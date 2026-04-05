@@ -5,7 +5,7 @@ import ExcelIcon from "assets/images/img-excel.png";
 
 interface IAddFileProps {
   code?: string;
-  fileProps?: any;
+  fileProps?: Record<string, unknown>;
   takeFileAdd: (data) => void;
 }
 
@@ -58,7 +58,7 @@ export default function AddFile(props: IAddFileProps) {
     setDragging(false);
 
     const newFiles = [...files];
-    const droppedFiles: any = Array.from(e.dataTransfer.files);
+    const droppedFiles: Record<string, unknown> = Array.from(e.dataTransfer.files);
 
     droppedFiles.forEach((file) => {
       const checkFile = file?.name.split("?")[0].split("#")[0].split(".").pop();

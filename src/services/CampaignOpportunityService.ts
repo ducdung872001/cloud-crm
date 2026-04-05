@@ -96,34 +96,34 @@ export default {
   },
 
   //lấy danh sách cơ hội dành cho chiến dịch doanh nghiệp
-  listOpportunity: (params?: any, signal?: AbortSignal) => {
+  listOpportunity: (params?: Record<string, unknown>, signal?: AbortSignal) => {
     return fetch(`${urlsApi.campaignOpportunity.listOpportunity}${convertParamsToString(params)}`, {
       signal,
       method: "GET",
     }).then((res) => res.json());
   },
 
-  opportunityCheck: (params: any) => {
+  opportunityCheck: (params: Record<string, unknown>) => {
     return fetch(`${urlsApi.campaignOpportunity.opportunityCheck}${convertParamsToString(params)}`, {
       method: "GET",
     }).then((res) => res.json());
   },
 
-  sendEmail: (body: any) => {
+  sendEmail: (body: Record<string, unknown>) => {
     return fetch(urlsApi.campaignOpportunity.sendEmail, {
       method: "POST",
       body: JSON.stringify(body),
     }).then((res) => res.json());
   },
 
-  opportunityContact: (body: any) => {
+  opportunityContact: (body: Record<string, unknown>) => {
     return fetch(urlsApi.campaignOpportunity.opportunityContact, {
       method: "POST",
       body: JSON.stringify(body),
     }).then((res) => res.json());
   },
 
-  detailOpportunityContact: (params: any) => {
+  detailOpportunityContact: (params: Record<string, unknown>) => {
     return fetch(`${urlsApi.campaignOpportunity.detailOpportunityContact}${convertParamsToString(params)}`, {
       method: "GET",
     }).then((res) => res.json());
@@ -131,14 +131,14 @@ export default {
 
   ///eform thu thập thông tin
 
-  OpportunityEformUpdate: (body: any) => {
+  OpportunityEformUpdate: (body: Record<string, unknown>) => {
     return fetch(urlsApi.campaignOpportunity.opportunityEformUpdate, {
       method: "POST",
       body: JSON.stringify(body),
     }).then((res) => res.json());
   },
 
-  OpportunityEformDetail: (params?: any, signal?: AbortSignal) => {
+  OpportunityEformDetail: (params?: Record<string, unknown>, signal?: AbortSignal) => {
     return fetch(`${urlsApi.campaignOpportunity.opportunityEformDetail}${convertParamsToString(params)}`, {
       signal,
       method: "GET",
@@ -146,7 +146,7 @@ export default {
   },
 
   // thêm mới nhiều người xem cho 1 khách hàng
-  addCoyViewer: (body: any) => {
+  addCoyViewer: (body: Record<string, unknown>) => {
     return fetch(urlsApi.campaignOpportunity.addCoyViewer, {
       method: "POST",
       body: JSON.stringify(body),

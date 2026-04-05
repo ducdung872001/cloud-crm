@@ -55,7 +55,7 @@ function countdownTo(end?: string): string {
 }
 
 export default function SharePromoPage() {
-  const params: any = getSearchParameters();
+  const params: Record<string, unknown> = getSearchParameters();
   const slug = params?.slug ?? "";
 
   const [promo, setPromo]       = useState<PromoInfo | null>(null);

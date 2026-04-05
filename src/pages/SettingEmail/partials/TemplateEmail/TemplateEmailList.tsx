@@ -34,7 +34,7 @@ export default function TemplateEmailList(props: ITemplateEmailListProps) {
   const [dataTemplateEmail, setDataTemplateEmail] = useState<ITemplateEmailResponseModel>(null);
   const [listIdChecked, setListIdChecked] = useState<number[]>([]);
   const [showDialog, setShowDialog] = useState<boolean>(false);
-  const [contentDialog, setContentDialog] = useState<any>(null);
+  const [contentDialog, setContentDialog] = useState<Record<string, unknown>>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [isNoItem, setIsNoItem] = useState<boolean>(false);
   const [isAddEditTemplateEmail, setIsAddEditTemplateEmail] = useState<boolean>(false);

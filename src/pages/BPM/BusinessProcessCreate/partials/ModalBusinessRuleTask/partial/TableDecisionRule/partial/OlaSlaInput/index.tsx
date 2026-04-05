@@ -3,11 +3,11 @@ import NummericInput from "components/input/numericInput";
 import React, { memo } from "react";
 
 interface RangeValueInputProps {
-  child: any;
+  child: Record<string, unknown>;
   index: number;
   rowIndex: number;
   fieldIndex: number;
-  handChangeValueItem: (rowIndex: number, fieldIndex: number, value: any, type: "number" | "input", index: number) => void;
+  handChangeValueItem: (rowIndex: number, fieldIndex: number, value: Record<string, unknown>, type: "number" | "input", index: number) => void;
 }
 
 const OlaSlaInput: React.FC<RangeValueInputProps> = ({ child, index, rowIndex, fieldIndex, handChangeValueItem }) => {

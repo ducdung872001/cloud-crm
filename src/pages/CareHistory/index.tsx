@@ -55,7 +55,7 @@ const StatCard: React.FC<StatCardProps> = ({ title, value, sub, icon, color, tre
   </div>
 );
 
-export default function CareHistory(props: any) {
+export default function CareHistory(props: Record<string, unknown>) {
   document.title = "Lịch sử chăm sóc";
 
   const { onBackProps } = props;
@@ -66,7 +66,7 @@ export default function CareHistory(props: any) {
 
   const [listIdChecked, setListIdChecked] = useState<number[]>([]);
   const [showModalAdd, setShowModalAdd] = useState(false);
-  const [dataCategoryService, setDataCategoryService] = useState<any>(null);
+  const [dataCategoryService, setDataCategoryService] = useState<Record<string, unknown>>(null);
   const [showDialog, setShowDialog] = useState(false);
   const [contentDialog, setContentDialog] = useState<IContentDialog>(null);
 

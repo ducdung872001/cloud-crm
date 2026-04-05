@@ -62,8 +62,8 @@ type TimeConfigBoxProps = {
   enableMinute?: boolean;
   enableSecond?: boolean;
   cronType?: string;
-  config: any;
-  setConfig: any;
+  config: Record<string, unknown>;
+  setConfig: Record<string, unknown>;
 };
 
 const RunTimeConfig: React.FC<TimeConfigBoxProps> = ({

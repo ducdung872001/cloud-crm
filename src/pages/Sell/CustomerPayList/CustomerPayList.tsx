@@ -156,7 +156,7 @@ export default function CustomerPayList() {
     try {
       await InvoiceService.exportExcel(params);
       showToast("Xuất Excel thành công", "success");
-    } catch (err: any) {
+    } catch (err: unknown) {
       showToast(err?.message ?? "Xuất Excel thất bại. Vui lòng thử lại", "error");
     } finally {
       setIsExporting(false);

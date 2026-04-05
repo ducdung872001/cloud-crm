@@ -188,7 +188,7 @@ export default function Overview() {
       a.href = url;
       a.download = `don_hang_da_kenh_${new Date().toISOString().slice(0, 10)}.xlsx`;
       document.body.appendChild(a); a.click(); a.remove(); URL.revokeObjectURL(url);
-    } catch (e: any) {
+    } catch (e: unknown) {
       alert(e?.message ?? "Xuất Excel thất bại. Vui lòng thử lại.");
     } finally {
       setIsExporting(false);

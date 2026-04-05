@@ -167,7 +167,7 @@ export function convertDataRow(dataConfigAdvance, nodeId): Record<string, any> {
             `Alias for key "${key}":`,
             conditionMap[key].filter((item) => item.operator !== "OTHERWISE")
           );
-          const result: any = negateInAndNotIn(conditionMap[key].filter((item) => item.operator !== "OTHERWISE"));
+          const result: Record<string, unknown> = negateInAndNotIn(conditionMap[key].filter((item) => item.operator !== "OTHERWISE"));
           // const simplified = result ? simplifyConditions(result) : false;
           alias[key] = result;
         } else if (key == "the_chap") {
@@ -176,7 +176,7 @@ export function convertDataRow(dataConfigAdvance, nodeId): Record<string, any> {
             conditionMap[key].filter((item) => item.filter((item) => item.operator == "OTHERWISE").length == 0)
           );
           // const result: any = negateOrConditionsWithAndGroups(conditionMap[key].filter((item) => item.operator !== "OTHERWISE"));
-          const result: any = convertOutsideRangesToConditionGroups(
+          const result: Record<string, unknown> = convertOutsideRangesToConditionGroups(
             conditionMap[key].filter((item) => item.filter((item) => item.operator == "OTHERWISE").length == 0)
           );
           // const simplified = result ? simplifyConditions(result) : false;
@@ -189,7 +189,7 @@ export function convertDataRow(dataConfigAdvance, nodeId): Record<string, any> {
 
   return dataConfig;
 }
-function processData(value: any[]): void {
+function processData(value: Record<string, unknown>[]): void {
   // Kiểm tra nếu value là một mảng
   if (Array.isArray(value)) {
     // Kiểm tra xem có item nào có operator là "OTHERWISE"

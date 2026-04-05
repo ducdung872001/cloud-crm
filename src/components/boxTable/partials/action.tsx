@@ -6,8 +6,8 @@ import React, { Fragment, useRef } from "react";
 import { useOnClickOutside } from "utils/hookCustom";
 
 interface ActionProps {
-  item: any;
-  actions: (item: any) => IAction[];
+  item: Record<string, unknown>;
+  actions: (item: Record<string, unknown>) => IAction[];
   actionType?: "dropdown" | "inline";
   handleShowActionRow: (id: number, value?: boolean) => void;
 }

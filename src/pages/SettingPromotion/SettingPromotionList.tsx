@@ -18,7 +18,7 @@ import ContractEformService from "services/ContractEformService";
 import { getPermissions, showToast } from "utils/common";
 import EditPromotion from "./partials/EditPromotion/EditPromotion";
 
-export default function SettingPromotionList(props: any) {
+export default function SettingPromotionList(props: Record<string, unknown>) {
   document.title = "Danh sách khuyến mãi";
 
   const { onBackProps } = props;
@@ -29,7 +29,7 @@ export default function SettingPromotionList(props: any) {
   const [listIdChecked, setListIdChecked] = useState<number[]>([]);
   const [showEditPrm, setShowEditPrm] = useState<boolean>(true);
   const [showDialog, setShowDialog] = useState<boolean>(false);
-  const [contentDialog, setContentDialog] = useState<any>(null);
+  const [contentDialog, setContentDialog] = useState<Record<string, unknown>>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [isNoItem, setIsNoItem] = useState<boolean>(false);
   const [isPermissions, setIsPermissions] = useState<boolean>(false);
@@ -65,7 +65,7 @@ export default function SettingPromotionList(props: any) {
 
   const abortController = new AbortController();
 
-  const getListContractEform = async (paramsSearch: any) => {
+  const getListContractEform = async (paramsSearch: Record<string, unknown>) => {
     setIsLoading(true);
 
     const response = await ContractEformService.list(paramsSearch, abortController.signal);
@@ -147,11 +147,11 @@ export default function SettingPromotionList(props: any) {
 
   const dataFormat = ["text-center", "", "text-center", "text-center", "text-center", ""];
 
-  const dataMappingArray = (item: any, index: number) => [getPageOffset(params) + index + 1, item.name, item.position, item.position, item.position];
+  const dataMappingArray = (item: Record<string, unknown>, index: number) => [getPageOffset(params) + index + 1, item.name, item.position, item.position, item.position];
   const [dataSetting, setDataSetting] = useState(null);
 
   const [dataEdit, setDataEdit] = useState(null);
-  const actionsTable = (item: any): IAction[] => {
+  const actionsTable = (item: Record<string, unknown>): IAction[] => {
     const isCheckedItem = listIdChecked?.length > 0;
     return [
       {

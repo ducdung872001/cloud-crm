@@ -8,8 +8,8 @@ interface FullPageProps {
   isChildrenTitle: boolean;
   titleChildren: string;
   className?: string;
-  children: any;
-  callback?: any;
+  children: React.ReactNode;
+  callback?: () => void;
 }
 
 export default function FullPage(props: FullPageProps) {

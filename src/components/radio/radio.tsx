@@ -3,14 +3,14 @@ import "./radio.scss";
 
 export interface RadioProps {
   label?: string | number;
-  onChange?: any;
+  onChange?: React.ChangeEventHandler<HTMLInputElement>;
   name?: string;
   value?: string | number;
   checked?: boolean;
   defaultChecked?: boolean;
   id?: string;
   disabled?: boolean;
-  onClick?: any;
+  onClick?: React.MouseEventHandler<HTMLLabelElement>;
   className?: string;
 }
 export default function Radio(props: RadioProps) {

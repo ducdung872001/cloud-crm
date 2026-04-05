@@ -112,7 +112,7 @@ export default function ModalSignalIntermediateCatchEvent({ onShow, onHide, data
       const newListInputVarData = Array.isArray(arrayInput) && arrayInput.length > 0 ? arrayInput : [];
       const listInputVarData = newListInputVarData.map((item) => {
         const name = Object.entries(item)[0][0];
-        const attributeMapping: any = Object.entries(item)[0][1];
+        const attributeMapping: Record<string, unknown> = Object.entries(item)[0][1];
 
         return {
           name: name,
@@ -148,7 +148,7 @@ export default function ModalSignalIntermediateCatchEvent({ onShow, onHide, data
       const newListOutputVarData = Array.isArray(arrayOut) && arrayInput.length > 0 ? arrayOut : [];
       const listOutputVarData = newListOutputVarData.map((item) => {
         const name = Object.entries(item)[0][0];
-        const attributeMapping: any = Object.entries(item)[0][1];
+        const attributeMapping: Record<string, unknown> = Object.entries(item)[0][1];
 
         return {
           name: name,
@@ -370,7 +370,7 @@ export default function ModalSignalIntermediateCatchEvent({ onShow, onHide, data
                   // || !isDifferenceObj(formData, values),
                   is_loading: isSubmit,
                 },
-              ] as any)),
+              ] as Record<string, unknown>)),
         ],
       },
     }),

@@ -11,7 +11,7 @@ import { isDifferenceObj } from 'reborn-util';
 import "./ModalAddCampaignPipeline.scss";
 import CampaignPipelineService from "services/CampaignPipelineService";
 
-export default function ModalAddCampaignPipeline(props: any) {
+export default function ModalAddCampaignPipeline(props: Record<string, unknown>) {
   const { onShow, onHide, data, campaignId } = props;
 
   const [isSubmit, setIsSubmit] = useState<boolean>(false);
@@ -26,7 +26,7 @@ export default function ModalAddCampaignPipeline(props: any) {
       name: data?.name ?? "",
       position: data?.position ?? "0",
       campaignId: data?.campaignId ?? campaignId,
-    } as any),
+    } as Record<string, unknown>),
     [data, onShow, campaignId]
   );
 
@@ -87,8 +87,8 @@ export default function ModalAddCampaignPipeline(props: any) {
     }
     setIsSubmit(true);
 
-    const body: any = {
-      ...(formData.values as any),
+    const body: Record<string, unknown> = {
+      ...(formData.values as Record<string, unknown>),
       ...(data ? { id: data.id } : {}),
     };
 

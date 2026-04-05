@@ -17,7 +17,7 @@ exportingInit(Highcharts);
 
 interface ReportRevenueProps {
   classNames?: string;
-  paramsProps: any;
+  paramsProps: Record<string, unknown>;
 }
 
 export default function ChartRateJobEmployee(props: ReportRevenueProps) {

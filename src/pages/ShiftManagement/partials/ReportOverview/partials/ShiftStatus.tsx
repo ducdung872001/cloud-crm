@@ -62,7 +62,7 @@ export default function ShiftStatus({ branchId }: Props) {
           return;
         }
         setShifts(
-          d.shiftStatuses.map((s: any) => ({
+          d.shiftStatuses.map((s: Record<string, unknown>) => ({
             shiftId: s.shiftId ?? 0,
             shiftName: s.shiftName ?? "Ca",
             timeRange: s.timeRange ?? "",

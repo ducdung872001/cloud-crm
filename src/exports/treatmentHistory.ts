@@ -9,7 +9,7 @@ import { getCharByCode, getFileExtension } from "utils/common";
 const workbook = new ExcelJS.Workbook();
 
 const IntStream = (function () {
-  function range(start: number, end: any, numbers = []) {
+  function range(start: number, end: number, numbers = []) {
     if (start === end) {
       return numbers;
     }
@@ -22,7 +22,7 @@ const IntStream = (function () {
 })();
 
 // đoạn này xử lý vấn đề thêm hàng
-export const worksheetAddRow = (worksheet: ExcelJS.Worksheet, data: any[], index?: number, isHorizontal?: boolean) => {
+export const worksheetAddRow = (worksheet: ExcelJS.Worksheet, data: unknown[], index?: number, isHorizontal?: boolean) => {
   let row = null;
   if (index === null || isNaN(index)) {
     row = worksheet.addRow(data);
@@ -36,7 +36,7 @@ export const worksheetAddRow = (worksheet: ExcelJS.Worksheet, data: any[], index
   return row;
 };
 
-const addRow = (ws: ExcelJS.Worksheet, rowData: any[], widths: number[], options: { [x: string]: any }[]) => {
+const addRow = (ws: ExcelJS.Worksheet, rowData: unknown[], widths: number[], options: Record<string, unknown>[]) => {
   const rowValues = [];
   if (widths === undefined) widths = rowData.map(() => 1);
   if (options === undefined) options = [];
@@ -70,7 +70,7 @@ const addRow = (ws: ExcelJS.Worksheet, rowData: any[], widths: number[], options
 };
 
 // đoạn này xử lý vấn đề chỉnh sửa ô
-export const excelEditCell = (cell: { [x: string]: any }, data = {}) => {
+export const excelEditCell = (cell: Record<string, unknown>, data = {}) => {
   Object.keys(data).forEach((key) => {
     if (data[key].constructor === {}.constructor) {
       cell[key] = { ...cell[key], ...data[key] };
@@ -81,7 +81,7 @@ export const excelEditCell = (cell: { [x: string]: any }, data = {}) => {
   return cell;
 };
 
-const createHeader = (worksheet: ExcelJS.Worksheet, dataHeader?: any) => {
+const createHeader = (worksheet: ExcelJS.Worksheet, dataHeader?: Record<string, unknown>) => {
   if (dataHeader) {
     // nếu như mà có hình ảnh
     if (dataHeader.avatar) {
@@ -105,7 +105,7 @@ interface IBeautySalonProps {
 }
 
 export async function ExportTreatmentHistoryExcel(
-  userOptions: { fileName: string; title: string; header: any[]; data: any[]; info: { name: string } },
+  userOptions: { fileName: string; title: string; header: string[]; data: unknown[][]; info: { name: string } },
   beautySalon?: IBeautySalonProps,
   name?: string
 ) {
@@ -119,7 +119,7 @@ export async function ExportTreatmentHistoryExcel(
     data: [],
     dataFormat: [],
     columnsWidth: [], // đoạn này cấu hình chiều dài của 1 ô
-    callback: (f: any) => f,
+    callback: (f: unknown) => f,
     ...userOptions,
   };
 

@@ -3,7 +3,7 @@ import { convertParamsToString } from "reborn-util";
 import { ICustomerSourceFilterRequest, ICustomerSourceRequest } from "model/customerSource/CustomerSourceRequest";
 
 export default {
-  list: (params?: any, signal?: AbortSignal) => {
+  list: (params?: Record<string, unknown>, signal?: AbortSignal) => {
     return fetch(`${urlsApi.customerMarketingLead.list}${convertParamsToString(params)}`, {
       signal,
       method: "GET",

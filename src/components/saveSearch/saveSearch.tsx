@@ -3,12 +3,12 @@ import { IFilterItem, ISaveSearch, ISaveSearchParam } from "model/OtherModel";
 import "./saveSearch.scss";
 
 interface SaveSearchProps {
-  params: any;
+  params: Record<string, unknown>;
   listSaveSearch?: ISaveSearch[];
   listFilterItem?: IFilterItem[];
   setDisabledSaveSearch: (e: boolean) => void;
   callback: (saveSearch: ISaveSearch) => void;
-  setTabActive?: any;
+  setTabActive?: (key: string | number) => void;
 }
 
 export default function SaveSearch(props: SaveSearchProps) {

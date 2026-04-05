@@ -70,7 +70,7 @@ export default function DetailHistoryProcess(props) {
   const [listArtifact, setListArtifact] = useState([]);
   const [listEformAttribute, setListEformAttribute] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
-  const [contractExtraInfos, setContractExtraInfos] = useState<any>([]);
+  const [contractExtraInfos, setContractExtraInfos] = useState<Record<string, unknown>>([]);
 
   const [listHistory, setListHistory] = useState([]);
 
@@ -290,7 +290,7 @@ export default function DetailHistoryProcess(props) {
     });
 
     if (!found) {
-      const item: any = {
+      const item: Record<string, unknown> = {
         [attributeFieldName]: attributeValue,
       };
       // item.attributeId = attributeId;
@@ -702,7 +702,7 @@ export default function DetailHistoryProcess(props) {
 
     setIsSubmit(true);
 
-    const body: any = {
+    const body: Record<string, unknown> = {
       id: 0,
       nodeId: tabNode,
       // attributeValue: JSON.stringify(contractExtraInfos),
@@ -938,7 +938,7 @@ export default function DetailHistoryProcess(props) {
               return (
                 <Button
                   key={idx}
-                  color={item.color as any}
+                  color={item.color as Record<string, unknown>}
                   onClick={() => {
                     handleSigned(item);
                     setDataAction(item);

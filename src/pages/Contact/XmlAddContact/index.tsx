@@ -39,7 +39,7 @@ const getContactExtraInfos = async (id) => {
   return response.result ?? [];
 };
 
-const getOjectGroup = async (type: any) => {
+const getOjectGroup = async (type: Record<string, unknown>) => {
   const response = await ObjectGroupService.detailByType(type);
   if (response.code === 0) {
     const result = response?.result;
@@ -55,7 +55,7 @@ const getOjectGroup = async (type: any) => {
   return defaultSchema;
 };
 
-export default function XmlAddContact(props: any) {
+export default function XmlAddContact(props: Record<string, unknown>) {
   const { onShow, data, onHide, takeInfoContact } = props;
 
   const formContainerRef = useRef(null);
@@ -70,8 +70,8 @@ export default function XmlAddContact(props: any) {
 
   const { dataBranch } = useContext(UserContext) as ContextType;
   const [isSubmit, setIsSubmit] = useState<boolean>(false);
-  const [contactExtraInfos, setContactExtraInfos] = useState<any>([]);
-  const [mapContactAttribute, setMapContactAttribute] = useState<any>(null);
+  const [contactExtraInfos, setContactExtraInfos] = useState<Record<string, unknown>>([]);
+  const [mapContactAttribute, setMapContactAttribute] = useState<Record<string, unknown>>(null);
 
   useEffect(() => {
     localStorage.setItem("showFullScreenModalContactEform", JSON.stringify(showFullScreen));
@@ -130,7 +130,7 @@ export default function XmlAddContact(props: any) {
     let phone = config?.phoneMasked ?? null;
     let email = config?.emailMasked ?? null;
 
-    let body: any = {
+    let body: Record<string, unknown> = {
       ...(data ? data : {}),
       avatar: config.avatar ? JSON.parse(config.avatar)[0]?.url : "",
       name: config.name ?? "",

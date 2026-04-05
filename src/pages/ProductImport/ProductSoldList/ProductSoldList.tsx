@@ -183,7 +183,7 @@ export default function ProductSoldList() {
       a.href = url;
       a.download = `top_san_pham_${sortBy}_${new Date().toISOString().slice(0, 10)}.xlsx`;
       document.body.appendChild(a); a.click(); a.remove(); URL.revokeObjectURL(url);
-    } catch (e: any) {
+    } catch (e: unknown) {
       console.error("Export failed", e);
     } finally {
       setIsExporting(false);

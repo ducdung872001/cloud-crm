@@ -2,13 +2,13 @@ import { urlsApi } from "configs/urls";
 import { convertParamsToString } from "reborn-util";
 
 export default {
-  list: (params?: any, signal?: AbortSignal) => {
+  list: (params?: Record<string, unknown>, signal?: AbortSignal) => {
     return fetch(`${urlsApi.contractAttachment.list}${convertParamsToString(params)}`, {
       signal,
       method: "GET",
     }).then((res) => res.json());
   },
-  update: (body: any) => {
+  update: (body: Record<string, unknown>) => {
     return fetch(urlsApi.contractAttachment.update, {
       method: "POST",
       body: JSON.stringify(body),
@@ -26,14 +26,14 @@ export default {
   },
 
 
-  contractAttachmentList: (params?: any, signal?: AbortSignal) => {
+  contractAttachmentList: (params?: Record<string, unknown>, signal?: AbortSignal) => {
     return fetch(`${urlsApi.contractAttachment.contractAttachmentList}${convertParamsToString(params)}`, {
       signal,
       method: "GET",
     }).then((res) => res.json());
   },
 
-  contractAttachmentUpdate: (body: any) => {
+  contractAttachmentUpdate: (body: Record<string, unknown>) => {
     return fetch(urlsApi.contractAttachment.contractAttachmentUpdate, {
       method: "POST",
       body: JSON.stringify(body),

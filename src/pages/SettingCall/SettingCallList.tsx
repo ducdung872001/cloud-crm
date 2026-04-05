@@ -9,7 +9,7 @@ import "./SettingCallList.scss";
 import { getDomain } from "reborn-util";
 import TabMenuList from "@/components/TabMenuList/TabMenuList";
 
-export default function SettingCallList(props: any) {
+export default function SettingCallList(props: Record<string, unknown>) {
   document.title = "Cài đặt Tổng đài";
 
   const { onBackProps, titleBack } = props;
@@ -68,7 +68,7 @@ export default function SettingCallList(props: any) {
         {!isDetail && (
           <TabMenuList
             groups={groups}
-            onClick={(item: any) => { setTab(item.is_tab); setIsDetail(true); }}
+            onClick={(item: Record<string, unknown>) => { setTab(item.is_tab); setIsDetail(true); }}
           />
         )}
       </div>

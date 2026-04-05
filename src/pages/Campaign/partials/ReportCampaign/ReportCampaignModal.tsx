@@ -5,7 +5,7 @@ import { IAddCampaignModalProps } from "model/campaign/PropsModel";
 import Modal, { ModalBody, ModalFooter, ModalHeader } from "components/modal/modal";
 import "./ReportCampaignModal.scss";
 
-export default function ReportCampaignModal(props: any) {
+export default function ReportCampaignModal(props: Record<string, unknown>) {
   const { onShow, dataCampaign, onHide } = props;
 
   const data = {

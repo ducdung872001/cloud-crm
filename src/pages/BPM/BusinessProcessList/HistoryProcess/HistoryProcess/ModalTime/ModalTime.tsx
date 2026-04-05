@@ -3,7 +3,7 @@ import Modal, { ModalBody, ModalFooter, ModalHeader } from "components/modal/mod
 import "./ModalTime.scss";
 import moment from "moment";
 
-export default function ModalTime(props: any) {
+export default function ModalTime(props: Record<string, unknown>) {
   const { onShow, data, onHide } = props;  
 
   return (

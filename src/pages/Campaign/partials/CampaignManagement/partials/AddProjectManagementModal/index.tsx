@@ -190,7 +190,7 @@ export default function AddProjectManagementModal(props: IAddWorkProjectModalPro
   const [dataProjectTypes, setDataProjectTypes] = useState(null);
 
   const loadedOptionProjectTypes = async (search, loadedOptions, { page }) => {
-    const param: any = {
+    const param: Record<string, unknown> = {
       name: search,
       // page: page,
       // limit: 10,

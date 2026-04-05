@@ -77,7 +77,7 @@ export default function AddTemplateEmailModal(props: IAddTemplateEmailModelProps
 
   const [formData, setFormData] = useState<IFormData>({ values: values });
 
-  const [selectedTcyId, setSelectedTcyId] = useState<any>(null); // State riêng cho dropdown chọn chủ đề
+  const [selectedTcyId, setSelectedTcyId] = useState<Record<string, unknown>>(null); // State riêng cho dropdown chọn chủ đề
 
   // Khởi tạo dữ liệu form khi mở modal
   useEffect(() => {
@@ -97,7 +97,7 @@ export default function AddTemplateEmailModal(props: IAddTemplateEmailModelProps
   const onSubmit = async (e) => {
     e.preventDefault();
 
-    const errors: any = {};
+    const errors: Record<string, unknown> = {};
     if (!selectedTcyId || !selectedTcyId.value) {
       errors.tcyId = "Vui lòng chọn Chủ đề email";
     }

@@ -303,7 +303,13 @@ function bfs(items, newItem) {
   return newLayouts;
 }
 
-export default function SettingAttribute(props: any) {
+interface SettingAttributeProps {
+  onShow: boolean;
+  onHide: (reload: boolean) => void;
+  dataObjectGroup: Record<string, unknown> | null;
+}
+
+export default function SettingAttribute(props: SettingAttributeProps) {
   const { onShow, onHide, dataObjectGroup } = props;
   console.log("dataObjectGroup", dataObjectGroup);
 
@@ -321,13 +327,13 @@ export default function SettingAttribute(props: any) {
   const [showDialog, setShowDialog] = useState<boolean>(false);
   const [contentDialog, setContentDialog] = useState<IContentDialog>(null);
 
-  const [data, setData] = useState<any>();
+  const [data, setData] = useState<Record<string, unknown> | null>();
 
-  const [addFieldAttributes, setAddFieldAttributes] = useState<any[]>([{ value: "", label: "" }]);
-  const [detailLookup, setDetailLookup] = useState<any>("contract");
-  const [numberFormat, setNumberFormat] = useState<any>("");
+  const [addFieldAttributes, setAddFieldAttributes] = useState<Record<string, unknown>[]>([{ value: "", label: "" }]);
+  const [detailLookup, setDetailLookup] = useState<string>("contract");
+  const [numberFormat, setNumberFormat] = useState<string>("");
 
-  const [contractAttributeFields, setContractAttributeFields] = useState<any>(null); //Khởi tạo null là quan trọng
+  const [contractAttributeFields, setContractAttributeFields] = useState<Record<string, unknown> | null>(null);
   console.log("contractAttributeFields", contractAttributeFields);
 
   const [showFields, setShowFields] = useState<boolean>(false);
@@ -457,7 +463,7 @@ export default function SettingAttribute(props: any) {
       console.log("newresult", newresult);
 
       const newChildrens = await Promise.all(
-        Object.entries(result).map((item: any, key) => {
+        Object.entries(result).map((item: [string, unknown], key: number) => {
           // console.log('ddd', item[1][0]);
           return item[1][0].datatype === "text" ? (
             <div key={item[1][0].id} datatype={item[1][0].datatype} style={{ height: "100%" }}>
@@ -980,8 +986,8 @@ export default function SettingAttribute(props: any) {
   const saveAttribute = async (e) => {
     e.preventDefault();
 
-    const body: any = {
-      ...(dataField as any),
+    const body: Record<string, unknown> = {
+      ...(dataField as Record<string, unknown>),
       // ...(data ? { id: data.id } : {}),
       ...(dataField["datatype"] == "dropdown" || dataField["datatype"] == "radio" || dataField["datatype"] == "multiselect"
         ? {
@@ -1023,7 +1029,7 @@ export default function SettingAttribute(props: any) {
   const saveEform = async (e) => {
     e.preventDefault();
 
-    const body: any = {
+    const body: Record<string, unknown> = {
       id: eformId,
       name: "",
       note: "",

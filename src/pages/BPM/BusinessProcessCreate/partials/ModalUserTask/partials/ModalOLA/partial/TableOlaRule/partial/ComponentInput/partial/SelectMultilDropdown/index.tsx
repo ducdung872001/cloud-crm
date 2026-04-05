@@ -5,10 +5,10 @@ import React, { memo } from "react";
 import "./index.scss";
 
 interface SelectMultilDropdownProps {
-  field: any;
+  field: Record<string, unknown>;
   rowIndex: number;
   fieldIndex: number;
-  handChangeValueItem: (rowIndex: number, fieldIndex: number, value: any, type: "compare" | "number" | "date" | "select_multi") => void;
+  handChangeValueItem: (rowIndex: number, fieldIndex: number, value: Record<string, unknown>, type: "compare" | "number" | "date" | "select_multi") => void;
 }
 
 const SelectMultilDropdown: React.FC<SelectMultilDropdownProps> = ({ field, rowIndex, fieldIndex, handChangeValueItem }) => {
@@ -42,7 +42,7 @@ const SelectMultilDropdown: React.FC<SelectMultilDropdownProps> = ({ field, rowI
             options={field.options || []}
             value={
               field?.value
-                ? field.value.map((item: any) => ({
+                ? field.value.map((item: Record<string, unknown>) => ({
                     label: item,
                     value: item,
                   }))

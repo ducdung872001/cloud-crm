@@ -45,10 +45,10 @@ export function useSTWebRTC(options: UseSTWebRTCOptions) {
           console.log("STWebRTC: WebRTC embed success");
         },
 
-        embed_error_handle: (data: any) => {
+        embed_error_handle: (data: Record<string, unknown>) => {
           // Xử lý lỗi nhúng
           console.error("STWebRTC: Có lỗi nhúng:", data);
-          setError(data?.message || "Embed error");
+          setError((data?.message as string) || "Embed error");
           setCallState("error");
         },
 
@@ -64,10 +64,10 @@ export function useSTWebRTC(options: UseSTWebRTCOptions) {
           setCallState("idle");
         },
 
-        background_registrationFailed_handle: (data: any) => {
+        background_registrationFailed_handle: (data: Record<string, unknown>) => {
           // Đăng ký SIP thất bại
           console.error("STWebRTC: Đăng ký SIP thất bại:", data);
-          setError(data?.cause || "Registration failed");
+          setError((data?.cause as string) || "Registration failed");
           setCallState("error");
         },
 
@@ -83,10 +83,10 @@ export function useSTWebRTC(options: UseSTWebRTCOptions) {
           setCallState("ringing");
         },
 
-        background_incomingcall_handle: (data: any) => {
+        background_incomingcall_handle: (data: Record<string, unknown>) => {
           // Có cuộc gọi đến
           console.log("STWebRTC: Có cuộc gọi đến từ:", data.customernumber);
-          setIncomingNumber(data.customernumber);
+          setIncomingNumber(data.customernumber as string);
           setCallState("incoming");
         },
 
@@ -103,10 +103,10 @@ export function useSTWebRTC(options: UseSTWebRTCOptions) {
           setCallState("ended");
         },
 
-        background_failed_handle: (data: any) => {
+        background_failed_handle: (data: Record<string, unknown>) => {
           // Cuộc gọi thất bại
           console.error("STWebRTC: Cuộc gọi thất bại:", data);
-          setError(data?.failed_cause || "Call failed");
+          setError((data?.failed_cause as string) || "Call failed");
           setCallState("error");
         },
       },

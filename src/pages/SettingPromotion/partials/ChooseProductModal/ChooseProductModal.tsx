@@ -5,14 +5,14 @@ import Dialog, { IContentDialog } from "components/dialog/dialog";
 import "./ChooseProductModal.scss";
 import ProductService from "services/ProductService";
 
-export default function ChooseProductModal(props: any) {
+export default function ChooseProductModal(props: Record<string, unknown>) {
   const { onShow, idData, onHide } = props;
 
   const [showDialog, setShowDialog] = useState<boolean>(false);
   const [contentDialog, setContentDialog] = useState<IContentDialog>(null);
   const [isSubmit, setIsSubmit] = useState<boolean>(false);
 
-  const [dataProduct, setDataProduct] = useState<any>([
+  const [dataProduct, setDataProduct] = useState<Record<string, unknown>>([
     {
       id: 3389888,
       name: "MYDOCALM 150MG",
@@ -114,7 +114,7 @@ export default function ChooseProductModal(props: any) {
   };
 
   const loadedOptionProduct = async (search, loadedOptions, { page }) => {
-    const param: any = {
+    const param: Record<string, unknown> = {
       name: search,
       page: page,
       limit: 10,

@@ -12,7 +12,7 @@ import "./AddPermissionModal.scss";
 import BeautyBranchService from "services/BeautyBranchService";
 import PermissionService from "services/PermissionService";
 
-export default function AddPermissionModal(props: any) {
+export default function AddPermissionModal(props: Record<string, unknown>) {
   const { onShow, onHide } = props;
 
   const [isSubmit, setIsSubmit] = useState<boolean>(false);
@@ -30,7 +30,7 @@ export default function AddPermissionModal(props: any) {
     () =>
       ({
         code: dataSearch?.code ?? "",
-      } as any),
+      } as Record<string, unknown>),
     [dataSearch, onShow]
   );
 
@@ -73,8 +73,8 @@ export default function AddPermissionModal(props: any) {
     }
     setIsSubmit(true);
 
-    const body: any = {
-      ...(formData.values as any),
+    const body: Record<string, unknown> = {
+      ...(formData.values as Record<string, unknown>),
     };
 
     const response = await BeautyBranchService.getBeautyBranchByCode(body);
@@ -197,7 +197,7 @@ export default function AddPermissionModal(props: any) {
         // requestCode: 'product',
         requestCodeList: "",
         sourceNote: "",
-      } as any),
+      } as Record<string, unknown>),
     [isAddPermission, infoPartner]
   );
 

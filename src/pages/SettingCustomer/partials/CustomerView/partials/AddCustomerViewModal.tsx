@@ -14,7 +14,7 @@ import { isDifferenceObj } from 'reborn-util';
 import "./AddCustomerViewModal.scss";
 import CustomerViewService from "services/CustomerViewService";
 
-export default function AddCustomerViewModal(props: any) {
+export default function AddCustomerViewModal(props: Record<string, unknown>) {
   const { onShow, onHide, data } = props;
 
   const [isSubmit, setIsSubmit] = useState<boolean>(false);
@@ -76,8 +76,8 @@ export default function AddCustomerViewModal(props: any) {
     }
     setIsSubmit(true);
 
-    const body: any = {
-      ...(formData.values as any),
+    const body: Record<string, unknown> = {
+      ...(formData.values as Record<string, unknown>),
       ...(data ? { id: data.id } : {}),
     };
 

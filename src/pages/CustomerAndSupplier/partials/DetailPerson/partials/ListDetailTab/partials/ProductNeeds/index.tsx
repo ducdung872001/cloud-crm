@@ -20,10 +20,10 @@ export default function ProductNeeds({ data }) {
   const [listProductNeeds, setListProductNeeds] = useState([]);
   const [isNoItem, setIsNoItem] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [dataProductNeeds, setDataProductNeeds] = useState<any>(null);
+  const [dataProductNeeds, setDataProductNeeds] = useState<Record<string, unknown>>(null);
   const [showModalAdd, setShowModalAdd] = useState<boolean>(false);
 
-  const [params, setParams] = useState<any>({
+  const [params, setParams] = useState<Record<string, unknown>>({
     name: "",
     customerId: data.id,
   });
@@ -42,7 +42,7 @@ export default function ProductNeeds({ data }) {
 
   const abortController = new AbortController();
 
-  const getListProductNeeds = async (paramsSearch: any) => {
+  const getListProductNeeds = async (paramsSearch: Record<string, unknown>) => {
     setIsLoading(true);
 
     const response = null;
@@ -100,7 +100,7 @@ export default function ProductNeeds({ data }) {
 
   const dataFormat = ["text-center", "", "", "text-center", "text-center", "", "", "text-right"];
 
-  const dataMappingArray = (item: any, index: number) => [
+  const dataMappingArray = (item: Record<string, unknown>, index: number) => [
     getPageOffset(params) + index + 1,
     item.type,
     item.name,
@@ -111,7 +111,7 @@ export default function ProductNeeds({ data }) {
     formatCurrency(item.costs, ","),
   ];
 
-  const actionsTable = (item: any): IAction[] => {
+  const actionsTable = (item: Record<string, unknown>): IAction[] => {
     return [
       {
         title: "Sửa",
@@ -132,7 +132,7 @@ export default function ProductNeeds({ data }) {
   }; 
 
   const [showDialog, setShowDialog] = useState<boolean>(false);
-  const [contentDialog, setContentDialog] = useState<any>(null);
+  const [contentDialog, setContentDialog] = useState<Record<string, unknown>>(null);
 
   const onDelete = async (id: number) => {
     const response = null;
@@ -147,7 +147,7 @@ export default function ProductNeeds({ data }) {
     setContentDialog(null);
   };
 
-  const showDialogConfirmDelete = (item?: any) => {
+  const showDialogConfirmDelete = (item?: Record<string, unknown>) => {
     const contentDialog: IContentDialog = {
       color: "error",
       className: "dialog-delete",

@@ -14,7 +14,7 @@ import "./AddCxmOption.scss";
 
 // SpaceTypeService removed (non-retail BDS)
 
-export default function AddCxmOption(props: any) {
+export default function AddCxmOption(props: Record<string, unknown>) {
   const { onShow, onHide, data, dataBuildingFloor, dataBuilding } = props;
 
   const focusedElement = useActiveElement();
@@ -33,7 +33,7 @@ export default function AddCxmOption(props: any) {
         buildingId: data?.buildingId ?? dataBuilding?.id ?? "",
         floorId: data?.floorId ?? dataBuildingFloor?.id ?? "",
         projectId: data?.projectId ?? dataBuilding?.projectId ?? "",
-      } as any),
+      } as Record<string, unknown>),
     [data, onShow]
   );
 
@@ -118,7 +118,7 @@ export default function AddCxmOption(props: any) {
   );
 
   //! đoạn này xử lý lấy ngày
-  const [days, setDays] = useState<any[]>(
+  const [days, setDays] = useState<Record<string, unknown>[]>(
     createArrayFromTo(1, 28).map((item, idx) => {
       if (item < 10) {
         return {

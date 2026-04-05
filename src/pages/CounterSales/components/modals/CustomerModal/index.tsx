@@ -85,8 +85,8 @@ export default function CustomerModal({
     const wallet = walletMap[String(c.id)];
     const enriched: Customer = {
       ...c,
-      points:      wallet?.currentBalance ?? (c as any).points ?? 0,
-      tier:        wallet?.segmentName ?? (c as any).tier ?? undefined,
+      points:      wallet?.currentBalance ?? (c as Record<string, unknown>).points ?? 0,
+      tier:        wallet?.segmentName ?? (c as Record<string, unknown>).tier ?? undefined,
     };
     onSelect?.(enriched);
     onClose();
@@ -104,7 +104,7 @@ export default function CustomerModal({
         phone:    newPhone.trim(),
         branchId: branchId || undefined,
         custType: 1,   // 1 = Cá nhân (mặc định)
-      } as any);
+      } as Record<string, unknown>);
       if (createRes.code !== 0 || !createRes.result) {
         showToast(createRes.message ?? "Không thể tạo khách hàng", "error");
         return;

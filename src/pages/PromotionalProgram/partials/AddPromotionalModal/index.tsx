@@ -30,7 +30,7 @@ interface Props {
  * Convert bất kỳ giá trị date (moment object / ISO string / Date) → "YYYY-MM-DDTHH:mm:ss"
  * Trả về "" nếu không hợp lệ.
  */
-function toISOStr(val: any): string {
+function toISOStr(val: Record<string, unknown>): string {
   if (!val) return "";
   const m = moment.isMoment(val) ? val : moment(val);
   return m.isValid() ? m.format("YYYY-MM-DDTHH:mm:ss") : "";
@@ -95,7 +95,7 @@ export default function AddPromotionalModal({ onShow, data, onHide }: Props) {
   const [formData, setFormData] = useState<IFormData>({ values });
 
   // isFixedPrice + effectiveValidations phải nằm SAU useState(formData)
-  const isFixedPrice = Number((formData?.values as any)?.promotionType) === 7;
+  const isFixedPrice = Number((formData?.values as Record<string, unknown>)?.promotionType) === 7;
 
   const effectiveValidations: IValidation[] = isFixedPrice
     ? [
@@ -210,7 +210,7 @@ export default function AddPromotionalModal({ onShow, data, onHide }: Props) {
     const errors: Record<string, string> = Validate(validations, formData, listField);
 
     // 2. Validate date fields thủ công (vì value là moment object)
-    const v = formData.values as any;
+    const v = formData.values as Record<string, unknown>;
     const startISO = toISOStr(v.startTime);
     const endISO   = toISOStr(v.endTime);
 
@@ -454,9 +454,9 @@ export default function AddPromotionalModal({ onShow, data, onHide }: Props) {
                 <p className="fp-hint">
                   💡 Khi CT đang chạy, các sản phẩm trên sẽ được bán với giá{" "}
                   <strong>
-                    {(formData?.values as any)?.fixedPrice
+                    {(formData?.values as Record<string, unknown>)?.fixedPrice
                       ? new Intl.NumberFormat("vi-VN").format(
-                          Number((formData?.values as any).fixedPrice)) + "đ"
+                          Number((formData?.values as Record<string, unknown>).fixedPrice)) + "đ"
                       : "..."}
                   </strong> tại POS.
                 </p>

@@ -14,25 +14,25 @@ import { PRODUCT_DETAIL_CONFIG } from "@/assets/mock/Product";
 import Toggle from "@/components/toggle";
 import ProductPreview from "./PreviewProduct";
 interface ProductPreviewProps {
-  product: any;
+  product: Record<string, unknown>;
   config: Record<string, boolean>;
 }
 
-export default function DetailProductModal(props: any) {
+export default function DetailProductModal(props: Record<string, unknown>) {
   const { onShow, onHide, data } = props;
   console.log("DATA", data);
   
   const [isSubmit, setIsSubmit] = useState<boolean>(false);
   const [showDialog, setShowDialog] = useState<boolean>(false);
   const [contentDialog, setContentDialog] = useState<IContentDialog>(null);
-  const [productDetail, setProductDetail] = useState<any>({});
+  const [productDetail, setProductDetail] = useState<Record<string, unknown>>({});
 
   const values = useMemo(
     () =>
       ({
         id: data?.id,
         content: data?.content ?? "",
-      } as any),
+      } as Record<string, unknown>),
     [onShow, data]
   );
 

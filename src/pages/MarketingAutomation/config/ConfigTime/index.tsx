@@ -24,7 +24,7 @@ import Icon from "components/icon";
 import Input from "components/input/input";
 import _ from "lodash";
 
-export default function ConfigTime(props: any) {
+export default function ConfigTime(props: Record<string, unknown>) {
   const { onShow, onHide, dataNode, setDataNode, statusMA } = props;
   const [data, setData] = useState(null);
   const [nodeName, setNodeName] = useState(null);
@@ -90,7 +90,7 @@ export default function ConfigTime(props: any) {
       },
     };
 
-    const body: any = {
+    const body: Record<string, unknown> = {
       ...dataNode,
       ...(!_.isEqual(nodeName, dataNode?.name) ? { name: nodeName } : {}),
       configData: configDataNew,

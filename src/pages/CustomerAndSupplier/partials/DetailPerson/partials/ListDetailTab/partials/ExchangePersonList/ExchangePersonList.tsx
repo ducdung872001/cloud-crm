@@ -37,7 +37,7 @@ export default function ExchangePersonList(props: IExchangePersonListProps) {
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [isEditChat, setIsEditChat] = useState<boolean>(false);
   const [showDialog, setShowDialog] = useState<boolean>(false);
-  const [contentDialog, setContentDialog] = useState<any>(null);
+  const [contentDialog, setContentDialog] = useState<Record<string, unknown>>(null);
   useOnClickOutside(refEditChat, () => setIsEditChat(false), ["option-action-chat"]);
 
   const getListExchange = async (pageProps?: number) => {

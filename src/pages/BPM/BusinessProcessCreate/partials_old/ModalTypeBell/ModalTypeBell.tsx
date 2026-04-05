@@ -16,7 +16,7 @@ import "./ModalTypeBell.scss";
 interface IModalTypeBellProps {
   onShow: boolean;
   onHide: (reload: boolean) => void;
-  data: any;
+  data: Record<string, unknown>;
 }
 
 export default function ModalTypeBell(props: IModalTypeBellProps) {

@@ -29,7 +29,7 @@ export default function CustomerCareList() {
   const [showModalAdd, setShowModalAdd] = useState<boolean>(false);
   const [dataCustomerCare, setDataCustomerCare] = useState<ICustomerResponse>(null);
   const [showDialog, setShowDialog] = useState<boolean>(false);
-  const [contentDialog, setContentDialog] = useState<any>(null);
+  const [contentDialog, setContentDialog] = useState<Record<string, unknown>>(null);
   const [listSaveSearch] = useState<ISaveSearch[]>([
     {
       key: "all",

@@ -20,10 +20,10 @@ export default function FullFinancialReports({ data }) {
   const [listFullFinancialReports, setListFullFinancialReports] = useState([]);
   const [isNoItem, setIsNoItem] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [dataFullFinancialReports, setDataFullFinancialReports] = useState<any>(null);
+  const [dataFullFinancialReports, setDataFullFinancialReports] = useState<Record<string, unknown>>(null);
   const [showModalAdd, setShowModalAdd] = useState<boolean>(false);
 
-  const [params, setParams] = useState<any>({
+  const [params, setParams] = useState<Record<string, unknown>>({
     name: "",
     customerId: data.id,
   });
@@ -42,7 +42,7 @@ export default function FullFinancialReports({ data }) {
 
   const abortController = new AbortController();
 
-  const getListFullFinancialReports = async (paramsSearch: any) => {
+  const getListFullFinancialReports = async (paramsSearch: Record<string, unknown>) => {
     setIsLoading(true);
 
     const response = null;
@@ -101,7 +101,7 @@ export default function FullFinancialReports({ data }) {
 
   const dataFormat = ["text-center", "text-center", "", "", "", ""];
 
-  const dataMappingArray = (item: any, index: number) => [
+  const dataMappingArray = (item: Record<string, unknown>, index: number) => [
     getPageOffset(params) + index + 1,
     `${item.month}/${item.year}`,
     item.balanceSheet, //Nên dùng icon tốt hơn
@@ -110,7 +110,7 @@ export default function FullFinancialReports({ data }) {
     item.auditReport,
   ];
 
-  const actionsTable = (item: any): IAction[] => {
+  const actionsTable = (item: Record<string, unknown>): IAction[] => {
     return [
       {
         title: "Sửa",
@@ -131,7 +131,7 @@ export default function FullFinancialReports({ data }) {
   };
 
   const [showDialog, setShowDialog] = useState<boolean>(false);
-  const [contentDialog, setContentDialog] = useState<any>(null);
+  const [contentDialog, setContentDialog] = useState<Record<string, unknown>>(null);
 
   const onDelete = async (id: number) => {
     const response = null;
@@ -146,7 +146,7 @@ export default function FullFinancialReports({ data }) {
     setContentDialog(null);
   };
 
-  const showDialogConfirmDelete = (item?: any) => {
+  const showDialogConfirmDelete = (item?: Record<string, unknown>) => {
     const contentDialog: IContentDialog = {
       color: "error",
       className: "dialog-delete",

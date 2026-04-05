@@ -7,7 +7,7 @@ import "./ModalCalling.scss";
 import { showToast } from "utils/common";
 import Loading from "components/loading";
 
-export default function ModalCalling(props: any) {
+export default function ModalCalling(props: Record<string, unknown>) {
   const {onHide, onShow, dataCustomer, statusCall, endCall, seconds } = props;
   
   const [isSubmit, setIsSubmit] = useState<boolean>(false);

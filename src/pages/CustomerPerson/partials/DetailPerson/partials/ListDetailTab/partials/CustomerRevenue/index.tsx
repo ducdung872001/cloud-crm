@@ -29,7 +29,7 @@ export default function CustomerRevenue({ data }) {
     },
   ];
 
-  const [params, setParams] = useState<any>({
+  const [params, setParams] = useState<Record<string, unknown>>({
     name: "",
     customerId: data.id,
   });

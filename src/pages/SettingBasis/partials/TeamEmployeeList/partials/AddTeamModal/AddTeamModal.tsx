@@ -21,7 +21,7 @@ interface IPartnerSMS {
   partnerConfig: string;
 }
 
-export default function AddTeamModal(props: any) {
+export default function AddTeamModal(props: Record<string, unknown>) {
   const { onShow, onHide, data } = props;
 
   const focusedElement = useActiveElement();
@@ -42,7 +42,7 @@ export default function AddTeamModal(props: any) {
       id: data?.id ?? "",
       name: data?.name ?? "",
       description: data?.description ?? null,
-    } as any),
+    } as Record<string, unknown>),
     [data, onShow]
   );
 
@@ -97,8 +97,8 @@ export default function AddTeamModal(props: any) {
 
     setIsSubmit(true);
 
-    const body: any = {
-      ...(formData.values as any),
+    const body: Record<string, unknown> = {
+      ...(formData.values as Record<string, unknown>),
     };
 
     const response = await TeamEmployeeService.update(body);

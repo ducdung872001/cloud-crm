@@ -38,7 +38,7 @@ export default function EmployeeList(props: IEmployeeListProps) {
   const [isNoItem, setIsNoItem] = useState<boolean>(false);
   const [showModalAdd, setShowModalAdd] = useState<boolean>(false);
   const [showDialog, setShowDialog] = useState<boolean>(false);
-  const [contentDialog, setContentDialog] = useState<any>(null);
+  const [contentDialog, setContentDialog] = useState<Record<string, unknown>>(null);
   const [dataEmployee, setDataEmployee] = useState<IEmployeeResponse>(null);
   const [listEmployee, setListEmployee] = useState<IEmployeeResponse[]>([]);
   const [listIdChecked, setListIdChecked] = useState<number[]>([]);

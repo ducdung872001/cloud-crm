@@ -131,7 +131,7 @@ export default function ModalStartMessageEvent({ onShow, onHide, dataNode, proce
                   disabled: isSubmit,
                   is_loading: isSubmit,
                 },
-              ] as any)),
+              ] as Record<string, unknown>)),
         ],
       },
     }),

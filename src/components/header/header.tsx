@@ -312,7 +312,7 @@ export default function Header(props: HeaderProps) {
         showToast("Đã đánh dấu tất cả là đã đọc", "success");
         // Cập nhật UI ngay
         setListNotification((prev) =>
-          (prev as any[]).map((item) => ({ ...item, unread: 1 }))
+          (prev as Record<string, unknown>[]).map((item) => ({ ...item, unread: 1 }))
         );
         setCountUnread(0);
       } else {

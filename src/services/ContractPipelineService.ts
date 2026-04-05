@@ -26,7 +26,7 @@ export default {
     }).then((res) => res.json());
   },
   
-  contractSubPipelineUpdate: (body: any) => {
+  contractSubPipelineUpdate: (body: Record<string, unknown>) => {
     return fetch(urlsApi.contractPipeline.contractSubPipelineUpdate, {
       method: "POST",
       body: JSON.stringify(body),

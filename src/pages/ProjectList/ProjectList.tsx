@@ -184,7 +184,7 @@ export default function ProjectList() {
 
   const isMounted = useRef(false);
 
-  const [params, setParams] = useState<any>({
+  const [params, setParams] = useState<Record<string, unknown>>({
     name: "",
     limit: 10,
     page: 1,
@@ -225,7 +225,7 @@ export default function ProjectList() {
       }, {});
 
       // Lấy ra các đối tượng { width, colId } của phần tử cuối cùng trong từng nhóm
-      const uniqueWidths = Object.values(groupedData).map((group?: any) => ({
+      const uniqueWidths = Object.values(groupedData).map((group?: Record<string, unknown>) => ({
         width: group[group.length - 1].width,
         colId: group[group.length - 1].colId,
       }));
@@ -549,7 +549,7 @@ export default function ProjectList() {
     // },
   ];
 
-  const [columnDefs, setColumnDefs] = useState<any>(defaultValueColumnDefs);
+  const [columnDefs, setColumnDefs] = useState<Record<string, unknown>>(defaultValueColumnDefs);
 
   console.log("columnDefs", columnDefs);
 
@@ -608,7 +608,7 @@ export default function ProjectList() {
         });
 
       if (dataConfirm && dataConfirm.length > 0) {
-        const changeDataConfirm: any = dataConfirm.map((el) => {
+        const changeDataConfirm: Record<string, unknown> = dataConfirm.map((el) => {
           return {
             headerName: el.label,
             field: el.fieldName,
@@ -822,7 +822,7 @@ export default function ProjectList() {
 
   useEffect(() => {
     if (takeFieldActiveContact) {
-      const changeDataTakeFieldActiveContact: any = takeFieldActiveContact.map((el) => {
+      const changeDataTakeFieldActiveContact: Record<string, unknown> = takeFieldActiveContact.map((el) => {
         return {
           headerName: el.label,
           field: el.fieldName,
@@ -866,7 +866,7 @@ export default function ProjectList() {
   }, [columnDefs]);
 
   const abortController = new AbortController();
-  const getListProject = async (paramsSearch: any, activeTitleHeader?) => {
+  const getListProject = async (paramsSearch: Record<string, unknown>, activeTitleHeader?) => {
     setIsLoading(true);
 
     const response = await ProjectService.list(paramsSearch, abortController.signal);
@@ -1014,7 +1014,7 @@ export default function ProjectList() {
 
       if (response.code === 0) {
         const result = response.result;
-        const dataExport: any = result.items.map((item, index) => {
+        const dataExport: Record<string, unknown> = result.items.map((item, index) => {
           const body = Object.assign({
             idx: getPageOffset(params) + index + 1,
             ...item,
@@ -1071,7 +1071,7 @@ export default function ProjectList() {
     [params, titleExport]
   );
 
-  const onDelete = async (id: number, parma: any) => {
+  const onDelete = async (id: number, parma: Record<string, unknown>) => {
     const response = await ProjectService.delete(id);
     if (response.code === 0) {
       showToast(`Xóa dự án thành công`, "success");
@@ -1087,7 +1087,7 @@ export default function ProjectList() {
   const [dataProject, setDataProject] = useState<ICustomerResponse>(null);
 
   const [showDialog, setShowDialog] = useState<boolean>(false);
-  const [contentDialog, setContentDialog] = useState<any>(null);
+  const [contentDialog, setContentDialog] = useState<Record<string, unknown>>(null);
 
   const onDeleteAllProject = async () => {
     const arrayPromise = [];
@@ -1113,7 +1113,7 @@ export default function ProjectList() {
     });
   };
 
-  const showDialogConfirmDelete = (item?: any, param?: any) => {
+  const showDialogConfirmDelete = (item?: Record<string, unknown>, param?: Record<string, unknown>) => {
     const contentDialog: IContentDialog = {
       color: "error",
       className: "dialog-delete",

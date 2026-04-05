@@ -25,7 +25,7 @@ import ShowPaymentBillModal from "./partials/ShowPaymentBillModal/ShowPaymentBil
 import "tippy.js/animations/scale-extreme.css";
 import "./PaymentBill.scss";
 
-export default function PaymentBill(props: any) {
+export default function PaymentBill(props: Record<string, unknown>) {
   const { dataPaymentBill, tab, idCustomer, listIdCardService, listIdProduct, listIdService } = props;
   const navigate = useNavigate();
 

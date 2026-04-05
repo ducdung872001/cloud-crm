@@ -228,7 +228,7 @@ export default function AddApplicationModal(props: IAddApplicationModalProps) {
       return;
     }
 
-    const changeFormData: any = {
+    const changeFormData: Record<string, unknown> = {
       ...formData.values,
       whitelistDomains: JSON.stringify(listTag),
     };

@@ -33,10 +33,10 @@ export default function CashBookTable({ dataProjectReport }) {
   const [showModalCashBook, setShowModalCashBook] = useState<boolean>(false);
   const [dataCashBook, setDataCashBook] = useState<ICashBookResponse>(null);
   const [showDialog, setShowDialog] = useState<boolean>(false);
-  const [contentDialog, setContentDialog] = useState<any>(null);
+  const [contentDialog, setContentDialog] = useState<Record<string, unknown>>(null);
   const [listIdChecked, setListIdChecked] = useState<number[]>([]);
   const [listCashBook, setListCashBook] = useState<ICustomerResponse[]>([]);
-  const [listCashBookTotal, setListCashBookTotal] = useState<any>({});
+  const [listCashBookTotal, setListCashBookTotal] = useState<Record<string, unknown>>({});
   const [typeProps, setTypeProps] = useState<number>(0);
   const [permissions, setPermissions] = useState(getPermissions());
   const [showModalExport, setShowModalExport] = useState<boolean>(false);
@@ -204,7 +204,7 @@ export default function CashBookTable({ dataProjectReport }) {
   }, []);
 
   //   const takeParamsUrl = getSearchParameters();
-  const takeParamsUrl: any = {};
+  const takeParamsUrl: Record<string, unknown> = {};
 
   useEffect(() => {
     if (!isMounted.current) {
@@ -557,7 +557,7 @@ export default function CashBookTable({ dataProjectReport }) {
               isActivity={true}
               bulkActionItems={[]}
               setListIdChecked={(listId) => setListIdChecked(listId)}
-              actions={[] as any}
+              actions={[] as Record<string, unknown>}
               actionType="inline"
             />
           ) : isLoading ? (

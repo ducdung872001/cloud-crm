@@ -10,7 +10,7 @@ export default function ManagerWork() {
 
   const [activeTitleHeader, setActiveTitleHeader] = useState(takeActiveTitleHeaderManagerWork ? parseInt(takeActiveTitleHeaderManagerWork) : 3);
   const [activeTitleViewBy, setActiveTitleViewBy] = useState(takeActiveTitleViewBy ? parseInt(takeActiveTitleViewBy) : 1);
-  const [params, setParams] = useState<any>({
+  const [params, setParams] = useState<Record<string, unknown>>({
     fromTime: "",
     toTime: "",
   });
@@ -30,7 +30,7 @@ export default function ManagerWork() {
     },
   ]);
 
-  const handleChangeActiveTitleHeader = (item: any) => {
+  const handleChangeActiveTitleHeader = (item: Record<string, unknown>) => {
     setActiveTitleHeader(item.type);
     localStorage.setItem("activeTitleHeaderManagerWork", item.type.toString()); // Lưu item.type vào localStorage
   };

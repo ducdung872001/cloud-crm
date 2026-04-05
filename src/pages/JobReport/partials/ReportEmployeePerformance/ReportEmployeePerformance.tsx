@@ -10,7 +10,7 @@ import TopCampaignsCustomer from "pages/JobReport/partials/TopCampaignsCustomer"
 import ReportInteractCustomerTable from "pages/JobReport/partials/ReportInteractCustomerTable";
 import "./ReportEmployeePerformance.scss";
 interface ICardItem {
-  icon: any;
+  icon: Record<string, unknown>;
   name: string;
   value: number;
   color: "blue" | "red" | "green" | "orange";

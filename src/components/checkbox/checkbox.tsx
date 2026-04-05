@@ -8,8 +8,8 @@ export interface CheckboxProps {
   checked?: boolean;
   defaultChecked?: boolean;
   indeterminate?: boolean;
-  onChange?: any;
-  onClick?: any;
+  onChange?: React.ChangeEventHandler<HTMLInputElement>;
+  onClick?: React.MouseEventHandler<HTMLLabelElement>;
   className?: string;
   disabled?: boolean;
 }

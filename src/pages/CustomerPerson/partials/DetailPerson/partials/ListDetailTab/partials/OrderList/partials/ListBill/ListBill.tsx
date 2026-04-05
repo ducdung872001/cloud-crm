@@ -22,12 +22,12 @@ export default function ListBill(props: IListBillProps) {
   const { id } = useParams();
 
   const [isLoading, setIsLoading]         = useState<boolean>(true);
-  const [listBill, setListBill]           = useState<any[]>([]);
+  const [listBill, setListBill]           = useState<Record<string, unknown>[]>([]);
   const [isNoItem, setIsNoItem]           = useState<boolean>(false);
   const [showModalBill, setShowModalBill] = useState<boolean>(false);
   const [idBill, setIdBill]               = useState<number>(null);
   const [showModalDebt, setShowModalDebt] = useState<boolean>(false);
-  const [dataInvoice, setDataInvoice]     = useState<any>(null);
+  const [dataInvoice, setDataInvoice]     = useState<Record<string, unknown>>(null);
   const [idCustomer, setIdCustomer]       = useState<number>(null);
 
   const [params, setParams] = useState<IInvoiceFilterRequest>({
@@ -48,7 +48,7 @@ export default function ListBill(props: IListBillProps) {
 
     if (response.code === 0) {
       const result    = response.result?.pagedLst;
-      const rawItems: any[] = result?.items ?? [];
+      const rawItems: Record<string, unknown>[] = result?.items ?? [];
       setListBill(rawItems);
 
       if (+result.total === 0 && +result.page === 1) {
@@ -70,7 +70,7 @@ export default function ListBill(props: IListBillProps) {
 
   const dataFormat = ["text-center", "", "", "text-right", "text-right", "text-right", "text-right", "text-right", "text-right", "text-center"];
 
-  const dataMappingArray = (item: any, index: number) => {
+  const dataMappingArray = (item: Record<string, unknown>, index: number) => {
     // API /invoice/list/v2 trả nested: mỗi item có item.invoice (tài chính) + item.invoiceId (ID)
     // Dùng fallback (item.invoice ?? item) để tương thích cả cấu trúc cũ lẫn mới
     const inv = item.invoice ?? item;
@@ -134,7 +134,7 @@ export default function ListBill(props: IListBillProps) {
     ];
   };
 
-  const actionsTable = (item: any): IAction[] => {
+  const actionsTable = (item: Record<string, unknown>): IAction[] => {
     const inv = item.invoice ?? item;
     const iId = item.invoiceId ?? inv.id;
     return [

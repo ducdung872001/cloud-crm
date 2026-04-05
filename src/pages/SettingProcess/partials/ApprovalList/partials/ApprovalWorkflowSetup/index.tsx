@@ -22,7 +22,7 @@ import "./index.scss";
 interface IApprovalWorkflowSetupProps {
   onShow: boolean;
   onHide: (reload: boolean) => void;
-  data: any;
+  data: Record<string, unknown>;
 }
 
 export default function ApprovalWorkflowSetup(props: IApprovalWorkflowSetupProps) {
@@ -145,7 +145,7 @@ export default function ApprovalWorkflowSetup(props: IApprovalWorkflowSetupProps
 
   useEffect(() => {
     if (lstLinkApproval && lstLinkApproval.length > 0) {
-      const changeLstLinkApproval: any[] = lstLinkApproval.map((item) => {
+      const changeLstLinkApproval: Record<string, unknown>[] = lstLinkApproval.map((item) => {
         return {
           id: `reactflow__edge-${item.nodeFrom}-${item.nodeTo}`,
           markerEnd: { type: "arrowclosed" },
@@ -265,7 +265,7 @@ export default function ApprovalWorkflowSetup(props: IApprovalWorkflowSetupProps
         type,
         position,
         data: { label: name },
-      } as any;
+      } as Record<string, unknown>;
 
       if (conditionStartWidth) {
         handleAddItemSpecial(name, newNode, data?.id);

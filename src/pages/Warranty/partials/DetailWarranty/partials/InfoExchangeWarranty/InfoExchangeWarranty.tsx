@@ -32,7 +32,7 @@ export default function InfoExchangeWarranty(props: IInfoExchangeWarrantyProps) 
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [isEditChat, setIsEditChat] = useState<boolean>(false);
   const [showDialog, setShowDialog] = useState<boolean>(false);
-  const [contentDialog, setContentDialog] = useState<any>(null);
+  const [contentDialog, setContentDialog] = useState<Record<string, unknown>>(null);
   useOnClickOutside(refEditChat, () => setIsEditChat(false), ["option-action-chat"]);
 
   const params: IWarrantyExchangeFilterRequestModel = {

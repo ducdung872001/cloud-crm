@@ -34,7 +34,7 @@ import ModalComment from "./partials/ModalComment";
 interface IGridFormProps {
   title?: string;
   columns: IColumnGrid[];
-  data?: any[];
+  data?: Record<string, unknown>[];
 }
 export interface IColumnGrid {
   name: string;
@@ -47,8 +47,8 @@ export interface IColumnGrid {
   lookup?: string;
 }
 
-export default function GridForm(props: any) {
-  const params: any = getSearchParameters();
+export default function GridForm(props: Record<string, unknown>) {
+  const params: Record<string, unknown> = getSearchParameters();
   const columns = props.columns || [];
   const title = props?.title || "Danh mục";
   const data = props?.data || [];
@@ -256,7 +256,7 @@ export default function GridForm(props: any) {
   //   // },
   // ]);
 
-  const [listDataNew, setListDataNew] = useState<any[]>([]);
+  const [listDataNew, setListDataNew] = useState<Record<string, unknown>[]>([]);
 
   // useEffect(() => {
   //   if (columns?.length) {
@@ -314,7 +314,7 @@ export default function GridForm(props: any) {
   // }, [listData]);
 
   useEffect(() => {
-    const dataRowHeahder = listColumn.map((item: any) => ({
+    const dataRowHeahder = listColumn.map((item: Record<string, unknown>) => ({
       // key: item.key,
       // name: item.name,
       // type: "text",
@@ -337,7 +337,7 @@ export default function GridForm(props: any) {
       lookup: item?.lookup || "",
       readOnly: item?.readOnly == 1 ? true : false,
     }));
-    const baseRowFist = listColumn.map((item: any) => ({
+    const baseRowFist = listColumn.map((item: Record<string, unknown>) => ({
       name: item.name,
       key: item.key,
       rowKey: item.rowKey,
@@ -357,7 +357,7 @@ export default function GridForm(props: any) {
       readOnly: item?.readOnly == 1 ? true : false,
     }));
     setBaseRow(baseRowFist);
-    let list_data_new: any = listDataNew.map((item) => {
+    let list_data_new: Record<string, unknown> = listDataNew.map((item) => {
       baseRowFist.map((field) => {
         item = {
           //Thêm các trường không có trong listColumn cũ
@@ -454,7 +454,7 @@ export default function GridForm(props: any) {
       let check_required = false;
       const updatedData = dataRow.map((row, rIdx) => {
         if (rIdx === rowIndex) {
-          let new_field: any = [];
+          let new_field: Record<string, unknown> = [];
           for (let fIdx = 0; fIdx < row.length; fIdx++) {
             const element = row[fIdx];
             if (fIdx === fieldIndex) {
@@ -564,7 +564,7 @@ export default function GridForm(props: any) {
   const [showModalImport, setShowModalImport] = useState<boolean>(false);
   const [onShowModalExport, setOnShowModalExport] = useState<boolean>(false);
   const [showModalAddColumn, setShowModalAddColumn] = useState<boolean>(false);
-  const [dataColumnEdit, setDataColumnEdit] = useState<any>(null);
+  const [dataColumnEdit, setDataColumnEdit] = useState<Record<string, unknown>>(null);
   const optionsExport: IOption[] = useMemo(
     () => [
       {
@@ -627,9 +627,9 @@ export default function GridForm(props: any) {
     }
   };
 
-  const [rowKeyComment, setRowKeyComment] = useState<any>(null);
-  const [columnKeyComment, setColumnKeyComment] = useState<any>(null);
-  const [dataCommentLast, setDataCommentLast] = useState<any>(null);
+  const [rowKeyComment, setRowKeyComment] = useState<Record<string, unknown>>(null);
+  const [columnKeyComment, setColumnKeyComment] = useState<Record<string, unknown>>(null);
+  const [dataCommentLast, setDataCommentLast] = useState<Record<string, unknown>>(null);
 
   const getListComment = async () => {
     const param = {
@@ -665,8 +665,8 @@ export default function GridForm(props: any) {
     }
   };
 
-  const [dataImport, setDataImport] = useState<any>(null);
-  const [dataImportHeader, setDataImportHeader] = useState<any>(null);
+  const [dataImport, setDataImport] = useState<Record<string, unknown>>(null);
+  const [dataImportHeader, setDataImportHeader] = useState<Record<string, unknown>>(null);
 
   useEffect(() => {
     if (dataImport) {
@@ -679,7 +679,7 @@ export default function GridForm(props: any) {
           });
         }
       }
-      const dataRowHeahder = listColumn.map((item: any) => ({
+      const dataRowHeahder = listColumn.map((item: Record<string, unknown>) => ({
         name: item.name,
         key: item.key,
         rowKey: item.rowKey,
@@ -695,7 +695,7 @@ export default function GridForm(props: any) {
         lookup: item?.lookup || "",
         readOnly: item?.readOnly == 1 ? true : false,
       }));
-      const baseRowFist = listColumn.map((item: any) => ({
+      const baseRowFist = listColumn.map((item: Record<string, unknown>) => ({
         name: item.name,
         key: item.key,
         rowKey: item.rowKey,
@@ -714,7 +714,7 @@ export default function GridForm(props: any) {
         bindingField: item?.bindingField || "",
         readOnly: item?.readOnly == 1 ? true : false,
       }));
-      let list_data_new: any = dataImportNew.map((item) => {
+      let list_data_new: Record<string, unknown> = dataImportNew.map((item) => {
         baseRowFist.map((field) => {
           item = {
             //Thêm các trường không có trong listColumn cũ

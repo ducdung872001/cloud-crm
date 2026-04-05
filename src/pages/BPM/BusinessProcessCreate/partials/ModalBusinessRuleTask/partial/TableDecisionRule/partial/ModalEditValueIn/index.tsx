@@ -14,7 +14,7 @@ export default function ModalEditValueIn({ onShow, onHide, dataFieldEdit, setDat
   const [isSubmit, setIsSubmit] = useState<boolean>(false);
   const [showDialog, setShowDialog] = useState<boolean>(false);
   const [contentDialog, setContentDialog] = useState<IContentDialog>(null);
-  const [addFieldAttributes, setAddFieldAttributes] = useState<any[]>([""]);
+  const [addFieldAttributes, setAddFieldAttributes] = useState<Record<string, unknown>[]>([""]);
 
   useEffect(() => {
     if (onShow) {

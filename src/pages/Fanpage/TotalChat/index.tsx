@@ -44,7 +44,7 @@ function threadFromOmniEvent(payload: OmniChatPayload, idx: number): IConversati
       tags:         [],
       // Gắn room_id vào object để dùng khi gửi tin qua OmniCXM
       omniRoomId:   payload.room_id,
-    } as any,
+    } as Record<string, unknown>,
     messages: [
       {
         id:      Date.now(),
@@ -108,10 +108,10 @@ export default function TotalChat() {
   const handleOmniPick = useCallback((payload: OmniChatPayload) => {
     setThreads((prev) => {
       // Nếu room này đã tồn tại → cập nhật status
-      const exists = prev.find((t) => (t.conversation as any).omniRoomId === payload.room_id);
+      const exists = prev.find((t) => (t.conversation as Record<string, unknown>).omniRoomId === payload.room_id);
       if (exists) {
         return prev.map((t) =>
-          (t.conversation as any).omniRoomId === payload.room_id
+          (t.conversation as Record<string, unknown>).omniRoomId === payload.room_id
             ? { ...t, conversation: { ...t.conversation, status: "consulting", unread: true } }
             : t
         );
@@ -127,7 +127,7 @@ export default function TotalChat() {
   const handleOmniSolved = useCallback((payload: OmniChatPayload) => {
     setThreads((prev) =>
       prev.map((t) =>
-        (t.conversation as any).omniRoomId === payload.room_id
+        (t.conversation as Record<string, unknown>).omniRoomId === payload.room_id
           ? {
               ...t,
               conversation: { ...t.conversation, status: "offline" },
@@ -150,7 +150,7 @@ export default function TotalChat() {
   const handleOmniReassigned = useCallback((payload: OmniChatPayload) => {
     setThreads((prev) =>
       prev.map((t) =>
-        (t.conversation as any).omniRoomId === payload.room_id
+        (t.conversation as Record<string, unknown>).omniRoomId === payload.room_id
           ? {
               ...t,
               messages: [
@@ -168,12 +168,12 @@ export default function TotalChat() {
     );
   }, []);
 
-  const handleOmniNewMessage = useCallback((payload: any) => {
+  const handleOmniNewMessage = useCallback((payload: Record<string, unknown>) => {
     // OmniCXM có thể emit event tin nhắn mới (tuỳ version)
     if (!payload.room_id || !payload.message) return;
     setThreads((prev) =>
       prev.map((t) => {
-        if ((t.conversation as any).omniRoomId !== payload.room_id) return t;
+        if ((t.conversation as Record<string, unknown>).omniRoomId !== payload.room_id) return t;
         const newMsg = {
           id:      Date.now(),
           sender:  "customer" as const,
@@ -263,7 +263,7 @@ export default function TotalChat() {
   const appendMessageToThread = useCallback((content: string) => {
     if (!selectedConversation || !content.trim()) return;
 
-    const omniRoomId = (selectedConversation as any).omniRoomId;
+    const omniRoomId = (selectedConversation as Record<string, unknown>).omniRoomId;
     const sentViaOmni = omniRoomId ? omniSendMessage(omniRoomId, content.trim()) : false;
 
     // Luôn cập nhật local state để UI phản hồi ngay
@@ -504,7 +504,7 @@ export default function TotalChat() {
 
         <ChatWorkspaceColumn
           customerName={selectedConversation?.customerName || totalChatMockConfig.fallbackText.emptyConversation}
-          platformLabel={selectedConversation ? (platformText as any)[selectedConversation.platform] ?? selectedConversation.platform : ""}
+          platformLabel={selectedConversation ? (platformText as Record<string, unknown>)[selectedConversation.platform] ?? selectedConversation.platform : ""}
           messages={messages}
           quickReplies={quickReplies}
           productCatalog={productCatalog}

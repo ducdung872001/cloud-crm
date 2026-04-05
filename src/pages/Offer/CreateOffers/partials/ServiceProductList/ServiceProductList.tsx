@@ -18,7 +18,7 @@ import AddOfferProductModal from "./partials/AddOfferProductModal/AddOfferProduc
 import Image from "components/image";
 import ImageThirdGender from "assets/images/third-gender.png";
 
-export default function ServiceProductList(props: any) {
+export default function ServiceProductList(props: Record<string, unknown>) {
   const {
     tab,
     idCustomer,
@@ -42,7 +42,7 @@ export default function ServiceProductList(props: any) {
   const [offerId, setInvoiceId] = useState<number>(0);
   const [listIdChecked, setListIdChecked] = useState<number[]>([]);
   const [showDialog, setShowDialog] = useState<boolean>(false);
-  const [contentDialog, setContentDialog] = useState<any>(null);
+  const [contentDialog, setContentDialog] = useState<Record<string, unknown>>(null);
   const [listProductInvoiceService, setListProductInvoiceService] = useState<IProductOfferServiceResponse[]>([]);
 
   const getListProductInvoiceService = async () => {

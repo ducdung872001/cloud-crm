@@ -8,18 +8,18 @@ interface PopoverProps {
   className?: string;
   alignment: "left" | "right" | "center";
   direction?: "top" | "bottom";
-  refContainer: any;
-  refPopover: any;
-  children?: any;
+  refContainer: React.RefObject<HTMLElement>;
+  refPopover: React.RefObject<HTMLElement>;
+  children?: React.ReactNode;
   isTriangle?: boolean;
   distance?: number;
-  forNote?: any;
+  forNote?: boolean;
 }
 export default function Popover(props: PopoverProps) {
   const { className, alignment, direction, refContainer, children, isTriangle, refPopover, distance } = props;
   const el = document.getElementsByTagName("body")[0];
   const { width, height } = useWindowDimensions();
-  const [position, setPosition] = useState<any>(null);
+  const [position, setPosition] = useState<React.CSSProperties | null>(null);
   const scrollBar = getParentByClassName(refContainer?.current, "custom-scrollbar");
 
   useEffect(() => {

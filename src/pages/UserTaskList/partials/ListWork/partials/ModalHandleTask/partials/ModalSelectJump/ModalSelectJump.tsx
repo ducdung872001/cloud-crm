@@ -12,7 +12,7 @@ import "./ModalSelectJump.scss";
 import { useNavigate } from "react-router-dom";
 import PurchaseRequestService from "services/PurchaseRequestService";
 
-export default function ModalSelectJump(props: any) {
+export default function ModalSelectJump(props: Record<string, unknown>) {
   const { onShow, onHide, data } = props;
 
   const focusedElement = useActiveElement();
@@ -25,7 +25,7 @@ export default function ModalSelectJump(props: any) {
     () =>
     ({
         isJump: 'jump'
-    } as any),
+    } as Record<string, unknown>),
     [data, onShow]
   );
 

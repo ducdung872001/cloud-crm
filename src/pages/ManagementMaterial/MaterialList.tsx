@@ -188,7 +188,7 @@ export default function MaterialList({ onBackProps }: MaterialListProps = {}) {
         exportAbortRef.current.signal
       );
       showToast("Xuất Excel thành công!", "success");
-    } catch (e: any) {
+    } catch (e: unknown) {
       if (e?.name !== "AbortError") {
         showToast(e?.message ?? "Xuất Excel thất bại. Vui lòng thử lại.", "error");
       }
@@ -269,7 +269,7 @@ export default function MaterialList({ onBackProps }: MaterialListProps = {}) {
         </div>
         <span className="mat-stock-bar__pct">{pct}%</span>
       </div>,
-      <Badge key="status" text={statusLabel} variant={statusVariant as any} />,
+      <Badge key="status" text={statusLabel} variant={statusVariant as Record<string, unknown>} />,
       null,
     ];
   };

@@ -32,7 +32,7 @@ export default function CustomerZaloList(props: ICustomerZaloListProps) {
   const [codes, setCodes] = useState<ICustomPlaceholderResponse>(null);
 
   const [showAlertNotFollow, setShowAlertNotFollow] = useState<boolean>(false);
-  const [contentAlert, setContentAlert] = useState<any>(null);
+  const [contentAlert, setContentAlert] = useState<Record<string, unknown>>(null);
 
   const [params, setParams] = useState<ICustomerZaloFilterRequest>({
     customerId: idCustomer,
@@ -125,8 +125,8 @@ export default function CustomerZaloList(props: ICustomerZaloListProps) {
 
 
 
-  const showAlert = (item?: any) => {
-    const contentAlert: any = {
+  const showAlert = (item?: Record<string, unknown>) => {
+    const contentAlert: Record<string, unknown> = {
       color: "warning",
       className: "dialog-delete",
       isCentered: true,

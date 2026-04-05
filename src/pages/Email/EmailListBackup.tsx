@@ -41,7 +41,7 @@ export default function EmailList() {
   const [listIdChecked, setListIdChecked] = useState<number[]>([]);
   const [showModalAdd, setShowModalAdd] = useState<boolean>(false);
   const [showDialog, setShowDialog] = useState<boolean>(false);
-  const [contentDialog, setContentDialog] = useState<any>(null);
+  const [contentDialog, setContentDialog] = useState<Record<string, unknown>>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [isNoItem, setIsNoItem] = useState<boolean>(false);
   const [isPermissions, setIsPermissions] = useState<boolean>(false);
@@ -356,7 +356,7 @@ export default function EmailList() {
    * Thực hiện đăng nhập ẩn
    */
   const handleLogin = () => {
-    let accountInfo: any = localStorage.getItem("outlook.account");
+    let accountInfo: Record<string, unknown> = localStorage.getItem("outlook.account");
     if (accountInfo) {
       accountInfo = JSON.parse(accountInfo);
     }

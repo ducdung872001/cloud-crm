@@ -8,7 +8,7 @@ import ViewProjectManagementModal from "../ViewProjectManagementModal";
 import WorkProjectService from "services/WorkProjectService";
 import "./ProjectManagementItem.scss";
 
-export default function ProjectManagementItem(props: any) {
+export default function ProjectManagementItem(props: Record<string, unknown>) {
   const {
     data,
     idProjectManagement,

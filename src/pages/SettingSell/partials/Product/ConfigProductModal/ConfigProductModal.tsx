@@ -32,7 +32,7 @@ import ImageThirdGender from "assets/images/third-gender.png";
 import BeautyBranchService from "services/BeautyBranchService";
 
 
-export default function ConfigProductModal(props: any) {
+export default function ConfigProductModal(props: Record<string, unknown>) {
   const { onShow, onHide, idProduct } = props;
 
   const focusedElement = useActiveElement();
@@ -67,7 +67,7 @@ export default function ConfigProductModal(props: any) {
     
     //? đoạn này xử lý vấn đề call api lấy ra nguồn khách hàng
     const loadOptionSource = async (search, loadedOptions, { page }) => {
-        const param: any = {
+        const param: Record<string, unknown> = {
             name: search,
             page: page,
             limit: 1000,
@@ -80,7 +80,7 @@ export default function ConfigProductModal(props: any) {
         return {
             options: [
             ...(dataOption.length > 0
-                ? dataOption.map((item: any) => {
+                ? dataOption.map((item: Record<string, unknown>) => {
                     return {
                         value: item.id,
                         label: item.name,
@@ -126,7 +126,7 @@ export default function ConfigProductModal(props: any) {
     
     //chọn tỉnh thành phố
     const loadOptionCity = async (search, loadedOptions, { page }) => {
-        const param: any = {
+        const param: Record<string, unknown> = {
             name: search,
             parentId: 0,
             page: page,
@@ -140,7 +140,7 @@ export default function ConfigProductModal(props: any) {
         return {
             options: [
             ...(dataOption.length > 0
-                ? dataOption.map((item: any) => {
+                ? dataOption.map((item: Record<string, unknown>) => {
                     return {
                         value: item.id,
                         label: item.name,
@@ -167,7 +167,7 @@ export default function ConfigProductModal(props: any) {
     const loadOptionDistrict = async (cityId: number) => {
         if (!cityId) return;
 
-        const param: any = {
+        const param: Record<string, unknown> = {
             name: '',
             parentId: cityId,
             page: 1,
@@ -204,7 +204,7 @@ export default function ConfigProductModal(props: any) {
     const loadOptionSubdistrict = async (districtId: number) => {
         if (!districtId) return;
 
-        const param: any = {
+        const param: Record<string, unknown> = {
             name: '',
             parentId: districtId,
             page: 1,
@@ -243,7 +243,7 @@ export default function ConfigProductModal(props: any) {
     
     //? đoạn này xử lý vấn đề call api lấy ra nguồn khách hàng
     const loadOptionBranch = async (search, loadedOptions, { page }) => {
-        const param: any = {
+        const param: Record<string, unknown> = {
             name: search,
             page: page,
             limit: 10,
@@ -256,7 +256,7 @@ export default function ConfigProductModal(props: any) {
         return {
             options: [
             ...(dataOption.length > 0
-                ? dataOption.map((item: any) => {
+                ? dataOption.map((item: Record<string, unknown>) => {
                     return {
                         value: item.id,
                         label: item.name,

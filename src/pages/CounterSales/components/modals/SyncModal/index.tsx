@@ -48,7 +48,7 @@ export default function SyncModal({ open, onClose, onSynced }: SyncModalProps) {
 
       if (json.code === 0 && Array.isArray(json.result) && json.result.length > 0) {
         setChannels(
-          json.result.map((c: any) => ({
+          json.result.map((c: Record<string, unknown>) => ({
             key:        c.key        ?? c.channelKey ?? c.name,
             icon:       c.icon       ?? "🔗",
             name:       c.name       ?? c.channelName ?? c.key,

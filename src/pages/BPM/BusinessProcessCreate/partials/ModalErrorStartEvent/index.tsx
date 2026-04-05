@@ -139,7 +139,7 @@ export default function ModalErrorStartEvent({ onShow, onHide, dataNode, process
                                 // || !isDifferenceObj(formData, values),
                                 is_loading: isSubmit,
                             },
-                        ] as any)),
+                        ] as Record<string, unknown>)),
                 ],
             },
         }),

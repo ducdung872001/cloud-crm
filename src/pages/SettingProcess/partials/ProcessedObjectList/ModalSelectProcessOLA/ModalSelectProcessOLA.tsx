@@ -11,7 +11,7 @@ import BusinessProcessService from "services/BusinessProcessService";
 import { ExportExcel } from "exports";
 import moment from "moment";
 
-export default function ModalSelectProcessOLA(props: any) {
+export default function ModalSelectProcessOLA(props: Record<string, unknown>) {
   const { onShow, onHide, data } = props;
 
   const [isSubmit, setIsSubmit] = useState<boolean>(false);
@@ -168,7 +168,7 @@ export default function ModalSelectProcessOLA(props: any) {
     "center",
   ];
 
-  const dataMappingArray_OLA_SLA = (item: any, index: number, type?: string) =>
+  const dataMappingArray_OLA_SLA = (item: Record<string, unknown>, index: number, type?: string) =>
     type === "ola"
       ? [
           index + 1,
@@ -231,7 +231,7 @@ export default function ModalSelectProcessOLA(props: any) {
       const result = response.result;
 
       if (type === "sla") {
-        const headerFormatSLA: any = [
+        const headerFormatSLA: Record<string, unknown> = [
           {
             merge: {
               row: 2,

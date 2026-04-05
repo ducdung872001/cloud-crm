@@ -16,7 +16,7 @@ const uploadFile = (uploadURL, { data, onSuccess, onError = processError, onProg
     xhr.setRequestHeader("Content-Type", "application/json");
     xhr.setRequestHeader("Authorization", token);
 
-    let percent: any = 0;
+    let percent: Record<string, unknown> = 0;
     xhr.onload = () => {
       percent = 100;
       if (typeof onProgress === "function") onProgress(percent);
@@ -28,7 +28,7 @@ const uploadFile = (uploadURL, { data, onSuccess, onError = processError, onProg
       // eslint-disable-next-line prefer-const, @typescript-eslint/ban-types
       let total: Number = event.total;
       // eslint-disable-next-line prefer-const
-      let result: any = loaded.valueOf() / total.valueOf();
+      let result: Record<string, unknown> = loaded.valueOf() / total.valueOf();
 
       percent = result.toFixed(2) * 100;
       if (typeof onProgress === "function") {

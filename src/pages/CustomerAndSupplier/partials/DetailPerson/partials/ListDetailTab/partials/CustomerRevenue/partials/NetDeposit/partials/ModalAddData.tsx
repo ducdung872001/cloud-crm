@@ -29,7 +29,7 @@ export default function ModalAddData({ onShow, onHide, dataProps, customerId }) 
       fd: data?.fd ?? "",
       other: data?.other ?? "",
       transactionDate: data?.transactionDate ?? "",
-    } as any),
+    } as Record<string, unknown>),
     [onShow, data]
   ); 
 
@@ -109,9 +109,9 @@ export default function ModalAddData({ onShow, onHide, dataProps, customerId }) 
 
     setIsSubmit(true);
 
-    const body: any = {
+    const body: Record<string, unknown> = {
       ...(data ? { id: data?.id } : {}),
-      ...(formData.values as any),
+      ...(formData.values as Record<string, unknown>),
       customerId,
       transactionDate: moment(formData.values.transactionDate).format('YYYY-MM-DDTHH:mm:ss'),
     };

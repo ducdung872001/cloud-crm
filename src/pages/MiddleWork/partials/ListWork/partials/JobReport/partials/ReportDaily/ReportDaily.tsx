@@ -14,7 +14,7 @@ import WorkOrderService from "services/WorkOrderService";
 import ProjectService from "services/ProjectService";
 interface ICardItem {
   key: string;
-  icon: any;
+  icon: Record<string, unknown>;
   name: string;
   value: number;
   color: "total" | "out-date" | "success" | "today" | "remaining" | "average" | "early";

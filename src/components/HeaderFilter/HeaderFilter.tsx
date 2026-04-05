@@ -5,7 +5,20 @@ import SearchBox from "components/searchBox/searchBox";
 import TitleAction, { ITitleActions } from "components/titleAction/titleAction";
 import "./HeaderFilter.scss";
 
-export default function HeaderFilter(props: any) {
+export default function HeaderFilter(props: {
+  params: Record<string, unknown>;
+  setParams: (params: Record<string, unknown>) => void;
+  listIdChecked?: number[];
+  showDialogConfirmDelete?: () => void;
+  titleActions?: ITitleActions;
+  titleSearch?: string;
+  exportExcel?: boolean;
+  importExcel?: boolean;
+  setOnShowModalExport?: () => void;
+  setOnShowModalImport?: () => void;
+  disableDeleteAll?: boolean;
+  listSaveSearch?: Record<string, unknown>[];
+}) {
   const {
     params,
     setParams,

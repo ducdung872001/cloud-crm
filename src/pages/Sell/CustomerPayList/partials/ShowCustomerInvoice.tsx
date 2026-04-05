@@ -89,7 +89,7 @@ export default function ShowCustomerInvoice(props: IShowCustomerInvoiceProps) {
       if (rj.code !== 0) throw new Error(rj.message ?? "Gửi thất bại");
       showToast(`Đã gửi biên lai tới ${email}`, "success");
       setShowEmailInput(false);
-    } catch (err: any) {
+    } catch (err: unknown) {
       showToast(err?.message ?? "Gửi email thất bại. Vui lòng thử lại.", "error");
     } finally {
       setIsSendingEmail(false);

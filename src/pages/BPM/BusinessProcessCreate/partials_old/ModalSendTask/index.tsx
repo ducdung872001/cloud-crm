@@ -121,7 +121,7 @@ export default function ModalSendTask({ onShow, onHide, dataNode, processId, cha
       const newListInputVarData = Array.isArray(arrayInput) && arrayInput.length > 0 ? arrayInput : [];
       const listInputVarData = newListInputVarData.map((item) => {
         const name = Object.entries(item)[0][0];
-        const attributeMapping: any = Object.entries(item)[0][1];
+        const attributeMapping: Record<string, unknown> = Object.entries(item)[0][1];
 
         return {
           name: name,
@@ -316,7 +316,7 @@ export default function ModalSendTask({ onShow, onHide, dataNode, processId, cha
                   // || !isDifferenceObj(formData, values),
                   is_loading: isSubmit,
                 },
-              ] as any)),
+              ] as Record<string, unknown>)),
         ],
       },
     }),

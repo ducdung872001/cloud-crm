@@ -47,7 +47,7 @@ export default function ModalImportCustomer(props: IModalImportCustomerProps) {
     setDragging(false);
 
     const newFiles = [...files];
-    const droppedFiles: any = Array.from(e.dataTransfer.files);
+    const droppedFiles: File[] = Array.from(e.dataTransfer.files);
 
     droppedFiles.forEach((file) => {
       if (!newFiles.find((f) => f.name === file.name)) {

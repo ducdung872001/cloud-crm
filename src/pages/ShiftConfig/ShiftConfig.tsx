@@ -106,7 +106,7 @@ export default function ShiftConfigTabs() {
         if (!d) return;
 
         if (d.configs && d.configs.length > 0) {
-          const mapped: ShiftConfigModel[] = d.configs.map((c: any, idx: number) => ({
+          const mapped: ShiftConfigModel[] = d.configs.map((c: Record<string, unknown>, idx: number) => ({
             id:            c.id ?? nextTmpId(),
             shiftName:     c.name ?? `Ca ${idx + 1}`,
             startTime:     c.startTime ? String(c.startTime).substring(0, 5) : "",
@@ -122,8 +122,8 @@ export default function ShiftConfigTabs() {
           // Lưu assignments hiện tại để merge sau khi load employee list
           const existingAssignments: Record<number, Record<number, boolean>> = {}; // employeeId → {configId → bool}
           const existingRoles: Record<number, string> = {};
-          const assignments: any[] = d.staffAssignments ?? [];
-          assignments.forEach((a: any) => {
+          const assignments: Record<string, unknown>[] = d.staffAssignments ?? [];
+          assignments.forEach((a: Record<string, unknown>) => {
             if (!existingAssignments[a.employeeId]) existingAssignments[a.employeeId] = {};
             if (a.shiftConfigId) existingAssignments[a.employeeId][a.shiftConfigId] = true;
             if (a.role) existingRoles[a.employeeId] = a.role;
@@ -132,9 +132,9 @@ export default function ShiftConfigTabs() {
           // Load danh sách nhân viên thực từ API
           setLoadingStaff(true);
           EmployeeService.list({ branchId, limit: 500 })
-            .then((empRes: any) => {
-              const items: any[] = empRes?.result?.items ?? empRes?.result ?? [];
-              const rows: StaffRow[] = items.map((emp: any) => ({
+            .then((empRes: Record<string, unknown>) => {
+              const items: Record<string, unknown>[] = empRes?.result?.items ?? empRes?.result ?? [];
+              const rows: StaffRow[] = items.map((emp: Record<string, unknown>) => ({
                 employeeId:  emp.id,
                 name:        emp.name ?? `NV #${emp.id}`,
                 role:        existingRoles[emp.id] ?? "Thu ngân",
@@ -206,7 +206,7 @@ export default function ShiftConfigTabs() {
 
       if (tab === "staff_assign") {
         // Build payload: chỉ gửi các row có ít nhất 1 assignment
-        const assignments: any[] = [];
+        const assignments: Record<string, unknown>[] = [];
         staffRows.forEach((row) => {
           Object.entries(row.assignments).forEach(([cid, on]) => {
             if (on) {

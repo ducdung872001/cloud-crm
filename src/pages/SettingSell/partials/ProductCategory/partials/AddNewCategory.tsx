@@ -9,7 +9,7 @@ import Validate, { handleChangeValidate } from "utils/validate";
 import { showToast } from "utils/common";
 import { isDifferenceObj } from "reborn-util";
 
-export default function AddProductCategoryModal(props: any) {
+export default function AddProductCategoryModal(props: Record<string, unknown>) {
   const { onShow, onHide, data } = props;
 
   const [isSubmit, setIsSubmit] = useState(false);

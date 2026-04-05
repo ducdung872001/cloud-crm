@@ -146,7 +146,7 @@ export default function WarehouseReportHistoryView() {
     InventoryService.list({ page: 1, limit: 200 }).then(r => {
       const arr = Array.isArray(r.result) ? r.result
         : Array.isArray(r.result?.items) ? r.result.items : [];
-      setWarehouseList(arr.map((i: any) => ({ value: i.id, label: i.name })));
+      setWarehouseList(arr.map((i: Record<string, unknown>) => ({ value: i.id, label: i.name })));
     }).catch(() => {});
   }, []);
 
@@ -159,7 +159,7 @@ export default function WarehouseReportHistoryView() {
         const json = await res.json();
         const items = Array.isArray(json.result) ? json.result
           : Array.isArray(json.result?.items) ? json.result.items : [];
-        setProductOptions(items.map((p: any) => ({ value: p.id, label: p.name, sku: p.code ?? "" })));
+        setProductOptions(items.map((p: Record<string, unknown>) => ({ value: p.id, label: p.name, sku: p.code ?? "" })));
         setShowDropdown(true);
       } catch {}
     }, 350);

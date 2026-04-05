@@ -20,7 +20,7 @@ import EmployeeService from "services/EmployeeService";
 import OfferServiceService from "services/OfferServiceService";
 import "./AddOfferServiceModal.scss";
 
-export default function AddOfferServiceModal(props: any) {
+export default function AddOfferServiceModal(props: Record<string, unknown>) {
   const { onShow, onHide, idCustomer, offerId, data } = props;
 
   const focusedElement = useActiveElement();

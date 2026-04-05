@@ -5,7 +5,7 @@ import "./index.scss";
 interface IInfoSignatureProps {
   name: string;
   type: string;
-  lstData: any;
+  lstData: Record<string, unknown>;
 }
 
 export default function InfoSignature(props: IInfoSignatureProps) {

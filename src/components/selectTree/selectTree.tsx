@@ -111,7 +111,7 @@ export default function SelectTree(props: SelectCustomProps) {
   const [onHasValue, setOnHasValue] = useState<boolean>(options.find((o) => o.value === value) ? true : false);
   const refSelectDefault = useRef(null);
   const [dropdownVisible, setDropdownVisible] = useState<boolean>(false);
-  const [selectedValue, setSelectedValue] = useState<any>(value);
+  const [selectedValue, setSelectedValue] = useState<Record<string, unknown>>(value);
 
   const CustomDropdownIndicator = (props) => {
     return isShowDropdownIcon ? <components.DropdownIndicator {...props} /> : null;
@@ -131,7 +131,7 @@ export default function SelectTree(props: SelectCustomProps) {
     value: "",
   });
 
-  const [valueSearch, setValueSearch] = useState<any>("");
+  const [valueSearch, setValueSearch] = useState<Record<string, unknown>>("");
   useEffect(() => {
     if (value) {
       if (data.length == 0) {

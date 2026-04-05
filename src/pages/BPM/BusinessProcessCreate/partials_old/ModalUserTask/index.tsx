@@ -265,7 +265,7 @@ export default function ModalUserTask({ onShow, onHide, dataNode, processId, dis
                   // || !isDifferenceObj(formData, values),
                   is_loading: isSubmit,
                 },
-              ] as any)),
+              ] as Record<string, unknown>)),
         ],
       },
     }),

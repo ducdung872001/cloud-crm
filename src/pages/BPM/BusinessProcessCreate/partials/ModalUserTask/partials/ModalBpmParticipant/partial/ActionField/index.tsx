@@ -41,7 +41,7 @@ interface INoteFieldProps {
   rowIndex: number;
   fieldIndex: number;
   callBack: (detailAction: IDetailAction) => void;
-  field: any;
+  field: Record<string, unknown>;
 }
 
 export default function ActionField(props: INoteFieldProps) {

@@ -16,7 +16,7 @@ import EmployeeService from "services/EmployeeService";
 import { IEmployeeFilterRequest } from "model/employee/EmployeeRequestModel";
 import ImageThirdGender from "assets/images/third-gender.png";
 
-export default function ModalSaleDepartment(props: any) {
+export default function ModalSaleDepartment(props: Record<string, unknown>) {
   //isBatch: Thêm hàng loạt cơ hội (thêm nhanh từ màn hình danh sách khách hàng)
   const { onShow, onHide, dataApproach } = props;
   // console.log('dataApproach', dataApproach);
@@ -228,7 +228,7 @@ export default function ModalSaleDepartment(props: any) {
     setIsSubmit(true);
 
     const body = {
-      ...(formData?.values as any),
+      ...(formData?.values as Record<string, unknown>),
       ...(detailSaleflowSale?.id ? { id: detailSaleflowSale?.id } : {}),
       ...{ approachId: dataApproach.id },
     };

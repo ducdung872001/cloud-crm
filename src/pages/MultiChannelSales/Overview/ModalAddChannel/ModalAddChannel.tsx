@@ -4,7 +4,7 @@ import Modal, { ModalBody, ModalFooter, ModalHeader } from "components/modal/mod
 import "./ModalAddChannel.scss";
 import Input from "@/components/input/input";
 
-export default function ModalAddChannel(props: any) {
+export default function ModalAddChannel(props: Record<string, unknown>) {
   const { onShow, onHide } = props;
   const [isSubmit, setIsSubmit] = useState<boolean>(false);
 

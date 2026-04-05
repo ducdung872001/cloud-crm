@@ -7,7 +7,7 @@ import "./previewTemplateZalo.scss";
 
 
 
-export default function PreviewTemplateZalo(props: any) {
+export default function PreviewTemplateZalo(props: { dataTemplateZalo: Record<string, unknown>[] }) {
   const { dataTemplateZalo } = props;
 
 
@@ -19,7 +19,7 @@ export default function PreviewTemplateZalo(props: any) {
                 {item.type === "banner" ? (
                     <div className="item__banner">{item.image_url ? <img src={item.image_url} alt="banner-zalo" /> : ""}</div>
                 ) : item.type === "header" ? (
-                    <h3 className="title-zalo" style={{ textAlign: `${item.align}` } as any}>
+                    <h3 className="title-zalo" style={{ textAlign: `${item.align}` } as React.CSSProperties}>
                     {item.content}
                     </h3>
                 ) : item.type === "table" ? (
@@ -32,7 +32,7 @@ export default function PreviewTemplateZalo(props: any) {
                     );
                     })
                 ) : item.type === "text" ? (
-                    <p className="item__content" style={{ textAlign: `${item.align}` } as any}>
+                    <p className="item__content" style={{ textAlign: `${item.align}` } as React.CSSProperties}>
                     {item.content}
                     </p>
                 ) : (

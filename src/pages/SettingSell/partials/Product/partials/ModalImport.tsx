@@ -409,7 +409,7 @@ export default function ModalImportProduct({ onShow, onHide }: IModalImportProdu
 
       </ModalBody>
 
-      <ModalFooter actions={footerActions as any} />
+      <ModalFooter actions={footerActions as Record<string, unknown>} />
     </Modal>
   );
 }

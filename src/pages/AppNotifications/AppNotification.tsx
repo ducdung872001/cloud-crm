@@ -44,7 +44,7 @@ export default function AppNotificationList(props) {
   const [isNoItem, setIsNoItem] = useState<boolean>(false);
   const [idNotification, setIdNotification] = useState<number>(null);
   const [showDialog, setShowDialog] = useState<boolean>(false);
-  const [contentDialog, setContentDialog] = useState<any>(null);
+  const [contentDialog, setContentDialog] = useState<Record<string, unknown>>(null);
   const [showCampaignModal, setShowCampaignModal] = useState<boolean>(false);
   const [permissions, setPermissions] = useState(getPermissions());
 

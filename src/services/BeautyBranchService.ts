@@ -43,7 +43,7 @@ export default {
   },
 
   //tìm đối tác (chi nhánh) bằng mã
-  getBeautyBranchByCode: (params: any, signal?: AbortSignal) => {
+  getBeautyBranchByCode: (params: Record<string, unknown>, signal?: AbortSignal) => {
     return fetch(`${urlsApi.beautyBranch.getBeautyBranchByCode}${convertParamsToString(params)}`, {
       signal,
       method: "GET",
@@ -51,14 +51,14 @@ export default {
   },
 
   // thay đổi trạng thái chi nhánh
-  unActivate: (body: any) => {
+  unActivate: (body: Record<string, unknown>) => {
     return fetch(urlsApi.beautyBranch.unActivate, {
       method: "POST",
       body: JSON.stringify(body),
     }).then((res) => res.json());
   },
 
-  activate: (body: any) => {
+  activate: (body: Record<string, unknown>) => {
     return fetch(urlsApi.beautyBranch.activate, {
       method: "POST",
       body: JSON.stringify(body),

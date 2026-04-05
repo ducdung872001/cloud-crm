@@ -20,7 +20,7 @@ import AddCustomerCharacteristics from "./partials/AddCustomerCharacteristics";
 interface ICustomerCharacteristicsProps {
   onShow: boolean;
   onHide: (reload) => void;
-  data?: any;
+  data?: Record<string, unknown>;
   typeProps: "product" | "service";
 }
 
@@ -34,7 +34,7 @@ export default function CustomerCharacteristics(props: ICustomerCharacteristicsP
   const [listIdChecked, setListIdChecked] = useState<number[]>([]);
   const [showModalAdd, setShowModalAdd] = useState<boolean>(false);
   const [showDialog, setShowDialog] = useState<boolean>(false);
-  const [contentDialog, setContentDialog] = useState<any>(null);
+  const [contentDialog, setContentDialog] = useState<Record<string, unknown>>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [isNoItem, setIsNoItem] = useState<boolean>(false);
   const [isPermissions, setIsPermissions] = useState<boolean>(false);
@@ -46,7 +46,7 @@ export default function CustomerCharacteristics(props: ICustomerCharacteristicsP
 
   useEffect(() => {
     if (data) {
-      setParams({ ...params, objectId: data } as any);
+      setParams({ ...params, objectId: data } as Record<string, unknown>);
     }
   }, [data]);
 
@@ -160,7 +160,7 @@ export default function CustomerCharacteristics(props: ICustomerCharacteristicsP
     setContentDialog(null);
   };
 
-  const showDialogConfirmDelete = (item?: any) => {
+  const showDialogConfirmDelete = (item?: Record<string, unknown>) => {
     const contentDialog: IContentDialog = {
       color: "error",
       className: "dialog-delete",
@@ -223,7 +223,7 @@ export default function CustomerCharacteristics(props: ICustomerCharacteristicsP
                   is_loading: hasSubmitForm,
                   disabled: hasSubmitForm || hasBackup,
                 },
-              ] as any)
+              ] as Record<string, unknown>)
             : []),
         ],
       },

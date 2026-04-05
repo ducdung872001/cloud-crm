@@ -8,12 +8,12 @@ import moment from "moment";
 import React, { Fragment, useEffect, useState } from "react";
 import BusinessProcessService from "services/BusinessProcessService";
 
-export const LogErrorTableModal: React.FC = (props: any) => {
+export const LogErrorTableModal: React.FC = (props: Record<string, unknown>) => {
   const { isOpen, processDetail = {}, setIsOpen } = props;
   const { nodeId, processId, potId } = processDetail;
 
   const [data, setData] = useState([]);
-  const [params, setParams] = useState<any>({});
+  const [params, setParams] = useState<Record<string, unknown>>({});
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [pagination, setPagination] = useState<PaginationProps>({
     ...DataPaginationDefault,
@@ -25,7 +25,7 @@ export const LogErrorTableModal: React.FC = (props: any) => {
 
   useEffect(() => {
     const paramsTemp = _.cloneDeep(params);
-    setParams((prevParams: any) => ({ ...prevParams, ...paramsTemp }));
+    setParams((prevParams: Record<string, unknown>) => ({ ...prevParams, ...paramsTemp }));
   }, []);
 
   useEffect(() => {
@@ -55,10 +55,10 @@ export const LogErrorTableModal: React.FC = (props: any) => {
             totalItem: total,
             totalPage: Math.ceil(+total / +(size ?? DataPaginationDefault.sizeLimit)),
             setPage: (page: number) => {
-              setParams((prev: any) => ({ ...prev, page: page }));
+              setParams((prev: Record<string, unknown>) => ({ ...prev, page: page }));
             },
             chooseSizeLimit: (limit: number) => {
-              setParams((prev: any) => ({ ...prev, page: 1, limit: limit }));
+              setParams((prev: Record<string, unknown>) => ({ ...prev, page: 1, limit: limit }));
             },
           });
         }
@@ -74,7 +74,7 @@ export const LogErrorTableModal: React.FC = (props: any) => {
 
   const titles = ["Node ID", "Type Node", "Pot ID", "Process ID", "Trạng thái", "Payload", "Attempt number", "Retry Time"];
   const dataFormat = ["", "", "", "", "text-center", "text-center", "text-center", ""];
-  const dataMappingArray = (item: any, index: number) => [
+  const dataMappingArray = (item: Record<string, unknown>, index: number) => [
     item.nodeId,
     item.typeNode,
     item.potId,

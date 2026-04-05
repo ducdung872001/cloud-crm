@@ -35,7 +35,7 @@ export default function AddQRManagementModal(props) {
         endDate: data?.endDate ?? "",
         link: data?.link ?? "",
         code: data?.code ?? generateRandomString(6),
-      } as any),
+      } as Record<string, unknown>),
     [data, onShow]
   );
 
@@ -185,7 +185,7 @@ export default function AddQRManagementModal(props) {
     setIsSubmit(true);
 
     const body = {
-      ...(formData.values as any),
+      ...(formData.values as Record<string, unknown>),
       ...(data ? { id: data.id } : {}),
     };
 

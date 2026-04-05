@@ -15,7 +15,7 @@ import { uploadDocumentFormData } from "utils/document";
 import ContractAttachmentService from "services/ContractAttachmentService";
 import AddFile from "./partials/AddFile";
 
-export default function ModalAddAttachment(props: any) {
+export default function ModalAddAttachment(props: Record<string, unknown>) {
   const { onShow, onHide, data, contractId } = props;
   
   const focusedElement = useActiveElement();
@@ -57,7 +57,7 @@ export default function ModalAddAttachment(props: any) {
       attachmentId: data?.attachmentId ?? 0,
       contractId: contractId
 
-    } as any),
+    } as Record<string, unknown>),
     [data, contractId]
   ); 
   
@@ -191,7 +191,7 @@ export default function ModalAddAttachment(props: any) {
     setIsSubmit(true);
 
     const body = {
-        ...(formData.values as any),
+        ...(formData.values as Record<string, unknown>),
         ...(infoFile ? { link: infoFile.fileUrl } : {}),
     };
 

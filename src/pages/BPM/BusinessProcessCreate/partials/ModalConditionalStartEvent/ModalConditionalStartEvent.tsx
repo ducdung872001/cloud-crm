@@ -171,7 +171,7 @@ export default function ModalConditionalStartEvent({ onShow, onHide, dataNode, p
                   // || !isDifferenceObj(formData, values),
                   is_loading: isSubmit,
                 },
-              ] as any)),
+              ] as Record<string, unknown>)),
         ],
       },
     }),

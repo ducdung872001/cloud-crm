@@ -223,7 +223,7 @@ export default function ModalTimerStartEventTask({ onShow, onHide, dataNode, pro
                   // || !isDifferenceObj(formData, values),
                   is_loading: isSubmit,
                 },
-              ] as any)),
+              ] as Record<string, unknown>)),
         ],
       },
     }),

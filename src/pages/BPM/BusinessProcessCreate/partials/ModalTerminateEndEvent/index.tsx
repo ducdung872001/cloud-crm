@@ -140,7 +140,7 @@ export default function ModalTerminateEndEvent({ onShow, onHide, dataNode, proce
                   disabled: isSubmit,
                   is_loading: isSubmit,
                 },
-              ] as any)),
+              ] as Record<string, unknown>)),
         ],
       },
     }),

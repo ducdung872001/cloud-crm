@@ -51,10 +51,10 @@ export default function AddServiceModal(props: IAddServiceModalProps) {
   const [listCategoryService, setListCategoryService] = useState<IOption[]>(null);
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
-  const [serviceExtraInfos, setServiceExtraInfos] = useState<any>([]);
+  const [serviceExtraInfos, setServiceExtraInfos] = useState<Record<string, unknown>>([]);
   // console.log("serviceExtraInfos", serviceExtraInfos);
 
-  const [mapServiceAttribute, setMapServiceAttribute] = useState<any>(null);
+  const [mapServiceAttribute, setMapServiceAttribute] = useState<Record<string, unknown>>(null);
   // console.log("mapServiceAttribute", mapServiceAttribute);
 
   //Dùng cho lookup
@@ -205,7 +205,7 @@ export default function AddServiceModal(props: IAddServiceModalProps) {
   const [validateFieldCategory, setValidateFieldCategory] = useState<boolean>(false);
 
   const loadOptionCategory = async (search, loadedOptions, { page }) => {
-    const param: any = {
+    const param: Record<string, unknown> = {
       name: search,
       page: page,
       limit: 10,
@@ -219,7 +219,7 @@ export default function AddServiceModal(props: IAddServiceModalProps) {
       return {
         options: [
           ...(dataOption.length > 0
-            ? dataOption.map((item: any) => {
+            ? dataOption.map((item: Record<string, unknown>) => {
                 return {
                   value: item.id,
                   label: item.name,
@@ -507,7 +507,7 @@ export default function AddServiceModal(props: IAddServiceModalProps) {
       const newArray = Object.entries(mapServiceAttribute);
       const checkArray = [];
 
-      newArray.map((lstContractAttribute: any, key: number) => {
+      newArray.map((lstContractAttribute: Record<string, unknown>, key: number) => {
         (lstContractAttribute[1] || []).map((item) => {
           if (item.required === 1 && item.parentId !== 0) {
             checkArray.push(item);
@@ -684,7 +684,7 @@ export default function AddServiceModal(props: IAddServiceModalProps) {
     });
 
     if (!found) {
-      const item: any = {};
+      const item: Record<string, unknown> = {};
       item.attributeId = attributeId;
       item.attributeValue = attributeValue;
       item.serviceId = serviceId;
@@ -1177,7 +1177,7 @@ export default function AddServiceModal(props: IAddServiceModalProps) {
 
           {mapServiceAttribute ? (
             <div className="list--attribute">
-              {Object.entries(mapServiceAttribute).map((lstAttribute: any, key: number) => (
+              {Object.entries(mapServiceAttribute).map((lstAttribute: Record<string, unknown>, key: number) => (
                 <Fragment key={key}>
                   {(lstAttribute[1] || []).map((attribute, index: number) => (
                     <Fragment key={index}>

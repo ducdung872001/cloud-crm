@@ -165,7 +165,7 @@ export default function BoxTable(props: BoxTableProps) {
                         <Checkbox checked={isChecked} onChange={(e) => checkOne(item.id, e.target.checked)} />
                       </td>
                     )}
-                    {item.data?.map((d: any, idx: number) => (
+                    {item.data?.map((d: unknown, idx: number) => (
                       // remaing: Trường dùng để đánh dấu màu sắc kế toán (> 0 thì xanh, còn <0 thì đỏ)
                       <td
                         className={`${dataFormat ? dataFormat[idx] : ""} ${

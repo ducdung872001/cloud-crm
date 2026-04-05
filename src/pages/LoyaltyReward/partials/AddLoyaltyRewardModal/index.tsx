@@ -37,7 +37,7 @@ export default function AddLoyaltyRewardModal(props: AddLoyaltyRewardProps) {
   // dynamic reward items rows
   const [rewardItems, setRewardItems] = useState<IRewardItem[]>([emptyItem()]);
 
-  const parseInitialItems = (raw: string | any[]): IRewardItem[] => {
+  const parseInitialItems = (raw: string | Record<string, unknown>[]): IRewardItem[] => {
     try {
       const parsed: { productId: number; quantity: number }[] =
         typeof raw === "string" ? JSON.parse(raw) : raw;
@@ -120,7 +120,7 @@ export default function AddLoyaltyRewardModal(props: AddLoyaltyRewardProps) {
           setRewardItems((prev) =>
             prev.map(item => {
               if (item.productId && !item.productLabel) {
-                const found = products.find((p: any) => p.id === item.productId);
+                const found = products.find((p: Record<string, unknown>) => p.id === item.productId);
                 return { ...item, productLabel: found ? String(found.name) : "" };
               }
               return item;
@@ -143,13 +143,13 @@ export default function AddLoyaltyRewardModal(props: AddLoyaltyRewardProps) {
     return () => { setIsSubmit(false); };
   }, [values]);
 
-  const loadProductOptions = async (search: string, loadedOptions: any, { page }: any) => {
+  const loadProductOptions = async (search: string, loadedOptions: Record<string, unknown>, { page }: Record<string, unknown>) => {
     try {
       const res = await ProductService.list({ name: search, page, limit: 10 });
       if (res && res.code === 0) {
         const dataList = res.result?.items || res.result || [];
 
-        const mapped = dataList.map((product: any) => ({
+        const mapped = dataList.map((product: Record<string, unknown>) => ({
           value: product.id,
           label: product.name,
         }));
@@ -313,7 +313,7 @@ export default function AddLoyaltyRewardModal(props: AddLoyaltyRewardProps) {
                               ? { value: item.productId, label: item.productLabel || String(item.productId) }
                               : null
                           }
-                          onChange={(opt) => updateProduct(idx, opt as any)}
+                          onChange={(opt) => updateProduct(idx, opt as Record<string, unknown>)}
                           classNamePrefix="rs"
                           menuPortalTarget={document.body}
                           styles={{ menuPortal: (base) => ({ ...base, zIndex: 9999 }) }}

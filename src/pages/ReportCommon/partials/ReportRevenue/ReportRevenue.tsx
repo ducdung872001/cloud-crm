@@ -123,7 +123,7 @@ export default function ReportRevenue(props: IReportCommonProps) {
 
     if (data) {
       // API về có data → dùng real
-      if (data.dailySeries?.length)  setListRevenue(data.dailySeries as any);
+      if (data.dailySeries?.length)  setListRevenue(data.dailySeries as Record<string, unknown>);
       if (data.summary)              setSummaryKpi(data.summary);
       if (data.channelRows?.length)  setChannelRows(data.channelRows);
       // Nếu bất kỳ trường nào rỗng → giữ mock của trường đó (không reset)

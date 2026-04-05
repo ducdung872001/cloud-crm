@@ -8,18 +8,18 @@ declare global {
           key: string;
           extension: string;
         };
-        callbacks?: Record<string, (data: any) => void>;
+        callbacks?: Record<string, (data: Record<string, unknown>) => void>;
       }) => void;
 
-      makecall: (phone: string) => Promise<any>;
-      answer: () => Promise<any>;
-      hangup: () => Promise<any>;
-      setDND: (status: boolean) => Promise<any>;
-      transfer: (extension: string) => Promise<any>;
-      sendDTMF: (tones: string) => Promise<any>;
-      holdAndUnhold: () => Promise<any>;
-      muteAndUnmute: () => Promise<any>;
-      getInformation: () => Promise<any>;
+      makecall: (phone: string) => Promise<Record<string, unknown>>;
+      answer: () => Promise<Record<string, unknown>>;
+      hangup: () => Promise<Record<string, unknown>>;
+      setDND: (status: boolean) => Promise<Record<string, unknown>>;
+      transfer: (extension: string) => Promise<Record<string, unknown>>;
+      sendDTMF: (tones: string) => Promise<Record<string, unknown>>;
+      holdAndUnhold: () => Promise<Record<string, unknown>>;
+      muteAndUnmute: () => Promise<Record<string, unknown>>;
+      getInformation: () => Promise<Record<string, unknown>>;
     };
   }
 }

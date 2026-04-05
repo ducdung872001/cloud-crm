@@ -21,7 +21,7 @@ import ContractEformService from "services/ContractEformService";
 import BusinessProcessService from "services/BusinessProcessService";
 import BpmEformMappingService from "services/BpmEformMappingService";
 
-export default function ModalSequenceFlow(props: any) {
+export default function ModalSequenceFlow(props: Record<string, unknown>) {
   const { onShow, onHide, dataNode, processId, setDataNode, disable } = props;
   // console.log("dataNode", dataNode);
   const [isSubmit, setIsSubmit] = useState<boolean>(false);
@@ -261,7 +261,7 @@ export default function ModalSequenceFlow(props: any) {
               },
             ],
         blockRule: data ? data.blockRule : [],
-      } as any),
+      } as Record<string, unknown>),
     [data, onShow]
   );
 
@@ -426,7 +426,7 @@ export default function ModalSequenceFlow(props: any) {
   };
 
   //! đoạn này xử lý lấy năm
-  const [years] = useState<any[]>(
+  const [years] = useState<Record<string, unknown>[]>(
     createArrayFromToR(new Date().getFullYear(), 1963).map((item, idx) => {
       return {
         value: +item,
@@ -436,7 +436,7 @@ export default function ModalSequenceFlow(props: any) {
   );
 
   //! đoạn này xử lý lấy tháng
-  const [months] = useState<any[]>(
+  const [months] = useState<Record<string, unknown>[]>(
     createArrayFromTo(1, 12).map((item, idx) => {
       if (item < 10) {
         return {
@@ -453,7 +453,7 @@ export default function ModalSequenceFlow(props: any) {
   );
 
   //! đoạn này xử lý lấy ngày
-  const [days] = useState<any[]>(
+  const [days] = useState<Record<string, unknown>[]>(
     createArrayFromTo(1, 31).map((item, idx) => {
       if (item < 10) {
         return {
@@ -634,7 +634,7 @@ export default function ModalSequenceFlow(props: any) {
 
   const [isLoadingSource, setIsLoadingSource] = useState<boolean>(false);
 
-  const onSelectOpenApi = async (source, idx, param?: any) => {
+  const onSelectOpenApi = async (source, idx, param?: Record<string, unknown>) => {
     if (!source) return;
 
     const checkSource = source.startsWith("https");
@@ -963,7 +963,7 @@ export default function ModalSequenceFlow(props: any) {
     });
   };
 
-  const onSelectOpenBlockApi = async (source, ids, idx, param?: any) => {
+  const onSelectOpenBlockApi = async (source, ids, idx, param?: Record<string, unknown>) => {
     if (!source) return;
 
     const checkSource = source.startsWith("https");
@@ -1329,7 +1329,7 @@ export default function ModalSequenceFlow(props: any) {
                     onSubmit(formData);
                   },
                 },
-              ] as any)),
+              ] as Record<string, unknown>)),
         ],
       },
     }),
@@ -1381,7 +1381,7 @@ export default function ModalSequenceFlow(props: any) {
       showToast("Vui lòng nhập tên điều kiện", "error");
       return;
     }
-    const body: any = {
+    const body: Record<string, unknown> = {
       linkId: dataNode?.id,
       name: nodeName,
     };

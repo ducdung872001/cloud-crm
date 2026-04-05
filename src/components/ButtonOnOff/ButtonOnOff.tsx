@@ -1,7 +1,7 @@
 import React from "react";
 import "./ButtonOnOff.scss";
 
-export default function ButtonOnOff(props: any) {
+export default function ButtonOnOff(props: { checked: boolean; onChange: (value: boolean) => void; disabled?: boolean }) {
   const { checked, onChange, disabled } = props;
 
   return (

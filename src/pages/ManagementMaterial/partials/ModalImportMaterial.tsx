@@ -475,7 +475,7 @@ export default function ModalImportMaterial({ onShow, onHide }: Props) {
 
       </ModalBody>
 
-      <ModalFooter actions={footerActions as any} />
+      <ModalFooter actions={footerActions as Record<string, unknown>} />
     </Modal>
   );
 }

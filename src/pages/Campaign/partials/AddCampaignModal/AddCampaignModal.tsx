@@ -122,7 +122,7 @@ export default function AddCampaignModal(props: IAddCampaignModalProps) {
   const [isOptionRank, setIsOptionRank] = useState<boolean>(false);
   useOnClickOutside(refOptionSpecialize, () => setIsOptionRank(false), ["option__rank"]);
 
-  const [data, setData] = useState<any>(null);
+  const [data, setData] = useState<Record<string, unknown>>(null);
 
   const handleDetailData = async () => {
     const response = await CampaignService.detail(idData);
@@ -564,7 +564,7 @@ export default function AddCampaignModal(props: IAddCampaignModalProps) {
     return { options: [], hasMore: false };
   };
   const loadedOptionBranchLevel_1 = async (search, loadedOptions, { page }) => {
-    const param: any = {
+    const param: Record<string, unknown> = {
       name: search,
       page: page,
       limit: 10,
@@ -596,7 +596,7 @@ export default function AddCampaignModal(props: IAddCampaignModalProps) {
     return { options: [], hasMore: false };
   };
   const loadedOptionBranchLevel_2 = async (search, loadedOptions, { page }) => {
-    const param: any = {
+    const param: Record<string, unknown> = {
       name: search,
       page: page,
       limit: 10,
@@ -628,7 +628,7 @@ export default function AddCampaignModal(props: IAddCampaignModalProps) {
     return { options: [], hasMore: false };
   };
   const loadedOptionBranchLevel_3 = async (search, loadedOptions, { page }) => {
-    const param: any = {
+    const param: Record<string, unknown> = {
       name: search,
       page: page,
       limit: 10,
@@ -660,7 +660,7 @@ export default function AddCampaignModal(props: IAddCampaignModalProps) {
     return { options: [], hasMore: false };
   };
   const loadedOptionBranchLevel_4 = async (search, loadedOptions, { page }) => {
-    const param: any = {
+    const param: Record<string, unknown> = {
       name: search,
       page: page,
       limit: 10,
@@ -937,7 +937,7 @@ export default function AddCampaignModal(props: IAddCampaignModalProps) {
   }, [listDepartmentId]);
 
   const loadedOptionDepartment = async (search, loadedOptions, { page }) => {
-    const param: any = {
+    const param: Record<string, unknown> = {
       name: search,
       // page: page,
       limit: 1000,

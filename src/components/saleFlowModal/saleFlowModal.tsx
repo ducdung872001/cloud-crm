@@ -8,7 +8,7 @@ import { showToast } from "utils/common";
 import OrderService from "services/OrderService";
 
 export interface SaleFlowModalProps {
-  itemSaleFlow: any;
+  itemSaleFlow: Record<string, unknown>;
   onShow: boolean;
   onHide: () => void;
 }
@@ -63,7 +63,7 @@ export default function SaleFlowModal(props: SaleFlowModalProps) {
     setValueSaleflow(e);
   };
   const loadOptionSaleflow = async (search, loadedOptions, { page }) => {
-    const param: any = {
+    const param: Record<string, unknown> = {
       name: search,
       page: page,
       limit: 10,
@@ -75,7 +75,7 @@ export default function SaleFlowModal(props: SaleFlowModalProps) {
       const dataOption = response.result.items;
 
       if (dataOption.length > 0) {
-        dataOption.map((item: any) => {
+        dataOption.map((item: Record<string, unknown>) => {
           optionSaleflow.push({
             value: item.id,
             label: item.name,

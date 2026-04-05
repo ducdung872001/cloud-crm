@@ -26,7 +26,7 @@ export default function AddPointModal(props: IAddCategoryServiceModelProps) {
 
   const values = useMemo(
     () => {
-      const d = data as any;
+      const d = data as Record<string, unknown>;
       return {
         title: d?.title ?? "",
         type: d?.type ?? "Voucher",
@@ -34,7 +34,7 @@ export default function AddPointModal(props: IAddCategoryServiceModelProps) {
         limit: d?.limit ?? 0,
         status: d?.status ?? "active",
         id: d?.id,
-      } as any;
+      } as Record<string, unknown>;
     },
     [data, onShow]
   );

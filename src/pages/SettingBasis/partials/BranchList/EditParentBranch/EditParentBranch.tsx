@@ -17,7 +17,7 @@ import BeautyBranchService from "services/BeautyBranchService";
 import "./EditParentBranch.scss";
 import { SelectOptionData } from "utils/selectCommon";
 
-export default function EditParentBranch(props: any) {
+export default function EditParentBranch(props: Record<string, unknown>) {
   const { onShow, onHide, branchId } = props;
 
   const focusedElement = useActiveElement();

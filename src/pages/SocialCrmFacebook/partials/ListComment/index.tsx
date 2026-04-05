@@ -20,7 +20,7 @@ export default function ListComment(props: IListCommentProps) {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [hasMore, setHasMore] = useState<boolean>(false);
   const [showDialog, setShowDialog] = useState<boolean>(false);
-  const [contentDialog, setContentDialog] = useState<any>(null);
+  const [contentDialog, setContentDialog] = useState<Record<string, unknown>>(null);
   const [showChat, setShowChat] = useState<boolean>(false);
   const [params, setParams] = useState<IFanpageCommentFilterRequest>({
     page: pageComment,

@@ -10,7 +10,7 @@ import { showToast } from "utils/common";
 interface IViewBillProps {
   onShow: boolean;
   onHide: (reload: boolean) => void;
-  data: any;
+  data: Record<string, unknown>;
 }
 
 export default function ViewBill(props: IViewBillProps) {
@@ -61,7 +61,7 @@ export default function ViewBill(props: IViewBillProps) {
                   disabled: isSubmit,
                   is_loading: isSubmit,
                 },
-              ] as any)
+              ] as Record<string, unknown>)
             : []),
         ],
       },

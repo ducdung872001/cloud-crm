@@ -1153,7 +1153,7 @@ export default function AddTreatmentScheduleModal(props: IScheduleTreatmentRespo
                                 className={`${valueDecisionTime.value === item.value ? "active__item--item" : "item-time"}`}
                                 onClick={(e) => {
                                   e && e.preventDefault();
-                                  setValueDecisionTime(item as any);
+                                  setValueDecisionTime(item as Record<string, unknown>);
                                   setIsOptionDecisionTime(false);
                                 }}
                               >

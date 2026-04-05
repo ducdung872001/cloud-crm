@@ -9,8 +9,8 @@ import "./index.scss";
 interface IShowModalChangeRoleProps {
   onShow: boolean;
   onHide: (reload: boolean) => void;
-  data: any;
-  lstData: any[];
+  data: Record<string, unknown>;
+  lstData: Record<string, unknown>[];
 }
 
 export default function ShowModalChangeRole(props: IShowModalChangeRoleProps) {

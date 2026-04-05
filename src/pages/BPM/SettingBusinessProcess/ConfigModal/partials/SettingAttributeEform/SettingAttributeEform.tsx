@@ -290,7 +290,7 @@ function bfs(items, newItem) {
 }
 
 
-export default function SettingAttributeEform(props: any) {
+export default function SettingAttributeEform(props: Record<string, unknown>) {
   const { dataComponentParent, onHide } = props;
   console.log('dataComponentParent', dataComponentParent);
   
@@ -309,13 +309,13 @@ export default function SettingAttributeEform(props: any) {
   const [showDialog, setShowDialog] = useState<boolean>(false);
   const [contentDialog, setContentDialog] = useState<IContentDialog>(null);
 
-  const [data, setData] = useState<any>();
+  const [data, setData] = useState<Record<string, unknown>>();
 
-  const [addFieldAttributes, setAddFieldAttributes] = useState<any[]>([{ value: '', label: '' }]);
-  const [detailLookup, setDetailLookup] = useState<any>("contract");
-  const [numberFormat, setNumberFormat] = useState<any>('');
+  const [addFieldAttributes, setAddFieldAttributes] = useState<Record<string, unknown>[]>([{ value: '', label: '' }]);
+  const [detailLookup, setDetailLookup] = useState<Record<string, unknown>>("contract");
+  const [numberFormat, setNumberFormat] = useState<Record<string, unknown>>('');
 
-  const [contractAttributeFields, setContractAttributeFields] = useState<any>(null); //Khởi tạo null là quan trọng
+  const [contractAttributeFields, setContractAttributeFields] = useState<Record<string, unknown>>(null); //Khởi tạo null là quan trọng
   console.log('contractAttributeFields', contractAttributeFields);
 
   const [showFields, setShowFields] = useState<boolean>(false);
@@ -409,7 +409,7 @@ export default function SettingAttributeEform(props: any) {
       const result = response.result;      
 
       const newChildrens = await Promise.all(
-        result.map((item: any) => {
+        result.map((item: Record<string, unknown>) => {
           // console.log('ddd', item[1][0]);
           return item.datatype === "text" ? (
             <div key={item.id} datatype={item.datatype} style={{ height: "100%" }}>
@@ -933,8 +933,8 @@ export default function SettingAttributeEform(props: any) {
   const saveAttribute = async (e) => {
     e.preventDefault();
 
-    const body: any = {
-      ...(dataField as any),
+    const body: Record<string, unknown> = {
+      ...(dataField as Record<string, unknown>),
       // ...(data ? { id: data.id } : {}),
       ...(
         (dataField['datatype'] == 'dropdown' || dataField['datatype'] == 'radio' || dataField['datatype'] == 'multiselect') ? {
@@ -969,7 +969,7 @@ export default function SettingAttributeEform(props: any) {
   const saveEform = async (e) => {
     e.preventDefault();
 
-    const body: any = {
+    const body: Record<string, unknown> = {
       id:  eformId,
       name:  "Thông tin khách hàng",
       note: '',

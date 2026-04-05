@@ -27,7 +27,7 @@ const statusColor = {
   STORE_CANCELED: "error",
 };
 
-const KanbanTicketProcess = (props: any) => {
+const KanbanTicketProcess = (props: Record<string, unknown>) => {
   const { processId, processCode } = props;
 
   //Xử lý các hành động trên item

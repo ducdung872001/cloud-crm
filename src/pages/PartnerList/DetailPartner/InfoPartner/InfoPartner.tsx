@@ -7,7 +7,7 @@ import { useWindowDimensions } from "utils/hookCustom";
 import "./InfoPartner.scss";
 import Tippy from "@tippyjs/react";
 
-export default function InfoPartner(props: any) {
+export default function InfoPartner(props: Record<string, unknown>) {
   const { data } = props;
 
   const { width } = useWindowDimensions();

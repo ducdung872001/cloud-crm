@@ -15,9 +15,9 @@ import "./AddSigner.scss";
 interface IAddSignerProps {
   onShow: boolean;
   onHide: () => void;
-  data?: any;
+  data?: Record<string, unknown>;
   approvalId: number;
-  takeData?: (data: any) => void;
+  takeData?: (data: Record<string, unknown>) => void;
   disabled: boolean;
 }
 

@@ -19,7 +19,7 @@ import Button from "components/button/button";
 import HandleTask from "pages/MiddleWork/partials/ListWork/partials/HandleTask/HandleTask";
 import ModalHandleTask from "pages/UserTaskList/partials/ListWork/partials/ModalHandleTask/ModalHandleTask";
 
-export default function ListWork(props: any) {
+export default function ListWork(props: { data: Record<string, unknown> }) {
   document.title = "Danh sách công việc";
 
   const { data } = props;
@@ -30,14 +30,14 @@ export default function ListWork(props: any) {
   const [dataWork, setDataWork] = useState(null);
   const [listIdChecked, setListIdChecked] = useState<number[]>([]);
   const [showDialog, setShowDialog] = useState<boolean>(false);
-  const [contentDialog, setContentDialog] = useState<any>(null);
+  const [contentDialog, setContentDialog] = useState<IContentDialog | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [isNoItem, setIsNoItem] = useState<boolean>(false);
   const [isPermissions, setIsPermissions] = useState<boolean>(false);
   const [permissions, setPermissions] = useState(getPermissions());
   const [isHandleTask, setIsHandleTask] = useState<boolean>(false);
 
-  const [params, setParams] = useState<any>({
+  const [params, setParams] = useState<Record<string, unknown>>({
     name: "",
     limit: 10,
   });
@@ -76,7 +76,7 @@ export default function ListWork(props: any) {
 
   const abortController = new AbortController();
 
-  const getListWork = async (paramsSearch: any) => {
+  const getListWork = async (paramsSearch: Record<string, unknown>) => {
     setIsLoading(true);
 
     // const response = await WorkOrderService.listBpmWorkOrder(paramsSearch, abortController.signal);
@@ -148,14 +148,14 @@ export default function ListWork(props: any) {
 
   const dataFormat = ["text-center", "", "", ""];
 
-  const dataMappingArray = (item: any, index: number) => [
+  const dataMappingArray = (item: Record<string, unknown>, index: number) => [
     getPageOffset(params) + index + 1,
     item.name,
     item.employeeName,
     item.processName || item.nodeName,
   ];
 
-  const actionsTable = (item: any): IAction[] => {
+  const actionsTable = (item: Record<string, unknown>): IAction[] => {
     return [
       ...(item?.contextData
         ? [
@@ -205,7 +205,7 @@ export default function ListWork(props: any) {
     ].filter((action) => action);
   };
 
-  const showDialogConfirmDelete = (item?: any) => {
+  const showDialogConfirmDelete = (item?: Record<string, unknown>) => {
     const contentDialog: IContentDialog = {
       color: "error",
       className: "dialog-delete",

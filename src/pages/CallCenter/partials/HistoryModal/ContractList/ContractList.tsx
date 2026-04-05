@@ -11,7 +11,7 @@ import { IContractFilterRequest } from "model/contract/ContractRequestModel";
 import ContractService from "services/ContractService";
 import { IAction } from "model/OtherModel";
 
-export default function ContractList(props: any) {
+export default function ContractList(props: Record<string, unknown>) {
     const { dataCustomer,} = props;
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const [contratList, setContractList] = useState([]);
@@ -33,7 +33,7 @@ export default function ContractList(props: any) {
       },
     });
 
-    const getListContract = async (paramsSearch: any, customerId: number) => {
+    const getListContract = async (paramsSearch: Record<string, unknown>, customerId: number) => {
       const param = {
         ...paramsSearch,
         customerId: customerId
@@ -114,7 +114,7 @@ export default function ContractList(props: any) {
     const titlesCall = ["STT", "Tên hợp đồng", "Giá trị hợp đồng", "Pha hợp đồng", "Tên công ty", "Trạng thái ký", "Trạng thái hợp đồng"];
     const dataFormatCall = ["text-center", "", "", "", "    ", "", ""];
 
-    const dataMappingArray = (item: any, index: number) => [
+    const dataMappingArray = (item: Record<string, unknown>, index: number) => [
       getPageOffset(params) + index + 1,
       item.name,
       item.dealValue == null ? null : item.dealValue == 0 ? "0đ" : formatCurrency(+item.dealValue, ","),
@@ -132,7 +132,7 @@ export default function ContractList(props: any) {
       />,
     ];
 
-    const actionsTable = (item: any): IAction[] => {
+    const actionsTable = (item: Record<string, unknown>): IAction[] => {
         
         return [
             // {

@@ -2,7 +2,7 @@ import ExcelJS from "exceljs";
 import { saveAs } from "file-saver";
 
 // inputData là tuỳ chọn, nếu có thì mới ghi dữ liệu từ dòng 5 trở đi
-export async function exportCustomExcel(listColumns: any[], inputData?: any[], typeNo?: string) {
+export async function exportCustomExcel(listColumns: Record<string, unknown>[], inputData?: Record<string, unknown>[], typeNo?: string) {
   const workbook = new ExcelJS.Workbook();
   const worksheet = workbook.addWorksheet("Sheet1");
 

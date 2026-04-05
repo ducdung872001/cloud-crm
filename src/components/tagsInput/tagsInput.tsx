@@ -4,8 +4,8 @@ import "./tagsInput.scss";
 
 interface TagsInputProps {
   tagsData: string[];
-  addTag: any;
-  removeTag: any;
+  addTag: (tags: string[]) => void;
+  removeTag: (tags: string[]) => void;
   placeholder?: string;
   acceptPaste: boolean;
   maxLength: number;
@@ -16,7 +16,7 @@ export default function TagsInput(props: TagsInputProps) {
   const { tagsData, label, addTag, removeTag, placeholder, acceptPaste, maxLength } = props;
   const [errorShow, setErrorShow] = useState<boolean>(false);
   const [focusInput, setFocusInput] = useState<boolean>(false);
-  const [valueInput, setValueInput] = useState<any>("");
+  const [valueInput, setValueInput] = useState<string>("");
 
   const validateRegex =
     /^[A-Za-z0-9.ÀÁÂÃÈÉÊÌÍÒÓÔÕÙÚĂĐĨŨƠàáâãèéêìíòóôõùúăđĩũơƯĂẠẢẤẦẨẪẬẮẰẲẴẶẸẺẼỀỀỂưăạảấầẩẫậắằẳẵặẹẻẽềềểỄỆỈỊỌỎỐỒỔỖỘỚỜỞỠỢỤỦỨỪễếệỉịọỏốồổỗộớờởỡợụủứừỬỮỰỲỴÝỶỸửữựỳỵỷỹ]*$/;

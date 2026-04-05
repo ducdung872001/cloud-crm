@@ -1,13 +1,13 @@
 import React, { useRef } from "react";
 import _ from "lodash";
 import Icon from "components/icon";
-import TitleAction from "components/titleAction/titleAction";
+import TitleAction, { ITitleActions } from "components/titleAction/titleAction";
 import "./HeaderTabMenu.scss";
 
 interface IHeaderTab {
-  onBackProps?: any;
+  onBackProps?: (value: boolean) => void;
   callBack?: () => void;
-  titleActions?: any;
+  titleActions?: ITitleActions;
   titleBack?: string
   title?: string
 }

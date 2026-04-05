@@ -7,7 +7,7 @@ import { IActionModal, IOption } from "model/OtherModel";
 import "./ModalViewChart.scss";
 import ChartComponent from "components/ChartComponent/ChartComponent";
 
-export default function ModalViewChart(props: any) {
+export default function ModalViewChart(props: Record<string, unknown>) {
   const { onShow, data, onHide, } = props;
 
   const [isSubmit, setIsSubmit] = useState<boolean>(false);

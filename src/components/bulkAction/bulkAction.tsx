@@ -7,7 +7,7 @@ import "./bulkAction.scss";
 
 export interface BulkActionItemModel {
   title: string;
-  callback: any;
+  callback: () => void;
 }
 interface BulkActionProps {
   name: string;

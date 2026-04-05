@@ -226,7 +226,7 @@ export default function InvoiceVATList({ onDataChanged, onGoToExport, onOpenDeta
       }, abortRef.current.signal);
       setList(data.items);
       setTotalItem(data.total);
-    } catch (e: any) {
+    } catch (e: unknown) {
       if (e?.name !== "AbortError") showToast(e?.message || "Lỗi tải dữ liệu", "error");
     } finally {
       setIsLoading(false);
@@ -314,7 +314,7 @@ export default function InvoiceVATList({ onDataChanged, onGoToExport, onOpenDeta
         columnsWidth: [6, 18, 12, 14, 30, 16, 18, 18, 18, 16, 38],
         formatExcel:  ["center", "left", "center", "center", "left", "center", "right", "right", "right", "center", "left"],
       });
-    } catch (e: any) {
+    } catch (e: unknown) {
       showToast(e?.message || "Lỗi khi xuất Excel", "error");
     } finally {
       setExportLoading(false);

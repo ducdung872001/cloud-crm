@@ -152,7 +152,7 @@ export default function AddOrg(props: IAddOrgProps) {
         subdistrictId: data?.subdistrictId ?? null,
         ownerId: data?.ownerId ?? dataUserOwn?.value ?? null,
         type: data?.type ?? null,
-      } as any),
+      } as Record<string, unknown>),
     [data, onShow, dataUserOwn]
   );
 
@@ -479,8 +479,8 @@ export default function AddOrg(props: IAddOrgProps) {
       subdomain: `${formData.values.subdomain}.reborn.vn`,
     };
 
-    const body: any = {
-      ...(changeFormData as any),
+    const body: Record<string, unknown> = {
+      ...(changeFormData as Record<string, unknown>),
       ...(id ? { id: id } : {}),
     };
 

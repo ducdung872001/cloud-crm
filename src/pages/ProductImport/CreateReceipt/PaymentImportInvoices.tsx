@@ -35,7 +35,7 @@ const DEFAULT_FORM: IInvoiceCreateRequest = {
   inventoryId: null,
 };
 
-const getInvoiceFromResponse = (response: any): IInvoiceCreateResponse | null => {
+const getInvoiceFromResponse = (response: Record<string, unknown>): IInvoiceCreateResponse | null => {
   const result = response?.result ?? response?.data ?? null;
   if (!result) return null;
   return (result.invoice ?? result) as IInvoiceCreateResponse;

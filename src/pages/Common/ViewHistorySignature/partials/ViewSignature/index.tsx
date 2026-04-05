@@ -93,7 +93,7 @@ export default function ViewSignature(props) {
 
   useEffect(() => {
     if (lstLinkApproval && lstLinkApproval.length > 0) {
-      const changeLstLinkApproval: any[] = lstLinkApproval.map((item) => {
+      const changeLstLinkApproval: Record<string, unknown>[] = lstLinkApproval.map((item) => {
         return {
           id: `reactflow__edge-${item.nodeFrom}-${item.nodeTo}`,
           markerEnd: { type: "arrowclosed" },

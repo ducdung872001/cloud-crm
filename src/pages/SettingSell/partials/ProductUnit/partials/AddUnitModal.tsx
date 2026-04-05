@@ -42,7 +42,7 @@ export default function AddUnitModal(props: AddUnitModalProps) {
       rules: "required",
     },
   ];
-  const listStatus: any = [
+  const listStatus: Record<string, unknown> = [
     { value: 1, label: "Đang sử dụng" },
     { value: 0, label: "Ngừng sử dụng" },
   ];

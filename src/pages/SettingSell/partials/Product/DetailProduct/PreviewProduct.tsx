@@ -6,7 +6,7 @@ import { formatCurrency } from "reborn-util";
 import "./PreviewProduct.scss";
 
 interface ProductPreviewProps {
-  product: any;
+  product: Record<string, unknown>;
   config: Record<string, boolean>;
 }
 

@@ -193,7 +193,7 @@ export default function ModalManualTask({ onShow, onHide, dataNode, processId, c
                   // || !isDifferenceObj(formData, values),
                   is_loading: isSubmit,
                 },
-              ] as any)),
+              ] as Record<string, unknown>)),
         ],
       },
     }),

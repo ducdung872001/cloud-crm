@@ -146,7 +146,7 @@ export default function ModalComplexGateway({ onShow, onHide, dataNode, processI
                   // || !isDifferenceObj(formData, values),
                   is_loading: isSubmit,
                 },
-              ] as any)),
+              ] as Record<string, unknown>)),
         ],
       },
     }),
@@ -208,7 +208,7 @@ export default function ModalComplexGateway({ onShow, onHide, dataNode, processI
         ],
         blockRule: [],
         resultOut: null,
-      } as any),
+      } as Record<string, unknown>),
     [data, onShow]
   );
 

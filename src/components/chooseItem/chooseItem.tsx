@@ -51,7 +51,7 @@ export default function ChooseItem(props: IChooseItemProps) {
   const [lstItems, setLstItems] = useState([]);
   const [isNoItem, setIsNoItem] = useState<boolean>(false);
   const [responseData, setResponseData] = useState({ total: 0, page: 1 });
-  const [params, setParams] = useState<any>({
+  const [params, setParams] = useState<Record<string, unknown>>({
     name: "",
     limit: 10,
   });

@@ -55,7 +55,7 @@ export default function SetttingSocialCrmList() {
    * Lấy danh sách fanpage để thêm kết nối
    * @param accessToken 
    */
-  const loadFanpages = async (accessToken?: any) => {
+  const loadFanpages = async (accessToken?: Record<string, unknown>) => {
     const params: IFanpageFacebookRequest = {
       accessToken,
     };
@@ -65,7 +65,7 @@ export default function SetttingSocialCrmList() {
       // eslint-disable-next-line prefer-const
       let fanpages = [];
 
-      (response.result || []).map((item: any) => {
+      (response.result || []).map((item: Record<string, unknown>) => {
         fanpages.push({
           name: item.name,
           _fanpage_id: item.id,

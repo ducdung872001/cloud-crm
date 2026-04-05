@@ -217,7 +217,7 @@ export default function AddConsultationScheduleModal(props: IAddConsultationSche
     },
   ];
 
-  const isValidDateTimeRange = (start: any, end: any) => {
+  const isValidDateTimeRange = (start: Record<string, unknown>, end: Record<string, unknown>) => {
     if (!start || !end) return true;
       return moment(start).isBefore(moment(end));
   };
@@ -862,7 +862,7 @@ export default function AddConsultationScheduleModal(props: IAddConsultationSche
                                       className={`${valueDecisionTime.value === item.value ? "active__item--item" : "item-time"}`}
                                       onClick={(e) => {
                                         e && e.preventDefault();
-                                        setValueDecisionTime(item as any);
+                                        setValueDecisionTime(item as Record<string, unknown>);
                                         setIsOptionDecisionTime(false);
                                       }}
                                     >
@@ -1278,8 +1278,8 @@ export default function AddConsultationScheduleModal(props: IAddConsultationSche
 
   setIsSubmittingCustomerArrived(true);
 
-  const vForm: any = formData?.values ?? values;
-  const vdata: any = data;
+  const vForm: Record<string, unknown> = formData?.values ?? values;
+  const vdata: Record<string, unknown> = data;
 
   const processor = vdata?.processor
     ? JSON.parse(vdata.processor)
@@ -1304,7 +1304,7 @@ export default function AddConsultationScheduleModal(props: IAddConsultationSche
   };
 
   try {
-    const response = await ScheduleConsultantService.updateKafka(kafkaBody as any);
+    const response = await ScheduleConsultantService.updateKafka(kafkaBody as Record<string, unknown>);
 
     if (response.code === 0) {
       showToast("Xác nhận khách đến thành công", "success");

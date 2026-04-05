@@ -13,7 +13,7 @@ import ReasonListBpmService from "services/ReasonListBpmService";
 import { UserContext, ContextType } from "contexts/userContext";
 import BusinessRuleService from "services/BusinessRuleService";
 
-export default function AddBusinessRuleModal(props: any) {
+export default function AddBusinessRuleModal(props: Record<string, unknown>) {
   const { onShow, onHide, data } = props;
   const { dataInfoEmployee } = useContext(UserContext) as ContextType;
 
@@ -31,7 +31,7 @@ export default function AddBusinessRuleModal(props: any) {
         code: data?.code ?? "",
         description: data?.description ?? "",
         employeeId: data?.employeeId ?? dataInfoEmployee?.id ?? 0,
-      } as any),
+      } as Record<string, unknown>),
     [data, onShow, dataInfoEmployee]
   );
 
@@ -96,8 +96,8 @@ export default function AddBusinessRuleModal(props: any) {
 
     setIsSubmit(true);
 
-    const body: any = {
-      ...(formData.values as any),
+    const body: Record<string, unknown> = {
+      ...(formData.values as Record<string, unknown>),
       ...(data ? { id: data.id } : {}),
     };
 

@@ -76,11 +76,11 @@ export default function BusinessProcessList() {
   const [listIdChecked, setListIdChecked] = useState<number[]>([]);
   const [showModalAdd, setShowModalAdd] = useState<boolean>(false);
   const [showDialog, setShowDialog] = useState<boolean>(false);
-  const [contentDialog, setContentDialog] = useState<any>(null);
+  const [contentDialog, setContentDialog] = useState<Record<string, unknown>>(null);
   const [showDialogPause, setShowDialogPause] = useState<boolean>(false);
-  const [contentDialogPause, setContentDialogPause] = useState<any>(null);
+  const [contentDialogPause, setContentDialogPause] = useState<Record<string, unknown>>(null);
   const [showDialogApprove, setShowDialogApprove] = useState<boolean>(false);
-  const [contentDialogApprove, setContentDialogApprove] = useState<any>(null);
+  const [contentDialogApprove, setContentDialogApprove] = useState<Record<string, unknown>>(null);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [dataBusinessProcess, setDataBusinessProcess] = useState(null);
   const [columnList, setColumnList] = useState(undefined);
@@ -135,7 +135,7 @@ export default function BusinessProcessList() {
 
   const abortController = new AbortController();
 
-  const getListBusinessProcess = async (paramsSearch: any) => {
+  const getListBusinessProcess = async (paramsSearch: Record<string, unknown>) => {
     setIsLoading(true);
     const response = await BusinessProcessService.list(paramsSearch, abortController.signal);
 
@@ -199,7 +199,7 @@ export default function BusinessProcessList() {
 
   //lấy danh sách bước của quy trình
   const getListStepProcess = async (processId) => {
-    const body: any = {
+    const body: Record<string, unknown> = {
       processId,
       limit: 100,
     };
@@ -289,7 +289,7 @@ export default function BusinessProcessList() {
 
   const dataFormat = ["text-center", "", "", "", "text-center", "text-center"];
 
-  const dataMappingArray = (item: any, index: number) => [
+  const dataMappingArray = (item: Record<string, unknown>, index: number) => [
     getPageOffset(params) + index + 1,
     // <Link
     //   key={item.id}
@@ -359,7 +359,7 @@ export default function BusinessProcessList() {
     setContentDialog(null);
   };
 
-  const actionsTable = (item: any): IAction[] => {
+  const actionsTable = (item: Record<string, unknown>): IAction[] => {
     return [
       // {
       //   title: "Đổi trạng thái",
@@ -530,7 +530,7 @@ export default function BusinessProcessList() {
     setShowDialog(true);
   };
 
-  const showDialogConfirmPause = (item?: any, status?: number) => {
+  const showDialogConfirmPause = (item?: Record<string, unknown>, status?: number) => {
     const contentDialog: IContentDialog = {
       color: "warning",
       className: "dialog-delete",
@@ -557,7 +557,7 @@ export default function BusinessProcessList() {
     setShowDialogPause(true);
   };
 
-  const showDialogConfirmApprove = (item?: any, status?: number) => {
+  const showDialogConfirmApprove = (item?: Record<string, unknown>, status?: number) => {
     const contentDialog: IContentDialog = {
       color: "success",
       className: "dialog-delete",
@@ -596,7 +596,7 @@ export default function BusinessProcessList() {
   const [valueProcess, setValueProcess] = useState(null);
 
   const loadOptionProcess = async (search, loadedOptions, { page }) => {
-    const param: any = {
+    const param: Record<string, unknown> = {
       name: search,
       page: page,
       limit: 10,
@@ -616,7 +616,7 @@ export default function BusinessProcessList() {
       const dataOption = response.result.items;
 
       if (dataOption.length > 0) {
-        dataOption.map((item: any) => {
+        dataOption.map((item: Record<string, unknown>) => {
           optionProcess.push({
             value: item.id,
             label: item.name,
@@ -811,7 +811,7 @@ export default function BusinessProcessList() {
     "center",
   ];
 
-  const dataMappingArray_OLA_SLA = (item: any, index: number, type?: string) =>
+  const dataMappingArray_OLA_SLA = (item: Record<string, unknown>, index: number, type?: string) =>
     type === "ola"
       ? [
           index + 1,
@@ -875,7 +875,7 @@ export default function BusinessProcessList() {
       const result = response.result;
 
       if (type === "sla") {
-        const headerFormatSLA: any = [
+        const headerFormatSLA: Record<string, unknown> = [
           {
             merge: {
               row: 2,

@@ -11,7 +11,7 @@ import "./ModalAddField.scss";
 import { useActiveElement } from "utils/hookCustom";
 import FieldService from "services/FieldService";
 
-export default function ModalAddField(props: any) {
+export default function ModalAddField(props: Record<string, unknown>) {
   const { onShow, onHide, data } = props;
 
   const focusedElement = useActiveElement();
@@ -27,7 +27,7 @@ export default function ModalAddField(props: any) {
         name: data?.name ?? "",
         rate: data?.rate ?? "",
         position: data?.position ?? 0,
-      } as any),
+      } as Record<string, unknown>),
     [data, onShow]
   );
 
@@ -107,8 +107,8 @@ export default function ModalAddField(props: any) {
     }
     setIsSubmit(true);
 
-    const body: any = {
-      ...(formData.values as any),
+    const body: Record<string, unknown> = {
+      ...(formData.values as Record<string, unknown>),
       ...(data ? { id: data.id } : {}),
     };
 

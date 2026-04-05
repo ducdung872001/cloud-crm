@@ -8,7 +8,7 @@ import { useActiveElement } from "utils/hookCustom";
 import Validate, { handleChangeValidate } from "utils/validate";
 import "./NoteModal.scss";
 
-export default function NoteModal(props: any) {
+export default function NoteModal(props: Record<string, unknown>) {
   const { onShow, data, onHide } = props;  
 
   const [isSubmit, setIsSubmit] = useState<boolean>(false);

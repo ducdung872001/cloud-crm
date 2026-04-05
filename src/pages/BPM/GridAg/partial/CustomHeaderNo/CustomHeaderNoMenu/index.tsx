@@ -10,7 +10,7 @@ import GirdService from "services/GridService";
 const CustomHeaderNoMenu = ({ position, onClose }) => {
   const menuRef = useRef(null);
   const { typeNo, setTypeNo, columnsConfig } = useGridAg();
-  const params: any = getSearchParameters();
+  const params: Record<string, unknown> = getSearchParameters();
 
   // Đóng popup khi click ngoài
   useEffect(() => {

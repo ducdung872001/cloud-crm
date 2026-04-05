@@ -12,7 +12,7 @@ import { isDifferenceObj } from 'reborn-util';
 import "./AddCustomerMarketingLeadModal.scss";
 import CustomerMarketingLeadService from "services/CustomerMarketingLeadService";
 
-export default function AddCustomerMarketingLeadModal(props: any) {
+export default function AddCustomerMarketingLeadModal(props: Record<string, unknown>) {
   const { onShow, onHide, data } = props;
 
   const [isSubmit, setIsSubmit] = useState<boolean>(false);

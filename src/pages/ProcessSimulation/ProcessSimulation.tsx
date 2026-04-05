@@ -22,7 +22,7 @@ import Badge from "components/badge/badge";
 import { color } from "highcharts";
 import { LogErrorTableModal } from "./LogErrorTableModal";
 
-export default function ProcessSimulation(props: any) {
+export default function ProcessSimulation(props: Record<string, unknown>) {
   document.title = "Mô phỏng quy trình";
 
   const { onBackProps } = props;
@@ -35,13 +35,13 @@ export default function ProcessSimulation(props: any) {
   const [listIdChecked, setListIdChecked] = useState<number[]>([]);
   const [showModalAdd, setShowModalAdd] = useState<boolean>(false);
   const [showDialog, setShowDialog] = useState<boolean>(false);
-  const [contentDialog, setContentDialog] = useState<any>(null);
+  const [contentDialog, setContentDialog] = useState<Record<string, unknown>>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [isNoItem, setIsNoItem] = useState<boolean>(false);
   const [isPermissions, setIsPermissions] = useState<boolean>(false);
   const [permissions, setPermissions] = useState(getPermissions());
 
-  const [params, setParams] = useState<any>({
+  const [params, setParams] = useState<Record<string, unknown>>({
     keyword: "",
     limit: 10,
   });
@@ -70,7 +70,7 @@ export default function ProcessSimulation(props: any) {
 
   const abortController = new AbortController();
 
-  const getListProcess = async (paramsSearch: any) => {
+  const getListProcess = async (paramsSearch: Record<string, unknown>) => {
     setIsLoading(true);
 
     const response = await BusinessProcessService.listBpmTrigger(paramsSearch, abortController.signal);
@@ -98,7 +98,7 @@ export default function ProcessSimulation(props: any) {
     setIsLoading(false);
   };
 
-  const handleOpenLogErrorModal = (item: any) => {
+  const handleOpenLogErrorModal = (item: Record<string, unknown>) => {
     setIsOpen(true);
     setProcessDetail({
       nodeId: item.toNodeId,
@@ -149,7 +149,7 @@ export default function ProcessSimulation(props: any) {
 
   const dataFormat = ["text-center", "", "", "", "", "", "text-center", ""];
 
-  const dataMappingArray = (item: any, index: number) => [
+  const dataMappingArray = (item: Record<string, unknown>, index: number) => [
     getPageOffset(params) + index + 1,
     item.id,
     item.fromNodeId,
@@ -186,7 +186,7 @@ export default function ProcessSimulation(props: any) {
     item.processId,
   ];
 
-  const actionsTable = (item: any): IAction[] => {
+  const actionsTable = (item: Record<string, unknown>): IAction[] => {
     return [
       {
         title: "Thực thi",
@@ -226,7 +226,7 @@ export default function ProcessSimulation(props: any) {
     setContentDialog(null);
   };
 
-  const showDialogConfirmActive = (item?: any) => {
+  const showDialogConfirmActive = (item?: Record<string, unknown>) => {
     const contentDialog: IContentDialog = {
       color: "warning",
       className: "dialog-delete",

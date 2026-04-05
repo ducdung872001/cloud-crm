@@ -13,7 +13,7 @@ import SelectCustom from "components/selectCustom/selectCustom";
 import BusinessProcessService from "services/BusinessProcessService";
 import ManageDefaultProcessesService from "services/ManageDefaultProcessesService";
 
-export default function AddConfigDefaultProcesses(props: any) {
+export default function AddConfigDefaultProcesses(props: Record<string, unknown>) {
   const { onShow, onHide, data } = props;
 
   const focusedElement = useActiveElement();
@@ -21,7 +21,7 @@ export default function AddConfigDefaultProcesses(props: any) {
   const [isSubmit, setIsSubmit] = useState<boolean>(false);
   const [showDialog, setShowDialog] = useState<boolean>(false);
   const [contentDialog, setContentDialog] = useState<IContentDialog>(null);
-  const [dataProcess, setDataProcess] = useState<any>(null);
+  const [dataProcess, setDataProcess] = useState<Record<string, unknown>>(null);
   const [checkFieldProcess, setCheckFieldProcess] = useState<boolean>(false);
 
   useEffect(() => {
@@ -41,12 +41,12 @@ export default function AddConfigDefaultProcesses(props: any) {
         uri: data?.uri ?? "",
         processCode: data?.processCode ?? "",
         processName: data?.processName ?? "",
-      } as any),
+      } as Record<string, unknown>),
     [data, onShow]
   );
 
   const loadedOptionProcess = async (search, loadedOptions, { page }) => {
-    const param: any = {
+    const param: Record<string, unknown> = {
       name: search,
       page: page,
       limit: 10,
@@ -216,8 +216,8 @@ export default function AddConfigDefaultProcesses(props: any) {
 
     setIsSubmit(true);
 
-    const body: any = {
-      ...(formData.values as any),
+    const body: Record<string, unknown> = {
+      ...(formData.values as Record<string, unknown>),
       ...(data ? { id: data.id } : {}),
     };
 

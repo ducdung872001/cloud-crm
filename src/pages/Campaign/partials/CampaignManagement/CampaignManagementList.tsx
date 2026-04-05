@@ -22,7 +22,7 @@ import { useOnClickOutside } from "utils/hookCustom";
 import { useNavigate } from "react-router-dom";
 import { ContextType, UserContext } from "contexts/userContext";
 
-export default function CampaignManagementList(props: any) {
+export default function CampaignManagementList(props: Record<string, unknown>) {
   const isMounted = useRef(false);
   const navigate = useNavigate();
 
@@ -30,7 +30,7 @@ export default function CampaignManagementList(props: any) {
 
   const { setType, isFullPage, idProjectManagement, setIdProjectManagement, isRegimeKanban, setParentCampaign } = props;
 
-  const paramsUrl: any = getSearchParameters();
+  const paramsUrl: Record<string, unknown> = getSearchParameters();
 
   const takeIdProjectManagement = Object.keys(paramsUrl).length > 0 && paramsUrl?.parentId ? +paramsUrl?.parentId : -1;
 
@@ -38,12 +38,12 @@ export default function CampaignManagementList(props: any) {
 
   const [showModalAdd, setShowModalAdd] = useState<boolean>(false);
   const [showDialog, setShowDialog] = useState<boolean>(false);
-  const [contentDialog, setContentDialog] = useState<any>(null);
+  const [contentDialog, setContentDialog] = useState<Record<string, unknown>>(null);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [isSearchProject, setIsSearchProject] = useState<boolean>(false);
   const [isShowChildrenProject, setIsShowChildrenProject] = useState<boolean>(false);
 
-  const [params, setParams] = useState<any>({
+  const [params, setParams] = useState<Record<string, unknown>>({
     limit: 20,
     page: 1,
     // parentId: 0,
@@ -51,7 +51,7 @@ export default function CampaignManagementList(props: any) {
   });
 
   //param này để load more
-  const [paramsLoadMore, setParamsLoadMore] = useState<any>({
+  const [paramsLoadMore, setParamsLoadMore] = useState<Record<string, unknown>>({
     limit: 20,
     page: 1,
     campaignType: 0,
@@ -59,7 +59,7 @@ export default function CampaignManagementList(props: any) {
 
   const abortControllerChild = new AbortController();
 
-  const getListProject = async (paramsSearch: any) => {
+  const getListProject = async (paramsSearch: Record<string, unknown>) => {
     setIsLoading(true);
 
     // const response = await WorkProjectService.list(paramsSearch, abortControllerChild.signal);

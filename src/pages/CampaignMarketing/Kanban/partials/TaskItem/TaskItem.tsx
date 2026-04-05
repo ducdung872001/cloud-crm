@@ -11,7 +11,7 @@ import { formatCurrency } from "reborn-util";
 import moment from "moment";
 import Badge from "components/badge/badge";
 
-export default function TaskItem(props: any) {
+export default function TaskItem(props: Record<string, unknown>) {
   const {
     item,
     index,

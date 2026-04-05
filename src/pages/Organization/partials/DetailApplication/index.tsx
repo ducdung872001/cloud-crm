@@ -32,7 +32,7 @@ import "./index.scss";
 
 interface IDetailApplicationProps {
   onShow: boolean;
-  data: any;
+  data: Record<string, unknown>;
   onHide: () => void;
 }
 
@@ -116,10 +116,10 @@ export default function DetailApplication(props: IDetailApplicationProps) {
     if (!date) return null;
 
     // Chuyển đổi startDate và endDate thành đối tượng Date
-    const endDate: any = new Date(date);
+    const endDate: Record<string, unknown> = new Date(date);
 
     // Lấy thời gian hiện tại
-    const currentDate: any = new Date();
+    const currentDate: Record<string, unknown> = new Date();
 
     // Tính số mili giây còn lại giữa ngày hiện tại và ngày kết thúc
     const remainingTimeInMilliseconds = endDate - currentDate;
@@ -154,7 +154,7 @@ export default function DetailApplication(props: IDetailApplicationProps) {
   };
 
   const [showDialog, setShowDialog] = useState<boolean>(false);
-  const [contentDialog, setContentDialog] = useState<any>(null);
+  const [contentDialog, setContentDialog] = useState<Record<string, unknown>>(null);
 
   const showDialogConfirmExtend = (item) => {
     const extend = `${item.period < 10 ? `0${item.period} tháng` : item.period > 100 ? "Vĩnh viễn" : `${item.period} tháng`}`;
@@ -182,7 +182,7 @@ export default function DetailApplication(props: IDetailApplicationProps) {
     setShowDialog(true);
   };
 
-  const dataMappingArray = (item, index: number, arrayData: any[]) => [
+  const dataMappingArray = (item, index: number, arrayData: Record<string, unknown>[]) => [
     index + 1,
     item.packageId <= 0 ? (
       <span>

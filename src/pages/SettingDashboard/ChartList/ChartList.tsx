@@ -19,7 +19,7 @@ import ModalViewChart from "./ModalViewChart/ModalViewChart";
 import ModalAddChart from "./partials/ModalAddChart";
 import ReportChartService from "services/ReportChartService";
 
-export default function ChartList(props: any) {
+export default function ChartList(props: Record<string, unknown>) {
   document.title = "Danh sách biểu đồ";
 
   const { onBackProps } = props;
@@ -30,7 +30,7 @@ export default function ChartList(props: any) {
   const [listIdChecked, setListIdChecked] = useState<number[]>([]);
   const [showModalAdd, setShowModalAdd] = useState<boolean>(false);
   const [showDialog, setShowDialog] = useState<boolean>(false);
-  const [contentDialog, setContentDialog] = useState<any>(null);
+  const [contentDialog, setContentDialog] = useState<Record<string, unknown>>(null);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [isNoItem, setIsNoItem] = useState<boolean>(false);
   const [isPermissions, setIsPermissions] = useState<boolean>(false);
@@ -51,7 +51,7 @@ export default function ChartList(props: any) {
     // },
   ])
 
-  const [params, setParams] = useState<any>({
+  const [params, setParams] = useState<Record<string, unknown>>({
     name: "",
     limit: 10,
   });
@@ -78,7 +78,7 @@ export default function ChartList(props: any) {
 
   const abortController = new AbortController();
 
-  const getListChart = async (paramsSearch: any) => {
+  const getListChart = async (paramsSearch: Record<string, unknown>) => {
     setIsLoading(true);
 
     const response = await ReportChartService.listReportArtifact(paramsSearch, abortController.signal);
@@ -149,13 +149,13 @@ export default function ChartList(props: any) {
 
   const dataFormat = ["text-center", "", "text-center"];
 
-  const dataMappingArray = (item: any, index: number) => [
+  const dataMappingArray = (item: Record<string, unknown>, index: number) => [
     getPageOffset(params) + index + 1,
     item.name,
     item.position
   ];
 
-  const actionsTable = (item: any): IAction[] => {
+  const actionsTable = (item: Record<string, unknown>): IAction[] => {
     const isCheckedItem = listIdChecked?.length > 0;
     return [
       {
@@ -235,7 +235,7 @@ export default function ChartList(props: any) {
     });
   }
 
-  const showDialogConfirmDelete = (item?: any) => {
+  const showDialogConfirmDelete = (item?: Record<string, unknown>) => {
     const contentDialog: IContentDialog = {
       color: "error",
       className: "dialog-delete",

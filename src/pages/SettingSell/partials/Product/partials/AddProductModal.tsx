@@ -55,12 +55,12 @@ export default function AddProductModal(props: AddProductProps) {
   const [listUnit, setListUnit] = useState<IOption[]>(null);
   const [isLoadingUnit, setIsLoadingUnit] = useState<boolean>(false);
 
-  const [addFieldExchange, setAddFieldExchange] = useState<any[]>([]);
+  const [addFieldExchange, setAddFieldExchange] = useState<Record<string, unknown>[]>([]);
 
-  const [productExtraInfos, setProductExtraInfos] = useState<any>([]);
+  const [productExtraInfos, setProductExtraInfos] = useState<Record<string, unknown>>([]);
   // console.log("productExtraInfos", productExtraInfos);
 
-  const [mapProductAttribute, setMapProductAttribute] = useState<any>(null);
+  const [mapProductAttribute, setMapProductAttribute] = useState<Record<string, unknown>>(null);
   // console.log("mapProductAttribute", mapProductAttribute);
 
   //Dùng cho lookup
@@ -210,7 +210,7 @@ export default function AddProductModal(props: AddProductProps) {
   const [validateFieldCategory, setValidateFieldCategory] = useState<boolean>(false);
 
   const loadOptionCategory = async (search, loadedOptions, { page }) => {
-    const param: any = {
+    const param: Record<string, unknown> = {
       name: search,
       page: page,
       limit: 10,
@@ -224,7 +224,7 @@ export default function AddProductModal(props: AddProductProps) {
       return {
         options: [
           ...(dataOption.length > 0
-            ? dataOption.map((item: any) => {
+            ? dataOption.map((item: Record<string, unknown>) => {
                 return {
                   value: item.id,
                   label: item.name,
@@ -599,7 +599,7 @@ export default function AddProductModal(props: AddProductProps) {
       const newArray = Object.entries(mapProductAttribute);
       const checkArray = [];
 
-      newArray.map((lstContractAttribute: any, key: number) => {
+      newArray.map((lstContractAttribute: Record<string, unknown>, key: number) => {
         (lstContractAttribute[1] || []).map((item) => {
           if (item.required === 1 && item.parentId !== 0) {
             checkArray.push(item);
@@ -777,7 +777,7 @@ export default function AddProductModal(props: AddProductProps) {
     });
 
     if (!found) {
-      const item: any = {};
+      const item: Record<string, unknown> = {};
       item.attributeId = attributeId;
       item.attributeValue = attributeValue;
       item.productId = productId;
@@ -1276,7 +1276,7 @@ export default function AddProductModal(props: AddProductProps) {
 
               {mapProductAttribute ? (
                 <div className="list--attribute">
-                  {Object.entries(mapProductAttribute).map((lstAttribute: any, key: number) => (
+                  {Object.entries(mapProductAttribute).map((lstAttribute: Record<string, unknown>, key: number) => (
                     <Fragment key={key}>
                       {(lstAttribute[1] || []).map((attribute, index: number) => (
                         <Fragment key={index}>

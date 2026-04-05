@@ -23,7 +23,7 @@ import { mapDataWithLookup } from "../../function/getDataGrid";
 // import { exportOlaExcel } from "../../exportOla";
 // import { convertToDataRow } from "../../convertToDataRow";
 
-export default function ModalImportGrid(props: any) {
+export default function ModalImportGrid(props: Record<string, unknown>) {
   const { onShow, onHide, name, code, listColumn } = props;
   const { typeNo, setRowData, setLookupValues, setIsLoading } = useGridAg();
 
@@ -112,7 +112,7 @@ export default function ModalImportGrid(props: any) {
     return date_info;
   }
 
-  function parseDateValue(value: any): string | null {
+  function parseDateValue(value: Record<string, unknown>): string | null {
     // Kiểm tra nếu giá trị đã là đối tượng Date
     if (value instanceof Date) {
       return moment(value).utc().toISOString(); // Giữ nguyên nếu đã là đối tượng Date
@@ -140,7 +140,7 @@ export default function ModalImportGrid(props: any) {
       const workbook = XLSX.read(binaryStr, { type: "binary" });
       const sheetName = workbook.SheetNames[0];
       const worksheet = workbook.Sheets[sheetName];
-      const jsonData: any[] = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
+      const jsonData: Record<string, unknown>[] = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
       console.log("jsonData", jsonData);
 
       //Đọc dòng đầu trong file Excel để lấy danh sách cột, nếu số lượng và tên cột không khớp với danh sách cột listColumn đã định nghĩa thì sẽ thông báo lỗi
@@ -208,7 +208,7 @@ export default function ModalImportGrid(props: any) {
     }
   };
 
-  const onSubmit = async (e?: any) => {
+  const onSubmit = async (e?: Record<string, unknown>) => {
     e.preventDefault();
 
     setIsSubmit(true);

@@ -53,7 +53,7 @@ export default function NotOpenShiftTab({ onOpenShiftClick, onActiveShiftFound }
           defaultCash:  d.openingCashDefault ?? 0,
         });
         setStaffs(
-          d.assignedStaff?.map((s: any, idx: number) => ({
+          d.assignedStaff?.map((s: Record<string, unknown>, idx: number) => ({
             employeeId: s.employeeId, name: s.employeeName ?? `NV #${s.employeeId ?? idx + 1}`,
             avatar: s.avatar, role: s.role, isMe: idx === 0,
           })) ?? []

@@ -43,14 +43,14 @@ export default function SaleFlowList() {
   const [listIdChecked, setListIdChecked] = useState<number[]>([]);
   const [showModalAdd, setShowModalAdd] = useState<boolean>(false);
   const [showDialog, setShowDialog] = useState<boolean>(false);
-  const [contentDialog, setContentDialog] = useState<any>(null);
+  const [contentDialog, setContentDialog] = useState<Record<string, unknown>>(null);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [isDetailSaleFlow, setIsDetailSaleFlow] = useState<boolean>(false);
   const [showReportSaleFlow, setShowReportSaleFlow] = useState<boolean>(false);
   const [dataSaleFlow, setDataSaleFlow] = useState(null);
   const [isChangeStatus, setIsChangeStatus] = useState(false);
 
-  const [params, setParams] = useState<any>({
+  const [params, setParams] = useState<Record<string, unknown>>({
     name: "",
   });
 
@@ -66,7 +66,7 @@ export default function SaleFlowList() {
       const paramsArray = queryString.split("&");
 
       // Tạo một đối tượng lưu trữ tham số
-      const paramsResult: any = {};
+      const paramsResult: Record<string, unknown> = {};
 
       // Lặp qua mỗi cặp key-value và thêm vào đối tượng params
       paramsArray.forEach((param) => {
@@ -78,7 +78,7 @@ export default function SaleFlowList() {
         ...params,
         campaignId: +paramsResult.campaignId,
         detail: paramsResult.detail ? true : false,
-      } as any);
+      } as Record<string, unknown>);
 
       setIdSaleFlow(+paramsResult.campaignId);
       setIsDetailSaleFlow(true);

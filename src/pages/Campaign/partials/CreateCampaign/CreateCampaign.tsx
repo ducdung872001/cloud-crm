@@ -62,7 +62,7 @@ interface IDataApproach {
   id?: number;
   step?: number;
   name?: string;
-  activities?: any;
+  activities?: Record<string, unknown>;
   checkName?: boolean;
 }
 
@@ -253,7 +253,7 @@ export default function CreateCampaign() {
     console.log("response detail campaign: ", response);
 
     if (response.code === 0) {
-      const result: any = response.result;
+      const result: Record<string, unknown> = response.result;
       if (result.sales) {
         const takeSales = JSON.parse(result.sales || "[]");
 
@@ -907,7 +907,7 @@ export default function CreateCampaign() {
   };
   //! đoạn này xử lý vấn đề lấy ra danh sách chiến dịch
   const loadedOptionCampaign = async (search, loadedOptions, { page }) => {
-    const param: any = {
+    const param: Record<string, unknown> = {
       name: search,
       page: page,
       limit: 10,
@@ -1071,7 +1071,7 @@ export default function CreateCampaign() {
   const [dataSupplySourceFromMA, setDataSupplySourceFromMA] = useState([]);
 
   const loadedOptionDataSupplySourceFromMA = async (search, loadedOptions, { page }) => {
-    const param: any = {
+    const param: Record<string, unknown> = {
       name: search,
       page: page,
       limit: 10,
@@ -1123,7 +1123,7 @@ export default function CreateCampaign() {
   const [dataSupplySourceFromFilter, setDataSupplySourceFromFilter] = useState([]);
 
   const loadedOptionDataSupplySourceFromFilter = async (search, loadedOptions, { page }) => {
-    const param: any = {
+    const param: Record<string, unknown> = {
       name: search,
       page: page,
       limit: 10,
@@ -1335,7 +1335,7 @@ export default function CreateCampaign() {
     return { options: [], hasMore: false };
   };
   const loadedOptionBranchLevel_1 = async (search, loadedOptions, { page }) => {
-    const param: any = {
+    const param: Record<string, unknown> = {
       name: search,
       page: page,
       limit: 10,
@@ -1367,7 +1367,7 @@ export default function CreateCampaign() {
     return { options: [], hasMore: false };
   };
   const loadedOptionBranchLevel_2 = async (search, loadedOptions, { page }) => {
-    const param: any = {
+    const param: Record<string, unknown> = {
       name: search,
       page: page,
       limit: 10,
@@ -1399,7 +1399,7 @@ export default function CreateCampaign() {
     return { options: [], hasMore: false };
   };
   const loadedOptionBranchLevel_3 = async (search, loadedOptions, { page }) => {
-    const param: any = {
+    const param: Record<string, unknown> = {
       name: search,
       page: page,
       limit: 10,
@@ -1431,7 +1431,7 @@ export default function CreateCampaign() {
     return { options: [], hasMore: false };
   };
   const loadedOptionBranchLevel_4 = async (search, loadedOptions, { page }) => {
-    const param: any = {
+    const param: Record<string, unknown> = {
       name: search,
       page: page,
       limit: 10,
@@ -1692,7 +1692,7 @@ export default function CreateCampaign() {
   }, [listDepartmentId]);
 
   const loadedOptionDepartment = async (search, loadedOptions, { page }) => {
-    const param: any = {
+    const param: Record<string, unknown> = {
       name: search,
       // page: page,
       limit: 1000,
@@ -2447,7 +2447,7 @@ export default function CreateCampaign() {
   ]);
 
   const loadedOptionEmailAction = async (search, loadedOptions, { page }) => {
-    const param: any = {
+    const param: Record<string, unknown> = {
       type: "email",
     };
     const response = await CampaignService.listActionScore(param);
@@ -2485,7 +2485,7 @@ export default function CreateCampaign() {
   ]);
 
   const loadedOptionZaloAction = async (search, loadedOptions, { page }) => {
-    const param: any = {
+    const param: Record<string, unknown> = {
       type: "zalo",
     };
     const response = await CampaignService.listActionScore(param);
@@ -2523,7 +2523,7 @@ export default function CreateCampaign() {
   ]);
 
   const loadedOptionSmsAction = async (search, loadedOptions, { page }) => {
-    const param: any = {
+    const param: Record<string, unknown> = {
       type: "sms",
     };
     const response = await CampaignService.listActionScore(param);
@@ -2562,7 +2562,7 @@ export default function CreateCampaign() {
   ]);
 
   const loadedOptionCallAction = async (search, loadedOptions, { page }) => {
-    const param: any = {
+    const param: Record<string, unknown> = {
       type: "call",
     };
     const response = await CampaignService.listActionScore(param);
@@ -2593,7 +2593,7 @@ export default function CreateCampaign() {
   };
 
   const loadedEmailAction = async () => {
-    const param: any = {
+    const param: Record<string, unknown> = {
       type: "email",
     };
     const response = await CampaignService.listActionScore(param);
@@ -2604,7 +2604,7 @@ export default function CreateCampaign() {
   };
 
   const loadedZaloAction = async () => {
-    const param: any = {
+    const param: Record<string, unknown> = {
       type: "email",
     };
     const response = await CampaignService.listActionScore(param);
@@ -2615,7 +2615,7 @@ export default function CreateCampaign() {
   };
 
   const loadedCallAction = async () => {
-    const param: any = {
+    const param: Record<string, unknown> = {
       type: "email",
     };
     const response = await CampaignService.listActionScore(param);
@@ -3054,7 +3054,7 @@ export default function CreateCampaign() {
   };
 
   const loadedOptionKpi = async (search, loadedOptions, { page }) => {
-    const param: any = {
+    const param: Record<string, unknown> = {
       name: search,
       limit: 10,
       page: page,
@@ -3211,7 +3211,7 @@ export default function CreateCampaign() {
 
   const dataFormat = ["text-center", "", "", "", "text-center"];
 
-  const dataMappingArray = (item: any, index: number, type) => [
+  const dataMappingArray = (item: Record<string, unknown>, index: number, type) => [
     getPageOffset(paramsKpi) + index + 1,
     ...(type === "kpi"
       ? [
@@ -3231,7 +3231,7 @@ export default function CreateCampaign() {
       : []),
   ];
 
-  const actionsTable = (item: any): IAction[] => {
+  const actionsTable = (item: Record<string, unknown>): IAction[] => {
     return [
       //   {
       //     title: "Sửa",
@@ -3253,7 +3253,7 @@ export default function CreateCampaign() {
 
   const [showModalConfigKpi, setShowModalConfigKpi] = useState(false);
 
-  const showDialogConfirmDelete = (item?: any) => {
+  const showDialogConfirmDelete = (item?: Record<string, unknown>) => {
     const contentDialog: IContentDialog = {
       color: "error",
       className: "dialog-delete",

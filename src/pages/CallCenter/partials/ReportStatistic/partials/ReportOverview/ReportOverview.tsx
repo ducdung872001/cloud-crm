@@ -2,7 +2,7 @@ import React, { Fragment, memo, useEffect, useRef, useState } from "react";
 import { formatCurrency } from "reborn-util";
 import "./ReportOverview.scss";
 
-function ReportOverview(props: any) {
+function ReportOverview(props: Record<string, unknown>) {
   const { onShow } = props;
 
   const data = [

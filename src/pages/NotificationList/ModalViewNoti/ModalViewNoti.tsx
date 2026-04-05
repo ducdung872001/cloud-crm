@@ -11,7 +11,7 @@ import { convertToFileName, isDifferenceObj, trimContent } from "reborn-util";
 import "./ModalViewNoti.scss";
 import parser from "html-react-parser";
 
-export default function ModalViewNoti(props: any) {
+export default function ModalViewNoti(props: Record<string, unknown>) {
   const { onShow, onHide, data } = props;
   // console.log('data', data);
 

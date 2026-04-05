@@ -10,7 +10,7 @@ import _ from "lodash";
 import Checkbox from "components/checkbox/checkbox";
 import SaleflowApproachService from "services/SaleflowApproachService";
 
-export default function ModalSettingSLA(props: any) {
+export default function ModalSettingSLA(props: Record<string, unknown>) {
   //isBatch: Thêm hàng loạt cơ hội (thêm nhanh từ màn hình danh sách khách hàng)
   const { onShow, onHide, dataApproach } = props;
   // console.log('dataApproach', dataApproach);

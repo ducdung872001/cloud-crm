@@ -35,10 +35,10 @@ export default function SubsystemAdministrationList(props: ISubsystemAdministrat
   const [listIdChecked, setListIdChecked] = useState<number[]>([]);
   const [showModalAdd, setShowModalAdd] = useState<boolean>(false);
   const [showDialog, setShowDialog] = useState<boolean>(false);
-  const [contentDialog, setContentDialog] = useState<any>(null);
+  const [contentDialog, setContentDialog] = useState<Record<string, unknown>>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [isNoItem, setIsNoItem] = useState<boolean>(false);
-  const [takePosition, setTakePosition] = useState<any>({
+  const [takePosition, setTakePosition] = useState<Record<string, unknown>>({
     index: null,
     moduleId: null,
     lstIdModule: [],

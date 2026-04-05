@@ -14,9 +14,9 @@ import { isDifferenceObj } from "reborn-util";
 import CategoryServiceService from "services/CategoryServiceService";
 import "./AddCategoryProductModal.scss";
 
-const isSuccessResponse = (response: any) => response?.code === 0 || response?.status === 1;
+const isSuccessResponse = (response: Record<string, unknown>) => response?.code === 0 || response?.status === 1;
 
-const getCategoryIdFromResponse = (response: any, fallbackId?: number) => {
+const getCategoryIdFromResponse = (response: Record<string, unknown>, fallbackId?: number) => {
   if (fallbackId) {
     return fallbackId;
   }

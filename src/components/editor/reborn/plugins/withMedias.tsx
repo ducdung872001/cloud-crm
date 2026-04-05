@@ -148,7 +148,7 @@ const updateImage = (editor, url, newUrl, link, width, height, desc, align, poin
   if (link) {
     Transforms.setNodes(editor, imgObj, {
       at: Range,
-      match: (n: any) => n.type == "image" && n.url == url && (n.point ? n.point < point : true),
+      match: (n: Record<string, unknown>) => n.type == "image" && n.url == url && (n.point ? n.point < point : true),
     });
 
     console.log("end fuck");
@@ -158,7 +158,7 @@ const updateImage = (editor, url, newUrl, link, width, height, desc, align, poin
   //Trường hợp cập nhật không có link trong ảnh
   Transforms.setNodes(editor, imgObj, {
     at: Range,
-    match: (n: any) => n.type == "image" && n.url == url && (n.point ? n.point < point : true),
+    match: (n: Record<string, unknown>) => n.type == "image" && n.url == url && (n.point ? n.point < point : true),
   });
 };
 

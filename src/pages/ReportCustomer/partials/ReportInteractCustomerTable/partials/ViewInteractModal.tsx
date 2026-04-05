@@ -9,7 +9,7 @@ import "./ViewInteractModal.scss";
 interface IViewInteractModalProps {
   onShow: boolean;
   onHide: () => void;
-  data: any;
+  data: Record<string, unknown>;
 }
 
 export default function ViewInteractModal(props: IViewInteractModalProps) {

@@ -73,7 +73,7 @@ export default function ReportLogin() {
 
   const abortController = new AbortController();
 
-  const getListReportLogin = async (paramsSearch: any) => {
+  const getListReportLogin = async (paramsSearch: Record<string, unknown>) => {
     setIsLoading(true);
 
     const response = await UserService.checkLogin(paramsSearch);
@@ -112,7 +112,7 @@ export default function ReportLogin() {
     }
     if (isMounted.current === true) {
       getListReportLogin(params);
-      const paramsTemp: any = _.cloneDeep(params);
+      const paramsTemp: Record<string, unknown> = _.cloneDeep(params);
       if (paramsTemp.limit === 10) {
         delete paramsTemp["limit"];
       }
@@ -135,7 +135,7 @@ export default function ReportLogin() {
 
   const dataFormat = ["text-center", "", "", "", "", "text-center", "text-right", "text-center"];
 
-  const dataMappingArray = (item: any, index: number) => [
+  const dataMappingArray = (item: Record<string, unknown>, index: number) => [
     getPageOffset(params) + index + 1,
     <Image key={item.id} src={item.avatar} alt={item.name} />,
     item.name,
@@ -146,7 +146,7 @@ export default function ReportLogin() {
     item.actionTime ? moment(item.actionTime).format("DD/MM/YYYY") : "",
   ];
 
-  const actionsTable = (item: any): IAction[] => {
+  const actionsTable = (item: Record<string, unknown>): IAction[] => {
     return [
       {
         title: "Xem chi tiết",

@@ -3,14 +3,14 @@ import { convertParamsToString } from "reborn-util";
 
 export default {
 
-    guaranteeAttachmentList: (params?: any, signal?: AbortSignal) => {
+    guaranteeAttachmentList: (params?: Record<string, unknown>, signal?: AbortSignal) => {
         return fetch(`${urlsApi.guaranteeAttachment.guaranteeAttachmentList}${convertParamsToString(params)}`, {
             signal,
             method: "GET",
         }).then((res) => res.json());
     },
 
-  guaranteeAttachmentUpdate: (body: any) => {
+  guaranteeAttachmentUpdate: (body: Record<string, unknown>) => {
     return fetch(urlsApi.guaranteeAttachment.guaranteeAttachmentUpdate, {
       method: "POST",
       body: JSON.stringify(body),

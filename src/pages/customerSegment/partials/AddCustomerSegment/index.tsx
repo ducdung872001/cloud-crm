@@ -18,9 +18,9 @@ import Dialog, { IContentDialog } from "components/dialog/dialog";
 import "./index.scss";
 
 interface IAddCustomerSegmentProps {
-  data: any;
+  data: Record<string, unknown>;
   onShow: boolean;
-  onReload: any;
+  onReload: Record<string, unknown>;
   isView: boolean;
 }
 
@@ -333,7 +333,7 @@ export default function AddCustomerSegment(props: IAddCustomerSegmentProps) {
         rule: changeDataProps ? changeDataProps.rule || [] : [],
         blockRule: changeDataProps ? changeDataProps.blockRule || [] : [],
         status: changeDataProps ? changeDataProps.status : "draft",
-      } as any),
+      } as Record<string, unknown>),
     [changeDataProps, onShow]
   );
 
@@ -349,7 +349,7 @@ export default function AddCustomerSegment(props: IAddCustomerSegmentProps) {
   }, [values]);
 
   //! đoạn này xử lý lấy năm
-  const [years] = useState<any[]>(
+  const [years] = useState<Record<string, unknown>[]>(
     createArrayFromToR(new Date().getFullYear(), 1963).map((item, idx) => {
       return {
         value: +item,
@@ -359,7 +359,7 @@ export default function AddCustomerSegment(props: IAddCustomerSegmentProps) {
   );
 
   //! đoạn này xử lý lấy tháng
-  const [months] = useState<any[]>(
+  const [months] = useState<Record<string, unknown>[]>(
     createArrayFromTo(1, 12).map((item, idx) => {
       if (item < 10) {
         return {
@@ -376,7 +376,7 @@ export default function AddCustomerSegment(props: IAddCustomerSegmentProps) {
   );
 
   //! đoạn này xử lý lấy ngày
-  const [days] = useState<any[]>(
+  const [days] = useState<Record<string, unknown>[]>(
     createArrayFromTo(1, 31).map((item, idx) => {
       if (item < 10) {
         return {
@@ -589,7 +589,7 @@ export default function AddCustomerSegment(props: IAddCustomerSegmentProps) {
 
   const [isLoadingSource, setIsLoadingSource] = useState<boolean>(false);
 
-  const onSelectOpenApi = async (source, idx, param?: any) => {
+  const onSelectOpenApi = async (source, idx, param?: Record<string, unknown>) => {
     console.log("source", source);
 
     if (!source) return;
@@ -940,7 +940,7 @@ export default function AddCustomerSegment(props: IAddCustomerSegmentProps) {
     });
   };
 
-  const onSelectOpenBlockApi = async (source, ids, idx, param?: any) => {
+  const onSelectOpenBlockApi = async (source, ids, idx, param?: Record<string, unknown>) => {
     if (!source) return;
 
     const checkSource = source.startsWith("https");
@@ -1373,7 +1373,7 @@ export default function AddCustomerSegment(props: IAddCustomerSegmentProps) {
     });
   };
 
-  const onSelectOpenChildrenBlockApi = async (source, index, ids, idx, param?: any) => {
+  const onSelectOpenChildrenBlockApi = async (source, index, ids, idx, param?: Record<string, unknown>) => {
     if (!source) return;
 
     const checkSource = source.startsWith("https");
@@ -1543,7 +1543,7 @@ export default function AddCustomerSegment(props: IAddCustomerSegmentProps) {
                   disabled: isSubmit || _.isEqual(formData, values) || Object.values(validateRule).filter((item) => item === true).length > 0,
                   is_loading: isSubmit,
                 },
-              ] as any)
+              ] as Record<string, unknown>)
             : []),
         ],
       },

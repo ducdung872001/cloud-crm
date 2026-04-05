@@ -38,7 +38,7 @@ export default function DetailMarketingAutomation() {
   const [listCustomer, setListCustomer] = useState([]);
   const [listIdChecked, setListIdChecked] = useState<number[]>([]);
   const [showDialog, setShowDialog] = useState<boolean>(false);
-  const [contentDialog, setContentDialog] = useState<any>(null);
+  const [contentDialog, setContentDialog] = useState<Record<string, unknown>>(null);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [modalProgress, setModalProgress] = useState(false);
   const [dataCustomer, setDataCustomer] = useState(null);
@@ -102,7 +102,7 @@ export default function DetailMarketingAutomation() {
 
   const abortController = new AbortController();
 
-  const getListCustomer = async (paramsSearch: any) => {
+  const getListCustomer = async (paramsSearch: Record<string, unknown>) => {
     setIsLoading(true);
 
     let response = null;
@@ -195,7 +195,7 @@ export default function DetailMarketingAutomation() {
 
   const dataFormat = ["text-center", "", "text-center", "", "text-center"];
 
-  const dataMappingArray = (item: any, index: number) => [
+  const dataMappingArray = (item: Record<string, unknown>, index: number) => [
     getPageOffset(params) + index + 1,
     // <Link key={item.id} to={`/detail_marketing_automation/maId/${item.id}`} onClick={() => {}} className="detail-customer-marketing-automation">
     //     {item.name}
@@ -371,7 +371,7 @@ export default function DetailMarketingAutomation() {
     }
   }, [id]);
 
-  const [status, setStatus] = useState<any>(-1);
+  const [status, setStatus] = useState<Record<string, unknown>>(-1);
   const handlClickOptionStatus = (e, value) => {
     if (status === value) {
       setStatus(-1);

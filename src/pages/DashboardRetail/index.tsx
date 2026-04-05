@@ -75,9 +75,9 @@ export default function DashboardRetail() {
       ]);
 
       const nearlyItems: ILowStockItem[] = (nearlyOut?.code === 0 ? nearlyOut.result?.data ?? nearlyOut.result ?? [] : [])
-        .map((item: any) => ({ ...item, stockStatus: 1 }));
+        .map((item: Record<string, unknown>) => ({ ...item, stockStatus: 1 }));
       const outItems: ILowStockItem[] = (outOfStock?.code === 0 ? outOfStock.result?.data ?? outOfStock.result ?? [] : [])
-        .map((item: any) => ({ ...item, stockStatus: 0 }));
+        .map((item: Record<string, unknown>) => ({ ...item, stockStatus: 0 }));
 
       // Hết hàng ưu tiên hiển thị trước, sau đó sắp hết
       setLowStockData([...outItems, ...nearlyItems].slice(0, 10));

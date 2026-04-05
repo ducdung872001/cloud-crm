@@ -825,7 +825,7 @@ export default function AddEmployeeModal(props: AddEmployeeModalProps) {
 
   const [defaultListRole, setDefaultListRole] = useState([]);
   const handleGetRole = async (employeeId) => {
-    const params: any = { employeeId, page: 1, limit: 100 };
+    const params: Record<string, unknown> = { employeeId, page: 1, limit: 100 };
 
     const response = await EmployeeService.getListRoleEmployee(params);
 

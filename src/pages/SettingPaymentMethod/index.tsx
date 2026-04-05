@@ -11,7 +11,7 @@ import { PaymentTemplateService } from "services/PaymentMethodService";
 import PaymentTemplateModal from "./partials/PaymentMethodModal";
 import "./index.scss";
 
-export default function SettingPaymentMethod({ onBackProps }: { onBackProps?: any }) {
+export default function SettingPaymentMethod({ onBackProps }: { onBackProps?: Record<string, unknown> }) {
   document.title = "Cài đặt phương thức thanh toán";
   const [permissions] = useState(getPermissions());
   const isMounted = useRef(false);

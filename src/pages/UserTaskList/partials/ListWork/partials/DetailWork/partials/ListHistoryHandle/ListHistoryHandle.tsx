@@ -27,7 +27,7 @@ export default function ListHistoryHandle(props) {
   const [data, setData] = useState(null);
   const [listIdChecked, setListIdChecked] = useState<number[]>([]);
   const [showDialog, setShowDialog] = useState<boolean>(false);
-  const [contentDialog, setContentDialog] = useState<any>(null);
+  const [contentDialog, setContentDialog] = useState<Record<string, unknown>>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [isNoItem, setIsNoItem] = useState<boolean>(false);
   const [isPermissions, setIsPermissions] = useState<boolean>(false);
@@ -54,7 +54,7 @@ export default function ListHistoryHandle(props) {
 
   const abortController = new AbortController();
 
-  const getListOjectLog = async (paramsSearch: any) => {
+  const getListOjectLog = async (paramsSearch: Record<string, unknown>) => {
     setIsLoading(true);
 
     const response = await BusinessProcessService.processedObjectLogPage(paramsSearch, abortController.signal);
@@ -130,7 +130,7 @@ export default function ListHistoryHandle(props) {
 
   const dataFormat = [ "", "", "text-center", "text-center", "text-center"];
 
-  const dataMappingArray = (item: any, index: number) => [
+  const dataMappingArray = (item: Record<string, unknown>, index: number) => [
     // getPageOffset(params) + index + 1,
     item.nodeName || item.processName, 
     item.employeeName,
@@ -152,7 +152,7 @@ export default function ListHistoryHandle(props) {
     />,
   ];
 
-  const actionsTable = (item: any): IAction[] => {
+  const actionsTable = (item: Record<string, unknown>): IAction[] => {
     return [
       // {
       //   title: "Cài đặt trường",

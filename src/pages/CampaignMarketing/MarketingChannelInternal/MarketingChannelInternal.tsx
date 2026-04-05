@@ -10,7 +10,7 @@ import { handDownloadFileOrigin, showToast } from "utils/common";
 import { convertToId, getPageOffset, isDifferenceObj } from "reborn-util";
 import "./MarketingChannelInternal.scss";
 
-export default function MarketingChannelInternal(props: any) {
+export default function MarketingChannelInternal(props: Record<string, unknown>) {
   const { onShow, onHide, data} = props;
   const focusedElement = useActiveElement();
 
@@ -23,7 +23,7 @@ export default function MarketingChannelInternal(props: any) {
     () =>
     ({
       send: 'email'
-    } as any),
+    } as Record<string, unknown>),
     [data, onShow]
   );  
 
@@ -88,7 +88,7 @@ export default function MarketingChannelInternal(props: any) {
     // setIsSubmit(true);
 
     const body = {
-        ...(formData.values as any),
+        ...(formData.values as Record<string, unknown>),
         // ...(data ? { id: data.id } : {}),
     };
 

@@ -12,7 +12,13 @@ import { isDifferenceObj } from "reborn-util";
 import "./index.scss";
 import ObjectGroupService from "services/ObjectGroupService";
 
-export default function AddObjectGroupModal(props: any) {
+interface AddObjectGroupModalProps {
+  onShow: boolean;
+  onHide: (reload: boolean) => void;
+  data: Record<string, unknown> | null;
+}
+
+export default function AddObjectGroupModal(props: AddObjectGroupModalProps) {
   const { onShow, onHide, data } = props;
 
   const focusedElement = useActiveElement();
@@ -91,8 +97,8 @@ export default function AddObjectGroupModal(props: any) {
 
     setIsSubmit(true);
 
-    const body: any = {
-      ...(formData.values as any),
+    const body: Record<string, unknown> = {
+      ...(formData.values as Record<string, unknown>),
       ...(data ? { id: data.id } : {}),
     };
 

@@ -23,7 +23,7 @@ export default function SocialCrm() {
   const [showModalAdd, setShowModalAdd] = useState<boolean>(false);
   const [dataFanpage, setDataFanpage] = useState<IFanpageFacebookResponse[]>([]);
 
-  const loadFanpages = async (accessToken: any) => {
+  const loadFanpages = async (accessToken: Record<string, unknown>) => {
     const params: IConnectFanpageFilterRequest = {
       accessToken,
     };
@@ -34,7 +34,7 @@ export default function SocialCrm() {
       let fanpages = [];
       // console.log('fanpages =>', response.result);
 
-      (response.result || []).map((item: any) => {
+      (response.result || []).map((item: Record<string, unknown>) => {
         fanpages.push({
           name: item.name,
           _fanpage_id: item.id,
@@ -48,7 +48,7 @@ export default function SocialCrm() {
     }
   };
 
-  const responseFacebook = async (response: any) => {
+  const responseFacebook = async (response: Record<string, unknown>) => {
     const accessToken = response.accessToken;
 
     //Từ accessToken, lấy ra danh sách các fanpage người dùng này đang quản lý

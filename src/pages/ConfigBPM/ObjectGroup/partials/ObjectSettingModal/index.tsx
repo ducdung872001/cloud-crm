@@ -6,7 +6,13 @@ import "./index.scss";
 import ObjectGroupService from "services/ObjectGroupService";
 import FormEditorComponent from "pages/BPM/BpmForm/FormEditor";
 
-export default function ObjectSettingModal(props: any) {
+interface ObjectSettingModalProps {
+  onShow: boolean;
+  onHide: (reload: boolean) => void;
+  dataObject: Record<string, unknown> | null;
+}
+
+export default function ObjectSettingModal(props: ObjectSettingModalProps) {
   const { onShow, onHide, dataObject } = props;
   const defaultSchema = {
     id: null,

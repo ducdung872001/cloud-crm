@@ -17,7 +17,7 @@ import SheetFieldQuoteFormService from "services/SheetFieldQuoteFormService";
 interface IViewHistorySignatureProps {
   onShow: boolean;
   onHide: (reload?: boolean) => void;
-  data: any;
+  data: Record<string, unknown>;
   type: "fs" | "quote" | "contract";
   contractTemplate?: boolean;
   fsAttachment?: boolean;
@@ -172,7 +172,7 @@ export default function ViewHistorySignature(props: IViewHistorySignatureProps) 
       const result = response.result.items;
 
       const changeResult = result.map((item) => {
-        const newItem: any = {
+        const newItem: Record<string, unknown> = {
           [item.code]: "",
           type: item.type,
           placeholder: item.name.toLowerCase(),

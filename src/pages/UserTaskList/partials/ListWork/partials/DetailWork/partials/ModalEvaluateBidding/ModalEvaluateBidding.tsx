@@ -40,7 +40,7 @@ export default function ModalEvaluateBidding({ onShow, onHide, data }) {
   const [evaluationType, setEvaluationType] = useState("technical");
   const [totalBidEvaluated, setTotalBidEvaluated] = useState(null);
 
-  const [params, setParams] = useState<any>({
+  const [params, setParams] = useState<Record<string, unknown>>({
     name: "",
     limit: 10,
     page: 1,
@@ -60,7 +60,7 @@ export default function ModalEvaluateBidding({ onShow, onHide, data }) {
     },
   });
 
-  const getListTenderPackage = async (paramsSearch: any, disableLoading?: boolean) => {
+  const getListTenderPackage = async (paramsSearch: Record<string, unknown>, disableLoading?: boolean) => {
     if (!disableLoading) {
       setIsLoading(true);
     }
@@ -100,7 +100,7 @@ export default function ModalEvaluateBidding({ onShow, onHide, data }) {
 
   const dataFormat = ["", "", "text-center", "text-center"];
 
-  const dataMappingArray = (item: any, index: number, type?: string) => [
+  const dataMappingArray = (item: Record<string, unknown>, index: number, type?: string) => [
     // getPageOffset(params) + index + 1,
     <div
       className="title-name"
@@ -180,7 +180,7 @@ export default function ModalEvaluateBidding({ onShow, onHide, data }) {
     "",
   ];
 
-  const actionsTable = (item: any): IAction[] => {
+  const actionsTable = (item: Record<string, unknown>): IAction[] => {
     return [].filter((action) => action);
   };
 

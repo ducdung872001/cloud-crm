@@ -29,7 +29,13 @@ import { stringify } from "uuid";
 import FormCategoryService from "services/FormCategoryService";
 import { showToast } from "utils/common";
 
-const SettingForm = (props: any) => {
+interface SettingFormProps {
+  onShow: boolean;
+  onHide: (reload: boolean) => void;
+  dataForm: Record<string, unknown> | null;
+}
+
+const SettingForm = (props: SettingFormProps) => {
   const { onShow, onHide, dataForm } = props;
   const [isSubmit, setIsSubmit] = useState<boolean>(false);
   const defaultSchema = {
@@ -65,7 +71,7 @@ const SettingForm = (props: any) => {
     }
     setIsSubmit(true);
 
-    const body: any = {
+    const body: Record<string, unknown> = {
       ...dataForm,
       config: JSON.stringify(formSchema),
     };

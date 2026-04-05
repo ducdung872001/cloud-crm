@@ -12,8 +12,8 @@ import "./index.scss";
 interface ITaskItemProps {
   type: "status" | "employee" | "mine";
   takeDescWork: (id: number) => void;
-  onReload: any;
-  item: any;
+  onReload: Record<string, unknown>;
+  item: Record<string, unknown>;
   index: number;
   totalTask: number;
 }
@@ -33,11 +33,11 @@ export default function TaskItem(props: ITaskItemProps) {
   const [showModalUpdateLevel, setShowModalUpdateLevel] = useState<boolean>(false);
 
   function calculateRemainingDays(startTime, endTime) {
-    const currentDate: any = new Date(); // Ngày hiện tại
+    const currentDate: Record<string, unknown> = new Date(); // Ngày hiện tại
 
     // Chuyển đổi thời gian bắt đầu và kết thúc thành đối tượng Date
-    const startDate: any = new Date(startTime);
-    const endDate: any = new Date(endTime);
+    const startDate: Record<string, unknown> = new Date(startTime);
+    const endDate: Record<string, unknown> = new Date(endTime);
 
     let remainingDays;
 

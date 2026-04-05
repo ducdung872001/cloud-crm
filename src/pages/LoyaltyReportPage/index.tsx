@@ -166,7 +166,7 @@ export default function LoyaltyReportPage({ onBackProps }: { onBackProps: (v: bo
         } else {
           setError(res?.message ?? "Không thể tải báo cáo");
         }
-      } catch (e: any) {
+      } catch (e: unknown) {
         if (e?.name !== "AbortError") setError("Lỗi kết nối máy chủ");
       } finally {
         setIsLoading(false);

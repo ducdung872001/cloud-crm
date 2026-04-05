@@ -12,7 +12,7 @@ import { useOlaSetting } from "hooks/useLA";
 import ModalHistoryOLA from "./partial/ModalHistoryOLA/ModalHistoryOLA";
 import ModalOverLap from "./partial/ModalOverLap";
 
-export default function ModalOLA(props: any) {
+export default function ModalOLA(props: Record<string, unknown>) {
   //isBatch: Thêm hàng loạt cơ hội (thêm nhanh từ màn hình danh sách khách hàng)
   const { onShow, onHide, dataNode, disable, processId } = props;
   const [showDialog, setShowDialog] = useState<boolean>(false);

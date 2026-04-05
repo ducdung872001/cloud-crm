@@ -15,12 +15,12 @@ import { useWindowDimensions } from "utils/hookCustom";
 import "./index.scss";
 
 interface IKanbanStatusWork {
-  data: any;
+  data: Record<string, unknown>;
   isShow: boolean;
-  onReload: any;
+  onReload: Record<string, unknown>;
 }
 
-export default function KanbanStatusWork(props: any) {
+export default function KanbanStatusWork(props: Record<string, unknown>) {
   const {
     data,
     type,
@@ -99,7 +99,7 @@ export default function KanbanStatusWork(props: any) {
     }
   }, [idProduct, isShow]);
 
-  const [columns, setColumns] = useState<any[]>([]);
+  const [columns, setColumns] = useState<Record<string, unknown>[]>([]);
   // console.log('columns', columns);
 
   const [idStartPoint, setIdStartPoint] = useState<number>(null);

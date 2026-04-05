@@ -165,7 +165,7 @@ export default function ModalExclusiveGateway({ onShow, onHide, dataNode, proces
                   // || !isDifferenceObj(formData, values),
                   is_loading: isSubmit,
                 },
-              ] as any)),
+              ] as Record<string, unknown>)),
         ],
       },
     }),

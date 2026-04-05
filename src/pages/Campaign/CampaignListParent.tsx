@@ -8,7 +8,7 @@ import CampaignManagementList from "./partials/CampaignManagement/CampaignManage
 import CampaignList from "./CampaignList";
 
 export default function CampaignListParent() {
-  const paramsUrl: any = getSearchParameters();
+  const paramsUrl: Record<string, unknown> = getSearchParameters();
   const [isFullPage, setIsFullPage] = useState<boolean>(false);
   const [isDetailWork, setIsDetailWork] = useState<boolean>(false);
   const [isVertical, setIsVertical] = useState<boolean>(false);

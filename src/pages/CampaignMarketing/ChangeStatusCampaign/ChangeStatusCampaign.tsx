@@ -9,7 +9,7 @@ import { isDifferenceObj } from "reborn-util";
 import "./ChangeStatusCampaign.scss";
 
 interface IChangeStatusCampaignProps {
-  data: any;
+  data: Record<string, unknown>;
   onShow: boolean;
   onHide: (reload: boolean) => void;
 }
@@ -23,7 +23,7 @@ export default function ChangeStatusCampaign(props: IChangeStatusCampaignProps) 
     () =>
       ({
         status: data?.statusOther?.toString() ?? "",
-      } as any),
+      } as Record<string, unknown>),
     [data, onShow]
   );
 

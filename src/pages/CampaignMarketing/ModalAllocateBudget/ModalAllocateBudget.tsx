@@ -16,7 +16,7 @@ import Icon from "components/icon";
 import SelectCustom from "components/selectCustom/selectCustom";
 import NummericInput from "components/input/numericInput";
 
-export default function ModalAllocateBudget(props: any) {
+export default function ModalAllocateBudget(props: Record<string, unknown>) {
   const { onShow, onHide, idData, idCampaign } = props;
 
   const focusedElement = useActiveElement();
@@ -32,7 +32,7 @@ export default function ModalAllocateBudget(props: any) {
     const response = null;
 
     if (response.code === 0) {
-      const result: any = response.result;
+      const result: Record<string, unknown> = response.result;
 
       if (result.channelId) {
         setDataChannel({ value: result.channelId, label: result.channelName });
@@ -57,7 +57,7 @@ export default function ModalAllocateBudget(props: any) {
     const response = null;
 
     if (response.code === 0) {
-      const result: any = response.result;
+      const result: Record<string, unknown> = response.result;
       setDetailCampaign(result);
     }
   };
@@ -83,7 +83,7 @@ export default function ModalAllocateBudget(props: any) {
         channelId: data?.channelId ?? 0,
         segments: data?.segments ?? "[]",
         measurements: data?.measurements ?? "[]",
-      } as any),
+      } as Record<string, unknown>),
     [onShow, data, idCampaign]
   );
 
@@ -125,7 +125,7 @@ export default function ModalAllocateBudget(props: any) {
   const [dataChannel, setDataChannel] = useState(null);
   //! đoạn này xử lý vấn đề lấy ra danh sách nhân viên
   const loadedOptionChannel = async (search, loadedOptions, { page }) => {
-    const param: any = {
+    const param: Record<string, unknown> = {
       name: search,
       page: page,
     };
@@ -179,8 +179,8 @@ export default function ModalAllocateBudget(props: any) {
 
     setIsSubmit(true);
 
-    const body: any = {
-      ...(formData.values as any),
+    const body: Record<string, unknown> = {
+      ...(formData.values as Record<string, unknown>),
       ...(data ? { id: data.id } : {}),
     };
 

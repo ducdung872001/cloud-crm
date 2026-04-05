@@ -15,7 +15,7 @@ import BusinessProcessService from "services/BusinessProcessService";
 import RadioList from "components/radio/radioList";
 import Input from "components/input/input";
 
-export default function ModalTimer(props: any) {
+export default function ModalTimer(props: Record<string, unknown>) {
   //isBatch: Thêm hàng loạt cơ hội (thêm nhanh từ màn hình danh sách khách hàng)
   const { onShow, onHide, dataNode, disable } = props;
   // console.log('dataApproach', dataApproach);

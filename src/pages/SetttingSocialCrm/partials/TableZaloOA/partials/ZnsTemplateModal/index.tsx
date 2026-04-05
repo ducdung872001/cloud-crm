@@ -23,7 +23,7 @@ export default function ZnsTemplateModal(props: AddZnsTemplateModalProps) {
   const [isPermissions, setIsPermissions] = useState<boolean>(false);
   const [isActiveForm, setIsActiveForm] = useState<boolean>(false);
   const [showDialog, setShowDialog] = useState<boolean>(false);
-  const [contentDialog, setContentDialog] = useState<any>(null);
+  const [contentDialog, setContentDialog] = useState<Record<string, unknown>>(null);
 
   const getListZnsTemplate = async () => {
     setIsLoading(true);

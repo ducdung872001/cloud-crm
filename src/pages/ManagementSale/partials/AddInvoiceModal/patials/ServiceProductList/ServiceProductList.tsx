@@ -44,7 +44,7 @@ export default function ServiceProductList(props: IServiceProductListProps) {
   const [invoiceId, setInvoiceId] = useState<number>(0);
   const [listIdChecked, setListIdChecked] = useState<number[]>([]);
   const [showDialog, setShowDialog] = useState<boolean>(false);
-  const [contentDialog, setContentDialog] = useState<any>(null);
+  const [contentDialog, setContentDialog] = useState<Record<string, unknown>>(null);
   const [listProductInvoiceService, setListProductInvoiceService] = useState<IProductInvoiceServiceResponse[]>([]);
 
   const getListProductInvoiceService = async () => {

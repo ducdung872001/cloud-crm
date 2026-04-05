@@ -67,7 +67,7 @@ export const headerHsmt = [
   },
 ];
 
-export const dataRowHsmt: any = [
+export const dataRowHsmt: Record<string, unknown> = [
   [
     {
       key: "stt",

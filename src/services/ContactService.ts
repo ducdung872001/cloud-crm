@@ -31,7 +31,7 @@ export default {
     }).then((res) => res.json());
   },
 
-  contactExchange: (params: any) => {
+  contactExchange: (params: Record<string, unknown>) => {
     return fetch(`${urlsApi.contact.contactExchange}${convertParamsToString(params)}`, {
       method: "GET",
     }).then((res) => res.json());
@@ -80,7 +80,7 @@ export default {
   },
 
   // import khách hàng b2
-  autoProcess: (body: any) => {
+  autoProcess: (body: Record<string, unknown>) => {
     return fetch(urlsApi.contact.autoProcess, {
       method: "POST",
       body: JSON.stringify(body),

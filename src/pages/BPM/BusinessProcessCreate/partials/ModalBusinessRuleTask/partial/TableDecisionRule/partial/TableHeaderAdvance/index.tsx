@@ -7,8 +7,8 @@ import Dialog, { IContentDialog } from "components/dialog/dialog";
 import ActionColumn from "../ActionColumnDecisionTable";
 
 interface TableHeaderAdvanceProps {
-  listColumn: any[];
-  setListColumn: (columns: any[]) => void;
+  listColumn: Record<string, unknown>[];
+  setListColumn: (columns: Record<string, unknown>[]) => void;
   setIsShowModalAddColumn: (isShow: boolean) => void;
   setIndexColumnEdit: (index: number) => void;
   setIsShowModalDecision: (isShow: boolean) => void;
@@ -23,7 +23,7 @@ const TableHeaderAdvance: React.FC<TableHeaderAdvanceProps> = ({
 }) => {
   const refColumn = useRef();
   const [editColumn, setEditColumn] = useState([]);
-  const [showPopoverEditColumn, setShowPopoverEditColumn] = useState<any[]>([]);
+  const [showPopoverEditColumn, setShowPopoverEditColumn] = useState<Record<string, unknown>[]>([]);
   useOnClickOutside(refColumn, () => setShowPopoverEditColumn(showPopoverEditColumn.map((item) => false)), ["index"]);
   useEffect(() => {
     setEditColumn(

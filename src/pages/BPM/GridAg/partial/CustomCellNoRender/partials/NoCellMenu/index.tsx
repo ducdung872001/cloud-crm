@@ -87,7 +87,7 @@ const NoCellMenu = ({ position, onClose, rowKey, callBack }) => {
     };
   }, [onClose]);
 
-  const handleAction = (action, position, stype?: any) => {
+  const handleAction = (action, position, stype?: Record<string, unknown>) => {
     callBack({
       rowKey: rowKey,
       action: action,

@@ -41,7 +41,7 @@ export default function AssignWorkModal(props: IAddWorkModelProps) {
   const { type, onShow, onHide, idWork, idManagement, startDate, endDate, dataProjectProps, dataOptProps, statusProps, customerId, customerName } =
     props;
 
-  const params: any = getSearchParameters();
+  const params: Record<string, unknown> = getSearchParameters();
 
   const takeIdProjectManagement = Object.keys(params).length > 0 && +params?.projectId > 0 ? +params?.projectId : null;
   const { name, avatar } = useContext(UserContext) as ContextType;

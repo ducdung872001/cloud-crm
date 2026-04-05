@@ -25,7 +25,7 @@ export default function OptManagementList(props: IOptManagementListProps) {
 
   const { setType, isFullPage, idOptManagement, setIdOptManagement, isRegimeKanban, dataProjectReport } = props;
 
-  const paramsUrl: any = getSearchParameters();
+  const paramsUrl: Record<string, unknown> = getSearchParameters();
   const checkKanbanTab = localStorage.getItem("kanbanTabOpportunity");
   const [kanbanTab, setKanbanTab] = useState(checkKanbanTab ? JSON.parse(checkKanbanTab) : 1);
   useEffect(() => {
@@ -37,7 +37,7 @@ export default function OptManagementList(props: IOptManagementListProps) {
   const [listOpt, setListOpt] = useState(null);
   const [showModalAdd, setShowModalAdd] = useState<boolean>(false);
   const [showDialog, setShowDialog] = useState<boolean>(false);
-  const [contentDialog, setContentDialog] = useState<any>(null);
+  const [contentDialog, setContentDialog] = useState<Record<string, unknown>>(null);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [isSearchProject, setIsSearchProject] = useState<boolean>(false);
   const [isShowChildrenProject, setIsShowChildrenProject] = useState<boolean>(false);

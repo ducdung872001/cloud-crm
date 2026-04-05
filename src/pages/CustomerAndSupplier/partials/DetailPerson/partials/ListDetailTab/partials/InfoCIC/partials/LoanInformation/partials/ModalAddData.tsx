@@ -53,7 +53,7 @@ export default function ModalAddData({ onShow, onHide, dataProps, customerId }) 
       badDebtAmount: data?.badDebtAmount ?? "",
       badDebtType: data?.badDebtType ?? "",
       customerId: data?.customerId ?? "",
-    } as any),
+    } as Record<string, unknown>),
     [onShow, data]
   );
 
@@ -352,9 +352,9 @@ export default function ModalAddData({ onShow, onHide, dataProps, customerId }) 
 
     setIsSubmit(true);
 
-    const body: any = {
+    const body: Record<string, unknown> = {
       ...(dataProps ? { id: dataProps?.id } : {}),
-      ...(formData.values as any),
+      ...(formData.values as Record<string, unknown>),
       openingDate: moment(formData.values.openingDate).format("YYYY-MM-DD[T]HH:mm:ss"),
       dateDue: moment(formData.values.dateDue).format("YYYY-MM-DD[T]HH:mm:ss"),
       badDebtDate: moment(formData.values.badDebtDate).format("YYYY-MM-DD[T]HH:mm:ss"),

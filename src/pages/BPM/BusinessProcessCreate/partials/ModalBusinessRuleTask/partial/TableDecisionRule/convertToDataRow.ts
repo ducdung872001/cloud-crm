@@ -10,13 +10,13 @@ import moment from "moment";
 
 type CellData = {
   key: string;
-  value?: any;
+  value?: Record<string, unknown>;
   compare?: string;
   children?: CellData[];
-  [k: string]: any; // bổ sung trường khác
+  [k: string]: Record<string, unknown>; // bổ sung trường khác
 };
 
-export function convertToDataRow(rawTable: CellData[][]): any[] {
+export function convertToDataRow(rawTable: CellData[][]): Record<string, unknown>[] {
   return rawTable.map((row, index) => {
     // row là array các cell
     const result: Record<string, any> = {};

@@ -32,7 +32,7 @@ export default {
       method: "DELETE",
     }).then((res) => res.json());
   },
-  updateAlert: (body: any) => {
+  updateAlert: (body: Record<string, unknown>) => {
     return fetch(urlsApi.contract.updateAlert, {
       method: "POST",
       body: JSON.stringify(body),
@@ -45,7 +45,7 @@ export default {
   },
 
   //cảnh báo hợp đồng chung cho tất cả
-  contractAlertUpdate: (body: any) => {
+  contractAlertUpdate: (body: Record<string, unknown>) => {
     return fetch(urlsApi.contract.contractAlertUpdate, {
       method: "POST",
       body: JSON.stringify(body),
@@ -59,7 +59,7 @@ export default {
   },
 
   //cảnh báo bảo lãnh hợp đồng chung cho tất cả
-  guaranteeAlertUpdate: (body: any) => {
+  guaranteeAlertUpdate: (body: Record<string, unknown>) => {
     return fetch(urlsApi.contract.guaranteeAlertUpdate, {
       method: "POST",
       body: JSON.stringify(body),
@@ -73,7 +73,7 @@ export default {
   },
 
   //cảnh báo bảo hành hợp đồng chung cho tất cả
-  warrantyAlertUpdate: (body: any) => {
+  warrantyAlertUpdate: (body: Record<string, unknown>) => {
     return fetch(urlsApi.contract.warrantyAlertUpdate, {
       method: "POST",
       body: JSON.stringify(body),
@@ -87,7 +87,7 @@ export default {
   },
 
   //cảnh báo hợp đồng riêng từng cái
-  contractAlertSpecific: (body: any) => {
+  contractAlertSpecific: (body: Record<string, unknown>) => {
     return fetch(urlsApi.contract.contractAlertSpecific, {
       method: "POST",
       body: JSON.stringify(body),
@@ -106,7 +106,7 @@ export default {
     }).then((res) => res.json());
   },
 
-  updateApproach: (body: any) => {
+  updateApproach: (body: Record<string, unknown>) => {
     return fetch(urlsApi.contract.updateApproach, {
       method: "POST",
       body: JSON.stringify(body),
@@ -114,7 +114,7 @@ export default {
   },
 
   //phụ lục hợp đồng
-  contractAppendixList: (params: any, signal?: AbortSignal) => {
+  contractAppendixList: (params: Record<string, unknown>, signal?: AbortSignal) => {
     return fetch(`${urlsApi.contract.contractAppendixList}${convertParamsToString(params)}`, {
       signal,
       method: "GET",
@@ -125,7 +125,7 @@ export default {
       method: "DELETE",
     }).then((res) => res.json());
   },
-  contractAppendixUpdate: (body: any) => {
+  contractAppendixUpdate: (body: Record<string, unknown>) => {
     return fetch(urlsApi.contract.contractAppendixUpdate, {
       method: "POST",
       body: JSON.stringify(body),
@@ -137,7 +137,7 @@ export default {
     }).then((res) => res.json());
   },
 
-  contractExchange: (params: any) => {
+  contractExchange: (params: Record<string, unknown>) => {
     return fetch(`${urlsApi.contract.contractExchange}${convertParamsToString(params)}`, {
       method: "GET",
     }).then((res) => res.json());
@@ -180,7 +180,7 @@ export default {
   },
 
   //list mã để nghị workit
-  listCodeSuggest: (params: any, signal?: AbortSignal) => {
+  listCodeSuggest: (params: Record<string, unknown>, signal?: AbortSignal) => {
     return fetch(`${urlsApi.contract.listCodeSuggest}${convertParamsToString(params)}`, {
       signal,
       method: "GET",
@@ -188,7 +188,7 @@ export default {
   },
 
   //list mã mặt hàng/dịch vụ workit
-  listCodeService: (params: any, signal?: AbortSignal) => {
+  listCodeService: (params: Record<string, unknown>, signal?: AbortSignal) => {
     return fetch(`${urlsApi.contract.listCodeService}${convertParamsToString(params)}`, {
       signal,
       method: "GET",
@@ -196,7 +196,7 @@ export default {
   },
 
   //list nhà cung cấp workit
-  listSupplier: (params: any, signal?: AbortSignal) => {
+  listSupplier: (params: Record<string, unknown>, signal?: AbortSignal) => {
     return fetch(`${urlsApi.contract.listSupplier}${convertParamsToString(params)}`, {
       signal,
       method: "GET",
@@ -204,7 +204,7 @@ export default {
   },
 
   //Thêm hạng mục bàn giao
-  updateHandover: (body: any) => {
+  updateHandover: (body: Record<string, unknown>) => {
     return fetch(urlsApi.contract.updateHandover, {
       method: "POST",
       body: JSON.stringify(body),
@@ -212,7 +212,7 @@ export default {
   },
 
   //Thêm đợt bàn giao
-  updateHandoverProgress: (body: any) => {
+  updateHandoverProgress: (body: Record<string, unknown>) => {
     return fetch(urlsApi.contract.updateHandoverProgress, {
       method: "POST",
       body: JSON.stringify(body),
@@ -220,7 +220,7 @@ export default {
   },
 
   //danh sách đợt bàn giao
-  listHandoverProgress: (params: any, signal?: AbortSignal) => {
+  listHandoverProgress: (params: Record<string, unknown>, signal?: AbortSignal) => {
     return fetch(`${urlsApi.contract.listHandoverProgress}${convertParamsToString(params)}`, {
       signal,
       method: "GET",
@@ -270,21 +270,21 @@ export default {
   },
 
   //Biểu đồ thống kê
-  reportContractStatus: (params: any, signal?: AbortSignal) => {
+  reportContractStatus: (params: Record<string, unknown>, signal?: AbortSignal) => {
     return fetch(`${urlsApi.contract.reportContractStatus}${convertParamsToString(params)}`, {
       signal,
       method: "GET",
     }).then((res) => res.json());
   },
 
-  reportContractValue: (params: any, signal?: AbortSignal) => {
+  reportContractValue: (params: Record<string, unknown>, signal?: AbortSignal) => {
     return fetch(`${urlsApi.contract.reportContractContract}${convertParamsToString(params)}`, {
       signal,
       method: "GET",
     }).then((res) => res.json());
   },
 
-  reportNewContract: (params: any, signal?: AbortSignal) => {
+  reportNewContract: (params: Record<string, unknown>, signal?: AbortSignal) => {
     return fetch(`${urlsApi.contract.reportNewContract}${convertParamsToString(params)}`, {
       signal,
       method: "GET",
@@ -292,7 +292,7 @@ export default {
   },
 
   //Cập nhật các trạng thái liên quan đến hợp đồng
-  updateStatus: (body: any) => {
+  updateStatus: (body: Record<string, unknown>) => {
     return fetch(urlsApi.contract.updateStatus, {
       method: "POST",
       body: JSON.stringify(body),
@@ -300,7 +300,7 @@ export default {
   },
 
   ///lịch sử thay đổi hợp đồng
-  logValues: (params: any, signal?: AbortSignal) => {
+  logValues: (params: Record<string, unknown>, signal?: AbortSignal) => {
     return fetch(`${urlsApi.contract.logValues}${convertParamsToString(params)}`, {
       signal,
       method: "GET",

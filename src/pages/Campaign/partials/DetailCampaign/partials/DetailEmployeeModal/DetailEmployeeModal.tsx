@@ -14,7 +14,7 @@ import "react-funnel-pipeline/dist/index.css";
 import "./DetailEmployeeModal.scss";
 import AdvancedDateFilter from "components/advancedDateFilter/advancedDateFilter";
 
-export default function DetailEmployeeModal(props: any) {
+export default function DetailEmployeeModal(props: Record<string, unknown>) {
   const { onShow, data, onHide } = props;
 
   const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -37,7 +37,7 @@ export default function DetailEmployeeModal(props: any) {
 
   const dataFormat = ["text-center", "text-center", "text-center", "text-center", "text-center"];
 
-  const dataMappingArray = (item: any, index: number) => [
+  const dataMappingArray = (item: Record<string, unknown>, index: number) => [
     <span style={{ fontSize: 14, color: "var(--success-color)" }}>
       <span style={{ fontSize: 14, color: "orange" }}>{item.call}</span>/{item.kpiCall}
     </span>,

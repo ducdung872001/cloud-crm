@@ -13,8 +13,8 @@ const withTables = (editor) => {
         const { selection } = editor;
 
         if (selection && Range.isCollapsed(selection)) {
-            const [cell]: any = Editor.nodes(editor, {
-                match: (n: any) => n.type === "table-cell",
+            const [cell] = Editor.nodes(editor, {
+                match: (n: Record<string, unknown>) => n.type === "table-cell",
             });
 
             if (cell) {
@@ -34,8 +34,8 @@ const withTables = (editor) => {
         const { selection } = editor;
 
         if (selection && Range.isCollapsed(selection)) {
-            const [cell]: any = Editor.nodes(editor, {
-                match: (n: any) => n.type === "table-cell",
+            const [cell] = Editor.nodes(editor, {
+                match: (n: Record<string, unknown>) => n.type === "table-cell",
             });
 
             if (cell) {
@@ -55,7 +55,7 @@ const withTables = (editor) => {
         const { selection } = editor;
 
         if (selection) {
-            const [table]: any = Editor.nodes(editor, { match: (n: any) => n.type === "table" });
+            const [table] = Editor.nodes(editor, { match: (n: Record<string, unknown>) => n.type === "table" });
 
             if (table) {
                 return;
@@ -147,7 +147,7 @@ const insertTable = (editor) => {
  */
 const insertTableColumn = (editor, currentId) => {
     //Tìm table => lấy ra children => chỉnh sửa children => update lại node
-    for (const [node, path] of Editor.nodes(editor, { at: Range, match: (n: any) => n.type === "table" })) {
+    for (const [node, path] of Editor.nodes(editor, { at: Range, match: (n: Record<string, unknown>) => n.type === "table" })) {
         let children = node.children;
         let columnIndex = 0;
 
@@ -189,7 +189,7 @@ const insertTableColumn = (editor, currentId) => {
         //Xóa cũ
         Transforms.removeNodes(editor, {
             at: Range,
-            match: (n: any) => n.type == "table",
+            match: (n: Record<string, unknown>) => n.type == "table",
         });
 
         //Thực hiện chèn lại
@@ -208,7 +208,7 @@ const insertTableRow = (editor, currentId) => {
     let point = new Date().getTime();
 
     //Tìm table => lấy ra children => chỉnh sửa children => update lại node
-    for (const [node, path] of Editor.nodes(editor, { at: Range, match: (n: any) => n.type === "table" })) {
+    for (const [node, path] of Editor.nodes(editor, { at: Range, match: (n: Record<string, unknown>) => n.type === "table" })) {
         //1. Trả về mảng table-row
         let children = Object.assign([], node.children);
 
@@ -242,7 +242,7 @@ const insertTableRow = (editor, currentId) => {
         //Xóa cũ
         Transforms.removeNodes(editor, {
             at: Range,
-            match: (n: any) => n.type == "table",
+            match: (n: Record<string, unknown>) => n.type == "table",
         });
 
         //Thực hiện chèn lại
@@ -259,7 +259,7 @@ const insertTableRow = (editor, currentId) => {
 const removeTable = (editor, currentId) => {
     Transforms.removeNodes(editor, {
         at: Range,
-        match: (n: any) => n.type == "table" && n?.id == currentId,
+        match: (n: Record<string, unknown>) => n.type == "table" && n?.id == currentId,
     });
 };
 
@@ -268,7 +268,7 @@ const removeTable = (editor, currentId) => {
  */
 const removeTableColumn = (editor, currentId) => {
     //Tìm table => lấy ra children => chỉnh sửa children => update lại node
-    for (const [node, path] of Editor.nodes(editor, { at: Range, match: (n: any) => n.type === "table" })) {
+    for (const [node, path] of Editor.nodes(editor, { at: Range, match: (n: Record<string, unknown>) => n.type === "table" })) {
         let children = node.children;
         let columnIndex = 0;
 
@@ -307,7 +307,7 @@ const removeTableColumn = (editor, currentId) => {
         //Xóa cũ
         Transforms.removeNodes(editor, {
             at: Range,
-            match: (n: any) => n.type == "table",
+            match: (n: Record<string, unknown>) => n.type == "table",
         });
 
         //Thực hiện chèn lại
@@ -326,7 +326,7 @@ const removeTableRow = (editor, currentId) => {
     let point = new Date().getTime();
 
     //Tìm table => lấy ra children => chỉnh sửa children => update lại node
-    for (const [node, path] of Editor.nodes(editor, { at: Range, match: (n: any) => n.type === "table" })) {
+    for (const [node, path] of Editor.nodes(editor, { at: Range, match: (n: Record<string, unknown>) => n.type === "table" })) {
         //Đây là tập các hàng
         let children = Object.assign([], node.children);
         let rowIndex = 0;
@@ -351,7 +351,7 @@ const removeTableRow = (editor, currentId) => {
         //Xóa cũ
         Transforms.removeNodes(editor, {
             at: Range,
-            match: (n: any) => n.type == "table",
+            match: (n: Record<string, unknown>) => n.type == "table",
         });
 
         //Thực hiện chèn lại

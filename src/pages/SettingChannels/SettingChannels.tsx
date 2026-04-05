@@ -180,7 +180,7 @@ export default function SettingChannels() {
       {!isDetail && (
         <TabMenuList
           groups={groups}
-          onClick={(item: any) => {
+          onClick={(item: Record<string, unknown>) => {
             setTab(item.is_tab);
             setTabLabel(item.title);
             setIsDetail(true);

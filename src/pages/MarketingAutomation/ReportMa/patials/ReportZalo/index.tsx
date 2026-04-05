@@ -7,7 +7,7 @@ import ChartActionDaily from "./ChartActionDaily";
 import ChartActionCumulative from "./ChartActionCumulative";
 
 interface ICardItem {
-  icon: any;
+  icon: Record<string, unknown>;
   name: string;
   value: string;
   color: "total" | "out-date" | "success" | "today" | "remaining" | "average" | "early";

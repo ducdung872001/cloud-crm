@@ -81,7 +81,7 @@ const statusColor = {
   STORE_CANCELED: "error",
 };
 
-export default function KanbanOrderTracking(props: any) {
+export default function KanbanOrderTracking(props: Record<string, unknown>) {
   const { beautySalonId, setShowModalRequestDetail, setDataRequestDetail, setCustomerInfo } = props;
 
   //Xử lý các hành động trên item
@@ -181,7 +181,7 @@ export default function KanbanOrderTracking(props: any) {
   );
 
   const OrderRequestServiceList = useCallback(
-    async (params: any, signal?: AbortSignal) => {
+    async (params: Record<string, unknown>, signal?: AbortSignal) => {
       let mergedParams = {
         ...params,
         ...(beautySalonId ? { bsnId: beautySalonId } : {}),

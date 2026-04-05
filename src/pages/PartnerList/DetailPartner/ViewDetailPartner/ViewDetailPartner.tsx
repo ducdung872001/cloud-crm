@@ -20,7 +20,7 @@ import "./ViewDetailPartner.scss";
 import _ from "lodash";
 import PartnerService from "services/PartnerService";
 
-export default function ViewDetailPartner(props: any) {
+export default function ViewDetailPartner(props: Record<string, unknown>) {
   const sourceDomain = getDomain(decodeURIComponent(document.location.href));
 
   const { data, callback, setDeleteSignal, deleteSignal } = props;
@@ -36,9 +36,9 @@ export default function ViewDetailPartner(props: any) {
   const [isShowInfoRevenue, setIsShowInfoRevenue] = useState<boolean>(false);
   const [isShowInfoContact, setIsShowInfoContact] = useState<boolean>(false);
   const [isShowInfoOther, setIsShowInfoOther] = useState<boolean>(false);
-  const [mapCustomerAttribute, setMapCustomerAttribute] = useState<any>(null);
+  const [mapCustomerAttribute, setMapCustomerAttribute] = useState<Record<string, unknown>>(null);
   // console.log('mapCustomerAttribute', mapCustomerAttribute);
-  const [dataCustomerAttribute, setDataCustomerAttribute] = useState<any>(null);
+  const [dataCustomerAttribute, setDataCustomerAttribute] = useState<Record<string, unknown>>(null);
 
   //   useEffect(() => {
   //     if(data){
@@ -82,7 +82,7 @@ export default function ViewDetailPartner(props: any) {
   };
 
   const [showDialog, setShowDialog] = useState<boolean>(false);
-  const [contentDialog, setContentDialog] = useState<any>(null);
+  const [contentDialog, setContentDialog] = useState<Record<string, unknown>>(null);
 
   const onDelete = async (id: number) => {
     if (!id) return;
@@ -103,7 +103,7 @@ export default function ViewDetailPartner(props: any) {
     setContentDialog(null);
   };
 
-  const showDialogConfirmDelete = (item?: any) => {
+  const showDialogConfirmDelete = (item?: Record<string, unknown>) => {
     const contentDialog: IContentDialog = {
       color: "error",
       className: "dialog-delete",

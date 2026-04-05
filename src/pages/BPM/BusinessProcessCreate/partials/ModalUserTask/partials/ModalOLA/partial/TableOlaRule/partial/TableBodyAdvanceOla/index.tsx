@@ -14,12 +14,12 @@ import { set } from "lodash";
 
 interface TableBodyAdvanceOlaProps {
   dataRow: DataRows;
-  setDataRow: any;
-  handChangeValueItem: (rowIndex: number, fieldIndex: number, value: any, type: string) => void;
-  baseRow: any[]; // Assuming baseRow is passed as a prop, you might need to adjust this based on your actual implementation
-  lookupValues: any;
+  setDataRow: Record<string, unknown>;
+  handChangeValueItem: (rowIndex: number, fieldIndex: number, value: Record<string, unknown>, type: string) => void;
+  baseRow: Record<string, unknown>[]; // Assuming baseRow is passed as a prop, you might need to adjust this based on your actual implementation
+  lookupValues: Record<string, unknown>;
   loading: boolean;
-  setHaveError?: any;
+  setHaveError?: Record<string, unknown>;
 }
 
 const TableBodyAdvanceOla: React.FC<TableBodyAdvanceOlaProps> = ({
@@ -36,7 +36,7 @@ const TableBodyAdvanceOla: React.FC<TableBodyAdvanceOlaProps> = ({
   const [refs, setRefs] = useState([]);
   const [height, setHeight] = useState([]);
   const [showPopoverStatus, setShowPopoverStatus] = useState<boolean[]>([]);
-  const [showPopoverStatusField, setShowPopoverStatusField] = useState<any[]>([]);
+  const [showPopoverStatusField, setShowPopoverStatusField] = useState<Record<string, unknown>[]>([]);
 
   useOnClickOutside(refRow, () => setShowPopoverStatus(showPopoverStatus.map((item) => false)), ["index"]);
   useOnClickOutside(

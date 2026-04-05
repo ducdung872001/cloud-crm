@@ -33,7 +33,7 @@ const defaultSchema = {
 export default function ModalCustomPopup({ onShow, onHide, dataWork, isHandleTask, codePopupCustom }) {
   // console.log("dataWork", dataWork);
 
-  const params: any = getSearchParameters();
+  const params: Record<string, unknown> = getSearchParameters();
   const formViewerRef = useRef(null);
   const checkShowFullScreen = localStorage.getItem("showFullScreenEform");
 
@@ -407,7 +407,7 @@ export default function ModalCustomPopup({ onShow, onHide, dataWork, isHandleTas
                             },
                           ]
                         : []),
-                    ] as any)),
+                    ] as Record<string, unknown>)),
 
                 ...(dataEngine?.isReceived === 1
                   ? ([
@@ -477,7 +477,7 @@ export default function ModalCustomPopup({ onShow, onHide, dataWork, isHandleTas
                               },
                             },
                           ]),
-                    ] as any)
+                    ] as Record<string, unknown>)
                   : []),
 
                 ...(dataEngine?.isReceived === 0
@@ -493,7 +493,7 @@ export default function ModalCustomPopup({ onShow, onHide, dataWork, isHandleTas
                           ReceiveProcessedObjectLog();
                         },
                       },
-                    ] as any)
+                    ] as Record<string, unknown>)
                   : []),
 
                 // ...(dataEngine?.isReceived === 1 ? ([

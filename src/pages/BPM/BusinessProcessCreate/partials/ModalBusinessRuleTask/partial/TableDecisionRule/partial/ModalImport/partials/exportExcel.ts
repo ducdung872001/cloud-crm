@@ -1,7 +1,7 @@
 import ExcelJS from "exceljs";
 import { saveAs } from "file-saver";
 
-export async function exportCustomExcel(listColumns: any[]) {
+export async function exportCustomExcel(listColumns: Record<string, unknown>[]) {
   const workbook = new ExcelJS.Workbook();
   const worksheet = workbook.addWorksheet("Sheet1");
   const numberExampleRow = 97;

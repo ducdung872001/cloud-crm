@@ -26,7 +26,7 @@ type ActiveFilter = "all" | "pending" | "shipping" | "success" | "cancelled";
 // ── Helper: map 1 invoice item → Order ────────────────────────────────────────
 // customerId nằm trong item.invoice.customerId (không phải item.customerId root)
 
-function mapItemToOrder(item: any, customerMap: CustomerMap): Order {
+function mapItemToOrder(item: Record<string, unknown>, customerMap: CustomerMap): Order {
   const customerId: number = item?.invoice?.customerId ?? item?.customerId ?? 0;
   const enriched = customerId > 0 ? customerMap[customerId] : null;
 
@@ -44,7 +44,7 @@ function mapItemToOrder(item: any, customerMap: CustomerMap): Order {
   const statusLabel = inv.status === 1 ? "Hoàn thành" : inv.status === 2 ? "Chờ xử lý" : "Đã hủy";
 
   const itemNames = [...(item.products || []), ...(item.services || [])]
-    .map((p: any) => {
+    .map((p: Record<string, unknown>) => {
       const base = p.productName || p.name || "";
       const variant = p.name && p.name !== p.productName ? p.name : "";
       return variant ? `${base} (${variant})` : base;
@@ -123,7 +123,7 @@ function QuickPayModal({ debtInfo, funds, onClose, onSuccess }: QuickPayModalPro
         "success"
       );
       onSuccess();
-    } catch (e: any) {
+    } catch (e: unknown) {
       showToast(e?.message ?? "Có lỗi xảy ra khi thu tiền", "error");
     } finally {
       setSubmitting(false);
@@ -299,7 +299,7 @@ export default function SaleInvoiceList() {
   });
 
   // ── Refs ───────────────────────────────────────────────────────────────────
-  const rawItemsRef    = useRef<any[]>([]);
+  const rawItemsRef    = useRef<Record<string, unknown>[]>([]);
   const abortRef       = useRef<AbortController | null>(null);
   const enrichAbortRef = useRef<AbortController | null>(null);
   const searchTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -337,7 +337,7 @@ export default function SaleInvoiceList() {
       }
 
       const { pagedLst, statusCounts: sc } = response.result;
-      const rawItems: any[] = pagedLst.items ?? [];
+      const rawItems: Record<string, unknown>[] = pagedLst.items ?? [];
 
       // Lưu raw để re-map sau khi enrich xong
       rawItemsRef.current = append ? [...rawItemsRef.current, ...rawItems] : rawItems;
@@ -368,7 +368,7 @@ export default function SaleInvoiceList() {
         enrichAbortRef.current = new AbortController();
         enrichList(ids, enrichAbortRef.current.signal);
       }
-    } catch (e: any) {
+    } catch (e: unknown) {
       if (e?.name !== "AbortError") showToast("Lỗi tải danh sách đơn hàng", "error");
     } finally {
       setIsLoading(false);
@@ -443,7 +443,7 @@ export default function SaleInvoiceList() {
     try {
       await InvoiceService.exportExcel(params);
       showToast("Xuất Excel thành công", "success");
-    } catch (err: any) {
+    } catch (err: unknown) {
       showToast(err?.message ?? "Xuất Excel thất bại. Vui lòng thử lại", "error");
     } finally {
       setIsExporting(false);

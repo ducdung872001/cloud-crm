@@ -6,7 +6,7 @@ interface CustomScrollbarProps {
   width: string | number;
   height: string | number;
   autoHide?: boolean;
-  handleScroll?: any;
+  handleScroll?: React.UIEventHandler<HTMLDivElement>;
 }
 
 export default function CustomScrollbar(props: CustomScrollbarProps) {

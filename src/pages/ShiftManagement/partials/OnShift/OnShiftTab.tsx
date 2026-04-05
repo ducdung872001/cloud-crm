@@ -96,7 +96,7 @@ export default function OnShiftTab({ shiftId, branchId, onEndShift, onViewOrders
         });
 
         if (d.activeStaff && d.activeStaff.length > 0) {
-          setStaffs(d.activeStaff.map((s: any) => ({
+          setStaffs(d.activeStaff.map((s: Record<string, unknown>) => ({
             employeeId: s.employeeId,
             name:       s.employeeName ?? `NV #${s.employeeId}`,
             role:       s.role ?? "Thu ngân",

@@ -9,14 +9,14 @@ import { DataPaginationDefault, PaginationProps } from "components/pagination/pa
 import { getPageOffset } from "reborn-util";
 import _ from "lodash";
 
-export default function TableTeamEmployee(props: any) {
+export default function TableTeamEmployee(props: Record<string, unknown>) {
   const { groupId } = props;
   const isMounted = useRef(false);
   const [isLoading, setIsLoading] = useState(false);
   const [tableEmployee, setTableEmployee] = useState([]);
   const [listIdCheckedEmployee, setListIdCheckedEmployee] = useState<number[]>([]);  
   
-  const [params, setParams] = useState<any>({
+  const [params, setParams] = useState<Record<string, unknown>>({
     name: "",
     limit: 30,
     page: 1
@@ -36,7 +36,7 @@ export default function TableTeamEmployee(props: any) {
 
   const abortController = new AbortController();
 
-  const getListTableEmployee = async (paramsSearch: any) => {
+  const getListTableEmployee = async (paramsSearch: Record<string, unknown>) => {
     setIsLoading(true);
     const response = await TeamEmployeeService.listEmployee(paramsSearch, abortController.signal);
 
@@ -82,13 +82,13 @@ export default function TableTeamEmployee(props: any) {
   const titles = ["STT", "Tên nhân viên",  "Phòng ban"];
   const dataFormat = ["text-center", "", ""];
 
-  const dataMappingArray = (item: any, index: number) => [
+  const dataMappingArray = (item: Record<string, unknown>, index: number) => [
     getPageOffset(params) + index + 1,
     item?.employee?.name,
     item?.employee?.departmentName
   ];
 
-  const actionsTable = (item: any): IAction[] => {
+  const actionsTable = (item: Record<string, unknown>): IAction[] => {
     return [];
   };
 

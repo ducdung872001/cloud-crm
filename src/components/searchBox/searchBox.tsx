@@ -15,8 +15,8 @@ import "./searchBox.scss";
 
 interface SearchBoxProps {
   name?: string;
-  params: any;
-  updateParams?: (params: any) => void;
+  params: Record<string, unknown>;
+  updateParams?: (params: Record<string, unknown>) => void;
   isFilter?: boolean;
   isHiddenSearch?: boolean;
   listFilterItem?: IFilterItem[];
@@ -29,7 +29,7 @@ interface SearchBoxProps {
   autoFocusSearch?: boolean;
   placeholderSearch?: string;
   disabledTextInput?: boolean;
-  setTabActive?: any;
+  setTabActive?: (key: string | number) => void;
 }
 
 export default function SearchBox(props: SearchBoxProps) {
@@ -53,7 +53,7 @@ export default function SearchBox(props: SearchBoxProps) {
   } = props;
   const searchParams = getSearchParameters();
   const { width } = useWindowDimensions();
-  const [paramsOld, setParamsOld] = useState<any>();
+  const [paramsOld, setParamsOld] = useState<Record<string, unknown>>();
   const [disableSaveSearch, setDisableSaveSearch] = useState<boolean>(false);
   const [filterItems, setFilterItems] = useState<IFilterItem[]>(listFilterItem);
   const [query, setQuery] = useState<string>("");

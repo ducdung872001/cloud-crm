@@ -12,7 +12,7 @@ import "./ModalAddCode.scss";
 import SelectCustom from "components/selectCustom/selectCustom";
 import CodeService from "services/CodeService";
 
-export default function ModalAddCode(props: any) {
+export default function ModalAddCode(props: Record<string, unknown>) {
   const { onShow, onHide, data } = props;
 
   const [isSubmit, setIsSubmit] = useState<boolean>(false);
@@ -44,7 +44,7 @@ export default function ModalAddCode(props: any) {
         regexPattern: data?.regexPattern ?? "",
         currentCode: data?.currentCode ?? "",
         entityName: data?.entityName ?? "",
-      } as any),
+      } as Record<string, unknown>),
     [data, onShow]
   );
 
@@ -168,8 +168,8 @@ export default function ModalAddCode(props: any) {
     }
 
     setIsSubmit(true);
-    const body: any = {
-      ...(formData.values as any),
+    const body: Record<string, unknown> = {
+      ...(formData.values as Record<string, unknown>),
       ...(data ? { id: data.id } : {}),
     };
 

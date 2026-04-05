@@ -1054,7 +1054,7 @@ export default function AddEditSendSMS(props: ISendSMS) {
 
   console.log("isView", isView);
 
-  const actions = useMemo<any>(
+  const actions = useMemo<Record<string, unknown>>(
     () => ({
       actions_right: {
         buttons: [

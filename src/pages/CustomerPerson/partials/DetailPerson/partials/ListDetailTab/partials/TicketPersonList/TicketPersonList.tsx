@@ -34,7 +34,7 @@ export default function TicketPersonList(props: ITicketPersonListProps) {
   const [showModalAdd, setShowModalAdd] = useState<boolean>(false);
   const [showModalView, setShowModalView] = useState<boolean>(false);
   const [showDialog, setShowDialog] = useState<boolean>(false);
-  const [contentDialog, setContentDialog] = useState<any>(null);
+  const [contentDialog, setContentDialog] = useState<Record<string, unknown>>(null);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [idTicket, setIdTicket] = useState<number>(0);
   const [isShowOption, setIsShowOption] = useState<boolean>(false);

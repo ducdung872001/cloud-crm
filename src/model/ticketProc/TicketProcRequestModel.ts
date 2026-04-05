@@ -1,7 +1,7 @@
 export interface ITicketProcFilterRequest {
   name?: string;
-  startDate?: any;
-  endDate?: any;
+  startDate?: string | Date;
+  endDate?: string | Date;
   page?: number;
   limit?: number;
   type?: number;

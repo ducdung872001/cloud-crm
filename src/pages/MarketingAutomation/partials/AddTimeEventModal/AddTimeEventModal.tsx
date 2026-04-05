@@ -25,7 +25,7 @@ import moment from "moment";
 import { listDay } from "pages/CalendarCommon/partials/MockData";
 import DatePicker from "react-datepicker";
 
-export default function AddTimeEventModal(props: any) {
+export default function AddTimeEventModal(props: Record<string, unknown>) {
   const { onShow, onHide, data } = props;
   
 

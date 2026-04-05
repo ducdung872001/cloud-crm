@@ -20,7 +20,7 @@ import ContractEformService from "services/ContractEformService";
 import BusinessProcessService from "services/BusinessProcessService";
 import SelectCustom from "components/selectCustom/selectCustom";
 
-export default function ConfigModalPeople(props: any) {
+export default function ConfigModalPeople(props: Record<string, unknown>) {
   const { onShow, onHide, dataNode, setDataNode, statusMA } = props;
   //console.log("dataNode", dataNode);
   const [isSubmit, setIsSubmit] = useState<boolean>(false);
@@ -145,7 +145,7 @@ export default function ConfigModalPeople(props: any) {
         listEformAttribute: [],
         rule: data ? data.rule : [],
         blockRule: data ? data.blockRule : [],
-      } as any),
+      } as Record<string, unknown>),
     [data, onShow]
   );
 
@@ -308,7 +308,7 @@ export default function ConfigModalPeople(props: any) {
   const [listActionEmail, setListActionEmail] = useState([]);
 
   const loadedOptionEmailAction = async (search, loadedOptions, { page }) => {
-    const param: any = {
+    const param: Record<string, unknown> = {
       type: "email",
     };
     const response = await CampaignService.listActionScore(param);

@@ -365,7 +365,7 @@ export default function AddWarrantyModal(props: IAddWarrantyModelProps) {
   );
 
   useEffect(() => {
-    const result = JSON.parse(formData.values.docLink || []).map((item: any) => item.url);
+    const result = JSON.parse(formData.values.docLink || []).map((item: Record<string, unknown>) => item.url);
     setListImageWarranty(result);
   }, [formData.values.docLink]);
 

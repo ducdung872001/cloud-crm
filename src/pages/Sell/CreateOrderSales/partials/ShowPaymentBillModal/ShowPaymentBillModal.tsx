@@ -107,7 +107,7 @@ export default function ShowPaymentBillModal(props: ShowPaymentBillModalProps) {
           : [...result.boughtCardServices];
   
       const cardIds = mergedList
-        .map((item: any) => item.cardId)
+        .map((item: Record<string, unknown>) => item.cardId)
         .filter((id): id is number => id !== undefined && id !== null);
   
       let cardMap: Record<number, { name: string; avatar: string; price: number }> = {};
@@ -119,7 +119,7 @@ export default function ShowPaymentBillModal(props: ShowPaymentBillModalProps) {
           const cards = cardRes.result.items || [];
   
           cardIds.forEach((cardId) => {
-            const card = cards.find((c: any) => c.id === cardId);
+            const card = cards.find((c: Record<string, unknown>) => c.id === cardId);
             if (card) {
               cardMap[cardId] = {
                 name: card.name || "",

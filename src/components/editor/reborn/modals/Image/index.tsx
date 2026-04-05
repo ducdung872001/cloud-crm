@@ -26,7 +26,7 @@ export default function Image(props: IModalAddImageProps) {
     setUploading(true);
     await FileService.uploadFile({
       data: file,
-      onSuccess: (data: any) => {
+      onSuccess: (data: Record<string, unknown>) => {
         const url = data?.fileUrl || data;
         if (url) setListSelectedImage(prev => [...prev, url]);
         setUploading(false);

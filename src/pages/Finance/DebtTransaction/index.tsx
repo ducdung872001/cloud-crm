@@ -132,7 +132,7 @@ export default function FinanceDebtTransaction(props) {
       });
       setSubmitted(true);
       showToast(t("pageFinance.transactionSuccess"), "success");
-    } catch (e: any) {
+    } catch (e: unknown) {
       setError(e?.message ?? "Tạo giao dịch thất bại. Vui lòng thử lại.");
     } finally {
       setSubmitting(false);

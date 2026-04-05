@@ -21,7 +21,7 @@ import PartnerService from "services/PartnerService";
 import ContractService from "services/ContractService";
 import ContractExtraInfoService from "services/ContractExtraInfoService";
 
-export default function ModalEditCustomer(props: any) {
+export default function ModalEditCustomer(props: Record<string, unknown>) {
   const { onShow, onHide, data } = props;
 
   const focusedElement = useActiveElement();
@@ -35,7 +35,7 @@ export default function ModalEditCustomer(props: any) {
   const [isLoading, setIsLoading] = useState(false);
   const [dataCustomer, setDataCustomer] = useState(null);
   const [dataPartner, setDataPartner] = useState(null);
-  const [contractExtraInfos, setContractExtraInfos] = useState<any>([]);
+  const [contractExtraInfos, setContractExtraInfos] = useState<Record<string, unknown>>([]);
 
   const getDetailCustomer = async (id: number) => {
     if (!id) return;
@@ -122,7 +122,7 @@ export default function ModalEditCustomer(props: any) {
         custType: data?.custType ?? "",
         businessPartnerId: data?.businessPartnerId ?? "",
         businessPartnerName: data?.businessPartnerName ?? "",
-      } as any),
+      } as Record<string, unknown>),
     [data]
   );
 
@@ -193,7 +193,7 @@ export default function ModalEditCustomer(props: any) {
   };
 
   const loadOptionPartner = async (search, loadedOptions, { page }) => {
-    const param: any = {
+    const param: Record<string, unknown> = {
       keyword: search,
       page: page,
       limit: 10,
@@ -378,7 +378,7 @@ export default function ModalEditCustomer(props: any) {
     setIsSubmit(true);
 
     const body = {
-      ...(formData.values as any),
+      ...(formData.values as Record<string, unknown>),
       contractExtraInfos: contractExtraInfos,
     };
 

@@ -15,7 +15,7 @@ import "./PaymentMethod.scss";
 const maskAccount = (s?: string) =>
   s && s.length > 4 ? "•".repeat(Math.min(s.length - 4, 6)) + s.slice(-4) : (s ?? "—");
 
-export default function PaymentMethodList({ onBackProps }: { onBackProps?: any }) {
+export default function PaymentMethodList({ onBackProps }: { onBackProps?: Record<string, unknown> }) {
   document.title = "Lựa chọn Phương thức Thanh toán";
   const isMounted = useRef(false);
   const abort = useRef(new AbortController());

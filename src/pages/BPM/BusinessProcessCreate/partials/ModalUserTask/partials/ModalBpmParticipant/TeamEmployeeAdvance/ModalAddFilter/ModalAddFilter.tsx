@@ -21,7 +21,7 @@ import BusinessProcessService from "services/BusinessProcessService";
 import EmployeeService from "services/EmployeeService";
 import SegmentFilterService from "services/SegmentFilterService";
 
-export default function ModalAddFilter(props: any) {
+export default function ModalAddFilter(props: Record<string, unknown>) {
   const { onShow, onHide, dataNode, processId, setDataNode, disable } = props;
   console.log("dataNode2222", dataNode);
   console.log('processId', processId);
@@ -230,7 +230,7 @@ export default function ModalAddFilter(props: any) {
             }
           ],
         blockRule: data ? data.blockRule : [],
-      } as any),
+      } as Record<string, unknown>),
     [data, onShow]
   );
 
@@ -304,7 +304,7 @@ export default function ModalAddFilter(props: any) {
       let listData = [];      
 
       if (dataOption) {
-        Object.entries(dataOption).map((lstEformAttribute: any, key: number) => {
+        Object.entries(dataOption).map((lstEformAttribute: Record<string, unknown>, key: number) => {
           (lstEformAttribute[1] || []).map((eformAttribute, index: number) => {
             console.log('eformAttribute', eformAttribute);
             
@@ -758,7 +758,7 @@ export default function ModalAddFilter(props: any) {
                 onSubmit(formData);
               },
             },
-          ] as any)
+          ] as Record<string, unknown>)
         ],
       },
     }),
@@ -783,7 +783,7 @@ export default function ModalAddFilter(props: any) {
             }
           ],
         blockRule: data ? data.blockRule : [],
-      } as any),
+      } as Record<string, unknown>),
     [data, onShow]
   );
 

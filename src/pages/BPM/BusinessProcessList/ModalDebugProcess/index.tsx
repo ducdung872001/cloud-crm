@@ -87,7 +87,7 @@ export default function ModalDebugProcess({ onShow, onHide, dataProcess }) {
 
   const abortController = new AbortController();
 
-  const getListNode= async (paramsSearch: any) => {
+  const getListNode= async (paramsSearch: Record<string, unknown>) => {
       setIsLoading(true);
 
       const response = await BusinessProcessService.debugListNodeProcess(paramsSearch, abortController.signal);
@@ -111,7 +111,7 @@ export default function ModalDebugProcess({ onShow, onHide, dataProcess }) {
       setIsLoading(false);
   };
 
-  const getListLinkNode= async (paramsSearch: any) => {
+  const getListLinkNode= async (paramsSearch: Record<string, unknown>) => {
     setIsLoading(true);
 
     const response = await BusinessProcessService.debugListLinkNodeProcess(paramsSearch, abortController.signal);
@@ -152,7 +152,7 @@ export default function ModalDebugProcess({ onShow, onHide, dataProcess }) {
   const titlesLinkNode = ["STT","LinkId", "FlowType", "FromNodeId", "ToNodeId", "Đã có trong DB", "Đã có trong thiết kế"];
   const dataFormatLinkNode = [ "text-center", "", "", "", "", "text-center", "text-center"];
 
-  const dataMappingArray = (item: any, index: number, type) => [
+  const dataMappingArray = (item: Record<string, unknown>, index: number, type) => [
       getPageOffset(params) + index + 1,
       ...(type === 'node' 
       ? 
@@ -200,7 +200,7 @@ export default function ModalDebugProcess({ onShow, onHide, dataProcess }) {
       
   ];
 
-  const actionsTable = (item: any): IAction[] => {
+  const actionsTable = (item: Record<string, unknown>): IAction[] => {
       
       return [
             ...(item.notYetDb && !item.notYetDesign ? [
@@ -230,7 +230,7 @@ export default function ModalDebugProcess({ onShow, onHide, dataProcess }) {
       ];
   };
 
-  const showDialogConfirmDelete = (item?: any) => {
+  const showDialogConfirmDelete = (item?: Record<string, unknown>) => {
       const contentDialog: IContentDialog = {
         color: "error",
         className: "dialog-delete",
@@ -280,7 +280,7 @@ export default function ModalDebugProcess({ onShow, onHide, dataProcess }) {
       setShowDialog(true);
   };
 
-  const showDialogConfirmSave = (item?: any) => {
+  const showDialogConfirmSave = (item?: Record<string, unknown>) => {
     const contentDialog: IContentDialog = {
       color: "warning",
       className: "dialog-warning",

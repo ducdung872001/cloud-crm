@@ -12,11 +12,11 @@ export function makeAliasOtherwise(conditionMap, columns): Record<string, any> {
         const inputGroups = conditionMap[key].filter((item) => item.filter((item) => item.operator == "OTHERWISE").length == 0);
         const flat = inputGroups.flat();
 
-        const result: any = negateInAndNotIn(flat);
+        const result: Record<string, unknown> = negateInAndNotIn(flat);
         alias[key] = result.flat().length > 0 ? result.flat() : false;
       } else if ((_column.compareType == "range" || _column.compareType == "equal") && _column.type == "number") {
         const inputGroups = conditionMap[key].filter((item) => item.filter((item) => item.operator == "OTHERWISE").length == 0);
-        const result: any = convertOutsideRangesToConditionGroups(inputGroups);
+        const result: Record<string, unknown> = convertOutsideRangesToConditionGroups(inputGroups);
         alias[key] = result;
       } else if ((_column.compareType == "range" || _column.compareType == "equal") && _column.type == "date") {
         const inputGroups = conditionMap[key].filter((item) => item.filter((item) => item.operator == "OTHERWISE").length == 0);
@@ -28,7 +28,7 @@ export function makeAliasOtherwise(conditionMap, columns): Record<string, any> {
             operator: item.operator as Operator, // Ép kiểu operator về kiểu Operator
           }))
         );
-        const result: any = convertOutsideRangesToConditionGroups(convertedInputGroups);
+        const result: Record<string, unknown> = convertOutsideRangesToConditionGroups(convertedInputGroups);
         alias[key] = convertTimestampValuesToISOString(result);
       } else if (_column.compareType == "equal" && _column.type != "date" && _column.type != "number") {
         const inputGroups = conditionMap[key].filter((item) => item.filter((item) => item.operator == "OTHERWISE").length == 0);
@@ -37,7 +37,7 @@ export function makeAliasOtherwise(conditionMap, columns): Record<string, any> {
         const flat = inputGroups.flat();
 
         // Bước 2: Gộp các phần tử có parameter & operator giống nhau
-        const merged: { [key: string]: any } = {};
+        const merged: { [key: string]: Record<string, unknown> } = {};
         flat.forEach((cond) => {
           const key = `${cond.parameter}|${cond.operator}`;
           if (!merged[key]) {
@@ -47,7 +47,7 @@ export function makeAliasOtherwise(conditionMap, columns): Record<string, any> {
             merged[key].value = Array.from(new Set([...merged[key].value, ...[cond.value]]));
           }
         });
-        const result: any = negateEqualAndNotEqual(Object.values(merged));
+        const result: Record<string, unknown> = negateEqualAndNotEqual(Object.values(merged));
         alias[key] = result.flat().length > 0 ? result.flat() : false;
       }
       if (_column.compareType == "equal" && _column.type == "checkbox") {

@@ -6,7 +6,7 @@ import { SystemNotification } from "components/systemNotification/systemNotifica
 import { Chart } from "react-google-charts";
 import "./index.scss";
 
-export default function TableRole(props: any) {
+export default function TableRole(props: Record<string, unknown>) {
   const {
     titles,
     listRole,

@@ -21,13 +21,13 @@ export default {
       body: JSON.stringify(body),
     }).then((res) => res.json());
   },
-  deleteRole: (params: any, signal?: AbortSignal) => {
+  deleteRole: (params: Record<string, unknown>, signal?: AbortSignal) => {
     return fetch(`${urlsApi.employee.deleteRole}${convertParamsToString(params)}`, {
       signal,
       method: "DELETE",
     }).then((res) => res.json());
   },
-  getListRoleEmployee: (params?: any, signal?: AbortSignal) => {
+  getListRoleEmployee: (params?: Record<string, unknown>, signal?: AbortSignal) => {
     return fetch(`${urlsApi.employee.getListRoleEmployee}${convertParamsToString(params)}`, {
       signal,
       method: "GET",
@@ -73,7 +73,7 @@ export default {
     }).then((res) => res.json());
   },
 
-  list_department: (params?: any, signal?: AbortSignal) => {
+  list_department: (params?: Record<string, unknown>, signal?: AbortSignal) => {
     return fetch(`${urlsApi.employee.list_department}${convertParamsToString(params)}`, {
       signal,
       method: "GET",

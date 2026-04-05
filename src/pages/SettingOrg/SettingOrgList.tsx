@@ -62,7 +62,7 @@ export default function SettingOrgList() {
       {!isDetail && (
         <TabMenuList
           groups={groups}
-          onClick={(item: any) => { setTab(item.is_tab); setIsDetail(true); }}
+          onClick={(item: Record<string, unknown>) => { setTab(item.is_tab); setIsDetail(true); }}
         />
       )}
 

@@ -14,7 +14,7 @@ import "./ViewOrgModal.scss";
 
 interface IViewOrgModalProps {
   onShow: boolean;
-  data: any;
+  data: Record<string, unknown>;
   onHide: (reload: boolean) => void;
 }
 
@@ -28,7 +28,7 @@ export default function ViewOrgModal(props: IViewOrgModalProps) {
 
   const dataFormat = ["text-center", "text-center", "", "text-center", ""];
 
-  const dataMappingArray = (item: any, index: number) => [
+  const dataMappingArray = (item: Record<string, unknown>, index: number) => [
     index + 1,
     <div key={item.id} className="avatar">
       <img src={item.avatar || ImageError} alt={item.name} />
@@ -43,7 +43,7 @@ export default function ViewOrgModal(props: IViewOrgModalProps) {
     window.open(link, "_blank");
   };
 
-  const actionsTable = (item: any): IAction[] => {
+  const actionsTable = (item: Record<string, unknown>): IAction[] => {
     return [
       {
         title: "Truy cập",

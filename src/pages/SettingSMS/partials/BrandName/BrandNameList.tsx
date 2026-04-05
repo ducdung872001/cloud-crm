@@ -36,16 +36,16 @@ export default function BrandNameList(props: IBrandNameListProps) {
   const [listIdChecked, setListIdChecked] = useState<number[]>([]);
   const [showModalAdd, setShowModalAdd] = useState<boolean>(false);
   const [showDialog, setShowDialog] = useState<boolean>(false);
-  const [contentDialog, setContentDialog] = useState<any>(null);
+  const [contentDialog, setContentDialog] = useState<Record<string, unknown>>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [isNoItem, setIsNoItem] = useState<boolean>(false);
   const [isPermissions, setIsPermissions] = useState<boolean>(false);
   const [permissions, setPermissions] = useState(getPermissions());
   const [modalWhiteList, setModalWhiteList] = useState(false);
   const [showDialogPause, setShowDialogPause] = useState<boolean>(false);
-  const [contentDialogPause, setContentDialogPause] = useState<any>(null);
+  const [contentDialogPause, setContentDialogPause] = useState<Record<string, unknown>>(null);
   const [showDialogApprove, setShowDialogApprove] = useState<boolean>(false);
-  const [contentDialogApprove, setContentDialogApprove] = useState<any>(null);
+  const [contentDialogApprove, setContentDialogApprove] = useState<Record<string, unknown>>(null);
   const [params, setParams] = useState<IBrandNameFilterRequest>({
     name: "",
     limit: 10,
@@ -340,7 +340,7 @@ export default function BrandNameList(props: IBrandNameListProps) {
     }
   };
 
-  const showDialogConfirmPause = (item?: any, status?: boolean) => {
+  const showDialogConfirmPause = (item?: Record<string, unknown>, status?: boolean) => {
     const contentDialog: IContentDialog = {
       color: "warning",
       className: "dialog-delete",
@@ -366,7 +366,7 @@ export default function BrandNameList(props: IBrandNameListProps) {
     setShowDialogPause(true);
   };
 
-  const showDialogConfirmApprove = (item?: any, status?: boolean) => {
+  const showDialogConfirmApprove = (item?: Record<string, unknown>, status?: boolean) => {
     const contentDialog: IContentDialog = {
       color: "success",
       className: "dialog-delete",

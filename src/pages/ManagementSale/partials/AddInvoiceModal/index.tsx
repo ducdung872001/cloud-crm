@@ -27,7 +27,7 @@ import NummericInput from "components/input/numericInput";
 import CardServiceList from "./patials/CardServiceList/CardServiceList";
 import PaymentBill from "./PaymentBill";
 
-export default function AddInvoiceModal(props: any) {
+export default function AddInvoiceModal(props: Record<string, unknown>) {
   const { onShow, onHide, idData, saleflowId, dataInvoice } = props;
   console.log("dataInvoice", dataInvoice);
 

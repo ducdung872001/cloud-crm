@@ -20,7 +20,7 @@ interface IShowInvoiceOrderProps {
   onShow: boolean;
   onHide: () => void;
   id: number;
-  data?: any;
+  data?: Record<string, unknown>;
   action?: "view" | "edit";
 }
 

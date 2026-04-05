@@ -55,7 +55,7 @@ export default function ListWork(props: IListWorkProps) {
   const [listIdChecked, setListIdChecked] = useState<number[]>([]);
   const [showModalAdd, setShowModalAdd] = useState<boolean>(false);
   const [showDialog, setShowDialog] = useState<boolean>(false);
-  const [contentDialog, setContentDialog] = useState<any>(null);
+  const [contentDialog, setContentDialog] = useState<Record<string, unknown>>(null);
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
   // đoạn này cập nhập tiến động công việc
@@ -106,7 +106,7 @@ export default function ListWork(props: IListWorkProps) {
                     is_featured: true,
                     value: searchParams.get("departmentId") ?? "",
                   },
-                ] as any)
+                ] as Record<string, unknown>)
               : []),
             ...(filterByKanban !== "kanbanEmployee" && filterByKanban !== "kanbanProject"
               ? ([
@@ -117,7 +117,7 @@ export default function ListWork(props: IListWorkProps) {
                     is_featured: true,
                     value: searchParams.get("employeeId") ?? "",
                   },
-                ] as any)
+                ] as Record<string, unknown>)
               : []),
             {
               key: "status",
@@ -414,7 +414,7 @@ export default function ListWork(props: IListWorkProps) {
     if (dataProjectReport) {
       return;
     }
-    const param: any = {
+    const param: Record<string, unknown> = {
       limit: 10,
       page: 1,
       status: status,

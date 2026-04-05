@@ -19,7 +19,7 @@ import { ContextType, UserContext } from "contexts/userContext";
 interface IAddSignerFSAndQuoteProps {
   onShow: boolean;
   onHide: (reload: boolean) => void;
-  data?: any;
+  data?: Record<string, unknown>;
 }
 
 export default function ModalAddCustomerArrivedConsultation(props: IAddSignerFSAndQuoteProps) {
@@ -212,7 +212,7 @@ export default function ModalAddCustomerArrivedConsultation(props: IAddSignerFSA
 
   useEffect(() => {
     if (formData?.lstVar && Array.isArray(formData.lstVar)) {
-      const mapped = formData.lstVar.map((item: any) => {
+      const mapped = formData.lstVar.map((item: Record<string, unknown>) => {
         const key = item.key || "";
         const val = item.value;
         if (val && typeof val === "object" && !Array.isArray(val)) {
@@ -275,7 +275,7 @@ export default function ModalAddCustomerArrivedConsultation(props: IAddSignerFSA
       value: (group.fields || []).reduce((acc, f) => {
         if (f.field) acc[f.field] = f.value;
         return acc;
-      }, {} as any),
+      }, {} as Record<string, unknown>),
     }));
 
     const processorObj = {
@@ -314,7 +314,7 @@ export default function ModalAddCustomerArrivedConsultation(props: IAddSignerFSA
       processor: JSON.stringify(processorObj),
     };
 
-    const response = await ScheduleConsultantService.updateKafka(kafkaBody as any);
+    const response = await ScheduleConsultantService.updateKafka(kafkaBody as Record<string, unknown>);
 
     if (response.code === 0) {
       showToast("Xử lý thành công", "success");

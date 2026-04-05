@@ -24,7 +24,7 @@ interface UseProductListParams {
 }
 
 interface UseProductListReturn {
-  listProduct: any[];
+  listProduct: Record<string, unknown>[];
   isLoading: boolean;
   isNoItem: boolean;
   isPermissions: boolean;
@@ -49,7 +49,7 @@ export function useProductList({ categoryId, params = {} }: UseProductListParams
     paramsRef.current = params;
   });
 
-  const [listProduct, setListProduct] = useState<any[]>([]);
+  const [listProduct, setListProduct] = useState<Record<string, unknown>[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [isNoItem, setIsNoItem] = useState<boolean>(false);
   const [isPermissions, setIsPermissions] = useState<boolean>(false);
@@ -70,7 +70,7 @@ export function useProductList({ categoryId, params = {} }: UseProductListParams
         const totalPage = Math.ceil(+result.total / +sizeLimit);
 
         // Map raw API fields → UI fields used by ProductGrid
-        const mapped = (result.items ?? []).map((p: any) => {
+        const mapped = (result.items ?? []).map((p: Record<string, unknown>) => {
           const stock = p.stockQuantity ?? 0;
           const price = p.originalPrice ?? p.promotionPrice ?? 0;
           return {

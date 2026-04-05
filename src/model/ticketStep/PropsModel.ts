@@ -2,8 +2,8 @@ import { ITicketStepResponse } from "./TicketStepResponseModel";
 
 export interface IStepModalProps {
   onShow?: boolean;
-  data?: any;
-  infoProc: any;
+  data?: ITicketStepResponse;
+  infoProc: Record<string, unknown>;
   onHide?: (reload: boolean) => void;
   onReload?: (reload: boolean) => void;
 }
@@ -13,9 +13,9 @@ export interface ITableStepProps {
   listStep: ITicketStepResponse[];
   titles: string[];
   dataFormat: string[];
-  dataMappingArray: any;
-  actionsTable: any;
-  setIsActiveForm: any;
+  dataMappingArray: string[];
+  actionsTable: Record<string, unknown>;
+  setIsActiveForm: (value: boolean) => void;
   isPermissions: boolean;
 }
 

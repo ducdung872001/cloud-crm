@@ -27,7 +27,7 @@ export interface IJobTitles {
   isPostion: boolean;
 }
 
-export default function AddRoleDirectoryModal(props: any) {
+export default function AddRoleDirectoryModal(props: Record<string, unknown>) {
   const { onShow, onHide, idRole, data } = props;
 
   console.log("data>>", data);
@@ -47,7 +47,7 @@ export default function AddRoleDirectoryModal(props: any) {
         name: data?.name || "",
         code: data?.code || "",
         position: data?.position || 0,
-      } as any),
+      } as Record<string, unknown>),
     [data, onShow]
   );
 

@@ -42,11 +42,11 @@ export default function MarketingAutomationList() {
   const [showModalInitBpm, setShowModalInitBpm] = useState<boolean>(false);
   const [idCampaign, setIdCampaign] = useState<boolean>(null);
   const [showDialog, setShowDialog] = useState<boolean>(false);
-  const [contentDialog, setContentDialog] = useState<any>(null);
+  const [contentDialog, setContentDialog] = useState<Record<string, unknown>>(null);
   const [showDialogPause, setShowDialogPause] = useState<boolean>(false);
-  const [contentDialogPause, setContentDialogPause] = useState<any>(null);
+  const [contentDialogPause, setContentDialogPause] = useState<Record<string, unknown>>(null);
   const [showDialogApprove, setShowDialogApprove] = useState<boolean>(false);
-  const [contentDialogApprove, setContentDialogApprove] = useState<any>(null);
+  const [contentDialogApprove, setContentDialogApprove] = useState<Record<string, unknown>>(null);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [isDetailMA, setIsDetailMA] = useState<boolean>(false);
   const [dataMA, setDataMA] = useState(null);
@@ -83,7 +83,7 @@ export default function MarketingAutomationList() {
 
   const abortController = new AbortController();
 
-  const getListMarketingAutomation = async (paramsSearch: any) => {
+  const getListMarketingAutomation = async (paramsSearch: Record<string, unknown>) => {
     setIsLoading(true);
 
     // setListMarketingAutomation([
@@ -156,7 +156,7 @@ export default function MarketingAutomationList() {
   }, [params]);
 
   const [showReport, setShowReport] = useState<boolean>(false);
-  const [itemReport, setItemReport] = useState<any>(null);
+  const [itemReport, setItemReport] = useState<Record<string, unknown>>(null);
 
   const titleActions: ITitleActions = {
     actions: [
@@ -177,7 +177,7 @@ export default function MarketingAutomationList() {
 
   const dataFormat = ["text-center", "", "text-center", "text-center", "text-center", "text-center", "text-center"];
 
-  const dataMappingArray = (item: any, index: number) => [
+  const dataMappingArray = (item: Record<string, unknown>, index: number) => [
     getPageOffset(params) + index + 1,
     // <Link
     //   key={item.id}
@@ -241,7 +241,7 @@ export default function MarketingAutomationList() {
     }
   };
 
-  const actionsTable = (item: any): IAction[] => {
+  const actionsTable = (item: Record<string, unknown>): IAction[] => {
       const isCheckedItem = listIdChecked?.length > 0;
 
     return [
@@ -405,7 +405,7 @@ export default function MarketingAutomationList() {
     setShowDialog(true);
   };
 
-  const showDialogConfirmPause = (item?: any, status?: number) => {
+  const showDialogConfirmPause = (item?: Record<string, unknown>, status?: number) => {
     const contentDialog: IContentDialog = {
       color: "warning",
       className: "dialog-delete",
@@ -432,7 +432,7 @@ export default function MarketingAutomationList() {
     setShowDialogPause(true);
   };
 
-  const showDialogConfirmApprove = (item?: any, status?: number) => {
+  const showDialogConfirmApprove = (item?: Record<string, unknown>, status?: number) => {
     const contentDialog: IContentDialog = {
       color: "success",
       className: "dialog-delete",

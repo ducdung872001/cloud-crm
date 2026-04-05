@@ -14,8 +14,8 @@ interface CheckboxListProps {
   message?: string;
   warning?: boolean;
   messageWarning?: string;
-  onChange?: any;
-  onClick?: any;
+  onChange?: (value: string) => void;
+  onClick?: React.MouseEventHandler<HTMLLabelElement>;
 }
 export default function CheckboxList(props: CheckboxListProps) {
   const { title, titlePosition, options, disabled, required, value, defaultValue, error, message, warning, messageWarning, onChange, onClick } =

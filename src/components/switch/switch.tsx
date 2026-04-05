@@ -6,9 +6,9 @@ interface SwitchProps {
   name?: string;
   label?: string;
   className?: string;
-  onChange?: any;
+  onChange?: React.ChangeEventHandler<HTMLInputElement>;
   checked?: boolean;
-  onClick?: any;
+  onClick?: React.MouseEventHandler<HTMLLabelElement>;
 }
 
 export default function Switch(props: SwitchProps) {

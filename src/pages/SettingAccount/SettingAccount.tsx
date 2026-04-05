@@ -74,7 +74,7 @@ export default function SettingAccount() {
         email: dataAccount?.email ?? "",
         avatar: dataAccount?.avatar ?? "",
         fmtBirthDay: dataAccount ? converBirtDay(dataAccount.birthDay, dataAccount.birthMonth, dataAccount.birthYear) : "",
-      } as any),
+      } as Record<string, unknown>),
     [dataAccount]
   );
 
@@ -191,7 +191,7 @@ export default function SettingAccount() {
   };
 
   const [showDialog, setShowDialog] = useState<boolean>(false);
-  const [contentDialog, setContentDialog] = useState<any>(null);
+  const [contentDialog, setContentDialog] = useState<Record<string, unknown>>(null);
 
   const showDialogConfirm = () => {
     const contentDialog: IContentDialog = {
@@ -274,7 +274,7 @@ export default function SettingAccount() {
     }
   };
 
-  const paramsUrl: any = getSearchParameters();
+  const paramsUrl: Record<string, unknown> = getSearchParameters();
 
   const elementRef = useRef(null);
 

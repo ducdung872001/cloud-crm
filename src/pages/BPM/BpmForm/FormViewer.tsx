@@ -37,7 +37,7 @@ import { CallApiCommon } from "utils/callApiCommon";
 //Range
 // import RenderExtension from "./extension/range/render";
 
-const FormViewerComponent = (props: any) => {
+const FormViewerComponent = (props: Record<string, unknown>) => {
   const {
     formContainerRef,
     formViewerRef,
@@ -54,7 +54,7 @@ const FormViewerComponent = (props: any) => {
     onOpenCallCustomerModal,
   } = props;
 
-  const [currFormSchema, setCurrFormSchema] = useState<any>();
+  const [currFormSchema, setCurrFormSchema] = useState<Record<string, unknown>>();
   const [isLoadingGrid, setIsLoadingGrid] = useState(false);
 
   //nút xoá dòng trong dynamic
@@ -64,9 +64,9 @@ const FormViewerComponent = (props: any) => {
       const removeBtns = listEl.querySelectorAll(".fjs-repeat-row-remove");
 
       if (rows.length === 1) {
-        removeBtns.forEach((btn: any) => (btn.style.display = "none"));
+        removeBtns.forEach((btn: Record<string, unknown>) => (btn.style.display = "none"));
       } else {
-        removeBtns.forEach((btn: any) => (btn.style.display = ""));
+        removeBtns.forEach((btn: Record<string, unknown>) => (btn.style.display = ""));
       }
     });
   }

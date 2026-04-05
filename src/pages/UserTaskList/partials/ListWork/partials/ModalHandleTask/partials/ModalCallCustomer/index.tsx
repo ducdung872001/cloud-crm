@@ -16,7 +16,7 @@ import "./index.scss";
 import HistoryModal from "pages/CallCenter/partials/HistoryModal/HistoryModal";
 import CustomerService from "services/CustomerService";
 
-export default function ModalCallCustomer(props: any) {
+export default function ModalCallCustomer(props: Record<string, unknown>) {
   const { onShow, customerId, onHide } = props;
 
   const [dataEmployee, setDataEmployee] = useState(null);

@@ -41,7 +41,7 @@ export default function ServiceList(props: IServiceListProps) {
   const [dataService, setDataService] = useState<IServiceRespone>(null);
   const [listIdChecked, setListIdChecked] = useState<number[]>([]);
   const [showDialog, setShowDialog] = useState<boolean>(false);
-  const [contentDialog, setContentDialog] = useState<any>(null);
+  const [contentDialog, setContentDialog] = useState<Record<string, unknown>>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [isNoItem, setIsNoItem] = useState<boolean>(false);
   const [isAddEditService, setIsAddEditService] = useState<boolean>(false);
@@ -175,7 +175,7 @@ export default function ServiceList(props: IServiceListProps) {
 
   const abortController = new AbortController();
 
-  const getListService = async (paramsSearch: any, tab) => {
+  const getListService = async (paramsSearch: Record<string, unknown>, tab) => {
     setIsLoading(true);
 
     let response = null;

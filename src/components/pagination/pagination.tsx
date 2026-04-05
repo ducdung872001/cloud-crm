@@ -13,7 +13,7 @@ export interface PaginationProps {
   name?: string;
   displayNumber: number;
   page: number;
-  sizeLimit: any;
+  sizeLimit: number;
   totalPage: number;
   totalItem: number;
   setPage?: (page: number) => void;
@@ -34,7 +34,7 @@ export const DataPaginationDefault: PaginationProps = {
 const sourceDomain = getDomain(decodeURIComponent(document.location.href));
 const checkSubdomainTNEX = sourceDomain.includes("tnex");
 
-const listSizeLimit: any[] = checkSubdomainTNEX ? [5, 10, 20, 30, 40, 50, 100] : [10, 30, 50, 100];
+const listSizeLimit: number[] = checkSubdomainTNEX ? [5, 10, 20, 30, 40, 50, 100] : [10, 30, 50, 100];
 
 export function Pagination(props: PaginationProps) {
   const { isCollapsedSidebar } = useContext(UserContext) as ContextType;

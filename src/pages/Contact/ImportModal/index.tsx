@@ -254,7 +254,7 @@ export default function ImportModal(props: IImportModalProps) {
 
   const dataMappingArray = (item, idx: number) => [idx + 1, item.name || "", item.code || "", item.phone || "", item.email || ""];
 
-  const actionsTable = (item: any): IAction[] => {
+  const actionsTable = (item: Record<string, unknown>): IAction[] => {
     return [
       {
         title: "Sửa",
@@ -457,7 +457,7 @@ export default function ImportModal(props: IImportModalProps) {
   const [isLoadingImportField, setIsLoadingImportField] = useState<boolean>(false);
 
   // đoạn này hàm gọi api khi mà chọn các trường gửi xuống
-  const handImportFielDownload = async (count: number, lstField?: any[], lstFieldChildren?: any[], typeContract?: any) => {
+  const handImportFielDownload = async (count: number, lstField?: Record<string, unknown>[], lstFieldChildren?: Record<string, unknown>[], typeContract?: Record<string, unknown>) => {
     const changeLstField = lstField.map((item) => ({ [item.fieldName]: true }));
     const changeLstFieldChildren = lstFieldChildren?.map((item) => ({ [item.fieldName]: true }));
 
@@ -535,7 +535,7 @@ export default function ImportModal(props: IImportModalProps) {
                     }
                   },
                 },
-              ] as any)
+              ] as Record<string, unknown>)
             : []),
         ],
       },

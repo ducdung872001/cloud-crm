@@ -21,7 +21,7 @@ import WorkTypeService from "services/WorkTypeService";
 import moment from "moment";
 import { IWorkTypeFilterRequest } from "model/workType/WorkTypeRequestModel";
 
-export default function IntegratedMonitoring(props: any) {
+export default function IntegratedMonitoring(props: Record<string, unknown>) {
   document.title = "Danh sách ứng dụng";
 
   const { onBackProps } = props;
@@ -33,7 +33,7 @@ export default function IntegratedMonitoring(props: any) {
   const [listIdChecked, setListIdChecked] = useState<number[]>([]);
   const [showModalAdd, setShowModalAdd] = useState<boolean>(false);
   const [showChangeStatus, setShowChangeStatus] = useState<boolean>(false);
-  const [contentChangeStatus, setContentChangeStatus] = useState<any>(null);
+  const [contentChangeStatus, setContentChangeStatus] = useState<Record<string, unknown>>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [isNoItem, setIsNoItem] = useState<boolean>(false);
   const [isPermissions, setIsPermissions] = useState<boolean>(false);
@@ -64,7 +64,7 @@ export default function IntegratedMonitoring(props: any) {
 
   const abortController = new AbortController();
 
-  const getListLog = async (paramsSearch: any) => {
+  const getListLog = async (paramsSearch: Record<string, unknown>) => {
     setIsLoading(true);
 
     const response = await IntegrationPartnerService.logList(paramsSearch, abortController.signal);
@@ -143,7 +143,7 @@ export default function IntegratedMonitoring(props: any) {
 
   const dataFormat = ["text-center", "text-center", "", "text-center", "", "text-center"];
 
-  const dataMappingArray = (item: any, index: number) => [
+  const dataMappingArray = (item: Record<string, unknown>, index: number) => [
     getPageOffset(params) + index + 1,
     <div>
       <Image src={item.partner.avatar || ''} alt={''} width={"64rem"} />
@@ -159,7 +159,7 @@ export default function IntegratedMonitoring(props: any) {
     // item.errorMessage,
   ];
 
-  const actionsTable = (item: any): IAction[] => {
+  const actionsTable = (item: Record<string, unknown>): IAction[] => {
     return [
         item.status === 2 && 
         {
@@ -223,7 +223,7 @@ export default function IntegratedMonitoring(props: any) {
     setContentChangeStatus(null);
   };
 
-  const showDialogConfirmChangeStatus = (item?: any) => {
+  const showDialogConfirmChangeStatus = (item?: Record<string, unknown>) => {
     const contentDialog: IContentDialog = {
       color: "warning",
       className: "dialog-delete",

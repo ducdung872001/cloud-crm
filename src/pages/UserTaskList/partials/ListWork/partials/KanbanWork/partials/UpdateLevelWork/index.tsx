@@ -14,7 +14,7 @@ import "./index.scss";
 interface IUpdateLevelWorkModalProps {
   onShow: boolean;
   onHide: (reload) => void;
-  data: any;
+  data: Record<string, unknown>;
 }
 
 export default function UpdateLevelWorkModal(props: IUpdateLevelWorkModalProps) {
@@ -31,7 +31,7 @@ export default function UpdateLevelWorkModal(props: IUpdateLevelWorkModalProps) 
     () =>
       ({
         priorityLevel: data.priorityLevel?.toString() ?? "0",
-      } as any),
+      } as Record<string, unknown>),
     [onShow, data]
   );
 
@@ -89,7 +89,7 @@ export default function UpdateLevelWorkModal(props: IUpdateLevelWorkModalProps) 
       priorityLevel: +formData.values.priorityLevel,
     };
 
-    const body: any = {
+    const body: Record<string, unknown> = {
       ...changeFormData,
       ...(data ? { id: data.id } : {}),
     };

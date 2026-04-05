@@ -201,7 +201,7 @@ export default function AddBranchModal(props: AddBeautyBranchModalProps) {
   ];
 
   //! đoạn này xử lý lấy năm
-  const [years, setYears] = useState<any[]>(
+  const [years, setYears] = useState<Record<string, unknown>[]>(
     createArrayFromToR(new Date().getFullYear(), 1963).map((item, idx) => {
       return {
         value: +item,
@@ -211,7 +211,7 @@ export default function AddBranchModal(props: AddBeautyBranchModalProps) {
   );
 
   //! đoạn này xử lý lấy tháng
-  const [months, setMonths] = useState<any[]>(
+  const [months, setMonths] = useState<Record<string, unknown>[]>(
     createArrayFromTo(1, 12).map((item, idx) => {
       if (item < 10) {
         return {
@@ -228,7 +228,7 @@ export default function AddBranchModal(props: AddBeautyBranchModalProps) {
   );
 
   //! đoạn này xử lý lấy ngày
-  const [days, setDays] = useState<any[]>(
+  const [days, setDays] = useState<Record<string, unknown>[]>(
     createArrayFromTo(1, 28).map((item, idx) => {
       if (item < 10) {
         return {

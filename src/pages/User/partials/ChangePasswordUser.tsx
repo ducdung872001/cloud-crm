@@ -10,7 +10,7 @@ import Validate, { handleChangeValidate } from "utils/validate";
 import FieldCustomize from "components/fieldCustomize/fieldCustomize";
 import { isDifferenceObj } from "reborn-util";
 
-export default function ChangePasswordUser(props: any) {
+export default function ChangePasswordUser(props: Record<string, unknown>) {
   const { onShow, onHide, id } = props;
 
   const [isSubmit, setIsSubmit] = useState<boolean>(false);
@@ -25,7 +25,7 @@ export default function ChangePasswordUser(props: any) {
       ({
         newPassword: "",
         retypePassword: "",
-      } as any),
+      } as Record<string, unknown>),
     []
   );
 
@@ -98,9 +98,9 @@ export default function ChangePasswordUser(props: any) {
 
     setIsSubmit(true);
 
-    const body: any = {
+    const body: Record<string, unknown> = {
       id: id,
-      ...(formData.values as any),
+      ...(formData.values as Record<string, unknown>),
     };
 
     const response = await UserService.resetPass(body);

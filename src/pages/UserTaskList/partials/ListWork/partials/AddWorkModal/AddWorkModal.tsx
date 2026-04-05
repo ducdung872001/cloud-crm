@@ -68,7 +68,7 @@ export default function AddWorkModal(props: IAddWorkModelProps) {
     disableOpportunity,
   } = props;
 
-  const params: any = getSearchParameters();
+  const params: Record<string, unknown> = getSearchParameters();
 
   const takeIdProjectManagement = Object.keys(params).length > 0 && +params?.projectId > 0 ? +params?.projectId : null;
   const takeIdOptManagement = Object.keys(params).length > 0 && +params?.opportunityId > 0 ? +params?.opportunityId : null;

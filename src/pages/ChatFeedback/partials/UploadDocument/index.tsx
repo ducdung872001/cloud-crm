@@ -115,7 +115,7 @@ export default function UploadDocument(props: IUploadDocumentProps) {
   // thay đổi tài liệu
   useEffect(() => {
     if (isEditDocument && infoDocument) {
-      const newData: any = [...lstData].map((item, index) => {
+      const newData: Record<string, unknown> = [...lstData].map((item, index) => {
         if (index == idxDocument && infoDocument.url !== item.url) {
           return infoDocument;
         }

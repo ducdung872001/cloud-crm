@@ -24,7 +24,7 @@ export default function AddCustomerSurvey(props: IAddCustomerSurveyProps) {
   const [showDialog, setShowDialog] = useState<boolean>(false);
   const [contentDialog, setContentDialog] = useState<IContentDialog>(null);
 
-  const handChangeDataProps = (data: any) => {
+  const handChangeDataProps = (data: Record<string, unknown>) => {
     if (!data) return;
 
     const changeData = {
@@ -67,7 +67,7 @@ export default function AddCustomerSurvey(props: IAddCustomerSurveyProps) {
         shortLink: data?.shortLink ?? "",
         startTime: data?.startTime ?? new Date(),
         endTime: data?.endTime ?? "",
-      } as any),
+      } as Record<string, unknown>),
     [onShow, data, currentDomain]
   );
 

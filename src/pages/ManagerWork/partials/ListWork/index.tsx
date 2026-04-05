@@ -4,7 +4,7 @@ import SelectCustom from "components/selectCustom/selectCustom";
 import ProjectNavigation from "./partials/ProjectNavigation";
 import WorkTableByGroup from "./partials/WorkTableByGroup";
 
-export default function ListWork(props: any) {
+export default function ListWork(props: Record<string, unknown>) {
   const { activeTitleHeader } = props;
   const [isDetailWork, setIsDetailWork] = useState<boolean>(false);
   let _isFullPage = localStorage.getItem("isFullPageWorkManagement");

@@ -12,20 +12,20 @@ import ListInValueLookupInput from "../ListInValueLookupInput";
 import SelectMultilDropdown from "./partial/SelectMultilDropdown";
 
 interface ComponentInputProps {
-  field: any;
+  field: Record<string, unknown>;
   rowIndex: number;
   fieldIndex: number;
   handChangeValueItem: (
     rowIndex: number,
     fieldIndex: number,
-    value: any,
+    value: Record<string, unknown>,
     type: "compare" | "number" | "date" | "checkbox" | "input" | "select" | "select_multi" | "lookup"
   ) => void;
-  setDataRow: (data: any) => void;
+  setDataRow: (data: Record<string, unknown>) => void;
   //   listColumn: any[];
   //   setListColumn: (columns: any[]) => void;
   //   dataRow: any;
-  lookupValues: any;
+  lookupValues: Record<string, unknown>;
   loading: boolean;
 }
 

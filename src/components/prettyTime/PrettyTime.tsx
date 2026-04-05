@@ -2,7 +2,7 @@ import React from "react";
 import moment from "moment";
 
 interface PrettyTimeProps {
-  time: any;
+  time: string | number | Date;
   className?: string;
 }
 

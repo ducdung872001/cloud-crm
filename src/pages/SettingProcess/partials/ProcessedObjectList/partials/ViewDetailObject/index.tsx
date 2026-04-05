@@ -12,7 +12,7 @@ import { SystemNotification } from "components/systemNotification/systemNotifica
 
 interface IViewDetailFsModalProps {
   onShow: boolean;
-  data: any;
+  data: Record<string, unknown>;
   onHide: () => void;
 }
 
@@ -67,7 +67,7 @@ export default function ViewDetailFsModal(props: IViewDetailFsModalProps) {
       const result = response.result.items;
 
       const changeResult = result.map((item) => {
-        const newItem: any = {
+        const newItem: Record<string, unknown> = {
           [item.code]: "",
           type: item.type,
           placeholder: item.name.toLowerCase(),

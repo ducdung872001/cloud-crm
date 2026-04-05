@@ -11,7 +11,7 @@ import { serialize } from "utils/editor";
 import _ from "lodash";
 import ServiceService from "services/ServiceService";
 
-export default function DetailServiceModal(props: any) {
+export default function DetailServiceModal(props: Record<string, unknown>) {
   const { onShow, onHide, data } = props;
 
   const [isSubmit, setIsSubmit] = useState<boolean>(false);
@@ -23,7 +23,7 @@ export default function DetailServiceModal(props: any) {
       ({
         id: data?.id,
         content: data?.content ?? "",
-      } as any),
+      } as Record<string, unknown>),
     [onShow, data]
   );
 

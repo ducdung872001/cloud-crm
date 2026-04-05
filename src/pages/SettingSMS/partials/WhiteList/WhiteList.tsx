@@ -21,7 +21,7 @@ import "./WhiteList.scss";
 import ModalAddPhone from "./partials/ModalAddPhone";
 import Badge from "components/badge/badge";
 
-export default function WhiteList(props: any) {
+export default function WhiteList(props: Record<string, unknown>) {
   const { titleProps, nameProps, onBackProps } = props;
 
   document.title = `Danh sách WhiteList`;
@@ -31,14 +31,14 @@ export default function WhiteList(props: any) {
   const [listIdChecked, setListIdChecked] = useState<number[]>([]);
   const [showModalAdd, setShowModalAdd] = useState<boolean>(false);
   const [showDialog, setShowDialog] = useState<boolean>(false);
-  const [contentDialog, setContentDialog] = useState<any>(null);
+  const [contentDialog, setContentDialog] = useState<Record<string, unknown>>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [isNoItem, setIsNoItem] = useState<boolean>(false);
   const [isPermissions, setIsPermissions] = useState<boolean>(false);
   const [showDialogPause, setShowDialogPause] = useState<boolean>(false);
-  const [contentDialogPause, setContentDialogPause] = useState<any>(null);
+  const [contentDialogPause, setContentDialogPause] = useState<Record<string, unknown>>(null);
   const [showDialogApprove, setShowDialogApprove] = useState<boolean>(false);
-  const [contentDialogApprove, setContentDialogApprove] = useState<any>(null);
+  const [contentDialogApprove, setContentDialogApprove] = useState<Record<string, unknown>>(null);
   const [params, setParams] = useState<ITemplateCategoryFilterRequest>({
     name: "",
   });
@@ -121,14 +121,14 @@ export default function WhiteList(props: any) {
 
   const dataFormat = ["text-center", ""];
 
-  const dataMappingArray = (item: any, index: number) => [
+  const dataMappingArray = (item: Record<string, unknown>, index: number) => [
     getPageOffset(params) + index + 1,
     item.phone,
     // <Badge key={index} variant={item.status === 1 ? "success" : "secondary"} text={item.status === 1 ? "Đã kích hoạt" : "Chưa kích hoạt"} />,
 
   ];
 
-  const actionsTable = (item: any): IAction[] => {
+  const actionsTable = (item: Record<string, unknown>): IAction[] => {
     const isCheckedItem = listIdChecked?.length > 0;
     return [
 
@@ -254,7 +254,7 @@ export default function WhiteList(props: any) {
     setShowDialog(true);
   };
 
-  const showDialogConfirmPause = (item?: any, status?: number) => {
+  const showDialogConfirmPause = (item?: Record<string, unknown>, status?: number) => {
     const contentDialog: IContentDialog = {
       color: "warning",
       className: "dialog-delete",
@@ -280,7 +280,7 @@ export default function WhiteList(props: any) {
     setShowDialogPause(true);
   };
 
-  const showDialogConfirmApprove = (item?: any, status?: number) => {
+  const showDialogConfirmApprove = (item?: Record<string, unknown>, status?: number) => {
     const contentDialog: IContentDialog = {
       color: "success",
       className: "dialog-delete",

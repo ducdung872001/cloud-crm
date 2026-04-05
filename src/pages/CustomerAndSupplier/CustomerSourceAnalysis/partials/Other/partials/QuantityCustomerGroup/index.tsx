@@ -97,7 +97,7 @@ export default function QuantityCustomerGroup(props) {
           {
             ...chartData.series,
             data: changeResult,
-          } as any,
+          } as Record<string, unknown>,
         ],
       });
     } else {

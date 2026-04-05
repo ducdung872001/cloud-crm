@@ -43,7 +43,7 @@ export default function SaleOfferList() {
   const [listIdChecked, setListIdChecked] = useState<number[]>([]);
   const [showModalViewOffer, setShowModalViewOffer] = useState<boolean>(false);
   const [showDialog, setShowDialog] = useState<boolean>(false);
-  const [contentDialog, setContentDialog] = useState<any>(null);
+  const [contentDialog, setContentDialog] = useState<Record<string, unknown>>(null);
   const [idSaleOffer, setIdSaleOffer] = useState<number>(0);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [isNoItem, setIsNoItem] = useState<boolean>(false);

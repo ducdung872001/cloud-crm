@@ -9,7 +9,7 @@ import { useOnClickOutside } from "utils/hookCustom";
 import "./sortby.scss";
 
 interface SortProps {
-  params: any;
+  params: Record<string, unknown>;
   listSort: ISortItem[];
   callback: (value: string) => void;
 }

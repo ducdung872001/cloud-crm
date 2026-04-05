@@ -182,7 +182,7 @@ export default function ModalCompensationIntermediateThrowEvent({ onShow, onHide
                   disabled: isSubmit,
                   is_loading: isSubmit,
                 },
-              ] as any)),
+              ] as Record<string, unknown>)),
         ],
       },
     }),

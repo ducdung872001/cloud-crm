@@ -25,18 +25,18 @@ export default function Package() {
   document.title = "Quản lý gói dịch vụ";
 
   const isMounted = useRef(false);
-  const [listPackage, setListPackage] = useState<any[]>();
-  const [dataPackage, setDataPackage] = useState<any>(null);
+  const [listPackage, setListPackage] = useState<Record<string, unknown>[]>();
+  const [dataPackage, setDataPackage] = useState<Record<string, unknown>>(null);
   const [listIdChecked, setListIdChecked] = useState<number[]>([]);
   const [showModalAdd, setShowModalAdd] = useState<boolean>(false);
   const [showDialog, setShowDialog] = useState<boolean>(false);
-  const [contentDialog, setContentDialog] = useState<any>(null);
+  const [contentDialog, setContentDialog] = useState<Record<string, unknown>>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [isNoItem, setIsNoItem] = useState<boolean>(false);
   const [showConfig, setShowConfig] = useState<boolean>(false);
-  const [dataRole, setDataRole] = useState<any>(null);
+  const [dataRole, setDataRole] = useState<Record<string, unknown>>(null);
   const [idRole, setIdRole] = useState<number>(null);
-  const [params, setParams] = useState<any>({
+  const [params, setParams] = useState<Record<string, unknown>>({
     name: "",
     page: 1,
     limit: 10,
@@ -97,7 +97,7 @@ export default function Package() {
 
   const abortController = new AbortController();
 
-  const getListPackage = async (paramsSearch: any) => {
+  const getListPackage = async (paramsSearch: Record<string, unknown>) => {
     setIsLoading(true);
 
     const response = await PackageService.lst(paramsSearch, abortController.signal);
@@ -140,7 +140,7 @@ export default function Package() {
 
     if (isMounted.current === true) {
       getListPackage(params);
-      const paramsTemp: any = _.cloneDeep(params);
+      const paramsTemp: Record<string, unknown> = _.cloneDeep(params);
       if (paramsTemp.limit === 10) {
         delete paramsTemp["limit"];
       }
@@ -218,7 +218,7 @@ export default function Package() {
   ];
 
   // IPackageResponseModel
-  const dataMappingArray = (item: any, index: number) => [
+  const dataMappingArray = (item: Record<string, unknown>, index: number) => [
     getPageOffset(params) + index + 1,
     item.code,
     <div style={{ width: "20rem" }} title={item.name}>
@@ -242,7 +242,7 @@ export default function Package() {
     <Badge key={index} text={item.status == 1 ? "Đang hiệu lực" : "Tạm dừng"} variant={item.status == 1 ? "success" : "warning"} />,
   ];
 
-  const actionsTable = (item: any): IAction[] => {
+  const actionsTable = (item: Record<string, unknown>): IAction[] => {
     const isCheckedItem = listIdChecked?.length > 0;
     return [
       {
@@ -330,7 +330,7 @@ export default function Package() {
       });
   };
 
-  const showDialogConfirmDelete = (item?: any) => {
+  const showDialogConfirmDelete = (item?: Record<string, unknown>) => {
     const contentDialog: IContentDialog = {
       color: "error",
       className: "dialog-delete",
@@ -384,7 +384,7 @@ export default function Package() {
     setContentDialog(null);
   };
 
-  const showDialogConfirm = (item?: any) => {
+  const showDialogConfirm = (item?: Record<string, unknown>) => {
     const contentDialog: IContentDialog = {
       color: "warning",
       className: "dialog-warning",

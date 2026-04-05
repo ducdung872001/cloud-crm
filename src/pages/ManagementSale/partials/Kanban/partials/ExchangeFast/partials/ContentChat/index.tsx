@@ -14,7 +14,7 @@ import FileService from "services/FileService";
 import SaleflowInvoiceService from "services/SaleflowInvoiceService";
 
 interface IContentChatProps {
-  dataMessage: any;
+  dataMessage: Record<string, unknown>;
   sieId: number;
   employeeId: number;
   onHide: (reload) => void;

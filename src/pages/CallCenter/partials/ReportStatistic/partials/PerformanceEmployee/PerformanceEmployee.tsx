@@ -6,7 +6,7 @@ import BoxTable from "components/boxTable/boxTable";
 import { DataPaginationDefault, PaginationProps } from "components/pagination/pagination";
 import { formatCurrency, getPageOffset } from "reborn-util";
 
-function PerformanceEmployee(props: any) {
+function PerformanceEmployee(props: Record<string, unknown>) {
   const { onShow } = props;
 
 
@@ -16,7 +16,7 @@ function PerformanceEmployee(props: any) {
 
 
 
-  const [params, setParams] = useState<any>({
+  const [params, setParams] = useState<Record<string, unknown>>({
     name: "",
   });
   const [listTopSale, setListTopSale] = useState([]);
@@ -109,7 +109,7 @@ function PerformanceEmployee(props: any) {
   ];
   const dataFormatTopSale = ["text-center", "", "", "", "text-right",];
 
-  const dataMappingArrayTopSale = (item: any, index: number) => [
+  const dataMappingArrayTopSale = (item: Record<string, unknown>, index: number) => [
     getPageOffset(params) + index + 1,
     item.employeeName,
     item.quatityCall,

@@ -8,7 +8,7 @@ import Badge from "@/components/badge/badge";
 import { showToast } from "@/utils/common";
 import OrderRequestService from "@/services/OrderRequestService";
 
-export default function ModalDetailOrder(props: any) {
+export default function ModalDetailOrder(props: Record<string, unknown>) {
   const { onShow, onHide, dataOrder } = props;
 
   const [isSubmit, setIsSubmit] = useState<boolean>(false);
@@ -139,7 +139,7 @@ export default function ModalDetailOrder(props: any) {
   // SHIPPING,   // Đang giao
   // COMPLETED,      // Đã hoàn thành
   // CANCELED; // Hủy
-  const handleConfirm = async (item: any) => {
+  const handleConfirm = async (item: Record<string, unknown>) => {
     await OrderRequestService.confirm({
       status: "CONFIRMED",
       id: item.id,

@@ -2,7 +2,7 @@ export interface IKpiResponse {
   id: number;
   name: string;
   description: string;
-  startDate: any;
-  endDate: any;
+  startDate: string | Date;
+  endDate: string | Date;
   branchId?: number;
 }

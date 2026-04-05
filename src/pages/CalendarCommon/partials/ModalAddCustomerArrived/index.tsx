@@ -18,7 +18,7 @@ import { is } from "bpmn-js/lib/util/ModelUtil";
 interface IAddSignerFSAndQuoteProps {
   onShow: boolean;
   onHide: (reload: boolean) => void;
-  data?: any;
+  data?: Record<string, unknown>;
 }
 
 export default function ModalAddCustomerArrived(props: IAddSignerFSAndQuoteProps) {
@@ -50,7 +50,7 @@ export default function ModalAddCustomerArrived(props: IAddSignerFSAndQuoteProps
 
           // extract customerId and serviceId from response (services may be stringified or in lstService)
           const customerIdFromRes = item?.customerId ?? undefined;
-          let serviceIdFromRes: any = undefined;
+          let serviceIdFromRes: Record<string, unknown> = undefined;
           try {
             if (item?.serviceId) {
               serviceIdFromRes = item.serviceId;
@@ -280,7 +280,7 @@ export default function ModalAddCustomerArrived(props: IAddSignerFSAndQuoteProps
 
   useEffect(() => {
     if (formData?.lstVar && Array.isArray(formData.lstVar)) {
-      const mapped = formData.lstVar.map((item: any) => {
+      const mapped = formData.lstVar.map((item: Record<string, unknown>) => {
         const key = item.key || "";
         const val = item.value;
         if (val && typeof val === "object" && !Array.isArray(val)) {
@@ -297,27 +297,27 @@ export default function ModalAddCustomerArrived(props: IAddSignerFSAndQuoteProps
         const out = [...arr];
         const hasCustomer = out.find((x) => x.key === "customer");
         if (!hasCustomer) {
-          out.unshift({ key: "customer", fields: [{ fieldName: "customerId", value: String((formData as any)?.customerId ?? ""), readonly: true }] });
+          out.unshift({ key: "customer", fields: [{ fieldName: "customerId", value: String((formData as Record<string, unknown>)?.customerId ?? ""), readonly: true }] });
         } else {
           const customerKey = out.find((x) => x.key === "customer");
           if (customerKey) {
             const hasField = customerKey.fields.find((search) => search.fieldName === "customerId");
-            if (!hasField) customerKey.fields.unshift({ fieldName: "customerId", value: String((formData as any)?.customerId ?? ""), readonly: true });
-            else hasField.value = hasField.value ?? String((formData as any)?.customerId ?? "");
+            if (!hasField) customerKey.fields.unshift({ fieldName: "customerId", value: String((formData as Record<string, unknown>)?.customerId ?? ""), readonly: true });
+            else hasField.value = hasField.value ?? String((formData as Record<string, unknown>)?.customerId ?? "");
             hasField.readonly = true;
           }
         }
 
         const hasService = out.find((x) => x.key === "service");
         if (!hasService) {
-          const svcVal = (formData as any)?.serviceId ?? (typeof (formData as any)?.services === "string" ? (formData as any).services : "");
+          const svcVal = (formData as Record<string, unknown>)?.serviceId ?? (typeof (formData as Record<string, unknown>)?.services === "string" ? (formData as Record<string, unknown>).services : "");
           out.splice(hasCustomer ? 1 : 0, 0, { key: "service", fields: [{ fieldName: "serviceId", value: String(svcVal ?? ""), readonly: true }] });
         } else {
           const serviceKey = out.find((x) => x.key === "service");
           if (serviceKey) {
             const hasField = serviceKey.fields.find((search) => search.fieldName === "serviceId");
-            if (!hasField) serviceKey.fields.unshift({ fieldName: "serviceId", value: String((formData as any)?.serviceId ?? (typeof (formData as any)?.services === "string" ? (formData as any).services : "")), readonly: true });
-            else hasField.value = hasField.value ?? String((formData as any)?.serviceId ?? (typeof (formData as any)?.services === "string" ? (formData as any).services : ""));
+            if (!hasField) serviceKey.fields.unshift({ fieldName: "serviceId", value: String((formData as Record<string, unknown>)?.serviceId ?? (typeof (formData as Record<string, unknown>)?.services === "string" ? (formData as Record<string, unknown>).services : "")), readonly: true });
+            else hasField.value = hasField.value ?? String((formData as Record<string, unknown>)?.serviceId ?? (typeof (formData as Record<string, unknown>)?.services === "string" ? (formData as Record<string, unknown>).services : ""));
             hasField.readonly = true;
           }
         }
@@ -375,7 +375,7 @@ export default function ModalAddCustomerArrived(props: IAddSignerFSAndQuoteProps
 
   const base = data && typeof data === "object" ? { ...data } : {};
 
-  const body: any = {
+  const body: Record<string, unknown> = {
     ...base,
     ...(base.id ? {} : { id: data?.id ?? formData.potId }),
     processor: JSON.stringify(processorObj),

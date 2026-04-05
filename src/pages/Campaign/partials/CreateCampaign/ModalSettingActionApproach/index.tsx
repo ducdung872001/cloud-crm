@@ -15,7 +15,7 @@ import Button from "components/button/button";
 import ModalAddAction from "./partials/ModalAddAction";
 import Loading from "components/loading";
 
-export default function ModalSettingActionApproach(props: any) {
+export default function ModalSettingActionApproach(props: Record<string, unknown>) {
     const { onShow, onHide, approachData } = props;  
     // console.log('approachData', approachData);
     
@@ -53,7 +53,7 @@ export default function ModalSettingActionApproach(props: any) {
 
     const abortController = new AbortController();
 
-    const getListActivityApproach = async (paramsSearch: any) => {
+    const getListActivityApproach = async (paramsSearch: Record<string, unknown>) => {
         setIsLoading(true);
 
         const response = await CampaignApproachService.activityList(paramsSearch, abortController.signal);
@@ -86,7 +86,7 @@ export default function ModalSettingActionApproach(props: any) {
 
     const dataFormat = ["text-center", "", "text-center", "text-center",];
 
-    const dataMappingArray = (item: any, index: number) => [
+    const dataMappingArray = (item: Record<string, unknown>, index: number) => [
         getPageOffset(params) + index + 1,
         item.code === 'email' ? 'Gửi Email' 
             : item.code === 'sms' ? 'Gửi SMS' 
@@ -117,7 +117,7 @@ export default function ModalSettingActionApproach(props: any) {
     ];
 
 
-    const actionsTable = (item: any): IAction[] => {
+    const actionsTable = (item: Record<string, unknown>): IAction[] => {
         
         return [
           {
@@ -138,7 +138,7 @@ export default function ModalSettingActionApproach(props: any) {
         ];
     };
 
-    const showDialogConfirmDelete = (item?: any) => {
+    const showDialogConfirmDelete = (item?: Record<string, unknown>) => {
         const contentDialog: IContentDialog = {
           color: "error",
           className: "dialog-delete",

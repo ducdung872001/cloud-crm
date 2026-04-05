@@ -35,7 +35,7 @@ import BeautyBranchService from "services/BeautyBranchService";
 // 4 - Yêu cầu làm rõ (Từ portal/Từ Cổng đấu thầu)
 // 5 - Phản hồi Yêu cầu làm rõ (Phản hồi nhà thầu)
 
-export default function NotificationList(props: any) {
+export default function NotificationList(props: Record<string, unknown>) {
   const { t } = useTranslation();
   document.title = t("pageNotification.title");
 
@@ -48,7 +48,7 @@ export default function NotificationList(props: any) {
   const [listIdChecked, setListIdChecked] = useState<number[]>([]);
   const [showModalSetting, setShowModalSetting] = useState<boolean>(false);
   const [showDialog, setShowDialog] = useState<boolean>(false);
-  const [contentDialog, setContentDialog] = useState<any>(null);
+  const [contentDialog, setContentDialog] = useState<Record<string, unknown>>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [isNoItem, setIsNoItem] = useState<boolean>(false);
   const [isPermissions, setIsPermissions] = useState<boolean>(false);
@@ -64,7 +64,7 @@ export default function NotificationList(props: any) {
   const [isModalViewNoti, setIsModalViewNoti] = useState(false)
   const [dataNoti, setDataNoti] = useState(null);
 
-  const [params, setParams] = useState<any>({
+  const [params, setParams] = useState<Record<string, unknown>>({
     title: "",
     limit: 10,
     page: 1,
@@ -89,7 +89,7 @@ export default function NotificationList(props: any) {
 
   const abortController = new AbortController();
 
-  const getListNotify = async (paramsSearch: any, disableLoading?: boolean) => {
+  const getListNotify = async (paramsSearch: Record<string, unknown>, disableLoading?: boolean) => {
 
     if (!disableLoading) {
       // setIsLoading(true);
@@ -241,7 +241,7 @@ export default function NotificationList(props: any) {
   ];
 
   const loadedOptionProject = async (search, loadedOptions, { page }) => {
-    const param: any = {
+    const param: Record<string, unknown> = {
       name: search,
       page: page,
       limit: 10,
@@ -355,7 +355,7 @@ export default function NotificationList(props: any) {
         showToast(t("pageNotification.markedAllRead"), "success");
         // Cập nhật UI ngay - đánh dấu toàn bộ list đã đọc
         setListNotification((prev) =>
-          (prev as any[]).map((item) => ({ ...item, unread: 1 }))
+          (prev as Record<string, unknown>[]).map((item) => ({ ...item, unread: 1 }))
         );
         setCountUnread(0);
       } else {
@@ -383,7 +383,7 @@ export default function NotificationList(props: any) {
   }, [])
 
   const onFilter = () => {
-    const newParams: any = {
+    const newParams: Record<string, unknown> = {
       title: params.title || "",
       limit: params.limit || 10,
       page: 1,
@@ -419,7 +419,7 @@ export default function NotificationList(props: any) {
   }
 
   /** Navigate based on targetLink or payload type from the new API */
-  const handleNotificationClick = (item: any) => {
+  const handleNotificationClick = (item: Record<string, unknown>) => {
     // unread: 0 = chưa đọc, unread: 1 = đã đọc
     if (item.unread === 0 || item.unread === null) {
       onUnread(item.id);
@@ -461,7 +461,7 @@ export default function NotificationList(props: any) {
     }
   };
 
-  const getNotificationIconName = (item: any): string => {
+  const getNotificationIconName = (item: Record<string, unknown>): string => {
     if (item.payload && isJsonString(item.payload)) {
       const payload = JSON.parse(item.payload);
       switch (payload?.type) {
@@ -486,7 +486,7 @@ export default function NotificationList(props: any) {
   };
 
   /** Render a single notification item */
-  const renderNotificationItem = (item: any) => {
+  const renderNotificationItem = (item: Record<string, unknown>) => {
     const isUnread = item.unread === 0 || item.unread === null; // 0/null = chưa đọc, 1 = đã đọc
     const iconName = getNotificationIconName(item);
     return (

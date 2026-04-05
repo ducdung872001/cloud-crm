@@ -19,7 +19,7 @@ import TextArea from "components/textarea/textarea";
 import ProductAttributeService from "services/ProductAttributeService";
 import CategoryServiceService from "services/CategoryServiceService";
 
-export default function AddProductAttributeModal(props: any) {
+export default function AddProductAttributeModal(props: Record<string, unknown>) {
   const { onShow, onHide, data } = props;
 
   const refShowField = useRef();
@@ -33,12 +33,12 @@ export default function AddProductAttributeModal(props: any) {
 
   const [listCustomerAttribute, setListCustomerAttribute] = useState<IOption[]>(null);
   const [isLoadingCustomerAttribute, setIsLoadingCustomerAttribute] = useState<boolean>(false);
-  const [addFieldAttributes, setAddFieldAttributes] = useState<any[]>([{ value: '', label: '' }]);
-  const [detailLookup, setDetailLookup] = useState<any>("contract");
-  const [numberFormat, setNumberFormat] = useState<any>('');
+  const [addFieldAttributes, setAddFieldAttributes] = useState<Record<string, unknown>[]>([{ value: '', label: '' }]);
+  const [detailLookup, setDetailLookup] = useState<Record<string, unknown>>("contract");
+  const [numberFormat, setNumberFormat] = useState<Record<string, unknown>>('');
 
   //Cần đổi lại thành khách hàng
-  const [customerAttributeFields, setCustomerAttributeFields] = useState<any>(null); //Khởi tạo null là quan trọng
+  const [customerAttributeFields, setCustomerAttributeFields] = useState<Record<string, unknown>>(null); //Khởi tạo null là quan trọng
   const [showFields, setShowFields] = useState<boolean>(false);
   const [selectedFormula, setSelectedFormula] = useState<string>("");
   const [cursorPosition, setCursorPosition] = useState<number>(0);
@@ -63,7 +63,7 @@ export default function AddProductAttributeModal(props: any) {
   const [validateFieldCategory, setValidateFieldCategory] = useState<boolean>(false);
 
   const loadOptionCategory = async (search, loadedOptions, { page }) => {
-    const param: any = {
+    const param: Record<string, unknown> = {
       name: search,
       page: page,
       limit: 10,
@@ -77,7 +77,7 @@ export default function AddProductAttributeModal(props: any) {
       return {
         options: [
           ...(dataOption.length > 0
-            ? dataOption.map((item: any) => {
+            ? dataOption.map((item: Record<string, unknown>) => {
               return {
                 value: item.id,
                 label: item.name,
@@ -245,7 +245,7 @@ export default function AddProductAttributeModal(props: any) {
       attributes: data?.attributes ?? null,
       position: data?.position ?? "0",
       parentId: data?.parentId ?? "0",
-    } as any),
+    } as Record<string, unknown>),
     [data, onShow]
   );
 
@@ -269,7 +269,7 @@ export default function AddProductAttributeModal(props: any) {
   const [detailParent, setDetailParent] = useState(null);
 
   const loadedOptionParent = async (search, loadedOptions, { page }) => {
-    const params: any = {
+    const params: Record<string, unknown> = {
       isParent: 1
     }
     const response = await ProductAttributeService.list(params);
@@ -664,8 +664,8 @@ export default function AddProductAttributeModal(props: any) {
 
     setIsSubmit(true);
 
-    const body: any = {
-      ...(formData.values as any),
+    const body: Record<string, unknown> = {
+      ...(formData.values as Record<string, unknown>),
       ...(data ? { id: data.id } : {}),
       ...(
         (formData.values['datatype'] == 'dropdown' || formData.values['datatype'] == 'radio' || formData.values['datatype'] == 'multiselect') ? {

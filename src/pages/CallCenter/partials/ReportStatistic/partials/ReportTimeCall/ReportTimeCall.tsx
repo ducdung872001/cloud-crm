@@ -3,7 +3,7 @@ import "./ReportTimeCall.scss";
 import HighchartsReact from "highcharts-react-official";
 import Highcharts from "highcharts";
 
-export default function ReportTimeCall(props: any) {
+export default function ReportTimeCall(props: Record<string, unknown>) {
   const { onShow } = props;
 
   const chartRef = useRef(null);

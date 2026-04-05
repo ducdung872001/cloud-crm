@@ -264,7 +264,7 @@ export default function InventoryManagement() {
           if (p.keyword) stockParams.keyword = p.keyword;
           if (p.warehouseId) stockParams.warehouseId = +p.warehouseId;
           if (p.status !== "") stockParams.stockStatus = +p.status;
-          const res = await InventoryService.variantStockList(stockParams as any, abortCtrl.signal);
+          const res = await InventoryService.variantStockList(stockParams as Record<string, unknown>, abortCtrl.signal);
           if (res.code === 0 || res.status === 1) {
             const result = res.result ?? res.data ?? {};
             const items: IVariantStockItem[] = result.items ?? result.content ?? result.data ?? [];
@@ -330,7 +330,7 @@ export default function InventoryManagement() {
         case "transfer": {
           const transferParams: Record<string, any> = { page: pageIdx, size };
           if (p.status !== "") transferParams.status = +p.status;
-          const res = await InventoryService.stockTransferList(transferParams as any, abortCtrl.signal);
+          const res = await InventoryService.stockTransferList(transferParams as Record<string, unknown>, abortCtrl.signal);
           if (res.code === 0 || res.status === 1) {
             const result = res.result ?? res.data ?? {};
             const items: IStockTransferItem[] = result.items ?? result.content ?? result.data ?? [];
@@ -355,7 +355,7 @@ export default function InventoryManagement() {
           const checkParams: Record<string, any> = { page: pageIdx, limit: size };
           if (p.keyword) checkParams.name = p.keyword;
           if (p.status !== "") checkParams.status = +p.status;
-          const res = await AdjustmentSlipService.list(checkParams as any, abortCtrl.signal);
+          const res = await AdjustmentSlipService.list(checkParams as Record<string, unknown>, abortCtrl.signal);
           if (res.code === 0 || res.status === 1) {
             const result = res.result ?? res.data ?? {};
             const items: IStockAdjustItem[] = result.items ?? result.content ?? result.data ?? [];
@@ -453,7 +453,7 @@ export default function InventoryManagement() {
           if (p.warehouseId) costParams.warehouseId = +p.warehouseId;
 
           const [res, summaryRes] = await Promise.all([
-            InventoryService.variantStockList(costParams as any, abortCtrl.signal),
+            InventoryService.variantStockList(costParams as Record<string, unknown>, abortCtrl.signal),
             costSummaryLoaded.current
               ? Promise.resolve(null)
               : InventoryService.costSummary(
@@ -487,7 +487,7 @@ export default function InventoryManagement() {
         }
       }
     } catch (err) {
-      if ((err as any)?.name !== "AbortError") {
+      if ((err as Record<string, unknown>)?.name !== "AbortError") {
         showToast("Có lỗi xảy ra khi tải dữ liệu", "error");
       }
     } finally {
@@ -682,7 +682,7 @@ export default function InventoryManagement() {
         dl(b, `kiem_ke_kho_${new Date().toISOString().slice(0,10)}.xlsx`);
       }
       showToast("Xuất Excel thành công!", "success");
-    } catch (e: any) {
+    } catch (e: unknown) {
       showToast(e?.message ?? "Xuất Excel thất bại. Vui lòng thử lại.", "error");
     } finally {
       setIsExporting(false);

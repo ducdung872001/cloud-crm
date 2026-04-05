@@ -28,7 +28,7 @@ function Fancybox(props: PropsWithChildren<Props>) {
         items: {
           downloadCustom: {
             tpl: `<button title="Tải xuống" class="f-button"><svg><path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2M7 11l5 5 5-5M12 4v12"/></svg></button>`,
-            click: (instance: any) => {
+            click: (instance: Record<string, unknown>) => {
               const takeImage = instance.instance.userSlides[0].src;
               downloadImage(takeImage, "");
             },

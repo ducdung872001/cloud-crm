@@ -25,21 +25,21 @@ export default {
       method: "DELETE",
     }).then((res) => res.json());
   },
-  updateSLA: (body: any) => {
+  updateSLA: (body: Record<string, unknown>) => {
     return fetch(urlsApi.campaignApproach.updateSLA, {
       method: "POST",
       body: JSON.stringify(body),
     }).then((res) => res.json());
   },
 
-  activityList: (params?: any, signal?: AbortSignal) => {
+  activityList: (params?: Record<string, unknown>, signal?: AbortSignal) => {
     return fetch(`${urlsApi.campaignApproach.activityList}${convertParamsToString(params)}`, {
       signal,
       method: "GET",
     }).then((res) => res.json());
   },
 
-  updateActivity: (body: any) => {
+  updateActivity: (body: Record<string, unknown>) => {
     return fetch(urlsApi.campaignApproach.updateActivity, {
       method: "POST",
       body: JSON.stringify(body),

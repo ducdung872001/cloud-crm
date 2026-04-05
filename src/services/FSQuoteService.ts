@@ -2,31 +2,31 @@ import { urlsApi } from "configs/urls";
 import { convertParamsToString } from "reborn-util";
 
 export default {
-  list: (params?: any, signal?: AbortSignal) => {
+  list: (params?: Record<string, unknown>, signal?: AbortSignal) => {
     return fetch(`${urlsApi.fs.lst}${convertParamsToString(params)}`, {
       signal,
       method: "GET",
     }).then((res) => res.json());
   },
-  update: (body: any) => {
+  update: (body: Record<string, unknown>) => {
     return fetch(urlsApi.fs.update, {
       method: "POST",
       body: JSON.stringify(body),
     }).then((res) => res.json());
   },
-  updateAndInit: (body: any) => {
+  updateAndInit: (body: Record<string, unknown>) => {
     return fetch(urlsApi.fs.updateAndInit, {
       method: "POST",
       body: JSON.stringify(body),
     }).then((res) => res.json());
   },
-  updateStatus: (body: any) => {
+  updateStatus: (body: Record<string, unknown>) => {
     return fetch(urlsApi.fs.updateStatus, {
       method: "POST",
       body: JSON.stringify(body),
     }).then((res) => res.json());
   },
-  resetSignature: (params: any) => {
+  resetSignature: (params: Record<string, unknown>) => {
     return fetch(`${urlsApi.fs.resetSignal}${convertParamsToString(params)}`, {
       method: "GET",
     }).then((res) => res.json());
@@ -41,18 +41,18 @@ export default {
       method: "GET",
     }).then((res) => res.json());
   },
-  cloneFs: (body: any) => {
+  cloneFs: (body: Record<string, unknown>) => {
     return fetch(urlsApi.fs.cloneFs, {
       method: "POST",
       body: JSON.stringify(body),
     }).then((res) => res.json());
   },
-  fsFormLst: (params?: any) => {
+  fsFormLst: (params?: Record<string, unknown>) => {
     return fetch(`${urlsApi.fs.fsFormLst}${convertParamsToString(params)}`, {
       method: "GET",
     }).then((res) => res.json());
   },
-  fsFormUpdate: (body: any) => {
+  fsFormUpdate: (body: Record<string, unknown>) => {
     return fetch(`${urlsApi.fs.fsFormUpdate}`, {
       method: "POST",
       body: JSON.stringify(body),

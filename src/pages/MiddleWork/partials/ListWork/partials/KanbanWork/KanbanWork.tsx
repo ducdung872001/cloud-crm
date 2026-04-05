@@ -6,7 +6,7 @@ import KanbanEmployee from "./partials/KanbanEmployee";
 import KanbanProject from "./partials/KanbanProject";
 import "./KanbanWork.scss";
 
-export default function KanbanWork(props: any) {
+export default function KanbanWork(props: Record<string, unknown>) {
   const {
     type,
     data,

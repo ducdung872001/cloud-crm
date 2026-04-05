@@ -26,14 +26,14 @@ const colorData = [
 ];
 
 type Props = {
-  itemShow: (item: any, idx: number) => React.ReactNode;
-  listStep: any[];
-  functionGetDataItem?: any;
-  handleDoubleClick?: (item: any) => void;
+  itemShow: (item: Record<string, unknown>, idx: number) => React.ReactNode;
+  listStep: Record<string, unknown>[];
+  functionGetDataItem?: Record<string, unknown>;
+  handleDoubleClick?: (item: Record<string, unknown>) => void;
 };
 
 export default function KanbanCommon({ itemShow, listStep, functionGetDataItem, handleDoubleClick }: Props) {
-  const [columns, setColumns] = useState<any[]>([]);
+  const [columns, setColumns] = useState<Record<string, unknown>[]>([]);
   const abortControllerRef = useRef<AbortController | null>(null);
   const [showHistory, setShowHistory] = useState<boolean>(false);
 
@@ -59,7 +59,7 @@ export default function KanbanCommon({ itemShow, listStep, functionGetDataItem, 
   }, []);
 
   // Parent handlers called by Column to set/append items for that column
-  const handleInitLoad = useCallback((columnId: any, payload: { items: any[]; hasMore: boolean; page: number }) => {
+  const handleInitLoad = useCallback((columnId: Record<string, unknown>, payload: { items: Record<string, unknown>[]; hasMore: boolean; page: number }) => {
     setColumns((prev) =>
       prev.map((c) =>
         c.id === columnId
@@ -75,7 +75,7 @@ export default function KanbanCommon({ itemShow, listStep, functionGetDataItem, 
     );
   }, []);
 
-  const handleAppend = useCallback((columnId: any, payload: { items: any[]; hasMore: boolean; page: number }) => {
+  const handleAppend = useCallback((columnId: Record<string, unknown>, payload: { items: Record<string, unknown>[]; hasMore: boolean; page: number }) => {
     setColumns((prev) =>
       prev.map((c) =>
         c.id === columnId
@@ -91,11 +91,11 @@ export default function KanbanCommon({ itemShow, listStep, functionGetDataItem, 
     );
   }, []);
 
-  const setColumnLoading = useCallback((columnId: any, loading: boolean) => {
+  const setColumnLoading = useCallback((columnId: Record<string, unknown>, loading: boolean) => {
     setColumns((prev) => prev.map((c) => (c.id === columnId ? { ...c, isLoading: loading } : c)));
   }, []);
 
-  const onDragEnd = async (result: any) => {
+  const onDragEnd = async (result: Record<string, unknown>) => {
     if (!result.destination) return;
 
     const { source, destination } = result;

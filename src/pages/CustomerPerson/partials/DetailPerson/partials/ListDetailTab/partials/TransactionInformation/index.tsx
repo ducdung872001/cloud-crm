@@ -20,10 +20,10 @@ export default function TransactionInformation({ data }) {
   const [listTransactionInformation, setListTransactionInformation] = useState([]);
   const [isNoItem, setIsNoItem] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [dataTransactionInformation, setDataTransactionInformation] = useState<any>(null);
+  const [dataTransactionInformation, setDataTransactionInformation] = useState<Record<string, unknown>>(null);
   const [showModalAdd, setShowModalAdd] = useState<boolean>(false);
 
-  const [params, setParams] = useState<any>({
+  const [params, setParams] = useState<Record<string, unknown>>({
     name: "",
     customerId: data.id,
   });
@@ -42,7 +42,7 @@ export default function TransactionInformation({ data }) {
 
   const abortController = new AbortController();
 
-  const getListTransactionInformation = async (paramsSearch: any) => {
+  const getListTransactionInformation = async (paramsSearch: Record<string, unknown>) => {
     setIsLoading(true);
 
     const response = null;
@@ -104,7 +104,7 @@ export default function TransactionInformation({ data }) {
     "text-right"
   ];
 
-  const dataMappingArray = (item: any, index: number) => [
+  const dataMappingArray = (item: Record<string, unknown>, index: number) => [
     getPageOffset(params) + index + 1,
     item.transactionDate ? moment(item.transactionDate).format("DD/MM/YYYY") : "",
     formatCurrency(item.casa, ","),
@@ -117,7 +117,7 @@ export default function TransactionInformation({ data }) {
     item.transactionFrequency,    
   ];
 
-  const actionsTable = (item: any): IAction[] => {
+  const actionsTable = (item: Record<string, unknown>): IAction[] => {
     return [
       {
         title: "Sửa",
@@ -139,7 +139,7 @@ export default function TransactionInformation({ data }) {
   };
 
   const [showDialog, setShowDialog] = useState<boolean>(false);
-  const [contentDialog, setContentDialog] = useState<any>(null);
+  const [contentDialog, setContentDialog] = useState<Record<string, unknown>>(null);
 
   const onDelete = async (id: number) => {
     const response = null;
@@ -154,7 +154,7 @@ export default function TransactionInformation({ data }) {
     setContentDialog(null);
   };
 
-  const showDialogConfirmDelete = (item?: any) => {
+  const showDialogConfirmDelete = (item?: Record<string, unknown>) => {
     const contentDialog: IContentDialog = {
       color: "error",
       className: "dialog-delete",

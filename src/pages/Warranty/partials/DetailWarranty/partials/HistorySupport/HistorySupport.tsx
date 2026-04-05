@@ -26,7 +26,7 @@ export default function HistorySupport(props) {
   const titles = ["STT", "Phòng ban tiếp nhận", "Nhân viên", "Thời gian tiếp nhận", "Thời gian hoàn thành", "Ghi chú", "Trạng thái"];
   const dataFormat = ["text-center", "", "", "text-center", "text-center", "", "text-center"];
 
-  const dataMappingArray = (item: any, index: number) => [
+  const dataMappingArray = (item: Record<string, unknown>, index: number) => [
     index + 1,
     item.departmentName,
     item.employeeName,

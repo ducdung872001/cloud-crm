@@ -18,7 +18,7 @@ import SelectCustom from "components/selectCustom/selectCustom";
 import FieldCustomize from "components/fieldCustomize/fieldCustomize";
 import ReportChartService from "services/ReportChartService";
 
-export default function SettingReportModal(props: any) {
+export default function SettingReportModal(props: Record<string, unknown>) {
   const { onShow, onHide, dataReportDashboard} = props;
   const focusedElement = useActiveElement();
 
@@ -56,7 +56,7 @@ export default function SettingReportModal(props: any) {
 
     const abortController = new AbortController();
 
-    const getListChart = async (paramsSearch: any) => {
+    const getListChart = async (paramsSearch: Record<string, unknown>) => {
         setIsLoading(true);
 
         const response = await ReportChartService.listArtifactByDashboard(paramsSearch, abortController.signal);
@@ -86,14 +86,14 @@ export default function SettingReportModal(props: any) {
     const titles = ["STT", "Tên biểu đồ", "Thứ tự hiển thị", "Độ rộng (%)"];
     const dataFormat = ["text-center", "", "text-center", "text-right"];
 
-    const dataMappingArray = (item: any, index: number) => [
+    const dataMappingArray = (item: Record<string, unknown>, index: number) => [
         getPageOffset(params) + index + 1,
         item.name,
         item.position,
         <span style={{fontSize: 14}}>{item.width}%</span>
     ];
 
-    const actionsTable = (item: any): IAction[] => {
+    const actionsTable = (item: Record<string, unknown>): IAction[] => {
         
         return [
           {
@@ -114,7 +114,7 @@ export default function SettingReportModal(props: any) {
         ];
     };
 
-    const showDialogConfirmDelete = (item?: any) => {
+    const showDialogConfirmDelete = (item?: Record<string, unknown>) => {
         const contentDialog: IContentDialog = {
           color: "error",
           className: "dialog-delete",
@@ -199,7 +199,7 @@ export default function SettingReportModal(props: any) {
       artifactId: dataChart?.id ?? 0,
       position: dataChart?.position ?? 0,
       width: dataChart?.width?.toString() ?? '50',
-    } as any),
+    } as Record<string, unknown>),
     [onShow, dataChart, dataReportDashboard]
   );  
 
@@ -336,7 +336,7 @@ export default function SettingReportModal(props: any) {
     setIsSubmit(true);
 
     const body = {
-        ...(formData.values as any),
+        ...(formData.values as Record<string, unknown>),
         // ...(data ? { id: data.id } : {}),
     };
 

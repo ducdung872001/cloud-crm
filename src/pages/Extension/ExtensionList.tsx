@@ -39,12 +39,12 @@ export default function ExtensionList() {
 
   const isMounted = useRef(false);
 
-  const [params, setParams] = useState<any>({
+  const [params, setParams] = useState<Record<string, unknown>>({
     beautySalonName: "",
     status: -1,
   });
 
-  const defaultFilterList: any = useMemo(
+  const defaultFilterList: Record<string, unknown> = useMemo(
     () => [
       {
         key: "createdTime",
@@ -110,7 +110,7 @@ export default function ExtensionList() {
 
   const abortController = new AbortController();
 
-  const getListApplication = async (paramsSearch: any) => {
+  const getListApplication = async (paramsSearch: Record<string, unknown>) => {
     setIsLoading(true);
     const response = await ApplicationService.listAll(paramsSearch, abortController.signal);
     if (response.code === 0) {
@@ -171,7 +171,7 @@ export default function ExtensionList() {
 
   const dataFormat = ["text-center", "", "text-center", "", "text-center", "text-center", "text-center"];
 
-  const dataMappingArray = (item: any, index: number) => [
+  const dataMappingArray = (item: Record<string, unknown>, index: number) => [
     getPageOffset(params) + index + 1,
     item.beautySalonName,
     item.phone,
@@ -185,7 +185,7 @@ export default function ExtensionList() {
     />,
   ];
 
-  const actionsTable = (item: any): IAction[] => {
+  const actionsTable = (item: Record<string, unknown>): IAction[] => {
     return [
       {
         title: "Xem hóa đơn",

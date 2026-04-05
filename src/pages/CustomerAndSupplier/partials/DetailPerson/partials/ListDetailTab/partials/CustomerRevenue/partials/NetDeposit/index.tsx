@@ -18,9 +18,9 @@ export default function NetDeposit({ data, onShow, callBack }) {
   const [listNetDeposit, setListNetDeposit] = useState([]);
   const [isNoItem, setIsNoItem] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [dataNetDeposit, setDataNetDeposit] = useState<any>(null);
+  const [dataNetDeposit, setDataNetDeposit] = useState<Record<string, unknown>>(null);
 
-  const [params, setParams] = useState<any>({
+  const [params, setParams] = useState<Record<string, unknown>>({
     name: "",
     customerId: data.id,
   });
@@ -39,7 +39,7 @@ export default function NetDeposit({ data, onShow, callBack }) {
 
   const abortController = new AbortController();
 
-  const getListNetDeposit = async (paramsSearch: any) => {
+  const getListNetDeposit = async (paramsSearch: Record<string, unknown>) => {
     setIsLoading(true);
 
     const response = null;
@@ -97,7 +97,7 @@ export default function NetDeposit({ data, onShow, callBack }) {
 
   const dataFormat = ["text-center", "text-center", "text-right", "text-right", "text-right"];
 
-  const dataMappingArray = (item: any, index: number) => [
+  const dataMappingArray = (item: Record<string, unknown>, index: number) => [
     getPageOffset(params) + index + 1,
     item.transactionDate ? moment(item.transactionDate).format("DD/MM/YYYY") : "",
     formatCurrency(item.casa, ","),
@@ -105,7 +105,7 @@ export default function NetDeposit({ data, onShow, callBack }) {
     formatCurrency(item.other, ","),
   ];
 
-  const actionsTable = (item: any): IAction[] => {
+  const actionsTable = (item: Record<string, unknown>): IAction[] => {
     return [
       {
         title: "Sửa",
@@ -126,7 +126,7 @@ export default function NetDeposit({ data, onShow, callBack }) {
   };
 
   const [showDialog, setShowDialog] = useState<boolean>(false);
-  const [contentDialog, setContentDialog] = useState<any>(null);
+  const [contentDialog, setContentDialog] = useState<Record<string, unknown>>(null);
 
   const onDelete = async (id: number) => {
     const response = null;
@@ -141,7 +141,7 @@ export default function NetDeposit({ data, onShow, callBack }) {
     setContentDialog(null);
   };
 
-  const showDialogConfirmDelete = (item?: any) => {
+  const showDialogConfirmDelete = (item?: Record<string, unknown>) => {
     const contentDialog: IContentDialog = {
       color: "error",
       className: "dialog-delete",

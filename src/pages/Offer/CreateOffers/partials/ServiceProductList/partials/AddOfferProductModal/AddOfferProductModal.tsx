@@ -28,7 +28,7 @@ interface IOptionData {
   quantity: number;
 }
 
-export default function AddofferProductModal(props: any) {
+export default function AddofferProductModal(props: Record<string, unknown>) {
   const { onShow, onHide, offerId, idCustomer, data } = props;
 
   const focusedElement = useActiveElement();

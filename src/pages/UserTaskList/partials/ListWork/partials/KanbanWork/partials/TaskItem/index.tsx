@@ -19,8 +19,8 @@ const getInitials = (name: string) => {
 interface ITaskItemProps {
   type: "status" | "employee" | "mine";
   takeDescWork: (id: number) => void;
-  onReload: any;
-  item: any;
+  onReload: Record<string, unknown>;
+  item: Record<string, unknown>;
   index: number;
   totalTask: number;
 }
@@ -46,7 +46,7 @@ function AvatarEmployee({ name, src }: { name: string; src?: string }) {
   );
 }
 
-export default function TaskItem(props: any) {
+export default function TaskItem(props: Record<string, unknown>) {
   const { 
     type,
     takeDescWork, 
@@ -70,11 +70,11 @@ export default function TaskItem(props: any) {
   const [showModalUpdateLevel, setShowModalUpdateLevel] = useState<boolean>(false);
 
   function calculateRemainingDays(startTime, endTime) {
-    const currentDate: any = new Date(); // Ngày hiện tại
+    const currentDate: Record<string, unknown> = new Date(); // Ngày hiện tại
 
     // Chuyển đổi thời gian bắt đầu và kết thúc thành đối tượng Date
-    const startDate: any = new Date(startTime);
-    const endDate: any = new Date(endTime);
+    const startDate: Record<string, unknown> = new Date(startTime);
+    const endDate: Record<string, unknown> = new Date(endTime);
 
     let remainingDays;
 

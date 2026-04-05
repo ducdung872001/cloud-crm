@@ -10,16 +10,16 @@ import "./boxTableBusinessRule.scss";
 
 export interface BoxTableProps {
   name?: string;
-  titles: any[];
-  actions?: (item: any) => IAction[];
+  titles: (string | Record<string, unknown>)[];
+  actions?: (item: Record<string, unknown>) => IAction[];
   actionType?: "dropdown" | "inline";
-  items: any[];
+  items: Record<string, unknown>[];
   className?: string;
-  style?: any;
-  dataMappingArray: (item: any, index: number) => void;
+  style?: React.CSSProperties;
+  dataMappingArray: (item: Record<string, unknown>, index: number) => void;
   dataFormat?: string[];
-  dataSize?: any[];
-  onClickRow?: (item: any) => void;
+  dataSize?: (string | number)[];
+  onClickRow?: (item: Record<string, unknown>) => void;
   striped?: boolean;
   isActivity?: boolean;
   isBulkAction?: boolean;
@@ -28,11 +28,11 @@ export interface BoxTableProps {
   dataPagination?: PaginationProps;
   listIdChecked?: number[];
   setListIdChecked?: (listId: number[]) => void;
-  renderDetail?: any;
-  listDetailData?: any[];
+  renderDetail?: (item: Record<string, unknown>) => React.ReactNode;
+  listDetailData?: Record<string, unknown>[];
   listIdDetailShow?: number[];
   isSummary?: boolean;
-  dataSummary?: any[];
+  dataSummary?: React.ReactNode[];
 }
 
 export default function BoxTableBusinessRule(props: BoxTableProps) {
@@ -64,7 +64,7 @@ export default function BoxTableBusinessRule(props: BoxTableProps) {
   let { actions, bulkActionItems } = props;
   bulkActionItems = (bulkActionItems || []).filter((item) => item);
 
-  const [listItem, setListItem] = useState<any[]>();
+  const [listItem, setListItem] = useState<{ id: number; data: void; raw: Record<string, unknown>; showActionRow: boolean; onShowDetail: boolean }[]>();
   const checkAll = (isChecked: boolean) => {
     if (isChecked) {
       setListIdChecked &&
@@ -86,7 +86,7 @@ export default function BoxTableBusinessRule(props: BoxTableProps) {
     }
   };
 
-  const mapData = (data: any[]) => {
+  const mapData = (data: Record<string, unknown>[]) => {
     return data?.map((item, index) => ({
       id: item.id,
       data: dataMappingArray(item, index),
@@ -185,7 +185,7 @@ export default function BoxTableBusinessRule(props: BoxTableProps) {
                         <Checkbox checked={isChecked} onChange={(e) => checkOne(item.id, e.target.checked)} />
                       </td>
                     )}
-                    {item.data?.map((d: any, idx: number) => {
+                    {item.data?.map((d: unknown, idx: number) => {
                       const titleItem = titles[idx];
                       const isOutput = titleItem?.type === "output";
                       const isSTT = titleItem === "STT";

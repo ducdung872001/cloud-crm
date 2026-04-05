@@ -15,22 +15,22 @@ import { getPageOffset } from "reborn-util";
 import "./CxmQuestionList.scss";
 import CxmQuestionService from "services/CxmQuestionService";
 
-export default function CxmQuestionList(props: any) {
+export default function CxmQuestionList(props: Record<string, unknown>) {
   document.title = "Danh sách câu hỏi";
 
   const { setDataCxmQuestion, setShowModalAddCxmQuestion, isReloadCxmQuestion, dataSurvey, setStepQuestion, listNav, setListNav } = props;
 
   const isMounted = useRef(false);
 
-  const [listCxmQuestion, setListCxmQuestion] = useState<any[]>([]);
+  const [listCxmQuestion, setListCxmQuestion] = useState<Record<string, unknown>[]>([]);
   const [listIdChecked, setListIdChecked] = useState<number[]>([]);
   const [showDialog, setShowDialog] = useState<boolean>(false);
-  const [contentDialog, setContentDialog] = useState<any>(null);
+  const [contentDialog, setContentDialog] = useState<Record<string, unknown>>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [isNoItem, setIsNoItem] = useState<boolean>(false);
   const [isPermissions, setIsPermissions] = useState<boolean>(false);
 
-  const [params, setParams] = useState<any>({
+  const [params, setParams] = useState<Record<string, unknown>>({
     name: "",
     limit: 10,
     surveyId: dataSurvey.id,
@@ -79,7 +79,7 @@ export default function CxmQuestionList(props: any) {
   });
 
   const abortController = new AbortController();
-  const getListCxmQuestion = async (paramsSearch: any) => {
+  const getListCxmQuestion = async (paramsSearch: Record<string, unknown>) => {
     setIsLoading(true);
 
     const _params = {
@@ -176,7 +176,7 @@ export default function CxmQuestionList(props: any) {
 
   const dataFormat = ["text-center", "text-left", "text-left", "text-left", "text-center"];
 
-  const dataMappingArray = (item: any, index: number) => [
+  const dataMappingArray = (item: Record<string, unknown>, index: number) => [
     getPageOffset(params) + index + 1,
     <div key={item.id} className={`action__view--customer`}>
       <a>Xem câu hỏi và đáp án trước</a>
@@ -238,7 +238,7 @@ export default function CxmQuestionList(props: any) {
     setContentDialog(null);
   };
 
-  const showDialogConfirmActiveCxmQuestion = (item?: any) => {
+  const showDialogConfirmActiveCxmQuestion = (item?: Record<string, unknown>) => {
     const contentDialog: IContentDialog = {
       color: "warning",
       className: "dialog-warning",
@@ -265,7 +265,7 @@ export default function CxmQuestionList(props: any) {
     setShowDialog(true);
   };
 
-  const actionsTable = (item: any): IAction[] => {
+  const actionsTable = (item: Record<string, unknown>): IAction[] => {
     return item.headquarter === 1
       ? [
           {
@@ -324,7 +324,7 @@ export default function CxmQuestionList(props: any) {
     setContentDialog(null);
   };
 
-  const showDialogConfirmDelete = (item?: any) => {
+  const showDialogConfirmDelete = (item?: Record<string, unknown>) => {
     const contentDialog: IContentDialog = {
       color: "error",
       className: "dialog-delete",

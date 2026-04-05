@@ -34,12 +34,12 @@ import ManagementAskedService from "services/ManagementAskedService";
 import ModalEvaluateBidding from "./partials/ModalEvaluateBidding/ModalEvaluateBidding";
 import UserTaskService from "services/UserTaskService";
 
-const DetailTask = (props: any) => {
+const DetailTask = (props: Record<string, unknown>) => {
   const { idData, setIsHandleTask, isDetailWork, isHandleTask } = props;
   const tokenUrl = new URLSearchParams(location.search).get("token");
 
   const [dataEmployee, setDataEmployee] = useState(null);
-  const [data, setData] = useState<any>(null);
+  const [data, setData] = useState<Record<string, unknown>>(null);
 
   const [listStepProcess, setListStepProcess] = useState([]);
   const [logWorkObject, setLogWorkObject] = useState(null);
@@ -54,7 +54,7 @@ const DetailTask = (props: any) => {
   const [showOnRejectModal, setShowOnRejectModal] = useState(false);
   const [showOnSuccessExpiretModal, setShowOnSuccessExpireModal] = useState(false);
   const [showDialog, setShowDialog] = useState<boolean>(false);
-  const [contentDialog, setContentDialog] = useState<any>(null);
+  const [contentDialog, setContentDialog] = useState<Record<string, unknown>>(null);
 
   // lấy thông tin nhân viên
   const takeDataEmployee = async () => {
@@ -119,7 +119,7 @@ const DetailTask = (props: any) => {
   };
 
   const getStepProcess = async (processId: number) => {
-    const body: any = {
+    const body: Record<string, unknown> = {
       processId: processId,
       limit: 100,
     };
@@ -193,7 +193,7 @@ const DetailTask = (props: any) => {
   };
 
   const getProcumentType = async (potId: number, dataWork) => {
-    const body: any = {
+    const body: Record<string, unknown> = {
       potId: potId,
     };
 
@@ -433,7 +433,7 @@ const DetailTask = (props: any) => {
     "center",
   ];
 
-  const dataMappingArray = (item: any, index: number, type?: string) =>
+  const dataMappingArray = (item: Record<string, unknown>, index: number, type?: string) =>
     type === "ola"
       ? [
           index + 1,
@@ -495,7 +495,7 @@ const DetailTask = (props: any) => {
       const result = response.result;
 
       if (type === "sla") {
-        const headerFormatSLA: any = [
+        const headerFormatSLA: Record<string, unknown> = [
           {
             merge: {
               row: 2,
@@ -607,7 +607,7 @@ const DetailTask = (props: any) => {
     }
   }, []);
 
-  const dataMappingArrayExternal = (item: any, index: number, type?: string) =>
+  const dataMappingArrayExternal = (item: Record<string, unknown>, index: number, type?: string) =>
     type === "ola"
       ? [
           index + 1,

@@ -54,7 +54,7 @@ export default function OrderInvoiceList() {
   const [dataInvoice, setDataInvoice] = useState<IOrderResponseModel>(null);
   const [listIdChecked, setListIdChecked] = useState<number[]>([]);
   const [showDialog, setShowDialog] = useState<boolean>(false);
-  const [contentDialog, setContentDialog] = useState<any>(null);
+  const [contentDialog, setContentDialog] = useState<Record<string, unknown>>(null);
   const [idOrderInvoice, setIdOrderInvoice] = useState<number>(0);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [isNoItem, setIsNoItem] = useState<boolean>(false);
@@ -312,7 +312,7 @@ export default function OrderInvoiceList() {
 
   const dataFormat = ["text-center", "text-center", "text-center", "text-center", "", "text-right", "", "text-center"];
 
-  const dataMappingArray = (item: any, index: number, type?: string) => [
+  const dataMappingArray = (item: Record<string, unknown>, index: number, type?: string) => [
     getPageOffset(params) + index + 1,
     item.orderCode,
     moment(item.orderDate).format("DD/MM/YYYY"),

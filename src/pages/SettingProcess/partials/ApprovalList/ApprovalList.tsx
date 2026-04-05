@@ -41,7 +41,7 @@ export default function ApprovalList(props: IApprovalListProps) {
   const [listIdChecked, setListIdChecked] = useState<number[]>([]);
   const [showModalAdd, setShowModalAdd] = useState<boolean>(false);
   const [showDialog, setShowDialog] = useState<boolean>(false);
-  const [contentDialog, setContentDialog] = useState<any>(null);
+  const [contentDialog, setContentDialog] = useState<Record<string, unknown>>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [isNoItem, setIsNoItem] = useState<boolean>(false);
   const [isPermissions, setIsPermissions] = useState<boolean>(false);
@@ -76,7 +76,7 @@ export default function ApprovalList(props: IApprovalListProps) {
 
   const abortController = new AbortController();
 
-  const getListApproval = async (paramsSearch: any) => {
+  const getListApproval = async (paramsSearch: Record<string, unknown>) => {
     setIsLoading(true);
 
     const response = await ApprovalService.list(paramsSearch, abortController.signal);
@@ -147,7 +147,7 @@ export default function ApprovalList(props: IApprovalListProps) {
 
   const dataFormat = ["text-center", "", "text-center"];
 
-  const dataMappingArray = (item: any, index: number) => [
+  const dataMappingArray = (item: Record<string, unknown>, index: number) => [
     getPageOffset(params) + index + 1,
     item.name,
     <Badge key={item.id} text={item.status ? "Đã phê duyệt" : "Chưa phê duyệt"} variant={item.status ? "success" : "secondary"} />,
@@ -205,7 +205,7 @@ export default function ApprovalList(props: IApprovalListProps) {
 
   const [isLoadingChangeStatus, setIsLoadingChangeStatus] = useState<boolean>(false);
 
-  const handleValidateApprove = async (id: number, item: any) => {
+  const handleValidateApprove = async (id: number, item: Record<string, unknown>) => {
     if (!id) return;
 
     setIsLoadingChangeStatus(true);
@@ -288,7 +288,7 @@ export default function ApprovalList(props: IApprovalListProps) {
 
   const [showModalBellApproval, setShowModalBellApproval] = useState<boolean>(false);
 
-  const actionsTable = (item: any): IAction[] => {
+  const actionsTable = (item: Record<string, unknown>): IAction[] => {
     return [
       {
         title: "Cài đặt cảnh báo",
@@ -377,7 +377,7 @@ export default function ApprovalList(props: IApprovalListProps) {
     setContentDialog(null);
   };
 
-  const showDialogConfirmStatus = (item?: any) => {
+  const showDialogConfirmStatus = (item?: Record<string, unknown>) => {
     const contentDialog: IContentDialog = {
       color: "warning",
       className: "dialog-warning",
@@ -415,7 +415,7 @@ export default function ApprovalList(props: IApprovalListProps) {
     setContentDialog(null);
   };
 
-  const showDialogConfirmDelete = (item?: any) => {
+  const showDialogConfirmDelete = (item?: Record<string, unknown>) => {
     const contentDialog: IContentDialog = {
       color: "error",
       className: "dialog-delete",

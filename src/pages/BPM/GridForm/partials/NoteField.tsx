@@ -46,7 +46,7 @@ export default function NoteField(props: INoteFieldProps) {
   const onSubmit = async (e) => {
     e.preventDefault();
 
-    const body: any = {};
+    const body: Record<string, unknown> = {};
 
     setIsSubmit(true);
 

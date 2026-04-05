@@ -15,7 +15,7 @@ export default function TableFanpageFacebook(props: ITableFanpageFacebookProps) 
   const { listFanpageFacebook, isLoading, dataPagination, callback, isPermissionsFacebook } = props;
 
   const [showDialog, setShowDialog] = useState<boolean>(false);
-  const [contentDialog, setContentDialog] = useState<any>(null);
+  const [contentDialog, setContentDialog] = useState<Record<string, unknown>>(null);
   const [permissions, setPermissions] = useState(getPermissions());
 
   const titles = ["STT", "Tên fanpage", "Mã fanpage"];

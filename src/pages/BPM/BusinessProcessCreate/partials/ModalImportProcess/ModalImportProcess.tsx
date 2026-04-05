@@ -11,7 +11,7 @@ import { formatFileSize, showToast } from "utils/common";
 import { uploadDocumentFormData } from "utils/document";
 import "./ModalImportProcess.scss";
 
-export default function ModalImportProcess(props: any) {
+export default function ModalImportProcess(props: Record<string, unknown>) {
   const { onShow, onHide, processId } = props;
 
   const [isSubmit, setIsSubmit] = useState<boolean>(false);
@@ -188,7 +188,7 @@ export default function ModalImportProcess(props: any) {
     setDragging(false);
 
     const newFiles = [...listAttactment];
-    const droppedFiles: any = Array.from(e.dataTransfer.files);
+    const droppedFiles: Record<string, unknown> = Array.from(e.dataTransfer.files);
     console.log("droppedFiles", droppedFiles);
 
     droppedFiles.forEach((file) => {

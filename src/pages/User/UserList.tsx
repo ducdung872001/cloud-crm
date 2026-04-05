@@ -24,7 +24,7 @@ import "./UserList.scss";
 export default function UserList() {
   document.title = "Danh sách Người dùng";
   const [searchParams, setSearchParams] = useSearchParams();
-  const [listUser, setListUser] = useState<any[]>([]);
+  const [listUser, setListUser] = useState<Record<string, unknown>[]>([]);
   const [listIdChecked, setListIdChecked] = useState<number[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [isNoItem, setIsNoItem] = useState<boolean>(false);
@@ -97,7 +97,7 @@ export default function UserList() {
   );
 
   const isMounted = useRef(false);
-  const [params, setParams] = useState<any>({
+  const [params, setParams] = useState<Record<string, unknown>>({
     name: "",
   });
 
@@ -114,7 +114,7 @@ export default function UserList() {
   });
 
   const abortController = new AbortController();
-  const getListUser = async (paramsSearch: any) => {
+  const getListUser = async (paramsSearch: Record<string, unknown>) => {
     setIsLoading(true);
     const response = await UserService.list(paramsSearch, abortController.signal);
     if (response.code === 0) {
@@ -193,7 +193,7 @@ export default function UserList() {
 
   const [modalViewOrg, setModalViewOrg] = useState<boolean>(false);
 
-  const dataMappingArray = (item: any, index: number) => [
+  const dataMappingArray = (item: Record<string, unknown>, index: number) => [
     getPageOffset(params) + index + 1,
     <div key={index} className="container-name">
       {/* <div style={{width: '2rem'}}>
@@ -223,7 +223,7 @@ export default function UserList() {
 
   const dataFormat = ["text-center", "", "text-center", "", "text-center", "text-center", ""];
 
-  const actionsTable = (item: any): IAction[] => {
+  const actionsTable = (item: Record<string, unknown>): IAction[] => {
     return [
       {
         title: "Tạo tổ chức",
@@ -260,9 +260,9 @@ export default function UserList() {
   };
 
   const [showDialog, setShowDialog] = useState<boolean>(false);
-  const [contentDialog, setContentDialog] = useState<any>(null);
+  const [contentDialog, setContentDialog] = useState<Record<string, unknown>>(null);
 
-  const showDialogConfirmDelete = (item?: any) => {
+  const showDialogConfirmDelete = (item?: Record<string, unknown>) => {
     const contentDialog: IContentDialog = {
       color: "error",
       className: "dialog-delete",
@@ -300,7 +300,7 @@ export default function UserList() {
   };
 
   const [showModalUser, setShowModalUser] = useState<boolean>(false);
-  const [dataUser, setDataUser] = useState<any>(null);
+  const [dataUser, setDataUser] = useState<Record<string, unknown>>(null);
 
   //Export
   const [onShowModalExport, setOnShowModalExport] = useState<boolean>(false);

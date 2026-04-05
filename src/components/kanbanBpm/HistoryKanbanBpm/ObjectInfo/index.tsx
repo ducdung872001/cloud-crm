@@ -27,7 +27,7 @@ export default function ObjectInfo({ data }) {
     }
   }, [data]);
 
-  const getOjectGroup = async (id: any) => {
+  const getOjectGroup = async (id: Record<string, unknown>) => {
     const response = await ObjectGroupService.detail(id);
     if (response.code === 0) {
       const result = response?.result;

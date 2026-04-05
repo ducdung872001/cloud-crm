@@ -10,7 +10,7 @@ import "./index.scss";
 import CustomerService from "services/CustomerService";
 
 interface IChangeStatusCustomerSegmentProps {
-  data: any;
+  data: Record<string, unknown>;
   onShow: boolean;
   onHide: (reload: boolean) => void;
 }
@@ -24,7 +24,7 @@ export default function ChangeStatusCustomerSegment(props: IChangeStatusCustomer
     () =>
       ({
         status: data?.status?.toString() ?? "",
-      } as any),
+      } as Record<string, unknown>),
     [data, onShow]
   );
 

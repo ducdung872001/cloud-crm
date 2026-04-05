@@ -165,7 +165,7 @@ export default function ModalEndEvent({ onShow, onHide, dataNode, processId, cha
                   // || !isDifferenceObj(formData, values),
                   is_loading: isSubmit,
                 },
-              ] as any)),
+              ] as Record<string, unknown>)),
         ],
       },
     }),

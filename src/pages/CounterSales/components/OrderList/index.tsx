@@ -136,12 +136,12 @@ const OrderList: React.FC<OrderListProps> = ({
       const json = await res.json();
       if (json.code === 0) {
         const result = json.result ?? {};
-        const products: any[] = result.products ?? result.items ?? [];
+        const products: Record<string, unknown>[] = result.products ?? result.items ?? [];
         if (products.length === 0) {
           showToast("Đơn hàng này không có sản phẩm để tái tạo.", "error");
           return;
         }
-        const cartItems = products.map((p: any) => ({
+        const cartItems = products.map((p: Record<string, unknown>) => ({
           id: String(p.productId),
           variantId: String(p.variantId ?? p.productId),
           name: p.name || p.productName || "Sản phẩm",

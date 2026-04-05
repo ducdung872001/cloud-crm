@@ -13,10 +13,10 @@ import WorkOrderService from "services/WorkOrderService";
 import "./AddMAModal.scss";
 import { ContextType, UserContext } from "contexts/userContext";
 
-export default function AddMAModalV2(props: any) {
+export default function AddMAModalV2(props: Record<string, unknown>) {
   const { onShow, onHide, id } = props;
 
-  const params: any = getSearchParameters();
+  const params: Record<string, unknown> = getSearchParameters();
 
   const { dataBranch } = useContext(UserContext) as ContextType;
   const [data, setData] = useState(null);
@@ -140,9 +140,9 @@ export default function AddMAModalV2(props: any) {
 
     setIsSubmit(true);
 
-    const body: any = {
+    const body: Record<string, unknown> = {
       ...(data ? { id: data?.id } : {}),
-      ...(formData.values as any),
+      ...(formData.values as Record<string, unknown>),
     };
 
     setIsSubmit(false);

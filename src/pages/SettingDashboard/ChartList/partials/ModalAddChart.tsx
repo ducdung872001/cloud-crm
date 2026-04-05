@@ -11,7 +11,7 @@ import { isDifferenceObj } from 'reborn-util';
 import "./ModalAddChart.scss";
 import ReportChartService from "services/ReportChartService";
 
-export default function ModalAddChart(props: any) {
+export default function ModalAddChart(props: Record<string, unknown>) {
   const { onShow, onHide, data } = props;
 
   const [isSubmit, setIsSubmit] = useState<boolean>(false);
@@ -26,7 +26,7 @@ export default function ModalAddChart(props: any) {
       name: data?.name ?? "",
       code: data?.code ?? "",
       position: data?.position ?? "0",
-    } as any),
+    } as Record<string, unknown>),
     [data, onShow]
   );
 
@@ -85,8 +85,8 @@ export default function ModalAddChart(props: any) {
     }
     setIsSubmit(true);
 
-    const body: any = {
-      ...(formData.values as any),
+    const body: Record<string, unknown> = {
+      ...(formData.values as Record<string, unknown>),
       ...(data ? { id: data.id } : {}),
     };
 

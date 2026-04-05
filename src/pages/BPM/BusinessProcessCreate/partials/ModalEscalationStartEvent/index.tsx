@@ -154,7 +154,7 @@ export default function ModalEscalationStartEvent({ onShow, onHide, dataNode, pr
                 disabled: isSubmit,
                 is_loading: isSubmit,
               },
-            ] as any)),
+            ] as Record<string, unknown>)),
         ],
       },
     }),

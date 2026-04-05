@@ -67,7 +67,7 @@ const EMPTY_FORM = {
 };
 
 // ── Component ─────────────────────────────────────────────────────────────────
-export default function CareAutomationPage(props: any) {
+export default function CareAutomationPage(props: Record<string, unknown>) {
   document.title = "Kịch bản chăm sóc";
 
   const { onBackProps } = props;
@@ -119,7 +119,7 @@ export default function CareAutomationPage(props: any) {
         setScenarios(res.result?.items ?? []);
         setTotal(res.result?.total ?? 0);
       }
-    } catch (e: any) {
+    } catch (e: unknown) {
       if (e?.name !== "AbortError") showToast("Lỗi tải dữ liệu", "error");
     } finally {
       setIsLoading(false);

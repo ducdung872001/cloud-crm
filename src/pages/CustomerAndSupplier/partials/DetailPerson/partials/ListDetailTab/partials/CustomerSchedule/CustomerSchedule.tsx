@@ -26,7 +26,7 @@ export default function CustomerSchedule({ idCustomer }) {
 
   const { dataBranch, idEmployee } = useContext(UserContext) as ContextType;
 
-  const [params, setParams] = useState<any>({
+  const [params, setParams] = useState<Record<string, unknown>>({
     name: "",
     startTime: "",
     endTime: "",
@@ -52,7 +52,7 @@ export default function CustomerSchedule({ idCustomer }) {
 
   const abortController = new AbortController();
 
-  const getListSchedule = async (paramsSearch: any) => {
+  const getListSchedule = async (paramsSearch: Record<string, unknown>) => {
     setIsLoading(true);
 
     const response = await ScheduleCommonService.listCommon(paramsSearch, abortController.signal);
@@ -122,7 +122,7 @@ export default function CustomerSchedule({ idCustomer }) {
 
   const dataFormat = ["text-center", "", "", "text-center", "text-center", "text-center"];
 
-  const dataMappingArray = (item: any, index: number) => [
+  const dataMappingArray = (item: Record<string, unknown>, index: number) => [
     getPageOffset(params) + index + 1,
     item.title,
     item.employeeName,

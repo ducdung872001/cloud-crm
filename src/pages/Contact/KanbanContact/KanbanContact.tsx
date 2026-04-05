@@ -15,7 +15,7 @@ import ContactService from "services/ContactService";
 export default function KanbanContact(props: IKanbanContactProps) {
     const { data, onReload, params, setParams, contractFilterList, listStatusContact } = props;
     
-    const [columns, setColumns] = useState<any[]>([]);
+    const [columns, setColumns] = useState<Record<string, unknown>[]>([]);
     // console.log('columns', columns);
     
     

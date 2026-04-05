@@ -18,9 +18,9 @@ export default function LoanInformation({ data, onShow, callBack }) {
   const [listLoanInformation, setListLoanInformation] = useState([]);
   const [isNoItem, setIsNoItem] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [dataLoanInformation, setDataLoanInformation] = useState<any>(null);
+  const [dataLoanInformation, setDataLoanInformation] = useState<Record<string, unknown>>(null);
 
-  const [params, setParams] = useState<any>({
+  const [params, setParams] = useState<Record<string, unknown>>({
     name: "",
     customerId: data.id,
   });
@@ -39,7 +39,7 @@ export default function LoanInformation({ data, onShow, callBack }) {
 
   const abortController = new AbortController();
 
-  const getListLoanInformation = async (paramsSearch: any) => {
+  const getListLoanInformation = async (paramsSearch: Record<string, unknown>) => {
     setIsLoading(true);
 
     const response = null;
@@ -103,7 +103,7 @@ export default function LoanInformation({ data, onShow, callBack }) {
     "", "text-right", "text-center", "text-center", "text-right", "text-center"
   ];
 
-  const dataMappingArray = (item: any, index: number) => [
+  const dataMappingArray = (item: Record<string, unknown>, index: number) => [
     getPageOffset(params) + index + 1,
     item.contractNo,    
     formatCurrency(item.creditLimit, ","),
@@ -125,7 +125,7 @@ export default function LoanInformation({ data, onShow, callBack }) {
     item.badDebtType
   ];
 
-  const actionsTable = (item: any): IAction[] => {
+  const actionsTable = (item: Record<string, unknown>): IAction[] => {
     return [
       {
         title: "Sửa",
@@ -146,7 +146,7 @@ export default function LoanInformation({ data, onShow, callBack }) {
   };
 
   const [showDialog, setShowDialog] = useState<boolean>(false);
-  const [contentDialog, setContentDialog] = useState<any>(null);
+  const [contentDialog, setContentDialog] = useState<Record<string, unknown>>(null);
 
   const onDelete = async (id: number) => {
     const response = null;
@@ -161,7 +161,7 @@ export default function LoanInformation({ data, onShow, callBack }) {
     setContentDialog(null);
   };
 
-  const showDialogConfirmDelete = (item?: any) => {
+  const showDialogConfirmDelete = (item?: Record<string, unknown>) => {
     const contentDialog: IContentDialog = {
       color: "error",
       className: "dialog-delete",

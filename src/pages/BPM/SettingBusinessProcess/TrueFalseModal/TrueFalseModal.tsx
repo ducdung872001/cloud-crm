@@ -13,7 +13,7 @@ import { showToast } from "utils/common";
 import { isDifferenceObj } from 'reborn-util';
 import "./TrueFalseModal.scss";
 
-export default function TrueFalseModal(props: any) {
+export default function TrueFalseModal(props: Record<string, unknown>) {
   const { onShow, onHide, data } = props;
 
   const [isSubmit, setIsSubmit] = useState<boolean>(false);
@@ -26,7 +26,7 @@ export default function TrueFalseModal(props: any) {
     () =>
     ({
       condition: '1'
-    } as any),
+    } as Record<string, unknown>),
     [data, onShow]
   );
 

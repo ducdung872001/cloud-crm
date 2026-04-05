@@ -64,10 +64,10 @@ export default function Index() {
       const permissionRes = await PermissionService.getPermissionResources();
       let lstPermissionResource = permissionRes.result;
       let mapPermission = {};
-      (lstPermissionResource || []).forEach((permissionResource: any) => {
+      (lstPermissionResource || []).forEach((permissionResource: Record<string, unknown>) => {
         if (permissionResource?.actions) {
           let actions = JSON.parse(permissionResource?.actions);
-          actions.forEach((action: any) => {
+          actions.forEach((action: Record<string, unknown>) => {
             mapPermission[`${permissionResource.code}_${action}`] = 1;
           });
         }

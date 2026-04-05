@@ -11,13 +11,13 @@ function isValidDateString(str: string) {
   return /^(\d{1,2})\/(\d{1,2})\/(\d{4})$/.test(str);
 }
 
-function toNumber(val: any) {
+function toNumber(val: Record<string, unknown>) {
   if (typeof val === "number") return val;
   if (typeof val === "string" && !isNaN(Number(val))) return Number(val);
   return null;
 }
 
-function isValidNumberList(val: any) {
+function isValidNumberList(val: Record<string, unknown>) {
   // Kiểm tra chuỗi số ngăn cách bằng |, ví dụ: "1|2|3"
   if (typeof val === "number") return true;
   if (typeof val !== "string") return false;
@@ -32,7 +32,7 @@ function isValidExcelSerial(serial: number): boolean {
   return serial > 0; // Excel serial phải là số dương
 }
 
-function validateDateValue(value: any, fieldName: string): string | null {
+function validateDateValue(value: Record<string, unknown>, fieldName: string): string | null {
   // Kiểm tra nếu là Date object hợp lệ
   if (value instanceof Date && !isNaN(value.getTime())) {
     return null;
@@ -64,7 +64,7 @@ function excelDateToJSDate(serial) {
   return date_info;
 }
 
-function parseDateValue(value: any): Date | null {
+function parseDateValue(value: Record<string, unknown>): Date | null {
   // Kiểm tra nếu giá trị đã là đối tượng Date
   if (value instanceof Date) {
     return value; // Giữ nguyên nếu đã là đối tượng Date
@@ -80,8 +80,8 @@ function parseDateValue(value: any): Date | null {
   return dateValue.isValid() ? dateValue.toDate() : null; // Trả về ngày hoặc null nếu không hợp lệ
 }
 
-export function makeValidateField(listColumns: any[]) {
-  const validateFields: any[] = [];
+export function makeValidateField(listColumns: Record<string, unknown>[]) {
+  const validateFields: Record<string, unknown>[] = [];
 
   listColumns.forEach((item) => {
     // Bỏ qua trường "stt"
@@ -101,7 +101,7 @@ export function makeValidateField(listColumns: any[]) {
       children.forEach((child) => {
         const fieldName = `${item.name}.${child.name}`;
         // Hàm validate cho từng field
-        let validateValue: (value: any, allValues?: any) => string | null = () => null;
+        let validateValue: (value: Record<string, unknown>, allValues?: Record<string, unknown>) => string | null = () => null;
 
         // 1. Số hoặc ngày và child.name === "condition" điều kiện phải thuộc listEqual
         if ((item.type === "number" || item.type === "date") && child.name === "condition") {
@@ -384,7 +384,7 @@ export function makeValidateField(listColumns: any[]) {
         });
       });
     } else {
-      let validateValue: (value: any, allValues?: any) => string | null = () => null;
+      let validateValue: (value: Record<string, unknown>, allValues?: Record<string, unknown>) => string | null = () => null;
       if (item.type == "checkbox") {
         // Trường hợp checkbox: chỉ cần kiểm tra giá trị là TRUE, FALSE hoặc trống
         validateValue = (value) => {

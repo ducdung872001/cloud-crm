@@ -51,7 +51,7 @@ export default function SignedRejectedHistory(props) {
   const titles = ["STT", "Người ký", "Đơn vị", "Thời gian ký", "Ghi chú ký", "Trạng thái"];
   const dataFormat = ["text-center", "", "", "text-center", "", "text-center"];
 
-  const dataMappingArray = (item: any, index: number) => [
+  const dataMappingArray = (item: Record<string, unknown>, index: number) => [
     index + 1,
     item.employeeName,
     item.departmentName,
@@ -100,7 +100,7 @@ export default function SignedRejectedHistory(props) {
               return (
                 <Button
                   key={idx}
-                  color={item.color as any}
+                  color={item.color as Record<string, unknown>}
                   onClick={() => {
                     handleSigned(item);
                     setDataAction(item);

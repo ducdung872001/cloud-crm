@@ -31,7 +31,7 @@ export default function QRManagement(props) {
   const [listIdChecked, setListIdChecked] = useState<number[]>([]);
   const [showModalAdd, setShowModalAdd] = useState<boolean>(false);
   const [showDialog, setShowDialog] = useState<boolean>(false);
-  const [contentDialog, setContentDialog] = useState<any>(null);
+  const [contentDialog, setContentDialog] = useState<Record<string, unknown>>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [isNoItem, setIsNoItem] = useState<boolean>(false);
   const [isPermissions, setIsPermissions] = useState<boolean>(false);
@@ -56,7 +56,7 @@ export default function QRManagement(props) {
 
   const abortController = new AbortController();
 
-  const getListQRManagement = async (paramsSearch: any) => {
+  const getListQRManagement = async (paramsSearch: Record<string, unknown>) => {
     setIsLoading(true);
 
     const response = await QrCodeService.lst(paramsSearch, abortController.signal);
@@ -126,14 +126,14 @@ export default function QRManagement(props) {
   const titles = ["STT", "Tên mã qr", "Ngày bắt đầu", "Ngày kết thúc"];
   const dataFormat = ["text-center", "", "text-center", "text-center"];
 
-  const dataMappingArray = (item: any, index: number) => [
+  const dataMappingArray = (item: Record<string, unknown>, index: number) => [
     getPageOffset(params) + index + 1,
     item.name,
     moment(item.startDate).format("DD/MM/YYYY"),
     moment(item.endDate).format("DD/MM/YYYY"),
   ];
 
-  const actionsTable = (item: any): IAction[] => {
+  const actionsTable = (item: Record<string, unknown>): IAction[] => {
     const isCheckedItem = listIdChecked?.length > 0;
     return [
       {
@@ -201,7 +201,7 @@ export default function QRManagement(props) {
     });
   }
 
-  const showDialogConfirmDelete = (item?: any) => {
+  const showDialogConfirmDelete = (item?: Record<string, unknown>) => {
     const contentDialog: IContentDialog = {
       color: "error",
       className: "dialog-delete",

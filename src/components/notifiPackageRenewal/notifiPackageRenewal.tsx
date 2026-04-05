@@ -7,7 +7,7 @@ import "./notifiPackageRenewal.scss";
 
 interface INotifiPackageRenewalProps {
   onShow: boolean;
-  data?: any;
+  data?: Record<string, unknown>;
   onHide: () => void;
 }
 

@@ -31,23 +31,23 @@ const colorData = [
 ];
 
 type Props = {
-  processId?: any;
-  processCode?: any;
-  itemShow: (item: any, idx: number) => React.ReactNode;
-  params?: any;
+  processId?: string | number;
+  processCode?: string;
+  itemShow: (item: Record<string, unknown>, idx: number) => React.ReactNode;
+  params?: Record<string, unknown>;
   setLoadinglistColumns?: (loading: boolean) => void;
 };
 
 export default function KanbanBpm({ processId, processCode, itemShow, params, setLoadinglistColumns }: Props) {
-  const [listStepProcess, setListStepProcess] = useState<any[]>([]);
-  const [columns, setColumns] = useState<any[]>([]);
+  const [listStepProcess, setListStepProcess] = useState<Record<string, unknown>[]>([]);
+  const [columns, setColumns] = useState<Record<string, unknown>[]>([]);
   const [isLoadingKanban, setIsLoadingKanban] = useState<boolean>(false);
   const abortControllerRef = useRef<AbortController | null>(null);
   const [showHistory, setShowHistory] = useState<boolean>(false);
-  const [itemHistory, setItemHistory] = useState<any>(null);
+  const [itemHistory, setItemHistory] = useState<Record<string, unknown> | null>(null);
 
-  const processIdRef = useRef<any>(null);
-  const processCodeRef = useRef<any>(null);
+  const processIdRef = useRef<string | number | null>(null);
+  const processCodeRef = useRef<string | null>(null);
 
   useEffect(() => {
     abortControllerRef.current = new AbortController();
@@ -85,9 +85,9 @@ export default function KanbanBpm({ processId, processCode, itemShow, params, se
     }
   }, [processId, processCode, params, setLoadinglistColumns]);
 
-  const getListStepProcess = async (pid?: any, pCode?: any) => {
+  const getListStepProcess = async (pid?: string | number, pCode?: string) => {
     setIsLoadingKanban(true);
-    const body: any = {
+    const body: Record<string, unknown> = {
       ...(pid ? { processId: pid } : {}),
       ...(pCode ? { processCode: pCode } : {}),
       limit: 100,
@@ -99,7 +99,7 @@ export default function KanbanBpm({ processId, processCode, itemShow, params, se
         const dataOption = response.result.items;
         setListStepProcess(
           dataOption.length > 0
-            ? dataOption.map((item: any, index: number) => ({
+            ? dataOption.map((item: Record<string, unknown>, index: number) => ({
                 id: item.id,
                 value: item.id,
                 label: item.stepName,
@@ -112,7 +112,7 @@ export default function KanbanBpm({ processId, processCode, itemShow, params, se
 
         setColumns(
           (dataOption.length > 0
-            ? dataOption.map((item: any, index: number) => ({
+            ? dataOption.map((item: Record<string, unknown>, index: number) => ({
                 id: item.id,
                 title: item.stepName,
                 label: item.stepName,
@@ -125,7 +125,7 @@ export default function KanbanBpm({ processId, processCode, itemShow, params, se
                 isLoading: false,
                 params: params,
               }))
-            : []) as any[]
+            : []) as Record<string, unknown>[]
         );
       } else {
         showToast(response.message ?? "Lấy bước xử lý thất bại", "error");
@@ -142,7 +142,7 @@ export default function KanbanBpm({ processId, processCode, itemShow, params, se
   };
 
   // Parent handlers — đã memo để giữ reference ổn định
-  const handleInitLoad = useCallback((columnId: any, payload: { items: any[]; hasMore: boolean; page: number }) => {
+  const handleInitLoad = useCallback((columnId: string | number, payload: { items: Record<string, unknown>[]; hasMore: boolean; page: number }) => {
     setColumns((prev) =>
       prev.map((c) =>
         c.id === columnId ? { ...c, items: payload.items || [], hasMore: !!payload.hasMore, page: payload.page || 1, isLoading: false } : c
@@ -150,7 +150,7 @@ export default function KanbanBpm({ processId, processCode, itemShow, params, se
     );
   }, []);
 
-  const handleAppend = useCallback((columnId: any, payload: { items: any[]; hasMore: boolean; page: number }) => {
+  const handleAppend = useCallback((columnId: string | number, payload: { items: Record<string, unknown>[]; hasMore: boolean; page: number }) => {
     setColumns((prev) =>
       prev.map((c) =>
         c.id === columnId
@@ -166,20 +166,20 @@ export default function KanbanBpm({ processId, processCode, itemShow, params, se
     );
   }, []);
 
-  const setColumnLoading = useCallback((columnId: any, loading: boolean) => {
+  const setColumnLoading = useCallback((columnId: string | number, loading: boolean) => {
     setColumns((prev) => prev.map((c) => (c.id === columnId ? { ...c, isLoading: loading } : c)));
   }, []);
 
   // memo hoá handler setShowHistory (không truyền inline trong map)
   const handleSetShowHistory = useCallback(
-    (item: any) => {
+    (item: Record<string, unknown>) => {
       setShowHistory(true);
       setItemHistory(item);
     },
     [setShowHistory, setItemHistory]
   );
 
-  const onDragEnd = async (result: any) => {
+  const onDragEnd = async (result: Record<string, unknown>) => {
     if (!result.destination) return;
 
     const { source, destination } = result;
@@ -197,7 +197,7 @@ export default function KanbanBpm({ processId, processCode, itemShow, params, se
 
   // build map id->columnState để lấy cùng reference object (fast & stable)
   const columnsById = useMemo(() => {
-    const m = new Map<any, any>();
+    const m = new Map<string | number, Record<string, unknown>>();
     for (const c of columns) {
       m.set(c.id, c);
     }

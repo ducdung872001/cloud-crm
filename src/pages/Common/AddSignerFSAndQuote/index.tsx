@@ -12,8 +12,8 @@ import "./index.scss";
 interface IAddSignerFSAndQuoteProps {
   onShow: boolean;
   onHide: (reload: boolean) => void;
-  dataProps?: any;
-  data?: any;
+  dataProps?: Record<string, unknown>;
+  data?: Record<string, unknown>;
 }
 
 export default function AddSignerFSAndQuote(props: IAddSignerFSAndQuoteProps) {

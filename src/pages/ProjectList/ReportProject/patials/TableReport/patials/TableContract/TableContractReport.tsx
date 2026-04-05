@@ -83,7 +83,7 @@ export default function TableContractReport({ dataProjectReport }) {
       }, {});
 
       // Lấy ra các đối tượng { width, colId } của phần tử cuối cùng trong từng nhóm
-      const uniqueWidths = Object.values(groupedData).map((group?: any) => ({
+      const uniqueWidths = Object.values(groupedData).map((group?: Record<string, unknown>) => ({
         width: group[group.length - 1].width,
         colId: group[group.length - 1].colId,
       }));
@@ -253,7 +253,7 @@ export default function TableContractReport({ dataProjectReport }) {
     },
   ];
 
-  const [columnDefs, setColumnDefs] = useState<any>(defaultValueColumnDefs);
+  const [columnDefs, setColumnDefs] = useState<Record<string, unknown>>(defaultValueColumnDefs);
   const [lstFieldContract, setLstFieldContract] = useState([]);
   const [lstFieldActive, setLstFieldActive] = useState([]);
   const [lstFieldUnActive, setLstFieldUnActive] = useState([]);
@@ -300,7 +300,7 @@ export default function TableContractReport({ dataProjectReport }) {
         });
 
       if (dataConfirm && dataConfirm.length > 0) {
-        const changeDataConfirm: any = dataConfirm.map((el) => {
+        const changeDataConfirm: Record<string, unknown> = dataConfirm.map((el) => {
           return {
             headerName: el.label,
             field: el.fieldName,
@@ -360,7 +360,7 @@ export default function TableContractReport({ dataProjectReport }) {
 
   useEffect(() => {
     if (listContract && listContract.length >= 0) {
-      const changeDataCustomer: any = listContract.map((item, index) => {
+      const changeDataCustomer: Record<string, unknown> = listContract.map((item, index) => {
         const result = rowMapping.filter((el) => el.contractId === item.id) || [];
 
         const changeDataResult = result.map((item) => {
@@ -483,7 +483,7 @@ export default function TableContractReport({ dataProjectReport }) {
 
   useEffect(() => {
     if (takeFieldActiveContact) {
-      const changeDataTakeFieldActiveContact: any = takeFieldActiveContact.map((el) => {
+      const changeDataTakeFieldActiveContact: Record<string, unknown> = takeFieldActiveContact.map((el) => {
         return {
           headerName: el.label,
           field: el.fieldName,

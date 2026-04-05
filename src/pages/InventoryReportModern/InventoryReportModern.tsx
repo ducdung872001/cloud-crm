@@ -122,7 +122,7 @@ export default function InventoryReportModern() {
     const toTime   = dateRange[1] ? formatInventoryDate(new Date(dateRange[1])) : undefined;
 
     const data: IInventoryReportFull | null = await InventoryReportService.full(
-      { warehouseId, fromTime, toTime, groupBy: groupBy as any },
+      { warehouseId, fromTime, toTime, groupBy: groupBy as Record<string, unknown> },
       controller.signal
     );
 

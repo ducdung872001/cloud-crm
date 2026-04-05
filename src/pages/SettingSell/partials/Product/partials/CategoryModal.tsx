@@ -35,7 +35,7 @@ const PAGE_SIZE = 100; // load hết để drag-drop position
 interface CategoryModalProps {
   onShow: boolean;
   onHide: () => void;
-  listProduct?: any[];
+  listProduct?: Record<string, unknown>[];
 }
 
 export default function CategoryModal({ onShow, onHide, listProduct = [] }: CategoryModalProps) {
@@ -64,7 +64,7 @@ export default function CategoryModal({ onShow, onHide, listProduct = [] }: Cate
         limit: PAGE_SIZE,
       });
       if (res.code === 0) {
-        const list: CategoryItem[] = (res.result?.items || []).map((i: any) => ({
+        const list: CategoryItem[] = (res.result?.items || []).map((i: Record<string, unknown>) => ({
           id: i.id,
           name: i.name,
           position: i.position ?? 0,
@@ -107,7 +107,7 @@ export default function CategoryModal({ onShow, onHide, listProduct = [] }: Cate
       avatar: "",
       parentId: 0,
       featured: 0,
-    } as any);
+    } as Record<string, unknown>);
     if (res.code === 0) {
       showToast(`Thêm ${currentTab.label.toLowerCase()} thành công`, "success");
       setNewName("");
@@ -129,7 +129,7 @@ export default function CategoryModal({ onShow, onHide, listProduct = [] }: Cate
       avatar: "",
       parentId: 0,
       featured: 0,
-    } as any);
+    } as Record<string, unknown>);
     if (res.code === 0) {
       showToast("Cập nhật thành công", "success");
       setEditingId(null);

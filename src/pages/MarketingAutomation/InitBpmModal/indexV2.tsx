@@ -9,7 +9,7 @@ import SelectCustom from "components/selectCustom/selectCustom";
 import BusinessProcessService from "services/BusinessProcessService";
 import MarketingAutomationService from "services/MarketingAutomationService";
 
-export default function InitBpmModalV2(props: any) {
+export default function InitBpmModalV2(props: Record<string, unknown>) {
   const { onShow, onHide, idCampaign } = props;
 
   const [isSubmit, setIsSubmit] = useState<boolean>(false);
@@ -102,7 +102,7 @@ export default function InitBpmModalV2(props: any) {
   const [listBusinessProcess, setListBusinessProcess] = useState([]);
 
   const loadOptionProcess = async (search, loadedOptions, { page }) => {
-    const param: any = {
+    const param: Record<string, unknown> = {
       name: search,
       page: page,
       limit: 10,
@@ -122,7 +122,7 @@ export default function InitBpmModalV2(props: any) {
       const dataOption = response.result.items;
 
       if (dataOption.length > 0) {
-        dataOption.map((item: any) => {
+        dataOption.map((item: Record<string, unknown>) => {
           optionProcess.push({
             value: item.id,
             label: item.name,

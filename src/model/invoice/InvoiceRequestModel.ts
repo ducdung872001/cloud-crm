@@ -61,7 +61,7 @@ export interface IInvoiceCreateRequest {
   discount?: number;
   fee?: number;
   paid?: number;
-  receiptDate?: any;
+  receiptDate?: string | Date;
   vatAmount?: number;
   account?: string;
   amountCard?: number;
@@ -70,7 +70,7 @@ export interface IInvoiceCreateRequest {
   customerId?: number;
   campaignId?: number;
   saleflowId?: number;
-  card?: any;
+  card?: Record<string, unknown>;
   cardName?: string;
   cardPrice?: number;
   moneyUsed?: number;

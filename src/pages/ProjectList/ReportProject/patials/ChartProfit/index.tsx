@@ -20,7 +20,7 @@ exportingInit(Highcharts);
 
 interface ReportRevenueProps {
   classNames?: string;
-  paramsProps: any;
+  paramsProps: Record<string, unknown>;
 }
 const chartColor = {
   total: "#015aa4",

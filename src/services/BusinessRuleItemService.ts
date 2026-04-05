@@ -2,19 +2,19 @@ import { urlsApi } from "configs/urls";
 import { convertParamsToString } from "reborn-util";
 
 export default {
-  list: (params?: any, signal?: AbortSignal) => {
+  list: (params?: Record<string, unknown>, signal?: AbortSignal) => {
     return fetch(`${urlsApi.businessRuleItem.list}${convertParamsToString(params)}`, {
       signal,
       method: "GET",
     }).then((res) => res.json());
   },
-  update: (body: any) => {
+  update: (body: Record<string, unknown>) => {
     return fetch(urlsApi.businessRuleItem.update, {
       method: "POST",
       body: JSON.stringify(body),
     }).then((res) => res.json());
   },
-  updateActive: (body: any) => {
+  updateActive: (body: Record<string, unknown>) => {
     return fetch(urlsApi.businessRuleItem.updateActive, {
       method: "POST",
       body: JSON.stringify(body),

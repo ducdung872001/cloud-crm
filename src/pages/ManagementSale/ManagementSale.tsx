@@ -53,7 +53,7 @@ export default function ManagementSale() {
   const [dataManagementInvoice, setDataManagementInvoice] = useState<number>(null);
   const [listIdChecked, setListIdChecked] = useState<number[]>([]);
   const [showDialog, setShowDialog] = useState<boolean>(false);
-  const [contentDialog, setContentDialog] = useState<any>(null);
+  const [contentDialog, setContentDialog] = useState<Record<string, unknown>>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [isNoItem, setIsNoItem] = useState<boolean>(false);
   const [showModalAdd, setShowModalAdd] = useState<boolean>(false);
@@ -202,7 +202,7 @@ export default function ManagementSale() {
 
   const abortController = new AbortController();
 
-  const getListManagementInvoice = async (paramsSearch: any) => {
+  const getListManagementInvoice = async (paramsSearch: Record<string, unknown>) => {
     setIsLoading(true);
 
     const response = await SaleflowInvoiceService.list(paramsSearch, abortController.signal);
@@ -380,7 +380,7 @@ export default function ManagementSale() {
         if (paramsTemp.page === 1) {
           delete paramsTemp["page"];
         }
-        setSearchParams(paramsTemp as any);
+        setSearchParams(paramsTemp as Record<string, unknown>);
       }
     }
     //tạm ẩn đi
@@ -398,12 +398,12 @@ export default function ManagementSale() {
     try {
       const esc = (s: string) =>
         String(s ?? "—").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");
-      const fmtAmt = (v: any) => (Number(v) || 0).toLocaleString("vi-VN");
+      const fmtAmt = (v: Record<string, unknown>) => (Number(v) || 0).toLocaleString("vi-VN");
       const headers = ["STT","Mã hóa đơn","Ngày bán","Tổng tiền (VNĐ)","Giảm giá (VNĐ)","Đã thanh toán (VNĐ)","Công nợ (VNĐ)","Trạng thái"];
       const COL_WIDTHS = [42, 140, 140, 154, 126, 168, 126, 112];
       const colDefs = COL_WIDTHS.map(w => `<Column ss:AutoFitWidth="0" ss:Width="${w}"/>`).join("");
       const STATUS_MAP: Record<number, string> = { 1: "Hoàn thành", 4: "Chưa hoàn thành", 3: "Đã hủy" };
-      const dataRows = listManagementInvoice.map((item: any, i: number) => {
+      const dataRows = listManagementInvoice.map((item: Record<string, unknown>, i: number) => {
         const inv = item.invoiceResponse ?? item;
         const cols = [
           String(i + 1),
@@ -531,7 +531,7 @@ ${dataRows.join("\n")}
 
   //   const dataFormat = ["text-center", "", "text-center", "", "", "text-right", "text-center"];
 
-  const dataMappingArray = (item: any, index: number) => [
+  const dataMappingArray = (item: Record<string, unknown>, index: number) => [
     getPageOffset(params) + index + 1,
     item.invoiceResponse?.invoiceCode,
     item.invoiceResponse?.receiptDate ? moment(item.receiptDate).format("DD/MM/YYYY") : "",
@@ -548,7 +548,7 @@ ${dataRows.join("\n")}
     />,
   ];
 
-  const actionsTable = (item: any): IAction[] => {
+  const actionsTable = (item: Record<string, unknown>): IAction[] => {
     const activities = item.activities ? JSON.parse(item.activities) : [];
 
     return [
@@ -642,7 +642,7 @@ ${dataRows.join("\n")}
     });
   };
 
-  const showDialogConfirmDelete = (item?: any) => {
+  const showDialogConfirmDelete = (item?: Record<string, unknown>) => {
     const contentDialog: IContentDialog = {
       color: "error",
       className: "dialog-delete",
@@ -691,7 +691,7 @@ ${dataRows.join("\n")}
   const [valueSaleflow, setValueSaleflow] = useState(null);
 
   const loadOptionSaleflow = async (search, loadedOptions, { page }) => {
-    const param: any = {
+    const param: Record<string, unknown> = {
       name: search,
       page: page,
       limit: 10,
@@ -711,7 +711,7 @@ ${dataRows.join("\n")}
       const dataOption = response.result.items;
 
       if (dataOption.length > 0) {
-        dataOption.map((item: any) => {
+        dataOption.map((item: Record<string, unknown>) => {
           optionSaleflow.push({
             value: item.id,
             label: item.name,
@@ -753,7 +753,7 @@ ${dataRows.join("\n")}
 
   const getPipelineList = async () => {
     if (!listPipeline || listPipeline.length === 0) {
-      const param: any = {
+      const param: Record<string, unknown> = {
         limit: 1000,
       };
       const response = await SaleFlowService.list(param);
@@ -762,7 +762,7 @@ ${dataRows.join("\n")}
       if (response.code === 0) {
         const dataOption = response.result.items;
         if (dataOption.length > 0) {
-          dataOption.map((item: any) => {
+          dataOption.map((item: Record<string, unknown>) => {
             optionSaleflow.push({
               value: item.id,
               label: item.name,
@@ -782,7 +782,7 @@ ${dataRows.join("\n")}
   //call danh sách trạng thái liên hệ
   const [valueApproach, setValueApproach] = useState(null);
   const getOptionApproach = async (saleflowId) => {
-    const body: any = {
+    const body: Record<string, unknown> = {
       saleflowId,
     };
 

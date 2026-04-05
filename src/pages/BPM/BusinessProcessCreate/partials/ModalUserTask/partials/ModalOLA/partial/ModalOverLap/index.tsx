@@ -11,7 +11,7 @@ import { showToast } from "utils/common";
 import BusinessProcessService from "services/BusinessProcessService";
 import moment from "moment";
 
-export default function ModalOverLap(props: any) {
+export default function ModalOverLap(props: Record<string, unknown>) {
   //isBatch: Thêm hàng loạt cơ hội (thêm nhanh từ màn hình danh sách khách hàng)
   const { onShow, onHide, dataNode } = props;
   const [showDialog, setShowDialog] = useState<boolean>(false);

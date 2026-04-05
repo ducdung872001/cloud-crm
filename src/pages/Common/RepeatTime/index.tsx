@@ -12,7 +12,7 @@ import { listTimeSlots } from "utils/common";
 import "./index.scss";
 
 export interface IRepeatTimeProps {
-  dataProps?: any;
+  dataProps?: Record<string, unknown>;
   callback?: (data) => void;
 }
 
@@ -75,7 +75,7 @@ export default function RepeatTime(props: IRepeatTimeProps) {
     repeat: 1,
     frequencyType: "week",
     repeatWeekOns: ["Mo"],
-    repeatMonthOns: [1, 31] as any[],
+    repeatMonthOns: [1, 31] as Record<string, unknown>[],
     timeRanges: [
       {
         startTime: "00:00:00",

@@ -11,7 +11,7 @@ import MarketingAutomationService from "services/MarketingAutomationService";
 interface IAddMaModalProps {
   onShow: boolean;
   onHide: (reload: boolean) => void;
-  data: any;
+  data: Record<string, unknown>;
 }
 
 export default function AddMaModal(props: IAddMaModalProps) {

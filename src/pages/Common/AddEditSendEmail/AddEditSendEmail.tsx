@@ -863,7 +863,7 @@ export default function AddEditSendEmail(props: ISendEmail) {
   const [valueUpload, setValueUpload] = useState([]);
 
   const loadOptionUpload = async (search, loadedOptions, { page }) => {
-    const param: any = {
+    const param: Record<string, unknown> = {
       name: search,
       page: page,
       limit: 10,
@@ -1459,7 +1459,7 @@ export default function AddEditSendEmail(props: ISendEmail) {
     }, 2000);
   };
 
-  const [listApproach, setListApproach] = useState<any>([
+  const [listApproach, setListApproach] = useState<Record<string, unknown>>([
     {
       value: "customer",
       label: "Khách hàng",
@@ -1490,7 +1490,7 @@ export default function AddEditSendEmail(props: ISendEmail) {
     // },
   ]);
 
-  const [placeholder, setPlaceholder] = useState<any>(listApproach[0]);
+  const [placeholder, setPlaceholder] = useState<Record<string, unknown>>(listApproach[0]);
 
   useEffect(() => {
     for (let i = 0; i < listApproach.length; i++) {
@@ -2022,7 +2022,7 @@ export default function AddEditSendEmail(props: ISendEmail) {
           onShow={showModalAddTemplateEmail}
           onHide={() => setShowModalAddTemplateEmail(false)}
           //contentDelta -> Chưa lưu
-          data={{ id: 0, title: titleEmail, content: contentEmail, type: 1, tcyId: 0 } as any}
+          data={{ id: 0, title: titleEmail, content: contentEmail, type: 1, tcyId: 0 } as Record<string, unknown>}
         />
 
         <ViewTemplateEmailModal

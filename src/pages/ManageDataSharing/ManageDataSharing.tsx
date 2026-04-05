@@ -26,7 +26,7 @@ import AddPermissionModal from "./partials/AddPermissionModal";
 import ApproveModal from "./ApproveModal/ApproveModal";
 import NoteModal from "./NoteModal/NoteModal";
 
-export default function ManageDataSharing(props: any) {
+export default function ManageDataSharing(props: Record<string, unknown>) {
   document.title = "Cài đặt chia sẻ dữ liệu";
 
   const { onBackProps } = props;
@@ -38,9 +38,9 @@ export default function ManageDataSharing(props: any) {
   const [listIdChecked, setListIdChecked] = useState<number[]>([]);
   const [showModalAddPermission, setShowModalAddPermission] = useState<boolean>(false);
   const [showDialog, setShowDialog] = useState<boolean>(false);
-  const [contentDialog, setContentDialog] = useState<any>(null);
+  const [contentDialog, setContentDialog] = useState<Record<string, unknown>>(null);
   const [showDialogApprove, setShowDialogApprove] = useState<boolean>(false);
-  const [contentDialogApprove, setContentDialogApprove] = useState<any>(null);
+  const [contentDialogApprove, setContentDialogApprove] = useState<Record<string, unknown>>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [isNoItem, setIsNoItem] = useState<boolean>(false);
   const [isPermissions, setIsPermissions] = useState<boolean>(false);
@@ -90,7 +90,7 @@ export default function ManageDataSharing(props: any) {
 
   const abortController = new AbortController();
 
-  const getListPermission = async (paramsSearch: any, tab) => {
+  const getListPermission = async (paramsSearch: Record<string, unknown>, tab) => {
     setIsLoading(true);
 
     let response = null;
@@ -172,7 +172,7 @@ export default function ManageDataSharing(props: any) {
   const dataFormat = ["text-center", "", "", "", "t", "text-center"];
   const dataFormatTab2 = ["text-center", "", "", "t", "text-center"];
 
-  const dataMappingArray = (item: any, index: number) => [
+  const dataMappingArray = (item: Record<string, unknown>, index: number) => [
     getPageOffset(params) + index + 1,
     ...(tab === 'tab_one' ? [item.targetBranchCode] : [] ),
     tab === 'tab_one' ? item.targetBranchName : item.sourceBeautyName,
@@ -190,7 +190,7 @@ export default function ManageDataSharing(props: any) {
     // />,
   ];
 
-  const actionsTable = (item: any): IAction[] => {
+  const actionsTable = (item: Record<string, unknown>): IAction[] => {
     return [
       
     //   permissions["PRODUCT_UPDATE"] == 1 && {
@@ -308,7 +308,7 @@ export default function ManageDataSharing(props: any) {
     setShowDialog(true);
   };
 
-  const showDialogConfirmApprove = (item?: any, status?: number) => {
+  const showDialogConfirmApprove = (item?: Record<string, unknown>, status?: number) => {
     const contentDialog: IContentDialog = {
       color: "success",
       className: "dialog-delete",

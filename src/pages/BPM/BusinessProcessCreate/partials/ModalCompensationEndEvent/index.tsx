@@ -182,7 +182,7 @@ export default function ModalCompensationEndEvent({ onShow, onHide, dataNode, pr
                   disabled: isSubmit,
                   is_loading: isSubmit,
                 },
-              ] as any)),
+              ] as Record<string, unknown>)),
         ],
       },
     }),

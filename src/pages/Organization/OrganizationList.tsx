@@ -24,7 +24,7 @@ export default function OrganizationList() {
   const takeIdUserAdmin = localStorage.getItem("idUserAdmin");
 
   const [searchParams, setSearchParams] = useSearchParams();
-  const [listBeautySalon, setListBeautySalon] = useState<any[]>([]);
+  const [listBeautySalon, setListBeautySalon] = useState<Record<string, unknown>[]>([]);
   const [dataOrganization, setDataOrganization] = useState(null);
   const [listIdChecked, setListIdChecked] = useState<number[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
@@ -39,11 +39,11 @@ export default function OrganizationList() {
 
   const isMounted = useRef(false);
 
-  const [params, setParams] = useState<any>({
+  const [params, setParams] = useState<Record<string, unknown>>({
     name: "",
   });
 
-  const defaultFilterList: any = useMemo(
+  const defaultFilterList: Record<string, unknown> = useMemo(
     () => [
       {
         key: "createdTime",
@@ -135,7 +135,7 @@ export default function OrganizationList() {
   });
 
   const abortController = new AbortController();
-  const getListBeautySalon = async (paramsSearch: any) => {
+  const getListBeautySalon = async (paramsSearch: Record<string, unknown>) => {
     paramsSearch.sortedBy = "newest";
 
     setIsLoading(true);
@@ -240,7 +240,7 @@ export default function OrganizationList() {
 
   const [viewApplication, setViewApplication] = useState<boolean>(false);
 
-  const dataMappingArray = (item: any, index: number) => [
+  const dataMappingArray = (item: Record<string, unknown>, index: number) => [
     getPageOffset(params) + index + 1,
     <a
       key={item.id}
@@ -268,7 +268,7 @@ export default function OrganizationList() {
 
   const dataFormat = ["text-center", "", "", "text-center", "text-center", "text-center", "text-center"];
 
-  const actionsTable = (item: any): IAction[] => {
+  const actionsTable = (item: Record<string, unknown>): IAction[] => {
     return [
       {
         title: "Sửa",
@@ -289,9 +289,9 @@ export default function OrganizationList() {
   };
 
   const [showDialog, setShowDialog] = useState<boolean>(false);
-  const [contentDialog, setContentDialog] = useState<any>(null);
+  const [contentDialog, setContentDialog] = useState<Record<string, unknown>>(null);
 
-  const showDialogConfirmDelete = (item?: any) => {
+  const showDialogConfirmDelete = (item?: Record<string, unknown>) => {
     const contentDialog: IContentDialog = {
       color: "error",
       className: "dialog-delete",

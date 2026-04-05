@@ -19,7 +19,7 @@ import ModalAddNameFilter from "./ModalAddNameFilter/ModalAddNameFilter";
 import Icon from "components/icon";
 import Tippy from "@tippyjs/react";
 
-export default function FilterAdvanceModal(props: any) {
+export default function FilterAdvanceModal(props: Record<string, unknown>) {
   const { onShow, onHide, filterAdvance, setFilterAdvance, takeParamsUrl, takeUrlFilterAdvance, params } = props;
   console.log('takeParamsUrl', takeParamsUrl);
   console.log('takeUrlFilterAdvance', takeUrlFilterAdvance);
@@ -179,7 +179,7 @@ export default function FilterAdvanceModal(props: any) {
 
   //! đoạn này xử lý call api lấy ra thông tin nguồn khách hàng
   const loadOptionCustomerSource = async (search, loadedOptions, { page }) => {
-    const param: any = {
+    const param: Record<string, unknown> = {
       name: search,
       page: page,
       limit: 100,
@@ -192,7 +192,7 @@ export default function FilterAdvanceModal(props: any) {
       return {
         options: [
           ...(dataOption.length > 0
-            ? dataOption.map((item: any) => {
+            ? dataOption.map((item: Record<string, unknown>) => {
                 return {
                   value: item.id,
                   label: item.name,

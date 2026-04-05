@@ -50,7 +50,7 @@ export const EditorValue = React.forwardRef(
       ...props
     }: PropsWithChildren<
       {
-        value: any;
+        value: Record<string, unknown>;
       } & BaseProps
     >,
     ref: Ref<OrNull<null>>

@@ -102,7 +102,7 @@ export default function ModalSignalIntermediateThrowEvent({ onShow, onHide, data
       const errorHandling = (result?.errorHandling && JSON.parse(result.errorHandling)) || null;
       setHandleErrorData(errorHandling?.config || null);
 
-      let inputVarParsed: any = {};
+      let inputVarParsed: Record<string, unknown> = {};
       try {
         inputVarParsed = result.inputVar ? JSON.parse(result.inputVar) : {};
       } catch (error) {
@@ -149,7 +149,7 @@ export default function ModalSignalIntermediateThrowEvent({ onShow, onHide, data
       const newListOutputVarData = Array.isArray(arrayOut) && arrayOut.length > 0 ? arrayOut : [];
       const listOutputVarData = newListOutputVarData.map((item) => {
         const name = Object.entries(item)[0][0];
-        const attributeMapping: any = Object.entries(item)[0][1];
+        const attributeMapping: Record<string, unknown> = Object.entries(item)[0][1];
 
         return {
           name: name,
@@ -425,7 +425,7 @@ export default function ModalSignalIntermediateThrowEvent({ onShow, onHide, data
                   disabled: isSubmit,
                   is_loading: isSubmit,
                 },
-              ] as any)),
+              ] as Record<string, unknown>)),
         ],
       },
     }),

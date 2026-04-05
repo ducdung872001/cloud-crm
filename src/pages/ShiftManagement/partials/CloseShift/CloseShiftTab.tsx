@@ -39,7 +39,7 @@ export default function CloseShiftTab({ shiftId, branchId, onShiftClosed }: Prop
   useEffect(() => {
     if (!branchId) return;
     ShiftService.getActiveDashboard(branchId)
-      .then((res: any) => {
+      .then((res: Record<string, unknown>) => {
         const d = res?.result;
         if (!d) return;
         setSummary({

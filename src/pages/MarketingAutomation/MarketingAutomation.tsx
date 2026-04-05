@@ -179,7 +179,7 @@ const MarketingAutomation = () => {
     (changes) => {
       console.log('changes', changes);
       // const changed = changes.find(el => el.selected === true)
-      const changed: any = nodes.filter(el => el.id === changes[0].id)[0] || null;
+      const changed: Record<string, unknown> = nodes.filter(el => el.id === changes[0].id)[0] || null;
       console.log('changed', changed);
       const nodeChanged = {
         id: changed?.id,
@@ -210,7 +210,7 @@ const MarketingAutomation = () => {
 
   useEffect(() => {
     if (edges && edges.length > 0) {
-      const newData = edges.map((item: any) => {
+      const newData = edges.map((item: Record<string, unknown>) => {
         return {
           // fromNode: { id: item.source },
           // toNode: { id: item.target },
@@ -228,7 +228,7 @@ const MarketingAutomation = () => {
 
   const onSubmit = async () => {
     if (nodes.length > 0) {
-      nodes.map((item: any) => {
+      nodes.map((item: Record<string, unknown>) => {
         const bodyNode = {
           id: item.id,
           maId: maId,
@@ -493,7 +493,7 @@ const MarketingAutomation = () => {
   const onClickNode = (e) => {
     console.log("e", e);
 
-    const nodeSelected : any = nodes.find(el => el.id == e.target?.dataset?.id) || null;
+    const nodeSelected : Record<string, unknown> = nodes.find(el => el.id == e.target?.dataset?.id) || null;
     console.log('nodeSelected', nodeSelected);
     
 

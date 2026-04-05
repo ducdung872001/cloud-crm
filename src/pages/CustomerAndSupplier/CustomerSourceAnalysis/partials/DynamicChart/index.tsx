@@ -20,7 +20,7 @@ export default function DynamicChart({ lstChartDynamic, callBack }) {
   const [isLoadingField, setIsLoadingField] = useState<boolean>(false);
 
   const [showDialog, setShowDialog] = useState<boolean>(false);
-  const [contentDialog, setContentDialog] = useState<any>(null);
+  const [contentDialog, setContentDialog] = useState<IContentDialog>(null);
 
   const handleLstField = async () => {
     setIsLoadingField(true);
@@ -928,7 +928,7 @@ export default function DynamicChart({ lstChartDynamic, callBack }) {
     setContentDialog(null);
   };
 
-  const showDialogConfirmDelete = (item?: any) => {
+  const showDialogConfirmDelete = (item?: Record<string, unknown>) => {
     const contentDialog: IContentDialog = {
       color: "error",
       className: "dialog-delete",

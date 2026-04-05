@@ -44,7 +44,7 @@ export default function SendEmailModal(props: IAddEmailModelProps) {
   const [dataCodeEmail, setDataCodeEmail] = useState<string>("");
 
   // State cho placeholder
-  const [listApproach, setListApproach] = useState<any>([
+  const [listApproach, setListApproach] = useState<Record<string, unknown>>([
     {
       value: "customer",
       label: "Khách hàng",
@@ -54,7 +54,7 @@ export default function SendEmailModal(props: IAddEmailModelProps) {
     },
   ]);
 
-  const [placeholder, setPlaceholder] = useState<any>(listApproach[0]);
+  const [placeholder, setPlaceholder] = useState<Record<string, unknown>>(listApproach[0]);
 
   useEffect(() => {
     for (let i = 0; i < listApproach.length; i++) {

@@ -23,7 +23,7 @@ import Input from "components/input/input";
 import NummericInput from "components/input/numericInput";
 import { BulkActionItemModel } from "components/bulkAction/bulkAction";
 
-export default function OperatorList(props: any) {
+export default function OperatorList(props: Record<string, unknown>) {
   const { onShow, onHide, dataSwitchboard } = props;
   console.log("dataSwitchboard", dataSwitchboard);
 
@@ -65,7 +65,7 @@ export default function OperatorList(props: any) {
 
   const abortController = new AbortController();
 
-  const getListOperator = async (paramsSearch: any) => {
+  const getListOperator = async (paramsSearch: Record<string, unknown>) => {
     setIsLoading(true);
 
     const response = await EmployeeAgentService.list(paramsSearch, abortController.signal);
@@ -94,14 +94,14 @@ export default function OperatorList(props: any) {
   const titles = ["STT", "Tên nhân viên", "Tên tài khoản"];
   const dataFormat = ["text-center", "", "", "text-right"];
 
-  const dataMappingArray = (item: any, index: number) => [
+  const dataMappingArray = (item: Record<string, unknown>, index: number) => [
     getPageOffset(params) + index + 1,
     item.employeeName,
     item.configs ? JSON.parse(item.configs)?.username : "",
     // item.configs ? JSON.parse(item.configs)?.password : '',
   ];
 
-  const actionsTable = (item: any): IAction[] => {
+  const actionsTable = (item: Record<string, unknown>): IAction[] => {
     return [
       {
         title: "Sửa",
@@ -121,7 +121,7 @@ export default function OperatorList(props: any) {
     ];
   };
 
-  const showDialogConfirmDelete = (item?: any) => {
+  const showDialogConfirmDelete = (item?: Record<string, unknown>) => {
     const contentDialog: IContentDialog = {
       color: "error",
       className: "dialog-delete",
@@ -268,7 +268,7 @@ export default function OperatorList(props: any) {
         employeeId: dataOperator?.employeeId ?? 0,
         partnerId: dataOperator?.partnerId ?? dataSwitchboard?.partnerId ?? 0,
         configs: "",
-      } as any),
+      } as Record<string, unknown>),
     [onShow, dataOperator, dataSwitchboard]
   );
 
@@ -334,7 +334,7 @@ export default function OperatorList(props: any) {
   };
 
   const loadedOptionAthena = async (search, loadedOptions, { page }) => {
-    const param: any = {
+    const param: Record<string, unknown> = {
       name: search,
       page: page,
       limit: 10,
@@ -393,7 +393,7 @@ export default function OperatorList(props: any) {
     setIsSubmit(true);
 
     const body = {
-      ...(formData.values as any),
+      ...(formData.values as Record<string, unknown>),
       configs: dataSwitchboard?.name === "Athena" ? JSON.stringify(dataAthena) : "",
     };
 

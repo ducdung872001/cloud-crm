@@ -20,7 +20,7 @@ import Input from "components/input/input";
 import "./AddEventModal.scss";
 import Radio from "components/radio/radio";
 
-export default function AddEventModal(props: any) {
+export default function AddEventModal(props: Record<string, unknown>) {
   const { onShow, onHide, data } = props;
 
   const focusedElement = useActiveElement();
@@ -34,11 +34,11 @@ export default function AddEventModal(props: any) {
   const [isLoadingEmployee, setIsLoadingEmployee] = useState<boolean>(false);
   const [listCustomer, setListCustomer] = useState<IOption[]>(null);
   const [isLoadingCustomer, setIsLoadingCustomer] = useState<boolean>(false);
-  const [addFieldCustomer, setAddFieldCustomer] = useState<any[]>([{ id: 0, customerId: 0, isPrimary: 1 }]);
-  const [validateCustomer, setValidateCustomer] = useState<any[]>([]);
+  const [addFieldCustomer, setAddFieldCustomer] = useState<Record<string, unknown>[]>([{ id: 0, customerId: 0, isPrimary: 1 }]);
+  const [validateCustomer, setValidateCustomer] = useState<Record<string, unknown>[]>([]);
 
   const [listEmail, setListEmail] = useState<IOption[]>(null);
-  const [addFieldEmail, setAddFieldEmail] = useState<any[]>([{ email: "", emailType: 1, isPrimary: 1 }]);
+  const [addFieldEmail, setAddFieldEmail] = useState<Record<string, unknown>[]>([{ email: "", emailType: 1, isPrimary: 1 }]);
 
   const onSelectOpenPosition = async () => {
     if (!listPosition || listPosition.length === 0) {

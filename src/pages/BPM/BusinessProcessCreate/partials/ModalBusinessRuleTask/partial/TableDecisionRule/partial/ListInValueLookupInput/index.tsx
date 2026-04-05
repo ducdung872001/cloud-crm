@@ -7,11 +7,11 @@ import SelectLookupOla from "../ComponentInput/partial/SelectLookupOla";
 import SelectMultiLookupOla from "../ComponentInput/partial/SelectMultiLookupOla";
 
 interface ListInValueLookupInputProps {
-  field: any;
+  field: Record<string, unknown>;
   rowIndex: number;
   fieldIndex: number;
-  handChangeValueItem: (rowIndex: number, fieldIndex: number, value: any, type: "compare" | "number" | "date") => void;
-  lookupValues: any;
+  handChangeValueItem: (rowIndex: number, fieldIndex: number, value: Record<string, unknown>, type: "compare" | "number" | "date") => void;
+  lookupValues: Record<string, unknown>;
   loading: boolean;
 }
 
@@ -57,7 +57,7 @@ const ListInValueLookupInput: React.FC<ListInValueLookupInputProps> = ({
             onChange={(e) => {
               console.log("onChange-ListInValueLookupInput", e);
               const value = {
-                value: e.map((item: any) => item.value),
+                value: e.map((item: Record<string, unknown>) => item.value),
               };
 
               handChangeValueItem(rowIndex, fieldIndex, value, field.type);

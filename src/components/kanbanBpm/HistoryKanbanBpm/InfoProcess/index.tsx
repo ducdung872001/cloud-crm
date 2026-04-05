@@ -22,7 +22,7 @@ import { showToast } from "utils/common";
 import ListWork from "./ListWork/ListWork";
 import ObjectInfo from "../ObjectInfo";
 
-export default function InfoProcess(props: any) {
+export default function InfoProcess(props: { data: Record<string, unknown> }) {
   const { data } = props;
   // console.log('data', data);
 
@@ -38,7 +38,7 @@ export default function InfoProcess(props: any) {
     setTab(1);
   }, [data]);
 
-  const [objectExtraInfos, setObjectExtraInfos] = useState<any>([]);
+  const [objectExtraInfos, setObjectExtraInfos] = useState<Record<string, unknown>[]>([]);
 
   const [listCustomer, setListCustomer] = useState<IOption[]>(null);
   const [isLoadingCustomer, setIsLoadingCustomer] = useState<boolean>(false);
@@ -66,7 +66,7 @@ export default function InfoProcess(props: any) {
   const [isLoadingContact, setIsLoadingContact] = useState<boolean>(false);
   const [listContract, setListContract] = useState<IOption[]>(null);
   const [isLoadingContract, setIsLoadingContract] = useState<boolean>(false);
-  const [mapObjectAttribute, setMapObjectAttribute] = useState<any>(null);
+  const [mapObjectAttribute, setMapObjectAttribute] = useState<Record<string, unknown[]> | null>(null);
 
   const getObjectAttributes = async (groupId) => {
     // if (!mapObjectAttribute || mapObjectAttribute.length === 0) {
@@ -83,7 +83,7 @@ export default function InfoProcess(props: any) {
     }
   };
 
-  const onSelectOpenEmployee = async (data?: any) => {
+  const onSelectOpenEmployee = async (data?: IOption) => {
     if (!listEmployee || listEmployee.length === 0) {
       setIsLoadingEmployee(true);
       const dataOption = await SelectOptionData("employeeId");
@@ -161,7 +161,7 @@ export default function InfoProcess(props: any) {
     });
 
     if (!found) {
-      let item: any = {};
+      let item: Record<string, unknown> = {};
       item.attributeId = attributeId;
       item.attributeValue = attributeValue;
       item.objectId = objectId;
@@ -586,7 +586,7 @@ export default function InfoProcess(props: any) {
 
           {mapObjectAttribute ? (
             <div className="list__object--attribute">
-              {Object.entries(mapObjectAttribute).map((lstEformAttribute: any, key: number) => (
+              {Object.entries(mapObjectAttribute).map((lstEformAttribute: [string, unknown[]], key: number) => (
                 <Fragment key={key}>
                   {(lstEformAttribute[1] || []).map((eformAttribute, index: number) => (
                     <Fragment key={index}>

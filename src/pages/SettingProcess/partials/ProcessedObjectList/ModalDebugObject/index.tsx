@@ -88,7 +88,7 @@ export default function ModalDebugObject({ onShow, onHide, dataObject }) {
 
   const abortController = new AbortController();
 
-  const getListVar = async (paramsSearch: any) => {
+  const getListVar = async (paramsSearch: Record<string, unknown>) => {
     setIsLoading(true);
 
     const response = await BusinessProcessService.listVariableDeclareGlobal(paramsSearch, abortController.signal);
@@ -112,7 +112,7 @@ export default function ModalDebugObject({ onShow, onHide, dataObject }) {
     setIsLoading(false);
   };
 
-  const getListForm = async (paramsSearch: any) => {
+  const getListForm = async (paramsSearch: Record<string, unknown>) => {
     setIsLoading(true);
 
     const response = await BusinessProcessService.listBpmFormGlobal(paramsSearch, abortController.signal);
@@ -150,7 +150,7 @@ export default function ModalDebugObject({ onShow, onHide, dataObject }) {
   const titlesLinkNode = ["STT", "FormId", "NodeId", "ProcessId", "Giá trị"];
   const dataFormatLinkNode = ["text-center", "", "", "", "text-center"];
 
-  const dataMappingArray = (item: any, index: number, type) => [
+  const dataMappingArray = (item: Record<string, unknown>, index: number, type) => [
     ...(type === "var"
       ? [
           getPageOffset(params) + index + 1,
@@ -183,7 +183,7 @@ export default function ModalDebugObject({ onShow, onHide, dataObject }) {
         ]),
   ];
 
-  const actionsTable = (item: any): IAction[] => {
+  const actionsTable = (item: Record<string, unknown>): IAction[] => {
     return [
       //   {
       //       title: tab === 1 ? 'Lưu Node vào CSDL' : 'Lưu Link vào CSDL',
@@ -202,7 +202,7 @@ export default function ModalDebugObject({ onShow, onHide, dataObject }) {
     ];
   };
 
-  const showDialogConfirmDelete = (item?: any) => {
+  const showDialogConfirmDelete = (item?: Record<string, unknown>) => {
     const contentDialog: IContentDialog = {
       color: "error",
       className: "dialog-delete",

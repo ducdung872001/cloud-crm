@@ -42,7 +42,7 @@ export default function ProcessedObjectList(props) {
   const [showModalAdd, setShowModalAdd] = useState<boolean>(false);
   const [showModalSettingObject, setShowModalSettingObject] = useState<boolean>(false);
   const [showDialog, setShowDialog] = useState<boolean>(false);
-  const [contentDialog, setContentDialog] = useState<any>(null);
+  const [contentDialog, setContentDialog] = useState<Record<string, unknown>>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [isNoItem, setIsNoItem] = useState<boolean>(false);
   const [isPermissions, setIsPermissions] = useState<boolean>(false);
@@ -149,7 +149,7 @@ export default function ProcessedObjectList(props) {
 
     if (isMounted.current === true) {
       getListProcessedObject(params);
-      const paramsTemp: any = _.cloneDeep(params);
+      const paramsTemp: Record<string, unknown> = _.cloneDeep(params);
       if (paramsTemp.limit === 10) {
         delete paramsTemp["limit"];
       }
@@ -221,7 +221,7 @@ export default function ProcessedObjectList(props) {
       const result = response.result.items;
 
       const changeResult = result.map((item) => {
-        const newItem: any = {
+        const newItem: Record<string, unknown> = {
           [item.code]: "",
           type: item.type,
           placeholder: item.name.toLowerCase(),
@@ -252,7 +252,7 @@ export default function ProcessedObjectList(props) {
       .join("");
   };
 
-  const handleExportDataFS = async (data, item: any) => {
+  const handleExportDataFS = async (data, item: Record<string, unknown>) => {
     const changeName = removePunctuationAndCamelCase(item.name);
     const titleExport = await handleTitleExport(item.sheetId);
 
@@ -560,7 +560,7 @@ export default function ProcessedObjectList(props) {
     "center",
   ];
 
-  const dataMappingArray_OLA_SLA = (item: any, index: number, type?: string) =>
+  const dataMappingArray_OLA_SLA = (item: Record<string, unknown>, index: number, type?: string) =>
     type === "ola"
       ? [
           index + 1,
@@ -623,7 +623,7 @@ export default function ProcessedObjectList(props) {
       const result = response.result;
 
       if (type === "sla") {
-        const headerFormatSLA: any = [
+        const headerFormatSLA: Record<string, unknown> = [
           {
             merge: {
               row: 2,

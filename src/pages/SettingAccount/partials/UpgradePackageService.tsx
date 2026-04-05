@@ -11,11 +11,11 @@ import PackageService from "services/PackageService";
 import { showToast } from "utils/common";
 
 interface IUpgradePackageServiceProps {
-  data: any;
-  dataInfoEmployee: any;
+  data: Record<string, unknown>;
+  dataInfoEmployee: Record<string, unknown>;
   onShow: boolean;
   onHide: (reload: boolean) => void;
-  callback: (data: any, dataRes: any) => void;
+  callback: (data: Record<string, unknown>, dataRes: Record<string, unknown>) => void;
 }
 
 export default function UpgradePackageService(props: IUpgradePackageServiceProps) {
@@ -90,7 +90,7 @@ export default function UpgradePackageService(props: IUpgradePackageServiceProps
   const [lstPackage, setLstPackage] = useState([]);
 
   const handleListPackage = async (data) => {
-    const params: any = {
+    const params: Record<string, unknown> = {
       status: 1,
       code: data.code,
       limit: 100,

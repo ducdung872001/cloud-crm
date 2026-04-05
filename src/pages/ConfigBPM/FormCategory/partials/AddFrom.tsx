@@ -12,7 +12,13 @@ import { isDifferenceObj } from "reborn-util";
 import "./AddFrom.scss";
 import FormCategoryService from "services/FormCategoryService";
 
-export default function AddFrom(props: any) {
+interface AddFromProps {
+  onShow: boolean;
+  onHide: (reload: boolean) => void;
+  data: Record<string, unknown> | null;
+}
+
+export default function AddFrom(props: AddFromProps) {
   const { onShow, onHide, data } = props;
 
   const focusedElement = useActiveElement();
@@ -30,7 +36,7 @@ export default function AddFrom(props: any) {
         config: "",
         validationLink: "",
         position: 0,
-      } as any),
+      } as Record<string, unknown>),
     [data, onShow]
   );
 
@@ -88,8 +94,8 @@ export default function AddFrom(props: any) {
 
     setIsSubmit(true);
 
-    const body: any = {
-      ...(formData.values as any),
+    const body: Record<string, unknown> = {
+      ...(formData.values as Record<string, unknown>),
       ...(data ? { id: data.id } : {}),
     };
 

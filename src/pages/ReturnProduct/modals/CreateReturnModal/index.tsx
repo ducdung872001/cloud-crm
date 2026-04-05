@@ -138,13 +138,13 @@ interface ExchangeProductRowProps {
 
 function ExchangeProductRow({ row, disabled, onChange, onSelect, onRemove }: ExchangeProductRowProps) {
   const [query, setQuery]                   = useState(row.name);
-  const [suggestions, setSuggestions]       = useState<any[]>([]);
+  const [suggestions, setSuggestions]       = useState<Record<string, unknown>[]>([]);
   const [showDrop, setShowDrop]             = useState(false);
   const [searching, setSearching]           = useState(false);
   const [variants, setVariants]             = useState<StockVariant[]>([]);
   const [showVariantPicker, setShowVariantPicker] = useState(false);
   const [loadingVariants, setLoadingVariants]     = useState(false);
-  const [pendingProd, setPendingProd]       = useState<any>(null);
+  const [pendingProd, setPendingProd]       = useState<Record<string, unknown>>(null);
 
   const debounceRef = useRef<ReturnType<typeof setTimeout>>();
   const abortRef    = useRef<AbortController | null>(null);
@@ -182,7 +182,7 @@ function ExchangeProductRow({ row, disabled, onChange, onSelect, onRemove }: Exc
         setSuggestions([]);
         setShowDrop(true);
       }
-    } catch (e: any) {
+    } catch (e: unknown) {
       if (e?.name !== "AbortError") { setSuggestions([]); setShowDrop(false); }
     } finally {
       setSearching(false);
@@ -197,7 +197,7 @@ function ExchangeProductRow({ row, disabled, onChange, onSelect, onRemove }: Exc
   };
 
   // ── Bước 2: Chọn SP → load biến thể còn hàng ────────────────────
-  const handlePickProduct = async (item: any) => {
+  const handlePickProduct = async (item: Record<string, unknown>) => {
     setShowDrop(false);
     setSuggestions([]);
     setPendingProd(item);
@@ -213,10 +213,10 @@ function ExchangeProductRow({ row, disabled, onChange, onSelect, onRemove }: Exc
         page:        1,
       });
 
-      const items: any[] = res?.result?.items ?? [];
+      const items: Record<string, unknown>[] = res?.result?.items ?? [];
 
       // Map → StockVariant
-      const stockVariants: StockVariant[] = items.map((v: any) => ({
+      const stockVariants: StockVariant[] = items.map((v: Record<string, unknown>) => ({
         variantId:       v.variantId,
         variantLabel:    v.variantLabel || v.sku || item.name,
         sellingPrice:    v.sellingPrice ?? item.originalPrice ?? 0,
@@ -259,7 +259,7 @@ function ExchangeProductRow({ row, disabled, onChange, onSelect, onRemove }: Exc
   };
 
   // ── Apply vào row ────────────────────────────────────────────────
-  const applySelection = (item: any, variantId: number | undefined, price: number, label: string) => {
+  const applySelection = (item: Record<string, unknown>, variantId: number | undefined, price: number, label: string) => {
     setQuery(label);
     onChange(row.id, "name",  label);
     onChange(row.id, "price", price);
@@ -300,7 +300,7 @@ function ExchangeProductRow({ row, disabled, onChange, onSelect, onRemove }: Exc
               <div className="crm-product-dropdown__empty">
                 {searching ? "Đang tìm..." : "Không tìm thấy sản phẩm"}
               </div>
-            ) : suggestions.map((sug: any) => (
+            ) : suggestions.map((sug: Record<string, unknown>) => (
               <div
                 key={sug.id}
                 className="crm-product-dropdown__item"
@@ -536,7 +536,7 @@ export default function CreateReturnModal({
         return;
       }
       await fetchReturnItems(invoiceId, ctrl.signal);
-    } catch (e: any) {
+    } catch (e: unknown) {
       if (e?.name === "AbortError") return;
       setLookupStatus("error");
       setLookupMsg("Lỗi kết nối. Kiểm tra lại mạng và thử lại.");
@@ -654,7 +654,7 @@ export default function CreateReturnModal({
         note:         note || undefined,
       };
 
-      let res: any;
+      let res: Record<string, unknown>;
       if (seg === "return") {
         const body: ICreateReturnRequest = {
           invoice:          invoiceBase,

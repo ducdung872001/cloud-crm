@@ -64,7 +64,7 @@ interface CategoryItem {
 
 /** Lấy URL fund overview từ billing prefix */
 const fundOverviewUrl = () => urlsApi.fund?.overview
-  ?? (urlsApi.financeDashboard as any).full.replace("/finance/dashboard", "/fund/overview");
+  ?? (urlsApi.financeDashboard as Record<string, unknown>).full.replace("/finance/dashboard", "/fund/overview");
 
 /** Group danh sách giao dịch theo ngày (key = YYYY-MM-DD) */
 function groupByDate(items: TxItem[]): Record<string, TxItem[]> {
@@ -130,14 +130,14 @@ export default function FinanceCashBook() {
     if (kindFilter !== "all") params.type = Number(kindFilter);
 
     CashbookService.list(params, ctrl.signal)
-      .then((res: any) => {
+      .then((res: Record<string, unknown>) => {
         const raw: TxItem[] = res?.result?.cashbookResponse?.items ?? [];
         const filteredByKind = kindFilter === "all"
           ? raw
           : raw.filter((t) => t.type === Number(kindFilter));
         const filteredByFund = fundFilter === "all"
           ? filteredByKind
-          : filteredByKind.filter((t: any) => String(t.fundName) === fundFilter);
+          : filteredByKind.filter((t: Record<string, unknown>) => String(t.fundName) === fundFilter);
 
         setAllTxns(filteredByFund);
 
@@ -149,7 +149,7 @@ export default function FinanceCashBook() {
         setTotalIncome(inc);
         setTotalExpense(exp);
       })
-      .catch((err: any) => {
+      .catch((err: Record<string, unknown>) => {
         if (err?.name !== "AbortError") console.error("[CashBook]", err);
       })
       .finally(() => setTxLoading(false));
@@ -165,10 +165,10 @@ export default function FinanceCashBook() {
   useEffect(() => {
     fetch(fundOverviewUrl())
       .then(r => r.json())
-      .then((res: any) => {
+      .then((res: Record<string, unknown>) => {
         const raw = res?.result?.funds ?? res?.data?.funds ?? [];
         setFilterFunds(
-          raw.map((f: any) => ({
+          raw.map((f: Record<string, unknown>) => ({
             id:      Number(f.id),
             name:    String(f.name ?? ""),
             balance: Number(f.balance ?? 0),
@@ -219,7 +219,7 @@ export default function FinanceCashBook() {
         toTime,
         // type: kindFilter !== "all" ? Number(kindFilter) : undefined,
       });
-    } catch (e: any) {
+    } catch (e: unknown) {
       if (e?.name !== "AbortError") {
         toast("Xuất Excel thất bại. Vui lòng thử lại.");
       }
@@ -286,7 +286,7 @@ export default function FinanceCashBook() {
           <div className="finance-filter-toolbar__group">
             <select
               value={kindFilter}
-              onChange={e => setKindFilter(e.target.value as any)}
+              onChange={e => setKindFilter(e.target.value as Record<string, unknown>)}
               className="finance-filter-select finance-filter-select--compact"
               aria-label="Lọc theo loại"
             >
@@ -300,7 +300,7 @@ export default function FinanceCashBook() {
           <div className="finance-filter-toolbar__group">
             <select
               value={monthFilter}
-              onChange={e => setMonthFilter(e.target.value as any)}
+              onChange={e => setMonthFilter(e.target.value as Record<string, unknown>)}
               className="finance-filter-select finance-filter-select--compact"
               aria-label="Lọc theo thời gian"
             >

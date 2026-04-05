@@ -47,7 +47,7 @@ export default function ModalComment(props: IImportModalProps) {
     e.preventDefault();
   };
 
-  const [dataComment, setDataComment] = useState<any[]>([
+  const [dataComment, setDataComment] = useState<Record<string, unknown>[]>([
     // {
     //   id: 1,
     //   avatar: "",

@@ -11,7 +11,7 @@ import { isDifferenceObj } from "reborn-util";
 import "./index.scss";
 import DecisionTableOutputService from "services/DecisionTableOutputService";
 
-export default function ModalAddOutputColumn(props: any) {
+export default function ModalAddOutputColumn(props: Record<string, unknown>) {
   const { onShow, onHide, data, businessRuleId } = props;
 
   const focusedElement = useActiveElement();
@@ -28,7 +28,7 @@ export default function ModalAddOutputColumn(props: any) {
         code: data?.code ?? "",
         dataType: data?.dataType ?? "",
         businessRuleId: data?.businessRuleId ?? businessRuleId ?? 0,
-      } as any),
+      } as Record<string, unknown>),
     [data, onShow, businessRuleId]
   );
 
@@ -99,8 +99,8 @@ export default function ModalAddOutputColumn(props: any) {
 
     setIsSubmit(true);
 
-    const body: any = {
-      ...(formData.values as any),
+    const body: Record<string, unknown> = {
+      ...(formData.values as Record<string, unknown>),
       ...(data ? { id: data.id } : {}),
     };
 

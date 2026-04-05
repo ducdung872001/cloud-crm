@@ -5,11 +5,11 @@ import ModalEditValueIn from "../ModalEditValueIn";
 import "./index.scss";
 
 interface ListInValueInputProps {
-  field: any;
+  field: Record<string, unknown>;
   rowIndex: number;
   fieldIndex: number;
-  handChangeValueItem: (rowIndex: number, fieldIndex: number, value: any, type: "compare" | "number" | "date") => void;
-  setDataRow: (data: any) => void;
+  handChangeValueItem: (rowIndex: number, fieldIndex: number, value: Record<string, unknown>, type: "compare" | "number" | "date") => void;
+  setDataRow: (data: Record<string, unknown>) => void;
 }
 
 const ListInValueInput: React.FC<ListInValueInputProps> = ({ field, rowIndex, fieldIndex, handChangeValueItem, setDataRow }) => {

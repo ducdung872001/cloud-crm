@@ -128,7 +128,7 @@ const CustomCellEdit = (props) => {
     const markMultiUpdate = { value: false };
 
     // hàm để đảm bảo giữ nguyên các kiểu dữ liệu gốc (tránh ||)
-    const safeGet = (obj: any, key: string, fallback: any = null) => (obj && key in obj ? obj[key] : fallback);
+    const safeGet = (obj: Record<string, unknown>, key: string, fallback: Record<string, unknown> = null) => (obj && key in obj ? obj[key] : fallback);
 
     if (type === "number") {
       // giữ nguyên kiểu số (ví dụ 0)

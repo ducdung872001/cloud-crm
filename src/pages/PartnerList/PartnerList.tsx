@@ -308,7 +308,7 @@ export default function PartnerList() {
       }, {});
 
       // Lấy ra các đối tượng { width, colId } của phần tử cuối cùng trong từng nhóm
-      const uniqueWidths = Object.values(groupedData).map((group?: any) => ({
+      const uniqueWidths = Object.values(groupedData).map((group?: Record<string, unknown>) => ({
         width: group[group.length - 1].width,
         colId: group[group.length - 1].colId,
       }));
@@ -655,7 +655,7 @@ export default function PartnerList() {
     },
   ];
 
-  const [columnDefs, setColumnDefs] = useState<any>(defaultValueColumnDefs);
+  const [columnDefs, setColumnDefs] = useState<Record<string, unknown>>(defaultValueColumnDefs);
 
   useEffect(() => {
     if (activeTitleHeader === 1) {
@@ -710,7 +710,7 @@ export default function PartnerList() {
         });
 
       if (dataConfirm && dataConfirm.length > 0) {
-        const changeDataConfirm: any = dataConfirm.map((el) => {
+        const changeDataConfirm: Record<string, unknown> = dataConfirm.map((el) => {
           return {
             headerName: el.label,
             field: el.fieldName,
@@ -982,7 +982,7 @@ export default function PartnerList() {
 
   useEffect(() => {
     if (takeFieldActiveContact) {
-      const changeDataTakeFieldActiveContact: any = takeFieldActiveContact.map((el) => {
+      const changeDataTakeFieldActiveContact: Record<string, unknown> = takeFieldActiveContact.map((el) => {
         return {
           headerName: el.label,
           field: el.fieldName,
@@ -1026,7 +1026,7 @@ export default function PartnerList() {
   }, [columnDefs]);
 
   const abortController = new AbortController();
-  const getListPartner = async (paramsSearch: any, activeTitleHeader?) => {
+  const getListPartner = async (paramsSearch: Record<string, unknown>, activeTitleHeader?) => {
     setIsLoading(true);
 
     const response = await PartnerService.list(paramsSearch, abortController.signal);
@@ -1197,7 +1197,7 @@ export default function PartnerList() {
 
   const formatExcel = ["center", "top", "center", "center", "right", "right", "right"];
 
-  const onDelete = async (id: number, parma: any) => {
+  const onDelete = async (id: number, parma: Record<string, unknown>) => {
     const response = await PartnerService.delete(id);
     if (response.code === 0) {
       showToast(`Xóa đối tác thành công`, "success");
@@ -1215,9 +1215,9 @@ export default function PartnerList() {
   const [dataPartner, setDataPartner] = useState<ICustomerResponse>(null);
 
   const [showDialog, setShowDialog] = useState<boolean>(false);
-  const [contentDialog, setContentDialog] = useState<any>(null);
+  const [contentDialog, setContentDialog] = useState<Record<string, unknown>>(null);
 
-  const handleCheckCustomerDelete = async (item?: any, params?: any, type?: "one" | "all") => {
+  const handleCheckCustomerDelete = async (item?: Record<string, unknown>, params?: Record<string, unknown>, type?: "one" | "all") => {
     const body = {
       customerIds: type === "one" ? [item.id] : listIdChecked,
     };
@@ -1261,7 +1261,7 @@ export default function PartnerList() {
     });
   };
 
-  const showDialogConfirmDelete = (item?: ICustomerResponse, param?: any, dataCheckDeleteCustomer?: any) => {
+  const showDialogConfirmDelete = (item?: ICustomerResponse, param?: Record<string, unknown>, dataCheckDeleteCustomer?: Record<string, unknown>) => {
     const contentDialog: IContentDialog = {
       color: "error",
       className: "dialog-delete",
@@ -1398,7 +1398,7 @@ export default function PartnerList() {
           }
         }
 
-        const dataExport: any = result.items.map((item, index) => {
+        const dataExport: Record<string, unknown> = result.items.map((item, index) => {
           const result = rowMapping.filter((el) => el.partnerId === item.id) || [];
 
           const changeDataResult = result.map((item) => {

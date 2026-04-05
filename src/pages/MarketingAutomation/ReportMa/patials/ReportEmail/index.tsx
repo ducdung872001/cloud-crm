@@ -10,7 +10,7 @@ import MarketingAutomationService from "services/MarketingAutomationService";
 
 interface ICardItem {
   key: string;
-  icon: any;
+  icon: Record<string, unknown>;
   name: string;
   value: string;
   color: "total" | "out-date" | "success" | "today" | "remaining" | "average" | "early";

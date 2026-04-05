@@ -40,7 +40,7 @@ const getCustomerExtraInfos = async (id) => {
   return response.result ?? [];
 };
 
-const getOjectGroup = async (type: any) => {
+const getOjectGroup = async (type: Record<string, unknown>) => {
   const response = await ObjectGroupService.detailByType(type);
   if (response.code === 0) {
     const result = response?.result;
@@ -56,7 +56,7 @@ const getOjectGroup = async (type: any) => {
   return defaultSchema;
 };
 
-export default function XmlAddCustomer(props: any) {
+export default function XmlAddCustomer(props: Record<string, unknown>) {
   const { onShow, data, onHide, takeInfoCustomer } = props;
 
   const formContainerRef = useRef(null);
@@ -71,9 +71,9 @@ export default function XmlAddCustomer(props: any) {
 
   const { dataBranch } = useContext(UserContext) as ContextType;
   const [isSubmit, setIsSubmit] = useState<boolean>(false);
-  const [customerExtraInfos, setCustomerExtraInfos] = useState<any>([]);
+  const [customerExtraInfos, setCustomerExtraInfos] = useState<Record<string, unknown>>([]);
 
-  const [mapCustomerAttribute, setMapCustomerAttribute] = useState<any>(null);
+  const [mapCustomerAttribute, setMapCustomerAttribute] = useState<Record<string, unknown>>(null);
 
   useEffect(() => {
     localStorage.setItem("showFullScreenModalCustomerEform", JSON.stringify(showFullScreen));
@@ -84,11 +84,11 @@ export default function XmlAddCustomer(props: any) {
     return moment(value).format("YYYY-MM-DD");
   };
 
-  const toApiDate = (value: any) => {
+  const toApiDate = (value: Record<string, unknown>) => {
     return value ? moment(value, ["MM-DD-YYYY", moment.ISO_8601]).format("YYYY-MM-DDTHH:mm:ss") : "";
   };
 
-  const normalizeMultiSelectToString = (input: any) => {
+  const normalizeMultiSelectToString = (input: Record<string, unknown>) => {
   try {
     if (!input) return "[]";
 
@@ -223,7 +223,7 @@ const mapCareerToMultiSelect = (data) => {
     let phone = config?.phoneMasked ?? null; // Lấy theo phoneMasked vì maskedInput trong form lấy theo key này
     let email = config?.emailMasked ?? null; // Lấy theo emailMasked vì maskedInput trong form lấy theo key này
     let custType = config?.custType ?? "0";
-    let body: any = {
+    let body: Record<string, unknown> = {
       ...(data ? data : {}),
       avatar: config.avatar ? JSON.parse(config.avatar)[0]?.url : "",
       birthday: toApiDate(config.birthday),

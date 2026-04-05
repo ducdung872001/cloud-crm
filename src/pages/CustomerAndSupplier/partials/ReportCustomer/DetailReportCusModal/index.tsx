@@ -12,14 +12,14 @@ import ReportCustomerService from "services/ReportCustomerService";
 import Icon from "components/icon";
 import { useNavigate } from "react-router-dom";
 
-export default function DetailReportCusModal(props: any) {
+export default function DetailReportCusModal(props: Record<string, unknown>) {
   const { onShow, reportDetail, onHide, paramsFilter } = props;
 
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [listOpt, setListOpt] = useState([]);
 
-  const [params, setParams] = useState<any>({
+  const [params, setParams] = useState<Record<string, unknown>>({
     limit: 10,
     page: 1,
   });
@@ -41,9 +41,9 @@ export default function DetailReportCusModal(props: any) {
   });
 
   const abortController = new AbortController();
-  const getListReport = async (paramsSearch: any) => {
+  const getListReport = async (paramsSearch: Record<string, unknown>) => {
     setIsLoading(true);
-    let response: any = {};
+    let response: Record<string, unknown> = {};
     let paramsTemp = _.cloneDeep(params);
 
     switch (reportDetail.key) {
@@ -142,7 +142,7 @@ export default function DetailReportCusModal(props: any) {
   const dataFormat = ["text-center", "", "", "text-center"];
   const dataFormatContract = ["text-center", "", "", "", "", "", "text-center"];
 
-  const dataMappingArray = (item: any, index: number) => [
+  const dataMappingArray = (item: Record<string, unknown>, index: number) => [
     getPageOffset(params) + index + 1,
     item?.name || "",
     reportDetail?.key == "totalCustomer" ? item?.recommenderPhone || "" : formatCurrency(item?.dealValue) || "",

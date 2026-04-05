@@ -12,7 +12,7 @@ import "tippy.js/dist/tippy.css";
  * Hiển thị popup chọn màu => sau đó cho phép chọn màu => apply vào bên trong trình soạn thảo
  * @returns
  */
-const InsertColorPickerButton = (props: any) => {
+const InsertColorPickerButton = (props: { format: string }) => {
   const editor = useSlateStatic();
   const [showModalColorPicker, setShowModalColorPicker] = useState<boolean>(false);
 

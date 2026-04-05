@@ -21,7 +21,7 @@ import BusinessRuleService from "services/BusinessRuleService";
 import { useNavigate } from "react-router-dom";
 import SearchBox from "@/components/searchBox/searchBox";
 
-export default function BusinessRule(props: any) {
+export default function BusinessRule(props: Record<string, unknown>) {
   document.title = "Quy tắc nghiệp vụ";
 
   const navigate = useNavigate();
@@ -34,7 +34,7 @@ export default function BusinessRule(props: any) {
   const [listIdChecked, setListIdChecked] = useState<number[]>([]);
   const [showModalAdd, setShowModalAdd] = useState<boolean>(false);
   const [showDialog, setShowDialog] = useState<boolean>(false);
-  const [contentDialog, setContentDialog] = useState<any>(null);
+  const [contentDialog, setContentDialog] = useState<Record<string, unknown>>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [isNoItem, setIsNoItem] = useState<boolean>(false);
   const [isPermissions, setIsPermissions] = useState<boolean>(false);
@@ -68,7 +68,7 @@ export default function BusinessRule(props: any) {
 
   const abortController = new AbortController();
 
-  const getListReason = async (paramsSearch: any, disableLoading?: boolean) => {
+  const getListReason = async (paramsSearch: Record<string, unknown>, disableLoading?: boolean) => {
     if (!disableLoading) {
       setIsLoading(true);
     }
@@ -147,13 +147,13 @@ export default function BusinessRule(props: any) {
 
   const dataFormat = ["text-center", "", "", ""];
 
-  const dataMappingArray = (item: any, index: number) => [
+  const dataMappingArray = (item: Record<string, unknown>, index: number) => [
     getPageOffset(params) + index + 1,
     item.name,
     <span className="code-badge" title={item.code}>{item.code}</span>,
   ];
 
-  const actionsTable = (item: any): IAction[] => {
+  const actionsTable = (item: Record<string, unknown>): IAction[] => {
     return [
       {
         title: "Cài đặt luật nghiệp vụ",

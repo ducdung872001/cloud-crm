@@ -33,7 +33,7 @@ export default function ExchangeContentList(props: IExchangeContentListProps) {
   const { id } = useContext(UserContext) as ContextType;
 
   const [showDialog, setShowDialog] = useState<boolean>(false);
-  const [contentDialog, setContentDialog] = useState<any>(null);
+  const [contentDialog, setContentDialog] = useState<Record<string, unknown>>(null);
   const [isEditChat, setIsEditChat] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [page, setPage] = useState<number>(1);
@@ -62,7 +62,7 @@ export default function ExchangeContentList(props: IExchangeContentListProps) {
 
       const newDetailExchange = page == 1 ? [] : detailExchange;
 
-      (result.lstMailboxExchange || []).map((item: any) => {
+      (result.lstMailboxExchange || []).map((item: Record<string, unknown>) => {
         newDetailExchange.unshift(item);
       });
       setDetailExchange(newDetailExchange);

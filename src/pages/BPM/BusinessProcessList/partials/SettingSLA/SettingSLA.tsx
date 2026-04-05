@@ -5,7 +5,7 @@ import NummericInput from "components/input/numericInput";
 import _ from "lodash";
 import BusinessProcessService from "services/BusinessProcessService";
 
-export default function SettingSLA(props: any) {
+export default function SettingSLA(props: Record<string, unknown>) {
   const { processId, valueSLA, setValueSLA } = props;
 
   useEffect(() => {

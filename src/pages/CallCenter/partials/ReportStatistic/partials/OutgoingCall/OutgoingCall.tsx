@@ -3,7 +3,7 @@ import "./OutgoingCall.scss";
 import HighchartsReact from "highcharts-react-official";
 import Highcharts from "highcharts";
 
-export default function OutgoingCall(props: any) {
+export default function OutgoingCall(props: Record<string, unknown>) {
   const { onShow } = props;
 
   const chartRef = useRef(null);

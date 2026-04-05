@@ -142,7 +142,7 @@ export default function ShippingFeeConfig() {
         setOrderValueRows(DEFAULT_ORDER_VALUE_ROWS);
       }
       setHasUnsaved(false);
-    } catch (err: any) {
+    } catch (err: unknown) {
       if (err?.name === "AbortError") return;
       // API lỗi → vẫn hiện mẫu mặc định, không block UI
       setRegionRows(DEFAULT_REGION_ROWS);

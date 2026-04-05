@@ -21,7 +21,7 @@ import CampaignService from "services/CampaignService";
 import MarketingAutomationService from "services/MarketingAutomationService";
 import _ from "lodash";
 
-export default function ConfigZalo(props: any) {
+export default function ConfigZalo(props: Record<string, unknown>) {
   const { onShow, onHide, dataNode, setDataNode, statusMA } = props;
   const [isSubmit, setIsSubmit] = useState<boolean>(false);
   const [showDialog, setShowDialog] = useState<boolean>(false);
@@ -290,7 +290,7 @@ export default function ConfigZalo(props: any) {
         logical: data ? data.logical : "and",
         rule: data ? data.rule : [],
         blockRule: data ? data.blockRule : [],
-      } as any),
+      } as Record<string, unknown>),
     [data, onShow]
   );
 
@@ -306,7 +306,7 @@ export default function ConfigZalo(props: any) {
   }, [values]);
 
   //! đoạn này xử lý lấy năm
-  const [years] = useState<any[]>(
+  const [years] = useState<Record<string, unknown>[]>(
     createArrayFromToR(new Date().getFullYear(), 1963).map((item, idx) => {
       return {
         value: +item,
@@ -316,7 +316,7 @@ export default function ConfigZalo(props: any) {
   );
 
   //! đoạn này xử lý lấy tháng
-  const [months] = useState<any[]>(
+  const [months] = useState<Record<string, unknown>[]>(
     createArrayFromTo(1, 12).map((item, idx) => {
       if (item < 10) {
         return {
@@ -333,7 +333,7 @@ export default function ConfigZalo(props: any) {
   );
 
   //! đoạn này xử lý lấy ngày
-  const [days] = useState<any[]>(
+  const [days] = useState<Record<string, unknown>[]>(
     createArrayFromTo(1, 31).map((item, idx) => {
       if (item < 10) {
         return {
@@ -530,7 +530,7 @@ export default function ConfigZalo(props: any) {
 
   const [isLoadingSource, setIsLoadingSource] = useState<boolean>(false);
 
-  const onSelectOpenApi = async (source, idx, param?: any) => {
+  const onSelectOpenApi = async (source, idx, param?: Record<string, unknown>) => {
     if (!source) return;
 
     const checkSource = source.startsWith("https");
@@ -869,7 +869,7 @@ export default function ConfigZalo(props: any) {
     });
   };
 
-  const onSelectOpenBlockApi = async (source, ids, idx, param?: any) => {
+  const onSelectOpenBlockApi = async (source, ids, idx, param?: Record<string, unknown>) => {
     if (!source) return;
 
     const checkSource = source.startsWith("https");
@@ -1292,7 +1292,7 @@ export default function ConfigZalo(props: any) {
     });
   };
 
-  const onSelectOpenChildrenBlockApi = async (source, index, ids, idx, param?: any) => {
+  const onSelectOpenChildrenBlockApi = async (source, index, ids, idx, param?: Record<string, unknown>) => {
     if (!source) return;
 
     const checkSource = source.startsWith("https");
@@ -1499,7 +1499,7 @@ export default function ConfigZalo(props: any) {
   const [listActionEmail, setListActionEmail] = useState([]);
 
   const loadedOptionEmailAction = async (search, loadedOptions, { page }) => {
-    const param: any = {
+    const param: Record<string, unknown> = {
       type: "zalo",
     };
     const response = await CampaignService.listActionScore(param);

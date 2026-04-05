@@ -14,7 +14,7 @@ const getRowData = {
   },
 };
 
-export const worksheetAddRow = (worksheet: ExcelJS.Worksheet, data: any[], index?: number, isHorizontal?: boolean) => {
+export const worksheetAddRow = (worksheet: ExcelJS.Worksheet, data: unknown[], index?: number, isHorizontal?: boolean) => {
   let row = null;
   if (index === null || isNaN(index)) {
     row = worksheet.addRow(data);
@@ -42,8 +42,8 @@ export const excelEditCell = (cell, data = {}) => {
 const createHeaderFooter = (
   worksheet: ExcelJS.Worksheet,
   currentRowIndex?: number,
-  headerFooter?: any[],
-  format?: any[],
+  headerFooter?: unknown[][],
+  format?: Record<string, unknown>[][],
   formatExcel?: string[],
   isBorder?: boolean,
   isBold?: boolean,
@@ -463,7 +463,7 @@ export async function CustomExportReport(userOptions, name?: string, setFilebase
       let reader = new FileReader();
       reader.readAsDataURL(blob);
       reader.onloadend = function () {
-        let base64data: any = reader.result;
+        const base64data = reader.result as string;
         setFilebase64(base64data.split(",")[1]);
       };
     }

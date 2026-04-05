@@ -11,7 +11,7 @@ import ViewProcess from "./ViewProcess";
 import BusinessProcessService from "services/BusinessProcessService";
 import Icon from "components/icon";
 
-export default function HistoryKanbanBpm(props: any) {
+export default function HistoryKanbanBpm(props: { onShow: boolean; onHide?: (value: boolean) => void; dataObject: Record<string, unknown>; type?: string; onBack: () => void }) {
   const { onShow, onHide, dataObject, type, onBack } = props;
 
   const [lstField, setLstField] = useState(null);

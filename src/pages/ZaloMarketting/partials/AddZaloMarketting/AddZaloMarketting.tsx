@@ -39,12 +39,12 @@ import PreviewTemplateZalo from "components/previewTemplateZalo/previewTemplateZ
 export interface IAddZaloMarkettingProps {
   onShow: boolean;
   idSendZalo: number;
-  data?: any;
+  data?: Record<string, unknown>;
   onHide: (reload: boolean) => void;
   onBackProps: () => void;
   listIdCustomerProps?: number[];
-  paramCustomerProps?: any;
-  customerIdList?: any;
+  paramCustomerProps?: Record<string, unknown>;
+  customerIdList?: Record<string, unknown>;
 }
 
 interface IFilterUser {
@@ -162,7 +162,7 @@ export default function AddZaloMarketting(props: IAddZaloMarkettingProps) {
         limit: "",
         timeType: "1",
         timeAt: "",
-      } as any),
+      } as Record<string, unknown>),
     [onShow]
   );
 
@@ -949,7 +949,7 @@ export default function AddZaloMarketting(props: IAddZaloMarkettingProps) {
     setDragging(false);
 
     const newFiles = [];
-    const droppedFiles: any = Array.from(e.dataTransfer.files);
+    const droppedFiles: Record<string, unknown> = Array.from(e.dataTransfer.files);
 
     droppedFiles.forEach((file) => {
       const checkFile = file?.name.split("?")[0].split("#")[0].split(".").pop();

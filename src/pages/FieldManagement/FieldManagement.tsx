@@ -21,15 +21,15 @@ export default function FieldMannagement() {
   document.title = "Quản lý lĩnh vực";
 
   const isMounted = useRef(false);
-  const [listField, setListField] = useState<any[]>();
-  const [dataField, setDataField] = useState<any>(null);
+  const [listField, setListField] = useState<Record<string, unknown>[]>();
+  const [dataField, setDataField] = useState<Record<string, unknown>>(null);
   const [listIdChecked, setListIdChecked] = useState<number[]>([]);
   const [showModalAdd, setShowModalAdd] = useState<boolean>(false);
   const [showDialog, setShowDialog] = useState<boolean>(false);
-  const [contentDialog, setContentDialog] = useState<any>(null);
+  const [contentDialog, setContentDialog] = useState<Record<string, unknown>>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [isNoItem, setIsNoItem] = useState<boolean>(false);
-  const [params, setParams] = useState<any>({
+  const [params, setParams] = useState<Record<string, unknown>>({
     name: "",
     limit: 10,
     page: 1
@@ -90,7 +90,7 @@ export default function FieldMannagement() {
 
   const abortController = new AbortController();
 
-  const getListField = async (paramsSearch: any) => {
+  const getListField = async (paramsSearch: Record<string, unknown>) => {
     setIsLoading(true);
 
     const response = await FieldService.list(paramsSearch, abortController.signal);
@@ -133,7 +133,7 @@ export default function FieldMannagement() {
 
     if (isMounted.current === true) {
       getListField(params);
-      const paramsTemp: any = _.cloneDeep(params);
+      const paramsTemp: Record<string, unknown> = _.cloneDeep(params);
       if (paramsTemp.limit === 10) {
         delete paramsTemp["limit"];
       }
@@ -170,7 +170,7 @@ export default function FieldMannagement() {
   const dataFormat = ["text-center", "", "", "text-center", "text-center"];
 
   // IPackageResponseModel
-  const dataMappingArray = (item: any, index: number) => [
+  const dataMappingArray = (item: Record<string, unknown>, index: number) => [
     getPageOffset(params) + index + 1,
     item.code,
     item.name,
@@ -179,7 +179,7 @@ export default function FieldMannagement() {
     // <Badge key={index} text={item.status == 1 ? "Đang hiệu lực" : "Tạm dừng"} variant={item.status == 1 ? "success" : "warning"} />,
   ];
 
-  const actionsTable = (item: any): IAction[] => {
+  const actionsTable = (item: Record<string, unknown>): IAction[] => {
     const isCheckedItem = listIdChecked?.length > 0;
     return [
         {
@@ -248,7 +248,7 @@ export default function FieldMannagement() {
     });
   }
 
-  const showDialogConfirmDelete = (item?: any) => {
+  const showDialogConfirmDelete = (item?: Record<string, unknown>) => {
     const contentDialog: IContentDialog = {
       color: "error",
       className: "dialog-delete",

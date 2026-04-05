@@ -59,7 +59,7 @@ export default function ContactList() {
   const [listIdChecked, setListIdChecked] = useState<number[]>([]);
   const [showModalAdd, setShowModalAdd] = useState<boolean>(false);
   const [showDialog, setShowDialog] = useState<boolean>(false);
-  const [contentDialog, setContentDialog] = useState<any>(null);
+  const [contentDialog, setContentDialog] = useState<Record<string, unknown>>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [isNoItem, setIsNoItem] = useState<boolean>(false);
   const [isPermissions, setIsPermissions] = useState<boolean>(false);
@@ -207,7 +207,7 @@ export default function ContactList() {
       }, {});
 
       // Lấy ra các đối tượng { width, colId } của phần tử cuối cùng trong từng nhóm
-      const uniqueWidths = Object.values(groupedData).map((group?: any) => ({
+      const uniqueWidths = Object.values(groupedData).map((group?: Record<string, unknown>) => ({
         width: group[group.length - 1].width,
         colId: group[group.length - 1].colId,
       }));
@@ -513,7 +513,7 @@ export default function ContactList() {
     },
   ];
 
-  const [columnDefs, setColumnDefs] = useState<any>(defaultValueColumnDefs);
+  const [columnDefs, setColumnDefs] = useState<Record<string, unknown>>(defaultValueColumnDefs);
   const [lstFieldContact, setLstFieldContact] = useState([]);
   const [lstFieldActive, setLstFieldActive] = useState([]);
   const [lstFieldUnActive, setLstFieldUnActive] = useState([]);
@@ -559,7 +559,7 @@ export default function ContactList() {
         });
 
       if (dataConfirm && dataConfirm.length > 0) {
-        const changeDataConfirm: any = dataConfirm.map((el) => {
+        const changeDataConfirm: Record<string, unknown> = dataConfirm.map((el) => {
           return {
             headerName: el.label,
             field: el.fieldName,
@@ -621,7 +621,7 @@ export default function ContactList() {
 
   useEffect(() => {
     if (listContact && listContact.length >= 0) {
-      const changeDataCustomer: any = listContact.map((item, index) => {
+      const changeDataCustomer: Record<string, unknown> = listContact.map((item, index) => {
         const result = rowMapping.filter((el) => el.contactId === item.id) || [];
 
         const changeDataResult = result.map((item) => {
@@ -785,7 +785,7 @@ export default function ContactList() {
 
   useEffect(() => {
     if (takeFieldActiveContact) {
-      const changeDataTakeFieldActiveContact: any = takeFieldActiveContact.map((el) => {
+      const changeDataTakeFieldActiveContact: Record<string, unknown> = takeFieldActiveContact.map((el) => {
         return {
           headerName: el.label,
           field: el.fieldName,
@@ -1073,7 +1073,7 @@ export default function ContactList() {
     });
   };
 
-  const showDialogConfirmDelete = (item?: IContactResponse, param?: any) => {
+  const showDialogConfirmDelete = (item?: IContactResponse, param?: Record<string, unknown>) => {
     const contentDialog: IContentDialog = {
       color: "error",
       className: "dialog-delete",
@@ -1226,7 +1226,7 @@ export default function ContactList() {
           }
         }
 
-        const dataExport: any = result.items.map((item, index) => {
+        const dataExport: Record<string, unknown> = result.items.map((item, index) => {
           const result = rowMapping.filter((el) => el.contactId === item.id) || [];
 
           const changeDataResult = result.map((item) => {

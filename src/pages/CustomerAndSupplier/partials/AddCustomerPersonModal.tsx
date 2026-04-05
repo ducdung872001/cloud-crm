@@ -65,7 +65,7 @@ export default function AddCustomerPersonModal(props: AddCustomerModalProps) {
   const [isLoadingCustomerGroup, setIsLoadingCustomerGroup] = useState<boolean>(false);
   const [listEmployee, setListEmployee] = useState<IOption[]>(null);
   const [isLoadingEmployee, setIsLoadingEmployee] = useState<boolean>(false);
-  const [customerExtraInfos, setCustomerExtraInfos] = useState<any>([]);
+  const [customerExtraInfos, setCustomerExtraInfos] = useState<Record<string, unknown>[]>([]);
   const [isShowPhone, setIsShowPhone] = useState<boolean>(false);
   const [isShowEmail, setIsShowEmail] = useState<boolean>(false);
 
@@ -77,7 +77,7 @@ export default function AddCustomerPersonModal(props: AddCustomerModalProps) {
   const [isLoadingContact, setIsLoadingContact] = useState<boolean>(false);
   const [listContract, setListContract] = useState<IOption[]>(null);
   const [isLoadingContract, setIsLoadingContract] = useState<boolean>(false);
-  const [mapCustomerAttribute, setMapCustomerAttribute] = useState<any>(null);
+  const [mapCustomerAttribute, setMapCustomerAttribute] = useState<Record<string, unknown>>(null);
 
   const [employeeIdDefault, setEmployeeIdDefault] = useState(null);
   const [activeCode, setActiveCode] = useState(false);
@@ -275,7 +275,7 @@ export default function AddCustomerPersonModal(props: AddCustomerModalProps) {
     }
   }, [data]);
 
-  const onSelectOpenEmployee = async (data?: any) => {
+  const onSelectOpenEmployee = async (data?: Record<string, unknown>) => {
     if (!listEmployee || listEmployee.length === 0) {
       setIsLoadingEmployee(true);
       const dataOption = await SelectOptionData("employeeId", { branchId: dataBranch.value });
@@ -314,7 +314,7 @@ export default function AddCustomerPersonModal(props: AddCustomerModalProps) {
   const [showModalCareer, setShowModalCareer] = useState(false);
 
   const loadedOptionCareer = async (search, loadedOptions, { page }) => {
-    const param: any = {
+    const param: Record<string, unknown> = {
       name: search,
       page: page,
       limit: 10,
@@ -387,7 +387,7 @@ export default function AddCustomerPersonModal(props: AddCustomerModalProps) {
   const [showModalCgp, setShowModalCgp] = useState(false);
 
   const loadedOptionCgp = async (search, loadedOptions, { page }) => {
-    const param: any = {
+    const param: Record<string, unknown> = {
       name: search,
       page: page,
       limit: 10,
@@ -1116,7 +1116,7 @@ export default function AddCustomerPersonModal(props: AddCustomerModalProps) {
       const newArray = Object.entries(mapCustomerAttribute);
       let checkArray = [];
 
-      newArray.map((lstCustomerAttribute: any, key: number) => {
+      newArray.map((lstCustomerAttribute: Record<string, unknown>, key: number) => {
         (lstCustomerAttribute[1] || []).map((item) => {
           if (item.required === 1 && item.parentId !== 0) {
             checkArray.push(item);
@@ -1261,7 +1261,7 @@ export default function AddCustomerPersonModal(props: AddCustomerModalProps) {
     });
 
     if (!found) {
-      let item: any = {};
+      let item: Record<string, unknown> = {};
       item.attributeId = attributeId;
       item.attributeValue = attributeValue;
       item.customerId = customerId;
@@ -1781,7 +1781,7 @@ export default function AddCustomerPersonModal(props: AddCustomerModalProps) {
               {/* Các trường thông tin động được hiển thị ở đây */}
               {/* {mapCustomerAttribute ? (
                 <div className="list__customer--attribute">
-                  {Object.entries(mapCustomerAttribute).map((lstCustomerAttribute: any, key: number) => (
+                  {Object.entries(mapCustomerAttribute).map((lstCustomerAttribute: Record<string, unknown>, key: number) => (
                     <Fragment key={key}>
                       {(lstCustomerAttribute[1] || []).map((customerAttribute, index: number) => (
                         <Fragment key={index}>
@@ -1818,7 +1818,7 @@ export default function AddCustomerPersonModal(props: AddCustomerModalProps) {
               {/* Các trường thông tin động được hiển thị ở đây */}
               {!lstDataOrigin && mapCustomerAttribute ? (
                 <div className="list__customer--attribute">
-                  {Object.entries(mapCustomerAttribute).map((lstCustomerAttribute: any, key: number) => (
+                  {Object.entries(mapCustomerAttribute).map((lstCustomerAttribute: Record<string, unknown>, key: number) => (
                     <Fragment key={key}>
                       {(lstCustomerAttribute[1] || []).map((customerAttribute, index: number) => (
                         <Fragment key={index}>

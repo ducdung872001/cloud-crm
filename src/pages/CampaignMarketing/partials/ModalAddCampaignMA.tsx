@@ -23,7 +23,7 @@ import ServiceService from "services/ServiceService";
 import ProductService from "services/ProductService";
 import NummericInput from "components/input/numericInput";
 
-export default function ModalAddCampaignMA(props: any) {
+export default function ModalAddCampaignMA(props: Record<string, unknown>) {
   const { onShow, onHide, idData } = props;
   console.log("idData", idData);
 
@@ -65,7 +65,7 @@ export default function ModalAddCampaignMA(props: any) {
     const response = null;
 
     if (response.code === 0) {
-      const result: any = response.result;
+      const result: Record<string, unknown> = response.result;
 
       if (result.employeeId) {
         setDataEmployee({ value: result.employeeId, label: result.employeeName, avatar: result.employeeAvatar });
@@ -143,7 +143,7 @@ export default function ModalAddCampaignMA(props: any) {
         services: data?.services ?? "[]",
         products: data?.products ?? "[]",
         status: data?.status ?? "1",
-      } as any),
+      } as Record<string, unknown>),
     [onShow, data]
   );
 
@@ -266,7 +266,7 @@ export default function ModalAddCampaignMA(props: any) {
   const [dataServices, setDataServices] = useState([]);
   //! đoạn này xử lý vấn đề lấy ra danh sách dịch vụ
   const loadedOptionService = async (search, loadedOptions, { page }) => {
-    const param: any = {
+    const param: Record<string, unknown> = {
       name: search,
       page: page,
       limit: 10,
@@ -311,7 +311,7 @@ export default function ModalAddCampaignMA(props: any) {
   const [dataProducts, setDataProducts] = useState([]);
 
   const loadedOptionProduct = async (search, loadedOptions, { page }) => {
-    const param: any = {
+    const param: Record<string, unknown> = {
       name: search,
       page: page,
       limit: 10,
@@ -376,7 +376,7 @@ export default function ModalAddCampaignMA(props: any) {
 
     const parseToMiddayDate = (val) => {
       if (!val) return val;
-      let d: any = null;
+      let d: Record<string, unknown> = null;
       try {
         if (val instanceof Date) d = new Date(val);
         else if (moment.isMoment && moment.isMoment(val)) d = val.toDate();
@@ -389,8 +389,8 @@ export default function ModalAddCampaignMA(props: any) {
       return d;
     };
 
-    const body: any = {
-      ...(formData.values as any),
+    const body: Record<string, unknown> = {
+      ...(formData.values as Record<string, unknown>),
       startDate: parseToMiddayDate(formData.values?.startDate),
       endDate: parseToMiddayDate(formData.values?.endDate),
       ...(data ? { id: data.id } : {}),

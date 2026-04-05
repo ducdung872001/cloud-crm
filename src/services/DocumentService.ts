@@ -4,7 +4,7 @@ const token =
   "eyJhbGciOiJIUzI1NiJ9.eyJleHAiOjE3NDQ4OTc1MTEsInVzZXIiOiJ7XCJpZFwiOjE0NTksXCJ1c2VybmFtZVwiOlwiMDk3MTIzNDU5OVwiLFwibmFtZVwiOlwiSMOyYSBQaOG6oW1cIixcInJvbGVzXCI6W1wibW9kXCJdLFwibWFwQmVhdXR5U2Fsb25cIjp7XCJub25hbWUucmVib3JuLnZuXCI6NDMsXCJoYWx1aGFsdS5yZWJvcm4udm5cIjoyMzEsXCJiZW9zcGEucmVib3JuLnZuXCI6MjIxLFwiaGFpcnNhbG9uLnJlYm9ybi52blwiOjEyMyxcInJlYm9ybnRlc3QucmVib3JuLnZuXCI6NDIsXCJncmVlbnNwYS5yZWJvcm4udm5cIjo2LFwiYWRoYS5yZWJvcm4udm5cIjoyMjIsXCJlbnRlcnByaXNlLW5ldy5yZWJvcm4udm5cIjoyMzYsXCJsb2NhbGhvc3QxMTIucmVib3JuLnZuXCI6MjI5LFwiaHJoci5yZWJvcm4udm5cIjoyMjcsXCJiZXNwYS5yZWJvcm4udm5cIjoyMDAsXCJoZWhlaGUucmVib3JuLnZuXCI6MjI2fSxcInJlYm9ybkRvY3RvcklkXCI6MTQ1OSxcInJlYm9ybkJzbklkXCI6NixcImJyYW5jaElkXCI6MjN9In0.ZYxcNv6jZAMFuwR7eB___4aJP7xj31Ue9G8lOlvi0DQ";
 
 export default {
-  lst: (params?: any, signal?: AbortSignal) => {
+  lst: (params?: Record<string, unknown>, signal?: AbortSignal) => {
     return fetch(`${urlsApi.document.lst}${convertParamsToString(params)}`, {
       signal,
       method: "GET",
@@ -14,7 +14,7 @@ export default {
       },
     }).then((res) => res.json());
   },
-  update: (body: any) => {
+  update: (body: Record<string, unknown>) => {
     return fetch(urlsApi.document.update, {
       method: "POST",
       headers: {

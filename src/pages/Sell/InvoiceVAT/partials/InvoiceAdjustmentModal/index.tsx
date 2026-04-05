@@ -72,9 +72,9 @@ interface Props {
 // ─── Constants ──────────────────────────────────────────────────────────────
 
 const SUPPLIER_TAX_CODE =
-  (window as any).__VAT_SUPPLIER_TAX_CODE__ || "0100109106-501";
+  (window as Record<string, unknown>).__VAT_SUPPLIER_TAX_CODE__ || "0100109106-501";
 const TEMPLATE_CODE =
-  (window as any).__VAT_TEMPLATE_CODE__ || "1/6553";
+  (window as Record<string, unknown>).__VAT_TEMPLATE_CODE__ || "1/6553";
 
 const fmt = (v: number) => (v ?? 0).toLocaleString("vi-VN") + "đ";
 
@@ -154,7 +154,7 @@ export default function InvoiceAdjustmentModal({
     ]);
   };
 
-  const updateLine = (id: number, key: keyof AdjustLine, value: any) => {
+  const updateLine = (id: number, key: keyof AdjustLine, value: Record<string, unknown>) => {
     setLines((prev) =>
       prev.map((l) => (l.id === id ? { ...l, [key]: value } : l))
     );
@@ -185,7 +185,7 @@ export default function InvoiceAdjustmentModal({
         { keyword: value.trim(), size: 10, page: 1 },
         ctrl.signal
       )
-        .then((res: any) => {
+        .then((res: Record<string, unknown>) => {
           if (res?.code === 0 && res.result?.items) {
             setSuggestions(res.result.items);
           } else {

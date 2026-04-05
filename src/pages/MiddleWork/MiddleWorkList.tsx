@@ -11,7 +11,7 @@ import "./MiddleWorkList.scss";
 import OptManagementList from "./partials/OptManagement/OptManagementList";
 
 export default function MiddleWorkList() {
-  const paramsUrl: any = getSearchParameters();
+  const paramsUrl: Record<string, string> = getSearchParameters();
   const [isFullPage, setIsFullPage] = useState<boolean>(false);
   const [isRegimeKanban, setIsRegimeKanban] = useState<boolean>(false);
   const [isDetailWork, setIsDetailWork] = useState<boolean>(false);

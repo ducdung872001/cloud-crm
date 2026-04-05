@@ -14,12 +14,12 @@ import "./UpdatePeopleInvolved.scss";
 import Tippy from "@tippyjs/react";
 import EmployeeService from "services/EmployeeService";
 
-export default function UpdatePeopleInvolved(props: any) {
+export default function UpdatePeopleInvolved(props: Record<string, unknown>) {
   const { data, setModalChangeEmployee } = props;
   //! đoạn này xử lý lấy ra danh sách người giao việc, người nhận việc
   //  người liên quan, khách hàng liên quan
   const [jobAssign, setJobAssign] = useState<IEmployeeResponse>(null);
-  const [jobListAssign, setJobListAssign] = useState<any>([]);
+  const [jobListAssign, setJobListAssign] = useState<Record<string, unknown>>([]);
 
   const [jobRecipient, setJobRecipient] = useState<IEmployeeResponse>(null);
   const [dataEmployee, setDataEmployee] = useState(null);

@@ -11,8 +11,8 @@ type Props = {
    */
   animationDuration?: number;
   onToggle?: (open: boolean) => void;
-  header?: (item: any, idx?: number) => React.ReactNode;
-  dataItems?: any;
+  header?: (item: Record<string, unknown>, idx?: number) => React.ReactNode;
+  dataItems?: Record<string, unknown>;
   isOpen?: boolean;
 };
 

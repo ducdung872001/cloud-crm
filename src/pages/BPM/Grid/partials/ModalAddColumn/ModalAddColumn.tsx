@@ -22,10 +22,10 @@ import GirdService from "services/GridService";
 import { BindingFieldMap } from "./BindingFieldMap";
 import { is } from "bpmn-js/lib/util/ModelUtil";
 
-export default function ModalAddColumn(props: any) {
+export default function ModalAddColumn(props: Record<string, unknown>) {
   const { onShow, onHide, data, listColumn, setListColumn } = props;
 
-  const params: any = getSearchParameters();
+  const params: Record<string, unknown> = getSearchParameters();
   console.log("columnsEdit>>>>>", data);
 
   const refShowField = useRef();
@@ -39,15 +39,15 @@ export default function ModalAddColumn(props: any) {
 
   const [listCustomerAttribute, setListCustomerAttribute] = useState<IOption[]>(null);
   const [isLoadingCustomerAttribute, setIsLoadingCustomerAttribute] = useState<boolean>(false);
-  const [addFieldAttributes, setAddFieldAttributes] = useState<any[]>([]);
-  const [detailLookup, setDetailLookup] = useState<any>("");
-  const [numberFormat, setNumberFormat] = useState<any>("");
+  const [addFieldAttributes, setAddFieldAttributes] = useState<Record<string, unknown>[]>([]);
+  const [detailLookup, setDetailLookup] = useState<Record<string, unknown>>("");
+  const [numberFormat, setNumberFormat] = useState<Record<string, unknown>>("");
 
-  const [listBindingField, setListBindingField] = useState<any[]>([]);
-  const [detailBindingField, setDetailBindingField] = useState<any>([]);
+  const [listBindingField, setListBindingField] = useState<Record<string, unknown>[]>([]);
+  const [detailBindingField, setDetailBindingField] = useState<Record<string, unknown>>([]);
 
   //Cần đổi lại thành khách hàng
-  const [customerAttributeFields, setCustomerAttributeFields] = useState<any>(null); //Khởi tạo null là quan trọng
+  const [customerAttributeFields, setCustomerAttributeFields] = useState<Record<string, unknown>>(null); //Khởi tạo null là quan trọng
   const [showFields, setShowFields] = useState<boolean>(false);
   const [selectedFormula, setSelectedFormula] = useState<string>("");
   const [cursorPosition, setCursorPosition] = useState<number>(0);
@@ -273,7 +273,7 @@ export default function ModalAddColumn(props: any) {
         options: data?.options ?? null,
         position: data?.position ?? "0",
         parentId: data?.parentId ?? "0",
-      } as any),
+      } as Record<string, unknown>),
     [data, onShow]
   );
 

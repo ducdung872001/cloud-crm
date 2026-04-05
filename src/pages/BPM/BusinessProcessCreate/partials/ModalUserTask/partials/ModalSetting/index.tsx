@@ -61,7 +61,7 @@ export default function ModalSetting({ onShow, onHide, dataNode, processId }) {
 
   const abortController = new AbortController();
 
-  const getListVariable = async (paramsSearch: any) => {
+  const getListVariable = async (paramsSearch: Record<string, unknown>) => {
       setIsLoading(true);
 
       const response = await BusinessProcessService.listVariableDeclare(paramsSearch, abortController.signal);
@@ -95,14 +95,14 @@ export default function ModalSetting({ onShow, onHide, dataNode, processId }) {
   const titlesVariable = ["STT","Tên biến", "Mô tả"];
   const dataFormatVariable = [ "text-center", "", "", "text-center"];
 
-  const dataMappingArray = (item: any, index: number) => [
+  const dataMappingArray = (item: Record<string, unknown>, index: number) => [
       getPageOffset(params) + index + 1,
       item.name,
       item.description,
       // item.affectedDate ? moment(item.affectedDate).format('DD/MM/YYYY') : '',
   ];
 
-  const actionsTable = (item: any): IAction[] => {
+  const actionsTable = (item: Record<string, unknown>): IAction[] => {
       
       return [
           {
@@ -123,7 +123,7 @@ export default function ModalSetting({ onShow, onHide, dataNode, processId }) {
       ];
   };
 
-  const showDialogConfirmDelete = (item?: any) => {
+  const showDialogConfirmDelete = (item?: Record<string, unknown>) => {
       const contentDialog: IContentDialog = {
         color: "error",
         className: "dialog-delete",

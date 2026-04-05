@@ -25,7 +25,7 @@ import ListColumnOutput from "./partials/ListColumnOutput";
 import ModalAddDecision from "./partials/ModalAddDecision";
 import moment from "moment";
 
-export default function BusinessRuleConfig(props: any) {
+export default function BusinessRuleConfig(props: Record<string, unknown>) {
   document.title = "Loại luật nghiệp vụ";
 
   const isMounted = useRef(false);
@@ -46,7 +46,7 @@ export default function BusinessRuleConfig(props: any) {
   const [showModalColumnOutput, setShowModalColumnOutput] = useState<boolean>(false);
   const [showModalDecision, setShowModalDecision] = useState<boolean>(false);
   const [showDialog, setShowDialog] = useState<boolean>(false);
-  const [contentDialog, setContentDialog] = useState<any>(null);
+  const [contentDialog, setContentDialog] = useState<Record<string, unknown>>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [isNoItem, setIsNoItem] = useState<boolean>(false);
   const [isPermissions, setIsPermissions] = useState<boolean>(false);
@@ -94,8 +94,8 @@ export default function BusinessRuleConfig(props: any) {
   useEffect(() => {
     setListTitles([
       "STT",
-      ...listDecisionInput.map((item: any) => (item.name ? item.name : item.code)),
-      ...listDecisionOutput.map((item: any) => ({
+      ...listDecisionInput.map((item: Record<string, unknown>) => (item.name ? item.name : item.code)),
+      ...listDecisionOutput.map((item: Record<string, unknown>) => ({
         name: item.name ? item.name : item.code,
         type: "output",
       })),
@@ -105,11 +105,11 @@ export default function BusinessRuleConfig(props: any) {
         key: "stt",
         type: "number",
       },
-      ...listDecisionInput.map((item: any) => ({
+      ...listDecisionInput.map((item: Record<string, unknown>) => ({
         key: item.code,
         type: item?.dataType ? item.dataType : "String",
       })),
-      ...listDecisionOutput.map((item: any) => ({
+      ...listDecisionOutput.map((item: Record<string, unknown>) => ({
         key: item.code,
         type: item?.dataType ? item.dataType : "String",
       })),
@@ -157,9 +157,9 @@ export default function BusinessRuleConfig(props: any) {
     setIsLoading(false);
   };
 
-  const [listRuleItemOriginal, setListRuleItemOriginal] = useState<any[]>([]);
+  const [listRuleItemOriginal, setListRuleItemOriginal] = useState<Record<string, unknown>[]>([]);
 
-  const getListRuleItem = async (paramsSearch: any, disableLoading?: boolean) => {
+  const getListRuleItem = async (paramsSearch: Record<string, unknown>, disableLoading?: boolean) => {
     if (!disableLoading) {
       setIsLoading(true);
     }
@@ -170,14 +170,14 @@ export default function BusinessRuleConfig(props: any) {
       const result = response.result;
       setListRuleItemOriginal(result?.items);
       setListRuleItem(
-        result?.items.map((item: any) => {
+        result?.items.map((item: Record<string, unknown>) => {
           let ruleItem = {
             id: item.id,
             // inputs: JSON.parse(item.inputs) ? JSON.parse(item.inputs) : [],
             // outputs: JSON.parse(item.outputs) ? JSON.parse(item.outputs) : [],
           };
           if (JSON.parse(item.inputs)) {
-            JSON.parse(item.inputs).forEach((input: any) => {
+            JSON.parse(item.inputs).forEach((input: Record<string, unknown>) => {
               // ruleItem[input.parameter] = input.value ? input.value : "";
               ruleItem[input.parameter] = {
                 value: input.value ? input.value : "",
@@ -291,7 +291,7 @@ export default function BusinessRuleConfig(props: any) {
     BETWEEN: "BETWEEN",
   };
 
-  const dataMappingArray = (item: any, index: number) => [
+  const dataMappingArray = (item: Record<string, unknown>, index: number) => [
     ...listTitleKeys.map((titleKey) => {
       if (titleKey.key === "stt") {
         return getPageOffset(params) + index + 1;
@@ -343,7 +343,7 @@ export default function BusinessRuleConfig(props: any) {
                   {titleKey.type == "Array" ? (
                     <>
                       {Array.isArray(item[titleKey.key]?.value) && item[titleKey.key]?.value?.length > 0 ? (
-                        item[titleKey.key]?.value.map((value: any, idx: number) => (
+                        item[titleKey.key]?.value.map((value: Record<string, unknown>, idx: number) => (
                           <span key={idx} className="text-bold">
                             {value}
                             {idx < item[titleKey.key]?.value?.length - 1 ? ", " : ""}
@@ -371,7 +371,7 @@ export default function BusinessRuleConfig(props: any) {
         } else {
           if (titleKey.type == "Array") {
             return Array.isArray(item[titleKey.key]) && item[titleKey.key]?.length > 0 ? (
-              item[titleKey.key].map((value: any, idx: number) => (
+              item[titleKey.key].map((value: Record<string, unknown>, idx: number) => (
                 <span key={idx} className="text-bold">
                   {value}
                   {idx < item[titleKey.key].length - 1 ? ", " : ""}
@@ -396,8 +396,8 @@ export default function BusinessRuleConfig(props: any) {
     }),
   ];
 
-  const [dataEdit, setDataEdit] = useState<any>(null);
-  const actionsTable = (item: any): IAction[] => {
+  const [dataEdit, setDataEdit] = useState<Record<string, unknown>>(null);
+  const actionsTable = (item: Record<string, unknown>): IAction[] => {
     return [
       // {
       //   title: "Cài đặt luật nghiệp vụ",

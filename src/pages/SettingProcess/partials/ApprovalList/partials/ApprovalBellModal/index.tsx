@@ -14,7 +14,7 @@ import ApprovalService from "services/ApprovalService";
 interface IApprovalBellModalProps {
   onShow: boolean;
   onHide: (reload: boolean) => void;
-  data: any;
+  data: Record<string, unknown>;
 }
 
 export default function ApprovalBellModal(props: IApprovalBellModalProps) {

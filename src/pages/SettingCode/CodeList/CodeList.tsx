@@ -18,7 +18,7 @@ import "./CodeList.scss";
 import CodeService from "services/CodeService";
 import ModalAddCode from "./partials/ModalAddCode";
 
-export default function dsCodeList(props: any) {
+export default function dsCodeList(props: Record<string, unknown>) {
   document.title = "Danh sách mã";
 
   const { onBackProps } = props;
@@ -30,7 +30,7 @@ export default function dsCodeList(props: any) {
   const [listIdChecked, setListIdChecked] = useState<number[]>([]);
   const [showModalAdd, setShowModalAdd] = useState<boolean>(false);
   const [showDialog, setShowDialog] = useState<boolean>(false);
-  const [contentDialog, setContentDialog] = useState<any>(null);
+  const [contentDialog, setContentDialog] = useState<Record<string, unknown>>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [isNoItem, setIsNoItem] = useState<boolean>(false);
   const [isPermissions, setIsPermissions] = useState<boolean>(false);
@@ -62,7 +62,7 @@ export default function dsCodeList(props: any) {
 
   const abortController = new AbortController();
 
-  const getListCode = async (paramsSearch: any) => {
+  const getListCode = async (paramsSearch: Record<string, unknown>) => {
     setIsLoading(true);
 
     const response = await CodeService.list(paramsSearch, abortController.signal);
@@ -135,7 +135,7 @@ export default function dsCodeList(props: any) {
 
   const dataFormat = ["text-center", "", "", "", "text-right", "text-right"];
 
-  const dataMappingArray = (item: any, index: number) => [
+  const dataMappingArray = (item: Record<string, unknown>, index: number) => [
     getPageOffset(params) + index + 1,
     item.entityName === 'customer' 
         ? 'Khách hàng' 
@@ -150,7 +150,7 @@ export default function dsCodeList(props: any) {
     item.currentCode
   ];
 
-  const actionsTable = (item: any): IAction[] => {
+  const actionsTable = (item: Record<string, unknown>): IAction[] => {
     const isCheckedItem = listIdChecked?.length > 0;
     return [
     //   permissions["CATEGORY_PROJECT_UPDATE"] == 1 && 
@@ -221,7 +221,7 @@ export default function dsCodeList(props: any) {
     });
   }
 
-  const showDialogConfirmDelete = (item?: any) => {
+  const showDialogConfirmDelete = (item?: Record<string, unknown>) => {
     const contentDialog: IContentDialog = {
       color: "error",
       className: "dialog-delete",

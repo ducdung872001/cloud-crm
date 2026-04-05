@@ -20,7 +20,7 @@ import { IEmployeeFilterRequest } from "model/employee/EmployeeRequestModel";
 import CustomerService from "services/CustomerService";
 import Tippy from "@tippyjs/react";
 
-export default function ModalGiveGoal(props: any) {
+export default function ModalGiveGoal(props: Record<string, unknown>) {
   const { onShow, onHide, idData, idCampaign } = props;
   console.log("idData", idData);
   console.log("idCampaign", idCampaign);
@@ -39,7 +39,7 @@ export default function ModalGiveGoal(props: any) {
     const response = null;
 
     if (response.code === 0) {
-      const result: any = response.result;
+      const result: Record<string, unknown> = response.result;
 
       if (result.employeeId) {
         setDataEmployee({ value: result.employeeId, label: result.employeeName, avatar: result.employeeAvatar });
@@ -93,7 +93,7 @@ export default function ModalGiveGoal(props: any) {
     const response = null;
 
     if (response.code === 0) {
-      const result: any = response.result;
+      const result: Record<string, unknown> = response.result;
       setDetailCampaign(result);
     }
   };
@@ -138,7 +138,7 @@ export default function ModalGiveGoal(props: any) {
         segments: data?.segments ?? "[]",
         measurements: data?.measurements ?? "[]",
         status: 3,
-      } as any),
+      } as Record<string, unknown>),
     [onShow, data, idCampaign]
   );
 
@@ -234,7 +234,7 @@ export default function ModalGiveGoal(props: any) {
   const [dataSegment, setDataSegment] = useState([]);
 
   const loadedOptionSegment = async (search, loadedOptions, { page }) => {
-    const param: any = {
+    const param: Record<string, unknown> = {
       name: search,
       page: page,
       limit: 10,
@@ -288,7 +288,7 @@ export default function ModalGiveGoal(props: any) {
   console.log("dataMeasurement", dataMeasurement);
 
   const loadedOptionMeasurement = async (search, loadedOptions, { page }) => {
-    const param: any = {
+    const param: Record<string, unknown> = {
       name: search,
       page: page,
       //   limit: 10,
@@ -354,8 +354,8 @@ export default function ModalGiveGoal(props: any) {
 
     setIsSubmit(true);
 
-    const body: any = {
-      ...(formData.values as any),
+    const body: Record<string, unknown> = {
+      ...(formData.values as Record<string, unknown>),
       ...(data ? { id: data.id } : {}),
       ...{ measurements: JSON.stringify(dataMeasurement) },
     };

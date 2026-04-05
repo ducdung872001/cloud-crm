@@ -20,7 +20,7 @@ import Image from "components/image";
 import PartnerService from "services/PartnerService";
 import MessageChatExchangePartner from "./partials/MessageChatExchangePartner";
 
-export default function ExchangePartnerList(props: any) {
+export default function ExchangePartnerList(props: Record<string, unknown>) {
   const { idPartner } = props;
 
   const refEditChat = useRef();
@@ -29,19 +29,19 @@ export default function ExchangePartnerList(props: any) {
 
   const { id } = useContext(UserContext) as ContextType;
 
-  const [listExchange, setListExchange] = useState<any[]>([]);
-  const [dataExchange, setDataExchange] = useState<any>(null);
+  const [listExchange, setListExchange] = useState<Record<string, unknown>[]>([]);
+  const [dataExchange, setDataExchange] = useState<Record<string, unknown>>(null);
   const [idDetailExchange, setIdDetailExchange] = useState<number>(0);
   const [page, setPage] = useState<number>(1);
   const [hasMore, setHasMore] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [isEditChat, setIsEditChat] = useState<boolean>(false);
   const [showDialog, setShowDialog] = useState<boolean>(false);
-  const [contentDialog, setContentDialog] = useState<any>(null);
+  const [contentDialog, setContentDialog] = useState<Record<string, unknown>>(null);
   useOnClickOutside(refEditChat, () => setIsEditChat(false), ["option-action-chat"]);
 
   const getListExchange = async (pageProps?: number) => {
-    const params: any = {
+    const params: Record<string, unknown> = {
       businessPartnerId: idPartner,
       type: 1,
       page: pageProps ? pageProps : page,

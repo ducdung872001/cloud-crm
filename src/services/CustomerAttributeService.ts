@@ -33,7 +33,7 @@ export default {
     }).then((res) => res.json());
   },
 
-  checkDuplicated: (params: any, signal?: AbortSignal) => {
+  checkDuplicated: (params: Record<string, unknown>, signal?: AbortSignal) => {
     return fetch(`${urlsApi.customerAttribute.checkDuplicated}${convertParamsToString(params)}`, {
       signal,
       method: "GET",

@@ -183,7 +183,7 @@ export default function ModalPaymentMethod({ open, data, branchId = 0, onClose }
     },
   }), [isSubmit]);
 
-  const set = (key: string, val: any) => {
+  const set = (key: string, val: Record<string, unknown>) => {
     setForm((p) => ({ ...p, [key]: val }));
     setErrors((p) => ({ ...p, [key]: undefined }));
   };
@@ -219,7 +219,7 @@ export default function ModalPaymentMethod({ open, data, branchId = 0, onClose }
                       placeholder="Chọn phương thức..."
                       value={form.templateId || null}
                       fill
-                      onChange={(opt: any) => handleTemplateChange(opt?.value ?? 0)}
+                      onChange={(opt: Record<string, unknown>) => handleTemplateChange(opt?.value ?? 0)}
                     />
                   )}
                   {errors.templateId && <span className="mpm-error">{errors.templateId}</span>}
@@ -267,7 +267,7 @@ export default function ModalPaymentMethod({ open, data, branchId = 0, onClose }
                     placeholder="Chọn ngân hàng..."
                     value={form.bankName}
                     fill
-                    onChange={(opt: any) => set("bankName", opt?.value ?? "")}
+                    onChange={(opt: Record<string, unknown>) => set("bankName", opt?.value ?? "")}
                   />
                   {errors.bankName && <span className="mpm-error">{errors.bankName}</span>}
                 </div>
@@ -368,7 +368,7 @@ export default function ModalPaymentMethod({ open, data, branchId = 0, onClose }
                     placeholder="Chọn quỹ nhận tiền..."
                     value={form.fundId ?? null}
                     fill
-                    onChange={(opt: any) => set("fundId", opt?.value ?? undefined)}
+                    onChange={(opt: Record<string, unknown>) => set("fundId", opt?.value ?? undefined)}
                   />
                 )}
               </div>

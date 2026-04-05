@@ -11,8 +11,8 @@ function BarcodeImage({ value, width = 200, height = 50 }: { value: string; widt
     if (!value || !canvasRef.current) return;
     try {
       // Dùng JsBarcode nếu có trong window
-      if ((window as any).JsBarcode) {
-        (window as any).JsBarcode(canvasRef.current, value, {
+      if ((window as Record<string, unknown>).JsBarcode) {
+        (window as Record<string, unknown>).JsBarcode(canvasRef.current, value, {
           format: value.length === 13 ? "EAN13" : "CODE128",
           width: 1.5,
           height: height,
@@ -95,7 +95,7 @@ export default function BarcodePrintModal({ onShow, onHide, productName, variant
   const setQty = (id: number, val: number) =>
     setQuantities((prev) => ({ ...prev, [id]: Math.max(1, val) }));
 
-  const setCfg = (key: keyof PrintConfig, val: any) =>
+  const setCfg = (key: keyof PrintConfig, val: Record<string, unknown>) =>
     setConfig((prev) => ({ ...prev, [key]: val }));
 
   // Khi đổi paperSize → cập nhật labelsPerRow tương ứng
@@ -292,7 +292,7 @@ export default function BarcodePrintModal({ onShow, onHide, productName, variant
                         name="paperSize"
                         value={ps.value}
                         checked={config.paperSize === ps.value}
-                        onChange={() => handlePaperSize(ps.value as any)}
+                        onChange={() => handlePaperSize(ps.value as Record<string, unknown>)}
                       />
                       <span className="bpm-paper-opt__label">{ps.label}</span>
                     </label>
@@ -420,7 +420,7 @@ export default function BarcodePrintModal({ onShow, onHide, productName, variant
           </div>
         </ModalBody>
 
-        <ModalFooter actions={footerActions as any} />
+        <ModalFooter actions={footerActions as Record<string, unknown>} />
       </Modal>
 
       {/* Hidden iframe để in */}

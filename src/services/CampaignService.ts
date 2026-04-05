@@ -32,21 +32,21 @@ export default {
     }).then((res) => res.json());
   },
 
-  listConvertRate: (id?: any, signal?: AbortSignal) => {
+  listConvertRate: (id?: Record<string, unknown>, signal?: AbortSignal) => {
     return fetch(`${urlsApi.campaign.convertRate}/${id}/summary`, {
       signal,
       method: "GET",
     }).then((res) => res.json());
   },
 
-  updateStatus: (body: any) => {
+  updateStatus: (body: Record<string, unknown>) => {
     return fetch(urlsApi.campaign.updateStatus, {
       method: "POST",
       body: JSON.stringify(body),
     }).then((res) => res.json());
   },
 
-  listActionScore: (params?: any, signal?: AbortSignal) => {
+  listActionScore: (params?: Record<string, unknown>, signal?: AbortSignal) => {
     return fetch(`${urlsApi.campaign.listActionScore}${convertParamsToString(params)}`, {
       signal,
       method: "GET",
@@ -54,7 +54,7 @@ export default {
   },
 
   //cài đặt điểm khách hàng
-  updateStep3: (body: any) => {
+  updateStep3: (body: Record<string, unknown>) => {
     return fetch(urlsApi.campaign.updateStep3, {
       method: "POST",
       body: JSON.stringify(body),
@@ -62,7 +62,7 @@ export default {
   },
 
   
-  listDataStep3: (params?: any, signal?: AbortSignal) => {
+  listDataStep3: (params?: Record<string, unknown>, signal?: AbortSignal) => {
     return fetch(`${urlsApi.campaign.listDataStep3}${convertParamsToString(params)}`, {
       signal,
       method: "GET",
@@ -70,70 +70,70 @@ export default {
   },
 
   //cài đặt điểm nhân viên
-  updateStep4: (body: any) => {
+  updateStep4: (body: Record<string, unknown>) => {
     return fetch(urlsApi.campaign.updateStep4, {
       method: "POST",
       body: JSON.stringify(body),
     }).then((res) => res.json());
   },
 
-  listDataScoreEmployee: (params?: any, signal?: AbortSignal) => {
+  listDataScoreEmployee: (params?: Record<string, unknown>, signal?: AbortSignal) => {
     return fetch(`${urlsApi.campaign.listDataScoreEmployee}${convertParamsToString(params)}`, {
       signal,
       method: "GET",
     }).then((res) => res.json());
   },
 
-  listSale: (params?: any, signal?: AbortSignal) => {
+  listSale: (params?: Record<string, unknown>, signal?: AbortSignal) => {
     return fetch(`${urlsApi.campaign.listSale}${convertParamsToString(params)}`, {
       signal,
       method: "GET",
     }).then((res) => res.json());
   },
 
-  statisticApproach: (params?: any, signal?: AbortSignal) => {
+  statisticApproach: (params?: Record<string, unknown>, signal?: AbortSignal) => {
     return fetch(`${urlsApi.campaign.statisticApproach}${convertParamsToString(params)}`, {
       signal,
       method: "GET",
     }).then((res) => res.json());
   },
 
-  statisticSale: (params?: any, signal?: AbortSignal) => {
+  statisticSale: (params?: Record<string, unknown>, signal?: AbortSignal) => {
     return fetch(`${urlsApi.campaign.statisticSale}${convertParamsToString(params)}`, {
       signal,
       method: "GET",
     }).then((res) => res.json());
   },
 
-  statisticConvertRate: (params?: any, signal?: AbortSignal) => {
+  statisticConvertRate: (params?: Record<string, unknown>, signal?: AbortSignal) => {
     return fetch(`${urlsApi.campaign.statisticConvertRate}${convertParamsToString(params)}`, {
       signal,
       method: "GET",
     }).then((res) => res.json());
   },
 
-  exportResult: (params: any, signal?: AbortSignal) => {
+  exportResult: (params: Record<string, unknown>, signal?: AbortSignal) => {
     return fetch(`${urlsApi.campaign.exportResult}${convertParamsToString(params)}`, {
       signal,
       method: "GET",
     }).then((res) => res.arrayBuffer());
   },
 
-  exportAction: (params: any, signal?: AbortSignal) => {
+  exportAction: (params: Record<string, unknown>, signal?: AbortSignal) => {
     return fetch(`${urlsApi.campaign.exportAction}${convertParamsToString(params)}`, {
       signal,
       method: "GET",
     }).then((res) => res.arrayBuffer());
   },
 
-  exportCustomer: (params: any, signal?: AbortSignal) => {
+  exportCustomer: (params: Record<string, unknown>, signal?: AbortSignal) => {
     return fetch(`${urlsApi.campaign.exportCustomer}${convertParamsToString(params)}`, {
       signal,
       method: "GET",
     }).then((res) => res.arrayBuffer());
   },
 
-  updateConfigSLA: (body: any) => {
+  updateConfigSLA: (body: Record<string, unknown>) => {
     return fetch(urlsApi.campaign.updateConfigSLA, {
       method: "POST",
       body: JSON.stringify(body),

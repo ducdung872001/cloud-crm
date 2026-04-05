@@ -53,19 +53,19 @@ export default {
       body: JSON.stringify(body),
     }).then((res) => res.json());
   },
-  telesaleCallList: (params?: any, signal?: AbortSignal) => {
+  telesaleCallList: (params?: Record<string, unknown>, signal?: AbortSignal) => {
     return fetch(`${urlsApi.customer.telesaleCallList}${convertParamsToString(params)}`, {
       signal,
       method: "GET",
     }).then((res) => res.json());
   },
-  telesaleCallUpdate: (body: any) => {
+  telesaleCallUpdate: (body: Record<string, unknown>) => {
     return fetch(urlsApi.customer.telesaleCallUpdate, {
       method: "POST",
       body: JSON.stringify(body),
     }).then((res) => res.json());
   },
-  updateByField: (body: any) => {
+  updateByField: (body: Record<string, unknown>) => {
     return fetch(urlsApi.customer.updateByField, {
       method: "POST",
       body: JSON.stringify(body),
@@ -209,7 +209,7 @@ export default {
       method: "GET",
     }).then((res) => res.json());
   },
-  viewFullPhone: (params: any) => {
+  viewFullPhone: (params: Record<string, unknown>) => {
     return fetch(`${urlsApi.customer.viewFullPhone}${convertParamsToString(params)}`, {
       method: "GET",
     }).then((res) => res.json());
@@ -255,7 +255,7 @@ export default {
   },
 
   // thêm khách hàng vào chương trình MA
-  addCustomerMA: (body: any) => {
+  addCustomerMA: (body: Record<string, unknown>) => {
     return fetch(urlsApi.customer.addCustomerMA, {
       method: "POST",
       body: JSON.stringify(body),
@@ -263,7 +263,7 @@ export default {
   },
 
   //Danh sách tỉnh/thành phố
-  areaList: (params?: any, signal?: AbortSignal) => {
+  areaList: (params?: Record<string, unknown>, signal?: AbortSignal) => {
     return fetch(`${urlsApi.customer.area}${convertParamsToString(params)}`, {
       signal,
       method: "GET",
@@ -308,7 +308,7 @@ export default {
   },
 
   //khách hàng theo doi tk Zalo nào
-  customerZaloOA: (params: any) => {
+  customerZaloOA: (params: Record<string, unknown>) => {
     return fetch(`${urlsApi.customer.customerZaloOA}${convertParamsToString(params)}`, {
       method: "GET",
     }).then((res) => res.json());
@@ -340,7 +340,7 @@ export default {
     }).then((res) => res.json());
   },
 
-  filterLstCustomer: (id: number, params: any) => {
+  filterLstCustomer: (id: number, params: Record<string, unknown>) => {
     return fetch(`${urlsApi.customer.filterLstCustomer}/${id}/customers${convertParamsToString(params)}`, {
       method: "GET",
     }).then((res) => res.json());
@@ -556,13 +556,13 @@ export default {
   },
 
   //create call TNEX-Athena
-  loginAccountAthena: (body: any) => {
+  loginAccountAthena: (body: Record<string, unknown>) => {
     return fetch(urlsApi.customer.loginAccountAthena, {
       method: "POST",
       body: JSON.stringify(body),
     }).then((res) => res.json());
   },
-  createCall: (body: any) => {
+  createCall: (body: Record<string, unknown>) => {
     return fetch(urlsApi.customer.update, {
       method: "POST",
       body: JSON.stringify(body),
@@ -575,7 +575,7 @@ export default {
   },
 
   //Chạy lại dữ liệu
-  reloadData: (body: any) => {
+  reloadData: (body: Record<string, unknown>) => {
     return fetch(urlsApi.customer.reloadData, {
       method: "POST",
       body: JSON.stringify(body),
@@ -583,7 +583,7 @@ export default {
   },
 
   // chia data khách hàng Tnex
-  customerAssign: (body: any) => {
+  customerAssign: (body: Record<string, unknown>) => {
     return fetch(urlsApi.customer.customerAssign, {
       method: "POST",
       body: JSON.stringify(body),

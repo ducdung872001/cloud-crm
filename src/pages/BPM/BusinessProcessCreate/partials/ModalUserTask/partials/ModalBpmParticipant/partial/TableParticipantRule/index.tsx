@@ -33,7 +33,7 @@ export default function TableParticipantRule({ dataNode, processId, childProcess
   const refField = useRef();
   const [editColumn, setEditColumn] = useState([]);
   const [height, setHeight] = useState([]);
-  const [listColumn, setListColumn] = useState<any[]>([
+  const [listColumn, setListColumn] = useState<Record<string, unknown>[]>([
     {
       key: "stt",
       name: "STT",
@@ -42,11 +42,11 @@ export default function TableParticipantRule({ dataNode, processId, childProcess
       width: "50px",
     },
   ]);
-  const [listKeyColumn, setListKeyColumn] = useState<any[]>([]); // Danh sách các key của cột trong bảng
-  const [baseRow, setBaseRow] = useState<any[]>([]);
+  const [listKeyColumn, setListKeyColumn] = useState<Record<string, unknown>[]>([]); // Danh sách các key của cột trong bảng
+  const [baseRow, setBaseRow] = useState<Record<string, unknown>[]>([]);
   const [showPopoverStatus, setShowPopoverStatus] = useState<boolean[]>([]);
-  const [showPopoverEditColumn, setShowPopoverEditColumn] = useState<any[]>([]);
-  const [showPopoverStatusField, setShowPopoverStatusField] = useState<any[]>([]);
+  const [showPopoverEditColumn, setShowPopoverEditColumn] = useState<Record<string, unknown>[]>([]);
+  const [showPopoverStatusField, setShowPopoverStatusField] = useState<Record<string, unknown>[]>([]);
 
   useOnClickOutside(refRow, () => setShowPopoverStatus(showPopoverStatus.map((item) => false)), ["index"]);
   useOnClickOutside(refColumn, () => setShowPopoverEditColumn(showPopoverEditColumn.map((item) => false)), ["index"]);
@@ -220,13 +220,13 @@ export default function TableParticipantRule({ dataNode, processId, childProcess
     emailRegex: EMAIL_REGEX,
   };
 
-  const handChangeValueItem = (rowIndex, fieldIndex, value, type, childIndex: any = "undefined") => {
+  const handChangeValueItem = (rowIndex, fieldIndex, value, type, childIndex: Record<string, unknown> = "undefined") => {
     if (childIndex == "undefined") {
       if (type === "binding") {
         let check_required = false;
         const updatedData = dataRow.map((row, rIdx) => {
           if (rIdx === rowIndex) {
-            let new_field: any = [];
+            let new_field: Record<string, unknown> = [];
             for (let fIdx = 0; fIdx < row.length; fIdx++) {
               const element = row[fIdx];
               if (fIdx === fieldIndex) {

@@ -11,7 +11,7 @@ import "./ReportDaily.scss";
 import ChartJobProcess from "../ChartJobProcess";
 import ChartJobRate from "../ChartJobRate";
 interface ICardItem {
-  icon: any;
+  icon: Record<string, unknown>;
   name: string;
   value: number;
   color: "total" | "out-date" | "success" | "today" | "remaining" | "average" | "early";

@@ -63,7 +63,7 @@ export const sampleColumns = [
   {
     headerName: "STT",
     key: "stt",
-    valueGetter: (params: any) => params.node.rowIndex + 1,
+    valueGetter: (params: Record<string, unknown>) => params.node.rowIndex + 1,
     width: 80,
     cellStyle: { textAlign: "center" },
   },

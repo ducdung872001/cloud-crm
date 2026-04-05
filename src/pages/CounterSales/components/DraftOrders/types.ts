@@ -69,7 +69,7 @@ export interface RawInvoiceDetail {
     fee: number;
     batchNo: string | null;
   }>;
-  services: Array<any>;
+  services: Array<Record<string, unknown>>;
 }
 
 /**

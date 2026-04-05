@@ -17,7 +17,7 @@ import Loading from "components/loading";
 import TableOlaRule from "../../ModalUserTask/partials/ModalOLA/partial/TableOlaRule";
 import { useOlaSetting } from "hooks/useLA";
 
-export default function ModalSLA(props: any) {
+export default function ModalSLA(props: Record<string, unknown>) {
   //isBatch: Thêm hàng loạt cơ hội (thêm nhanh từ màn hình danh sách khách hàng)
   const { onShow, onHide, dataNode, disable, processId } = props;
   const [showDialog, setShowDialog] = useState<boolean>(false);
@@ -140,7 +140,7 @@ export default function ModalSLA(props: any) {
                   title="Loại cài đặt: "
                   name="typeNode"
                   value={typeNode}
-                  onChange={(e: any) => {
+                  onChange={(e: Record<string, unknown>) => {
                     const value = e.target.value;
                     setTypeNode(value);
                   }}

@@ -26,7 +26,7 @@ export default function AddPartnerSMSModel(props: IAddPartnerSMSModelProps) {
   const [isSubmit, setIsSubmit] = useState<boolean>(false);
   const [showDialog, setShowDialog] = useState<boolean>(false);
   const [contentDialog, setContentDialog] = useState<IContentDialog>(null);
-  const [addFieldConfig, setAddFieldConfig] = useState<any[]>([{ key: "", value: "" }]);
+  const [addFieldConfig, setAddFieldConfig] = useState<Record<string, unknown>[]>([{ key: "", value: "" }]);
 
   const values = useMemo(
     () =>

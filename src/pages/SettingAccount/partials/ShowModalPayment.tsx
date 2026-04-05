@@ -12,8 +12,8 @@ interface IShowModalPaymentProps {
   onShow: boolean;
   onHide: () => void;
   phone: string;
-  data: any;
-  dataResponse?: any;
+  data: Record<string, unknown>;
+  dataResponse?: Record<string, unknown>;
 }
 
 export default function ShowModalPayment(props: IShowModalPaymentProps) {

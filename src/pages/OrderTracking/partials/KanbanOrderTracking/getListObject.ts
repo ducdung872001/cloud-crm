@@ -1,7 +1,7 @@
 import ContractService from "services/ContractService";
 import OrderRequestService from "services/OrderRequestService";
 
-const getListContract = async (potIds: any) => {
+const getListContract = async (potIds: Record<string, unknown>) => {
   const params = {
     limit: 10,
     potIds: potIds,
@@ -18,7 +18,7 @@ const getListContract = async (potIds: any) => {
   }
 };
 
-const getListClaim = async (potIds: any) => {
+const getListClaim = async (potIds: Record<string, unknown>) => {
   const params = {
     limit: 10,
     potIds: potIds,

@@ -52,7 +52,7 @@ export default function ModalListGrid({ onShow, onHide, data }) {
 
   const abortController = new AbortController();
 
-  const getListGrid= async (paramsSearch: any) => {
+  const getListGrid= async (paramsSearch: Record<string, unknown>) => {
       setIsLoading(true);
 
       const response = await BusinessProcessService.listArtifactMetadata(paramsSearch, abortController.signal);
@@ -85,7 +85,7 @@ export default function ModalListGrid({ onShow, onHide, data }) {
   const titlesVariable = ["STT","Tên Artifact", "Tên Node", "NodeId", "Loại Artifact", "Link"];
   const dataFormatVariable = [ "text-center", "", "", "", ""];
 
-  const dataMappingArray = (item: any, index: number) => [
+  const dataMappingArray = (item: Record<string, unknown>, index: number) => [
     getPageOffset(params) + index + 1,
     item.fieldName,
     item.nodeName,
@@ -94,7 +94,7 @@ export default function ModalListGrid({ onShow, onHide, data }) {
     item.link
   ];
 
-  const actionsTable = (item: any): IAction[] => {
+  const actionsTable = (item: Record<string, unknown>): IAction[] => {
       
       return [
           {
@@ -115,7 +115,7 @@ export default function ModalListGrid({ onShow, onHide, data }) {
       ];
   };
 
-  const showDialogConfirmDelete = (item?: any) => {
+  const showDialogConfirmDelete = (item?: Record<string, unknown>) => {
       const contentDialog: IContentDialog = {
         color: "error",
         className: "dialog-delete",

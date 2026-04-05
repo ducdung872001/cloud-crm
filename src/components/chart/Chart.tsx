@@ -36,7 +36,7 @@ type HighChartType =
 
 interface HighChartProps {
   title?: string;
-  chartOptions?: any;
+  chartOptions?: Highcharts.Options;
   chartType?: HighChartType;
   allowTypeChange?: boolean;
   onTypeChange?: (type: HighChartType) => void;
@@ -248,7 +248,7 @@ const defaultChartOptions: Highcharts.Options = {
 const defaultTypeChartOptions = ["column", "bar", "pie", "line", "area", "spline", "areaspline", "scatter", "heatmap", "gantt"];
 
 export const Chart = ({ chartType = "bar", chartOptions }: HighChartProps) => {
-  const chartRef = useRef<any>(null);
+  const chartRef = useRef<HighchartsReact.RefObject>(null);
 
   const chartOpts: Highcharts.Options = {
     ...defaultChartOptions,

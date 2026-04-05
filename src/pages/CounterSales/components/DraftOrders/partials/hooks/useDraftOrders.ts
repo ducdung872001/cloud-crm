@@ -45,7 +45,7 @@ export function useDraftOrders(options?: UseDraftOrdersOptions) {
         }
         setList([]);
       }
-    } catch (e: any) {
+    } catch (e: unknown) {
       if (e?.name !== "AbortError") {
         showToast("Lỗi kết nối khi tải đơn tạm", "error");
       }

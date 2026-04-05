@@ -18,16 +18,16 @@ import DetailWorkModal from "./partials/DetailWorkModal";
 import { UserContext, ContextType } from "contexts/userContext";
 import { HEADER_VIEW_MODES, listColors } from "pages/ManagerWork/constant";
 
-export default function WorkTableByGroup(props: any) {
+export default function WorkTableByGroup(props: Record<string, unknown>) {
   const { idManagement, isFullPage, showProjectManagement, abortController, setIsFullPage, activeTitleHeader } = props;
   const user = useContext(UserContext) as ContextType;
 
-  const [listGroupWork, setListGroupWork] = useState<any[]>([]);
+  const [listGroupWork, setListGroupWork] = useState<Record<string, unknown>[]>([]);
 
   const [showModalAdd, setShowModalAdd] = useState<boolean>(false);
   const [showModalAssign, setShowModalAssign] = useState<boolean>(false);
 
-  const [groupBy, setGroupBy] = useState<any>("status");
+  const [groupBy, setGroupBy] = useState<Record<string, unknown>>("status");
 
   // đoạn này cập nhập tiến động công việc
   const [idWork, setIdWork] = useState<number>(null);
@@ -35,7 +35,7 @@ export default function WorkTableByGroup(props: any) {
   // đoạn này hiển thị danh sách cập nhật tiến độ công việc
   const [showModalViewWorkInprogress, setShowModalViewWorkInprogress] = useState<boolean>(false);
   const [showModalDetail, setShowModalDetail] = useState<boolean>(false);
-  const [paramsGetGroupWork, setParamsGetGroupWork] = useState<any>({});
+  const [paramsGetGroupWork, setParamsGetGroupWork] = useState<Record<string, unknown>>({});
 
   console.log("listGroupWork>>>", listGroupWork);
 
@@ -102,7 +102,7 @@ export default function WorkTableByGroup(props: any) {
 
     if (Array.isArray(raw)) {
       setListGroupWork(
-        raw.map((x: any) => ({
+        raw.map((x: Record<string, unknown>) => ({
           key: x?.groupValue ?? x?.key ?? x?.status ?? x?.priority ?? x?.employeeId ?? x?.wte ?? -2,
           name: x?.groupName ?? x?.name ?? x?.statusName ?? x?.priorityName ?? x?.employeeName ?? x?.wteName ?? "Chưa phân nhóm",
           total: x?.total ?? 0,
@@ -157,7 +157,7 @@ export default function WorkTableByGroup(props: any) {
       ? JSON.parse(localStorage.getItem("projectWorkManagement"))
       : null;
 
-  const normalizeKey = (key: any) => {
+  const normalizeKey = (key: Record<string, unknown>) => {
     if (key == null) return -2;
     if (typeof key === "object") {
       return key.id ?? key.value ?? key.key ?? -2;

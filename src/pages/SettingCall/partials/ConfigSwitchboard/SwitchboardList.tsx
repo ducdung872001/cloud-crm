@@ -36,18 +36,18 @@ export default function SwitchboardList(props: ISwitchboardListProps) {
   const [showModalAdd, setShowModalAdd] = useState<boolean>(false);
   const [showModalListOperator, setShowModalListOperator] = useState<boolean>(false);
   const [showDialog, setShowDialog] = useState<boolean>(false);
-  const [contentDialog, setContentDialog] = useState<any>(null);
+  const [contentDialog, setContentDialog] = useState<Record<string, unknown>>(null);
   const [showChangeStatus, setShowChangeStatus] = useState<boolean>(false);
-  const [contentChangeStatus, setContentChangeStatus] = useState<any>(null);
+  const [contentChangeStatus, setContentChangeStatus] = useState<Record<string, unknown>>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [isNoItem, setIsNoItem] = useState<boolean>(false);
   const [isPermissions, setIsPermissions] = useState<boolean>(false);
   const [permissions, setPermissions] = useState(getPermissions());
   const [modalWhiteList, setModalWhiteList] = useState(false);
   const [showDialogPause, setShowDialogPause] = useState<boolean>(false);
-  const [contentDialogPause, setContentDialogPause] = useState<any>(null);
+  const [contentDialogPause, setContentDialogPause] = useState<Record<string, unknown>>(null);
   const [showDialogApprove, setShowDialogApprove] = useState<boolean>(false);
-  const [contentDialogApprove, setContentDialogApprove] = useState<any>(null);
+  const [contentDialogApprove, setContentDialogApprove] = useState<Record<string, unknown>>(null);
   const [params, setParams] = useState<ISwitchboardFilterRequest>({
     name: "",
     limit: 10,
@@ -314,7 +314,7 @@ export default function SwitchboardList(props: ISwitchboardListProps) {
     }
   };    
 
-  const showDialogConfirmChangeStatus = (item?: any) => {
+  const showDialogConfirmChangeStatus = (item?: Record<string, unknown>) => {
     const contentDialog: IContentDialog = {
       color: item.active === 1 ? "warning" : 'success',
       className: "dialog-delete",

@@ -18,7 +18,7 @@ import { showToast } from "utils/common";
 interface IModalTypeBellProps {
   onShow: boolean;
   onHide: (reload: boolean) => void;
-  dataComponent: any;
+  dataComponent: Record<string, unknown>;
 }
 
 export default function ModalTypeBell(props: IModalTypeBellProps) {

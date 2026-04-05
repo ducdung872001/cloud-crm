@@ -43,7 +43,7 @@ interface IDataSales {
   };
 }
 
-export default function FilterComponent(props: any) {
+export default function FilterComponent(props: Record<string, unknown>) {
   const { onShow, onHide, listRuleData, setListRuleData, dataRule, indexRule } = props;
 
   const refOptionSpecialize = useRef();
@@ -367,7 +367,7 @@ export default function FilterComponent(props: any) {
   const [formData, setFormData] = useState(defaultFormData);
 
   //! đoạn này xử lý lấy năm
-  const [years, setYears] = useState<any[]>(
+  const [years, setYears] = useState<Record<string, unknown>[]>(
     createArrayFromToR(new Date().getFullYear(), 1963).map((item, idx) => {
       return {
         value: +item,
@@ -377,7 +377,7 @@ export default function FilterComponent(props: any) {
   );
 
   //! đoạn này xử lý lấy tháng
-  const [months, setMonths] = useState<any[]>(
+  const [months, setMonths] = useState<Record<string, unknown>[]>(
     createArrayFromTo(1, 12).map((item, idx) => {
       if (item < 10) {
         return {
@@ -394,7 +394,7 @@ export default function FilterComponent(props: any) {
   );
 
   //! đoạn này xử lý lấy ngày
-  const [days, setDays] = useState<any[]>(
+  const [days, setDays] = useState<Record<string, unknown>[]>(
     createArrayFromTo(1, 31).map((item, idx) => {
       if (item < 10) {
         return {
@@ -596,7 +596,7 @@ export default function FilterComponent(props: any) {
 
   const [isLoadingSource, setIsLoadingSource] = useState<boolean>(false);
 
-  const onSelectOpenApi = async (source, idx, param?: any) => {
+  const onSelectOpenApi = async (source, idx, param?: Record<string, unknown>) => {
     if (!source) return;
 
     const checkSource = source.startsWith("https");
@@ -938,7 +938,7 @@ export default function FilterComponent(props: any) {
     });
   };
 
-  const onSelectOpenBlockApi = async (source, ids, idx, param?: any) => {
+  const onSelectOpenBlockApi = async (source, ids, idx, param?: Record<string, unknown>) => {
     if (!source) return;
 
     const checkSource = source.startsWith("https");
@@ -1364,7 +1364,7 @@ export default function FilterComponent(props: any) {
     });
   };
 
-  const onSelectOpenChildrenBlockApi = async (source, index, ids, idx, param?: any) => {
+  const onSelectOpenChildrenBlockApi = async (source, index, ids, idx, param?: Record<string, unknown>) => {
     if (!source) return;
 
     const checkSource = source.startsWith("https");
@@ -1598,7 +1598,7 @@ export default function FilterComponent(props: any) {
     return { options: [], hasMore: false };
   };
   const loadedOptionBranchLevel_1 = async (search, loadedOptions, { page }) => {
-    const param: any = {
+    const param: Record<string, unknown> = {
       name: search,
       page: page,
       limit: 10,
@@ -1630,7 +1630,7 @@ export default function FilterComponent(props: any) {
     return { options: [], hasMore: false };
   };
   const loadedOptionBranchLevel_2 = async (search, loadedOptions, { page }) => {
-    const param: any = {
+    const param: Record<string, unknown> = {
       name: search,
       page: page,
       limit: 10,
@@ -1662,7 +1662,7 @@ export default function FilterComponent(props: any) {
     return { options: [], hasMore: false };
   };
   const loadedOptionBranchLevel_3 = async (search, loadedOptions, { page }) => {
-    const param: any = {
+    const param: Record<string, unknown> = {
       name: search,
       page: page,
       limit: 10,
@@ -1694,7 +1694,7 @@ export default function FilterComponent(props: any) {
     return { options: [], hasMore: false };
   };
   const loadedOptionBranchLevel_4 = async (search, loadedOptions, { page }) => {
-    const param: any = {
+    const param: Record<string, unknown> = {
       name: search,
       page: page,
       limit: 10,
@@ -1932,7 +1932,7 @@ export default function FilterComponent(props: any) {
   }, [listDepartmentId, dataDepartment]);
 
   const loadedOptionDepartment = async (search, loadedOptions, { page }) => {
-    const param: any = {
+    const param: Record<string, unknown> = {
       name: search,
       // page: page,
       limit: 1000,

@@ -17,7 +17,7 @@ import "./Webhook.scss";
 import WebhookService from "services/WebhookService";
 import ModalAddWebhook from "./partials/ModalAddWebhook";
 
-export default function Webhook(props: any) {
+export default function Webhook(props: Record<string, unknown>) {
   document.title = "Danh sách Webhook";
 
   const { onBackProps } = props;
@@ -29,12 +29,12 @@ export default function Webhook(props: any) {
   const [listIdChecked, setListIdChecked] = useState<number[]>([]);
   const [showModalAdd, setShowModalAdd] = useState<boolean>(false);
   const [showDialog, setShowDialog] = useState<boolean>(false);
-  const [contentDialog, setContentDialog] = useState<any>(null);
+  const [contentDialog, setContentDialog] = useState<Record<string, unknown>>(null);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [isNoItem, setIsNoItem] = useState<boolean>(false);
   const [isPermissions, setIsPermissions] = useState<boolean>(false);
   const [permissions, setPermissions] = useState(getPermissions());
-  const [params, setParams] = useState<any>({
+  const [params, setParams] = useState<Record<string, unknown>>({
     name: "",
   });
 
@@ -60,7 +60,7 @@ export default function Webhook(props: any) {
 
   const abortController = new AbortController();
 
-  const getListWebhook = async (paramsSearch: any) => {
+  const getListWebhook = async (paramsSearch: Record<string, unknown>) => {
     setIsLoading(true);
 
     const response = await WebhookService.list(paramsSearch, abortController.signal);
@@ -132,7 +132,7 @@ export default function Webhook(props: any) {
 
   const dataFormat = ["text-center", "", "", "text-center", "", "", ""];
 
-  const dataMappingArray = (item: any, index: number) => [
+  const dataMappingArray = (item: Record<string, unknown>, index: number) => [
     getPageOffset(params) + index + 1,
     item.name,
     item.appName,
@@ -151,7 +151,7 @@ export default function Webhook(props: any) {
         :'' ,
   ];
 
-  const actionsTable = (item: any): IAction[] => {
+  const actionsTable = (item: Record<string, unknown>): IAction[] => {
     const isCheckedItem = listIdChecked?.length > 0;
     return [
       {
@@ -220,7 +220,7 @@ export default function Webhook(props: any) {
     });
   }
 
-  const showDialogConfirmDelete = (item?: any) => {
+  const showDialogConfirmDelete = (item?: Record<string, unknown>) => {
     const contentDialog: IContentDialog = {
       color: "error",
       className: "dialog-delete",

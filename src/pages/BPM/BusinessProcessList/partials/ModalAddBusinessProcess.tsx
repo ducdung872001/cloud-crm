@@ -31,7 +31,7 @@ import { SelectOptionData } from "utils/selectCommon";
 import { Parser } from "formula-functionizer";
 import SettingSLA from "./SettingSLA/SettingSLA";
 
-export default function ModalAddBusinessProcess(props: any) {
+export default function ModalAddBusinessProcess(props: Record<string, unknown>) {
   const { onShow, onHide, data } = props;
 
   const focusedElement = useActiveElement();
@@ -51,15 +51,15 @@ export default function ModalAddBusinessProcess(props: any) {
 
   //Loại đối tượng trong tab 4
   const [detailObjectType, setDetailObjectType] = useState(null);
-  const [mapObjectAttribute, setMapObjectAttribute] = useState<any>(null);
-  const [objectExtraInfos, setObjectExtraInfos] = useState<any>([]);
+  const [mapObjectAttribute, setMapObjectAttribute] = useState<Record<string, unknown>>(null);
+  const [objectExtraInfos, setObjectExtraInfos] = useState<Record<string, unknown>>([]);
 
   const [listEmployee, setListEmployee] = useState<IOption[]>(null);
   const [isLoadingEmployee, setIsLoadingEmployee] = useState<boolean>(false);
 
   //Lấy danh sách các bước của quy trình
   const getListStepProcess = async (processId: number) => {
-    const params: any = {
+    const params: Record<string, unknown> = {
       limit: 100,
       processId: processId,
     };
@@ -90,7 +90,7 @@ export default function ModalAddBusinessProcess(props: any) {
         code: data?.code ?? "",
         description: data?.description ?? "",
         employeeId: data?.employeeId ?? 0,
-      } as any),
+      } as Record<string, unknown>),
     [data, onShow]
   );
 
@@ -105,7 +105,7 @@ export default function ModalAddBusinessProcess(props: any) {
         planExecutionDay: data?.planExecutionDay || "",
         planExecutionHour: data?.planExecutionHour || "",
         planExecutionMinute: data?.planExecutionMinute || "",
-      } as any),
+      } as Record<string, unknown>),
     [data, onShow]
   );
 
@@ -279,8 +279,8 @@ export default function ModalAddBusinessProcess(props: any) {
 
     setIsSubmit(true);
 
-    const body: any = {
-      ...(formData.values as any),
+    const body: Record<string, unknown> = {
+      ...(formData.values as Record<string, unknown>),
       ...(data || processId ? { id: data?.id || processId } : {}),
     };
 
@@ -301,7 +301,7 @@ export default function ModalAddBusinessProcess(props: any) {
   const onSubmitObject = async () => {
     setIsSubmit(true);
 
-    const body: any = {
+    const body: Record<string, unknown> = {
       processId: processId,
       groupId: detailObjectType.value,
     };
@@ -321,7 +321,7 @@ export default function ModalAddBusinessProcess(props: any) {
   const onSubmitSLA = async () => {
     setIsSubmit(true);
 
-    const body: any = {
+    const body: Record<string, unknown> = {
       id: processId,
       ...valueSLA,
     };
@@ -480,7 +480,7 @@ export default function ModalAddBusinessProcess(props: any) {
   };
 
   const handleAddStep = async (step: number) => {
-    const body: any = {
+    const body: Record<string, unknown> = {
       stepName: "",
       stepNumber: step,
       processId: processId,
@@ -498,7 +498,7 @@ export default function ModalAddBusinessProcess(props: any) {
   // Thay đổi tên bước
   const handleBlurValueStep = async (e, idx) => {
     const value = e.target.value;
-    let item: any = {};
+    let item: Record<string, unknown> = {};
 
     if (value) {
       listStepProcess.map((obj, index) => {
@@ -523,7 +523,7 @@ export default function ModalAddBusinessProcess(props: any) {
     }
   };
 
-  const updateStep = async (item: any) => {
+  const updateStep = async (item: Record<string, unknown>) => {
     const response = await BusinessProcessService.updateStep(item);
     if (response.code == 0) {
       getListStepProcess(processId);
@@ -584,7 +584,7 @@ export default function ModalAddBusinessProcess(props: any) {
   };
 
   const loadOptionObjectType = async (search, loadedOptions, { page }) => {
-    const param: any = {
+    const param: Record<string, unknown> = {
       keyword: search,
       page: page,
       limit: 10,
@@ -597,7 +597,7 @@ export default function ModalAddBusinessProcess(props: any) {
       return {
         options: [
           ...(dataOption.length > 0
-            ? dataOption.map((item: any) => {
+            ? dataOption.map((item: Record<string, unknown>) => {
                 return {
                   value: item.id,
                   label: item.name,
@@ -642,7 +642,7 @@ export default function ModalAddBusinessProcess(props: any) {
     });
 
     if (!found) {
-      let item: any = {};
+      let item: Record<string, unknown> = {};
       item.attributeId = attributeId;
       item.attributeValue = attributeValue;
       item.objectId = objectId;
@@ -687,7 +687,7 @@ export default function ModalAddBusinessProcess(props: any) {
     updateCustomerAttribute(attributeId, JSON.stringify(attributeValue));
   };
 
-  const onSelectOpenEmployee = async (data?: any) => {
+  const onSelectOpenEmployee = async (data?: Record<string, unknown>) => {
     if (!listEmployee || listEmployee.length === 0) {
       setIsLoadingEmployee(true);
       // const dataOption = await SelectOptionData("employeeId", { branchId: dataBranch.value });
@@ -905,7 +905,7 @@ export default function ModalAddBusinessProcess(props: any) {
   };
 
   const getDetailBpmObject = async (processId: number) => {
-    const params: any = {
+    const params: Record<string, unknown> = {
       processId: processId,
     };
 
@@ -1083,7 +1083,7 @@ export default function ModalAddBusinessProcess(props: any) {
                 <div>
                   {mapObjectAttribute ? (
                     <div className="list__object--attribute">
-                      {Object.entries(mapObjectAttribute).map((lstEformAttribute: any, key: number) => (
+                      {Object.entries(mapObjectAttribute).map((lstEformAttribute: Record<string, unknown>, key: number) => (
                         <Fragment key={key}>
                           {(lstEformAttribute[1] || []).map((eformAttribute, index: number) => (
                             <Fragment key={index}>

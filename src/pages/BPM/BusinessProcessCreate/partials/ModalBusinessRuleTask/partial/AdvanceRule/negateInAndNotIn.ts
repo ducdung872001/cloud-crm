@@ -3,7 +3,7 @@ type Operator = "IN" | "NOT_IN";
 interface Condition {
   parameter: string;
   operator: Operator;
-  value: any[];
+  value: Record<string, unknown>[];
 }
 
 export function negateInAndNotIn(conditions: Condition[]): Condition[][] {

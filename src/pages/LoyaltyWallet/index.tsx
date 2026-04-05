@@ -80,7 +80,7 @@ export default function LoyaltyWallet(props) {
       // customerId = undefined → xuất tất cả hội viên
       await LoyaltyService.exportLoyaltyWallet(undefined);
       showToast("Xuất Excel thành công", "success");
-    } catch (err: any) {
+    } catch (err: unknown) {
       showToast(err?.message ?? "Xuất Excel thất bại. Vui lòng thử lại", "error");
     } finally {
       setIsExporting(false);

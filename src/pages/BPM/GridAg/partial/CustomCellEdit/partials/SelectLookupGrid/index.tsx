@@ -10,13 +10,13 @@ import { convertParamsToString } from "reborn-util";
 
 interface SelectLookupProps {
   id?: string;
-  value?: any; //string | number
-  defaultValue?: any;
+  value?: Record<string, unknown>; //string | number
+  defaultValue?: Record<string, unknown>;
   name?: string;
   lookup: string;
   className?: string;
   placeholder?: string;
-  onChange?: any;
+  onChange?: Record<string, unknown>;
   autoFocus?: boolean;
   onFocus?: (e) => void;
   onBlur?: (e) => void;
@@ -29,28 +29,28 @@ interface SelectLookupProps {
   fill?: boolean;
   required?: boolean;
   warningHistory?: boolean;
-  onWarningHistory?: any;
+  onWarningHistory?: Record<string, unknown>;
   disabled?: boolean;
   readOnly?: boolean;
   isSearchable?: boolean;
   //   options: IOption[];
   isLoading?: boolean;
   onMenuOpen?: () => void;
-  refSelect?: any;
+  refSelect?: Record<string, unknown>;
   special?: boolean;
 
   //Async
   isAsync?: boolean;
-  loadOptions?: (inputValue: string, callback: any) => void;
+  loadOptions?: (inputValue: string, callback: Record<string, unknown>) => void;
 
   //Hiển thị hình ảnh người dùng
   isFormatOptionLabel?: boolean;
-  formatOptionLabel?: any;
+  formatOptionLabel?: Record<string, unknown>;
 
   //đoạn này hiển thị phân trang khi cuộn xuống
   isAsyncPaginate?: boolean;
-  loadOptionsPaginate?: any;
-  additional?: any;
+  loadOptionsPaginate?: Record<string, unknown>;
+  additional?: Record<string, unknown>;
   isMulti?: boolean;
   isClearable?: boolean;
 
@@ -64,18 +64,18 @@ interface SelectLookupProps {
   setDataRow?: (dataRow: IColumnGrid[]) => void;
   columnIndex?: number;
   rowIndex?: number;
-  bindingField?: any[];
+  bindingField?: Record<string, unknown>[];
   bindingKey?: string;
-  dataRow?: any[];
-  setListLoadBindingField?: (listLoadBindingField: any[]) => void;
-  listLoadBindingField?: any[];
+  dataRow?: Record<string, unknown>[];
+  setListLoadBindingField?: (listLoadBindingField: Record<string, unknown>[]) => void;
+  listLoadBindingField?: Record<string, unknown>[];
   // lookupValues: any;
   loading: boolean;
-  styleCustom?: any;
-  col?: any;
+  styleCustom?: Record<string, unknown>;
+  col?: Record<string, unknown>;
 }
 
-export const fetchLookupData = async (lookupUri: string, params: any, signal?: AbortSignal) => {
+export const fetchLookupData = async (lookupUri: string, params: Record<string, unknown>, signal?: AbortSignal) => {
   if (!lookupUri) return { code: -1, message: "No lookupUri provided" };
   return fetch(`${lookupUri}${convertParamsToString(params)}`, {
     signal,
@@ -106,7 +106,7 @@ function SelectLookupGrid(props: SelectLookupProps) {
           return obj;
         }, {})
       : {};
-    const param: any = {
+    const param: Record<string, unknown> = {
       keyword: search,
       name: search,
       page: page,
@@ -130,7 +130,7 @@ function SelectLookupGrid(props: SelectLookupProps) {
         return {
           options: [
             ...(dataOption?.length > 0
-              ? dataOption.map((item: any) => {
+              ? dataOption.map((item: Record<string, unknown>) => {
                   return {
                     value: item.id,
                     label: col?.cellEditorParams?.fieldLabelLookup?.key

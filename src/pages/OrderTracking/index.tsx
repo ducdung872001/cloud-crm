@@ -49,14 +49,14 @@ export default function OrderTracking() {
   const [listOrderTracking, setListOrderTracking] = useState([]);
   const [listIdChecked, setListIdChecked] = useState<number[]>([]);
   const [showDialog, setShowDialog] = useState<boolean>(false);
-  const [contentDialog, setContentDialog] = useState<any>(null);
+  const [contentDialog, setContentDialog] = useState<Record<string, unknown>>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [isNoItem, setIsNoItem] = useState<boolean>(false);
   const [isPermissions, setIsPermissions] = useState<boolean>(false);
   const [searchParams, setSearchParams] = useSearchParams();
   const [isRegimeKanban, setIsRegimeKanban] = useState<boolean>(false);
 
-  const [params, setParams] = useState<any>({
+  const [params, setParams] = useState<Record<string, unknown>>({
     name: "",
     limit: 10,
   });
@@ -120,7 +120,7 @@ export default function OrderTracking() {
 
   const abortController = new AbortController();
 
-  const getListOrderTracking = async (paramsSearch: any) => {
+  const getListOrderTracking = async (paramsSearch: Record<string, unknown>) => {
     setIsLoading(true);
 
     const response = await OrderRequestService.list(paramsSearch);
@@ -204,10 +204,10 @@ export default function OrderTracking() {
   const dataFormat = ["text-center", "", "", "", "text-center", "", "", "text-center"];
 
   const [showModalRequestDetail, setShowModalRequestDetail] = useState<boolean>(false);
-  const [dataRequestDetail, setDataRequestDetail] = useState<any>(null);
-  const [customerInfo, setCustomerInfo] = useState<any>(null);
+  const [dataRequestDetail, setDataRequestDetail] = useState<Record<string, unknown>>(null);
+  const [customerInfo, setCustomerInfo] = useState<Record<string, unknown>>(null);
 
-  const dataMappingArray = (item: any, index: number) => [
+  const dataMappingArray = (item: Record<string, unknown>, index: number) => [
     getPageOffset(params) + index + 1,
     item?.beautySalonName || item.bsnId,
     item?.customerInfo ? JSON.parse(item.customerInfo).name : "",
@@ -346,7 +346,7 @@ export default function OrderTracking() {
   const [valueBeautySalon, setValueBeautySalon] = useState(null);
 
   const loadOptionBeautySalon = async (search, loadedOptions, { page }) => {
-    const param: any = {
+    const param: Record<string, unknown> = {
       name: search,
       page: page,
       limit: 10,
@@ -366,7 +366,7 @@ export default function OrderTracking() {
       const dataOption = response.result.items;
 
       if (dataOption.length > 0) {
-        dataOption.map((item: any) => {
+        dataOption.map((item: Record<string, unknown>) => {
           optionProcess.push({
             value: item.id,
             label: item.name,

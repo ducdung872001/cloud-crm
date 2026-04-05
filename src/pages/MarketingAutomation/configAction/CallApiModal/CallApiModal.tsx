@@ -15,7 +15,7 @@ import Radio from "components/radio/radio";
 import NummericInput from "components/input/numericInput";
 import Button from "components/button/button";
 
-export default function CallApiModal(props: any) {
+export default function CallApiModal(props: Record<string, unknown>) {
   //isBatch: Thêm hàng loạt cơ hội (thêm nhanh từ màn hình danh sách khách hàng)
   const { onShow, onHide, dataNode, setDataNode, statusMA } = props;
   //   console.log('dataNode', dataNode);
@@ -53,7 +53,7 @@ export default function CallApiModal(props: any) {
         option: data?.option ?? 1,
         partnerCode: data?.partnerCode ?? "",
         linkApi: data?.linkApi ?? "",
-      } as any),
+      } as Record<string, unknown>),
     [onShow, data]
   );
 
@@ -98,7 +98,7 @@ export default function CallApiModal(props: any) {
       return;
     }
 
-    const body: any = {
+    const body: Record<string, unknown> = {
       ...dataNode,
       configData: config,
     };
@@ -219,7 +219,7 @@ export default function CallApiModal(props: any) {
       return;
     }
 
-    const body: any = {
+    const body: Record<string, unknown> = {
       ...dataNode,
       name: nodeName,
       configData: config,

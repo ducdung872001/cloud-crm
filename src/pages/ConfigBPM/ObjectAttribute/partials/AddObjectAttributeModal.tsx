@@ -172,7 +172,13 @@ function bfs(items, newItem) {
   return newLayouts;
 }
 
-export default function AddObjectAttributeModal(props: any) {
+interface AddObjectAttributeModalProps {
+  onShow: boolean;
+  onHide: (reload: boolean) => void;
+  dataContractAttribute: Record<string, unknown> | null;
+}
+
+export default function AddObjectAttributeModal(props: AddObjectAttributeModalProps) {
   const { onShow, onHide, dataContractAttribute } = props;
   const refShowField = useRef();
   useOnClickOutside(refShowField, () => setShowFields(false), ["formula"]);
@@ -187,13 +193,13 @@ export default function AddObjectAttributeModal(props: any) {
   const [showDialog, setShowDialog] = useState<boolean>(false);
   const [contentDialog, setContentDialog] = useState<IContentDialog>(null);
 
-  const [data, setData] = useState<any>();
+  const [data, setData] = useState<Record<string, unknown> | null>();
 
-  const [addFieldAttributes, setAddFieldAttributes] = useState<any[]>([{ value: "", label: "" }]);
-  const [detailLookup, setDetailLookup] = useState<any>("contract");
-  const [numberFormat, setNumberFormat] = useState<any>("");
+  const [addFieldAttributes, setAddFieldAttributes] = useState<Record<string, unknown>[]>([{ value: "", label: "" }]);
+  const [detailLookup, setDetailLookup] = useState<string>("contract");
+  const [numberFormat, setNumberFormat] = useState<string>("");
 
-  const [contractAttributeFields, setContractAttributeFields] = useState<any>(null); //Khởi tạo null là quan trọng
+  const [contractAttributeFields, setContractAttributeFields] = useState<Record<string, unknown> | null>(null);
 
   const [showFields, setShowFields] = useState<boolean>(false);
   const [selectedFormula, setSelectedFormula] = useState<string>("");
@@ -205,7 +211,7 @@ export default function AddObjectAttributeModal(props: any) {
   const [validateFieldCategory, setValidateFieldCategory] = useState<boolean>(false);
 
   const loadOptionCategory = async (search, loadedOptions, { page }) => {
-    const param: any = {
+    const param: Record<string, unknown> = {
       name: search,
       page: page,
       limit: 10,
@@ -218,7 +224,7 @@ export default function AddObjectAttributeModal(props: any) {
       return {
         options: [
           ...(dataOption.length > 0
-            ? dataOption.map((item: any) => {
+            ? dataOption.map((item: Record<string, unknown>) => {
                 return {
                   value: item.id,
                   label: item.name,
@@ -265,7 +271,7 @@ export default function AddObjectAttributeModal(props: any) {
         datatype: data?.datatype ?? "text",
         attributes: data?.attributes ?? null,
         position: data?.position ?? "0",
-      } as any),
+      } as Record<string, unknown>),
     [data, onShow]
   );
 

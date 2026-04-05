@@ -131,7 +131,7 @@ export default function AddTicketModal(props: IAddTicketModalProps) {
 
   //! đoạn này xử lý vấn đề lấy ra danh sách khách hàng
   const loadedOptionCustomer = async (search, loadedOptions, { page }) => {
-    const param: any = {
+    const param: Record<string, unknown> = {
       keyword: search,
       page: page,
       limit: 10,
@@ -272,7 +272,7 @@ export default function AddTicketModal(props: IAddTicketModalProps) {
     }
   }, [idCustomer, onShow, data?.customerId]);
 
-  const listFieldVoteInfo: any[] = useMemo(() => [
+  const listFieldVoteInfo: Record<string, unknown>[] = useMemo(() => [
     {
       label: "Danh mục hỗ trợ",
       name: "supportId",

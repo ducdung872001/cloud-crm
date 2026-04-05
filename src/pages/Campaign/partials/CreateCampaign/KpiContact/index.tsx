@@ -46,7 +46,7 @@ export default function KpiContact(props) {
 
 
   //lấy danh sách kpi của nhân viên
-  const getListEmployeeKpiContact = async (paramsKpi: any) => {
+  const getListEmployeeKpiContact = async (paramsKpi: Record<string, unknown>) => {
     
     setIsLoadingEmployeeContactGoal(true);
 
@@ -95,7 +95,7 @@ export default function KpiContact(props) {
 
   const dataFormat = ["text-center", "", "", "", "text-center"];
 
-  const dataMappingArray = (item: any, index: number, type) => [
+  const dataMappingArray = (item: Record<string, unknown>, index: number, type) => [
     getPageOffset(paramsKpi) + index + 1,
     item.name,
     item.departmentName,
@@ -111,7 +111,7 @@ export default function KpiContact(props) {
     </a>,
   ];
 
-  const actionsTable = (item: any): IAction[] => {
+  const actionsTable = (item: Record<string, unknown>): IAction[] => {
     console.log("item", item);
 
     return [
@@ -134,7 +134,7 @@ export default function KpiContact(props) {
   };
 
 
-  const showDialogConfirmDelete = (item?: any) => {
+  const showDialogConfirmDelete = (item?: Record<string, unknown>) => {
     const contentDialog: IContentDialog = {
       color: "error",
       className: "dialog-delete",

@@ -28,7 +28,7 @@ import { SystemNotification } from "components/systemNotification/systemNotifica
 import { formatCurrency } from "reborn-util";
 import CampaignOpportunityService from "services/CampaignOpportunityService";
 
-export default function ModalRequestDetail(props: any) {
+export default function ModalRequestDetail(props: Record<string, unknown>) {
   const { onShow, onHide, data, customerInfo } = props;
 
   const actions = useMemo<IActionModal>(
@@ -103,7 +103,7 @@ export default function ModalRequestDetail(props: any) {
                 <div className="value">{customerInfo?.email || "N/A"}</div>
               </div>
             </div>
-            {data?.map((item: any, index: number) => (
+            {data?.map((item: Record<string, unknown>, index: number) => (
               <div className="item-request" key={index}>
                 <div className="avatar">
                   <img src={item.avatar || ImageThirdGender} alt={item.name} />
@@ -126,7 +126,7 @@ export default function ModalRequestDetail(props: any) {
             </div>
             <div className="item">
               <div className="label">Tổng cộng</div>
-              <div className="value">{formatCurrency(data?.reduce((sum: number, item: any) => sum + item.price * item.qty, 0) || 0)}</div>
+              <div className="value">{formatCurrency(data?.reduce((sum: number, item: Record<string, unknown>) => sum + item.price * item.qty, 0) || 0)}</div>
             </div>
           </div>
         </ModalBody>

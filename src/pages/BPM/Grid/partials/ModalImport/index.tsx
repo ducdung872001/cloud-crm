@@ -30,11 +30,11 @@ interface IImportModalProps {
   name: string;
   type?: "customer" | "partner" | "contact" | "grid";
   // listColumn: IColumnGrid[];
-  setDataImport?: any;
-  setDataImportHeader?: any;
+  setDataImport?: Record<string, unknown>;
+  setDataImportHeader?: Record<string, unknown>;
 }
 
-export default function ModalImport(props: any) {
+export default function ModalImport(props: Record<string, unknown>) {
   const { onShow, onHide, name, code, type = "grid", listColumn, setDataImport, setDataImportHeader } = props;
 
   const defaultStep = {
@@ -235,7 +235,7 @@ export default function ModalImport(props: any) {
     // sau có muốn hiển thị % upload thì xử lý ở đây
   };
 
-  const onSubmit = async (e?: any) => {
+  const onSubmit = async (e?: Record<string, unknown>) => {
     e.preventDefault();
 
     setIsSubmit(true);
@@ -370,7 +370,7 @@ export default function ModalImport(props: any) {
 
   const dataMappingArray = (item, idx: number) => [idx + 1, item.name || "", item.code || "", item.phone || "", item.email || ""];
 
-  const actionsTable = (item: any): IAction[] => {
+  const actionsTable = (item: Record<string, unknown>): IAction[] => {
     return [
       {
         title: "Sửa",
@@ -573,7 +573,7 @@ export default function ModalImport(props: any) {
   const [isLoadingImportField, setIsLoadingImportField] = useState<boolean>(false);
 
   // đoạn này hàm gọi api khi mà chọn các trường gửi xuống
-  const handImportFielDownload = async (count: number, lstField?: any[], lstFieldChildren?: any[], custType?: any, type?: string) => {
+  const handImportFielDownload = async (count: number, lstField?: Record<string, unknown>[], lstFieldChildren?: Record<string, unknown>[], custType?: Record<string, unknown>, type?: string) => {
     const changeLstField = lstField.map((item) => ({ [item.fieldName]: true }));
     const changeLstFieldChildren = lstFieldChildren?.map((item) => ({ [item.fieldName]: true }));
 

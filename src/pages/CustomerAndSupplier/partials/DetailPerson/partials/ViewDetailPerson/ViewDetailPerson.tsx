@@ -43,18 +43,18 @@ export default function ViewDetailPerson(props: IViewDetailPersonProps) {
   const [isShowInfoRevenue, setIsShowInfoRevenue] = useState<boolean>(false);
   const [isShowInfoContact, setIsShowInfoContact] = useState<boolean>(false);
   const [isShowInfoOther, setIsShowInfoOther] = useState<boolean>(false);
-  const [mapCustomerAttribute, setMapCustomerAttribute] = useState<any>(null);
+  const [mapCustomerAttribute, setMapCustomerAttribute] = useState<Record<string, unknown>>(null);
   const [showModalHistory, setShowModalHistory] = useState<boolean>(false);
   const [showModalEditScore, setShowModalEditScore] = useState<boolean>(false);
   // console.log('mapCustomerAttribute', mapCustomerAttribute);
-  const [dataCustomerAttribute, setDataCustomerAttribute] = useState<any>(null);
+  const [dataCustomerAttribute, setDataCustomerAttribute] = useState<Record<string, unknown>>(null);
 
   useEffect(() => {
     if (data) {
       const listNewItem = [];
       const customerExtraInfos = data.lstCustomerExtraInfo;
       const customerAttribute = data.mapCustomerAttribute;
-      Object.entries(customerAttribute).map((lstCustomerAttribute: any, key: number) => {
+      Object.entries(customerAttribute).map((lstCustomerAttribute: Record<string, unknown>, key: number) => {
         (lstCustomerAttribute[1] || []).map((customerAttribute, index: number) => {
           if (customerAttribute.parentId) {
             const newItem = {
@@ -119,7 +119,7 @@ export default function ViewDetailPerson(props: IViewDetailPersonProps) {
   //////
 
   const [showDialog, setShowDialog] = useState<boolean>(false);
-  const [contentDialog, setContentDialog] = useState<any>(null);
+  const [contentDialog, setContentDialog] = useState<Record<string, unknown>>(null);
 
   const onDelete = async (id: number) => {
     if (!id) return;
@@ -242,7 +242,7 @@ export default function ViewDetailPerson(props: IViewDetailPersonProps) {
               ? JSON.parse(dataCustomerAttribute?.find((el) => el.fieldName === "SanPham")?.attributeValue)
               : "",
         },
-      ] as any,
+      ] as Record<string, unknown>,
     [data, dataCustomerAttribute]
   );
 
@@ -282,7 +282,7 @@ export default function ViewDetailPerson(props: IViewDetailPersonProps) {
             ? dataCustomerAttribute?.find((el) => el.fieldName === "Trangthaikhoanvaycreditline").attributeValue
             : "",
         },
-      ] as any,
+      ] as Record<string, unknown>,
     [dataCustomerAttribute]
   );
 
@@ -297,7 +297,7 @@ export default function ViewDetailPerson(props: IViewDetailPersonProps) {
           product: "Creditline",
           status: "",
         },
-      ] as any,
+      ] as Record<string, unknown>,
     [dataCustomerAttribute]
   );
 

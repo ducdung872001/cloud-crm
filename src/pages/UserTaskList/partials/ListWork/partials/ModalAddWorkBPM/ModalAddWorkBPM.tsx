@@ -30,10 +30,10 @@ import { uploadDocumentFormData } from "utils/document";
 import "./ModalAddWorkBPM.scss";
 import DatePickerCustom from "components/datepickerCustom/datepickerCustom";
 
-export default function ModalAddWorkBpm(props: any) {
+export default function ModalAddWorkBpm(props: Record<string, unknown>) {
   const { onShow, onHide, idWork } = props;
 
-  const params: any = getSearchParameters();
+  const params: Record<string, unknown> = getSearchParameters();
   const { dataBranch } = useContext(UserContext) as ContextType;
   const [data, setData] = useState(null);
 
@@ -67,7 +67,7 @@ export default function ModalAddWorkBpm(props: any) {
     const response = await WorkOrderService.detail(id);
 
     if (response.code == 0) {
-      const result: any = response.result;
+      const result: Record<string, unknown> = response.result;
 
       const takeLstParticipant = (response.result?.lstParticipant || []).map((item) => {
         return {
@@ -150,7 +150,7 @@ export default function ModalAddWorkBpm(props: any) {
         scope: "external", // internal - công việc tạo ra từ quy trình /external - công việc tạo ngoài
         ola: data?.old || "",
         taskType: data?.taskType || "assigned_task",
-      } as any),
+      } as Record<string, unknown>),
     [onShow, data]
   );
 
@@ -382,7 +382,7 @@ export default function ModalAddWorkBpm(props: any) {
     setDragging(false);
 
     const newFiles = [...listAttactment];
-    const droppedFiles: any = Array.from(e.dataTransfer.files);
+    const droppedFiles: Record<string, unknown> = Array.from(e.dataTransfer.files);
 
     droppedFiles.forEach((file) => {
       const checkFile = file.type;
@@ -924,9 +924,9 @@ export default function ModalAddWorkBpm(props: any) {
 
     setIsSubmit(true);
 
-    const body: any = {
+    const body: Record<string, unknown> = {
       ...(data ? { id: data?.id } : {}),
-      ...(formData.values as any),
+      ...(formData.values as Record<string, unknown>),
       docLink: JSON.stringify(listAttactment),
       participants: JSON.stringify(listIdParticipants || []),
       ola: JSON.stringify({ responseTime: valueResponse, processTime: valueProcess }),

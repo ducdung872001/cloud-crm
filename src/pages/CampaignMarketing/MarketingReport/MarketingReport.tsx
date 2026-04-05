@@ -17,7 +17,7 @@ import Button from "components/button/button";
 import BoxTable from "components/boxTable/boxTable";
 import moment from "moment";
 
-export default function MarketingReport(props: any) {
+export default function MarketingReport(props: Record<string, unknown>) {
   const { onShow, onHide, data} = props;
   const focusedElement = useActiveElement();
 
@@ -55,7 +55,7 @@ export default function MarketingReport(props: any) {
 
     const abortController = new AbortController();
 
-    const getListReport = async (paramsSearch: any) => {
+    const getListReport = async (paramsSearch: Record<string, unknown>) => {
         setIsLoading(true);
 
         const response = null;
@@ -86,14 +86,14 @@ export default function MarketingReport(props: any) {
     const titlesReport = ["STT","Tên đợt báo cáo", "Ngân sách chi tiêu", "Ngày báo cáo"];
     const dataFormatReport = [ "text-center", "", "text-right", "text-center"];
 
-    const dataMappingArray = (item: any, index: number) => [
+    const dataMappingArray = (item: Record<string, unknown>, index: number) => [
         getPageOffset(params) + index + 1,
         item.name,
         formatCurrency(item.budget || 0),
         item.reportDate ? moment(item.reportDate).format('DD/MM/YYYY') : '',
     ];
 
-    const actionsTable = (item: any): IAction[] => {
+    const actionsTable = (item: Record<string, unknown>): IAction[] => {
         
         return [
             {
@@ -122,7 +122,7 @@ export default function MarketingReport(props: any) {
         ];
     };
 
-    const showDialogConfirmDelete = (item?: any) => {
+    const showDialogConfirmDelete = (item?: Record<string, unknown>) => {
         const contentDialog: IContentDialog = {
           color: "error",
           className: "dialog-delete",
@@ -199,7 +199,7 @@ export default function MarketingReport(props: any) {
       budget: dataReport?.budget ?? '',
       reportDate: dataReport?.reportDate ?? new Date(),
       mbtId: data?.id ?? null
-    } as any),
+    } as Record<string, unknown>),
     [dataReport, isAddReport, data]
   );  
 
@@ -272,7 +272,7 @@ export default function MarketingReport(props: any) {
     setIsSubmitReport(true);
 
     const body = {
-        ...(formDataReport.values as any),
+        ...(formDataReport.values as Record<string, unknown>),
         // ...(data ? { id: data.id } : {}),
     };
 

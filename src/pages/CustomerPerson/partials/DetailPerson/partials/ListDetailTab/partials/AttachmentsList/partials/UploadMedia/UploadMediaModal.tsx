@@ -44,7 +44,7 @@ export default function UploadMediaModal(props: IUploadMediaModalProps) {
 
     setIsSubmit(true);
 
-    const body: any = {
+    const body: Record<string, unknown> = {
       customerId: idCustomer,
       type: 0,
       medias: lstData.map((item) => {

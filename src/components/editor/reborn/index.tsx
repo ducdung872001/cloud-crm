@@ -38,27 +38,27 @@ interface EditorProps {
   name?: string;
   className?: string;
   placeholder?: string;
-  onChangeContent?: any;
+  onChangeContent?: (value: Descendant[]) => void;
   autoFocus?: boolean;
-  onFocus?: any;
-  onBlur?: any;
+  onFocus?: React.FocusEventHandler<HTMLDivElement>;
+  onBlur?: React.FocusEventHandler<HTMLDivElement>;
   error?: boolean;
   message?: string;
   warning?: boolean;
   messageWarning?: string;
-  onKeyDown?: any;
-  onKeyUp?: any;
-  onClick?: any;
-  onReady?: any;
+  onKeyDown?: React.KeyboardEventHandler<HTMLDivElement>;
+  onKeyUp?: React.KeyboardEventHandler<HTMLDivElement>;
+  onClick?: React.MouseEventHandler<HTMLDivElement>;
+  onReady?: (editor: Editor) => void;
   label?: string | ReactElement;
   labelPosition?: "left";
   fill?: boolean;
   fillColor?: boolean;
   disabled?: boolean;
-  onKeyPress?: any;
+  onKeyPress?: React.KeyboardEventHandler<HTMLDivElement>;
   readOnly?: boolean;
   maxLength?: number;
-  refInput?: any;
+  refInput?: React.RefObject<HTMLDivElement>;
   required?: boolean;
   dataText?: string; //Dữ liệu text muốn được chèn vào vị trí hiện tại của trình soạn thảo
 }
@@ -197,7 +197,7 @@ const RebornEditor = (props: EditorProps) => {
             readOnly={readOnly}
             onKeyDown={(event) => {
               for (const hotkey in HOTKEYS) {
-                if (isHotkey(hotkey, event as any)) {
+                if (isHotkey(hotkey, event as unknown as KeyboardEvent)) {
                   event.preventDefault();
                   const mark = HOTKEYS[hotkey];
                   toggleMark(editor, mark);

@@ -174,7 +174,7 @@ function FundForm({ editData, onClose, onSaved }: FundFormProps) {
       };
       await FundManagementService.save(req);
       onSaved();
-    } catch (err: any) {
+    } catch (err: unknown) {
       setError(err?.message ?? "Có lỗi xảy ra khi lưu quỹ.");
     } finally {
       setSaving(false);

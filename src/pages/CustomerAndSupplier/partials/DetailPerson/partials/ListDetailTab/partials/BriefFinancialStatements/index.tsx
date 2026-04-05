@@ -20,10 +20,10 @@ export default function BriefFinancialStatements({ data }) {
   const [listBriefFinancialStatements, setListBriefFinancialStatements] = useState([]);
   const [isNoItem, setIsNoItem] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [dataBriefFinancialStatements, setDataBriefFinancialStatements] = useState<any>(null);
+  const [dataBriefFinancialStatements, setDataBriefFinancialStatements] = useState<Record<string, unknown>>(null);
   const [showModalAdd, setShowModalAdd] = useState<boolean>(false);
 
-  const [params, setParams] = useState<any>({
+  const [params, setParams] = useState<Record<string, unknown>>({
     name: "",
     customerId: data.id,
   });
@@ -42,7 +42,7 @@ export default function BriefFinancialStatements({ data }) {
 
   const abortController = new AbortController();
 
-  const getListBriefFinancialStatements = async (paramsSearch: any) => {
+  const getListBriefFinancialStatements = async (paramsSearch: Record<string, unknown>) => {
     setIsLoading(true);
 
     const response = null;
@@ -106,7 +106,7 @@ export default function BriefFinancialStatements({ data }) {
     "text-right", "text-right", "text-right", "text-right"
   ];
 
-  const dataMappingArray = (item: any, index: number) => [
+  const dataMappingArray = (item: Record<string, unknown>, index: number) => [
     getPageOffset(params) + index + 1,
     `${item.month}/${item.year}`,
     formatCurrency(item.revenue, ","),
@@ -127,7 +127,7 @@ export default function BriefFinancialStatements({ data }) {
     formatCurrency(item.netProfit, ","),    
   ];
 
-  const actionsTable = (item: any): IAction[] => {
+  const actionsTable = (item: Record<string, unknown>): IAction[] => {
     return [
       {
         title: "Sửa",
@@ -148,7 +148,7 @@ export default function BriefFinancialStatements({ data }) {
   };
 
   const [showDialog, setShowDialog] = useState<boolean>(false);
-  const [contentDialog, setContentDialog] = useState<any>(null);
+  const [contentDialog, setContentDialog] = useState<Record<string, unknown>>(null);
 
   const onDelete = async (id: number) => {
     const response = null;
@@ -163,7 +163,7 @@ export default function BriefFinancialStatements({ data }) {
     setContentDialog(null);
   };
 
-  const showDialogConfirmDelete = (item?: any) => {
+  const showDialogConfirmDelete = (item?: Record<string, unknown>) => {
     const contentDialog: IContentDialog = {
       color: "error",
       className: "dialog-delete",

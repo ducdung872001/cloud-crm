@@ -123,7 +123,7 @@ const AttachmentUploader: React.FC<Props> = ({
     else console.warn(msg);
   };
 
-  const processUploadSuccess = (data: any) => {
+  const processUploadSuccess = (data: Record<string, unknown>) => {
     if (!data) {
       safeShowToast("Upload thành công nhưng server không trả về data.");
       return;
@@ -147,8 +147,8 @@ const AttachmentUploader: React.FC<Props> = ({
     });
   };
 
-  const onError = (err: any) => {
-    const text = err?.message ?? (typeof err === "string" ? err : "Có lỗi xảy ra. Vui lòng thử lại sau !");
+  const onError = (err: unknown) => {
+    const text = (err as Record<string, unknown>)?.message as string ?? (typeof err === "string" ? err : "Có lỗi xảy ra. Vui lòng thử lại sau !");
     safeShowToast(text);
   };
 
@@ -164,9 +164,9 @@ const AttachmentUploader: React.FC<Props> = ({
   /* Image upload via FileService.uploadFile */
   const handUploadFile = async (file: File) => {
     try {
-      if (FileService && typeof (FileService as any).uploadFile === "function") {
-        const maybe = (FileService as any).uploadFile({ data: file, onSuccess: processUploadSuccess, onError, onProgress });
-        if (maybe && typeof (maybe as Promise<any>).then === "function") {
+      if (FileService && typeof (FileService as Record<string, unknown>).uploadFile === "function") {
+        const maybe = (FileService as Record<string, (...args: unknown[]) => unknown>).uploadFile({ data: file, onSuccess: processUploadSuccess, onError, onProgress });
+        if (maybe && typeof (maybe as Promise<unknown>).then === "function") {
           const resp = await maybe;
           if (resp && (resp.fileUrl || resp.url)) processUploadSuccess(resp);
         }
@@ -189,8 +189,8 @@ const AttachmentUploader: React.FC<Props> = ({
       if (typeof uploadDocumentFormData === "function") {
         uploadDocumentFormData(
           file,
-          (data: any) => processUploadSuccess(data),
-          (err: any) => onError(err),
+          (data: Record<string, unknown>) => processUploadSuccess(data),
+          (err: unknown) => onError(err),
           (p?: number) => onProgress(p ?? 0)
         );
       } else {
@@ -250,14 +250,14 @@ const AttachmentUploader: React.FC<Props> = ({
         }
       }
     };
-    window.addEventListener("paste", onPaste as any);
-    return () => window.removeEventListener("paste", onPaste as any);
+    window.addEventListener("paste", onPaste as EventListener);
+    return () => window.removeEventListener("paste", onPaste as EventListener);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [list, multiple, maxFiles]);
 
   const handleAddFiles = async (incoming: File[] | FileList | null) => {
     if (!incoming) return;
-    const arr = Array.from(incoming as any as File[]);
+    const arr = Array.from(incoming as FileList);
     if (arr.length === 0) return;
     const remaining = maxFiles - list.length;
     const toProcess = multiple ? arr.slice(0, remaining) : [arr[0]];

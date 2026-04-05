@@ -48,7 +48,7 @@ interface ReceiptModalProps {
   onClose: () => void;
   customerId: number | string;
   invoiceId: number | string;
-  invoiceDraft: any;
+  invoiceDraft: Record<string, unknown>;
   method: string;
   qrCodePro: string | null;
   couponDiscount?: number;
@@ -118,7 +118,7 @@ export default function ReceiptModal({
     }
 
     try {
-      const body: any = {
+      const body: Record<string, unknown> = {
         // ── Định danh — QUAN TRỌNG: phải là id từ draft, không được là -1 ──
         id:           Number(realInvoiceId),
 
@@ -334,7 +334,7 @@ ${html}
       if (res?.code !== 0) throw new Error(res?.message ?? "Gửi thất bại");
       showToast(`Đã gửi biên lai tới ${email}`, "success");
       setShowEmail(false);
-    } catch (err: any) {
+    } catch (err: unknown) {
       showToast(err?.message ?? "Gửi email thất bại. Vui lòng thử lại.", "error");
     } finally {
       setIsSending(false);
@@ -620,7 +620,7 @@ function buildEmailHtml({ items, subtotal, totalDiscount, total, method, dateStr
         <span>TỔNG CỘNG</span><span style="color:#22c55e">${fmtVND(total)}</span>
       </div>
       <div style="display:flex;justify-content:space-between;padding:3px 0;font-size:12px;color:#666">
-        <span>Thanh toán</span><span>${({cash:"Tiền mặt",transfer:"Chuyển khoản",qr:"QR Code",credit_card:"Quẹt thẻ"} as any)[method] ?? method}</span>
+        <span>Thanh toán</span><span>${({cash:"Tiền mặt",transfer:"Chuyển khoản",qr:"QR Code",credit_card:"Quẹt thẻ"} as Record<string, unknown>)[method] ?? method}</span>
       </div>
     </div>
   </div>

@@ -6,7 +6,7 @@ import TimeConfigBox from "./partial/TimeConfigBox";
 import moment from "moment";
 import RunTimeConfig from "./partial/RunTimeConfig";
 
-export default function CycleConfig({ setFormData, formData, repeatDuration, setRepeatDuration, config, setConfig }: any) {
+export default function CycleConfig({ setFormData, formData, repeatDuration, setRepeatDuration, config, setConfig }: Record<string, unknown>) {
   const [cronType, setCronType] = useState("");
 
   return (

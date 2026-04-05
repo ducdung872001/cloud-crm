@@ -13,7 +13,7 @@ import { showToast } from "utils/common";
 import { isDifferenceObj } from 'reborn-util';
 import "./ModalAddPhone.scss";
 
-export default function ModalAddPhone(props: any) {
+export default function ModalAddPhone(props: Record<string, unknown>) {
   const { onShow, onHide, data } = props;
 
   const [isSubmit, setIsSubmit] = useState<boolean>(false);
@@ -27,7 +27,7 @@ export default function ModalAddPhone(props: any) {
     ({
       phone: data?.phone ?? "",
       status: data?.status?.toString() ?? '0',
-    } as any),
+    } as Record<string, unknown>),
     [data, onShow]
   );
 

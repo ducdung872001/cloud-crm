@@ -52,7 +52,7 @@ const StatCard: React.FC<StatCardProps> = ({ title, value, sub, icon, color, tre
   </div>
 );
 
-export default function PromoCode(props: any) {
+export default function PromoCode(props: Record<string, unknown>) {
   document.title = "Mã giảm giá";
   const { onBackProps } = props;
   const [permissions] = useState(getPermissions());
@@ -99,7 +99,7 @@ export default function PromoCode(props: any) {
         setListData(res.result?.items ?? []);
         setTotalItem(res.result?.total ?? 0);
       }
-    } catch (e: any) {
+    } catch (e: unknown) {
       if (e?.name !== "AbortError") showToast("Lỗi tải dữ liệu", "error");
     } finally {
       setIsLoading(false);

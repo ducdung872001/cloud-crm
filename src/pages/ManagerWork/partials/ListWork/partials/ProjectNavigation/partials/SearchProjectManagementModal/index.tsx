@@ -35,7 +35,7 @@ export default function SearchProjectManagementModal(props: ISearchProjectManage
         endTime: "",
         employeeId: null,
         departmentId: null,
-      } as any),
+      } as Record<string, unknown>),
     []
   );
 
@@ -154,7 +154,7 @@ export default function SearchProjectManagementModal(props: ISearchProjectManage
 
   const validations: IValidation[] = [];
 
-  const listField: any = [
+  const listField: Record<string, unknown> = [
     {
       type: "custom",
       name: "",

@@ -13,11 +13,11 @@ import "./ContentChat.scss";
 import ChatBotService from "services/ChatBotService";
 
 interface IContentFeedbackProps {
-  data: any;
+  data: Record<string, unknown>;
   onHide: (reload: boolean) => void;
 }
 
-export default function ContentChat(props: any) {
+export default function ContentChat(props: Record<string, unknown>) {
   const { data, onHide } = props;
 
   const inputRef = useRef(null);

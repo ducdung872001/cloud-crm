@@ -54,7 +54,7 @@ const CounterSales: React.FC = () => {
   const [activeTab, setActiveTab] = useState<TabType>("pos");
   const [cartItems, setCartItems] = useState<CartItem[]>(INITIAL_CART);
   const [invoiceId, setInvoiceId] = useState<number | null>(null);
-  const [invoiceDraftToPaid, setInvoiceDraftToPaid] = useState<any>(null);
+  const [invoiceDraftToPaid, setInvoiceDraftToPaid] = useState<Record<string, unknown>>(null);
   const [activeDraftId, setActiveDraftId] = useState<string | null>(null);
   /** Lưu paid/debt từ PayModal để truyền vào ReceiptModal → POST /invoice/create */
   const [paidAmount, setPaidAmount] = useState<number>(0);
@@ -98,7 +98,7 @@ const CounterSales: React.FC = () => {
         if (!isMounted || res.code !== 0) return;
         const items = Array.isArray(res.result) ? res.result
           : Array.isArray(res.result?.items) ? res.result.items : [];
-        setWarehouseOptions(items.map((item: any) => ({
+        setWarehouseOptions(items.map((item: Record<string, unknown>) => ({
           value: Number(item.id),
           label: item.name ?? item.warehouseName ?? `Kho #${item.id}`,
         })));

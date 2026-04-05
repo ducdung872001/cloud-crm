@@ -25,7 +25,7 @@ import { CashbookChartPoint, ExpenseCategoryPoint, PanelKey, PanelRefreshState, 
 type CashbookTabCache = {
   type: 1 | 2;
   listCashBook?: ICustomerResponse[];
-  listCashBookTotal?: any;
+  listCashBookTotal?: Record<string, unknown>;
   listReportCashBook?: ICustomerResponse[];
   prevBalance?: number;
   posBalance?: number;
@@ -218,7 +218,7 @@ export default function CashBookList() {
   const [isTabSwitching, setIsTabSwitching] = useState<boolean>(false);
   const [isNoItem, setIsNoItem] = useState<boolean>(false);
   const [listCashBook, setListCashBook] = useState<ICustomerResponse[]>([]);
-  const [listCashBookTotal, setListCashBookTotal] = useState<any>({});
+  const [listCashBookTotal, setListCashBookTotal] = useState<Record<string, unknown>>({});
   const [listReportCashBook, setListReportCashBook] = useState<ICustomerResponse[]>([]);
   const [prevBalance, setPrevBalance] = useState<number>(0);
   const [posBalance, setPosBalance] = useState<number>(0);

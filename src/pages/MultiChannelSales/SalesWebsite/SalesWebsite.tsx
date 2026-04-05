@@ -20,7 +20,7 @@ function QRWebsiteModal({ domain, storeName, onClose }: QRWebsiteModalProps) {
   const url = domain.startsWith("http") ? domain : `https://${domain}`;
 
   // Lấy canvas element sau khi render
-  const handleRef = useCallback((node: any) => {
+  const handleRef = useCallback((node: Record<string, unknown>) => {
     const el: HTMLCanvasElement | null = node?.canvas ?? node ?? null;
     if (el) canvasRef.current = el;
   }, []);
@@ -83,7 +83,7 @@ function QRWebsiteModal({ domain, storeName, onClose }: QRWebsiteModalProps) {
         {/* QR */}
         <div className="sw-qr-canvas">
           <QRCodeCanvas
-            ref={handleRef as any}
+            ref={handleRef as Record<string, unknown>}
             value={url}
             size={220}
             level="M"

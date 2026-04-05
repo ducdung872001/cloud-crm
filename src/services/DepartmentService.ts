@@ -40,12 +40,12 @@ export default {
   },
 
   // costs
-  lstCost: (params?: any) => {
+  lstCost: (params?: Record<string, unknown>) => {
     return fetch(`${urlsApi.department.detail}/cost${convertParamsToString(params)}`, {
       method: "GET",
     }).then((res) => res.json());
   },
-  updateCost: (body: any) => {
+  updateCost: (body: Record<string, unknown>) => {
     return fetch(`${urlsApi.department.update}/cost`, {
       method: "POST",
       body: JSON.stringify(body),

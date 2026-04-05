@@ -274,7 +274,7 @@ export default function ModalBpmParticipant({ onShow, onHide, dataNode, formSche
                   disabled: isSubmit || (!isDifferenceObj(formData, values) && formData.type !== "4"),
                   is_loading: isSubmit,
                 },
-              ] as any)),
+              ] as Record<string, unknown>)),
         ],
       },
     }),
@@ -392,7 +392,7 @@ export default function ModalBpmParticipant({ onShow, onHide, dataNode, formSche
   const [dataEmployee, setDataEmployee] = useState(null);
 
   const loadedOptionEmployee = async (search, loadedOptions, { page }) => {
-    const param: any = {
+    const param: Record<string, unknown> = {
       name: search,
       page: page,
       limit: 10,
@@ -462,7 +462,7 @@ export default function ModalBpmParticipant({ onShow, onHide, dataNode, formSche
   const [teamEmployee, setTeamEmployee] = useState(null);
 
   const loadedOptionTeamEmployee = async (search, loadedOptions, { page }) => {
-    const param: any = {
+    const param: Record<string, unknown> = {
       name: search,
       page: 1,
       limit: 100,
@@ -507,7 +507,7 @@ export default function ModalBpmParticipant({ onShow, onHide, dataNode, formSche
   const [teamMember, setTeamMember] = useState(null);
 
   const loadedOptionTeamMember = async (search, loadedOptions, { page }) => {
-    const param: any = {
+    const param: Record<string, unknown> = {
       name: search,
       page: page,
       limit: 10,

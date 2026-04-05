@@ -3,7 +3,7 @@ type Operator = "EQUAL" | "NOT_EQUAL" | "NOT_IN" | "IN";
 interface Condition {
   parameter: string;
   operator: Operator;
-  value: any[];
+  value: Record<string, unknown>[];
 }
 
 type InputItem = {

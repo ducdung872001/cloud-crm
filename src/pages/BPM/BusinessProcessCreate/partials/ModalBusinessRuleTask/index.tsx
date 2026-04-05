@@ -434,7 +434,7 @@ export default function ModalBusinessRuleTask({ onShow, onHide, dataNode, proces
                   // || !isDifferenceObj(formData, values),
                   is_loading: isSubmit,
                 },
-              ] as any)),
+              ] as Record<string, unknown>)),
         ],
       },
     }),
@@ -587,7 +587,7 @@ export default function ModalBusinessRuleTask({ onShow, onHide, dataNode, proces
           resultAttribute: null,
           resultValue: "",
         },
-      } as any),
+      } as Record<string, unknown>),
     [data, onShow]
   );
 
@@ -597,7 +597,7 @@ export default function ModalBusinessRuleTask({ onShow, onHide, dataNode, proces
   const [conditionList, setConditionList] = useState([valuesCondition]);
 
   //! đoạn này xử lý lấy năm
-  const [years] = useState<any[]>(
+  const [years] = useState<Record<string, unknown>[]>(
     createArrayFromToR(new Date().getFullYear(), 1963).map((item, idx) => {
       return {
         value: +item,
@@ -607,7 +607,7 @@ export default function ModalBusinessRuleTask({ onShow, onHide, dataNode, proces
   );
 
   //! đoạn này xử lý lấy tháng
-  const [months] = useState<any[]>(
+  const [months] = useState<Record<string, unknown>[]>(
     createArrayFromTo(1, 12).map((item, idx) => {
       if (item < 10) {
         return {
@@ -624,7 +624,7 @@ export default function ModalBusinessRuleTask({ onShow, onHide, dataNode, proces
   );
 
   //! đoạn này xử lý lấy ngày
-  const [days] = useState<any[]>(
+  const [days] = useState<Record<string, unknown>[]>(
     createArrayFromTo(1, 31).map((item, idx) => {
       if (item < 10) {
         return {
@@ -842,7 +842,7 @@ export default function ModalBusinessRuleTask({ onShow, onHide, dataNode, proces
 
   const [isLoadingSource, setIsLoadingSource] = useState<boolean>(false);
 
-  const onSelectOpenApi = async (source, idx, param?: any, idxList?) => {
+  const onSelectOpenApi = async (source, idx, param?: Record<string, unknown>, idxList?) => {
     if (!source) return;
 
     const checkSource = source.startsWith("https");
@@ -1218,7 +1218,7 @@ export default function ModalBusinessRuleTask({ onShow, onHide, dataNode, proces
     );
   };
 
-  const onSelectOpenBlockApi = async (source, ids, idx, param?: any, idxList?) => {
+  const onSelectOpenBlockApi = async (source, ids, idx, param?: Record<string, unknown>, idxList?) => {
     if (!source) return;
 
     const checkSource = source.startsWith("https");

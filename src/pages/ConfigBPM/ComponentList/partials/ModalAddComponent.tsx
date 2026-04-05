@@ -15,7 +15,13 @@ import "./ModalAddComponent.scss";
 import ContractCategoryService from "services/ContractCategoryService";
 import ArtifactService from "services/ArtifactService";
 
-export default function ModalAddComponent(props: any) {
+interface ModalAddComponentProps {
+  onShow: boolean;
+  onHide: (reload: boolean) => void;
+  data: Record<string, unknown> | null;
+}
+
+export default function ModalAddComponent(props: ModalAddComponentProps) {
   const { onShow, onHide, data } = props;
 
   const focusedElement = useActiveElement();
@@ -37,7 +43,7 @@ export default function ModalAddComponent(props: any) {
       position: Number.isFinite(Number(data?.position)) ? Number(data?.position) : 0,
       paste: "",
       bulkPaste: "",
-    } as any),
+    } as Record<string, unknown>),
     [data, onShow]
   );
 
@@ -108,11 +114,11 @@ export default function ModalAddComponent(props: any) {
           __line: idx + 1,
         };
       })
-      .filter(Boolean) as any[];
+      .filter(Boolean) as Record<string, unknown>[];
   };
 
   const onBulkCreate = async () => {
-    const raw = String((formData.values as any)?.bulkPaste ?? "");
+    const raw = String((formData.values as Record<string, unknown>)?.bulkPaste ?? "");
     const rows = parseBulkPaste(raw);
 
     if (!rows.length) {
@@ -122,8 +128,8 @@ export default function ModalAddComponent(props: any) {
 
     setIsSubmit(true);
 
-    const ok: any[] = [];
-    const fail: any[] = [];
+    const ok: Record<string, unknown>[] = [];
+    const fail: Record<string, unknown>[] = [];
 
     for (const row of rows) {
       const pos = Number(row.position);
@@ -138,7 +144,7 @@ export default function ModalAddComponent(props: any) {
         const res = await ArtifactService.update(body);
         if (res.code === 0) ok.push(row);
         else fail.push({ row, error: `Dòng ${row.__line}: ${res.message || "Lỗi tạo mới"}` });
-      } catch (e: any) {
+      } catch (e: unknown) {
         fail.push({ row, error: `Dòng ${row.__line}: Lỗi mạng/exception` });
       }
     }
@@ -217,7 +223,7 @@ export default function ModalAddComponent(props: any) {
   }, [isBulkMode, data]);
 
   useEffect(() => {
-    setFormData({ values, errors: {} } as any);
+    setFormData({ values, errors: {} } as IFormData);
     setIsSubmit(false);
 
     if (data) setIsBulkMode(false);
@@ -227,7 +233,7 @@ export default function ModalAddComponent(props: any) {
     };
   }, [values, data]);
 
-  const onSubmit = async (e: any) => {
+  const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
     if (isBulkMode && !data) {
@@ -235,7 +241,7 @@ export default function ModalAddComponent(props: any) {
       return;
     }
 
-    const posRaw = (formData.values as any)?.position;
+    const posRaw = (formData.values as Record<string, unknown>)?.position;
     const pos = Number(posRaw);
 
     if (!Number.isFinite(pos) || !Number.isInteger(pos) || pos < 0 || pos > 1000000) {
@@ -254,9 +260,9 @@ export default function ModalAddComponent(props: any) {
 
     setIsSubmit(true);
 
-    const { paste, bulkPaste, ...restValues } = (formData.values as any) || {};
+    const { paste, bulkPaste, ...restValues } = (formData.values as Record<string, unknown>) || {};
 
-    const body: any = {
+    const body: Record<string, unknown> = {
       ...restValues,
       position: pos,
       ...(data ? { id: data.id } : {}),
@@ -329,7 +335,7 @@ export default function ModalAddComponent(props: any) {
   };
 
   const checkKeyDown = useCallback(
-    (e: any) => {
+    (e: KeyboardEvent) => {
       const { keyCode } = e;
       if (keyCode === 27 && !showDialog) {
         if (isDifferenceObj(formData.values, values)) {
@@ -375,7 +381,7 @@ export default function ModalAddComponent(props: any) {
                     key={index}
                     field={field}
                     formData={formData}
-                    handleUpdate={(value: any) => {
+                    handleUpdate={(value: unknown) => {
                       handleChangeValidate(value, field, formData, validations, listFieldBasic, setFormData);
 
                       if (field.name === "paste") {

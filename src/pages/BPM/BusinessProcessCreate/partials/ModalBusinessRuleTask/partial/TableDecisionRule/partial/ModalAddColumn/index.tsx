@@ -18,9 +18,9 @@ export default function ModalAddColumn({ onShow, onHide, indexColumn, processId,
   const [isSubmit, setIsSubmit] = useState<boolean>(false);
   const [showDialog, setShowDialog] = useState<boolean>(false);
   const [contentDialog, setContentDialog] = useState<IContentDialog>(null);
-  const [addFieldAttributes, setAddFieldAttributes] = useState<any[]>([{ value: "", label: "" }]);
+  const [addFieldAttributes, setAddFieldAttributes] = useState<Record<string, unknown>[]>([{ value: "", label: "" }]);
 
-  const [detailLookup, setDetailLookup] = useState<any>(null);
+  const [detailLookup, setDetailLookup] = useState<Record<string, unknown>>(null);
 
   const [formData, setFormData] = useState({
     name: "",
@@ -354,7 +354,7 @@ export default function ModalAddColumn({ onShow, onHide, indexColumn, processId,
     setAddFieldAttributes(result);
   };
 
-  const [valueKey, setValueKey] = useState<any>(null);
+  const [valueKey, setValueKey] = useState<Record<string, unknown>>(null);
 
   //! đoạn này xử lý vấn đề lấy giá trị tham chiếu của trường lookup
   const handleDetailLookup = (item) => {

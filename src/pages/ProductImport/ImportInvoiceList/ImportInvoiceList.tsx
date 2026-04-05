@@ -36,7 +36,7 @@ export default function ImportInvoiceList() {
   const [listIdChecked, setListIdChecked] = useState<number[]>([]);
   const [showModalViewInvoice, setShowModalViewInvoice] = useState<boolean>(false);
   const [showDialog, setShowDialog] = useState<boolean>(false);
-  const [contentDialog, setContentDialog] = useState<any>(null);
+  const [contentDialog, setContentDialog] = useState<Record<string, unknown>>(null);
   const [idImportInvoice, setIdImportInvoice] = useState<number>(0);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [isNoItem, setIsNoItem] = useState<boolean>(false);
@@ -239,11 +239,11 @@ export default function ImportInvoiceList() {
     try {
       const base64 = await InvoiceService.exportImportInvoice({
         invoiceCode: params.invoiceCode || undefined,
-        fromDate:    (params as any).fromDate    || undefined,
-        toDate:      (params as any).toDate      || undefined,
-        employeeId:  (params as any).employeeId  ? +(params as any).employeeId : undefined,
-        status:      (params as any).status !== undefined && (params as any).status !== ""
-                       ? +(params as any).status : undefined,
+        fromDate:    (params as Record<string, unknown>).fromDate    || undefined,
+        toDate:      (params as Record<string, unknown>).toDate      || undefined,
+        employeeId:  (params as Record<string, unknown>).employeeId  ? +(params as Record<string, unknown>).employeeId : undefined,
+        status:      (params as Record<string, unknown>).status !== undefined && (params as Record<string, unknown>).status !== ""
+                       ? +(params as Record<string, unknown>).status : undefined,
       });
       const binary = atob(base64);
       const bytes  = new Uint8Array(binary.length);
@@ -260,7 +260,7 @@ export default function ImportInvoiceList() {
       link.remove();
       URL.revokeObjectURL(url);
       showToast("Xuất Excel thành công!", "success");
-    } catch (e: any) {
+    } catch (e: unknown) {
       showToast(e?.message ?? "Xuất Excel thất bại. Vui lòng thử lại.", "error");
     } finally {
       setIsExporting(false);
@@ -272,7 +272,7 @@ export default function ImportInvoiceList() {
       {
         title: isExporting ? "Đang xuất..." : "Xuất Excel",
         color: "primary",
-        variant: "outline" as any,
+        variant: "outline" as Record<string, unknown>,
         disabled: isExporting,
         callback: handleExportExcel,
       },

@@ -2,7 +2,7 @@ import { urlsApi } from "configs/urls";
 import { convertParamsToString } from "reborn-util";
 
 export default {
-  list: (params: any, signal?: AbortSignal) => {
+  list: (params: Record<string, unknown>, signal?: AbortSignal) => {
     return fetch(`${urlsApi.feedback.lst}${convertParamsToString(params)}`, {
       signal,
       method: "GET",

@@ -16,9 +16,9 @@ import "./AddDepartmentSupport.scss";
 interface IAddDepartmentSupportProps {
   onShow: boolean;
   onHide: () => void;
-  data?: any;
+  data?: Record<string, unknown>;
   supportId: number;
-  takeData?: (data: any) => void;
+  takeData?: (data: Record<string, unknown>) => void;
   disabled: boolean;
 }
 
@@ -146,7 +146,7 @@ export default function AddDepartmentSupport(props: IAddDepartmentSupportProps) 
   };
 
   const loadedOptionDepartment = async (search, loadedOptions, { page }) => {
-    const param: any = {
+    const param: Record<string, unknown> = {
       name: search,
       page: page,
       limit: 100,

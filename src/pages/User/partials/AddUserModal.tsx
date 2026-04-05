@@ -12,7 +12,7 @@ import { PHONE_REGEX, EMAIL_REGEX } from "utils/constant";
 import UserService from "services/UserService";
 import "./AddUserModal.scss";
 
-export default function AddUserModal(props: any) {
+export default function AddUserModal(props: Record<string, unknown>) {
   const { onShow, data, onHide } = props;
   const [isSubmit, setIsSubmit] = useState<boolean>(false);
   const focusedElement = useActiveElement();
@@ -38,7 +38,7 @@ export default function AddUserModal(props: any) {
         email: data?.email ?? "",
         role: data?.role ?? "mod",
         seeder: 0,
-      } as any),
+      } as Record<string, unknown>),
     [data, onShow]
   );
 
@@ -134,9 +134,9 @@ export default function AddUserModal(props: any) {
       return;
     }
     setIsSubmit(true);
-    const body: any = {
+    const body: Record<string, unknown> = {
       ...(data ? { id: data?.id } : {}),
-      ...(formData.values as any),
+      ...(formData.values as Record<string, unknown>),
     };
 
     let response = null;

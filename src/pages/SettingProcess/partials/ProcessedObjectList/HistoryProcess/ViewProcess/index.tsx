@@ -49,7 +49,7 @@ export default function ViewProcess(props) {
     }
   }
 
-  const getDetailProcess = async (id?: number, logObject?: any) => {
+  const getDetailProcess = async (id?: number, logObject?: Record<string, unknown>) => {
     const response = await BusinessProcessService.detail(id);
 
     if (response.code === 0) {

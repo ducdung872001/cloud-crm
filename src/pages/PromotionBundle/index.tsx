@@ -30,13 +30,13 @@ const statusMap: Record<string, { label: string; className: string }> = {
   expired: { label: "Hết hạn", className: "combo-badge combo-badge--expired" },
 };
 
-export default function PromotionBundle(props: any) {
+export default function PromotionBundle(props: Record<string, unknown>) {
   document.title = "Combo khuyến mãi";
 
   const { onBackProps } = props;
   const [permissions] = useState(getPermissions());
   const [showModalAdd, setShowModalAdd] = useState(false);
-  const [dataCategoryService, setDataCategoryService] = useState<any>(null);
+  const [dataCategoryService, setDataCategoryService] = useState<Record<string, unknown>>(null);
 
   const titleActions: ITitleActions = {
     actions: [

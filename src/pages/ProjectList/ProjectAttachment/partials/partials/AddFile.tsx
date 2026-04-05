@@ -12,13 +12,13 @@ import ImgFilePowerpoint from "assets/images/img-powerpoint.png";
 
 interface IAddFileProps {
   code?: string;
-  fileProps?: any;
-  infoFile?: any;
+  fileProps?: Record<string, unknown>;
+  infoFile?: Record<string, unknown>;
   takeFileAdd: (data) => void;
-  setInfoFile?: any;
+  setInfoFile?: Record<string, unknown>;
   template?: string;
-  setIsLoadingFile?: any
-  dataAttachment?: any
+  setIsLoadingFile?: Record<string, unknown>
+  dataAttachment?: Record<string, unknown>
 }
 
 /**
@@ -69,7 +69,7 @@ export default function AddFile(props: IAddFileProps) {
     setDragging(false);
 
     const newFiles = [...files];
-    const droppedFiles: any = Array.from(e.dataTransfer.files);
+    const droppedFiles: Record<string, unknown> = Array.from(e.dataTransfer.files);
 
     droppedFiles.forEach((file) => {
       const checkFile = file?.name.split("?")[0].split("#")[0].split(".").pop();

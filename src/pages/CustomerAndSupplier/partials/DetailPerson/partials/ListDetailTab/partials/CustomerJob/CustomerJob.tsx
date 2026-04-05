@@ -25,7 +25,7 @@ export default function CustomerJob({ dataCustomer }) {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [showModalAdd, setShowModalAdd] = useState<boolean>(false);
 
-  const [params, setParams] = useState<any>({
+  const [params, setParams] = useState<Record<string, unknown>>({
     name: "",
     projectId: -1,
     customerId: dataCustomer.id,
@@ -47,7 +47,7 @@ export default function CustomerJob({ dataCustomer }) {
 
   const abortController = new AbortController();
 
-  const getListWork = async (paramsSearch: any) => {
+  const getListWork = async (paramsSearch: Record<string, unknown>) => {
     setIsLoading(true);
 
     const response = await WorkOrderService.list(paramsSearch, abortController.signal);
@@ -162,7 +162,7 @@ export default function CustomerJob({ dataCustomer }) {
     }
   };
 
-  const dataMappingArray = (item: any, index: number) => [
+  const dataMappingArray = (item: Record<string, unknown>, index: number) => [
     getPageOffset(params) + index + 1,
     item.name,
     item.employeeName,
@@ -186,7 +186,7 @@ export default function CustomerJob({ dataCustomer }) {
 
   const [idWork, setIdWork] = useState<number>(null);
 
-  const actionsTable = (item: any): IAction[] => {
+  const actionsTable = (item: Record<string, unknown>): IAction[] => {
     return [
       ...(item.status == 2 || item.status == 3
         ? []
@@ -211,7 +211,7 @@ export default function CustomerJob({ dataCustomer }) {
   };
 
   const [showDialog, setShowDialog] = useState<boolean>(false);
-  const [contentDialog, setContentDialog] = useState<any>(null);
+  const [contentDialog, setContentDialog] = useState<Record<string, unknown>>(null);
 
   const onDelete = async (id: number) => {
     const response = await WorkOrderService.delete(id);
@@ -226,7 +226,7 @@ export default function CustomerJob({ dataCustomer }) {
     setContentDialog(null);
   };
 
-  const showDialogConfirmDelete = (item?: any) => {
+  const showDialogConfirmDelete = (item?: Record<string, unknown>) => {
     const contentDialog: IContentDialog = {
       color: "error",
       className: "dialog-delete",

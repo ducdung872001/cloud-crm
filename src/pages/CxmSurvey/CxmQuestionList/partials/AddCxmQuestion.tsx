@@ -13,7 +13,7 @@ import "./AddCxmQuestion.scss";
 // BuildingFloorService removed (non-retail BDS)
 import CxmQuestionService from "services/CxmQuestionService";
 
-export default function AddCxmQuestion(props: any) {
+export default function AddCxmQuestion(props: Record<string, unknown>) {
   const { onShow, onHide, data, dataSurvey } = props;
 
   const focusedElement = useActiveElement();
@@ -71,7 +71,7 @@ export default function AddCxmQuestion(props: any) {
         questionText: data?.questionText ?? "",
         questionType: data?.questionType ?? "",
         surveyId: dataSurvey?.id ?? "",
-      } as any),
+      } as Record<string, unknown>),
     [data, onShow]
   );
 
@@ -109,7 +109,7 @@ export default function AddCxmQuestion(props: any) {
   );
 
   //! đoạn này xử lý lấy ngày
-  const [days, setDays] = useState<any[]>(
+  const [days, setDays] = useState<Record<string, unknown>[]>(
     createArrayFromTo(1, 28).map((item, idx) => {
       if (item < 10) {
         return {

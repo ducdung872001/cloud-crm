@@ -15,7 +15,7 @@ import "./KanbanWarranty.scss";
 export default function KanbanWarranty(props: IKanbanWarrantyProps) {
   const { data } = props;
 
-  const [columns, setColumns] = useState<any[]>([]);
+  const [columns, setColumns] = useState<Record<string, unknown>[]>([]);
   const [idEndPoint, setIdEndPoint] = useState<number>();
   const [idStatusWarranty, setIdStatusWarranty] = useState<number>();
   const [idWarranty, setIdWarranty] = useState<number>();

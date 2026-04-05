@@ -1,4 +1,4 @@
-export const filterData = (currentDataRow: any[], checkedMap, columns) => {
+export const filterData = (currentDataRow: Record<string, unknown>[], checkedMap, columns) => {
   try {
     // Your async logic here
     let paramsFilter = {};

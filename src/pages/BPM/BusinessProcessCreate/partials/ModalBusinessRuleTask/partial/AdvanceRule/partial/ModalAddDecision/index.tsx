@@ -18,7 +18,7 @@ export default function ModalAddDecision({ onShow, onHide, setListColumn, listKe
   const [isSubmit, setIsSubmit] = useState<boolean>(false);
   const [showDialog, setShowDialog] = useState<boolean>(false);
   const [contentDialog, setContentDialog] = useState<IContentDialog>(null);
-  const [addFieldAttributes, setAddFieldAttributes] = useState<any[]>([{ value: "", label: "" }]);
+  const [addFieldAttributes, setAddFieldAttributes] = useState<Record<string, unknown>[]>([{ value: "", label: "" }]);
   const [listAttribute, setListAttribute] = useState([
     {
       name: "",
@@ -75,7 +75,7 @@ export default function ModalAddDecision({ onShow, onHide, setListColumn, listKe
     return false; // Không có phần tử trùng lặp
   }
 
-  function hasEmptyFields(listAttribute: { key?: string; name?: string; type?: any }[]): boolean {
+  function hasEmptyFields(listAttribute: { key?: string; name?: string; type?: Record<string, unknown> }[]): boolean {
     return listAttribute.some((item) => !item.key?.trim() || !item.name?.trim() || !item.type?.value.trim());
   }
 
@@ -203,7 +203,7 @@ export default function ModalAddDecision({ onShow, onHide, setListColumn, listKe
     setAddFieldAttributes(result);
   };
 
-  const [valueKey, setValueKey] = useState<any>(null);
+  const [valueKey, setValueKey] = useState<Record<string, unknown>>(null);
 
   const loadedOptionAttribute = async (search, loadedOptions, { page }) => {
     const params = {

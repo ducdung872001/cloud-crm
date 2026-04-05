@@ -143,7 +143,7 @@ export default function WarehouseReportSlowView() {
       .then(json => {
         const arr = Array.isArray(json.result) ? json.result
           : Array.isArray(json.result?.items) ? json.result.items : [];
-        setWarehouseList(arr.map((i: any) => ({ value: i.id, label: i.name })));
+        setWarehouseList(arr.map((i: Record<string, unknown>) => ({ value: i.id, label: i.name })));
       })
       .catch(() => {});
   }, []);

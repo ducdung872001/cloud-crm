@@ -43,7 +43,7 @@ export default function CreateMarketingAutomation() {
     const response = await MarketingAutomationService.detail(+id);
 
     if (response.code === 0) {
-      const result: any = response.result;
+      const result: Record<string, unknown> = response.result;
       setValuePoint([result.campaignPoint]);
       if (result.campaignId) {
         setValueCampaign({

@@ -28,7 +28,7 @@ const chartColor = {
 
 interface ReportRevenueProps {
   classNames?: string;
-  paramsProps: any;
+  paramsProps: Record<string, unknown>;
 }
 
 export default function ChartJobEmployee(props: ReportRevenueProps) {

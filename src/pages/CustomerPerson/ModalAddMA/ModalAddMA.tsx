@@ -19,7 +19,14 @@ import "./ModalAddMA.scss";
 import { ContextType, UserContext } from "contexts/userContext";
 import MarketingAutomationService from "services/MarketingAutomationService";
 
-export default function ModalAddMA(props: any) {
+interface ModalAddMAProps {
+  onShow: boolean;
+  onHide: (reload: boolean) => void;
+  idData?: number;
+  idCustomer?: number;
+}
+
+export default function ModalAddMA(props: ModalAddMAProps) {
   //isBatch: Thêm hàng loạt cơ hội (thêm nhanh từ màn hình danh sách khách hàng)
   const { onShow, onHide, idData, idCustomer } = props;
 
@@ -68,7 +75,7 @@ export default function ModalAddMA(props: any) {
         employeeId: data?.employeeId ?? null,
         customerId: data?.customerId ?? null,
         maId: data?.maId ?? null,
-      } as any),
+      } as Record<string, unknown>),
     [onShow, data]
   );
 
@@ -303,7 +310,7 @@ export default function ModalAddMA(props: any) {
   const [checkFieldMA, setCheckFieldMA] = useState<boolean>(false);
 
   const loadedOptionMA = async (search, loadedOptions, { page }) => {
-    const param: any = {
+    const param: Record<string, unknown> = {
       name: search,
       page: page,
       limit: 10,

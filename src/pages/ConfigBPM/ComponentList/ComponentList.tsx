@@ -17,7 +17,11 @@ import "./ComponentList.scss";
 import ArtifactService from "services/ArtifactService";
 import ModalAddComponent from "./partials/ModalAddComponent";
 
-export default function ComponentList(props: any) {
+interface ComponentListProps {
+  onBackProps: (value: boolean) => void;
+}
+
+export default function ComponentList(props: ComponentListProps) {
   document.title = "Danh mục thành phần chung";
 
   const { onBackProps } = props;
@@ -29,7 +33,7 @@ export default function ComponentList(props: any) {
   const [listIdChecked, setListIdChecked] = useState<number[]>([]);
   const [showModalAddComponent, setShowModalAddComponent] = useState<boolean>(false);
   const [showDialog, setShowDialog] = useState<boolean>(false);
-  const [contentDialog, setContentDialog] = useState<any>(null);
+  const [contentDialog, setContentDialog] = useState<IContentDialog | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [isNoItem, setIsNoItem] = useState<boolean>(true);
   const [isPermissions, setIsPermissions] = useState<boolean>(false);
@@ -62,7 +66,7 @@ export default function ComponentList(props: any) {
 
   const abortController = new AbortController();
 
-  const getListComponent = async (paramsSearch: any) => {
+  const getListComponent = async (paramsSearch: Record<string, unknown>) => {
     setIsLoading(true);
 
     const response = await ArtifactService.list(paramsSearch, abortController.signal);
@@ -133,7 +137,7 @@ export default function ComponentList(props: any) {
 
   const dataFormat = ["text-center", "", "", "", "text-center"];
 
-  const mapComponentType = (type: any) => {
+  const mapComponentType = (type: string | number | null | undefined) => {
     const t = typeof type === "string" ? type.trim() : type;
 
     if (t === 1 || t === "1") return "Hành động";
@@ -143,7 +147,7 @@ export default function ComponentList(props: any) {
     return String(type);
   };
 
-  const dataMappingArray = (item: any, index: number) => [
+  const dataMappingArray = (item: Record<string, unknown>, index: number) => [
     getPageOffset(params) + index + 1,
     item.name,
     item.code,
@@ -151,7 +155,7 @@ export default function ComponentList(props: any) {
     item.position ? item.position : "0",
   ];
 
-  const actionsTable = (item: any): IAction[] => {
+  const actionsTable = (item: Record<string, unknown>): IAction[] => {
     const isCheckedItem = listIdChecked?.length > 0;
     return [
       {
@@ -220,7 +224,7 @@ export default function ComponentList(props: any) {
       });
   }
 
-  const showDialogConfirmDelete = (item?: any) => {
+  const showDialogConfirmDelete = (item?: Record<string, unknown>) => {
     const contentDialog: IContentDialog = {
       color: "error",
       className: "dialog-delete",

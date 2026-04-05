@@ -274,7 +274,7 @@ export default function CreateOrder() {
     loadOptionSaleflow();
   }, []);
   const loadOptionSaleflow = async () => {
-    const param: any = {
+    const param: Record<string, unknown> = {
       name: "",
       page: 1,
       limit: 10,
@@ -550,7 +550,7 @@ export default function CreateOrder() {
   }, [conditionCommon.formData.discount, conditionCommon.formData.discount_type, conditionCommon.formData.amount, hasAPIPayAmount]);
 
   //* submit form
-  const [dataInvoice, setDataInvoice] = useState<any>({});
+  const [dataInvoice, setDataInvoice] = useState<Record<string, unknown>>({});
   const handSubmitForm = async (e, type: string) => {
     e.preventDefault();
 
@@ -598,7 +598,7 @@ export default function CreateOrder() {
       };
     });
     
-    const body: any = {
+    const body: Record<string, unknown> = {
       id: changeFormData.id,
       bnsId: 0,
       orderDate: moment(changeFormData.order_date, "DD/MM/YYYY").startOf("day").format("YYYY-MM-DDTHH:mm:ss"),

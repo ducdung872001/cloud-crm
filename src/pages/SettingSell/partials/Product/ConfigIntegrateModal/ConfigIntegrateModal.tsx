@@ -15,7 +15,7 @@ import Input from "components/input/input";
 import IntegrationPartnerService from "services/IntegrationPartnerService";
 import Tippy from "@tippyjs/react";
 
-export default function ConfigIntegrateModal(props: any) {
+export default function ConfigIntegrateModal(props: Record<string, unknown>) {
   const { onShow, onHide, type } = props;
 
   const [isSubmit, setIsSubmit] = useState<boolean>(false);
@@ -206,7 +206,7 @@ export default function ConfigIntegrateModal(props: any) {
                   })
                 }
               },
-            } as any),
+            } as Record<string, unknown>),
           ] : []),
 
           {

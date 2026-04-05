@@ -40,7 +40,7 @@ interface IFilterUser {
   gender: number;
 }
 
-export default function EditPromotion(props: any) {
+export default function EditPromotion(props: Record<string, unknown>) {
   const { showEditPrm, setShowEditPrm, data } = props;
   console.log("data edit prm", data);
   document.title = "Thêm mới khuyến mãi";
@@ -53,7 +53,7 @@ export default function EditPromotion(props: any) {
   const [isNoItem, setIsNoItem] = useState<boolean>(false);
   const [isSettingEform, setIsSettingEform] = useState<boolean>(false);
 
-  const [listCondition, setListCondition] = useState<any[]>([
+  const [listCondition, setListCondition] = useState<Record<string, unknown>[]>([
     {
       type: "1",
       value: "1",
@@ -138,7 +138,7 @@ export default function EditPromotion(props: any) {
   const [optionOne, setOptionOne] = useState<boolean>(false);
   const [optionTwo, setOptionTwo] = useState<boolean>(false);
   const [optionThree, setOptionThree] = useState<boolean>(false);
-  const [formData, setFormData] = useState<any>({ values: {} });
+  const [formData, setFormData] = useState<Record<string, unknown>>({ values: {} });
 
   //! biến này tạo ra với mục đích validate số khách hàng tối đa muốn gửi
   const [isLimitCustomer, setIsLimitCustomer] = useState<boolean>(false);
@@ -444,7 +444,7 @@ export default function EditPromotion(props: any) {
   const [valueUpload, setValueUpload] = useState([]);
 
   const loadOptionUpload = async (search, loadedOptions, { page }) => {
-    const param: any = {
+    const param: Record<string, unknown> = {
       name: search,
       page: page,
       limit: 10,
@@ -609,7 +609,7 @@ export default function EditPromotion(props: any) {
     setFormData({ ...formData, values: { ...formData?.values, endDate: e } });
   };
 
-  const [giftList, setGiftList] = useState<any[]>([
+  const [giftList, setGiftList] = useState<Record<string, unknown>[]>([
     {
       id: 1,
       name: "Sản phẩm 1",

@@ -26,7 +26,7 @@ export default {
     }).then((res) => res.json());
   },
 
-  checkEmail: (body: any) => {
+  checkEmail: (body: Record<string, unknown>) => {
     return fetch(urlsApi.emailConfig.checkEmail, {
       method: "POST",
       body: JSON.stringify(body),

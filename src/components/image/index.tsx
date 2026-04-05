@@ -9,7 +9,7 @@ interface ImageProps {
   width?: string;
   height?: string;
   className?: string;
-  onClick?: any;
+  onClick?: React.MouseEventHandler<HTMLImageElement>;
 }
 
 export default function Image(props: ImageProps) {

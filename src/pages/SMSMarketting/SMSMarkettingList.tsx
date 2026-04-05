@@ -43,7 +43,7 @@ export default function SMSMarkettingList(props) {
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [isNoItem, setIsNoItem] = useState<boolean>(false);
   const [showDialog, setShowDialog] = useState<boolean>(false);
-  const [contentDialog, setContentDialog] = useState<any>(null);
+  const [contentDialog, setContentDialog] = useState<Record<string, unknown>>(null);
   const [showPageSendSMS, setShowPageSendSMS] = useState<boolean>(false);
   const [checkadd, setCheckAdd] = useState(false);
   const [permissions, setPermissions] = useState(getPermissions());

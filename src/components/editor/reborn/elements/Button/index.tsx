@@ -126,7 +126,7 @@ const insertLink = (editor, url) => {
 
     // Remove the Link node if we're inserting a new link node inside of another
     // link.
-    if ((parentNode as any).type === "link") {
+    if ((parentNode as SlateElement).type === "link") {
       removeLink(editor);
     }
 

@@ -13,7 +13,7 @@ import NummericInput from "components/input/numericInput";
 import _ from "lodash";
 import BusinessProcessService from "services/BusinessProcessService";
 
-export default function ModalSLA(props: any) {
+export default function ModalSLA(props: Record<string, unknown>) {
   //isBatch: Thêm hàng loạt cơ hội (thêm nhanh từ màn hình danh sách khách hàng)
   const { onShow, onHide, dataNode, disable } = props;
   // console.log('dataApproach', dataApproach);

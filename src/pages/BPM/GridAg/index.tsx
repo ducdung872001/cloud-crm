@@ -5,10 +5,10 @@ import GridAgTable, { GridAgTableHandle } from "./GridAgTable";
 export interface IGridAgTable {
   location: string; // "iframe" hoặc "viewAndHandle"
   setDataConfigGrid?: (data) => void;
-  dataGrid?: any; // Dữ liệu cấu hình bảng từ bên ngoài
+  dataGrid?: Record<string, unknown>; // Dữ liệu cấu hình bảng từ bên ngoài
   onChange?: (data) => void; // Hàm gọi khi có thay đổi dữ liệu (dùng trong configViewer)
-  onAction?: (action: any) => void; // Hàm gọi khi có hành động trên grid
-  configField?: any; // Dùng trong configViewer để truyền tham số thay vì lấy từ URL
+  onAction?: (action: Record<string, unknown>) => void; // Hàm gọi khi có hành động trên grid
+  configField?: Record<string, unknown>; // Dùng trong configViewer để truyền tham số thay vì lấy từ URL
   domId?: string; // key để ép React remount lại component khi cần thiết
 }
 

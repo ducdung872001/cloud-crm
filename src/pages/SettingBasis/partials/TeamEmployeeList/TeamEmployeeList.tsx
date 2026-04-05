@@ -18,25 +18,25 @@ import TeamEmployeeService from "services/TeamEmployeeService";
 import AddTeamModal from "./partials/AddTeamModal/AddTeamModal";
 import EmployeeListModal from "./partials/EmployeeListModal/EmployeeListModal";
 
-export default function TeamEmployeeList(props: any) {
+export default function TeamEmployeeList(props: Record<string, unknown>) {
   document.title = "Danh sách nhóm nhân viên";
 
   const { onBackProps } = props;
   const isMounted = useRef(false);
 
-  const [listTeam, setListTeam] = useState<any[]>([]);
-  const [dataTeam, setDataTeam] = useState<any>(null);
+  const [listTeam, setListTeam] = useState<Record<string, unknown>[]>([]);
+  const [dataTeam, setDataTeam] = useState<Record<string, unknown>>(null);
   const [listIdChecked, setListIdChecked] = useState<number[]>([]);
   const [showModalAdd, setShowModalAdd] = useState<boolean>(false);
   const [showModalListEmployee, setShowModalListEmployee] = useState<boolean>(false);
   const [showDialog, setShowDialog] = useState<boolean>(false);
-  const [contentDialog, setContentDialog] = useState<any>(null);
+  const [contentDialog, setContentDialog] = useState<Record<string, unknown>>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [isNoItem, setIsNoItem] = useState<boolean>(false);
   const [isPermissions, setIsPermissions] = useState<boolean>(false);
   const [permissions, setPermissions] = useState(getPermissions());
 
-  const [params, setParams] = useState<any>({
+  const [params, setParams] = useState<Record<string, unknown>>({
     name: "",
     limit: 10,
   });
@@ -63,7 +63,7 @@ export default function TeamEmployeeList(props: any) {
 
   const abortController = new AbortController();
 
-  const getListTeam= async (paramsSearch: any) => {
+  const getListTeam= async (paramsSearch: Record<string, unknown>) => {
     setIsLoading(true);
 
     const response = await TeamEmployeeService.list(paramsSearch, abortController.signal);
@@ -134,7 +134,7 @@ export default function TeamEmployeeList(props: any) {
 
   const dataFormat = ["text-center", "", "text-center"];
 
-  const dataMappingArray = (item: any, index: number) => [
+  const dataMappingArray = (item: Record<string, unknown>, index: number) => [
     getPageOffset(params) + index + 1,
     item.name,
     <div
@@ -149,7 +149,7 @@ export default function TeamEmployeeList(props: any) {
     </div>,    
   ];
 
-  const actionsTable = (item: any): IAction[] => {
+  const actionsTable = (item: Record<string, unknown>): IAction[] => {
         const isCheckedItem = listIdChecked?.length > 0;
     return [  
      
@@ -190,7 +190,7 @@ export default function TeamEmployeeList(props: any) {
     setContentDialog(null);
   };
 
-  const showDialogConfirmDelete = (item?: any) => {
+  const showDialogConfirmDelete = (item?: Record<string, unknown>) => {
     const contentDialog: IContentDialog = {
       color: "error",
       className: "dialog-delete",

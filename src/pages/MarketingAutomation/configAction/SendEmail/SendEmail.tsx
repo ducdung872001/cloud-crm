@@ -42,7 +42,7 @@ import ImgFilePowerpoint from "assets/images/img-powerpoint.png";
 import SelectCustom from "components/selectCustom/selectCustom";
 import PlaceholderService from "services/PlaceholderService";
 
-export default function SendEmail(props: any) {
+export default function SendEmail(props: Record<string, unknown>) {
   const { onShow, onHide, dataNode, setDataNode, statusMA } = props;
   //console.log("dataNode", dataNode);
 
@@ -383,7 +383,7 @@ export default function SendEmail(props: any) {
         request.onload = function () {
           var reader = new FileReader();
           reader.readAsDataURL(request.response);
-          reader.onload = function (e: any) {
+          reader.onload = function (e: Record<string, unknown>) {
             const data = {
               fileName: `${convertToFileName(item?.fileName || "")}`,
               fileData: e.target.result.split(",")[1],
@@ -419,7 +419,7 @@ export default function SendEmail(props: any) {
 
     setIsSubmit(true);
 
-    const body: any = {
+    const body: Record<string, unknown> = {
       ...dataNode,
       configData: { ...formData.values, content: desContent, files: dataAttactment },
       point: nodePoint,
@@ -547,7 +547,7 @@ export default function SendEmail(props: any) {
       showToast("Vui lòng nhập tên hành động", "error");
       return;
     }
-    const body: any = {
+    const body: Record<string, unknown> = {
       ...dataNode,
       name: nodeName,
       configData: { ...formData.values, content: desContent, files: newData },
@@ -566,7 +566,7 @@ export default function SendEmail(props: any) {
     }
   };
 
-  const [listApproach, setListApproach] = useState<any>([
+  const [listApproach, setListApproach] = useState<Record<string, unknown>>([
     {
       value: "customer",
       label: "Khách hàng",
@@ -597,7 +597,7 @@ export default function SendEmail(props: any) {
     // },
   ]);
 
-  const [placeholder, setPlaceholder] = useState<any>(listApproach[0]);
+  const [placeholder, setPlaceholder] = useState<Record<string, unknown>>(listApproach[0]);
 
   useEffect(() => {
     for (let i = 0; i < listApproach.length; i++) {

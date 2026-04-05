@@ -49,7 +49,7 @@ function formatDate(d?: string) {
 }
 
 // ── Main page ─────────────────────────────────────────────────────
-export default function FixedPricePage(props: any) {
+export default function FixedPricePage(props: Record<string, unknown>) {
   document.title = "Chương trình đồng giá";
   const { onBackProps } = props;
   const [permissions] = useState(getPermissions());
@@ -111,7 +111,7 @@ export default function FixedPricePage(props: any) {
             .catch(() => {});
         });
       }
-    } catch (e: any) {
+    } catch (e: unknown) {
       if (e?.name !== "AbortError") showToast("Lỗi tải dữ liệu", "error");
     } finally {
       setIsLoading(false);

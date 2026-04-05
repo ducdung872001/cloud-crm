@@ -10,7 +10,7 @@ import { formatCurrency } from "reborn-util";
 
 interface ICardItem {
   key: string;
-  icon: any;
+  icon: Record<string, unknown>;
   name: string;
   value: string;
   color: "total" | "out-date" | "success" | "today" | "remaining" | "average" | "early";

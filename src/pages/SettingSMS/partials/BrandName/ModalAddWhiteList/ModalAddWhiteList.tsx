@@ -19,7 +19,7 @@ import moment from "moment";
 import BrandNameService from "services/BrandNameService";
 import { PHONE_REGEX } from "utils/constant";
 
-export default function ModalAddWhiteList(props: any) {
+export default function ModalAddWhiteList(props: Record<string, unknown>) {
   const { onShow, onHide, data } = props;
   const focusedElement = useActiveElement();
 
@@ -57,7 +57,7 @@ export default function ModalAddWhiteList(props: any) {
 
   const abortController = new AbortController();
 
-  const getListPhoneNumber = async (paramsSearch: any) => {
+  const getListPhoneNumber = async (paramsSearch: Record<string, unknown>) => {
     setIsLoading(true);
 
     const response = await BrandNameService.listWhiteList(paramsSearch, abortController.signal);
@@ -86,9 +86,9 @@ export default function ModalAddWhiteList(props: any) {
   const titlesWhiteList = ["STT", "Số điện thoại"];
   const dataFormatWhiteList = ["text-center"];
 
-  const dataMappingArray = (item: any, index: number) => [getPageOffset(params) + index + 1, item.contact];
+  const dataMappingArray = (item: Record<string, unknown>, index: number) => [getPageOffset(params) + index + 1, item.contact];
 
-  const actionsTable = (item: any): IAction[] => {
+  const actionsTable = (item: Record<string, unknown>): IAction[] => {
     return [
       {
         title: "Sửa",
@@ -108,7 +108,7 @@ export default function ModalAddWhiteList(props: any) {
     ];
   };
 
-  const showDialogConfirmDelete = (item?: any) => {
+  const showDialogConfirmDelete = (item?: Record<string, unknown>) => {
     const contentDialog: IContentDialog = {
       color: "error",
       className: "dialog-delete",
@@ -182,7 +182,7 @@ export default function ModalAddWhiteList(props: any) {
         id: dataWhiteList?.id ?? 0,
         contact: dataWhiteList?.contact ?? "",
         uatWhitelistId: dataWhiteList?.uatWhitelistId ?? data?.whitelist?.id ?? "",
-      } as any),
+      } as Record<string, unknown>),
     [dataWhiteList, isAddWhiteList, data]
   );
 
@@ -235,7 +235,7 @@ export default function ModalAddWhiteList(props: any) {
     setIsSubmitWhiteList(true);
 
     const body = {
-      ...(formDataWhiteList.values as any),
+      ...(formDataWhiteList.values as Record<string, unknown>),
       // ...(data ? { id: data.id } : {}),
     };
 

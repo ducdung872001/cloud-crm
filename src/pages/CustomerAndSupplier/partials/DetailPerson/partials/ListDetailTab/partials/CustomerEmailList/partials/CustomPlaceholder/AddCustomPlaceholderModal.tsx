@@ -39,7 +39,7 @@ export default function AddCustomPlaceholderModal(props: ICustomPlaceholderModal
 
   useEffect(() => {
     let mapCode = {};
-    (values?.codes || ([] as any)).map((item) => {
+    (values?.codes || ([] as Record<string, unknown>)).map((item) => {
       mapCode[item] = "";
     });
 

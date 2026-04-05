@@ -81,7 +81,7 @@ function CategorySlideOver({ open, type, editItem, onClose, onSaved }: CategoryS
         position: parseInt(form.position, 10) || 0,
         bsnId:    0,
       };
-      const res = await CategoryService.update(payload as any);
+      const res = await CategoryService.update(payload as Record<string, unknown>);
       const ok  = res?.code === 0 || res?.code === 200;
       if (!ok) { setError(res?.message ?? "Lưu thất bại"); return; }
 
@@ -93,7 +93,7 @@ function CategorySlideOver({ open, type, editItem, onClose, onSaved }: CategoryS
         code:     form.code.trim() || undefined,
         position: parseInt(form.position, 10) || 0,
       });
-    } catch (e: any) {
+    } catch (e: unknown) {
       setError(e?.message ?? "Lỗi kết nối");
     } finally {
       setSaving(false);
@@ -208,7 +208,7 @@ function DeleteConfirm({ item, onConfirm, onCancel }: DeleteConfirmProps) {
     setError("");
     try {
       await onConfirm();
-    } catch (e: any) {
+    } catch (e: unknown) {
       setError(e?.message ?? "Xóa thất bại");
       setLoading(false);
     }
@@ -267,10 +267,10 @@ export default function FinanceCategoryManagement() {
   const loadCategories = useCallback(async () => {
     setLoading(true);
     try {
-      const res = await CategoryService.list({ page: 1, limit: 500 } as any);
+      const res = await CategoryService.list({ page: 1, limit: 500 } as Record<string, unknown>);
       const raw = res?.result?.content ?? res?.result ?? res?.data?.content ?? res?.data ?? [];
       setCategories(
-        (Array.isArray(raw) ? raw : []).map((c: any) => ({
+        (Array.isArray(raw) ? raw : []).map((c: Record<string, unknown>) => ({
           id:       Number(c.id),
           name:     String(c.name ?? ""),
           type:     Number(c.type ?? 1),

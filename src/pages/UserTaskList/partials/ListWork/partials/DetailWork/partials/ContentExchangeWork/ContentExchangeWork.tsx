@@ -31,8 +31,8 @@ import ImgFilePowerpoint from "assets/images/img-powerpoint.png";
 
 interface IContentExchangeWorkProps {
   worId: number;
-  dataEmployee: any;
-  dataWork: any;
+  dataEmployee: Record<string, unknown>;
+  dataWork: Record<string, unknown>;
 }
 
 export default function ContentExchangeWork(props: IContentExchangeWorkProps) {
@@ -49,7 +49,7 @@ export default function ContentExchangeWork(props: IContentExchangeWorkProps) {
   });
 
   const [showDialog, setShowDialog] = useState<boolean>(false);
-  const [contentDialog, setContentDialog] = useState<any>(null);
+  const [contentDialog, setContentDialog] = useState<Record<string, unknown>>(null);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [hasMore, setHasMore] = useState<boolean>(false);
   const [isEditChat, setIsEditChat] = useState<boolean>(false);
@@ -262,7 +262,7 @@ export default function ContentExchangeWork(props: IContentExchangeWorkProps) {
         <div className="content-exchange">
           {lstDataExchange && dataEmployee && lstDataExchange.length > 0 ? (
             <div onScroll={handleScroll} className="lst__data--exchange">
-              {lstDataExchange.map((item: any, idx) => {
+              {lstDataExchange.map((item: Record<string, unknown>, idx) => {
                 return (
                   <div
                     key={idx}

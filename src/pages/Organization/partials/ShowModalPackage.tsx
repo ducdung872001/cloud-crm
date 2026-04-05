@@ -16,9 +16,9 @@ import "./ShowModalPackage.scss";
 
 interface IShowModalPackageProps {
   onShow: boolean;
-  data: any;
+  data: Record<string, unknown>;
   onHide: () => void;
-  callback: (data: any) => void;
+  callback: (data: Record<string, unknown>) => void;
 }
 
 export default function ShowModalPackage(props: IShowModalPackageProps) {
@@ -35,7 +35,7 @@ export default function ShowModalPackage(props: IShowModalPackageProps) {
   const handLstPackageService = async (data) => {
     setIsLoading(true);
 
-    const params: any = {
+    const params: Record<string, unknown> = {
       status: 1,
       code: data.code,
     };
@@ -216,7 +216,7 @@ export default function ShowModalPackage(props: IShowModalPackageProps) {
                     callback(hasConfirm.data);
                   },
                 },
-              ] as any)
+              ] as Record<string, unknown>)
             : [
                 {
                   title: "Đóng",

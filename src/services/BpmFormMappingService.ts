@@ -2,19 +2,19 @@ import { urlsApi } from "configs/urls";
 import { convertParamsToString } from "reborn-util";
 
 export default {
-  list: (params: any, signal?: AbortSignal) => {
+  list: (params: Record<string, unknown>, signal?: AbortSignal) => {
     return fetch(`${urlsApi.bpmFormMapping.list}${convertParamsToString(params)}`, {
       signal,
       method: "GET",
     }).then((res) => res.json());
   },
-  listSource: (params: any, signal?: AbortSignal) => {
+  listSource: (params: Record<string, unknown>, signal?: AbortSignal) => {
     return fetch(`${urlsApi.bpmFormMapping.listSource}${convertParamsToString(params)}`, {
       signal,
       method: "GET",
     }).then((res) => res.json());
   },
-  listTarget: (params: any, signal?: AbortSignal) => {
+  listTarget: (params: Record<string, unknown>, signal?: AbortSignal) => {
     return fetch(`${urlsApi.bpmFormMapping.listTarget}${convertParamsToString(params)}`, {
       signal,
       method: "GET",
@@ -25,7 +25,7 @@ export default {
       method: "GET",
     }).then((res) => res.json());
   },
-  update: (body: any) => {
+  update: (body: Record<string, unknown>) => {
     return fetch(urlsApi.bpmFormMapping.update, {
       method: "POST",
       body: JSON.stringify(body),

@@ -8,12 +8,12 @@ export function DeleteHandler({
   entityName,
   reload,
 }: {
-  deleteService: (id: number) => Promise<any>;
+  deleteService: (id: number) => Promise<Record<string, unknown>>;
   entityName: string;
   reload: () => void;
 }) {
   const [showDialog, setShowDialog] = useState(false);
-  const [contentDialog, setContentDialog] = useState<any>(null);
+  const [contentDialog, setContentDialog] = useState<IContentDialog | null>(null);
 
   const handleDelete = async (ids: number[]) => {
     if (!ids.length) return;

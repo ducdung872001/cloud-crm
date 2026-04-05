@@ -18,8 +18,8 @@ interface RadioListProps {
   message?: string;
   warning?: boolean;
   messageWarning?: string;
-  onChange?: any;
-  onClick?: any;
+  onChange?: React.ChangeEventHandler<HTMLInputElement>;
+  onClick?: React.MouseEventHandler<HTMLLabelElement>;
 }
 export default function RadioList(props: RadioListProps) {
   const {

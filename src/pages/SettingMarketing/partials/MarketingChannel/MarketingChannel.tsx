@@ -16,7 +16,7 @@ import { getPermissions } from "utils/common";
 import "./MarketingChannel.scss";
 import ModalAddMarketingChannel from "./partials/ModalAddMarketingChannel";
 
-export default function MarketingChannel(props: any) {
+export default function MarketingChannel(props: Record<string, unknown>) {
   document.title = "Danh sách loại hợp đồng";
 
   const { onBackProps } = props;
@@ -28,7 +28,7 @@ export default function MarketingChannel(props: any) {
   const [listIdChecked, setListIdChecked] = useState<number[]>([]);
   const [showModalAddChannel, setShowModalAddChannel] = useState<boolean>(false);
   const [showDialog, setShowDialog] = useState<boolean>(false);
-  const [contentDialog, setContentDialog] = useState<any>(null);
+  const [contentDialog, setContentDialog] = useState<Record<string, unknown>>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
 
   //đã fix true
@@ -65,7 +65,7 @@ export default function MarketingChannel(props: any) {
 
   const abortController = new AbortController();
 
-  const getListMarketingChannel = async (paramsSearch: any) => {
+  const getListMarketingChannel = async (paramsSearch: Record<string, unknown>) => {
     setIsLoading(true);
 
     const response = null;
@@ -138,9 +138,9 @@ export default function MarketingChannel(props: any) {
 
   const dataFormat = ["text-center", "", "", "text-center"];
 
-  const dataMappingArray = (item: any, index: number) => [getPageOffset(params) + index + 1, item.name, item.code, item.position];
+  const dataMappingArray = (item: Record<string, unknown>, index: number) => [getPageOffset(params) + index + 1, item.name, item.code, item.position];
 
-  const actionsTable = (item: any): IAction[] => {
+  const actionsTable = (item: Record<string, unknown>): IAction[] => {
     const isCheckedItem = listIdChecked?.length > 0;
     return [
       {
@@ -209,7 +209,7 @@ export default function MarketingChannel(props: any) {
     });
   }
 
-  const showDialogConfirmDelete = (item?: any) => {
+  const showDialogConfirmDelete = (item?: Record<string, unknown>) => {
     const contentDialog: IContentDialog = {
       color: "error",
       className: "dialog-delete",

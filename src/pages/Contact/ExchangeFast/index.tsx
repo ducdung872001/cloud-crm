@@ -24,7 +24,7 @@ import Tippy from "@tippyjs/react";
 import ContactService from "services/ContactService";
 
 interface IExchangeFastProps {
-  dataContact: any;
+  dataContact: Record<string, unknown>;
   onHide: () => void;
 }
 
@@ -81,7 +81,7 @@ export default function ExchangeFast(props: IExchangeFastProps) {
     setDragging(false);
 
     const newFiles = [...files];
-    const droppedFiles: any = Array.from(e.dataTransfer.files);
+    const droppedFiles: Record<string, unknown> = Array.from(e.dataTransfer.files);
 
     droppedFiles.forEach((file) => {
       if (!newFiles.find((f) => f.name === file.name)) {

@@ -36,7 +36,7 @@ export default function AddTemplateEmailModal(props: IAddTemplateEmailModelProps
 
   const [listConfigEmail, setListConfigEmail] = useState<IConfigCodeResponseModel[]>([]);
 
-  const [listApproach, setListApproach] = useState<any>([
+  const [listApproach, setListApproach] = useState<Record<string, unknown>>([
     {
       value: "customer",
       label: "Khách hàng",
@@ -271,7 +271,7 @@ export default function AddTemplateEmailModal(props: IAddTemplateEmailModelProps
     },
   ];
 
-  const [placeholder, setPlaceholder] = useState<any>(listApproach[0]);
+  const [placeholder, setPlaceholder] = useState<Record<string, unknown>>(listApproach[0]);
 
   useEffect(() => {
     for (let i = 0; i < listApproach.length; i++) {

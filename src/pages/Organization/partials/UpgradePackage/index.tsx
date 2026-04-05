@@ -13,7 +13,7 @@ import PackageService from "services/PackageService";
 import "./index.scss";
 
 interface IUpgradePackageServiceProps {
-  data: any;
+  data: Record<string, unknown>;
   onShow: boolean;
   onHide: (reload: boolean) => void;
 }
@@ -91,7 +91,7 @@ export default function UpgradePackageService(props: IUpgradePackageServiceProps
   const [lstPackage, setLstPackage] = useState([]);
 
   const handleListPackage = async (data) => {
-    const params: any = {
+    const params: Record<string, unknown> = {
       status: 1,
       code: data.code,
       limit: 100,

@@ -81,7 +81,7 @@ const BarMini: React.FC<{ data: IBarData[]; vk: keyof IBarData; lk: keyof IBarDa
   );
 };
 
-export default function PromotionDashboard(props: any) {
+export default function PromotionDashboard(props: Record<string, unknown>) {
   document.title = "Báo cáo khuyến mãi";
   const { onBackProps } = props;
 

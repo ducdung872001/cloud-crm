@@ -63,7 +63,7 @@ interface Props {
 
 // ─── Constants ───────────────────────────────────────────────────────────────
 
-const SUPPLIER_TAX_CODE = (window as any).__VAT_SUPPLIER_TAX_CODE__ || "0100109106-501";
+const SUPPLIER_TAX_CODE = (window as Record<string, unknown>).__VAT_SUPPLIER_TAX_CODE__ || "0100109106-501";
 
 const STATUS_MAP: Record<string, { text: string; variant: BadgeVariant }> = {
   ISSUED:    { text: "ISSUED",    variant: "success" },

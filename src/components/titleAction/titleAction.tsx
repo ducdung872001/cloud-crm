@@ -18,7 +18,7 @@ interface TitleActionProps {
   titleActions?: ITitleActions;
   callback?: () => void;
   disableIcon?: boolean;
-  icon?: any;
+  icon?: React.ReactNode;
 }
 
 export interface ITitleActions {

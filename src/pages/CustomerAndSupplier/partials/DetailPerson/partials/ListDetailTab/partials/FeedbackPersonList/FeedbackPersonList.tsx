@@ -38,7 +38,7 @@ export default function FeedbackPersonList(props: IFeedbackPersonListProps) {
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [isEditChat, setIsEditChat] = useState<boolean>(false);
   const [showDialog, setShowDialog] = useState<boolean>(false);
-  const [contentDialog, setContentDialog] = useState<any>(null);
+  const [contentDialog, setContentDialog] = useState<Record<string, unknown>>(null);
   useOnClickOutside(refEditChat, () => setIsEditChat(false), ["option-action-chat"]);
 
   const getListFeedback = async (pageProps?: number) => {

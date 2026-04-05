@@ -13,7 +13,7 @@ import MarketingAutomationService from "services/MarketingAutomationService";
 interface IAddSignerFSAndQuoteProps {
   onShow: boolean;
   onHide: (reload: boolean) => void;
-  data?: any;
+  data?: Record<string, unknown>;
 }
 
 export default function ModalSigner(props: IAddSignerFSAndQuoteProps) {

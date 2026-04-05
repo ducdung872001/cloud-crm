@@ -350,7 +350,7 @@ export default function AddCashBookModal(props: AddCashBookModalProps) {
   const [dataProject, setDataProject] = useState(null);
 
   const loadOptionProject = async (search, loadedOptions, { page }) => {
-    const param: any = {
+    const param: Record<string, unknown> = {
       name: search,
       page: page,
       limit: 10,
@@ -364,7 +364,7 @@ export default function AddCashBookModal(props: AddCashBookModalProps) {
       return {
         options: [
           ...(dataOption.length > 0
-            ? dataOption.map((item: any) => {
+            ? dataOption.map((item: Record<string, unknown>) => {
                 return {
                   value: item.id,
                   label: item.name,
@@ -390,7 +390,7 @@ export default function AddCashBookModal(props: AddCashBookModalProps) {
   const [dataContract, setDataContract] = useState(null);
 
   const loadOptionContract = async (search, loadedOptions, { page }) => {
-    const param: any = {
+    const param: Record<string, unknown> = {
       name: search,
       page: page,
       limit: 10,
@@ -403,7 +403,7 @@ export default function AddCashBookModal(props: AddCashBookModalProps) {
       return {
         options: [
           ...(dataOption.length > 0
-            ? dataOption.map((item: any) => {
+            ? dataOption.map((item: Record<string, unknown>) => {
                 return {
                   value: item.id,
                   label: item.name,

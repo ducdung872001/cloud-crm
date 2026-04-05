@@ -22,7 +22,7 @@ export interface Product {
   avatar?: string;
   unitName?: string;
   name: string;
-  s: any;
+  s: Record<string, unknown>;
   priceLabel: string;
   price: number;
   stock: number;

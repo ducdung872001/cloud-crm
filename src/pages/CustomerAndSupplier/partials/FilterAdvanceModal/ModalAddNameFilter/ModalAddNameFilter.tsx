@@ -11,7 +11,7 @@ import "./ModalAddNameFilter.scss";
 import _, { lowerCase } from "lodash";
 import { showToast } from "utils/common";
 
-export default function ModalAddNameFilter(props: any) {
+export default function ModalAddNameFilter(props: Record<string, unknown>) {
   const { 
     onShow, 
     onHide,

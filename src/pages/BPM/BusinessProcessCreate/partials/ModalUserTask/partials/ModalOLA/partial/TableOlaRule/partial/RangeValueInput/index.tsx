@@ -5,11 +5,11 @@ import React, { memo, useState, useEffect } from "react";
 import "./index.scss";
 
 interface RangeValueInputProps {
-  child: any[];
+  child: Record<string, unknown>[];
   rowIndex: number;
   fieldIndex: number;
-  handChangeValueItem: (rowIndex: number, fieldIndex: number, value: any, type: "number" | "date", index: number) => void;
-  setHaveError?: any; // Hàm để cập nhật trạng thái lỗi, có thể là một hàm setState hoặc một hàm callback
+  handChangeValueItem: (rowIndex: number, fieldIndex: number, value: Record<string, unknown>, type: "number" | "date", index: number) => void;
+  setHaveError?: Record<string, unknown>; // Hàm để cập nhật trạng thái lỗi, có thể là một hàm setState hoặc một hàm callback
 }
 
 const RangeValueInput: React.FC<RangeValueInputProps> = ({ child, rowIndex, fieldIndex, handChangeValueItem, setHaveError }) => {

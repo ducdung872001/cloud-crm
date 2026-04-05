@@ -151,7 +151,7 @@ export default function ModalEscalationEndEvent({ onShow, onHide, dataNode, proc
                 disabled: isSubmit,
                 is_loading: isSubmit,
               },
-            ] as any)),
+            ] as Record<string, unknown>)),
         ],
       },
     }),

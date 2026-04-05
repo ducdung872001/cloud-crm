@@ -14,7 +14,7 @@ const CustomHeader = (props) => {
   const [sort, setSort] = useState(null);
   const buttonRef = useRef(null);
   const [position, setPosition] = useState({ top: 0, left: 0 });
-  const params: any = getSearchParameters();
+  const params: Record<string, unknown> = getSearchParameters();
   const [isEditColumn, setIsEditColumn] = useState(false);
 
   const handleSort = () => {

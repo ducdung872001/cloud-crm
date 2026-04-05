@@ -92,7 +92,7 @@ export default function ModalSubprocess({ onShow, onHide, dataNode, processId, c
       const newListInputVarData = Array.isArray(arrayInput) && arrayInput.length > 0 ? arrayInput : [];
       const listInputVarData = newListInputVarData.map((item) => {
         const name = Object.entries(item)[0][0];
-        const attributeMapping: any = Object.entries(item)[0][1] || null;
+        const attributeMapping: Record<string, unknown> = Object.entries(item)[0][1] || null;
         // const attributeMappingName = Object.entries(item)[0][2];
 
         return {
@@ -129,7 +129,7 @@ export default function ModalSubprocess({ onShow, onHide, dataNode, processId, c
       const newListOutputVarData = Array.isArray(arrayOut) && arrayInput.length > 0 ? arrayOut : [];
       const listOutputVarData = newListOutputVarData.map((item) => {
         const name = Object.entries(item)[0][0];
-        const attributeMapping: any = Object.entries(item)[0][1] || null;
+        const attributeMapping: Record<string, unknown> = Object.entries(item)[0][1] || null;
         // getVarSetup(attributeMapping)
         return {
           name: name,
@@ -338,7 +338,7 @@ export default function ModalSubprocess({ onShow, onHide, dataNode, processId, c
                   // || !isDifferenceObj(formData, values),
                   is_loading: isSubmit,
                 },
-              ] as any)),
+              ] as Record<string, unknown>)),
         ],
       },
     }),

@@ -14,7 +14,7 @@ import FileService from "services/FileService";
 import ContactService from "services/ContactService";
 
 interface IContentChatProps {
-  dataMessage: any;
+  dataMessage: Record<string, unknown>;
   contactId: number;
   employeeId: number;
   onHide: (reload) => void;

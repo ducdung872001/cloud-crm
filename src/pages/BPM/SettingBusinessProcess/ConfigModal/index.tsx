@@ -130,7 +130,7 @@ function bfs(items, newItem) {
 }
 //TODO: 🧠 End logic code nhóm kéo thả thư viện 🧠
 
-export default function ConfigModal(props: any) {
+export default function ConfigModal(props: Record<string, unknown>) {
   const { onShow, onHide, dataNode, setDataNode, statusMA } = props;
   const [isSubmit, setIsSubmit] = useState<boolean>(false);
   const [showDialog, setShowDialog] = useState<boolean>(false);
@@ -997,7 +997,7 @@ export default function ConfigModal(props: any) {
       ///Đoạn này là tạo eform mới 
       if(type === 'create_eform'){
 
-        const body: any = {
+        const body: Record<string, unknown> = {
           id:  0,
           name:  "",
           note: '',
@@ -1209,7 +1209,7 @@ export default function ConfigModal(props: any) {
         listEformAttribute: [],
         rule: [],
         blockRule: [],
-      } as any),
+      } as Record<string, unknown>),
     [onShow]
   );
 
@@ -1302,7 +1302,7 @@ export default function ConfigModal(props: any) {
 
   const getListStep = async (formId) => {
     // setListStep([]);
-    const params: any = {
+    const params: Record<string, unknown> = {
       formId: formId
     };
 
@@ -1350,7 +1350,7 @@ export default function ConfigModal(props: any) {
   }, [idTabConfig])
 
   const addStepHandle = async (id?: number, actionNext? : number) => {
-    const body: any = {
+    const body: Record<string, unknown> = {
       ...(id ? {id: id} : {}),
       actionNext: actionNext ? actionNext : 1,
       nodeId: +dataNode.id,
@@ -1379,7 +1379,7 @@ export default function ConfigModal(props: any) {
   }
 
   const selectEmployee = async (bfpsId, e) => {
-    const body: any = {
+    const body: Record<string, unknown> = {
       bfpsId: bfpsId,
       departmentId: e.departmentId,
       employeeId: e.value,

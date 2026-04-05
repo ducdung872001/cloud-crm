@@ -21,7 +21,7 @@ import CallCenterService from "services/CallCenterService";
 import Image from "components/image";
 import ContractList from "./ContractList/ContractList";
 
-export default function HistoryModal(props: any) {
+export default function HistoryModal(props: Record<string, unknown>) {
     const { onShow, onHide, dataCustomer,} = props;
 
     const [showDialog, setShowDialog] = useState<boolean>(false);
@@ -102,7 +102,7 @@ export default function HistoryModal(props: any) {
     const [listSaleInvoice, setListSaleInvoice] = useState<IInvoiceResponse[]>([]);
     const [isNoItemInvoice, setIsNoItemInvoice] = useState<boolean>(false);
 
-    const [paramsInvoice, setParamsInvoice] = useState<any>({
+    const [paramsInvoice, setParamsInvoice] = useState<Record<string, unknown>>({
       invoiceCode: "",
       invoiceTypes: JSON.stringify(["IV1", "IV3"]),
     });
@@ -194,7 +194,7 @@ export default function HistoryModal(props: any) {
     const titlesCall = ["STT", "Ảnh khách hàng", "Tên khách hàng", "Điện thoại", "Cuộc gọi", "Nhân viên chăm sóc", "Thời gian cuộc gọi"];
     const dataFormatCall = ["text-center", "text-center", "", "text-center", "text-center", "", "text-center"];
 
-    const dataMappingArray = (item: any, index: number) => [
+    const dataMappingArray = (item: Record<string, unknown>, index: number) => [
       getPageOffset(paramsCall) + index + 1,
       <Image key={item.id} src={item.customerAvatar} alt={item.customerName} />,
       item.customerName,
@@ -222,7 +222,7 @@ export default function HistoryModal(props: any) {
       );
     };
 
-    const actionsTable = (item: any): IAction[] => {
+    const actionsTable = (item: Record<string, unknown>): IAction[] => {
         
         return [
             // {
@@ -243,7 +243,7 @@ export default function HistoryModal(props: any) {
         ];
     };
 
-    const showDialogConfirmDelete = (item?: any) => {
+    const showDialogConfirmDelete = (item?: Record<string, unknown>) => {
         const contentDialog: IContentDialog = {
           color: "error",
           className: "dialog-delete",

@@ -134,7 +134,7 @@ interface ModalReceiptBodyProps {
   totalAmountPayable?: number;
   actuallyPaySupplier?: number;
   debt?: number;
-  children: any;
+  children: React.ReactNode;
   type: string;
   name?: string;
   nameCard?: string;
@@ -143,7 +143,7 @@ interface ModalReceiptBodyProps {
   pocketMoney?: number;
   paymentType?: string | number;
   status?: number;
-  style?: any;
+  style?: React.CSSProperties;
   isPrintPomService?: boolean;
 }
 

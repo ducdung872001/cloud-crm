@@ -32,7 +32,7 @@ export default function TableWorkInColapse(props: ITableWorkInColapsedProps) {
 
   const [searchParams, setSearchParams] = useSearchParams();
   const [showDialog, setShowDialog] = useState<boolean>(false);
-  const [contentDialog, setContentDialog] = useState<any>(null);
+  const [contentDialog, setContentDialog] = useState<Record<string, unknown>>(null);
   const [listWork, setListWork] = useState<IWorkOrderResponseModel[]>([]);
   const [isNoItem, setIsNoItem] = useState<boolean>(false);
   const [listIdChecked, setListIdChecked] = useState<number[]>([]);
@@ -44,7 +44,7 @@ export default function TableWorkInColapse(props: ITableWorkInColapsedProps) {
     });
 
     setParams((prevParams) => {
-      const next: any = {
+      const next: Record<string, unknown> = {
         ...prevParams,
         ...paramsTemp,
         projectId: paramsFilter.projectId,

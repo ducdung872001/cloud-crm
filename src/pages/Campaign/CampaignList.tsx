@@ -44,14 +44,14 @@ export default function CampaignList({ parentId, parentCampaign, setIsFullPage, 
   const [listIdChecked, setListIdChecked] = useState<number[]>([]);
   const [showModalAdd, setShowModalAdd] = useState<boolean>(false);
   const [showDialog, setShowDialog] = useState<boolean>(false);
-  const [contentDialog, setContentDialog] = useState<any>(null);
+  const [contentDialog, setContentDialog] = useState<Record<string, unknown>>(null);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [isDetailCampaign, setIsDetailCampaignDetail] = useState<boolean>(false);
   const [showReportCampaign, setShowReportCampaign] = useState<boolean>(false);
   const [dataCampaign, setDataCampaign] = useState(null);
   const [isChangeStatus, setIsChangeStatus] = useState(false);
 
-  const [params, setParams] = useState<any>({
+  const [params, setParams] = useState<Record<string, unknown>>({
     name: "",
   });
 
@@ -77,7 +77,7 @@ export default function CampaignList({ parentId, parentCampaign, setIsFullPage, 
       const paramsArray = queryString.split("&");
 
       // Tạo một đối tượng lưu trữ tham số
-      const paramsResult: any = {};
+      const paramsResult: Record<string, unknown> = {};
 
       // Lặp qua mỗi cặp key-value và thêm vào đối tượng params
       paramsArray.forEach((param) => {

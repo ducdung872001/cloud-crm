@@ -60,7 +60,7 @@ function StatCard({ label, value, sub, accentColor = "#f59e0b" }: StatCardProps)
 type TabName = "tab_one" | "tab_two" | "tab_three" | "tab_four" | "tab_five";
 interface TabHeaderConfig { title: string; subtitle?: string; actions: React.ReactNode; }
 
-export default function InvoiceVATOverview(props: any) {
+export default function InvoiceVATOverview(props: Record<string, unknown>) {
   document.title = "Hóa đơn VAT điện tử";
 
   const location = useLocation();
@@ -85,7 +85,7 @@ export default function InvoiceVATOverview(props: any) {
   const [dataInvoice, setDataInvoice]   = useState<IInvoiceVATResponse>(null);
   const [listIdChecked, setListIdChecked] = useState<number[]>([]);
   const [showDialog, setShowDialog]     = useState<boolean>(false);
-  const [contentDialog, setContentDialog] = useState<any>(null);
+  const [contentDialog, setContentDialog] = useState<Record<string, unknown>>(null);
   const [isLoading, setIsLoading]       = useState<boolean>(true);
   const [isNoItem, setIsNoItem]         = useState<boolean>(false);
   const [isPermissions, setIsPermissions] = useState<boolean>(false);
@@ -124,13 +124,13 @@ export default function InvoiceVATOverview(props: any) {
 
   useEffect(() => {
     VatInvoiceService.getConfig()
-      .then((res: any) => {
+      .then((res: Record<string, unknown>) => {
         if (res?.code === 0 && res.result) {
           const c: VatConfig = res.result;
           setVatConfig(c);
-          (window as any).__VAT_SUPPLIER_TAX_CODE__ = c.taxCode;
-          (window as any).__VAT_TEMPLATE_CODE__ = c.defaultTemplateCode;
-          (window as any).__VAT_CONFIG__ = c;
+          (window as Record<string, unknown>).__VAT_SUPPLIER_TAX_CODE__ = c.taxCode;
+          (window as Record<string, unknown>).__VAT_TEMPLATE_CODE__ = c.defaultTemplateCode;
+          (window as Record<string, unknown>).__VAT_CONFIG__ = c;
         }
       })
       .catch(() => {});
@@ -240,8 +240,8 @@ export default function InvoiceVATOverview(props: any) {
   };
 
   // ─── Overview: real stats ─────────────────────────────────────────────────
-  const SUPPLIER_TAX_CODE = (window as any).__VAT_SUPPLIER_TAX_CODE__ || "0100109106-501";
-  const TEMPLATE_CODE     = (window as any).__VAT_TEMPLATE_CODE__     || "1/6553";
+  const SUPPLIER_TAX_CODE = (window as Record<string, unknown>).__VAT_SUPPLIER_TAX_CODE__ || "0100109106-501";
+  const TEMPLATE_CODE     = (window as Record<string, unknown>).__VAT_TEMPLATE_CODE__     || "1/6553";
 
   const currentMonth = (() => {
     const d = new Date();
@@ -371,8 +371,8 @@ export default function InvoiceVATOverview(props: any) {
           fmtDateExport(item.invoiceIssuedDate),
           item.buyerName || "",
           item.buyerTaxCode || "Cá nhân",
-          (item as any).amountWithoutTax ?? 0,
-          (item as any).taxAmount ?? 0,
+          (item as Record<string, unknown>).amountWithoutTax ?? 0,
+          (item as Record<string, unknown>).taxAmount ?? 0,
           item.totalAmount ?? 0,
           statusLabel(item.status),
         ]),
@@ -380,7 +380,7 @@ export default function InvoiceVATOverview(props: any) {
         formatExcel:  ["center", "left", "center", "center", "left", "center", "right", "right", "right", "center"],
       });
       showToast("Xuất báo cáo thành công!", "success");
-    } catch (e: any) {
+    } catch (e: unknown) {
       showToast(e?.message || "Lỗi khi xuất báo cáo.", "error");
     } finally {
       setExportingReport(false);

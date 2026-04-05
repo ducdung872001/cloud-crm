@@ -110,7 +110,7 @@ export default function PaymentTemplateModal({ open, data, onClose }: Props) {
         },
     }), [isSubmit, isEdit]);
 
-    const set = (key: string, val: any) => {
+    const set = (key: string, val: Record<string, unknown>) => {
         setForm((p) => ({ ...p, [key]: val }));
         setErrors((p) => ({ ...p, [key]: undefined }));
     };

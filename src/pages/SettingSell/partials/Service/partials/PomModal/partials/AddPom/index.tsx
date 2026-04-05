@@ -124,7 +124,7 @@ export default function AddPom(props: IAddPomProps) {
   }, [data?.productId]);
 
   //! Từ idProduct xử lý lấy ra đơn vị sản phẩm tương ứng
-  const onSelectOpenUnit = (dataOtherUnits: any) => {
+  const onSelectOpenUnit = (dataOtherUnits: Record<string, unknown>) => {
     const dataOption = dataOtherUnits.map((item) => {
       return { value: item.unitId, label: item.unitName, exchange: item.exchange };
     });

@@ -69,7 +69,7 @@ export default function ShippingPartnerSetup() {
       const initForms: Record<string, IConfigForm> = {};
       merged.forEach((c) => { initForms[c.code] = { ...DEFAULT_FORM }; });
       setForms(initForms);
-    } catch (err: any) {
+    } catch (err: unknown) {
       if (err?.name === "AbortError") return;
       showToast("Không thể tải danh sách đơn vị vận chuyển", "error");
     } finally {
@@ -83,7 +83,7 @@ export default function ShippingPartnerSetup() {
   }, [loadData]);
 
   // ---- Helpers ----
-  const setFormField = (code: string, field: keyof IConfigForm) => (e: any) => {
+  const setFormField = (code: string, field: keyof IConfigForm) => (e: Record<string, unknown>) => {
     const value = typeof e === "boolean" ? e : e.target.value;
     setForms((prev) => ({ ...prev, [code]: { ...prev[code], [field]: value } }));
   };

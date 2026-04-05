@@ -6,7 +6,7 @@ import "./customChartBasic.scss";
 
 interface ICustomChartBasicProps {
   totalMax: number;
-  lstData: any[];
+  lstData: { name: string; amount: number }[];
   isLoading: boolean;
   nameNotification: string;
 }

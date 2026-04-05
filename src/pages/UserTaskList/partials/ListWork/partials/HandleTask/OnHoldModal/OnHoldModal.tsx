@@ -25,7 +25,7 @@ import NummericInput from "components/input/numericInput";
 import SelectCustom from "components/selectCustom/selectCustom";
 import ReasonListBpmService from "services/ReasonListBpmService";
 
-export default function OnHoldModal(props: any) {
+export default function OnHoldModal(props: Record<string, unknown>) {
   const { onShow, onHide, data, dataSchema } = props;
 
   const focusedElement = useActiveElement();
@@ -53,7 +53,7 @@ export default function OnHoldModal(props: any) {
         minute: "",
         pauseReasonId: "",
         type: 1,
-      } as any),
+      } as Record<string, unknown>),
     [data, onShow]
   );
 
@@ -108,8 +108,8 @@ export default function OnHoldModal(props: any) {
 
     setIsSubmit(true);
 
-    const body: any = {
-      ...(formData.values as any),
+    const body: Record<string, unknown> = {
+      ...(formData.values as Record<string, unknown>),
       attachment: attachment,
       config: dataSchema ? JSON.stringify(dataSchema) : null,
     };
@@ -289,7 +289,7 @@ export default function OnHoldModal(props: any) {
     setDragging(false);
 
     const newFiles = [...listAttactment];
-    const droppedFiles: any = Array.from(e.dataTransfer.files);
+    const droppedFiles: Record<string, unknown> = Array.from(e.dataTransfer.files);
 
     droppedFiles.forEach((file) => {
       // const checkFile = file?.name.split("?")[0].split("#")[0].split(".").pop();
@@ -354,7 +354,7 @@ export default function OnHoldModal(props: any) {
         request.onload = function () {
           var reader = new FileReader();
           reader.readAsDataURL(request.response);
-          reader.onload = function (e: any) {
+          reader.onload = function (e: Record<string, unknown>) {
             const data = {
               fileName: `${convertToFileName(item?.fileName || "")}`,
               fileData: e.target.result.split(",")[1],
@@ -370,7 +370,7 @@ export default function OnHoldModal(props: any) {
   }, [onShow, listAttactment]);
 
   const loadedOptionPauseReason = async (search, loadedOptions, { page }) => {
-    const param: any = {
+    const param: Record<string, unknown> = {
       name: search,
       page: page,
       limit: 10,

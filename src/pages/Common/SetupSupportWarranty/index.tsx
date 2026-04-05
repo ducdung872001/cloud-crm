@@ -22,7 +22,7 @@ import "./index.scss";
 interface ISetupSupportWarrantyProps {
   onShow: boolean;
   onHide: (reload: boolean) => void;
-  data: any;
+  data: Record<string, unknown>;
 }
 
 export default function SetupSupportWarranty(props: ISetupSupportWarrantyProps) {
@@ -146,7 +146,7 @@ export default function SetupSupportWarranty(props: ISetupSupportWarrantyProps) 
 
   useEffect(() => {
     if (lstLinkSupport && lstLinkSupport.length > 0) {
-      const changeLstLinkApproval: any[] = lstLinkSupport.map((item) => {
+      const changeLstLinkApproval: Record<string, unknown>[] = lstLinkSupport.map((item) => {
         return {
           id: `reactflow__edge-${item.nodeFrom}-${item.nodeTo}`,
           markerEnd: { type: "arrowclosed" },
@@ -267,7 +267,7 @@ export default function SetupSupportWarranty(props: ISetupSupportWarrantyProps) 
         type,
         position,
         data: { label: name },
-      } as any;
+      } as Record<string, unknown>;
 
       if (conditionStartWidth) {
         handleAddItemSpecial(name, newNode, data?.id);

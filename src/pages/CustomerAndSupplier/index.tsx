@@ -41,7 +41,7 @@ import PermissionService from "services/PermissionService";
 import ModalExportCustomer from "./ModalExportCustomer/ModalExportCustomer";
 import { StyleHeaderTable } from "components/StyleHeaderTable/StyleHeaderTable";
 
-export default function CustomerAndSupplier(props: any) {
+export default function CustomerAndSupplier(props: Record<string, unknown>) {
   const {type} = props;
   const [showPageSendSMS, setShowPageSendSMS] = useState<boolean>(false);
   const [showPageSendEmail, setShowPageSendEmail] = useState<boolean>(false);
@@ -259,7 +259,7 @@ export default function CustomerAndSupplier(props: any) {
       }, {});
 
       // Lấy ra các đối tượng { width, colId } của phần tử cuối cùng trong từng nhóm
-      const uniqueWidths = Object.values(groupedData).map((group?: any) => ({
+      const uniqueWidths = Object.values(groupedData).map((group?: Record<string, unknown>) => ({
         width: group[group.length - 1].width,
         colId: group[group.length - 1].colId,
       }));
@@ -503,7 +503,7 @@ export default function CustomerAndSupplier(props: any) {
     },
   ];
 
-  const [columnDefs, setColumnDefs] = useState<any>(defaultValueColumnDefs);
+  const [columnDefs, setColumnDefs] = useState<Record<string, unknown>>(defaultValueColumnDefs);
 
   const defaultFieldCustomer = [
     { id: 1, name: "Mã khách hàng", fieldName: "code", isTable: false },
@@ -525,7 +525,7 @@ export default function CustomerAndSupplier(props: any) {
     { id: 18, name: "Nhóm khách hàng", fieldName: "cgpId", isTable: false },
     { id: 19, name: "Chi nhánh", fieldName: "branchId", isTable: false },
     { id: 20, name: "Nhân viên", fieldName: "employeeName", isTable: false },
-  ] as any[];
+  ] as Record<string, unknown>[];
 
   const [lstFieldCustomer, setLstFieldCustomer] = useState(defaultFieldCustomer);
   const [lstFieldActive, setLstFieldActive] = useState(() => {
@@ -562,7 +562,7 @@ export default function CustomerAndSupplier(props: any) {
         });
 
       if (dataConfirm && dataConfirm.length > 0) {
-        const changeDataConfirm: any = dataConfirm.map((el) => {
+        const changeDataConfirm: Record<string, unknown> = dataConfirm.map((el) => {
           return {
             headerName: el.label,
             field: el.fieldName,
@@ -748,7 +748,7 @@ export default function CustomerAndSupplier(props: any) {
 
   useEffect(() => {
     if (takeFieldActiveContact) {
-      const changeDataTakeFieldActiveContact: any = takeFieldActiveContact.map((el) => {
+      const changeDataTakeFieldActiveContact: Record<string, unknown> = takeFieldActiveContact.map((el) => {
         return {
           headerName: el.label,
           field: el.fieldName,
@@ -1003,7 +1003,7 @@ export default function CustomerAndSupplier(props: any) {
 
   const formatExcel = ["center", "top", "center", "center", "right", "right", "right"];
 
-  const onDelete = async (id: number, parma: any) => {
+  const onDelete = async (id: number, parma: Record<string, unknown>) => {
     const response = await CustomerService.delete(id);
     if (response.code === 0) {
       showToast(`Xóa khách hàng thành công`, "success");
@@ -1028,9 +1028,9 @@ export default function CustomerAndSupplier(props: any) {
   const [isActiveCustomerEmployee, setIsActiveCustomerEmployee] = useState<boolean>(false);
 
   const [showDialog, setShowDialog] = useState<boolean>(false);
-  const [contentDialog, setContentDialog] = useState<any>(null);
+  const [contentDialog, setContentDialog] = useState<Record<string, unknown>>(null);
 
-  const handleCheckCustomerDelete = async (item?: any, params?: any, type?: "one" | "all") => {
+  const handleCheckCustomerDelete = async (item?: Record<string, unknown>, params?: Record<string, unknown>, type?: "one" | "all") => {
     const body = {
       customerIds: type === "one" ? [item.id] : listIdChecked,
     };
@@ -1070,7 +1070,7 @@ export default function CustomerAndSupplier(props: any) {
     setContentDialog(null);
   };
 
-  const showDialogConfirmDelete = (item?: ICustomerResponse, param?: any, dataCheckDeleteCustomer?: any) => {
+  const showDialogConfirmDelete = (item?: ICustomerResponse, param?: Record<string, unknown>, dataCheckDeleteCustomer?: Record<string, unknown>) => {
     const contentDialog: IContentDialog = {
       color: "error",
       className: "dialog-delete",
@@ -1290,7 +1290,7 @@ export default function CustomerAndSupplier(props: any) {
             return ol;
           });
 
-        const dataExport: any = result.items.map((item, index) => {
+        const dataExport: Record<string, unknown> = result.items.map((item, index) => {
           const result = rowMapping.filter((el) => el.customerId === item.id) || [];
 
           const changeDataResult = result.map((item) => {

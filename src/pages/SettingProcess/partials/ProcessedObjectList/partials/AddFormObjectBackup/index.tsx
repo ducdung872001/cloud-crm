@@ -29,7 +29,7 @@ interface IAddObjectProps {
   onShow: boolean;
   onHide: (reload: boolean) => void;
   idObject: number;
-  dataObject: any;
+  dataObject: Record<string, unknown>;
   disable: boolean;
 }
 
@@ -83,7 +83,7 @@ export default function AddFormObjectBackup(props: IAddObjectProps) {
       const result = response.result.items;
 
       const changeResult = result.map((item) => {
-        const newItem: any = {
+        const newItem: Record<string, unknown> = {
           [item.code]: "",
           type: item.type,
           placeholder: item.name.toLowerCase(),
@@ -305,7 +305,7 @@ export default function AddFormObjectBackup(props: IAddObjectProps) {
                     handSubmitForm();
                   },
                 },
-              ] as any)
+              ] as Record<string, unknown>)
             : []),
         ],
       },

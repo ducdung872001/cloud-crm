@@ -73,8 +73,8 @@ export default function AddStoreModal(props: AddStoreModalProps) {
         phone: data?.phone ?? "",
         email: data?.email ?? "",
         goodAt: data?.goodAt ?? "",
-        openTime: (data as any)?.openTime ?? "",
-        closeTime: (data as any)?.closeTime ?? "",
+        openTime: (data as Record<string, unknown>)?.openTime ?? "",
+        closeTime: (data as Record<string, unknown>)?.closeTime ?? "",
       } as unknown as IStoreRequest),
     [data, onShow]
   );

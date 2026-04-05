@@ -52,8 +52,8 @@ type TimeConfigBoxProps = {
   leftSecondLabel?: string;
   rightSecondLabel?: string;
   setCronType?: (type: string) => void;
-  repeatDuration: any;
-  setRepeatDuration: (value: any) => void;
+  repeatDuration: Record<string, unknown>;
+  setRepeatDuration: (value: Record<string, unknown>) => void;
 };
 
 const TimeConfigBox: React.FC<TimeConfigBoxProps> = ({
@@ -113,7 +113,7 @@ const TimeConfigBox: React.FC<TimeConfigBoxProps> = ({
 
     for (let index = listTimeUnit.length; index >= 0; index--) {
       const element = listTimeUnit[index];
-      if (element && (repeatDuration as any)[element.value]) {
+      if (element && (repeatDuration as Record<string, unknown>)[element.value]) {
         setCronType(element.value);
         break;
       } else {

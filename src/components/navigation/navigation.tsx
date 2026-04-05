@@ -14,7 +14,7 @@ interface NavigationProps {
   menuItemList: IMenuItem[];
 }
 
-const filterMenuItemList = (menuItemList: any) => {
+const filterMenuItemList = (menuItemList: IMenuItem[]) => {
   const permissions = getPermissions();
 
   return menuItemList

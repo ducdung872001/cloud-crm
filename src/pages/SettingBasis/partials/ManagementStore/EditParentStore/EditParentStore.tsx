@@ -13,7 +13,7 @@ import "./EditParentStore.scss";
 import { SelectOptionData } from "utils/selectCommon";
 import { IStoreRequest } from "@/model/managementStore/StoreRequestModel";
 
-export default function EditParentStore(props: any) {
+export default function EditParentStore(props: Record<string, unknown>) {
   const { onShow, onHide, branchId } = props;
 
   const focusedElement = useActiveElement();

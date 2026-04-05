@@ -20,7 +20,7 @@ import { getPageOffset } from 'reborn-util';
 import "./TemplateCategoryZalo.scss";
 import AddTemplateCategoryZalo from "./partials/AddTemplateCategoryZalo";
 
-export default function TemplateCategoryZalo(props: any) {
+export default function TemplateCategoryZalo(props: Record<string, unknown>) {
   const { titleProps, nameProps, onBackProps } = props;
 
   const name = "Zalo";
@@ -32,7 +32,7 @@ export default function TemplateCategoryZalo(props: any) {
   const [listIdChecked, setListIdChecked] = useState<number[]>([]);
   const [showModalAdd, setShowModalAdd] = useState<boolean>(false);
   const [showDialog, setShowDialog] = useState<boolean>(false);
-  const [contentDialog, setContentDialog] = useState<any>(null);
+  const [contentDialog, setContentDialog] = useState<Record<string, unknown>>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [isNoItem, setIsNoItem] = useState<boolean>(false);
   const [isPermissions, setIsPermissions] = useState<boolean>(false);

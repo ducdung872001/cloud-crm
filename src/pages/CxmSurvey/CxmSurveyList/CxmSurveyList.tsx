@@ -31,7 +31,7 @@ import AddCxmQuestion from "../CxmQuestionList/partials/AddCxmQuestion";
 import CxmOptionList from "../CxmOptionList/CxmOptionList";
 import AddCxmOption from "../CxmOptionList/partials/AddCxmOption";
 
-export default function CxmSurveyList(props: any) {
+export default function CxmSurveyList(props: Record<string, unknown>) {
   document.title = "Danh sách khảo sát";
   const navigate = useNavigate();
 
@@ -39,17 +39,17 @@ export default function CxmSurveyList(props: any) {
 
   const isMounted = useRef(false);
 
-  const [listBuilding, setListBuilding] = useState<any[]>([]);
-  const [dataSurvey, setDataSurvey] = useState<any>(null);
+  const [listBuilding, setListBuilding] = useState<Record<string, unknown>[]>([]);
+  const [dataSurvey, setDataSurvey] = useState<Record<string, unknown>>(null);
   const [listIdChecked, setListIdChecked] = useState<number[]>([]);
   const [showModalAddCxmSurvey, setShowModalAddCxmSurvey] = useState<boolean>(false);
   const [showDialog, setShowDialog] = useState<boolean>(false);
-  const [contentDialog, setContentDialog] = useState<any>(null);
+  const [contentDialog, setContentDialog] = useState<Record<string, unknown>>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [isNoItem, setIsNoItem] = useState<boolean>(false);
   const [isPermissions, setIsPermissions] = useState<boolean>(false);
 
-  const [params, setParams] = useState<any>({
+  const [params, setParams] = useState<Record<string, unknown>>({
     name: "",
     limit: 10,
   });
@@ -93,7 +93,7 @@ export default function CxmSurveyList(props: any) {
   });
 
   const abortController = new AbortController();
-  const getListBuilding = async (paramsSearch: any) => {
+  const getListBuilding = async (paramsSearch: Record<string, unknown>) => {
     setIsLoading(true);
 
     const _params = {
@@ -166,7 +166,7 @@ export default function CxmSurveyList(props: any) {
 
   const dataFormat = ["text-center", "text-left", "text-left", "text-left", "text-left", "text-left", "text-left", "text-center", "text-center"];
 
-  const dataMappingArray = (item: any, index: number) => [
+  const dataMappingArray = (item: Record<string, unknown>, index: number) => [
     getPageOffset(params) + index + 1,
     item?.title || "",
     item?.description || "",
@@ -230,7 +230,7 @@ export default function CxmSurveyList(props: any) {
     setContentDialog(null);
   };
 
-  const showDialogConfirmActiveBuilding = (item?: any) => {
+  const showDialogConfirmActiveBuilding = (item?: Record<string, unknown>) => {
     const contentDialog: IContentDialog = {
       color: "warning",
       className: "dialog-warning",
@@ -257,7 +257,7 @@ export default function CxmSurveyList(props: any) {
     setShowDialog(true);
   };
 
-  const actionsTable = (item: any): IAction[] => {
+  const actionsTable = (item: Record<string, unknown>): IAction[] => {
     const isCheckedItem = listIdChecked?.length > 0;
     return item.headquarter === 1
       ? [
@@ -358,7 +358,7 @@ export default function CxmSurveyList(props: any) {
     });
   }
 
-  const showDialogConfirmDelete = (item?: any) => {
+  const showDialogConfirmDelete = (item?: Record<string, unknown>) => {
     const contentDialog: IContentDialog = {
       color: "error",
       className: "dialog-delete",
@@ -412,7 +412,7 @@ export default function CxmSurveyList(props: any) {
     []
   );
 
-  const [listNav, setListNav] = useState<any[]>([
+  const [listNav, setListNav] = useState<Record<string, unknown>[]>([
     {
       title: "Trải nghiệm khách hàng",
       className: "title-first",
@@ -487,12 +487,12 @@ export default function CxmSurveyList(props: any) {
   }, [stepQuestion]);
 
   // Đoạn này cho phần bộ câu hỏi
-  const [dataCxmQuestion, setDataCxmQuestion] = useState<any>(null);
+  const [dataCxmQuestion, setDataCxmQuestion] = useState<Record<string, unknown>>(null);
   const [showModalAddCxmQuestion, setShowModalAddCxmQuestion] = useState<boolean>(false);
   const [isReloadCxmQuestion, setIsReloadCxmQuestion] = useState<boolean>(false);
 
   // Đoạn này cho phần căn
-  const [dataSpace, setDataSpace] = useState<any>(null);
+  const [dataSpace, setDataSpace] = useState<Record<string, unknown>>(null);
   const [showModalAddOption, setShowModalAddSpace] = useState<boolean>(false);
   const [reloadSpace, setReloadSpace] = useState<boolean>(false);
 

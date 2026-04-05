@@ -67,9 +67,9 @@ const CURRENCY_REVERSE: Record<string, string> = {
 
 /** Đẩy config lên window globals để các component khác đọc được */
 function applyConfigToGlobals(cfg: VatConfig) {
-  (window as any).__VAT_SUPPLIER_TAX_CODE__ = cfg.taxCode;
-  (window as any).__VAT_TEMPLATE_CODE__ = cfg.defaultTemplateCode;
-  (window as any).__VAT_CONFIG__ = cfg;
+  (window as Record<string, unknown>).__VAT_SUPPLIER_TAX_CODE__ = cfg.taxCode;
+  (window as Record<string, unknown>).__VAT_TEMPLATE_CODE__ = cfg.defaultTemplateCode;
+  (window as Record<string, unknown>).__VAT_CONFIG__ = cfg;
 }
 
 export default function Configuration() {
@@ -97,7 +97,7 @@ export default function Configuration() {
   useEffect(() => {
     setLoadingGet(true);
     VatInvoiceService.getConfig()
-      .then((res: any) => {
+      .then((res: Record<string, unknown>) => {
         if (res?.code === 0 && res.result) {
           const c: VatConfig = res.result;
           setBusiness({

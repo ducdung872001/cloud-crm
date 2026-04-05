@@ -46,10 +46,10 @@ export default function EmailMarkettingList(props) {
   const [isNoItem, setIsNoItem] = useState<boolean>(false);
   const [idSendEmail, setIdSendEmail] = useState<number>(null);
   const [showDialog, setShowDialog] = useState<boolean>(false);
-  const [contentDialog, setContentDialog] = useState<any>(null);
+  const [contentDialog, setContentDialog] = useState<Record<string, unknown>>(null);
 
   const [showCheckResourceEmail, setShowCheckResourceEmail] = useState<boolean>(false);
-  const [contentDialogResourceEamil, setContentDialogResourceEmail] = useState<any>(null);
+  const [contentDialogResourceEamil, setContentDialogResourceEmail] = useState<Record<string, unknown>>(null);
 
   const [showPageSendEmail, setShowPageSendEmail] = useState<boolean>(false);
   const [checkadd, setCheckAdd] = useState(false);

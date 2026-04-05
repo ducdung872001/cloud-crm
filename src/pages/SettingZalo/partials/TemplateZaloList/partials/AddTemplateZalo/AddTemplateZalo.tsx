@@ -41,12 +41,12 @@ import { isDifferenceObj } from "reborn-util";
 
 export interface IAddZaloMarkettingProps {
   onShow: boolean;
-  dataTemplateZalo: any;
-  data?: any;
+  dataTemplateZalo: Record<string, unknown>;
+  data?: Record<string, unknown>;
   onHide: (reload: boolean) => void;
   onBackProps: () => void;
   listIdCustomerProps?: number[];
-  paramCustomerProps?: any;
+  paramCustomerProps?: Record<string, unknown>;
 }
 
 interface IFilterUser {
@@ -195,7 +195,7 @@ export default function AddTemplateZalo(props: IAddZaloMarkettingProps) {
         title: dataTemplateZalo?.title ?? "",
         // content: "",
         tcyId: dataTemplateZalo?.tcyId ?? null,
-      } as any),
+      } as Record<string, unknown>),
     [onShow]
   );
 
@@ -454,7 +454,7 @@ export default function AddTemplateZalo(props: IAddZaloMarkettingProps) {
     setDragging(false);
 
     const newFiles = [];
-    const droppedFiles: any = Array.from(e.dataTransfer.files);
+    const droppedFiles: Record<string, unknown> = Array.from(e.dataTransfer.files);
 
     droppedFiles.forEach((file) => {
       const checkFile = file?.name.split("?")[0].split("#")[0].split(".").pop();
@@ -828,7 +828,7 @@ export default function AddTemplateZalo(props: IAddZaloMarkettingProps) {
     }
     setIsSubmit(true);
 
-    const body: any = {
+    const body: Record<string, unknown> = {
         id: dataTemplateZalo?.id,
         title: formData.values.title,
         tcyId: formData.values.tcyId,
@@ -1269,7 +1269,7 @@ export default function AddTemplateZalo(props: IAddZaloMarkettingProps) {
                             {item.type === "banner" ? (
                               <div className="item__banner">{item.image_url ? <img src={item.image_url} alt="banner-zalo" /> : ""}</div>
                             ) : item.type === "header" ? (
-                              <h3 className="title-zalo" style={{ textAlign: `${item.align}` } as any}>
+                              <h3 className="title-zalo" style={{ textAlign: `${item.align}` } as Record<string, unknown>}>
                                 {item.content}
                               </h3>
                             ) : item.type === "table" ? (
@@ -1282,7 +1282,7 @@ export default function AddTemplateZalo(props: IAddZaloMarkettingProps) {
                                 );
                               })
                             ) : item.type === "text" ? (
-                              <p className="item__content" style={{ textAlign: `${item.align}` } as any}>
+                              <p className="item__content" style={{ textAlign: `${item.align}` } as Record<string, unknown>}>
                                 {item.content}
                               </p>
                             ) : (

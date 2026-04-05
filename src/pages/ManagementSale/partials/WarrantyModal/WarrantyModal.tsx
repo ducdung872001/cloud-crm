@@ -67,7 +67,7 @@ export default function WarrantyModal(props: IAddWarrantyModelProps) {
     const [warrantyList, setWarrantyList] = useState([]);
     const abortController = new AbortController();
 
-    const getListWarranty = async (paramsSearch: any) => {
+    const getListWarranty = async (paramsSearch: Record<string, unknown>) => {
         setIsLoading(true);
 
         const response = await WarrantyService.list(paramsSearch, abortController.signal);
@@ -125,7 +125,7 @@ export default function WarrantyModal(props: IAddWarrantyModelProps) {
         />,
       ];
 
-    const actionsTable = (item: any): IAction[] => {
+    const actionsTable = (item: Record<string, unknown>): IAction[] => {
         
         return [
           
@@ -147,7 +147,7 @@ export default function WarrantyModal(props: IAddWarrantyModelProps) {
         ];
     };
 
-    const showDialogConfirmDelete = (item?: any) => {
+    const showDialogConfirmDelete = (item?: Record<string, unknown>) => {
         const contentDialog: IContentDialog = {
           color: "error",
           className: "dialog-delete",
@@ -436,7 +436,7 @@ export default function WarrantyModal(props: IAddWarrantyModelProps) {
   );
 
   useEffect(() => {
-    const result = JSON.parse(formData.values.docLink || []).map((item: any) => item.url);
+    const result = JSON.parse(formData.values.docLink || []).map((item: Record<string, unknown>) => item.url);
     setListImageWarranty(result);
   }, [formData.values.docLink]);
 

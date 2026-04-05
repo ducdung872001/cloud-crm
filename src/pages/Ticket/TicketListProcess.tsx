@@ -45,7 +45,7 @@ export default function TicketListProcess() {
   const [listIdChecked, setListIdChecked] = useState<number[]>([]);
   const [showModalAdd, setShowModalAdd] = useState<boolean>(false);
   const [showDialog, setShowDialog] = useState<boolean>(false);
-  const [contentDialog, setContentDialog] = useState<any>(null);
+  const [contentDialog, setContentDialog] = useState<Record<string, unknown>>(null);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [isLoadingKanban, setIsLoadingKanban] = useState<boolean>(false);
   const [isService, setIsService] = useState<boolean>(false);
@@ -603,7 +603,7 @@ export default function TicketListProcess() {
   const [valueProcess, setValueProcess] = useState(null);
 
   const loadOptionProcess = async (search, loadedOptions, { page }) => {
-    const param: any = {
+    const param: Record<string, unknown> = {
       name: search,
       page: page,
       limit: 10,
@@ -624,7 +624,7 @@ export default function TicketListProcess() {
       const dataOption = response.result.items;
 
       if (dataOption.length > 0) {
-        dataOption.map((item: any) => {
+        dataOption.map((item: Record<string, unknown>) => {
           optionProcess.push({
             value: item.id,
             label: item.name,
@@ -682,7 +682,7 @@ export default function TicketListProcess() {
 
   const getListStepProcess = async (processId) => {
     console.log("getListStepProcess called with processId:", processId);
-    const body: any = {
+    const body: Record<string, unknown> = {
       processId,
       limit: 100,
     };

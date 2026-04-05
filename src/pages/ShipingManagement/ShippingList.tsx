@@ -142,7 +142,7 @@ export default function ShippingOrderList() {
       } else {
         showToast(response.message ?? "Lỗi tải danh sách vận chuyển", "error");
       }
-    } catch (err: any) {
+    } catch (err: unknown) {
       if (err?.name !== "AbortError") {
         showToast("Không thể tải danh sách vận chuyển", "error");
       }
@@ -159,7 +159,7 @@ export default function ShippingOrderList() {
     if (!isMounted.current) { isMounted.current = true; return; }
     getListOrder(params);
 
-    const paramsTemp = _.cloneDeep(params) as any;
+    const paramsTemp = _.cloneDeep(params) as Record<string, unknown>;
     if (paramsTemp.limit === 10) delete paramsTemp["limit"];
     Object.keys(paramsTemp).forEach((k) => {
       if (!paramsTemp[k] && paramsTemp[k] !== 0) delete paramsTemp[k];
@@ -335,7 +335,7 @@ export default function ShippingOrderList() {
     };
 
     const displayTrackingCode = item.carrierTrackingCode || item.shipmentOrder;
-    const codValue = (item as any).codAmount ?? item.totalAmount ?? 0;
+    const codValue = (item as Record<string, unknown>).codAmount ?? item.totalAmount ?? 0;
 
     // Quy tắc theo yêu cầu
     const canCancel = ["draft", "submitted", "waiting_pickup"].includes(uiStatus);
@@ -361,7 +361,7 @@ export default function ShippingOrderList() {
       <Badge
         key={`badge-${item.id}`}
         text={badgeText[rawStatus] ?? item.statusCode}
-        variant={(badgeVariant[rawStatus] ?? "secondary") as any}
+        variant={(badgeVariant[rawStatus] ?? "secondary") as Record<string, unknown>}
       />,
 
       <div key={`action-${item.id}`} className="lst__action--cell">
@@ -445,7 +445,7 @@ export default function ShippingOrderList() {
               setParams((prev) => ({
                 ...prev,
                 ...paramsNew,
-                shipmentOrder: (paramsNew as any).keyword ?? (paramsNew as any).shipmentOrder ?? prev.shipmentOrder,
+                shipmentOrder: (paramsNew as Record<string, unknown>).keyword ?? (paramsNew as Record<string, unknown>).shipmentOrder ?? prev.shipmentOrder,
                 page: 1,
               }))
             }

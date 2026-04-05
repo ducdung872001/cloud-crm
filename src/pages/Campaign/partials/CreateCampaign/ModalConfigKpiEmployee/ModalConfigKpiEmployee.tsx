@@ -17,7 +17,7 @@ import ImageThirdGender from "assets/images/third-gender.png";
 import SelectCustom from "components/selectCustom/selectCustom";
 import KpiService from "services/KpiService";
 
-export default function ModalConfigKpiEmployee(props: any) {
+export default function ModalConfigKpiEmployee(props: Record<string, unknown>) {
   const { onShow, onHide, data, kayId } = props;
 
   const [isSubmit, setIsSubmit] = useState<boolean>(false);

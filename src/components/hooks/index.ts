@@ -14,7 +14,7 @@ const getWindowDimensions = () => {
  * @param {any} handler
  * @param {string[]} classList
  */
-export const useOnClickOutside = (ref: any, handler: any, classList: string[]) => {
+export const useOnClickOutside = (ref: React.RefObject<HTMLElement>, handler: (event: MouseEvent) => void, classList: string[]) => {
   const listener = (event) => {
     // Fix path in safari
     if (!("path" in Event.prototype)) {
@@ -58,7 +58,7 @@ export const useOnClickOutside = (ref: any, handler: any, classList: string[]) =
  * @param {function} callback
  * @return {any}
  */
-export const useDebounce = (value: any, delay: number, callback = (f) => f) => {
+export const useDebounce = (value: unknown, delay: number, callback = (f: unknown) => f) => {
   const [debouncedValue, setDebouncedValue] = useState(value);
   useEffect(() => {
     const handler = setTimeout(() => {
@@ -79,8 +79,8 @@ export const useDebounce = (value: any, delay: number, callback = (f) => f) => {
  * @param {any} callback
  * @param {number} delay
  */
-export const useInterval = (callback: any, delay: number) => {
-  const savedCallback = useRef<any>();
+export const useInterval = (callback: () => void, delay: number) => {
+  const savedCallback = useRef<(() => void) | undefined>();
   useEffect(() => {
     savedCallback.current = callback;
   }, [callback]);

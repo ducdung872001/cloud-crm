@@ -22,7 +22,7 @@ const WEBSITE_SETTING_CONFIG = [
 ];
 
 // Convert response từ backend (Integer 0/1) sang state FE (boolean)
-function responseToState(res: Record<string, any>): Record<string, boolean> {
+function responseToState(res: Record<string, unknown>): Record<string, boolean> {
   const state: Record<string, boolean> = {};
   WEBSITE_SETTING_CONFIG.forEach(({ key, backendKey }) => {
     state[key] = res[backendKey] === 1 || res[backendKey] === true;

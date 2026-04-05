@@ -22,7 +22,7 @@ export default function TableZaloOA(props: ITableZaloOAProps) {
   const { listZaloOA, isLoading, dataPagination, callback, isPermissionsZalo } = props;
 
   const [showDialog, setShowDialog] = useState<boolean>(false);
-  const [contentDialog, setContentDialog] = useState<any>(null);
+  const [contentDialog, setContentDialog] = useState<Record<string, unknown>>(null);
   const [permissions, setPermissions] = useState(getPermissions());
   const isMounted = useRef(false);
   const [zaloOa, setZaloOa] = useState(null);

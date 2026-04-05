@@ -10,8 +10,8 @@ import "./fileUpload.scss";
 
 interface FileUploadProps {
   label?: string | ReactElement;
-  formData?: any;
-  setFormData?: any;
+  formData?: Record<string, unknown>;
+  setFormData?: (data: Record<string, unknown>) => void;
   isRequired?: boolean;
   type?: string;
   name?: string;
@@ -60,7 +60,7 @@ export default function FileUpload(props: FileUploadProps) {
   }, [file]);
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const showImage = (url, filekey?: any) => {
+  const showImage = (url: string, filekey?: string) => {
     switch (type) {
       case "avatar":
         setFormData({ ...formData, values: { ...formData.values, avatar: url } });

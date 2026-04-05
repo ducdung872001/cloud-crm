@@ -14,18 +14,18 @@ import Button from "components/button/button";
 import Icon from "components/icon";
 import { set } from "lodash";
 
-export default function ListColumnInput(props: any) {
+export default function ListColumnInput(props: Record<string, unknown>) {
   const { onShow, onHide, businessRuleId } = props;
 
   const [showModalAddInputColumn, setShowModalAddInputColumn] = useState<boolean>(false);
   const [isSubmit, setIsSubmit] = useState<boolean>(false);
   const [showDialog, setShowDialog] = useState<boolean>(false);
   const [contentDialog, setContentDialog] = useState<IContentDialog>(null);
-  const [data, setData] = useState<any>(null); // Data for modal add/edit input column
+  const [data, setData] = useState<Record<string, unknown>>(null); // Data for modal add/edit input column
 
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
-  const showDialogConfirmDelete = (item?: any) => {
+  const showDialogConfirmDelete = (item?: Record<string, unknown>) => {
     const contentDialog: IContentDialog = {
       color: "error",
       className: "dialog-delete",
@@ -117,9 +117,9 @@ export default function ListColumnInput(props: any) {
 
   const dataFormat = ["text-center", "", "", "", "text-center", "text-center"];
 
-  const dataMappingArray = (item: any, index: number) => [index + 1, item.name, item.code, renderDatatypeBadge(item.dataType), ""];
+  const dataMappingArray = (item: Record<string, unknown>, index: number) => [index + 1, item.name, item.code, renderDatatypeBadge(item.dataType), ""];
 
-  const actionsTable = (item: any): IAction[] => {
+  const actionsTable = (item: Record<string, unknown>): IAction[] => {
     return [
       {
         title: "Sửa",

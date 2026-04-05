@@ -3,7 +3,7 @@ import "./badge.scss";
 
 interface BadgeProps {
   text: string;
-  style?: any;
+  style?: React.CSSProperties;
   variant: "error" | "success" | "warning" | "primary" | "secondary" | "transparent" | "done" | "wait-collect";
 }
 

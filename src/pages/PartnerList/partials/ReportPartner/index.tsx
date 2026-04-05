@@ -24,7 +24,7 @@ import DetailReportPartnerModal from "./DetailReportPartnerModal";
 
 interface ICardItem {
   key: string;
-  icon: any;
+  icon: Record<string, unknown>;
   name: string;
   value: string;
   color: "total" | "out-date" | "success" | "today" | "remaining" | "average" | "early";
@@ -425,7 +425,7 @@ export default function ReportPartner() {
         </div>
         <div className="report_overview--list">
           <div className="box__view--total">
-            {dataPreview.map((item: any, idx) => {
+            {dataPreview.map((item: Record<string, unknown>, idx) => {
               return (
                 <div
                   key={idx}

@@ -4,7 +4,7 @@ import "./ModalConfirm.scss";
 import _, { at, get, set } from "lodash";
 import Icon from "components/icon";
 
-export default function ModalConfirm(props: any) {
+export default function ModalConfirm(props: { onShow: boolean; onHide: (value: boolean) => void; title: string; content: string; onSubmit: () => void; isSubmit?: boolean }) {
   const { onShow, onHide, title, content, onSubmit, isSubmit} = props;
 
 

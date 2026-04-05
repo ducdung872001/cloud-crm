@@ -10,7 +10,7 @@ import ViettelWizard from "./partials/ViettelWizard/ViettelWizard";
 import ViettelSettings from "./partials/ViettelSettings/ViettelSettings";
 import ViettelAnalytics from "./partials/ViettelAnalytics/ViettelAnalytics";
 
-export default function ViettelIntegration(props: any) {
+export default function ViettelIntegration(props: Record<string, unknown>) {
   document.title = "Tích hợp Viettel";
 
   const { onBackProps } = props;
@@ -18,7 +18,7 @@ export default function ViettelIntegration(props: any) {
   const isMounted = useRef(false);
   const [dataIntegration, setDataIntegration] = useState(null);
   const [showDialog, setShowDialog] = useState<boolean>(false);
-  const [contentDialog, setContentDialog] = useState<any>(null);
+  const [contentDialog, setContentDialog] = useState<Record<string, unknown>>(null);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [isNoItem, setIsNoItem] = useState<boolean>(false);
   const [isPermissions, setIsPermissions] = useState<boolean>(false);
@@ -73,7 +73,7 @@ export default function ViettelIntegration(props: any) {
                   className={item.is_active === activeTab ? "active" : ""}
                   onClick={(e) => {
                     e.preventDefault();
-                    setActiveTab(item.is_active as any);
+                    setActiveTab(item.is_active as Record<string, unknown>);
                   }}
                 >
                   {item.title}

@@ -16,7 +16,7 @@ interface CartProps {
   onPay: (invoiceId: number) => void;
   onSelectCustomer: () => void;
   customer?: Customer;
-  setInvoiceDraftToPaid: (invoice: any) => void;
+  setInvoiceDraftToPaid: (invoice: Record<string, unknown>) => void;
   onSavedDraft?: () => void;
   // ── Loại đơn & ship ──────────────────────────────────────────────────────
   orderType: OrderType;
@@ -30,7 +30,7 @@ interface CartProps {
   onPointsChange?: (points: number, moneyValue: number) => void;
   // ── Khuyến mãi ───────────────────────────────────────────────────────────
   eligiblePromoCount?: number;
-  appliedPromo?: { id: number; name: string; discountAmount: number; promotionType: number; gifts?: any[] } | null;
+  appliedPromo?: { id: number; name: string; discountAmount: number; promotionType: number; gifts?: Record<string, unknown>[] } | null;
   promoDiscount?: number;
   onViewPromos?: () => void;
   onRemovePromo?: () => void;
@@ -145,18 +145,18 @@ const Cart: React.FC<CartProps> = ({
     setCouponError(""); setCouponMessage("");
     try {
       const res = await CouponService.apply(code, subtotal);
-      const payload = (res as any)?.result ?? (res as any)?.data ?? res;
+      const payload = (res as Record<string, unknown>)?.result ?? (res as Record<string, unknown>)?.data ?? res;
       let calcDiscount = 0;
       if (typeof payload?.discountAmount === "number" && payload.discountAmount > 0) {
         calcDiscount = payload.discountAmount;
       } else if (typeof payload?.finalAmount === "number" && typeof payload?.orderAmount === "number") {
         calcDiscount = Math.max(0, payload.orderAmount - payload.finalAmount);
       }
-      const hasError = payload?.error || (res as any)?.success === false;
+      const hasError = payload?.error || (res as Record<string, unknown>)?.success === false;
       if (hasError) {
         handleCouponDiscountChange(0);
         setCouponError(payload?.message ?? t("pageCounterSales.voucherInvalid"));
-      } else if (payload?.code || (res as any)?.success === true) {
+      } else if (payload?.code || (res as Record<string, unknown>)?.success === true) {
         handleCouponDiscountChange(calcDiscount);
         setCouponMessage(calcDiscount > 0
           ? (payload?.message ?? `${t("pageCounterSales.voucherSuccess")} − ${calcDiscount.toLocaleString("vi")} đ`)

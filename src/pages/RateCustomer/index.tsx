@@ -57,7 +57,7 @@ const Stars = ({ n }: { n: number }) => (
 );
 
 const CustomBadge = ({ status }: { status: string }) => {
-  const map: any = {
+  const map: Record<string, unknown> = {
     published: { l: 'published', c: 'rate-badge--published' },
     pending: { l: 'Chờ duyệt', c: 'rate-badge--pending' },
   };
@@ -65,7 +65,7 @@ const CustomBadge = ({ status }: { status: string }) => {
   return <span className={`rate-badge ${c}`}>{l}</span>;
 }
 
-export default function RateCustomer(props: any) {
+export default function RateCustomer(props: Record<string, unknown>) {
   document.title = "Đánh giá khách hàng";
   const { onBackProps } = props;
 

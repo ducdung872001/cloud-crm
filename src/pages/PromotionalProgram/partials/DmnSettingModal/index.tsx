@@ -72,11 +72,11 @@ function MappingSection({ businessRuleId, listInput, setListInput, listOutput, s
   const switchTab = (t: "input" | "output") => { setTab(t); setFormRow({ ruleField: "", ruleFieldName: "", mappingField: "", mappingFieldName: "" }); };
 
   // Trường đầu vào DMN
-  const loadInputFields = useCallback(async (search: string, _: any, { page }: any) => {
+  const loadInputFields = useCallback(async (search: string, _: Record<string, unknown>, { page }: Record<string, unknown>) => {
     const res = await DecisionTableInputService.list({ code: search, businessRuleId, page, limit: 20 });
     if (res?.code === 0) {
       return {
-        options: (res.result?.items ?? []).map((it: any) => ({
+        options: (res.result?.items ?? []).map((it: Record<string, unknown>) => ({
           value: it.code,
           label: `${it.code}${it.name ? " - " + it.name : ""}`,
           isDisabled: listInput.some((r) => r.ruleField === it.code),
@@ -89,11 +89,11 @@ function MappingSection({ businessRuleId, listInput, setListInput, listOutput, s
   }, [businessRuleId, listInput]);
 
   // Trường đầu ra DMN
-  const loadOutputFields = useCallback(async (search: string, _: any, { page }: any) => {
+  const loadOutputFields = useCallback(async (search: string, _: Record<string, unknown>, { page }: Record<string, unknown>) => {
     const res = await DecisionTableOutputService.list({ code: search, businessRuleId, page, limit: 20 });
     if (res?.code === 0) {
       return {
-        options: (res.result?.items ?? []).map((it: any) => ({
+        options: (res.result?.items ?? []).map((it: Record<string, unknown>) => ({
           value: it.code,
           label: `${it.code}${it.name ? " - " + it.name : ""}`,
           isDisabled: listOutput.some((r) => r.ruleField === it.code),
@@ -141,7 +141,7 @@ function MappingSection({ businessRuleId, listInput, setListInput, listOutput, s
             id="ruleField" name="ruleField" label="" options={[]} fill={true}
             value={formRow.ruleField ? { value: formRow.ruleField, label: formRow.ruleFieldName } : null}
             special={true} required={false}
-            onChange={(e: any) => setFormRow({ ...formRow, ruleField: e.value, ruleFieldName: e.label })}
+            onChange={(e: Record<string, unknown>) => setFormRow({ ...formRow, ruleField: e.value, ruleFieldName: e.label })}
             isAsyncPaginate={true}
             placeholder="Chọn trường nghiệp vụ"
             additional={{ page: 1 }}
@@ -152,7 +152,7 @@ function MappingSection({ businessRuleId, listInput, setListInput, listOutput, s
         <div className="dmn-mapping-add-row__field">
           <Input
             name="mappingField" fill={true} value={formRow.mappingField}
-            onChange={(e: any) => setFormRow({ ...formRow, mappingField: e.target.value, mappingFieldName: e.target.value })}
+            onChange={(e: Record<string, unknown>) => setFormRow({ ...formRow, mappingField: e.target.value, mappingFieldName: e.target.value })}
             placeholder={tab === "input" ? "vd: $.orderAmount" : "vd: discountAmount"}
           />
         </div>
@@ -222,14 +222,14 @@ export default function DmnSettingModal({ onShow, data, onHide }: Props) {
   }, [onShow, data]);
 
   // businessRule/list trả về items: [{ id, code, name }]
-  const loadBusinessRules = async (search: string, _: any, { page }: any) => {
+  const loadBusinessRules = async (search: string, _: Record<string, unknown>, { page }: Record<string, unknown>) => {
     try {
       const res = await fetch(
         `${urlsApi.businessRule.list}?name=${encodeURIComponent(search)}&page=${page}&limit=20`
       ).then((r) => r.json());
       if (res?.code === 0) {
         return {
-          options: (res.result?.items ?? []).map((it: any) => ({
+          options: (res.result?.items ?? []).map((it: Record<string, unknown>) => ({
             value: it.id,
             label: it.name,
             code: it.code ?? "",
@@ -312,7 +312,7 @@ export default function DmnSettingModal({ onShow, data, onHide }: Props) {
                 id="businessRule" name="businessRule" label="Luật nghiệp vụ"
                 fill={true} required={true} options={[]}
                 value={selectedRule ? { value: selectedRule.id, label: selectedRule.label } : null}
-                onChange={(e: any) => {
+                onChange={(e: Record<string, unknown>) => {
                   setSelectedRule({ id: e.id ?? e.value, code: e.code ?? "", label: e.label });
                   setListInput([]);
                   setListOutput([]);

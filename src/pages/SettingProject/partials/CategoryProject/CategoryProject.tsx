@@ -18,7 +18,7 @@ import "./CategoryProject.scss";
 import CategoryProjectService from "services/CategoryProjectService";
 import AddCategoryProjectModal from "./partials/AddCategoryProjectModal";
 
-export default function CategoryProject(props: any) {
+export default function CategoryProject(props: Record<string, unknown>) {
   document.title = "Danh mục dịch vụ";
 
   const { onBackProps } = props;
@@ -30,7 +30,7 @@ export default function CategoryProject(props: any) {
   const [listIdChecked, setListIdChecked] = useState<number[]>([]);
   const [showModalAdd, setShowModalAdd] = useState<boolean>(false);
   const [showDialog, setShowDialog] = useState<boolean>(false);
-  const [contentDialog, setContentDialog] = useState<any>(null);
+  const [contentDialog, setContentDialog] = useState<Record<string, unknown>>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [isNoItem, setIsNoItem] = useState<boolean>(true);
   const [isPermissions, setIsPermissions] = useState<boolean>(false);
@@ -62,7 +62,7 @@ export default function CategoryProject(props: any) {
 
   const abortController = new AbortController();
 
-  const getListCategoryProject = async (paramsSearch: any) => {
+  const getListCategoryProject = async (paramsSearch: Record<string, unknown>) => {
     setIsLoading(true);
 
     const response = await CategoryProjectService.list(paramsSearch, abortController.signal);
@@ -135,13 +135,13 @@ export default function CategoryProject(props: any) {
 
   const dataFormat = ["text-center", "", "text-center"];
 
-  const dataMappingArray = (item: any, index: number) => [
+  const dataMappingArray = (item: Record<string, unknown>, index: number) => [
     getPageOffset(params) + index + 1,
     item.name,
     // item.position,
   ];
 
-  const actionsTable = (item: any): IAction[] => {
+  const actionsTable = (item: Record<string, unknown>): IAction[] => {
     return [
     //   permissions["CATEGORY_PROJECT_UPDATE"] == 1 && 
       {
@@ -176,7 +176,7 @@ export default function CategoryProject(props: any) {
     setContentDialog(null);
   };
 
-  const showDialogConfirmDelete = (item?: any) => {
+  const showDialogConfirmDelete = (item?: Record<string, unknown>) => {
     const contentDialog: IContentDialog = {
       color: "error",
       className: "dialog-delete",

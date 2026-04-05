@@ -25,7 +25,7 @@ import ModalViewDocument from "./ModalViewDocument/ModalViewDocument";
  */
 export default function UploadDocument() {
   document.title = ""; //Ảnh hoặc file theo định dạng
-  const params: any = getSearchParameters();
+  const params: Record<string, unknown> = getSearchParameters();
   console.log("paramsDocument", params);
 
   //Định dạng là mảng JSON
@@ -137,7 +137,7 @@ export default function UploadDocument() {
     setDragging(false);
 
     const newFiles = [...dataAttachment];
-    const droppedFiles: any = Array.from(e.dataTransfer.files);
+    const droppedFiles: Record<string, unknown> = Array.from(e.dataTransfer.files);
     console.log("droppedFiles", droppedFiles);
 
     droppedFiles.forEach((file) => {
@@ -210,7 +210,7 @@ export default function UploadDocument() {
    * Tải tài liệu lên (Luôn là 1 phần tử)
    * @param e
    */
-  const handSubmitForm = async (item: any) => {
+  const handSubmitForm = async (item: Record<string, unknown>) => {
     let dataSubmit = {
       nodeId,
       processId,
@@ -241,7 +241,7 @@ export default function UploadDocument() {
   //   // getDocuments(nodeId, processId, potId, fieldName);
   // };
 
-  const handDelete = async (item: any) => {
+  const handDelete = async (item: Record<string, unknown>) => {
     console.log("data>>>>", dataAttachment);
     setDataAttachment(dataAttachment.filter((x) => x !== item));
     console.log("item>>>>", item);

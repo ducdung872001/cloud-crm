@@ -228,7 +228,7 @@ export default function ModalTimerIntermediateCatchEvent({ onShow, onHide, dataN
                   // || !isDifferenceObj(formData, values),
                   is_loading: isSubmit,
                 },
-              ] as any)),
+              ] as Record<string, unknown>)),
         ],
       },
     }),

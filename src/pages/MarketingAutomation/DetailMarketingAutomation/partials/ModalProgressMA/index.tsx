@@ -13,7 +13,7 @@ const minimapStyle = {
   };
 
   
-export default function ModalProgressMA(props: any) {
+export default function ModalProgressMA(props: Record<string, unknown>) {
     const { onShow, onHide, dataCustomer, maId, nodesData, edgesData } = props;
 
     const reactFlowWrapper = useRef(null);

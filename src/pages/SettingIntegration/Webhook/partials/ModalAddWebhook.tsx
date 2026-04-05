@@ -24,7 +24,7 @@ import "react18-json-view/src/style.css";
 import InstallApplicationService from "services/InstallApplicationService";
 import ContractService from "services/ContractService";
 
-export default function ModalAddWebhook(props: any) {
+export default function ModalAddWebhook(props: Record<string, unknown>) {
   const { onShow, data, onHide } = props;
 
   const focusedElement = useActiveElement();
@@ -40,7 +40,7 @@ export default function ModalAddWebhook(props: any) {
         appId: data?.appId ?? null,
         mapper: data?.mapper ?? "[]",
         method: data?.method ?? "",
-      } as any),
+      } as Record<string, unknown>),
     [data, onShow]
   );
 
@@ -312,7 +312,7 @@ export default function ModalAddWebhook(props: any) {
   };
 
   const loadedOptionApp = async (search, loadedOptions, { page }) => {
-    const param: any = {
+    const param: Record<string, unknown> = {
       name: search,
       page: page,
       limit: 10,
@@ -411,9 +411,9 @@ export default function ModalAddWebhook(props: any) {
     //     }
     // })
 
-    const body: any = {
+    const body: Record<string, unknown> = {
       ...(data ? { id: data?.id } : {}),
-      ...(formData.values as any),
+      ...(formData.values as Record<string, unknown>),
       // ...{mapper: JSON.stringify(listAttributeSubmit)}
       ...{ mapper: dataEntityName?.value == "contract" ? JSON.stringify(dataJsonContract) : JSON.stringify(dataJsonCustomer) },
     };

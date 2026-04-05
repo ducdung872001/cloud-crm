@@ -138,12 +138,12 @@ export default function InvoiceReceiptModal({ open, invoiceId, onClose }: Props)
         }
       }
 
-      const products = (raw.products ?? []).map((p: any) => ({
+      const products = (raw.products ?? []).map((p: Record<string, unknown>) => ({
         name: p.productName || p.name || "",
         qty: p.qty ?? 1,
         price: p.price ?? p.mainCost ?? 0,
       }));
-      const services = (raw.services ?? []).map((s: any) => ({
+      const services = (raw.services ?? []).map((s: Record<string, unknown>) => ({
         name: s.serviceName || s.name || "",
         qty: s.qty ?? 1,
         price: s.price ?? s.mainCost ?? 0,
@@ -177,7 +177,7 @@ export default function InvoiceReceiptModal({ open, invoiceId, onClose }: Props)
         setEmailMasked("");
         setEmailReadonly(false);
       }
-    } catch (e: any) {
+    } catch (e: unknown) {
       if (e?.name !== "AbortError") showToast("Lỗi tải biên lai", "error");
     } finally {
       setIsLoading(false);
@@ -341,7 +341,7 @@ ${html}
       }
       showToast(`Đã gửi biên lai tới ${email}`, "success");
       setShowEmail(false);
-    } catch (err: any) {
+    } catch (err: unknown) {
       showToast(err?.message ?? "Gửi email thất bại. Vui lòng thử lại.", "error");
     } finally {
       setIsSending(false);
@@ -632,7 +632,7 @@ function buildEmailHtml(r: ReceiptData): string {
         <span>TỔNG CỘNG</span><span style="color:#22c55e">${fmtVND(r.fee)}</span>
       </div>
       <div style="display:flex;justify-content:space-between;padding:4px 0;font-size:13px;color:#666">
-        <span>Thanh toán</span><span>${({ 1: "Tiền mặt", 2: "Chuyển khoản", 3: "Quẹt thẻ", 4: "QR Code" } as any)[r.paymentType] ?? "Tiền mặt"}</span>
+        <span>Thanh toán</span><span>${({ 1: "Tiền mặt", 2: "Chuyển khoản", 3: "Quẹt thẻ", 4: "QR Code" } as Record<string, unknown>)[r.paymentType] ?? "Tiền mặt"}</span>
       </div>
     </div>
   </div>

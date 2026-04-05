@@ -158,7 +158,7 @@ export default function ModalBpmParticipant({ onShow, onHide, dataNode, formSche
                   disabled: isSubmit || !isDifferenceObj(formData, values),
                   is_loading: isSubmit,
                 },
-              ] as any)),
+              ] as Record<string, unknown>)),
         ],
       },
     }),
@@ -268,7 +268,7 @@ export default function ModalBpmParticipant({ onShow, onHide, dataNode, formSche
   const [dataEmployee, setDataEmployee] = useState(null);
 
   const loadedOptionEmployee = async (search, loadedOptions, { page }) => {
-    const param: any = {
+    const param: Record<string, unknown> = {
       name: search,
       page: page,
       limit: 10,

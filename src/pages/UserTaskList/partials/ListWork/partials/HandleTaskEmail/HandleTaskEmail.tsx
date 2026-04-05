@@ -15,7 +15,7 @@ const defaultSchema = {
 const HandleTaskEmail = () => {
   const navigation = useNavigate();
 
-  const params: any = getSearchParameters();
+  const params: Record<string, unknown> = getSearchParameters();
 
   useEffect(() => {
     if (params && params.workId) {

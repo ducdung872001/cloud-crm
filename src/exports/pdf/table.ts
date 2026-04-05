@@ -2,15 +2,15 @@ import { formatCurrency } from "utils/common";
 import { logo } from "./logoText";
 
 interface TableDocDefinitionProps {
-  info: any;
+  info: Record<string, unknown>;
   title: string;
-  header: any;
-  items: any[];
-  mapFooter?: any[];
+  header: (string | Record<string, unknown>)[];
+  items: (string | number | Record<string, unknown>)[][];
+  mapFooter?: (string | number | Record<string, unknown>)[];
   widths?: (number | string)[];
-  customFooter?: any;
-  options?: any;
-  customFieldExportPDF?: any;
+  customFooter?: Record<string, unknown>[];
+  options?: Record<string, unknown>;
+  customFieldExportPDF?: string | Record<string, unknown>;
 }
 
 export default function TableDocDefinition(props: TableDocDefinitionProps) {

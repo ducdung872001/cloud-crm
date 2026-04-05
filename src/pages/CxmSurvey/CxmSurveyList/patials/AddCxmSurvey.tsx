@@ -14,7 +14,7 @@ import "./AddCxmSurvey.scss";
 import CxmSurveyService from "services/CxmSurveyService";
 import SelectCustom from "components/selectCustom/selectCustom";
 
-export default function AddCxmSurvey(props: any) {
+export default function AddCxmSurvey(props: Record<string, unknown>) {
   const { onShow, onHide, data } = props;
 
   const focusedElement = useActiveElement();
@@ -29,7 +29,7 @@ export default function AddCxmSurvey(props: any) {
         title: data?.title ?? "",
         description: data?.description ?? "",
         status: data?.status.toString() ?? "1",
-      } as any),
+      } as Record<string, unknown>),
     [data, onShow]
   );
 

@@ -19,8 +19,8 @@ import "./index.scss";
 interface IAddTemplateFSQuoteProps {
   onShow: boolean;
   onHide: (reload: boolean) => void;
-  callBack: (data: any) => void;
-  data: any;
+  callBack: (data: Record<string, unknown>) => void;
+  data: Record<string, unknown>;
   type: "fs" | "quote";
 }
 
@@ -71,7 +71,7 @@ export default function AddTemplateFSQuote(props: IAddTemplateFSQuoteProps) {
       const result = response.result?.items ? [...response.result.items] : [];
 
       const changeResult = result.map((item) => {
-        const newItem: any = {
+        const newItem: Record<string, unknown> = {
           [item.code]: "",
           type: item.type,
           placeholder: item.name.toLowerCase(),

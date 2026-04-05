@@ -34,7 +34,7 @@ export default function ReportInteractCustomerTable() {
 
   const isMounted = useRef(false);
 
-  const [params, setParams] = useState<any>({
+  const [params, setParams] = useState<Record<string, unknown>>({
     keyword: "",
   });
 
@@ -113,7 +113,7 @@ export default function ReportInteractCustomerTable() {
   );
 
   const abortController = new AbortController();
-  const getListCustomer = async (paramsSearch: any) => {
+  const getListCustomer = async (paramsSearch: Record<string, unknown>) => {
     setIsLoading(true);
 
     const response = await CustomerService.detailCustomerReport(paramsSearch);
@@ -193,7 +193,7 @@ export default function ReportInteractCustomerTable() {
   const [showModalInteract, setShowModalInteract] = useState<boolean>(false);
   const [dataInteract, setDataInteract] = useState(null);
 
-  const dataMappingArray = (item: any, index: number, type?: string) => [
+  const dataMappingArray = (item: Record<string, unknown>, index: number, type?: string) => [
     getPageOffset(params) + index + 1,
     item.lastActionTime ? moment(item.lastActionTime).format("DD/MM/YYYY") : "",
     item.customer?.name,

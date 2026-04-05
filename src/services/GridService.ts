@@ -2,7 +2,7 @@ import { urlsApi } from "configs/urls";
 import { convertParamsToString } from "reborn-util";
 
 export default {
-  list: (params: any, signal?: AbortSignal) => {
+  list: (params: Record<string, unknown>, signal?: AbortSignal) => {
     return fetch(`${urlsApi.grid.list}${convertParamsToString(params)}`, {
       signal,
       method: "GET",
@@ -10,64 +10,64 @@ export default {
   },
 
   //Thêm cột
-  update: (body: any) => {
+  update: (body: Record<string, unknown>) => {
     return fetch(urlsApi.grid.update, {
       method: "POST",
       body: JSON.stringify(body),
     }).then((res) => res.json());
   },
-  detail: (params: any) => {
+  detail: (params: Record<string, unknown>) => {
     return fetch(`${urlsApi.grid.detail}${convertParamsToString(params)}`, {
       method: "GET",
     }).then((res) => res.json());
   },
-  delete: (params: any) => {
+  delete: (params: Record<string, unknown>) => {
     return fetch(`${urlsApi.grid.delete}${convertParamsToString(params)}`, {
       method: "DELETE",
     }).then((res) => res.json());
   },
 
   //Thêm hàng
-  updateRow: (body: any) => {
+  updateRow: (body: Record<string, unknown>) => {
     return fetch(urlsApi.grid.updateRow, {
       method: "POST",
       body: JSON.stringify(body),
     }).then((res) => res.json());
   },
 
-  detailRow: (params: any) => {
+  detailRow: (params: Record<string, unknown>) => {
     return fetch(`${urlsApi.grid.detailRow}${convertParamsToString(params)}`, {
       method: "GET",
     }).then((res) => res.json());
   },
 
-  deleteRow: (params: any) => {
+  deleteRow: (params: Record<string, unknown>) => {
     return fetch(`${urlsApi.grid.deleteRow}${convertParamsToString(params)}`, {
       method: "DELETE",
     }).then((res) => res.json());
   },
 
-  importFile: (body: any) => {
+  importFile: (body: Record<string, unknown>) => {
     return fetch(urlsApi.grid.importFile, {
       method: "POST",
       body: JSON.stringify(body),
     }).then((res) => res.json());
   },
 
-  getRowsUpload: (params: any) => {
+  getRowsUpload: (params: Record<string, unknown>) => {
     return fetch(`${urlsApi.grid.getRowsUpload}${convertParamsToString(params)}`, {
       method: "GET",
     }).then((res) => res.json());
   },
 
   //Thêm comment
-  updateComment: (body: any) => {
+  updateComment: (body: Record<string, unknown>) => {
     return fetch(urlsApi.grid.updateComment, {
       method: "POST",
       body: JSON.stringify(body),
     }).then((res) => res.json());
   },
-  listComment: (params: any, signal?: AbortSignal) => {
+  listComment: (params: Record<string, unknown>, signal?: AbortSignal) => {
     return fetch(`${urlsApi.grid.listComment}${convertParamsToString(params)}`, {
       signal,
       method: "GET",

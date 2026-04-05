@@ -38,17 +38,17 @@ export default function SummaryCards({ branchId }: Props) {
 
         // Tổng đơn sub — ghép tên ca
         const orderSub = (d.shiftStatuses ?? [])
-          .map((s: any) => `${s.orderCount ?? 0} đơn ${s.shiftName ?? ""}`)
+          .map((s: Record<string, unknown>) => `${s.orderCount ?? 0} đơn ${s.shiftName ?? ""}`)
           .join(" · ") || "";
 
         // Card 3: nhân viên đang ca
-        const activeShift = (d.shiftStatuses ?? []).find((s: any) => s.status === "OPEN");
+        const activeShift = (d.shiftStatuses ?? []).find((s: Record<string, unknown>) => s.status === "OPEN");
         const staffSub = activeShift
           ? `${activeShift.shiftName ?? ""} · ${activeShift.timeRange ?? ""}`
           : "";
 
         // Card 4: chênh lệch
-        const diffShift = (d.shiftStatuses ?? []).find((s: any) => (s.cashDifference ?? 0) !== 0);
+        const diffShift = (d.shiftStatuses ?? []).find((s: Record<string, unknown>) => (s.cashDifference ?? 0) !== 0);
         const diffSub = d.diffShiftInfo ?? "";
 
         setCards([

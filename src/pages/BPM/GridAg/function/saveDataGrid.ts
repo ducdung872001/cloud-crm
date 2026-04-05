@@ -15,7 +15,7 @@ const defaultNote = {
   documentType: "PVYC",
 };
 
-export const saveDataGrid = async (columnsConfig: any[], currentDataRow: any[], params, checkedMap): Promise<{ code; message } | undefined> => {
+export const saveDataGrid = async (columnsConfig: Record<string, unknown>[], currentDataRow: Record<string, unknown>[], params, checkedMap): Promise<{ code; message } | undefined> => {
   try {
     // Your async logic here
     let dataRow = currentDataRow.map((row) => {
@@ -79,7 +79,7 @@ export const saveDataGrid = async (columnsConfig: any[], currentDataRow: any[], 
 
 const generateDataSave = (columnsConfig, dataRow) => {
   const data = dataRow.map((row) => {
-    let rowData: any = [];
+    let rowData: Record<string, unknown> = [];
     if (row.isFullWidthRow) {
       rowData = {
         no: row.no,

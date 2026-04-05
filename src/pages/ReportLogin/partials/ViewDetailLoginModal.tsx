@@ -19,7 +19,7 @@ export default function ViewDetailLoginModal({ onShow, onHide, data }) {
 
   const dataFormat = ["text-center", "", "", "text-center"];
 
-  const dataMappingArray = (item: any, index: number) => [index + 1, <Image key={item.id} src={item.avatar} alt={item.name} />, item.name, item.date];
+  const dataMappingArray = (item: Record<string, unknown>, index: number) => [index + 1, <Image key={item.id} src={item.avatar} alt={item.name} />, item.name, item.date];
 
   const handleLstUserLoginDetail = async (data) => {
     if (!data) return;

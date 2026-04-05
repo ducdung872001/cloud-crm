@@ -19,7 +19,7 @@ interface Props {
   onHide: (refresh?: boolean) => void;
 }
 
-function toISODate(val: any): string {
+function toISODate(val: Record<string, unknown>): string {
   if (!val) return "";
   const m = moment.isMoment(val) ? val : moment(val);
   return m.isValid() ? m.format("YYYY-MM-DD") : "";
@@ -97,7 +97,7 @@ export default function AddPromoCodeModal({ onShow, data, onHide }: Props) {
 
     const errors: Record<string, string> = Validate(validations, formData, listField);
 
-    const v = formData.values as any;
+    const v = formData.values as Record<string, unknown>;
     const expiryISO = toISODate(v.expiryDate);
     if (!expiryISO) errors["expiryDate"] = "Vui lòng chọn hạn sử dụng";
 

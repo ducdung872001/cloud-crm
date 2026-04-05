@@ -19,22 +19,22 @@ import AddSpaceModal from "./partials/AddCxmOption";
 // SpaceService removed (non-retail BDS)
 import CxmOptionService from "services/CxmOptionService";
 
-export default function CxmOptionList(props: any) {
+export default function CxmOptionList(props: Record<string, unknown>) {
   document.title = "Danh sách lựa chọn";
 
   const { onBackProps, setDataSpace, setShowModalAddSpace, reloadSpace, dataQuestionFloor, dataQuestion } = props;
 
   const isMounted = useRef(false);
 
-  const [listSpace, setListSpace] = useState<any[]>([]);
+  const [listSpace, setListSpace] = useState<Record<string, unknown>[]>([]);
   const [listIdChecked, setListIdChecked] = useState<number[]>([]);
   const [showDialog, setShowDialog] = useState<boolean>(false);
-  const [contentDialog, setContentDialog] = useState<any>(null);
+  const [contentDialog, setContentDialog] = useState<Record<string, unknown>>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [isNoItem, setIsNoItem] = useState<boolean>(false);
   const [isPermissions, setIsPermissions] = useState<boolean>(false);
 
-  const [params, setParams] = useState<any>({
+  const [params, setParams] = useState<Record<string, unknown>>({
     unitNumber: "",
     limit: 10,
     questionId: dataQuestion?.id,
@@ -79,7 +79,7 @@ export default function CxmOptionList(props: any) {
   });
 
   const abortController = new AbortController();
-  const getListSpace = async (paramsSearch: any) => {
+  const getListSpace = async (paramsSearch: Record<string, unknown>) => {
     setIsLoading(true);
     const response = await CxmOptionService.list(paramsSearch, abortController.signal);
 
@@ -147,7 +147,7 @@ export default function CxmOptionList(props: any) {
     //  "text-center"
   ];
 
-  const dataMappingArray = (item: any, index: number) => [
+  const dataMappingArray = (item: Record<string, unknown>, index: number) => [
     getPageOffset(params) + index + 1,
     item.optionText,
     <a key={index}>Xem câu hỏi tiếp theo</a>,
@@ -176,7 +176,7 @@ export default function CxmOptionList(props: any) {
     setContentDialog(null);
   };
 
-  const showDialogConfirmActiveSpace = (item?: any) => {
+  const showDialogConfirmActiveSpace = (item?: Record<string, unknown>) => {
     const contentDialog: IContentDialog = {
       color: "warning",
       className: "dialog-warning",
@@ -203,7 +203,7 @@ export default function CxmOptionList(props: any) {
     setShowDialog(true);
   };
 
-  const actionsTable = (item: any): IAction[] => {
+  const actionsTable = (item: Record<string, unknown>): IAction[] => {
     return item.headquarter === 1
       ? [
           {
@@ -262,7 +262,7 @@ export default function CxmOptionList(props: any) {
     setContentDialog(null);
   };
 
-  const showDialogConfirmDelete = (item?: any) => {
+  const showDialogConfirmDelete = (item?: Record<string, unknown>) => {
     const contentDialog: IContentDialog = {
       color: "error",
       className: "dialog-delete",

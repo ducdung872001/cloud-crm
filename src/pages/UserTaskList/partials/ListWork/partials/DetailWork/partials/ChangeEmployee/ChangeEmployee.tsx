@@ -9,7 +9,7 @@ import EmployeeService from "services/EmployeeService";
 import WorkOrderService from "services/WorkOrderService";
 import { ContextType, UserContext } from "contexts/userContext";
 
-export default function ChangeEmployee(props: any) {
+export default function ChangeEmployee(props: Record<string, unknown>) {
   const { onShow, onHide, data } = props;
 
   const [isSubmit, setIsSubmit] = useState<boolean>(false);

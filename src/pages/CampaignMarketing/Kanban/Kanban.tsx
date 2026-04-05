@@ -10,7 +10,7 @@ import { ICustomPlaceholderResponse } from "model/customPlaceholder/CustomPlaceh
 import SaleflowInvoiceService from "services/SaleflowInvoiceService";
 import { AnyKindOfDictionary } from "lodash";
 
-export default function Kanban(props: any) {
+export default function Kanban(props: Record<string, unknown>) {
   const {
     data,
     dataOfStatus_1,
@@ -51,7 +51,7 @@ export default function Kanban(props: any) {
   } = props;
 
   const marginRight = 12;
-  const [columns, setColumns] = useState<any[]>([]);
+  const [columns, setColumns] = useState<Record<string, unknown>[]>([]);
   console.log("columns", columns);
 
   const [idEndPoint, setIdEndPoint] = useState<number>(null);
@@ -238,7 +238,7 @@ export default function Kanban(props: any) {
   };
 
   const handleUpdateStatus = async (idStartPoint, idEndPoint, dragItem) => {
-    const body: any = {
+    const body: Record<string, unknown> = {
       id: dragItem?.id,
       status: idEndPoint,
     };

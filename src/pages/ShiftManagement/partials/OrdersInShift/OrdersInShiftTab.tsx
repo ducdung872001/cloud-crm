@@ -49,13 +49,13 @@ type Params = {
 // ── InvoiceDetailModal inline ────────────────────────────────────────────────
 function InvoiceDetailModal({ invoiceId, onClose }: { invoiceId: number; onClose: () => void }) {
   const [loading, setLoading] = useState(true);
-  const [detail, setDetail] = useState<any>(null);
-  const [items, setItems] = useState<any[]>([]);
+  const [detail, setDetail] = useState<Record<string, unknown>>(null);
+  const [items, setItems] = useState<Record<string, unknown>[]>([]);
 
   useEffect(() => {
     setLoading(true);
     InvoiceService.listInvoiceDetail(invoiceId)
-      .then((res: any) => {
+      .then((res: Record<string, unknown>) => {
         if (res?.code === 0) {
           const r = res.result;
           setDetail(r.invoice);
@@ -207,12 +207,12 @@ export default function OrdersInShiftTab({ shiftId: shiftIdProp }: Props) {
       }).filter(([, v]) => v !== undefined && v !== null && v !== "")
     );
 
-    ShiftService.getShiftOrders(cleanParams as any)
+    ShiftService.getShiftOrders(cleanParams as Record<string, unknown>)
       .then((res) => {
         const d = res?.result;
         if (!d) { setOrders([]); setIsNoItem(true); return; }
 
-        const mapped: OrderItem[] = (d.orders ?? []).map((o: any) => ({
+        const mapped: OrderItem[] = (d.orders ?? []).map((o: Record<string, unknown>) => ({
           id: o.orderId ?? o.id,
           code: o.orderCode ?? `#ĐH-${o.orderId}`,
           customer: o.customerName ?? "—",
@@ -280,7 +280,7 @@ export default function OrdersInShiftTab({ shiftId: shiftIdProp }: Props) {
   const dataFormat = ["text-center", "", "", "text-center", "text-center", "text-right", "text-center", "text-center"];
 
   const dataMappingArray = (item: OrderItem, index: number) => [
-    getPageOffset(params as any) + index + 1,
+    getPageOffset(params as Record<string, unknown>) + index + 1,
     <span className="order-code" key={`code-${item.id}`}>{item.code}</span>,
     item.customer,
     item.time,

@@ -311,9 +311,9 @@ export default function AddCustomerCardModal(props: AddCardModalProps) {
     setIsSubmit(true);
 
     // Chuyển đổi listInputVar thành object ranking khi type = "1"
-    let rankingData: any = formData.values.ranking || 0;
+    let rankingData: Record<string, unknown> = formData.values.ranking || 0;
     if (formData.values.type === "1" && listInputVar.length > 0) {
-      const rankingObj: any = {};
+      const rankingObj: Record<string, unknown> = {};
       listInputVar.forEach((item) => {
         if (item.name && item.attributeMapping) {
           rankingObj[item.name] = parseInt(item.attributeMapping) || 0;

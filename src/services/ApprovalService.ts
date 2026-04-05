@@ -2,13 +2,13 @@ import { urlsApi } from "configs/urls";
 import { convertParamsToString } from "reborn-util";
 
 export default {
-  list: (params: any, signal?: AbortSignal) => {
+  list: (params: Record<string, unknown>, signal?: AbortSignal) => {
     return fetch(`${urlsApi.approval.lst}${convertParamsToString(params)}`, {
       signal,
       method: "GET",
     }).then((res) => res.json());
   },
-  update: (body: any) => {
+  update: (body: Record<string, unknown>) => {
     return fetch(urlsApi.approval.update, {
       method: "POST",
       body: JSON.stringify(body),
@@ -19,7 +19,7 @@ export default {
       method: "DELETE",
     }).then((res) => res.json());
   },
-  updateStatus: (body: any) => {
+  updateStatus: (body: Record<string, unknown>) => {
     // truyền vào id và status ==> status == 0 (Chưa phê duyệt) <==> status == 1 (Đã phê duyệt)
     return fetch(urlsApi.approval.updateStatus, {
       method: "POST",
@@ -27,13 +27,13 @@ export default {
     }).then((res) => res.json());
   },
   // config
-  lstConfig: (params: any, signal?: AbortSignal) => {
+  lstConfig: (params: Record<string, unknown>, signal?: AbortSignal) => {
     return fetch(`${urlsApi.approval.lstConfig}${convertParamsToString(params)}`, {
       signal,
       method: "GET",
     }).then((res) => res.json());
   },
-  updateConfig: (body: any) => {
+  updateConfig: (body: Record<string, unknown>) => {
     return fetch(urlsApi.approval.updateConfig, {
       method: "POST",
       body: JSON.stringify(body),
@@ -45,13 +45,13 @@ export default {
     }).then((res) => res.json());
   },
   //link
-  lstLink: (params: any, signal?: AbortSignal) => {
+  lstLink: (params: Record<string, unknown>, signal?: AbortSignal) => {
     return fetch(`${urlsApi.approval.lstLink}${convertParamsToString(params)}`, {
       signal,
       method: "GET",
     }).then((res) => res.json());
   },
-  updateLink: (body: any) => {
+  updateLink: (body: Record<string, unknown>) => {
     return fetch(urlsApi.approval.updateLink, {
       method: "POST",
       body: JSON.stringify(body),
@@ -63,23 +63,23 @@ export default {
     }).then((res) => res.json());
   },
   //object
-  lstObject: (params: any, signal?: AbortSignal) => {
+  lstObject: (params: Record<string, unknown>, signal?: AbortSignal) => {
     return fetch(`${urlsApi.approval.lstObject}${convertParamsToString(params)}`, {
       signal,
       method: "GET",
     }).then((res) => res.json());
   },
-  takeObject: (params: any) => {
+  takeObject: (params: Record<string, unknown>) => {
     return fetch(`${urlsApi.approval.takeObject}${convertParamsToString(params)}`, {
       method: "GET",
     }).then((res) => res.json());
   },
-  checkApproved: (params: any) => {
+  checkApproved: (params: Record<string, unknown>) => {
     return fetch(`${urlsApi.approval.checkApproved}${convertParamsToString(params)}`, {
       method: "GET",
     }).then((res) => res.json());
   },
-  updateObject: (body: any) => {
+  updateObject: (body: Record<string, unknown>) => {
     return fetch(urlsApi.approval.updateObject, {
       method: "POST",
       body: JSON.stringify(body),
@@ -91,13 +91,13 @@ export default {
     }).then((res) => res.json());
   },
   //log
-  lstLog: (params: any, signal?: AbortSignal) => {
+  lstLog: (params: Record<string, unknown>, signal?: AbortSignal) => {
     return fetch(`${urlsApi.approval.lstLog}${convertParamsToString(params)}`, {
       signal,
       method: "GET",
     }).then((res) => res.json());
   },
-  updateLog: (body: any) => {
+  updateLog: (body: Record<string, unknown>) => {
     return fetch(urlsApi.approval.updateLog, {
       method: "POST",
       body: JSON.stringify(body),
@@ -109,7 +109,7 @@ export default {
     }).then((res) => res.json());
   },
 
-  updateAlert: (body: any) => {
+  updateAlert: (body: Record<string, unknown>) => {
     return fetch(urlsApi.approval.updateAlert, {
       method: "POST",
       body: JSON.stringify(body),

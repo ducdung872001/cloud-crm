@@ -89,7 +89,7 @@ export default function ProcedureSupport(props) {
 
   useEffect(() => {
     if (lstLinkSupport && lstLinkSupport.length > 0) {
-      const changeLstLinkApproval: any[] = lstLinkSupport.map((item) => {
+      const changeLstLinkApproval: Record<string, unknown>[] = lstLinkSupport.map((item) => {
         return {
           id: `reactflow__edge-${item.nodeFrom}-${item.nodeTo}`,
           markerEnd: { type: "arrowclosed" },

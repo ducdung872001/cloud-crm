@@ -44,13 +44,13 @@ const StatCard: React.FC<StatCardProps> = ({ title, value, sub, icon, color, tre
   </div>
 );
 
-export default function ExchangePoints(props: any) {
+export default function ExchangePoints(props: Record<string, unknown>) {
   document.title = "Danh mục đổi điểm";
 
   const { onBackProps } = props;
   const [permissions] = useState(getPermissions());
   const [showModalAdd, setShowModalAdd] = useState(false);
-  const [dataCategoryService, setDataCategoryService] = useState<any>(null);
+  const [dataCategoryService, setDataCategoryService] = useState<Record<string, unknown>>(null);
 
   const titleActions: ITitleActions = {
     actions: [

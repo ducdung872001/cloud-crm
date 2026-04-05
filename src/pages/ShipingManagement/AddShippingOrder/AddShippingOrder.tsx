@@ -271,7 +271,7 @@ export default function AddShippingOrder() {
     };
     const response = await InvoiceService.list(filterParams);
     if (response.code === 0) {
-      const rawItems: any[] = response.result?.pagedLst?.items ?? [];
+      const rawItems: Record<string, unknown>[] = response.result?.pagedLst?.items ?? [];
       const options = rawItems
         .map((item) => {
           const inv: IInvoiceResponse = item.invoice ?? item;
@@ -290,7 +290,7 @@ export default function AddShippingOrder() {
   };
 
   // ---- loadOptions Người gửi ----
-  const loadSenderOptions = async (inputValue: string, _loadedOptions: any, { page }: { page: number }) => {
+  const loadSenderOptions = async (inputValue: string, _loadedOptions: Record<string, unknown>, { page }: { page: number }) => {
     const params: IEmployeeFilterRequest = { name: inputValue?.trim() ?? "", page, limit: 20 };
     const response = await EmployeeService.list(params);
     if (response.code === 0) {
@@ -315,17 +315,17 @@ export default function AddShippingOrder() {
       senderEmployeeId: emp.id,
       senderName: emp.name ?? "",
       senderPhone: emp.phone ?? "",
-      senderEmail: (emp as any).email ?? "",
-      senderStreet: (emp as any).address ?? (emp as any).street ?? "",
+      senderEmail: (emp as Record<string, unknown>).email ?? "",
+      senderStreet: (emp as Record<string, unknown>).address ?? (emp as Record<string, unknown>).street ?? "",
     }));
     setErrors((prev) => ({
       ...prev,
       senderName: "", senderPhone: "", senderStreet: "", senderDistrict: "", senderWard: "",
     }));
     // Auto-fill địa chỉ nếu có
-    const province = (emp as any).province ?? (emp as any).provinceName ?? "";
-    const district = (emp as any).district ?? (emp as any).districtName ?? "";
-    const ward = (emp as any).ward ?? (emp as any).wardName ?? "";
+    const province = (emp as Record<string, unknown>).province ?? (emp as Record<string, unknown>).provinceName ?? "";
+    const district = (emp as Record<string, unknown>).district ?? (emp as Record<string, unknown>).districtName ?? "";
+    const ward = (emp as Record<string, unknown>).ward ?? (emp as Record<string, unknown>).wardName ?? "";
     if (province || district) {
       senderAddr.setValuesByName(province, district, ward);
     }
@@ -382,7 +382,7 @@ export default function AddShippingOrder() {
         amountCard: invFromApi?.amountCard ?? invoiceBasic?.amountCard ?? 0,
         invoiceCode: invFromApi?.invoiceCode ?? invoiceBasic?.invoiceCode ?? "",
       } as IInvoiceResponse;
-      applyInvoiceToForm({ ...inv, productSummary, _products: products } as any);
+      applyInvoiceToForm({ ...inv, productSummary, _products: products } as Record<string, unknown>);
     } else {
       showToast(response.message ?? "Không thể tải thông tin hóa đơn", "error");
     }
@@ -390,7 +390,7 @@ export default function AddShippingOrder() {
   };
 
   const applyInvoiceToForm = (inv: ISelectedInvoice) => {
-    const invAny = inv as any;
+    const invAny = inv as Record<string, unknown>;
     setSelectedInvoice(inv);
     setForm((prev) => ({
       ...prev,
@@ -438,15 +438,15 @@ export default function AddShippingOrder() {
         setOriginData(found);
 
         // Set trạng thái hiện tại
-        const currentStatus = (found as any).status ?? (found as any).statusCode ?? null;
+        const currentStatus = (found as Record<string, unknown>).status ?? (found as Record<string, unknown>).statusCode ?? null;
         if (currentStatus) {
           const statusOpt = STATUS_OPTIONS.find((s) => s.value === currentStatus) ?? null;
           setSelectedStatus(statusOpt);
         }
         // API trả về carrierCode: "GHTK" | "VTP" | "GHN"
         const CARRIER_TO_PARTNER_ID: Record<string, number> = { GHTK: 1, VTP: 2, GHN: 3 };
-        const resolvedPartnerId = (found as any).partnerId
-          ?? CARRIER_TO_PARTNER_ID[(found as any).carrierCode ?? ""]
+        const resolvedPartnerId = (found as Record<string, unknown>).partnerId
+          ?? CARRIER_TO_PARTNER_ID[(found as Record<string, unknown>).carrierCode ?? ""]
           ?? null;
 
         // API trả về receiverAddress dạng full string "18 Nguyễn Thị Minh Khai, Q.3, TP.HCM"
@@ -460,15 +460,15 @@ export default function AddShippingOrder() {
         // codAmount: API trả về codAmount (COD thực thu = codAmount - orderSubtotalAmount)
         // Nếu có codAmount riêng dùng luôn, không thì fallback về codAmount
         const resolvedCod =
-          (found as any).totalAmount != null
-            ? (found as any).totalAmount
-            : (found as any).totalAmount ?? null;
+          (found as Record<string, unknown>).totalAmount != null
+            ? (found as Record<string, unknown>).totalAmount
+            : (found as Record<string, unknown>).totalAmount ?? null;
 
         setForm({
           ...DEFAULT_FORM,
           id:               found.id,
           partnerId:        resolvedPartnerId,
-          invoiceId:        (found as any).salesOrderId ?? (found as any).orderId ?? null,
+          invoiceId:        (found as Record<string, unknown>).salesOrderId ?? (found as Record<string, unknown>).orderId ?? null,
 
           // Người nhận — field names khớp API response
           receiverName:     found.receiverName     ?? "",
@@ -478,7 +478,7 @@ export default function AddShippingOrder() {
           // Người gửi — field names khớp API response
           senderName:       found.senderName       ?? "",
           senderPhone:      found.senderPhone       ?? "",
-          senderEmail:      (found as any).senderEmail ?? "",
+          senderEmail:      (found as Record<string, unknown>).senderEmail ?? "",
           senderStreet:     parseStreet(found.senderAddress ?? ""),
 
           // Kích thước & trọng lượng — khớp API
@@ -523,7 +523,7 @@ export default function AddShippingOrder() {
     }
   };
 
-  const setField = (field: string) => (e: any) => {
+  const setField = (field: string) => (e: Record<string, unknown>) => {
     const value = e?.target !== undefined ? e.target.value : e?.value ?? e;
     setForm((prev) => ({ ...prev, [field]: value }));
     setErrors((prev) => ({ ...prev, [field]: "" }));
@@ -569,8 +569,8 @@ export default function AddShippingOrder() {
         ? rawProducts.map((p) => ({
             name: p.name,
             quantity: p.qty ?? 1,
-            weightGram: (p as any).weightGram
-              ? +(p as any).weightGram
+            weightGram: (p as Record<string, unknown>).weightGram
+              ? +(p as Record<string, unknown>).weightGram
               : Math.round(totalWeightGram / totalQty),
             price: p.price ?? 0,
           }))
@@ -613,7 +613,7 @@ export default function AddShippingOrder() {
         status: selectedStatus?.value ?? "SUBMITTED",
       };
 
-      const response = await ShippingService.create(payload as any);
+      const response = await ShippingService.create(payload as Record<string, unknown>);
       if (response.code === 0) {
         showToast("Cập nhật đơn vận chuyển thành công", "success");
         navigate("/shipping");
@@ -662,7 +662,7 @@ export default function AddShippingOrder() {
                       fill
                       options={STATUS_OPTIONS}
                       value={selectedStatus?.value ?? null}
-                      onChange={(opt: any) => {
+                      onChange={(opt: Record<string, unknown>) => {
                         const val = opt === null || opt === undefined
                           ? null
                           : typeof opt === "object" ? opt : STATUS_OPTIONS.find((s) => s.value === opt) ?? null;
@@ -710,7 +710,7 @@ export default function AddShippingOrder() {
                           ? { value: selectedInvoice.id, label: `${selectedInvoice.invoiceCode} — ${selectedInvoice.customerName}` }
                           : null
                       }
-                      onChange={(opt: any) => {
+                      onChange={(opt: Record<string, unknown>) => {
                         if (!opt) { clearSelectedInvoice(); return; }
                         loadInvoiceDetailAndApply(opt.value, opt.origin);
                       }}
@@ -792,7 +792,7 @@ export default function AddShippingOrder() {
                     loadOptions={loadSenderOptions}
                     additional={{ page: 1 }}
                     value={selectedSender ? { value: selectedSender.id, label: `${selectedSender.name}${selectedSender.phone ? " — " + selectedSender.phone : ""}${selectedSender.branchName ? " | " + selectedSender.branchName : ""}` } : null}
-                    onChange={(opt: any) => {
+                    onChange={(opt: Record<string, unknown>) => {
                       if (!opt) { clearSender(); return; }
                       applySenderToForm(opt.origin);
                     }}
@@ -867,7 +867,7 @@ export default function AddShippingOrder() {
                         hasMore: false,
                       })}
                       defaultOptions={senderAddr.provinceOptions}
-                      onChange={(opt: any) => senderAddr.onProvinceChange(opt)}
+                      onChange={(opt: Record<string, unknown>) => senderAddr.onProvinceChange(opt)}
                     />
                   </div>
 
@@ -896,7 +896,7 @@ export default function AddShippingOrder() {
                         hasMore: false,
                       })}
                       defaultOptions={senderAddr.districtOptions}
-                      onChange={(opt: any) => senderAddr.onDistrictChange(opt)}
+                      onChange={(opt: Record<string, unknown>) => senderAddr.onDistrictChange(opt)}
                     />
                   </div>
 
@@ -925,7 +925,7 @@ export default function AddShippingOrder() {
                         hasMore: false,
                       })}
                       defaultOptions={senderAddr.wardOptions}
-                      onChange={(opt: any) => senderAddr.onWardChange(opt)}
+                      onChange={(opt: Record<string, unknown>) => senderAddr.onWardChange(opt)}
                     />
                   </div>
                 </div>
@@ -947,7 +947,7 @@ export default function AddShippingOrder() {
                     disabled={isEdit}
                     options={PARTNER_OPTIONS}
                     value={form.partnerId ?? null}
-                    onChange={(opt: any) => {
+                    onChange={(opt: Record<string, unknown>) => {
                       const partnerId =
                         opt === null || opt === undefined
                           ? null
@@ -1030,7 +1030,7 @@ export default function AddShippingOrder() {
                   fill
                   disabled={isEdit}
                   type="email"
-                  value={(form as any).receiverEmail ?? ""}
+                  value={(form as Record<string, unknown>).receiverEmail ?? ""}
                   onChange={setField("receiverEmail")}
                   placeholder="example@email.com"
                 />
@@ -1057,7 +1057,7 @@ export default function AddShippingOrder() {
                         hasMore: false,
                       })}
                       defaultOptions={receiverAddr.provinceOptions}
-                      onChange={(opt: any) => receiverAddr.onProvinceChange(opt)}
+                      onChange={(opt: Record<string, unknown>) => receiverAddr.onProvinceChange(opt)}
                     />
                   </div>
 
@@ -1086,7 +1086,7 @@ export default function AddShippingOrder() {
                         hasMore: false,
                       })}
                       defaultOptions={receiverAddr.districtOptions}
-                      onChange={(opt: any) => receiverAddr.onDistrictChange(opt)}
+                      onChange={(opt: Record<string, unknown>) => receiverAddr.onDistrictChange(opt)}
                     />
                     {errors.receiverDistrict && <span className="field-error">{errors.receiverDistrict}</span>}
                   </div>
@@ -1116,7 +1116,7 @@ export default function AddShippingOrder() {
                         hasMore: false,
                       })}
                       defaultOptions={receiverAddr.wardOptions}
-                      onChange={(opt: any) => receiverAddr.onWardChange(opt)}
+                      onChange={(opt: Record<string, unknown>) => receiverAddr.onWardChange(opt)}
                     />
                     {errors.receiverWard && <span className="field-error">{errors.receiverWard}</span>}
                   </div>
@@ -1196,7 +1196,7 @@ export default function AddShippingOrder() {
                     fill
                     options={STATUS_OPTIONS}
                     value={selectedStatus?.value ?? null}
-                    onChange={(opt: any) => {
+                    onChange={(opt: Record<string, unknown>) => {
                       const val = opt === null || opt === undefined
                         ? null
                         : typeof opt === "object" ? opt : STATUS_OPTIONS.find((s) => s.value === opt) ?? null;

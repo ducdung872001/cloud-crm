@@ -142,7 +142,7 @@ export default function StockInModal({isOpen, materialList, initialMaterial, onC
     [materialList, formData.values?.materialId]
   );
 
-  const handleUpdate = (value: any, field: IFieldCustomize) => {
+  const handleUpdate = (value: Record<string, unknown>, field: IFieldCustomize) => {
     if (field.name === "materialId") {
       const sel = materialList.find((m) => m.id === value);
       setFormData((prev) => ({

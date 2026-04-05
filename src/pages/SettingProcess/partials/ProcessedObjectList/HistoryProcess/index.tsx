@@ -15,7 +15,7 @@ import DetailHistoryProcess from "./HistoryProcess";
 import ViewProcess from "./ViewProcess";
 
 
-export default function HistoryProcess(props: any) {
+export default function HistoryProcess(props: Record<string, unknown>) {
   const { onShow, onHide, dataObject, type, callback } = props;
 
 

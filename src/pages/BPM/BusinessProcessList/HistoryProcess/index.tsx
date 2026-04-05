@@ -10,7 +10,7 @@ import DetailHistoryProcess from "./HistoryProcess";
 import ViewProcess from "./ViewProcess";
 import BusinessProcessService from "services/BusinessProcessService";
 
-export default function HistoryProcess(props: any) {
+export default function HistoryProcess(props: Record<string, unknown>) {
   const { onShow, onHide, dataObject, type } = props;
 
   const [lstField, setLstField] = useState(null);

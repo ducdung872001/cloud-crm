@@ -18,7 +18,7 @@ import { ISaveSearch } from "model/OtherModel";
 import { formatCurrency, getPageOffset } from "reborn-util";
 import KpiDiagram from "./partials/KpiDiagram/KpiDiagram";
 
-function DetailCampaign(props: any) {
+function DetailCampaign(props: Record<string, unknown>) {
   const { idCampaign, onShow } = props;
 
   const colorData = [
@@ -86,7 +86,7 @@ function DetailCampaign(props: any) {
   //   console.log("saleData", saleData);
 
   const [showDialog, setShowDialog] = useState<boolean>(false);
-  const [contentDialog, setContentDialog] = useState<any>(null);
+  const [contentDialog, setContentDialog] = useState<Record<string, unknown>>(null);
 
   const [showModalDetailEmployee, setShowModalDetailEmployee] = useState<boolean>(false);
   const [employeeDetail, setEmployeeDetail] = useState(null);
@@ -255,7 +255,7 @@ function DetailCampaign(props: any) {
 
   const dataFormat = ["text-center", "", ...formatApproach];
 
-  const dataMappingArray = (item: any, index: number) => [
+  const dataMappingArray = (item: Record<string, unknown>, index: number) => [
     index + 1,
     <span
       key={index}
@@ -474,7 +474,7 @@ function DetailCampaign(props: any) {
 
   ////tab 3: vinh danh bán hàng
 
-  const [params, setParams] = useState<any>({
+  const [params, setParams] = useState<Record<string, unknown>>({
     name: "",
   });
   const [listTopSale, setListTopSale] = useState([]);
@@ -561,7 +561,7 @@ function DetailCampaign(props: any) {
   ];
   const dataFormatTopSale = ["text-center", "", "", "", "text-right",];
 
-  const dataMappingArrayTopSale = (item: any, index: number) => [
+  const dataMappingArrayTopSale = (item: Record<string, unknown>, index: number) => [
     getPageOffset(params) + index + 1,
     item.employeeName,
     item.departmentName,

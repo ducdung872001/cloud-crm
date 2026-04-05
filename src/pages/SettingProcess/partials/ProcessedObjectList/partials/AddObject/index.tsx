@@ -43,7 +43,7 @@ import ObjectAttributeService from "services/ObjectAttributeService";
 interface IAddObjectProps {
   onShow: boolean;
   onHide: (reload: boolean) => void;
-  data: any;
+  data: Record<string, unknown>;
   contractId?: number;
 }
 
@@ -83,7 +83,7 @@ export default function AddObject(props: IAddObjectProps) {
         // endTime: data?.endTime ?? '',
         // processId: data?.processId ?? null,
         status: data?.status ?? null,
-      } as any),
+      } as Record<string, unknown>),
     [data, onShow]
   );
 
@@ -106,7 +106,7 @@ export default function AddObject(props: IAddObjectProps) {
   }, [values]);
 
   const loadOptionObjectType = async (search, loadedOptions, { page }) => {
-    const param: any = {
+    const param: Record<string, unknown> = {
       keyword: search,
       page: page,
       limit: 10,
@@ -195,7 +195,7 @@ export default function AddObject(props: IAddObjectProps) {
   // };
 
   const loadOptionProduct = async (search, loadedOptions, { page }) => {
-    const param: any = {
+    const param: Record<string, unknown> = {
       keyword: search,
       page: page,
       limit: 10,
@@ -209,7 +209,7 @@ export default function AddObject(props: IAddObjectProps) {
       return {
         options: [
           ...(dataOption.length > 0
-            ? dataOption.map((item: any) => {
+            ? dataOption.map((item: Record<string, unknown>) => {
                 return {
                   value: item.id,
                   label: item.name,
@@ -228,7 +228,7 @@ export default function AddObject(props: IAddObjectProps) {
   };
 
   const loadOptionService = async (search, loadedOptions, { page }) => {
-    const param: any = {
+    const param: Record<string, unknown> = {
       keyword: search,
       page: page,
       limit: 10,
@@ -242,7 +242,7 @@ export default function AddObject(props: IAddObjectProps) {
       return {
         options: [
           ...(dataOption.length > 0
-            ? dataOption.map((item: any) => {
+            ? dataOption.map((item: Record<string, unknown>) => {
                 return {
                   value: item.id,
                   label: item.name,
@@ -469,7 +469,7 @@ export default function AddObject(props: IAddObjectProps) {
     };
   }, [checkKeyDown]);
 
-  const [objectExtraInfos, setObjectExtraInfos] = useState<any>([]);
+  const [objectExtraInfos, setObjectExtraInfos] = useState<Record<string, unknown>>([]);
 
   const [listCustomer, setListCustomer] = useState<IOption[]>(null);
   const [isLoadingCustomer, setIsLoadingCustomer] = useState<boolean>(false);
@@ -482,7 +482,7 @@ export default function AddObject(props: IAddObjectProps) {
   const [isLoadingContact, setIsLoadingContact] = useState<boolean>(false);
   const [listContract, setListContract] = useState<IOption[]>(null);
   const [isLoadingContract, setIsLoadingContract] = useState<boolean>(false);
-  const [mapObjectAttribute, setMapObjectAttribute] = useState<any>(null);
+  const [mapObjectAttribute, setMapObjectAttribute] = useState<Record<string, unknown>>(null);
 
   const getObjectAttributes = async (groupId) => {
     // if (!mapObjectAttribute || mapObjectAttribute.length === 0) {
@@ -500,7 +500,7 @@ export default function AddObject(props: IAddObjectProps) {
     }
   };
 
-  const onSelectOpenEmployee = async (data?: any) => {
+  const onSelectOpenEmployee = async (data?: Record<string, unknown>) => {
     if (!listEmployee || listEmployee.length === 0) {
       setIsLoadingEmployee(true);
       const dataOption = await SelectOptionData("employeeId", { branchId: dataBranch.value });
@@ -577,7 +577,7 @@ export default function AddObject(props: IAddObjectProps) {
     });
 
     if (!found) {
-      let item: any = {};
+      let item: Record<string, unknown> = {};
       item.attributeId = attributeId;
       item.attributeValue = attributeValue;
       item.objectId = objectId;
@@ -994,7 +994,7 @@ export default function AddObject(props: IAddObjectProps) {
               <div>
                 {mapObjectAttribute ? (
                   <div className="list__object--attribute">
-                    {Object.entries(mapObjectAttribute).map((lstEformAttribute: any, key: number) => (
+                    {Object.entries(mapObjectAttribute).map((lstEformAttribute: Record<string, unknown>, key: number) => (
                       <Fragment key={key}>
                         {(lstEformAttribute[1] || []).map((eformAttribute, index: number) => (
                           <Fragment key={index}>

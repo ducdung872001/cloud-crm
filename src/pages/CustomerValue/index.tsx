@@ -137,7 +137,7 @@ const buildClvChartOptions = (): Options => ({
       data: clvMonthData.map((d) => d.v),
       color: "#f97316",
       fillColor: {
-        linearGradient: { x1: 0, y1: 0, x2: 0, y2: 1 } as any,
+        linearGradient: { x1: 0, y1: 0, x2: 0, y2: 1 } as Record<string, unknown>,
         stops: [
           [0, "rgba(249, 115, 22, 0.28)"],
           [1, "rgba(249, 115, 22, 0)"],
@@ -157,7 +157,7 @@ const RankIcon: React.FC<{ rank: number }> = ({ rank }) => {
   return <span className="clv-rank clv-rank--other">#{rank}</span>;
 };
 
-export default function CustomerValue(props: any) {
+export default function CustomerValue(props: Record<string, unknown>) {
   document.title = "Giá trị khách hàng";
 
   const { onBackProps } = props;
@@ -194,7 +194,7 @@ export default function CustomerValue(props: any) {
       <RankIcon rank={rank} />,
       <div className="clv-customer-cell">
         <div className="clv-avatar clv-avatar--tier" data-tier={item.tier}>
-          <Icon name={tierIconMap[item.tier] as any} />
+          <Icon name={tierIconMap[item.tier] as Record<string, unknown>} />
         </div>
         <div>
           <p className="clv-customer-cell__name">{item.name}</p>
@@ -202,7 +202,7 @@ export default function CustomerValue(props: any) {
         </div>
       </div>,
       <span className={cfg.className}>
-        <Icon name={tierIconMap[item.tier] as any} />
+        <Icon name={tierIconMap[item.tier] as Record<string, unknown>} />
         {cfg.label}
       </span>,
       <span className="clv-clv-value">{formatMoney(item.clv)}</span>,
@@ -251,7 +251,7 @@ export default function CustomerValue(props: any) {
               return (
                 <div key={t.tier} className="clv-tier-row">
                   <span className={`${cfg.className} clv-tier-row__badge`}>
-                    <Icon name={tierIconMap[t.tier] as any} />
+                    <Icon name={tierIconMap[t.tier] as Record<string, unknown>} />
                     {t.tier}
                   </span>
                   <div className="clv-tier-row__bar-wrap">

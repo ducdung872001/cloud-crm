@@ -15,7 +15,7 @@ import WarrantyModal from "../WarrantyModal/WarrantyModal";
 import TicketModal from "../TicketModal/TicketModal";
 import ExchangeFast from "./partials/ExchangeFast";
 
-export default function Kanban(props: any) {
+export default function Kanban(props: Record<string, unknown>) {
   const {
     data,
     dataOfApproach,
@@ -45,7 +45,7 @@ export default function Kanban(props: any) {
   } = props;
 
   const marginRight = 12;
-  const [columns, setColumns] = useState<any[]>([]);
+  const [columns, setColumns] = useState<Record<string, unknown>[]>([]);
 
   const [idEndPoint, setIdEndPoint] = useState<number>(null);
   const [dataWork, setDataWork] = useState<IContractResponse>(null);

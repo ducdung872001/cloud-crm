@@ -4,7 +4,7 @@ import React, { useEffect, useState } from "react";
 import { convertParamsToString } from "reborn-util";
 import { showToast } from "utils/common";
 
-export const fetchData = async (Uri: string, params: any, signal?: AbortSignal) => {
+export const fetchData = async (Uri: string, params: Record<string, unknown>, signal?: AbortSignal) => {
   if (!Uri) return { code: -1, message: "No lookupUri provided" };
   return fetch(`${Uri}${convertParamsToString(params)}`, {
     signal,

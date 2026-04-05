@@ -318,7 +318,7 @@ const CASHBOOK_FORM_INIT: CashbookFormState = {
 };
 
 const fundOverviewUrl = () =>
-  (urlsApi.financeDashboard as any).full.replace("/finance/dashboard", "/fund/overview");
+  (urlsApi.financeDashboard as Record<string, unknown>).full.replace("/finance/dashboard", "/fund/overview");
 
 // ── QuickCreateCategory — mini inline form tạo nhanh khoản mục ───────────────
 
@@ -441,7 +441,7 @@ export function CashbookSlideOver({ open, onClose, onSuccess }: CashbookSlideOve
     setDropdownLoading(true);
 
     Promise.allSettled([
-      CategoryService.list({ page: 1, limit: 200 } as any),
+      CategoryService.list({ page: 1, limit: 200 } as Record<string, unknown>),
       fetch(fundOverviewUrl()).then(r => r.json()),
     ]).then(([catRes, fundRes]) => {
       if (catRes.status === "fulfilled") {
@@ -452,7 +452,7 @@ export function CashbookSlideOver({ open, onClose, onSuccess }: CashbookSlideOve
           ?? catRes.value?.data
           ?? [];
         setCategories(
-          (Array.isArray(raw) ? raw : []).map((c: any) => ({
+          (Array.isArray(raw) ? raw : []).map((c: Record<string, unknown>) => ({
             id: Number(c.id),
             name: String(c.name ?? ""),
             type: Number(c.type ?? 1),
@@ -465,7 +465,7 @@ export function CashbookSlideOver({ open, onClose, onSuccess }: CashbookSlideOve
           ?? fundRes.value?.data?.funds
           ?? [];
         setFunds(
-          (Array.isArray(rawFunds) ? rawFunds : []).map((f: any) => ({
+          (Array.isArray(rawFunds) ? rawFunds : []).map((f: Record<string, unknown>) => ({
             id: Number(f.id),
             name: String(f.name ?? ""),
             balance: Number(f.balance ?? 0),

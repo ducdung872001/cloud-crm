@@ -22,7 +22,11 @@ import AddObjectGroupModal from "./partials/AddObjectGroupModal";
 import ObjectSettingModal from "./partials/ObjectSettingModal";
 import { UserContext, ContextType } from "contexts/userContext";
 
-export default function ObjectGroupList(props: any) {
+interface ObjectGroupListProps {
+  onBackProps: (value: boolean) => void;
+}
+
+export default function ObjectGroupList(props: ObjectGroupListProps) {
   document.title = "Danh mục loại đối tượng";
 
   const { role } = useContext(UserContext) as ContextType;
@@ -37,7 +41,7 @@ export default function ObjectGroupList(props: any) {
   const [showModalAddOjectGroup, setShowModalAddOjectGroup] = useState<boolean>(false);
   const [showModalSettingObject, setShowModalSettingObject] = useState<boolean>(false);
   const [showDialog, setShowDialog] = useState<boolean>(false);
-  const [contentDialog, setContentDialog] = useState<any>(null);
+  const [contentDialog, setContentDialog] = useState<IContentDialog | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [isNoItem, setIsNoItem] = useState<boolean>(false);
   const [isPermissions, setIsPermissions] = useState<boolean>(false);
@@ -72,7 +76,7 @@ export default function ObjectGroupList(props: any) {
 
   const abortController = new AbortController();
 
-  const getListOjectGroup = async (paramsSearch: any) => {
+  const getListOjectGroup = async (paramsSearch: Record<string, unknown>) => {
     setIsLoading(true);
 
     const response = await ObjectGroupService.list(paramsSearch, abortController.signal);
@@ -143,9 +147,9 @@ export default function ObjectGroupList(props: any) {
 
   const dataFormat = ["text-center", "", "", "text-center"];
 
-  const dataMappingArray = (item: any, index: number) => [getPageOffset(params) + index + 1, item.name, item.type, item.position];
+  const dataMappingArray = (item: Record<string, unknown>, index: number) => [getPageOffset(params) + index + 1, item.name, item.type, item.position];
 
-  const actionsTable = (item: any): IAction[] => {
+  const actionsTable = (item: Record<string, unknown>): IAction[] => {
     const isCheckedItem = listIdChecked?.length > 0;
     return [
       {

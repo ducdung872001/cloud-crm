@@ -23,7 +23,7 @@ export default function ProjectManagementList(props: IProjectManagementListProps
 
   const { setType, isFullPage, idProjectManagement, setIdProjectManagement, isRegimeKanban } = props;
 
-  const paramsUrl: any = getSearchParameters();
+  const paramsUrl: Record<string, unknown> = getSearchParameters();
 
   const takeIdProjectManagement = Object.keys(paramsUrl).length > 0 && paramsUrl?.projectId ? +paramsUrl?.projectId : -1;
 
@@ -31,7 +31,7 @@ export default function ProjectManagementList(props: IProjectManagementListProps
 
   const [showModalAdd, setShowModalAdd] = useState<boolean>(false);
   const [showDialog, setShowDialog] = useState<boolean>(false);
-  const [contentDialog, setContentDialog] = useState<any>(null);
+  const [contentDialog, setContentDialog] = useState<Record<string, unknown>>(null);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [isSearchProject, setIsSearchProject] = useState<boolean>(false);
   const [isShowChildrenProject, setIsShowChildrenProject] = useState<boolean>(false);

@@ -13,7 +13,7 @@ import "./ViewResultSurvey.scss";
 interface IViewResultSurveyProps {
   onShow: boolean;
   onHide: () => void;
-  data: any;
+  data: Record<string, unknown>;
 }
 
 export default function ViewResultSurvey(props: IViewResultSurveyProps) {
@@ -70,7 +70,7 @@ export default function ViewResultSurvey(props: IViewResultSurveyProps) {
     ],
   });
 
-  const handGetStatisticSurvey = async (id: number, params?: any) => {
+  const handGetStatisticSurvey = async (id: number, params?: Record<string, unknown>) => {
     if (!id) return;
 
     setIsLoading(true);
@@ -106,7 +106,7 @@ export default function ViewResultSurvey(props: IViewResultSurveyProps) {
             {
               ...chartData.series,
               data: changeResult,
-            } as any,
+            } as Record<string, unknown>,
           ],
         });
         setIsNoItem(false);
@@ -156,7 +156,7 @@ export default function ViewResultSurvey(props: IViewResultSurveyProps) {
   useEffect(() => {
     if (data) {
       if (dataChoose && dataChoose.length > 0) {
-        const changeDataChoose: any = dataChoose.reduce((result, item) => {
+        const changeDataChoose: Record<string, unknown> = dataChoose.reduce((result, item) => {
           if (item.label && item.value) {
             result[item.label] = item.value;
           }

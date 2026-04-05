@@ -6,7 +6,7 @@ import { handDownloadFileOrigin, showToast } from "utils/common";
 import DocViewer, { DocViewerRenderers } from "react-doc-viewer";
 import "./ModalViewDocument.scss";
 
-export default function ModalViewDocument(props: any) {
+export default function ModalViewDocument(props: Record<string, unknown>) {
   const { onShow, onHide, dataDoc } = props;
 
   const [fileContract, setFileContract] = useState([]);

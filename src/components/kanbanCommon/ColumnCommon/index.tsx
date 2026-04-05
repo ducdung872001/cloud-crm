@@ -4,18 +4,18 @@ import Loading from "components/loading";
 import { showToast } from "utils/common";
 
 type ColumnDef = {
-  id: any;
-  value?: any;
+  id: Record<string, unknown>;
+  value?: Record<string, unknown>;
   label?: string;
   color?: string;
   key?: string;
 };
 
 type ColumnState = {
-  id: any;
+  id: Record<string, unknown>;
   title?: string;
   color?: string;
-  items: any[];
+  items: Record<string, unknown>[];
   hasMore?: boolean;
   page?: number;
   isLoading?: boolean;
@@ -26,12 +26,12 @@ type ColumnProps = {
   columnState?: ColumnState; // current state stored in parent (may be undefined initially)
   droppableId: string; // index string used by parent for DnD
   index: number;
-  itemShow: (item: any, idx: number) => React.ReactNode;
-  onInitLoad: (columnId: any, payload: { items: any[]; hasMore: boolean; page: number }) => void;
-  onAppend: (columnId: any, payload: { items: any[]; hasMore: boolean; page: number }) => void;
-  setLoading: (columnId: any, loading: boolean) => void;
-  setShowHistory: (item: any) => void;
-  functionGetDataItem?: any;
+  itemShow: (item: Record<string, unknown>, idx: number) => React.ReactNode;
+  onInitLoad: (columnId: Record<string, unknown>, payload: { items: Record<string, unknown>[]; hasMore: boolean; page: number }) => void;
+  onAppend: (columnId: Record<string, unknown>, payload: { items: Record<string, unknown>[]; hasMore: boolean; page: number }) => void;
+  setLoading: (columnId: Record<string, unknown>, loading: boolean) => void;
+  setShowHistory: (item: Record<string, unknown>) => void;
+  functionGetDataItem?: Record<string, unknown>;
 };
 
 /**
@@ -82,7 +82,7 @@ const ColumnCommon: React.FC<ColumnProps> = ({
         return { items: [], hasMore: false, page };
       }
     } catch (err) {
-      if ((err as any)?.name === "AbortError") {
+      if ((err as Record<string, unknown>)?.name === "AbortError") {
         // aborted, ignore
         return { items: [], hasMore: false, page };
       }
@@ -171,7 +171,7 @@ const ColumnCommon: React.FC<ColumnProps> = ({
               <div className="lst__item" style={{ backgroundColor: snapshot.isDraggingOver ? "#D1FAE5" : "#f4f5f7" }} onScroll={handleScroll}>
                 {Array.isArray(items) && items.length > 0 ? (
                   <>
-                    {items.map((item: any, idx: number) => {
+                    {items.map((item: Record<string, unknown>, idx: number) => {
                       const draggableId = `${id}-${item.id ?? idx}`;
                       return (
                         <Draggable
@@ -186,7 +186,7 @@ const ColumnCommon: React.FC<ColumnProps> = ({
                               {...providedDraggable.draggableProps}
                               {...providedDraggable.dragHandleProps}
                               style={{
-                                ...(providedDraggable.draggableProps.style as any),
+                                ...(providedDraggable.draggableProps.style as Record<string, unknown>),
                               }}
                             >
                               <div

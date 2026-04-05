@@ -85,7 +85,7 @@ export default function InfoPerson(props: IInfoPersonProps) {
     }
   }, [formData.values?.relationshipId]);
 
-  const handleSubmit = async (e?: any) => {
+  const handleSubmit = async (e?: Record<string, unknown>) => {
     e?.preventDefault();
 
     const errors = Validate(validations, formData, listField);

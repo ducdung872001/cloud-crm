@@ -36,7 +36,7 @@ import EmployeeService from "services/EmployeeService";
 
 // status: 0-chưa bắt đầu, 1-mới tiếp nhận, 2-hoàn thành, 3-huỷ, 4-tạm dừng
 
-export default function ListWork(props: any) {
+export default function ListWork(props: Record<string, unknown>) {
   const isMounted = useRef(false);
 
   const navigation = useNavigate();
@@ -69,7 +69,7 @@ export default function ListWork(props: any) {
   const [listIdChecked, setListIdChecked] = useState<number[]>([]);
   const [showModalAdd, setShowModalAdd] = useState<boolean>(false);
   const [showDialog, setShowDialog] = useState<boolean>(false);
-  const [contentDialog, setContentDialog] = useState<any>(null);
+  const [contentDialog, setContentDialog] = useState<Record<string, unknown>>(null);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [dataEmployee, setDataEmployee] = useState(null);
 
@@ -89,11 +89,11 @@ export default function ListWork(props: any) {
   // đoạn này hiển thị danh sách cập nhật tiến độ công việc
   const [showModalViewWorkInprogress, setShowModalViewWorkInprogress] = useState<boolean>(false);
 
-  const [params, setParams] = useState<any>({
+  const [params, setParams] = useState<Record<string, unknown>>({
     name: "",
   });
 
-  const [paramsInit, setParamsInit] = useState<any>({
+  const [paramsInit, setParamsInit] = useState<Record<string, unknown>>({
     name: "",
     // processId: -1,
     // potId: -1,
@@ -140,7 +140,7 @@ export default function ListWork(props: any) {
                     is_featured: true,
                     value: searchParams.get("departmentId") ?? "",
                   },
-                ] as any)
+                ] as Record<string, unknown>)
               : []),
             ...(filterByKanban !== "kanbanEmployee" && filterByKanban !== "kanbanProject"
               ? ([
@@ -151,7 +151,7 @@ export default function ListWork(props: any) {
                     is_featured: true,
                     value: searchParams.get("employeeId") ?? "",
                   },
-                ] as any)
+                ] as Record<string, unknown>)
               : []),
             {
               key: "status",
@@ -460,7 +460,7 @@ export default function ListWork(props: any) {
     if (dataProjectReport) {
       return;
     }
-    const param: any = {
+    const param: Record<string, unknown> = {
       limit: 10,
       page: 1,
       status: status,
@@ -560,7 +560,7 @@ export default function ListWork(props: any) {
   const dataFormat = ["text-center", "", "text-center", "text-center", "text-center", "text-center", "text-center", "text-center"];
 
   // Helper render status badge — pill có text rõ ràng
-  const renderStatusBadge = (item: any) => {
+  const renderStatusBadge = (item: Record<string, unknown>) => {
     const isOverdue = new Date() > new Date(item?.endTime);
     const overdueDays = handleUnfulfilled(item.endTime, true);
     const overdueFull = handleUnfulfilled(item.endTime);
@@ -625,7 +625,7 @@ export default function ListWork(props: any) {
     }
   };
 
-  const dataMappingArray = (item: any, index: number, type?: string) =>
+  const dataMappingArray = (item: Record<string, unknown>, index: number, type?: string) =>
     type !== "export"
       ? [
           getPageOffset(params) + index + 1,

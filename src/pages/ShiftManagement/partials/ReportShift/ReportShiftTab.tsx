@@ -55,7 +55,7 @@ export default function ShiftReportTab({ shiftId, branchId }: Props) {
     if (!shiftId || shiftId <= 0) { setLoading(false); return; }
     setLoading(true);
     ShiftService.getCloseReport(shiftId)
-      .then((res: any) => {
+      .then((res: Record<string, unknown>) => {
         const d = res?.result;
         if (!d) return;
         setData({

@@ -2,13 +2,13 @@ import { urlsApi } from "configs/urls";
 import { convertParamsToString } from "reborn-util";
 
 export default {
-  list: (params?: any, signal?: AbortSignal) => {
+  list: (params?: Record<string, unknown>, signal?: AbortSignal) => {
     return fetch(`${urlsApi.contractGuarantee.list}${convertParamsToString(params)}`, {
       signal,
       method: "GET",
     }).then((res) => res.json());
   },
-  update: (body: any) => {
+  update: (body: Record<string, unknown>) => {
     return fetch(urlsApi.contractGuarantee.update, {
       method: "POST",
       body: JSON.stringify(body),
@@ -26,14 +26,14 @@ export default {
   },
 
 
-  guaranteeTypeList: (params?: any, signal?: AbortSignal) => {
+  guaranteeTypeList: (params?: Record<string, unknown>, signal?: AbortSignal) => {
     return fetch(`${urlsApi.contractGuarantee.guaranteeTypeList}${convertParamsToString(params)}`, {
       signal,
       method: "GET",
     }).then((res) => res.json());
   },
 
-  guaranteeTypeUpdate: (body: any) => {
+  guaranteeTypeUpdate: (body: Record<string, unknown>) => {
     return fetch(urlsApi.contractGuarantee.guaranteeTypeUpdate, {
       method: "POST",
       body: JSON.stringify(body),
@@ -45,14 +45,14 @@ export default {
     }).then((res) => res.json());
   },
 
-  competencyGuaranteeList: (params?: any, signal?: AbortSignal) => {
+  competencyGuaranteeList: (params?: Record<string, unknown>, signal?: AbortSignal) => {
     return fetch(`${urlsApi.contractGuarantee.competencyList}${convertParamsToString(params)}`, {
       signal,
       method: "GET",
     }).then((res) => res.json());
   },
 
-  competencyGuaranteeUpdate: (body: any) => {
+  competencyGuaranteeUpdate: (body: Record<string, unknown>) => {
     return fetch(urlsApi.contractGuarantee.competencyUpdate, {
       method: "POST",
       body: JSON.stringify(body),
@@ -64,14 +64,14 @@ export default {
     }).then((res) => res.json());
   },
 
-  bankList: (params?: any, signal?: AbortSignal) => {
+  bankList: (params?: Record<string, unknown>, signal?: AbortSignal) => {
     return fetch(`${urlsApi.contractGuarantee.bankList}${convertParamsToString(params)}`, {
       signal,
       method: "GET",
     }).then((res) => res.json());
   },
 
-  bankUpdate: (body: any) => {
+  bankUpdate: (body: Record<string, unknown>) => {
     return fetch(urlsApi.contractGuarantee.bankUpdate, {
       method: "POST",
       body: JSON.stringify(body),
@@ -105,7 +105,7 @@ export default {
   },
 
   // import khách hàng b2
-  autoProcess: (body: any) => {
+  autoProcess: (body: Record<string, unknown>) => {
     return fetch(urlsApi.contractGuarantee.autoProcess, {
       method: "POST",
       body: JSON.stringify(body),

@@ -22,7 +22,7 @@ import Input from "components/input/input";
 import Button from "components/button/button";
 import NummericInput from "components/input/numericInput";
 
-export default function SendSMS(props: any) {
+export default function SendSMS(props: Record<string, unknown>) {
   const { onShow,  onHide, dataNode, setDataNode, statusMA } = props;  
   console.log('dataNodeSMS', dataNode);
   
@@ -186,7 +186,7 @@ export default function SendSMS(props: any) {
     //Kiểm tra đã setup mẫu placeholder chưa
     console.log('idCategorySMS', idCategorySMS);
 
-    const body: any = {
+    const body: Record<string, unknown> = {
         ...dataNode,
         configData: {templateId: idCategorySMS}
       };        
@@ -207,7 +207,7 @@ export default function SendSMS(props: any) {
 
   const onSubmitTab1 = async (dataNode, nodePoint) => {
 
-    const body: any = {
+    const body: Record<string, unknown> = {
         ...dataNode,
         point: nodePoint
       };        
@@ -309,7 +309,7 @@ export default function SendSMS(props: any) {
                   
                 }
               },
-            ] as any) 
+            ] as Record<string, unknown>) 
             : []
           ),
           
@@ -346,7 +346,7 @@ export default function SendSMS(props: any) {
       showToast("Vui lòng nhập tên hành động", "error");
       return;
     }
-    const body: any = {
+    const body: Record<string, unknown> = {
       ...dataNode,
       name: nodeName,
       point: nodePoint

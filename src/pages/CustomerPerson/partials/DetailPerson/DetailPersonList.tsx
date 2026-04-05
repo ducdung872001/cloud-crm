@@ -69,7 +69,7 @@ export default function DetailPersonList() {
   } | null>(null);
 
   // Snapshot KPI từ customer list (customer/get không trả debt/paid/invoiceCount)
-  const [listSnapshot] = useState<any>(() => {
+  const [listSnapshot] = useState<Record<string, unknown>>(() => {
     try {
       const snap = localStorage.getItem("customerListSnapshot");
       if (!snap) return null;

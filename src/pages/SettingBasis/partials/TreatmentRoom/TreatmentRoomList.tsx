@@ -33,7 +33,7 @@ export default function TreatmentRoomList(props: ITreatmentRoomListProps) {
   const [isNoItem, setIsNoItem] = useState<boolean>(false);
   const [showModalAdd, setShowModalAdd] = useState<boolean>(false);
   const [showDialog, setShowDialog] = useState<boolean>(false);
-  const [contentDialog, setContentDialog] = useState<any>(null);
+  const [contentDialog, setContentDialog] = useState<Record<string, unknown>>(null);
   const [listTreatmentRoom, setListTreatmentRoom] = useState<ITreatmentRoomResponseModal[]>([]);
   const [dataTreatmentRoom, setDataTreatmentRoom] = useState<ITreatmentRoomResponseModal>(null);
   const [listIdChecked, setListIdChecked] = useState<number[]>([]);

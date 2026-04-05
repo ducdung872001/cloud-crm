@@ -15,7 +15,7 @@ export default function ModalConfigGrid({ onShow, onHide, callBack, dataConfig }
   const [showDialog, setShowDialog] = useState<boolean>(false);
   const [contentDialog, setContentDialog] = useState<IContentDialog>(null);
 
-  const [dataConfigGrid, setDataConfigGrid] = useState<any>({
+  const [dataConfigGrid, setDataConfigGrid] = useState<Record<string, unknown>>({
     headerTable: dataConfig?.headerTable || [],
     dataRow: dataConfig?.dataRow || [],
   });

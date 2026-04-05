@@ -16,7 +16,7 @@ export default function ConnectOutlook() {
    * @returns
    */
   const updateToken = async (res) => {
-    const body: any = {
+    const body: Record<string, unknown> = {
       idToken: res.idToken,
       accessToken: res.accessToken,
       uniqueId: res.uniqueId,
@@ -52,7 +52,7 @@ export default function ConnectOutlook() {
         console.log(e);
       });
     } else if (loginType === "silent") {
-      let accountInfo: any = localStorage.getItem("outlook.account");
+      let accountInfo: Record<string, unknown> = localStorage.getItem("outlook.account");
       if (accountInfo) {
         accountInfo = JSON.parse(accountInfo);
       }

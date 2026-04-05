@@ -16,7 +16,7 @@ export default function ModalAddColumn({ onShow, onHide, indexColumn, processId,
   const [isSubmit, setIsSubmit] = useState<boolean>(false);
   const [showDialog, setShowDialog] = useState<boolean>(false);
   const [contentDialog, setContentDialog] = useState<IContentDialog>(null);
-  const [addFieldAttributes, setAddFieldAttributes] = useState<any[]>([{ value: "", label: "" }]);
+  const [addFieldAttributes, setAddFieldAttributes] = useState<Record<string, unknown>[]>([{ value: "", label: "" }]);
 
   const [formData, setFormData] = useState({
     name: "",
@@ -344,7 +344,7 @@ export default function ModalAddColumn({ onShow, onHide, indexColumn, processId,
     setAddFieldAttributes(result);
   };
 
-  const [valueKey, setValueKey] = useState<any>(null);
+  const [valueKey, setValueKey] = useState<Record<string, unknown>>(null);
 
   return (
     <Fragment>

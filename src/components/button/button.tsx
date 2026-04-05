@@ -3,16 +3,16 @@ import "./button.scss";
 export interface ButtonProps {
   color?: "primary" | "destroy" | "success" | "warning" | "transparent" | "link" | "secondary";
   variant?: "outline";
-  children?: any;
+  children?: React.ReactNode;
   disabled?: boolean;
-  onClick?: any;
+  onClick?: React.MouseEventHandler<HTMLButtonElement>;
   type?: "submit" | "button";
   className?: string;
   hasIcon?: boolean; // Dành cho color filter
   onlyIcon?: boolean;
   size?: "slim" | "large";
-  refButton?: any;
-  dataTip?: any;
+  refButton?: React.Ref<HTMLButtonElement>;
+  dataTip?: string;
   autoFocus?: boolean;
 }
 export default function Button(props: ButtonProps) {

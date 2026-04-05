@@ -44,7 +44,7 @@ const Cashbook: React.FC<Props> = ({ data, onAddTx }) => {
       <div className="filter-bar">
         <div className="filter-left">
           <span className="fw">Bộ lọc nhanh</span>
-          <select value={type} onChange={(e) => setType(e.target.value as any)}>
+          <select value={type} onChange={(e) => setType(e.target.value as Record<string, unknown>)}>
             <option value="all">Tất cả</option>
             <option value="thu">Thu</option>
             <option value="chi">Chi</option>

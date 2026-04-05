@@ -32,7 +32,7 @@ import CampaignService from "services/CampaignService";
 import SaleFlowService from "services/SaleFlowService";
 import { getActiveShiftId } from "utils/ShiftStorage";
 
-export default function PaymentBill(props: any) {
+export default function PaymentBill(props: Record<string, unknown>) {
   const { 
           dataPaymentBill, 
           tab, 
@@ -205,7 +205,7 @@ export default function PaymentBill(props: any) {
   
 
   const loadOptionSaleflow = async (search, loadedOptions, { page }) => {
-    const param: any = {
+    const param: Record<string, unknown> = {
       keyword: search,
       page: page,
       limit: 10,
@@ -220,7 +220,7 @@ export default function PaymentBill(props: any) {
         options: [
           // ...(dataOption.length == 0 ? [{ value: "", label: "Thêm mới khách hàng", isShowModal: true, avatar: "custom" }] : []),
           ...(dataOption.length > 0
-            ? dataOption.map((item: any) => {
+            ? dataOption.map((item: Record<string, unknown>) => {
                 return {
                   value: item.id,
                   label: item.name,

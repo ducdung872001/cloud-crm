@@ -14,7 +14,7 @@ import { uploadDocumentFormData } from "utils/document";
 import "./MessageChatExchangePartner.scss";
 import PartnerService from "services/PartnerService";
 
-export default function MessageChatExchangePartner(props: any) {
+export default function MessageChatExchangePartner(props: Record<string, unknown>) {
   const { idPartner, dataExchange, onReload } = props;
 
   const inputRef = useRef(null);
@@ -52,7 +52,7 @@ export default function MessageChatExchangePartner(props: any) {
     },
   ]);
 
-  const [messageChatExchange, setMessageChatExchange] = useState<any>({
+  const [messageChatExchange, setMessageChatExchange] = useState<Record<string, unknown>>({
     content: "",
     type: 1,
     medias: null,
@@ -104,8 +104,8 @@ export default function MessageChatExchangePartner(props: any) {
 
     setLoadingSend(true);
 
-    const body: any = {
-      ...(messageChatExchange as any),
+    const body: Record<string, unknown> = {
+      ...(messageChatExchange as Record<string, unknown>),
     };
 
     const response = await PartnerService.partnerExchangeUpdate(body);
@@ -123,8 +123,8 @@ export default function MessageChatExchangePartner(props: any) {
   const onSubmit = async () => {
     setLoadingSend(true);
 
-    const body: any = {
-      ...(messageChatExchange as any),
+    const body: Record<string, unknown> = {
+      ...(messageChatExchange as Record<string, unknown>),
     };
 
     const response = await PartnerService.partnerExchangeUpdate(body);

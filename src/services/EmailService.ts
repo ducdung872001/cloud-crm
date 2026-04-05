@@ -30,14 +30,14 @@ export default {
     }).then((res) => res.json());
   },
   //gui thong tin voucher
-  sendVoucher: (body: IEmailRequest, params: any) => {
+  sendVoucher: (body: IEmailRequest, params: Record<string, unknown>) => {
     return fetch(`${urlsApi.email.sendEmailConfirm}${convertParamsToString(params)}`, {
       method: "POST",
       body: JSON.stringify(body),
     }).then((res) => res.json());
   },
   //gui phieu uu dai
-  sendEmailSale: (body: IEmailRequest, params: any) => {
+  sendEmailSale: (body: IEmailRequest, params: Record<string, unknown>) => {
     return fetch(`${urlsApi.email.sendEmailConfirm}${convertParamsToString(params)}`, {
       method: "POST",
       body: JSON.stringify(body),

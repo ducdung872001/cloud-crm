@@ -127,7 +127,7 @@ function RewardForm({
 
   useEffect(() => { setForm(initial); setErrors({}); }, [initial]);
 
-  const set = (k: keyof ILoyaltyRewardRequest, v: any) => {
+  const set = (k: keyof ILoyaltyRewardRequest, v: Record<string, unknown>) => {
     setForm(p => ({ ...p, [k]: v }));
     setErrors(p => ({ ...p, [k]: "" }));
   };
@@ -326,7 +326,7 @@ export default function RewardsExchangePage({ onBackProps }: { onBackProps: (v: 
       } else {
         showToast(res?.message ?? "Không thể tải danh sách phần thưởng", "error");
       }
-    } catch (e: any) {
+    } catch (e: unknown) {
       if (e?.name !== "AbortError") showToast("Lỗi kết nối", "error");
     } finally {
       setIsLoading(false);

@@ -34,7 +34,7 @@ export default function WarrantyPersonList(props: IWarrantyListProps) {
   const [showModalAdd, setShowModalAdd] = useState<boolean>(false);
   const [showModalView, setShowModalView] = useState<boolean>(false);
   const [showDialog, setShowDialog] = useState<boolean>(false);
-  const [contentDialog, setContentDialog] = useState<any>(null);
+  const [contentDialog, setContentDialog] = useState<Record<string, unknown>>(null);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [idWarranty, setIdWarranty] = useState<number>(0);
   const [isShowOption, setIsShowOption] = useState<boolean>(false);

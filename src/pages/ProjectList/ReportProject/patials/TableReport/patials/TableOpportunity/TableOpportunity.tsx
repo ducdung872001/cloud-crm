@@ -18,7 +18,7 @@ export default function TableOpportunity({ dataProjectReport }) {
   const [isNoItem, setIsNoItem] = useState<boolean>(false);
   const [isPermissions, setIsPermissions] = useState<boolean>(false);
 
-  const [params, setParams] = useState<any>({
+  const [params, setParams] = useState<Record<string, unknown>>({
     name: "",
     limit: 10,
   });
@@ -41,7 +41,7 @@ export default function TableOpportunity({ dataProjectReport }) {
 
   const abortController = new AbortController();
 
-  const getListOpportunity = async (paramsSearch: any) => {
+  const getListOpportunity = async (paramsSearch: Record<string, unknown>) => {
     setIsLoading(true);
 
     const response = await CustomerService.lstOpportunity(paramsSearch);
@@ -101,7 +101,7 @@ export default function TableOpportunity({ dataProjectReport }) {
 
   const dataFormat = ["text-center", "", ""];
 
-  const dataMappingArray = (item: any, index: number) => [
+  const dataMappingArray = (item: Record<string, unknown>, index: number) => [
     getPageOffset(params) + index + 1,
     item.productName || item.serviceName,
     item.customerName,

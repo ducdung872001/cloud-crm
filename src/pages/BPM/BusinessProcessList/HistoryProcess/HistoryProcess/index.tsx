@@ -32,7 +32,7 @@ export default function DetailHistoryProcess(props) {
   const [listIdChecked, setListIdChecked] = useState<number[]>([]);
   const [showModalAddOjectGroup, setShowModalAddOjectGroup] = useState<boolean>(false);
   const [showDialog, setShowDialog] = useState<boolean>(false);
-  const [contentDialog, setContentDialog] = useState<any>(null);
+  const [contentDialog, setContentDialog] = useState<Record<string, unknown>>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [isNoItem, setIsNoItem] = useState<boolean>(false);
   const [isPermissions, setIsPermissions] = useState<boolean>(false);
@@ -67,7 +67,7 @@ export default function DetailHistoryProcess(props) {
 
   const abortController = new AbortController();
 
-  const getListOjectGroup = async (paramsSearch: any) => {
+  const getListOjectGroup = async (paramsSearch: Record<string, unknown>) => {
     setIsLoading(true);
 
     const response = await BusinessProcessService.processedObjectLogPage(paramsSearch, abortController.signal);
@@ -143,7 +143,7 @@ export default function DetailHistoryProcess(props) {
 
   const dataFormat = ["text-center", "", "", "text-center", "text-center", "text-center"];
 
-  const dataMappingArray = (item: any, index: number) => [
+  const dataMappingArray = (item: Record<string, unknown>, index: number) => [
     getPageOffset(params) + index + 1,
     item.nodeName || item.processName, 
     item.employeeName,
@@ -171,7 +171,7 @@ export default function DetailHistoryProcess(props) {
     </a>,
   ];
 
-  const actionsTable = (item: any): IAction[] => {
+  const actionsTable = (item: Record<string, unknown>): IAction[] => {
     return [
       // {
       //   title: "Cài đặt trường",

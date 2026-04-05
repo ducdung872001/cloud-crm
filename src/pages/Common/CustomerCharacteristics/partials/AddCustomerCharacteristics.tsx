@@ -17,7 +17,7 @@ import Dialog, { IContentDialog } from "components/dialog/dialog";
 import "./AddCustomerCharacteristics.scss";
 
 interface IAddCustomerCharacteristicsProps {
-  data: any;
+  data: Record<string, unknown>;
   idProduct?: number;
   idService?: number;
   onShow: boolean;
@@ -265,7 +265,7 @@ export default function AddCustomerCharacteristics(props: IAddCustomerCharacteri
         objectType: objectType,
         blockRule: changeDataProps ? changeDataProps.blockRule : [defaultBlockRule],
         lastProcessId: 0,
-      } as any),
+      } as Record<string, unknown>),
     [changeDataProps, onShow, objectType, defaultBlockRule, idProduct, idService]
   );
 
@@ -316,7 +316,7 @@ export default function AddCustomerCharacteristics(props: IAddCustomerCharacteri
   const [isLoadingSource, setIsLoadingSource] = useState<boolean>(false);
 
   //! đoạn này xử lý lấy năm
-  const [years] = useState<any[]>(
+  const [years] = useState<Record<string, unknown>[]>(
     createArrayFromToR(new Date().getFullYear(), 1963).map((item, idx) => {
       return {
         value: +item,
@@ -326,7 +326,7 @@ export default function AddCustomerCharacteristics(props: IAddCustomerCharacteri
   );
 
   //! đoạn này xử lý lấy tháng
-  const [months] = useState<any[]>(
+  const [months] = useState<Record<string, unknown>[]>(
     createArrayFromTo(1, 12).map((item, idx) => {
       if (item < 10) {
         return {
@@ -343,7 +343,7 @@ export default function AddCustomerCharacteristics(props: IAddCustomerCharacteri
   );
 
   //! đoạn này xử lý lấy ngày
-  const [days] = useState<any[]>(
+  const [days] = useState<Record<string, unknown>[]>(
     createArrayFromTo(1, 31).map((item, idx) => {
       if (item < 10) {
         return {
@@ -613,7 +613,7 @@ export default function AddCustomerCharacteristics(props: IAddCustomerCharacteri
     });
   };
 
-  const onSelectOpenBlockApi = async (source, ids, idx, param?: any) => {
+  const onSelectOpenBlockApi = async (source, ids, idx, param?: Record<string, unknown>) => {
     if (!source) return;
 
     const checkSource = source.startsWith("https");
@@ -1070,7 +1070,7 @@ export default function AddCustomerCharacteristics(props: IAddCustomerCharacteri
     });
   };
 
-  const onSelectOpenChildrenBlockApi = async (source, index, ids, idx, param?: any) => {
+  const onSelectOpenChildrenBlockApi = async (source, index, ids, idx, param?: Record<string, unknown>) => {
     if (!source) return;
 
     const checkSource = source.startsWith("https");
@@ -1582,7 +1582,7 @@ export default function AddCustomerCharacteristics(props: IAddCustomerCharacteri
     });
   };
 
-  const onSelectOpenGrandChildrenBlockApi = async (source, index, idj, ids, idx, param?: any) => {
+  const onSelectOpenGrandChildrenBlockApi = async (source, index, idj, ids, idx, param?: Record<string, unknown>) => {
     if (!source) return;
 
     const checkSource = source.startsWith("https");

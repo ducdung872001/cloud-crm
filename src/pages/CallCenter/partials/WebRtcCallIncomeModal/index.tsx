@@ -35,7 +35,7 @@ const employeeSip470 = "470"; // Nguyễn Ngọc Trung
 
 const employeeSip471 = "471"; // Hoàng Văn Lợi
 
-export default function WebRtcCallIncomeModal(props: any) {
+export default function WebRtcCallIncomeModal(props: Record<string, unknown>) {
   const { onShow, onHide, makeCall, hangup, answer, transfer, incomingNumber, callState } = props;
 
   const [dataEmployee, setDataEmployee] = useState(null);

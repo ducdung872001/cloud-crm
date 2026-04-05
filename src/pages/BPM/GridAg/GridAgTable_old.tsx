@@ -48,7 +48,7 @@ const GridAgTable = (
     checkedMap,
     setCheckedMap,
   } = useGridAg();
-  const gridRef = useRef<any>(null);
+  const gridRef = useRef<Record<string, unknown>>(null);
   const { location, setDataConfigGrid, dataGrid, onChange, configField, onAction } = props;
   const idGrid = configField?.fieldName || dataGrid?.fieldName || "";
   const COLUMN_WIDTH_STORAGE_KEY = "gridag_column_widths" + idGrid;
@@ -89,7 +89,7 @@ const GridAgTable = (
   const columnsRef = useRef<ColDef[]>(columns);
 
   const [showModalAddColumn, setShowModalAddColumn] = useState<boolean>(false);
-  const [dataColumnEdit, setDataColumnEdit] = useState<any>(null);
+  const [dataColumnEdit, setDataColumnEdit] = useState<Record<string, unknown>>(null);
   const [isEditColumn, setIsEditColumn] = useState(false);
   const [isChangeColumns, setIsChangeColumns] = useState<boolean>(false);
   const [showModalImport, setShowModalImport] = useState<boolean>(false);
@@ -107,7 +107,7 @@ const GridAgTable = (
     fieldName: "",
   };
 
-  const params: any =
+  const params: Record<string, unknown> =
     location && location == "viewAndHandle" ? configField : location && location == "configForm" ? configFieldModal : getSearchParameters();
   const enableAddRow = !params?.enableAddRow || params?.enableAddRow == "false" ? false : true;
   const enableFilter = !params?.enableFilter || params?.enableFilter == "false" ? false : true;
@@ -253,12 +253,12 @@ const GridAgTable = (
     []
   );
 
-  const getRowHeight = (params: any) => {
+  const getRowHeight = (params: Record<string, unknown>) => {
     if (params.data.isHeaderRow) return 50; // Chiều cao hàng header
     return 40; // Chiều cao mặc định
   };
 
-  const isFullWidthRow = (params: any) => {
+  const isFullWidthRow = (params: Record<string, unknown>) => {
     return params?.rowNode?.data?.isFullWidthRow; // Xác định hàng toàn chiều rộng
   };
 
@@ -273,7 +273,7 @@ const GridAgTable = (
     if (!columnApi) return;
     const allColumns = columnApi.getAllColumns();
     const widths: { [key: string]: number } = {};
-    allColumns.forEach((col: any) => {
+    allColumns.forEach((col: Record<string, unknown>) => {
       const colDef = col.getColDef();
       if (colDef.field) {
         widths[colDef.field] = col.getActualWidth();
@@ -312,7 +312,7 @@ const GridAgTable = (
   const handleAddRow = (rowKey?: string, position?: "top" | "bottom") => {
     const cols = columnsRef.current;
     const uuid = uuidv4();
-    const newRow: any = { rowKey: uuid };
+    const newRow: Record<string, unknown> = { rowKey: uuid };
     cols.forEach((col: ColDef) => {
       if (col.field && col.field !== "rowKey") {
         if (col.cellRendererParams.type === "number" || col.cellEditorParams?.type === "lookup" || col.cellEditorParams?.type === "binding") {
@@ -324,7 +324,7 @@ const GridAgTable = (
     });
     if (rowKey && position) {
       setRowData((prev) => {
-        const rowIndex = prev.findIndex((row: any) => row.rowKey === rowKey);
+        const rowIndex = prev.findIndex((row: Record<string, unknown>) => row.rowKey === rowKey);
         if (rowIndex === -1) {
           // Nếu không tìm thấy rowKey, thêm vào cuối
           showToast("Không tìm thấy dòng để thêm vào", "error");
@@ -344,9 +344,9 @@ const GridAgTable = (
     }
   };
   // THÊM: Hàm thêm dòng mới
-  const handleAddRowTitle = (stype: any, rowKey?: string, position?: "top" | "bottom") => {
+  const handleAddRowTitle = (stype: Record<string, unknown>, rowKey?: string, position?: "top" | "bottom") => {
     const uuid = uuidv4();
-    const newRow: any = {
+    const newRow: Record<string, unknown> = {
       rowKey: uuid,
       no: "",
       level: stype.split("")[1] || 1,
@@ -356,7 +356,7 @@ const GridAgTable = (
 
     if (rowKey && position) {
       setRowData((prev) => {
-        const rowIndex = prev.findIndex((row: any) => row.rowKey === rowKey);
+        const rowIndex = prev.findIndex((row: Record<string, unknown>) => row.rowKey === rowKey);
         if (rowIndex === -1) {
           // Nếu không tìm thấy rowKey, thêm vào cuối
           showToast("Không tìm thấy dòng để thêm vào", "error");

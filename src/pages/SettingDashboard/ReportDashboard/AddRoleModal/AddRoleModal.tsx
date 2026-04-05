@@ -20,7 +20,7 @@ import ReportChartService from "services/ReportChartService";
 import DepartmentService from "services/DepartmentService";
 import { ContextType, UserContext } from "contexts/userContext";
 
-export default function AddRoleModal(props: any) {
+export default function AddRoleModal(props: Record<string, unknown>) {
   const { onShow, onHide, dataReportDashboard} = props;
   const focusedElement = useActiveElement();
 
@@ -59,7 +59,7 @@ export default function AddRoleModal(props: any) {
 
     const abortController = new AbortController();
 
-    const getListRole = async (paramsSearch: any) => {
+    const getListRole = async (paramsSearch: Record<string, unknown>) => {
         setIsLoading(true);
 
         const response = await ReportChartService.listReportRole(paramsSearch, abortController.signal);
@@ -89,13 +89,13 @@ export default function AddRoleModal(props: any) {
     const titles = ["STT", "Chức vụ", "Phòng ban"];
     const dataFormat = ["text-center", "", "text-center", "text-right"];
 
-    const dataMappingArray = (item: any, index: number) => [
+    const dataMappingArray = (item: Record<string, unknown>, index: number) => [
         getPageOffset(params) + index + 1,
         item.jobTitle,
         item.departmentName,
     ];
 
-    const actionsTable = (item: any): IAction[] => {
+    const actionsTable = (item: Record<string, unknown>): IAction[] => {
         
         return [
           {
@@ -116,7 +116,7 @@ export default function AddRoleModal(props: any) {
         ];
     };
 
-    const showDialogConfirmDelete = (item?: any) => {
+    const showDialogConfirmDelete = (item?: Record<string, unknown>) => {
         const contentDialog: IContentDialog = {
           color: "error",
           className: "dialog-delete",
@@ -204,7 +204,7 @@ export default function AddRoleModal(props: any) {
       dashboardId: dataRole?.dashboardId ?? dataReportDashboard?.id ?? 0,
       departmentId: dataRole?.departmentId ?? 0,
       jteId: dataRole?.jteId ?? 0,
-    } as any),
+    } as Record<string, unknown>),
     [onShow, dataRole, dataReportDashboard]
   );  
 
@@ -393,7 +393,7 @@ export default function AddRoleModal(props: any) {
     setIsSubmit(true);
 
     const body = {
-        ...(formData.values as any),
+        ...(formData.values as Record<string, unknown>),
         // ...(data ? { id: data.id } : {}),
     };
 

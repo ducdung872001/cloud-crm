@@ -22,7 +22,7 @@ import InstallApplicationService from "services/InstallApplicationService";
 import Badge from "components/badge/badge";
 import AddApplicationModal from "./partials/AddApplicationModal";
 
-export default function InstallApplication(props: any) {
+export default function InstallApplication(props: Record<string, unknown>) {
   document.title = "Danh sách cài đặt ứng dụng";
 
   const { onBackProps } = props;
@@ -34,7 +34,7 @@ export default function InstallApplication(props: any) {
   const [listIdChecked, setListIdChecked] = useState<number[]>([]);
   const [showModalAdd, setShowModalAdd] = useState<boolean>(false);
   const [showDialog, setShowDialog] = useState<boolean>(false);
-  const [contentDialog, setContentDialog] = useState<any>(null);
+  const [contentDialog, setContentDialog] = useState<Record<string, unknown>>(null);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [isNoItem, setIsNoItem] = useState<boolean>(false);
   const [isPermissions, setIsPermissions] = useState<boolean>(false);

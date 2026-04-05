@@ -29,7 +29,7 @@ export default function CardServiceList(props: ICardServiceListProps) {
   const [listCardService, setListCardService] = useState<ICardInvoiceServiceResponse[]>([]);
 
   const [showDialog, setShowDialog] = useState<boolean>(false);
-  const [contentDialog, setContentDialog] = useState<any>(null);
+  const [contentDialog, setContentDialog] = useState<Record<string, unknown>>(null);
 
   const [showModalUpdate, setShowModalUpdate] = useState<boolean>(false);
 

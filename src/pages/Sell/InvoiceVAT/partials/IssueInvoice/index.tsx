@@ -32,11 +32,11 @@ interface InvoiceFormData {
   note:          string;
 }
 
-const getSupplierTaxCode = () => (window as any).__VAT_SUPPLIER_TAX_CODE__ || "0100109106-501";
-const getTemplateCode    = () => (window as any).__VAT_TEMPLATE_CODE__     || "1/6553";
+const getSupplierTaxCode = () => (window as Record<string, unknown>).__VAT_SUPPLIER_TAX_CODE__ || "0100109106-501";
+const getTemplateCode    = () => (window as Record<string, unknown>).__VAT_TEMPLATE_CODE__     || "1/6553";
 
 const buildDefaultForm = (): InvoiceFormData => {
-  const cfg = (window as any).__VAT_CONFIG__;
+  const cfg = (window as Record<string, unknown>).__VAT_CONFIG__;
   return {
     templateCode:  cfg?.defaultTemplateCode?.includes("2")
       ? "02GTKT0/001 – HĐ GTGT dịch vụ"
@@ -86,10 +86,10 @@ export default function IssueInvoice({ onRegisterPreview, onRegisterPublish, ini
   const totalVAT   = form.items.reduce((s, i) => s + Math.round(i.total * i.taxRate / 100), 0);
   const grandTotal = subtotal + totalVAT;
 
-  const setField = (key: keyof InvoiceFormData, value: any) =>
+  const setField = (key: keyof InvoiceFormData, value: Record<string, unknown>) =>
     setForm(f => ({ ...f, [key]: value }));
 
-  const updateItem = (id: number, key: keyof InvoiceItem, value: any) => {
+  const updateItem = (id: number, key: keyof InvoiceItem, value: Record<string, unknown>) => {
     setForm(f => ({
       ...f,
       items: f.items.map(item => {
@@ -126,9 +126,9 @@ export default function IssueInvoice({ onRegisterPreview, onRegisterPublish, ini
         if (inv.customerAddress) setField("address",      inv.customerAddress);
         if (inv.customerEmail)   setField("emailReceive", inv.customerEmail);
 
-        const rawProducts: any[] = inv.boughtProducts || inv.items || [];
+        const rawProducts: Record<string, unknown>[] = inv.boughtProducts || inv.items || [];
         if (rawProducts.length > 0) {
-          const mappedItems: InvoiceItem[] = rawProducts.map((p: any, idx: number) => {
+          const mappedItems: InvoiceItem[] = rawProducts.map((p: Record<string, unknown>, idx: number) => {
             const qty      = p.qty || p.quantity || 1;
             const unitPrice= p.price || p.unitPrice || 0;
             return {
@@ -178,7 +178,7 @@ export default function IssueInvoice({ onRegisterPreview, onRegisterPublish, ini
       taxMap[i.taxPercentage].taxAmount     += i.taxAmount;
     });
 
-    const cfg = (window as any).__VAT_CONFIG__;
+    const cfg = (window as Record<string, unknown>).__VAT_CONFIG__;
 
     return {
       supplierTaxCode: getSupplierTaxCode(),

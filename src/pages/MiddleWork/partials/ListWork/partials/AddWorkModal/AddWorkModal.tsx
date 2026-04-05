@@ -77,7 +77,7 @@ export default function AddWorkModal(props: IAddWorkModelProps) {
     disableOpportunity,
   } = props;
 
-  const params: any = getSearchParameters();
+  const params: Record<string, unknown> = getSearchParameters();
 
   const takeIdProjectManagement = Object.keys(params).length > 0 && +params?.projectId > 0 ? +params?.projectId : null;
   const takeIdOptManagement = Object.keys(params).length > 0 && +params?.opportunityId > 0 ? +params?.opportunityId : null;
@@ -1536,7 +1536,7 @@ export default function AddWorkModal(props: IAddWorkModelProps) {
                                 className={`${valueDecisionTime.value === item.value ? "active__item--item" : "item-time"}`}
                                 onClick={(e) => {
                                   e && e.preventDefault();
-                                  setValueDecisionTime(item as any);
+                                  setValueDecisionTime(item as Record<string, unknown>);
                                   setIsOptionDecisionTime(false);
                                 }}
                               >

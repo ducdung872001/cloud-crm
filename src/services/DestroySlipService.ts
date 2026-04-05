@@ -31,7 +31,7 @@ export default {
   },
 
   // POST /stockAdjustDetail/update — thêm/sửa 1 dòng sản phẩm (reuse từ AdjustmentSlip)
-  addUpdatePro: (body: any) => {
+  addUpdatePro: (body: Record<string, unknown>) => {
     return fetch(urlsApi.destroySlip.addUpdatePro, {
       method: "POST",
       body: JSON.stringify(body),

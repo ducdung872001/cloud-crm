@@ -18,7 +18,7 @@ import CampaignMarketingService from "services/CampaignMarketingService";
 import ModalAddMarketingMeasurement from "./partials/ModalAddMAMeasurement";
 import { DeleteHandler } from "components/DeleteHandler/deleteHandler";
 
-export default function MarketingMeasurement(props: any) {
+export default function MarketingMeasurement(props: Record<string, unknown>) {
   document.title = "Danh mục đo lường";
 
   const { onBackProps } = props;
@@ -30,7 +30,7 @@ export default function MarketingMeasurement(props: any) {
   const [listIdChecked, setListIdChecked] = useState<number[]>([]);
   const [showModalAddMeasurement, setShowModalAddMeasurement] = useState<boolean>(false);
   const [showDialog, setShowDialog] = useState<boolean>(false);
-  const [contentDialog, setContentDialog] = useState<any>(null);
+  const [contentDialog, setContentDialog] = useState<Record<string, unknown>>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
 
   //đã fix true
@@ -67,7 +67,7 @@ export default function MarketingMeasurement(props: any) {
 
   const abortController = new AbortController();
 
-  const getListMarketingMeasurement = async (paramsSearch: any) => {
+  const getListMarketingMeasurement = async (paramsSearch: Record<string, unknown>) => {
     setIsLoading(true);
 
     const response = await CampaignMarketingService.listMAMeasurement(paramsSearch, abortController.signal);
@@ -140,7 +140,7 @@ export default function MarketingMeasurement(props: any) {
 
   const dataFormat = ["text-center", "", "", "text-center", "text-center"];
 
-  const dataMappingArray = (item: any, index: number) => [
+  const dataMappingArray = (item: Record<string, unknown>, index: number) => [
     getPageOffset(params) + index + 1,
     item.name,
     item.code,
@@ -148,7 +148,7 @@ export default function MarketingMeasurement(props: any) {
     item.position,
   ];
 
-  const actionsTable = (item: any): IAction[] => {
+  const actionsTable = (item: Record<string, unknown>): IAction[] => {
     const isCheckedItem = listIdChecked?.length > 0;
     return [
       {

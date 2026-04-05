@@ -21,7 +21,7 @@ export default function ViewAdjustmentSlip(props: IViewAdjustmentSlipProps) {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [data, setData] = useState<IDetailAdjustmentSlipResponse>(null);
   const [showDialog, setShowDialog] = useState<boolean>(false);
-  const [contentDialog, setContentDialog] = useState<any>(null);
+  const [contentDialog, setContentDialog] = useState<Record<string, unknown>>(null);
 
   const getDetailAdjustmentSlip = async (id: number) => {
     setIsLoading(true);

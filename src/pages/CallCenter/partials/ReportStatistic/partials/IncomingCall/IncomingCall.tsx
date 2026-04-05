@@ -3,7 +3,7 @@ import "./IncomingCall.scss";
 import HighchartsReact from "highcharts-react-official";
 import Highcharts from "highcharts";
 
-function IncomingCall(props: any) {
+function IncomingCall(props: Record<string, unknown>) {
   const { onShow } = props;
 
   const chartRef = useRef(null);

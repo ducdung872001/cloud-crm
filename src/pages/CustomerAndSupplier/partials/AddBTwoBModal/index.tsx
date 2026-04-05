@@ -33,7 +33,7 @@ interface IAddBTwoBModalProps {
   onHide: (reload: boolean) => void;
   idCustomer: number;
   idOpportunity: number;
-  dataCustomer?: any;
+  dataCustomer?: Record<string, unknown>;
   special: boolean;
   onBackup: (idCustomer: number, reload: boolean) => void;
 }
@@ -141,7 +141,7 @@ export default function AddBTwoBModal(props: IAddBTwoBModalProps) {
         coordinators: dataRes && dataRes.coordinators ? JSON.parse(dataRes.coordinators) : [], // người phối hợp
         // contactCoordinators: dataRes ? dataRes.lstContactCoordinatorId  : [], // người phối hợp
         // employeeCoordinators: dataRes ? dataRes.lstEmployeeCoordinatorId  : [], // người phối hợp
-      } as any),
+      } as Record<string, unknown>),
     [onShow, idCustomer, dataRes]
   );
 
@@ -373,7 +373,7 @@ export default function AddBTwoBModal(props: IAddBTwoBModalProps) {
   //? End xử lý người quyết định
 
   const loadOptionProject = async (search, loadedOptions, { page }) => {
-    const param: any = {
+    const param: Record<string, unknown> = {
       name: search,
       page: page,
       limit: 10,
@@ -547,7 +547,7 @@ export default function AddBTwoBModal(props: IAddBTwoBModalProps) {
         refId: 0,
         sourceId: null,
         type: "biz",
-      } as any),
+      } as Record<string, unknown>),
     [activeItemMenu, idCustomer, idOpportunity, idResponse, nxStep]
   );
 
@@ -669,7 +669,7 @@ export default function AddBTwoBModal(props: IAddBTwoBModalProps) {
     // setFormDataTwo({ ...formDataTwo, campaignId: e.value, startDate: e.startDate, endDate: e.endDate });
   };
 
-  const getListCampaignPipeline = async (campaignId: any, e) => {
+  const getListCampaignPipeline = async (campaignId: number, e: Record<string, unknown>) => {
     const param = {
       limit: 100,
       campaignId: campaignId,
@@ -992,7 +992,7 @@ export default function AddBTwoBModal(props: IAddBTwoBModalProps) {
                       : _.isEqual(formDataTwo, valueStepTwo),
                   is_loading: isSubmit,
                 },
-              ] as any)
+              ] as Record<string, unknown>[])
             : []),
         ],
       },

@@ -15,8 +15,8 @@ import "./ModalShiftConfig.scss";
 export type ShiftConfigModel = {
   id?: number;
   shiftName: string;
-  startTime: any;
-  endTime: any;
+  startTime: Record<string, unknown>;
+  endTime: Record<string, unknown>;
   posDevice: string;
   defaultCash: string | number;
   minStaff: string | number;
@@ -198,7 +198,7 @@ export default function ShiftConfigModal(props: Props) {
               <div className="time-grid">
                 <DatePickerCustom
                   label="Chọn giờ bắt đầu"
-                  value={(formData.values as any).startTime}
+                  value={(formData.values as Record<string, unknown>).startTime}
                   hasSelectTime
                   fill
                   isFmtText
@@ -207,7 +207,7 @@ export default function ShiftConfigModal(props: Props) {
                 />
                 <DatePickerCustom
                   label="Chọn giờ kết thúc"
-                  value={(formData.values as any).endTime}
+                  value={(formData.values as Record<string, unknown>).endTime}
                   hasSelectTime
                   fill
                   isFmtText
@@ -220,8 +220,8 @@ export default function ShiftConfigModal(props: Props) {
               <SelectCustom
                 label="Chọn thiết bị POS"
                 options={posOptions}
-                value={(formData.values as any).posDevice}
-                onChange={(e: any) => setFormData({ ...formData, values: { ...formData.values, posDevice: e?.value } })}
+                value={(formData.values as Record<string, unknown>).posDevice}
+                onChange={(e: Record<string, unknown>) => setFormData({ ...formData, values: { ...formData.values, posDevice: e?.value } })}
                 placeholder="Chọn thiết bị..."
                 fill
                 required

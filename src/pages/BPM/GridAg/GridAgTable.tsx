@@ -25,7 +25,7 @@ import { filterData } from "./function/filterData";
 import { IGridAgTable } from ".";
 
 export interface GridAgTableHandle {
-  getLatestRowData: () => any[];
+  getLatestRowData: () => Record<string, unknown>[];
 }
 
 const GridAgTable = forwardRef<GridAgTableHandle, IGridAgTable>((props: IGridAgTable, ref) => {
@@ -49,7 +49,7 @@ const GridAgTable = forwardRef<GridAgTableHandle, IGridAgTable>((props: IGridAgT
     checkedMap,
     setCheckedMap,
   } = useGridAg();
-  const gridRef = useRef<any>(null);
+  const gridRef = useRef<Record<string, unknown>>(null);
   const { location, setDataConfigGrid, dataGrid, onChange, configField, onAction, domId } = props;
 
   const idGrid = domId;
@@ -91,7 +91,7 @@ const GridAgTable = forwardRef<GridAgTableHandle, IGridAgTable>((props: IGridAgT
   const columnsRef = useRef<ColDef[]>(columns);
 
   const [showModalAddColumn, setShowModalAddColumn] = useState<boolean>(false);
-  const [dataColumnEdit, setDataColumnEdit] = useState<any>(null);
+  const [dataColumnEdit, setDataColumnEdit] = useState<Record<string, unknown>>(null);
   const [isEditColumn, setIsEditColumn] = useState(false);
   const [isChangeColumns, setIsChangeColumns] = useState<boolean>(false);
   const [showModalImport, setShowModalImport] = useState<boolean>(false);
@@ -109,7 +109,7 @@ const GridAgTable = forwardRef<GridAgTableHandle, IGridAgTable>((props: IGridAgT
     fieldName: "",
   };
 
-  const params: any =
+  const params: Record<string, unknown> =
     location && location == "viewAndHandle" ? configField : location && location == "configForm" ? configFieldModal : getSearchParameters();
   const enableAddRow = !params?.enableAddRow || params?.enableAddRow == "false" ? false : true;
   const enableFilter = !params?.enableFilter || params?.enableFilter == "false" ? false : true;
@@ -250,12 +250,12 @@ const GridAgTable = forwardRef<GridAgTableHandle, IGridAgTable>((props: IGridAgT
     []
   );
 
-  const getRowHeight = (params: any) => {
+  const getRowHeight = (params: Record<string, unknown>) => {
     if (params.data.isHeaderRow) return 50; // Chiều cao hàng header
     return 40; // Chiều cao mặc định
   };
 
-  const isFullWidthRow = (params: any) => {
+  const isFullWidthRow = (params: Record<string, unknown>) => {
     return params?.rowNode?.data?.isFullWidthRow; // Xác định hàng toàn chiều rộng
   };
 
@@ -270,7 +270,7 @@ const GridAgTable = forwardRef<GridAgTableHandle, IGridAgTable>((props: IGridAgT
     if (!columnApi) return;
     const allColumns = columnApi.getAllColumns();
     const widths: { [key: string]: number } = {};
-    allColumns.forEach((col: any) => {
+    allColumns.forEach((col: Record<string, unknown>) => {
       const colDef = col.getColDef();
       if (colDef.field) {
         widths[colDef.field] = col.getActualWidth();
@@ -309,7 +309,7 @@ const GridAgTable = forwardRef<GridAgTableHandle, IGridAgTable>((props: IGridAgT
   const handleAddRow = (rowKey?: string, position?: "top" | "bottom") => {
     const cols = columnsRef.current;
     const uuid = uuidv4();
-    const newRow: any = { rowKey: uuid };
+    const newRow: Record<string, unknown> = { rowKey: uuid };
     cols.forEach((col: ColDef) => {
       if (col.field && col.field !== "rowKey") {
         if (col.cellRendererParams.type === "number" || col.cellEditorParams?.type === "lookup" || col.cellEditorParams?.type === "binding") {
@@ -323,7 +323,7 @@ const GridAgTable = forwardRef<GridAgTableHandle, IGridAgTable>((props: IGridAgT
     const latestData = getLatestRowData();
     // Cập nhật newRow với dữ liệu mới nhất nếu có
     if (rowKey && position) {
-      const rowIndex = latestData.findIndex((row: any) => row.rowKey === rowKey);
+      const rowIndex = latestData.findIndex((row: Record<string, unknown>) => row.rowKey === rowKey);
       if (rowIndex === -1) {
         // Nếu không tìm thấy rowKey, thêm vào cuối
         showToast("Không tìm thấy dòng để thêm vào", "error");
@@ -342,9 +342,9 @@ const GridAgTable = forwardRef<GridAgTableHandle, IGridAgTable>((props: IGridAgT
     }
   };
   // THÊM: Hàm thêm dòng mới
-  const handleAddRowTitle = (stype: any, rowKey?: string, position?: "top" | "bottom") => {
+  const handleAddRowTitle = (stype: Record<string, unknown>, rowKey?: string, position?: "top" | "bottom") => {
     const uuid = uuidv4();
-    const newRow: any = {
+    const newRow: Record<string, unknown> = {
       rowKey: uuid,
       no: "",
       level: stype.split("")[1] || 1,
@@ -354,7 +354,7 @@ const GridAgTable = forwardRef<GridAgTableHandle, IGridAgTable>((props: IGridAgT
     // Lấy dữ liệu mới nhất trong bảng
     const latestData = getLatestRowData();
     if (rowKey && position) {
-      const rowIndex = latestData.findIndex((row: any) => row.rowKey === rowKey);
+      const rowIndex = latestData.findIndex((row: Record<string, unknown>) => row.rowKey === rowKey);
       if (rowIndex === -1) {
         // Nếu không tìm thấy rowKey, thêm vào cuối
         showToast("Không tìm thấy dòng để thêm vào", "error");
@@ -389,7 +389,7 @@ const GridAgTable = forwardRef<GridAgTableHandle, IGridAgTable>((props: IGridAgT
 
   const getLatestRowData = useCallback(() => {
     //Lấy data mới nhất trên lưới
-    const _rowData: any[] = [];
+    const _rowData: Record<string, unknown>[] = [];
     try {
       if (gridRef.current && gridRef.current.api && typeof gridRef.current.api.forEachNode === "function") {
         gridRef.current.api.forEachNode((node) => _rowData.push(node.data));

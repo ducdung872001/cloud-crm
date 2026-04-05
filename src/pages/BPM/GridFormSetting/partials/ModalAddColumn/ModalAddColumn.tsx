@@ -21,9 +21,9 @@ import GirdService from "services/GridService";
 import { BindingFieldMap } from "./BindingFieldMap";
 import Checkbox from "components/checkbox/checkbox";
 
-export default function ModalAddColumn(props: any) {
+export default function ModalAddColumn(props: Record<string, unknown>) {
   const { onShow, onHide, data, listColumn, setListColumn, setIsChangeColumns, nodeId, fieldName, processId } = props;
-  const params: any = getSearchParameters();
+  const params: Record<string, unknown> = getSearchParameters();
 
   const refShowField = useRef();
   useOnClickOutside(refShowField, () => setShowFields(false), ["formula"]);
@@ -36,15 +36,15 @@ export default function ModalAddColumn(props: any) {
 
   const [listCustomerAttribute, setListCustomerAttribute] = useState<IOption[]>(null);
   const [isLoadingCustomerAttribute, setIsLoadingCustomerAttribute] = useState<boolean>(false);
-  const [addFieldAttributes, setAddFieldAttributes] = useState<any[]>([]);
-  const [detailLookup, setDetailLookup] = useState<any>("");
-  const [numberFormat, setNumberFormat] = useState<any>("");
+  const [addFieldAttributes, setAddFieldAttributes] = useState<Record<string, unknown>[]>([]);
+  const [detailLookup, setDetailLookup] = useState<Record<string, unknown>>("");
+  const [numberFormat, setNumberFormat] = useState<Record<string, unknown>>("");
 
-  const [listBindingField, setListBindingField] = useState<any[]>([]);
-  const [detailBindingField, setDetailBindingField] = useState<any>([]);
+  const [listBindingField, setListBindingField] = useState<Record<string, unknown>[]>([]);
+  const [detailBindingField, setDetailBindingField] = useState<Record<string, unknown>>([]);
 
   //Cần đổi lại thành khách hàng
-  const [customerAttributeFields, setCustomerAttributeFields] = useState<any>(null); //Khởi tạo null là quan trọng
+  const [customerAttributeFields, setCustomerAttributeFields] = useState<Record<string, unknown>>(null); //Khởi tạo null là quan trọng
   const [showFields, setShowFields] = useState<boolean>(false);
   const [selectedFormula, setSelectedFormula] = useState<string>("");
   const [dependFormula, setDependFormula] = useState([]);
@@ -109,7 +109,7 @@ export default function ModalAddColumn(props: any) {
     if (!listCustomerAttribute || listCustomerAttribute.length === 0) {
       setIsLoadingCustomerAttribute(true);
 
-      const params: any = {
+      const params: Record<string, unknown> = {
         isParent: 1,
       };
       const response = await CustomerAttributeService.list(params);
@@ -286,7 +286,7 @@ export default function ModalAddColumn(props: any) {
         options: data?.options ?? null,
         position: data?.position ?? "0",
         parentId: data?.parentId ?? "0",
-      } as any),
+      } as Record<string, unknown>),
     [data, onShow]
   );
 
@@ -310,7 +310,7 @@ export default function ModalAddColumn(props: any) {
   const [detailParent, setDetailParent] = useState(null);
 
   const loadedOptionParent = async (search, loadedOptions, { page }) => {
-    const params: any = {
+    const params: Record<string, unknown> = {
       isParent: 1,
     };
     const response = await CustomerAttributeService.list(params);
@@ -862,8 +862,8 @@ export default function ModalAddColumn(props: any) {
     //   ...(data ? { id: data.id } : {}),
     // };
 
-    const body: any = {
-      ...(formData.values as any),
+    const body: Record<string, unknown> = {
+      ...(formData.values as Record<string, unknown>),
       ...(data ? { id: data.id } : {}),
       ...(formData.values["type"] == "select" || formData.values["type"] == "radio" || formData.values["type"] == "multiselect"
         ? {

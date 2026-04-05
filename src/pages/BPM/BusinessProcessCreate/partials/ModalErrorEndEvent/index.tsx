@@ -224,7 +224,7 @@ export default function ModalErrorEndEvent({ onShow, onHide, dataNode, processId
                                 // || !isDifferenceObj(formData, values),
                                 is_loading: isSubmit,
                             },
-                        ] as any)),
+                        ] as Record<string, unknown>)),
                 ],
             },
         }),
@@ -344,7 +344,7 @@ export default function ModalErrorEndEvent({ onShow, onHide, dataNode, processId
             ],
             blockRule: [],
             error_code: "", // Để trống cho điều kiện mới
-        } as any),
+        } as Record<string, unknown>),
         [data, onShow]
     );
 

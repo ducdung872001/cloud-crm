@@ -17,7 +17,7 @@ import ContractPaymentService from "services/ContractPaymentService";
 import ContractAttachmentService from "services/ContractAttachmentService";
 import ModalAddAttachment from "./partials/ModalAddAttachment";
 
-export default function ProjectAttachment(props: any) {
+export default function ProjectAttachment(props: Record<string, unknown>) {
   const { contractId, detailContract } = props;
   const navigate = useNavigate();
   const [showDialog, setShowDialog] = useState<boolean>(false);
@@ -51,7 +51,7 @@ export default function ProjectAttachment(props: any) {
     },
   });
 
-  const getListAttachment = async (paramsSearch: any) => {
+  const getListAttachment = async (paramsSearch: Record<string, unknown>) => {
     setIsLoading(true);
 
     const response = await ContractAttachmentService.contractAttachmentList(paramsSearch);
@@ -80,9 +80,9 @@ export default function ProjectAttachment(props: any) {
   const titles = ["STT", "Tên tài liệu", "Loại tài liệu"];
   const dataFormat = ["text-center", "", "text-center"];
 
-  const dataMappingArray = (item: any, index: number) => [getPageOffset(params) + index + 1, item.name, item.attachmentName];
+  const dataMappingArray = (item: Record<string, unknown>, index: number) => [getPageOffset(params) + index + 1, item.name, item.attachmentName];
 
-  const actionsTable = (item: any): IAction[] => {
+  const actionsTable = (item: Record<string, unknown>): IAction[] => {
     return [
       {
         title: "Tải xuống",
@@ -125,7 +125,7 @@ export default function ProjectAttachment(props: any) {
     ];
   };
 
-  const showDialogConfirmDelete = (item?: any) => {
+  const showDialogConfirmDelete = (item?: Record<string, unknown>) => {
     const contentDialog: IContentDialog = {
       color: "error",
       className: "dialog-delete",

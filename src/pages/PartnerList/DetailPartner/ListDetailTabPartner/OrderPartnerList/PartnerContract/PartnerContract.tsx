@@ -23,7 +23,7 @@ export default function PartnerContract(props) {
   const [listContract, setListContract] = useState<IContractResponse[]>([]);
   const [isNoItem, setIsNoItem] = useState<boolean>(false);
 
-  const [params, setParams] = useState<any>({
+  const [params, setParams] = useState<Record<string, unknown>>({
     name: "",
     limit: 100,
   });

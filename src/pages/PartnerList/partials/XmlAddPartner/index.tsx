@@ -39,7 +39,7 @@ const getPartnerExtraInfos = async (id) => {
   return response.result ?? [];
 };
 
-const getOjectGroup = async (type: any) => {
+const getOjectGroup = async (type: Record<string, unknown>) => {
   const response = await ObjectGroupService.detailByType(type);
   if (response.code === 0) {
     const result = response?.result;
@@ -55,7 +55,7 @@ const getOjectGroup = async (type: any) => {
   return defaultSchema;
 };
 
-export default function XmlAddPartner(props: any) {
+export default function XmlAddPartner(props: Record<string, unknown>) {
   const { onShow, data, onHide, takeInfoPartner } = props;
 
   const formContainerRef = useRef(null);
@@ -70,9 +70,9 @@ export default function XmlAddPartner(props: any) {
 
   const { dataBranch } = useContext(UserContext) as ContextType;
   const [isSubmit, setIsSubmit] = useState<boolean>(false);
-  const [partnerExtraInfos, setPartnerExtraInfos] = useState<any>([]);
+  const [partnerExtraInfos, setPartnerExtraInfos] = useState<Record<string, unknown>>([]);
 
-  const [mapPartnerAttribute, setMapPartnerAttribute] = useState<any>(null);
+  const [mapPartnerAttribute, setMapPartnerAttribute] = useState<Record<string, unknown>>(null);
 
   useEffect(() => {
     localStorage.setItem("showFullScreenModalPartnerEform", JSON.stringify(showFullScreen));
@@ -131,7 +131,7 @@ export default function XmlAddPartner(props: any) {
     let phone = config?.phoneMasked ?? null; // Lấy theo phoneMasked vì maskedInput trong form lấy theo key này
     let email = config?.emailMasked ?? null; // Lấy theo emailMasked vì maskedInput trong form lấy theo key này
 
-    let body: any = {
+    let body: Record<string, unknown> = {
       ...(data ? data : {}),
       avatar: config.avatar ? JSON.parse(config.avatar)[0]?.url : "",
       name: config.name ?? "",

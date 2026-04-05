@@ -12,7 +12,7 @@ import BusinessProcessService from "services/BusinessProcessService";
 import moment from "moment";
 
 
-export default function ModalHistoryOLA(props: any) {
+export default function ModalHistoryOLA(props: Record<string, unknown>) {
   //isBatch: Thêm hàng loạt cơ hội (thêm nhanh từ màn hình danh sách khách hàng)
   const { onShow, onHide, dataNode} = props;
   const [showDialog, setShowDialog] = useState<boolean>(false);
@@ -59,7 +59,7 @@ export default function ModalHistoryOLA(props: any) {
   const titles = ["STT", "Ngày", "Thời gian phản hồi", "Thời gian xử lý"];
   const dataFormat = ["text-center", "", ""];
 
-  const dataMappingArray = (item: any, index: number) => 
+  const dataMappingArray = (item: Record<string, unknown>, index: number) => 
     [
       index + 1,
       item.date,
@@ -67,7 +67,7 @@ export default function ModalHistoryOLA(props: any) {
       item.processedTime
     ];
   
-  const actionsTable = (item: any): IAction[] => {
+  const actionsTable = (item: Record<string, unknown>): IAction[] => {
     return [
       
     ].filter((action) => action);

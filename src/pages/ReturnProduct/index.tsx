@@ -116,7 +116,7 @@ const ReturnProductPage: React.FC = () => {
 
         setData(currentPage === 0 ? items : (prev) => [...prev, ...items]);
         setTotal(apiTotal);
-      } catch (err: any) {
+      } catch (err: unknown) {
         if (err?.name !== "AbortError") {
           console.error("[ReturnProduct] fetch error:", err);
         }
@@ -195,7 +195,7 @@ const ReturnProductPage: React.FC = () => {
       a.href = url;
       a.download = `doi_tra_hang_${new Date().toISOString().slice(0, 10)}.xlsx`;
       document.body.appendChild(a); a.click(); a.remove(); URL.revokeObjectURL(url);
-    } catch (e: any) {
+    } catch (e: unknown) {
       alert(e?.message ?? "Xuất Excel thất bại. Vui lòng thử lại.");
     } finally {
       setIsExporting(false);

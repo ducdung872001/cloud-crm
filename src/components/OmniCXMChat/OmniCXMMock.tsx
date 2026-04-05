@@ -119,10 +119,10 @@ export default function OmniCXMMock({ onEvent }: Props) {
 
   // ── Quick Order state ────────────────────────────────────────────────────────
   const [productSearch,  setProductSearch]  = useState("");
-  const [productResults, setProductResults] = useState<any[]>([]);
+  const [productResults, setProductResults] = useState<Record<string, unknown>[]>([]);
   const [productLoading, setProductLoading] = useState(false);
   const [cart,           setCart]           = useState<CartItem[]>([]);
-  const [foundCustomer,  setFoundCustomer]  = useState<any>(null);
+  const [foundCustomer,  setFoundCustomer]  = useState<Record<string, unknown>>(null);
   const [customerLoading, setCustomerLoading] = useState(false);
   const [submitting,     setSubmitting]     = useState(false);
   const [paymentType,    setPaymentType]    = useState<"CASH" | "TRANSFER">("CASH");
@@ -148,7 +148,7 @@ export default function OmniCXMMock({ onEvent }: Props) {
       setFoundCustomer(null);
       setCustomerLoading(true);
       CustomerService.filter({ keyword: activeRoom.phone, limit: 1 })
-        .then((res: any) => {
+        .then((res: Record<string, unknown>) => {
           if (res.code === 0 && res.result?.items?.length > 0) {
             setFoundCustomer(res.result.items[0]);
           }
@@ -212,14 +212,14 @@ export default function OmniCXMMock({ onEvent }: Props) {
     productSearchTimer.current = setTimeout(async () => {
       setProductLoading(true);
       try {
-        const res: any = await ProductService.wList({ name: kw, limit: 6, page: 1 });
+        const res: Record<string, unknown> = await ProductService.wList({ name: kw, limit: 6, page: 1 });
         if (res.code === 0) setProductResults(res.result?.items || []);
       } catch {}
       finally { setProductLoading(false); }
     }, 300);
   };
 
-  const handleAddToCart = async (product: any) => {
+  const handleAddToCart = async (product: Record<string, unknown>) => {
     // Nếu không có biến thể → dùng defaultVariantId
     const variantId = product.defaultVariantId;
     if (!variantId) {
@@ -263,7 +263,7 @@ export default function OmniCXMMock({ onEvent }: Props) {
     setSubmitting(true);
     try {
       // Bước 1: Tạo đơn tạm → lấy invoiceId
-      const draftRes: any = await InvoiceService.createInvoice({
+      const draftRes: Record<string, unknown> = await InvoiceService.createInvoice({
         customerId: foundCustomer?.id ?? -1,
       });
       if (draftRes.code !== 0 || !draftRes?.result?.invoiceId) {
@@ -283,7 +283,7 @@ export default function OmniCXMMock({ onEvent }: Props) {
         fee:        c.price * c.qty,
         customerId: foundCustomer?.id ?? -1,
       }));
-      const insertRes: any = await BoughtProductService.insert(items, { invoiceId });
+      const insertRes: Record<string, unknown> = await BoughtProductService.insert(items, { invoiceId });
       if (insertRes.code !== 0) {
         throw new Error(insertRes.message || "Thêm sản phẩm vào đơn thất bại");
       }
@@ -307,7 +307,7 @@ export default function OmniCXMMock({ onEvent }: Props) {
         bsnId:       draftRes.result.invoice?.bsnId ?? -1,
         customerName: foundCustomer?.name || activeRoom?.customer || "",
       };
-      const createRes: any = await InvoiceService.create(createBody);
+      const createRes: Record<string, unknown> = await InvoiceService.create(createBody);
       if (createRes.code !== 0) throw new Error(createRes.message || "Thanh toán thất bại");
 
       const code = createRes.result?.invoiceCode || createRes.result?.code || `#${invoiceId}`;
@@ -332,7 +332,7 @@ export default function OmniCXMMock({ onEvent }: Props) {
       setDiscount(0);
       setProductSearch("");
       setView("chat");
-    } catch (err: any) {
+    } catch (err: unknown) {
       showToast(err.message || "Có lỗi xảy ra", "error");
     } finally {
       setSubmitting(false);

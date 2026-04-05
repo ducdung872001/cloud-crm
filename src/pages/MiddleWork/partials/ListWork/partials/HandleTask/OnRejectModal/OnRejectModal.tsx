@@ -27,7 +27,7 @@ import BusinessProcessService from "services/BusinessProcessService";
 import EmployeeService from "services/EmployeeService";
 import RadioList from "components/radio/radioList";
 
-export default function OnRejectModal(props: any) {
+export default function OnRejectModal(props: Record<string, unknown>) {
   const { onShow, onHide, data, dataSchema, dataForm, checkReceived } = props;
   const focusedElement = useActiveElement();
 
@@ -53,7 +53,7 @@ export default function OnRejectModal(props: any) {
         reason: "",
         fromNodeId: "",
         attachment: [],
-      } as any),
+      } as Record<string, unknown>),
     [data, onShow]
   );
 
@@ -107,8 +107,8 @@ export default function OnRejectModal(props: any) {
 
     setIsSubmit(true);
 
-    const body: any = {
-      ...(formData.values as any),
+    const body: Record<string, unknown> = {
+      ...(formData.values as Record<string, unknown>),
       attachment: attachment,
       config: dataSchema ? JSON.stringify(dataSchema) : null,
     };
@@ -294,7 +294,7 @@ export default function OnRejectModal(props: any) {
     setDragging(false);
 
     const newFiles = [...listAttactment];
-    const droppedFiles: any = Array.from(e.dataTransfer.files);
+    const droppedFiles: Record<string, unknown> = Array.from(e.dataTransfer.files);
 
     droppedFiles.forEach((file) => {
       // const checkFile = file?.name.split("?")[0].split("#")[0].split(".").pop();
@@ -359,7 +359,7 @@ export default function OnRejectModal(props: any) {
         request.onload = function () {
           var reader = new FileReader();
           reader.readAsDataURL(request.response);
-          reader.onload = function (e: any) {
+          reader.onload = function (e: Record<string, unknown>) {
             const data = {
               fileName: `${convertToFileName(item?.fileName || "")}`,
               fileData: e.target.result.split(",")[1],
@@ -375,7 +375,7 @@ export default function OnRejectModal(props: any) {
   }, [onShow, listAttactment]);
 
   const loadedOptionNode = async (search, loadedOptions, { page }) => {
-    const param: any = {
+    const param: Record<string, unknown> = {
       name: search,
       page: page,
       limit: 10,

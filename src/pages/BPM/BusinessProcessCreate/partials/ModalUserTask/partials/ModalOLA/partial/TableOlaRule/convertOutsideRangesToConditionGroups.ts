@@ -144,7 +144,7 @@ function mergeRanges(ranges: Range[]): Range[] {
   return merged;
 }
 
-function invertRanges(ranges: Range[], specialEqual?: any): Range[] {
+function invertRanges(ranges: Range[], specialEqual?: Record<string, unknown>): Range[] {
   // Ham này sẽ lấy các khoảng đã cho và tạo ra các khoảng nằm ngoài chúng.
   const result: Range[] = [];
   let current = -Infinity;
@@ -303,7 +303,7 @@ export function convertOutsideRangesToConditionGroups(inputGroups: ConditionGrou
     }
   }
 
-  let specialEqual: any = null;
+  let specialEqual: Record<string, unknown> = null;
   // ✅ Xử lý đặc biệt: nếu trong tất cả các phần tử cấp 2 của inputGroups nếu có 2 điều kiện NOT_EQUAL trở lên thì kiểm tra thêm
   if (notEqualConditions.length > 1) {
     // Nếu value của các điều kiện NOT_EQUAL bằng nhau thì trả về EQUAL

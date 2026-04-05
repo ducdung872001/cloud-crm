@@ -88,7 +88,7 @@ export default function MarketingHistoryPage({ onBackProps }: MarketingHistoryPa
     tooltip: {
       backgroundColor: "#475467", borderRadius: 8,
       style: { color: "#fff", fontSize: "13px" },
-      formatter: function() { return `<b>${(this as any).x}</b>: ${(this as any).y} chiến dịch`; },
+      formatter: function() { return `<b>${(this as Record<string, unknown>).x}</b>: ${(this as Record<string, unknown>).y} chiến dịch`; },
     },
     plotOptions: { column: { borderRadius: 6, color: "#93c5fd", pointPadding: 0.15, groupPadding: 0.1 } },
     legend: { enabled: false },

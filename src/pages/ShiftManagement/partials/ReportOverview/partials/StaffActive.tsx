@@ -35,7 +35,7 @@ export default function StaffActive({ branchId }: Props) {
         const d = res?.result;
         if (!d || !d.activeStaff || d.activeStaff.length === 0) return;
 
-        const mapped: StaffItem[] = d.activeStaff.map((s: any, idx: number) => ({
+        const mapped: StaffItem[] = d.activeStaff.map((s: Record<string, unknown>, idx: number) => ({
           id: s.employeeId ?? idx + 1,
           name: s.employeeName ?? `NV ${idx + 1}`,
           role: s.role ?? "Thu ngân",

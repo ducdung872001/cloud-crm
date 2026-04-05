@@ -11,7 +11,7 @@ import "./SettingSMSList.scss";
 import WhiteList from "./partials/WhiteList/WhiteList";
 import TabMenuList from "@/components/TabMenuList/TabMenuList";
 
-export default function SettingSMSList(props: any) {
+export default function SettingSMSList(props: Record<string, unknown>) {
   document.title = "Cài đặt SMS";
 
   // onBackProps: khi render inline từ SettingChannels → hiện breadcrumb
@@ -88,7 +88,7 @@ export default function SettingSMSList(props: any) {
         {!isDetail && (
           <TabMenuList
             groups={groups}
-            onClick={(item: any) => { setTab(item.is_tab); setIsDetail(true); }}
+            onClick={(item: Record<string, unknown>) => { setTab(item.is_tab); setIsDetail(true); }}
           />
         )}
       </div>

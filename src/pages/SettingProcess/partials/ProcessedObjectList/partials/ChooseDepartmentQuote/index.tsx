@@ -13,7 +13,7 @@ import "./index.scss";
 interface IChooseDepartmentProps {
   onShow: boolean;
   onHide: () => void;
-  takeValue: (data: any) => void;
+  takeValue: (data: Record<string, unknown>) => void;
 }
 
 export default function ChooseDepartmentQuote(props: IChooseDepartmentProps) {

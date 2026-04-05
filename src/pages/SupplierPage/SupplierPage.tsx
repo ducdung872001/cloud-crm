@@ -369,7 +369,7 @@ export default function SupplierPage() {
               <div key={i} className="stat-pill">
                 <div className="dot" style={{ background: c.dot }} />
                 <div>
-                  <div className="num" style={(c as any).red ? { color: "#ef4444" } : undefined}>
+                  <div className="num" style={(c as Record<string, unknown>).red ? { color: "#ef4444" } : undefined}>
                     {c.num}
                   </div>
                   <div className="lbl">{c.lbl}</div>

@@ -31,7 +31,7 @@ const CHANNEL_CFG: Record<string, { label: string; color: string; bg: string }> 
   App:   { label: "App",   color: "#7E22CE", bg: "#F3E8FF" },
 };
 
-const STATUS_CFG: Record<string, { label: string; variant: any }> = {
+const STATUS_CFG: Record<string, { label: string; variant: Record<string, unknown> }> = {
   active:    { label: "Đang chạy",   variant: "success"  },
   completed: { label: "Hoàn thành",  variant: "done"     },
   draft:     { label: "Nháp",        variant: "warning"  },
@@ -202,7 +202,7 @@ export default function CampaignManagementPage({ onBackProps }: { onBackProps: (
                 ].map(opt => (
                   <div key={opt.value}
                     className={`cm-schedule-opt ${form.sendType === opt.value ? "cm-schedule-opt--selected" : ""}`}
-                    onClick={() => setForm({ ...form, sendType: opt.value as any })}>
+                    onClick={() => setForm({ ...form, sendType: opt.value as Record<string, unknown> })}>
                     <div className="cm-schedule-opt__label">{opt.label}</div>
                     <div className="cm-schedule-opt__desc">{opt.desc}</div>
                   </div>

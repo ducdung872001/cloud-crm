@@ -10,7 +10,7 @@ import SaleflowInvoiceService from "services/SaleflowInvoiceService";
 import BusinessProcessService from "services/BusinessProcessService";
 import Dialog, { IContentDialog } from "components/dialog/dialog";
 
-export default function Kanban(props: any) {
+export default function Kanban(props: Record<string, unknown>) {
   const {
     data,
     dataOfStep,
@@ -32,7 +32,7 @@ export default function Kanban(props: any) {
   
 
   const marginRight = 12;
-  const [columns, setColumns] = useState<any[]>([]);
+  const [columns, setColumns] = useState<Record<string, unknown>[]>([]);
   console.log("columns", columns);
 
   const [idEndPoint, setIdEndPoint] = useState<number>(null);
@@ -274,9 +274,9 @@ export default function Kanban(props: any) {
 
 
   const [showDialog, setShowDialog] = useState<boolean>(false);
-  const [contentDialog, setContentDialog] = useState<any>(null);
+  const [contentDialog, setContentDialog] = useState<Record<string, unknown>>(null);
 
-  const showDialogConfirmDelete = (item?: any) => {
+  const showDialogConfirmDelete = (item?: Record<string, unknown>) => {
     const contentDialog: IContentDialog = {
       color: "error",
       className: "dialog-delete",

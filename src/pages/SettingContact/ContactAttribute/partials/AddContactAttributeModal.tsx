@@ -39,15 +39,15 @@ export default function AddContactAttributeModal(props: AddContactAttributeModal
   const [showDialog, setShowDialog] = useState<boolean>(false);
   const [contentDialog, setContentDialog] = useState<IContentDialog>(null);
 
-  const [data, setData] = useState<any>();
+  const [data, setData] = useState<Record<string, unknown>>();
 
   const [listContactAttribute, setListContactAttribute] = useState<IOption[]>(null);
   const [isLoadingContactAttribute, setIsLoadingContactAttribute] = useState<boolean>(false);
-  const [addFieldAttributes, setAddFieldAttributes] = useState<any[]>([{ value: '', label: '' }]);
-  const [detailLookup, setDetailLookup] = useState<any>("contact");
-  const [numberFormat, setNumberFormat] = useState<any>('');
+  const [addFieldAttributes, setAddFieldAttributes] = useState<Record<string, unknown>[]>([{ value: '', label: '' }]);
+  const [detailLookup, setDetailLookup] = useState<Record<string, unknown>>("contact");
+  const [numberFormat, setNumberFormat] = useState<Record<string, unknown>>('');
 
-  const [contactAttributeFields, setContactAttributeFields] = useState<any>(null); //Khởi tạo null là quan trọng
+  const [contactAttributeFields, setContactAttributeFields] = useState<Record<string, unknown>>(null); //Khởi tạo null là quan trọng
   const [showFields, setShowFields] = useState<boolean>(false);
   const [selectedFormula, setSelectedFormula] = useState<string>("");
   const [cursorPosition, setCursorPosition] = useState<number>(0);
@@ -627,7 +627,7 @@ export default function AddContactAttributeModal(props: AddContactAttributeModal
     }
   };
 
-  const checkFieldAttributes = (dataAttribute: any, dataCheckField: any) => {
+  const checkFieldAttributes = (dataAttribute: Record<string, unknown>, dataCheckField: Record<string, unknown>) => {
     const fieldAttributes = [...dataAttribute];
     let result = true
     if (fieldAttributes && fieldAttributes.length > 0 && dataCheckField && dataCheckField.length > 0) {

@@ -186,7 +186,7 @@ export default function ViettelAnalytics() {
                                 <span>Lượt đồng bộ theo dịch vụ (7 ngày)</span>
                                 <select
                                     value={analyticsMetricType}
-                                    onChange={(e) => setAnalyticsMetricType(e.target.value as any)}
+                                    onChange={(e) => setAnalyticsMetricType(e.target.value as Record<string, unknown>)}
                                 >
                                     <option value="sync">Lượt sync</option>
                                     <option value="success">Thành công</option>

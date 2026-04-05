@@ -46,7 +46,7 @@ export default function AddUnitPriceDepartmentModal(props: IAddUnitPriceDepartme
     }
   };
 
-  const handGetUnitPriceDepartment = async (idDepartment: any) => {
+  const handGetUnitPriceDepartment = async (idDepartment: Record<string, unknown>) => {
     setIsLoading(true);
 
     const params = {
@@ -80,7 +80,7 @@ export default function AddUnitPriceDepartmentModal(props: IAddUnitPriceDepartme
     () =>
       ({
         costs: data && data.length > 0 ? data : [defaultCost],
-      } as any),
+      } as Record<string, unknown>),
     [onShow, data]
   );
 

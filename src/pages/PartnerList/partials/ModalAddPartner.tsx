@@ -35,7 +35,7 @@ import PartnerAttributeService from "services/PartnerAttributeService";
 import _ from "lodash";
 import CodeService from "services/CodeService";
 
-export default function ModalAddPartner(props: any) {
+export default function ModalAddPartner(props: Record<string, unknown>) {
   const { onShow, data, onHide, takeInfoPartner, lstDataOrigin } = props;
 
   const focusedElement = useActiveElement();
@@ -48,7 +48,7 @@ export default function ModalAddPartner(props: any) {
   const [contentDialog, setContentDialog] = useState<IContentDialog>(null);
   const [listEmployee, setListEmployee] = useState<IOption[]>(null);
   const [isLoadingEmployee, setIsLoadingEmployee] = useState<boolean>(false);
-  const [partnerExtraInfos, setPartnerExtraInfos] = useState<any>([]);
+  const [partnerExtraInfos, setPartnerExtraInfos] = useState<Record<string, unknown>>([]);
   const [isShowPhone, setIsShowPhone] = useState<boolean>(false);
   const [isShowEmail, setIsShowEmail] = useState<boolean>(false);
   const [activeCode, setActiveCode] = useState(true);
@@ -60,7 +60,7 @@ export default function ModalAddPartner(props: any) {
   const [isLoadingContact, setIsLoadingContact] = useState<boolean>(false);
   const [listContract, setListContract] = useState<IOption[]>(null);
   const [isLoadingContract, setIsLoadingContract] = useState<boolean>(false);
-  const [mapPartnerAttribute, setMapPartnerAttribute] = useState<any>(null);
+  const [mapPartnerAttribute, setMapPartnerAttribute] = useState<Record<string, unknown>>(null);
 
   const getPartnerAttributes = async () => {
     if (!mapPartnerAttribute || mapPartnerAttribute.length === 0) {
@@ -72,7 +72,7 @@ export default function ModalAddPartner(props: any) {
     }
   };
 
-  const onSelectOpenEmployee = async (data?: any) => {
+  const onSelectOpenEmployee = async (data?: Record<string, unknown>) => {
     if (!listEmployee || listEmployee.length === 0) {
       setIsLoadingEmployee(true);
       const dataOption = await SelectOptionData("employeeId", { branchId: dataBranch.value });
@@ -424,7 +424,7 @@ export default function ModalAddPartner(props: any) {
       const newArray = Object.entries(mapPartnerAttribute);
       let checkArray = [];
 
-      newArray.map((lstPartnerAttribute: any, key: number) => {
+      newArray.map((lstPartnerAttribute: Record<string, unknown>, key: number) => {
         (lstPartnerAttribute[1] || []).map((item) => {
           if (item.required === 1 && item.parentId !== 0) {
             checkArray.push(item);
@@ -455,9 +455,9 @@ export default function ModalAddPartner(props: any) {
 
     setIsSubmit(true);
 
-    const body: any = {
+    const body: Record<string, unknown> = {
       ...(data ? { id: data?.id } : {}),
-      ...(formData.values as any),
+      ...(formData.values as Record<string, unknown>),
       bank: JSON.stringify(bankAccountList),
       businessPartnerExtraInfos: partnerExtraInfos,
     };
@@ -575,7 +575,7 @@ export default function ModalAddPartner(props: any) {
     });
 
     if (!found) {
-      let item: any = {};
+      let item: Record<string, unknown> = {};
       item.attributeId = attributeId;
       item.attributeValue = attributeValue;
       item.businessPartnerId = businessPartnerId;
@@ -1074,7 +1074,7 @@ export default function ModalAddPartner(props: any) {
               {/* Các trường thông tin động được hiển thị ở đây */}
               {!lstDataOrigin && mapPartnerAttribute ? (
                 <div className="list__partner--attribute">
-                  {Object.entries(mapPartnerAttribute).map((lstCustomerAttribute: any, key: number) => (
+                  {Object.entries(mapPartnerAttribute).map((lstCustomerAttribute: Record<string, unknown>, key: number) => (
                     <Fragment key={key}>
                       {(lstCustomerAttribute[1] || []).map((customerAttribute, index: number) => (
                         <Fragment key={index}>

@@ -28,19 +28,19 @@ export default function AddLoyaltyPointLedgerModal(props: AddLoyaltyPointLedgerM
 
   // Khách hàng
   const [listCustomer, setListCustomer] = useState<IOption[]>([]);
-  const [customerData, setCustomerData] = useState<any>(null);
+  const [customerData, setCustomerData] = useState<Record<string, unknown>>(null);
 
   // Ví điểm
-  const [walletData, setWalletData] = useState<any>(null);
+  const [walletData, setWalletData] = useState<Record<string, unknown>>(null);
 
   // Chương trình loyalty
-  const [loyaltyProgramData, setLoyaltyProgramData] = useState<any>(null);
+  const [loyaltyProgramData, setLoyaltyProgramData] = useState<Record<string, unknown>>(null);
 
   // Đổi thưởng
-  const [loyaltyRewardData, setLoyaltyRewardData] = useState<any>(null);
+  const [loyaltyRewardData, setLoyaltyRewardData] = useState<Record<string, unknown>>(null);
 
   // Nhân viên
-  const [employeeData, setEmployeeData] = useState<any>(null);
+  const [employeeData, setEmployeeData] = useState<Record<string, unknown>>(null);
 
   const values = useMemo(
     () =>
@@ -182,7 +182,7 @@ export default function AddLoyaltyPointLedgerModal(props: AddLoyaltyPointLedgerM
 
   const [countCheckAddLoyaltyProgram, setCountCheckAddLoyaltyProgram] = useState(0);
   const loadedOptionLoyaltyProgram = async (search, loadedOptions, { page }) => {
-    const param: any = { keyword: search, page: page, limit: 10 };
+    const param: Record<string, unknown> = { keyword: search, page: page, limit: 10 };
     const response = await LoyaltyService.list(param);
     if (response.code === 0) {
       const dataOption = response.result.items || [];
@@ -204,7 +204,7 @@ export default function AddLoyaltyPointLedgerModal(props: AddLoyaltyPointLedgerM
 
   const [countCheckAddLoyaltyReward, setCountCheckAddLoyaltyReward] = useState(0);
   const loadedOptionLoyaltyReward = async (search, loadedOptions, { page }) => {
-    const param: any = { keyword: search, page: page, limit: 10 };
+    const param: Record<string, unknown> = { keyword: search, page: page, limit: 10 };
     const response = await LoyaltyService.listLoyaltyReward(param);
     if (response.code === 0) {
       const dataOption = response.result.items || [];

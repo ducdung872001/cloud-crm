@@ -11,7 +11,7 @@ import "./SettingEmailList.scss";
 import { getSearchParameters } from "reborn-util";
 import TabMenuList from "@/components/TabMenuList/TabMenuList";
 
-export default function SettingEmailList(props: any) {
+export default function SettingEmailList(props: Record<string, unknown>) {
   document.title = "Cài đặt Email";
 
   const { onBackProps, titleBack } = props;
@@ -87,7 +87,7 @@ export default function SettingEmailList(props: any) {
         {!isDetail && (
           <TabMenuList
             groups={groups}
-            onClick={(item: any) => { setTab(item.is_tab); setIsDetail(true); }}
+            onClick={(item: Record<string, unknown>) => { setTab(item.is_tab); setIsDetail(true); }}
           />
         )}
       </div>

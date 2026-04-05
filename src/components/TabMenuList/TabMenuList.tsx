@@ -10,11 +10,11 @@ import "./TabMenuList.scss";
  *   groups    – array of { label, items[] } để hiển thị section headers
  *   onClick   – callback khi click card
  */
-export default function TabMenuList(props: any) {
+export default function TabMenuList(props: Record<string, unknown>) {
   const { listTab, groups, onClick } = props;
 
   // ── Render một card ──────────────────────────────────────────────────────────
-  const renderCard = (item: any, idx: number) => (
+  const renderCard = (item: Record<string, unknown>, idx: number) => (
     <div
       key={idx}
       className="item-menu"
@@ -38,13 +38,13 @@ export default function TabMenuList(props: any) {
   if (groups && groups.length > 0) {
     return (
       <div className="tab-menu-grouped">
-        {groups.map((group: any, gi: number) => (
+        {groups.map((group: Record<string, unknown>, gi: number) => (
           <div key={gi} className="tab-menu-group">
             {group.label && (
               <div className="tab-menu-group__label">{group.label}</div>
             )}
             <div className="menu">
-              {group.items.map((item: any, idx: number) => renderCard(item, idx))}
+              {group.items.map((item: Record<string, unknown>, idx: number) => renderCard(item, idx))}
             </div>
           </div>
         ))}
@@ -55,7 +55,7 @@ export default function TabMenuList(props: any) {
   // ── Flat mode (cũ, backward compatible) ─────────────────────────────────────
   return (
     <div className="menu">
-      {listTab.map((item: any, idx: number) => renderCard(item, idx))}
+      {listTab.map((item: Record<string, unknown>, idx: number) => renderCard(item, idx))}
     </div>
   );
 }

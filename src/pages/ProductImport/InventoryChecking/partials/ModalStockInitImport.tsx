@@ -60,7 +60,7 @@ export default function ModalStockInitImport({ isOpen, onClose, onSuccess }: Pro
     if (!isOpen) return;
     setStep("upload"); setFile(null); setResult(null);
     setWId(0); setDone(null); sessRef.current = "";
-    InventoryService.list({}).then((r: any) => {
+    InventoryService.list({}).then((r: Record<string, unknown>) => {
       const items = r?.result?.items ?? r?.result?.data ?? r?.data ?? [];
       setWH(items);
       if (items.length === 1) setWId(items[0].id);

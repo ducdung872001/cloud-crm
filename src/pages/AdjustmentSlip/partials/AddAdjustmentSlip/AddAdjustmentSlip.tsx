@@ -44,7 +44,7 @@ export default function AddAdjustmentSlip(props: IAddAdjustmentSlipProps) {
       const result = response.result;
       setDataOrgProducts(result?.stockAdjustDetails ?? []);
       setSatId(result.satId);
-      const items = (result?.stockAdjustDetails ?? []).map((item: any) => ({
+      const items = (result?.stockAdjustDetails ?? []).map((item: Record<string, unknown>) => ({
         ...item,
         inventoryName: result?.stockAdjust?.inventoryName ?? dataInventoryRef.current?.label ?? "",
       }));
@@ -69,7 +69,7 @@ export default function AddAdjustmentSlip(props: IAddAdjustmentSlipProps) {
               label: result.stockAdjust.inventoryName,
             });
             setSatId(result.stockAdjust.id);
-            const items = (result.stockAdjustDetails ?? []).map((item: any) => ({
+            const items = (result.stockAdjustDetails ?? []).map((item: Record<string, unknown>) => ({
               ...item,
               inventoryName: result.stockAdjust.inventoryName,
             }));
@@ -88,7 +88,7 @@ export default function AddAdjustmentSlip(props: IAddAdjustmentSlipProps) {
     setLstBatchNoProduct(lstProducts.map((item) => item.batchNo));
   }, [lstProducts]);
 
-  const [listInventory, setListInventory] = useState<any[]>([]);
+  const [listInventory, setListInventory] = useState<Record<string, unknown>[]>([]);
   const [isLoadingInventory, setIsLoadingInventory] = useState(false);
 
   // ── Warehouse loader — chỉ load khi mở dropdown, không auto-load ─────────
@@ -100,7 +100,7 @@ export default function AddAdjustmentSlip(props: IAddAdjustmentSlipProps) {
       const data = Array.isArray(response.result)
         ? response.result
         : Array.isArray(response.result?.items) ? response.result.items : [];
-      setListInventory(data.map((i: any) => ({
+      setListInventory(data.map((i: Record<string, unknown>) => ({
         value: i.id, label: i.name,
         address: i.address ?? "", branchName: i.branchName ?? "",
       })));
@@ -110,7 +110,7 @@ export default function AddAdjustmentSlip(props: IAddAdjustmentSlipProps) {
     setIsLoadingInventory(false);
   }, [listInventory.length]);
 
-  const handleChangeInventory = (e: any) => {
+  const handleChangeInventory = (e: Record<string, unknown>) => {
     // e là option object {value, label, address, branchName}
     setDataInventory(e);
     setLstProducts([]);
@@ -142,7 +142,7 @@ export default function AddAdjustmentSlip(props: IAddAdjustmentSlipProps) {
     }
   };
 
-  const handChangeDataProps = (data: any[]) => {
+  const handChangeDataProps = (data: Record<string, unknown>[]) => {
     if (!data?.length) return;
     const converted = data.map((item) => ({
       id: item.id ?? 0,

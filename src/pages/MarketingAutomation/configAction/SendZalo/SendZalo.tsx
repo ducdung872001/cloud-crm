@@ -22,7 +22,7 @@ import Input from "components/input/input";
 import Button from "components/button/button";
 import NummericInput from "components/input/numericInput";
 
-export default function SendZalo(props: any) {
+export default function SendZalo(props: Record<string, unknown>) {
   const { onShow,  onHide, callback, dataNode, setDataNode, statusMA } = props;  
   
   const isMounted = useRef(false);
@@ -178,7 +178,7 @@ export default function SendZalo(props: any) {
     setIsSubmit(true);
     //Kiểm tra đã setup mẫu placeholder chưa
 
-    const body: any = {
+    const body: Record<string, unknown> = {
         ...dataNode,
         configData: {templateId: idCategoryZalo}
       };        
@@ -199,7 +199,7 @@ export default function SendZalo(props: any) {
 
   const onSubmitTab1 = async (dataNode, nodePoint) => {
 
-    const body: any = {
+    const body: Record<string, unknown> = {
         ...dataNode,
         point: nodePoint
       };        
@@ -301,7 +301,7 @@ export default function SendZalo(props: any) {
                   
                 }
               },
-            ] as any) 
+            ] as Record<string, unknown>) 
             : []
           ),
           
@@ -338,7 +338,7 @@ export default function SendZalo(props: any) {
       showToast("Vui lòng nhập tên hành động", "error");
       return;
     }
-    const body: any = {
+    const body: Record<string, unknown> = {
       ...dataNode,
       name: nodeName,
       point: nodePoint

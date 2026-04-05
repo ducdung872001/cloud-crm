@@ -33,7 +33,7 @@ const defaultSchema = {
 };
 
 export default function ModalHandleTask({ onShow, onHide, dataWork, isHandleTask }) {
-  const params: any = getSearchParameters();
+  const params: Record<string, unknown> = getSearchParameters();
   const formViewerRef = useRef(null);
   const checkShowFullScreen = localStorage.getItem("showFullScreenEform");
 
@@ -299,7 +299,7 @@ export default function ModalHandleTask({ onShow, onHide, dataWork, isHandleTask
     }
   };
 
-  const handleRecallConfirm = async (requestId: any) => {
+  const handleRecallConfirm = async (requestId: Record<string, unknown>) => {
     if (!requestId) return;
     setIsLoadingRecall(true);
     const params = {
@@ -331,7 +331,7 @@ export default function ModalHandleTask({ onShow, onHide, dataWork, isHandleTask
                   is_loading: isLoadingRecall,
                   callback: handleWorkRecall,
                 },
-              ] as any)
+              ] as Record<string, unknown>)
             : []),
           ...(dataEngine?.isProcessed === 1
             ? []
@@ -366,7 +366,7 @@ export default function ModalHandleTask({ onShow, onHide, dataWork, isHandleTask
                             },
                           ]
                         : []),
-                    ] as any)),
+                    ] as Record<string, unknown>)),
 
                 ...(dataEngine?.isReceived === 1
                   ? ([
@@ -422,7 +422,7 @@ export default function ModalHandleTask({ onShow, onHide, dataWork, isHandleTask
                               },
                             },
                           ]),
-                    ] as any)
+                    ] as Record<string, unknown>)
                   : []),
 
                 ...(dataEngine?.isReceived === 0
@@ -438,7 +438,7 @@ export default function ModalHandleTask({ onShow, onHide, dataWork, isHandleTask
                           ReceiveProcessedObjectLog();
                         },
                       },
-                    ] as any)
+                    ] as Record<string, unknown>)
                   : []),
               ]),
         ],
@@ -461,7 +461,7 @@ export default function ModalHandleTask({ onShow, onHide, dataWork, isHandleTask
     ]
   );
 
-  const showDialogConfirmWorkRecall = (requestId: any) => {
+  const showDialogConfirmWorkRecall = (requestId: Record<string, unknown>) => {
     const contentDialog: IContentDialog = {
       color: "warning",
       className: "dialog-cancel",
@@ -625,11 +625,11 @@ export default function ModalHandleTask({ onShow, onHide, dataWork, isHandleTask
    * bỏ qua component có id === excludeId.
    * Tránh trả về duplicate dựa trên id (nếu có).
    */
-  function findAllGrids(components: any[] | undefined, excludeId?: string): any[] {
-    const results: any[] = [];
+  function findAllGrids(components: Record<string, unknown>[] | undefined, excludeId?: string): Record<string, unknown>[] {
+    const results: Record<string, unknown>[] = [];
     const seen = new Set<string | undefined>();
 
-    function walk(comps?: any[]) {
+    function walk(comps?: Record<string, unknown>[]) {
       if (!Array.isArray(comps) || comps.length === 0) return;
       for (const c of comps) {
         const id = c.id;
@@ -648,7 +648,7 @@ export default function ModalHandleTask({ onShow, onHide, dataWork, isHandleTask
     walk(components);
     return results;
   }
-  function canParseJSON(value: any): boolean {
+  function canParseJSON(value: Record<string, unknown>): boolean {
     try {
       JSON.parse(value);
       return true;

@@ -9,7 +9,7 @@ import { showToast } from "utils/common";
 import CampaignService from "services/CampaignService";
 import CampaignOpportunityService from "services/CampaignOpportunityService";
 
-export default function TippyInvoiceInfo(props: any) {
+export default function TippyInvoiceInfo(props: Record<string, unknown>) {
   const { detailCustomer } = props;  
 
   const [valueShowPhone, setValueShowPhone] = useState(null);

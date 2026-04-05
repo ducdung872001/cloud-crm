@@ -3,7 +3,7 @@ import { IAction } from "model/OtherModel";
 import "./tablePrintA5.scss";
 
 export interface ITablePrintA5Props {
-  actions?: (item: any) => IAction[];
+  actions?: (item: Record<string, unknown>) => IAction[];
   dataFormat?: string[];
 }
 

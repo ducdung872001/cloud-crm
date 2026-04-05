@@ -51,7 +51,7 @@ export default function ServiceProductList(props: IServiceProductListProps) {
   const [invoiceId, setInvoiceId] = useState<number>(0);
   const [listIdChecked, setListIdChecked] = useState<number[]>([]);
   const [showDialog, setShowDialog] = useState<boolean>(false);
-  const [contentDialog, setContentDialog] = useState<any>(null);
+  const [contentDialog, setContentDialog] = useState<Record<string, unknown>>(null);
   const [listProductInvoiceService, setListProductInvoiceService] = useState<IProductInvoiceServiceResponse[]>([]);
   const [cardInfoMap, setCardInfoMap] = useState<Record<number, { name: string; avatar: string; price: number }>>({});
 
@@ -91,7 +91,7 @@ export default function ServiceProductList(props: IServiceProductListProps) {
     const fetchCardInfo = async () => {
       // Lấy tất cả cardId unique từ boughtCards
       const cardIds = listProductInvoiceService
-        .map((item: any) => item.cardId)
+        .map((item: Record<string, unknown>) => item.cardId)
         .filter((cardId): cardId is number => cardId !== undefined && cardId !== null);
 
       if (cardIds.length === 0) {
@@ -108,7 +108,7 @@ export default function ServiceProductList(props: IServiceProductListProps) {
 
         // Tạo map cardId -> {name, avatar, price}
         cardIds.forEach((cardId) => {
-          const card = cards.find((card: any) => card.id === cardId);
+          const card = cards.find((card: Record<string, unknown>) => card.id === cardId);
           if (card) {
             map[cardId] = {
               name: card.name || "",
@@ -146,7 +146,7 @@ export default function ServiceProductList(props: IServiceProductListProps) {
 
   const dataMappingArray = (item: IProductInvoiceServiceResponse, index: number) => {
     // Kiểm tra xem item có phải là boughtCard không
-    const cardId = (item as any).cardId;
+    const cardId = (item as Record<string, unknown>).cardId;
     const isBoughtCard = cardId !== undefined && cardId !== null;
     const cardInfo = isBoughtCard ? cardInfoMap[cardId] : null;
 

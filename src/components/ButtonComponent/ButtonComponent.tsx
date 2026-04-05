@@ -1,7 +1,7 @@
 import React, { Fragment, memo, useCallback, useEffect, useRef, useState } from "react";
 import "./ButtonComponent.scss";
 
-const ButtonComponent = (props: any) => {
+const ButtonComponent = (props: { name: string; callback: () => void; className?: string; disabled?: boolean }) => {
   const {name, callback, className, disabled } = props;
 
   const [isLoading, setIsLoading] = useState(false);

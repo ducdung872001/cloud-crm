@@ -29,12 +29,12 @@ export default function AddProgramLoyaltyModal(props: AddProgramRoyaltyModalProp
   const focusedElement = useActiveElement();
   const [showDialog, setShowDialog] = useState<boolean>(false);
   const [contentDialog, setContentDialog] = useState<IContentDialog>(null);
-  const [employeeData, setEmployeeData] = useState<any>(null);
+  const [employeeData, setEmployeeData] = useState<Record<string, unknown>>(null);
   const [employeeIdDefault, setEmployeeIdDefault] = useState(null);
   const [countCheckAddBranch, setCountCheckAddBranch] = useState(0);
   const [listBranch, setListBranch] = useState<IOption[]>(null);
-  const [processData, setProcessData] = useState<any>(null);
-  const [startNodeData, setStartNodeData] = useState<any>(null);
+  const [processData, setProcessData] = useState<Record<string, unknown>>(null);
+  const [startNodeData, setStartNodeData] = useState<Record<string, unknown>>(null);
 
   const values = useMemo(
     () =>
@@ -94,7 +94,7 @@ export default function AddProgramLoyaltyModal(props: AddProgramRoyaltyModalProp
   const [showModalBranch, setShowModalBranch] = useState(false);
 
   const loadedOptionBranch = async (search, loadedOptions, { page }) => {
-    const param: any = {
+    const param: Record<string, unknown> = {
       name: search,
       page: page,
       limit: 10,
@@ -281,7 +281,7 @@ export default function AddProgramLoyaltyModal(props: AddProgramRoyaltyModalProp
   };
 
 
-  const validateDateRange = (values: any) => {
+  const validateDateRange = (values: Record<string, unknown>) => {
     const errors: Record<string, string> = {};
     if (values?.startDate && values?.endDate) {
       const start = moment(values.startDate);
@@ -479,7 +479,7 @@ export default function AddProgramLoyaltyModal(props: AddProgramRoyaltyModalProp
     const body: IProgramRoyaltyRequest = {
       ...(formData.values as IProgramRoyaltyRequest),
       ...(data ? { id: data.id } : {}),
-      processCode: (processData as any)?.code || formData.values.processCode || "",
+      processCode: (processData as Record<string, unknown>)?.code || formData.values.processCode || "",
       branchIds: JSON.stringify(formData.values.branchIds || []),
       startDate: formData.values.startDate && moment(formData.values.startDate).isValid()
         ? moment(formData.values.startDate).format("YYYY-MM-DDTHH:mm:ss")

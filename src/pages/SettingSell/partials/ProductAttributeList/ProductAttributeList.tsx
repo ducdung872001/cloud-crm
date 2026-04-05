@@ -19,7 +19,7 @@ import "./ProductAttributeList.scss";
 import AddProductAttributeModal from "./partials/AddProductAttributeModal";
 import ProductAttributeService from "services/ProductAttributeService";
 
-export default function ProductAttributeList(props: any) {
+export default function ProductAttributeList(props: Record<string, unknown>) {
   document.title = "Định nghĩa trường thông tin bổ sung sản phẩm";
 
   const { onBackProps } = props;
@@ -32,7 +32,7 @@ export default function ProductAttributeList(props: any) {
   const [listIdChecked, setListIdChecked] = useState<number[]>([]);
   const [showModalAdd, setShowModalAdd] = useState<boolean>(false);
   const [showDialog, setShowDialog] = useState<boolean>(false);
-  const [contentDialog, setContentDialog] = useState<any>(null);
+  const [contentDialog, setContentDialog] = useState<Record<string, unknown>>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [isNoItem, setIsNoItem] = useState<boolean>(true);
   const [isPermissions, setIsPermissions] = useState<boolean>(false);
@@ -84,7 +84,7 @@ export default function ProductAttributeList(props: any) {
 
   const abortController = new AbortController();
 
-  const getListAttribute = async (paramsSearch: any) => {
+  const getListAttribute = async (paramsSearch: Record<string, unknown>) => {
     setIsLoading(true);
 
     const response = await ProductAttributeService.list(paramsSearch, abortController.signal);
@@ -155,7 +155,7 @@ export default function ProductAttributeList(props: any) {
 
   const dataFormat = ["text-center", "text-center", "", "text-center", "text-center", ""];
 
-  const dataMappingArray = (item: any, index: number) => [
+  const dataMappingArray = (item: Record<string, unknown>, index: number) => [
     getPageOffset(params) + index + 1,
     item.name,
     item.datatype,
@@ -163,7 +163,7 @@ export default function ProductAttributeList(props: any) {
     item.parentName
   ];
 
-  const actionsTable = (item: any): IAction[] => {
+  const actionsTable = (item: Record<string, unknown>): IAction[] => {
     const isCheckedItem = listIdChecked?.length > 0;
     return [
       {
@@ -232,7 +232,7 @@ export default function ProductAttributeList(props: any) {
     });
   }
 
-  const showDialogConfirmDelete = (item?: any) => {
+  const showDialogConfirmDelete = (item?: Record<string, unknown>) => {
     const contentDialog: IContentDialog = {
       color: "error",
       className: "dialog-delete",

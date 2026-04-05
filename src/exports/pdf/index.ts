@@ -159,7 +159,7 @@ export const PrintBarcode = (canvasElement, productStore: IProductStore, product
   });
 };
 
-const printStamp = (column: any, productName?: string, productStore?: IProductStore, options?: any) => {
+const printStamp = (column: Record<string, unknown>[], productName?: string, productStore?: IProductStore, options?: Record<string, unknown>) => {
   column = [
     {
       text: productStore.name,
@@ -652,8 +652,8 @@ function billColumnCombo(t1, t2, t3, t4) {
 interface BillSummaryLine {
   text: string;
   value: string | number;
-  bold?: any;
-  headlineLevel?: any;
+  bold?: boolean;
+  headlineLevel?: string;
 }
 
 function billSummaryLine(props: BillSummaryLine) {

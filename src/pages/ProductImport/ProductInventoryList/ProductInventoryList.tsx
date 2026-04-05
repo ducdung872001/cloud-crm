@@ -178,7 +178,7 @@ export default function ProductInventoryList() {
       link.remove();
       URL.revokeObjectURL(url);
       showToast("Xuất Excel thành công!", "success");
-    } catch (e: any) {
+    } catch (e: unknown) {
       showToast(e?.message ?? "Xuất Excel thất bại. Vui lòng thử lại.", "error");
     } finally {
       setIsExporting(false);

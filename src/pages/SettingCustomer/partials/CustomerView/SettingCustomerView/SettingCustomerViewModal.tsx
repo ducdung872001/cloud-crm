@@ -19,7 +19,7 @@ import SelectCustom from "components/selectCustom/selectCustom";
 import CustomerService from "services/CustomerService";
 import FieldCustomize from "components/fieldCustomize/fieldCustomize";
 
-export default function SettingCustomerViewModal(props: any) {
+export default function SettingCustomerViewModal(props: Record<string, unknown>) {
   const { onShow, onHide, dataCustomerView} = props;
   const focusedElement = useActiveElement();
 
@@ -58,7 +58,7 @@ export default function SettingCustomerViewModal(props: any) {
 
     const abortController = new AbortController();
 
-    const getListAttribute = async (paramsSearch: any) => {
+    const getListAttribute = async (paramsSearch: Record<string, unknown>) => {
         setIsLoading(true);
 
         const response = await CustomerFieldService.list(paramsSearch, abortController.signal);
@@ -88,13 +88,13 @@ export default function SettingCustomerViewModal(props: any) {
     const titles = ["STT", "Tên trường", "Thứ tự hiển thị"];
     const dataFormat = ["text-center", "", "text-center",];
 
-    const dataMappingArray = (item: any, index: number) => [
+    const dataMappingArray = (item: Record<string, unknown>, index: number) => [
         getPageOffset(params) + index + 1,
         item.attributeLabel,
         item.position,
     ];
 
-    const actionsTable = (item: any): IAction[] => {
+    const actionsTable = (item: Record<string, unknown>): IAction[] => {
         
         return [
           {
@@ -115,7 +115,7 @@ export default function SettingCustomerViewModal(props: any) {
         ];
     };
 
-    const showDialogConfirmDelete = (item?: any) => {
+    const showDialogConfirmDelete = (item?: Record<string, unknown>) => {
         const contentDialog: IContentDialog = {
           color: "error",
           className: "dialog-delete",
@@ -208,7 +208,7 @@ export default function SettingCustomerViewModal(props: any) {
       attributeLabel: dataAttribute?.attributeLabel ?? '',
       position: dataAttribute?.position ?? 0,
 
-    } as any),
+    } as Record<string, unknown>),
     [onShow, dataAttribute, dataCustomerView]
   );  
 
@@ -324,7 +324,7 @@ export default function SettingCustomerViewModal(props: any) {
     setIsSubmit(true);
 
     const body = {
-        ...(formData.values as any),
+        ...(formData.values as Record<string, unknown>),
         // ...(data ? { id: data.id } : {}),
     };
 

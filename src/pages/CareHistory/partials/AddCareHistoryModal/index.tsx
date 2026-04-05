@@ -14,7 +14,7 @@ import "./index.scss";
 interface IAddCareHistoryModalProps {
   onShow: boolean;
   onHide: (reload?: boolean) => void;
-  data?: any;
+  data?: Record<string, unknown>;
 }
 
 export default function AddCareHistoryModal(props: IAddCareHistoryModalProps) {
@@ -131,8 +131,8 @@ export default function AddCareHistoryModal(props: IAddCareHistoryModalProps) {
     }
 
     setIsSubmit(true);
-    const body: any = {
-      ...(formData.values as any),
+    const body: Record<string, unknown> = {
+      ...(formData.values as Record<string, unknown>),
       ...(data ? { id: data.id } : {}),
     };
 

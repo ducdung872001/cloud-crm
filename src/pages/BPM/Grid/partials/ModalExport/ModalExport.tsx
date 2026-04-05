@@ -16,7 +16,7 @@ export interface ExportModalProps {
   onHide: () => void;
   options: IOption[];
   listColumn: IColumnGrid[];
-  listData: any[];
+  listData: Record<string, unknown>[];
   callback: (type: string, extension: string) => void;
 }
 export default function ModalExport(props: ExportModalProps) {

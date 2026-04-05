@@ -42,7 +42,7 @@ export default function ModalSaveForm({ onShow, onHide, dataNode, processId, for
   const onSubmit = async () => {
     // e.preventDefault();
 
-    const body: any = {
+    const body: Record<string, unknown> = {
       id: formData.id,
       name: formData.name,
       config: formData.config,

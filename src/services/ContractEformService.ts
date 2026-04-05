@@ -2,13 +2,13 @@ import { urlsApi } from "configs/urls";
 import { convertParamsToString } from "reborn-util";
 
 export default {
-  list: (params?: any, signal?: AbortSignal) => {
+  list: (params?: Record<string, unknown>, signal?: AbortSignal) => {
     return fetch(`${urlsApi.contractEform.list}${convertParamsToString(params)}`, {
       signal,
       method: "GET",
     }).then((res) => res.json());
   },
-  update: (body: any) => {
+  update: (body: Record<string, unknown>) => {
     return fetch(urlsApi.contractEform.update, {
       method: "POST",
       body: JSON.stringify(body),
@@ -25,20 +25,20 @@ export default {
     }).then((res) => res.json());
   },
 
-  listEformExtraInfo: (params?: any, signal?: AbortSignal) => {
+  listEformExtraInfo: (params?: Record<string, unknown>, signal?: AbortSignal) => {
     return fetch(`${urlsApi.contractEform.listEformExtraInfo}${convertParamsToString(params)}`, {
       signal,
       method: "GET",
     }).then((res) => res.json());
   },
-  updateEformExtraInfo: (body: any) => {
+  updateEformExtraInfo: (body: Record<string, unknown>) => {
     return fetch(urlsApi.contractEform.updateEformExtraInfo, {
       method: "POST",
       body: JSON.stringify(body),
     }).then((res) => res.json());
   },
 
-  updateEformExtraInfoPosition: (body: any) => {
+  updateEformExtraInfoPosition: (body: Record<string, unknown>) => {
     return fetch(urlsApi.contractEform.updateEformExtraInfoPosition, {
       method: "POST",
       body: JSON.stringify(body),
@@ -56,13 +56,13 @@ export default {
     }).then((res) => res.json());
   },
 
-  listEformAttribute: (params?: any, signal?: AbortSignal) => {
+  listEformAttribute: (params?: Record<string, unknown>, signal?: AbortSignal) => {
     return fetch(`${urlsApi.contractEform.listEformAttribute}${convertParamsToString(params)}`, {
       signal,
       method: "GET",
     }).then((res) => res.json());
   },
-  updateEformAttribute: (body: any) => {
+  updateEformAttribute: (body: Record<string, unknown>) => {
     return fetch(urlsApi.contractEform.updateEformAttribute, {
       method: "POST",
       body: JSON.stringify(body),
@@ -80,28 +80,28 @@ export default {
     }).then((res) => res.json());
   },
 
-  listEformAttributeAll: (params?: any, signal?: AbortSignal) => {
+  listEformAttributeAll: (params?: Record<string, unknown>, signal?: AbortSignal) => {
     return fetch(`${urlsApi.contractEform.listEformAttributeAll}${convertParamsToString(params)}`, {
       signal,
       method: "GET",
     }).then((res) => res.json());
   },
 
-  checkDuplicated: (params: any, signal?: AbortSignal) => {
+  checkDuplicated: (params: Record<string, unknown>, signal?: AbortSignal) => {
     return fetch(`${urlsApi.contractEform.checkDuplicated}${convertParamsToString(params)}`, {
       signal,
       method: "GET",
     }).then((res) => res.json());
   },
 
-  ContractEformUpdate: (body: any) => {
+  ContractEformUpdate: (body: Record<string, unknown>) => {
     return fetch(urlsApi.contractEform.contractEformUpdate, {
       method: "POST",
       body: JSON.stringify(body),
     }).then((res) => res.json());
   },
 
-  ContractEformDetail: (params?: any, signal?: AbortSignal) => {
+  ContractEformDetail: (params?: Record<string, unknown>, signal?: AbortSignal) => {
     return fetch(`${urlsApi.contractEform.contractEformDetail}${convertParamsToString(params)}`, {
       signal,
       method: "GET",

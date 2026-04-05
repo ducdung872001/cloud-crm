@@ -117,7 +117,7 @@ export default function ContentTemplatePage({ onBackProps }: { onBackProps: (v: 
         <div className="ct-filter-row">
           {(["all", "SMS", "Zalo", "Email", "App"] as const).map(ch => (
             <button key={ch} className={`cm-filter-btn ${filterChannel === ch ? "cm-filter-btn--active" : ""}`}
-              onClick={() => setFilterChannel(ch as any)}>
+              onClick={() => setFilterChannel(ch as Record<string, unknown>)}>
               {ch === "all" ? "Tất cả kênh" : ch}
             </button>
           ))}

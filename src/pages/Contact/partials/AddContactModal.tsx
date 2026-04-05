@@ -62,17 +62,17 @@ export default function AddContactModal(props: AddContactModalProps) {
   const [detailEmployee, setDetailEmployee] = useState(null);
   const [listCustomer, setListCustomer] = useState<IOption[]>(null);
   const [isLoadingCustomer, setIsLoadingCustomer] = useState<boolean>(false);
-  const [addFieldCustomer, setAddFieldCustomer] = useState<any[]>([{ id: 0, customerId: 0, customerName: "", isPrimary: 1 }]);
-  const [validateCustomer, setValidateCustomer] = useState<any[]>([]);
-  const [contactExtraInfos, setContactExtraInfos] = useState<any>([]);
+  const [addFieldCustomer, setAddFieldCustomer] = useState<Record<string, unknown>[]>([{ id: 0, customerId: 0, customerName: "", isPrimary: 1 }]);
+  const [validateCustomer, setValidateCustomer] = useState<Record<string, unknown>[]>([]);
+  const [contactExtraInfos, setContactExtraInfos] = useState<Record<string, unknown>>([]);
   const [listContact, setListContact] = useState<IOption[]>(null);
   const [isLoadingContact, setIsLoadingContact] = useState<boolean>(false);
   const [listContract, setListContract] = useState<IOption[]>(null);
   const [isLoadingContract, setIsLoadingContract] = useState<boolean>(false);
 
   const [listEmail, setListEmail] = useState<IOption[]>(null);
-  const [addFieldEmail, setAddFieldEmail] = useState<any[]>([{ email: "", emailType: 1, isPrimary: 1, item_id: 0 }]);
-  const [mapContactAttribute, setMapContactAttribute] = useState<any>(null);
+  const [addFieldEmail, setAddFieldEmail] = useState<Record<string, unknown>[]>([{ email: "", emailType: 1, isPrimary: 1, item_id: 0 }]);
+  const [mapContactAttribute, setMapContactAttribute] = useState<Record<string, unknown>>(null);
   const [employeeIdDefault, setEmployeeIdDefault] = useState(null);
   const [detailPipeline, setDetailPipeline] = useState(null);
   const [validateFieldPipeline, setValidateFieldPipeline] = useState<boolean>(false);
@@ -670,7 +670,7 @@ export default function AddContactModal(props: AddContactModalProps) {
       const newArray = Object.entries(mapContactAttribute);
       let checkArray = [];
 
-      newArray.map((lstContactAttribute: any, key: number) => {
+      newArray.map((lstContactAttribute: Record<string, unknown>, key: number) => {
         (lstContactAttribute[1] || []).map((item) => {
           if (item.required === 1 && item.parentId !== 0) {
             checkArray.push(item);
@@ -1040,7 +1040,7 @@ export default function AddContactModal(props: AddContactModalProps) {
     });
 
     if (!found) {
-      let item: any = {};
+      let item: Record<string, unknown> = {};
       item.attributeId = attributeId;
       item.attributeValue = attributeValue;
       item.contactId = contactId;
@@ -1660,7 +1660,7 @@ export default function AddContactModal(props: AddContactModalProps) {
               {/* Các trường thông tin động được hiển thị ở đây */}
               {mapContactAttribute ? (
                 <div className="list__contact--attribute">
-                  {Object.entries(mapContactAttribute).map((lstContactAttribute: any, key: number) => (
+                  {Object.entries(mapContactAttribute).map((lstContactAttribute: Record<string, unknown>, key: number) => (
                     <Fragment key={key}>
                       {(lstContactAttribute[1] || []).map((contactAttribute, index: number) => (
                         <Fragment key={index}>

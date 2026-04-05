@@ -6,7 +6,7 @@ import TemplateZaloList from "./partials/TemplateZaloList/TemplateZaloList";
 import "./SettingZalo.scss";
 import TabMenuList from "@/components/TabMenuList/TabMenuList";
 
-export default function SettingZalo(props: any) {
+export default function SettingZalo(props: Record<string, unknown>) {
   document.title = "Cài đặt Zalo";
 
   const { onBackProps, titleBack } = props;
@@ -52,7 +52,7 @@ export default function SettingZalo(props: any) {
         {!isDetail && (
           <TabMenuList
             groups={groups}
-            onClick={(item: any) => { setTab(item.is_tab); setIsDetail(true); }}
+            onClick={(item: Record<string, unknown>) => { setTab(item.is_tab); setIsDetail(true); }}
           />
         )}
       </div>

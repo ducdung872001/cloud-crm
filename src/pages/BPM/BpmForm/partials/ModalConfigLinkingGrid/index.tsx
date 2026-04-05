@@ -17,7 +17,7 @@ export default function ModalConfigLinkingGrid({ onShow, onHide, callBack, dataC
   const [showDialog, setShowDialog] = useState<boolean>(false);
   const [contentDialog, setContentDialog] = useState<IContentDialog>(null);
 
-  const [dataConfigGrid, setDataConfigGrid] = useState<any>(dataConfig?.linkingConfig || {});
+  const [dataConfigGrid, setDataConfigGrid] = useState<Record<string, unknown>>(dataConfig?.linkingConfig || {});
 
   useEffect(() => {
     if (onShow && dataConfig) {

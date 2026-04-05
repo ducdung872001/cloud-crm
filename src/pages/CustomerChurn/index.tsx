@@ -133,7 +133,7 @@ const buildChurnChartOptions = (): Options => ({
       data: churnMonthData.map((d) => d.v),
       color: "#ef4444",
       fillColor: {
-        linearGradient: { x1: 0, y1: 0, x2: 0, y2: 1 } as any,
+        linearGradient: { x1: 0, y1: 0, x2: 0, y2: 1 } as Record<string, unknown>,
         stops: [
           [0, "rgba(239, 68, 68, 0.3)"],
           [1, "rgba(239, 68, 68, 0)"],
@@ -151,7 +151,7 @@ const buildChurnChartOptions = (): Options => ({
   },
 });
 
-export default function CustomerChurn(props: any) {
+export default function CustomerChurn(props: Record<string, unknown>) {
   document.title = "Khách hàng rời bỏ";
 
   const { onBackProps } = props;

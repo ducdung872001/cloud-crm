@@ -21,7 +21,7 @@ export default function TeamEmployeeAdvance({ dataNode, processId }) {
     const [listIdChecked, setListIdChecked] = useState<number[]>([]);
     const [showModalAdd, setShowModalAdd] = useState<boolean>(false);
     const [showDialog, setShowDialog] = useState<boolean>(false);
-    const [contentDialog, setContentDialog] = useState<any>(null);
+    const [contentDialog, setContentDialog] = useState<Record<string, unknown>>(null);
     const [isLoading, setIsLoading] = useState<boolean>(true);
     const [isNoItem, setIsNoItem] = useState<boolean>(false);
     const [isPermissions, setIsPermissions] = useState<boolean>(false);
@@ -32,7 +32,7 @@ export default function TeamEmployeeAdvance({ dataNode, processId }) {
     //     limit: 100
     // })
 
-    const getListFilter = async (nodeId: any, disableLoading?: boolean) => {
+    const getListFilter = async (nodeId: Record<string, unknown>, disableLoading?: boolean) => {
         if(!disableLoading){
             setIsLoading(true);
         }
@@ -76,7 +76,7 @@ export default function TeamEmployeeAdvance({ dataNode, processId }) {
 
   const dataFormat = ["text-center", "", ""];
 
-  const dataMappingArray = (item: any, index: number) => [
+  const dataMappingArray = (item: Record<string, unknown>, index: number) => [
     // getPageOffset(params) + index + 1,
     item.id,
     item.potSegmentName,
@@ -85,7 +85,7 @@ export default function TeamEmployeeAdvance({ dataNode, processId }) {
     
   ];
 
-  const actionsTable = (item: any): IAction[] => {
+  const actionsTable = (item: Record<string, unknown>): IAction[] => {
     return [
         {
           title: listIdChecked.length > 0 ? '' : "Sửa",

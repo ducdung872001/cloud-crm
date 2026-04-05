@@ -74,7 +74,7 @@ export default function AddChildProjectModal(props: IAddChildProjectModal) {
         employeeId: result?.employeeId ?? null,
         docLink: result?.docLink ?? [],
         parentId: 0,
-      } as any);
+      } as Record<string, unknown>);
     }
   };
 

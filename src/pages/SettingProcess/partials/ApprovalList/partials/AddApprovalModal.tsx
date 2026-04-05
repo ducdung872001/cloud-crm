@@ -13,7 +13,7 @@ import ApprovalService from "services/ApprovalService";
 interface IAddApprovalModalProps {
   onShow: boolean;
   onHide: (reload: boolean) => void;
-  data: any;
+  data: Record<string, unknown>;
 }
 
 export default function AddApprovalModal(props: IAddApprovalModalProps) {
@@ -29,7 +29,7 @@ export default function AddApprovalModal(props: IAddApprovalModalProps) {
     () =>
       ({
         name: data?.name ?? "",
-      } as any),
+      } as Record<string, unknown>),
     [data, onShow]
   );
 
@@ -70,8 +70,8 @@ export default function AddApprovalModal(props: IAddApprovalModalProps) {
       return;
     }
     setIsSubmit(true);
-    const body: any = {
-      ...(formData.values as any),
+    const body: Record<string, unknown> = {
+      ...(formData.values as Record<string, unknown>),
       ...(data ? { id: data.id } : {}),
     };
 

@@ -10,7 +10,7 @@ import TippyInvoiceInfo from "./partials/TippyInvoiceInfo";
 import { formatCurrency } from "reborn-util";
 import moment from "moment";
 
-export default function TaskItem(props: any) {
+export default function TaskItem(props: Record<string, unknown>) {
   const { item, 
           index, 
           column,

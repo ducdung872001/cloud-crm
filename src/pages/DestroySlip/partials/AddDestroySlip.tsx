@@ -50,13 +50,13 @@ export default function AddDestroySlip({ id, isViewMode = false, onHide }: Props
   const [contentDialog, setContentDialog] = useState<IContentDialog>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [showModalAdd, setShowModalAdd] = useState(false);
-  const [dataInventory, setDataInventory] = useState<any>(null);
+  const [dataInventory, setDataInventory] = useState<Record<string, unknown>>(null);
   const [satId, setSatId] = useState<number>(null);
   const [isSubmit, setIsSubmit] = useState(false);
   const [note, setNote] = useState("");
   const [slipStatus, setSlipStatus] = useState<number | null>(null);
   const isReadOnly = isViewMode;
-  const isOk = (response: any) => response?.code === 0 || response?.status === 1 || response?.success === true;
+  const isOk = (response: Record<string, unknown>) => response?.code === 0 || response?.status === 1 || response?.success === true;
 
   const isDirty = !isReadOnly && !!(dataInventory || lstProducts.length > 0);
   const isReadyToAdd = !!dataInventory;
@@ -140,7 +140,7 @@ export default function AddDestroySlip({ id, isViewMode = false, onHide }: Props
             setSatId(slipInfo.id ?? slipInfo.satId ?? slipInfo.refId ?? null);
             setNote(slipInfo.note ?? detailResult?.stockAdjust?.note ?? "");
             setSlipStatus(slipInfo.status ?? null);
-            setLstProducts((detailItems ?? []).map((item: any) => {
+            setLstProducts((detailItems ?? []).map((item: Record<string, unknown>) => {
               const availableQty = Number(
                 item.availQty ??
                 item.availableQty ??
@@ -202,7 +202,7 @@ export default function AddDestroySlip({ id, isViewMode = false, onHide }: Props
     );
   }, [lstProducts]);
 
-  const [listInventory, setListInventory] = useState<any[]>([]);
+  const [listInventory, setListInventory] = useState<Record<string, unknown>[]>([]);
   const [isLoadingInventory, setIsLoadingInventory] = useState(false);
 
   // ── Warehouse loader — chỉ gọi khi mở dropdown, không auto-load ──────────
@@ -215,7 +215,7 @@ export default function AddDestroySlip({ id, isViewMode = false, onHide }: Props
       const data = Array.isArray(result)
         ? result
         : Array.isArray(result?.items) ? result.items : [];
-      setListInventory(data.map((i: any) => ({
+      setListInventory(data.map((i: Record<string, unknown>) => ({
         value: i.id, label: i.name,
         address: i.address ?? "", branchName: i.branchName ?? "",
       })));
@@ -225,7 +225,7 @@ export default function AddDestroySlip({ id, isViewMode = false, onHide }: Props
     setIsLoadingInventory(false);
   }, [listInventory.length]);
 
-  const handleChangeInventory = (e: any) => {
+  const handleChangeInventory = (e: Record<string, unknown>) => {
     setDataInventory(e);
     setLstProducts([]);
     setNote("");
@@ -256,7 +256,7 @@ export default function AddDestroySlip({ id, isViewMode = false, onHide }: Props
     }
   };
 
-  const handChangeDataProps = (data: any[]) => {
+  const handChangeDataProps = (data: Record<string, unknown>[]) => {
     if (!data?.length) return;
     const converted: IDestroyProduct[] = data.map((item) => ({
       id: item.id ?? 0,

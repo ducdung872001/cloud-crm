@@ -3,7 +3,7 @@ import Modal, { ModalBody, ModalFooter, ModalHeader } from "components/modal/mod
 import { IActionModal } from "model/OtherModel";
 import "./ModalCheckout.scss";
 
-export default function ModalCheckout(props: any) {
+export default function ModalCheckout(props: Record<string, unknown>) {
   const { onShow, onHide, data } = props;
 
   const footerActions: IActionModal = {

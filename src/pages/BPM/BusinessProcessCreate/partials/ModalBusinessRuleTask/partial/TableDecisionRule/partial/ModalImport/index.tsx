@@ -20,7 +20,7 @@ import Button from "components/button/button";
 import { exportOlaExcel } from "../../exportOla";
 import { convertToDataRow } from "../../convertToDataRow";
 
-export default function ModalImport(props: any) {
+export default function ModalImport(props: Record<string, unknown>) {
   const { onShow, onHide, name, code, listColumn, caclData, lineSuccess, baseRow, setDataRow, setLookupValues, setLookupError, setLookupLoading } =
     props;
 
@@ -109,7 +109,7 @@ export default function ModalImport(props: any) {
     return date_info;
   }
 
-  function parseDateValue(value: any): Date | null {
+  function parseDateValue(value: Record<string, unknown>): Date | null {
     // Kiểm tra nếu giá trị đã là đối tượng Date
     if (value instanceof Date) {
       return value; // Giữ nguyên nếu đã là đối tượng Date
@@ -138,7 +138,7 @@ export default function ModalImport(props: any) {
       const workbook = XLSX.read(binaryStr, { type: "binary" });
       const sheetName = workbook.SheetNames[0];
       const worksheet = workbook.Sheets[sheetName];
-      const jsonData: any[] = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
+      const jsonData: Record<string, unknown>[] = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
       // setData(jsonData);
       //Đọc dòng đầu trong file Excel để lấy danh sách cột, nếu số lượng và tên cột không khớp với danh sách cột listColumn đã định nghĩa thì sẽ thông báo lỗi
       const headerRow = jsonData[0].filter((item) => item !== null && item !== undefined); // Lọc các giá trị null, undefined và rỗng
@@ -166,7 +166,7 @@ export default function ModalImport(props: any) {
         }
       }
 
-      let baseData: any = [];
+      let baseData: Record<string, unknown> = [];
       for (let index = 0; index < jsonData.length; index++) {
         const row = jsonData[index];
         if (index > 2) {
@@ -318,7 +318,7 @@ export default function ModalImport(props: any) {
     }
   };
 
-  const onSubmit = async (e?: any) => {
+  const onSubmit = async (e?: Record<string, unknown>) => {
     e.preventDefault();
 
     setIsSubmit(true);

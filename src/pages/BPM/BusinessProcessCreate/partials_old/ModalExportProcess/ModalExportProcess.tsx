@@ -11,7 +11,7 @@ import { formatFileSize, handDownloadFileOrigin, showToast } from "utils/common"
 import { uploadDocumentFormData } from "utils/document";
 import "./ModalExportProcess.scss";
 
-export default function ModalExportProcess(props: any) {
+export default function ModalExportProcess(props: Record<string, unknown>) {
   const { onShow, onHide, processId, listNodeSelected } = props;
 
   const [isSubmit, setIsSubmit] = useState<boolean>(false);
@@ -26,7 +26,7 @@ export default function ModalExportProcess(props: any) {
   const titles = ["Tên Node", "NodeId"];
   const dataFormat = [ "", ""];
 
-  const dataMappingArray = (item: any, index: number, type?: string) =>
+  const dataMappingArray = (item: Record<string, unknown>, index: number, type?: string) =>
     [
         // index + 1,
         item.nodeName,

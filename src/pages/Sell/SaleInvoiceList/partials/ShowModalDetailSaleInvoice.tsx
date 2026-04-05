@@ -99,7 +99,7 @@ export default function ShowModalDetailSaleInvoice(props: ShowModalDetailSaleInv
       setDetaiInvoice(result.invoice);
       setDetailBranch(result.beautyBranch);
 
-      let mergedList: any[] = [];
+      let mergedList: Record<string, unknown>[] = [];
       let hasCardServices = false;
 
       if (result.boughtCardServices?.length > 0) {
@@ -112,7 +112,7 @@ export default function ShowModalDetailSaleInvoice(props: ShowModalDetailSaleInv
       }
 
       // Fetch card information
-      const cardIds = mergedList.map((item: any) => item.cardId).filter((id): id is number => id !== undefined && id !== null);
+      const cardIds = mergedList.map((item: Record<string, unknown>) => item.cardId).filter((id): id is number => id !== undefined && id !== null);
 
       let cardMap: Record<number, { name: string; avatar: string; price: number }> = {};
 
@@ -123,7 +123,7 @@ export default function ShowModalDetailSaleInvoice(props: ShowModalDetailSaleInv
           const cards = cardRes.result.items || [];
 
           cardIds.forEach((cardId) => {
-            const card = cards.find((c: any) => c.id === cardId);
+            const card = cards.find((c: Record<string, unknown>) => c.id === cardId);
             if (card) {
               cardMap[cardId] = {
                 name: card.name || "",
@@ -240,7 +240,7 @@ export default function ShowModalDetailSaleInvoice(props: ShowModalDetailSaleInv
                     setIsPrintPomService(true);
                   },
                 },
-              ] as any)
+              ] as Record<string, unknown>)
             : []),
           {
             title: "Tạo đơn vận chuyển",

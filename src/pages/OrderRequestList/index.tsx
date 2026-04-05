@@ -51,7 +51,7 @@ export default function OrderRequestList() {
   const [listIdChecked, setListIdChecked] = useState<number[]>([]);
   const [showModalAdd, setShowModalAdd] = useState<boolean>(false);
   const [showDialog, setShowDialog] = useState<boolean>(false);
-  const [contentDialog, setContentDialog] = useState<any>(null);
+  const [contentDialog, setContentDialog] = useState<Record<string, unknown>>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [isNoItem, setIsNoItem] = useState<boolean>(false);
   const [isPermissions, setIsPermissions] = useState<boolean>(false);
@@ -83,7 +83,7 @@ export default function OrderRequestList() {
     }
   }, [isCreate]);
 
-  const [params, setParams] = useState<any>({
+  const [params, setParams] = useState<Record<string, unknown>>({
     name: "",
     limit: 10,
   });
@@ -147,7 +147,7 @@ export default function OrderRequestList() {
 
   const abortController = new AbortController();
 
-  const getListOpportunity = async (paramsSearch: any) => {
+  const getListOpportunity = async (paramsSearch: Record<string, unknown>) => {
     setIsLoading(true);
 
     const response = await OrderRequestService.listOne(paramsSearch);
@@ -238,10 +238,10 @@ export default function OrderRequestList() {
   const dataFormat = ["text-center", "", "", "", "text-center", "", "", "text-center"];
 
   const [showModalRequestDetail, setShowModalRequestDetail] = useState<boolean>(false);
-  const [dataRequestDetail, setDataRequestDetail] = useState<any>(null);
-  const [customerInfo, setCustomerInfo] = useState<any>(null);
+  const [dataRequestDetail, setDataRequestDetail] = useState<Record<string, unknown>>(null);
+  const [customerInfo, setCustomerInfo] = useState<Record<string, unknown>>(null);
 
-  const dataMappingArray = (item: any, index: number) => [
+  const dataMappingArray = (item: Record<string, unknown>, index: number) => [
     getPageOffset(params) + index + 1,
     item?.beautySalonName || item.bsnId,
     item?.customerInfo ? JSON.parse(item.customerInfo).name : "",
@@ -395,7 +395,7 @@ export default function OrderRequestList() {
   const [valueProcess, setValueProcess] = useState(null);
 
   const loadOptionProcess = async (search, loadedOptions, { page }) => {
-    const param: any = {
+    const param: Record<string, unknown> = {
       name: search,
       page: page,
       limit: 10,
@@ -416,7 +416,7 @@ export default function OrderRequestList() {
       const dataOption = response.result.items;
 
       if (dataOption.length > 0) {
-        dataOption.map((item: any) => {
+        dataOption.map((item: Record<string, unknown>) => {
           optionProcess.push({
             value: item.id,
             label: item.name,

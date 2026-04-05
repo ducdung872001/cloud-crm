@@ -55,7 +55,7 @@ export default function SettingBasisList() {
       {!isDetail && (
         <TabMenuList
           listTab={listTab}
-          onClick={(item: any) => { setTab(item.is_tab); setIsDetail(true); }}
+          onClick={(item: Record<string, unknown>) => { setTab(item.is_tab); setIsDetail(true); }}
         />
       )}
 

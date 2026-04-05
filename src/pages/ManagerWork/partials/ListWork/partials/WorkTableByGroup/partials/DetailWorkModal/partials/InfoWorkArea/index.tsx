@@ -13,7 +13,7 @@ import Loading from "components/loading";
 import "./index.scss";
 import StatusTask from "../../../StatusTask";
 
-export default function InfoWorkArea(props: any) {
+export default function InfoWorkArea(props: Record<string, unknown>) {
   const { idData, onShow, onHide } = props;
   const [dataEmployee, setDataEmployee] = useState(null);
   const [data, setData] = useState<IWorkOrderResponseModel>(null);
@@ -89,8 +89,8 @@ export default function InfoWorkArea(props: any) {
       if (!Array.isArray(raw)) return [];
 
       return raw
-        .filter((x: any) => x && typeof x.url === "string")
-        .map((x: any) => ({
+        .filter((x: Record<string, unknown>) => x && typeof x.url === "string")
+        .map((x: Record<string, unknown>) => ({
           url: x.url,
           type: x.type,
           name: x.name,

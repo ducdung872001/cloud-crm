@@ -14,8 +14,8 @@ import "./index.scss";
 interface IAddTransferVotesProps {
   onShow: boolean;
   onHide: (reload: boolean) => void;
-  dataProps?: any;
-  data?: any;
+  dataProps?: Record<string, unknown>;
+  data?: Record<string, unknown>;
   type: "ticket" | "warranty";
 }
 

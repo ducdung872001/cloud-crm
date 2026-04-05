@@ -6,7 +6,7 @@ import Tippy from "@tippyjs/react";
 import moment from "moment";
 import Badge from "components/badge/badge";
 
-export default function TaskItemClaim(props: any) {
+export default function TaskItemClaim(props: Record<string, unknown>) {
   const { item, index, column, callbackHistory, callBackAction } = props;
 
   return (

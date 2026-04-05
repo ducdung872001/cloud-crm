@@ -12,7 +12,7 @@ import HeaderTabMenu from "@/components/HeaderTabMenu/HeaderTabMenu";
 export default function UserTaskList(props) {
 
   const { onBackProps } = props;
-  const paramsUrl: any = getSearchParameters();
+  const paramsUrl: Record<string, unknown> = getSearchParameters();
   const location = useLocation();
   const state = location.state || null;
   const viewDetail = location.state?.viewDetail || "";
@@ -58,7 +58,7 @@ export default function UserTaskList(props) {
   //! đẩy xuống dưới là do phụ thuộc vào biến ở trên để thay đổi tên
   document.title = `${isDetailWork ? "Chi tiết công việc" : isRegimeKanban ? "Kanban công việc" : "Công việc"}`;
 
-  const [dataDetaiWork, setDataDetailWork] = useState<any>(null);
+  const [dataDetaiWork, setDataDetailWork] = useState<Record<string, unknown>>(null);
 
   const showProjectManagement = () => {
     const overlay = document.querySelector(".project-management");

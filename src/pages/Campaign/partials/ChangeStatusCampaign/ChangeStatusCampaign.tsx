@@ -12,7 +12,7 @@ import "./ChangeStatusCampaign.scss";
 import ContractService from "services/ContractService";
 import CampaignService from "services/CampaignService";
 
-export default function ChangeStatusCampaign(props: any) {
+export default function ChangeStatusCampaign(props: Record<string, unknown>) {
   const { onShow, onHide, data } = props;
 
   const focusedElement = useActiveElement();
@@ -80,7 +80,7 @@ export default function ChangeStatusCampaign(props: any) {
 
     setIsSubmit(true);
 
-    const body: any = {
+    const body: Record<string, unknown> = {
       ...formData.values,
     };
     // console.log('body', body);

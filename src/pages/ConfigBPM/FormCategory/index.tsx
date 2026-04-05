@@ -19,7 +19,11 @@ import FormCategoryService from "services/FormCategoryService";
 import AddFrom from "./partials/AddFrom";
 import SettingForm from "./SettingForm";
 
-export default function FormCategory(props: any) {
+interface FormCategoryProps {
+  onBackProps: (value: boolean) => void;
+}
+
+export default function FormCategory(props: FormCategoryProps) {
   document.title = "Danh mục biểu mẫu";
 
   const { onBackProps } = props;
@@ -31,7 +35,7 @@ export default function FormCategory(props: any) {
   const [listIdChecked, setListIdChecked] = useState<number[]>([]);
   const [showModalAddOjectGroup, setShowModalAddOjectGroup] = useState<boolean>(false);
   const [showDialog, setShowDialog] = useState<boolean>(false);
-  const [contentDialog, setContentDialog] = useState<any>(null);
+  const [contentDialog, setContentDialog] = useState<IContentDialog | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [isNoItem, setIsNoItem] = useState<boolean>(false);
   const [isPermissions, setIsPermissions] = useState<boolean>(false);
@@ -66,7 +70,7 @@ export default function FormCategory(props: any) {
 
   const abortController = new AbortController();
 
-  const getListOjectGroup = async (paramsSearch: any) => {
+  const getListOjectGroup = async (paramsSearch: Record<string, unknown>) => {
     setIsLoading(true);
 
     const response = await FormCategoryService.list(paramsSearch, abortController.signal);
@@ -137,9 +141,9 @@ export default function FormCategory(props: any) {
 
   const dataFormat = ["text-center", "", "text-left"];
 
-  const dataMappingArray = (item: any, index: number) => [getPageOffset(params) + index + 1, item.code, item.name];
+  const dataMappingArray = (item: Record<string, unknown>, index: number) => [getPageOffset(params) + index + 1, item.code, item.name];
 
-  const actionsTable = (item: any): IAction[] => {
+  const actionsTable = (item: Record<string, unknown>): IAction[] => {
     const isCheckedItem = listIdChecked?.length > 0;
     return [
       {

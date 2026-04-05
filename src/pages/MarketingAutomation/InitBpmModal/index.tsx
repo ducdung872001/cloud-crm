@@ -12,7 +12,7 @@ import "./index.scss";
 import SelectCustom from "components/selectCustom/selectCustom";
 import BusinessProcessService from "services/BusinessProcessService";
 
-export default function InitBpmModal(props: any) {
+export default function InitBpmModal(props: Record<string, unknown>) {
   const { onShow, onHide, idCampaign } = props;
 
   const [rating, setRating] = useState<number>(0);
@@ -22,7 +22,7 @@ export default function InitBpmModal(props: any) {
   const [contentDialog, setContentDialog] = useState<IContentDialog>(null);
   const [validateContent, setValidateContent] = useState<boolean>(false);
 
-  const [formData, setFormData] = useState<any>({
+  const [formData, setFormData] = useState<Record<string, unknown>>({
     idCampaign: idCampaign,
   });
 
@@ -116,7 +116,7 @@ export default function InitBpmModal(props: any) {
   const [valueProcess, setValueProcess] = useState(null);
 
   const loadOptionProcess = async (search, loadedOptions, { page }) => {
-    const param: any = {
+    const param: Record<string, unknown> = {
       name: search,
       page: page,
       limit: 10,
@@ -136,7 +136,7 @@ export default function InitBpmModal(props: any) {
       const dataOption = response.result.items;
 
       if (dataOption.length > 0) {
-        dataOption.map((item: any) => {
+        dataOption.map((item: Record<string, unknown>) => {
           optionProcess.push({
             value: item.id,
             label: item.name,

@@ -30,13 +30,13 @@ const DEFAULT_INVOICE: IInvoiceCreateResponse = {
 type InvoiceStatusFilter = "all" | 2 | 1 | 3;
 type InvoiceOption = { value: number; label: string; receiptDate?: string; status?: number; };
 
-const getInvoiceFromResponse = (response: any): IInvoiceCreateResponse | null => {
+const getInvoiceFromResponse = (response: Record<string, unknown>): IInvoiceCreateResponse | null => {
   const result = response?.result ?? response?.data ?? null;
   if (!result) return null;
   return (result.invoice ?? result) as IInvoiceCreateResponse;
 };
 
-const getImportedProductsFromResponse = (response: any): IInvoiceDetailResponse[] => {
+const getImportedProductsFromResponse = (response: Record<string, unknown>): IInvoiceDetailResponse[] => {
   const result = response?.result ?? response?.data ?? null;
   if (Array.isArray(result)) return result;
   if (Array.isArray(result?.importedProducts)) return result.importedProducts;
@@ -124,7 +124,7 @@ export default function CreateReceipt() {
       const items = Array.isArray(result) ? result
         : Array.isArray(result?.items) ? result.items
           : Array.isArray(result?.pagedLst?.items) ? result.pagedLst.items : [];
-      setInvoiceOptions(items.map((item: any) => ({
+      setInvoiceOptions(items.map((item: Record<string, unknown>) => ({
         value: item.id, label: item.invoiceCode || `#${item.id}`,
         receiptDate: item.receiptDate, status: item.status,
       })));
@@ -284,7 +284,7 @@ export default function CreateReceipt() {
               }}
               placeholder="Chọn phiếu nhập để thao tác"
               isSearchable isClearable isLoading={isLoadingInvoiceOptions} isFormatOptionLabel
-              formatOptionLabel={(option: any, meta: any) =>
+              formatOptionLabel={(option: Record<string, unknown>, meta: Record<string, unknown>) =>
                 meta.context === "value" ? (
                   <div className="cr-invoice-value">{option.label}</div>
                 ) : (

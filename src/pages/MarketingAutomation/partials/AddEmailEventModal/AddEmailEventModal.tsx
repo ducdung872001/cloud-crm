@@ -20,7 +20,7 @@ import "./AddEmailEventModal.scss";
 import MarketingAutomationService from "services/MarketingAutomationService";
 import RebornEditor from "components/editor/reborn";
 
-export default function AddEmailEventModal(props: any) {
+export default function AddEmailEventModal(props: Record<string, unknown>) {
   const { onShow, onHide, dataNode } = props;  
 
   const focusedElement = useActiveElement();

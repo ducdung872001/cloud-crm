@@ -17,7 +17,7 @@ import DatePickerCustom from "components/datepickerCustom/datepickerCustom";
 import Input from "components/input/input";
 // ProjectRealtyService removed (non-retail BDS)
 
-export default function FilterModal(props: any) {
+export default function FilterModal(props: Record<string, unknown>) {
   const isMounted = useRef(false);
 
   const navigation = useNavigate();
@@ -127,7 +127,7 @@ export default function FilterModal(props: any) {
   console.log("endDate", endDate);
 
   const loadedOptionProject = async (search, loadedOptions, { page }) => {
-    const param: any = {
+    const param: Record<string, unknown> = {
       name: search,
       page: page,
       limit: 10,

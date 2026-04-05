@@ -11,7 +11,7 @@ import { isDifferenceObj } from 'reborn-util';
 import "./ApproveModal.scss";
 import PermissionService from "services/PermissionService";
 
-export default function ApproveModal(props: any) {
+export default function ApproveModal(props: Record<string, unknown>) {
   const { onShow, data, onHide, type } = props;  
 
   const [isSubmit, setIsSubmit] = useState<boolean>(false);
@@ -25,7 +25,7 @@ export default function ApproveModal(props: any) {
     ({
         id: data?.id ?? 0,
         targetNote: "",
-    } as any),
+    } as Record<string, unknown>),
     [onShow, data]
   );
 
@@ -69,8 +69,8 @@ export default function ApproveModal(props: any) {
     }
     setIsSubmit(true);
 
-    const body: any = {
-      ...(formData.values as any),
+    const body: Record<string, unknown> = {
+      ...(formData.values as Record<string, unknown>),
     };
     
     let response = null;

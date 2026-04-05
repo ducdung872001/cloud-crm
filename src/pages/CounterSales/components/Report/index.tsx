@@ -175,7 +175,7 @@ const Report: React.FC = () => {
       } else {
         setError(json.message ?? "Không thể tải báo cáo");
       }
-    } catch (e: any) {
+    } catch (e: unknown) {
       if (e?.name !== "AbortError") setError("Lỗi kết nối. Vui lòng thử lại.");
     } finally {
       setLoading(false);

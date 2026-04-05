@@ -14,7 +14,7 @@ import { isDifferenceObj } from "reborn-util";
 import "./ModalAddMarketingChannel.scss";
 import ContractCategoryService from "services/ContractCategoryService";
 
-export default function ModalAddMarketingChannel(props: any) {
+export default function ModalAddMarketingChannel(props: Record<string, unknown>) {
   const { onShow, onHide, data, listMarketingChannel } = props;
 
   const focusedElement = useActiveElement();
@@ -30,7 +30,7 @@ export default function ModalAddMarketingChannel(props: any) {
         name: data?.name ?? "",
         code: data?.code ?? "",
         position: data?.position ?? listMarketingChannel?.length + 1 ?? 0,
-      } as any),
+      } as Record<string, unknown>),
     [data, onShow, listMarketingChannel]
   );
 
@@ -94,8 +94,8 @@ export default function ModalAddMarketingChannel(props: any) {
 
     setIsSubmit(true);
 
-    const body: any = {
-      ...(formData.values as any),
+    const body: Record<string, unknown> = {
+      ...(formData.values as Record<string, unknown>),
       ...(data ? { id: data.id } : {}),
     };
 

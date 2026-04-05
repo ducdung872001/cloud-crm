@@ -40,8 +40,8 @@ export default function DetailProject() {
   const [infoFile, setInfoFile] = useState(null);
   const [detailPartner, setDetailPartner] = useState(null);
 
-  const [projectExtraInfos, setProjectExtraInfos] = useState<any>([]);
-  const [mapProjectAttribute, setMapProjectAttribute] = useState<any>(null);
+  const [projectExtraInfos, setProjectExtraInfos] = useState<Record<string, unknown>>([]);
+  const [mapProjectAttribute, setMapProjectAttribute] = useState<Record<string, unknown>>(null);
   // console.log('projectExtraInfos', projectExtraInfos);
 
   const [tabProject, setTabProject] = useState(1);
@@ -469,7 +469,7 @@ export default function DetailProject() {
 
                 {mapProjectAttribute ? (
                   <div className="list__project--attribute">
-                    {Object.entries(mapProjectAttribute).map((lstProjectAttribute: any, key: number) => (
+                    {Object.entries(mapProjectAttribute).map((lstProjectAttribute: Record<string, unknown>, key: number) => (
                       <Fragment key={key}>
                         {(lstProjectAttribute[1] || []).map((projectAttribute, index: number) => (
                           <Fragment key={index}>

@@ -13,7 +13,7 @@ import BeautyBranchService from "services/BeautyBranchService";
 import { EMAIL_REGEX } from "utils/constant";
 import EmailConfigService from "services/EmailConfigService";
 
-export default function ModalCheckEmail(props: any) {
+export default function ModalCheckEmail(props: Record<string, unknown>) {
   const { onShow, onHide, data } = props;
 
   const [isSubmit, setIsSubmit] = useState<boolean>(false);
@@ -27,7 +27,7 @@ export default function ModalCheckEmail(props: any) {
       ({
         email: "",
         emailId: data?.id,
-      } as any),
+      } as Record<string, unknown>),
     [onShow, data]
   );
 
@@ -76,8 +76,8 @@ export default function ModalCheckEmail(props: any) {
     }
     setIsSubmit(true);
 
-    const body: any = {
-      ...(formData.values as any),
+    const body: Record<string, unknown> = {
+      ...(formData.values as Record<string, unknown>),
     };
 
     const response = await EmailConfigService.checkEmail(body);

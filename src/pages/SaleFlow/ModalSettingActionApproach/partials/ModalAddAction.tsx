@@ -13,7 +13,7 @@ import SelectCustom from "components/selectCustom/selectCustom";
 import SaleflowApproachService from "services/SaleflowApproachService";
 import ContractEformService from "services/ContractEformService";
 
-export default function ModalAddAction(props: any) {
+export default function ModalAddAction(props: Record<string, unknown>) {
   const { onShow, onHide, approachData, activityData, actionList } = props;
   console.log("activityData", activityData);
 
@@ -247,8 +247,8 @@ export default function ModalAddAction(props: any) {
 
     setIsSubmit(true);
 
-    const body: any = {
-      ...(formData as any),
+    const body: Record<string, unknown> = {
+      ...(formData as Record<string, unknown>),
       ...(activityData ? { id: activityData.id } : {}),
       ...{ approachId: approachData.id },
     };

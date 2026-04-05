@@ -89,7 +89,7 @@ export default function Modal(props: ModalProps) {
 }
 
 interface ModalHeaderProps {
-  id?: any;
+  id?: string | number;
   title?: React.ReactElement | string;
   toggle?: () => void;
   className?: string;

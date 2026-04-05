@@ -8,7 +8,7 @@ import { UserContext, ContextType } from "contexts/userContext";
 import { formatCurrency } from "utils/common";
 
 interface IPrintSmallProps {
-  data: any;
+  data: Record<string, unknown>;
   isPrint: boolean;
 }
 

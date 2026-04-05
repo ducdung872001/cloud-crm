@@ -26,7 +26,7 @@ export default function AddPromotionBundleModal(props: IAddCategoryServiceModelP
 
   const values = useMemo(
     () => {
-      const d = data as any;
+      const d = data as Record<string, unknown>;
       return {
         name: d?.name ?? "",
         products: d?.products ? d.products.join(", ") : "",
@@ -34,7 +34,7 @@ export default function AddPromotionBundleModal(props: IAddCategoryServiceModelP
         salePrice: d?.sale ? parseInt(d.sale.replace(/\./g, '')) : 0,
         status: d?.status ?? "active",
         id: d?.id,
-      } as any;
+      } as Record<string, unknown>;
     },
     [data, onShow]
   );

@@ -28,7 +28,7 @@ const uploadFile = (uploadURL, { data, onSuccess, onError, onProgress }) => {
 
     xhr.upload.onprogress = (event) => {
       const { loaded, total } = event;
-      const result = (loaded / total) as any;
+      const result = (loaded / total) as Record<string, unknown>;
 
       percent = result.toFixed(2) * 100;
       if (typeof onProgress === "function") {
@@ -91,7 +91,7 @@ const uploadVideo = (uploadURL, { data, onSuccess, onError, onProgress }) => {
 
     xhr.upload.onprogress = (event) => {
       const { loaded, total } = event;
-      const result = (loaded / total) as any;
+      const result = (loaded / total) as Record<string, unknown>;
 
       percent = result.toFixed(2) * 100;
       if (typeof onProgress === "function") {

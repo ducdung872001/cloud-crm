@@ -21,7 +21,7 @@ import { SystemNotification } from "components/systemNotification/systemNotifica
 import { BulkActionItemModel } from "components/bulkAction/bulkAction";
 import SearchBox from "components/searchBox/searchBox";
 
-export default function ModalListUploadFile(props: any) {
+export default function ModalListUploadFile(props: Record<string, unknown>) {
   const { onShow, onHide, data } = props;
 
   const isMounted = useRef(false);
@@ -31,7 +31,7 @@ export default function ModalListUploadFile(props: any) {
   const [dataFile, setDataFile] = useState(null);
   const [isPermissions, setIsPermissions] = useState<boolean>(false);
   const [showDialog, setShowDialog] = useState<boolean>(false);
-  const [contentDialog, setContentDialog] = useState<any>(null);
+  const [contentDialog, setContentDialog] = useState<Record<string, unknown>>(null);
   const [isNoItem, setIsNoItem] = useState<boolean>(false);
   const [listIdChecked, setListIdChecked] = useState<number[]>([]);
   
@@ -62,7 +62,7 @@ export default function ModalListUploadFile(props: any) {
 
   const abortController = new AbortController();
 
-  const getListFileUpload = async (paramsSearch: any) => {
+  const getListFileUpload = async (paramsSearch: Record<string, unknown>) => {
     setIsLoading(true);
 
     const response = await OrganizationService.customerUploadList(paramsSearch, abortController.signal);
@@ -126,7 +126,7 @@ export default function ModalListUploadFile(props: any) {
 
   const dataFormat = ["text-center", "", "text-right", "text-right"];
 
-  const dataMappingArray = (item: any, index: number) => [
+  const dataMappingArray = (item: Record<string, unknown>, index: number) => [
     getPageOffset(params) + index + 1,
     item.fileName,
   ];
@@ -189,7 +189,7 @@ export default function ModalListUploadFile(props: any) {
   };
 
 
-  const showDialogConfirmDelete = (item?: any) => {
+  const showDialogConfirmDelete = (item?: Record<string, unknown>) => {
     const contentDialog: IContentDialog = {
       color: "error",
       className: "dialog-delete",

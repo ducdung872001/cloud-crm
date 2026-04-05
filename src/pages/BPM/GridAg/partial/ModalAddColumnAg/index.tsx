@@ -18,10 +18,10 @@ import GirdService from "services/GridService";
 import Checkbox from "components/checkbox/checkbox";
 import { useGridAg } from "../../GridAgContext";
 
-export default function ModalAddColumnAg(props: any) {
+export default function ModalAddColumnAg(props: Record<string, unknown>) {
   const { onShow, onHide, data, listColumn, setIsChangeColumns, typeNo, isEdit, location } = props;
   const { setColCodeEdit, setColumnsConfig } = useGridAg();
-  const params: any = getSearchParameters();
+  const params: Record<string, unknown> = getSearchParameters();
 
   const refShowField = useRef();
   useOnClickOutside(refShowField, () => setShowFields(false), ["formula"]);
@@ -34,17 +34,17 @@ export default function ModalAddColumnAg(props: any) {
 
   const [listCustomerAttribute, setListCustomerAttribute] = useState<IOption[]>(null);
   const [isLoadingCustomerAttribute, setIsLoadingCustomerAttribute] = useState<boolean>(false);
-  const [addFieldAttributes, setAddFieldAttributes] = useState<any[]>([]);
-  const [listParams, setListParams] = useState<any[]>([]);
-  const [listColumnBinding, setListColumnBinding] = useState<any[]>([]);
-  const [detailLookup, setDetailLookup] = useState<any>("");
-  const [lookupLabel, setLookupLabel] = useState<any>({
+  const [addFieldAttributes, setAddFieldAttributes] = useState<Record<string, unknown>[]>([]);
+  const [listParams, setListParams] = useState<Record<string, unknown>[]>([]);
+  const [listColumnBinding, setListColumnBinding] = useState<Record<string, unknown>[]>([]);
+  const [detailLookup, setDetailLookup] = useState<Record<string, unknown>>("");
+  const [lookupLabel, setLookupLabel] = useState<Record<string, unknown>>({
     key: "",
     type: "",
   });
-  const [numberFormat, setNumberFormat] = useState<any>("");
+  const [numberFormat, setNumberFormat] = useState<Record<string, unknown>>("");
 
-  const [detailBindingField, setDetailBindingField] = useState<any>([]);
+  const [detailBindingField, setDetailBindingField] = useState<Record<string, unknown>>([]);
 
   //Cần đổi lại thành khách hàng
   const [showFields, setShowFields] = useState<boolean>(false);
@@ -243,7 +243,7 @@ export default function ModalAddColumnAg(props: any) {
         parentId: data?.parentId ?? "0",
         regex: data?.regex ?? "",
         lookupUri: data?.lookupUri ?? "",
-      } as any),
+      } as Record<string, unknown>),
     [data, onShow]
   );
 

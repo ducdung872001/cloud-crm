@@ -31,7 +31,7 @@ export default function FeedbackCustomer() {
   const [listFeedbackCustomer, setListFeedbackCustomer] = useState([]);
   const [searchParams, setSearchParams] = useSearchParams();
   const [showDialog, setShowDialog] = useState<boolean>(false);
-  const [contentDialog, setContentDialog] = useState<any>(null);
+  const [contentDialog, setContentDialog] = useState<Record<string, unknown>>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [isNoItem, setIsNoItem] = useState<boolean>(false);
   const [params, setParams] = useState({
@@ -128,7 +128,7 @@ export default function FeedbackCustomer() {
 
     if (isMounted.current === true) {
       getListFeedbackCustomer(params);
-      const paramsTemp: any = _.cloneDeep(params);
+      const paramsTemp: Record<string, unknown> = _.cloneDeep(params);
       if (paramsTemp.limit === 10) {
         delete paramsTemp["limit"];
       }

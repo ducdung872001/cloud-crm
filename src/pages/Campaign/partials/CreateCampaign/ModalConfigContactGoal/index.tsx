@@ -17,7 +17,7 @@ import ImageThirdGender from "assets/images/third-gender.png";
 import SelectCustom from "components/selectCustom/selectCustom";
 import KpiService from "services/KpiService";
 
-export default function ModalConfigContactGoal(props: any) {
+export default function ModalConfigContactGoal(props: Record<string, unknown>) {
   const { onShow, onHide, data, campaignId } = props;
 
   const [isSubmit, setIsSubmit] = useState<boolean>(false);

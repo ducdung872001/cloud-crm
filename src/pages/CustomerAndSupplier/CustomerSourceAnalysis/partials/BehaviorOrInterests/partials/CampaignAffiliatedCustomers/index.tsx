@@ -129,7 +129,7 @@ export default function CampaignAffiliatedCustomers(props) {
           {
             ...chartData.series,
             data: changeResult,
-          } as any,
+          } as Record<string, unknown>,
         ],
       });
     } else {

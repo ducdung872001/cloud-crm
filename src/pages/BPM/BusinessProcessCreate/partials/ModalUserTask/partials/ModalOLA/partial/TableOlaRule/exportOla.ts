@@ -2,7 +2,7 @@ import ExcelJS from "exceljs";
 import { saveAs } from "file-saver";
 
 // Định nghĩa kiểu cho listColumns và dataRow (có thể tùy biến lại nếu cần chặt chẽ hơn)
-export async function exportOlaExcel(listColumns: any[], dataRow: any[], listErrors: any[] = []) {
+export async function exportOlaExcel(listColumns: Record<string, unknown>[], dataRow: Record<string, unknown>[], listErrors: Record<string, unknown>[] = []) {
   console.log("Exporting to Excel with columns:", listColumns, "and data rows:", dataRow);
 
   const workbook = new ExcelJS.Workbook();
@@ -12,7 +12,7 @@ export async function exportOlaExcel(listColumns: any[], dataRow: any[], listErr
 
   let colIndex = 1;
   // Lưu các thông tin column để mapping dataRow
-  const colMap: { key: string; children?: any[]; colStart: number; colSpan: number }[] = [];
+  const colMap: { key: string; children?: Record<string, unknown>[]; colStart: number; colSpan: number }[] = [];
 
   listColumns.forEach((item) => {
     let children = Array.isArray(item.children) ? [...item.children] : [];

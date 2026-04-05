@@ -27,7 +27,7 @@ export default function ViewConfigRole(props: IViewConfigDepartmentProps) {
   const refBoxConfig = useRef(null);
 
   const [width, setWidth] = useState(0);
-  const [dataRole, setDataRole] = useState<any>([
+  const [dataRole, setDataRole] = useState<Record<string, unknown>>([
     {
       id: "",
       name: "",
@@ -103,9 +103,9 @@ export default function ViewConfigRole(props: IViewConfigDepartmentProps) {
     const permissionRes = await RolePermissionService.getPermissionResources();
     let lstRolePermissionResource = permissionRes.result;
     let mapPermission = {};
-    (lstRolePermissionResource || []).forEach((permissionResource: any) => {
+    (lstRolePermissionResource || []).forEach((permissionResource: Record<string, unknown>) => {
       let actions = JSON.parse(permissionResource.actions);
-      actions.forEach((action: any) => {
+      actions.forEach((action: Record<string, unknown>) => {
         mapPermission[`${permissionResource.code}_${action}`] = 1;
       });
     });
@@ -481,7 +481,7 @@ export default function ViewConfigRole(props: IViewConfigDepartmentProps) {
                                     id={`resource_row_${element.id}_${permission.packageId}`}
                                     className={`permission__check department__permission--${dataRole.length}`}
                                   >
-                                    {mapData.map((dataItem: any, idxBox) => {
+                                    {mapData.map((dataItem: Record<string, unknown>, idxBox) => {
                                       return dataItem === false || dataItem === true ? (
                                         <div key={`idx_box_${idxBox}`} className="item__check--permission">
                                           <Checkbox

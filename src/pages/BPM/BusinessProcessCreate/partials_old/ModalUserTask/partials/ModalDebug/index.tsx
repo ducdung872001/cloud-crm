@@ -53,7 +53,7 @@ export default function ModalDebug({ onShow, onHide, dataNode, processId }) {
 
   const abortController = new AbortController();
 
-  const getListLinkNode= async (paramsSearch: any) => {
+  const getListLinkNode= async (paramsSearch: Record<string, unknown>) => {
       setIsLoading(true);
 
       const response = await BusinessProcessService.listLinkFrom(paramsSearch, abortController.signal);
@@ -87,7 +87,7 @@ export default function ModalDebug({ onShow, onHide, dataNode, processId }) {
   const titlesVariable = ["STT","LinkId", "FlowType", "FromNodeId", "ToNodeId"];
   const dataFormatVariable = [ "text-center", "", "", "", ""];
 
-  const dataMappingArray = (item: any, index: number) => [
+  const dataMappingArray = (item: Record<string, unknown>, index: number) => [
       getPageOffset(params) + index + 1,
       item.linkId,
       item.flowType,
@@ -95,7 +95,7 @@ export default function ModalDebug({ onShow, onHide, dataNode, processId }) {
       item.toNodeId
   ];
 
-  const actionsTable = (item: any): IAction[] => {
+  const actionsTable = (item: Record<string, unknown>): IAction[] => {
       
       return [
         //   {
@@ -116,7 +116,7 @@ export default function ModalDebug({ onShow, onHide, dataNode, processId }) {
       ];
   };
 
-  const showDialogConfirmDelete = (item?: any) => {
+  const showDialogConfirmDelete = (item?: Record<string, unknown>) => {
       const contentDialog: IContentDialog = {
         color: "error",
         className: "dialog-delete",

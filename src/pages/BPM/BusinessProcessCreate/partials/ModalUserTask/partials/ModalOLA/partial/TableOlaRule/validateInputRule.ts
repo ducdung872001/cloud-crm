@@ -3,9 +3,9 @@ type Operator = "IN" | "NOT_IN" | "EQUAL" | "NOT_EQUAL" | "RANGE" | "GREATER_THA
 interface InputRule {
   parameter: string;
   operator: Operator;
-  value?: any;
-  valueMin?: any;
-  valueMax?: any;
+  value?: Record<string, unknown>;
+  valueMin?: Record<string, unknown>;
+  valueMax?: Record<string, unknown>;
 }
 
 interface RuleItem {

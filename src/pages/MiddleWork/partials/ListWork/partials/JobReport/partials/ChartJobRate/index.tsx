@@ -17,8 +17,8 @@ exportingInit(Highcharts);
 
 interface ReportRevenueProps {
   classNames?: string;
-  paramsProps: any;
-  dataProjectProcess: any;
+  paramsProps: Record<string, unknown>;
+  dataProjectProcess: Record<string, unknown>;
 }
 const chartColor = {
   total: "#015aa4",

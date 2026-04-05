@@ -11,7 +11,7 @@ import "./index.scss";
 export default function LinkSurvey() {
   document.title = "Phiếu khảo sát khách hàng";
 
-  const params: any = getSearchParameters();
+  const params: Record<string, unknown> = getSearchParameters();
 
   // eslint-disable-next-line @typescript-eslint/no-var-requires
   const loadingGif = require("assets/images/image-success.gif");
@@ -65,7 +65,7 @@ export default function LinkSurvey() {
   const [ratingStart, setRatingStart] = useState<number>(0);
   const [hoverStart, setHoverStart] = useState<number>(0);
 
-  const [idxEmoticon, setIdxEmticon] = useState<any>(null);
+  const [idxEmoticon, setIdxEmticon] = useState<Record<string, unknown>>(null);
 
   useEffect(() => {
     if (rating) {
@@ -166,7 +166,7 @@ export default function LinkSurvey() {
 
   useEffect(() => {
     if (hasNextStep) {
-      const globalAccess: any = document.body.querySelector("#container");
+      const globalAccess: Record<string, unknown> = document.body.querySelector("#container");
 
       if (globalAccess) {
         globalAccess.style.background = "#fff";
@@ -174,7 +174,7 @@ export default function LinkSurvey() {
     }
   }, [hasNextStep]);
 
-  const handSubmitForm = async (e: any) => {
+  const handSubmitForm = async (e: Record<string, unknown>) => {
     e.preventDefault();
 
     setIsSubmit(true);

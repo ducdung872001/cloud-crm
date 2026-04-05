@@ -26,7 +26,7 @@ import { SelectOptionData } from "utils/selectCommon";
 import moment from "moment";
 import SaleflowEformService from "services/SaleflowEformService";
 
-export default function CollectInfoModal(props: any) {
+export default function CollectInfoModal(props: Record<string, unknown>) {
   const { onShow, onHide, data } = props;
 
   const parser = new Parser();
@@ -37,7 +37,7 @@ export default function CollectInfoModal(props: any) {
   const [contentDialog, setContentDialog] = useState<IContentDialog>(null);
   const [listEformAttribute, setListEformAttribute] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
-  const [contractExtraInfos, setContractExtraInfos] = useState<any>([]);
+  const [contractExtraInfos, setContractExtraInfos] = useState<Record<string, unknown>>([]);
 
   //Dùng cho lookup
   const [listCustomer, setListCustomer] = useState<IOption[]>(null);
@@ -141,7 +141,7 @@ export default function CollectInfoModal(props: any) {
     });
 
     if (!found) {
-      let item: any = {};
+      let item: Record<string, unknown> = {};
       item.attributeId = attributeId;
       item.attributeValue = attributeValue;
       // item.contractId = contractId;
@@ -485,7 +485,7 @@ export default function CollectInfoModal(props: any) {
         id: data?.id ?? 0,
         name: data?.name ?? "",
         note: data?.note ?? "",
-      } as any),
+      } as Record<string, unknown>),
     [data, onShow]
   );
 
@@ -570,7 +570,7 @@ export default function CollectInfoModal(props: any) {
 
     setIsSubmit(true);
 
-    const body: any = {
+    const body: Record<string, unknown> = {
       id: 0,
       eformId: data.eformId,
       attributeValue: JSON.stringify(contractExtraInfos),

@@ -15,8 +15,8 @@ export interface ExportModalProps {
   onHide: () => void;
   options: IOption[];
   callback: (type: string, extension: string) => void;
-  total: any;
-  params: any;
+  total: number;
+  params: Record<string, unknown>;
 }
 export default function ModalExportCustomer(props: ExportModalProps) {
   const sourceDomain = getDomain(decodeURIComponent(document.location.href));

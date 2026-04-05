@@ -394,7 +394,7 @@ const SectionHeader: React.FC<{ title: string; desc: string }> = ({ title, desc 
 // 🔷 MAIN DASHBOARD
 // ================================================================
 
-const PromotionDashboard = (props: any) => {
+const PromotionDashboard = (props: Record<string, unknown>) => {
   const { onBackProps } = props;
   const [activeTab, setActiveTab] = useState<"overview" | "detail">("overview");
 

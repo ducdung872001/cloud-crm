@@ -43,7 +43,7 @@ function formatDate(d?: string) {
 }
 
 export default function ShareCouponPage() {
-  const params: any = getSearchParameters();
+  const params: Record<string, unknown> = getSearchParameters();
   const code = params?.code ?? "";
 
   const [coupon, setCoupon]     = useState<CouponInfo | null>(null);

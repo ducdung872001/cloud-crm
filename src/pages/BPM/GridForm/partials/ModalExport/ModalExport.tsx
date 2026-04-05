@@ -17,7 +17,7 @@ export interface ExportModalProps {
   onHide: () => void;
   options: IOption[];
   listColumn: IColumnGrid[];
-  listData: any[];
+  listData: Record<string, unknown>[];
   callback: (type: string, extension: string) => void;
 }
 export default function ModalExport(props: ExportModalProps) {
@@ -43,7 +43,7 @@ export default function ModalExport(props: ExportModalProps) {
         listColumn.map((column) => {
           if (column.type == "select" || column.type == "lookup" || column.type == "binding") {
             if (column.key.includes("NguoiLienHe_")) {
-              obj[column.name] = column.options.find((option: any) => parseInt(option.value) == parseInt(item[column.key]))?.label;
+              obj[column.name] = column.options.find((option: Record<string, unknown>) => parseInt(option.value) == parseInt(item[column.key]))?.label;
             } else {
               obj[column.name] = column.options.find((option) => option.value == item[column.key])?.label;
             }

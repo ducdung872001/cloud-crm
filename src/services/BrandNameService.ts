@@ -26,13 +26,13 @@ export default {
     }).then((res) => res.json());
   },
 
-  listWhiteList: (params?: any, signal?: AbortSignal) => {
+  listWhiteList: (params?: Record<string, unknown>, signal?: AbortSignal) => {
     return fetch(`${urlsApi.brandName.listWhiteList}${convertParamsToString(params)}`, {
       signal,
       method: "GET",
     }).then((res) => res.json());
   },
-  updateWhiteList: (body: any) => {
+  updateWhiteList: (body: Record<string, unknown>) => {
     return fetch(urlsApi.brandName.updateWhiteList, {
       method: "POST",
       body: JSON.stringify(body),
@@ -45,7 +45,7 @@ export default {
     }).then((res) => res.json());
   },
 
-  changeStatusWhiteList: (body: any) => {
+  changeStatusWhiteList: (body: Record<string, unknown>) => {
     return fetch(urlsApi.brandName.changeStatusWhiteList, {
       method: "POST",
       body: JSON.stringify(body),

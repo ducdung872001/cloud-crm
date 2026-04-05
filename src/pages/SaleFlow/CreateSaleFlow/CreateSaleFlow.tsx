@@ -39,7 +39,7 @@ interface IDataApproach {
   id?: number;
   step?: number;
   name?: string;
-  activities?: any;
+  activities?: Record<string, unknown>;
   checkName?: boolean;
 }
 
@@ -95,7 +95,7 @@ export default function CreateSaleflow() {
     const response = await SaleFlowService.detail(+id);
 
     if (response.code === 0) {
-      const result: any = response.result;
+      const result: Record<string, unknown> = response.result;
 
       if (result.employeeId) {
         setDataEmployee({
@@ -150,7 +150,7 @@ export default function CreateSaleflow() {
         position: data?.position ?? "",
         employeeId: data?.employeeId ?? "",
         coordinators: data?.coordinators || "[]",
-      } as any),
+      } as Record<string, unknown>),
     [data]
   );
 
@@ -285,9 +285,9 @@ export default function CreateSaleflow() {
 
     setIsSubmit(true);
 
-    const body: any = {
+    const body: Record<string, unknown> = {
       ...(data || saleflowId ? { id: data?.id || saleflowId } : {}),
-      ...(formData?.values as any),
+      ...(formData?.values as Record<string, unknown>),
     };
 
     console.log("body", body);
@@ -372,7 +372,7 @@ export default function CreateSaleflow() {
    * Lấy danh sách Quy trình bán hàng
    */
   const loadSaleflowApproaches = async (saleflowId: number) => {
-    const body: any = {
+    const body: Record<string, unknown> = {
       saleflowId,
     };
 
@@ -388,7 +388,7 @@ export default function CreateSaleflow() {
    * Cập nhật lại
    * @param item
    */
-  const updateSaleflowApproach = async (item: any) => {
+  const updateSaleflowApproach = async (item: Record<string, unknown>) => {
     const response = await SaleflowApproachService.update(item);
     if (response.code == 0) {
       loadSaleflowApproaches(saleflowId);
@@ -403,7 +403,7 @@ export default function CreateSaleflow() {
    * @param saleflowId
    */
   const addSaleflowApproach = async (step: number) => {
-    const body: any = {
+    const body: Record<string, unknown> = {
       name: "",
       step,
       activities: "[]",
@@ -425,7 +425,7 @@ export default function CreateSaleflow() {
     setCheckFieldApproach(false);
 
     const value = e.target.value;
-    let item: any = {};
+    let item: Record<string, unknown> = {};
 
     if (value) {
       listApproach.map((obj, index) => {

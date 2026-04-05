@@ -11,7 +11,7 @@ import { isDifferenceObj, formatCurrency } from "reborn-util";
 import { useActiveElement } from "utils/hookCustom";
 // import { IWarehouseBook } from "assets/mock/WarehouseBook";
 
-export default function AddWarehouseBookModal(props: any) {
+export default function AddWarehouseBookModal(props: Record<string, unknown>) {
   const { onShow, onHide, data } = props;
   const isViewMode = !!data;
 

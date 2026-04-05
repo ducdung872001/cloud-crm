@@ -103,7 +103,7 @@ export default function MultiChannelOrders() {
       a.href = url;
       a.download = `don_hang_da_kenh_${new Date().toISOString().slice(0, 10)}.xlsx`;
       document.body.appendChild(a); a.click(); a.remove(); URL.revokeObjectURL(url);
-    } catch (e: any) {
+    } catch (e: unknown) {
       console.error("Export failed", e);
       alert(e?.message ?? "Xuất Excel thất bại. Vui lòng thử lại.");
     } finally {
@@ -111,7 +111,7 @@ export default function MultiChannelOrders() {
     }
   };
 
-  const fetchData = async (paramsSearch: any) => {
+  const fetchData = async (paramsSearch: Record<string, unknown>) => {
     //   setIsLoading(true);
 
     const response = await OrderRequestService.list(paramsSearch, abortController.signal);
@@ -175,7 +175,7 @@ export default function MultiChannelOrders() {
   const titles = ["Mã đơn", "Kênh", "Khách hàng", "Sản phẩm", "Giá trị", "Trạng thái", "Thời gian", ""];
   const dataFormat = ["", "", "t", "", "", "text-center", ""];
 
-  const dataMappingArray = (item: any, index: number) => [
+  const dataMappingArray = (item: Record<string, unknown>, index: number) => [
     // index + 1,
     <div
       style={{ width: "5rem", cursor: "pointer" }}
@@ -220,14 +220,14 @@ export default function MultiChannelOrders() {
           title={
             item.orderInfo && JSON.parse(item.orderInfo)
               ? JSON.parse(item.orderInfo)
-                  .items.map((i: any) => i.name)
+                  .items.map((i: Record<string, unknown>) => i.name)
                   .join(", ")
               : ""
           }
         >
           {item.orderInfo && JSON.parse(item.orderInfo)
             ? JSON.parse(item.orderInfo)
-                .items.map((i: any) => i.name)
+                .items.map((i: Record<string, unknown>) => i.name)
                 .join(", ")
             : ""}
         </span>
@@ -235,7 +235,7 @@ export default function MultiChannelOrders() {
     </div>,
     item.orderInfo && JSON.parse(item.orderInfo)
       ? JSON.parse(item.orderInfo)
-          .items.reduce((total: number, i: any) => total + i.price * i.qty, 0)
+          .items.reduce((total: number, i: Record<string, unknown>) => total + i.price * i.qty, 0)
           .toLocaleString("vi-VN", { style: "currency", currency: "VND" })
       : 0,
     <Badge
@@ -357,7 +357,7 @@ export default function MultiChannelOrders() {
     },
   ];
 
-  const actionsTable = (item: any): IAction[] => {
+  const actionsTable = (item: Record<string, unknown>): IAction[] => {
     return [
       //   {
       //     title: "Xem chi tiết",

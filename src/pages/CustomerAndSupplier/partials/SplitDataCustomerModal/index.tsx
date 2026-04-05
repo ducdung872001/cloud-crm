@@ -20,7 +20,7 @@ import { getPageOffset } from "reborn-util";
 import { BulkActionItemModel } from "components/bulkAction/bulkAction";
 import TableTeamEmployee from "./partials/TableTeamEmployee";
 
-export default function SplitDataCustomerModal(props: any) {
+export default function SplitDataCustomerModal(props: Record<string, unknown>) {
   const { onShow, onHide, paramsCustomerList, pagination, listIdChecked } = props;  
   const { dataBranch } = useContext(UserContext) as ContextType;
   const [isSubmit, setIsSubmit] = useState<boolean>(false);
@@ -39,7 +39,7 @@ export default function SplitDataCustomerModal(props: any) {
   
   const [tabDepartment, setTabDepartment] = useState(1);
   
-  const [params, setParams] = useState<any>({
+  const [params, setParams] = useState<Record<string, unknown>>({
     name: "",
     limit: 100,
     page: 1,
@@ -59,7 +59,7 @@ export default function SplitDataCustomerModal(props: any) {
 
   const abortController = new AbortController();
 
-  const getListTableEmployee = async (paramsSearch: any, tabDepartment) => {
+  const getListTableEmployee = async (paramsSearch: Record<string, unknown>, tabDepartment) => {
     setIsLoading(true);
     let response = null;
 
@@ -99,13 +99,13 @@ export default function SplitDataCustomerModal(props: any) {
   const titles = ["STT", "Tên nhân viên",  "Phòng ban"];
   const dataFormat = ["text-center", "", ""];
 
-  const dataMappingArray = (item: any, index: number) => [
+  const dataMappingArray = (item: Record<string, unknown>, index: number) => [
     getPageOffset(params) + index + 1,
     item.name || item?.employee?.name,
     item.departmentName || item?.employee?.departmentName,
   ];
 
-  const actionsTable = (item: any): IAction[] => {
+  const actionsTable = (item: Record<string, unknown>): IAction[] => {
     return [];
   };
 
@@ -153,7 +153,7 @@ export default function SplitDataCustomerModal(props: any) {
   }, [listEmployee, params, onShow, tabDepartment]);
 
   const loadedOptionTeamEmployee = async (search, loadedOptions, { page }) => {
-    const param: any = {
+    const param: Record<string, unknown> = {
       name: search,
       page: page,
       limit: 10,
@@ -188,7 +188,7 @@ export default function SplitDataCustomerModal(props: any) {
     getListEmployeeFromTeam(e.value);
   };
 
-  const getListEmployeeFromTeam = async (groupId: any) => {
+  const getListEmployeeFromTeam = async (groupId: Record<string, unknown>) => {
     const params = {
       groupId: groupId,
       limit: 1000

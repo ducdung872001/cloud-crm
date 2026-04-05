@@ -181,7 +181,7 @@ function ShareSheet({ dataUrl, debtName, amount, onClose }: ShareSheetProps) {
         });
         return true;
       }
-    } catch (err: any) {
+    } catch (err: unknown) {
       if (err?.name === "AbortError") return true;
     }
     return false;
@@ -272,7 +272,7 @@ function PayModal({ debt, funds, onClose, onSuccess }: PayModalProps) {
       );
       onSuccess(debt.id, remaining);
       onClose();
-    } catch (e: any) {
+    } catch (e: unknown) {
       showToast(e?.message ?? "Có lỗi xảy ra khi thu tiền", "error");
     } finally {
       setSubmitting(false);
@@ -426,7 +426,7 @@ function QRModal({ debt, funds, onClose, onPaid }: QRModalProps) {
   }, [debt.id, debt.amount]);
 
   // Lấy canvas element và extract dataUrl ngay sau khi render
-  const handleQrRef = useCallback((node: any) => {
+  const handleQrRef = useCallback((node: Record<string, unknown>) => {
     const el: HTMLCanvasElement | null = node?.canvas ?? node ?? null;
     if (el) {
       canvasRef.current = el;
@@ -501,7 +501,7 @@ function QRModal({ debt, funds, onClose, onPaid }: QRModalProps) {
           {!qrLoading && !qrError && qrCode && (
             <div className="debt-qr-canvas">
               <QRCodeCanvas
-                ref={handleQrRef as any}
+                ref={handleQrRef as Record<string, unknown>}
                 value={qrCode}
                 size={200}
                 level="M"
@@ -594,7 +594,7 @@ function EditScheduleModal({ debt, onClose, onSaved }: EditScheduleModalProps) {
       showToast("✓ Đã cập nhật hạn thanh toán & lịch nhắc nhở", "success");
       onSaved(debt.id, fromInputDate(dueDate), fromInputDate(reminderDate));
       onClose();
-    } catch (e: any) {
+    } catch (e: unknown) {
       showToast(e?.message ?? "Cập nhật thất bại", "error");
     } finally {
       setSaving(false);
@@ -745,7 +745,7 @@ export default function FinanceDebtManagement() {
       const kindParam = filter === "all" ? undefined : filter;
       await DebtManagementService.exportExcel(kindParam, keyword || undefined);
       showToast("Xuất Excel thành công", "success");
-    } catch (err: any) {
+    } catch (err: unknown) {
       showToast(err?.message ?? "Xuất Excel thất bại. Vui lòng thử lại", "error");
     } finally {
       setIsExporting(false);

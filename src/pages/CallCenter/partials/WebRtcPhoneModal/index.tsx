@@ -17,7 +17,7 @@ import HistoryModal from "../HistoryModal/HistoryModal";
 import { UserContext, ContextType } from "contexts/userContext";
 import CustomerService from "services/CustomerService";
 
-export default function WebRtcPhoneModal(props: any) {
+export default function WebRtcPhoneModal(props: Record<string, unknown>) {
   const { onShow, dataCustomer, onHide, makeCall, hangup, answer, transfer, incomingNumber, callState } = props;
   const user = useContext(UserContext) as ContextType;
   const [dataEmployee, setDataEmployee] = useState(null);

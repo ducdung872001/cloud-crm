@@ -233,11 +233,11 @@ export default function ShiftRulesNotifyTab(props: Props) {
           <div className="send-row">
             <div className="send-label">Gửi đến</div>
             <div className="send-select">
-              <SelectCustom options={receiverOptions} value={value.receiver} onChange={(e: any) => set("receiver", e?.value)} />
+              <SelectCustom options={receiverOptions} value={value.receiver} onChange={(e: Record<string, unknown>) => set("receiver", e?.value)} />
             </div>
             <div className="send-label small">qua</div>
             <div className="send-select small">
-              <SelectCustom options={channelOptions} value={value.channel} onChange={(e: any) => set("channel", e?.value)} />
+              <SelectCustom options={channelOptions} value={value.channel} onChange={(e: Record<string, unknown>) => set("channel", e?.value)} />
             </div>
           </div>
         </div>

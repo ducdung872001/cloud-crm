@@ -21,12 +21,12 @@ import ModalConfigLinkingGrid from "./partials/ModalConfigLinkingGrid";
 import SelectUrlExtention from "./extension/selectUrl/render";
 
 interface FormEditorProps {
-  initialSchema: any;
-  onSchemaChange: (schema: any) => void;
+  initialSchema: Record<string, unknown>;
+  onSchemaChange: (schema: Record<string, unknown>) => void;
   callback: (action: string) => void;
   onClickSaveForm: () => void;
   onClickSelectForm: () => void;
-  dataNode?: any;
+  dataNode?: Record<string, unknown>;
   disableHeader?: boolean;
 }
 
@@ -41,7 +41,7 @@ const FormEditorComponent = ({
 }: FormEditorProps) => {
   const editorContainerRef = useRef(null);
   const formEditorRef = useRef(null);
-  const schemaRef = useRef<any>(null);
+  const schemaRef = useRef<Record<string, unknown>>(null);
   useEffect(() => {
     // Khởi tạo Editor với palette provider tùy chỉnh
     formEditorRef.current = new FormEditor({
@@ -138,11 +138,11 @@ const FormEditorComponent = ({
    * bỏ qua component có id === excludeId.
    * Tránh trả về duplicate dựa trên id (nếu có).
    */
-  function findAllGrids(components: any[] | undefined, excludeId?: string): any[] {
-    const results: any[] = [];
+  function findAllGrids(components: Record<string, unknown>[] | undefined, excludeId?: string): Record<string, unknown>[] {
+    const results: Record<string, unknown>[] = [];
     const seen = new Set<string | undefined>();
 
-    function walk(comps?: any[]) {
+    function walk(comps?: Record<string, unknown>[]) {
       if (!Array.isArray(comps) || comps.length === 0) return;
       for (const c of comps) {
         const id = c.id;
@@ -212,11 +212,11 @@ const FormEditorComponent = ({
 
   // Trả về một bản mới của components với node đầu tiên có id khớp được cập nhật bởi updater
   function updateComponentByIdImmutable(
-    components: any[] | undefined,
+    components: Record<string, unknown>[] | undefined,
     id: string,
-    updater: (node: any) => any,
+    updater: (node: Record<string, unknown>) => Record<string, unknown>,
     stopAfterFirst = true
-  ): { components: any[] | undefined; updated: boolean } {
+  ): { components: Record<string, unknown>[] | undefined; updated: boolean } {
     if (!Array.isArray(components)) return { components, updated: false };
 
     let updated = false;
@@ -251,7 +251,7 @@ const FormEditorComponent = ({
     return { components: newComponents, updated };
   }
 
-  const updateFieldLabel = (fieldId: string, data: any, location?: string): boolean => {
+  const updateFieldLabel = (fieldId: string, data: Record<string, unknown>, location?: string): boolean => {
     const editor = formEditorRef.current;
     if (!editor) {
       console.warn("No editor instance");
@@ -265,7 +265,7 @@ const FormEditorComponent = ({
     }
 
     // updater: nhận node cũ, trả node mới
-    const updater = (node: any) => {
+    const updater = (node: Record<string, unknown>) => {
       const newNode = { ...node };
       try {
         if (location === "linking") {

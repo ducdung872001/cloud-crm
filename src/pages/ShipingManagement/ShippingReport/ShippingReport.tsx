@@ -61,8 +61,8 @@ export default function ShippingReport() {
   ]);
 
   const [summary, setSummary]           = useState(MOCK_REPORT_SUMMARY);
-  const [chartData, setChartData]       = useState<any[]>([]);
-  const [partnerData, setPartnerData]   = useState<any[]>([]);
+  const [chartData, setChartData]       = useState<Record<string, unknown>[]>([]);
+  const [partnerData, setPartnerData]   = useState<Record<string, unknown>[]>([]);
   const [activeMetric, setActiveMetric] = useState<"orders" | "cod">("orders");
 
   useEffect(() => { loadAll(); }, [partnerId, groupBy, dateRange]); // eslint-disable-line
@@ -175,8 +175,8 @@ export default function ShippingReport() {
         borderRadius: 10,
         style: { fontSize: "12.5px" },
         formatter() {
-          const pts = (this as any).points;
-          return `<b>${this.x}</b><br/>${pts.map((p: any) =>
+          const pts = (this as Record<string, unknown>).points;
+          return `<b>${this.x}</b><br/>${pts.map((p: Record<string, unknown>) =>
             `<span style="color:${p.color}">●</span> COD: <b>${formatCurrency(p.y)} đ</b>`
           ).join("<br/>")}`;
         },

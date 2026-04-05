@@ -12,14 +12,14 @@ import ReportBussinessPartnerService from "services/ReportBussinessPartnerServic
 import { useNavigate } from "react-router-dom";
 import Icon from "components/icon";
 
-export default function DetailReportPartnerModal(props: any) {
+export default function DetailReportPartnerModal(props: Record<string, unknown>) {
   const { onShow, reportDetail, onHide, paramsFilter } = props;
   const navigate = useNavigate();
 
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [listOpt, setListOpt] = useState([]);
 
-  const [params, setParams] = useState<any>({
+  const [params, setParams] = useState<Record<string, unknown>>({
     limit: 10,
     page: 1,
   });
@@ -41,7 +41,7 @@ export default function DetailReportPartnerModal(props: any) {
   });
 
   const abortController = new AbortController();
-  const getListReport = async (paramsSearch: any) => {
+  const getListReport = async (paramsSearch: Record<string, unknown>) => {
     setIsLoading(true);
     let paramsTemp = _.cloneDeep(params);
 
@@ -128,7 +128,7 @@ export default function DetailReportPartnerModal(props: any) {
   const dataFormat = ["text-center", "", "", "text-center"];
   const dataFormatContract = ["text-center", "", "", "", "", "", "text-center"];
 
-  const dataMappingArray = (item: any, index: number) => [
+  const dataMappingArray = (item: Record<string, unknown>, index: number) => [
     getPageOffset(params) + index + 1,
     ...(reportDetail?.key == "contractBusinessPartner"
       ? [

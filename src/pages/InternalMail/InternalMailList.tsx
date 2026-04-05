@@ -36,7 +36,7 @@ export default function InternalMailList() {
   const [showModalAdd, setShowModalAdd] = useState<boolean>(false);
   const [showModalOption, setShowModalOption] = useState<boolean>(false);
   const [showDialog, setShowDialog] = useState<boolean>(false);
-  const [contentDialog, setContentDialog] = useState<any>(null);
+  const [contentDialog, setContentDialog] = useState<Record<string, unknown>>(null);
   const [page, setPage] = useState<number>(1);
   const [hasMore, setHasMore] = useState<boolean>(false);
   const [listMailbox, setListMailbox] = useState<IMailBoxResponseModel[]>([]);

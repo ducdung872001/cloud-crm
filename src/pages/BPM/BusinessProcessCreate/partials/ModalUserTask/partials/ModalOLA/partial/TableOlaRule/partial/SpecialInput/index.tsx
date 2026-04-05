@@ -6,10 +6,10 @@ import React, { memo } from "react";
 import "./index.scss";
 
 interface SpecialInputProps {
-  field: any;
+  field: Record<string, unknown>;
   rowIndex: number;
   fieldIndex: number;
-  handChangeValueItem: (rowIndex: number, fieldIndex: number, value: any, type: "compare" | "number" | "date") => void;
+  handChangeValueItem: (rowIndex: number, fieldIndex: number, value: Record<string, unknown>, type: "compare" | "number" | "date") => void;
 }
 
 // const areEqual = (prevProps: SpecialInputProps, nextProps: SpecialInputProps) => {

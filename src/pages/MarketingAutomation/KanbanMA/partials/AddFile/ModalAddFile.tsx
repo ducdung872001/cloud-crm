@@ -37,7 +37,7 @@ import ImgFileExcel from "assets/images/img-excel.png";
 import ImgFilePowerpoint from "assets/images/img-powerpoint.png";
 import SelectCustom from "components/selectCustom/selectCustom";
 
-export default function ModalAddFile(props: any) {
+export default function ModalAddFile(props: Record<string, unknown>) {
   const { onShow, onHide, dataNode, setDataNode, statusMA } = props;
   console.log("dataNode", dataNode);
 
@@ -210,7 +210,7 @@ export default function ModalAddFile(props: any) {
         request.onload = function () {
           const reader = new FileReader();
           reader.readAsDataURL(request.response);
-          reader.onload = function (e: any) {
+          reader.onload = function (e: Record<string, unknown>) {
             const data = {
               fileName: `${convertToFileName(item?.fileName || "")}`,
               fileData: e.target.result.split(",")[1],
@@ -238,7 +238,7 @@ export default function ModalAddFile(props: any) {
 
     setIsSubmit(true);
 
-    const body: any = {
+    const body: Record<string, unknown> = {
       ...dataNode,
       configData: { ...formData.values, content: desContent, files: dataAttactment },
       point: nodePoint,

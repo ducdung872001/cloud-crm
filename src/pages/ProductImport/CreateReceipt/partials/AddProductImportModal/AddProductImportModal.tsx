@@ -51,7 +51,7 @@ const buildVariantLabel = (selectedOptions: Array<{ optionName?: string; value?:
   return parts.length > 0 ? parts.join(" · ") : "Mặc định";
 };
 
-const buildVariantDisplayLabel = (variant: any): string => {
+const buildVariantDisplayLabel = (variant: Record<string, unknown>): string => {
   const optionName = variant?.optionName?.trim?.();
   if (optionName) return optionName;
 
@@ -87,14 +87,14 @@ export default function AddProductImportModal(props: AddProductImportModalProps)
   const queryDebounce = useDebounce(valueBatchNo, 500);
 
   // ── Async load sản phẩm (giữ nguyên pattern cũ) ───────────────────────────
-  const loadedOptionProduct = async (search: string, _loadedOptions: any, { page }: { page: number }) => {
+  const loadedOptionProduct = async (search: string, _loadedOptions: Record<string, unknown>, { page }: { page: number }) => {
     const param: IProductFilterRequest = { name: search, page, limit: 10 };
     const response = await ProductService.list(param);
 
     if (response.code === 0) {
       const items = response.result.items || [];
       return {
-        options: items.map((item: any) => ({
+        options: items.map((item: Record<string, unknown>) => ({
           value: item.id,
           label: item.name,
           avatar: item.avatar,
@@ -128,7 +128,7 @@ export default function AddProductImportModal(props: AddProductImportModalProps)
       ).then((r) => r.json());
 
       if (res.code === 0) {
-        const items: any[] = res.result?.items ?? res.result ?? [];
+        const items: Record<string, unknown>[] = res.result?.items ?? res.result ?? [];
         console.log("variant sample:", items[0]);
 
         const opts: IVariantOption[] = items.map((v) => ({
@@ -238,7 +238,7 @@ export default function AddProductImportModal(props: AddProductImportModalProps)
       expiryDate: data?.expiryDate ?? "",
       quantity: data?.quantity?.toString() ?? "",
       mainCost: data?.mainCost?.toString() ?? "",
-      discount: (data as any)?.discount?.toString() ?? "0",
+      discount: (data as Record<string, unknown>)?.discount?.toString() ?? "0",
     } as IInvoiceDetailRequest & { discount?: string }),
     [data, onShow, invoiceId]
   );
@@ -311,7 +311,7 @@ export default function AddProductImportModal(props: AddProductImportModalProps)
               unitName: v.unitName,
             }))}
             isFormatOptionLabel={true}
-            formatOptionLabel={(opt: any) => (
+            formatOptionLabel={(opt: Record<string, unknown>) => (
               <div className="selected--item variant-option-item">
                 <div className="variant-option-main">
                   <span>{opt.label}</span>
@@ -335,7 +335,7 @@ export default function AddProductImportModal(props: AddProductImportModalProps)
                     : "Chọn biến thể"
             }
             disabled={!selectedProduct || isLoadingVariants || variantOptions.length === 0}
-            onChange={(e: any) => {
+            onChange={(e: Record<string, unknown>) => {
               const found = variantOptions.find((v) => v.value === e.value);
               if (found) applyVariant(found);
             }}
@@ -452,7 +452,7 @@ export default function AddProductImportModal(props: AddProductImportModalProps)
       return;
     }
 
-    const discountVal = parseFloat((formData.values as any).discount ?? "0") || 0;
+    const discountVal = parseFloat((formData.values as Record<string, unknown>).discount ?? "0") || 0;
 
     const body: IInvoiceDetailRequest = {
       ...(data ? { id: data.id } : {}),

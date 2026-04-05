@@ -75,7 +75,7 @@ const getDetailArtifact = async (nodeId, fieldName, potId, workId) => {
   }
 };
 
-export const getDataGrid = async (actionRow, params): Promise<{ columns: ColDef[]; data: any[]; typeNo: TypeNo; columnsConfig: any } | undefined> => {
+export const getDataGrid = async (actionRow, params): Promise<{ columns: ColDef[]; data: Record<string, unknown>[]; typeNo: TypeNo; columnsConfig: Record<string, unknown> } | undefined> => {
   try {
     // Your async logic here
     console.log("Fetching data...");
@@ -85,7 +85,7 @@ export const getDataGrid = async (actionRow, params): Promise<{ columns: ColDef[
       params?.potId || defaultNote.potId,
       params?.workId || defaultNote.workId
     );
-    const dataDetailRow: any = await getDetailRow(
+    const dataDetailRow: Record<string, unknown> = await getDetailRow(
       params?.noteId || defaultNote.noteId,
       params?.fieldName || defaultNote.fieldName,
       params?.potId || defaultNote.potId,
@@ -122,11 +122,11 @@ export const getDataGrid = async (actionRow, params): Promise<{ columns: ColDef[
 };
 
 export const generateColumns = (header, actionRow, typeNo, params) => {
-  const columnsForGrid: any = header
+  const columnsForGrid: Record<string, unknown> = header
     .map((col) => {
       const editable = col.readOnly != 1 && params?.enableEditCell && col.type != "checkbox" && col.type != "radio" ? true : false;
 
-      let column: any = {
+      let column: Record<string, unknown> = {
         headerName: col.name,
         field: col.key,
         sortable: true,
@@ -194,7 +194,7 @@ export const generateColumns = (header, actionRow, typeNo, params) => {
       return column;
     })
     .sort((a, b) => a.position - b.position);
-  let columnLast: any = {
+  let columnLast: Record<string, unknown> = {
     headerName: "Làm rõ",
     field: "cot-lam-ro",
     sortable: false,
@@ -324,7 +324,7 @@ export const getDataConfig = (actionRow) => {
         headerName: "STT",
         name: "STT",
         key: "stt",
-        valueGetter: (params: any) => params.node.rowIndex + 1,
+        valueGetter: (params: Record<string, unknown>) => params.node.rowIndex + 1,
         width: 80,
         cellStyle: { textAlign: "center" },
       },

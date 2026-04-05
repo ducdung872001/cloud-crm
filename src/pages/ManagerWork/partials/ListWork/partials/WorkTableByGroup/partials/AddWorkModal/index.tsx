@@ -26,7 +26,7 @@ import { buildListFieldAssign } from "model/assign/buildListFieldAssign";
 export default function AddWorkModal(props: IAddWorkModelProps) {
   const { onShow, onHide, idWork, idManagement, startDate, endDate, dataProjectProps, statusProps } = props;
 
-  const [data, setData] = useState<any>(null);
+  const [data, setData] = useState<Record<string, unknown>>(null);
 
   const focusedElement = useActiveElement();
 
@@ -43,13 +43,13 @@ export default function AddWorkModal(props: IAddWorkModelProps) {
     }
   }, [onShow]);
 
-  const [dataWorkProject, setDataWorkProject] = useState<any>(null);
-  const [dataWorkType, setDataWorkType] = useState<any>(null);
+  const [dataWorkProject, setDataWorkProject] = useState<Record<string, unknown>>(null);
+  const [dataWorkType, setDataWorkType] = useState<Record<string, unknown>>(null);
 
-  const [dataManager, setDataManager] = useState<any>(null);
-  const [dataEmployee, setDataEmployee] = useState<any>(null);
+  const [dataManager, setDataManager] = useState<Record<string, unknown>>(null);
+  const [dataEmployee, setDataEmployee] = useState<Record<string, unknown>>(null);
 
-  const [listImageWork, setListImageWork] = useState<any[]>([]);
+  const [listImageWork, setListImageWork] = useState<Record<string, unknown>[]>([]);
   const [validateWordLoad, setValidateWordLoad] = useState(false);
 
   const refContainerTimeWorkLoad = useRef<HTMLDivElement | null>(null);
@@ -66,13 +66,13 @@ export default function AddWorkModal(props: IAddWorkModelProps) {
   );
 
   const [isOptionTimeWorkLoad, setIsOptionTimeWorkLoad] = useState(false);
-  const [dataTimeWorkLoad, setDataTimeWorkLoad] = useState<any>(listOptionTimeWorkLoad[0]);
+  const [dataTimeWorkLoad, setDataTimeWorkLoad] = useState<Record<string, unknown>>(listOptionTimeWorkLoad[0]);
 
   const getDetailWork = async (id: number) => {
     const response = await WorkOrderService.detail(id);
 
     if (response.code == 0) {
-      const result: any = response.result;
+      const result: Record<string, unknown> = response.result;
 
       setDataWorkProject({
         value: result.projectId,
@@ -383,10 +383,10 @@ export default function AddWorkModal(props: IAddWorkModelProps) {
     [listImageWork, dataWorkProject, validateProject, dataWorkType, handleChange]
   );
 
-  const formatOptionLabelManager = (opt: any) => opt?.label ?? opt?.name ?? "";
-  const formatOptionLabelEmployee = (opt: any) => opt?.label ?? opt?.name ?? "";
+  const formatOptionLabelManager = (opt: Record<string, unknown>) => opt?.label ?? opt?.name ?? "";
+  const formatOptionLabelEmployee = (opt: Record<string, unknown>) => opt?.label ?? opt?.name ?? "";
 
-  const handleChangeValueManager = (e: any) => {
+  const handleChangeValueManager = (e: Record<string, unknown>) => {
     setDataManager(e);
     setFormData((prev) => ({
       ...prev,
@@ -402,11 +402,11 @@ export default function AddWorkModal(props: IAddWorkModelProps) {
     }));
   };
 
-  const handleChangeValueWorkLoad = (e: any) => {
+  const handleChangeValueWorkLoad = (e: Record<string, unknown>) => {
     const value = e?.floatValue ?? e?.value ?? e ?? "";
     setValidateWordLoad(value === "" || value === null || value === undefined);
 
-    setFormData((prev: any) => ({
+    setFormData((prev: Record<string, unknown>) => ({
       ...prev,
       values: { ...prev.values, workLoad: value },
     }));
@@ -471,7 +471,7 @@ export default function AddWorkModal(props: IAddWorkModelProps) {
   const buildWorkOrderBodyForBE = ({ values, includeAssign, id }) => {
     const v = values ?? {};
 
-    const body: any = {
+    const body: Record<string, unknown> = {
       name: v.name ?? "",
       content: v.content ?? "",
       wteId: v.wteId ?? null,
@@ -533,7 +533,7 @@ export default function AddWorkModal(props: IAddWorkModelProps) {
     setIsSubmit(true);
 
     try {
-      const localValues: any = { ...(formData.values ?? {}) };
+      const localValues: Record<string, unknown> = { ...(formData.values ?? {}) };
 
       const isUpdate = !!(data?.id ?? localValues?.id);
       const id = (data?.id ?? localValues?.id) ?? undefined;
@@ -550,7 +550,7 @@ export default function AddWorkModal(props: IAddWorkModelProps) {
         id,
       });
 
-      let response: any;
+      let response: Record<string, unknown>;
 
       if (showAssign) {
         response = await WorkOrderService.updateAndInit(body);

@@ -9,7 +9,7 @@ import KanbanCommon from "components/kanbanCommon";
 import OrderRequestService from "services/OrderRequestService";
 import { formatCurrency } from "reborn-util";
 
-export default function KanbanOrderTracking(props: any) {
+export default function KanbanOrderTracking(props: Record<string, unknown>) {
   const {
     processCode,
     setShowModalRequestDetail, 
@@ -279,7 +279,7 @@ export default function KanbanOrderTracking(props: any) {
   );
 
   const OrderRequestServiceList = useCallback(
-    async (params: any, signal?: AbortSignal) => {
+    async (params: Record<string, unknown>, signal?: AbortSignal) => {
       let mergedParams = {
         ...params,
         ...(processCode ? { bsnId: processCode } : {}),

@@ -21,7 +21,7 @@ import EmployeeService from "services/EmployeeService";
 import { BulkActionItemModel } from "components/bulkAction/bulkAction";
 import TeamEmployeeService from "services/TeamEmployeeService";
 
-export default function EmployeeListModal(props: any) {
+export default function EmployeeListModal(props: Record<string, unknown>) {
   const { onShow, onHide, dataTeam } = props;
   const focusedElement = useActiveElement();
   const { dataBranch } = useContext(UserContext) as ContextType;
@@ -59,7 +59,7 @@ export default function EmployeeListModal(props: any) {
   
   const abortController = new AbortController();
 
-  const getListEmployee = async (paramsSearch: any) => {
+  const getListEmployee = async (paramsSearch: Record<string, unknown>) => {
     setIsLoading(true);
 
     const response = await TeamEmployeeService.listEmployee(paramsSearch, abortController.signal);
@@ -88,14 +88,14 @@ export default function EmployeeListModal(props: any) {
   const titles = ["STT", "Tên nhân viên", "Phòng ban", "Chức vụ"];
   const dataFormat = ["text-center", "", "", ""];
 
-  const dataMappingArray = (item: any, index: number) => [
+  const dataMappingArray = (item: Record<string, unknown>, index: number) => [
     getPageOffset(params) + index + 1,
     item.employee.name,
     item.employee.departmentName,
     item.employee.jteName,
   ];
 
-  const actionsTable = (item: any): IAction[] => {
+  const actionsTable = (item: Record<string, unknown>): IAction[] => {
     return [
       {
         title: "Sửa",
@@ -115,7 +115,7 @@ export default function EmployeeListModal(props: any) {
     ];
   };
 
-  const showDialogConfirmDelete = (item?: any) => {
+  const showDialogConfirmDelete = (item?: Record<string, unknown>) => {
     const contentDialog: IContentDialog = {
       color: "error",
       className: "dialog-delete",
@@ -246,7 +246,7 @@ export default function EmployeeListModal(props: any) {
         id: dataEmployee?.id ?? 0,
         employeeId: dataEmployee?.employeeId ?? 0,
         groupId: dataEmployee?.groupId ?? dataTeam?.id ?? 0,
-      } as any),
+      } as Record<string, unknown>),
     [onShow, dataEmployee, dataTeam]
   );
 
@@ -350,7 +350,7 @@ export default function EmployeeListModal(props: any) {
     setIsSubmit(true);
 
     const body = {
-      ...(formData.values as any),
+      ...(formData.values as Record<string, unknown>),
     };
 
     const response = await TeamEmployeeService.updateEmployee(body);

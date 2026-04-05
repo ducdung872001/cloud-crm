@@ -10,7 +10,7 @@ import { ProductVariant, useGetDetailProduct, VariantProduct } from "@/hooks/use
 
 interface VariantModalProps {
   open: boolean;
-  productData: any;
+  productData: Record<string, unknown>;
   onClose: () => void;
   onAddToCart: (item: Omit<CartItem, "qty"> & { qty: number }) => void;
 }

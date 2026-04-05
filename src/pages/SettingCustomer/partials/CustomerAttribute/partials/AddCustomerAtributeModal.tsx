@@ -33,12 +33,12 @@ export default function AddCustomerAttributeModal(props: AddCustomerAttributeMod
 
   const [listCustomerAttribute, setListCustomerAttribute] = useState<IOption[]>(null);
   const [isLoadingCustomerAttribute, setIsLoadingCustomerAttribute] = useState<boolean>(false);
-  const [addFieldAttributes, setAddFieldAttributes] = useState<any[]>([{ value: '', label: '' }]);
-  const [detailLookup, setDetailLookup] = useState<any>("contract");
-  const [numberFormat, setNumberFormat] = useState<any>('');
+  const [addFieldAttributes, setAddFieldAttributes] = useState<Record<string, unknown>[]>([{ value: '', label: '' }]);
+  const [detailLookup, setDetailLookup] = useState<Record<string, unknown>>("contract");
+  const [numberFormat, setNumberFormat] = useState<Record<string, unknown>>('');
 
   //Cần đổi lại thành khách hàng
-  const [customerAttributeFields, setCustomerAttributeFields] = useState<any>(null); //Khởi tạo null là quan trọng
+  const [customerAttributeFields, setCustomerAttributeFields] = useState<Record<string, unknown>>(null); //Khởi tạo null là quan trọng
   const [showFields, setShowFields] = useState<boolean>(false);
   const [selectedFormula, setSelectedFormula] = useState<string>("");
   const [cursorPosition, setCursorPosition] = useState<number>(0);

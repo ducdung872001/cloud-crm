@@ -2,8 +2,8 @@ export interface ITicketProcResponse {
   id: number;
   name: string;
   position: number;
-  startDate: any;
-  endDate: any;
+  startDate: string | Date;
+  endDate: string | Date;
   branchId?: number;
-  status: any;
+  status: string | number;
 }

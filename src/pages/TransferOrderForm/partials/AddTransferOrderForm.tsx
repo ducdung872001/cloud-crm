@@ -34,9 +34,9 @@ const TRANSFER_STATUS_LABEL: Record<number, string> = {
   3: "Đã hủy",
 };
 
-const getApiPayload = (response: any) => response?.result ?? response?.data ?? {};
+const getApiPayload = (response: Record<string, unknown>) => response?.result ?? response?.data ?? {};
 
-const getApiItems = (payload: any) => {
+const getApiItems = (payload: Record<string, unknown>) => {
   if (Array.isArray(payload)) return payload;
   if (Array.isArray(payload?.items)) return payload.items;
   if (Array.isArray(payload?.content)) return payload.content;
@@ -55,12 +55,12 @@ export default function AddTransferOrderForm(props) {
   const [showDialog, setShowDialog] = useState(false);
   const [contentDialog, setContentDialog] = useState<IContentDialog>(null);
   const [showModalAdd, setShowModalAdd] = useState(false);
-  const [dataInventoryOrg, setDataInventoryOrg] = useState<any>(null);
-  const [dataInventoryArrive, setDataInventoryArrive] = useState<any>(null);
+  const [dataInventoryOrg, setDataInventoryOrg] = useState<Record<string, unknown>>(null);
+  const [dataInventoryArrive, setDataInventoryArrive] = useState<Record<string, unknown>>(null);
   const [isSubmit, setIsSubmit] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [note, setNote] = useState("");
-  const [listInventory, setListInventory] = useState<any[]>([]);
+  const [listInventory, setListInventory] = useState<Record<string, unknown>[]>([]);
   const [isLoadingInventory, setIsLoadingInventory] = useState(false);
   const [pendingRowKey, setPendingRowKey] = useState<string | null>(null);
 
@@ -82,7 +82,7 @@ export default function AddTransferOrderForm(props) {
 
   const getRowKey = (item: ITransferProduct) => `${item.detailId ?? "new"}_${item.productId}_${item.variantId ?? 0}`;
 
-  const mapDetailToRow = useCallback((detail: any, warehouseId?: number, warehouseLabel?: string): ITransferProduct => ({
+  const mapDetailToRow = useCallback((detail: Record<string, unknown>, warehouseId?: number, warehouseLabel?: string): ITransferProduct => ({
     detailId: detail.id,
     productId: detail.productId,
     variantId: detail.variantId,
@@ -112,7 +112,7 @@ export default function AddTransferOrderForm(props) {
         const data = Array.isArray(res.result)
           ? res.result
           : Array.isArray(res.result?.items) ? res.result.items : [];
-        const mapped = data.map((i: any) => ({ value: i.id, label: i.name }));
+        const mapped = data.map((i: Record<string, unknown>) => ({ value: i.id, label: i.name }));
         setListInventory(mapped);
         return mapped;
       }
@@ -130,7 +130,7 @@ export default function AddTransferOrderForm(props) {
       return;
     }
     const detailItems = getApiItems(getApiPayload(detailRes));
-    setLstProducts(detailItems.map((d: any) => mapDetailToRow(d, warehouseId, warehouseLabel)));
+    setLstProducts(detailItems.map((d: Record<string, unknown>) => mapDetailToRow(d, warehouseId, warehouseLabel)));
   }, [mapDetailToRow]);
 
   const loadTransfer = useCallback(async (transferIdToLoad: number) => {
@@ -151,8 +151,8 @@ export default function AddTransferOrderForm(props) {
       setTransferStatus(transfer.status ?? 0);
       setNote(transfer.note ?? "");
 
-      const orgOpt = inventoryOptions.find((o: any) => o.value === transfer.fromWarehouseId) ?? null;
-      const arrOpt = inventoryOptions.find((o: any) => o.value === transfer.toWarehouseId) ?? null;
+      const orgOpt = inventoryOptions.find((o: Record<string, unknown>) => o.value === transfer.fromWarehouseId) ?? null;
+      const arrOpt = inventoryOptions.find((o: Record<string, unknown>) => o.value === transfer.toWarehouseId) ?? null;
       setDataInventoryOrg(orgOpt);
       setDataInventoryArrive(arrOpt);
 
@@ -184,7 +184,7 @@ export default function AddTransferOrderForm(props) {
     })));
   }, [dataInventoryOrg]);
 
-  const handChangeDataProps = (data: any[]) => {
+  const handChangeDataProps = (data: Record<string, unknown>[]) => {
     const newItems: ITransferProduct[] = data.map((item) => ({
       detailId: undefined,
       productId: item.productId,

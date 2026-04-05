@@ -135,7 +135,7 @@ export default function SelectUrlCustom(props: SelectCustomProps) {
   const listBindingField = bindingField ? bindingField.split(",").map((item) => item.trim()) : [];
 
   const [onFocusSelect, setOnFocusSelect] = useState<boolean>(false);
-  const [internalValue, setInternalValue] = useState<any>(isMulti ? [] : null);
+  const [internalValue, setInternalValue] = useState<Record<string, unknown>>(isMulti ? [] : null);
 
   const listOptions = useRef([]);
   console.log("value", value);
@@ -218,7 +218,7 @@ export default function SelectUrlCustom(props: SelectCustomProps) {
 
   const [onHasValue, setOnHasValue] = useState<boolean>(hasValueParams());
 
-  const refSelectDefault = useRef<any>(null);
+  const refSelectDefault = useRef<Record<string, unknown>>(null);
 
   // --- api phân trang ---
   const internalLoadOptionsPaginate = async (search, loadedOptions, { page }) => {

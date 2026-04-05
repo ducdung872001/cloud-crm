@@ -98,7 +98,7 @@ export default function CollectWarranty() {
         content: "",
         docLink: "[]",
         statusId: null,
-      } as any),
+      } as Record<string, unknown>),
     []
   );
 
@@ -137,7 +137,7 @@ export default function CollectWarranty() {
 
   //! đoạn này xử lý vấn đề lấy ra danh sách khách hàng
   const loadedOptionCustomer = async (search, loadedOptions, { page }) => {
-    const param: any = {
+    const param: Record<string, unknown> = {
       keyword: search,
       page: page,
       limit: 10,
@@ -217,7 +217,7 @@ export default function CollectWarranty() {
   //   }
   // }, [idCustomer, onShow, data?.customerId]);
 
-  const listFieldVoteInfo: any[] = [
+  const listFieldVoteInfo: Record<string, unknown>[] = [
     {
       label: "Tên khách hàng",
       name: "customerName",

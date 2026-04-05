@@ -76,7 +76,7 @@ const [pagination, setPagination] = useState<PaginationProps>({
 const [ticketList, setTicketList] = useState([]);
 const abortController = new AbortController();
 
-const getListTicket = async (paramsSearch: any) => {
+const getListTicket = async (paramsSearch: Record<string, unknown>) => {
     setIsLoading(true);
 
     const response = await TicketService.list(paramsSearch, abortController.signal);
@@ -133,7 +133,7 @@ const dataMappingArray = (item: ITicketResponseModel, index: number) => [
     />,
   ];
 
-    const actionsTable = (item: any): IAction[] => {
+    const actionsTable = (item: Record<string, unknown>): IAction[] => {
         
         return [
         
@@ -155,7 +155,7 @@ const dataMappingArray = (item: ITicketResponseModel, index: number) => [
         ];
     };
 
-    const showDialogConfirmDelete = (item?: any) => {
+    const showDialogConfirmDelete = (item?: Record<string, unknown>) => {
         const contentDialog: IContentDialog = {
           color: "error",
           className: "dialog-delete",

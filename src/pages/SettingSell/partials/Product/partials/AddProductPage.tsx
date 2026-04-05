@@ -26,7 +26,7 @@ type PageTab = "info" | "variants";
 
 interface AddProductPageProps {
   idProduct: number | null;
-  data?: any;
+  data?: Record<string, unknown>;
   onBack: (reload: boolean) => void;
   preFillBarcode?: string | null;
 }
@@ -185,7 +185,7 @@ const ZXING_CDN = "https://cdn.jsdelivr.net/npm/@zxing/browser@0.1.5/umd/index.m
 
 function loadZXingScript(): Promise<void> {
   return new Promise((resolve, reject) => {
-    if ((window as any).ZXingBrowser) { resolve(); return; }
+    if ((window as Record<string, unknown>).ZXingBrowser) { resolve(); return; }
     const existing = document.querySelector(`script[src="${ZXING_CDN}"]`);
     if (existing) {
       existing.addEventListener("load", () => resolve());
@@ -203,7 +203,7 @@ function loadZXingScript(): Promise<void> {
 
 function BarcodeScannerModal({ onScan, onClose }: { onScan: (barcode: string) => void; onClose: () => void }) {
   const videoRef = useRef<HTMLVideoElement>(null);
-  const readerRef = useRef<any>(null);
+  const readerRef = useRef<Record<string, unknown>>(null);
   const [error, setError] = useState<string>("");
   const [status, setStatus] = useState<"loading" | "ready" | "error">("loading");
 
@@ -216,7 +216,7 @@ function BarcodeScannerModal({ onScan, onClose }: { onScan: (barcode: string) =>
         await loadZXingScript();
         if (cancelled) return;
 
-        const ZXing = (window as any).ZXingBrowser;
+        const ZXing = (window as Record<string, unknown>).ZXingBrowser;
         if (!ZXing?.BrowserMultiFormatReader) {
           throw new Error("Thư viện ZXing chưa sẵn sàng, vui lòng thử lại.");
         }
@@ -229,13 +229,13 @@ function BarcodeScannerModal({ onScan, onClose }: { onScan: (barcode: string) =>
         await reader.decodeFromVideoDevice(
           undefined,
           videoRef.current,
-          (result: any, err: any) => {
+          (result: Record<string, unknown>, err: Record<string, unknown>) => {
             if (cancelled || !result) return;
             reader.reset();
             onScan(result.getText());
           }
         );
-      } catch (err: any) {
+      } catch (err: unknown) {
         if (cancelled) return;
         const msg = err?.message || String(err);
         if (msg.includes("NotAllowed") || msg.includes("Permission")) {
@@ -315,7 +315,7 @@ function VariantImagePicker({ images, onChange }: { images: string[]; onChange: 
       setUploadingCount((c) => c + 1);
       FileService.uploadFile({
         data: file,
-        onSuccess: (result: any) => {
+        onSuccess: (result: Record<string, unknown>) => {
           const url = result?.fileUrl || result;
           setUploadingCount((c) => c - 1);
           onChange([...imagesRef.current, url]);
@@ -460,7 +460,7 @@ export default function AddProductPage({ idProduct, data, onBack, preFillBarcode
   // Scanner cho barcode theo từng đơn vị tính
   const [scanningUnitKey, setScanningUnitKey] = useState<{ comboKey: string; tempId: string } | null>(null);
 
-  const setField = (key: string, value: any) => setFormData((prev) => ({ ...prev, [key]: value }));
+  const setField = (key: string, value: Record<string, unknown>) => setFormData((prev) => ({ ...prev, [key]: value }));
 
   const buildProductWebUrl = () => {
     const slug = formData.name
@@ -525,7 +525,7 @@ export default function AddProductPage({ idProduct, data, onBack, preFillBarcode
     }
   }, [combinations.length > 0]);
 
-  const preFill = (p: any) => {
+  const preFill = (p: Record<string, unknown>) => {
     setFormData((prev) => ({
       ...prev,
       name: p.name || "",
@@ -557,27 +557,27 @@ export default function AddProductPage({ idProduct, data, onBack, preFillBarcode
     // ── Load biến thể từ API ──
     if (p.variantGroups?.length) {
       // Map variantGroups → variantAttrs
-      const attrs: VariantAttribute[] = p.variantGroups.map((g: any) => ({
+      const attrs: VariantAttribute[] = p.variantGroups.map((g: Record<string, unknown>) => ({
         tempId: genId(),
         id: g.id ?? null,
         name: g.name,
-        values: [...new Set((g.options || []).map((o: any) => o.label as string))],
-        optionIds: Object.fromEntries((g.options || []).map((o: any) => [o.label, o.id])),
+        values: [...new Set((g.options || []).map((o: Record<string, unknown>) => o.label as string))],
+        optionIds: Object.fromEntries((g.options || []).map((o: Record<string, unknown>) => [o.label, o.id])),
         inputVal: "",
       }));
       setVariantAttrs(attrs);
 
       // Map variants → combinations (bỏ qua biến thể "Mac dinh" / default)
-      const realVariants = (p.variants || []).filter((v: any) => v.label !== "Mac dinh");
+      const realVariants = (p.variants || []).filter((v: Record<string, unknown>) => v.label !== "Mac dinh");
 
       if (realVariants.length) {
-        const combos: VariantCombination[] = realVariants.map((v: any) => {
+        const combos: VariantCombination[] = realVariants.map((v: Record<string, unknown>) => {
           // variantPrices: BE có thể trả field tên khác (prices / variantPrices / units)
-          const rawUnitPrices: any[] =
+          const rawUnitPrices: Record<string, unknown>[] =
             v.variantPrices ?? v.prices ?? v.units ?? [];
           const mappedUnitPrices =
             rawUnitPrices.length > 0
-              ? rawUnitPrices.map((u: any) => ({
+              ? rawUnitPrices.map((u: Record<string, unknown>) => ({
                   tempId: genId(),
                   id: u.id ?? null,
                   unitId: u.unitId ?? u.unit_id ?? null,
@@ -599,12 +599,12 @@ export default function AddProductPage({ idProduct, data, onBack, preFillBarcode
 
           // Tạo key theo format "GroupName:value|GroupName:value|..."
           // Nếu API trả về groupName rỗng, fallback: tách label "Đỏ / M" theo attrs
-          const hasGroupName = v.selectedOptions?.some((o: any) => o.groupName);
+          const hasGroupName = v.selectedOptions?.some((o: Record<string, unknown>) => o.groupName);
           let key: string;
           if (hasGroupName) {
             key = v.selectedOptions
-              .filter((o: any) => o.groupName)
-              .map((o: any) => `${o.groupName}:${o.label}`)
+              .filter((o: Record<string, unknown>) => o.groupName)
+              .map((o: Record<string, unknown>) => `${o.groupName}:${o.label}`)
               .join("|");
           } else {
             // Fallback: label "Đỏ" hoặc "Đỏ / M" → map theo thứ tự attrs
@@ -697,7 +697,7 @@ export default function AddProductPage({ idProduct, data, onBack, preFillBarcode
     if (res.code === 0) {
       const items = Array.isArray(res.result) ? res.result : res.result?.items || [];
       setListCategory(
-        items.map((i: any) => ({
+        items.map((i: Record<string, unknown>) => ({
           value: i.id ?? i.groupId,
           label: i.name ?? i.groupName,
         }))
@@ -712,14 +712,14 @@ export default function AddProductPage({ idProduct, data, onBack, preFillBarcode
       // Lọc bỏ tag không có name (null/undefined) để tránh crash .toLowerCase()
       setAvailableTags(
         items
-          .filter((i: any) => i.name != null)
-          .map((i: any) => ({ id: i.id, name: i.name }))
+          .filter((i: Record<string, unknown>) => i.name != null)
+          .map((i: Record<string, unknown>) => ({ id: i.id, name: i.name }))
       );
     }
   };
 
   // ── Helper: map backend response (0/1) → formData fields (boolean) ──
-  const applyWebsiteSettingToForm = (r: any) => {
+  const applyWebsiteSettingToForm = (r: Record<string, unknown>) => {
     if (!r) return;
     setFormData((prev) => ({
       ...prev,
@@ -903,7 +903,7 @@ export default function AddProductPage({ idProduct, data, onBack, preFillBarcode
 
     console.log("[variantPrices] data gửi lên theo từng biến thể:");
     variants.forEach((v) => {
-      console.log(`  variant "${v.label}" (id=${(v as any).id ?? "new"}):`, JSON.stringify(v.variantPrices, null, 2));
+      console.log(`  variant "${v.label}" (id=${(v as Record<string, unknown>).id ?? "new"}):`, JSON.stringify(v.variantPrices, null, 2));
     });
 
     const defaultVariant = {
@@ -936,12 +936,12 @@ export default function AddProductPage({ idProduct, data, onBack, preFillBarcode
     console.log("[AddProduct] submit body:", JSON.stringify(body, null, 2));
     setIsSubmitting(true);
     try {
-      const res = await ProductService.wUpdate(body as any);
+      const res = await ProductService.wUpdate(body as Record<string, unknown>);
       if (res.code === 0) {
         // Lưu content, tags và website settings song song sau khi lưu SP thành công
         const savedId = idProduct || res.result?.id || res.result;
         if (savedId) {
-          const sideEffects: Promise<any>[] = [];
+          const sideEffects: Promise<Record<string, unknown>>[] = [];
           if (contentHtml || contentDelta) {
             sideEffects.push(
               ProductService.wDescriptionUpdate({ productId: savedId, content: contentHtml, contentDelta })
@@ -1039,7 +1039,7 @@ export default function AddProductPage({ idProduct, data, onBack, preFillBarcode
   };
 
   // Cập nhật field trực tiếp trên variant (barcode, price, costPrice, priceWholesale, pricePromo)
-  const updateComboField = (key: string, field: keyof VariantCombination, value: any) =>
+  const updateComboField = (key: string, field: keyof VariantCombination, value: Record<string, unknown>) =>
     setCombinations((prev) => prev.map((c) => (c.key === key ? { ...c, [field]: value } : c)));
 
   // ── UNIT PRICE HANDLERS ──
@@ -1073,7 +1073,7 @@ export default function AddProductPage({ idProduct, data, onBack, preFillBarcode
   // Barcode KHÔNG sync — mỗi biến thể có barcode riêng
   const SYNC_UNIT_FIELDS: (keyof UnitPrice)[] = ["unitId", "unitName", "price", "priceWholesale"];
 
-  const updateUnitPrice = (comboKey: string, tempId: string, field: keyof UnitPrice, value: any) =>
+  const updateUnitPrice = (comboKey: string, tempId: string, field: keyof UnitPrice, value: Record<string, unknown>) =>
     setCombinations((prev) => {
       const isFirst = prev[0]?.key === comboKey;
       if (isFirst && SYNC_UNIT_FIELDS.includes(field)) {
@@ -1204,7 +1204,7 @@ export default function AddProductPage({ idProduct, data, onBack, preFillBarcode
               }],
       };
 
-      const res = await ProductService.wUpdate(body as any);
+      const res = await ProductService.wUpdate(body as Record<string, unknown>);
       if (res.code !== 0) {
         showToast(res.error ?? res.message ?? "Có lỗi xảy ra", "error");
         return;
@@ -1213,7 +1213,7 @@ export default function AddProductPage({ idProduct, data, onBack, preFillBarcode
       // Lấy id sản phẩm vừa tạo
       const newId = res.result?.id ?? res.result;
       if (newId) {
-        const sideEffects: Promise<any>[] = [];
+        const sideEffects: Promise<Record<string, unknown>>[] = [];
 
         // Copy mô tả chi tiết
         if (contentHtml || contentDelta) {
@@ -1465,7 +1465,7 @@ export default function AddProductPage({ idProduct, data, onBack, preFillBarcode
                     name="contentDetail"
                     fill={true}
                     initialValue={contentHtml || ""}
-                    onChangeContent={(value: any) => {
+                    onChangeContent={(value: Record<string, unknown>) => {
                       setContentHtml(serialize({ children: value }));
                       setContentDelta(JSON.stringify(value));
                     }}
@@ -2024,7 +2024,7 @@ export default function AddProductPage({ idProduct, data, onBack, preFillBarcode
                                 <span className="add-prod-vt-price__icon">₫</span>
                                 <NummericInput
                                   value={up.price}
-                                  onValueChange={(vals: any) => updateUnitPrice(c.key, up.tempId, "price", vals.floatValue ?? 0)}
+                                  onValueChange={(vals: Record<string, unknown>) => updateUnitPrice(c.key, up.tempId, "price", vals.floatValue ?? 0)}
                                   placeholder="0"
                                   thousandSeparator={true}
                                 />
@@ -2037,7 +2037,7 @@ export default function AddProductPage({ idProduct, data, onBack, preFillBarcode
                                 <span className="add-prod-vt-price__icon">₫</span>
                                 <NummericInput
                                   value={up.priceWholesale}
-                                  onValueChange={(vals: any) => updateUnitPrice(c.key, up.tempId, "priceWholesale", vals.floatValue ?? 0)}
+                                  onValueChange={(vals: Record<string, unknown>) => updateUnitPrice(c.key, up.tempId, "priceWholesale", vals.floatValue ?? 0)}
                                   placeholder="0"
                                   thousandSeparator={true}
                                 />
@@ -2180,7 +2180,7 @@ export default function AddProductPage({ idProduct, data, onBack, preFillBarcode
                 <div className="wp-product__gallery">
                   {combinations[0]?.images?.[0] || detailProduct?.avatar ? (
                     <img
-                      src={combinations[0]?.images?.[0] || (detailProduct as any)?.avatar}
+                      src={combinations[0]?.images?.[0] || (detailProduct as Record<string, unknown>)?.avatar}
                       alt={formData.name}
                       className="wp-product__main-img"
                     />

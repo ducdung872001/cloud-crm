@@ -22,9 +22,9 @@ import WorkOrderService from "services/WorkOrderService";
 import DetailReportCusModal from "./DetailReportCusModal";
 
 interface ICardItem {
-  icon: any;
+  icon: Record<string, unknown>;
   name: string;
-  value: any;
+  value: Record<string, unknown>;
   color: "total" | "out-date" | "success" | "today" | "remaining" | "average" | "early";
   unit?: string;
   rate?: string;
@@ -56,7 +56,7 @@ export default function ReportCustomer() {
     endDate: "",
   });
 
-  const [dataPreview, setDataPreview] = useState<any>([
+  const [dataPreview, setDataPreview] = useState<Record<string, unknown>>([
     // API: Khác
     {
       key: "totalCustomer",
@@ -678,7 +678,7 @@ export default function ReportCustomer() {
         </div>
         <div className="report_overview--list">
           <div className="box__view--total">
-            {dataPreview.map((item: any, idx) => {
+            {dataPreview.map((item: Record<string, unknown>, idx) => {
               return (
                 <div
                   key={idx}

@@ -32,14 +32,14 @@ export interface IDetailAction {
   columnIndex: number;
   action: string;
   position: "left" | "right";
-  column?: any;
+  column?: Record<string, unknown>;
 }
 interface INoteFieldProps {
   onShow: boolean;
   onHide?: (reload: boolean) => void;
   columnIndex: number;
   callBack: (detailAction: IDetailAction) => void;
-  column: any;
+  column: Record<string, unknown>;
 }
 
 export default function ActionColumn(props: INoteFieldProps) {

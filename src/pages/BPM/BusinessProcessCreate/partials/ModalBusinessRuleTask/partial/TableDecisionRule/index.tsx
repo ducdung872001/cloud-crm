@@ -20,19 +20,19 @@ export default function TableDecisionRule({ processId, childProcessId, dataConfi
 
   const refColumn = useRef();
   const [editColumn, setEditColumn] = useState([]);
-  const [listColumn, setListColumn] = useState<any[]>(headerHsmt);
+  const [listColumn, setListColumn] = useState<Record<string, unknown>[]>(headerHsmt);
 
-  const [listKeyColumn, setListKeyColumn] = useState<any[]>([]); // Danh sách các key của cột trong bảng
-  const [listNameColumn, setListNameColumn] = useState<any[]>([]); // Danh sách các name của cột trong bảng
-  const [baseRow, setBaseRow] = useState<any[]>([]);
-  const [showPopoverEditColumn, setShowPopoverEditColumn] = useState<any[]>([]);
+  const [listKeyColumn, setListKeyColumn] = useState<Record<string, unknown>[]>([]); // Danh sách các key của cột trong bảng
+  const [listNameColumn, setListNameColumn] = useState<Record<string, unknown>[]>([]); // Danh sách các name của cột trong bảng
+  const [baseRow, setBaseRow] = useState<Record<string, unknown>[]>([]);
+  const [showPopoverEditColumn, setShowPopoverEditColumn] = useState<Record<string, unknown>[]>([]);
 
   const [showModalImport, setShowModalImport] = useState<boolean>(false);
-  const [caclData, setCaclData] = useState<any>(false);
-  const [dataExcel, setDataExcel] = useState<any>(null);
-  const [lineSuccess, setLineSuccess] = useState<any>(0);
-  const [dataImport, setDataImport] = useState<any>(null);
-  const [dataImportHeader, setDataImportHeader] = useState<any>(null);
+  const [caclData, setCaclData] = useState<Record<string, unknown>>(false);
+  const [dataExcel, setDataExcel] = useState<Record<string, unknown>>(null);
+  const [lineSuccess, setLineSuccess] = useState<Record<string, unknown>>(0);
+  const [dataImport, setDataImport] = useState<Record<string, unknown>>(null);
+  const [dataImportHeader, setDataImportHeader] = useState<Record<string, unknown>>(null);
 
   useOnClickOutside(refColumn, () => setShowPopoverEditColumn(showPopoverEditColumn.map((item) => false)), ["index"]);
 

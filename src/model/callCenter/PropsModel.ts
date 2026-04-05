@@ -19,5 +19,5 @@ export interface ICallHistoryProps {
 export interface ICustomerListProps {
   tab: ITabModel;
   reload: boolean;
-  setReload: any
+  setReload: (value: boolean) => void
 }

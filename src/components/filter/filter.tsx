@@ -89,7 +89,7 @@ export default function Filter(props: FilterProps) {
     }
 
     const nextClientX = e.clientX;
-    const arrFilter: any = document.getElementsByClassName("filter-item");
+    const arrFilter = document.getElementsByClassName("filter-item") as HTMLCollectionOf<HTMLElement>;
 
     let offset = 0;
     let adjusted = false;
@@ -114,7 +114,7 @@ export default function Filter(props: FilterProps) {
   };
 
   // Determine carousel display and width based on breakpoints
-  let carouselStyle: any = { width: "100%" };
+  let carouselStyle: React.CSSProperties = { width: "100%" };
   let displayCarousel = false;
   if (listFilterItem.length > 4) {
     if (width >= 1880) {

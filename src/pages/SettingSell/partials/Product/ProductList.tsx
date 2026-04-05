@@ -38,7 +38,7 @@ import CategoryServiceService from "services/CategoryServiceService";
 // ---- Tab filter type ----
 type StatusTab = "all" | "active" | "paused" | "category" | "label" | "low_stock" | "on_web";
 
-const isSuccessResponse = (response: any) => response?.code === 0 || response?.status === 1;
+const isSuccessResponse = (response: Record<string, unknown>) => response?.code === 0 || response?.status === 1;
 
 // showOnWebsite (số 0/1) ưu tiên hơn showOnWeb (boolean) vì API trả không nhất quán
 const getProductWebState = (item: IProductResponse) =>
@@ -62,13 +62,13 @@ export default function ProductList(props: IProductListProps) {
   const [showScanModal, setShowScanModal]         = useState(false);
   const [scanInput, setScanInput]                 = useState("");
   const [scanSearching, setScanSearching]         = useState(false);
-  const [scanFound, setScanFound]                 = useState<any>(null);
+  const [scanFound, setScanFound]                 = useState<Record<string, unknown>>(null);
   const [scanNotFound, setScanNotFound]           = useState(false);
   const [scanCode, setScanCode]                   = useState("");
   const [preFillBarcode, setPreFillBarcode]       = useState<string | null>(null);
   const [isExporting, setIsExporting] = useState<boolean>(false);
   const [showDialog, setShowDialog] = useState<boolean>(false);
-  const [contentDialog, setContentDialog] = useState<any>(null);
+  const [contentDialog, setContentDialog] = useState<Record<string, unknown>>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [isNoItem, setIsNoItem] = useState<boolean>(false);
   const [isPermissions, setIsPermissions] = useState<boolean>(false);
@@ -105,7 +105,7 @@ export default function ProductList(props: IProductListProps) {
 
   // ── Barcode Print Modal ──
   const [showBarcodePrint, setShowBarcodePrint] = useState(false);
-  const [barcodePrintProduct, setBarcodePrintProduct] = useState<{ name: string; variants: any[] } | null>(null);
+  const [barcodePrintProduct, setBarcodePrintProduct] = useState<{ name: string; variants: Record<string, unknown>[] } | null>(null);
   const [isFetchingBarcode, setIsFetchingBarcode] = useState(false);
 
   // Đọc ?productId từ URL (từ Global Search) → tự mở trang chi tiết sản phẩm
@@ -146,7 +146,7 @@ export default function ProductList(props: IProductListProps) {
 
   const abortController = new AbortController();
 
-  const getListProduct = async (paramsSearch: any) => {
+  const getListProduct = async (paramsSearch: Record<string, unknown>) => {
     setIsLoading(true);
 
     const response = await ProductService.wList(paramsSearch, abortController.signal);
@@ -203,7 +203,7 @@ export default function ProductList(props: IProductListProps) {
     if (categoryList.length > 0) return; // cache
     const res = await CategoryServiceService.list({ type: 1, page: 1, limit: 200 });
     if (res.code === 0) {
-      setCategoryList((res.result?.items || []).map((i: any) => ({ id: i.id, name: i.name })));
+      setCategoryList((res.result?.items || []).map((i: Record<string, unknown>) => ({ id: i.id, name: i.name })));
     }
   };
 
@@ -211,7 +211,7 @@ export default function ProductList(props: IProductListProps) {
   const searchTags = async (kw: string) => {
     const res = await ProductService.wTagList(kw);
     if (res.code === 0) {
-      setTagList((res.result?.items || res.result || []).map((i: any) => ({ id: i.id, name: i.name })));
+      setTagList((res.result?.items || res.result || []).map((i: Record<string, unknown>) => ({ id: i.id, name: i.name })));
     }
   };
 
@@ -426,15 +426,15 @@ export default function ProductList(props: IProductListProps) {
     try {
       // Fetch detail song song tất cả SP đã chọn
       const results = await Promise.all(productIds.map((id) => ProductService.wDetail(id)));
-      const allVariants: any[] = [];
+      const allVariants: Record<string, unknown>[] = [];
       let productName = "";
 
       results.forEach((res) => {
         if (res.code !== 0) return;
         const p = res.result;
         if (!productName) productName = p.name; // tên SP đầu tiên
-        const realVariants = (p.variants || []).filter((v: any) => v.label !== "Mac dinh");
-        realVariants.forEach((v: any) => {
+        const realVariants = (p.variants || []).filter((v: Record<string, unknown>) => v.label !== "Mac dinh");
+        realVariants.forEach((v: Record<string, unknown>) => {
           allVariants.push({
             id: v.id,
             label: productIds.length > 1 ? `${p.name} — ${v.label}` : v.label,
@@ -506,15 +506,15 @@ export default function ProductList(props: IProductListProps) {
       };
 
       // 3. Build variantGroups (bỏ id → tạo mới)
-      const dupVariantGroups = (src.variantGroups || []).map((g: any) => ({
+      const dupVariantGroups = (src.variantGroups || []).map((g: Record<string, unknown>) => ({
         name: g.name,
-        options: (g.options || []).map((o: any) => ({ label: o.label })),
+        options: (g.options || []).map((o: Record<string, unknown>) => ({ label: o.label })),
       }));
 
       // 4. Build variants — sinh SKU + barcode mới, giữ giá/ảnh/đơn vị
-      const realVariants = (src.variants || []).filter((v: any) => v.label !== "Mac dinh");
+      const realVariants = (src.variants || []).filter((v: Record<string, unknown>) => v.label !== "Mac dinh");
       const dupVariants = realVariants.length > 0
-        ? realVariants.map((v: any) => ({
+        ? realVariants.map((v: Record<string, unknown>) => ({
             label: v.label,
             sku: genDupSku(v.sku || ""),
             barcode: genEAN13(),                // sinh mới để tránh unique constraint
@@ -525,12 +525,12 @@ export default function ProductList(props: IProductListProps) {
             pricePromo: v.pricePromo ?? v.pricePromotion ?? 0,
             pricePromotion: v.pricePromo ?? v.pricePromotion ?? 0,
             images: v.images || [],
-            selectedOptions: (v.selectedOptions || []).map((o: any) => ({
+            selectedOptions: (v.selectedOptions || []).map((o: Record<string, unknown>) => ({
               groupName: o.groupName,
               label: o.label,
             })),
-            attributes: (v.attributes || []).map((a: any) => ({ name: a.name, value: a.value })),
-            variantPrices: (v.variantPrices || []).map((u: any) => ({
+            attributes: (v.attributes || []).map((a: Record<string, unknown>) => ({ name: a.name, value: a.value })),
+            variantPrices: (v.variantPrices || []).map((u: Record<string, unknown>) => ({
               unitId: u.unitId ?? null,
               unitName: u.unitName ?? "",
               price: u.price ?? 0,
@@ -546,7 +546,7 @@ export default function ProductList(props: IProductListProps) {
             pricePromo: 0,
           }];
 
-      const body: any = {
+      const body: Record<string, unknown> = {
         id: 0,
         name: `${src.name} (Copy)`,
         position: 0,
@@ -572,7 +572,7 @@ export default function ProductList(props: IProductListProps) {
       const newId = res.result?.id ?? res.result;
 
       if (newId) {
-        const sideEffects: Promise<any>[] = [];
+        const sideEffects: Promise<Record<string, unknown>>[] = [];
 
         // Copy mô tả chi tiết (content HTML + delta)
         if (src.content || src.contentDelta) {
@@ -774,7 +774,7 @@ export default function ProductList(props: IProductListProps) {
       } else {
         showToast(`Lazada: ${result.message}`, "error");
       }
-    } catch (e: any) {
+    } catch (e: unknown) {
       showToast(e?.message ?? "Lỗi đồng bộ Lazada", "error");
     } finally {
       setSyncingIds(prev => { const s = new Set(prev); s.delete(item.id); return s; });
@@ -923,7 +923,7 @@ export default function ProductList(props: IProductListProps) {
       link.remove();
       URL.revokeObjectURL(url);
       showToast("Xuất Excel thành công!", "success");
-    } catch (e: any) {
+    } catch (e: unknown) {
       showToast(e?.message ?? "Xuất Excel thất bại. Vui lòng thử lại.", "error");
     } finally {
       setIsExporting(false);

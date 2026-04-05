@@ -118,7 +118,7 @@ export default function QuantityCustomerSource(props) {
           {
             ...chartData.series,
             data: changeResult,
-          } as any,
+          } as Record<string, unknown>,
         ],
       });
     } else {

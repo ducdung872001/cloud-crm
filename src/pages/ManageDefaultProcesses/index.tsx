@@ -22,7 +22,7 @@ import "./index.scss";
 import ManageDefaultProcessesService from "services/ManageDefaultProcessesService";
 import AddConfigDefaultProcesses from "./partials/AddConfigDefaultProcesses";
 
-export default function ManageDefaultProcesses(props: any) {
+export default function ManageDefaultProcesses(props: Record<string, unknown>) {
   document.title = "Cài đặt quy trình mặc định";
 
   const isMounted = useRef(false);
@@ -32,7 +32,7 @@ export default function ManageDefaultProcesses(props: any) {
   const [listIdChecked, setListIdChecked] = useState<number[]>([]);
   const [showModalAddEform, setShowModalAddEform] = useState<boolean>(false);
   const [showDialog, setShowDialog] = useState<boolean>(false);
-  const [contentDialog, setContentDialog] = useState<any>(null);
+  const [contentDialog, setContentDialog] = useState<Record<string, unknown>>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [isNoItem, setIsNoItem] = useState<boolean>(false);
   const [isPermissions, setIsPermissions] = useState<boolean>(false);
@@ -67,7 +67,7 @@ export default function ManageDefaultProcesses(props: any) {
 
   const abortController = new AbortController();
 
-  const getListContractEform = async (paramsSearch: any) => {
+  const getListContractEform = async (paramsSearch: Record<string, unknown>) => {
     setIsLoading(true);
 
     const response = await ManageDefaultProcessesService.list(paramsSearch, abortController.signal);
@@ -164,7 +164,7 @@ export default function ManageDefaultProcesses(props: any) {
 
   const dataFormat = ["text-center", "", "text-left", "text-left", "text-center"];
 
-  const dataMappingArray = (item: any, index: number) => [
+  const dataMappingArray = (item: Record<string, unknown>, index: number) => [
     getPageOffset(params) + index + 1,
     item?.name ?? "",
     options.find((option) => option.value === item?.uri)?.label || item?.uri || "",
@@ -172,7 +172,7 @@ export default function ManageDefaultProcesses(props: any) {
     // item.position,
   ];
 
-  const actionsTable = (item: any): IAction[] => {
+  const actionsTable = (item: Record<string, unknown>): IAction[] => {
     const isCheckedItem = listIdChecked?.length > 0;
     return [
       {

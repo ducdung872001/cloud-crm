@@ -18,25 +18,25 @@ import "./SettingPineline.scss";
 import CampaignPipelineService from "services/CampaignPipelineService";
 import ModalAddCampaignPipeline from "./partials/ModalAddCampaignPipeline";
 
-export default function SettingPineline(props: any) {
+export default function SettingPineline(props: Record<string, unknown>) {
   document.title = "Danh sách pha chiến dịch";
 
   const isMounted = useRef(false);
   const {campaignId} = props;
 
-  const [listCampaignPipeline, setListCampaignPipeline] = useState<any[]>([]);
-  const [dataCampaignPipeline, setDataCampaignPipeline] = useState<any>(null);
+  const [listCampaignPipeline, setListCampaignPipeline] = useState<Record<string, unknown>[]>([]);
+  const [dataCampaignPipeline, setDataCampaignPipeline] = useState<Record<string, unknown>>(null);
   const [listIdChecked, setListIdChecked] = useState<number[]>([]);
   const [showModalAdd, setShowModalAdd] = useState<boolean>(false);
   const [showDialog, setShowDialog] = useState<boolean>(false);
-  const [contentDialog, setContentDialog] = useState<any>(null);
+  const [contentDialog, setContentDialog] = useState<Record<string, unknown>>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [isNoItem, setIsNoItem] = useState<boolean>(false);
   const [isPermissions, setIsPermissions] = useState<boolean>(false);
   const [permissions, setPermissions] = useState(getPermissions());
   const [tab, setTab] = useState('tab_one')
 
-  const [params, setParams] = useState<any>({
+  const [params, setParams] = useState<Record<string, unknown>>({
     name: "",
     limit: 100,
     page: 1
@@ -75,7 +75,7 @@ export default function SettingPineline(props: any) {
 
   const abortController = new AbortController();
 
-  const getListCampaignPipeline = async (paramsSearch: any) => {
+  const getListCampaignPipeline = async (paramsSearch: Record<string, unknown>) => {
     const param = {
         ...paramsSearch,
         campaignId: campaignId
@@ -155,13 +155,13 @@ export default function SettingPineline(props: any) {
 
   const dataFormat = ["text-center", "", "text-center"];
 
-  const dataMappingArray = (item: any, index: number) => [
+  const dataMappingArray = (item: Record<string, unknown>, index: number) => [
     getPageOffset(params) + index + 1, 
     item.name, 
     item.position
   ];
 
-  const actionsTable = (item: any): IAction[] => {
+  const actionsTable = (item: Record<string, unknown>): IAction[] => {
     return [
       {
         title: "Sửa",
@@ -218,7 +218,7 @@ export default function SettingPineline(props: any) {
     });
   };
 
-  const showDialogConfirmDelete = (item?: any) => {
+  const showDialogConfirmDelete = (item?: Record<string, unknown>) => {
     const contentDialog: IContentDialog = {
       color: "error",
       className: "dialog-delete",

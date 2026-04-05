@@ -64,7 +64,7 @@ export const headerHsmt = [
   },
 ];
 
-export const dataRowHsmt: any = [
+export const dataRowHsmt: Record<string, unknown> = [
   [
     {
       key: "TenHoSo",
@@ -885,7 +885,7 @@ export const dataRowHsmt: any = [
     },
   ],
 ];
-export const dataRowHsmtTvtk: any = [
+export const dataRowHsmtTvtk: Record<string, unknown> = [
   [
     {
       key: "TenHoSo",

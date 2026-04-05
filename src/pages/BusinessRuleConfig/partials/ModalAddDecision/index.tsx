@@ -21,7 +21,7 @@ import BusinessRuleItemService from "services/BusinessRuleItemService";
 import Icon from "components/icon";
 import Button from "components/button/button";
 
-export default function ModalAddDecision(props: any) {
+export default function ModalAddDecision(props: Record<string, unknown>) {
   const { onShow, onHide, data, businessRuleId, listDecisionInput, listDecisionOutput } = props;
 
   const [isSubmit, setIsSubmit] = useState<boolean>(false);
@@ -36,7 +36,7 @@ export default function ModalAddDecision(props: any) {
         outputs: data?.outputs ?? "",
         ruleIndex: data?.ruleIndex ?? "",
         businessRuleId: data?.businessRuleId ?? parseInt(businessRuleId) ?? 0,
-      } as any),
+      } as Record<string, unknown>),
     [data, onShow, businessRuleId]
   );
 
@@ -68,8 +68,8 @@ export default function ModalAddDecision(props: any) {
       newOutputs[output.parameter] = output.value;
     });
 
-    const body: any = {
-      ...(formData.values as any),
+    const body: Record<string, unknown> = {
+      ...(formData.values as Record<string, unknown>),
       ...(data ? { id: data.id } : {}),
       ...{ inputs: JSON.stringify(newInputs), outputs: JSON.stringify(newOutputs) },
     };

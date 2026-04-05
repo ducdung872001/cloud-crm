@@ -289,7 +289,7 @@ export default function WarehouseBookList() {
       if (res.code === 0) {
         const data = Array.isArray(res.result) ? res.result
           : Array.isArray(res.result?.items) ? res.result.items : [];
-        setListWarehouse(data.map((i: any) => ({ value: String(i.id), label: i.name })));
+        setListWarehouse(data.map((i: Record<string, unknown>) => ({ value: String(i.id), label: i.name })));
       }
     });
   }, []);
@@ -356,7 +356,7 @@ export default function WarehouseBookList() {
       link.remove();
       URL.revokeObjectURL(url);
       showToast("Xuất Excel thành công!", "success");
-    } catch (e: any) {
+    } catch (e: unknown) {
       showToast(e?.message ?? "Xuất Excel thất bại. Vui lòng thử lại.", "error");
     } finally {
       setIsExporting(false);

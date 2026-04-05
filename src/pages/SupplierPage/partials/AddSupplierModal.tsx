@@ -138,7 +138,7 @@ export default function AddSupplierModal({ onShow, data, onHide }: Props) {
     setIsSubmit(true);
     const v = formData.values;
 
-    const body: any = {
+    const body: Record<string, unknown> = {
       code:          v.code          || undefined,
       name:          v.name,
       phone:         v.phone         || undefined,

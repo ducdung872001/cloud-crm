@@ -163,7 +163,7 @@ export default function ModalLinkCatchEvent({ onShow, onHide, dataNode, processI
                   // || !isDifferenceObj(formData, values),
                   is_loading: isSubmit,
                 },
-              ] as any)),
+              ] as Record<string, unknown>)),
         ],
       },
     }),

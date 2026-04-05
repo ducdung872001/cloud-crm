@@ -20,7 +20,7 @@ import Icon from "components/icon";
 import Input from "components/input/input";
 import _ from "lodash";
 
-export default function PushCampaignModal(props: any) {
+export default function PushCampaignModal(props: Record<string, unknown>) {
   //isBatch: Thêm hàng loạt cơ hội (thêm nhanh từ màn hình danh sách khách hàng)
   const { onShow, onHide, dataNode, setDataNode, statusMA } = props;
 
@@ -45,7 +45,7 @@ export default function PushCampaignModal(props: any) {
     () =>
       ({
         campaignId: data?.campaignId ?? null,
-      } as any),
+      } as Record<string, unknown>),
     [onShow, data]
   );
 
@@ -67,7 +67,7 @@ export default function PushCampaignModal(props: any) {
   const [checkFieldCampaign, setCheckFieldCampaign] = useState<boolean>(false);
 
   const loadedOptionCampaign = async (search, loadedOptions, { page }) => {
-    const param: any = {
+    const param: Record<string, unknown> = {
       name: search,
       page: page,
       limit: 10,
@@ -217,7 +217,7 @@ export default function PushCampaignModal(props: any) {
 
     setIsSubmit(true);
 
-    const body: any = {
+    const body: Record<string, unknown> = {
       ...dataNode,
       configData: { campaignId: dataCampaign?.value, campaignName: dataCampaign?.label },
     };
@@ -314,7 +314,7 @@ export default function PushCampaignModal(props: any) {
       showToast("Vui lòng nhập tên hành động", "error");
       return;
     }
-    const body: any = {
+    const body: Record<string, unknown> = {
       ...dataNode,
       name: nodeName,
       configData: { campaignId: dataCampaign?.value, campaignName: dataCampaign?.label },

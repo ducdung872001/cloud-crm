@@ -82,11 +82,11 @@ export default function MarketingAutomationListV2() {
   const [listIdChecked, setListIdChecked] = useState<number[]>([]);
   const [showModalAdd, setShowModalAdd] = useState<boolean>(false);
   const [showDialog, setShowDialog] = useState<boolean>(false);
-  const [contentDialog, setContentDialog] = useState<any>(null);
+  const [contentDialog, setContentDialog] = useState<Record<string, unknown>>(null);
   const [showDialogPause, setShowDialogPause] = useState<boolean>(false);
-  const [contentDialogPause, setContentDialogPause] = useState<any>(null);
+  const [contentDialogPause, setContentDialogPause] = useState<Record<string, unknown>>(null);
   const [showDialogApprove, setShowDialogApprove] = useState<boolean>(false);
-  const [contentDialogApprove, setContentDialogApprove] = useState<any>(null);
+  const [contentDialogApprove, setContentDialogApprove] = useState<Record<string, unknown>>(null);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [isDetailMA, setIsDetailMA] = useState<boolean>(false);
   const [dataMA, setDataMA] = useState(null);
@@ -146,7 +146,7 @@ export default function MarketingAutomationListV2() {
 
   const abortController = new AbortController();
 
-  const getListMarketingAutomation = async (paramsSearch: any) => {
+  const getListMarketingAutomation = async (paramsSearch: Record<string, unknown>) => {
     setIsLoading(true);
 
     const response = await MarketingAutomationService.list(paramsSearch);
@@ -174,7 +174,7 @@ export default function MarketingAutomationListV2() {
     setIsLoading(false);
   };
 
-  const getListBusinessProcess = async (paramsSearch: any) => {
+  const getListBusinessProcess = async (paramsSearch: Record<string, unknown>) => {
     const response = await BusinessProcessService.list(paramsSearch, abortController.signal);
 
     if (response.code == 0) {
@@ -239,7 +239,7 @@ export default function MarketingAutomationListV2() {
   }, [params]);
 
   const [showReport, setShowReport] = useState<boolean>(false);
-  const [itemReport, setItemReport] = useState<any>(null);
+  const [itemReport, setItemReport] = useState<Record<string, unknown>>(null);
 
   useEffect(() => {
     setValueProcess({
@@ -284,7 +284,7 @@ export default function MarketingAutomationListV2() {
 
   const dataFormat = ["text-center", "", "text-center", "text-center", "text-center", "text-center", "text-center"];
 
-  const dataMappingArray = (item: any, index: number) => [
+  const dataMappingArray = (item: Record<string, unknown>, index: number) => [
     getPageOffset(params) + index + 1,
     item.name,
     <div
@@ -354,7 +354,7 @@ export default function MarketingAutomationListV2() {
     setShowModalInitBpm(true);
   };
 
-  const actionsTable = (item: any): IAction[] => {
+  const actionsTable = (item: Record<string, unknown>): IAction[] => {
     return [
       ...(item.status !== 1
         ? [
@@ -479,7 +479,7 @@ export default function MarketingAutomationListV2() {
     setShowDialog(true);
   };
 
-  const showDialogConfirmPause = (item?: any, status?: number) => {
+  const showDialogConfirmPause = (item?: Record<string, unknown>, status?: number) => {
     const contentDialog: IContentDialog = {
       color: "warning",
       className: "dialog-delete",
@@ -506,7 +506,7 @@ export default function MarketingAutomationListV2() {
     setShowDialogPause(true);
   };
 
-  const showDialogConfirmApprove = (item?: any, status?: number) => {
+  const showDialogConfirmApprove = (item?: Record<string, unknown>, status?: number) => {
     const contentDialog: IContentDialog = {
       color: "success",
       className: "dialog-delete",
@@ -542,7 +542,7 @@ export default function MarketingAutomationListV2() {
 
   //danh sách quy trình
   const loadOptionProcess = async (search, loadedOptions, { page }) => {
-    const param: any = {
+    const param: Record<string, unknown> = {
       name: search,
       page: page,
       limit: 10,
@@ -558,7 +558,7 @@ export default function MarketingAutomationListV2() {
       const dataOption = response.result.items;
 
       if (dataOption.length > 0) {
-        dataOption.map((item: any) => {
+        dataOption.map((item: Record<string, unknown>) => {
           optionProcess.push({
             value: item.id,
             label: item.name,
@@ -606,7 +606,7 @@ export default function MarketingAutomationListV2() {
   const [listColumn, setListColumn] = useState([]);
   
     const getListStepProcess = async (processId) => {
-      const body: any = {
+      const body: Record<string, unknown> = {
         processId,
         limit: 100,
       };
@@ -824,7 +824,7 @@ export default function MarketingAutomationListV2() {
     "center",
   ];
 
-  const dataMappingArray_OLA_SLA = (item: any, index: number, type?: string) =>
+  const dataMappingArray_OLA_SLA = (item: Record<string, unknown>, index: number, type?: string) =>
     type === "ola"
       ? [
         index + 1,
@@ -884,7 +884,7 @@ export default function MarketingAutomationListV2() {
       const result = response.result;
 
       if (type === "sla") {
-        const headerFormatSLA: any = [
+        const headerFormatSLA: Record<string, unknown> = [
           {
             merge: {
               row: 2,

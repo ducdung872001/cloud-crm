@@ -32,7 +32,7 @@ export default function AddSwitchboardModel(props: IAddSwitchboardModelProps) {
   const [contentDialog, setContentDialog] = useState<IContentDialog>(null);
   const [listPartner, setListPartner] = useState<IPartnerSMS[]>(null);
   const [isLoadingPartner, setIsLoadingPartner] = useState<boolean>(false);
-  const [addFieldConfig, setAddFieldConfig] = useState<any[]>([{ key: "", value: "" }]);
+  const [addFieldConfig, setAddFieldConfig] = useState<Record<string, unknown>[]>([{ key: "", value: "" }]);
   const [validateFieldConfig, setValidateFieldConfig] = useState<boolean>(false);
 
   const onSelectOpenPartner = async () => {

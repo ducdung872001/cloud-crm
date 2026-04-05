@@ -34,7 +34,7 @@ export default function ModalAddData({ onShow, onHide, dataProps, customerId }) 
       auditReport: data?.auditReport ?? "",
       month: data?.month ?? "",
       year: data?.year ?? "",
-    } as any),
+    } as Record<string, unknown>),
     [onShow, data]
   );
 
@@ -128,9 +128,9 @@ export default function ModalAddData({ onShow, onHide, dataProps, customerId }) 
 
     setIsSubmit(true);
 
-    const body: any = {
+    const body: Record<string, unknown> = {
       ...(data ? { id: data?.id } : {}),
-      ...(formData.values as any),
+      ...(formData.values as Record<string, unknown>),
       customerId
     };
 

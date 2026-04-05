@@ -25,7 +25,7 @@ const abortController = new AbortController();
 
 const getListStepProcess = async (processId) => {
   try {
-    const body: any = {
+    const body: Record<string, unknown> = {
       processId,
       limit: 100,
     };

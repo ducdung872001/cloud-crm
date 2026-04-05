@@ -106,10 +106,10 @@ export default function ViewConfigDepartment(props: IViewConfigDepartmentProps) 
     const permissionRes = await PermissionService.getPermissionResources();
     let lstPermissionResource = permissionRes.result;
     let mapPermission = {};
-    (lstPermissionResource || []).forEach((permissionResource: any) => {
+    (lstPermissionResource || []).forEach((permissionResource: Record<string, unknown>) => {
       if (permissionResource?.actions) {
         let actions = JSON.parse(permissionResource.actions);
-        actions.forEach((action: any) => {
+        actions.forEach((action: Record<string, unknown>) => {
           mapPermission[`${permissionResource.code}_${action}`] = 1;
         });
       }
@@ -504,7 +504,7 @@ export default function ViewConfigDepartment(props: IViewConfigDepartmentProps) 
                                     id={`resource_row_${element.id}_${permission.jteId}`}
                                     className={`permission__check department__permission--${jobTitles.length}`}
                                   >
-                                    {mapData.map((dataItem: any, idxBox) => {
+                                    {mapData.map((dataItem: Record<string, unknown>, idxBox) => {
                                       return dataItem === false || dataItem === true ? (
                                         <div key={`idx_box_${idxBox}`} className="item__check--permission">
                                           <Checkbox

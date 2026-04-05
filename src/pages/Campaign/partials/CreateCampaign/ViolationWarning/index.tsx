@@ -8,7 +8,7 @@ import TemplateEmailService from "services/TemplateEmailService";
 import TemplateSMSService from "services/TemplateSMSService";
 import CampaignService from "services/CampaignService";
 
-export default function ViolationWarning(props: any) {
+export default function ViolationWarning(props: Record<string, unknown>) {
   const { onShow, onHide, campaignId, setDataViolation } = props;
   const notifyData = [
     {
@@ -59,7 +59,7 @@ export default function ViolationWarning(props: any) {
     const response = await CampaignService.detail(campaignId);
 
     if (response.code === 0) {
-      const result: any = response.result;
+      const result: Record<string, unknown> = response.result;
 
       //SLA
       if (result.slaInfo) {
@@ -121,7 +121,7 @@ export default function ViolationWarning(props: any) {
   }, [channelList]);
 
   const loadedOptionTemplateEmail = async (search, loadedOptions, { page }) => {
-    const param: any = {
+    const param: Record<string, unknown> = {
       keyword: search,
       page: page,
       limit: 10,
@@ -163,7 +163,7 @@ export default function ViolationWarning(props: any) {
   };
 
   const loadedOptionTemplateSMS = async (search, loadedOptions, { page }) => {
-    const param: any = {
+    const param: Record<string, unknown> = {
       keyword: search,
       page: page,
       limit: 10,

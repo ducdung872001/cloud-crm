@@ -74,7 +74,7 @@ export default function AddChildOptModal(props: IAddChildOptModal) {
         employeeId: result?.employeeId ?? null,
         docLink: result?.docLink ?? [],
         parentId: 0,
-      } as any);
+      } as Record<string, unknown>);
     }
   };
 

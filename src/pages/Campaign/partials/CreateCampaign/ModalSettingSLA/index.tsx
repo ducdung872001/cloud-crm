@@ -17,7 +17,7 @@ import SelectCustom from "components/selectCustom/selectCustom";
 import TemplateEmailService from "services/TemplateEmailService";
 import TemplateSMSService from "services/TemplateSMSService";
 
-export default function ModalSettingSLA(props: any) {
+export default function ModalSettingSLA(props: Record<string, unknown>) {
   //isBatch: Thêm hàng loạt cơ hội (thêm nhanh từ màn hình danh sách khách hàng)
   const { onShow, onHide, dataApproach } = props;
 
@@ -144,7 +144,7 @@ export default function ModalSettingSLA(props: any) {
   }, [channelList]);
 
   const loadedOptionTemplateEmail = async (search, loadedOptions, { page }) => {
-    const param: any = {
+    const param: Record<string, unknown> = {
       keyword: search,
       page: page,
       limit: 10,
@@ -186,7 +186,7 @@ export default function ModalSettingSLA(props: any) {
   };
 
   const loadedOptionTemplateSMS = async (search, loadedOptions, { page }) => {
-    const param: any = {
+    const param: Record<string, unknown> = {
       keyword: search,
       page: page,
       limit: 10,

@@ -11,7 +11,7 @@ import ImageThirdGender from "assets/images/third-gender.png";
 interface IAddModalOtherProps {
   onShow: boolean;
   onHide: (reload: boolean) => void;
-  data: any;
+  data: Record<string, unknown>;
 }
 
 export default function AddModalOther(props: IAddModalOtherProps) {

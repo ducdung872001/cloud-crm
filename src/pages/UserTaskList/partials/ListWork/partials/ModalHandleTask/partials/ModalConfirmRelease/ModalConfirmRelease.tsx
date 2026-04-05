@@ -15,7 +15,7 @@ import { use } from "i18next";
 import SupplierAccountService from "services/SupplierAccountService";
 import Icon from "components/icon";
 
-export default function ModalConfirmRelease(props: any) {
+export default function ModalConfirmRelease(props: Record<string, unknown>) {
   const { onShow, onHide, data, typeAccept, isAddNew } = props;
 
   const focusedElement = useActiveElement();
@@ -34,7 +34,7 @@ export default function ModalConfirmRelease(props: any) {
       ({
         id: data?.id ?? 0,
         active: 0,
-      } as any),
+      } as Record<string, unknown>),
     [data, onShow]
   );
 
@@ -71,7 +71,7 @@ export default function ModalConfirmRelease(props: any) {
     setIsSubmit(false);
   };
 
-  const actions = useMemo<any>(
+  const actions = useMemo<Record<string, unknown>>(
     () => ({
       actions_right: {
         buttons: [

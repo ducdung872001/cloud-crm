@@ -14,7 +14,7 @@ import UploadDocument from "../UploadDocument";
 import "./index.scss";
 
 interface IContentChatProps {
-  dataMessage: any;
+  dataMessage: Record<string, unknown>;
   worId: number;
   employeeId: number;
   onHide: (reload) => void;

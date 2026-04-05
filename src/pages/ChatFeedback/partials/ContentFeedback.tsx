@@ -12,7 +12,7 @@ import { uploadDocumentFormData } from "utils/document";
 import "./ContentFeedback.scss";
 
 interface IContentFeedbackProps {
-  data: any;
+  data: Record<string, unknown>;
   onHide: (reload: boolean) => void;
 }
 

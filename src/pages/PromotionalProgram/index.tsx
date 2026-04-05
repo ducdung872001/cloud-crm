@@ -84,7 +84,7 @@ const StatCard: React.FC<StatCardProps> = ({ title, value, icon, color, isLoadin
 );
 
 // ─── Main component ───────────────────────────────────────────────────
-export default function PromotionalProgram(props: any) {
+export default function PromotionalProgram(props: Record<string, unknown>) {
   document.title = "Chương trình khuyến mãi";
 
   const { onBackProps } = props;
@@ -156,7 +156,7 @@ export default function PromotionalProgram(props: any) {
       } else {
         showToast(res?.message ?? "Không thể tải dữ liệu", "error");
       }
-    } catch (e: any) {
+    } catch (e: unknown) {
       if (e?.name !== "AbortError") showToast("Lỗi kết nối máy chủ", "error");
     } finally {
       setIsLoading(false);

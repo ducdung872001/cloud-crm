@@ -67,10 +67,10 @@ export default function CreateProductionOrderModal({ isOpen, onClose, onSuccess 
   useEffect(() => {
     if (!isOpen) return;
     WarehouseService.list({ limit: 100 })
-      .then((res: any) => {
+      .then((res: Record<string, unknown>) => {
         if (res?.code === 0 && res.result?.items) {
           setWarehouseOptions(
-            res.result.items.map((w: any) => ({ value: w.id, label: w.name }))
+            res.result.items.map((w: Record<string, unknown>) => ({ value: w.id, label: w.name }))
           );
         }
       })
@@ -114,7 +114,7 @@ export default function CreateProductionOrderModal({ isOpen, onClose, onSuccess 
       const res = await BomService.get(bom.id);
       if (res?.code === 0 && res.result?.ingredients) {
         const planned = parseFloat(plannedQty) || 1;
-        setLines(res.result.ingredients.map((ing: any, i: number) => ({
+        setLines(res.result.ingredients.map((ing: Record<string, unknown>, i: number) => ({
           materialId:   ing.materialId,
           materialCode: ing.materialCode,
           materialName: ing.materialName,
@@ -126,11 +126,11 @@ export default function CreateProductionOrderModal({ isOpen, onClose, onSuccess 
     } catch {}
 
     // Nếu BOM đã có product_variant_id, auto-fill
-    if ((bom as any).productVariantId) {
+    if ((bom as Record<string, unknown>).productVariantId) {
       setSelectedVariant({
-        id:          (bom as any).productVariantId,
-        productId:   (bom as any).productId ?? 0,
-        sku:         (bom as any).productSku,
+        id:          (bom as Record<string, unknown>).productVariantId,
+        productId:   (bom as Record<string, unknown>).productId ?? 0,
+        sku:         (bom as Record<string, unknown>).productSku,
         productName: bom.productName,
       });
     }
@@ -143,7 +143,7 @@ export default function CreateProductionOrderModal({ isOpen, onClose, onSuccess 
     // Recalculate from BOM ratio: plannedQty = ingredient.quantity * batches
     BomService.get(selectedBom.id).then((res) => {
       if (res?.code === 0 && res.result?.ingredients) {
-        setLines(res.result.ingredients.map((ing: any, i: number) => ({
+        setLines(res.result.ingredients.map((ing: Record<string, unknown>, i: number) => ({
           materialId:   ing.materialId,
           materialCode: ing.materialCode,
           materialName: ing.materialName,

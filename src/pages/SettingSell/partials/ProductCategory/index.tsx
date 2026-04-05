@@ -19,7 +19,7 @@ import AddProductCategoryModal from "./partials/AddNewCategory"
 import "./styles.scss";
 import { getPageOffset } from "reborn-util";
 
-export default function ProductCategoryList(props: any) {
+export default function ProductCategoryList(props: Record<string, unknown>) {
   document.title = "Danh mục nhóm sản phẩm";
 
   const { onBackProps } = props;
@@ -30,7 +30,7 @@ export default function ProductCategoryList(props: any) {
   const [listIdChecked, setListIdChecked] = useState<number[]>([]);
   const [showModalAdd, setShowModalAdd] = useState<boolean>(false);
   const [showDialog, setShowDialog] = useState<boolean>(false);
-  const [contentDialog, setContentDialog] = useState<any>(null);
+  const [contentDialog, setContentDialog] = useState<Record<string, unknown>>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [isNoItem, setIsNoItem] = useState<boolean>(false);
   const [isPermissions, setIsPermissions] = useState<boolean>(false);
@@ -51,7 +51,7 @@ export default function ProductCategoryList(props: any) {
   });
 
   // Lấy danh sách (mock)
-  const getListCategory = (paramsSearch: any) => {
+  const getListCategory = (paramsSearch: Record<string, unknown>) => {
     setIsLoading(true);
 
     setTimeout(() => {
@@ -117,7 +117,7 @@ export default function ProductCategoryList(props: any) {
     </div>
   );
 
-  const dataMappingArray = (item: any, index: number) => [
+  const dataMappingArray = (item: Record<string, unknown>, index: number) => [
     getPageOffset(params) + index + 1,
     item.name,
     item.productCount,
@@ -125,7 +125,7 @@ export default function ProductCategoryList(props: any) {
     renderStatus(item.status),
   ];
 
-  const actionsTable = (item: any): IAction[] => {
+  const actionsTable = (item: Record<string, unknown>): IAction[] => {
     const isCheckedItem = listIdChecked?.length > 0;
     return [
       {
@@ -169,7 +169,7 @@ export default function ProductCategoryList(props: any) {
     setContentDialog(null);
   };
 
-  const showDialogConfirmDelete = (item?: any) => {
+  const showDialogConfirmDelete = (item?: Record<string, unknown>) => {
     const content: IContentDialog = {
       color: "error",
       className: "dialog-delete",
