@@ -5,28 +5,34 @@ import Icon from "components/icon";
 import RadioList from "components/radio/radioList";
 import { IOption } from "model/OtherModel";
 import Tippy from "@tippyjs/react";
+interface NumberFormatValues {
+  formattedValue: string;
+  value: string;
+  floatValue: number | undefined;
+}
+
 interface NumericInputProps {
   id?: string;
   value?: string | number;
   name?: string;
   className?: string;
   placeholder?: string;
-  onChange?: any;
-  onValueChange?: any;
+  onChange?: React.ChangeEventHandler<HTMLInputElement>;
+  onValueChange?: (values: NumberFormatValues) => void;
   autoFocus?: boolean;
-  onFocus?: any;
-  onBlur?: any;
+  onFocus?: React.FocusEventHandler<HTMLInputElement>;
+  onBlur?: React.FocusEventHandler<HTMLInputElement>;
   error?: boolean;
   message?: string;
   warning?: boolean;
   messageWarning?: string;
-  onKeyDown?: any;
-  onKeyUp?: any;
-  onClick?: any;
+  onKeyDown?: React.KeyboardEventHandler<HTMLInputElement>;
+  onKeyUp?: React.KeyboardEventHandler<HTMLInputElement>;
+  onClick?: React.MouseEventHandler<HTMLInputElement>;
   label?: string | ReactElement;
   labelPosition?: "left";
   fill?: boolean;
-  onKeyPress?: any;
+  onKeyPress?: React.KeyboardEventHandler<HTMLInputElement>;
   readOnly?: boolean;
   defaultValue?: string | number;
   suffixes?: string;
@@ -40,7 +46,7 @@ interface NumericInputProps {
   icon?: React.ReactElement;
   iconPosition?: "left" | "right";
   iconClickEvent?: React.ReactEventHandler;
-  refInput?: any;
+  refInput?: React.Ref<HTMLInputElement>;
   required?: boolean;
   disabled?: boolean;
   isButton?: boolean;
@@ -48,11 +54,11 @@ interface NumericInputProps {
   valueOptions?: string | number;
   options?: IOption[];
   optionsPosition?: "left" | "right";
-  onChangeValueOptions?: any;
+  onChangeValueOptions?: (value: string | number) => void;
   decimalScale?: number;
   isDecimalScale?: boolean;
   warningHistory?: boolean;
-  onWarningHistory?: any;
+  onWarningHistory?: React.MouseEventHandler<HTMLDivElement>;
 }
 export default function NummericInput(props: NumericInputProps) {
   const {
@@ -111,7 +117,7 @@ export default function NummericInput(props: NumericInputProps) {
   }
 
   const refSuffixes = useRef<HTMLDivElement>();
-  const [styleNumberFormat, setStyleNumberFormat] = useState<any>(null);
+  const [styleNumberFormat, setStyleNumberFormat] = useState<React.CSSProperties | null>(null);
   useEffect(() => {
     if (refSuffixes.current && suffixes) {
       setStyleNumberFormat({

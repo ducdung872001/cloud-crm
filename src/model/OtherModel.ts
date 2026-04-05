@@ -4,8 +4,8 @@ export interface IOption {
   label: string | number;
   type?: "number" | "amount";
   disabled?: boolean;
-  onChange?: any;
-  onClick?: any;
+  onChange?: (value: string | number) => void;
+  onClick?: () => void;
 }
 
 // Notification

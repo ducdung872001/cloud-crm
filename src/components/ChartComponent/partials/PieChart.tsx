@@ -2,7 +2,12 @@ import React, { useContext, useEffect, useState } from "react";
 import Highcharts from "highcharts";
 import HighchartsReact from "highcharts-react-official";
 
-export default function PieChart(props: any) {
+interface PieChartProps {
+  classNames?: string;
+  data?: Highcharts.SeriesOptionsType[];
+}
+
+export default function PieChart(props: PieChartProps) {
   const { classNames, data } = props;
 
   const [chartData, setChartData] = useState({

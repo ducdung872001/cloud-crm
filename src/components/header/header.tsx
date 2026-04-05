@@ -9,7 +9,7 @@ import Button from "components/button/button";
 import Icon from "components/icon";
 import Popover from "components/popover/popover";
 import { UserContext, ContextType } from "contexts/userContext";
-import { INotification, INotificationItem } from "model/OtherModel";
+import { INotification, INotificationItem, IOption } from "model/OtherModel";
 import ImageThirdGender from "assets/images/third-gender.png";
 import { fadeIn, fadeOut, getDomain } from "reborn-util";
 import { useOnClickOutside } from "utils/hookCustom";
@@ -32,7 +32,50 @@ import CustomerService from "services/CustomerService";
 import ProductService from "services/ProductService";
 import InvoiceService from "services/InvoiceService";
 
-export default function Header(props: any) {
+interface CustomerSearchItem {
+  id: number;
+  name: string;
+  phone?: string;
+  number_phone?: string;
+  avatar?: string;
+  code?: string;
+}
+
+interface ProductSearchItem {
+  id: number;
+  name: string;
+  stockQuantity?: number;
+  image?: string;
+  avatar?: string;
+  salePrice?: number;
+}
+
+interface InvoiceSearchItem {
+  invoiceId?: number;
+  invoice?: { id?: number; invoiceCode?: string; fee?: number; amount?: number };
+  products?: { productName?: string }[];
+}
+
+interface NotificationItem {
+  id: number;
+  unread: number | null;
+  messageTitle?: string;
+  messageText?: string;
+  sentAt?: string;
+  targetLink?: string;
+  payload?: string;
+}
+
+interface HeaderProps {
+  valueBranch: IOption | null;
+  handleChangeValueBranch: (option: IOption | null) => void;
+  listBranch: IOption[];
+  newListBranch: IOption[];
+  searchListBranch: (keyword: string) => void;
+  paramBranch: Record<string, unknown>;
+}
+
+export default function Header(props: HeaderProps) {
   const [cookies, setCookie, removeCookie] = useCookies();
   const { valueBranch, handleChangeValueBranch, listBranch, newListBranch, searchListBranch, paramBranch } = props;
   const {
@@ -147,13 +190,13 @@ export default function Header(props: any) {
     }
   };
 
-  const logoutAccountAthena = async (accessTokenAthena) => {
+  const logoutAccountAthena = async (accessTokenAthena: string) => {
     const url = "https://api-athenaspear-prod.athenafs.io/api/v1/account/logout";
     const headers = {
       "Content-Type": "application/json",
       "x-access-token": accessTokenAthena,
     };
-    const response: any = await fetch(url, {
+    const response: { error_code?: number } = await fetch(url, {
       method: "GET",
       headers: headers,
       // body: JSON.stringify(body),
@@ -214,7 +257,7 @@ export default function Header(props: any) {
   //   };
   // }, [paramsNotification]);
 
-  const getListNotify = async (paramsSearch: any, disableLoading?: boolean) => {
+  const getListNotify = async (paramsSearch: Record<string, unknown>, disableLoading?: boolean) => {
     setLoadingNotify(true);
     const response = await NotificationService.list(paramsSearch);
 
@@ -414,11 +457,11 @@ export default function Header(props: any) {
       try {
         const [custRes, prodRes, invRes] = await Promise.allSettled([
           CustomerService.filter({ keyword: q, page: 1, limit: 5 }, ctrl.signal),
-          ProductService.publicList({ keyword: q, page: 1, limit: 5 } as any, ctrl.signal),
+          ProductService.publicList({ keyword: q, page: 1, limit: 5 } as Record<string, unknown>, ctrl.signal),
           // Chỉ search invoice khi query trông như mã đơn (HD/DH/INV + số)
           // Khi tìm tên thông thường, skip invoice để tránh hiển thị đơn không liên quan
           /^(HD|DH|INV)\d*/i.test(q.trim())
-            ? InvoiceService.list({ invoiceCode: q, page: 1, limit: 5 } as any, ctrl.signal)
+            ? InvoiceService.list({ invoiceCode: q, page: 1, limit: 5 } as Record<string, unknown>, ctrl.signal)
             : Promise.resolve({ code: -1, result: null }),
         ]);
         const results: SearchResult[] = [];
@@ -427,7 +470,7 @@ export default function Header(props: any) {
             ?? custRes.value.result?.pagedLst?.items
             ?? custRes.value.result
             ?? [];
-          (custItems as any[]).slice(0, 3).forEach((c: any) => {
+          (custItems as CustomerSearchItem[]).slice(0, 3).forEach((c) => {
             results.push({
               id: c.id,
               group: "customer",
@@ -445,7 +488,7 @@ export default function Header(props: any) {
           const prodItems = prodRes.value.result?.items
             ?? prodRes.value.result?.pagedLst?.items
             ?? [];
-          (prodItems as any[]).slice(0, 3).forEach((p: any) => {
+          (prodItems as ProductSearchItem[]).slice(0, 3).forEach((p) => {
             results.push({
               id: p.id,
               group: "product",
@@ -463,10 +506,10 @@ export default function Header(props: any) {
           const invItems = invRes.value.result?.pagedLst?.items
             ?? invRes.value.result?.items
             ?? [];
-          (invItems as any[]).slice(0, 3).forEach((row: any) => {
+          (invItems as InvoiceSearchItem[]).slice(0, 3).forEach((row) => {
             const inv = row.invoice ?? row;
             const prodNames = (row.products ?? [])
-              .map((p: any) => p.productName)
+              .map((p) => p.productName)
               .filter(Boolean)
               .join(", ");
             results.push({
@@ -531,7 +574,7 @@ export default function Header(props: any) {
 
 
 
-  function isJsonString(str) {
+  function isJsonString(str: string) {
     try {
       const parsed = JSON.parse(str);
       return typeof parsed === "object" && parsed !== null;
@@ -540,7 +583,7 @@ export default function Header(props: any) {
     }
   }
 
-  const handleNotificationClick = (item: any) => {
+  const handleNotificationClick = (item: NotificationItem) => {
     // unread: 0 = chưa đọc, unread: 1 = đã đọc
     if (item.unread === 0 || item.unread === null) {
       onUnread(item.id);
@@ -584,7 +627,7 @@ export default function Header(props: any) {
     }
   };
 
-  const getNotificationIconName = (item: any): string => {
+  const getNotificationIconName = (item: NotificationItem): string => {
     if (item.payload && isJsonString(item.payload)) {
       const payload = JSON.parse(item.payload);
       switch (payload?.type) {
@@ -609,7 +652,7 @@ export default function Header(props: any) {
   };
 
   /** Render a single notification item using the new API fields */
-  const renderNotificationItem = (item: any) => {
+  const renderNotificationItem = (item: NotificationItem) => {
     const isUnread = item.unread === 0 || item.unread === null; // 0/null = chưa đọc, 1 = đã đọc
     const iconName = getNotificationIconName(item);
     return (

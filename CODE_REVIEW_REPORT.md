@@ -43,7 +43,7 @@
 |---|--------|------|---------|
 | 7_FIX | Azure Client ID + email dev lộ | src/configs/authConfig.js dòng 15 | Comment chứa email cá nhân |
 | 8_FIX | VAPID key lộ | src/firebase-config.ts dòng 99 | Firebase push notification key |
-| 9 | OmniCXM secret key trong .env | .env.dev, .env.devlocal, .env.prod | VITE_OMNICXM_KEY hardcoded |
+| 9_FIX | OmniCXM secret key trong .env | .env.dev, .env.devlocal, .env.prod | VITE_OMNICXM_KEY hardcoded |
 | 10 | Thiếu Content-Security-Policy header | index.html, vite.config.ts | Không có CSP, X-Frame-Options |
 | 11 | Thiếu CSRF protection | src/configs/fetchConfig.ts | Không có CSRF token trong request |
 | 12 | Serveo.net tunnel URL trong env files | .env, .env.dev, .env.devlocal | Public tunnel có thể lộ internal API |
@@ -74,7 +74,7 @@
 
 | # | Vấn đề | Số lượng | Ghi chú |
 |---|--------|----------|---------|
-| 1 | Type "any" tràn lan | ~3,973 instances | tsconfig strict: false cho phép implicit any |
+| 1_FIX | Type "any" tràn lan | ~3,973 instances | tsconfig strict: false cho phép implicit any |
 
 **Các file tiêu biểu dùng any nhiều:**
 - src/components/input/input.tsx — tất cả event handlers typed any

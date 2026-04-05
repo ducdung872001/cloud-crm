@@ -14,17 +14,17 @@ import Icon from "components/icon";
 
 interface DatePickerCustomProps {
   id?: string;
-  value?: any;
+  value?: string | Date;
   name?: string;
   className?: string;
-  onChange?: any;
-  onFocus?: any;
-  onBlur?: any;
+  onChange?: (date: Date | string) => void;
+  onFocus?: React.FocusEventHandler<HTMLInputElement>;
+  onBlur?: React.FocusEventHandler<HTMLInputElement>;
   error?: boolean;
   message?: string;
   warning?: boolean;
   messageWarning?: string;
-  onClick?: any;
+  onClick?: React.MouseEventHandler<HTMLElement>;
   label?: string | ReactElement;
   labelPosition?: "left";
   fill?: boolean;
@@ -33,17 +33,17 @@ interface DatePickerCustomProps {
   placeholder?: string;
   icon?: React.ReactElement;
   iconPosition?: "left" | "right";
-  iconClickEvent?: any;
+  iconClickEvent?: React.MouseEventHandler<HTMLSpanElement>;
   hasSelectTime?: boolean;
   calculatorTime?: boolean;
   isMinDate?: boolean;
   isMaxDate?: boolean;
-  minDate?: any;
-  maxDate?: any;
+  minDate?: Date;
+  maxDate?: Date;
   isFmtText?: boolean;
   readOnly?: boolean;
   warningHistory?: boolean;
-  onWarningHistory?: any;
+  onWarningHistory?: React.MouseEventHandler<HTMLDivElement>;
 }
 export default function DatePickerCustom(props: DatePickerCustomProps) {
   const {
@@ -91,21 +91,21 @@ export default function DatePickerCustom(props: DatePickerCustomProps) {
 
   const refInput = useRef<HTMLInputElement>();
 
-  const timeMask = (valueMask) => {
+  const timeMask = (valueMask: string) => {
     const chars = valueMask.split("");
 
-    const minutes: Array<any> = [/[0-5]/, /[0-9]/];
-    const date: Array<any> = [/[0-3]/, /\d/, "/", /[0-1]/, /\d/, "/", /[1-2]/, /\d/, /\d/, /\d/, " "];
+    const minutes: Array<string | RegExp> = [/[0-5]/, /[0-9]/];
+    const date: Array<string | RegExp> = [/[0-3]/, /\d/, "/", /[0-1]/, /\d/, "/", /[1-2]/, /\d/, /\d/, /\d/, " "];
     if (hasSelectTime) {
       let arr = valueMask.split(" ");
-      const hours: Array<any> = [/[0-2]/, arr && arr.length > 1 && arr[1][0] == "2" ? /[0-3]/ : /[0-9]/, ":"];
+      const hours: Array<string | RegExp> = [/[0-2]/, arr && arr.length > 1 && arr[1][0] == "2" ? /[0-3]/ : /[0-9]/, ":"];
       return date.concat(hours.concat(minutes));
     } else {
       return date;
     }
   };
 
-  const filterPassedTime = (time) => {
+  const filterPassedTime = (time: Date) => {
     const currentDate = new Date();
     const selectedDate = new Date(time);
     return calculatorTime ? currentDate.getTime() < selectedDate.getTime() : currentDate.getTime();
@@ -255,7 +255,7 @@ export default function DatePickerCustom(props: DatePickerCustomProps) {
   );
 }
 
-const CalendarContainer = ({ children }) => {
+const CalendarContainer = ({ children }: { children: React.ReactNode }) => {
   const el = document.getElementsByTagName("body")[0];
   return <Portal container={el}>{children}</Portal>;
 };

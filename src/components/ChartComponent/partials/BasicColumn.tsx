@@ -2,7 +2,12 @@ import React, { useContext, useEffect, useState } from "react";
 import Highcharts from "highcharts";
 import HighchartsReact from "highcharts-react-official";
 
-export default function BasicColumn(props: any) {
+interface BasicColumnProps {
+  classNames?: string;
+  data?: Highcharts.SeriesOptionsType[];
+}
+
+export default function BasicColumn(props: BasicColumnProps) {
   const { classNames, data } = props;
 
   const [chartData, setChartData] = useState({

@@ -18,28 +18,28 @@
  *   nghĩa là: nếu mappedData.phone là empty -> lấy inputData.phoneMasked để gán mappedData.phone
  */
 
-type AnyObject = Record<string, any>;
+type AnyObject = Record<string, unknown>;
 
 type Component = {
   label?: string;
   type?: string;
-  layout?: AnyObject;
+  layout?: Record<string, unknown>;
   id?: string;
   key?: string;
   path?: string;
   components?: Component[];
-  values?: { label: string; value: any }[];
+  values?: { label: string; value: string | number | boolean }[];
   valuesKey?: string;
   showOutline?: boolean;
   isRepeating?: boolean;
   allowAddRemove?: boolean;
   defaultRepetitions?: number;
-  [k: string]: any;
+  [k: string]: unknown;
 };
 
 type Config = {
   components: Component[];
-  [k: string]: any;
+  [k: string]: unknown;
 };
 
 type ComponentAttribute = {
@@ -47,8 +47,8 @@ type ComponentAttribute = {
   name?: string;
   fieldName?: string;
   datatype?: string | null;
-  attributes?: any;
-  [k: string]: any;
+  attributes?: Record<string, unknown>;
+  [k: string]: unknown;
 };
 
 type ExtraInfo = {
@@ -59,8 +59,8 @@ type ExtraInfo = {
   contractWarrantyId? : number;
   contractId? : number;
   customerId? : number;
-  attributeValue?: any;
-  [k: string]: any;
+  attributeValue?: unknown;
+  [k: string]: unknown;
 };
 
 export function mapConfigData(
@@ -73,7 +73,7 @@ export function mapConfigData(
   const mappedData: AnyObject = {};
 
   // Parse JSON-string nếu có, trả về nguyên giá trị nếu không phải JSON
-  function safeParseJson(possibleJson: any): any {
+  function safeParseJson(possibleJson: unknown): unknown {
     if (possibleJson == null) return possibleJson;
     if (Array.isArray(possibleJson) || typeof possibleJson === "object") return possibleJson;
     if (typeof possibleJson === "string") {
@@ -90,7 +90,7 @@ export function mapConfigData(
   }
 
   // Kiểm tra value có được coi là "không có giá trị"
-  function isEmptyValue(value: any): boolean {
+  function isEmptyValue(value: unknown): boolean {
     if (value === undefined || value === null) return true;
     if (typeof value === "string" && value.trim() === "") return true;
     if (Array.isArray(value) && value.length === 0) return true;
@@ -98,7 +98,7 @@ export function mapConfigData(
   }
 
   // Tìm array phù hợp trong inputData (heuristic cho dynamiclist khi value là JSON-string)
-  function findMatchingArrayInData(subComponents: Component[], dataObject: AnyObject): { keyName: string; arrayValue: any[] } | null {
+  function findMatchingArrayInData(subComponents: Component[], dataObject: AnyObject): { keyName: string; arrayValue: unknown[] } | null {
     const subKeys = (subComponents || []).map((c) => c.key).filter(Boolean);
     for (const keyName of Object.keys(dataObject || {})) {
       const rawValue = dataObject[keyName];
@@ -125,7 +125,7 @@ export function mapConfigData(
   }
 
   // Lấy raw value cho component từ inputData (theo path, key, valuesKey, id)
-  function getRawValueForComponent(component: Component): any {
+  function getRawValueForComponent(component: Component): unknown {
     if (component.path && hasKey(inputData, component.path)) return inputData[component.path];
     if (component.key && hasKey(inputData, component.key)) return inputData[component.key];
     if (component.valuesKey && hasKey(inputData, component.valuesKey)) return inputData[component.valuesKey];
@@ -133,7 +133,7 @@ export function mapConfigData(
     return undefined;
   }
 
-  function hasKey(objectToCheck: any, keyName: string): boolean {
+  function hasKey(objectToCheck: unknown, keyName: string): boolean {
     if (objectToCheck == null) return false;
     return Object.prototype.hasOwnProperty.call(objectToCheck, keyName) && objectToCheck[keyName] !== undefined;
   }
@@ -221,7 +221,7 @@ export function mapConfigData(
         rawValue = safeParseJson(rawValue);
         const arrayValue = Array.isArray(rawValue) ? rawValue : [];
 
-        const items = arrayValue.map((entryItem: any) => {
+        const items = arrayValue.map((entryItem: Record<string, unknown> | null) => {
           const itemObject: AnyObject = {};
           if (Array.isArray(componentDefinition.components)) {
             for (const subComponent of componentDefinition.components) {
@@ -303,7 +303,7 @@ export function mapConfigData(
     }
 
     // Tạo map từ attributeId -> extraInfo.attributeValue (parse nếu cần)
-    const extraInfoMap = new Map<number, any>();
+    const extraInfoMap = new Map<number, unknown>();
     for (const info of extraInfos) {
       if (info && typeof info.attributeId === "number") {
         extraInfoMap.set(info.attributeId, safeParseJson(info.attributeValue));

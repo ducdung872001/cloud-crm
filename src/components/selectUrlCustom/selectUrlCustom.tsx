@@ -7,7 +7,7 @@ import Icon from "components/icon";
 import Tippy from "@tippyjs/react";
 import { convertParamsToString } from "reborn-util";
 
-const fetchData = async (Uri: string, params: any, signal?: AbortSignal) => {
+const fetchData = async (Uri: string, params: Record<string, string | number | boolean>, signal?: AbortSignal) => {
   if (!Uri) return { code: -1, message: "No lookupUri provided" };
   let _params = params || {};
   let _uri = Uri;
@@ -31,15 +31,15 @@ const fetchData = async (Uri: string, params: any, signal?: AbortSignal) => {
 
 interface SelectCustomProps {
   id?: string;
-  value?: any;
-  defaultValue?: any;
+  value?: IOption | IOption[] | null;
+  defaultValue?: IOption | IOption[] | null;
   name?: string;
   className?: string;
   placeholder?: string;
-  onChange?: any;
+  onChange?: (option: IOption | IOption[] | null) => void;
   autoFocus?: boolean;
-  onFocus?: (e: any) => void;
-  onBlur?: (e: any) => void;
+  onFocus?: (e: React.FocusEvent) => void;
+  onBlur?: (e: React.FocusEvent) => void;
   error?: boolean;
   message?: string;
   warning?: boolean;
@@ -49,25 +49,25 @@ interface SelectCustomProps {
   fill?: boolean;
   required?: boolean;
   warningHistory?: boolean;
-  onWarningHistory?: any;
+  onWarningHistory?: React.MouseEventHandler<HTMLDivElement>;
   disabled?: boolean;
   readOnly?: boolean;
   isSearchable?: boolean;
   options?: IOption[];
   isLoading?: boolean;
   onMenuOpen?: () => void;
-  refSelect?: any;
+  refSelect?: React.Ref<unknown>;
   special?: boolean;
   url?: string;
   isLoadAll?: boolean;
   searchKey?: string;
   labelKey?: string;
   valueKey?: string;
-  defaultParams?: any;
-  mapResultData?: (result: any) => any[];
+  defaultParams?: Record<string, string | number | boolean>;
+  mapResultData?: (result: Record<string, unknown>) => IOption[];
   isFormatOptionLabel?: boolean;
-  formatOptionLabel?: any;
-  additional?: any;
+  formatOptionLabel?: (option: IOption) => React.ReactNode;
+  additional?: Record<string, unknown>;
   isMulti?: boolean;
   closeMenuOnSelect?: boolean;
   isClearable?: boolean;
@@ -150,7 +150,7 @@ export default function SelectUrlCustom(props: SelectCustomProps) {
   // chỉ fetch các id chưa có, cache lại option và setInternalValue đúng theo isMulti để tránh load dư và hiển thị sai dữ liệu
 
   useEffect(() => {
-    let listId: any[] = [];
+    let listId: (string | number)[] = [];
 
     if (isMulti) {
       if (Array.isArray(value)) {
@@ -187,7 +187,7 @@ export default function SelectUrlCustom(props: SelectCustomProps) {
                 ...listBindingField.reduce((acc, field) => {
                   if (field in item) acc[field] = item[field];
                   return acc;
-                }, {} as any),
+                }, {} as Record<string, unknown>),
               }));
 
           // cache option
@@ -258,7 +258,7 @@ export default function SelectUrlCustom(props: SelectCustomProps) {
                 acc[field] = item[field];
               }
               return acc;
-            }, {} as any),
+            }, {} as Record<string, unknown>),
           }));
         }
         // Nếu item nào trong mappedData có value trùng với 1 phần tử trong listOptions.current thì giữ nguyên, nếu không thì thêm mới vào listOptions.current
@@ -283,11 +283,11 @@ export default function SelectUrlCustom(props: SelectCustomProps) {
     }
   };
 
-  const CustomDropdownIndicator = (props: any) => {
+  const CustomDropdownIndicator = (props: React.ComponentProps<typeof components.DropdownIndicator>) => {
     return isShowDropdownIcon ? <components.DropdownIndicator {...props} /> : null;
   };
 
-  const handleOnChange = (e: any) => {
+  const handleOnChange = (e: IOption | IOption[] | null) => {
     setInternalValue(e);
 
     if (isMulti) {

@@ -12,22 +12,22 @@ interface InputProps {
   name?: string;
   className?: string;
   placeholder?: string;
-  onChange?: any;
+  onChange?: React.ChangeEventHandler<HTMLInputElement>;
   autoFocus?: boolean;
-  onFocus?: any;
-  onBlur?: any;
+  onFocus?: React.FocusEventHandler<HTMLInputElement>;
+  onBlur?: React.FocusEventHandler<HTMLInputElement>;
   error?: boolean;
   message?: string;
   warning?: boolean;
   messageWarning?: string;
-  onKeyDown?: any;
-  onKeyUp?: any;
-  onClick?: any;
+  onKeyDown?: React.KeyboardEventHandler<HTMLInputElement>;
+  onKeyUp?: React.KeyboardEventHandler<HTMLInputElement>;
+  onClick?: React.MouseEventHandler<HTMLInputElement>;
   label?: string | ReactElement;
   labelPosition?: "left";
   fill?: boolean;
   disabled?: boolean;
-  onKeyPress?: any;
+  onKeyPress?: React.KeyboardEventHandler<HTMLInputElement>;
   readOnly?: boolean;
   defaultValue?: string | number;
   maxLength?: number;
@@ -39,16 +39,16 @@ interface InputProps {
   }[];
   iconPosition?: "left" | "right";
   iconClickEvent?: React.ReactEventHandler;
-  refInput?: any;
+  refInput?: React.Ref<HTMLInputElement>;
   required?: boolean;
   autoComplete?: string;
   nameOptions?: string;
   valueOptions?: string | number;
   options?: IOption[];
   optionsPosition?: "left" | "right";
-  onChangeValueOptions?: any;
+  onChangeValueOptions?: (value: string | number) => void;
   warningHistory?: boolean;
-  onWarningHistory?: any;
+  onWarningHistory?: React.MouseEventHandler<HTMLDivElement>;
 }
 export default function Input(props: InputProps) {
   const {

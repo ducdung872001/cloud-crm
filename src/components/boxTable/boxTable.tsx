@@ -8,18 +8,23 @@ import { IAction } from "model/OtherModel";
 import Action from "./partials/action";
 import "./boxTable.scss";
 
+export interface BoxTableItem {
+  id: number;
+  [key: string]: unknown;
+}
+
 export interface BoxTableProps {
   name?: string;
   titles: string[];
-  actions?: (item: any) => IAction[];
+  actions?: (item: BoxTableItem) => IAction[];
   actionType?: "dropdown" | "inline";
-  items: any[];
+  items: BoxTableItem[];
   className?: string;
-  style?: any;
-  dataMappingArray: (item: any, index: number) => void;
+  style?: React.CSSProperties;
+  dataMappingArray: (item: BoxTableItem, index: number) => void;
   dataFormat?: string[];
-  dataSize?: any[];
-  onClickRow?: (item: any) => void;
+  dataSize?: (string | number)[];
+  onClickRow?: (item: BoxTableItem) => void;
   striped?: boolean;
   isActivity?: boolean;
   isBulkAction?: boolean;
@@ -28,11 +33,11 @@ export interface BoxTableProps {
   dataPagination?: PaginationProps;
   listIdChecked?: number[];
   setListIdChecked?: (listId: number[]) => void;
-  renderDetail?: any;
-  listDetailData?: any[];
+  renderDetail?: (item: BoxTableItem) => React.ReactNode;
+  listDetailData?: BoxTableItem[];
   listIdDetailShow?: number[];
   isSummary?: boolean;
-  dataSummary?: any[];
+  dataSummary?: React.ReactNode[];
 }
 
 export default function BoxTable(props: BoxTableProps) {
@@ -64,7 +69,7 @@ export default function BoxTable(props: BoxTableProps) {
   let { actions, bulkActionItems } = props;
   bulkActionItems = (bulkActionItems || []).filter((item) => item);
 
-  const [listItem, setListItem] = useState<any[]>();
+  const [listItem, setListItem] = useState<{ id: number; data: void; raw: BoxTableItem; showActionRow: boolean; onShowDetail: boolean }[]>();
   const checkAll = (isChecked: boolean) => {
     if (isChecked) {
       setListIdChecked &&
@@ -86,7 +91,7 @@ export default function BoxTable(props: BoxTableProps) {
     }
   };
 
-  const mapData = (data: any[]) => {
+  const mapData = (data: BoxTableItem[]) => {
     return data?.map((item, index) => ({
       id: item.id,
       data: dataMappingArray(item, index),

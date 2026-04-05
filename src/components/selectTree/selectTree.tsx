@@ -10,15 +10,15 @@ import { use } from "i18next";
 
 interface SelectCustomProps {
   id?: string;
-  value?: any; //string | number
-  defaultValue?: any;
+  value?: IOption | IOption[] | null;
+  defaultValue?: IOption | IOption[] | null;
   name?: string;
   className?: string;
   placeholder?: string;
-  onChange?: any;
+  onChange?: (option: IOption | IOption[] | null) => void;
   autoFocus?: boolean;
-  onFocus?: (e) => void;
-  onBlur?: (e) => void;
+  onFocus?: (e: React.FocusEvent) => void;
+  onBlur?: (e: React.FocusEvent) => void;
   error?: boolean;
   message?: string;
   warning?: boolean;
@@ -28,28 +28,28 @@ interface SelectCustomProps {
   fill?: boolean;
   required?: boolean;
   warningHistory?: boolean;
-  onWarningHistory?: any;
+  onWarningHistory?: React.MouseEventHandler<HTMLDivElement>;
   disabled?: boolean;
   readOnly?: boolean;
   isSearchable?: boolean;
   options: IOption[];
   isLoading?: boolean;
   onMenuOpen?: () => void;
-  refSelect?: any;
+  refSelect?: React.Ref<unknown>;
   special?: boolean;
 
   //Async
   isAsync?: boolean;
-  loadOptions?: (inputValue: string, callback: any) => void;
+  loadOptions?: (inputValue: string, callback: (options: IOption[]) => void) => void;
 
   //Hiển thị hình ảnh người dùng
   isFormatOptionLabel?: boolean;
-  formatOptionLabel?: any;
+  formatOptionLabel?: (option: IOption) => React.ReactNode;
 
   //đoạn này hiển thị phân trang khi cuộn xuống
   isAsyncPaginate?: boolean;
-  loadOptionsPaginate?: any;
-  additional?: any;
+  loadOptionsPaginate?: (search: string, loadedOptions: IOption[], additional: Record<string, unknown>) => Promise<{ options: IOption[]; hasMore: boolean; additional?: Record<string, unknown> }>;
+  additional?: Record<string, unknown>;
   isMulti?: boolean;
   isClearable?: boolean;
 

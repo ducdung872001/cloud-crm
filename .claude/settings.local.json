@@ -16,7 +16,8 @@
       "Bash(yarn add:*)",
       "Bash(ls \"d:\\\\Git\\\\reborn\\\\reborn-cloud\\\\cloud-ver2\\\\cloud-crm\"/.env*)",
       "Bash(ls \"d:\\\\Git\\\\reborn\\\\reborn-cloud\\\\cloud-ver2\\\\cloud-crm\"/public/firebase*)",
-      "Bash(echo \"EXIT_CODE:$?\")"
+      "Bash(echo \"EXIT_CODE:$?\")",
+      "Bash(echo \"EXIT_CODE: $?\")"
     ]
   }
 }
