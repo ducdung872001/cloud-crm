@@ -145,5 +145,4 @@ export function convertToDataRow(rawTable: CellData[][]): Record<string, unknown
   const rawTable = [ ...DỮ LIỆU ĐẦU VÀO CỦA BẠN... ];
   
   const dataRow = convertToDataRow(rawTable);
-  console.log(dataRow);
   */

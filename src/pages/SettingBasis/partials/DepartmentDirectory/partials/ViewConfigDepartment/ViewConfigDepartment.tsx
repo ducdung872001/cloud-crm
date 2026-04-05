@@ -68,7 +68,6 @@ export default function ViewConfigDepartment(props: IViewConfigDepartmentProps) 
   const getListPermissionDepartment = async (makeReload: boolean) => {
     makeReload && setIsLoading(true);
 
-    console.log("params =>", params?.name);
     const response = await PermissionService.permissionDepartment(data?.id, params?.name);
 
     if (response.code === 0) {

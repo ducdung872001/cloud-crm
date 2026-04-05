@@ -138,7 +138,6 @@ export default function SelectUrlCustom(props: SelectCustomProps) {
   const [internalValue, setInternalValue] = useState<Record<string, unknown>>(isMulti ? [] : null);
 
   const listOptions = useRef([]);
-  console.log("value", value);
 
   const hasValueParams = () => {
     if (isMulti && Array.isArray(value)) {

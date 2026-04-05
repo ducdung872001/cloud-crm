@@ -26,10 +26,8 @@ export default function SummaryCards({ branchId }: Props) {
     if (!branchId) return;
     ShiftService.getGeneralReport(branchId)
       .then((res) => {
-        console.log("[SummaryCards] API response:", res);
         const d = res?.result;
         if (!d) {
-          console.warn("[SummaryCards] No result:", res);
           return;
         }
 

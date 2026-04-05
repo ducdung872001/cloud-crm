@@ -141,7 +141,6 @@ export default function ModalImportGrid(props: Record<string, unknown>) {
       const sheetName = workbook.SheetNames[0];
       const worksheet = workbook.Sheets[sheetName];
       const jsonData: Record<string, unknown>[] = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
-      console.log("jsonData", jsonData);
 
       //Đọc dòng đầu trong file Excel để lấy danh sách cột, nếu số lượng và tên cột không khớp với danh sách cột listColumn đã định nghĩa thì sẽ thông báo lỗi
       const headerRow = jsonData[0].filter((item) => item !== null && item !== undefined); // Lọc các giá trị null, undefined và rỗng

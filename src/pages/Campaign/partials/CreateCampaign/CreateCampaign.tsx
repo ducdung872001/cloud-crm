@@ -250,7 +250,6 @@ export default function CreateCampaign() {
 
   const handleDetailData = async () => {
     const response = await CampaignService.detail(+id);
-    console.log("response detail campaign: ", response);
 
     if (response.code === 0) {
       const result: Record<string, unknown> = response.result;

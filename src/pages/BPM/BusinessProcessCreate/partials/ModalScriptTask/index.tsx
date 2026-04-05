@@ -324,7 +324,6 @@ export default function ModalScriptTask({ onShow, onHide, dataNode, processId, c
       processId: formData?.processId ?? null,
       workflowId: formData?.workflowId ?? null,
     };
-    console.log("body", body);
 
     const response = await BusinessProcessService.updateScriptTask(body);
 

@@ -151,8 +151,6 @@ export default function ShippingOrderList() {
     }
   };
 
-  console.log("Params search:", params);
-
   useEffect(() => { getListOrder(params); }, []); // eslint-disable-line
 
   useEffect(() => {

@@ -257,7 +257,6 @@ const BusinessProcessCreate = () => {
       modeling.updateProperties(dataNode, {
         name: nameNode,
       });
-      console.log("Tên đã thay đổi:", dataNode.businessObject.name);
     }
   };
 
@@ -391,12 +390,10 @@ const BusinessProcessCreate = () => {
 
     // Lắng nghe sự kiện copy
     bpmnModeler.current.on("copyPaste.copyElement", function (event) {
-      console.log("Đang copy element:", event.element);
     });
 
     // Lắng nghe sự kiện paste
     bpmnModeler.current.on("copyPaste.pasteElement", function (event) {
-      console.log("Đang paste element:", event.element);
     });
 
     bpmnModeler.current.on("commandStack.connection.delete.postExecuted", function (event) {
@@ -409,7 +406,6 @@ const BusinessProcessCreate = () => {
 
       // Kiểm tra nếu connection là một Sequence Flow
       if (connection.businessObject.$type === "bpmn:SequenceFlow") {
-        console.log("Sequence Flow đã bị xoá:", connection);
         isUpdatingTask = true;
         deleteLinkNode(connection?.id);
       }
@@ -429,14 +425,12 @@ const BusinessProcessCreate = () => {
     // Trước khi lệnh replace được thực thi
     bpmnModeler.current.on("commandStack.shape.replace.preExecute", function (event) {
       isReplacing = true; // Bắt đầu quá trình thay thế
-      console.log("Bắt đầu quá trình thay thế");
     });
 
     // Sau khi lệnh replace hoàn tất
     bpmnModeler.current.on("commandStack.shape.replace.postExecuted", function (event) {
       isReplacing = false; // Kết thúc quá trình thay thế
       const element = event.context.newShape;
-      console.log("Kết thúc quá trình thay thế", element);
 
       setTimeout(() => {
         if (checkType(element.type)) {
@@ -455,7 +449,6 @@ const BusinessProcessCreate = () => {
     bpmnModeler.current.on("commandStack.shape.delete.postExecuted", function (event) {
       const { context } = event;
       const deletedElement = context.shape;
-      console.log("Element deleted:", deletedElement);
       if (isReplacing) {
         // Nếu xoá đang diễn ra trong quá trình thay thế, bỏ qua xử lý
         // console.log('Xoá trong quá trình thay thế, bỏ qua.');
@@ -472,14 +465,12 @@ const BusinessProcessCreate = () => {
       if (isReplacing) {
         return;
       }
-      console.log("element create shape", element);
 
       // Kiểm tra nếu phần tử là SubProcess
       if (checkType(element.type)) {
         if (element?.businessObject?.$parent?.id && element.businessObject?.$parent?.$type === "bpmn:SubProcess") {
           getDetailNode(element?.businessObject?.$parent?.id, element);
         } else if (element.type === "bpmn:SubProcess") {
-          console.log("bpmn:SubProcess");
           // khi chuyên sang loại subprocess gọi api để tạo ra process con, lấy id process con cập nhật vào childProcessId của node
           addChildProcess(element, id);
         } else {
@@ -500,12 +491,10 @@ const BusinessProcessCreate = () => {
       if (checkType(element.type)) {
         if (element.type === "bpmn:SequenceFlow") {
           if (businessObject && businessObject.name) {
-            console.log("Link name changed:", businessObject.name);
           }
           // addLinkNode(element, fromNodeId, toNodeId)
         } else {
           if (businessObject && businessObject.name) {
-            console.log("Node name changed:", businessObject.name);
             addNameNode(businessObject.name, element);
           }
         }
@@ -519,7 +508,6 @@ const BusinessProcessCreate = () => {
       const name = element.id || "Unnamed";
 
       if (element.type === "bpmn:SequenceFlow") {
-        console.log("Hover vào SequenceFlow:", element.id);
       }
 
       // Display tooltip
@@ -586,7 +574,6 @@ const BusinessProcessCreate = () => {
           })
         );
 
-        console.log("Multi-select:", currentSelection);
       });
     };
 
@@ -596,17 +583,14 @@ const BusinessProcessCreate = () => {
       .then(({ warnings }) => {
         hookSelection(bpmnModeler.current);
         if (warnings.length) {
-          console.warn("Warnings", warnings);
         }
 
         bpmnModeler.current.on("element.click", (event) => {
           setNodeId(event.element.id);
-          console.log("element.click", event);
         });
 
         bpmnModeler.current.on("element.dblclick", (event) => {
           const element = event.element;
-          console.log("element", element);
           setDataNode(element);
           handleElementClick(element);
         });
@@ -639,7 +623,6 @@ const BusinessProcessCreate = () => {
   const saveDiagram = async () => {
     try {
       const { xml } = await bpmnModeler.current.saveXML({ format: true });
-      console.log("Saved BPMN 2.0 XML", xml);
       const body = {
         id: id,
         config: xml,

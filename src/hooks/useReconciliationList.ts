@@ -83,7 +83,6 @@ export function useReconciliationList({
       setIsLoading(false);
     } catch (error) {
       if (error?.name === "AbortError") {
-        console.log("Request was aborted");
       } else {
         showToast(error?.message ?? "Có lỗi xảy ra. Vui lòng thử lại sau", "error");
       }

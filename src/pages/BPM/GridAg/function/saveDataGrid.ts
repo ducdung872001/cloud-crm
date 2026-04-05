@@ -31,7 +31,6 @@ export const saveDataGrid = async (columnsConfig: Record<string, unknown>[], cur
         return newRow;
       }
     }); // Deep copy to avoid mutating the original data
-    console.log("dataRow to save:", dataRow);
 
     let check_required = false;
     let check_regex = false;
@@ -39,7 +38,6 @@ export const saveDataGrid = async (columnsConfig: Record<string, unknown>[], cur
       if (!item.isFullWidthRow) {
         columnsConfig.map((field) => {
           if (field?.required && !item[field.key]) {
-            console.log("field?.required && !item[field.key]", field, item);
 
             check_required = true;
           }

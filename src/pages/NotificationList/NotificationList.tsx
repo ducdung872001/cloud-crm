@@ -337,7 +337,6 @@ export default function NotificationList(props: Record<string, unknown>) {
   const onUnread = async (id: number) => {
     const response = await NotificationService.updateUnread({ id: id });
     if (response.code === 0) {
-      console.log('Đã đọc');
       // showToast("Xóa thông báo thành công", "success");
       getListNotify(params);
       getCountUnread();
@@ -625,7 +624,6 @@ export default function NotificationList(props: Record<string, unknown>) {
                 },
               ]}
               onChange={(e) => {
-                console.log('e', e);
                 if (e) {
                   setListNotifyType(e);
                 } else {

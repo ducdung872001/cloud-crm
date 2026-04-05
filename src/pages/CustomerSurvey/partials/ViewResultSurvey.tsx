@@ -81,7 +81,6 @@ export default function ViewResultSurvey(props: IViewResultSurveyProps) {
       const result = response.result;
 
       const checkData = result.filter((item) => item.count !== 0).length > 0;
-      console.log("checkData : ", checkData);
 
       if (checkData) {
         const total = result.reduce((sum, item) => sum + item.count, 0);

@@ -35,7 +35,6 @@ export default function SplitDataCustomerModal(props: Record<string, unknown>) {
   const [checkFieldTeamEmployee, setCheckFieldTeamEmployee] = useState(false);
   const [tableEmployee, setTableEmployee] = useState([]);
   const [listIdCheckedEmployee, setListIdCheckedEmployee] = useState<number[]>([]);
-  console.log('listIdCheckedEmployee', listIdCheckedEmployee);
   
   const [tabDepartment, setTabDepartment] = useState(1);
   

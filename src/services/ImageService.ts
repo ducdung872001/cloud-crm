@@ -2,7 +2,6 @@ import { urlsApi } from "configs/urls";
 import { getCookie } from "reborn-util";
 
 const processError = (err) => {
-  console.log(err);
 };
 
 const uploadFile = (uploadURL, { data, onSuccess, onError = processError, onProgress }) => {
@@ -47,10 +46,8 @@ const uploadFile = (uploadURL, { data, onSuccess, onError = processError, onProg
           if (response && response.code === 0) {
             onSuccess(response.result);
           } else {
-            console.log(response);
           }
         } catch (error) {
-          console.log(error);
         }
       }
     };

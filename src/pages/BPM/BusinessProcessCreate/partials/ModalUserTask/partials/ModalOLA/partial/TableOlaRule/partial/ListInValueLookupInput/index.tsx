@@ -55,7 +55,6 @@ const ListInValueLookupInput: React.FC<ListInValueLookupInputProps> = ({
             rowIndex={rowIndex}
             value={field.value}
             onChange={(e) => {
-              console.log("onChange-ListInValueLookupInput", e);
               const value = {
                 value: e.map((item: Record<string, unknown>) => item.value),
               };

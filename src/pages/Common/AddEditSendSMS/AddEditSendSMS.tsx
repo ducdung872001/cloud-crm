@@ -1052,8 +1052,6 @@ export default function AddEditSendSMS(props: ISendSMS) {
     setIsLimitCustomer(false);
   };
 
-  console.log("isView", isView);
-
   const actions = useMemo<Record<string, unknown>>(
     () => ({
       actions_right: {

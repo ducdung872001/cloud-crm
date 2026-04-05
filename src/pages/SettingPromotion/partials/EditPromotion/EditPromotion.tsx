@@ -42,7 +42,6 @@ interface IFilterUser {
 
 export default function EditPromotion(props: Record<string, unknown>) {
   const { showEditPrm, setShowEditPrm, data } = props;
-  console.log("data edit prm", data);
   document.title = "Thêm mới khuyến mãi";
 
   const [type, setType] = useState<string>("add");
@@ -187,7 +186,6 @@ export default function EditPromotion(props: Record<string, unknown>) {
   // Load data from props when component mounts or data changes
   useEffect(() => {
     if (data && Object.keys(data).length > 0) {
-      console.log("Loading data into formData", data);
       setType("edit");
       
       // Parse dates if they exist
@@ -211,7 +209,6 @@ export default function EditPromotion(props: Record<string, unknown>) {
         }
       };
       
-      console.log("New formData:", newFormData);
       setFormData(newFormData);
       
       // Set isFinishTime if endDate exists
@@ -1214,7 +1211,7 @@ export default function EditPromotion(props: Record<string, unknown>) {
                           required={true}
                           options={[]}
                           value={"1"}
-                          onChange={(e) => console.log(e)}
+                          onChange={(e) => { /* TODO */ }}
                           isAsyncPaginate={true}
                           placeholder="Chọn loại điều kiện"
                         />
@@ -1228,7 +1225,7 @@ export default function EditPromotion(props: Record<string, unknown>) {
                           required={true}
                           options={[]}
                           value={"1"}
-                          onChange={(e) => console.log(e)}
+                          onChange={(e) => { /* TODO */ }}
                           isAsyncPaginate={true}
                           placeholder="Chọn kiểu điều kiện"
                         />
@@ -1241,7 +1238,7 @@ export default function EditPromotion(props: Record<string, unknown>) {
                           value={""}
                           fill={true}
                           required={true}
-                          onChange={(e) => console.log(e)}
+                          onChange={(e) => { /* TODO */ }}
                         />
                       </div>
                       <div className="form-item">
@@ -1253,7 +1250,7 @@ export default function EditPromotion(props: Record<string, unknown>) {
                           required={true}
                           options={[]}
                           value={"1"}
-                          onChange={(e) => console.log(e)}
+                          onChange={(e) => { /* TODO */ }}
                           isAsyncPaginate={true}
                           placeholder="Chọn đối tượng điều kiện"
                         />
@@ -1431,7 +1428,7 @@ export default function EditPromotion(props: Record<string, unknown>) {
             </div>
           </div>
           <div className="footer">
-            <Button className="btn__search" onClick={() => console.log("ok")}>
+            <Button className="btn__search" onClick={() => { /* TODO */ }}>
               Hoàn thành
             </Button>
           </div>

@@ -22,8 +22,6 @@ import Tippy from "@tippyjs/react";
 
 export default function ModalGiveGoal(props: Record<string, unknown>) {
   const { onShow, onHide, idData, idCampaign } = props;
-  console.log("idData", idData);
-  console.log("idCampaign", idCampaign);
 
   const focusedElement = useActiveElement();
   const { dataBranch } = useContext(UserContext) as ContextType;
@@ -284,8 +282,6 @@ export default function ModalGiveGoal(props: Record<string, unknown>) {
       unit: "",
     },
   ]);
-
-  console.log("dataMeasurement", dataMeasurement);
 
   const loadedOptionMeasurement = async (search, loadedOptions, { page }) => {
     const param: Record<string, unknown> = {

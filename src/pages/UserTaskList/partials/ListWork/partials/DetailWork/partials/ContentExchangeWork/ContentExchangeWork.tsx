@@ -57,7 +57,6 @@ export default function ContentExchangeWork(props: IContentExchangeWorkProps) {
   useOnClickOutside(refEditChat, () => setIsEditChat(false), ["option-action-chat"]);
 
   const [lstDataExchange, setLstDataExchange] = useState<IWorkExchangeResponseModal[]>([]);
-  console.log("lstDataExchange", lstDataExchange);
 
   const [idExchange, setIdExchange] = useState<number>(0);
   const [dataExchange, setDataExchange] = useState<IWorkExchangeResponseModal>(null);

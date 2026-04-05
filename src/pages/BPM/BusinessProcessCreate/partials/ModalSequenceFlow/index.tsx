@@ -348,7 +348,6 @@ export default function ModalSequenceFlow(props: Record<string, unknown>) {
         dataOption.map((item) => {
           const components =
             (item.config && JSON.parse(item.config) && JSON.parse(item.config).components && JSON.parse(item.config).components) || [];
-          console.log("components", components);
 
           components.map((el) => {
             // if(el.key || el.path){
@@ -472,7 +471,6 @@ export default function ModalSequenceFlow(props: Record<string, unknown>) {
 
   //! Đoạn này xử lý lv-1
   const handlePushRule = (data, idx) => {
-    console.log("data", data);
 
     if (!data) return;
 
@@ -1809,7 +1807,6 @@ export default function ModalSequenceFlow(props: Record<string, unknown>) {
                                               <div
                                                 className={"icon-change-select"}
                                                 onClick={(e) => {
-                                                  console.log("da vao step 1");
 
                                                   setFormData({
                                                     ...formData,
@@ -2161,7 +2158,6 @@ export default function ModalSequenceFlow(props: Record<string, unknown>) {
                                                       <div
                                                         className={"icon-change-select"}
                                                         onClick={(e) => {
-                                                          console.log("da vao");
 
                                                           setFormData({
                                                             ...formData,

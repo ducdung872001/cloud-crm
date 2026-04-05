@@ -193,7 +193,6 @@ const SettingBusinessProcess = () => {
 
   const [statusProcess, setStatusProcess] = useState(null);
   const [nodes, setNodes] = useNodesState(initialNodes);
-  console.log("nodes", nodes);
 
   const onNodesChange = useCallback(
     (changes) => {
@@ -222,11 +221,9 @@ const SettingBusinessProcess = () => {
   );
 
   const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges);
-  console.log("edges", edges);
   const [reactFlowInstance, setReactFlowInstance] = useState(null);
 
   const [matchData, setMatchData] = useState([]);
-  console.log("matchData", matchData);
 
   useEffect(() => {
     if (edges && edges.length > 0) {
@@ -270,8 +267,6 @@ const SettingBusinessProcess = () => {
       configs: matchData,
     };
 
-    console.log("body", body);
-
     const response = await MarketingAutomationService.updateConfigNode(body);
 
     if (response.code === 0) {
@@ -314,8 +309,6 @@ const SettingBusinessProcess = () => {
       configs: newData,
     };
 
-    console.log("body", body);
-
     const response = await BusinessProcessService.updateLinkNode(body);
 
     if (response.code === 0) {
@@ -349,9 +342,7 @@ const SettingBusinessProcess = () => {
   const [dataParamsCondition, setDataParamsCondition] = useState(null);
 
   const onConnect = useCallback((params) => {
-    console.log('params', params);
     const findNodeSoure: Record<string, unknown> = nodes.find(el => el.id === params.source) || null;
-    console.log('findNodeSoure', findNodeSoure);
     
     if(findNodeSoure && findNodeSoure?.code === 'condition'){
       const newParams = {
@@ -368,7 +359,6 @@ const SettingBusinessProcess = () => {
       }    
   
       const edgesData = [...edges];
-      console.log('edgesData', edgesData);
       
       edgesData.push(newParams);
       changeEdgesUpdate(edgesData, nodes)
@@ -379,7 +369,6 @@ const SettingBusinessProcess = () => {
   }, [edges, nodes]);
 
   const onDragOver = useCallback((event) => {
-    console.log('event', event);
     
     event.preventDefault();
     event.dataTransfer.dropEffect = "move";
@@ -533,13 +522,9 @@ const SettingBusinessProcess = () => {
   const [modalConfigCondition, setModalConfigCondition] = useState(false);
   const [dataNode, setDataNode] = useState(null);
 
-  console.log('dataNode', dataNode);
-  
   const onClickNode = (e) => {
-    console.log("e", e);
 
     const nodeSelected : Record<string, unknown> = nodes.find(el => el.id == e.target?.dataset?.id) || null;
-    console.log('nodeSelected', nodeSelected);
     
 
     // if (e.target?.innerText === "Điều kiện Email") {
@@ -590,7 +575,6 @@ const SettingBusinessProcess = () => {
   
   const onNodesDelete = useCallback(
     (deleted) => {
-      console.log('delete', deleted);
       deleteNode(+deleted[0]?.id)
       
     },
@@ -598,15 +582,12 @@ const SettingBusinessProcess = () => {
   );
 
   function onShown() {
-    console.log('diagram shown');
   }
 
   function onLoading() {
-    console.log('diagram loading');
   }
 
   function onError(err) {
-    console.log('failed to show diagram');
   }
 
 

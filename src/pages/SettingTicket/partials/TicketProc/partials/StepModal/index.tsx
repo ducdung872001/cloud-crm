@@ -27,8 +27,6 @@ export default function StepModal(props: IStepModalProps) {
   const getListStep = async () => {
     setIsLoading(true);
 
-    console.log('infoProc ->', infoProc);
-
     const response = await TicketStepService.list({ procId: infoProc?.idProc });
 
     if (response.code === 0) {

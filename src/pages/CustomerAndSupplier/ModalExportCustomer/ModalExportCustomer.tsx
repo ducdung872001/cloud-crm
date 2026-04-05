@@ -156,9 +156,7 @@ export default function ModalExportCustomer(props: ExportModalProps) {
       email: email,
     };
 
-    console.log("bodyExport", bodyExport);
     const response = await CustomerService.exportMulti(bodyExport);
-    console.log("response", response);
 
     if (response) {
       showToast(`Xuất File khách hàng thành công!. File dữ liệu sẽ được gửi tới Email của bạn`, "success");

@@ -64,7 +64,7 @@ export default function TimeKeepingList() {
           isFilter={true}
           listSaveSearch={listSaveSearch}
           listFilterItem={customerFilterList}
-          updateParams={() => console.log()}
+          updateParams={() => { /* noop */ }}
         />
 
         {!isLoading && listTimeKeeping && listTimeKeeping.length > 0 ? (

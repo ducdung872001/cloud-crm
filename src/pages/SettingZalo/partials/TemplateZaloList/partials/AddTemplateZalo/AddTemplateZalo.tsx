@@ -58,7 +58,6 @@ interface IFilterUser {
 
 export default function AddTemplateZalo(props: IAddZaloMarkettingProps) {
   const { onShow, onHide, onBackProps, dataTemplateZalo } = props;
-  console.log('dataTemplateZalo', dataTemplateZalo && dataTemplateZalo.content && JSON.parse(dataTemplateZalo.content));
   
 
   const [isSubmit, setIsSubmit] = useState<boolean>(false);
@@ -70,8 +69,6 @@ export default function AddTemplateZalo(props: IAddZaloMarkettingProps) {
   const [idChange, setIdChange] = useState<string>("");
   const [customTemplateZalo, setCustomTemplateZalo] = useState([]);
 
-  console.log('customTemplateZalo', customTemplateZalo);
-  
   const [isChooseContent, setIsChooseContent] = useState<boolean>(false);
 
   const refInputUpload = useRef<HTMLInputElement | null>(null);
@@ -834,7 +831,6 @@ export default function AddTemplateZalo(props: IAddZaloMarkettingProps) {
         tcyId: formData.values.tcyId,
         content: JSON.stringify(customTemplateZalo)
     }
-    console.log('body', body);
 
     const response = await TemplateZaloService.update(body);
     if (response.code === 0) {

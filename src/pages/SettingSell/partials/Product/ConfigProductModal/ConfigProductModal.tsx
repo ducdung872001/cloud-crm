@@ -49,7 +49,6 @@ export default function ConfigProductModal(props: Record<string, unknown>) {
         //     connect:''
         // }
     ])
-    console.log('addFieldCondition', addFieldCondition);
 
 //////Time
     const [time, setTime] = useState({
@@ -714,8 +713,6 @@ export default function ConfigProductModal(props: Record<string, unknown>) {
             recommendProducts: dataProduct
         }
 
-        console.log('body', body);
-        
          
     };
 

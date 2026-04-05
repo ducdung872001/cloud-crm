@@ -55,10 +55,8 @@ export default function ShiftStatus({ branchId }: Props) {
     if (!branchId) return;
     ShiftService.getGeneralReport(branchId)
       .then((res) => {
-        console.log("[ShiftStatus] API response:", res);
         const d = res?.result;
         if (!d || !d.shiftStatuses || d.shiftStatuses.length === 0) {
-          console.warn("[ShiftStatus] No data:", d);
           return;
         }
         setShifts(

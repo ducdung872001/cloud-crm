@@ -98,7 +98,7 @@ export default function FinanceDashboard() {
         setIncomeChart(data.incomeChart   ?? []);
         setExpenseChart(data.expenseChart ?? []);
       })
-      .catch(err => { if (err.name !== "AbortError") console.warn("[Chart]", err); })
+      .catch(err => { if (err.name !== "AbortError") { /* ignored */ } })
       .finally(() => setChartLoading(false));
 
     return () => ctrl.abort();

@@ -406,8 +406,6 @@ export default function ModalSignalStartEvent({ onShow, onHide, dataNode, proces
       isActive: formData?.isActive ?? null,
     };
 
-    console.log("body", body);
-
     const response = await BusinessProcessService.updateSignalStartEvent(body);
 
     if (response.code === 0) {

@@ -150,7 +150,6 @@ export default function AddEmailEventModal(props: Record<string, unknown>) {
       const result = response.result;
       setDataCustomer(result);
 
-      console.log(result);
       setFormData({ ...formData, values: { ...formData.values, emailTo: result?.emailMasked } });
     }
   }

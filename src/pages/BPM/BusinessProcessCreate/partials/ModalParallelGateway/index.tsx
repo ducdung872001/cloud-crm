@@ -181,7 +181,6 @@ export default function ModalParallelGatewayTask({ onShow, onHide, dataNode, pro
       nodeId: dataNode?.id ?? null,
       processId: processId ?? null,
     };
-    console.log("body", body);
 
     const response = await BusinessProcessService.updateParallelGateway(body);
 

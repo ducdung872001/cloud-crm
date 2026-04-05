@@ -180,7 +180,6 @@ function invertRanges(ranges: Range[]): Range[] {
 
 function rangeToConditionGroup(range: Range, parameter: string): ConditionGroup {
   const group: ConditionGroup = [];
-  console.log("range>>>", range);
 
   if (range.start === range.end && !range.excludeStart && !range.excludeEnd) {
     group.push({
@@ -226,7 +225,6 @@ function rangeToConditionGroup(range: Range, parameter: string): ConditionGroup 
 
 export function convertOutsideRangesToConditionGroups(inputGroups: ConditionGroup[]): ConditionGroup[] | false {
   if (inputGroups.length === 0) {
-    console.log("⛔ Không có điều kiện đầu vào nào, không thể xác định giá trị nằm ngoài.");
     return false;
   }
 
@@ -248,19 +246,16 @@ export function convertOutsideRangesToConditionGroups(inputGroups: ConditionGrou
 
   const ranges = inputGroups.map((group) => extractRangeFromConditions(group)).flat();
   const merged = mergeRanges(ranges);
-  console.log("merged ranges:", merged);
 
   const outsideRanges = invertRanges(merged);
 
   if (outsideRanges.length === 0) {
-    console.log("✅ Các điều kiện đầu vào đã bao phủ toàn bộ trục số thực. Không còn giá trị nào nằm ngoài.");
     return false;
   }
 
   const result = outsideRanges.map((range) => rangeToConditionGroup(range, parameter));
 
   if (result.length === 0) {
-    console.log("⚠️ Các khoảng nằm ngoài không thể chuyển đổi thành điều kiện cụ thể.");
     return false;
   }
 

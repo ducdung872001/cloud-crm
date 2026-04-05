@@ -197,10 +197,10 @@ export default function CxmSurveyList(props: Record<string, unknown>) {
     >
       <a>Xem bộ câu hỏi</a>
     </div>,
-    <div key={item.id} className={`action__view--customer`} onClick={() => console.log("click")}>
+    <div key={item.id} className={`action__view--customer`} onClick={() => { /* TODO */ }}>
       <a>Xem danh sách</a>
     </div>,
-    <div key={item.id} className={`action__view--customer`} onClick={() => console.log("click")}>
+    <div key={item.id} className={`action__view--customer`} onClick={() => { /* TODO */ }}>
       <a>Xem báo cáo</a>
     </div>,
     moment(item.createdTime).format("DD/MM/YYYY"),

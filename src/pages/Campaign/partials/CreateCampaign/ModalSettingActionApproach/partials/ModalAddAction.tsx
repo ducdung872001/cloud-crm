@@ -268,8 +268,6 @@ export default function ModalAddAction(props: Record<string, unknown>) {
       ...{ approachId: approachData.id },
     };
 
-    console.log("body", body);
-
     const response = await CampaignApproachService.updateActivity(body);
     if (response.code === 0) {
       onHide(true);

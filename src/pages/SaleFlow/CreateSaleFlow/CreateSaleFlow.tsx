@@ -290,8 +290,6 @@ export default function CreateSaleflow() {
       ...(formData?.values as Record<string, unknown>),
     };
 
-    console.log("body", body);
-
     const response = await SaleFlowService.update(body);
 
     if (response.code == 0) {

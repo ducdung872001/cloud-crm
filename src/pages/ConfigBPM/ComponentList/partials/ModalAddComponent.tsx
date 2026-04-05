@@ -153,7 +153,7 @@ export default function ModalAddComponent(props: ModalAddComponentProps) {
 
     if (ok.length) showToast(`Tạo thành công ${ok.length} thành phần`, "success");
     if (fail.length) showToast(`Thất bại ${fail.length} dòng (mở console xem chi tiết)`, "error");
-    if (fail.length) console.log("Bulk create failed rows:", fail);
+    if (fail.length) 
 
     if (ok.length) onHide(true);
   };

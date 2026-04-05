@@ -62,7 +62,6 @@ export default function ViewProcess(props) {
       if(nodeList && nodeList.length > 0){
         nodeList.map(item => {
           const checkNode = logObject.find(el => el.nodeId === +item.id) || null;
-          console.log('checkNode', checkNode);
           
           nodeData.push(
             {

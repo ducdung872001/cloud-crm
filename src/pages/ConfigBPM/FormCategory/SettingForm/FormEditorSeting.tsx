@@ -47,7 +47,6 @@ const FormEditorSeting = ({ initialSchema, onSchemaChange, callback, onClickSave
     });
 
     formEditorRef.current.on("rendered", () => {
-      console.log("Editor rendered");
 
       // Debug: Kiểm tra các nhóm có sẵn trong palette
       const groups = document.querySelectorAll(".fjs-palette-group");
@@ -58,7 +57,6 @@ const FormEditorSeting = ({ initialSchema, onSchemaChange, callback, onClickSave
     formEditorRef.current
       .importSchema(initialSchema)
       .then(() => {
-        console.log("Form editor đã khởi tạo");
       })
       .catch((err) => {
         console.error("Lỗi khi tải form editor:", err);

@@ -24,7 +24,6 @@ import NummericInput from "components/input/numericInput";
 
 export default function SendSMS(props: Record<string, unknown>) {
   const { onShow,  onHide, dataNode, setDataNode, statusMA } = props;  
-  console.log('dataNodeSMS', dataNode);
   
   const isMounted = useRef(false);
 
@@ -184,7 +183,6 @@ export default function SendSMS(props: Record<string, unknown>) {
 
     // setIsSubmit(true);
     //Kiểm tra đã setup mẫu placeholder chưa
-    console.log('idCategorySMS', idCategorySMS);
 
     const body: Record<string, unknown> = {
         ...dataNode,

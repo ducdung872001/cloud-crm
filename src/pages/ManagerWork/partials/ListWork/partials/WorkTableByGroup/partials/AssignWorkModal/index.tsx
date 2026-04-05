@@ -808,10 +808,6 @@ export default function AssignWorkModal(props: IAddWorkModelProps) {
       status: data.status === 0 && !data.employeeId ? (formData.values.employeeId ? 1 : null) : null,
     };
 
-    console.log("data>>", data);
-    console.log("formData.values>>", formData.values);
-
-    console.log("body", body);
     // setIsSubmit(false);
     // return;
 

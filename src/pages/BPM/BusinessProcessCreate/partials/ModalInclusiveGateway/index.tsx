@@ -115,7 +115,6 @@ export default function ModalInclusiveGateway({ onShow, onHide, dataNode, proces
       nodeId: dataNode?.id ?? null,
       processId: processId ?? null,
     };
-    console.log("body", body);
 
     const response = await BusinessProcessService.updateInclusiveGateway(body);
 

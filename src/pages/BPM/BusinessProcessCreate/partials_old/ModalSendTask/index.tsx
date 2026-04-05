@@ -278,7 +278,6 @@ export default function ModalSendTask({ onShow, onHide, dataNode, processId, cha
       processId: formData?.processId ?? null,
       workflowId: formData?.workflowId ?? null,
     };
-    console.log("body", body);
 
     const response = await BusinessProcessService.updateSendTask(body);
 

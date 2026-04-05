@@ -23,8 +23,6 @@ import SegmentFilterService from "services/SegmentFilterService";
 
 export default function ModalAddFilter(props: Record<string, unknown>) {
   const { onShow, onHide, dataNode, processId, setDataNode, disable } = props;
-  console.log("dataNode2222", dataNode);
-  console.log('processId', processId);
   
   const [isSubmit, setIsSubmit] = useState<boolean>(false);
   const [showDialog, setShowDialog] = useState<boolean>(false);
@@ -236,7 +234,6 @@ export default function ModalAddFilter(props: Record<string, unknown>) {
 
   const [namePot, setNamePot] = useState('');
   const [formData, setFormData] = useState(values);
-  console.log("formData", formData);
 
 
 
@@ -306,7 +303,6 @@ export default function ModalAddFilter(props: Record<string, unknown>) {
       if (dataOption) {
         Object.entries(dataOption).map((lstEformAttribute: Record<string, unknown>, key: number) => {
           (lstEformAttribute[1] || []).map((eformAttribute, index: number) => {
-            console.log('eformAttribute', eformAttribute);
             
             listData.push({
               value: eformAttribute.id,
@@ -317,8 +313,6 @@ export default function ModalAddFilter(props: Record<string, unknown>) {
         })
       }
 
-      console.log('listData', listData);
-      
      
       return {
         options: listData,
@@ -385,7 +379,6 @@ export default function ModalAddFilter(props: Record<string, unknown>) {
 
   //! Đoạn này xử lý lv-1
   const handlePushRule = (data, idx) => {
-    console.log('data', data);  
     if (!data) return;
 
     setFormData({
@@ -792,7 +785,6 @@ export default function ModalAddFilter(props: Record<string, unknown>) {
 
     //! Đoạn này xử lý lv-1
   const handlePushRuleEmployee = (data, idx) => {
-    console.log('data', data);  
     if (!data) return;
 
     setFormDataEmployee({
@@ -1290,7 +1282,6 @@ export default function ModalAddFilter(props: Record<string, unknown>) {
                                                 <div 
                                                     className={'icon-change-select'}
                                                     onClick={(e) => {
-                                                      console.log('da vao step 1');
                                                       
                                                       setFormData({
                                                         ...formData,
@@ -1491,7 +1482,6 @@ export default function ModalAddFilter(props: Record<string, unknown>) {
                                                           <div 
                                                               className={'icon-change-select'}
                                                               onClick={(e) => {
-                                                                console.log('da vao');
                                                                 
                                                                 setFormData({
                                                                   ...formData,
@@ -2024,7 +2014,6 @@ export default function ModalAddFilter(props: Record<string, unknown>) {
                                                           <div 
                                                               className={'icon-change-select'}
                                                               onClick={(e) => {
-                                                                console.log('da vao');
                                                                 
                                                                 setFormDataEmployee({
                                                                   ...formDataEmployee,

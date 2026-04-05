@@ -52,13 +52,11 @@ export default function SocialCrm() {
     const accessToken = response.accessToken;
 
     //Từ accessToken, lấy ra danh sách các fanpage người dùng này đang quản lý
-    console.log("access token =>", accessToken);
     loadFanpages(accessToken);
   };
 
   useEffect(() => {
     if (params.code) {
-      console.log("code =>", params.code);
 
       //Call api để kết nối zalo
     }

@@ -387,7 +387,6 @@ export default function ModalSendTask({ onShow, onHide, dataNode, processId, cha
         payloadHandling: formData.payloadHandling,
       }),
     };
-    console.log("body", body);
 
     const response = await BusinessProcessService.updateSendTask(body);
 
@@ -1240,7 +1239,6 @@ export default function ModalSendTask({ onShow, onHide, dataNode, processId, cha
                   options={dataHandleError}
                   value={formData.errorHandling}
                   onChange={(e) => {
-                    console.log("e", e);
                     setFormData({ ...formData, errorHandling: e });
                     // if(e){
                     //   setListNotifyType(e);

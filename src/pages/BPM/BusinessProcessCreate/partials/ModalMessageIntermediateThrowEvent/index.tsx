@@ -357,7 +357,6 @@ export default function ModalMessageIntermediateThrowEvent({ onShow, onHide, dat
       processId: formData?.processId ?? null,
       workflowId: formData?.workflowId ?? null,
     };
-    console.log("body", body);
 
     const response = await BusinessProcessService.updateMessageIntermediateThrowEvent(body);
 
@@ -1136,7 +1135,6 @@ export default function ModalMessageIntermediateThrowEvent({ onShow, onHide, dat
                   options={dataHandleError}
                   value={formData.errorHandling}
                   onChange={(e) => {
-                    console.log("e", e);
                     setFormData({ ...formData, errorHandling: e });
                     // if(e){
                     //   setListNotifyType(e);

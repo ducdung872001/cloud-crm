@@ -307,18 +307,13 @@ export default function CustomerList(props: ICustomerListProps) {
     // Register callbacks to desired call events
     var eventHandlers = {
       progress: function (e) {
-        console.log("call is in progress");
       },
       failed: function (e) {
-        console.log("e", e);
 
-        console.log("call failed with cause: ", e.data.cause);
       },
       ended: function (e) {
-        console.log("call ended with cause: " + e.data.cause);
       },
       confirmed: function (e) {
-        console.log("call confirmed");
       },
     };
 

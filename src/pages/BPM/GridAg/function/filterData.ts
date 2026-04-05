@@ -21,7 +21,6 @@ export const filterData = (currentDataRow: Record<string, unknown>[], checkedMap
         }
       });
     });
-    console.log("ParamsFilter:", paramsFilter);
 
     return paramsFilter; // Return the fetched data
   } catch (error) {

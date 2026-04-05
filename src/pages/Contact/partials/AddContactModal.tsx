@@ -1230,8 +1230,6 @@ export default function AddContactModal(props: AddContactModalProps) {
         break;
       case "lookup":
         let attrs = contactAttribute.attributes ? JSON.parse(contactAttribute.attributes) : {};
-        console.log("contactAttribute lookup =>", contactAttribute);
-        console.log("contactAttribute lookup 2 =>", contactExtraInfos);
 
         //1. Trường hợp là customer (khách hàng)
         //2. Trường hợp là employee (nhân viên)
@@ -1354,8 +1352,6 @@ export default function AddContactModal(props: AddContactModalProps) {
     setDetailEmployee(null);
     setLstCoordinator([]);
   };
-
-  console.log("formData =>", formData);
 
   return (
     <Fragment>

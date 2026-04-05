@@ -173,7 +173,6 @@ export default function AddServiceAttributeModal(props: Record<string, unknown>)
     if (response.code === 0) {
       const dataOption = response.result;
 
-      console.log('dataOption =>', dataOption);
       Object.keys(dataOption).forEach((key) => {
         (dataOption[key] || []).map(item => {
           if (item.datatype == 'number') {
@@ -181,8 +180,6 @@ export default function AddServiceAttributeModal(props: Record<string, unknown>)
           }
         });
       });
-
-      console.log('Fields =>', arrField);
 
       //Lưu lại
       setCustomerAttributeFields(arrField);

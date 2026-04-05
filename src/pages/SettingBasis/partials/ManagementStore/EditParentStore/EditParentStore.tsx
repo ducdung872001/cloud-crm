@@ -52,7 +52,6 @@ export default function EditParentStore(props: Record<string, unknown>) {
     if (!listStore || listStore.length === 0) {
       setIsLoadingStore(true);
       const dataOption = await SelectOptionData("beautyBranch");
-      console.log("dataOption>>", dataOption);
 
       if (dataOption) {
         const newData = [...dataOption];

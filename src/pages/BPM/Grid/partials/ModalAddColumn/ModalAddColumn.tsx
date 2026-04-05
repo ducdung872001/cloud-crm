@@ -26,7 +26,6 @@ export default function ModalAddColumn(props: Record<string, unknown>) {
   const { onShow, onHide, data, listColumn, setListColumn } = props;
 
   const params: Record<string, unknown> = getSearchParameters();
-  console.log("columnsEdit>>>>>", data);
 
   const refShowField = useRef();
   useOnClickOutside(refShowField, () => setShowFields(false), ["formula"]);
@@ -202,7 +201,6 @@ export default function ModalAddColumn(props: Record<string, unknown>) {
     if (response.code === 0) {
       const dataOption = response.result;
 
-      console.log("dataOption =>", dataOption);
       Object.keys(dataOption).forEach((key) => {
         (dataOption[key] || []).map((item) => {
           if (item.type == "number") {
@@ -495,8 +493,6 @@ export default function ModalAddColumn(props: Record<string, unknown>) {
     [listCustomerAttribute, isLoadingCustomerAttribute, data]
   );
 
-  console.log("data>>>", data);
-
   const listFieldSecond = useMemo(
     () =>
       [
@@ -766,9 +762,6 @@ export default function ModalAddColumn(props: Record<string, unknown>) {
       fieldName: params?.fieldName || "boq",
       header: JSON.stringify(list_column),
     };
-
-    console.log("detailBindingField>>>>>", detailBindingField);
-    console.log("list_column>>>>>", list_column);
 
     // return;
     const responseHeader = await GirdService.update(dataSubmit);

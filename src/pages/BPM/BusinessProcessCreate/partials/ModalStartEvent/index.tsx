@@ -117,8 +117,6 @@ export default function ModalStartEvent({ onShow, onHide, dataNode, processId, c
       isActive: formData?.isActive,
     };
 
-    console.log("body", body);
-
     const response = await BusinessProcessService.updateStartTaskEvent(body);
 
     if (response.code === 0) {

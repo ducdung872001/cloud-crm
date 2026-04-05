@@ -94,7 +94,6 @@ export default function ExchangeFast(props: IExchangeFastProps) {
 
   useEffect(() => {
     if (files && files.length > 0) {
-      console.log("files : ", files);
     }
   }, [files]);
 
@@ -206,7 +205,6 @@ export default function ExchangeFast(props: IExchangeFastProps) {
   //* Xử lý ảnh
   const showImage = (url) => {
     if (url) {
-      console.log("");
       setInfoMedia({ ...infoMedia, type: "image", url: url, fileName: "" });
     }
   };

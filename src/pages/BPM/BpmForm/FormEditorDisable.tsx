@@ -39,7 +39,6 @@ const FormEditorComponentDisable = ({ initialSchema, onSchemaChange, callback, o
     formEditorRef.current
       .importSchema(initialSchema)
       .then(() => {
-        console.log("Form editor đã khởi tạo");
       })
       .catch((err) => {
         console.error("Lỗi khi tải form editor:", err);

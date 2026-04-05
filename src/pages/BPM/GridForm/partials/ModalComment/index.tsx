@@ -187,7 +187,6 @@ export default function ModalComment(props: IImportModalProps) {
           // return new Date(a.createdTime).getTime() - new Date(b.createdTime).getTime();
           return new Date(b.createdTime).getTime() - new Date(a.createdTime).getTime();
         });
-        console.log("listCommentSort>>>>>>>>>>>>>", listCommentSort);
 
         const listCommentFomat = listCommentSort.map((item) => {
           const date = new Date(item.createdTime);

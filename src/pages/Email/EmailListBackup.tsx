@@ -376,7 +376,6 @@ export default function EmailList() {
     instance
       .acquireTokenSilent(accessTokenRequest)
       .then((res) => {
-        console.log("popup silent =>", res);
 
         //Thực hiện cập nhật mới token
         updateToken(res);

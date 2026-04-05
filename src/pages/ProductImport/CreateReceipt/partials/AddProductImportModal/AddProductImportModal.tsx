@@ -129,7 +129,6 @@ export default function AddProductImportModal(props: AddProductImportModalProps)
 
       if (res.code === 0) {
         const items: Record<string, unknown>[] = res.result?.items ?? res.result ?? [];
-        console.log("variant sample:", items[0]);
 
         const opts: IVariantOption[] = items.map((v) => ({
           value: v.id,

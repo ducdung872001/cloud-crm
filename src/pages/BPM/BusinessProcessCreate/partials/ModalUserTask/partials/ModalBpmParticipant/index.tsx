@@ -50,7 +50,6 @@ export default function ModalBpmParticipant({ onShow, onHide, dataNode, formSche
     };
 
     const response = await BusinessProcessService.detailBpmParticipant(nodeId);
-    console.log("response>>>", response);
 
     if (response.code === 0) {
       const result = response.result;

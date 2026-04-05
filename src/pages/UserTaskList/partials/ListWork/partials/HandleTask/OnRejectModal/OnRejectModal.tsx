@@ -113,7 +113,6 @@ export default function OnRejectModal(props: Record<string, unknown>) {
       attachment: attachment,
       config: dataSchema ? JSON.stringify(dataSchema) : null,
     };
-    console.log("body", body);
 
     const response = await WorkOrderService.updateReject(body);
     if (response.code === 0) {
@@ -219,7 +218,6 @@ export default function OnRejectModal(props: Record<string, unknown>) {
     e.preventDefault();
 
     const file = e.target.files[0];
-    console.log("file", file);
 
     const checkFile = file?.type;
     setIsLoadingFile(true);

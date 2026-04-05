@@ -29,7 +29,6 @@ import PaymentBill from "./PaymentBill";
 
 export default function AddInvoiceModal(props: Record<string, unknown>) {
   const { onShow, onHide, idData, saleflowId, dataInvoice } = props;
-  console.log("dataInvoice", dataInvoice);
 
   const focusedElement = useActiveElement();
   const { dataBranch } = useContext(UserContext) as ContextType;
@@ -152,8 +151,6 @@ export default function AddInvoiceModal(props: Record<string, unknown>) {
     campaignId: 0,
     saleflowId: 0,
   });
-
-  console.log("dataPaymentBill", dataPaymentBill);
 
   useEffect(() => {
     if (detailCustomer) {

@@ -94,7 +94,6 @@ export async function fetchCustomerMap(
     return map;
   } catch (err: unknown) {
     if (err instanceof DOMException && err.name === "AbortError") return {};
-    console.warn("[useCustomerEnrich] fetchCustomerMap error:", err);
     return {};
   }
 }

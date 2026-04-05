@@ -20,7 +20,6 @@ interface ProductPreviewProps {
 
 export default function DetailProductModal(props: Record<string, unknown>) {
   const { onShow, onHide, data } = props;
-  console.log("DATA", data);
   
   const [isSubmit, setIsSubmit] = useState<boolean>(false);
   const [showDialog, setShowDialog] = useState<boolean>(false);
@@ -88,8 +87,6 @@ export default function DetailProductModal(props: Record<string, unknown>) {
       id: data?.id,
       content: content,
     };
-
-    console.log("body", body);
 
     const response = await ProductService.updateContent(body);
 

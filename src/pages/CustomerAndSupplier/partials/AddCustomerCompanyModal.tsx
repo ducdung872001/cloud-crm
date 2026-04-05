@@ -1684,7 +1684,6 @@ export default function AddCustomerCompanyModal(props: AddCustomerModalProps) {
       errors: {},
     });
   };
-  console.log("dataContact", dataContact);
 
   return (
     <Fragment>

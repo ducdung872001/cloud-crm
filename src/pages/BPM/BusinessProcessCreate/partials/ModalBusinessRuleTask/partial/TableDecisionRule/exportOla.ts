@@ -3,7 +3,6 @@ import { saveAs } from "file-saver";
 
 // Định nghĩa kiểu cho listColumns và dataRow (có thể tùy biến lại nếu cần chặt chẽ hơn)
 export async function exportOlaExcel(listColumns: Record<string, unknown>[], dataRow: Record<string, unknown>[], listErrors: Record<string, unknown>[] = []) {
-  console.log("Exporting to Excel with columns:", listColumns, "and data rows:", dataRow);
 
   const workbook = new ExcelJS.Workbook();
   const worksheet = workbook.addWorksheet("Sheet1");

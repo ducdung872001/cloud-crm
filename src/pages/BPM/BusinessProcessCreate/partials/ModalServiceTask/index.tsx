@@ -448,7 +448,6 @@ export default function ModalServiceTask({ onShow, onHide, dataNode, processId, 
       workflowId: formData?.workflowId ?? null,
       transforms: transforms,
     };
-    console.log("body", body);
 
     const response = await BusinessProcessService.updateServiceTask(body);
 
@@ -611,7 +610,6 @@ export default function ModalServiceTask({ onShow, onHide, dataNode, processId, 
         dataOption.map((item) => {
           const components =
             (item.config && JSON.parse(item.config) && JSON.parse(item.config).components && JSON.parse(item.config).components) || [];
-          console.log("components", components);
 
           components.map((el) => {
             if (el.key || el.path) {
@@ -1633,7 +1631,6 @@ export default function ModalServiceTask({ onShow, onHide, dataNode, processId, 
                   options={dataHandleError}
                   value={formData.errorHandling}
                   onChange={(e) => {
-                    console.log("e", e);
                     setFormData({ ...formData, errorHandling: e });
                     // if(e){
                     //   setListNotifyType(e);

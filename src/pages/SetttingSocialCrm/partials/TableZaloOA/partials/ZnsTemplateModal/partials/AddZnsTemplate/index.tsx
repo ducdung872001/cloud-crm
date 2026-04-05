@@ -15,7 +15,6 @@ export default function AddZnsTemplate(props: IAddZnsTemplateProps) {
   const [isSubmit, setIsSubmit] = useState<boolean>(false);   
 
   useEffect(() => {
-    console.log('Co vao');
   })
 
   const onSubmit = async (e) => {

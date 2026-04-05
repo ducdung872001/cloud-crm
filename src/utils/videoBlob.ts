@@ -52,7 +52,6 @@ export const uploadVideoFromFiles = (files, callback, showStatus, onAddVideoThum
                 onAddVideoThumbnail(res.image_url, key);
               },
               onError: (error) => {
-                console.log(error);
               },
             });
             URL.revokeObjectURL(url);
@@ -98,7 +97,6 @@ export const uploadVideoFromFiles = (files, callback, showStatus, onAddVideoThum
           }
         },
         onError: (error) => {
-          console.log(error);
           // setTimeout(() => onError(key, error), 0);
         },
       });

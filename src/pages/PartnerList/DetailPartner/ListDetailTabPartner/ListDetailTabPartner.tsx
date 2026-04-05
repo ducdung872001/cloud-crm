@@ -65,7 +65,6 @@ export default function ListDetailTabPartner(props: IListTabDetailProps) {
   const [listTabs, setListTabs] = useState(() => {
     return lstTabLocalStorage && lstTabLocalStorage.length > 0 ? lstTabLocalStorage : listTabItems;
   });
-  console.log("listTabs", listTabs);
 
   const handleOnDragEnd = (result) => {
     // Nếu không có đích đến, thoát ra

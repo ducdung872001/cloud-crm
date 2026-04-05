@@ -41,8 +41,6 @@ export default function KanbanStatusWork(props: Record<string, unknown>) {
     handleDetailWork
   } = props;
 
-  console.log('dataStart', dataStart);
-  
 
   const paramsUrl = getSearchParameters();
 
@@ -112,7 +110,6 @@ export default function KanbanStatusWork(props: Record<string, unknown>) {
   }, [processId, isShow]);
 
   const [columns, setColumns] = useState<Record<string, unknown>[]>([]);
-  console.log('columns', columns);
 
   const [idStartPoint, setIdStartPoint] = useState<number>(null);
   const [idEndPoint, setIdEndPoint] = useState<number>(null);

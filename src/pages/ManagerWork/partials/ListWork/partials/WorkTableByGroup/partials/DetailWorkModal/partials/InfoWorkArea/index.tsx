@@ -17,7 +17,6 @@ export default function InfoWorkArea(props: Record<string, unknown>) {
   const { idData, onShow, onHide } = props;
   const [dataEmployee, setDataEmployee] = useState(null);
   const [data, setData] = useState<IWorkOrderResponseModel>(null);
-  console.log("data", data);
 
   const [isInvolveWorks, setIsInvolveWorks] = useState<boolean>(true);
   const [isInvolveCustomer, setIsInvolveCustomer] = useState<boolean>(true);
@@ -148,7 +147,6 @@ export default function InfoWorkArea(props: Record<string, unknown>) {
   const handleUnfulfilled = (time) => {
     const currentTime = new Date().getTime();
     const startTime = new Date(time).getTime();
-    console.log();
 
     if (currentTime < startTime) {
       if ((startTime - currentTime) / (24 * 60 * 60 * 1000) >= 1) {

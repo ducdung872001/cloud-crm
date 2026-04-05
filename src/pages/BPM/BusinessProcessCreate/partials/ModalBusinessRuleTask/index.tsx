@@ -324,7 +324,6 @@ export default function ModalBusinessRuleTask({ onShow, onHide, dataNode, proces
         config: dataConfig?.config ? JSON.stringify(dataConfig?.config) : null,
         rules: dataConfig?.rules || [],
       };
-      console.log("dataConfig>>>>", dataConfig);
       // return;
 
       const response = await BusinessProcessService.updateBusinessRuleTaskAdvance(body);

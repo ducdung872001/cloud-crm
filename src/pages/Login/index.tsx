@@ -82,10 +82,8 @@ export default function Index() {
 
         //Sẽ lưu lại logo của tổ chức nếu tên miền khác reborn.vn
         let sourceDomain = getDomain(decodeURIComponent(location.href));
-        console.log("sourceDomain =>", sourceDomain);
 
         // if (!sourceDomain.endsWith("reborn.vn")) {
-        console.log("sourceDomain =>", "Có vào");
         localStorage.setItem("logoOrganization", takeIsBeauty.logo || takeIsBeauty.logoTransparent || "");
         // }
       }

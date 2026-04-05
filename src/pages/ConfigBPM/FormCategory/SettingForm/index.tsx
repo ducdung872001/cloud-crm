@@ -118,7 +118,6 @@ const SettingForm = (props: SettingFormProps) => {
 
   const handleSchemaChange = (newSchema) => {
     setFormSchema(newSchema); // Cập nhật schema mới
-    console.log("Schema mới:", newSchema);
   };
 
   return (

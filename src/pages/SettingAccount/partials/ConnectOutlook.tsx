@@ -39,17 +39,14 @@ export default function ConnectOutlook() {
       instance
         .loginPopup(loginRequest)
         .then((res) => {
-          console.log("popup res =>", res);
           updateToken(res);
 
           localStorage.setItem("outlook.account", JSON.stringify(res.account));
         })
         .catch((e) => {
-          console.log(e);
         });
     } else if (loginType === "redirect") {
       instance.loginRedirect(loginRequest).catch((e) => {
-        console.log(e);
       });
     } else if (loginType === "silent") {
       let accountInfo: Record<string, unknown> = localStorage.getItem("outlook.account");
@@ -72,11 +69,8 @@ export default function ConnectOutlook() {
       instance
         .acquireTokenSilent(accessTokenRequest)
         .then((res) => {
-          console.log("popup silent =>", res);
         })
         .catch((e) => {
-          console.log("popup silent err =>");
-          console.log(e);
 
           setIsConnect(false);
         });

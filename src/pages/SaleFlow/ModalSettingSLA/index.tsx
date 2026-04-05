@@ -131,8 +131,6 @@ export default function ModalSettingSLA(props: Record<string, unknown>) {
       slaConfig: JSON.stringify(formData.values.slaConfig),
     };
 
-    console.log("body", body);
-
     const response = await SaleflowApproachService.updateSLA(body);
     if (response.code === 0) {
       onHide(true);

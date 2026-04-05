@@ -311,7 +311,6 @@ interface SettingAttributeProps {
 
 export default function SettingAttribute(props: SettingAttributeProps) {
   const { onShow, onHide, dataObjectGroup } = props;
-  console.log("dataObjectGroup", dataObjectGroup);
 
   const refShowField = useRef();
   useOnClickOutside(refShowField, () => setShowFields(false), ["formula"]);
@@ -334,7 +333,6 @@ export default function SettingAttribute(props: SettingAttributeProps) {
   const [numberFormat, setNumberFormat] = useState<string>("");
 
   const [contractAttributeFields, setContractAttributeFields] = useState<Record<string, unknown> | null>(null);
-  console.log("contractAttributeFields", contractAttributeFields);
 
   const [showFields, setShowFields] = useState<boolean>(false);
   const [selectedFormula, setSelectedFormula] = useState<string>("");
@@ -424,7 +422,6 @@ export default function SettingAttribute(props: SettingAttributeProps) {
   const [showModalAdd, setShowModalAdd] = useState<boolean>(false);
   const [dataLayout, setDataLayout] = useState(null);
   const [dataField, setDataField] = useState(null);
-  console.log("dataField", dataField);
 
   // useEffect(() => {
   //   //Nếu rỗng thì thay đổi
@@ -451,8 +448,6 @@ export default function SettingAttribute(props: SettingAttributeProps) {
     layouts: { lg: [] },
   });
 
-  console.log("dataTabConfig", dataTabConfig);
-
   const getDataObjectGroup = async (groupId) => {
     const response = await ObjectAttributeService.listAll(groupId);
 
@@ -460,7 +455,6 @@ export default function SettingAttribute(props: SettingAttributeProps) {
       const result = response.result;
 
       const newresult = Object.entries(result);
-      console.log("newresult", newresult);
 
       const newChildrens = await Promise.all(
         Object.entries(result).map((item: [string, unknown], key: number) => {
@@ -602,8 +596,6 @@ export default function SettingAttribute(props: SettingAttributeProps) {
           );
         })
       );
-
-      console.log("newChildrens", newChildrens);
 
       const newConfig = {
         childrens: newChildrens || [],
@@ -768,11 +760,8 @@ export default function SettingAttribute(props: SettingAttributeProps) {
   }, [dataTabConfig.layouts, breakpoint, dataField]);
 
   const handleDrop = async (layout, item, e) => {
-    console.log("item", item);
-    console.log("toolboxItem", toolboxItem);
 
     const { type } = toolboxItem;
-    console.log("type", type);
 
     // if(type === 'create_form'){
     //   const body: any = {
@@ -814,8 +803,6 @@ export default function SettingAttribute(props: SettingAttributeProps) {
       h: item.h,
     };
 
-    console.log("body", body);
-
     const response = await ObjectAttributeService.update(body);
     if (response.code === 0) {
       const result = response.result;
@@ -828,8 +815,6 @@ export default function SettingAttribute(props: SettingAttributeProps) {
         isDraggable: undefined,
         isResizable: undefined,
       };
-
-      console.log("newItem", newItem);
 
       Object.keys(newLayouts).forEach((size) => {
         newLayouts[size] = bfs(newLayouts[size], newItem);

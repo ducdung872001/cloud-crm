@@ -169,7 +169,6 @@ const mapCareerToMultiSelect = (data) => {
 
         mapped.customerRelationIds = mapRelationToMultiSelect(data);
         mapped.careers = mapCareerToMultiSelect(data);
-        console.log("mapped before" ,mapped);
         if(mapped.custType==="0"){
           mapped.namePerson = mapped.name;
           mapped.sourceIdPerson = mapped.sourceId;
@@ -182,7 +181,6 @@ const mapCareerToMultiSelect = (data) => {
           mapped.addressCompany = mapped.address;
         }
 
-        console.log("mapped", mapped);
         setDataInit(mapped);
       }
       setInitFormSchema(configInit);

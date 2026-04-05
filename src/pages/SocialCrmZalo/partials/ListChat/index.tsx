@@ -19,7 +19,6 @@ import { IZaloChatResponse } from "model/zaloOA/ZaloOAResponse";
 
 export default function ListChat(props: IListChatZaloProps) {
   const { dataFanpageDialog, onClick } = props;
-  console.log("dataFanpageDialog", dataFanpageDialog?.id);
 
   const messageEndRef = useRef<HTMLDivElement>(null);
   const [listFanpageChat, setListFanpageChat] = useState<IZaloChatResponse[]>([]);
@@ -141,26 +140,21 @@ export default function ListChat(props: IListChatZaloProps) {
     // console.log('id', id);
 
     if (socket == null) {
-      console.log("socket is null");
     } else {
-      console.log("socket state =>");
     }
     if (id && (socket === null || socket.readyState == WebSocket.CLOSED)) {
-      console.log("luong vao");
       setSocket(new WebSocket(`wss://cloud.reborn.vn/chat/ws/zalo/${id}`));
     }
   };
 
   useEffect(() => {
     if (socket != null) {
-      console.log("socket.readyState", socket?.readyState, WebSocket.OPEN); //WebSocket.OPEN, WebSocket.CLOSED, WebSocket.CONNECTING, WebSocket.CLOSING
       // socket.onopen = () => {
       //     console.log('open');
       // };
 
       socket.onmessage = (e) => {
         const _data = JSON.parse(e.data);
-        console.log("dataSocket", _data);
         const newData = [...listFanpageChat];
         // console.log('listFanpageChat', listFanpageChat);
 
@@ -171,12 +165,10 @@ export default function ListChat(props: IListChatZaloProps) {
 
       socket.onerror = (e) => {
         // an error occurred
-        console.log("error", e);
       };
 
       socket.onclose = (e) => {
         // connection closed
-        console.log("Onclose", e.code, e.reason);
       };
     }
   }, [socket, dataFanpageDialog?.id, listFanpageChat]);
@@ -184,9 +176,7 @@ export default function ListChat(props: IListChatZaloProps) {
   useEffect(() => {
     connectSocket(dataFanpageDialog?.id);
     return () => {
-      console.log("close socket 1");
       if (socket != null && socket.readyState == WebSocket.OPEN) {
-        console.log("close socket 2");
         socket.close();
       }
     };

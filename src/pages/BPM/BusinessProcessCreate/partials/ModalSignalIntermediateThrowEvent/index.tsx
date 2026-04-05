@@ -388,8 +388,6 @@ export default function ModalSignalIntermediateThrowEvent({ onShow, onHide, data
       workflowId: formData?.workflowId ?? null,
     };
 
-    console.log("body", body);
-
     const response = await BusinessProcessService.updateSignalIntermediateThrowEvent(body);
 
     if (response.code === 0) {

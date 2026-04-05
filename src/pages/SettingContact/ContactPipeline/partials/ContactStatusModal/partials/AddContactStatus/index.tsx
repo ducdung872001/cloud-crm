@@ -33,7 +33,6 @@ export default function AddStage(props: IAddContactStatusProps) {
   //! xử lý field tên trạng thái
   const handChangeName = (e) => {
     const value = e.target.value;
-    console.log('name =>', value);
 
     setCheckFieldName(false);
     setFormData({ ...formData, name: value });

@@ -244,7 +244,6 @@ export default function ModalAddFile(props: Record<string, unknown>) {
       point: nodePoint,
     };
 
-    console.log("body", body);
   };
 
   const actions = useMemo<IActionModal>(

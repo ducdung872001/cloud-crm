@@ -399,8 +399,6 @@ export default function ModalTypeForm({ onShow, onHide, dataComponent, callBack 
     }
   };
 
-  console.log("listEformAttribute : ", listEformAttribute);
-
   const actions = useMemo<IActionModal>(
     () => ({
       actions_right: {

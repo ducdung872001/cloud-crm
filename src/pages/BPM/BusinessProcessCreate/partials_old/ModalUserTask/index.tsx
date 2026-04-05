@@ -175,7 +175,6 @@ export default function ModalUserTask({ onShow, onHide, dataNode, processId, dis
   // Callback để nhận schema khi người dùng thay đổi trong FormEditor
   const handleSchemaChange = (newSchema) => {
     setFormSchema(newSchema); // Cập nhật schema mới
-    console.log("Schema mới:", newSchema);
     setListComponent(newSchema?.components);
   }
 
@@ -205,7 +204,6 @@ export default function ModalUserTask({ onShow, onHide, dataNode, processId, dis
       config: JSON.stringify(formSchema),
     };
 
-    console.log("formSchemaSubmit", formSchema);
     if (formSchema && formSchema.components?.length > 0) {
       const componentIframe = formSchema.components.filter((el) => el.type === "iframe");
       if (componentIframe && componentIframe.length > 0) {

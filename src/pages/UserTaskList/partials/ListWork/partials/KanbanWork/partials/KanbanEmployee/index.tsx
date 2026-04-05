@@ -23,8 +23,6 @@ export default function KanbanEmployee(props: IKanbanEmployeeProps) {
   const { type, isShow } = props;
 
   const paramsUrl = getSearchParameters();
-  console.log('paramsUrl', paramsUrl);
-  console.log('isShow', isShow);
   
 
   const { width } = useWindowDimensions();
@@ -35,7 +33,6 @@ export default function KanbanEmployee(props: IKanbanEmployeeProps) {
   const [descWork, setDescWork] = useState(null);
 
   const handGetProject = async (id: number) => {
-    console.log('da vao');
     
     if (!id) {
       setIsLoading(false);

@@ -27,13 +27,10 @@ export default function Kanban(props: Record<string, unknown>) {
     callbackHistory,
 
   } = props;
-  console.log("dataOfStep", dataOfStep);
-  console.log('listStepProcess', listStepProcess);
   
 
   const marginRight = 12;
   const [columns, setColumns] = useState<Record<string, unknown>[]>([]);
-  console.log("columns", columns);
 
   const [idEndPoint, setIdEndPoint] = useState<number>(null);
   const [dataWork, setDataWork] = useState<IContractResponse>(null);
@@ -128,15 +125,12 @@ export default function Kanban(props: Record<string, unknown>) {
 
     const dragItem = newColumns[parseInt(source.droppableId)].items[source.index];
     setDataWork(dragItem);
-    console.log("dragItem", dragItem);
 
     //! biến này tạo ra với mục đích lấy cột hiện tại
     const sourceColumn = columns[source.droppableId];
-    console.log("sourceColumn", sourceColumn);
 
     //! biến này tạo ra với mục đích lấy cột cuối muốn kéo thả đến
     const destColumn = newColumns[destination.droppableId];
-    console.log("destColumn", destColumn);
 
     const startPoint = sourceColumn.id;
     const endPoint = destColumn.id;
@@ -180,8 +174,6 @@ export default function Kanban(props: Record<string, unknown>) {
       // saleflowId: params?.saleflowId,
     };
 
-    console.log("body", body);
-
     if (submitTask) {
       return;
     }
@@ -209,7 +201,6 @@ export default function Kanban(props: Record<string, unknown>) {
   const handleScroll = async (e, itemStep) => {
     const result = e.target.scrollHeight - Math.round(e.target.scrollTop) === e.target.clientHeight;
     if (result && itemStep.hasMore) {
-      console.log("itemStep", itemStep);
       const param = {
         processId: itemStep.processId,
         workflowId: itemStep.id,
@@ -244,7 +235,6 @@ export default function Kanban(props: Record<string, unknown>) {
   const handleScrollSpecial = async (e, itemStep, status) => {
     const result = e.target.scrollHeight - Math.round(e.target.scrollTop) === e.target.clientHeight;
     if (result && itemStep.hasMore) {
-      console.log("itemStep", itemStep);
       const param = {
         processId: itemStep.processId,
         workflowId: itemStep.id,

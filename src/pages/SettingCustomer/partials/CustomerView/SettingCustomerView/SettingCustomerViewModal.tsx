@@ -27,7 +27,6 @@ export default function SettingCustomerViewModal(props: Record<string, unknown>)
   const [contentDialog, setContentDialog] = useState<IContentDialog>(null);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [dataAttribute, setDataAttribute] = useState(null);
-  console.log('dataAttribute', dataAttribute);
   
   const [isAddAttribute, setIsAddAttribute] = useState(false);
   const [params, setParams] = useState({

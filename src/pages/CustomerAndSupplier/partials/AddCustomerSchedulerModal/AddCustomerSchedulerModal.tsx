@@ -101,8 +101,6 @@ export default function AddCustomerSchedulerModal(props: AddSchedulerModalProps)
 
     const response = await CustomerService.detail(dataCustomer?.id);
 
-    console.log("chi tiết 1 khách hàng : ", response);
-
     if (response.code === 0) {
       const result = response.result;
 

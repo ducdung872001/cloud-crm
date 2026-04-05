@@ -133,7 +133,6 @@ export default function ModalConditionalStartEvent({ onShow, onHide, dataNode, p
       config: JSON.stringify(configDataNew),
       nodeId: dataNode?.id ?? null,
     };
-    console.log("body", body);
 
     const response = await BusinessProcessService.updateConditionalStartEvent(body);
 
@@ -557,7 +556,6 @@ export default function ModalConditionalStartEvent({ onShow, onHide, dataNode, p
 
     //! Đoạn này xử lý lv-1
     const handlePushRule = (data, idx) => {
-        console.log("data", data);
     
         if (!data) return;
     
@@ -1137,7 +1135,6 @@ export default function ModalConditionalStartEvent({ onShow, onHide, dataNode, p
                                               <div
                                                 className={"icon-change-select"}
                                                 onClick={(e) => {
-                                                  console.log("da vao step 1");
 
                                                   setFormData({
                                                     ...formData,
@@ -1335,7 +1332,6 @@ export default function ModalConditionalStartEvent({ onShow, onHide, dataNode, p
                                                       <div
                                                         className={"icon-change-select"}
                                                         onClick={(e) => {
-                                                          console.log("da vao");
 
                                                           setFormData({
                                                             ...formData,

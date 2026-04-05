@@ -34,7 +34,6 @@ export default function ReportMa({ dataMaReport }) {
     };
     const response = await ReportMaService.getCustomer(params);
     if (response.code === 0) {
-      console.log(response);
     }
   };
 

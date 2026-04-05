@@ -246,9 +246,6 @@ export default function TableDecisionRule({ processId, childProcessId, dataConfi
     }));
   }, [dataRow, listColumn]);
 
-  console.log("dataRow", dataRow);
-  console.log("listColumn", listColumn);
-
   return (
     <div className="table-ola-rule">
       <div className="action-field-add">

@@ -169,7 +169,6 @@ export function mapConfigData(
 
         rawValue = safeParseJson(rawValue);
         if (rawValue !== undefined) {
-          console.log("Raw value for uploadFile:", rawValue);
           if (Array.isArray(rawValue)) {
             let _rawValue = rawValue.map((item) => {
               if (item) {

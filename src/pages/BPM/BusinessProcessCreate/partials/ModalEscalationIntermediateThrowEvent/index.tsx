@@ -107,8 +107,6 @@ export default function ModalEscalationIntermediateThrowEvent({ onShow, onHide, 
    };
 
 
-   console.log("body", body);
-
 
    const response = await BusinessProcessService.updateEscalationIntermediateThrowEvent(body);
 

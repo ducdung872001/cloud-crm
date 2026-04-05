@@ -101,8 +101,6 @@ export default function ModalErrorStartEvent({ onShow, onHide, dataNode, process
             active: isActiveBool,
         };
 
-        console.log("body", body);
-
         const response = await BusinessProcessService.updateErrorStartEvent(body);
 
         if (response.code === 0) {

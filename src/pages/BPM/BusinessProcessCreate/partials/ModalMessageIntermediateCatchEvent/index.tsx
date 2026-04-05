@@ -414,8 +414,6 @@ export default function ModalMessageIntermediateCatchEvent({ onShow, onHide, dat
       workflowId: formData?.workflowId ?? null,
     };
 
-    console.log("body", body);
-
     const response = await BusinessProcessService.updateMessageIntermediateCatchEvent(body);
 
     if (response.code === 0) {

@@ -80,8 +80,6 @@ export default function DetailServiceModal(props: Record<string, unknown>) {
       content: content,
     };
 
-    console.log("body", body);
-
     const response = await ServiceService.updateContent(body);
 
     if (response.code === 0) {

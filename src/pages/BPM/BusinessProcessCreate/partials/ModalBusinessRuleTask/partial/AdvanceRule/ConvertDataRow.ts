@@ -154,27 +154,17 @@ export function convertDataRow(dataConfigAdvance, nodeId): Record<string, any> {
     let alias = {};
 
     for (const key in conditionMap) {
-      console.log(`Processing key: ${key}`);
       if (conditionMap.hasOwnProperty(key)) {
         const value = conditionMap[key];
-        console.log(`Value for key "${key}":`, value);
 
         // Nếu 1 mảng nào đó trong value không có item nào có operator là "OTHERWISE" thì sẽ không xử lý nữa
         processData(value);
 
         if (conditionMap[key].filter((item) => item.operator == "IN" || item.operator == "NOT_IN").length > 0) {
-          console.log(
-            `Alias for key "${key}":`,
-            conditionMap[key].filter((item) => item.operator !== "OTHERWISE")
-          );
           const result: Record<string, unknown> = negateInAndNotIn(conditionMap[key].filter((item) => item.operator !== "OTHERWISE"));
           // const simplified = result ? simplifyConditions(result) : false;
           alias[key] = result;
         } else if (key == "the_chap") {
-          console.log(
-            `Alias for key "${key}":`,
-            conditionMap[key].filter((item) => item.filter((item) => item.operator == "OTHERWISE").length == 0)
-          );
           // const result: any = negateOrConditionsWithAndGroups(conditionMap[key].filter((item) => item.operator !== "OTHERWISE"));
           const result: Record<string, unknown> = convertOutsideRangesToConditionGroups(
             conditionMap[key].filter((item) => item.filter((item) => item.operator == "OTHERWISE").length == 0)
@@ -184,7 +174,6 @@ export function convertDataRow(dataConfigAdvance, nodeId): Record<string, any> {
         }
       }
     }
-    console.log(`Alias :`, alias);
   }
 
   return dataConfig;
@@ -196,13 +185,10 @@ function processData(value: Record<string, unknown>[]): void {
     const hasOtherwise = value.some((item) => item.operator === "OTHERWISE");
 
     if (!hasOtherwise) {
-      console.log("Không xử lý vì không có operator là 'OTHERWISE'");
       return; // Dừng xử lý
     }
 
     // Tiếp tục xử lý nếu có "OTHERWISE"
-    console.log("Xử lý dữ liệu:", value);
   } else {
-    console.log("Giá trị không phải là mảng.");
   }
 }

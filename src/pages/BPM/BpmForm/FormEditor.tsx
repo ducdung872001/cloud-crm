@@ -80,7 +80,6 @@ const FormEditorComponent = ({
     formEditorRef.current
       .importSchema(initialSchema)
       .then(() => {
-        console.log("Form editor đã khởi tạo");
       })
       .catch((err) => {
         console.error("Lỗi khi tải form editor:", err);
@@ -254,13 +253,11 @@ const FormEditorComponent = ({
   const updateFieldLabel = (fieldId: string, data: Record<string, unknown>, location?: string): boolean => {
     const editor = formEditorRef.current;
     if (!editor) {
-      console.warn("No editor instance");
       return false;
     }
 
     const schema = editor.getSchema();
     if (!schema || !Array.isArray(schema.components)) {
-      console.warn("Invalid schema or missing components");
       return false;
     }
 
@@ -286,7 +283,6 @@ const FormEditorComponent = ({
     const { components: newComponents, updated } = updateComponentByIdImmutable(schema.components, fieldId, updater, true);
 
     if (!updated) {
-      console.warn("Field id not found:", fieldId);
       return false;
     }
 

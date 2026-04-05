@@ -30,8 +30,6 @@ export interface IJobTitles {
 export default function AddRoleDirectoryModal(props: Record<string, unknown>) {
   const { onShow, onHide, idRole, data } = props;
 
-  console.log("data>>", data);
-
   const focusedElement = useActiveElement();
   const [isSubmit, setIsSubmit] = useState<boolean>(false);
   const [showDialog, setShowDialog] = useState<boolean>(false);

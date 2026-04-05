@@ -147,7 +147,6 @@ export default function CustomerDistribution(props) {
       // Sử dụng API của Highcharts để tải xuống
       chart.exportChart();
     } else {
-      console.log("chạy vào file xuất định dạng excel !");
     }
   };
 

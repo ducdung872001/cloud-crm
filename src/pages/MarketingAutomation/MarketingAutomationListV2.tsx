@@ -650,28 +650,6 @@ export default function MarketingAutomationListV2() {
             page: 1,
           },
         ]);
-        console.log("Ok1234>>", [
-          ...(dataOption.length > 0
-            ? dataOption.map((item, index) => {
-                return {
-                  id: item.id,
-                  title: item.stepName,
-                  color: colorData[index],
-                  processId: item.processId,
-                  step: item.stepNumber,
-                };
-              })
-            : []),
-          {
-            id: "done",
-            title: "Hoàn thành",
-            color: "#1bc10d",
-            processId: processId || listStepProcess[0]?.processId,
-            items: [],
-            hasMore: false,
-            page: 1,
-          },
-        ]);
         setIsLoadingKanban(false);
       }
     };

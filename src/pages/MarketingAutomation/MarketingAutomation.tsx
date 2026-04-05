@@ -31,7 +31,7 @@ const minimapStyle = {
   height: 120,
 };
 
-const onInit = (reactFlowInstance) => console.log("flow loaded:", reactFlowInstance);
+const onInit = (reactFlowInstance: Record<string, unknown>) => { /* noop */ };
 const defaultViewport = { x: 0, y: 0, zoom: 0 };
 
 let id = 0;
@@ -173,14 +173,11 @@ const MarketingAutomation = () => {
 
   const [statusMA, setStatusMA] = useState(null);
   const [nodes, setNodes] = useNodesState(initialNodes);
-  console.log("nodes", nodes);
 
   const onNodesChange = useCallback(
     (changes) => {
-      console.log('changes', changes);
       // const changed = changes.find(el => el.selected === true)
       const changed: Record<string, unknown> = nodes.filter(el => el.id === changes[0].id)[0] || null;
-      console.log('changed', changed);
       const nodeChanged = {
         id: changed?.id,
         maId: maId,
@@ -202,11 +199,9 @@ const MarketingAutomation = () => {
   );
 
   const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges);
-  console.log("edges", edges);
   const [reactFlowInstance, setReactFlowInstance] = useState(null);
 
   const [matchData, setMatchData] = useState([]);
-  console.log("matchData", matchData);
 
   useEffect(() => {
     if (edges && edges.length > 0) {
@@ -249,8 +244,6 @@ const MarketingAutomation = () => {
       configs: matchData,
     };
 
-    console.log("body", body);
-
     const response = await MarketingAutomationService.updateConfigNode(body);
 
     if (response.code === 0) {
@@ -292,8 +285,6 @@ const MarketingAutomation = () => {
       configs: newData,
     };
 
-    console.log("body", body);
-
     const response = await MarketingAutomationService.updateConfigNode(body);
 
     if (response.code === 0) {
@@ -331,7 +322,6 @@ const MarketingAutomation = () => {
     }    
 
     const edgesData = [...edges];
-    console.log('edgesData', edgesData);
     
     edgesData.push(newParams);
     changeEdgesUpdate(edgesData, nodes)
@@ -340,7 +330,6 @@ const MarketingAutomation = () => {
   }, [edges, nodes]);
 
   const onDragOver = useCallback((event) => {
-    console.log('event', event);
     
     event.preventDefault();
     event.dataTransfer.dropEffect = "move";
@@ -480,7 +469,6 @@ const MarketingAutomation = () => {
   const [modalCallApi, setModalCallApi] = useState<boolean>(false);
 
   const [dataEmail, setDataEmail] = useState(null);
-  console.log('dataEmail', dataEmail);
   
   const [dataSms, setDataSms] = useState(null);
   const [dataZalo, setDataZalo] = useState(null);
@@ -491,10 +479,8 @@ const MarketingAutomation = () => {
 
 
   const onClickNode = (e) => {
-    console.log("e", e);
 
     const nodeSelected : Record<string, unknown> = nodes.find(el => el.id == e.target?.dataset?.id) || null;
-    console.log('nodeSelected', nodeSelected);
     
 
     // if (e.target?.innerText === "Điều kiện Email") {
@@ -665,7 +651,6 @@ const MarketingAutomation = () => {
   
   const onNodesDelete = useCallback(
     (deleted) => {
-      console.log('delete', deleted);
       deleteNode(+deleted[0]?.id)
       
     },

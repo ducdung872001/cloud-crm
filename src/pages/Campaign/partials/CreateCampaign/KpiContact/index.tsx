@@ -30,7 +30,6 @@ export default function KpiContact(props) {
   const [showModalContactGoal, setShowModalContactGoal] = useState(false);
   const [dataEmployeeContactGoal, setDataEmployeeContactGoal] = useState([]);
   const [kpiEmployeeData, setKpiEmployeeData] = useState(null);
-  console.log("kpiEmployeeData", kpiEmployeeData);
   const [paramsKpi, setParamsKpi] = useState({
     name: "",
     campaignId: null,
@@ -112,7 +111,6 @@ export default function KpiContact(props) {
   ];
 
   const actionsTable = (item: Record<string, unknown>): IAction[] => {
-    console.log("item", item);
 
     return [
       //   {

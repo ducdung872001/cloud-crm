@@ -134,7 +134,6 @@ export default function DetailProject() {
     let attrObj = {};
     (projectExtraInfos || []).map((item, idx) => {
       if (item.datatype == "number") {
-        console.log(item);
         attrObj["projectAttribute_" + convertToId(item.attributeName)] = +item.attributeValue;
       }
     });

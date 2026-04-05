@@ -115,11 +115,10 @@ export default function ObjectSettingModal(props: ObjectSettingModalProps) {
             <FormEditorComponent
               initialSchema={initFormSchema}
               onSchemaChange={handleSchemaChange}
-              onClickSelectForm={() => console.log("onClickSelectForm")}
-              onClickSaveForm={() => console.log("onClickSaveForm")}
+              onClickSelectForm={() => { /* noop */ }}
+              onClickSaveForm={() => { /* noop */ }}
               dataNode={null}
               callback={(type) => {
-                console.log("type", type);
               }}
               disableHeader={true}
             />

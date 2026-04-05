@@ -508,7 +508,6 @@ const FormViewerComponent = (props: Record<string, unknown>) => {
     });
 
     formViewerRef.current.on("formField.focus", async (event) => {
-      console.log("Event focus =>", event);
 
       let formData = formViewerRef.current._getState().data;      
       const nodeId = contextData?.nodeId;
@@ -1021,7 +1020,6 @@ const FormViewerComponent = (props: Record<string, unknown>) => {
             }
 
             if (!parent) {
-              console.warn("⚠️ Không tìm thấy phần tử group (fjs-form-field)");
               return;
             }
 
@@ -1051,7 +1049,6 @@ const FormViewerComponent = (props: Record<string, unknown>) => {
                 label.textContent = label.textContent.replace("▼", "▲");
               }
             } else {
-              console.warn("⚠️ Không tìm thấy nội dung trong group");
             }
           });
         }

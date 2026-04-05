@@ -317,7 +317,6 @@ export default function ModalSignalEndEvent({ onShow, onHide, dataNode, processI
       workflowId: formData?.workflowId ?? null,
       isActive: formData?.isActive ?? null,
     };
-    console.log("body", body);
 
     const response = await BusinessProcessService.updateSignalEndEvent(body);
 
@@ -1099,7 +1098,6 @@ export default function ModalSignalEndEvent({ onShow, onHide, dataNode, processI
                   options={dataHandleError}
                   value={formData.errorHandling}
                   onChange={(e) => {
-                    console.log("e", e);
                     setFormData({ ...formData, errorHandling: e });
                     // if(e){
                     //   setListNotifyType(e);

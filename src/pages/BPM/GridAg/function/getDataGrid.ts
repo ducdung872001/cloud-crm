@@ -78,7 +78,6 @@ const getDetailArtifact = async (nodeId, fieldName, potId, workId) => {
 export const getDataGrid = async (actionRow, params): Promise<{ columns: ColDef[]; data: Record<string, unknown>[]; typeNo: TypeNo; columnsConfig: Record<string, unknown> } | undefined> => {
   try {
     // Your async logic here
-    console.log("Fetching data...");
     const { header, typeNo } = await getDetailArtifact(
       params?.noteId || defaultNote.noteId,
       params?.fieldName || defaultNote.fieldName,

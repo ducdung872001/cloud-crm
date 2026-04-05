@@ -58,7 +58,6 @@ const GridAgTable = (
     if (linkingConfig && linkingConfig?.gridDeparture) {
       const handler = (event) => {
         // event là một CustomEvent, event.detail chứa data
-        console.log("Grid >> ", linkingConfig?.gridDeparture, " đã bấm, nhận thông tin:", event.detail);
         // Ví dụ: sử dụng event.detail.message, event.detail.someValue, ...
         setLinkingConfigDeparture(event.detail);
       };
@@ -410,7 +409,6 @@ const GridAgTable = (
     }
   };
   const onCellValueChanged = () => {
-    console.log("Cell value changed", location);
 
     // params.data là dòng vừa được sửa
     // rowData là state, nhưng để chắc chắn, bạn nên lấy dữ liệu mới nhất từ gridRef
@@ -419,8 +417,6 @@ const GridAgTable = (
       onChange && onChange({ headerTable: columnsConfig, dataRow: updatedRowData });
     }
   };
-
-  console.log("Render GridAgTable:", rowData);
 
   return (
     <div className="ag-grid-table">

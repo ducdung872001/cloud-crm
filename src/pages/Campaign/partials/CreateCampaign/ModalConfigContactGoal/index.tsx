@@ -57,7 +57,6 @@ export default function ModalConfigContactGoal(props: Record<string, unknown>) {
   const [formData, setFormData] = useState([]);
 
   const [actionList, setActionList] = useState([]);
-  console.log("actionList", actionList);
 
   // useEffect(() => {
   //   setActionList(valueConfig);
@@ -265,8 +264,6 @@ export default function ModalConfigContactGoal(props: Record<string, unknown>) {
     //   return;
     // }
 
-    console.log("body", body);
-
     const response = await KpiService.saveKpiContactEmployee(body);
 
     if (response.code == 0) {
@@ -334,7 +331,6 @@ export default function ModalConfigContactGoal(props: Record<string, unknown>) {
                             value={!item.value ? "" : item.value}
                             onBlur={(e) => {
                               const value = e.target.value.replace(/\,/g, "");
-                              console.log("value", value);
 
                               handleUpdateValueKpiEmployee(+value, item, index);
                             }}

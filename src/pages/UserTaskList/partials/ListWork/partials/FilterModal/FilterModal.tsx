@@ -122,9 +122,7 @@ export default function FilterModal(props: Record<string, unknown>) {
   const [dataEmployee, setDataEmployee] = useState(null);
   const [statusWork, setStatusWork] = useState(null);
   const [startDate, setStartDate] = useState(null);
-  console.log("startDate", startDate);
   const [endDate, setEndDate] = useState(null);
-  console.log("endDate", endDate);
 
   const loadedOptionProject = async (search, loadedOptions, { page }) => {
     const param: Record<string, unknown> = {

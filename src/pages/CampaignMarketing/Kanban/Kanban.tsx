@@ -52,7 +52,6 @@ export default function Kanban(props: Record<string, unknown>) {
 
   const marginRight = 12;
   const [columns, setColumns] = useState<Record<string, unknown>[]>([]);
-  console.log("columns", columns);
 
   const [idEndPoint, setIdEndPoint] = useState<number>(null);
   const [dataWork, setDataWork] = useState<IContractResponse>(null);
@@ -137,15 +136,12 @@ export default function Kanban(props: Record<string, unknown>) {
 
     const dragItem = newColumns[parseInt(source.droppableId)].items[source.index];
     setDataWork(dragItem);
-    console.log("dragItem", dragItem);
 
     //! biến này tạo ra với mục đích lấy cột hiện tại
     const sourceColumn = columns[source.droppableId];
-    console.log("sourceColumn", sourceColumn);
 
     //! biến này tạo ra với mục đích lấy cột cuối muốn kéo thả đến
     const destColumn = newColumns[destination.droppableId];
-    console.log("destColumn", destColumn);
 
     const startPoint = sourceColumn.id;
     const endPoint = destColumn.id;

@@ -22,7 +22,6 @@ export default function AddPermissionModal(props: Record<string, unknown>) {
   const [contentDialog, setContentDialog] = useState<IContentDialog>(null);
   const [dataSearch, setDataSearch] = useState(null);
   const [infoPartner, setInfoPartner] = useState(null);
-  console.log("infoPartner", infoPartner);
 
   const [isAddPermission, setIsAddPermission] = useState(false);
 

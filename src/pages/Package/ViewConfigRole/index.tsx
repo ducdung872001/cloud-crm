@@ -20,8 +20,6 @@ import RolePermissionService from "services/RolePermissionService";
 export default function ViewConfigRole(props: IViewConfigDepartmentProps) {
   const { onHide, data } = props;
 
-  console.log("data>>", data);
-
   const { isCollapsedSidebar } = useContext(UserContext) as ContextType;
 
   const refBoxConfig = useRef(null);

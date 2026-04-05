@@ -215,8 +215,6 @@ export default function ConfigModalPeople(props: Record<string, unknown>) {
       },
     };
 
-    console.log("configDataNew", configDataNew);
-
     // if(!_.isEqual(nodeName, dataNode?.name)){
     //   if(!nodeName){
     //     showToast("Vui lòng nhập tên điều kiện", "error");

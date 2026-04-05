@@ -45,7 +45,6 @@ export function useProductCategory(): UseProductCategoryReturn {
       }
     } catch (error) {
       if (error?.name === "AbortError") {
-        console.log("Request was aborted");
       } else {
         showToast("Có lỗi xảy ra. Vui lòng thử lại sau", "error");
       }

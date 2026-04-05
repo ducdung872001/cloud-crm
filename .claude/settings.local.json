@@ -20,7 +20,18 @@
       "Bash(echo \"EXIT_CODE: $?\")",
       "Bash(node fix_any_bulk.js)",
       "Bash(grep -v \"^\\\\s*//\")",
-      "Bash(grep -v \"//.*any\")"
+      "Bash(grep -v \"//.*any\")",
+      "Bash(grep -v \"//.*console\")",
+      "Bash(node remove_console.js)",
+      "Bash(grep -v \"//.*\\(\\) => }\")",
+      "Bash(grep -v \"//\")",
+      "Bash(grep -rn \"=>\\\\s*$\" src/ --include=\"*.ts\" --include=\"*.tsx\")",
+      "Bash(grep -v \"//.*=>\")",
+      "Bash(grep -rn -A1 \"=>\\\\s*$\" src/ --include=\"*.ts\" --include=\"*.tsx\")",
+      "Bash(grep \"=>\\\\s*$\")",
+      "Bash(grep -rn \"else\\\\s*$\" src/ --include=\"*.ts\" --include=\"*.tsx\")",
+      "Bash(grep -rn -A1 \"else\\\\s*$\" src/ --include=\"*.ts\" --include=\"*.tsx\")",
+      "Bash(grep -B1 \"^\\\\\\(src/.*-\\\\\\)\\\\s*$\\\\|^\\\\\\(src/.*-\\\\\\)\\\\s*}\\\\s*$\")"
     ]
   }
 }

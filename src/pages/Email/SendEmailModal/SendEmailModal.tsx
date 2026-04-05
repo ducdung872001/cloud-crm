@@ -38,7 +38,6 @@ export default function SendEmailModal(props: IAddEmailModelProps) {
 
   const [showModalViewTemplateEmail, setShowModalViewTemplateEmail] = useState<boolean>(false);
   const [convertContent, setConvertContent] = useState<string>("");
-  console.log("convertContent", convertContent);
 
   //! lấy mã code email fill vào nội dung
   const [dataCodeEmail, setDataCodeEmail] = useState<string>("");
@@ -315,13 +314,11 @@ export default function SendEmailModal(props: IAddEmailModelProps) {
 
   // Hàm lấy danh sách placeholder khách hàng
   const getListplaceholderCustomer = async () => {
-    console.log("getListplaceholderCustomer called");
     const param = {};
     const response = await PlaceholderService.customer(param);
 
     if (response.code === 0) {
       const result = response.result.items;
-      console.log("Placeholder items:", result);
       const newListplaceholderCustomer = result.map((item) => ({
         code: "{{" + item.name + "}}",
         name: item.title,
@@ -343,7 +340,6 @@ export default function SendEmailModal(props: IAddEmailModelProps) {
   };
 
   const fetchPlaceholder = async () => {
-    console.log("fetchPlaceholder called, placeholder:", placeholder);
     if (placeholder.value == "customer") {
       await getListplaceholderCustomer();
     }
@@ -351,7 +347,6 @@ export default function SendEmailModal(props: IAddEmailModelProps) {
 
   // đoạn này lấy mã email
   const handlePointerContent = (data) => {
-    console.log("Selected placeholder:", data);
     const value = data.code;
     setDataCodeEmail(value);
     // Reset về rỗng sau một khoảng thời gian ngắn để có thể chọn lại cùng giá trị
@@ -375,8 +370,6 @@ export default function SendEmailModal(props: IAddEmailModelProps) {
    */
   const loadTemplateEmail = async (item: ITemplateEmailResponseModel) => {
     if (item) {
-      console.log("Loading template:", item);
-      console.log("item.content =>", item.content);
       setConvertContent(item.content);
       setFormData({ ...formData, values: { ...formData.values, title: item.title, content: item.content } });
       // Chuyển về nội dung tự soạn sau khi chọn mẫu

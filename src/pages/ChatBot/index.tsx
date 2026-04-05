@@ -465,7 +465,6 @@ export default function ChatBot() {
                     <ContentChat
                         data={dataFeedback}
                         onHide={(reload, newMessage) => {
-                          console.log('newMessage', newMessage);
                           
                             if (reload) {
                                 dataFeedback ? handleGetFeedback(params) : setParams({ ...params, page: 1 });

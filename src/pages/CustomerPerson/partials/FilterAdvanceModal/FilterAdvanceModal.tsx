@@ -21,8 +21,6 @@ import Tippy from "@tippyjs/react";
 
 export default function FilterAdvanceModal(props: Record<string, unknown>) {
   const { onShow, onHide, filterAdvance, setFilterAdvance, takeParamsUrl, takeUrlFilterAdvance, params } = props;
-  console.log('takeParamsUrl', takeParamsUrl);
-  console.log('takeUrlFilterAdvance', takeUrlFilterAdvance);
   
   //   const takeEmployeeId = localStorage.getItem("employeeId_local") && JSON.parse(localStorage.getItem("employeeId_local")) || null;
 
@@ -92,8 +90,6 @@ export default function FilterAdvanceModal(props: Record<string, unknown>) {
         const customerExtraInfo = [...paramsCustomerExtraInfo];
         // const customerExtraInfo = [...takeUrlFilterAdvance.customerExtraInfo];
 
-        console.log('customerExtraInfo12', customerExtraInfo);
-        
         
         if (customerExtraInfo.length > 0) {
           setDataStatusCashloan(extractStatusData(customerExtraInfo, "Trangthaikhoanvaycashloan"));

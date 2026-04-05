@@ -55,7 +55,6 @@ export default function EmailMarkettingList(props) {
   const [checkadd, setCheckAdd] = useState(false);
   const [permissions, setPermissions] = useState(getPermissions());
   const[listEmailConfig, setListEmailConfig] = useState([]);
-  console.log('listEmailConfig', listEmailConfig);
   
   useEffect(() => {
     if (customerIdlist && customerIdlist.length > 0) {

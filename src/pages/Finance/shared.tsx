@@ -502,7 +502,6 @@ export function CashbookSlideOver({ open, onClose, onSuccess }: CashbookSlideOve
     if (!amountNum || amountNum <= 0) { setFormError("Số tiền phải lớn hơn 0"); return; }
 
     setSubmitting(true);
-    console.log("idEmployee:", dataInfoEmployee, "transDate:", form.transDate);
 
 
     try {

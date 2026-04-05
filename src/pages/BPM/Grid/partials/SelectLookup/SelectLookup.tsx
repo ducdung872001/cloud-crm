@@ -272,7 +272,6 @@ export default function SelectLookup(props: SelectLookupProps) {
       }
     }
   }, [listOption]);
-  console.log("bindingKey>>", bindingKey);
 
   //! đoạn này xử lý call api lấy ra list lookup
   const loadOptionLookup = async (search, loadedOptions, { page }) => {

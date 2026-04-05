@@ -183,8 +183,6 @@ export default function ModalImport(props: Record<string, unknown>) {
 
       const validateField = makeValidateField(listColumn);
 
-      console.log("readExcelFile>>>:baseData>", baseData);
-
       if (baseData.length) {
         let newDataRow = [];
         for (let index = 0; index < baseData.length; index++) {
@@ -199,8 +197,6 @@ export default function ModalImport(props: Record<string, unknown>) {
             const errMsg = rule.validateValue(value, row);
             if (errMsg) {
               // Báo lỗi cho rule.name
-              console.log("readExcelFile>>>:value>", "Dòng:", index + 1, ":>>", value);
-              console.log("readExcelFile>>>:ERROR>", "Dòng:", index + 1, ":>>", rule.name, errMsg);
               hasError = true; // Đánh dấu có lỗi
               setLstIndexErros((prev) => {
                 const newPrev = prev;

@@ -65,7 +65,6 @@ export default function ViewDetailPerson(props: IViewDetailPersonProps) {
           }
         });
       });
-      console.log("listNewItem", listNewItem);
       const dataReason = listNewItem?.find((el) => el.fieldName === "LyDo") ? listNewItem?.find((el) => el.fieldName === "LyDo").attributeValue : "";
 
       setContentReason(dataReason ? { value: dataReason, label: dataReason } : null);
@@ -96,7 +95,6 @@ export default function ViewDetailPerson(props: IViewDetailPersonProps) {
   //Trạng thái cuộc gọi
   const [isShowStatusPhone, setIsShowStatusPhone] = useState<boolean>(false);
   const [callStatus, setCallStatus] = useState(null);
-  console.log("callStatus", callStatus);
 
   const [editCallStatus, setEditCallStatus] = useState(false);
   //danh sách cuộc gọi

@@ -27,7 +27,6 @@ interface IViewHistorySignatureProps {
 
 export default function ViewHistorySignature(props: IViewHistorySignatureProps) {
   const { onShow, onHide, data, type, contractTemplate, callback, buttonDownload, fsAttachment } = props;
-  console.log('fsAttachment', fsAttachment);
   
 
   const [lstFsForm, setLstFsForm] = useState([]);

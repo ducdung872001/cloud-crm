@@ -30,13 +30,13 @@ export const LogErrorTableModal: React.FC = (props: Record<string, unknown>) => 
 
   useEffect(() => {
     setIsLoading(true);
-    const logParams = {
+    const logParams: Record<string, unknown> = {
       page: params.page || 1,
       size: params.limit || 10,
-      nodeId,
-      processId,
-      potId,
     };
+    if (nodeId != null) logParams.nodeId = nodeId;
+    if (processId != null) logParams.processId = processId;
+    if (potId != null) logParams.potId = potId;
 
     const fetchLog = async () => {
       try {

@@ -119,8 +119,6 @@ function extractRangeFromConditions(group: ConditionGroup): Range[] {
 function mergeRanges(ranges: Range[]): Range[] {
   const sorted = ranges.filter((r) => r.start <= r.end).sort((a, b) => a.start - b.start || Number(a.excludeStart) - Number(b.excludeStart));
 
-  console.log("Alias: mergeRanges - sorted ranges:", sorted);
-
   const merged: Range[] = [];
 
   for (const range of sorted) {
@@ -272,7 +270,6 @@ function rangeToConditionGroup(range: Range, parameter: string): ConditionGroup 
 
 export function convertOutsideRangesToConditionGroups(inputGroups: ConditionGroup[]): ConditionGroup[] | false {
   if (inputGroups.length === 0) {
-    console.log("⛔ Không có điều kiện đầu vào nào, không thể xác định giá trị nằm ngoài.");
     return false;
   }
 
@@ -298,7 +295,6 @@ export function convertOutsideRangesToConditionGroups(inputGroups: ConditionGrou
   if (equalConditions.length > 0 && notEqualConditions.length > 0) {
     const hasConflict = equalConditions.some((e) => notEqualConditions.some((n) => n.value === e.value));
     if (hasConflict) {
-      console.log("⛔ Có mâu thuẫn giữa các điều kiện EQUAL và NOT_EQUAL.");
       return false;
     }
   }
@@ -310,7 +306,6 @@ export function convertOutsideRangesToConditionGroups(inputGroups: ConditionGrou
     if (notEqualConditions.every((c, _, arr) => c.value === arr[0].value)) {
       specialEqual = notEqualConditions[0].value;
     } else {
-      console.log("⛔ Không thể xác định giá trị nằm ngoài khi có nhiều điều kiện NOT_EQUAL.");
       return false;
     }
   }
@@ -327,17 +322,13 @@ export function convertOutsideRangesToConditionGroups(inputGroups: ConditionGrou
 
   const outsideRanges = invertRanges(merged, specialEqual);
 
-  console.log("Alias: convertOutsideRangesToConditionGroups - outsideRanges:", outsideRanges);
-
   if (outsideRanges.length === 0) {
-    console.log("✅ Các điều kiện đầu vào đã bao phủ toàn bộ trục số thực. Không còn giá trị nào nằm ngoài.");
     return false;
   }
 
   const result = outsideRanges.map((range) => rangeToConditionGroup(range, parameter));
 
   if (result.length === 0) {
-    console.log("⚠️ Các khoảng nằm ngoài không thể chuyển đổi thành điều kiện cụ thể.");
     return false;
   }
 

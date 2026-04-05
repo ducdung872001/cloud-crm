@@ -42,8 +42,6 @@ export default function AddTimeEventModal(props: Record<string, unknown>) {
 
   })
 
-  console.log('infoEvent', infoEvent);
-  
   
   const [target, setTarget] = useState(
     [
@@ -57,8 +55,6 @@ export default function AddTimeEventModal(props: Record<string, unknown>) {
     ]
   )
 
-  console.log('target', target);
-  
 
   const conditionData = [
     {
@@ -221,7 +217,6 @@ export default function AddTimeEventModal(props: Record<string, unknown>) {
         time_action: moment(infoEvent.time_action).format('HH:mm'),
         target: target
     }
-    console.log('body', body);
 
     if(body.target && body.target.length > 0 && body.target.filter(el => !el.condition_name).length > 0 
         || body.target.filter(el => !el.condition_other).length > 0
@@ -621,7 +616,6 @@ export default function AddTimeEventModal(props: Record<string, unknown>) {
                                     }
                                     placeholder="Vui lòng chọn"
                                     onChange={(e) => {  
-                                      console.log('e', e);
                                       // const newArray = (item.condition_name === 'Đối tượng khách hàng') ? [...item.soure_customer ]
                                       // : (item.condition_name === 'Loại khách hàng') ? [...item.group_customer] : []
                                       // newArray.push(e)

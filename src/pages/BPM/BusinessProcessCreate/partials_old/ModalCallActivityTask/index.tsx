@@ -1128,7 +1128,6 @@ export default function ModalCallActivityTask({ onShow, onHide, dataNode, proces
       .importXML(initialDiagram)
       .then(({ warnings }) => {
         if (warnings.length) {
-          console.warn("Warnings", warnings);
         }
       })
       .catch((err) => {

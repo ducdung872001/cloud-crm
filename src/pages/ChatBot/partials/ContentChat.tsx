@@ -30,7 +30,6 @@ export default function ContentChat(props: Record<string, unknown>) {
     // id: null,
     message: "",
   });
-  console.log('messageChat', messageChat);
   
 
   // call api khi click vào icon send

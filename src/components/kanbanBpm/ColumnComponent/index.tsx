@@ -205,7 +205,6 @@ const ColumnComponent: React.FC<ColumnProps> = ({
                               <div
                                 onDoubleClick={(e) => {
                                   // e.stopPropagation();
-                                  console.log("Double click item:", item);
                                   setShowHistory(item);
                                 }}
                               >

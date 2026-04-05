@@ -94,8 +94,6 @@ export default function ModalStartMessageEvent({ onShow, onHide, dataNode, proce
       messageId: formData?.messageId ?? "",
     };
 
-    console.log("body", body);
-
     const response = await BusinessProcessService.updateStartMessageEvent(body);
 
     if (response.code === 0) {

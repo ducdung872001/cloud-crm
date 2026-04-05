@@ -191,7 +191,6 @@ export default function ModalHandleTask({ onShow, onHide, dataWork, isHandleTask
   const handleSchemaSubmit = (newSchema, reject, contextData) => {
     // setFormSchema(newSchema); // Cập nhật schema mới
     setDataSchema(newSchema);
-    console.log("newSchema", newSchema);
 
     onSubmit(newSchema);
   };
@@ -290,7 +289,6 @@ export default function ModalHandleTask({ onShow, onHide, dataWork, isHandleTask
       await poll();
     } catch (error) {
       if (abortSignal.aborted) {
-        console.log("Polling bị hủy do người dùng.");
       } else {
         showToast("Đã có lỗi hệ thống!", "error");
       }
@@ -1078,7 +1076,6 @@ export default function ModalHandleTask({ onShow, onHide, dataWork, isHandleTask
                     setCodePopupCustom={setCodePopupCustom}
                     setShowPopupCallCustomer={setShowPopupCallCustomer}
                     onOpenCallCustomerModal={(data) => {
-                      console.log("data", data);
                       setCustomerId(data?.customerId);
                       setShowPopupCallCustomer(true);
                     }}

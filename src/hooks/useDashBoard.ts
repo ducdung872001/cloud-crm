@@ -64,7 +64,6 @@ export function useDashBoard({
     setIsTopProductLoading(true);
     try {
       const response = await ProductService.topProductV2(sort);
-      console.log("[TopProduct] sort=" + sort + " response=", JSON.stringify(response?.result?.slice(0,2)));
       if (response.code === 0) {
         setDataTopProduct(mapToTopProduct(response.result));
       } else if (response.code === 400) {
@@ -97,7 +96,6 @@ export function useDashBoard({
       setIsLoading(false);
     } catch (error) {
       if (error?.name === "AbortError") {
-        console.log("Request was aborted");
       } else {
         showToast(error?.message ?? "Có lỗi xảy ra. Vui lòng thử lại sau", "error");
       }

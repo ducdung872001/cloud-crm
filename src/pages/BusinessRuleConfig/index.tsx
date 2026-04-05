@@ -52,8 +52,6 @@ export default function BusinessRuleConfig(props: Record<string, unknown>) {
   const [isPermissions, setIsPermissions] = useState<boolean>(false);
   const [permissions, setPermissions] = useState(getPermissions());
 
-  console.log("listDecisionInput>>", listDecisionInput);
-
   const [params, setParams] = useState({
     keyWord: "",
     businessRuleId: id ? +id : null,

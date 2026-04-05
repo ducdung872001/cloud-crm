@@ -25,7 +25,6 @@ export default function DetailPartner() {
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [detailPartner, setDetailPartner] = useState(null);
-  console.log("detailPartner", detailPartner);
   const [deleteSignal, setDeleteSignal] = useState<boolean>(false);
 
   const [infoFile, setInfoFile] = useState(null);

@@ -273,8 +273,6 @@ export default function ModalConfigKpiEmployee(props: Record<string, unknown>) {
       return;
     }
 
-    console.log("body", body);
-
     const response = await KpiService.saveKpiEmployee(body);
 
     if (response.code == 0) {
@@ -298,8 +296,6 @@ export default function ModalConfigKpiEmployee(props: Record<string, unknown>) {
     if (formData[index].weight == +value) {
       return;
     }
-
-    console.log("body", body);
 
     const response = await KpiService.saveKpiEmployee(body);
 

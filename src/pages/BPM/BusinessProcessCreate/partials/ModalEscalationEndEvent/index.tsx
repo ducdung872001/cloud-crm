@@ -114,8 +114,6 @@ export default function ModalEscalationEndEvent({ onShow, onHide, dataNode, proc
       escalationCode: formData?.escalationCode ?? "",
     };
 
-    console.log("body", body);
-
     const response = await BusinessProcessService.updateEscalationEndEvent(body);
 
     if (response.code === 0) {

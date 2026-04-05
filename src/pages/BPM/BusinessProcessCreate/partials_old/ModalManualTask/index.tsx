@@ -155,8 +155,6 @@ export default function ModalManualTask({ onShow, onHide, dataNode, processId, c
       workflowId: formData?.workflowId ?? null,
     };
 
-    console.log("body", body);
-
     const response = await BusinessProcessService.updateManualTask(body);
 
     if (response.code === 0) {

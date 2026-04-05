@@ -551,8 +551,6 @@ export default function ProjectList() {
 
   const [columnDefs, setColumnDefs] = useState<Record<string, unknown>>(defaultValueColumnDefs);
 
-  console.log("columnDefs", columnDefs);
-
   useEffect(() => {
     if (activeTitleHeader === 1) {
       setColumnDefs(defaultValueColumnDefs);
@@ -1024,8 +1022,6 @@ export default function ProjectList() {
 
           return body;
         });
-
-        console.log("dataExport", dataExport);
 
         const compareArrays = (arr1, arr2) => {
           const result = [];

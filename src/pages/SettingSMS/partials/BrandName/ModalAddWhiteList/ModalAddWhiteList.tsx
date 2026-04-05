@@ -27,7 +27,6 @@ export default function ModalAddWhiteList(props: Record<string, unknown>) {
   const [contentDialog, setContentDialog] = useState<IContentDialog>(null);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [dataWhiteList, setDataWhiteList] = useState(null);
-  console.log("dataWhiteList", dataWhiteList);
 
   const [isAddWhiteList, setIsAddWhiteList] = useState(false);
   const [params, setParams] = useState({

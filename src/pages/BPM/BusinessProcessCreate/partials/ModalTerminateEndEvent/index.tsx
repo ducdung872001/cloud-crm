@@ -103,8 +103,6 @@ export default function ModalTerminateEndEvent({ onShow, onHide, dataNode, proce
       workflowId: formData?.workflowId ?? null,
     };
 
-    console.log("body", body);
-
     const response = await BusinessProcessService.updateTerminateEndEvent(body);
 
     if (response.code === 0) {

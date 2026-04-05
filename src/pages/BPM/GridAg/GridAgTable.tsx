@@ -60,7 +60,6 @@ const GridAgTable = forwardRef<GridAgTableHandle, IGridAgTable>((props: IGridAgT
     if (linkingConfig && linkingConfig?.gridDeparture) {
       const handler = (event) => {
         // event là một CustomEvent, event.detail chứa data
-        console.log("Grid >> ", linkingConfig?.gridDeparture, " đã bấm, nhận thông tin:", event.detail);
         // Ví dụ: sử dụng event.detail.message, event.detail.someValue, ...
         setLinkingConfigDeparture(event.detail);
       };

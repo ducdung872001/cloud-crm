@@ -47,7 +47,6 @@ export default function HistoryModal(props: Record<string, unknown>) {
 
     const [callHistory, setCallHistory] = useState([]);
     const [isNoItemCall, setIsNoItemCall] = useState<boolean>(false);
-    console.log('callHistory', callHistory);
 
     const [paramsCall, setParamsCall] = useState<ICallHistoryListFilterRequest>({
       keyword: "",

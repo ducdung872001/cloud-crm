@@ -37,13 +37,11 @@ export default function LoginZaloModal(props: LoginZaloModalProps) {
   window.addEventListener("message", (event) => {
     // Data sent with postMessage is stored in event.data
     if (event.origin === "https://sso.reborn.vn") {
-      console.log("show event zalo =>", event);
 
       const code = event.data?.code;
       const oaId = event.data?.oaId;
 
       //Thực hiện kết nối với Zalo
-      console.log("code is: ", code, ", oaId is:", oaId);
 
       if (code) {
         // getListZaloOA();

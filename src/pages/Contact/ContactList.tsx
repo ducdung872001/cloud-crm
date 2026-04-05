@@ -357,7 +357,6 @@ export default function ContactList() {
 
   const ActionRenderer = (props) => {
     let data = props.data;
-    console.log("data in action renderer><><><><><><><><", data);
     let params = props.params;
 
     return (

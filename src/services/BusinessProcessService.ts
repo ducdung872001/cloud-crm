@@ -395,7 +395,6 @@ export default {
   },
 
   checkTypeOLA: (params: Record<string, unknown>) => {
-    console.log("PARMAS", params);
     return fetch(`${urlsApi.businessProcess.checkTypeOLA}${convertParamsToString(params)}`, {
       method: "GET",
     }).then((res) => res.json());

@@ -25,7 +25,6 @@ import NummericInput from "components/input/numericInput";
 
 export default function ModalAddCampaignMA(props: Record<string, unknown>) {
   const { onShow, onHide, idData } = props;
-  console.log("idData", idData);
 
   const focusedElement = useActiveElement();
   const { dataBranch } = useContext(UserContext) as ContextType;

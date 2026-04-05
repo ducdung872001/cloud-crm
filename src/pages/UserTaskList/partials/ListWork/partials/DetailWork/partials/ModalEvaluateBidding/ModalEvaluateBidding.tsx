@@ -209,8 +209,6 @@ export default function ModalEvaluateBidding({ onShow, onHide, data }) {
       };
     });
 
-    console.log("body", body);
-
     const response = await TenderPackageService.submitReview(body);
 
     if (response.code === 0) {

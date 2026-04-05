@@ -68,7 +68,6 @@ export default function AddCustomPlaceholderModal(props: ICustomPlaceholderModal
       onHide(true);
       setIsSubmit(false);
     } else {
-      console.log(response);
       showToast(response.message ?? "Có lỗi xảy ra. Vui lòng thử lại sau", "error");
       setIsSubmit(false);
     }

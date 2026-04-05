@@ -207,7 +207,6 @@ export default function AddFormObjectBackup(props: IAddObjectProps) {
 
               return { ...field, [Object.keys(field)[0]]: calculatedValue };
             } catch (error) {
-              console.warn("Error parsing formula:", error);
             }
           }
           return field;

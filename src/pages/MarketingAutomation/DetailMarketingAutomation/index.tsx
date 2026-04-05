@@ -422,7 +422,6 @@ export default function DetailMarketingAutomation() {
               <li
                 className={"active"}
                 onClick={(e) => {
-                  console.log("click");
                 }}
               >
                 {maName}

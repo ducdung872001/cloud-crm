@@ -15,7 +15,6 @@ import ContractEformService from "services/ContractEformService";
 
 export default function ModalAddAction(props: Record<string, unknown>) {
   const { onShow, onHide, approachData, activityData, actionList } = props;
-  console.log("activityData", activityData);
 
   const [isSubmit, setIsSubmit] = useState<boolean>(false);
   const [showDialog, setShowDialog] = useState<boolean>(false);
@@ -252,8 +251,6 @@ export default function ModalAddAction(props: Record<string, unknown>) {
       ...(activityData ? { id: activityData.id } : {}),
       ...{ approachId: approachData.id },
     };
-
-    console.log("body", body);
 
     const response = await SaleflowApproachService.updateActivity(body);
     if (response.code === 0) {

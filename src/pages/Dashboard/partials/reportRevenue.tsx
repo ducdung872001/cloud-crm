@@ -26,13 +26,11 @@ export default function ReportRevenue(props: ReportRevenueProps) {
   const { t } = useTranslation();
 
   const { dataBranch } = useContext(UserContext) as ContextType;
-  console.log("dataBranch", dataBranch);
 
   // const checkBranch = localStorage.getItem("valueBranch") || null;
   // console.log('checkBranch123', checkBranch);
 
   const [listRevenue, setListRevenue] = useState<IReportRevenueResponse[]>([]);
-  console.log("listRevenue", listRevenue);
 
   const [valueBranch, setValueBranch] = useState(null);
 

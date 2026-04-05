@@ -120,7 +120,6 @@ const AttachmentUploader: React.FC<Props> = ({
 
   const safeShowToast = (msg: string) => {
     if (showToast) showToast(msg, "error");
-    else console.warn(msg);
   };
 
   const processUploadSuccess = (data: Record<string, unknown>) => {

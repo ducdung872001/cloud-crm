@@ -202,8 +202,6 @@ export default function Header(props: HeaderProps) {
       // body: JSON.stringify(body),
     }).then((res) => res.json());
 
-    console.log("response", response);
-
     if (response?.error_code === 0) {
     } else {
     }
@@ -292,7 +290,6 @@ export default function Header(props: HeaderProps) {
   const onUnread = async (id: number) => {
     const response = await NotificationService.updateUnread({ id: id });
     if (response.code === 0) {
-      console.log("Đã đọc");
       getListNotify({
         limit: 10,
         page: 1,

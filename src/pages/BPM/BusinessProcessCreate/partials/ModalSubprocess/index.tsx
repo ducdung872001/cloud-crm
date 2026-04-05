@@ -300,7 +300,6 @@ export default function ModalSubprocess({ onShow, onHide, dataNode, processId, c
       startNodeId: formData.startNodeId ?? null,
       workflowId: formData?.workflowId ?? null,
     };
-    console.log("body", body);
 
     const response = await BusinessProcessService.updateSubprocess(body);
 

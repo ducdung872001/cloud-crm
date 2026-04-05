@@ -110,7 +110,6 @@ export default function ChartJobProcess(props: ReportRevenueProps) {
 
     if (response.code == 0) {
       const result = response.result;
-      console.log("result", result);
 
       setListRevenue(result);
     } else {
@@ -229,7 +228,6 @@ export default function ChartJobProcess(props: ReportRevenueProps) {
     }
   };
 
-  console.log("params>>>", params);
   const fetchData = async () => {
     const response = await ProjectService.report(params);
     if (response.code === 0) {
@@ -308,7 +306,6 @@ export default function ChartJobProcess(props: ReportRevenueProps) {
       // Sử dụng API của Highcharts để tải xuống
       chart.exportChart();
     } else {
-      console.log("chạy vào file xuất định dạng excel !");
     }
   };
 

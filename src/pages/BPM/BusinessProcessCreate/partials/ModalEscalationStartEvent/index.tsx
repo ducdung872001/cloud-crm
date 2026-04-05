@@ -117,8 +117,6 @@ export default function ModalEscalationStartEvent({ onShow, onHide, dataNode, pr
       isInterrupting: formData?.isInterrupting
     };
 
-    console.log("body", body);
-
     const response = await BusinessProcessService.updateEscalationStartEvent(body);
 
     if (response.code === 0) {

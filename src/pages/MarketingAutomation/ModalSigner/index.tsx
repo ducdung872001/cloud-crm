@@ -86,8 +86,6 @@ export default function ModalSigner(props: IAddSignerFSAndQuoteProps) {
 
     const response = await MarketingAutomationService.updateMapping(body);
 
-    console.log("response updateMapping>>>>>", response);
-
     if (response.code === 0) {
       showToast("Cập nhật quy trình thành công", "success");
       handleClearForm(true);

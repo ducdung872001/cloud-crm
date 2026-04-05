@@ -1421,8 +1421,6 @@ export default function ConfigSMS(props: Record<string, unknown>) {
       point: nodePoint,
     };
 
-    console.log("body", body);
-
     const response = await MarketingAutomationService.addNode(body);
     if (response.code === 0) {
       showToast(`Cập nhật điều kiện SMS thành công`, "success");

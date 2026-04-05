@@ -125,7 +125,6 @@ export default function ModalLinkThrowEvent({ onShow, onHide, dataNode, processI
       nodeId: dataNode?.id ?? null,
     //   workflowId: formData?.workflowId ?? null,
     };
-    console.log("body", body);
 
     const response = await BusinessProcessService.updateLinkCatchEventTask(body);
 

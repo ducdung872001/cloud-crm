@@ -56,7 +56,6 @@ export default function EditParentBranch(props: Record<string, unknown>) {
     if (!listBeautyBranch || listBeautyBranch.length === 0) {
       setIsLoadingBeautyBranch(true);
       const dataOption = await SelectOptionData("beautyBranch");
-      console.log("dataOption>>", dataOption);
 
       if (dataOption) {
         const newData = [...dataOption];

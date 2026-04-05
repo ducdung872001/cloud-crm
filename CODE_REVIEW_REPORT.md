@@ -88,7 +88,7 @@
 
 | # | Vấn đề | Số lượng | Ghi chú |
 |---|--------|----------|---------|
-| 2 | console.log trong production code | 100+ instances | Đặc biệt: useSTWebRTC.ts (19 lần), App.tsx, firebase-config.ts |
+| 2_FIX | console.log trong production code | 100+ instances | Đặc biệt: useSTWebRTC.ts (19 lần), App.tsx, firebase-config.ts |
 | 3 | TODO/FIXME chưa xử lý | 100+ instances | AddZaloMarketting.tsx (17 TODO), AddTemplateZalo.tsx (17 TODO) |
 
 **Top offenders console.log:**

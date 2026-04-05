@@ -66,8 +66,6 @@ export default function ModalRequestDetail(props: Record<string, unknown>) {
     [data]
   );
 
-  console.log("data modal request detail: ", data);
-
   return (
     <Fragment>
       <Modal

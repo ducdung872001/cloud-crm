@@ -34,7 +34,6 @@ export default function WebRTCEmbed() {
       },
       callbacks: {
         embed_success_handle: (data) => {
-          console.log("Embed success", data);
         },
 
         embed_error_handle: (error) => {
@@ -42,11 +41,9 @@ export default function WebRTCEmbed() {
         },
 
         background_registered_handle: (data) => {
-          console.log("SIP registered", data);
         },
 
         background_unregistered_handle: (data) => {
-          console.log("SIP unregistered", data);
         },
 
         background_registrationFailed_handle: (data) => {
@@ -54,24 +51,19 @@ export default function WebRTCEmbed() {
         },
 
         background_incomingcall_handle: (data) => {
-          console.log("Incoming call", data);
           // Hiển thị popup incoming call tại đây
         },
 
         background_outgoingcall_handle: (data) => {
-          console.log("Outgoing call", data);
         },
 
         background_outgoingringing_handle: (data) => {
-          console.log("Outgoing ringing", data);
         },
 
         background_accepted_handle: (data) => {
-          console.log("Call connected", data);
         },
 
         background_ended_handle: (data) => {
-          console.log("Call ended", data);
         },
 
         background_failed_handle: (data) => {

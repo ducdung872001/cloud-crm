@@ -168,7 +168,6 @@ export default function AddContactAttributeModal(props: AddContactAttributeModal
     if (response.code === 0) {
       const dataOption = response.result;
 
-      console.log('dataOption =>', dataOption);
       Object.keys(dataOption).forEach((key) => {
         (dataOption[key] || []).map(item => {
           if (item.datatype == 'number') {
@@ -176,8 +175,6 @@ export default function AddContactAttributeModal(props: AddContactAttributeModal
           }
         });
       });
-
-      console.log('Fields =>', arrField);
 
       //Lưu lại
       setContactAttributeFields(arrField);

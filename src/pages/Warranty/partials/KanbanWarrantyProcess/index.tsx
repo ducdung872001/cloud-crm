@@ -33,7 +33,6 @@ const KanbanWarrantyProcess = (props: Record<string, unknown>) => {
   //Xử lý các hành động trên item
   const callBackAction = (item, action) => {
     if (action === "delete") {
-      console.log("Xoá yêu cầu bảo hành", item);
       // showDialogConfirmDelete(item);
     }
   };
@@ -41,7 +40,6 @@ const KanbanWarrantyProcess = (props: Record<string, unknown>) => {
   // Cài đặt hiển thị item
   const itemSetup = useCallback(
     (item, index) => {
-      console.log("itemSetup item", item);
       const orderRequest = item?.orderRequest || {};
       const customerInfo = JSON.parse(orderRequest?.customerInfo || "{}");
       return (

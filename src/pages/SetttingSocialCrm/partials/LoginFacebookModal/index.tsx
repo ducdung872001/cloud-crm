@@ -37,7 +37,6 @@ export default function LoginFacebookModal(props: LoginFanpageModalProps) {
     if (event.origin === "https://sso.reborn.vn") {
       let accessToken = event.data?.accessToken;
 
-      console.log("access token is: ", accessToken);
       if (accessToken) {
         loadFanpages(accessToken);
         onHide(false);

@@ -134,7 +134,6 @@ export default function ViewProcess(props) {
       .importXML(initialDiagram)
       .then(({ warnings }) => {
         if (warnings.length) {
-          console.warn("Warnings", warnings);
         }
 
         if (logObject && logObject.length > 0) {
@@ -154,14 +153,12 @@ export default function ViewProcess(props) {
       });
 
     bpmnModeler.current.on("element.click", (event) => {
-      console.log("eventCLick", event);
       // setNodeId(event.element.id)
     });
 
     bpmnModeler.current.on("element.dblclick", (event) => {
       const element = event.element;
       if (element.type === "bpmn:SendTask") {
-        console.log("Send Task được click:", element);
         setIsModalSendTask(true);
         setDataNode(element);
         //SendTask popup

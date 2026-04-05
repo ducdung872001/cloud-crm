@@ -251,11 +251,9 @@ export default function TaskItem(props: Record<string, unknown>) {
                       style={{ cursor: "pointer", alignItems: "flex-start", display: "flex" }}
                       onClick={() => {
                         if (item.status === 1) {
-                          console.log("da vao 1");
 
                           showDialogConfirmDelete(item);
                         } else {
-                          console.log("da vao 2");
                           showDialogConfirmDeleteChannel(item);
                         }
                       }}

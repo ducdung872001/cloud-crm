@@ -1081,26 +1081,18 @@ export default function AddTipRose(props: IAddTipRoseProps) {
   // gửi đi lựa chọn 1
   useEffect(() => {
     if (formData?.values.type == "1") {
-      console.log("giá trị gửi đi khi chọn theo giá trị đơn hàng : ", addOrderValue);
     }
   }, [formData?.values, addOrderValue]);
 
   // gửi đi lựa chọn 2
   useEffect(() => {
     if (formData?.values.type == "2") {
-      console.log("gửi đi mức hưởng : ", valueBenefitRate);
-      console.log("sản phẩm gửi đi : ", addProduct);
-      console.log("dịch vụ gửi đi : ", addService);
-      console.log("thẻ dịch vụ gửi đi : ", addCardService);
     }
   }, [formData?.values, addProduct, addService, addCardService]);
 
   // gửi đi lựa chọn 3
   useEffect(() => {
     if (formData?.values.type == "3") {
-      console.log("số lượng sản phẩm gửi đi : ", addQtyProduct);
-      console.log("số lượng dịch vụ gửi đi : ", addQtyService);
-      console.log("số lượng thẻ dịch vụ gửi : ", addQtyCardService);
     }
   }, [formData?.values, addQtyProduct, addQtyService, addQtyCardService]);
 

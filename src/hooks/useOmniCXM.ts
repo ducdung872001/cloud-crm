@@ -109,7 +109,6 @@ export function useOmniCXM({
     if (environment && environment !== "product") opts.environment = environment;
     app.init(opts);
     initialized.current = true;
-    console.log("[OmniCXM] Widget đã khởi tạo thành công");
 
     // Ẩn nút chat nổi - giao diện đa kênh đã được tích hợp vào TotalChat
     if (hideFloatingButton) {

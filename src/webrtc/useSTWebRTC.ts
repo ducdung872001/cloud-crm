@@ -16,7 +16,6 @@ export function useSTWebRTC(options: UseSTWebRTCOptions) {
   const initializedRef = useRef(false);
 
   useEffect(() => {
-    console.log("STWebRTC: Initializing STWebRTC with extension:", extension);
 
     if (!window.STWebRTCEmbed) {
       setError("STWebRTC: STWebRTCEmbed not loaded");
@@ -27,11 +26,8 @@ export function useSTWebRTC(options: UseSTWebRTCOptions) {
       return;
     }
 
-    console.log("STWebRTC: Starting initialization:", initializedRef.current);
-
     if (initializedRef.current) return;
     initializedRef.current = true;
-    console.log("STWebRTC: Initialization proceed");
 
     setCallState("registering");
 
@@ -42,7 +38,6 @@ export function useSTWebRTC(options: UseSTWebRTCOptions) {
       },
       callbacks: {
         embed_success_handle: () => {
-          console.log("STWebRTC: WebRTC embed success");
         },
 
         embed_error_handle: (data: Record<string, unknown>) => {
@@ -54,13 +49,11 @@ export function useSTWebRTC(options: UseSTWebRTCOptions) {
 
         background_registered_handle: () => {
           // Đăng ký SIP thành công
-          console.log("STWebRTC: Đăng ký SIP thành công");
           setCallState("ready");
         },
 
         background_unregistered_handle: () => {
           // Đăng xuất SIP
-          console.log("STWebRTC: Đăng xuất SIP");
           setCallState("idle");
         },
 
@@ -73,32 +66,27 @@ export function useSTWebRTC(options: UseSTWebRTCOptions) {
 
         background_outgoingcall_handle: () => {
           // Cuộc gọi đi được thực hiện
-          console.log("STWebRTC: Cuộc gọi đi được thực hiện");
           setCallState("calling");
         },
 
         background_outgoingringing_handle: () => {
           // Cuộc gọi đi đang đổ chuông
-          console.log("STWebRTC: Cuộc gọi đi đang đổ chuông");
           setCallState("ringing");
         },
 
         background_incomingcall_handle: (data: Record<string, unknown>) => {
           // Có cuộc gọi đến
-          console.log("STWebRTC: Có cuộc gọi đến từ:", data.customernumber);
           setIncomingNumber(data.customernumber as string);
           setCallState("incoming");
         },
 
         background_accepted_handle: () => {
           // Cuộc gọi đã được trả lời
-          console.log("STWebRTC: Cuộc gọi đã được trả lời");
           setCallState("oncall");
         },
 
         background_ended_handle: () => {
           // Cuộc gọi đã kết thúc
-          console.log("STWebRTC: Cuộc gọi đã kết thúc");
           setIncomingNumber(null);
           setCallState("ended");
         },
@@ -116,50 +104,42 @@ export function useSTWebRTC(options: UseSTWebRTCOptions) {
   // ===== ACTIONS =====
   const makeCall = async (phone: string) => {
     // Thực hiện cuộc gọi ra
-    console.log("STWebRTC: Thực hiện cuộc gọi ra đến:", phone);
     return window.STWebRTCEmbed.makecall(phone);
   };
 
   const answer = async () => {
     // Trả lời cuộc gọi đến
-    console.log("STWebRTC: Trả lời cuộc gọi đến");
     return window.STWebRTCEmbed.answer();
   };
 
   const hangup = async () => {
     // Kết thúc cuộc gọi
-    console.log("STWebRTC: Kết thúc cuộc gọi");
     setIncomingNumber(null);
     return window.STWebRTCEmbed.hangup();
   };
 
   const muteToggle = async () => {
     // Bật/tắt mic
-    console.log("STWebRTC: Bật/tắt mic");
     return window.STWebRTCEmbed.muteAndUnmute();
   };
 
   const holdToggle = async () => {
     // Giữ/tiếp tục cuộc gọi
-    console.log("STWebRTC: Giữ/tiếp tục cuộc gọi");
     return window.STWebRTCEmbed.holdAndUnhold();
   };
 
   const setDND = async (status: boolean) => {
     // Đặt trạng thái DND
-    console.log("STWebRTC: Đặt trạng thái DND:", status);
     return window.STWebRTCEmbed.setDND(status);
   };
 
   const transfer = async (ext: string) => {
     // Chuyển cuộc gọi
-    console.log("STWebRTC: Chuyển hướng cuộc gọi:", ext);
     return window.STWebRTCEmbed.transfer(ext);
   };
 
   const sendDTMF = async (tones: string) => {
     // Gửi tín hiệu DTMF
-    console.log("STWebRTC: Gửi tín hiệu DTMF:", tones);
     return window.STWebRTCEmbed.sendDTMF(tones);
   };
 

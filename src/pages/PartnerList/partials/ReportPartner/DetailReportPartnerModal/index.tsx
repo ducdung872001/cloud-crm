@@ -177,7 +177,6 @@ export default function DetailReportPartnerModal(props: Record<string, unknown>)
     });
   };
   if (reportDetail?.key) {
-    console.log("params-- ", reportDetail?.key, " >>>>", params);
   }
 
   return (

@@ -416,8 +416,6 @@ export default function ModalReceiveTask({ onShow, onHide, dataNode, processId, 
       workflowId: formData?.workflowId ?? null,
     };
 
-    console.log("body", body);
-
     const response = await BusinessProcessService.updateReceiveTask(body);
 
     if (response.code === 0) {

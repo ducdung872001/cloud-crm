@@ -25,7 +25,6 @@ import { BulkActionItemModel } from "components/bulkAction/bulkAction";
 
 export default function OperatorList(props: Record<string, unknown>) {
   const { onShow, onHide, dataSwitchboard } = props;
-  console.log("dataSwitchboard", dataSwitchboard);
 
   const focusedElement = useActiveElement();
   const { dataBranch } = useContext(UserContext) as ContextType;
@@ -241,8 +240,6 @@ export default function OperatorList(props: Record<string, unknown>) {
     username: "",
     password: "",
   });
-
-  console.log("dataAthena", dataAthena);
 
   useEffect(() => {
     if (dataOperator) {

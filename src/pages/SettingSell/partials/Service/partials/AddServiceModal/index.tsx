@@ -117,7 +117,6 @@ export default function AddServiceModal(props: IAddServiceModalProps) {
   }, [data?.id, mapServiceAttribute]);
 
   const getExtraInfos = async () => {
-    console.log("eerr");
 
     const response = await ServiceExtraInfoService.list(data?.id);
     // console.log("response =>", response);

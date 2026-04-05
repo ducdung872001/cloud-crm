@@ -154,7 +154,6 @@ export const useOlaSetting = (props) => {
       rules: dataConfig.rules || [],
       otherwise: JSON.stringify(dataConfig.alias || null),
     };
-    console.log(`body`, body);
 
     const response = await BusinessProcessService.updateBusinessRuleTaskAdvance(body);
     if (response.code === 0) {

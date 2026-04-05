@@ -17,7 +17,7 @@ const minimapStyle = {
   height: 120,
 };
 
-const onInit = (reactFlowInstance) => console.log("flow loaded:", reactFlowInstance);
+const onInit = (reactFlowInstance: Record<string, unknown>) => { /* noop */ };
 const defaultViewport = { x: 0, y: 0, zoom: 0 };
 
 let id = 0;
@@ -56,10 +56,8 @@ const KpiDiagram = () => {
   };
 
   const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
-  console.log("nodes", nodes);
 
   const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges);
-  console.log("edges", edges);
   const [reactFlowInstance, setReactFlowInstance] = useState(null);
 
 

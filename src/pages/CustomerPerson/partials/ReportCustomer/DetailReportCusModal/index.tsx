@@ -179,7 +179,6 @@ export default function DetailReportCusModal(props: Record<string, unknown>) {
     });
   };
   if (reportDetail?.key) {
-    console.log("params-- ", reportDetail?.key, " >>>>", params);
   }
 
   return (

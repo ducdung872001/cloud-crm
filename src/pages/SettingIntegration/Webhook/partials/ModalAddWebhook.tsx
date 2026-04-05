@@ -222,7 +222,6 @@ export default function ModalAddWebhook(props: Record<string, unknown>) {
       }
     }
   }, [formData?.values?.entityName]);
-  console.log("data.entityName>>>>", data?.entityName);
 
   const [dataMethod, setDataMethod] = useState(null);
   const [validateFieldMethod, setValidateFieldMethod] = useState(false);
@@ -582,14 +581,11 @@ export default function ModalAddWebhook(props: Record<string, unknown>) {
 
     // Cập nhật dữ liệu trong state với dữ liệu chỉnh sửa mới
     // setDataJson(edit.updated_src);
-    console.log("vaof ddaay >>>><<<<<<<", edit);
-    console.log("dataEntityName >>>><<<<<<<", dataEntityName);
 
     if (dataEntityName?.value === "customer") {
       setDataJsonCustomer(edit.src);
     }
     if (dataEntityName?.value === "contract") {
-      console.log("vaof ddaay >>>>", edit);
 
       setDataJsonContract(edit.src);
     }

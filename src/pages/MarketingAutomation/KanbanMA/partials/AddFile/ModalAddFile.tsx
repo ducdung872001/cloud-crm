@@ -39,7 +39,6 @@ import SelectCustom from "components/selectCustom/selectCustom";
 
 export default function ModalAddFile(props: Record<string, unknown>) {
   const { onShow, onHide, dataNode, setDataNode, statusMA } = props;
-  console.log("dataNode", dataNode);
 
   const focusedElement = useActiveElement();
 
@@ -244,7 +243,6 @@ export default function ModalAddFile(props: Record<string, unknown>) {
       point: nodePoint,
     };
 
-    console.log("body", body);
   };
 
   const actions = useMemo<IActionModal>(

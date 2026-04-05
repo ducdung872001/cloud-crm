@@ -582,8 +582,6 @@ export default function ModalCallActivityTask({ onShow, onHide, dataNode, proces
       startNodeId: formData.startNodeId ?? null,
     };
 
-    console.log("body", body);
-
     const response = await BusinessProcessService.updateCallActivityTask(body);
 
     if (response.code === 0) {
@@ -1110,7 +1108,6 @@ export default function ModalCallActivityTask({ onShow, onHide, dataNode, proces
     bpmnModeler.current.on("element.hover", function (event) {
       const element = event.element;
       const name = element.id || "Unnamed";
-      console.log('element.id', element.id);
       setNodeId(element.id);
       
       // if (element.type === "bpmn:SequenceFlow") {
@@ -1132,7 +1129,6 @@ export default function ModalCallActivityTask({ onShow, onHide, dataNode, proces
       .importXML(initialDiagram)
       .then(({ warnings }) => {
         if (warnings.length) {
-          console.warn("Warnings", warnings);
         }
       })
       .catch((err) => {

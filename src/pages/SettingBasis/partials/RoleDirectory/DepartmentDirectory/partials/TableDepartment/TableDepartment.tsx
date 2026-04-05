@@ -280,8 +280,6 @@ export default function TableDepartment(props: ITableDepartmentProps) {
                   callback({ chartWrapper }) {
                     const chart = chartWrapper.getChart();
                     chart.container.addEventListener("click", (ev) => {
-                      console.log(ev.target.attributes?.title?.value);
-                      console.log('ev', ev);
                       
                       
                       setIdDepartment(ev.target.attributes.title.value);

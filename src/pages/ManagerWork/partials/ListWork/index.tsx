@@ -20,7 +20,6 @@ export default function ListWork(props: Record<string, unknown>) {
     JSON.parse(localStorage.getItem("projectWorkManagement"))?.id
       ? JSON.parse(localStorage.getItem("projectWorkManagement"))?.id
       : -1;
-  console.log("projectWorkManagement:", takeIdProjectManagement);
 
   const [idProjectManagement, setIdProjectManagement] = useState<number>(takeIdProjectManagement);
   const abortController = new AbortController();

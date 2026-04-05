@@ -68,10 +68,6 @@ export default function ProjectManagementItem(props: Record<string, unknown>) {
     }
   }, [isShowChildren, data, idProjectManagement]);
 
-  console.log("isShowChildren", isShowChildren);
-  console.log("listProject", listProject);
-  console.log("listProjectChildren", listProjectChildren);
-
   return (
     <Fragment>
       {data.parentId === 0 && (

@@ -238,7 +238,6 @@ export default function AddEventModal(props: Record<string, unknown>) {
       ...(data ? { id: data.id } : {}),
     };
 
-    console.log(body);
     // return;
 
     const response = await ContactService.update(body);

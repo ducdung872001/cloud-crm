@@ -96,7 +96,6 @@ export default function CustomerPersonList() {
   const [isBatch, setIsBatch] = useState<boolean>(false);
   const { width } = useWindowDimensions();
   const takeParamsUrl = getSearchParameters();
-  console.log("takeParamsUrl", takeParamsUrl);
 
   //! đoạn này call API mối quan hệ khách hàng
   const [listRelationship, setListRelationship] = useState<IRelationShipResposne[]>([]);
@@ -878,7 +877,6 @@ export default function CustomerPersonList() {
       setParams((prevParams) => ({ ...prevParams, limit: limit, page: 1 }));
     },
   });
-  console.log("pagination", pagination);
 
   const [paginationPartner, setPaginationPartner] = useState<PaginationProps>({
     ...DataPaginationDefault,

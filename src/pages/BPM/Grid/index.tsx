@@ -392,12 +392,9 @@ export default function GridForm(props: Record<string, unknown>) {
     }
   }, [listColumn]);
 
-  console.log("listColumn>>>", listColumn);
-
   const [baseRow, setBaseRow] = useState([]);
 
   const [dataRow, setDataRow] = useState([]);
-  console.log("dataRow>>>", dataRow);
 
   useEffect(() => {
     window.parent.postMessage({ 

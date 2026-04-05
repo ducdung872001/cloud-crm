@@ -237,7 +237,6 @@ export default function ModalEndMessageEvent({ onShow, onHide, dataNode, process
       processId: formData?.processId ?? null,
       workflowId: formData?.workflowId ?? null,
     };
-    console.log("body", body);
 
     const response = await BusinessProcessService.updateEndMessageEvent(body);
 
@@ -744,7 +743,6 @@ export default function ModalEndMessageEvent({ onShow, onHide, dataNode, process
                   options={dataHandleError}
                   value={formData.errorHandling}
                   onChange={(e) => {
-                    console.log("e", e);
                     setFormData({ ...formData, errorHandling: e });
                     if (e.split(",").includes("Retry") && e.split(",").includes("Fallback")) {
                       if (handleErrorData?.retry) {
@@ -851,11 +849,6 @@ export default function ModalEndMessageEvent({ onShow, onHide, dataNode, process
                   value={formData.ackRequired}
                   onChange={(e) => {
                     const value = e.target.value;
-                    console.log("RadioList onChange:", {
-                      rawValue: value,
-                      convertedValue: +value,
-                      currentFormData: formData.ackRequired,
-                    });
                     setFormData({ ...formData, ackRequired: +value });
                   }}
                 />

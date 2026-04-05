@@ -80,7 +80,6 @@ const HandleTask = () => {
   // Callback để nhận schema khi người dùng thay đổi trong FormEditor
   const handleSchemaChange = (newSchema) => {
     setFormSchema(newSchema); // Cập nhật schema mới
-    console.log('Schema mới:', newSchema);
   };
 
 

@@ -37,8 +37,6 @@ export default function WorkTableByGroup(props: Record<string, unknown>) {
   const [showModalDetail, setShowModalDetail] = useState<boolean>(false);
   const [paramsGetGroupWork, setParamsGetGroupWork] = useState<Record<string, unknown>>({});
 
-  console.log("listGroupWork>>>", listGroupWork);
-
   const getGroupWork = async (paramsSearch: IGroupsFilterRequest) => {
     const response = await WorkOrderService.groups(paramsSearch, abortController.signal);
 

@@ -22,8 +22,6 @@ import "./index.scss";
 const OMNICXM_KEY = import.meta.env.VITE_OMNICXM_KEY || "";
 const OMNICXM_ENV = import.meta.env.VITE_OMNICXM_ENV || "";
 
-console.log("[OmniCXM] Key:", OMNICXM_KEY ? OMNICXM_KEY.slice(0, 8) + "..." : "⚠️ CHƯA CÓ KEY");
-
 // ── Helper: tạo thread rỗng từ OmniCXM event ─────────────────────────────────
 function threadFromOmniEvent(payload: OmniChatPayload, idx: number): IConversationThread {
   const platform =
@@ -291,7 +289,6 @@ export default function TotalChat() {
     );
 
     if (!sentViaOmni && omniRoomId) {
-      console.warn("[OmniCXM] sendMessage không khả dụng, chỉ lưu local.");
     }
   }, [selectedConversation]);
 

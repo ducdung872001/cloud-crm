@@ -78,7 +78,6 @@ const getDataOfStepSuccess = async (processId, status) => {
 
 export const getListColumns = async (processId) => {
   try {
-    console.log("processId:", processId); // Kiểm tra giá trị processId
     const listStepProcess = await getListStepProcess(processId);
 
     return [
@@ -102,7 +101,6 @@ export const getDetailColumns = async (listColumn) => {
   try {
     const processId = listColumn[0]?.processId; // Lấy processId từ cột đầu tiên
     const listDataOfStepSuccess = await getDataOfStepSuccess(processId, 2);
-    console.log("listColumn:", listColumn);
   } catch (error) {
     console.error("Error fetching data:", error); // Xử lý lỗi nếu có
   }

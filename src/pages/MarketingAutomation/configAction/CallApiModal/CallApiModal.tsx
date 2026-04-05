@@ -238,7 +238,6 @@ export default function CallApiModal(props: Record<string, unknown>) {
   };
 
   const handleChangeOption = (value) => {
-    console.log("value", value);
 
     if (value === 1) {
       setIsTest(false);
@@ -270,8 +269,6 @@ export default function CallApiModal(props: Record<string, unknown>) {
       value: "",
     },
   ]);
-
-  console.log("attributeData", attributeData);
 
   return (
     <Fragment>

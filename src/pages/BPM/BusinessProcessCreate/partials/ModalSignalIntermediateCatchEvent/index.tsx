@@ -332,8 +332,6 @@ export default function ModalSignalIntermediateCatchEvent({ onShow, onHide, data
       signalRef: formData?.signalRef ?? "",
     };
 
-    console.log("body", body);
-
     const response = await BusinessProcessService.updateSignalIntermediateCatchEvent(body);
 
     if (response.code === 0) {

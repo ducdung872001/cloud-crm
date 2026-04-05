@@ -292,7 +292,6 @@ function bfs(items, newItem) {
 
 export default function SettingAttributeEform(props: Record<string, unknown>) {
   const { dataComponentParent, onHide } = props;
-  console.log('dataComponentParent', dataComponentParent);
   
   
   const refShowField = useRef();
@@ -316,7 +315,6 @@ export default function SettingAttributeEform(props: Record<string, unknown>) {
   const [numberFormat, setNumberFormat] = useState<Record<string, unknown>>('');
 
   const [contractAttributeFields, setContractAttributeFields] = useState<Record<string, unknown>>(null); //Khởi tạo null là quan trọng
-  console.log('contractAttributeFields', contractAttributeFields);
 
   const [showFields, setShowFields] = useState<boolean>(false);
   const [selectedFormula, setSelectedFormula] = useState<string>("");
@@ -387,7 +385,6 @@ export default function SettingAttributeEform(props: Record<string, unknown>) {
   const [showModalAdd, setShowModalAdd] = useState<boolean>(false);
   const [dataLayout, setDataLayout] = useState(null);
   const [dataField, setDataField] = useState(null);
-  console.log('dataField', dataField);
   
 
   // const dataTabConfig = configs.find((_, idx) => idx === idxConfig);
@@ -395,8 +392,6 @@ export default function SettingAttributeEform(props: Record<string, unknown>) {
     childrens: [],
     layouts: { lg: [] },
   });
-
-  console.log('dataTabConfig', dataTabConfig);
 
   const getDataObjectGroup = async (eformId) => {
     const params = {
@@ -551,8 +546,6 @@ export default function SettingAttributeEform(props: Record<string, unknown>) {
         })
       );
 
-      console.log('newChildrens', newChildrens);
-      
 
       const newConfig = {
         childrens: newChildrens || [],
@@ -725,11 +718,8 @@ export default function SettingAttributeEform(props: Record<string, unknown>) {
   }, [dataTabConfig.layouts, breakpoint, dataField]);
   
   const handleDrop = async (layout, item, e) => {
-    console.log('item', item);
-    console.log('toolboxItem', toolboxItem);
     
     const { type } = toolboxItem;
-    console.log('type', type);
 
     // if(type === 'create_form'){
     //   const body: any = {
@@ -769,8 +759,6 @@ export default function SettingAttributeEform(props: Record<string, unknown>) {
       
     }
 
-    console.log('body', body);
-
     const response = await ContractEformService.updateEformAttribute(body);
     if(response.code === 0){
       const result = response.result;
@@ -800,8 +788,6 @@ export default function SettingAttributeEform(props: Record<string, unknown>) {
           attributeId: result.id, 
         };
   
-        console.log('newItem', newItem);
-        
     
         Object.keys(newLayouts).forEach((size) => {
           newLayouts[size] = bfs(newLayouts[size], newItem);

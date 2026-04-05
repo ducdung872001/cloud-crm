@@ -151,7 +151,6 @@ export default function ModalAddBusinessProcess(props: Record<string, unknown>) 
       branchId: dataBranch.value,
     };
 
-    console.log("param", param);
     const response = await EmployeeService.list(param);
 
     if (response.code === 0) {

@@ -158,7 +158,6 @@ export default function ConfigModal(props: Record<string, unknown>) {
   ]);
 
   const [listComponent, setListComponent] = useState([]);
-  console.log("listComponent", listComponent);
 
   const getListComponent = async () => {
     const response = await ArtifactService.list();
@@ -299,7 +298,6 @@ export default function ConfigModal(props: Record<string, unknown>) {
   }, [onShow, dataNode]);
 
   const [idTabConfig, setIdTabConfig] = useState(0);
-  console.log("idTabConfig", idTabConfig);
 
   const getControlByType = (contractAttribute) => {
     let CustomControl = (
@@ -556,8 +554,6 @@ export default function ConfigModal(props: Record<string, unknown>) {
   const EformPreview = ({ idEform, type }) => {
     const [listEformAttribute, setListEformAttribute] = useState([]);
 
-    console.log("listEformAttribute : ", listEformAttribute);
-
     useEffect(() => {
       const fetchEformAttributes = async () => {
         if (!idEform) return;
@@ -734,8 +730,6 @@ export default function ConfigModal(props: Record<string, unknown>) {
     }
   };
 
-  console.log("configs : ", configs);
-
   useEffect(() => {
     if (idTabConfig && dataNode) {
       getDataBpmFormArtifact(+dataNode.id, idTabConfig);
@@ -796,7 +790,6 @@ export default function ConfigModal(props: Record<string, unknown>) {
   };
 
   const [toolboxItem, setToolboxItem] = useState(null);
-  console.log("toolboxItem", toolboxItem);
 
   const [breakpoint, setBreakpoint] = useState("lg");
   const [nextId, setNextId] = useState(uuidv4());
@@ -810,8 +803,6 @@ export default function ConfigModal(props: Record<string, unknown>) {
   const [eformId, setEformId] = useState(null);
 
   const dataTabConfig = configs.find((_, idx) => idx === idxConfig);
-
-  console.log("dataTabConfig", dataTabConfig);
 
   const handleDeleteItemChildren = async (id) => {
     const newLayouts = _.cloneDeep(dataTabConfig.layouts);
@@ -1284,7 +1275,6 @@ export default function ConfigModal(props: Record<string, unknown>) {
   };
 
   const [listStep, setListStep] = useState([]);
-  console.log('listStep', listStep);
 
   // useEffect(() => {
   //   if(listStep && listStep.length > 0){
@@ -1384,8 +1374,6 @@ export default function ConfigModal(props: Record<string, unknown>) {
       departmentId: e.departmentId,
       employeeId: e.value,
     };
-
-    console.log('body', body);
 
     const response = await BpmParticipantService.update(body);
     if (response.code === 0) {

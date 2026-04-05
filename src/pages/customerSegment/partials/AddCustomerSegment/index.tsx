@@ -590,7 +590,6 @@ export default function AddCustomerSegment(props: IAddCustomerSegmentProps) {
   const [isLoadingSource, setIsLoadingSource] = useState<boolean>(false);
 
   const onSelectOpenApi = async (source, idx, param?: Record<string, unknown>) => {
-    console.log("source", source);
 
     if (!source) return;
 

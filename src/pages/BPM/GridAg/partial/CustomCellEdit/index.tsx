@@ -169,7 +169,6 @@ const CustomCellEdit = (props) => {
               newData[field.key] = safeGet(e, field.key, "");
               changedFieldKeys.push(field.key);
             } catch (error) {
-              console.log("Error binding field Grid", error);
             }
           });
         }

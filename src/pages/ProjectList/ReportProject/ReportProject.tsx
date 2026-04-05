@@ -77,7 +77,6 @@ export default function ReportProject({ dataProjectReport }) {
   const fetchData = async () => {
     const response = await ProjectService.report(params);
     if (response.code === 0) {
-      console.log("response.result>>>>", response.result);
 
       setDataPreview([
         {

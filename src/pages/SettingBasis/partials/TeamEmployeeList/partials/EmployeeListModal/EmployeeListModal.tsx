@@ -55,7 +55,6 @@ export default function EmployeeListModal(props: Record<string, unknown>) {
   });
 
   const [employeeList, setEmployeeList] = useState([]);
-  console.log('employeeList', employeeList);
   
   const abortController = new AbortController();
 

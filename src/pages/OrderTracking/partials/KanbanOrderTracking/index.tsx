@@ -87,7 +87,6 @@ export default function KanbanOrderTracking(props: Record<string, unknown>) {
   //Xử lý các hành động trên item
   const callBackAction = (item, action) => {
     if (action === "delete") {
-      console.log("Xoá yêu cầu đặt hàng", item);
       // showDialogConfirmDelete(item);
     }
   };

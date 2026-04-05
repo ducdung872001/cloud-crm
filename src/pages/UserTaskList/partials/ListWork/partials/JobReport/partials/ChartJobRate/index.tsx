@@ -107,7 +107,6 @@ export default function ChartJobRate(props: ReportRevenueProps) {
 
     if (response.code == 0) {
       const result = response.result;
-      console.log("result", result);
 
       setListRevenue(result);
     } else {
@@ -277,7 +276,6 @@ export default function ChartJobRate(props: ReportRevenueProps) {
       // Sử dụng API của Highcharts để tải xuống
       chart.exportChart();
     } else {
-      console.log("chạy vào file xuất định dạng excel !");
     }
   };
 

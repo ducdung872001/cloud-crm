@@ -185,7 +185,6 @@ export default function ModalTimerStartEventTask({ onShow, onHide, dataNode, pro
       executionCount: formData?.executionCount ?? null,
       repeatDuration: JSON.stringify(repeatDuration),
     };
-    console.log("body", body);
 
     const response = await BusinessProcessService.updateTimerStartEvent(body);
 

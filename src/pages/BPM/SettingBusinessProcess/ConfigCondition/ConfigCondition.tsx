@@ -1462,8 +1462,6 @@ export default function ConfigCondition(props: Record<string, unknown>) {
       blockRule: formData.blockRule,
     };
 
-    console.log("configDataNew", configDataNew);
-
     // if(!_.isEqual(nodeName, dataNode?.name)){
     //   if(!nodeName){
     //     showToast("Vui lòng nhập tên điều kiện", "error");

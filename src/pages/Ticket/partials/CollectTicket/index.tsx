@@ -326,7 +326,6 @@ export default function CollectTicket() {
       ...{ supportId: 85, clientId: "ieabgaiifh", qrCode: code },
     };
 
-    console.log("body", body);
     // return;
 
     const response = await TicketService.collect(body, { processCode: "NVTK" });

@@ -70,10 +70,8 @@ export const requestPermission = async (jwtToken) => {
   try {
     const permission = await Notification.requestPermission();
     if (permission === "granted") {
-      console.log("Quyền thông báo đã được cấp.");
 
       try {
-        console.log("Đang lấy token FCM...");
         const token = await getToken(messaging, {
           vapidKey: import.meta.env.VITE_FIREBASE_VAPID_KEY,
         });
@@ -107,7 +105,6 @@ export const requestPermission = async (jwtToken) => {
       }
 
     } else {
-      console.log("Quyền thông báo bị từ chối.");
     }
   } catch (error) {
     console.error("Lỗi khi yêu cầu quyền thông báo:", error);

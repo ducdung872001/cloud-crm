@@ -136,7 +136,6 @@ export default function ModalConditionalIntermediateCatchEvent({ onShow, onHide,
     //   processId: formData?.processId ?? null,
     //   workflowId: formData?.workflowId ?? null,
     };
-    console.log("body", body);
 
     const response = await BusinessProcessService.updateConditionalCatchEventTask(body);
 
@@ -560,7 +559,6 @@ export default function ModalConditionalIntermediateCatchEvent({ onShow, onHide,
 
     //! Đoạn này xử lý lv-1
     const handlePushRule = (data, idx) => {
-        console.log("data", data);
     
         if (!data) return;
     
@@ -1153,7 +1151,6 @@ export default function ModalConditionalIntermediateCatchEvent({ onShow, onHide,
                                               <div
                                                 className={"icon-change-select"}
                                                 onClick={(e) => {
-                                                  console.log("da vao step 1");
 
                                                   setFormData({
                                                     ...formData,
@@ -1351,7 +1348,6 @@ export default function ModalConditionalIntermediateCatchEvent({ onShow, onHide,
                                                       <div
                                                         className={"icon-change-select"}
                                                         onClick={(e) => {
-                                                          console.log("da vao");
 
                                                           setFormData({
                                                             ...formData,

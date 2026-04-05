@@ -56,7 +56,6 @@ export default function ViewTemplateEmailModal(props: IAddTemplateEmailModelProp
   const dataFormat = ["text-center", "", ""];
 
   const handleSelectTemplate = (item: ITemplateEmailResponseModel) => {
-    console.log("Template selected:", item);
     callback && callback(item);
     onHide(false);
   };

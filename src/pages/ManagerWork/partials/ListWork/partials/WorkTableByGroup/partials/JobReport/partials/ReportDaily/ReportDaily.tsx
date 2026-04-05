@@ -148,7 +148,6 @@ export default function ReportDaily({ idProject }) {
   const fetchData = async () => {
     const response = await WorkOrderService.workReport(params);
     if (response.code === 0) {
-      console.log("response.result>>>>", response.result);
       setDataPreview([
         {
           key: "totalWork",

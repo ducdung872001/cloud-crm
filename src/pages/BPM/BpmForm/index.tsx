@@ -691,7 +691,6 @@ const BpmForm = () => {
   // Callback để nhận schema khi người dùng thay đổi trong FormEditor
   const handleSchemaChange = (newSchema) => {
     setFormSchema(newSchema); // Cập nhật schema mới
-    console.log('Schema mới:', newSchema);
   };
 
 
@@ -701,7 +700,7 @@ const BpmForm = () => {
 
       {/* Form Viewer để hiển thị form */}
       <FormViewerComponent formSchema={formSchema}
-        onSchemaSubmit={(data) => console.log(data)}
+        onSchemaSubmit={(data) => { /* TODO */ }}
         dataInit={dataInit}
         contextData={null}
       />

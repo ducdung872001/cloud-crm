@@ -112,7 +112,6 @@ function SelectMultiLookupOla(props: SelectLookupProps) {
 
     if (response.code === 0) {
       const dataOption = response.result.items;
-      console.log("dataOption>>", dataOption);
 
       return {
         options: [
@@ -177,7 +176,6 @@ function SelectMultiLookupOla(props: SelectLookupProps) {
       value={dataLookup}
       isMulti={isMulti}
       onChange={(e) => {
-        console.log("onChange-SelectCustom", e);
         onChange(e);
         handleChangeValueLookup(e);
         if (!listDataLookupInternal.find((item) => item.value === e.value)) {

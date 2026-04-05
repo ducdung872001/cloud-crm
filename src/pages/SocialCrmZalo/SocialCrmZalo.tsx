@@ -105,7 +105,6 @@ export default function SocialCrmZalo() {
 
   //! đoạn này xử lý vấn đề lấy danh sách hội thoại
   const [zaloFollowerList, setZaloFollowerList] = useState(null);  
-  console.log('zaloFollowerList', zaloFollowerList);
   
   const [dataDialog, setDataDialog] = useState(null);
   

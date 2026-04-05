@@ -190,8 +190,6 @@ export default function ModalTimerIntermediateCatchEvent({ onShow, onHide, dataN
       repeatDuration: JSON.stringify(repeatDuration),
     };
 
-    console.log("body", body);
-
     const response = await BusinessProcessService.updateTimerIntermediateCatchEvent(body);
 
     if (response.code === 0) {

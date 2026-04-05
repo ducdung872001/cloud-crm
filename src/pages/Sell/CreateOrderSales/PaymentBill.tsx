@@ -52,8 +52,6 @@ export default function PaymentBill(props: IPaymentBillProps) {
   const [indexErrorCardFee, setIndexErrorCardFee] = useState<number>(null);
   const [validateBcseId, setValidateBcseId] = useState<boolean>(false);
   
-  console.log('invoiceCode', invoiceCode);
-  
 
   const getInvoiceCode = async (id: number) => {
 

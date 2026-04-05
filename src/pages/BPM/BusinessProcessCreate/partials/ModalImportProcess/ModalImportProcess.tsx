@@ -189,7 +189,6 @@ export default function ModalImportProcess(props: Record<string, unknown>) {
 
     const newFiles = [...listAttactment];
     const droppedFiles: Record<string, unknown> = Array.from(e.dataTransfer.files);
-    console.log("droppedFiles", droppedFiles);
 
     droppedFiles.forEach((file) => {
       setAddFile(file);

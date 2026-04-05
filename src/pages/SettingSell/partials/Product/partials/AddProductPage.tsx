@@ -635,7 +635,6 @@ export default function AddProductPage({ idProduct, data, onBack, preFillBarcode
 
   const loadDetail = async () => {
     const res = await ProductService.wDetail(idProduct);
-    console.log("[loadDetail] raw response:", JSON.stringify(res.result, null, 2));
     if (res.code === 0) {
       setDetailProduct(res.result);
       preFill(res.result);
@@ -901,9 +900,7 @@ export default function AddProductPage({ idProduct, data, onBack, preFillBarcode
       };
     });
 
-    console.log("[variantPrices] data gửi lên theo từng biến thể:");
     variants.forEach((v) => {
-      console.log(`  variant "${v.label}" (id=${(v as Record<string, unknown>).id ?? "new"}):`, JSON.stringify(v.variantPrices, null, 2));
     });
 
     const defaultVariant = {
@@ -933,7 +930,6 @@ export default function AddProductPage({ idProduct, data, onBack, preFillBarcode
       variants: variants.length > 0 ? variants : [defaultVariant],
     };
 
-    console.log("[AddProduct] submit body:", JSON.stringify(body, null, 2));
     setIsSubmitting(true);
     try {
       const res = await ProductService.wUpdate(body as Record<string, unknown>);

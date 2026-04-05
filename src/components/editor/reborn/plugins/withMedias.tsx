@@ -33,7 +33,6 @@ const withMedias = (editor) => {
                 insertImage(editor, imageLink);
               },
               (percent) => {
-                console.log("percent =>", percent);
               }
             );
           });
@@ -45,14 +44,11 @@ const withMedias = (editor) => {
           uploadVideoFromFiles(
             files,
             (videoLink) => {
-              console.log("videoLink =>", videoLink, thumbnail);
               insertVideo(editor, videoLink, thumbnail);
             },
             (percent) => {
-              console.log("percent =>", percent);
             },
             (imageLink) => {
-              console.log("thumbnail =>", imageLink);
               thumbnail = imageLink;
             },
             null
@@ -111,7 +107,6 @@ const insertVideo = (editor, url, thumbnail) => {
 const insertImage = (editor, url) => {
   //Tự detect cỡ ảnh ban đầu ở đây
   getMeta(url, (err, img) => {
-    console.log(img.naturalWidth, img.naturalHeight);
 
     const text = { text: "" };
     const image: ImageElement = { type: "image", url, width: img.naturalWidth, height: img.naturalHeight, children: [text] };
@@ -151,7 +146,6 @@ const updateImage = (editor, url, newUrl, link, width, height, desc, align, poin
       match: (n: Record<string, unknown>) => n.type == "image" && n.url == url && (n.point ? n.point < point : true),
     });
 
-    console.log("end fuck");
     return;
   }
 
@@ -167,7 +161,6 @@ const isVideoUrl = (url) => {
   if (!isUrl(url)) return false;
   const ext = new URL(url).pathname.split(".").pop();
 
-  console.log("ext =>", ext);
   return ["mp3", "mp4", "avi"].includes(ext); //Mở rộng tay ở đây
 };
 
@@ -176,7 +169,6 @@ const isImageUrl = (url) => {
   if (!isUrl(url)) return false;
   const ext = new URL(url).pathname.split(".").pop();
 
-  console.log("ext =>", ext);
   return ["png", "jpg", "jpeg"].includes(ext); //Mở rộng tay ở đây
 };
 

@@ -145,7 +145,6 @@ export default function AddEmailEventModal(props: IAddEmailModelProps) {
    */
   const loadTemplateEmail = async (item: ITemplateEmailResponseModel) => {
     if (item) {
-      console.log("item.content =>", item.content);
       setConvertContent(item.content);
       setFormData({ ...formData, values: { ...formData.values, title: item.title, content: item.content } });
     }

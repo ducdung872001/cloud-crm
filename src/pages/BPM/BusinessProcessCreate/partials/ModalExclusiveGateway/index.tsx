@@ -128,7 +128,6 @@ export default function ModalExclusiveGateway({ onShow, onHide, dataNode, proces
       processId: processId ?? null,
       workflowId: formData?.workflowId ?? null,
     };
-    console.log("body", body);
 
     const response = await BusinessProcessService.updateExclusiveGateway(body);
 

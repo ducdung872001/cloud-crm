@@ -49,7 +49,6 @@ const Reconcile: React.FC = () => {
       totalPage: paginationFromHook.totalPage,
     }));
   }, [paginationFromHook]);
-  console.log("Data từ hook useReconciliationList:", dataReconciliation); // dataReconciliation sẽ là [] nếu enabled=false, hoặc dữ liệu thật từ API nếu enabled=true
   const matched = useMemo(() => dataReconciliation.filter((b) => b.matched).length, [dataReconciliation]);
   const totalThu = useMemo(() => dataReconciliation.filter((b) => b.type === "thu").reduce((a, b) => a + b.amount, 0), [dataReconciliation]);
   // const totalTx = dataReconciliation.length;

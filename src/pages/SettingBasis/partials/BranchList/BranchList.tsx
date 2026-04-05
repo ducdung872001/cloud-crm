@@ -342,9 +342,7 @@ export default function BranchList(props: IBranchListProps) {
 
   ///Sơ đồ phân câos
   const [dataChart, setDataChart] = useState([]);
-  console.log("dataChart", dataChart);
   const [branchId, setBranchId] = useState(null);
-  console.log("branchId", branchId);
 
   const [parentArray, setParentArray] = useState([]);
 

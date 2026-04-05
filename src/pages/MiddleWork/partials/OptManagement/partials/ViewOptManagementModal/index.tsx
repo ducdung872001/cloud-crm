@@ -23,7 +23,6 @@ export default function ViewProjectManagementModal(props: IViewProjectManagement
 
     if (response.code === 0) {
       const result = response.result;
-      console.log("result", result);
 
       setDetailProjectManagement(result);
     } else {

@@ -111,7 +111,6 @@ export default function ModalComplexGateway({ onShow, onHide, dataNode, processI
       nodeId: dataNode?.id ?? null,
       processId: formData?.processId ?? null,
     };
-    console.log("body", body);
 
     const response = await BusinessProcessService.updateComplexGateway(body);
 

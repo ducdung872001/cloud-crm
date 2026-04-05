@@ -100,7 +100,6 @@ export default function OnSuccessExpireModal(props: Record<string, unknown>) {
       attachment: attachment,
       config: dataSchema ? JSON.stringify(dataSchema) : null,
     };
-    console.log("body", body);
 
     const response = await WorkOrderService.updatePause(body);
     if (response.code === 0) {
@@ -278,7 +277,6 @@ export default function OnSuccessExpireModal(props: Record<string, unknown>) {
 
     const newFiles = [...listAttactment];
     const droppedFiles: Record<string, unknown> = Array.from(e.dataTransfer.files);
-    console.log("droppedFiles", droppedFiles);
 
     droppedFiles.forEach((file) => {
       // const checkFile = file?.name.split("?")[0].split("#")[0].split(".").pop();

@@ -16,7 +16,6 @@ export default function EditScoreModal(props: IAddCustomerViewerModalProps) {
   };
   const listImageWork = [];
   const handleChange = (files: Record<string, unknown>) => {
-    console.log(files);
   };
   const actions = useMemo<IActionModal>(
     () => ({

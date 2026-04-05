@@ -31,7 +31,6 @@ export default function KanbanOrderTracking(props: Record<string, unknown>) {
   //Xử lý các hành động trên item
   const callBackAction = (item, action) => {
     if (action === "delete") {
-      console.log("Xoá yêu cầu đặt hàng", item);
       // showDialogConfirmDelete(item);
     }
   };
@@ -254,11 +253,9 @@ export default function KanbanOrderTracking(props: Record<string, unknown>) {
                         style={{ cursor: "pointer", alignItems: "flex-start", display: "flex" }}
                         onClick={() => {
                           if (item.status === 1) {
-                            console.log("da vao 1");
   
                             showDialogConfirmDelete(item);
                           } else {
-                            console.log("da vao 2");
                             showDialogConfirmDeleteChannel(item);
                           }
                         }}

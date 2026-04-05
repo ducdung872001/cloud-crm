@@ -181,7 +181,6 @@ export default function SubsystemAdministrationList(props: ISubsystemAdministrat
     <a
       key={item.id}
       onClick={() => {
-        console.log('moduleId =>', item.id);
 
         setDataSubsystemAdministration(item);
         setShowModalSubsystem(true);                
@@ -196,8 +195,6 @@ export default function SubsystemAdministrationList(props: ISubsystemAdministrat
       Xem thêm
     </a>,
   ];
-
-  console.log(dataSubsystemAdministration);
 
   const actionsTable = (item: ISubsystemAdministrationResponse): IAction[] => {
     const isCheckedItem = listIdChecked?.length > 0;

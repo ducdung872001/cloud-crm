@@ -42,7 +42,6 @@ export default function ConfigIntegrateModal(props: Record<string, unknown>) {
 
 
   const [lstApp, setLstApp] = useState([]);
-  console.log('lstApp', lstApp);
 
   const [dataApp, setDataApp] = useState(null);
 

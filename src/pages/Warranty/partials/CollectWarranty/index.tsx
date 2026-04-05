@@ -326,7 +326,6 @@ export default function CollectWarranty() {
       ...{ supportId: 85, clientId: "ieabgaiifh", qrCode: code },
     };
 
-    console.log("body", body);
     // return;
 
     const response = await WarrantyService.collect(body, { processCode: "QTBH" });

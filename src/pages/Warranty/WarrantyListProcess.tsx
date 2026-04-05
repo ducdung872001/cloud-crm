@@ -660,17 +660,14 @@ export default function WarrantyList() {
   const [listColumn, setListColumn] = useState([]);
 
   const getListStepProcess = async (processId) => {
-    console.log("getListStepProcess called with processId:", processId);
     const body: Record<string, unknown> = {
       processId,
       limit: 100,
     };
 
     const response = await BusinessProcessService.listStep(body);
-    console.log("listStep API response:", response);
     if (response.code === 0) {
       const dataOption = response.result.items;
-      console.log("dataOption from API:", dataOption);
 
       setListStepProcess([
         ...(dataOption.length > 0
@@ -710,7 +707,6 @@ export default function WarrantyList() {
       setIsLoadingKanban(false);
     }
   };
-  console.log("listStepProcess:", listStepProcess);
   const [hasHistorySignature, setHasHistorySignature] = useState<boolean>(false);
 
   const getDataOfStepSpecial = async (processId, status) => {

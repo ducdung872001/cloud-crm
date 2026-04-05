@@ -77,7 +77,6 @@ const HandleTaskEmail = () => {
     if (response.code == 0) {
       const result = response.result;
       const attributeValue = (result?.attributeValue && JSON.parse(result?.attributeValue)) || null;
-      console.log("attributeValue", attributeValue);
       setDataInit(attributeValue);
     } else {
       showToast(response.message ?? "Có lỗi xảy ra. Vui lòng thử lại sau", "error");
@@ -95,12 +94,10 @@ const HandleTaskEmail = () => {
 
   const [formSchema, setFormSchema] = useState(defaultSchema); // Lưu trữ schema
   const [initFormSchema, setInitFormSchema] = useState(defaultSchema); // Lưu trữ schema
-  console.log("initFormSchema", initFormSchema);
 
   // Callback để nhận schema khi người dùng thay đổi trong FormEditor
   const handleSchemaSubmit = (newSchema) => {
     // setFormSchema(newSchema); // Cập nhật schema mới
-    console.log("Schema mới:", newSchema);
     onSubmit(newSchema);
   };
 
@@ -113,8 +110,6 @@ const HandleTaskEmail = () => {
       potId: contextData?.potId,
       config: JSON.stringify(config),
     };
-
-    console.log("body", body);
 
     const response = await BusinessProcessService.updateHandleTask(body);
 

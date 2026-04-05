@@ -26,7 +26,6 @@ import ModalViewDocument from "./ModalViewDocument/ModalViewDocument";
 export default function UploadDocument() {
   document.title = ""; //Ảnh hoặc file theo định dạng
   const params: Record<string, unknown> = getSearchParameters();
-  console.log("paramsDocument", params);
 
   //Định dạng là mảng JSON
   const [dataAttachment, setDataAttachment] = useState([]);
@@ -40,11 +39,8 @@ export default function UploadDocument() {
   const [isModalViewDocument, setIsModalViewDocument] = useState(false);
   const [dataDoc, setDataDoc] = useState(null);
 
-  console.log(dataAttachment);
-
   const handleImageUpload = (e) => {
     e.preventDefault();
-    console.log("e.target.files[0]", e.target.files[0]);
 
     if (e.target.files && e.target.files.length > 0) {
       if (e.target.files[0].size > FILE_DOC_MAX) {
@@ -81,7 +77,6 @@ export default function UploadDocument() {
 
   const processUploadSuccess = (data) => {
     const result = data?.fileUrl;
-    console.log("result123", result);
 
     showImage(data);
     setIsLoadingFile(false);
@@ -138,7 +133,6 @@ export default function UploadDocument() {
 
     const newFiles = [...dataAttachment];
     const droppedFiles: Record<string, unknown> = Array.from(e.dataTransfer.files);
-    console.log("droppedFiles", droppedFiles);
 
     droppedFiles.forEach((file) => {
       const checkFile = file.type;
@@ -221,8 +215,6 @@ export default function UploadDocument() {
       data: JSON.stringify(item),
     };
 
-    console.log("item>>>>", item);
-
     const response = await DocumentService.update(dataSubmit);
 
     //Tải lại lấy danh sách
@@ -242,9 +234,7 @@ export default function UploadDocument() {
   // };
 
   const handDelete = async (item: Record<string, unknown>) => {
-    console.log("data>>>>", dataAttachment);
     setDataAttachment(dataAttachment.filter((x) => x !== item));
-    console.log("item>>>>", item);
     const response = await DocumentService.deleteByUrl(nodeId, processId, potId, fieldName, item.fileUrl, documentType);
     // console.log(response);
 
@@ -252,7 +242,6 @@ export default function UploadDocument() {
     // getDocuments(nodeId, processId, potId, fieldName);
   };
 
-  console.log("data>>>>", dataAttachment);
   const formatFileSize = (bytes: number) => {
     if (bytes === 0) return "0 Bytes";
     const k = 1024;
@@ -322,8 +311,6 @@ export default function UploadDocument() {
   };
 
   const handleClick = (name, url) => {
-    console.log("url", url);
-    console.log("applink", `${process.env.APP_LINK}/app/view_document?name=${name}&url=${url}`);
 
     // window.open(`${process.env.APP_LINK}/app/view_document?name=${name}&url=${url}`, "_blank", "noopener,noreferrer");
     window.parent.postMessage(
@@ -463,7 +450,6 @@ export default function UploadDocument() {
                                 className="download"
                                 onClick={() => {
                                   handDownloadFileOrigin(item.fileUrl, item.fileName);
-                                  console.log("mở được file không nhỉ");
                                   window.parent.postMessage(
                                     {
                                       type: "EXPORT_DOCUMENT",

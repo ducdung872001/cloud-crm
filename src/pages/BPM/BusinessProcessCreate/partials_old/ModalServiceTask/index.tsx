@@ -399,7 +399,6 @@ export default function ModalServiceTask({ onShow, onHide, dataNode, processId, 
       processId: formData?.processId ?? null,
       workflowId: formData?.workflowId ?? null,
     };
-    console.log("body", body);
 
     const response = await BusinessProcessService.updateServiceTask(body);
 

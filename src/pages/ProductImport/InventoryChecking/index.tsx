@@ -700,7 +700,6 @@ export default function InventoryManagement() {
         color: "secondary" as const,
         icon: <Icon name="Upload" style={{ width: 15 }} />,
         callback: () => {
-          console.log("[DEBUG] Import tồn kho clicked, setShowStockInitModal(true)");
           setShowStockInitModal(true);
         },
       },

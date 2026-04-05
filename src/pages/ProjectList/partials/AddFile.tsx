@@ -128,8 +128,6 @@ export default function AddFile(props: IAddFileProps) {
     handDownloadFileOrigin(link, nameDownload);
   };
 
-  console.log("infoFile", infoFile);
-
   return (
     <div
       className={`support__upload--file ${dragging ? "dragging" : ""}`}

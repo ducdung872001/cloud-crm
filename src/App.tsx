@@ -250,7 +250,6 @@ export default function App() {
     requestPermission(cookies.token);
 
     onMessage(messaging, (payload) => {
-      console.log("Thông báo nhận được:", payload);
       showToast(payload.notification?.title || "Bạn có thông báo mới", "success");
       getCountUnread();
       setNewNotificationPayload(payload);
@@ -319,7 +318,6 @@ export default function App() {
           await audio.play();
           unlockedRef.current = true;
         } catch (err) {
-          console.warn("Ringtone play blocked by browser autoplay policy:", err);
           showToast("Trình duyệt chặn phát âm thanh tự động. Vui lòng click/đụng vào trang để bật chuông.", "warning");
         }
       })();

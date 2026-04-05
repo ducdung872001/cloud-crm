@@ -74,7 +74,6 @@ export default function BoxTableAdvanced(props: IBoxTableAdvancedProps) {
     if (!saveColumnName) return;
     const columnOrder = params.columnApi.getColumnState().map((col) => col.colId);
 
-    console.log("columnOrder", columnOrder);
     localStorage.setItem(saveColumnName, JSON.stringify(columnOrder));
   };
 

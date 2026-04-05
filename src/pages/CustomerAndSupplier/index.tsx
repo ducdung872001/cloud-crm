@@ -226,7 +226,6 @@ export default function CustomerAndSupplier(props: Record<string, unknown>) {
       setParams((prevParams) => ({ ...prevParams, limit: limit, page: 1 }));
     },
   });
-  console.log("pagination", pagination);
 
   const [paginationPartner, setPaginationPartner] = useState<PaginationProps>({
     ...DataPaginationDefault,

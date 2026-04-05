@@ -69,7 +69,6 @@ export default function ModalMapping({ onShow, onHide, dataComponent, dataNode }
   }, [onShow, dataNode]);
 
   const [listEformMappingSource, setListEformMappingSource] = useState([]);
-  console.log("listEformMappingSource", listEformMappingSource);
 
   const getListEformMappingSource = async (bfatId, tabEform) => {
     const params = {
