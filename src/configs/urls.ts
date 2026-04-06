@@ -11,8 +11,12 @@ const prefixSystem = "/system";
 const prefixCs = "/cs";
 const prefixApplication = "/application";
 const prefixHr = "/hr";
-const prefixRebornVn = "https://reborn.vn/api";
-const prefixOperation = "https://reborn.vn/operation";
+const prefixRebornVn = (process.env.APP_AUTHENTICATOR_URL || "https://reborn.vn") + "/api";
+const prefixOperation = (process.env.APP_AUTHENTICATOR_URL || "https://reborn.vn") + "/operation";
+const prefixCloudMarket = (process.env.APP_API_URL || "https://cloud.reborn.vn") + "/market";
+const prefixConnect = process.env.APP_CONNECT_URL || "https://connect.reborn.vn";
+const prefixUpload = process.env.APP_UPLOAD_URL || "https://login.noron.vn";
+const prefixAthena = process.env.APP_ATHENA_URL || "https://api-athenaspear-prod.athenafs.io";
 const prefixNotification = prefixBiz + "/notification";
 const prefixFinance = prefixBiz + "/finance";
 const prefixInventory = prefixBiz + "/inventory";
@@ -220,8 +224,8 @@ export const urlsApi = {
     exportMulti: prefixAdmin + "/customer/export/multi",
 
     //create call tnex-athena
-    loginAccountAthena: "https://api-athenaspear-prod.athenafs.io/api/v1/account/login",
-    createCall: "https://api-athenaspear-prod.athenafs.io/api/v1/call-history/create-call",
+    loginAccountAthena: prefixAthena + "/api/v1/account/login",
+    createCall: prefixAthena + "/api/v1/call-history/create-call",
 
     //lấy tài khoản tổng đài
     getAccountCall: prefixAdmin + "/employeeAgent/employeeId",
@@ -1658,8 +1662,8 @@ export const urlsApi = {
     delete: prefixAdmin + "/setting/delete",
   },
   connectGmail: {
-    connect: "https://connect.reborn.vn/api/v1/google/access-token",
-    checkConnect: "https://connect.reborn.vn/api/v1/google/gmails-link-bsn",
+    connect: prefixConnect + "/api/v1/google/access-token",
+    checkConnect: prefixConnect + "/api/v1/google/gmails-link-bsn",
   },
   fanpageFacebook: {
     //* kết nối fanpage với crm
@@ -1714,31 +1718,31 @@ export const urlsApi = {
     deleteZaloChat: prefixAdmin + "/zaloChat/delete",
   },
   image: {
-    upload: "https://login.noron.vn/api/upload/image",
+    upload: prefixUpload + "/api/upload/image",
     // upload: "https://reborn.vn/api/upload/file",
     uploadReborn: prefixRebornVn + "/upload/file",
-    uploadNoron: "https://login.noron.vn/api/upload/file",
+    uploadNoron: prefixUpload + "/api/upload/file",
     // uploadReborn: "http://localhost:8000/api/upload/file"
   },
   file: {
     upload: prefixRebornVn + "/upload/file",
   },
   video: {
-    upload: "https://login.noron.vn/api/upload/file",
+    upload: prefixUpload + "/api/upload/file",
   },
   analysis: {
-    list: "https://cloud.reborn.vn/market/article/list",
-    detail: "https://cloud.reborn.vn/market/article/get",
+    list: prefixCloudMarket + "/article/list",
+    detail: prefixCloudMarket + "/article/get",
   },
   reportMa: {
     getCustomer: prefixAdmin + "/ma/dashboard/customer/byStatus",
-    // detail: "https://cloud.reborn.vn/market/article/get",
+    // detail: prefixCloudMarket + "/article/get",
   },
   keywordData: {
-    list: "https://cloud.reborn.vn/market/keywordData/list",
-    update: "https://cloud.reborn.vn/market/keywordData/update",
-    detail: "https://cloud.reborn.vn/market/keywordData/get",
-    delete: "https://cloud.reborn.vn/market/keywordData/delete",
+    list: prefixCloudMarket + "/keywordData/list",
+    update: prefixCloudMarket + "/keywordData/update",
+    detail: prefixCloudMarket + "/keywordData/get",
+    delete: prefixCloudMarket + "/keywordData/delete",
   },
   configCode: {
     list: prefixAdmin + "/globalConfig/list",
@@ -1823,10 +1827,10 @@ export const urlsApi = {
     checkEmail: prefixAdmin + "/email/testConnection",
   },
   industry: {
-    list: "https://cloud.reborn.vn/market/industry/list",
-    update: "https://cloud.reborn.vn/market/industry/update",
-    detail: "https://cloud.reborn.vn/market/industry/get",
-    delete: "https://cloud.reborn.vn/market/industry/delete",
+    list: prefixCloudMarket + "/industry/list",
+    update: prefixCloudMarket + "/industry/update",
+    detail: prefixCloudMarket + "/industry/get",
+    delete: prefixCloudMarket + "/industry/delete",
   },
   mailBox: {
     list: prefixAdmin + "/mailbox/list",
@@ -2515,12 +2519,12 @@ export const urlsApi = {
     sendEmailConfirm: prefixAdmin + "/promotion/init-receive-task",
 
     // call api email
-    lstEmail: "https://connect.reborn.vn/api/v1/google/gmail/message/search",
-    sendEmailNew: "https://connect.reborn.vn/api/v1/google/gmail/message/send",
-    detailEmail: "https://connect.reborn.vn/api/v1/google/gmail/message/get-by-id",
-    sendEmailDraft: "https://connect.reborn.vn/api/v1/google/gmail/draft/send",
-    lstEmailDraft: "https://connect.reborn.vn/api/v1/google/gmail/draft/search",
-    createEmailDraft: "https://connect.reborn.vn/api/v1/google/gmail/draft/create",
+    lstEmail: prefixConnect + "/api/v1/google/gmail/message/search",
+    sendEmailNew: prefixConnect + "/api/v1/google/gmail/message/send",
+    detailEmail: prefixConnect + "/api/v1/google/gmail/message/get-by-id",
+    sendEmailDraft: prefixConnect + "/api/v1/google/gmail/draft/send",
+    lstEmailDraft: prefixConnect + "/api/v1/google/gmail/draft/search",
+    createEmailDraft: prefixConnect + "/api/v1/google/gmail/draft/create",
   },
 
   ma: {
@@ -3151,7 +3155,7 @@ export const urlsApi = {
     delete: prefixAdmin + "/surveyForm/delete",
     detail: prefixAdmin + "/surveyForm/get",
     statistic: prefixAdmin + "/survey",
-    submitVoc: "https://reborn.vn/log-capture/crm/survey",
+    submitVoc: prefixRebornVn.replace("/api", "") + "/log-capture/crm/survey",
   },
 
   //báo giá

@@ -15,7 +15,7 @@ import { exportCustomExcel } from "./partials/exportExcel";
 import { v4 as uuidv4 } from "uuid";
 import { fetchDataLookup } from "../../Lookup";
 import moment from "moment";
-import { makeValidateField } from "./partials/makeValidateField";
+import { makeValidateField } from "utils/makeValidateField";
 import Button from "components/button/button";
 import { exportOlaExcel } from "../../exportOla";
 import { convertToDataRow } from "../../convertToDataRow";

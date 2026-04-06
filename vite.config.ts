@@ -41,7 +41,10 @@ export default defineConfig(({ mode }) => {
       "APP_SSO_LINK",
       "APP_CRM_LINK",
       "APP_DOMAIN",
-      "APP_BIZ_URL", 
+      "APP_BIZ_URL",
+      "APP_CONNECT_URL",
+      "APP_UPLOAD_URL",
+      "APP_ATHENA_URL",
     ];
 
     // Add all required environment variables

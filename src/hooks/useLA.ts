@@ -1,5 +1,5 @@
 import { convertDataRow } from "pages/BPM/BusinessProcessCreate/partials/ModalUserTask/partials/ModalOLA/partial/TableOlaRule/ConvertDataRow";
-import { validateInputRules } from "pages/BPM/BusinessProcessCreate/partials/ModalUserTask/partials/ModalOLA/partial/TableOlaRule/validateInputRule";
+import { validateInputRules } from "utils/validateInputRule";
 import { useEffect, useMemo, useState } from "react";
 import BusinessProcessService from "services/BusinessProcessService";
 import { showToast } from "utils/common";
