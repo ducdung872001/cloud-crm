@@ -1,5 +1,5 @@
 import React, {Fragment, useState, useEffect, useRef, memo} from "react";
-import _ from "lodash";
+
 import Icon from "components/icon";
 import SearchBox from "components/searchBox/searchBox";
 import TitleAction, { ITitleActions } from "components/titleAction/titleAction";

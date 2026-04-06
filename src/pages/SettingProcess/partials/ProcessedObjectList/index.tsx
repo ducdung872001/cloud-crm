@@ -1,5 +1,6 @@
 import React, { Fragment, useState, useEffect, useRef, useContext, useMemo, useCallback } from "react";
-import _ from "lodash";
+import cloneDeep from "lodash/cloneDeep";
+
 import moment from "moment";
 import Icon from "components/icon";
 import Loading from "components/loading";
@@ -134,7 +135,7 @@ export default function ProcessedObjectList(props) {
   };
 
   useEffect(() => {
-    const paramsTemp = _.cloneDeep(params);
+    const paramsTemp = cloneDeep(params);
     searchParams.forEach(async (key, value) => {
       paramsTemp[value] = key;
     });
@@ -149,7 +150,7 @@ export default function ProcessedObjectList(props) {
 
     if (isMounted.current === true) {
       getListProcessedObject(params);
-      const paramsTemp: Record<string, unknown> = _.cloneDeep(params);
+      const paramsTemp: Record<string, unknown> = cloneDeep(params);
       if (paramsTemp.limit === 10) {
         delete paramsTemp["limit"];
       }

@@ -1,6 +1,7 @@
 import React, { Fragment, useState, useEffect, useCallback, useMemo } from "react";
 import Tippy from "@tippyjs/react";
-import _ from "lodash";
+import isEqual from "lodash/isEqual";
+
 import { IActionModal } from "model/OtherModel";
 import { IFieldCustomize, IFormData, IValidation } from "model/FormModel";
 import { IAddApplicationModalProps } from "model/installApplication/PropsModel";
@@ -260,14 +261,14 @@ export default function AddApplicationModal(props: IAddApplicationModalProps) {
             variant: "outline",
             disabled: isSubmit,
             callback: () => {
-              _.isEqual(formData.values, values) ? onHide(false) : showDialogConfirmCancel();
+              isEqual(formData.values, values) ? onHide(false) : showDialogConfirmCancel();
             },
           },
           {
             title: data ? "Cập nhật" : "Tạo mới",
             type: "submit",
             color: "primary",
-            disabled: isSubmit || _.isEqual(formData.values, values) || (formData.errors && Object.keys(formData.errors).length > 0),
+            disabled: isSubmit || isEqual(formData.values, values) || (formData.errors && Object.keys(formData.errors).length > 0),
             is_loading: isSubmit,
           },
         ],

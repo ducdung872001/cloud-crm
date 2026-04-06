@@ -1,5 +1,6 @@
 import React, { Fragment, useState, useEffect, useCallback, useMemo } from "react";
-import _ from "lodash";
+import isEqual from "lodash/isEqual";
+
 import Tippy from "@tippyjs/react";
 import { AddProductProps } from "model/product/PropsModel";
 import { IActionModal, IOption } from "model/OtherModel";
@@ -659,14 +660,14 @@ export default function AddProductModal(props: AddProductProps) {
             variant: "outline",
             disabled: isSubmit,
             callback: () => {
-              _.isEqual(formData?.values, values) ? handleClear(false) : showDialogConfirmCancel();
+              isEqual(formData?.values, values) ? handleClear(false) : showDialogConfirmCancel();
             },
           },
           {
             title: idProduct ? "Cập nhật" : "Tạo mới",
             type: "submit",
             color: "primary",
-            disabled: isSubmit || _.isEqual(formData?.values, values) || (formData.errors && Object.keys(formData.errors).length > 0),
+            disabled: isSubmit || isEqual(formData?.values, values) || (formData.errors && Object.keys(formData.errors).length > 0),
             is_loading: isSubmit,
           },
         ],

@@ -1,5 +1,6 @@
 import React, { Fragment, useState, useEffect, useRef } from "react";
-import _ from "lodash";
+import cloneDeep from "lodash/cloneDeep";
+
 import Icon from "components/icon";
 import Image from "components/image";
 import Loading from "components/loading";
@@ -94,7 +95,7 @@ export default function CardServiceList(props: IServiceCardListProps) {
   };
 
   useEffect(() => {
-    const paramsTemp = _.cloneDeep(params);
+    const paramsTemp = cloneDeep(params);
     setParams((prevParams) => ({ ...prevParams, ...paramsTemp }));
   }, []);
 
@@ -106,7 +107,7 @@ export default function CardServiceList(props: IServiceCardListProps) {
 
     if (isMounted.current === true) {
       getListCardService(params);
-      const paramsTemp = _.cloneDeep(params);
+      const paramsTemp = cloneDeep(params);
       if (paramsTemp.limit === 10) {
         delete paramsTemp["limit"];
       }

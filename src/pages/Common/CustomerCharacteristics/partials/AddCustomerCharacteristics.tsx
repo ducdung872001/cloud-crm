@@ -1,5 +1,7 @@
 import React, { Fragment, useEffect, useMemo, useRef, useState } from "react";
-import _ from "lodash";
+import isEqual from "lodash/isEqual";
+import cloneDeep from "lodash/cloneDeep";
+
 import moment from "moment";
 import Tippy from "@tippyjs/react";
 import { convertParamsToString, createArrayFromTo, createArrayFromToR } from "reborn-util";
@@ -309,7 +311,7 @@ export default function AddCustomerCharacteristics(props: IAddCustomerCharacteri
   // check xem liệu có gì thay đổi không
   useEffect(() => {
     if (formData && values) {
-      handBackup(_.isEqual(formData, values));
+      handBackup(isEqual(formData, values));
     }
   }, [formData, values]);
 
@@ -1734,7 +1736,7 @@ export default function AddCustomerCharacteristics(props: IAddCustomerCharacteri
   };
 
   const onSubmit = async () => {
-    const changeFormData = _.cloneDeep(formData);
+    const changeFormData = cloneDeep(formData);
     const modifiedmodifiedData = transformData(changeFormData);
 
     const converData = {

@@ -1,5 +1,5 @@
 import React, { Fragment, useEffect, useRef, useState } from "react";
-import _ from "lodash";
+
 import "./MembershipClass.scss";
 import HeaderTabMenu from "@/components/HeaderTabMenu/HeaderTabMenu";
 import Icon from "@/components/icon";

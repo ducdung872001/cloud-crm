@@ -1,5 +1,6 @@
 import React, { Fragment, useState, useEffect, useRef, useMemo, useContext } from "react";
-import _ from "lodash";
+import cloneDeep from "lodash/cloneDeep";
+
 import moment from "moment";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import Icon from "components/icon";
@@ -199,7 +200,7 @@ export default function ImportInvoiceList() {
   };
 
   useEffect(() => {
-    const paramsTemp = _.cloneDeep(params);
+    const paramsTemp = cloneDeep(params);
     searchParams.forEach(async (key, value) => {
       paramsTemp[value] = key;
     });
@@ -213,7 +214,7 @@ export default function ImportInvoiceList() {
     }
     if (isMounted.current === true) {
       getListImportInvoice(params);
-      const paramsTemp = _.cloneDeep(params);
+      const paramsTemp = cloneDeep(params);
       if (paramsTemp.limit === 10) {
         delete paramsTemp["limit"];
       }

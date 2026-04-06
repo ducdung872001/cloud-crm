@@ -1,5 +1,7 @@
 import React, { Fragment, useState, useEffect, useRef } from "react";
-import _ from "lodash";
+import isEqual from "lodash/isEqual";
+import cloneDeep from "lodash/cloneDeep";
+
 import Icon from "components/icon";
 import Image from "components/image";
 import Loading from "components/loading";
@@ -213,7 +215,7 @@ export default function CustomerContact({ idCustomer }) {
                     Đóng
                   </Button>
                   <Button
-                    disabled={_.isEqual(dataConfirm, lstFieldActive)}
+                    disabled={isEqual(dataConfirm, lstFieldActive)}
                     onClick={() => {
                       setIsShowColumn(false);
                       setIsConfirmData(!isConfirmData);
@@ -679,7 +681,7 @@ export default function CustomerContact({ idCustomer }) {
   };
 
   useEffect(() => {
-    const paramsTemp = _.cloneDeep(params);
+    const paramsTemp = cloneDeep(params);
     setParams((prevParams) => ({ ...prevParams, ...paramsTemp }));
   }, []);
 
@@ -691,7 +693,7 @@ export default function CustomerContact({ idCustomer }) {
 
     if (isMounted.current === true) {
       getListContact(params);
-      const paramsTemp = _.cloneDeep(params);
+      const paramsTemp = cloneDeep(params);
       if (paramsTemp.limit === 10) {
         delete paramsTemp["limit"];
       }

@@ -1,5 +1,5 @@
 import React, { Fragment, useState, useEffect, useRef, useMemo, useContext } from "react";
-import _ from "lodash";
+
 import TitleAction from "components/titleAction/titleAction";
 import "./MultiChannelSales.scss";
 import Overview from "./Overview/Overview";

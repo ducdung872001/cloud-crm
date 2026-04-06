@@ -1,5 +1,6 @@
 import React, { Fragment, useContext, useEffect, useMemo, useState } from "react";
-import _ from "lodash";
+import isEqual from "lodash/isEqual";
+
 import { IActionModal } from "model/OtherModel";
 import SelectCustom from "components/selectCustom/selectCustom";
 import Modal, { ModalBody, ModalFooter, ModalHeader } from "components/modal/modal";
@@ -135,7 +136,7 @@ export default function ChangeEmployee(props: Record<string, unknown>) {
             title: "Áp dụng",
             type: "submit",
             color: "primary",
-            disabled: isSubmit || _.isEqual(formData, values) || validateFieldEmployee,
+            disabled: isSubmit || isEqual(formData, values) || validateFieldEmployee,
             is_loading: isSubmit,
           },
         ],

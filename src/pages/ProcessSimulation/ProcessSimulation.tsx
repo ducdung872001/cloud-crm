@@ -1,5 +1,6 @@
 import React, { Fragment, useState, useEffect, useRef } from "react";
-import _ from "lodash";
+import cloneDeep from "lodash/cloneDeep";
+
 import Icon from "components/icon";
 import Loading from "components/loading";
 import SearchBox from "components/searchBox/searchBox";
@@ -108,7 +109,7 @@ export default function ProcessSimulation(props: Record<string, unknown>) {
   };
 
   useEffect(() => {
-    const paramsTemp = _.cloneDeep(params);
+    const paramsTemp = cloneDeep(params);
     setParams((prevParams) => ({ ...prevParams, ...paramsTemp }));
   }, []);
 
@@ -120,7 +121,7 @@ export default function ProcessSimulation(props: Record<string, unknown>) {
 
     if (isMounted.current === true) {
       getListProcess(params);
-      const paramsTemp = _.cloneDeep(params);
+      const paramsTemp = cloneDeep(params);
       if (paramsTemp.limit === 10) {
         delete paramsTemp["limit"];
       }

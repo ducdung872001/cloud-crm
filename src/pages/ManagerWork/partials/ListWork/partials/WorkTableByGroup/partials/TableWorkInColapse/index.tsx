@@ -7,7 +7,8 @@ import { IWorkOrderFilterRequest } from "model/workOrder/WorkOrderRequestModel";
 import { IWorkOrderResponseModel } from "model/workOrder/WorkOrderResponseModel";
 import Dialog, { IContentDialog } from "components/dialog/dialog";
 import { DataPaginationDefault, PaginationProps } from "components/pagination/pagination";
-import _ from "lodash";
+import cloneDeep from "lodash/cloneDeep";
+
 import { useSearchParams } from "react-router-dom";
 import { isDifferenceObj } from "reborn-util";
 import WorkOrderService from "services/WorkOrderService";
@@ -38,7 +39,7 @@ export default function TableWorkInColapse(props: ITableWorkInColapsedProps) {
   const [listIdChecked, setListIdChecked] = useState<number[]>([]);
 
   useEffect(() => {
-    const paramsTemp = _.cloneDeep(params);
+    const paramsTemp = cloneDeep(params);
     searchParams.forEach(async (key, value) => {
       paramsTemp[value] = key;
     });
@@ -162,7 +163,7 @@ export default function TableWorkInColapse(props: ITableWorkInColapsedProps) {
       if (+result.total === 0 && !params?.name && +result.page === 1) {
         setIsNoItem(true);
       }
-      currentParamsFilter.current = _.cloneDeep(paramsSearch);
+      currentParamsFilter.current = cloneDeep(paramsSearch);
     } else {
       showToast(response.message ?? "Có lỗi xảy ra. Vui lòng thử lại sau", "error");
     }

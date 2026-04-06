@@ -1,5 +1,6 @@
 import React, { Fragment, useState, useEffect, useRef, useMemo } from "react";
-import _ from "lodash";
+import cloneDeep from "lodash/cloneDeep";
+
 import Icon from "components/icon";
 import Loading from "components/loading";
 import SearchBox from "components/searchBox/searchBox";
@@ -109,7 +110,7 @@ export default function ContactAttributeList(props: IContactAttributeListProps) 
   };
 
   useEffect(() => {
-    const paramsTemp = _.cloneDeep(params);
+    const paramsTemp = cloneDeep(params);
     searchParams.forEach(async (key, value) => {
       paramsTemp[value] = key;
     });
@@ -124,7 +125,7 @@ export default function ContactAttributeList(props: IContactAttributeListProps) 
 
     if (isMounted.current === true) {
       getListContactAttribute(params);
-      const paramsTemp = _.cloneDeep(params); 
+      const paramsTemp = cloneDeep(params); 
       if (paramsTemp.limit === 10) {
         delete paramsTemp["limit"];
       }

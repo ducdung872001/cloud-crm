@@ -1,6 +1,6 @@
 import React, { Fragment, useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import _ from "lodash";
+
 import { IActionModal } from "model/OtherModel";
 import SelectCustom from "components/selectCustom/selectCustom";
 import Modal, { ModalBody, ModalFooter, ModalHeader } from "components/modal/modal";

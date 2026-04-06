@@ -1,5 +1,6 @@
 import React, { Fragment, useState, useEffect, useRef, useMemo, useContext } from "react";
-import _ from "lodash";
+import cloneDeep from "lodash/cloneDeep";
+
 import moment from "moment";
 import Loading from "components/loading";
 import SearchBox from "components/searchBox/searchBox";
@@ -108,7 +109,7 @@ export default function ProductInventoryList() {
   };
 
   useEffect(() => {
-    const paramsTemp = _.cloneDeep(params);
+    const paramsTemp = cloneDeep(params);
     setParams((prevParams) => ({ ...prevParams, ...paramsTemp }));
   }, []);
 
@@ -120,7 +121,7 @@ export default function ProductInventoryList() {
 
     if (isMounted.current === true) {
       getListWarehouse(params);
-      const paramsTemp = _.cloneDeep(params);
+      const paramsTemp = cloneDeep(params);
       if (paramsTemp.limit === 10) {
         delete paramsTemp["limit"];
       }

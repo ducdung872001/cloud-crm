@@ -1,7 +1,8 @@
 import Tippy from "@tippyjs/react";
 import BoxTableAdvanced from "components/boxTableAdvanced/boxTableAdvanced";
 import Loading from "components/loading";
-import _ from "lodash";
+import cloneDeep from "lodash/cloneDeep";
+
 import { DataPaginationDefault, PaginationProps } from "components/pagination/pagination";
 import { SystemNotification } from "components/systemNotification/systemNotification";
 import { ContextType, UserContext } from "contexts/userContext";
@@ -567,7 +568,7 @@ export default function TableContractReport({ dataProjectReport }) {
     if (isMounted.current === true) {
       getListContract(params);
 
-      const paramsTemp = _.cloneDeep(params);
+      const paramsTemp = cloneDeep(params);
       if (paramsTemp.limit === 10) {
         delete paramsTemp["limit"];
       }

@@ -8,7 +8,7 @@ import { showToast } from "utils/common";
 import "./DetailProductModal.scss";
 import RebornEditor from "components/editor/reborn";
 import { serialize } from "utils/editor";
-import _ from "lodash";
+
 import ProductService from "services/ProductService";
 import { PRODUCT_DETAIL_CONFIG } from "@/assets/mock/Product";
 import Toggle from "@/components/toggle";

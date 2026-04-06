@@ -4,7 +4,7 @@ import Modal, { ModalBody, ModalFooter, ModalHeader } from "components/modal/mod
 import Dialog, { IContentDialog } from "components/dialog/dialog";
 import "./index.scss";
 import NummericInput from "components/input/numericInput";
-import _ from "lodash";
+
 import TableOlaRule from "./partial/TableOlaRule";
 import RadioList from "components/radio/radioList";
 import Loading from "components/loading";

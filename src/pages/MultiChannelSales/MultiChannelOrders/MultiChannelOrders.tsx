@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
-import _ from "lodash";
+import cloneDeep from "lodash/cloneDeep";
+
 import "./MultiChannelOrders.scss";
 import BoxTable from "@/components/boxTable/boxTable";
 import { DataPaginationDefault, PaginationProps } from "@/components/pagination/pagination";
@@ -69,7 +70,7 @@ export default function MultiChannelOrders() {
     page: 1,
   });
   useEffect(() => {
-    const paramsTemp = _.cloneDeep(params);
+    const paramsTemp = cloneDeep(params);
     setParams((prevParams) => ({ ...prevParams, ...paramsTemp }));
   }, []);
 
@@ -145,7 +146,7 @@ export default function MultiChannelOrders() {
     }
     if (isMounted.current === true) {
       fetchData(params);
-      const paramsTemp = _.cloneDeep(params);
+      const paramsTemp = cloneDeep(params);
       if (paramsTemp.limit === 10) {
         delete paramsTemp["limit"];
       }

@@ -1,5 +1,6 @@
 import React, { Fragment, useState, useEffect, useRef } from "react";
-import _ from "lodash";
+import cloneDeep from "lodash/cloneDeep";
+
 import { getPageOffset } from "reborn-util";
 import Icon from "components/icon";
 import Image from "components/image";
@@ -91,7 +92,7 @@ export default function InstallApplication() {
   };
 
   useEffect(() => {
-    const paramsTemp = _.cloneDeep(params);
+    const paramsTemp = cloneDeep(params);
     setParams((prevParams) => ({ ...prevParams, ...paramsTemp }));
   }, []);
 
@@ -103,7 +104,7 @@ export default function InstallApplication() {
 
     if (isMounted.current === true) {
       getListApp(params);
-      const paramsTemp = _.cloneDeep(params);
+      const paramsTemp = cloneDeep(params);
       if (paramsTemp.limit === 10) {
         delete paramsTemp["limit"];
       }

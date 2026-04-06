@@ -1,5 +1,6 @@
 import React, { Fragment, useEffect, useRef, useState } from "react";
-import _ from "lodash";
+import cloneDeep from "lodash/cloneDeep";
+
 import moment from "moment";
 import Tippy from "@tippyjs/react";
 import parser from "html-react-parser";
@@ -72,7 +73,7 @@ export default function CustomerEmailList(props: ICustomerEmailListProps) {
   };
 
   useEffect(() => {
-    const paramsTemp = _.cloneDeep(params);
+    const paramsTemp = cloneDeep(params);
     setParams((prevParams) => ({ ...prevParams, ...paramsTemp }));
   }, []);
 
@@ -83,7 +84,7 @@ export default function CustomerEmailList(props: ICustomerEmailListProps) {
     }
     if (isMounted.current === true) {
       getListCustomerEmail(params);
-      const paramsTemp = _.cloneDeep(params);
+      const paramsTemp = cloneDeep(params);
       if (paramsTemp.limit === 10) {
         delete paramsTemp["limit"];
       }

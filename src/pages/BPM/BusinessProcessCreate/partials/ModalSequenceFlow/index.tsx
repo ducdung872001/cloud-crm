@@ -16,7 +16,8 @@ import DatePickerCustom from "components/datepickerCustom/datepickerCustom";
 import Icon from "components/icon";
 import Button from "components/button/button";
 import Tippy from "@tippyjs/react";
-import _ from "lodash";
+import isEqual from "lodash/isEqual";
+
 import ContractEformService from "services/ContractEformService";
 import BusinessProcessService from "services/BusinessProcessService";
 import BpmEformMappingService from "services/BpmEformMappingService";
@@ -1492,9 +1493,9 @@ export default function ModalSequenceFlow(props: Record<string, unknown>) {
                   />
                 </div>
                 <div
-                  className={_.isEqual(nodeName, dataNode?.name) || !nodeName ? "button-save-inactive" : "button-save-active"}
+                  className={isEqual(nodeName, dataNode?.name) || !nodeName ? "button-save-inactive" : "button-save-active"}
                   onClick={() => {
-                    if (!_.isEqual(nodeName, dataNode?.name)) {
+                    if (!isEqual(nodeName, dataNode?.name)) {
                       changeNodeName();
                     }
                   }}

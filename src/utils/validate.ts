@@ -1,11 +1,12 @@
-import _ from "lodash";
+import cloneDeep from "lodash/cloneDeep";
+
 import moment from "moment";
 import { getTextFromReactElement } from "utils/common";
 import { IFieldCustomize, IFormData, IValidation } from "model/FormModel";
 
 export default function Validate(validations: IValidation[], formData: IFormData, listField: IFieldCustomize[]) {
   const errors: Record<string, string> = {};
-  const formDataTemp = _.cloneDeep(formData);
+  const formDataTemp = cloneDeep(formData);
   if (listField.length > 0 && validations && validations.length > 0) {
     for (const validation of validations) {
       const field = listField.find((form) => form.name === validation.name);
@@ -393,7 +394,7 @@ export function handleChangeValidate(
   listField: IFieldCustomize[],
   callback: (formData: IFormData) => void
 ) {
-  const formDataTemp = _.cloneDeep(formData);
+  const formDataTemp = cloneDeep(formData);
   if (value !== formDataTemp.values[field.name]) {
     formDataTemp.values[field.name] = value;
     const validation = validations.find((validation) => validation.name === field.name);

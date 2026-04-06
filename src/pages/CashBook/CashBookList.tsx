@@ -1,6 +1,7 @@
 /* eslint-disable prefer-const */
 import React, { useState, useEffect, useMemo, useRef, useContext } from "react";
-import _ from "lodash";
+import cloneDeep from "lodash/cloneDeep";
+
 import moment from "moment";
 import { useSearchParams } from "react-router-dom";
 import { Options } from "highcharts";
@@ -192,7 +193,7 @@ const getTransactionStatus = (item: ICashBookResponse) => {
 };
 
 const buildParamsSignature = (type: 1 | 2, params: ICashbookFilterRequest) => {
-  const cleaned = _.cloneDeep(params || {});
+  const cleaned = cloneDeep(params || {});
   delete cleaned.type;
 
   Object.keys(cleaned).forEach((key) => {
@@ -361,7 +362,7 @@ export default function CashBookList() {
   };
 
   useEffect(() => {
-    const paramsTemp = _.cloneDeep(params);
+    const paramsTemp = cloneDeep(params);
     searchParams.forEach(async (key, value) => {
       paramsTemp[value] = key;
     });
@@ -419,7 +420,7 @@ export default function CashBookList() {
   }, [params, tab.type]);
 
   useEffect(() => {
-    const paramsTemp = _.cloneDeep(params);
+    const paramsTemp = cloneDeep(params);
 
     if (paramsTemp.limit === 10) {
       delete paramsTemp["limit"];

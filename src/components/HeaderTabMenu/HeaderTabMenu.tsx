@@ -1,5 +1,5 @@
 import React, {useRef, memo} from "react";
-import _ from "lodash";
+
 import Icon from "components/icon";
 import TitleAction, { ITitleActions } from "components/titleAction/titleAction";
 import "./HeaderTabMenu.scss";

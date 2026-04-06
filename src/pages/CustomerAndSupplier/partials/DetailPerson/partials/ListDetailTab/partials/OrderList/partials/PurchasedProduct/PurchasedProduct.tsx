@@ -1,5 +1,6 @@
 import React, { Fragment, useEffect, useState } from "react";
-import _ from "lodash";
+import cloneDeep from "lodash/cloneDeep";
+
 import moment from "moment";
 import { useParams } from "react-router-dom";
 import { formatCurrency, getPageOffset } from "reborn-util";
@@ -53,7 +54,7 @@ export default function PurchasedProduct(props: IPurchasedProductProps) {
   useEffect(() => {
     if (tab == "tab_three") {
       getListPurchasedProduct(params);
-      const paramsTemp = _.cloneDeep(params);
+      const paramsTemp = cloneDeep(params);
       if (paramsTemp.limit === 10) {
         delete paramsTemp["limit"];
       }

@@ -1,6 +1,7 @@
 /* eslint-disable prefer-const */
 import React, { Fragment, useState, useEffect, useMemo, useRef } from "react";
-import _ from "lodash";
+import cloneDeep from "lodash/cloneDeep";
+
 import Tippy from "@tippyjs/react";
 import { useSearchParams } from "react-router-dom";
 import { IActionModal, IFilterItem } from "model/OtherModel";
@@ -125,7 +126,7 @@ export default function AddCustomerZaloModal(props: IAddCustomerZaloModelProps) 
 
     if (isMounted.current === true && onShow) {
         getListCategoryTemplateZalo(params, type);
-      const paramsTemp = _.cloneDeep(params);
+      const paramsTemp = cloneDeep(params);
       if (paramsTemp.limit === 10) {
         delete paramsTemp["limit"];
       }

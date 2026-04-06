@@ -10,7 +10,8 @@ import MarketingAutomationService from "services/MarketingAutomationService";
 import Tippy from "@tippyjs/react";
 import Icon from "components/icon";
 import Input from "components/input/input";
-import _ from "lodash";
+import isEqual from "lodash/isEqual";
+
 import Radio from "components/radio/radio";
 import NummericInput from "components/input/numericInput";
 import Button from "components/button/button";
@@ -157,7 +158,7 @@ export default function CallApiModal(props: Record<string, unknown>) {
               (formData.errors && Object.keys(formData.errors).length > 0),
             is_loading: isSubmit,
             callback: () => {
-              if (_.isEqual(nodeName, dataNode?.name)) {
+              if (isEqual(nodeName, dataNode?.name)) {
                 onSubmit();
               } else {
                 onHide(true);
@@ -319,7 +320,7 @@ export default function CallApiModal(props: Record<string, unknown>) {
                       iconPosition="right"
                       disabled={editName}
                       onBlur={() => {
-                        if (!_.isEqual(nodeName, dataNode?.name)) {
+                        if (!isEqual(nodeName, dataNode?.name)) {
                           changeNodeName();
                         } else {
                           setEditName(true);

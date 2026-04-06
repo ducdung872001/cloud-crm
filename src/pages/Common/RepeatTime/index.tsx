@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import _ from "lodash";
+
 import moment from "moment";
 import Tippy from "@tippyjs/react";
 import { IOption } from "model/OtherModel";

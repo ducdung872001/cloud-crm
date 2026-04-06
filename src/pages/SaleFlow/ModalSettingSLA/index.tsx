@@ -6,7 +6,8 @@ import Dialog, { IContentDialog } from "components/dialog/dialog";
 import { showToast } from "utils/common";
 import "./index.scss";
 import NummericInput from "components/input/numericInput";
-import _ from "lodash";
+import isEqual from "lodash/isEqual";
+
 import Checkbox from "components/checkbox/checkbox";
 import SaleflowApproachService from "services/SaleflowApproachService";
 
@@ -173,7 +174,7 @@ export default function ModalSettingSLA(props: Record<string, unknown>) {
             variant: "outline",
             disabled: isSubmit,
             callback: () => {
-              _.isEqual(formData.values, valueSetting) ? handClearForm() : showDialogConfirmCancel();
+              isEqual(formData.values, valueSetting) ? handClearForm() : showDialogConfirmCancel();
             },
           },
           {
@@ -183,7 +184,7 @@ export default function ModalSettingSLA(props: Record<string, unknown>) {
             disabled:
               isSubmit ||
               //   !isDifferenceObj(formData.values, valueSetting),
-              _.isEqual(formData.values, valueSetting),
+              isEqual(formData.values, valueSetting),
             is_loading: isSubmit,
           },
         ],

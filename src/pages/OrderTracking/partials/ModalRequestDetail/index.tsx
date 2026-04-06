@@ -1,5 +1,5 @@
 import React, { Fragment, useState, useEffect, useMemo, useContext } from "react";
-import _ from "lodash";
+
 import { IAction, IActionModal } from "model/OtherModel";
 import RadioList from "components/radio/radioList";
 import SelectCustom from "components/selectCustom/selectCustom";

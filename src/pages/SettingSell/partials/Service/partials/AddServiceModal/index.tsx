@@ -1,5 +1,6 @@
 import React, { Fragment, useState, useEffect, useCallback, useMemo } from "react";
-import _ from "lodash";
+import isEqual from "lodash/isEqual";
+
 import Icon from "components/icon";
 import { ModalFooter } from "components/modal/modal";
 import Dialog, { IContentDialog } from "components/dialog/dialog";
@@ -565,7 +566,7 @@ export default function AddServiceModal(props: IAddServiceModalProps) {
             variant: "outline",
             disabled: isSubmit,
             callback: () => {
-              _.isEqual(formData.values, values) ? onHide(false) : showDialogConfirmCancel();
+              isEqual(formData.values, values) ? onHide(false) : showDialogConfirmCancel();
             },
           },
           {
@@ -575,7 +576,7 @@ export default function AddServiceModal(props: IAddServiceModalProps) {
             disabled:
               isSubmit ||
               formData?.values?.discount > formData?.values?.price ||
-              _.isEqual(formData.values, values) ||
+              isEqual(formData.values, values) ||
               (formData.errors && Object.keys(formData.errors).length > 0),
             is_loading: isSubmit,
           },

@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useMemo, useCallback, Fragment } from "react";
-import _ from "lodash";
+import cloneDeep from "lodash/cloneDeep";
+
 import { validateIsEmpty } from "reborn-validation";
 import { useNavigate } from "react-router-dom";
 import { isDifferenceObj, capitalize, removeHtmlTags } from "reborn-util";
@@ -1316,7 +1317,7 @@ export default function AddEditSendEmail(props: ISendEmail) {
 
     setIsSubmit(true);
 
-    const newFormData = _.cloneDeep(formData.values);
+    const newFormData = cloneDeep(formData.values);
     const result = {
       ...newFormData,
       content: contentEmail,

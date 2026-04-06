@@ -2,7 +2,7 @@ import React, { Fragment, useState, useEffect, useCallback, useMemo, useContext 
 import { showToast } from "utils/common";
 import "./SettingSLA.scss";
 import NummericInput from "components/input/numericInput";
-import _ from "lodash";
+
 import BusinessProcessService from "services/BusinessProcessService";
 
 export default function SettingSLA(props: Record<string, unknown>) {

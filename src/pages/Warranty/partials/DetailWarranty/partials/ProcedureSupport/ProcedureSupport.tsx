@@ -1,5 +1,6 @@
 import React, { Fragment, useEffect, useState } from "react";
-import _ from "lodash";
+import cloneDeep from "lodash/cloneDeep";
+
 import ReactFlow, { Background, MiniMap, useEdgesState, useNodesState, BaseEdge, EdgeLabelRenderer, getBezierPath } from "reactflow";
 import SupportCommonService from "services/SupportCommonService";
 import { showToast } from "utils/common";
@@ -118,7 +119,7 @@ export default function ProcedureSupport(props) {
   function CustomEdge(props) {
     const { id, sourceX, sourceY, targetX, targetY, sourcePosition, targetPosition, style = {}, markerEnd, target, source } = props;
 
-    const cloneDataNodes = _.cloneDeep(nodes);
+    const cloneDataNodes = cloneDeep(nodes);
     const isMatch = cloneDataNodes.some((el) => el.id == target && el.data.departmentId == -2);
 
     const [edgePath, labelX, labelY] = getBezierPath({

@@ -35,7 +35,9 @@
       "Bash(node convert_lazy.js)",
       "Bash(xargs grep:*)",
       "Bash(node add_memo.js)",
-      "Bash(node fix_keys.js)"
+      "Bash(node fix_keys.js)",
+      "Bash(xargs -I{} grep -n \"_\\\\.\" {})",
+      "Bash(node fix_lodash.js)"
     ]
   }
 }

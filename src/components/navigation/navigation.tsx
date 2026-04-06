@@ -5,7 +5,8 @@ import Icon from "components/icon";
 import { IMenuItem } from "model/OtherModel";
 import { getPermissions } from "utils/common";
 import { ContextType, UserContext } from "contexts/userContext";
-import _ from "lodash";
+import cloneDeep from "lodash/cloneDeep";
+
 import "./navigation.scss";
 
 import "../../i18n";
@@ -53,7 +54,7 @@ function Navigation(props: NavigationProps) {
 
   // Toggle submenu của item có children
   const setShowChildren = (idx: number) => {
-    const menuListNew = _.cloneDeep(menuList);
+    const menuListNew = cloneDeep(menuList);
     setMenuList(
       menuListNew.map((m, index) => {
         return {
@@ -66,7 +67,7 @@ function Navigation(props: NavigationProps) {
 
   // ✅ FIX: Đóng tất cả submenu đang mở
   const closeAllChildren = () => {
-    const menuListNew = _.cloneDeep(menuList);
+    const menuListNew = cloneDeep(menuList);
     setMenuList(
       menuListNew.map((m) => ({
         ...m,

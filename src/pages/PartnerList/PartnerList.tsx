@@ -1,6 +1,8 @@
 /* eslint-disable prefer-const */
 import React, { Fragment, useCallback, useContext, useEffect, useMemo, useRef, useState } from "react";
-import _ from "lodash";
+import isEqual from "lodash/isEqual";
+import cloneDeep from "lodash/cloneDeep";
+
 import moment from "moment";
 import Tippy from "@tippyjs/react";
 import { getSearchParameters, getPageOffset } from "reborn-util";
@@ -442,7 +444,7 @@ export default function PartnerList() {
                     Đóng
                   </Button>
                   <Button
-                    disabled={_.isEqual(dataConfirm, lstFieldActive)}
+                    disabled={isEqual(dataConfirm, lstFieldActive)}
                     onClick={() => {
                       setIsShowColumn(false);
                       setIsConfirmData(!isConfirmData);
@@ -1084,7 +1086,7 @@ export default function PartnerList() {
   };
 
   useEffect(() => {
-    const paramsTemp = _.cloneDeep(params);
+    const paramsTemp = cloneDeep(params);
     searchParams.forEach(async (key, value) => {
       paramsTemp[value] = key;
     });
@@ -1101,7 +1103,7 @@ export default function PartnerList() {
         getListPartner(params, activeTitleHeader);
       }
 
-      const paramsTemp = _.cloneDeep(params);
+      const paramsTemp = cloneDeep(params);
       if (paramsTemp.limit === 10) {
         delete paramsTemp["limit"];
       }

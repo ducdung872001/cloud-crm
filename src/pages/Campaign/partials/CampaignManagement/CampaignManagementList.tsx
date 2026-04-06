@@ -1,5 +1,6 @@
 import React, { Fragment, useContext, useEffect, useRef, useState } from "react";
-import _ from "lodash";
+import cloneDeep from "lodash/cloneDeep";
+
 import Tippy from "@tippyjs/react";
 import Icon from "components/icon";
 import Loading from "components/loading";
@@ -75,7 +76,7 @@ export default function CampaignManagementList(props: Record<string, unknown>) {
   };
 
   useEffect(() => {
-    const paramsTemp = _.cloneDeep(params);
+    const paramsTemp = cloneDeep(params);
     setIdProjectManagement(takeIdProjectManagement);
 
     setParams((prevParams) => ({ ...prevParams, ...paramsTemp }));
@@ -89,7 +90,7 @@ export default function CampaignManagementList(props: Record<string, unknown>) {
 
     if (isMounted.current === true) {
       getListProject(params);
-      const paramsTemp = _.cloneDeep(params);
+      const paramsTemp = cloneDeep(params);
       if (paramsTemp.limit === 10) {
         delete paramsTemp["limit"];
       }

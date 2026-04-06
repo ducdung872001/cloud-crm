@@ -21,7 +21,8 @@ import RebornEditor from "components/editor/reborn";
 import Tippy from "@tippyjs/react";
 import Icon from "components/icon";
 import Input from "components/input/input";
-import _ from "lodash";
+import isEqual from "lodash/isEqual";
+
 import RadioList from "components/radio/radioList";
 import FileService from "services/FileService";
 import { uploadDocumentFormData } from "utils/document";
@@ -271,7 +272,7 @@ export default function ModalAddFile(props: Record<string, unknown>) {
             is_loading: isSubmit,
 
             callback: () => {
-              if (_.isEqual(nodeName, dataNode?.name)) {
+              if (isEqual(nodeName, dataNode?.name)) {
                 onSubmit();
               } else {
                 onHide(true);

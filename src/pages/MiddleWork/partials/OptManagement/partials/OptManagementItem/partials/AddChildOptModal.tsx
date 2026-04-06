@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useMemo, Fragment, useCallback } from "react";
-import _ from "lodash";
+import isEqual from "lodash/isEqual";
+
 import moment from "moment";
 import { IActionModal } from "model/OtherModel";
 import { IFieldCustomize, IFormData, IValidation } from "model/FormModel";
@@ -501,7 +502,7 @@ export default function AddChildOptModal(props: IAddChildOptModal) {
             variant: "outline",
             disabled: isSubmit,
             callback: () => {
-              _.isEqual(formData?.values, values) ? handleClearForm() : showDialogConfirmCancel();
+              isEqual(formData?.values, values) ? handleClearForm() : showDialogConfirmCancel();
             },
           },
           {
@@ -512,7 +513,7 @@ export default function AddChildOptModal(props: IAddChildOptModal) {
               isSubmit ||
               startDay > endDay ||
               endDay < startDay ||
-              _.isEqual(formData?.values, values) ||
+              isEqual(formData?.values, values) ||
               (formData.errors && Object.keys(formData.errors).length > 0),
             is_loading: isSubmit,
           },

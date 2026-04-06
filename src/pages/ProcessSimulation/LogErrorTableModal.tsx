@@ -3,7 +3,8 @@ import BoxTable from "components/boxTable/boxTable";
 import Loading from "components/loading";
 import Modal, { ModalHeader } from "components/modal/modal";
 import { DataPaginationDefault, PaginationProps } from "components/pagination/pagination";
-import _ from "lodash";
+import cloneDeep from "lodash/cloneDeep";
+
 import moment from "moment";
 import React, { Fragment, useEffect, useState } from "react";
 import BusinessProcessService from "services/BusinessProcessService";
@@ -24,7 +25,7 @@ export const LogErrorTableModal: React.FC = (props: Record<string, unknown>) => 
   const abortController = new AbortController();
 
   useEffect(() => {
-    const paramsTemp = _.cloneDeep(params);
+    const paramsTemp = cloneDeep(params);
     setParams((prevParams: Record<string, unknown>) => ({ ...prevParams, ...paramsTemp }));
   }, []);
 

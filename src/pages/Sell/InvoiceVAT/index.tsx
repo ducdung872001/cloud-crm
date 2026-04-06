@@ -1,5 +1,6 @@
 import React, { Fragment, useState, useEffect, useRef, useCallback } from "react";
-import _ from "lodash";
+import cloneDeep from "lodash/cloneDeep";
+
 import { useLocation } from "react-router-dom";
 import Icon from "components/icon";
 import Loading from "components/loading";
@@ -187,11 +188,11 @@ export default function InvoiceVATOverview(props: Record<string, unknown>) {
   };
 
   useEffect(() => { setParams({ ...params }); }, [tab]);
-  useEffect(() => { const p = _.cloneDeep(params); setParams((prev) => ({ ...prev, ...p })); }, []);
+  useEffect(() => { const p = cloneDeep(params); setParams((prev) => ({ ...prev, ...p })); }, []);
   useEffect(() => {
     if (!isMounted.current) { isMounted.current = true; return; }
     getListInvoice(params);
-    const p = _.cloneDeep(params);
+    const p = cloneDeep(params);
     if (p.limit === 10) delete p["limit"];
     Object.keys(p).forEach((k) => { if (p[k] === "") delete p[k]; });
     return () => { abortController.abort(); };

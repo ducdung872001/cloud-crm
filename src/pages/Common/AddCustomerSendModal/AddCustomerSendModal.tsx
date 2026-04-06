@@ -1,5 +1,6 @@
 import React, { Fragment, useState, useEffect, useRef, memo, useContext } from "react";
-import _ from "lodash";
+import cloneDeep from "lodash/cloneDeep";
+
 import { IAddCustomerSendEmailModalProps } from "model/customer/PropsModel";
 import { ICustomerResponse } from "model/customer/CustomerResponseModel";
 import { ISaveSearch } from "model/OtherModel";
@@ -104,7 +105,7 @@ const AddCustomerSendModal = (props: IAddCustomerSendEmailModalProps) => {
     }
     if (isMounted.current === true && type == "3" && onShow) {
       getListCustomer(params);
-      const paramsTemp = _.cloneDeep(params);
+      const paramsTemp = cloneDeep(params);
       if (paramsTemp.limit === 10) {
         delete paramsTemp["limit"];
       }

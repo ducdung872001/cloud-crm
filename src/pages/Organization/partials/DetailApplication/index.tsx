@@ -1,5 +1,6 @@
 import React, { Fragment, useEffect, useMemo, useState } from "react";
-import _ from "lodash";
+import cloneDeep from "lodash/cloneDeep";
+
 import moment from "moment";
 import { formatCurrency } from "reborn-util";
 import Icon from "components/icon";
@@ -62,7 +63,7 @@ export default function DetailApplication(props: IDetailApplicationProps) {
         };
       });
 
-      const changeResult = _.cloneDeep(result);
+      const changeResult = cloneDeep(result);
 
       // Tạo một đối tượng để theo dõi các mục đã thấy
       const seen = {};

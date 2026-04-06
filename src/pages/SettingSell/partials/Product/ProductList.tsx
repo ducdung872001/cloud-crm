@@ -1,6 +1,6 @@
 import React, { Fragment, useState, useEffect, useRef } from "react";
 import { useSearchParams } from "react-router-dom";
-import _ from "lodash";
+
 import Icon from "components/icon";
 import Image from "components/image";
 import Loading from "components/loading";

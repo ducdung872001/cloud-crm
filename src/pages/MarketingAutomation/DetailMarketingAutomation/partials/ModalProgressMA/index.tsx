@@ -1,5 +1,5 @@
 import React, { Fragment, useEffect, useMemo, useRef, useState } from "react";
-import _ from "lodash";
+
 import { IActionModal } from "model/OtherModel";
 import Modal, { ModalBody, ModalFooter, ModalHeader } from "components/modal/modal";
 import "./index.scss";

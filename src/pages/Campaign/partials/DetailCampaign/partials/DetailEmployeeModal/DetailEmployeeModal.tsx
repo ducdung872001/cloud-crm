@@ -4,7 +4,7 @@ import { formatCurrency, getPageOffset } from "reborn-util";
 import BoxTable from "components/boxTable/boxTable";
 import { DataPaginationDefault, PaginationProps } from "components/pagination/pagination";
 import Loading from "components/loading";
-import _ from "lodash";
+
 import ReportService from "services/ReportService";
 import { showToast } from "utils/common";
 import moment from "moment";

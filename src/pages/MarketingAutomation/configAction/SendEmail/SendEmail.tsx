@@ -21,7 +21,8 @@ import RebornEditor from "components/editor/reborn";
 import Tippy from "@tippyjs/react";
 import Icon from "components/icon";
 import Input from "components/input/input";
-import _ from "lodash";
+import isEqual from "lodash/isEqual";
+
 import NummericInput from "components/input/numericInput";
 import { IConfigCodeResponseModel } from "model/configCode/ConfigCodeResponse";
 import ConfigCodeService from "services/ConfigCodeService";
@@ -463,7 +464,7 @@ export default function SendEmail(props: Record<string, unknown>) {
             is_loading: isSubmit,
 
             callback: () => {
-              if (_.isEqual(nodeName, dataNode?.name)) {
+              if (isEqual(nodeName, dataNode?.name)) {
                 onSubmit();
               } else {
                 onHide(true);
@@ -695,7 +696,7 @@ export default function SendEmail(props: Record<string, unknown>) {
                         iconPosition="right"
                         disabled={editName}
                         onBlur={() => {
-                          if (!_.isEqual(nodeName, dataNode?.name)) {
+                          if (!isEqual(nodeName, dataNode?.name)) {
                             changeNodeName();
                           } else {
                             setEditName(true);
@@ -728,7 +729,7 @@ export default function SendEmail(props: Record<string, unknown>) {
                         value={nodePoint}
                         fill={true}
                         // onBlur={() => {
-                        //   if(!_.isEqual(nodeName, dataNode?.name)){
+                        //   if(!isEqual(nodeName, dataNode?.name)){
                         //     changeNodeName()
                         //   } else {
                         //     setEditName(true);

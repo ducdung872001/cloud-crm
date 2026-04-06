@@ -1,5 +1,6 @@
 import React, { Fragment, useState, useEffect, useRef, useMemo, useContext } from "react";
-import _ from "lodash";
+import cloneDeep from "lodash/cloneDeep";
+
 import { useSearchParams } from "react-router-dom";
 import Icon from "components/icon";
 import Loading from "components/loading";
@@ -153,7 +154,7 @@ export default function EmployeeList(props: IEmployeeListProps) {
   };
 
   useEffect(() => {
-    const paramsTemp = _.cloneDeep(params);
+    const paramsTemp = cloneDeep(params);
     searchParams.forEach(async (key, value) => {
       paramsTemp[value] = key;
     });
@@ -169,7 +170,7 @@ export default function EmployeeList(props: IEmployeeListProps) {
     if (isMounted.current === true) {
       getListEmployee(params);
 
-      const paramsTemp = _.cloneDeep(params);
+      const paramsTemp = cloneDeep(params);
 
       if (paramsTemp.limit === 10) {
         delete paramsTemp["limit"];

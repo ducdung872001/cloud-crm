@@ -1,5 +1,5 @@
 import React, { useState, useRef, useCallback } from "react";
-import _ from "lodash";
+
 import { QRCodeCanvas } from "qrcode.react";
 import "./SalesWebsite.scss";
 import Input from "@/components/input/input";

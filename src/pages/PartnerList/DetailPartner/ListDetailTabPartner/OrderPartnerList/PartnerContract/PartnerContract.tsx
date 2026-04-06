@@ -1,5 +1,6 @@
 import React, { Fragment, useEffect, useState } from "react";
-import _ from "lodash";
+import cloneDeep from "lodash/cloneDeep";
+
 import { useNavigate, useParams } from "react-router-dom";
 import { formatCurrency, getPageOffset, trimContent } from "reborn-util";
 import { IAction } from "model/OtherModel";
@@ -55,7 +56,7 @@ export default function PartnerContract(props) {
   useEffect(() => {
     if (tab == "tab_one" && params?.businessPartnerId) {
       getListContract(params);
-      const paramsTemp = _.cloneDeep(params);
+      const paramsTemp = cloneDeep(params);
       if (paramsTemp.limit === 10) {
         delete paramsTemp["limit"];
       }

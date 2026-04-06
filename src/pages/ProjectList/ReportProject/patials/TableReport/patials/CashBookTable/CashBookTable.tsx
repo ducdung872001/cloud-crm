@@ -21,7 +21,8 @@ import { useSearchParams } from "react-router-dom";
 import { downloadDataUrlFromJavascript, formatCurrency, getPageOffset, isDifferenceObj } from "reborn-util";
 import CashbookService from "services/CashbookService";
 import { getPermissions, showToast } from "utils/common";
-import _ from "lodash";
+import cloneDeep from "lodash/cloneDeep";
+
 import "./CashBookTable.scss";
 
 export default function CashBookTable({ dataProjectReport }) {
@@ -196,7 +197,7 @@ export default function CashBookTable({ dataProjectReport }) {
   };
 
   useEffect(() => {
-    const paramsTemp = _.cloneDeep(params);
+    const paramsTemp = cloneDeep(params);
     searchParams.forEach(async (key, value) => {
       paramsTemp[value] = key;
     });
@@ -217,7 +218,7 @@ export default function CashBookTable({ dataProjectReport }) {
       //   tab.type == 1 && takeParamsUrl?.type == 1 ? getListCashBook(params) : getListCashBookReport(params);
       tab.type == 1 ? getListCashBook(params) : getListCashBookReport(params);
 
-      const paramsTemp = _.cloneDeep(params);
+      const paramsTemp = cloneDeep(params);
 
       if (paramsTemp.limit === 10) {
         delete paramsTemp["limit"];

@@ -1,5 +1,6 @@
 import React, { Fragment, useState, useEffect, useRef } from "react";
-import _ from "lodash";
+import cloneDeep from "lodash/cloneDeep";
+
 import Icon from "components/icon";
 import { useNavigate } from "react-router-dom";
 import Loading from "components/loading";
@@ -103,7 +104,7 @@ export default function EmailList() {
   };
 
   useEffect(() => {
-    const paramsTemp = _.cloneDeep(params);
+    const paramsTemp = cloneDeep(params);
     setParams((prevParams) => ({ ...prevParams, ...paramsTemp }));
 
     checkEmailConnection();
@@ -117,7 +118,7 @@ export default function EmailList() {
 
     if (isMounted.current === true) {
       getListEmail(params);
-      const paramsTemp = _.cloneDeep(params);
+      const paramsTemp = cloneDeep(params);
       if (paramsTemp.limit === 10) {
         delete paramsTemp["limit"];
       }

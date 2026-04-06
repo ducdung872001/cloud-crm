@@ -1,5 +1,6 @@
 import React, { Fragment, useEffect, useMemo, useRef, useState } from "react";
-import _ from "lodash";
+import cloneDeep from "lodash/cloneDeep";
+
 import moment from "moment";
 import { useSearchParams } from "react-router-dom";
 import Loading from "components/loading";
@@ -98,7 +99,7 @@ export default function ReportLogin() {
   };
 
   useEffect(() => {
-    const paramsTemp = _.cloneDeep(params);
+    const paramsTemp = cloneDeep(params);
     searchParams.forEach(async (key, value) => {
       paramsTemp[value] = key;
     });
@@ -112,7 +113,7 @@ export default function ReportLogin() {
     }
     if (isMounted.current === true) {
       getListReportLogin(params);
-      const paramsTemp: Record<string, unknown> = _.cloneDeep(params);
+      const paramsTemp: Record<string, unknown> = cloneDeep(params);
       if (paramsTemp.limit === 10) {
         delete paramsTemp["limit"];
       }

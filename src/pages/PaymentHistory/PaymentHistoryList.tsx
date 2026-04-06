@@ -1,5 +1,6 @@
 import React, { Fragment, useState, useEffect, useRef, useMemo } from "react";
-import _ from "lodash";
+import cloneDeep from "lodash/cloneDeep";
+
 import moment from "moment";
 import Icon from "components/icon";
 import Image from "components/image";
@@ -85,7 +86,7 @@ export default function PaymentHistoryList() {
   };
 
   useEffect(() => {
-    const paramsTemp = _.cloneDeep(params);
+    const paramsTemp = cloneDeep(params);
     setParams((prevParams) => ({ ...prevParams, ...paramsTemp }));
   }, []);
 
@@ -97,7 +98,7 @@ export default function PaymentHistoryList() {
 
     if (isMounted.current === true) {
       getListPaymentHistory(params);
-      const paramsTemp = _.cloneDeep(params);
+      const paramsTemp = cloneDeep(params);
       if (paramsTemp.limit === 10) {
         delete paramsTemp["limit"];
       }

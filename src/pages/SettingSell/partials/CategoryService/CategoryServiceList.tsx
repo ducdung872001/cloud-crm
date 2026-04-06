@@ -1,5 +1,6 @@
 import React, { Fragment, useState, useEffect, useRef } from "react";
-import _ from "lodash";
+import cloneDeep from "lodash/cloneDeep";
+
 import Icon from "components/icon";
 import Image from "components/image";
 import Loading from "components/loading";
@@ -95,7 +96,7 @@ export default function CategoryServiceList(props: ICategoryServiceListProps) {
   };
 
   useEffect(() => {
-    const paramsTemp = _.cloneDeep(params);
+    const paramsTemp = cloneDeep(params);
     setParams((prevParams) => ({ ...prevParams, ...paramsTemp }));
   }, []);
 
@@ -107,7 +108,7 @@ export default function CategoryServiceList(props: ICategoryServiceListProps) {
 
     if (isMounted.current === true) {
       getListCategoryService(params);
-      const paramsTemp = _.cloneDeep(params);
+      const paramsTemp = cloneDeep(params);
       if (paramsTemp.limit === 10) {
         delete paramsTemp["limit"];
       }

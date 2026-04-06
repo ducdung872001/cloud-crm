@@ -1,5 +1,6 @@
 import React, { Fragment, useEffect, useMemo, useRef, useState } from "react";
-import _ from "lodash";
+import cloneDeep from "lodash/cloneDeep";
+
 import Icon from "components/icon";
 import Loading from "components/loading";
 import SearchBox from "components/searchBox/searchBox";
@@ -125,7 +126,7 @@ export default function Package() {
   };
 
   useEffect(() => {
-    const paramsTemp = _.cloneDeep(params);
+    const paramsTemp = cloneDeep(params);
     searchParams.forEach(async (key, value) => {
       paramsTemp[value] = key;
     });
@@ -140,7 +141,7 @@ export default function Package() {
 
     if (isMounted.current === true) {
       getListPackage(params);
-      const paramsTemp: Record<string, unknown> = _.cloneDeep(params);
+      const paramsTemp: Record<string, unknown> = cloneDeep(params);
       if (paramsTemp.limit === 10) {
         delete paramsTemp["limit"];
       }

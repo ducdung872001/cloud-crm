@@ -7,7 +7,8 @@ import { getPageOffset } from "reborn-util";
 import CustomerService from "services/CustomerService";
 import { showToast } from "utils/common";
 import "./TableOpportunity.scss";
-import _ from "lodash";
+import cloneDeep from "lodash/cloneDeep";
+
 
 export default function TableOpportunity({ dataProjectReport }) {
   const isMounted = useRef(false);
@@ -71,7 +72,7 @@ export default function TableOpportunity({ dataProjectReport }) {
   };
 
   useEffect(() => {
-    const paramsTemp = _.cloneDeep(params);
+    const paramsTemp = cloneDeep(params);
     setParams((prevParams) => ({ ...prevParams, ...paramsTemp }));
   }, []);
 
@@ -83,7 +84,7 @@ export default function TableOpportunity({ dataProjectReport }) {
 
     if (isMounted.current === true) {
       getListOpportunity(params);
-      const paramsTemp = _.cloneDeep(params);
+      const paramsTemp = cloneDeep(params);
       if (paramsTemp.limit === 10) {
         delete paramsTemp["limit"];
       }

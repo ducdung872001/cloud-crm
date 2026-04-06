@@ -9,7 +9,8 @@ import { showToast } from "utils/common";
 import "./index.scss";
 import { ContextType, UserContext } from "contexts/userContext";
 import NummericInput from "components/input/numericInput";
-import _ from "lodash";
+import isEqual from "lodash/isEqual";
+
 import Checkbox from "components/checkbox/checkbox";
 import { IEmployeeFilterRequest } from "model/employee/EmployeeRequestModel";
 import EmployeeService from "services/EmployeeService";
@@ -175,7 +176,7 @@ export default function ModalConfigContactGoal(props: Record<string, unknown>) {
   };
 
   const handClearForm = () => {
-    // if(!_.isEqual(formData, actionList)){
+    // if(!isEqual(formData, actionList)){
     //   onHide(true);
     // } else {
     //   onHide(false);
@@ -183,7 +184,7 @@ export default function ModalConfigContactGoal(props: Record<string, unknown>) {
     if (data) {
       onHide(false);
     } else {
-      if (!_.isEqual(formData, actionList)) {
+      if (!isEqual(formData, actionList)) {
         onHide(true);
       } else {
         onHide(false);
@@ -205,7 +206,7 @@ export default function ModalConfigContactGoal(props: Record<string, unknown>) {
             variant: "outline",
             disabled: isSubmit,
             callback: () => {
-              // _.isEqual(formData, valueConfig) ? handClearForm() : showDialogConfirmCancel();
+              // isEqual(formData, valueConfig) ? handClearForm() : showDialogConfirmCancel();
               handClearForm();
             },
           },
@@ -216,7 +217,7 @@ export default function ModalConfigContactGoal(props: Record<string, unknown>) {
           //   disabled:
           //     isSubmit ||
           //   //   !isDifferenceObj(formData.values, valueSetting),
-          //   _.isEqual(formData, valueConfig),
+          //   isEqual(formData, valueConfig),
           //   is_loading: isSubmit,
           // },
         ],

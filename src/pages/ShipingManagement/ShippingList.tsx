@@ -1,5 +1,6 @@
 import React, { Fragment, useCallback, useEffect, useRef, useState } from "react";
-import _ from "lodash";
+import cloneDeep from "lodash/cloneDeep";
+
 import moment from "moment";
 import Tippy from "@tippyjs/react";
 import { useNavigate, useSearchParams } from "react-router-dom";
@@ -157,7 +158,7 @@ export default function ShippingOrderList() {
     if (!isMounted.current) { isMounted.current = true; return; }
     getListOrder(params);
 
-    const paramsTemp = _.cloneDeep(params) as Record<string, unknown>;
+    const paramsTemp = cloneDeep(params) as Record<string, unknown>;
     if (paramsTemp.limit === 10) delete paramsTemp["limit"];
     Object.keys(paramsTemp).forEach((k) => {
       if (!paramsTemp[k] && paramsTemp[k] !== 0) delete paramsTemp[k];

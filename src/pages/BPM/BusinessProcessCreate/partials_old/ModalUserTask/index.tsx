@@ -20,7 +20,7 @@ import ModalOLA from "./partials/ModalOLA";
 import FormEditorComponentDisable from "pages/BPM/BpmForm/FormEditorDisable";
 import ModalDebug from "./partials/ModalDebug";
 import ModalTimer from "./partials/ModalTimer";
-import _ from "lodash";
+
 import Loading from "components/loading";
 
 export default function ModalUserTask({ onShow, onHide, dataNode, processId, disable }) {

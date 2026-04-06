@@ -1,5 +1,6 @@
 import React, { Fragment, useState, useEffect, useMemo } from "react";
-import _ from "lodash";
+import cloneDeep from "lodash/cloneDeep";
+
 import { IActionModal, IAction } from "model/OtherModel";
 import { IShowModalSubsystemProps } from "model/subsystemAdministration/PropsModel";
 import { IFreeResourceFilterRequest, IFunctionalManagementFilterRequest } from "model/functionalManagement/FunctionalManagementRequest";
@@ -56,7 +57,7 @@ export default function ShowModalSubsystem(props: IShowModalSubsystemProps) {
 
   //! đoạn này cập nhập lại biến paramResource mỗi lần gõ vào ô tìm kiếm
   useEffect(() => {
-    const paramsTemp = _.cloneDeep(paramResource);
+    const paramsTemp = cloneDeep(paramResource);
     setParamResource((prevParams) => ({ ...prevParams, ...paramsTemp }));
   }, []);
 
@@ -101,7 +102,7 @@ export default function ShowModalSubsystem(props: IShowModalSubsystemProps) {
 
   //! đoạn này cập nhập lại biến paramFreeResource mỗi lần gõ vào ô tìm kiếm
   useEffect(() => {
-    const paramsTemp = _.cloneDeep(paramFreeResource);
+    const paramsTemp = cloneDeep(paramFreeResource);
     setParamFreeResource((prevParams) => ({ ...prevParams, ...paramsTemp }));
   }, []);
 

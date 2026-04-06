@@ -1,5 +1,6 @@
 import React, { useRef, useState } from "react";
-import _ from "lodash";
+import cloneDeep from "lodash/cloneDeep";
+
 import { useParams } from "react-router-dom";
 import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
 import { IListTabDetailProps } from "model/customer/PropsModel";
@@ -81,7 +82,7 @@ export default function ListDetailTabPartner(props: IListTabDetailProps) {
 
     // Cập nhật lại trạng thái danh sách
     setListTabs(items);
-    localStorage.setItem("lstTabDetailCustomer", JSON.stringify(_.cloneDeep(items)));
+    localStorage.setItem("lstTabDetailCustomer", JSON.stringify(cloneDeep(items)));
   };
 
   return (

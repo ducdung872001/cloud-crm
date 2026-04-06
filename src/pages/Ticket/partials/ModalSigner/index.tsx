@@ -1,5 +1,6 @@
 import React, { Fragment, useEffect, useMemo, useState } from "react";
-import _ from "lodash";
+import isEqual from "lodash/isEqual";
+
 import { IActionModal } from "model/OtherModel";
 import TextArea from "components/textarea/textarea";
 import SelectCustom from "components/selectCustom/selectCustom";
@@ -209,7 +210,7 @@ export default function ModalSigner(props: IAddSignerFSAndQuoteProps) {
             title: "Xác nhận",
             type: "submit",
             color: "primary",
-            disabled: isSubmit || _.isEqual(formData, values) || validateFieldProcess,
+            disabled: isSubmit || isEqual(formData, values) || validateFieldProcess,
             is_loading: isSubmit,
           },
         ],

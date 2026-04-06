@@ -1,5 +1,6 @@
 import React, {useEffect, useRef, useState, useContext, useCallback, memo} from "react";
-import _ from "lodash";
+import debounce from "lodash/debounce";
+
 import moment from "moment";
 import { useCookies } from "react-cookie";
 import { useNavigate } from "react-router-dom";
@@ -445,7 +446,7 @@ function Header(props: HeaderProps) {
   const fmt = (n: number) => n?.toLocaleString("vi") + " ₫";
 
   const doSearch = useCallback(
-    _.debounce(async (q: string) => {
+    debounce(async (q: string) => {
       if (!q.trim()) { setSearchResults([]); setSearchLoading(false); return; }
       searchAbort?.abort();
       const ctrl = new AbortController();

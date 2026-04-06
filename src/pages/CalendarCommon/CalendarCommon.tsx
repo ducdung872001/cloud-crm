@@ -1,5 +1,6 @@
 import React, { useCallback, useContext, useEffect, useRef, useState } from "react";
-import _ from "lodash";
+import cloneDeep from "lodash/cloneDeep";
+
 import moment from "moment";
 import Tippy from "@tippyjs/react";
 import { Calendar, momentLocalizer } from "react-big-calendar";
@@ -340,7 +341,7 @@ export default function CalendarCommon() {
 
   //   if (isMounted.current === true) {
   //     getListSchedule(params);
-  //     const paramsTemp = _.cloneDeep(params);
+  //     const paramsTemp = cloneDeep(params);
 
   //     Object.keys(paramsTemp).map(function (key) {
   //       paramsTemp[key] === "" ? delete paramsTemp[key] : null;
@@ -355,7 +356,7 @@ export default function CalendarCommon() {
   useEffect(() => {
   getListSchedule(params);
 
-  const paramsTemp = _.cloneDeep(params);
+  const paramsTemp = cloneDeep(params);
   Object.keys(paramsTemp).forEach((key) => {
     if (paramsTemp[key] === "") delete paramsTemp[key];
   });

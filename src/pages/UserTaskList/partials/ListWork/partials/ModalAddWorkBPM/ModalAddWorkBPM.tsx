@@ -1,5 +1,6 @@
 import React, { Fragment, useState, useEffect, useCallback, useMemo, useRef, useContext } from "react";
-import _ from "lodash";
+import isEqual from "lodash/isEqual";
+
 import moment from "moment";
 import { getSearchParameters, isDifferenceObj, trimContent } from "reborn-util";
 import { IActionModal } from "model/OtherModel";
@@ -977,7 +978,7 @@ export default function ModalAddWorkBpm(props: Record<string, unknown>) {
             variant: "outline",
             disabled: isSubmit,
             callback: () => {
-              _.isEqual(formData.values, values) ? handleClearForm(false) : showDialogConfirmCancel();
+              isEqual(formData.values, values) ? handleClearForm(false) : showDialogConfirmCancel();
             },
           },
           {
@@ -990,9 +991,9 @@ export default function ModalAddWorkBpm(props: Record<string, unknown>) {
               !formData?.values.content ||
               !formData?.values.employeeId ||
               (formData?.values.taskType === "my_task" ? !formData?.values.startTime || !formData?.values.endTime : "") ||
-              (_.isEqual(formData.values, values) &&
+              (isEqual(formData.values, values) &&
                 (data?.ola
-                  ? _.isEqual(JSON.parse(data?.ola).responseTime, valueResponse) && _.isEqual(JSON.parse(data?.ola).processTime, valueProcess)
+                  ? isEqual(JSON.parse(data?.ola).responseTime, valueResponse) && isEqual(JSON.parse(data?.ola).processTime, valueProcess)
                   : "")) ||
               (formData.errors && Object.keys(formData.errors).length > 0),
             is_loading: isSubmit,

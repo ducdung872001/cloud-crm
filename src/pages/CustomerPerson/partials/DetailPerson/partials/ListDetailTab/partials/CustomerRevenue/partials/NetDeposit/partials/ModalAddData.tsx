@@ -1,5 +1,6 @@
 import React, { Fragment, useState, useEffect, useCallback, useMemo, useRef, useContext } from "react";
-import _ from "lodash";
+import isEqual from "lodash/isEqual";
+
 import { isDifferenceObj } from "reborn-util";
 import { IActionModal } from "model/OtherModel";
 import { IFieldCustomize, IFormData, IValidation } from "model/FormModel";
@@ -143,7 +144,7 @@ export default function ModalAddData({ onShow, onHide, dataProps, customerId }) 
             variant: "outline",
             disabled: isSubmit,
             callback: () => {
-              _.isEqual(formData.values, values) ? handleClearForm(false) : showDialogConfirmCancel();
+              isEqual(formData.values, values) ? handleClearForm(false) : showDialogConfirmCancel();
             },
           },
           {
@@ -151,7 +152,7 @@ export default function ModalAddData({ onShow, onHide, dataProps, customerId }) 
             type: "submit",
             color: "primary",
             disabled:
-              _.isEqual(formData.values, values) ||
+              isEqual(formData.values, values) ||
               (formData.errors && Object.keys(formData.errors).length > 0),
             is_loading: isSubmit,
           },

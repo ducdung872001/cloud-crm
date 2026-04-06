@@ -1,5 +1,6 @@
 import React, { Fragment, useEffect, useMemo, useState } from "react";
-import _ from "lodash";
+import isEqual from "lodash/isEqual";
+
 import { IActionModal } from "model/OtherModel";
 import TextArea from "components/textarea/textarea";
 import SelectCustom from "components/selectCustom/selectCustom";
@@ -152,7 +153,7 @@ export default function AddTransferVotes(props: IAddTransferVotesProps) {
             title: "Xác nhận",
             type: "submit",
             color: "primary",
-            disabled: isSubmit || _.isEqual(formData, values) || validateFieldSupport,
+            disabled: isSubmit || isEqual(formData, values) || validateFieldSupport,
             is_loading: isSubmit,
           },
         ],

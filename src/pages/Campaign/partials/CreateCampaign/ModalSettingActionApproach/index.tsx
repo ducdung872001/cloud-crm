@@ -6,7 +6,7 @@ import Dialog, { IContentDialog } from "components/dialog/dialog";
 import { showToast } from "utils/common";
 import CampaignApproachService from "services/CampaignApproachService";
 import "./index.scss";
-import _ from "lodash";
+
 import Icon from "components/icon";
 import { DataPaginationDefault, PaginationProps } from "components/pagination/pagination";
 import BoxTable from "components/boxTable/boxTable";

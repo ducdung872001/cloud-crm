@@ -17,7 +17,7 @@ import ImageError from "assets/images/error.png";
 
 import "tippy.js/animations/scale-extreme.css";
 import "./ViewDetailPartner.scss";
-import _ from "lodash";
+
 import PartnerService from "services/PartnerService";
 
 export default function ViewDetailPartner(props: Record<string, unknown>) {

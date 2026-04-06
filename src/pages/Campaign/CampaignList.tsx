@@ -1,5 +1,6 @@
 import React, { Fragment, useState, useEffect, useRef, useContext, useMemo } from "react";
-import _ from "lodash";
+import cloneDeep from "lodash/cloneDeep";
+
 import moment from "moment";
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { IAction, IFilterItem, ISaveSearch } from "model/OtherModel";
@@ -57,7 +58,7 @@ export default function CampaignList({ parentId, parentCampaign, setIsFullPage, 
 
   useEffect(() => {
     if (parentId == -1) {
-      let paramNew = _.cloneDeep(params);
+      let paramNew = cloneDeep(params);
       delete paramNew["parentId"];
       setParams({ ...paramNew, campaignType: 2 });
     } else {
@@ -86,7 +87,7 @@ export default function CampaignList({ parentId, parentCampaign, setIsFullPage, 
       });
 
       if (!paramsResult?.parentId) {
-        let paramNew = _.cloneDeep(params);
+        let paramNew = cloneDeep(params);
         delete paramNew["parentId"];
         setParams({ ...paramNew, campaignType: +paramsResult.campaignType });
       } else {
@@ -244,7 +245,7 @@ export default function CampaignList({ parentId, parentCampaign, setIsFullPage, 
   };
 
   useEffect(() => {
-    const paramsTemp = _.cloneDeep(params);
+    const paramsTemp = cloneDeep(params);
     //! đoạn này bao giờ có chức năng lọc thì viết vào đây
     setParams((prevParams) => ({ ...prevParams, ...paramsTemp }));
   }, []);
@@ -256,7 +257,7 @@ export default function CampaignList({ parentId, parentCampaign, setIsFullPage, 
     }
     if (isMounted.current === true) {
       getListCampaign(params);
-      const paramsTemp = _.cloneDeep(params);
+      const paramsTemp = cloneDeep(params);
       if (paramsTemp.limit === 10) {
         delete paramsTemp["limit"];
       }

@@ -6,7 +6,8 @@ import { useActiveElement } from "utils/hookCustom";
 import Validate, { handleChangeValidate } from "utils/validate";
 import { showToast } from "utils/common";
 import "./ModalAddAction.scss";
-import _ from "lodash";
+import isEqual from "lodash/isEqual";
+
 import Checkbox from "components/checkbox/checkbox";
 import ImageThirdGender from "assets/images/third-gender.png";
 import SelectCustom from "components/selectCustom/selectCustom";
@@ -280,7 +281,7 @@ export default function ModalAddAction(props: Record<string, unknown>) {
             variant: "outline",
             disabled: isSubmit,
             callback: () => {
-              // _.isEqual(formData, valueConfig) ? handClearForm() : showDialogConfirmCancel();
+              // isEqual(formData, valueConfig) ? handClearForm() : showDialogConfirmCancel();
               handClearForm();
             },
           },
@@ -292,7 +293,7 @@ export default function ModalAddAction(props: Record<string, unknown>) {
               isSubmit ||
               checkFieldAction ||
               //   !isDifferenceObj(formData.values, valueSetting),
-              _.isEqual(formData, valueConfig),
+              isEqual(formData, valueConfig),
             is_loading: isSubmit,
           },
         ],

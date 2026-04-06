@@ -1,5 +1,6 @@
 import React, { Fragment, useEffect, useMemo, useRef, useState, useContext } from "react";
-import _ from "lodash";
+import cloneDeep from "lodash/cloneDeep";
+
 import moment from "moment";
 import Tippy from "@tippyjs/react";
 import { useNavigate, useSearchParams } from "react-router-dom";
@@ -162,7 +163,7 @@ export default function TicketList(props) {
   };
 
   useEffect(() => {
-    const paramsTemp = _.cloneDeep(params);
+    const paramsTemp = cloneDeep(params);
     searchParams.forEach(async (key, value) => {
       paramsTemp[value] = key;
     });
@@ -176,7 +177,7 @@ export default function TicketList(props) {
     }
     if (isMounted.current === true) {
       getListTicket(params);
-      const paramsTemp = _.cloneDeep(params);
+      const paramsTemp = cloneDeep(params);
       if (paramsTemp.limit === 10) {
         delete paramsTemp["limit"];
       }

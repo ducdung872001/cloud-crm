@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import _ from "lodash";
+
 import "./MultiChannelConfiguration.scss";
 import ButtonOnOff from "@/components/ButtonOnOff/ButtonOnOff";
 import SelectCustom from "@/components/selectCustom/selectCustom";

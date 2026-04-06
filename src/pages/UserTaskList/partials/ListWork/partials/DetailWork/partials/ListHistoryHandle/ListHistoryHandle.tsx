@@ -9,7 +9,8 @@ import { DataPaginationDefault, PaginationProps } from "components/pagination/pa
 import BusinessProcessService from "services/BusinessProcessService";
 import { BulkActionItemModel } from "components/bulkAction/bulkAction";
 import { ITitleActions } from "components/titleAction/titleAction";
-import _ from "lodash";
+import cloneDeep from "lodash/cloneDeep";
+
 import BoxTable from "components/boxTable/boxTable";
 import Loading from "components/loading";
 import { SystemNotification } from "components/systemNotification/systemNotification";
@@ -83,7 +84,7 @@ export default function ListHistoryHandle(props) {
   };
 
   useEffect(() => {
-    const paramsTemp = _.cloneDeep(params);
+    const paramsTemp = cloneDeep(params);
     setParams((prevParams) => ({ ...prevParams, ...paramsTemp }));
   }, []);
 
@@ -100,7 +101,7 @@ export default function ListHistoryHandle(props) {
     }
     if (isMounted.current === true) {
         getListOjectLog(params);
-      const paramsTemp = _.cloneDeep(params);
+      const paramsTemp = cloneDeep(params);
       if (paramsTemp.limit === 10) {
         delete paramsTemp["limit"];
       }

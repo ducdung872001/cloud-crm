@@ -3,7 +3,7 @@ import { IAction, IActionModal } from "model/OtherModel";
 import Modal, { ModalBody, ModalFooter, ModalHeader } from "components/modal/modal";
 import Dialog, { IContentDialog } from "components/dialog/dialog";
 import "./ModalHistoryOLA.scss";
-import _ from "lodash";
+
 import { SystemNotification } from "components/systemNotification/systemNotification";
 import Loading from "components/loading";
 import BoxTable from "components/boxTable/boxTable";

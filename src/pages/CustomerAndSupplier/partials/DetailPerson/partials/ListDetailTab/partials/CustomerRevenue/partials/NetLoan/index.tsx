@@ -1,5 +1,6 @@
 import React, { Fragment, useState, useEffect, useRef } from "react";
-import _ from "lodash";
+import cloneDeep from "lodash/cloneDeep";
+
 import { formatCurrency, getPageOffset } from "reborn-util";
 import moment from "moment";
 import { showToast } from "utils/common";
@@ -66,7 +67,7 @@ export default function NetLoan({ data, onShow, callBack }) {
   };
 
   useEffect(() => {
-    const paramsTemp = _.cloneDeep(params);
+    const paramsTemp = cloneDeep(params);
     setParams((prevParams) => ({ ...prevParams, ...paramsTemp }));
   }, []);
 
@@ -80,7 +81,7 @@ export default function NetLoan({ data, onShow, callBack }) {
 
     if (isMounted.current === true) {
       getListNetLoan(params);
-      const paramsTemp = _.cloneDeep(params);
+      const paramsTemp = cloneDeep(params);
       if (paramsTemp.limit === 10) {
         delete paramsTemp["limit"];
       }

@@ -1,5 +1,6 @@
 import React, { Fragment, useState, useEffect, useRef, useContext, useMemo } from "react";
-import _ from "lodash";
+import cloneDeep from "lodash/cloneDeep";
+
 import moment from "moment";
 import { Link, useNavigate, useParams, useSearchParams } from "react-router-dom";
 import { IAction, IFilterItem, ISaveSearch } from "model/OtherModel";
@@ -152,7 +153,7 @@ export default function DetailMarketingAutomation() {
   };
 
   useEffect(() => {
-    const paramsTemp = _.cloneDeep(params);
+    const paramsTemp = cloneDeep(params);
     //! đoạn này bao giờ có chức năng lọc thì viết vào đây
     setParams((prevParams) => ({ ...prevParams, ...paramsTemp }));
   }, []);
@@ -164,7 +165,7 @@ export default function DetailMarketingAutomation() {
     }
     if (isMounted.current === true) {
       getListCustomer(params);
-      const paramsTemp = _.cloneDeep(params);
+      const paramsTemp = cloneDeep(params);
       if (paramsTemp.limit === 10) {
         delete paramsTemp["limit"];
       }

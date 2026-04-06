@@ -1,5 +1,6 @@
 import React, { Fragment, useEffect, useMemo, useRef, useState, useContext } from "react";
-import _ from "lodash";
+import cloneDeep from "lodash/cloneDeep";
+
 import moment from "moment";
 import Tippy from "@tippyjs/react";
 import { useSearchParams, useNavigate } from "react-router-dom";
@@ -152,7 +153,7 @@ export default function WarrantyList() {
   };
 
   useEffect(() => {
-    const paramsTemp = _.cloneDeep(params);
+    const paramsTemp = cloneDeep(params);
     searchParams.forEach(async (key, value) => {
       paramsTemp[value] = key;
     });
@@ -166,7 +167,7 @@ export default function WarrantyList() {
     }
     if (isMounted.current === true) {
       getListWarranty(params);
-      const paramsTemp = _.cloneDeep(params);
+      const paramsTemp = cloneDeep(params);
       if (paramsTemp.limit === 10) {
         delete paramsTemp["limit"];
       }

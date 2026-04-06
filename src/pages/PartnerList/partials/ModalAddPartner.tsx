@@ -32,7 +32,8 @@ import Tippy from "@tippyjs/react";
 import PartnerService from "services/PartnerService";
 import PartnerExtraInfoService from "services/PartnerExtraInfoService";
 import PartnerAttributeService from "services/PartnerAttributeService";
-import _ from "lodash";
+import isEqual from "lodash/isEqual";
+
 import CodeService from "services/CodeService";
 
 export default function ModalAddPartner(props: Record<string, unknown>) {
@@ -498,7 +499,7 @@ export default function ModalAddPartner(props: Record<string, unknown>) {
             color: "primary",
             disabled:
               isSubmit ||
-              (!isDifferenceObj(formData.values, values) && _.isEqual(formData.values.bank, bankAccountList)) ||
+              (!isDifferenceObj(formData.values, values) && isEqual(formData.values.bank, bankAccountList)) ||
               (formData.errors && Object.keys(formData.errors).length > 0),
             is_loading: isSubmit,
           },

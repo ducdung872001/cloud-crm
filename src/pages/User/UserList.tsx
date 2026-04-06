@@ -9,7 +9,8 @@ import Loading from "components/loading";
 import { IAction, IFilterItem, IOption, ISaveSearch } from "model/OtherModel";
 import { DataPaginationDefault, PaginationProps } from "components/pagination/pagination";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import _ from "lodash";
+import cloneDeep from "lodash/cloneDeep";
+
 import moment from "moment";
 import { PHONE_REGEX, EMAIL_REGEX } from "utils/constant";
 import AddUserModal from "pages/User/partials/AddUserModal";
@@ -137,7 +138,7 @@ export default function UserList() {
   };
 
   useEffect(() => {
-    const paramsTemp = _.cloneDeep(params);
+    const paramsTemp = cloneDeep(params);
     searchParams.forEach(async (key, value) => {
       paramsTemp[value] = key;
     });
@@ -151,7 +152,7 @@ export default function UserList() {
     }
     if (isMounted.current === true) {
       getListUser(params);
-      const paramsTemp = _.cloneDeep(params);
+      const paramsTemp = cloneDeep(params);
       if (paramsTemp.limit === 10) {
         delete paramsTemp["limit"];
       }
@@ -340,7 +341,7 @@ export default function UserList() {
             let newParams = null;
 
             if (paramsNew) {
-              const changeParams = _.cloneDeep(paramsNew);
+              const changeParams = cloneDeep(paramsNew);
               if (new RegExp(PHONE_REGEX).test(paramsNew.name)) {
                 changeParams.phone = paramsNew.name;
 

@@ -18,7 +18,8 @@ import { formatCurrency, getDomain } from "reborn-util";
 import "tippy.js/animations/scale-extreme.css";
 import "./ViewDetailPerson.scss";
 import SelectCustom from "components/selectCustom/selectCustom";
-import _ from "lodash";
+import isEqual from "lodash/isEqual";
+
 import ScoreHistoryModal from "../ScoreHistoryModal";
 import EditScoreModal from "../EditScoreModal";
 
@@ -1380,7 +1381,7 @@ export default function ViewDetailPerson(props: IViewDetailPersonProps) {
                   fill={true}
                   onBlur={(e) => {
                     const value = e.target.value;
-                    if(!_.isEqual(value, contentReasonFirst)){
+                    if(!isEqual(value, contentReasonFirst)){
                       handleSaveInfoTNEX(data, 2, value, 'LyDo');
                     }
                     

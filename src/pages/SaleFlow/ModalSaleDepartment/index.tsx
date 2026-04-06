@@ -6,7 +6,8 @@ import Dialog, { IContentDialog } from "components/dialog/dialog";
 import { showToast } from "utils/common";
 import "./index.scss";
 import NummericInput from "components/input/numericInput";
-import _ from "lodash";
+import isEqual from "lodash/isEqual";
+
 import Checkbox from "components/checkbox/checkbox";
 import SaleflowApproachService from "services/SaleflowApproachService";
 import SelectCustom from "components/selectCustom/selectCustom";
@@ -253,7 +254,7 @@ export default function ModalSaleDepartment(props: Record<string, unknown>) {
             variant: "outline",
             disabled: isSubmit,
             callback: () => {
-              _.isEqual(formData.values, values) ? handleClearForm() : showDialogConfirmCancel();
+              isEqual(formData.values, values) ? handleClearForm() : showDialogConfirmCancel();
             },
           },
           {
@@ -263,7 +264,7 @@ export default function ModalSaleDepartment(props: Record<string, unknown>) {
             disabled:
               isSubmit ||
               //   !isDifferenceObj(formData.values, valueSetting),
-              _.isEqual(formData.values, values) ||
+              isEqual(formData.values, values) ||
               checkFieldDepartment,
             is_loading: isSubmit,
           },

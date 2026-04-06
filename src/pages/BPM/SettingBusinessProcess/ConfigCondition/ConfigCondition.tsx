@@ -18,7 +18,8 @@ import Button from "components/button/button";
 import Tippy from "@tippyjs/react";
 import CampaignService from "services/CampaignService";
 import MarketingAutomationService from "services/MarketingAutomationService";
-import _ from "lodash";
+import isEqual from "lodash/isEqual";
+
 import ContractEformService from "services/ContractEformService";
 import BusinessProcessService from "services/BusinessProcessService";
 import BpmEformMappingService from "services/BpmEformMappingService";
@@ -1462,7 +1463,7 @@ export default function ConfigCondition(props: Record<string, unknown>) {
       blockRule: formData.blockRule,
     };
 
-    // if(!_.isEqual(nodeName, dataNode?.name)){
+    // if(!isEqual(nodeName, dataNode?.name)){
     //   if(!nodeName){
     //     showToast("Vui lòng nhập tên điều kiện", "error");
     //     return;
@@ -1471,7 +1472,7 @@ export default function ConfigCondition(props: Record<string, unknown>) {
 
     const body: Record<string, unknown> = {
       ...dataNode,
-      ...(!_.isEqual(nodeName, dataNode?.name) ? { name: nodeName } : {}),
+      ...(!isEqual(nodeName, dataNode?.name) ? { name: nodeName } : {}),
       configData: configDataNew,
       // point: nodePoint,
     };
@@ -1509,7 +1510,7 @@ export default function ConfigCondition(props: Record<string, unknown>) {
             disabled: isSubmit || !nodeName || statusMA === 1,
             is_loading: isSubmit,
             callback: () => {
-              if (_.isEqual(nodeName, dataNode?.name)) {
+              if (isEqual(nodeName, dataNode?.name)) {
                 onSubmit(formData);
               } else {
                 onHide(true);
@@ -1682,9 +1683,9 @@ export default function ConfigCondition(props: Record<string, unknown>) {
                   />
                 </div>
                 <div
-                  className={_.isEqual(nodeName, dataNode?.name) || !nodeName ? "button-save-inactive" : "button-save-active"}
+                  className={isEqual(nodeName, dataNode?.name) || !nodeName ? "button-save-inactive" : "button-save-active"}
                   onClick={() => {
-                    if (!_.isEqual(nodeName, dataNode?.name)) {
+                    if (!isEqual(nodeName, dataNode?.name)) {
                       changeNodeName();
                     }
                   }}
@@ -1736,7 +1737,7 @@ export default function ConfigCondition(props: Record<string, unknown>) {
                         onBlur={() => {
                           // setEditName(false);
                           // setNodeName(dataNode?.name)
-                          if (!_.isEqual(nodeName, dataNode?.name)) {
+                          if (!isEqual(nodeName, dataNode?.name)) {
                             changeNodeName();
                           } else {
                             setEditName(true);

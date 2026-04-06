@@ -1,5 +1,6 @@
 import React, { Fragment, useState, useEffect, useRef } from "react";
-import _ from "lodash";
+import cloneDeep from "lodash/cloneDeep";
+
 import moment from "moment";
 import { formatCurrency, getPageOffset } from "reborn-util";
 import { CircularProgressbar } from "react-circular-progressbar";
@@ -68,7 +69,7 @@ export default function NetServiceCharge({ data, onShow, callBack }) {
   };
 
   useEffect(() => {
-    const paramsTemp = _.cloneDeep(params);
+    const paramsTemp = cloneDeep(params);
     setParams((prevParams) => ({ ...prevParams, ...paramsTemp }));
   }, []);
 
@@ -81,7 +82,7 @@ export default function NetServiceCharge({ data, onShow, callBack }) {
     }
     if (isMounted.current === true) {
       getListNetServiceCharge(params);
-      const paramsTemp = _.cloneDeep(params);
+      const paramsTemp = cloneDeep(params);
       if (paramsTemp.limit === 10) {
         delete paramsTemp["limit"];
       }

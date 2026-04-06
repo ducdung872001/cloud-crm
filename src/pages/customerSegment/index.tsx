@@ -1,5 +1,6 @@
 import React, { Fragment, useState, useEffect, useRef } from "react";
-import _ from "lodash";
+import cloneDeep from "lodash/cloneDeep";
+
 import { useNavigate } from "react-router-dom";
 import Icon from "components/icon";
 import Loading from "components/loading";
@@ -91,7 +92,7 @@ export default function CustomerSegment(props) {
   };
 
   useEffect(() => {
-    const paramsTemp = _.cloneDeep(params);
+    const paramsTemp = cloneDeep(params);
     setParams((prevParams) => ({ ...prevParams, ...paramsTemp }));
   }, []);
 
@@ -103,7 +104,7 @@ export default function CustomerSegment(props) {
 
     if (isMounted.current === true) {
       getListCustomerSegment(params);
-      const paramsTemp = _.cloneDeep(params);
+      const paramsTemp = cloneDeep(params);
       if (paramsTemp.limit === 10) {
         delete paramsTemp["limit"];
       }

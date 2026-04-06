@@ -3,7 +3,7 @@ import Icon from "components/icon";
 import "./ListButtonHeader.scss";
 import BusinessProcessService from "services/BusinessProcessService";
 import { showToast } from "utils/common";
-import _ from "lodash";
+
 import Tippy from "@tippyjs/react";
 import Button from "components/button/button";
 import ButtonExportNode from "../ButtonExportNode/ButtonExportNode";

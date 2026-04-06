@@ -1,5 +1,4 @@
 import React, { Fragment, useCallback, useContext, useEffect, useMemo, useRef, useState } from "react";
-import _ from "lodash";
 import moment from "moment";
 import Tippy from "@tippyjs/react";
 import { isDifferenceObj, getPageOffset } from "reborn-util";

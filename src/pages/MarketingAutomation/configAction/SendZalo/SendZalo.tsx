@@ -1,6 +1,8 @@
 /* eslint-disable prefer-const */
 import React, { Fragment, useState, useEffect, useMemo, useRef } from "react";
-import _ from "lodash";
+import cloneDeep from "lodash/cloneDeep";
+import isEqual from "lodash/isEqual";
+
 import Tippy from "@tippyjs/react";
 import { useSearchParams } from "react-router-dom";
 import { IActionModal, IFilterItem } from "model/OtherModel";
@@ -156,7 +158,7 @@ export default function SendZalo(props: Record<string, unknown>) {
 
     if (isMounted.current === true && onShow) {
       getListCategoryTemplateSMS(params);
-      const paramsTemp = _.cloneDeep(params);
+      const paramsTemp = cloneDeep(params);
       if (paramsTemp.limit === 10) {
         delete paramsTemp["limit"];
       }
@@ -287,7 +289,7 @@ export default function SendZalo(props: Record<string, unknown>) {
             },
           },
 
-          ...(!_.isEqual(dataNode?.point, nodePoint) ? ([
+          ...(!isEqual(dataNode?.point, nodePoint) ? ([
               {
                 title: "Xác nhận",
                 // type: "submit",
@@ -295,7 +297,7 @@ export default function SendZalo(props: Record<string, unknown>) {
                 disabled: isSubmit || !nodeName || statusMA === 1,
                 // is_loading: isSubmit,
                 callback: () => {
-                  if(_.isEqual(nodeName, dataNode?.name)){
+                  if(isEqual(nodeName, dataNode?.name)){
                     onSubmitTab1(dataNode, nodePoint)
                   }
                   
@@ -402,7 +404,7 @@ export default function SendZalo(props: Record<string, unknown>) {
                               
                               disabled={editName}
                               onBlur={() => {
-                                if(!_.isEqual(nodeName, dataNode?.name)){
+                                if(!isEqual(nodeName, dataNode?.name)){
                                   changeNodeName()
                                 } else {
                                   setEditName(true);
@@ -435,7 +437,7 @@ export default function SendZalo(props: Record<string, unknown>) {
                               value={nodePoint}
                               fill={true}                                  
                               // onBlur={() => {
-                              //   if(!_.isEqual(nodeName, dataNode?.name)){
+                              //   if(!isEqual(nodeName, dataNode?.name)){
                               //     changeNodeName()
                               //   } else {
                               //     setEditName(true);

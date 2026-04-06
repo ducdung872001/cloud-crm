@@ -9,7 +9,7 @@ import { showToast } from "utils/common";
 import "./ModalConfigKpiEmployee.scss";
 import { ContextType, UserContext } from "contexts/userContext";
 import NummericInput from "components/input/numericInput";
-import _ from "lodash";
+
 import Checkbox from "components/checkbox/checkbox";
 import { IEmployeeFilterRequest } from "model/employee/EmployeeRequestModel";
 import EmployeeService from "services/EmployeeService";

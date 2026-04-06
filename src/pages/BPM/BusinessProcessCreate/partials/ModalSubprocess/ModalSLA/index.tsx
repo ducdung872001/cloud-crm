@@ -10,7 +10,7 @@ import { showToast } from "utils/common";
 import "./index.scss";
 import { ContextType, UserContext } from "contexts/userContext";
 import NummericInput from "components/input/numericInput";
-import _ from "lodash";
+
 import BusinessProcessService from "services/BusinessProcessService";
 import RadioList from "components/radio/radioList";
 import Loading from "components/loading";

@@ -1,5 +1,5 @@
 import React, { Fragment, useContext, useEffect, useMemo, useState } from "react";
-import _ from "lodash";
+
 import { IActionModal } from "model/OtherModel";
 import Modal, { ModalBody, ModalFooter, ModalHeader } from "components/modal/modal";
 import { handDownloadFileOrigin, showToast } from "utils/common";

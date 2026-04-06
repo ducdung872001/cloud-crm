@@ -1,6 +1,7 @@
 import React, { Fragment, useState, useEffect, useMemo, useRef } from "react";
 import moment from "moment";
-import _ from "lodash";
+import cloneDeep from "lodash/cloneDeep";
+
 import { Link, useSearchParams } from "react-router-dom";
 import CustomerService from "services/CustomerService";
 import { showToast } from "utils/common";
@@ -122,7 +123,7 @@ export default function CustomerCareList() {
   };
 
   useEffect(() => {
-    const paramsTemp = _.cloneDeep(params);
+    const paramsTemp = cloneDeep(params);
     searchParams.forEach(async (key, value) => {
       paramsTemp[value] = key;
     });
@@ -136,7 +137,7 @@ export default function CustomerCareList() {
     }
     if (isMounted.current === true) {
       getListCustomer(params);
-      const paramsTemp = _.cloneDeep(params);
+      const paramsTemp = cloneDeep(params);
       if (paramsTemp.limit === 10) {
         delete paramsTemp["limit"];
       }

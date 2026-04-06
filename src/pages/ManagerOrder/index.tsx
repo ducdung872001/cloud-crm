@@ -1,5 +1,6 @@
 import React, { Fragment, useState, useEffect, useRef, useMemo, useCallback, useContext } from "react";
-import _ from "lodash";
+import cloneDeep from "lodash/cloneDeep";
+
 import moment from "moment";
 import classNames from "classnames";
 import { useNavigate, useSearchParams } from "react-router-dom";
@@ -168,7 +169,7 @@ export default function ManageOrder() {
   };
 
   useEffect(() => {
-    const paramsTemp = _.cloneDeep(params);
+    const paramsTemp = cloneDeep(params);
     searchParams.forEach(async (key, value) => {
       paramsTemp[value] = key;
     });
@@ -182,7 +183,7 @@ export default function ManageOrder() {
     }
     if (isMounted.current === true) {
       getListOrderInvoice(params);
-      const paramsTemp = _.cloneDeep(params);
+      const paramsTemp = cloneDeep(params);
       if (paramsTemp.per_page === 10) {
         delete paramsTemp["per_page"];
       }

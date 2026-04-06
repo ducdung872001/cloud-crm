@@ -1,5 +1,6 @@
 import React, { Fragment, useEffect, useState } from "react";
-import _ from "lodash";
+import cloneDeep from "lodash/cloneDeep";
+
 import ReactFlow, { Background, BaseEdge, EdgeLabelRenderer, MiniMap, getBezierPath, useEdgesState, useNodesState } from "reactflow";
 import Icon from "components/icon";
 import ApprovalService from "services/ApprovalService";
@@ -121,8 +122,8 @@ export default function ViewSignature(props) {
   function CustomEdge(props) {
     const { id, sourceX, sourceY, targetX, targetY, sourcePosition, targetPosition, style = {}, markerEnd, target } = props;
 
-    const cloneDataNodes = _.cloneDeep(nodes);
-    const cloneDataEdges = _.cloneDeep(edges);
+    const cloneDataNodes = cloneDeep(nodes);
+    const cloneDataEdges = cloneDeep(edges);
 
     // const sourceCount = cloneDataEdges.filter((el) => el.source === props.source).length;
 

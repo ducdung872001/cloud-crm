@@ -1,5 +1,5 @@
 import React, { Fragment, useState, useEffect, useRef, useMemo } from "react";
-import _ from "lodash";
+
 import Icon from "components/icon";
 import Loading from "components/loading";
 import SearchBox from "components/searchBox/searchBox";

@@ -1,5 +1,6 @@
 import React, { Fragment, useState, useEffect, useRef, useMemo } from "react";
-import _ from "lodash";
+import cloneDeep from "lodash/cloneDeep";
+
 import Tippy from "@tippyjs/react";
 import { useSearchParams } from "react-router-dom";
 import Loading from "components/loading";
@@ -84,7 +85,7 @@ export default function ChooseTemplateSMSList(props: IChooseTemplateSMSModelProp
 
     if (isMounted.current === true && onShow) {
       getListTemplateSMS(params);
-      const paramsTemp = _.cloneDeep(params);
+      const paramsTemp = cloneDeep(params);
       if (paramsTemp.limit === 10) {
         delete paramsTemp["limit"];
       }
@@ -101,7 +102,7 @@ export default function ChooseTemplateSMSList(props: IChooseTemplateSMSModelProp
   }, [params, onShow]);
 
   const deleteParamUrl = () => {
-    const deepParam = _.cloneDeep(params);
+    const deepParam = cloneDeep(params);
     delete deepParam["brandnameId"];
     delete deepParam["tcyId"];
     delete deepParam["page"];

@@ -1,5 +1,6 @@
 import React, { Fragment, useState, useEffect, useRef } from "react";
-import _ from "lodash";
+import cloneDeep from "lodash/cloneDeep";
+
 import Icon from "components/icon";
 import Image from "components/image";
 import Loading from "components/loading";
@@ -126,7 +127,7 @@ export default function ManageDataSharing(props: Record<string, unknown>) {
   };
 
   useEffect(() => {
-    const paramsTemp = _.cloneDeep(params);
+    const paramsTemp = cloneDeep(params);
     setParams((prevParams) => ({ ...prevParams, ...paramsTemp }));
   }, []);
 
@@ -138,7 +139,7 @@ export default function ManageDataSharing(props: Record<string, unknown>) {
 
     if (isMounted.current === true) {
         getListPermission(params, tab);
-      const paramsTemp = _.cloneDeep(params);
+      const paramsTemp = cloneDeep(params);
       if (paramsTemp.limit === 10) {
         delete paramsTemp["limit"];
       }

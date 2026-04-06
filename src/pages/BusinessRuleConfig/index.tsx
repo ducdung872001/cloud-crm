@@ -12,7 +12,8 @@ import { IContractPipelineResponse } from "model/contractPipeline/ContractPipeli
 import { showToast } from "utils/common";
 import { getPageOffset } from "reborn-util";
 import { formatCurrency, getPermissions } from "utils/common";
-import _ from "lodash";
+import cloneDeep from "lodash/cloneDeep";
+
 import HeaderFilter from "components/HeaderFilter/HeaderFilter";
 import { ContextType, UserContext } from "contexts/userContext";
 import DecisionTableInputService from "services/DecisionTableInputService";
@@ -214,7 +215,7 @@ export default function BusinessRuleConfig(props: Record<string, unknown>) {
   };
 
   useEffect(() => {
-    const paramsTemp = _.cloneDeep(params);
+    const paramsTemp = cloneDeep(params);
     setParams((prevParams) => ({ ...prevParams, ...paramsTemp }));
   }, []);
 
@@ -226,7 +227,7 @@ export default function BusinessRuleConfig(props: Record<string, unknown>) {
 
     if (isMounted.current === true && params.businessRuleId) {
       getListRuleItem(params);
-      const paramsTemp = _.cloneDeep(params);
+      const paramsTemp = cloneDeep(params);
       if (paramsTemp.limit === 10) {
         delete paramsTemp["limit"];
       }

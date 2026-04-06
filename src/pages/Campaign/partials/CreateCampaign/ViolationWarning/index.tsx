@@ -1,7 +1,7 @@
 import React, { Fragment, useState, useEffect, useCallback, useMemo, useContext } from "react";
 import { IFieldCustomize, IFormData, IValidation } from "model/FormModel";
 import "./index.scss";
-import _ from "lodash";
+
 import Checkbox from "components/checkbox/checkbox";
 import SelectCustom from "components/selectCustom/selectCustom";
 import TemplateEmailService from "services/TemplateEmailService";

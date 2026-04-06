@@ -16,7 +16,7 @@ import DatePickerCustom from "components/datepickerCustom/datepickerCustom";
 import Icon from "components/icon";
 import Button from "components/button/button";
 import Tippy from "@tippyjs/react";
-import _ from "lodash";
+
 import BusinessProcessService from "services/BusinessProcessService";
 import EmployeeService from "services/EmployeeService";
 import SegmentFilterService from "services/SegmentFilterService";

@@ -1,5 +1,6 @@
 import React, { Fragment, useState, useEffect, useMemo, useContext } from "react";
-import _ from "lodash";
+import isEqual from "lodash/isEqual";
+
 import { formatCurrency } from "reborn-util";
 import { IAction, IActionModal } from "model/OtherModel";
 import Icon from "components/icon";
@@ -950,7 +951,7 @@ export default function AddBTwoBModal(props: IAddBTwoBModalProps) {
                   color: "warning",
                   variant: "outline",
                   callback: () => {
-                    onBackup(idCustomer, !_.isEqual(formDataOne, valuesStepOne));
+                    onBackup(idCustomer, !isEqual(formDataOne, valuesStepOne));
                     handClearForm(false);
                   },
                 },
@@ -988,8 +989,8 @@ export default function AddBTwoBModal(props: IAddBTwoBModalProps) {
                         ? idResponse
                           ? true
                           : false
-                        : _.isEqual(formDataOne, valuesStepOne)
-                      : _.isEqual(formDataTwo, valueStepTwo),
+                        : isEqual(formDataOne, valuesStepOne)
+                      : isEqual(formDataTwo, valueStepTwo),
                   is_loading: isSubmit,
                 },
               ] as Record<string, unknown>[])

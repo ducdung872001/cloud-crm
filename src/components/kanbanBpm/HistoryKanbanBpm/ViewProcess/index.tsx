@@ -1,5 +1,5 @@
 import React, { Fragment, useEffect, useRef, useState } from "react";
-import _ from "lodash";
+
 import Icon from "components/icon";
 import { showToast } from "utils/common";
 import "./index.scss";

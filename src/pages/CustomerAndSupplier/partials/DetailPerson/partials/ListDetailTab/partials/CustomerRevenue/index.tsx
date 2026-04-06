@@ -1,5 +1,6 @@
 import React, { Fragment, useState, useEffect, useRef } from "react";
-import _ from "lodash";
+import cloneDeep from "lodash/cloneDeep";
+
 import Tippy from "@tippyjs/react";
 import Button from "components/button/button";
 import { PaginationProps, DataPaginationDefault } from "components/pagination/pagination";
@@ -49,7 +50,7 @@ export default function CustomerRevenue({ data }) {
   const abortController = new AbortController();
 
   useEffect(() => {
-    const paramsTemp = _.cloneDeep(params);
+    const paramsTemp = cloneDeep(params);
     setParams((prevParams) => ({ ...prevParams, ...paramsTemp }));
   }, []);
 
@@ -61,7 +62,7 @@ export default function CustomerRevenue({ data }) {
       return;
     }
     if (isMounted.current === true) {      
-      const paramsTemp = _.cloneDeep(params);
+      const paramsTemp = cloneDeep(params);
       if (paramsTemp.limit === 10) {
         delete paramsTemp["limit"];
       }

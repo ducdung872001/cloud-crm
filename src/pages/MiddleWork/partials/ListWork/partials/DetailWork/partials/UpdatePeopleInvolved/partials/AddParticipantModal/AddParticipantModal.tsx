@@ -1,5 +1,6 @@
 import React, { Fragment, useState, useEffect, useRef } from "react";
-import _ from "lodash";
+import cloneDeep from "lodash/cloneDeep";
+
 import { ISaveSearch } from "model/OtherModel";
 import { IEmployeeFilterRequest } from "model/employee/EmployeeRequestModel";
 import { IEmployeeResponse } from "model/employee/EmployeeResponseModel";
@@ -100,7 +101,7 @@ export default function AddParticipantModal(props: IAddParticipantModalProps) {
     if (isMounted.current === true && onShow && params.limit > 0) {
       getListEmployee(params);
 
-      const paramsTemp = _.cloneDeep(params);
+      const paramsTemp = cloneDeep(params);
 
       if (paramsTemp.limit === 10) {
         delete paramsTemp["limit"];

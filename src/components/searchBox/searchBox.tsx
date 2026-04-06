@@ -5,7 +5,8 @@ import { IFilterItem, ISaveSearch, ISortItem } from "model/OtherModel";
 import Filter, { ListFilterChoose } from "components/filter/filter";
 import SaveSearch from "components/saveSearch/saveSearch";
 import Button from "components/button/button";
-import _ from "lodash";
+import isEqual from "lodash/isEqual";
+
 import { BuildObjectFilter, clearFilter } from "utils/filter";
 import Sortby from "components/sortby/sortby";
 import { SelectOptionData } from "utils/selectCommon";
@@ -83,7 +84,7 @@ function SearchBox(props: SearchBoxProps) {
 
   useEffect(() => {
     const paramsTemp = BuildObjectFilter(params, filterItems);
-    if (!_.isEqual(params, paramsTemp)) {
+    if (!isEqual(params, paramsTemp)) {
       updateParams({ ...paramsTemp, page: 1 });
     }
   }, [filterItems]);
@@ -239,7 +240,7 @@ function SearchBox(props: SearchBoxProps) {
   const callbackSaveSearch = (saveSearch: ISaveSearch) => {
     if (saveSearch.params && saveSearch.params.length > 0) {
       const paramsTemp = BuildObjectFilter(params, filterItems, saveSearch);
-      if (!_.isEqual(params, paramsTemp)) {
+      if (!isEqual(params, paramsTemp)) {
         const filterItemsTemp = filterItems?.map((filter) => {
           const param = saveSearch.params.find((param) => param.key === filter.key);
           if (param) {
@@ -261,7 +262,7 @@ function SearchBox(props: SearchBoxProps) {
       }
     } else {
       const paramsTemp = clearFilter(params, filterItems);
-      if (!_.isEqual(params, paramsTemp)) {
+      if (!isEqual(params, paramsTemp)) {
         const filterItemsTemp = filterItems?.map((filter) => {
           return {
             ...filter,

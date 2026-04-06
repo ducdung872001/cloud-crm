@@ -1,5 +1,6 @@
 import React, { Fragment, useState, useEffect, useRef } from "react";
-import _ from "lodash";
+import cloneDeep from "lodash/cloneDeep";
+
 import { IAddRelatedCustomerModalProps } from "model/workOrder/PropsModel";
 import { ICustomerResponse } from "model/customer/CustomerResponseModel";
 import { ISaveSearch } from "model/OtherModel";
@@ -105,7 +106,7 @@ export default function AddRelatedCustomerModal(props: IAddRelatedCustomerModalP
     if (isMounted.current === true && onShow && params.limit > 0 && params.page >= 1) {
       getListCustomer(params);
 
-      const paramsTemp = _.cloneDeep(params);
+      const paramsTemp = cloneDeep(params);
 
       if (paramsTemp.limit === 10) {
         delete paramsTemp["limit"];

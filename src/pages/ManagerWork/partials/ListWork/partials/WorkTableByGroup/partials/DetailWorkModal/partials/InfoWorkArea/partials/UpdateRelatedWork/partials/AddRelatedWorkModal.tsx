@@ -1,5 +1,6 @@
 import React, { Fragment, useEffect, useRef, useState } from "react";
-import _ from "lodash";
+import cloneDeep from "lodash/cloneDeep";
+
 import moment from "moment";
 import { ISaveSearch } from "model/OtherModel";
 import { IAddRelatedWorkModelProps } from "model/workOrder/PropsModel";
@@ -101,7 +102,7 @@ export default function AddRelatedWorkModal(props: IAddRelatedWorkModelProps) {
     if (isMounted.current === true && onShow && params.limit > 0 && params.page >= 1) {
       getListWork(params);
 
-      const paramsTemp = _.cloneDeep(params);
+      const paramsTemp = cloneDeep(params);
 
       if (paramsTemp.limit === 10) {
         delete paramsTemp["limit"];

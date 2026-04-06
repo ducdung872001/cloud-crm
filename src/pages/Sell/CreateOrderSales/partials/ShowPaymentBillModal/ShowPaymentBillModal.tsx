@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useMemo, Fragment, useRef } from "react";
-import _ from "lodash";
+import uniq from "lodash/uniq";
+
 import { useReactToPrint } from "react-to-print";
 import moment from "moment";
 import { useNavigate } from "react-router-dom";
@@ -79,7 +80,7 @@ export default function ShowPaymentBillModal(props: ShowPaymentBillModalProps) {
 
   useEffect(() => {
     if (lstIdService && lstIdService.length > 0) {
-      const changeLstIdService = _.uniq(lstIdService);
+      const changeLstIdService = uniq(lstIdService);
       const result = changeLstIdService.join(",");
 
       getPomService(result);

@@ -7,7 +7,8 @@ import { DataPaginationDefault, PaginationProps } from "components/pagination/pa
 import SearchBox from "components/searchBox/searchBox";
 import { SystemNotification } from "components/systemNotification/systemNotification";
 import TitleAction, { ITitleActions } from "components/titleAction/titleAction";
-import _ from "lodash";
+import cloneDeep from "lodash/cloneDeep";
+
 import { IContractPipelineFilterRequest } from "model/contractPipeline/ContractPipelineRequestModel";
 import { IContractPipelineResponse } from "model/contractPipeline/ContractPipelineResponseModel";
 import { IAction, IFilterItem, ISaveSearch } from "model/OtherModel";
@@ -94,7 +95,7 @@ export default function SettingPromotionList(props: Record<string, unknown>) {
   };
 
   useEffect(() => {
-    const paramsTemp = _.cloneDeep(params);
+    const paramsTemp = cloneDeep(params);
     setParams((prevParams) => ({ ...prevParams, ...paramsTemp }));
   }, []);
 
@@ -106,7 +107,7 @@ export default function SettingPromotionList(props: Record<string, unknown>) {
 
     if (isMounted.current === true) {
       getListContractEform(params);
-      const paramsTemp = _.cloneDeep(params);
+      const paramsTemp = cloneDeep(params);
       if (paramsTemp.limit === 10) {
         delete paramsTemp["limit"];
       }

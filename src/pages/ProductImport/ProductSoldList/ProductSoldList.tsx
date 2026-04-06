@@ -1,5 +1,6 @@
 import React, { Fragment, useState, useEffect, useRef, useMemo, useContext } from "react";
-import _ from "lodash";
+import cloneDeep from "lodash/cloneDeep";
+
 import moment from "moment";
 import { useSearchParams } from "react-router-dom";
 import Loading from "components/loading";
@@ -119,7 +120,7 @@ export default function ProductSoldList() {
   };
 
   useEffect(() => {
-    const paramsTemp = _.cloneDeep(params);
+    const paramsTemp = cloneDeep(params);
     searchParams.forEach(async (key, value) => {
       paramsTemp[value] = key;
     });
@@ -133,7 +134,7 @@ export default function ProductSoldList() {
     }
     if (isMounted.current === true) {
       getListProductSold(params);
-      const paramsTemp = _.cloneDeep(params);
+      const paramsTemp = cloneDeep(params);
       if (paramsTemp.limit === 10) {
         delete paramsTemp["limit"];
       }

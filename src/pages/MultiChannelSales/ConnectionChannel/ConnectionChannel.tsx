@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import _ from "lodash";
+
 import "./ConnectionChannel.scss";
 import ModalAddChannel from "../Overview/ModalAddChannel/ModalAddChannel";
 

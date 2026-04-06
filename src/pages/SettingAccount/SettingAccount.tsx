@@ -1,5 +1,6 @@
 import React, { Fragment, useContext, useEffect, useMemo, useRef, useState } from "react";
-import _ from "lodash";
+import isEqual from "lodash/isEqual";
+
 import moment from "moment";
 import { getDomain, getSearchParameters } from "reborn-util";
 import { useCookies } from "react-cookie";
@@ -366,7 +367,7 @@ export default function SettingAccount() {
                   </div>
                 </div>
                 <div className="footer__info">
-                  <Button type="submit" disabled={_.isEqual(valueInfo, valuesUser) || isSubmit || (dataExpired && dataExpired.numDay <= 0)}>
+                  <Button type="submit" disabled={isEqual(valueInfo, valuesUser) || isSubmit || (dataExpired && dataExpired.numDay <= 0)}>
                     Lưu {isSubmit ? <Icon name="Loading" /> : ""}
                   </Button>
                 </div>

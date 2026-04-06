@@ -8,7 +8,7 @@ import { showToast } from "utils/common";
 import "./DetailServiceModal.scss";
 import RebornEditor from "components/editor/reborn";
 import { serialize } from "utils/editor";
-import _ from "lodash";
+
 import ServiceService from "services/ServiceService";
 
 export default function DetailServiceModal(props: Record<string, unknown>) {

@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useMemo, Fragment, useCallback, useContext } from "react";
-import _ from "lodash";
+import isEqual from "lodash/isEqual";
+
 import { IActionModal } from "model/OtherModel";
 import { IFieldCustomize, IFormData, IValidation } from "model/FormModel";
 import { IAddWorkProjectModalProps } from "model/workProject/PropsModel";
@@ -585,7 +586,7 @@ export default function AddProjectManagementModal(props: IAddWorkProjectModalPro
             variant: "outline",
             disabled: isSubmit,
             callback: () => {
-              _.isEqual(formData?.values, values) ? handleClearForm(false) : showDialogConfirmCancel();
+              isEqual(formData?.values, values) ? handleClearForm(false) : showDialogConfirmCancel();
             },
           },
           {
@@ -596,7 +597,7 @@ export default function AddProjectManagementModal(props: IAddWorkProjectModalPro
               isSubmit ||
               startDay > endDay ||
               endDay < startDay ||
-              _.isEqual(formData?.values, values) ||
+              isEqual(formData?.values, values) ||
               (formData.errors && Object.keys(formData.errors).length > 0),
             is_loading: isSubmit,
           },

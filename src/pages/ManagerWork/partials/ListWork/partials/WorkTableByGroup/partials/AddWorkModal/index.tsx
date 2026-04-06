@@ -1,5 +1,6 @@
 import React, { Fragment, useState, useEffect, useCallback, useMemo, useRef } from "react";
-import _ from "lodash";
+import isEqual from "lodash/isEqual";
+
 import { isDifferenceObj } from "reborn-util";
 import { IActionModal } from "model/OtherModel";
 import { IFieldCustomize, IFormData, IValidation } from "model/FormModel";
@@ -611,7 +612,7 @@ export default function AddWorkModal(props: IAddWorkModelProps) {
             variant: "outline",
             disabled: isSubmit,
             callback: () => {
-              _.isEqual(formData.values, values) ? handleClearForm(false) : showDialogConfirmCancel();
+              isEqual(formData.values, values) ? handleClearForm(false) : showDialogConfirmCancel();
             },
           },
           {
@@ -622,7 +623,7 @@ export default function AddWorkModal(props: IAddWorkModelProps) {
               isSubmit ||
               validateProject ||
               (formData?.values?.workLoad !== "" && formData?.values?.workLoad == 0) ||
-              _.isEqual(formData.values, values) ||
+              isEqual(formData.values, values) ||
               (formData.errors && Object.keys(formData.errors).length > 0),
             is_loading: isSubmit,
           },

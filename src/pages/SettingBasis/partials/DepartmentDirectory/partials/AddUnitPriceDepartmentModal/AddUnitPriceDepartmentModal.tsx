@@ -1,5 +1,6 @@
 import React, { Fragment, useEffect, useMemo, useState } from "react";
-import _ from "lodash";
+import isEqual from "lodash/isEqual";
+
 import Modal, { ModalBody, ModalFooter, ModalHeader } from "components/modal/modal";
 import SelectCustom from "components/selectCustom/selectCustom";
 import NummericInput from "components/input/numericInput";
@@ -210,7 +211,7 @@ export default function AddUnitPriceDepartmentModal(props: IAddUnitPriceDepartme
             title: "Tạo mới đơn giá",
             type: "submit",
             color: "primary",
-            disabled: isSubmit || _.isEqual(formData, values),
+            disabled: isSubmit || isEqual(formData, values),
             is_loading: isSubmit,
           },
         ],

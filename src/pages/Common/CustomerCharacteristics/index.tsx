@@ -1,5 +1,6 @@
 import React, { Fragment, useEffect, useMemo, useRef, useState } from "react";
-import _ from "lodash";
+import cloneDeep from "lodash/cloneDeep";
+
 import Tippy from "@tippyjs/react";
 import Icon from "components/icon";
 import { showToast } from "utils/common";
@@ -99,7 +100,7 @@ export default function CustomerCharacteristics(props: ICustomerCharacteristicsP
   };
 
   useEffect(() => {
-    const paramsTemp = _.cloneDeep(params);
+    const paramsTemp = cloneDeep(params);
     setParams((prevParams) => ({ ...prevParams, ...paramsTemp }));
   }, []);
 
@@ -111,7 +112,7 @@ export default function CustomerCharacteristics(props: ICustomerCharacteristicsP
 
     if (isMounted.current === true) {
       getListCustomerCharacteristics(params);
-      const paramsTemp = _.cloneDeep(params);
+      const paramsTemp = cloneDeep(params);
       if (paramsTemp.limit === 10) {
         delete paramsTemp["limit"];
       }

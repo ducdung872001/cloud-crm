@@ -1,5 +1,6 @@
 import React, { Fragment, useContext, useEffect, useMemo, useState } from "react";
-import _ from "lodash";
+import isEqual from "lodash/isEqual";
+
 import { IActionModal } from "model/OtherModel";
 import ImageThirdGender from "assets/images/third-gender.png";
 import SelectCustom from "components/selectCustom/selectCustom";
@@ -207,7 +208,7 @@ export default function AddSigner(props: IAddSignerProps) {
             title: "Lưu",
             type: "submit",
             color: "primary",
-            disabled: isSubmit || _.isEqual(formData, values) || Object.values(validateFormData).filter((item) => item === true).length > 0,
+            disabled: isSubmit || isEqual(formData, values) || Object.values(validateFormData).filter((item) => item === true).length > 0,
             is_loading: isSubmit,
           },
         ],

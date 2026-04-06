@@ -1,5 +1,6 @@
 import React, { Fragment, useState, useEffect, useRef, useMemo, useContext } from "react";
-import _ from "lodash";
+import cloneDeep from "lodash/cloneDeep";
+
 import moment from "moment";
 import { isDifferenceObj, getPageOffset } from "reborn-util";
 import { useSearchParams } from "react-router-dom";
@@ -133,7 +134,7 @@ export default function CallHistory(props: ICallHistoryProps) {
   };
 
   useEffect(() => {
-    const paramsTemp = _.cloneDeep(params);
+    const paramsTemp = cloneDeep(params);
     searchParams.forEach(async (key, value) => {
       paramsTemp[value] = key;
     });
@@ -147,7 +148,7 @@ export default function CallHistory(props: ICallHistoryProps) {
     }
     if (isMounted.current === true) {
       getListHistory(params);
-      const paramsTemp = _.cloneDeep(params);
+      const paramsTemp = cloneDeep(params);
       if (paramsTemp.limit === 10) {
         delete paramsTemp["limit"];
       }

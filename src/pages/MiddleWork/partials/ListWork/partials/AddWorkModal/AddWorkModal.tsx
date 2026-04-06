@@ -1,5 +1,6 @@
 import React, { Fragment, useState, useEffect, useCallback, useMemo, useRef, useContext } from "react";
-import _ from "lodash";
+import isEqual from "lodash/isEqual";
+
 import moment from "moment";
 import { getSearchParameters, isDifferenceObj } from "reborn-util";
 import { IActionModal } from "model/OtherModel";
@@ -1859,7 +1860,7 @@ export default function AddWorkModal(props: IAddWorkModelProps) {
             variant: "outline",
             disabled: isSubmit,
             callback: () => {
-              _.isEqual(formData.values, values) ? handleClearForm(false) : showDialogConfirmCancel();
+              isEqual(formData.values, values) ? handleClearForm(false) : showDialogConfirmCancel();
             },
           },
           {
@@ -1873,7 +1874,7 @@ export default function AddWorkModal(props: IAddWorkModelProps) {
               validateWordLoad ||
               validateProject ||
               (formData?.values?.workLoad !== "" && formData?.values?.workLoad == 0) ||
-              _.isEqual(formData.values, values) ||
+              isEqual(formData.values, values) ||
               (formData.errors && Object.keys(formData.errors).length > 0),
             is_loading: isSubmit,
           },

@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useMemo, Fragment, useRef } from "react";
-import _ from "lodash";
+import uniq from "lodash/uniq";
+
 import Tippy from "@tippyjs/react";
 import { useReactToPrint } from "react-to-print";
 import moment from "moment";
@@ -72,7 +73,7 @@ export default function ModalDetailSaleInvoice(props: ShowModalDetailSaleInvoice
 
   useEffect(() => {
     if (lstIdService && lstIdService.length > 0) {
-      const changeLstIdService = _.uniq(lstIdService);
+      const changeLstIdService = uniq(lstIdService);
       const result = changeLstIdService.join(",");
 
       getPomService(result);

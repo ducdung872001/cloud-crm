@@ -1,6 +1,7 @@
 /* eslint-disable prefer-const */
 import React, { Fragment, useCallback, useContext, useEffect, useMemo, useRef, useState } from "react";
-import _ from "lodash";
+import cloneDeep from "lodash/cloneDeep";
+
 import moment from "moment";
 import Tippy from "@tippyjs/react";
 import { getSearchParameters, getPageOffset, getDomain } from "reborn-util";
@@ -859,7 +860,7 @@ export default function CustomerAndSupplier(props: Record<string, unknown>) {
   };
 
   useEffect(() => {
-    const paramsTemp = _.cloneDeep(params);
+    const paramsTemp = cloneDeep(params);
     searchParams.forEach(async (key, value) => {
       paramsTemp[value] = key;
     });
@@ -876,7 +877,7 @@ export default function CustomerAndSupplier(props: Record<string, unknown>) {
         getListCustomer(params, activeTitleHeader);
       }
 
-      const paramsTemp = _.cloneDeep(params);
+      const paramsTemp = cloneDeep(params);
       if (paramsTemp.limit === 10) {
         delete paramsTemp["limit"];
       }

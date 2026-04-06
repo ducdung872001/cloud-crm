@@ -1,5 +1,6 @@
 import React, { Fragment, useEffect, useRef, useState } from "react";
-import _ from "lodash";
+import cloneDeep from "lodash/cloneDeep";
+
 import moment from "moment";
 import { IAction, ISaveSearch } from "model/OtherModel";
 import { ITipUserDetail } from "model/tipUser/PropsModel";
@@ -86,7 +87,7 @@ export default function TipUserDetail(props: ITipUserDetail) {
   };
 
   useEffect(() => {
-    const paramsTemp = _.cloneDeep(params);
+    const paramsTemp = cloneDeep(params);
     setParams((prevParams) => ({ ...prevParams, ...paramsTemp }));
   }, []);
 
@@ -98,7 +99,7 @@ export default function TipUserDetail(props: ITipUserDetail) {
 
     if (isMounted.current === true) {
       getListDetailTip(params);
-      const paramsTemp = _.cloneDeep(params);
+      const paramsTemp = cloneDeep(params);
       if (paramsTemp.limit === 10) {
         delete paramsTemp["limit"];
       }

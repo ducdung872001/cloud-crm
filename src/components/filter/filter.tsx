@@ -1,5 +1,8 @@
 import React, {Fragment, useContext, useEffect, useRef, useState, memo} from "react";
-import _ from "lodash";
+import cloneDeep from "lodash/cloneDeep";
+import debounce from "lodash/debounce";
+import isEmpty from "lodash/isEmpty";
+
 import moment from "moment";
 import Button from "components/button/button";
 import Icon from "components/icon";
@@ -34,7 +37,7 @@ function Filter(props: FilterProps) {
   const changeValueFilter = (filterItem: IFilterItem) => {
     const index = listFilterItemState.findIndex((filter) => filter.key === filterItem.key);
     if (listFilterItemState.length > 0 && index > -1) {
-      const listFilterItemNew = _.cloneDeep(listFilterItemState);
+      const listFilterItemNew = cloneDeep(listFilterItemState);
       listFilterItemNew[index] = filterItem;
       setListFilterItemState(listFilterItemNew);
     } else {
@@ -54,7 +57,7 @@ function Filter(props: FilterProps) {
   };
 
   const removeFilter = (index) => {
-    const listFilterItemStateTemp = _.cloneDeep(listFilterItemState);
+    const listFilterItemStateTemp = cloneDeep(listFilterItemState);
     listFilterItemStateTemp.splice(index, 1);
     setListFilterItemState(listFilterItemStateTemp);
   };
@@ -65,7 +68,7 @@ function Filter(props: FilterProps) {
   }, [listFilterItem]);
 
   const submitFilter = () => {
-    let listFilterItemTemp = _.cloneDeep(listFilterItem);
+    let listFilterItemTemp = cloneDeep(listFilterItem);
     listFilterItemTemp = listFilterItemTemp.map((filter) => {
       const filterItemState = listFilterItemState.find((filterState) => filterState.key === filter.key);
       return {
@@ -156,7 +159,7 @@ function Filter(props: FilterProps) {
                     id="optionAdd"
                     options={[
                       { value: "", label: "Chọn điều kiện lọc" },
-                      ..._.cloneDeep(listFilterItem)
+                      ...cloneDeep(listFilterItem)
                         .filter((x) => !listFilterItemState.some((y) => y.key === x.key))
                         .map((filter) => {
                           return { value: filter.key, label: filter.name };
@@ -203,7 +206,7 @@ function Filter(props: FilterProps) {
             <Icon name="ChevronLeft" />
           </Button>
           <div className="filter-item" style={{ left: `${left}px` }}>
-            {_.cloneDeep(listFilterItem)
+            {cloneDeep(listFilterItem)
               .filter((filter) => filter.is_featured === true)
               .map((filter, index) => {
                 const filterItemState = listFilterItemState.find((filterItem) => filterItem.key === filter.key);
@@ -242,7 +245,7 @@ function Filter(props: FilterProps) {
         </div>
       ) : (
         width >= 768 &&
-        _.cloneDeep(listFilterItem)
+        cloneDeep(listFilterItem)
           .filter((filter) => filter.is_featured === true)
           .map((filter, index) => {
             const filterItemState = listFilterItemState.find((filterItem) => filterItem.key === filter.key);
@@ -569,8 +572,8 @@ function FilterSelect(props: FilterItemProps) {
     }
   };
 
-  const loadOptions = _.debounce(async (inputValue, callback) => {
-    if (_.isEmpty(inputValue)) {
+  const loadOptions = debounce(async (inputValue, callback) => {
+    if (isEmpty(inputValue)) {
       return callback({ options: filterItem.list });
     }
     const dataOption = await SelectOptionData(filterItem.key, { ...filterItem.params, query: inputValue });
@@ -656,7 +659,7 @@ export function ListFilterChoose(props: ListFilterChooseProps) {
   const filteredList = [...listFilterItem];
 
   const removeValueFilter = (key) => {
-    const listFilterItemNew = _.cloneDeep(listFilterItem);
+    const listFilterItemNew = cloneDeep(listFilterItem);
     const index = listFilterItemNew.findIndex((filterItem) => filterItem.key === key);
     if (index > -1) {
       listFilterItemNew[index].value = "";

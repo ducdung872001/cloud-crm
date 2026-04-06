@@ -9,7 +9,8 @@ import Loading from "components/loading";
 import { IAction, IFilterItem, IOption, ISaveSearch } from "model/OtherModel";
 import { DataPaginationDefault, PaginationProps } from "components/pagination/pagination";
 import { useSearchParams } from "react-router-dom";
-import _ from "lodash";
+import cloneDeep from "lodash/cloneDeep";
+
 import moment from "moment";
 import BeautySalonService from "services/BeautySalonService";
 import Dialog, { IContentDialog } from "components/dialog/dialog";
@@ -160,7 +161,7 @@ export default function OrganizationList() {
   };
 
   useEffect(() => {
-    const paramsTemp = _.cloneDeep(params);
+    const paramsTemp = cloneDeep(params);
     searchParams.forEach(async (key, value) => {
       paramsTemp[value] = key;
     });
@@ -168,7 +169,7 @@ export default function OrganizationList() {
   }, []);
 
   useEffect(() => {
-    const paramsTemp = _.cloneDeep(params);
+    const paramsTemp = cloneDeep(params);
 
     if (!params?.appCode) {
       delete paramsTemp["appStatus"];
@@ -185,7 +186,7 @@ export default function OrganizationList() {
     }
     if (isMounted.current === true) {
       getListBeautySalon(params);
-      const paramsTemp = _.cloneDeep(params);
+      const paramsTemp = cloneDeep(params);
       if (paramsTemp.limit === 10) {
         delete paramsTemp["limit"];
       }

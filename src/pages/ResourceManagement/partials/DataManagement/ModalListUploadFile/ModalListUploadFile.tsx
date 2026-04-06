@@ -14,7 +14,8 @@ import "./ModalListUploadFile.scss";
 import { formatCurrency, getPageOffset } from "reborn-util";
 import OrganizationService from "services/OrganizationService";
 import { DataPaginationDefault, PaginationProps } from "components/pagination/pagination";
-import _ from "lodash";
+import cloneDeep from "lodash/cloneDeep";
+
 import BoxTable from "components/boxTable/boxTable";
 import Loading from "components/loading";
 import { SystemNotification } from "components/systemNotification/systemNotification";
@@ -108,7 +109,7 @@ export default function ModalListUploadFile(props: Record<string, unknown>) {
         getListFileUpload(params);
       }
       
-      const paramsTemp = _.cloneDeep(params);
+      const paramsTemp = cloneDeep(params);
       if (paramsTemp.limit === 10) {
         delete paramsTemp["limit"];
       }

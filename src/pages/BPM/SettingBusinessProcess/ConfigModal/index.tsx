@@ -11,7 +11,9 @@ import Loading from "components/loading";
 import Button from "components/button/button";
 import Tippy from "@tippyjs/react";
 import MarketingAutomationService from "services/MarketingAutomationService";
-import _ from "lodash";
+import cloneDeep from "lodash/cloneDeep";
+import isEqual from "lodash/isEqual";
+
 import BusinessProcessService from "services/BusinessProcessService";
 import BpmFormService from "services/BpmFormService";
 
@@ -805,7 +807,7 @@ export default function ConfigModal(props: Record<string, unknown>) {
   const dataTabConfig = configs.find((_, idx) => idx === idxConfig);
 
   const handleDeleteItemChildren = async (id) => {
-    const newLayouts = _.cloneDeep(dataTabConfig.layouts);
+    const newLayouts = cloneDeep(dataTabConfig.layouts);
     newLayouts[breakpoint] = newLayouts[breakpoint].filter((item) => item.i !== id);
 
     const response = await BpmFormArtifactService.delete(id);
@@ -913,7 +915,7 @@ export default function ConfigModal(props: Record<string, unknown>) {
     // const data = e.dataTransfer.getData("text");
     // const newIcon = toolboxItems[parseInt(data, 10)];
 
-    const newLayouts = _.cloneDeep(dataTabConfig?.layouts);
+    const newLayouts = cloneDeep(dataTabConfig?.layouts);
 
     const saveConfig = {
       type: type,
@@ -1059,7 +1061,7 @@ export default function ConfigModal(props: Record<string, unknown>) {
       });
     }
 
-    const newLayouts = _.cloneDeep(layouts);
+    const newLayouts = cloneDeep(layouts);
 
     Object.keys(newLayouts).forEach((size) => {
       newLayouts[size] = newLayouts[size].map((item, index) => {
@@ -1099,7 +1101,7 @@ export default function ConfigModal(props: Record<string, unknown>) {
 
     const body: IEmailRequest = {
       ...dataNode,
-      ...(!_.isEqual(nodeName, dataNode?.name) ? { name: nodeName } : {}),
+      ...(!isEqual(nodeName, dataNode?.name) ? { name: nodeName } : {}),
       configData: null,
       point: nodePoint,
     };
@@ -1136,7 +1138,7 @@ export default function ConfigModal(props: Record<string, unknown>) {
           //   disabled: isSubmit || !nodeName || statusMA === 1,
           //   is_loading: isSubmit,
           //   callback: () => {
-          //     if (_.isEqual(nodeName, dataNode?.name)) {
+          //     if (isEqual(nodeName, dataNode?.name)) {
           //       // onSubmit(formData);
           //     } else {
           //       onHide(true);
@@ -1440,9 +1442,9 @@ export default function ConfigModal(props: Record<string, unknown>) {
                   />
                 </div>
                 <div
-                  className={_.isEqual(nodeName, dataNode?.name) || !nodeName ? "button-save-inactive" : "button-save-active"}
+                  className={isEqual(nodeName, dataNode?.name) || !nodeName ? "button-save-inactive" : "button-save-active"}
                   onClick={() => {
-                    if (!_.isEqual(nodeName, dataNode?.name)) {
+                    if (!isEqual(nodeName, dataNode?.name)) {
                       changeNodeName();
                     }
                   }}

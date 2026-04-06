@@ -1,5 +1,6 @@
 import React, { Fragment, useEffect, useState } from "react";
-import _ from "lodash";
+import cloneDeep from "lodash/cloneDeep";
+
 import moment from "moment";
 import Tippy from "@tippyjs/react";
 import { useParams } from "react-router-dom";
@@ -64,7 +65,7 @@ export default function ListBill(props: IListBillProps) {
   useEffect(() => {
     if (tab == "tab_one" && params?.customerId) {
       getListBill(params);
-      const paramsTemp = _.cloneDeep(params);
+      const paramsTemp = cloneDeep(params);
       if (paramsTemp.limit === 10) {
         delete paramsTemp["limit"];
       }

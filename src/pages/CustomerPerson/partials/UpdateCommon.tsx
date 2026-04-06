@@ -1,5 +1,6 @@
 import React, { Fragment, useState, useEffect, useCallback, useMemo, useRef, useContext } from "react";
-import _ from "lodash";
+import omit from "lodash/omit";
+
 import Dialog, { IContentDialog } from "components/dialog/dialog";
 import FieldCustomize from "components/fieldCustomize/fieldCustomize";
 import Button from "components/button/button";
@@ -393,7 +394,7 @@ export default function UpdateCommon(props: UpdateCommonModalProps) {
         ...(formData.values as IUpdateCommonRequest),
       };
 
-      const result: IUpdateCustomerGroupRequest = _.omit(body, ["employeeId", "relationshipId", "sourceId"]);
+      const result: IUpdateCustomerGroupRequest = omit(body, ["employeeId", "relationshipId", "sourceId"]);
       response = await CustomerService.updateCustomerGroup(result);
     }
 
@@ -403,7 +404,7 @@ export default function UpdateCommon(props: UpdateCommonModalProps) {
         ...(formData.values as IUpdateCommonRequest),
       };
 
-      const result: IUpdateCustomerEmployeeRequest = _.omit(body, ["cgpId", "relationshipId", "sourceId"]);
+      const result: IUpdateCustomerEmployeeRequest = omit(body, ["cgpId", "relationshipId", "sourceId"]);
       response = await CustomerService.updateCustomerEmployee(result);
     }
 
@@ -413,7 +414,7 @@ export default function UpdateCommon(props: UpdateCommonModalProps) {
         ...(formData.values as IUpdateCommonRequest),
       };
 
-      const result: IUpdateCustomerSourceRequest = _.omit(body, ["cgpId", "relationshipId", "employeeId"]);
+      const result: IUpdateCustomerSourceRequest = omit(body, ["cgpId", "relationshipId", "employeeId"]);
       response = await CustomerService.updateCustomerSource(result);
     }
 
@@ -423,7 +424,7 @@ export default function UpdateCommon(props: UpdateCommonModalProps) {
         ...(formData.values as IUpdateCommonRequest),
       };
 
-      const result: IUpdateCustomeRelationshipRequest = _.omit(body, ["cgpId", "employeeId", "sourceId"]);
+      const result: IUpdateCustomeRelationshipRequest = omit(body, ["cgpId", "employeeId", "sourceId"]);
       response = await CustomerService.updateCustomeRelationship(result);
     }
 

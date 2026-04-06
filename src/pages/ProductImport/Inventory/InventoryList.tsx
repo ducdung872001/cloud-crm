@@ -1,5 +1,6 @@
 import React, { Fragment, useEffect, useRef, useState } from "react";
-import _ from "lodash";
+import cloneDeep from "lodash/cloneDeep";
+
 import moment from "moment";
 import Loading from "components/loading";
 import SearchBox from "components/searchBox/searchBox";
@@ -280,7 +281,7 @@ export default function WarehouseBookList() {
 
   // Sync URL params on mount + load danh sách kho cho filter
   useEffect(() => {
-    const tmp = _.cloneDeep(params);
+    const tmp = cloneDeep(params);
     searchParams.forEach((v, k) => { tmp[k] = v; });
     setParams(prev => ({ ...prev, ...tmp }));
 
@@ -299,7 +300,7 @@ export default function WarehouseBookList() {
     if (!isMounted.current) { isMounted.current = true; return; }
     fetchData(params);
 
-    const tmp = _.cloneDeep(params) as Record<string, any>;
+    const tmp = cloneDeep(params) as Record<string, any>;
     if (tmp.limit === 10) delete tmp.limit;
     Object.keys(tmp).forEach(k => { if (tmp[k] === "" || tmp[k] == null) delete tmp[k]; });
     if (tmp.page === 1) delete tmp.page;

@@ -1,5 +1,6 @@
 import React, { Fragment, useState, useEffect, useRef, useContext, useCallback } from "react";
-import _ from "lodash";
+import cloneDeep from "lodash/cloneDeep";
+
 import moment from "moment";
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { IAction, ISaveSearch } from "model/OtherModel";
@@ -163,7 +164,7 @@ export default function BusinessProcessList() {
   };
 
   useEffect(() => {
-    const paramsTemp = _.cloneDeep(params);
+    const paramsTemp = cloneDeep(params);
     searchParams.forEach(async (key, value) => {
       paramsTemp[value] = key;
     });
@@ -177,7 +178,7 @@ export default function BusinessProcessList() {
     }
     if (isMounted.current === true) {
       getListBusinessProcess(params);
-      const paramsTemp = _.cloneDeep(params);
+      const paramsTemp = cloneDeep(params);
       if (paramsTemp.limit === 10) {
         delete paramsTemp["limit"];
       }

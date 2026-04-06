@@ -1,5 +1,6 @@
 import React, { Fragment, useEffect, useRef, useState } from "react";
-import _ from "lodash";
+import cloneDeep from "lodash/cloneDeep";
+
 import moment from "moment";
 import Tippy from "@tippyjs/react";
 import Icon from "components/icon";
@@ -88,7 +89,7 @@ export default function CustomerZaloList(props: ICustomerZaloListProps) {
     }
     if (isMounted.current === true) {
       getListCustomerZalo(params);
-      const paramsTemp = _.cloneDeep(params);
+      const paramsTemp = cloneDeep(params);
       if (paramsTemp.limit === 10) {
         delete paramsTemp["limit"];
       }
@@ -119,7 +120,7 @@ export default function CustomerZaloList(props: ICustomerZaloListProps) {
   };
 
   useEffect(() => {
-    const paramsTemp = _.cloneDeep(params);
+    const paramsTemp = cloneDeep(params);
     setParams((prevParams) => ({ ...prevParams, ...paramsTemp }));
     getLitsZaloFollowed();
   }, []);

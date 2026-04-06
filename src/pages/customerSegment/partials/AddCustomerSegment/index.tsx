@@ -1,5 +1,7 @@
 import React, { Fragment, useEffect, useMemo, useState } from "react";
-import _ from "lodash";
+import cloneDeep from "lodash/cloneDeep";
+import isEqual from "lodash/isEqual";
+
 import moment from "moment";
 import Tippy from "@tippyjs/react";
 import { convertParamsToString, createArrayFromTo, createArrayFromToR } from "reborn-util";
@@ -1488,7 +1490,7 @@ export default function AddCustomerSegment(props: IAddCustomerSegmentProps) {
 
     setIsSubmit(true);
 
-    const changeFormData = _.cloneDeep(formData);
+    const changeFormData = cloneDeep(formData);
     const modifiedmodifiedData = transformData(changeFormData);
 
     const body = {
@@ -1530,7 +1532,7 @@ export default function AddCustomerSegment(props: IAddCustomerSegmentProps) {
             variant: "outline",
             disabled: isSubmit,
             callback: () => {
-              _.isEqual(formData, values) ? handClearForm() : showDialogConfirmCancel();
+              isEqual(formData, values) ? handClearForm() : showDialogConfirmCancel();
             },
           },
           ...(!disableFieldCommom
@@ -1539,7 +1541,7 @@ export default function AddCustomerSegment(props: IAddCustomerSegmentProps) {
                   title: data ? "Cập nhật" : "Tạo mới",
                   type: "submit",
                   color: "primary",
-                  disabled: isSubmit || _.isEqual(formData, values) || Object.values(validateRule).filter((item) => item === true).length > 0,
+                  disabled: isSubmit || isEqual(formData, values) || Object.values(validateRule).filter((item) => item === true).length > 0,
                   is_loading: isSubmit,
                 },
               ] as Record<string, unknown>)

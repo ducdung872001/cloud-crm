@@ -10,7 +10,8 @@ import Loading from "components/loading";
 import { IAction, ISaveSearch } from "model/OtherModel";
 import { DataPaginationDefault, PaginationProps } from "components/pagination/pagination";
 import { useSearchParams } from "react-router-dom";
-import _ from "lodash";
+import cloneDeep from "lodash/cloneDeep";
+
 import moment from "moment";
 import { getPageOffset } from "reborn-util";
 import ApplicationService from "services/ApplicationService";
@@ -133,7 +134,7 @@ export default function ExtensionList() {
   };
 
   useEffect(() => {
-    const paramsTemp = _.cloneDeep(params);
+    const paramsTemp = cloneDeep(params);
     searchParams.forEach(async (key, value) => {
       paramsTemp[value] = key;
     });
@@ -147,7 +148,7 @@ export default function ExtensionList() {
     }
     if (isMounted.current === true) {
       getListApplication(params);
-      const paramsTemp = _.cloneDeep(params);
+      const paramsTemp = cloneDeep(params);
       if (paramsTemp.limit === 10) {
         delete paramsTemp["limit"];
       }

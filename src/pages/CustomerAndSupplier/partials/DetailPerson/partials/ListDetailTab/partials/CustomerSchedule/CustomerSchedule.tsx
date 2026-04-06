@@ -5,7 +5,8 @@ import Icon from "components/icon";
 import Button from "components/button/button";
 import { PaginationProps, DataPaginationDefault } from "components/pagination/pagination";
 import { showToast } from "utils/common";
-import _ from "lodash";
+import cloneDeep from "lodash/cloneDeep";
+
 import { getPageOffset } from "reborn-util";
 import moment from "moment";
 import Loading from "components/loading";
@@ -94,7 +95,7 @@ export default function CustomerSchedule({ idCustomer }) {
   };
 
   useEffect(() => {
-    const paramsTemp = _.cloneDeep(params);
+    const paramsTemp = cloneDeep(params);
     setParams((prevParams) => ({ ...prevParams, ...paramsTemp }));
   }, []);
 
@@ -106,7 +107,7 @@ export default function CustomerSchedule({ idCustomer }) {
 
     if (isMounted.current === true) {
       getListSchedule(params);
-      const paramsTemp = _.cloneDeep(params);
+      const paramsTemp = cloneDeep(params);
 
       Object.keys(paramsTemp).map(function (key) {
         paramsTemp[key] === "" ? delete paramsTemp[key] : null;

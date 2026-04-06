@@ -1,10 +1,11 @@
-import _ from "lodash";
+import cloneDeep from "lodash/cloneDeep";
+
 import { IFilterItem, ISaveSearch } from "model/OtherModel";
 
 // Tạo param từ bộ lọc và saveSearch
 export function BuildObjectFilter(params: Record<string, unknown>, listFilter: IFilterItem[], saveSearch?: ISaveSearch) {
   let result = {};
-  const paramsOld = _.cloneDeep(params);
+  const paramsOld = cloneDeep(params);
   if (listFilter) {
     listFilter.map((filterItem) => {
       if (saveSearch && saveSearch.params) {
@@ -52,7 +53,7 @@ export function BuildObjectFilter(params: Record<string, unknown>, listFilter: I
 }
 
 export function clearFilter(params: Record<string, unknown>, listFilter: IFilterItem[]) {
-  const paramsOld = _.cloneDeep(params);
+  const paramsOld = cloneDeep(params);
   listFilter?.map((filterItem) => {
     let paramName = filterItem.param_name;
     paramName = paramName ? paramName : ["fromTime", "toTime"];

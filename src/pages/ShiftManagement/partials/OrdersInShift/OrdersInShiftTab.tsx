@@ -1,5 +1,6 @@
 import React, { Fragment, useCallback, useEffect, useMemo, useRef, useState } from "react";
-import _ from "lodash";
+import cloneDeep from "lodash/cloneDeep";
+
 import SearchBox from "components/searchBox/searchBox";
 import BoxTable from "components/boxTable/boxTable";
 import Loading from "components/loading";
@@ -302,7 +303,7 @@ export default function OrdersInShiftTab({ shiftId: shiftIdProp }: Props) {
           isFilter={true}
           listFilterItem={listFilterItem}
           updateParams={(paramsNew) => {
-            const p = _.cloneDeep(paramsNew);
+            const p = cloneDeep(paramsNew);
             setParams({ ...p, page: p.page ?? 1 });
           }}
           placeholderSearch="Tìm theo mã đơn, khách hàng"

@@ -7,7 +7,8 @@ import AddWorkModal from "pages/MiddleWork/partials/ListWork/partials/AddWorkMod
 import { IAction } from "model/OtherModel";
 import { PaginationProps, DataPaginationDefault } from "components/pagination/pagination";
 import { showToast } from "utils/common";
-import _ from "lodash";
+import cloneDeep from "lodash/cloneDeep";
+
 import { getPageOffset } from "reborn-util";
 import moment from "moment";
 import { CircularProgressbar } from "react-circular-progressbar";
@@ -72,7 +73,7 @@ export default function CustomerJob({ dataCustomer }) {
   };
 
   useEffect(() => {
-    const paramsTemp = _.cloneDeep(params);
+    const paramsTemp = cloneDeep(params);
     setParams((prevParams) => ({ ...prevParams, ...paramsTemp }));
   }, []);
 
@@ -83,7 +84,7 @@ export default function CustomerJob({ dataCustomer }) {
     }
     if (isMounted.current === true) {
       getListWork(params);
-      const paramsTemp = _.cloneDeep(params);
+      const paramsTemp = cloneDeep(params);
       if (paramsTemp.limit === 10) {
         delete paramsTemp["limit"];
       }

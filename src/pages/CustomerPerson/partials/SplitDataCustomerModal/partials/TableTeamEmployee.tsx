@@ -7,7 +7,8 @@ import Loading from "components/loading";
 import BoxTable from "components/boxTable/boxTable";
 import { DataPaginationDefault, PaginationProps } from "components/pagination/pagination";
 import { getPageOffset } from "reborn-util";
-import _ from "lodash";
+import cloneDeep from "lodash/cloneDeep";
+
 
 export default function TableTeamEmployee(props: Record<string, unknown>) {
   const { groupId } = props;
@@ -65,7 +66,7 @@ export default function TableTeamEmployee(props: Record<string, unknown>) {
 
     if (isMounted.current === true) {
         getListTableEmployee(params);
-      const paramsTemp = _.cloneDeep(params);
+      const paramsTemp = cloneDeep(params);
       if (paramsTemp.limit === 10) {
         delete paramsTemp["limit"];
       }

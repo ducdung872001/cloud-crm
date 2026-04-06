@@ -1,5 +1,5 @@
 import React from "react";
-import _ from "lodash";
+
 import { IFieldCustomize } from "model/FormModel";
 import Icon from "components/icon";
 import NummericInput from "components/input/numericInput";

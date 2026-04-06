@@ -19,7 +19,8 @@ import Button from "components/button/button";
 import Tippy from "@tippyjs/react";
 import CampaignService from "services/CampaignService";
 import MarketingAutomationService from "services/MarketingAutomationService";
-import _ from "lodash";
+import isEqual from "lodash/isEqual";
+
 
 export default function ConfigZalo(props: Record<string, unknown>) {
   const { onShow, onHide, dataNode, setDataNode, statusMA } = props;
@@ -1417,7 +1418,7 @@ export default function ConfigZalo(props: Record<string, unknown>) {
 
     const body: IEmailRequest = {
       ...dataNode,
-      ...(!_.isEqual(nodeName, dataNode?.name) ? { name: nodeName } : {}),
+      ...(!isEqual(nodeName, dataNode?.name) ? { name: nodeName } : {}),
       configData: configDataNew,
       point: nodePoint,
     };
@@ -1455,7 +1456,7 @@ export default function ConfigZalo(props: Record<string, unknown>) {
             disabled: isSubmit || !nodeName || statusMA === 1,
             is_loading: isSubmit,
             callback: () => {
-              if (_.isEqual(nodeName, dataNode?.name)) {
+              if (isEqual(nodeName, dataNode?.name)) {
                 onSubmit(formData);
               } else {
                 onHide(true);
@@ -1625,7 +1626,7 @@ export default function ConfigZalo(props: Record<string, unknown>) {
                         iconPosition="right"
                         disabled={editName}
                         onBlur={() => {
-                          if (!_.isEqual(nodeName, dataNode?.name)) {
+                          if (!isEqual(nodeName, dataNode?.name)) {
                             changeNodeName();
                           } else {
                             setEditName(true);
@@ -1658,7 +1659,7 @@ export default function ConfigZalo(props: Record<string, unknown>) {
                         value={nodePoint}
                         fill={true}
                         // onBlur={() => {
-                        //   if(!_.isEqual(nodeName, dataNode?.name)){
+                        //   if(!isEqual(nodeName, dataNode?.name)){
                         //     changeNodeName()
                         //   } else {
                         //     setEditName(true);

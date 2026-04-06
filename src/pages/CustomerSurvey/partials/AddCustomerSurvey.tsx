@@ -1,6 +1,7 @@
 import React, { Fragment, useEffect, useMemo, useState } from "react";
 import parser from "html-react-parser";
-import _ from "lodash";
+import cloneDeep from "lodash/cloneDeep";
+
 import { IAddCustomerSurveyProps } from "model/surveyForm/PropsModel";
 import { ModalFooter } from "components/modal/modal";
 import Icon from "components/icon";
@@ -285,7 +286,7 @@ export default function AddCustomerSurvey(props: IAddCustomerSurveyProps) {
 
     setIsSubmit(true);
 
-    const newFormData = _.cloneDeep(formData);
+    const newFormData = cloneDeep(formData);
 
     const result = {
       ...newFormData,
