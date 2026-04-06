@@ -3,6 +3,9 @@ import React, { useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Routes, Route, useNavigate, useLocation } from "react-router-dom";
 import { UserContext } from "./contexts/userContext";
+import { AuthContext, AuthContextType } from "./contexts/authContext";
+import { UIContext, UIContextType } from "./contexts/uiContext";
+import { CallContext, CallContextType } from "./contexts/callContext";
 // Start css của thư viện
 import "swiper/css";
 import "styles/main.scss";
@@ -333,38 +336,65 @@ export default function App() {
     }
   }, [callState]);
 
+  const authValue: AuthContextType = {
+    id: user?.id,
+    idEmployee: user?.idEmployee,
+    username: user?.username,
+    name: user?.name,
+    phone: user?.phone,
+    avatar: user?.avatar,
+    email: user?.email,
+    token: user?.token,
+    role: user?.role,
+    gender: user?.gender,
+    permissions: user?.permissions,
+    product_store: user?.product_store,
+    dataExpired,
+    valueLanguage,
+    setValueLanguage,
+    dataInfoEmployee,
+    lstRole,
+    dataBeauty,
+    setDataBeauty,
+  };
+
+  const uiValue: UIContextType = {
+    isCollapsedSidebar,
+    setIsCollapsedSidebar,
+    dataBranch,
+    setDataBranch,
+    isShowFeedback,
+    setIsShowFeedback,
+    isShowChatBot,
+    setIsShowChatBot,
+    showModalPackage,
+    setShowModalPackage,
+    lastShowModalPayment,
+    setLastShowModalPayment,
+    countUnread,
+    setCountUnread,
+    newNotificationPayload,
+  };
+
+  const callValue: CallContextType = {
+    callState,
+    incomingNumber,
+    makeCall,
+    answer,
+    hangup,
+    transfer,
+  };
+
   return (
+    <AuthContext.Provider value={authValue}>
+    <UIContext.Provider value={uiValue}>
+    <CallContext.Provider value={callValue}>
     <UserContext.Provider
       value={{
         ...user,
-        lstRole: lstRole,
-        dataBeauty: dataBeauty,
-        setDataBeauty: setDataBeauty,
-        isCollapsedSidebar: isCollapsedSidebar,
-        setIsCollapsedSidebar: setIsCollapsedSidebar,
-        dataBranch: dataBranch,
-        setDataBranch: setDataBranch,
-        isShowFeedback: isShowFeedback,
-        setIsShowFeedback: setIsShowFeedback,
-        isShowChatBot: isShowChatBot,
-        setIsShowChatBot: setIsShowChatBot,
-        dataExpired: dataExpired,
-        valueLanguage: valueLanguage,
-        setValueLanguage: setValueLanguage,
-        dataInfoEmployee: dataInfoEmployee,
-        showModalPackage: showModalPackage,
-        setShowModalPackage: setShowModalPackage,
-        lastShowModalPayment: lastShowModalPayment,
-        setLastShowModalPayment: setLastShowModalPayment,
-        countUnread: countUnread,
-        setCountUnread: setCountUnread,
-        newNotificationPayload: newNotificationPayload,
-        callState: callState,
-        incomingNumber: incomingNumber,
-        makeCall: makeCall,
-        answer: answer,
-        hangup: hangup,
-        transfer: transfer,
+        ...authValue,
+        ...uiValue,
+        ...callValue,
       }}
     >
       <MsalProvider instance={msalInstance}>
@@ -404,5 +434,8 @@ export default function App() {
         />
       </MsalProvider>
     </UserContext.Provider>
+    </CallContext.Provider>
+    </UIContext.Provider>
+    </AuthContext.Provider>
   );
 }
