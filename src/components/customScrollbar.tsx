@@ -9,8 +9,6 @@ interface CustomScrollbarProps {
   handleScroll?: React.UIEventHandler<HTMLDivElement>;
 }
 
-
-const style_width_height: React.CSSProperties = { width: width, height: height };
 function CustomScrollbar(props: CustomScrollbarProps) {
   const { children, className, width, height, autoHide, handleScroll } = props;
   const renderThumb = ({ style, ...props }) => {
@@ -25,7 +23,7 @@ function CustomScrollbar(props: CustomScrollbarProps) {
   };
   return (
     <Scrollbars
-      style={style_width_height}
+      style={{ width, height }}
       renderTrackVertical={renderTrack}
       renderThumbVertical={renderThumb}
       className={`custom-scrollbar${className ? ` ${className}` : ""}`}
