@@ -113,7 +113,7 @@ export default function App() {
             }
           }
 
-          if (JSON.stringify(cookies.user) !== JSON.stringify(user)) {
+          if (cookies.user?.id !== user?.id || cookies.token !== user?.token) {
             setUser({ ...cookies.user, token: cookies.token });
             setIsLogin(true);
             if (cookies.user?.expired_cookie && isRunRefresh === false) {
