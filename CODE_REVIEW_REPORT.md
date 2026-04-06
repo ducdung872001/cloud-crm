@@ -166,7 +166,7 @@
 | Loại | Số lượng | Chi tiết |
 |------|----------|----------|
 | Non-retail pages | 19 thư mục (~12MB) | BPM, ProjectList, BusinessRule, Treatment, HR/Timekeeping |
-| Unused services | 13 files | Real estate domain: ElectricityMeter, WaterRate, Vehicle, ParkingFee |
+| FIX_Unused services | 13 files | Real estate domain: ElectricityMeter, WaterRate, Vehicle, ParkingFee |
 | FIX_Unused models | 12 thư mục | earnings, rentalType, KPI variants, treatment |
 | Backup files | 5+ files | EmailListBackup.tsx, GridAgTable_old.tsx, BusinessProcessList copy.tsx |
 
