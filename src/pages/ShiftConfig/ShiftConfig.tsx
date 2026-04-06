@@ -500,7 +500,7 @@ export default function ShiftConfigTabs() {
                       <div key={`nm-${row.employeeId}`} className="staff-name-cell">
                         <div className="staff-avatar-sm">
                           {row.avatar
-                            ? <img src={row.avatar} alt={row.name} />
+                            ? <img loading="lazy" src={row.avatar} alt={row.name} />
                             : getInitials(row.name)
                           }
                         </div>

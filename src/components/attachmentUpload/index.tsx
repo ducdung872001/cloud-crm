@@ -313,7 +313,7 @@ const AttachmentUploader: React.FC<Props> = ({
     return (
       <div key={item.url + String(idx)} className="image-item-attach">
         {isImage ? (
-          <img src={item.url} alt={item.name ?? "image"} />
+          <img loading="lazy" src={item.url} alt={item.name ?? "image"} />
         ) : (
           <div className="file-preview">
             <div className="file-preview-top">
@@ -510,8 +510,7 @@ const FileIcon: React.FC<{ type: string }> = ({ type }) => {
   if (t === "xlsx" || t === "xls" || t === "docx" || t === "doc" || t === "pptx" || t === "ppt") {
     return (
       <div className={`file-icon`} aria-hidden>
-        <img
-          src={t == "xlsx" || t == "xls" ? ImgExcel : t === "docx" || t === "doc" ? ImgWord : t === "pptx" || t === "ppt" ? ImgPowerpoint : ""}
+        <img loading="lazy" src={t == "xlsx" || t == "xls" ? ImgExcel : t === "docx" || t === "doc" ? ImgWord : t === "pptx" || t === "ppt" ? ImgPowerpoint : ""}
           alt="File Type"
           style={{ width: 25, height: 25 }}
         />

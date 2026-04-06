@@ -105,7 +105,7 @@ export default function ViewProjectManagementModal(props: IViewProjectManagement
                       {JSON.parse(detailProjectManagement?.docLink ? detailProjectManagement?.docLink : "[]").map((item, idx) => {
                         return item.type === "image" ? (
                           <div key={idx} className="image-item">
-                            <img src={item.url} alt="" />
+                            <img loading="lazy" src={item.url} alt="" />
                           </div>
                         ) : (
                           ""
@@ -122,7 +122,7 @@ export default function ViewProjectManagementModal(props: IViewProjectManagement
                   <h4 className="title">Người quản lý cơ hội</h4>
                   <div className="name__manager">
                     <div className="avatar--manager">
-                      <img src={detailProjectManagement.avatar || ImageThirdGender} alt={detailProjectManagement.employeeName} />
+                      <img loading="lazy" src={detailProjectManagement.avatar || ImageThirdGender} alt={detailProjectManagement.employeeName} />
                     </div>
                     {detailProjectManagement.employeeName}
                   </div>
@@ -144,7 +144,7 @@ export default function ViewProjectManagementModal(props: IViewProjectManagement
                           return (
                             <div key={idx} className="item__participant">
                               <div className="avatar--participant">
-                                <img src={item.avatar || ImageThirdGender} alt={item.name} />
+                                <img loading="lazy" src={item.avatar || ImageThirdGender} alt={item.name} />
                               </div>
                               {item.name}
                             </div>

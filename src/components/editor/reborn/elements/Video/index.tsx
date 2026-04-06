@@ -55,8 +55,7 @@ const Video = ({ attributes, children, element }) => {
                             `}
                         >
                             {children}
-                            <img
-                                contentEditable={false}
+                            <img loading="lazy" contentEditable={false}
                                 src={element?.thumbnail}
                                 className={css`
                                     display: block;

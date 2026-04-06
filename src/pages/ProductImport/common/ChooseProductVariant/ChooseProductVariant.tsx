@@ -276,8 +276,7 @@ export default function ChooseProductVariant({
                           </td>
                           <td className="cpv-col-avatar">
                             <div className="cpv-avatar">
-                              <img
-                                src={item.productAvatar || ImageError}
+                              <img loading="lazy" src={item.productAvatar || ImageError}
                                 alt={item.productName}
                                 onError={e => {
                                   (e.currentTarget as HTMLImageElement).onerror = null;

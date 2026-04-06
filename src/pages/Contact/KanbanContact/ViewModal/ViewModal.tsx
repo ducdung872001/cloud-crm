@@ -151,7 +151,7 @@ export default function ViewWorkModal(props: IViewWorkModalProps) {
                               {JSON.parse(item.name || "[]").map((el, idxEl) => {
                                 return el.type === "image" ? (
                                   <div key={idxEl} className="image-item">
-                                    <img src={el.url} alt="" />
+                                    <img loading="lazy" src={el.url} alt="" />
                                   </div>
                                 ) : (
                                   ""
@@ -171,7 +171,7 @@ export default function ViewWorkModal(props: IViewWorkModalProps) {
                       <h4 className="title">Người quản lý dự án</h4>
                       <div className="name__manager">
                         <div className="avatar--manager">
-                          <img src={detailWork?.managerAvatar || ImageThirdGender} alt={detailWork.managerName} />
+                          <img loading="lazy" src={detailWork?.managerAvatar || ImageThirdGender} alt={detailWork.managerName} />
                         </div>
                         {detailWork.managerName}
                       </div>
@@ -181,7 +181,7 @@ export default function ViewWorkModal(props: IViewWorkModalProps) {
                       <h4 className="title">Người nhân việc</h4>
                       <div className="name__recipient">
                         <div className="avatar--recipient">
-                          <img src={detailWork?.employeeAvatar || ImageThirdGender} alt="" />
+                          <img loading="lazy" src={detailWork?.employeeAvatar || ImageThirdGender} alt="" />
                         </div>
                         {detailWork.employeeName}
                       </div>
@@ -200,7 +200,7 @@ export default function ViewWorkModal(props: IViewWorkModalProps) {
                                 return (
                                   <div key={idx} className="item__participant">
                                     <div className="avatar--participant">
-                                      <img src={item.avatar || ImageThirdGender} alt={item.name} />
+                                      <img loading="lazy" src={item.avatar || ImageThirdGender} alt={item.name} />
                                     </div>
                                     {item.name}
                                   </div>
@@ -227,7 +227,7 @@ export default function ViewWorkModal(props: IViewWorkModalProps) {
                                 return (
                                   <div key={idx} className="item__customer">
                                     <div className="avatar--customer">
-                                      <img src={item.avatar || ImageThirdGender} alt={item.name} />
+                                      <img loading="lazy" src={item.avatar || ImageThirdGender} alt={item.name} />
                                     </div>
                                     {item.name}
                                   </div>

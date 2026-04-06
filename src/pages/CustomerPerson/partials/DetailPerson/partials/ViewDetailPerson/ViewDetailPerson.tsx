@@ -610,7 +610,7 @@ export default function ViewDetailPerson(props: IViewDetailPersonProps) {
             <div className="info__item--left">
               <Tippy content="Họ và tên" delay={[100, 0]} animation="scale-extreme">
                 <div className="avatar-item">
-                  <img src={data.avatar ? data.avatar : ThirdGender} alt={data.name} />
+                  <img loading="lazy" src={data.avatar ? data.avatar : ThirdGender} alt={data.name} />
                 </div>
               </Tippy>
             </div>

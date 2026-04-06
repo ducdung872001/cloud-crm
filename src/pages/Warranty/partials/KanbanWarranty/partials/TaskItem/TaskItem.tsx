@@ -42,7 +42,7 @@ export default function TaskItem(props: ITaskItemProps) {
                 {item.createdTime ? formatDate(item.createdTime) : ""}
               </div>
               <div className="avatar" title={item.customerName}>
-                <img src={item.customerAvatar ? item.customerAvatar : OtherGenders} alt={item.customerName} />
+                <img loading="lazy" src={item.customerAvatar ? item.customerAvatar : OtherGenders} alt={item.customerName} />
               </div>
             </div>
           </div>

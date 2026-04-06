@@ -197,7 +197,7 @@ export default function SupplierPage() {
       // Nhà cung cấp
       <div key="name" className="sup-name-cell">
         {item.avatar
-          ? <img src={item.avatar} alt="" className="sup-avatar sup-avatar--img" />
+          ? <img loading="lazy" src={item.avatar} alt="" className="sup-avatar sup-avatar--img" />
           : <div className="sup-avatar" style={{ background: bg }}>{initial}</div>
         }
         <div className="sup-name-cell__info">

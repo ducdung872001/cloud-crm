@@ -225,7 +225,7 @@ export default function ListComment(props: IListCommentProps) {
       ) : (
         <div className="notify-chatbot">
           <div className="image-chatbot">
-            <img src={NoImageChatBot} alt="" />
+            <img loading="lazy" src={NoImageChatBot} alt="" />
           </div>
           <h2>Chào mừng bạn đến với tính năng chat qua fanpage của Reborn !</h2>
         </div>

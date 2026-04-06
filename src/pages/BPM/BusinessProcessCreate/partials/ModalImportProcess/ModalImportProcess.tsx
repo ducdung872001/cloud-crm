@@ -370,7 +370,7 @@ export default function ModalImportProcess(props: Record<string, unknown>) {
                                 );
                               }}
                             >
-                              {item?.type == "image" ? <img src={item?.fileUrl} width={36} height={36} /> : <Icon name="FileXls" />}
+                              {item?.type == "image" ? <img loading="lazy" src={item?.fileUrl} width={36} height={36} /> : <Icon name="FileXls" />}
                               {/* <Icon name='FileXls'/> */}
                               <div className="data-file">
                                 <span style={{ fontSize: 14, fontWeight: "500" }}>

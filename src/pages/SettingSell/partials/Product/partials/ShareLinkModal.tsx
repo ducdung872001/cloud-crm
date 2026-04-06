@@ -52,8 +52,7 @@ const copyToClipboard = (text: string): Promise<void> => {
 function QRCode({ value, size = 160 }: { value: string; size?: number }) {
   const imgSrc = `https://api.qrserver.com/v1/create-qr-code/?size=${size}x${size}&data=${encodeURIComponent(value)}&color=1a1a2e&bgcolor=ffffff&margin=2`;
   return (
-    <img
-      src={imgSrc}
+    <img loading="lazy" src={imgSrc}
       alt="QR Code"
       width={size}
       height={size}
@@ -141,7 +140,7 @@ export default function ShareLinkModal({
         <div className="share-modal__header">
           <div className="share-modal__header-left">
             {productAvatar ? (
-              <img src={productAvatar} alt={productName} className="share-modal__product-img" />
+              <img loading="lazy" src={productAvatar} alt={productName} className="share-modal__product-img" />
             ) : (
               <div className="share-modal__product-img-placeholder">
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#c4c9d4" strokeWidth="1.5">

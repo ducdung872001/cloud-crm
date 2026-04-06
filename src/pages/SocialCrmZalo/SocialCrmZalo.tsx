@@ -292,7 +292,7 @@ export default function SocialCrmZalo() {
                       ) : (
                           <div className="notify-chatting">
                             <div className="img-notify">
-                                <img src={NoImageChat} alt="" />
+                                <img loading="lazy" src={NoImageChat} alt="" />
                             </div>
                             <h2>Chưa có hội thoại nào!</h2>
                           </div>

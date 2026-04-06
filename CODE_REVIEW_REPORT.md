@@ -137,7 +137,7 @@
 | 4_FIX | key={index} thay vì unique ID | 1,590 instances | Gây lỗi khi reorder/filter list |
 | 5_FIX | Full lodash import | 46+ files | import _ from "lodash" — load toàn bộ library |
 | 6_FIX | moment.js vẫn dùng | 30+ files | date-fns đã có trong dependencies nhưng không dùng |
-| 7 | useCallback gần như không dùng | ~1 lần | Inline functions tạo lại mỗi render |
+| 7_FIX | useCallback gần như không dùng | ~1 lần | Inline functions tạo lại mỗi render |
 
 ### 4.3 MEDIUM
 

@@ -101,15 +101,15 @@ export default function ShowModalPayment(props: IShowModalPaymentProps) {
                 <div className="info-step info-step--one">
                   <div className="info-step--left">
                     {/* <div className="logo-msb">
-                      <img src={LogoMB} alt="logo-msb" />
+                      <img loading="lazy" src={LogoMB} alt="logo-msb" />
                     </div> */}
                     <div className="qr-code">
-                      <img src={QR} alt="logo-msb" />
+                      <img loading="lazy" src={QR} alt="logo-msb" />
                     </div>
                   </div>
                   <div className="info-step--right">
                     <div className="user-receive logo-bank">
-                      <img src={LogoMB} alt="logo-mb" />
+                      <img loading="lazy" src={LogoMB} alt="logo-mb" />
                     </div>
                     <div className="user-receive">
                       <strong>Chủ tài khoản:</strong> REBORN JSC.

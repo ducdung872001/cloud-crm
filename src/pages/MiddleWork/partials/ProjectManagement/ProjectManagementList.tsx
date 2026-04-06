@@ -252,7 +252,7 @@ export default function ProjectManagementList(props: IProjectManagementListProps
       ) : (
         <div className="notification-project">
           <div className="img-project">
-            <img src={ImageProjectPlan} alt="no-project" />
+            <img loading="lazy" src={ImageProjectPlan} alt="no-project" />
           </div>
           <h2>Bạn chưa có dự án nào!</h2>
         </div>

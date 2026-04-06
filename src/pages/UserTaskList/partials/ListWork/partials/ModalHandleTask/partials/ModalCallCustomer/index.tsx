@@ -79,7 +79,7 @@ export default function ModalCallCustomer(props: Record<string, unknown>) {
     return (
       <div className="selected--item">
         <div className="avatar">
-          <img src={avatar || ImageThirdGender} alt={label} />
+          <img loading="lazy" src={avatar || ImageThirdGender} alt={label} />
         </div>
         {label}
       </div>
@@ -289,7 +289,7 @@ export default function ModalCallCustomer(props: Record<string, unknown>) {
             <div className="info__header">
               <div className="info__header--left">
                 <div className="avatar">
-                  <img src={dataCustomer?.avatar ? dataCustomer.avatar : dataCustomer?.gender == 1 ? Female : Male} alt={dataCustomer?.name} />
+                  <img loading="lazy" src={dataCustomer?.avatar ? dataCustomer.avatar : dataCustomer?.gender == 1 ? Female : Male} alt={dataCustomer?.name} />
                 </div>
                 <div className="info__customer">
                   <h4 className="name">{dataCustomer?.name}</h4>

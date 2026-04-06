@@ -52,7 +52,7 @@ export default function ViewEmployeeInDepartmentModal(props: IViewEmployeeInDepa
   const dataMappingArray = (item: IEmployeeResponse, index: number) => [
     index + 1,
     <div key={item.id} className="avatar">
-      <img src={item.avatar ? item.avatar : ImageThirdGender} alt={item.name} />
+      <img loading="lazy" src={item.avatar ? item.avatar : ImageThirdGender} alt={item.name} />
     </div>,
     item.name,
     item.phone,

@@ -70,7 +70,7 @@ export default function PublicConnectZalo() {
         <ModalBody>
           <div className="page-content page__connect--zalo">
             <div className="icon__connect">
-              <img src={loadingGif} alt="" />
+              <img loading="lazy" src={loadingGif} alt="" />
             </div>
             <div className="notification">
               <h1 className="name__connect--success">Kết nối thành công !</h1>

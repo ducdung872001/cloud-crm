@@ -150,8 +150,7 @@ export default function NoteField(props: INoteFieldProps) {
                 <div className="header-note">
                   <div className="header-note--left">
                     <div className="avatar">
-                      <img
-                        src={note.avatar}
+                      <img loading="lazy" src={note.avatar}
                         alt="avatar"
                         style={{
                           objectFit: location.origin.includes("sor") ? "contain" : "cover",

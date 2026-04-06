@@ -111,7 +111,7 @@ export default function TableZaloOA(props: ITableZaloOAProps) {
 
   const dataMappingArray = (item: IZaloOAResponse, index: number) => [
     index + 1,
-    item.avatar ? <img src={item.avatar} alt="avatar" /> : <Icon name="NoImage" />,
+    item.avatar ? <img loading="lazy" src={item.avatar} alt="avatar" /> : <Icon name="NoImage" />,
     item.name,
     <a
       key={item.id}

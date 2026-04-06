@@ -742,7 +742,7 @@ function Header(props: HeaderProps) {
                         >
                           <div className="gs-item__avatar">
                             {item.avatar
-                              ? <img src={item.avatar} alt="" />
+                              ? <img loading="lazy" src={item.avatar} alt="" />
                               : <span className="gs-item__avatar-fallback">
                                 {group === "customer" ? "👤" : group === "product" ? "📦" : "🧾"}
                               </span>
@@ -1029,7 +1029,7 @@ function Header(props: HeaderProps) {
         <div className="user-dropdown" ref={refUserContainer}>
           <Button type="button" color="transparent" onClick={() => setShowPopoverUser(!showPopoverUser)}>
             <div className="avatar">
-              <img src={avatar || ImageThirdGender} alt="avatar" style={{ objectFit: location.origin.includes("sor") ? "contain" : "cover" }} />
+              <img loading="lazy" src={avatar || ImageThirdGender} alt="avatar" style={{ objectFit: location.origin.includes("sor") ? "contain" : "cover" }} />
             </div>
             <span className="d-none d-md-block">{name}</span>
           </Button>

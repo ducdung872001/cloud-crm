@@ -219,7 +219,7 @@ export default function EditImageModal(props: IEditImageModal) {
                         <p className="content-top">Lorem Ipsum is simply dummy text of the printing and typesetting the industry.</p>
                       )}
                       <div className={`img-item ${imgAlign}-img`}>
-                        <img src={newUrl} alt="img-prev" />
+                        <img loading="lazy" src={newUrl} alt="img-prev" />
                       </div>
                       {imgAlign !== "center" && (
                         <p className="content__in--img">

@@ -363,7 +363,7 @@ export default function PayModal({
                 onClick={() => { setMethod(m.id); setSelectedConfigId(m.cfgId ?? null); }}>
                 <div className="pms__icon">
                   {m.image
-                    ? <img src={m.image} alt={m.label} className="pms__image" />
+                    ? <img loading="lazy" src={m.image} alt={m.label} className="pms__image" />
                     : m.icon}
                 </div>
                 <div className="pms__label">{m.label}</div>

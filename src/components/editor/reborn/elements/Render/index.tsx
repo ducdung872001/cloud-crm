@@ -55,7 +55,7 @@ const Element = ({ attributes, children, element }) => {
     case "link":
       // return (
       //     <a {...attributes} href={element.href}>
-      //         <img src={'https://cloud-cdn.reborn.vn/reborn/2024/09/25/ec15f625-e418-4741-962d-241ddd7f52ea-1727279856.png'}></img>
+      //         <img loading="lazy" src={'https://cloud-cdn.reborn.vn/reborn/2024/09/25/ec15f625-e418-4741-962d-241ddd7f52ea-1727279856.png'}></img>
       //     </a>
       // );
       return <Link {...props} />;

@@ -25,7 +25,7 @@ export default function HeaderInternalMailList(props: IHeaderInternalRightMailLi
     <div className="title-conversation">
       <div className="title-left">
         <div className="avatar-conversation">
-          <img src={dataMailbox.senderAvatar ? dataMailbox.senderAvatar : ThirdGender} alt="" />
+          <img loading="lazy" src={dataMailbox.senderAvatar ? dataMailbox.senderAvatar : ThirdGender} alt="" />
         </div>
         <span>{dataMailbox.title}</span>
       </div>

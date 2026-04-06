@@ -41,7 +41,7 @@ export default function VideoHelp(props: VideoHelpProps) {
               <li key={index}>
                 <a data-fancybox="video" href={v.url}>
                   <span className="video-help--image">
-                    <img src={v.image} alt={v.title} />
+                    <img loading="lazy" src={v.image} alt={v.title} />
                     <span className="icon-play">
                       <Icon name="Play" />
                     </span>

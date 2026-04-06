@@ -110,7 +110,7 @@ export default function AddProductImportModal(props: AddProductImportModalProps)
   const formatOptionLabelProduct = ({ label, avatar }: { label: string; avatar?: string }) => (
     <div className="selected--item">
       <div className="avatar">
-        <img src={avatar || ImageThirdGender} alt={label} />
+        <img loading="lazy" src={avatar || ImageThirdGender} alt={label} />
       </div>
       {label}
     </div>

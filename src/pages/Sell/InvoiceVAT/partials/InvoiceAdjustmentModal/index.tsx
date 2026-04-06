@@ -518,7 +518,7 @@ export default function InvoiceAdjustmentModal({
                                     onMouseDown={(e) => e.preventDefault()}
                                     onClick={() => handleSelectVariant(line.id, v)}
                                   >
-                                    {v.productAvatar && <img className="adj__sug-avatar" src={v.productAvatar} alt="" />}
+                                    {v.productAvatar && <img loading="lazy" className="adj__sug-avatar" src={v.productAvatar} alt="" />}
                                     <div className="adj__sug-info">
                                       <span className="adj__sug-name">
                                         {v.productName}

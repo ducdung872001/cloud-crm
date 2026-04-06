@@ -13,7 +13,7 @@ export default function InfoCustomerTicket(props: IInfoCustomerTicketProps) {
     <Fragment>
       <div className="info-left">
         <span className="avatar-person">
-          <img src={data.customerAvatar ? data.customerAvatar : ThirdGender} alt={data.customerName} />
+          <img loading="lazy" src={data.customerAvatar ? data.customerAvatar : ThirdGender} alt={data.customerName} />
         </span>
         <div className="detail-info">
           <span className="name">{data.customerName}</span>
@@ -38,7 +38,7 @@ export default function InfoCustomerTicket(props: IInfoCustomerTicketProps) {
                     return (
                       <div key={idx} className="image-item">
                         <a data-fancybox="gallery" href={item.url}>
-                          <img src={item.url} alt="" />
+                          <img loading="lazy" src={item.url} alt="" />
                         </a>
                       </div>
                     );

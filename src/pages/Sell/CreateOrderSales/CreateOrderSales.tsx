@@ -143,7 +143,7 @@ export default function CreateOrderSales() {
     return (
       <div className="selected--item">
         <div className="avatar" style={avatar == "custom" ? { width: "1.8rem", height: "1.8rem" } : {}}>
-          <img src={avatar == "custom" ? ImgPushCustomer : avatar ? avatar : ImageThirdGender} alt={label} />
+          <img loading="lazy" src={avatar == "custom" ? ImgPushCustomer : avatar ? avatar : ImageThirdGender} alt={label} />
         </div>
         {label}
       </div>
@@ -385,7 +385,7 @@ export default function CreateOrderSales() {
                           }}
                         >
                           <div className="__image">
-                            <img src={item.avatar || ImageError} alt={item.name} />
+                            <img loading="lazy" src={item.avatar || ImageError} alt={item.name} />
                           </div>
                           <div className="__desc">
                             <span className="name">{item.name}</span>

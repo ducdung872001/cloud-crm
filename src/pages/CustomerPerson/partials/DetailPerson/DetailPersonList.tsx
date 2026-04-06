@@ -215,7 +215,7 @@ export default function DetailPersonList() {
             {/* Avatar + tên */}
             <div className="rds-identity">
               <div className="rds-identity__avatar">
-                <img src={d.avatar || ThirdGender} alt={d.name} />
+                <img loading="lazy" src={d.avatar || ThirdGender} alt={d.name} />
               </div>
               <div className="rds-identity__info">
                 <div className="rds-identity__name">{d.name}</div>

@@ -114,7 +114,7 @@ export default function InfoPerson(props: IInfoPersonProps) {
     <Fragment>
       <div className="info-left">
         <span className="avatar-person">
-          <img src={data.avatar || ThirdGender} alt={data.name} />
+          <img loading="lazy" src={data.avatar || ThirdGender} alt={data.name} />
         </span>
         <div className="detail-info">
           <span className="name">{data.name}</span>
@@ -146,7 +146,7 @@ export default function InfoPerson(props: IInfoPersonProps) {
           {data?.employeeName ? (
             <div className="info-person-charge">
               <div className="avatar-person-charge">
-                <img src={data.employeeAvatar ? data.employeeAvatar : ThirdGender} alt={data.employeeName} />
+                <img loading="lazy" src={data.employeeAvatar ? data.employeeAvatar : ThirdGender} alt={data.employeeName} />
               </div>
               <div className="detail-person-charge">
                 <span className="name">{data.employeeName}</span>

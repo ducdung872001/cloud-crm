@@ -182,8 +182,7 @@ export default function ContentExchangeWork(props: IContentExchangeWorkProps) {
                   <div className="img-document">
                     <div className="info-document">
                       <div className="__avatar--doc">
-                        <img
-                          src={item.type == "pdf" ? ImagePdf : item.type == "xlsx" ? ImageExcel : item.type == "docx" ? ImageWord : ImagePowerPoint}
+                        <img loading="lazy" src={item.type == "pdf" ? ImagePdf : item.type == "xlsx" ? ImageExcel : item.type == "docx" ? ImageWord : ImagePowerPoint}
                           alt={item.content}
                         />
                       </div>
@@ -221,7 +220,7 @@ export default function ContentExchangeWork(props: IContentExchangeWorkProps) {
               {lstDataExchange.map((item: Record<string, unknown>, idx) => {
                 return (
                   <div key={item.id} className={`${item.employeeId === dataEmployee.id ? "data__item--right" : "data__item--left"}`}>
-                    <img src={item.employeeAvatar ? item.employeeAvatar : ThirdGender} alt={item.employeeName} className="avatar-employee" />
+                    <img loading="lazy" src={item.employeeAvatar ? item.employeeAvatar : ThirdGender} alt={item.employeeName} className="avatar-employee" />
                     <div className="info__content">
                       <div className="info__content--left">
                         <span className="username-person">{item.employeeId === dataEmployee.id ? "" : item.employeeName}</span>
@@ -278,7 +277,7 @@ export default function ContentExchangeWork(props: IContentExchangeWorkProps) {
           ) : (
             <div className="message-notification">
               <div className="img__message">
-                <img src={Conversation} alt="Hình ảnh cuộc trao đổi" />
+                <img loading="lazy" src={Conversation} alt="Hình ảnh cuộc trao đổi" />
               </div>
               <div className="content-message">
                 <h2>Chưa có cuộc trao đổi công việc nào</h2>

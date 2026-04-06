@@ -142,8 +142,7 @@ export default function ChatFeedback() {
                   <div className="img-document">
                     <div className="info-document">
                       <div className="__avatar--doc">
-                        <img
-                          src={item.type == "pdf" ? ImagePdf : item.type == "xlsx" ? ImageExcel : item.type == "docx" ? ImageWord : ImagePowerPoint}
+                        <img loading="lazy" src={item.type == "pdf" ? ImagePdf : item.type == "xlsx" ? ImageExcel : item.type == "docx" ? ImageWord : ImagePowerPoint}
                           alt={item.content}
                         />
                       </div>
@@ -266,7 +265,7 @@ export default function ChatFeedback() {
                     
                   </div>
                   <div className="avatar-feedback">
-                    <img src={ThirdGender} alt="" />
+                    <img loading="lazy" src={ThirdGender} alt="" />
                   </div>
                 </div>
               );
@@ -284,7 +283,7 @@ export default function ChatFeedback() {
         {!isLoading && lstFeedback.length === 0 && (
           <div className="notify__no--exchange">
             <div className="img__message">
-              <img src={Conversation} alt="Hình ảnh góp ý" />
+              <img loading="lazy" src={Conversation} alt="Hình ảnh góp ý" />
             </div>
             <div className="no__content--message">
               <h2>

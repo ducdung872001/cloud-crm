@@ -135,7 +135,7 @@ export default function KanbanEmployee(props: IKanbanEmployeeProps) {
                       <div className="wrapper__title">
                         <div className="info__employee">
                           <div className="avatar__employee">
-                            <img src={column.avatar || ThirdGender} alt={column.title} />
+                            <img loading="lazy" src={column.avatar || ThirdGender} alt={column.title} />
                           </div>
                           <span className="name">{column.title}</span>
                         </div>

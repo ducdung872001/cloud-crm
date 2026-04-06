@@ -124,7 +124,7 @@ export default function UpdatePeopleInvolved(props: IUpdatePeopleInvolvedProps) 
             <div className="view-jobassign">
               <label className="label">Người giao việc</label>
               <div className="info-jobassign">
-                <img src={jobAssign?.avatar ? jobAssign?.avatar : ImageThirdGender} alt={jobAssign?.name} />
+                <img loading="lazy" src={jobAssign?.avatar ? jobAssign?.avatar : ImageThirdGender} alt={jobAssign?.name} />
                 <div className="info-manager">
                   <span className="name">{jobAssign?.name}</span>
                   <span className="belong-department">{jobAssign?.departmentName}</span>
@@ -135,7 +135,7 @@ export default function UpdatePeopleInvolved(props: IUpdatePeopleInvolvedProps) 
             <div className="view-recipient">
               <label className="label">Người nhận việc</label>
               <div className="info-recipient">
-                <img src={jobRecipient?.avatar ? jobRecipient?.avatar : ImageThirdGender} alt={jobRecipient?.name} />
+                <img loading="lazy" src={jobRecipient?.avatar ? jobRecipient?.avatar : ImageThirdGender} alt={jobRecipient?.name} />
                 <div className="info-employee">
                   <span className="name">{jobRecipient?.name}</span>
                   <span className="belong-department">{jobRecipient?.departmentName}</span>
@@ -159,7 +159,7 @@ export default function UpdatePeopleInvolved(props: IUpdatePeopleInvolvedProps) 
               participants.map((item, idx) => (
                 <div key={item.id} className="participant-item">
                   <div className="info-participant">
-                    <img src={item?.avatar ? item?.avatar : ImageThirdGender} alt={item?.name} />
+                    <img loading="lazy" src={item?.avatar ? item?.avatar : ImageThirdGender} alt={item?.name} />
                     {item?.name}
                   </div>
                   <span
@@ -192,7 +192,7 @@ export default function UpdatePeopleInvolved(props: IUpdatePeopleInvolvedProps) 
               relatedCustomers.map((item, idx) => (
                 <div key={item.id} className="related__customers--item">
                   <div className="info__related--customers">
-                    <img src={item?.avatar ? item?.avatar : ImageThirdGender} alt={item?.name} />
+                    <img loading="lazy" src={item?.avatar ? item?.avatar : ImageThirdGender} alt={item?.name} />
                     {item?.name}
                   </div>
                   <span

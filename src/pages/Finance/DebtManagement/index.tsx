@@ -200,7 +200,7 @@ function ShareSheet({ dataUrl, debtName, amount, onClose }: ShareSheetProps) {
 
         {/* Preview ảnh QR */}
         <div className="share-sheet__preview">
-          <img src={dataUrl} alt="QR thu nợ" className="share-sheet__qr-img" />
+          <img loading="lazy" src={dataUrl} alt="QR thu nợ" className="share-sheet__qr-img" />
           <div className="share-sheet__amount">{amount.toLocaleString("vi")} VND</div>
           <div className="share-sheet__name">{debtName}</div>
         </div>

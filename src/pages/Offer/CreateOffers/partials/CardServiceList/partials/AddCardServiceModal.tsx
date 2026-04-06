@@ -83,7 +83,7 @@ export default function AddCardServiceModal(props: AddInfoCardServiceModalProps)
     return (
       <div className="selected--item">
         <div className="avatar">
-          <img src={avatar || ImageThirdGender} alt={label} />
+          <img loading="lazy" src={avatar || ImageThirdGender} alt={label} />
         </div>
         {label}
       </div>
@@ -161,7 +161,7 @@ export default function AddCardServiceModal(props: AddInfoCardServiceModalProps)
     return (
       <div className="selected--item">
         <div className="avatar">
-          <img src={avatar || ImageThirdGender} alt={label} />
+          <img loading="lazy" src={avatar || ImageThirdGender} alt={label} />
         </div>
         <div className="d-flex align-items-start justify-content-start flex-column">
           {label}
@@ -233,7 +233,7 @@ export default function AddCardServiceModal(props: AddInfoCardServiceModalProps)
     return (
       <div className="selected--item">
         <div className="avatar">
-          <img src={avatar || ImageThirdGender} alt={label} />
+          <img loading="lazy" src={avatar || ImageThirdGender} alt={label} />
         </div>
         {label}
       </div>

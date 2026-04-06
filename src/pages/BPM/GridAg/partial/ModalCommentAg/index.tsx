@@ -296,7 +296,7 @@ export default function ModalCommentAg(props: IImportModalProps) {
                               <div className={item?.childrent?.length ? "line-comment" : "d-none"}></div>
                               <div className="item-comment--top">
                                 <div className="avatar">
-                                  <img src={item?.employeeAvatar || ImageAvatar} alt="avatar" style={{ objectFit: "cover", width: 24, height: 24 }} />
+                                  <img loading="lazy" src={item?.employeeAvatar || ImageAvatar} alt="avatar" style={{ objectFit: "cover", width: 24, height: 24 }} />
                                 </div>
                                 <div className="name">{item?.employeeName || ""}</div>
                                 <div className="time">{item?.createdTime || ""}</div>
@@ -313,10 +313,9 @@ export default function ModalCommentAg(props: IImportModalProps) {
                                           </div>
                                           <div className="image-file">
                                             {file?.fileType == "image" ? (
-                                              <img src={file?.fileUrl || ImgError} width={55} height={36} style={{ objectFit: "contain" }} />
+                                              <img loading="lazy" src={file?.fileUrl || ImgError} width={55} height={36} style={{ objectFit: "contain" }} />
                                             ) : (
-                                              <img
-                                                width={36}
+                                              <img loading="lazy" width={36}
                                                 height={36}
                                                 style={{ marginLeft: "8px" }}
                                                 src={
@@ -430,8 +429,7 @@ export default function ModalCommentAg(props: IImportModalProps) {
                                       <div className={indexChild < item.childrent.length - 1 ? "line-comment" : "d-none"}></div>
                                       <div className="item-childrent--top">
                                         <div className="avatar">
-                                          <img
-                                            src={child?.employeeAvatar || ImageAvatar}
+                                          <img loading="lazy" src={child?.employeeAvatar || ImageAvatar}
                                             alt="avatar"
                                             style={{ objectFit: "cover", width: 24, height: 24 }}
                                           />
@@ -451,10 +449,9 @@ export default function ModalCommentAg(props: IImportModalProps) {
                                                   </div>
                                                   <div className="image-file">
                                                     {file?.fileType == "image" ? (
-                                                      <img src={file?.fileUrl || ImgError} width={55} height={36} style={{ objectFit: "cover" }} />
+                                                      <img loading="lazy" src={file?.fileUrl || ImgError} width={55} height={36} style={{ objectFit: "cover" }} />
                                                     ) : (
-                                                      <img
-                                                        width={36}
+                                                      <img loading="lazy" width={36}
                                                         height={36}
                                                         style={{ marginLeft: "8px" }}
                                                         src={

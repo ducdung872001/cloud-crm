@@ -387,8 +387,7 @@ export default function ModalAddFile(props: Record<string, unknown>) {
                         <div className="d-flex align-items-center">
                           {listAttactment.map((item, idx) => (
                             <div key={idx} className={item.type === "image" ? "image-item" : "file-item"}>
-                              <img
-                                src={
+                              <img loading="lazy" src={
                                   // item.type == "xlsx" ? ImgExcel
                                   // : item.type === "docx" ? ImgWord
                                   // : item.type === "pptx" ? ImgPowerpoint

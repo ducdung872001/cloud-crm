@@ -1458,7 +1458,7 @@ const DetailTask = (props: Record<string, unknown>) => {
                               <div className="employee_task">
                                 <div className="implementer">
                                   <div className="avatar-implementer">
-                                    <img src={item?.employeeAvatar || OtherGenders} />
+                                    <img loading="lazy" src={item?.employeeAvatar || OtherGenders} />
                                   </div>
                                   <h4 className="name-implementer">{item?.employeeName}</h4>
                                 </div>

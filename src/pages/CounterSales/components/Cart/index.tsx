@@ -279,7 +279,7 @@ const Cart: React.FC<CartProps> = ({
         {items.map((item) => (
           <div key={item.id} className="ci">
             <div className="ci__icon">
-              {item.image ? <img src={item.image} alt={item.name} /> : <span style={{ fontSize: "30px" }}>{item.icon}</span>}
+              {item.image ? <img loading="lazy" src={item.image} alt={item.name} /> : <span style={{ fontSize: "30px" }}>{item.icon}</span>}
             </div>
             <div className="ci__info">
               <div className="ci__name">

@@ -302,7 +302,7 @@ export default function SettingAccount() {
                 <div className="header__info">
                   <div className="avatar--acount">
                     <div className="__avatar">
-                      <img src={changeAvatar || avatar || dataAccount.avatar || ThirdGender} alt={dataAccount.name} />
+                      <img loading="lazy" src={changeAvatar || avatar || dataAccount.avatar || ThirdGender} alt={dataAccount.name} />
                     </div>
 
                     <label htmlFor="uploadAvatar">

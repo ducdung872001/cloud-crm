@@ -50,7 +50,7 @@ export default function TaskItem(props: ITaskItemProps) {
                     </Fragment>
                 </div>
                 <div className="avatar">
-                  <img src={OtherGenders} alt="" />
+                  <img loading="lazy" src={OtherGenders} alt="" />
                 </div>
               </div>
             </div>

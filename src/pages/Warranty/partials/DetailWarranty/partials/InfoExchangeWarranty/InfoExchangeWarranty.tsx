@@ -135,7 +135,7 @@ export default function InfoExchangeWarranty(props: IInfoExchangeWarrantyProps) 
               <div className="content-chat">
                 {listExchangeWarranty.map((item, idx) => (
                   <div key={item.id} className={`${item.userId === id ? "content__item--right" : "content__item--left"}`}>
-                    <img src={item.employeeAvatar ? item.employeeAvatar : ThirdGender} alt="" />
+                    <img loading="lazy" src={item.employeeAvatar ? item.employeeAvatar : ThirdGender} alt="" />
                     <div className="info__content">
                       <div className="info__content--left">
                         <span className="username-person">{item.userId === id ? "" : item.employeeName}</span>

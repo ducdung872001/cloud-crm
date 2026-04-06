@@ -48,8 +48,7 @@ const Image = ({ attributes, children, element }) => {
           `}
         >
           {children}
-          <img
-            contentEditable={false}
+          <img loading="lazy" contentEditable={false}
             src={element.url}
             className={css`
               display: block;
@@ -84,8 +83,7 @@ const Image = ({ attributes, children, element }) => {
           `}
         >
           {children}
-          <img
-            contentEditable={false}
+          <img loading="lazy" contentEditable={false}
             src={element.url}
             className={css`
               display: block;
@@ -121,8 +119,7 @@ const Image = ({ attributes, children, element }) => {
           `}
         >
           {children}
-          <img
-            contentEditable={false}
+          <img loading="lazy" contentEditable={false}
             src={element.url}
             className={css`
               display: block;

@@ -985,7 +985,7 @@ export default function AddTemplateZalo(props: IAddZaloMarkettingProps) {
                                       </div>
                                     ) : item.image_url ? (
                                       <div className="show-file-upload">
-                                        <img src={item.image_url} alt="img__banner" />
+                                        <img loading="lazy" src={item.image_url} alt="img__banner" />
                                       </div>
                                     ) : (
                                       <div className="action-operation">
@@ -1263,7 +1263,7 @@ export default function AddTemplateZalo(props: IAddZaloMarkettingProps) {
                         return (
                           <div key={idx} className="item__preview">
                             {item.type === "banner" ? (
-                              <div className="item__banner">{item.image_url ? <img src={item.image_url} alt="banner-zalo" /> : ""}</div>
+                              <div className="item__banner">{item.image_url ? <img loading="lazy" src={item.image_url} alt="banner-zalo" /> : ""}</div>
                             ) : item.type === "header" ? (
                               <h3 className="title-zalo" style={{ textAlign: `${item.align}` } as Record<string, unknown>}>
                                 {item.content}

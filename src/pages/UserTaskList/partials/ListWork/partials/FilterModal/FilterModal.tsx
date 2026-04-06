@@ -195,7 +195,7 @@ export default function FilterModal(props: Record<string, unknown>) {
     return (
       <div className="selected--item">
         <div className="avatar">
-          <img src={avatar || ImageThirdGender} alt={label} />
+          <img loading="lazy" src={avatar || ImageThirdGender} alt={label} />
         </div>
         {label}
       </div>
@@ -210,7 +210,7 @@ export default function FilterModal(props: Record<string, unknown>) {
     return (
       <div style={{ display: "flex", alignItems: "center" }}>
         <div className="avatar">
-          {/* <img src={avatar || ImageThirdGender} alt={label} /> */}
+          {/* <img loading="lazy" src={avatar || ImageThirdGender} alt={label} /> */}
           <Icon
             name="Star"
             style={{
@@ -231,7 +231,7 @@ export default function FilterModal(props: Record<string, unknown>) {
     return (
       <div className="icon_status">
         <div className="icon">
-          {/* <img src={avatar || ImageThirdGender} alt={label} /> */}
+          {/* <img loading="lazy" src={avatar || ImageThirdGender} alt={label} /> */}
           <Icon
             name={
               value === "0"

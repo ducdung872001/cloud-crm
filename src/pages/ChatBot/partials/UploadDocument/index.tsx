@@ -209,8 +209,7 @@ export default function UploadDocument(props: IUploadDocumentProps) {
                     return (
                       <div key={idx} className="item">
                         <div className="img-document">
-                          <img
-                            src={item.type == "pdf" ? ImagePdf : item.type == "xlsx" ? ImageExcel : item.type == "docx" ? ImageWord : ImagePowerPoint}
+                          <img loading="lazy" src={item.type == "pdf" ? ImagePdf : item.type == "xlsx" ? ImageExcel : item.type == "docx" ? ImageWord : ImagePowerPoint}
                             alt={item.fileName}
                           />
                         </div>

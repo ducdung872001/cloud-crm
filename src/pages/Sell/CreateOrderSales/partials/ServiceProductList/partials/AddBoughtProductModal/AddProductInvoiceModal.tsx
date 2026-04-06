@@ -250,7 +250,7 @@ export default function AddBoughtProductModal(props: AddBoughtProductModalProps)
     return (
       <div className="selected--item">
         <div className="avatar">
-          <img src={avatar || ImageThirdGender} alt={label} />
+          <img loading="lazy" src={avatar || ImageThirdGender} alt={label} />
         </div>
         {label}
       </div>
@@ -344,7 +344,7 @@ export default function AddBoughtProductModal(props: AddBoughtProductModalProps)
     return (
       <div className="selected--item">
         <div className="avatar">
-          <img src={avatar || ImageThirdGender} alt={label} />
+          <img loading="lazy" src={avatar || ImageThirdGender} alt={label} />
         </div>
         {label}
       </div>

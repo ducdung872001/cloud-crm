@@ -62,7 +62,7 @@ export default function AddModalOther(props: IAddModalOtherProps) {
     return (
       <div className="selected--item">
         <div className="avatar">
-          <img src={avatar || ImageThirdGender} alt={label} />
+          <img loading="lazy" src={avatar || ImageThirdGender} alt={label} />
         </div>
         {label}
       </div>

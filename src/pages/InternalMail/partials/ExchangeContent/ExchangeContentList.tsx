@@ -167,8 +167,7 @@ export default function ExchangeContentList(props: IExchangeContentListProps) {
                   <div className="img-document">
                     <div className="info-document">
                       <div className="__avatar">
-                        <img
-                          src={item.type == "pdf" ? ImagePdf : item.type == "xlsx" ? ImageExcel : item.type == "docx" ? ImageWord : ImagePowerPoint}
+                        <img loading="lazy" src={item.type == "pdf" ? ImagePdf : item.type == "xlsx" ? ImageExcel : item.type == "docx" ? ImageWord : ImagePowerPoint}
                           alt={item.content}
                           onError={(e) => {
                             (e.target as HTMLImageElement).src = ImageThirdGender; // Thay thế bằng ảnh mặc định nếu lỗi
@@ -213,8 +212,7 @@ export default function ExchangeContentList(props: IExchangeContentListProps) {
             <div onScroll={handleScroll} className={`list-content ${isBroadly ? "isActiveBroadly" : ""}`}>
               {detailExchange.map((item, idx) => (
                 <div key={item.id} className={`${item.userId === id ? "content__item--right" : "content__item--left"}`}>
-                  <img
-                    src={item.employeeAvatar ? item.employeeAvatar : ThirdGender}
+                  <img loading="lazy" src={item.employeeAvatar ? item.employeeAvatar : ThirdGender}
                     alt={item.employeeName}
                     className="avatar-employee"
                     onError={(e) => {
@@ -276,7 +274,7 @@ export default function ExchangeContentList(props: IExchangeContentListProps) {
           ) : (
             <div className="message-notification">
               <div className="img__message">
-                <img src={Conversation} alt="hình ảnh chưa có cuộc trò chuyện nào" />
+                <img loading="lazy" src={Conversation} alt="hình ảnh chưa có cuộc trò chuyện nào" />
               </div>
               <div className="content-message">
                 <h2>Nhóm chưa có cuộc trò nào</h2>

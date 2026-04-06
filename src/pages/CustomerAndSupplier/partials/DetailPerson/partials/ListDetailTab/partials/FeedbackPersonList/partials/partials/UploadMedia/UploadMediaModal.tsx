@@ -204,14 +204,14 @@ export default function UploadMediaModal(props: IUploadMediaModalProps) {
                         {/* {item.progress ? (
                           <span className="show-progress">{`${item.progress}%`}</span>
                         ) : item.type == "image" ? (
-                          <img src={item.url} alt="Ảnh Upload" />
+                          <img loading="lazy" src={item.url} alt="Ảnh Upload" />
                         ) : (
                           <video controls>
                             <source src={item.url} />
                           </video>
                         )} */}
                         {item.type == "image" ? (
-                          <img src={item.url} alt="Ảnh Upload" />
+                          <img loading="lazy" src={item.url} alt="Ảnh Upload" />
                         ) : (
                           <video controls>
                             <source src={item.url} />

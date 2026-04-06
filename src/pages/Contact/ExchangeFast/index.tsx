@@ -321,8 +321,7 @@ export default function ExchangeFast(props: IExchangeFastProps) {
                   <div className="img-document">
                     <div className="info-document">
                       <div className="__avatar--doc">
-                        <img
-                          src={item.type == "pdf" ? ImagePdf : item.type == "xlsx" ? ImageExcel : item.type == "docx" ? ImageWord : ImagePowerPoint}
+                        <img loading="lazy" src={item.type == "pdf" ? ImagePdf : item.type == "xlsx" ? ImageExcel : item.type == "docx" ? ImageWord : ImagePowerPoint}
                           alt={item.content}
                         />
                       </div>
@@ -399,7 +398,7 @@ export default function ExchangeFast(props: IExchangeFastProps) {
                       className={`item__content ${item.employeeId === dataEmployee.id ? "item__content--right" : "item__content--left"}`}
                     >
                       <div className="avatar-employee">
-                        <img src={item.employeeAvatar ? item.employeeAvatar : ThirdGender} alt={item.employeeName} />
+                        <img loading="lazy" src={item.employeeAvatar ? item.employeeAvatar : ThirdGender} alt={item.employeeName} />
                       </div>
 
                       <div className="desc__content">
@@ -480,7 +479,7 @@ export default function ExchangeFast(props: IExchangeFastProps) {
             {!isLoading && lstDataExchange.length === 0 && (
               <div className="notify__no--exchange">
                 <div className="img__message">
-                  <img src={Conversation} alt="Hình ảnh cuộc trao đổi" />
+                  <img loading="lazy" src={Conversation} alt="Hình ảnh cuộc trao đổi" />
                 </div>
                 <div className="no__content--message">
                   <h2>Chưa có cuộc trao đổi công việc nào</h2>

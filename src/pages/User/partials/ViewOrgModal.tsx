@@ -31,7 +31,7 @@ export default function ViewOrgModal(props: IViewOrgModalProps) {
   const dataMappingArray = (item: Record<string, unknown>, index: number) => [
     index + 1,
     <div key={item.id} className="avatar">
-      <img src={item.avatar || ImageError} alt={item.name} />
+      <img loading="lazy" src={item.avatar || ImageError} alt={item.name} />
     </div>,
     item.name,
     item.phone,

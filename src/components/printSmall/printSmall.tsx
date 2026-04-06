@@ -56,9 +56,9 @@ function PrintSmall(props: IPrintSmallProps) {
           <div className="header__print--top">
             <div className="logo-invoice">
               {infoSettingPrint && infoSettingPrint?.length > 0 && infoSettingPrint[2]["value"] ? (
-                <img src={infoSettingPrint[2]["value"]} alt="logo hóa đơn" />
+                <img loading="lazy" src={infoSettingPrint[2]["value"]} alt="logo hóa đơn" />
               ) : (
-                <img src={ImgBill} alt="logo hóa đơn" />
+                <img loading="lazy" src={ImgBill} alt="logo hóa đơn" />
               )}
             </div>
             <div className="info__product--store">
@@ -101,7 +101,7 @@ function PrintSmall(props: IPrintSmallProps) {
                     </div>
                   </div>
                   <div className="info__invoice--right">
-                    <img src={ImgQrBill} alt="img-bill" />
+                    <img loading="lazy" src={ImgQrBill} alt="img-bill" />
                   </div>
                 </div>
               </div>

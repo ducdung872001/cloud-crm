@@ -37,10 +37,10 @@ export default function InfoBox(props: InfoboxProps) {
             Ứng dụng <strong>REBORN CRM</strong> đã có mặt trên App Store và Google Play
           </div>
           <div className="qr-appstore">
-            <img src={QRCode} alt="Mã QR code" />
+            <img loading="lazy" src={QRCode} alt="Mã QR code" />
             <div className="appstore d-flex flex-column">
-              <img src={GoogleStore} alt="Google Store" />
-              <img src={AppStore} alt="App Store" />
+              <img loading="lazy" src={GoogleStore} alt="Google Store" />
+              <img loading="lazy" src={AppStore} alt="App Store" />
             </div>
           </div>
         </div>

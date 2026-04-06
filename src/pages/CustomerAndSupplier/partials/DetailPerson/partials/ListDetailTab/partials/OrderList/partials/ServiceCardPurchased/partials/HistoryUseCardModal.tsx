@@ -111,7 +111,7 @@ export default function HistoryUseCardModal(props: IHistoryUseCardModalProps) {
               ) : (
                 <div className="notification__no--card">
                   <div className="avatar">
-                    <img src={NoCreditCard} alt="Chưa sử dụng thẻ dịch vụ" />
+                    <img loading="lazy" src={NoCreditCard} alt="Chưa sử dụng thẻ dịch vụ" />
                   </div>
                   <h2 className="dept-notify">Hiện tại thẻ {infoCard?.name.toLowerCase()} chưa được tiêu dùng</h2>
                 </div>

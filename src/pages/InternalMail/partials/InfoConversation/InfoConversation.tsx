@@ -82,7 +82,7 @@ export default function InfoConversation(props: IInfoConversationProps) {
             <div className="detail__creator">
               <div className="detail__creator--person">
                 <div className="avatar-creator">
-                  <img src={detailMailBox.senderAvatar ? detailMailBox.senderAvatar : ThirdGender} alt={detailMailBox.senderName} />
+                  <img loading="lazy" src={detailMailBox.senderAvatar ? detailMailBox.senderAvatar : ThirdGender} alt={detailMailBox.senderName} />
                 </div>
                 <div className="info-creator">
                   <span className="name">{detailMailBox.senderName}</span>
@@ -129,7 +129,7 @@ export default function InfoConversation(props: IInfoConversationProps) {
                 {listPerson.map((item, idx) => (
                   <div key={idx} className="person-item">
                     <span className="avatar-person">
-                      <img src={item.avatar ? item.avatar : ThirdGender} alt={item.name} />
+                      <img loading="lazy" src={item.avatar ? item.avatar : ThirdGender} alt={item.name} />
                     </span>
                     <span className="name-person">{item.name}</span>
                   </div>
@@ -162,7 +162,7 @@ export default function InfoConversation(props: IInfoConversationProps) {
                     <div key={idx} className="item-attachment">
                       {item.url && (
                         <div className="img-document">
-                          <img src={item?.url} alt="ảnh tài liệu" />
+                          <img loading="lazy" src={item?.url} alt="ảnh tài liệu" />
                         </div>
                       )}
                     </div>

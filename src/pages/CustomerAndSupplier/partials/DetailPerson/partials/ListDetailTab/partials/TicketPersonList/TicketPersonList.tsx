@@ -209,7 +209,7 @@ export default function TicketPersonList(props: ITicketPersonListProps) {
                                   {dataImage.slice(1).map((item, idx) => {
                                     return (
                                       <a key={idx} data-fancybox="gallery" href={item.url}>
-                                        <img src={item.url} alt="" />
+                                        <img loading="lazy" src={item.url} alt="" />
                                       </a>
                                     );
                                   })}

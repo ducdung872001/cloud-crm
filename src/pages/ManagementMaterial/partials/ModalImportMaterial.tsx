@@ -294,7 +294,7 @@ export default function ModalImportMaterial({ onShow, onHide }: Props) {
             >
               {selectedFile ? (
                 <div className="pimport-dropzone__file">
-                  <img src={ExcelIcon} alt="excel" className="pimport-dropzone__icon" />
+                  <img loading="lazy" src={ExcelIcon} alt="excel" className="pimport-dropzone__icon" />
                   <div className="pimport-dropzone__info">
                     <div className="pimport-dropzone__name">{selectedFile.name}</div>
                     <div className="pimport-dropzone__size">

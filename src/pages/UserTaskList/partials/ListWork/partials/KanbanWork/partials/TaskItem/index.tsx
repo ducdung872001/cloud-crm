@@ -35,8 +35,7 @@ function AvatarEmployee({ name, src }: { name: string; src?: string }) {
   return (
     <div className="avatar-implementer">
       {src && !imgError ? (
-        <img
-          src={src}
+        <img loading="lazy" src={src}
           alt={name}
           onError={() => setImgError(true)}
         />
@@ -164,7 +163,7 @@ export default function TaskItem(props: Record<string, unknown>) {
               {/* {type === "status" ? (
                 <div className="implementer">
                   <span className="avatar-implementer">
-                    <img src={item.employeeAvatar || OtherGenders} alt={item.employeeName} />
+                    <img loading="lazy" src={item.employeeAvatar || OtherGenders} alt={item.employeeName} />
                   </span>
                   <h4 className="name-implementer">{item.employeeName}</h4>
                 </div>

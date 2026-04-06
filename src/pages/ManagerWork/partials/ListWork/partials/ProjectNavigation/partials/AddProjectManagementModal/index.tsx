@@ -181,7 +181,7 @@ export default function AddProjectManagementModal(props: IAddWorkProjectModalPro
     return (
       <div className="selected--item">
         <div className="avatar">
-          <img src={avatar || ImageThirdGender} alt={label} />
+          <img loading="lazy" src={avatar || ImageThirdGender} alt={label} />
         </div>
         {label}
       </div>
@@ -331,7 +331,7 @@ export default function AddProjectManagementModal(props: IAddWorkProjectModalPro
     return (
       <div className="selected--item">
         <div className="avatar">
-          <img src={avatar || ImageThirdGender} alt={label} />
+          <img loading="lazy" src={avatar || ImageThirdGender} alt={label} />
         </div>
         {label}
       </div>
@@ -792,8 +792,7 @@ export default function AddProjectManagementModal(props: IAddWorkProjectModalPro
                           {listImageWork.map((item, idx) => (
                             <div key={idx} className="wrap-image-item">
                               <div className="image-item">
-                                <img
-                                  src={
+                                <img loading="lazy" src={
                                     item.type == "xlsx" ? ImgExcel : item.type === "docx" ? ImgWord : item.type === "pptx" ? ImgPowerpoint : item.url
                                   }
                                   alt="image-warranty"

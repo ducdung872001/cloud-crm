@@ -85,7 +85,7 @@ export default function ViewBill(props: IViewBillProps) {
             <div className="view__image--bill">
               {data && data.bill ? (
                 <div className="img-bill">
-                  <img src={data.bill} alt="Hóa đơn chuyển tiền" />
+                  <img loading="lazy" src={data.bill} alt="Hóa đơn chuyển tiền" />
                 </div>
               ) : (
                 <SystemNotification type="no-item" description={<span>Hiện tại chưa có hóa đơn chuyển tiền nào.</span>} />

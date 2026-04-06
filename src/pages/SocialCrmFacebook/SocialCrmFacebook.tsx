@@ -218,7 +218,7 @@ export default function SocialCrmFacebook() {
               ) : (
                 <div className="notify-chatting">
                   <div className="img-notify">
-                    <img src={NoImageChat} alt="" />
+                    <img loading="lazy" src={NoImageChat} alt="" />
                   </div>
                   <h2>Fanpage của bạn chưa có thành viên nào!</h2>
                 </div>

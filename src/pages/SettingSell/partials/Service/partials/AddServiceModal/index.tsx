@@ -1150,8 +1150,7 @@ export default function AddServiceModal(props: IAddServiceModalProps) {
                   <div className="d-flex align-items-center">
                     {lstDocument.map((item, idx) => (
                       <div key={idx} className="image-item">
-                        <img
-                          src={item.type == "xlsx" ? ImgExcel : item.type === "docx" ? ImgWord : item.type === "pptx" ? ImgPowerpoint : item.url}
+                        <img loading="lazy" src={item.type == "xlsx" ? ImgExcel : item.type === "docx" ? ImgWord : item.type === "pptx" ? ImgPowerpoint : item.url}
                           alt="image-document"
                         />
                         <span className="icon-delete" onClick={() => handleRemoveImageItem(idx)}>

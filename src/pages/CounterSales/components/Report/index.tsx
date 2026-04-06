@@ -424,7 +424,7 @@ const Report: React.FC = () => {
                   <div className={`tp-rank ${rankCls(p.rank)}`}>{p.rank}</div>
                   <div className="tp-icon">
                     {p.avatar
-                      ? <img src={p.avatar} alt="" style={{ width: "100%", height: "100%", objectFit: "cover", borderRadius: "0.3rem" }} />
+                      ? <img loading="lazy" src={p.avatar} alt="" style={{ width: "100%", height: "100%", objectFit: "cover", borderRadius: "0.3rem" }} />
                       : "📦"
                     }
                   </div>

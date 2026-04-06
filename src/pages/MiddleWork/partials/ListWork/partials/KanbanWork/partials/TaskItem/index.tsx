@@ -163,7 +163,7 @@ export default function TaskItem(props: ITaskItemProps) {
               {type === "status" ? (
                 <div className="implementer">
                   <span className="avatar-implementer">
-                    <img src={item.employeeAvatar || OtherGenders} alt={item.employeeName} />
+                    <img loading="lazy" src={item.employeeAvatar || OtherGenders} alt={item.employeeName} />
                   </span>
                   <h4 className="name-implementer">{item.employeeName}</h4>
                 </div>

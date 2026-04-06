@@ -216,7 +216,7 @@ export default function AddMailBoxModal(props: IAddMailBoxModalProps) {
     return (
       <div className="selected--item">
         <div className="avatar">
-          <img src={avatar || ImageThirdGender} alt={label} />
+          <img loading="lazy" src={avatar || ImageThirdGender} alt={label} />
         </div>
         {label}
       </div>
@@ -324,7 +324,7 @@ export default function AddMailBoxModal(props: IAddMailBoxModalProps) {
                       ) : (
                         JSON.parse(formData.values.attachments || "[]").map((item, idx) => (
                           <div key={idx} className="image-item">
-                            <img src={item.url} alt="image-warranty" />
+                            <img loading="lazy" src={item.url} alt="image-warranty" />
                             <span className="icon-delete" onClick={() => handleRemoveDocumentItem(idx)}>
                               <Icon name="Trash" />
                             </span>
@@ -334,7 +334,7 @@ export default function AddMailBoxModal(props: IAddMailBoxModalProps) {
                        */}
                       {JSON.parse(formData.values.attachments || "[]").map((item, idx) => (
                         <div key={idx} className="image-item">
-                          <img src={item.url} alt="image-warranty" />
+                          <img loading="lazy" src={item.url} alt="image-warranty" />
                           <span className="icon-delete" onClick={() => handleRemoveDocumentItem(idx)}>
                             <Icon name="Trash" />
                           </span>

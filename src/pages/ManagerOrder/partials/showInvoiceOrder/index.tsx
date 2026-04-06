@@ -116,7 +116,7 @@ export default function ShowInvoiceOrder(props: IShowInvoiceOrderProps) {
               <div ref={refPrintInvoice} className="body--info">
                 {/* <div className="info__product--store">
                   <div className="logo-store">
-                    <img src={Logo} alt="logo" />
+                    <img loading="lazy" src={Logo} alt="logo" />
                   </div>
                   <div className="dept__store">
                     <h3 className="name-store">{product_store?.name}</h3>

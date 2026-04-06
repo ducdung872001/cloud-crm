@@ -128,7 +128,7 @@ export default function PaymentMethodList({ onBackProps }: { onBackProps?: Recor
                 <div className="card-main-info">
                   <div className="icon-box" style={{ background: meta.color + "18" }}>
                     {item.template?.logoUrl
-                      ? <img src={item.template.logoUrl} alt="" style={{ width: 26, height: 26, objectFit: "contain" }} />
+                      ? <img loading="lazy" src={item.template.logoUrl} alt="" style={{ width: 26, height: 26, objectFit: "contain" }} />
                       : <span style={{ fontSize: 24 }}>{meta.icon}</span>}
                   </div>
                   <div className="info-text">

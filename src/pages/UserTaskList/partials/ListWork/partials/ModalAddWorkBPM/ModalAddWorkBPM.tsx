@@ -234,7 +234,7 @@ export default function ModalAddWorkBpm(props: Record<string, unknown>) {
     return (
       <div className="selected--item">
         <div className="avatar">
-          <img src={avatar || ImageThirdGender} alt={label} />
+          <img loading="lazy" src={avatar || ImageThirdGender} alt={label} />
         </div>
         {label}
       </div>
@@ -285,7 +285,7 @@ export default function ModalAddWorkBpm(props: Record<string, unknown>) {
     return (
       <div className="selected--item">
         <div className="avatar">
-          <img src={avatar || ImageThirdGender} alt={label} />
+          <img loading="lazy" src={avatar || ImageThirdGender} alt={label} />
         </div>
         {label}
       </div>
@@ -436,7 +436,7 @@ export default function ModalAddWorkBpm(props: Record<string, unknown>) {
     return (
       <div style={{ display: "flex", alignItems: "center" }}>
         <div className="avatar">
-          {/* <img src={avatar || ImageThirdGender} alt={label} /> */}
+          {/* <img loading="lazy" src={avatar || ImageThirdGender} alt={label} /> */}
           <Icon
             name="Star"
             style={{
@@ -543,7 +543,7 @@ export default function ModalAddWorkBpm(props: Record<string, unknown>) {
                           );
                         }}
                       >
-                        {item?.type == "image" ? <img src={item?.fileUrl} width={36} height={36} /> : <Icon name="FileXls" />}
+                        {item?.type == "image" ? <img loading="lazy" src={item?.fileUrl} width={36} height={36} /> : <Icon name="FileXls" />}
                         {/* <Icon name='FileXls'/> */}
                         <div className="data-file">
                           <span style={{ fontSize: 14, fontWeight: "500" }}>

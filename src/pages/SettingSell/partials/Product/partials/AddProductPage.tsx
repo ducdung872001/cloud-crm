@@ -356,7 +356,7 @@ function VariantImagePicker({ images, onChange }: { images: string[]; onChange: 
           title={idx === 0 ? "Ảnh chính" : "Click để đặt làm ảnh chính"}
         >
           {idx === 0 && <span className="vt-img-strip__main-badge">Chính</span>}
-          <img src={url} alt={`img-${idx}`} className="vt-img-strip__img" />
+          <img loading="lazy" src={url} alt={`img-${idx}`} className="vt-img-strip__img" />
           {/* Nút di chuyển (hiện khi hover) */}
           <div className="vt-img-strip__move-row">
             <button
@@ -2175,8 +2175,7 @@ export default function AddProductPage({ idProduct, data, onBack, preFillBarcode
               <div className="wp-product">
                 <div className="wp-product__gallery">
                   {combinations[0]?.images?.[0] || detailProduct?.avatar ? (
-                    <img
-                      src={combinations[0]?.images?.[0] || (detailProduct as Record<string, unknown>)?.avatar}
+                    <img loading="lazy" src={combinations[0]?.images?.[0] || (detailProduct as Record<string, unknown>)?.avatar}
                       alt={formData.name}
                       className="wp-product__main-img"
                     />

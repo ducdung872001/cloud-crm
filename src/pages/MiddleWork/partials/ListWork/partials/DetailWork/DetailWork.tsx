@@ -203,7 +203,7 @@ const DetailWork = (props: IDetailWorkProps) => {
                                   {JSON.parse(item.name || "[]").map((el, idxEl) => {
                                     return el.type === "image" ? (
                                       <div key={idxEl} className="image-item">
-                                        <img src={el.url} alt="" />
+                                        <img loading="lazy" src={el.url} alt="" />
                                       </div>
                                     ) : (
                                       ""

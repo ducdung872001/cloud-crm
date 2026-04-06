@@ -1259,7 +1259,7 @@ export default function ConfigModal(props: Record<string, unknown>) {
     return (
       <div className="selected--item">
         <div className="avatar">
-          <img src={avatar || ImageThirdGender} alt={label} />
+          <img loading="lazy" src={avatar || ImageThirdGender} alt={label} />
         </div>
         <div>
           <div>
@@ -1649,7 +1649,7 @@ export default function ConfigModal(props: Record<string, unknown>) {
                             <div key={el.id} className="item-employee">
                               <div style={{display: 'flex', alignItems:'center', gap: '0 0.5rem'}}>
                                 <div className="avatar">
-                                  <img src={ImageThirdGender} alt={'Trung Nguyen'} />
+                                  <img loading="lazy" src={ImageThirdGender} alt={'Trung Nguyen'} />
                                 </div>
                                 <div className="employee-name">
                                   <div>

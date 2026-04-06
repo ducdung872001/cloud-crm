@@ -35,7 +35,7 @@ export default function Banner() {
         {dataBanner.map((item, idx) => {
           return (
             <SwiperSlide key={idx}>
-              <img src={item.image} alt="banner" />
+              <img loading="lazy" src={item.image} alt="banner" />
             </SwiperSlide>
           );
         })}

@@ -288,8 +288,7 @@ export default function ConfigIntegrateModal(props: Record<string, unknown>) {
                           }}
                         >
                           <div className="header-item">
-                            <img
-                              src={item.avatar}
+                            <img loading="lazy" src={item.avatar}
                               alt=""
                             />
 

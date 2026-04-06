@@ -270,8 +270,7 @@ export default function AddAdjustmentSlip(props: IAddAdjustmentSlipProps) {
                           <td>
                             <div className="adj-product-info">
                               <div className="adj-product-avatar">
-                                <img
-                                  src={item.productAvatar || ImageError}
+                                <img loading="lazy" src={item.productAvatar || ImageError}
                                   alt={item.productName}
                                   onError={e => {
                                     (e.currentTarget as HTMLImageElement).onerror = null;

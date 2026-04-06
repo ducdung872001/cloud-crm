@@ -387,11 +387,10 @@ export default function UploadDocument() {
                   >
                     <div className="item--upload__left">
                       {item?.fileType == "image" ? (
-                        <img src={item?.fileUrl} width={36} height={36} style={{ marginLeft: "8px" }} />
+                        <img loading="lazy" src={item?.fileUrl} width={36} height={36} style={{ marginLeft: "8px" }} />
                       ) : (
                         // <Icon name="FileXls" />
-                        <img
-                          width={36}
+                        <img loading="lazy" width={36}
                           height={36}
                           style={{ marginLeft: "8px" }}
                           src={
@@ -533,7 +532,7 @@ export default function UploadDocument() {
               ? data.map((item, idx) => {
                   return (
                     <div key={idx} className="item_upload">
-                      <img src={item?.fileUrl} width={96} height={96} />
+                      <img loading="lazy" src={item?.fileUrl} width={96} height={96} />
                       <span className="icon-delete" onClick={() => handDelete(item)}>
                         <Icon name="Trash" />
                       </span>

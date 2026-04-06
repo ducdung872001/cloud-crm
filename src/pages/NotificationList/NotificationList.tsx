@@ -278,7 +278,7 @@ export default function NotificationList(props: Record<string, unknown>) {
     return (
       <div className="icon_status">
         <div className="icon">
-          {/* <img src={avatar || ImageThirdGender} alt={label} /> */}
+          {/* <img loading="lazy" src={avatar || ImageThirdGender} alt={label} /> */}
           <Icon
             name={value === '0' ? 'NewWork' : value === '1' ? 'ExpireWork' : value === '4' ? 'PauseWork' : value === '2' ? 'CompleteWork' : value === '3' ? 'CancelWork' : ''}
             style={{

@@ -145,7 +145,7 @@ export default function FeedbackPersonList(props: IFeedbackPersonListProps) {
                 <div key={media.id} className="item--media">
                   {media.type === "image" ? (
                     // <div className="__media--image">
-                    //   <img src={media.url} alt={data.content} />
+                    //   <img loading="lazy" src={media.url} alt={data.content} />
                     //   <a href={media.url} download rel="noopener noreferrer" target="_blank" className="action__download--image">
                     //     Tải xuống
                     //   </a>
@@ -163,8 +163,7 @@ export default function FeedbackPersonList(props: IFeedbackPersonListProps) {
                     <div className="img-document">
                       <div className="info-document">
                         <div className="__avatar">
-                          <img
-                            src={
+                          <img loading="lazy" src={
                               media.type == "pdf" ? ImagePdf : media.type == "xlsx" ? ImageExcel : media.type == "docx" ? ImageWord : ImagePowerPoint
                             }
                             alt={data.content}
@@ -201,8 +200,7 @@ export default function FeedbackPersonList(props: IFeedbackPersonListProps) {
               <div className="content-chat">
                 {listFeedback.map((item, idx) => (
                   <div key={media.id} className={`${item.employeeUserId === id ? "content__item--right" : "content__item--left"}`}>
-                    <img
-                      src={item.employeeAvatar ? item.employeeAvatar : ThirdGender}
+                    <img loading="lazy" src={item.employeeAvatar ? item.employeeAvatar : ThirdGender}
                       alt=""
                       onError={(e) => {
                         e.currentTarget.onerror = null; // Ngăn lặp vô hạn nếu ảnh mặc định cũng lỗi

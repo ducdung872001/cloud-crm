@@ -877,7 +877,7 @@ export default function EditPromotion(props: Record<string, unknown>) {
                         {giftList.map((product, index_product) => (
                           <li key={index_product} className="list-product-item">
                             <div className="product_img">
-                              <img src={product.imageUrl || "./assets/5f7944ea4e383956a0fd.png"} alt={product.name} />
+                              <img loading="lazy" src={product.imageUrl || "./assets/5f7944ea4e383956a0fd.png"} alt={product.name} />
                             </div>
                             <div className="product_details">
                               <div className="product_name">{product.name}</div>
@@ -1275,7 +1275,7 @@ export default function EditPromotion(props: Record<string, unknown>) {
                         {item.listProduct.map((product, index_product) => (
                           <li key={index_product} className="list-product-item">
                             <div className="product_img">
-                              <img src={product.imageUrl || "./assets/5f7944ea4e383956a0fd.png"} alt={product.name} />
+                              <img loading="lazy" src={product.imageUrl || "./assets/5f7944ea4e383956a0fd.png"} alt={product.name} />
                             </div>
                             <div className="product_details">
                               <div className="product_name">{product.name}</div>

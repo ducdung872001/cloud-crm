@@ -496,7 +496,7 @@ export default function AddWorkModal(props: IAddWorkModelProps) {
     return (
       <div className="selected--item">
         <div className="avatar">
-          <img src={avatar || ImageThirdGender} alt={label} />
+          <img loading="lazy" src={avatar || ImageThirdGender} alt={label} />
         </div>
         {label}
       </div>
@@ -548,7 +548,7 @@ export default function AddWorkModal(props: IAddWorkModelProps) {
     return (
       <div className="selected--item">
         <div className="avatar">
-          <img src={avatar || ImageThirdGender} alt={label} />
+          <img loading="lazy" src={avatar || ImageThirdGender} alt={label} />
         </div>
         {label}
       </div>
@@ -662,7 +662,7 @@ export default function AddWorkModal(props: IAddWorkModelProps) {
     return (
       <div className="selected--item">
         <div className="avatar">
-          <img src={avatar || ImageThirdGender} alt={label} />
+          <img loading="lazy" src={avatar || ImageThirdGender} alt={label} />
         </div>
         {label}
       </div>
@@ -722,7 +722,7 @@ export default function AddWorkModal(props: IAddWorkModelProps) {
     return (
       <div className="selected--item">
         <div className="avatar">
-          <img src={avatar || ImageThirdGender} alt={label} />
+          <img loading="lazy" src={avatar || ImageThirdGender} alt={label} />
         </div>
         {label}
       </div>
@@ -1274,8 +1274,7 @@ export default function AddWorkModal(props: IAddWorkModelProps) {
         //             <div className="d-flex align-items-center">
         //               {listImageWork.map((item, idx) => (
         //                 <div key={item.value} className="image-item">
-        //                   <img
-        //                     src={item.type == "xlsx" ? ImgExcel : item.type === "docx" ? ImgWord : item.type === "pptx" ? ImgPowerpoint : item.url}
+        //                   <img loading="lazy" //                     src={item.type == "xlsx" ? ImgExcel : item.type === "docx" ? ImgWord : item.type === "pptx" ? ImgPowerpoint : item.url}
         //                     alt="image-warranty"
         //                   />
         //                   <span className="icon-delete" onClick={() => handleRemoveImageItem(idx)}>

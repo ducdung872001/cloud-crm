@@ -253,11 +253,11 @@ export default function AddRelatedCustomerModal(props: IAddRelatedCustomerModalP
                               <td>
                                 <div className="avatar">
                                   {item.avatar ? (
-                                    <img src={item.avatar} alt={item.name} />
+                                    <img loading="lazy" src={item.avatar} alt={item.name} />
                                   ) : item.gender == 1 ? (
-                                    <img src={Male} alt={item.name} />
+                                    <img loading="lazy" src={Male} alt={item.name} />
                                   ) : (
-                                    <img src={Female} alt={item.name} />
+                                    <img loading="lazy" src={Female} alt={item.name} />
                                   )}
                                 </div>
                               </td>

@@ -149,7 +149,7 @@ export default function Image(props: IModalAddImageProps) {
                   <div className="img-modal__preview-grid">
                     {listSelectedImage.map((url, idx) => (
                       <div key={`${idx}-${url}`} className="img-modal__preview-item">
-                        <img src={url} alt={`preview-${idx}`} />
+                        <img loading="lazy" src={url} alt={`preview-${idx}`} />
                         {idx === 0 && <span className="img-modal__preview-main">Chính</span>}
                         <button className="img-modal__preview-remove" onClick={() => handleRemove(idx)}>
                           <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round">

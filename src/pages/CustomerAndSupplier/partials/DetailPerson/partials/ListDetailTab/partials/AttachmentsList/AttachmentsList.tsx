@@ -272,7 +272,7 @@ export default function AttachmentsList(props: IAttachmentsListProps) {
                 return (
                   <div key={idx} className="content__attachment--left">
                     <div className="avatar_user">
-                      <img src={item.employeeAvatar || ThirdGender} alt="avatar_user" />
+                      <img loading="lazy" src={item.employeeAvatar || ThirdGender} alt="avatar_user" />
                     </div>
                     <div className="box__desc--attachment">
                       <h4 className="name__user">{item.employeeName}</h4>
@@ -283,8 +283,7 @@ export default function AttachmentsList(props: IAttachmentsListProps) {
                             <div className="desc__attachment--left">
                               {el.type !== "image" ? (
                                 <div className="img__file">
-                                  <img
-                                    src={
+                                  <img loading="lazy" src={
                                       el.type === "docx"
                                         ? ImgFileDoc
                                         : el.type === "xlsx"
@@ -302,7 +301,7 @@ export default function AttachmentsList(props: IAttachmentsListProps) {
                                 </div>
                               ) : (
                                 <div className="img__avatar">
-                                  <img src={el.url} alt={el.type} />
+                                  <img loading="lazy" src={el.url} alt={el.type} />
                                   <a href={el.url} download rel="noopener noreferrer" target="_blank" className="action__download--image">
                                     Tải xuống
                                   </a>

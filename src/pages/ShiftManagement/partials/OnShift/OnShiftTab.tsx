@@ -251,7 +251,7 @@ export default function OnShiftTab({ shiftId, branchId, onEndShift, onViewOrders
                 <div className="left">
                   <div className="avatar">
                     {s.avatar
-                      ? <img src={s.avatar} alt={s.name} />
+                      ? <img loading="lazy" src={s.avatar} alt={s.name} />
                       : getInitials(s.name)
                     }
                   </div>

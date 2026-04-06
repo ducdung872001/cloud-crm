@@ -108,7 +108,7 @@ const serialize = (node: Record<string, unknown>, key = "") => {
     case "list-item":
       return `<li>${children}</li>`;
     case "image":
-      let imgResult = `<img src="${node.url}" 
+      let imgResult = `<img loading="lazy" src="${node.url}" 
                 width="${node?.width ? node.width : "100%"}" 
                 height="${node?.height ? node.height : "100%"}" 
                 align="${node?.align ? node.align : ""}"

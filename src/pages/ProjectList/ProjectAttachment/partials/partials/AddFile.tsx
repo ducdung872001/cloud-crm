@@ -149,8 +149,7 @@ export default function AddFile(props: IAddFileProps) {
       ) : (
         <div className="show__file--upload">
           <div className="img__upload">
-            <img 
-                src={
+            <img loading="lazy" src={
                     infoFile?.extension === "docx"
                       ? ImgFileDoc
                       : infoFile?.extension === "xlsx"

@@ -645,8 +645,7 @@ export default function OnRejectModal(props: Record<string, unknown>) {
                         <div className="container-list-file">
                           {listAttactment.map((item, idx) => (
                             <div key={idx} className={item.type === "image" ? "image-item" : "file-item"}>
-                              <img
-                                src={
+                              <img loading="lazy" src={
                                   // item.type == "xlsx" ? ImgExcel
                                   // : item.type === "docx" ? ImgWord
                                   // : item.type === "pptx" ? ImgPowerpoint
@@ -722,7 +721,7 @@ export default function OnRejectModal(props: Record<string, unknown>) {
                               );
                             }}
                           >
-                            {item?.type == "image" ? <img src={item?.fileUrl} width={36} height={36} /> : <Icon name="FileXls" />}
+                            {item?.type == "image" ? <img loading="lazy" src={item?.fileUrl} width={36} height={36} /> : <Icon name="FileXls" />}
                             {/* <Icon name='FileXls'/> */}
                             <div className="data-file">
                               <span style={{ fontSize: 14, fontWeight: "500" }}>

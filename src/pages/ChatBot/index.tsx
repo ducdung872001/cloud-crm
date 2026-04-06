@@ -194,8 +194,7 @@ export default function ChatBot() {
                   <div className="img-document">
                     <div className="info-document">
                       <div className="__avatar--doc">
-                        <img
-                          src={item.type == "pdf" ? ImagePdf : item.type == "xlsx" ? ImageExcel : item.type == "docx" ? ImageWord : ImagePowerPoint}
+                        <img loading="lazy" src={item.type == "pdf" ? ImagePdf : item.type == "xlsx" ? ImageExcel : item.type == "docx" ? ImageWord : ImagePowerPoint}
                           alt={item.content}
                         />
                       </div>
@@ -379,13 +378,13 @@ export default function ChatBot() {
                                             </div>
                                         </div>
                                         <div className="avatar-bot">
-                                            <img src={avatar || ThirdGender} alt="" />
+                                            <img loading="lazy" src={avatar || ThirdGender} alt="" />
                                         </div>
                                     </div>
                                     :
                                     <div key={item.id} className="item__content--bot">
                                         <div className="avatar-bot">
-                                            <img src={NoImageChatBot} alt="" />
+                                            <img loading="lazy" src={NoImageChatBot} alt="" />
                                         </div>
                                         <div className="desc__content__receive">
                                             <div className="desc__content__receive--left">
@@ -452,7 +451,7 @@ export default function ChatBot() {
                     {!isLoading && lstFeedback.length === 0 && (
                         <div className="notify__no--exchange">
                             <div className="img__message">
-                                <img src={Conversation} alt="Hình ảnh góp ý" />
+                                <img loading="lazy" src={Conversation} alt="Hình ảnh góp ý" />
                             </div>
                             <div className="no__content--message">
                                 <h2>
@@ -495,7 +494,7 @@ export default function ChatBot() {
             //   >
             //     <Tippy content='Trợ lý ảo Reborn (F2 để ẩn)'>
             //       <div className="image-chatbot-icon">
-            //           <img src={NoImageChatBot} alt="" />
+            //           <img loading="lazy" src={NoImageChatBot} alt="" />
             //       </div>
             //     </Tippy>
             //   </div>

@@ -238,7 +238,7 @@ export default function AddParticipantModal(props: IAddParticipantModalProps) {
                                 <td className="text-center">{index + 1}</td>
                                 <td>
                                   <div key={item.id} className="avatar">
-                                    <img src={item.avatar ? item.avatar : ImageThirdGender} alt={item.name} />
+                                    <img loading="lazy" src={item.avatar ? item.avatar : ImageThirdGender} alt={item.name} />
                                   </div>
                                 </td>
                                 <td>{item.name}</td>

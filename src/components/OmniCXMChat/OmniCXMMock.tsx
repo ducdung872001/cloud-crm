@@ -583,7 +583,7 @@ export default function OmniCXMMock({ onEvent }: Props) {
                 onMouseLeave={(e) => (e.currentTarget.style.background = "")}
               >
                 {p.avatar
-                  ? <img src={p.avatar} alt="" style={{ width: 32, height: 32, borderRadius: 6, objectFit: "cover", flexShrink: 0 }} />
+                  ? <img loading="lazy" src={p.avatar} alt="" style={{ width: 32, height: 32, borderRadius: 6, objectFit: "cover", flexShrink: 0 }} />
                   : <div style={{ width: 32, height: 32, borderRadius: 6, background: "#e0e7ff", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 16, flexShrink: 0 }}>📦</div>
                 }
                 <div style={{ flex: 1, minWidth: 0 }}>

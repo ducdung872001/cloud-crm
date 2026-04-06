@@ -171,8 +171,7 @@ export default function FeedbackCustomer() {
                 <div className="img-document">
                   <div className="info-document">
                     <div className="__avatar--doc">
-                      <img
-                        src={item.type == "pdf" ? ImagePdf : item.type == "xlsx" ? ImageExcel : item.type == "docx" ? ImageWord : ImagePowerPoint}
+                      <img loading="lazy" src={item.type == "pdf" ? ImagePdf : item.type == "xlsx" ? ImageExcel : item.type == "docx" ? ImageWord : ImagePowerPoint}
                         alt={item.content}
                       />
                     </div>

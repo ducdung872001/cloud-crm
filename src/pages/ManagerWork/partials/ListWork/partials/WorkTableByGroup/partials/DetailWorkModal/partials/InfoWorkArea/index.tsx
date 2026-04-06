@@ -425,8 +425,7 @@ export default function InfoWorkArea(props: Record<string, unknown>) {
                         </button>
 
                         <div className="doc-image-wrap">
-                          <img
-                            src={docFiles[activeIndex]?.url}
+                          <img loading="lazy" src={docFiles[activeIndex]?.url}
                             alt={docFiles[activeIndex]?.name || `Tài liệu ${activeIndex + 1}`}
                             className="doc-image"
                             loading="lazy"

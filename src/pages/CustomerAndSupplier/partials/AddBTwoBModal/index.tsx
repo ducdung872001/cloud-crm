@@ -225,7 +225,7 @@ export default function AddBTwoBModal(props: IAddBTwoBModalProps) {
     return (
       <div className="selected--item">
         <div className="avatar">
-          <img src={avatar || ImageThirdGender} alt={label} />
+          <img loading="lazy" src={avatar || ImageThirdGender} alt={label} />
         </div>
         {label}
       </div>
@@ -278,7 +278,7 @@ export default function AddBTwoBModal(props: IAddBTwoBModalProps) {
     return (
       <div className="selected--item">
         <div className="avatar">
-          <img src={avatar || ImageThirdGender} alt={label} />
+          <img loading="lazy" src={avatar || ImageThirdGender} alt={label} />
         </div>
         {label}
       </div>
@@ -350,7 +350,7 @@ export default function AddBTwoBModal(props: IAddBTwoBModalProps) {
     return (
       <div className="selected--item">
         <div className="avatar" style={avatar == "custom" ? { width: "1.8rem", height: "1.8rem" } : {}}>
-          <img src={avatar == "custom" ? ImgPushCustomer : avatar ? avatar : ImageThirdGender} alt={label} />
+          <img loading="lazy" src={avatar == "custom" ? ImgPushCustomer : avatar ? avatar : ImageThirdGender} alt={label} />
         </div>
         {label}
       </div>
@@ -418,7 +418,7 @@ export default function AddBTwoBModal(props: IAddBTwoBModalProps) {
     return (
       <div className="selected--item">
         <div className="avatar" style={avatar == "custom" ? { width: "1.8rem", height: "1.8rem" } : {}}>
-          <img src={avatar == "custom" ? ImgPushCustomer : avatar ? avatar : ImageThirdGender} alt={label} />
+          <img loading="lazy" src={avatar == "custom" ? ImgPushCustomer : avatar ? avatar : ImageThirdGender} alt={label} />
         </div>
         {label}
       </div>
@@ -504,7 +504,7 @@ export default function AddBTwoBModal(props: IAddBTwoBModalProps) {
     return (
       <div className="selected--item">
         <div className="avatar">
-          <img src={avatar || ImageThirdGender} alt={label} />
+          <img loading="lazy" src={avatar || ImageThirdGender} alt={label} />
         </div>
         {label}
       </div>
@@ -603,7 +603,7 @@ export default function AddBTwoBModal(props: IAddBTwoBModalProps) {
     return (
       <div className="selected--item">
         <div className="avatar">
-          <img src={avatar || ImageThirdGender} alt={label} />
+          <img loading="lazy" src={avatar || ImageThirdGender} alt={label} />
         </div>
         {label}
       </div>
@@ -657,7 +657,7 @@ export default function AddBTwoBModal(props: IAddBTwoBModalProps) {
     return (
       <div className="selected--item">
         <div className="avatar">
-          <img src={avatar || ImageThirdGender} alt={label} />
+          <img loading="lazy" src={avatar || ImageThirdGender} alt={label} />
         </div>
         {label}
       </div>
@@ -747,7 +747,7 @@ export default function AddBTwoBModal(props: IAddBTwoBModalProps) {
     return (
       <div className="selected--item">
         <div className="avatar">
-          <img src={avatar || ImageThirdGender} alt={label} />
+          <img loading="lazy" src={avatar || ImageThirdGender} alt={label} />
         </div>
         {label}
       </div>

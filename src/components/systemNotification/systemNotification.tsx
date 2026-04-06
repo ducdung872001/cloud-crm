@@ -31,7 +31,7 @@ export function SystemNotification(props: SystemNotificationProps) {
         ) : type === "no-permission" ? (
           <ImageNoPermission />
         ) : (
-          type === "no-service" && <img srcSet={`${ImageErrorSystem} 2x`} alt="Lỗi hệ thống" />
+          type === "no-service" && <img loading="lazy" srcSet={`${ImageErrorSystem} 2x`} alt="Lỗi hệ thống" />
         )}
         <div className="system-notification__description">
           <h2>

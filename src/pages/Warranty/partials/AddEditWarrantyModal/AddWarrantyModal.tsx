@@ -274,7 +274,7 @@ export default function AddWarrantyModal(props: IAddWarrantyModelProps) {
     return (
       <div className="selected--item">
         <div className="avatar">
-          <img src={avatar || ImageThirdGender} alt={label} />
+          <img loading="lazy" src={avatar || ImageThirdGender} alt={label} />
         </div>
         {label}
       </div>
@@ -574,7 +574,7 @@ export default function AddWarrantyModal(props: IAddWarrantyModelProps) {
                         <div className="d-flex align-items-center">
                           {JSON.parse(formData.values.docLink).map((item, idx) => (
                             <div key={idx} className="image-item">
-                              <img src={item.url} alt="image-warranty" />
+                              <img loading="lazy" src={item.url} alt="image-warranty" />
                               <span className="icon-delete" onClick={() => handleRemoveImageItem(idx)}>
                                 <Icon name="Trash" />
                               </span>

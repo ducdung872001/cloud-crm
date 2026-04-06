@@ -203,8 +203,7 @@ export default function ContentExchangeWork(props: IContentExchangeWorkProps) {
                       }}
                     >
                       <div className="__avatar--doc">
-                        <img
-                          // src={item.type == "pdf" ? ImagePdf : item.type == "xlsx" ? ImageExcel : item.type == "docx" ? ImageWord : ImagePowerPoint}
+                        <img loading="lazy" // src={item.type == "pdf" ? ImagePdf : item.type == "xlsx" ? ImageExcel : item.type == "docx" ? ImageWord : ImagePowerPoint}
                           src={
                             item.type === "docx" || item.type === "doc"
                               ? ImgFileDoc
@@ -269,7 +268,7 @@ export default function ContentExchangeWork(props: IContentExchangeWorkProps) {
                     // className={`${item.employeeId === dataEmployee.id ? "data__item--right" : "data__item--left"}`}
                     className={`${"data__item--left"}`}
                   >
-                    <img src={item.employeeAvatar ? item.employeeAvatar : ImageAvatar} alt={item.employeeName} className="avatar-employee" />
+                    <img loading="lazy" src={item.employeeAvatar ? item.employeeAvatar : ImageAvatar} alt={item.employeeName} className="avatar-employee" />
                     <div className="info__content">
                       <div className="info__content--left">
                         <div className="username-person">
@@ -349,7 +348,7 @@ export default function ContentExchangeWork(props: IContentExchangeWorkProps) {
           ) : (
             <div className="message-notification">
               <div className="img__message">
-                <img src={Conversation} alt="Hình ảnh cuộc trao đổi" />
+                <img loading="lazy" src={Conversation} alt="Hình ảnh cuộc trao đổi" />
                 {/* <Icon name='NoChatHistory' /> */}
               </div>
               <div className="content-message">

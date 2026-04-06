@@ -307,7 +307,7 @@ function ExchangeProductRow({ row, disabled, onChange, onSelect, onRemove }: Exc
                 onMouseDown={(e) => { e.preventDefault(); handlePickProduct(sug); }}
               >
                 {sug.avatar && (
-                  <img src={sug.avatar} alt="" className="crm-product-dropdown__avatar" />
+                  <img loading="lazy" src={sug.avatar} alt="" className="crm-product-dropdown__avatar" />
                 )}
                 <div className="crm-product-dropdown__info">
                   <span className="crm-product-dropdown__name">{sug.name}</span>

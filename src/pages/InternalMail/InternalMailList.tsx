@@ -221,8 +221,7 @@ export default function InternalMailList() {
                 }}
               >
                 <div className="conversation__item--info">
-                  <img
-                    src={item.senderAvatar ? item.senderAvatar : ThirdGender}
+                  <img loading="lazy" src={item.senderAvatar ? item.senderAvatar : ThirdGender}
                     onError={(e) => {
                       (e.target as HTMLImageElement).src = ThirdGender; // Thay thế bằng ảnh mặc định nếu lỗi
                     }}
@@ -271,7 +270,7 @@ export default function InternalMailList() {
         ) : params.keyword && listMailbox.length == 0 ? (
           <div className="no__search--data">
             <div className="img__no--search">
-              <img src={ImgNoSearch} alt="Không tìm thấy" />
+              <img loading="lazy" src={ImgNoSearch} alt="Không tìm thấy" />
             </div>
 
             <div className="content">
@@ -297,7 +296,7 @@ export default function InternalMailList() {
         ) : (
           <div className="introduction">
             <div className="img__chat--group">
-              <img src={ImgChatGroup} alt="chat nhóm" />
+              <img loading="lazy" src={ImgChatGroup} alt="chat nhóm" />
             </div>
             <h2>Chào mừng bạn đến với tính năng thư nội bộ !</h2>
           </div>

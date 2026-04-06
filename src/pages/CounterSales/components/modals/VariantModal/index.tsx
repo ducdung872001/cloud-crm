@@ -195,9 +195,9 @@ export default function VariantModal({ open, productData, onClose, onAddToCart }
             <div className="variant-modal__product">
               <div className="variant-modal__product-icon">
                 {matchedVariant?.images?.[0] ? (
-                  <img src={matchedVariant.images[0]} alt={matchedVariant.sku} />
+                  <img loading="lazy" src={matchedVariant.images[0]} alt={matchedVariant.sku} />
                 ) : product?.avatar ? (
-                  <img src={product.avatar} alt={product.name} />
+                  <img loading="lazy" src={product.avatar} alt={product.name} />
                 ) : (
                   product.icon ?? "📦"
                 )}

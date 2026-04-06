@@ -505,7 +505,7 @@ export default function CollectTicket() {
                             <div className="d-flex align-items-center">
                               {JSON.parse(formData.values.docLink).map((item, idx) => (
                                 <div key={idx} className="image-item">
-                                  <img src={item.url} alt="image-warranty" />
+                                  <img loading="lazy" src={item.url} alt="image-warranty" />
                                   <span className="icon-delete" onClick={() => handleRemoveImageItem(idx)}>
                                     <Icon name="Trash" />
                                   </span>

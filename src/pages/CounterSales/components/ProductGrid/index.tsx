@@ -109,8 +109,7 @@ const ProductGrid: React.FC<ProductGridProps> = ({ onAddToCart, onQrScan, wareho
           >
             <div className="pg-card__icon">
               {prod.avatar ? (
-                <img
-                  src={prod.avatar}
+                <img loading="lazy" src={prod.avatar}
                   alt={prod.name}
                   onError={(e) => {
                     (e.target as HTMLImageElement).style.display = "none";

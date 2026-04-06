@@ -212,8 +212,7 @@ export default function ShippingPartnerSetup() {
                 {/* Logo */}
                 <div className="ps-partner-card__logo">
                   {carrier.avatar ? (
-                    <img
-                      src={carrier.avatar}
+                    <img loading="lazy" src={carrier.avatar}
                       alt={carrier.name}
                       onError={(e) => { (e.target as HTMLImageElement).style.display = "none"; }}
                     />

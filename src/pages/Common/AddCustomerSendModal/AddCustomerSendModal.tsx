@@ -242,7 +242,7 @@ const AddCustomerSendModal = (props: IAddCustomerSendEmailModalProps) => {
                                 <td className="text-center">{index + 1}</td>
                                 <td className="text-center">
                                   <span key={item.id} className="avatar">
-                                    <img src={item.avatar ? item.avatar : item.gender == 1 ? Female : Male} alt={item.name} />
+                                    <img loading="lazy" src={item.avatar ? item.avatar : item.gender == 1 ? Female : Male} alt={item.name} />
                                   </span>
                                 </td>
                                 <td>{item.name}</td>

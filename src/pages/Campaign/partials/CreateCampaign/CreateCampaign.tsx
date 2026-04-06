@@ -956,7 +956,7 @@ export default function CreateCampaign() {
     return (
       <div className="selected--item">
         <div className="avatar">
-          <img src={avatar || ImageThirdGender} alt={label} />
+          <img loading="lazy" src={avatar || ImageThirdGender} alt={label} />
         </div>
         {label}
       </div>
@@ -1012,7 +1012,7 @@ export default function CreateCampaign() {
     return (
       <div className="selected--item" style={{ marginBottom: "3px" }}>
         {/* <div className="avatar">
-          <img src={avatar || ImageThirdGender} alt={label} />
+          <img loading="lazy" src={avatar || ImageThirdGender} alt={label} />
         </div> */}
         {label}
       </div>
@@ -1440,7 +1440,7 @@ export default function CreateCampaign() {
     return (
       <div className="selected--item" style={{ marginBottom: "3px" }}>
         {/* <div className="avatar">
-          <img src={avatar || ImageThirdGender} alt={label} />
+          <img loading="lazy" src={avatar || ImageThirdGender} alt={label} />
         </div> */}
         {label}
       </div>
@@ -1815,7 +1815,7 @@ export default function CreateCampaign() {
     return (
       <div className="selected--item">
         <div className="avatar">
-          <img src={avatar || ImageThirdGender} alt={label} />
+          <img loading="lazy" src={avatar || ImageThirdGender} alt={label} />
         </div>
         <div>
           <div>{label}</div>

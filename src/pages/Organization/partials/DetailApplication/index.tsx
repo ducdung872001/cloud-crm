@@ -337,8 +337,7 @@ export default function DetailApplication(props: IDetailApplicationProps) {
               return (
                 <div key={item.code} className="item__application">
                   <div className="avatar-app">
-                    <img
-                      src={
+                    <img loading="lazy" src={
                         item.code == "CRM"
                           ? LogoCrm
                           : item.code == "CMS"
@@ -429,8 +428,7 @@ export default function DetailApplication(props: IDetailApplicationProps) {
                   <div key={item.code} className="item-other">
                     <div className="basic__info--other">
                       <div className="avatar-app">
-                        <img
-                          src={
+                        <img loading="lazy" src={
                             item.code == "CRM"
                               ? LogoCrm
                               : item.code == "CMS"

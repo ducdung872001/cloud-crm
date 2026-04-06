@@ -258,7 +258,7 @@ export default function LinkSurvey() {
       ) : (
         <div className="box__thank--you">
           <div className="icon__success">
-            <img src={loadingGif} alt="" />
+            <img loading="lazy" src={loadingGif} alt="" />
           </div>
           <div className="content">
             <h2 className="title-content">Cảm ơn quý khách hàng đã tham gia khảo sát</h2>

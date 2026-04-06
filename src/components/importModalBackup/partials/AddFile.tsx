@@ -116,7 +116,7 @@ export default function AddFile(props: IAddFileProps) {
       ) : (
         <div className="show__file--upload">
           <div className="img__upload">
-            <img src={ExcelIcon} alt="File đã tải" />
+            <img loading="lazy" src={ExcelIcon} alt="File đã tải" />
           </div>
           <div className="actions__change-file">
             <span className="btn-change" onClick={() => refInputUpload.current?.click()}>
