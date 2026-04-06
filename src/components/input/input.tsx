@@ -50,6 +50,8 @@ interface InputProps {
   warningHistory?: boolean;
   onWarningHistory?: React.MouseEventHandler<HTMLDivElement>;
 }
+
+const style_alignItems_display_marginLeft: React.CSSProperties = { alignItems:'center', display:'flex', marginLeft: 5, marginBottom: 5, cursor:'pointer' };
 function Input(props: InputProps) {
   const {
     id,
@@ -191,7 +193,7 @@ function Input(props: InputProps) {
             {warningHistory && 
               <Tippy content={'Lịch sử thay đổi'}>
                 <div 
-                  style={{ alignItems:'center', display:'flex', marginLeft: 5, marginBottom: 5, cursor:'pointer'}}
+                  style={style_alignItems_display_marginLeft}
                   onClick={onWarningHistory}
                 >
                   <Icon name="WarningCircle" style={{width:'1.5rem', height:'1.5rem', fill: 'var(--warning-color)'}}/>

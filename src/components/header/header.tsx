@@ -77,6 +77,12 @@ interface HeaderProps {
   paramBranch: Record<string, unknown>;
 }
 
+
+const style_fontSize_fontWeight_marginLeft: React.CSSProperties = { fontSize: 15, fontWeight: "500", marginLeft: 3, cursor: "pointer" };
+const style_fontSize_fontWeight_marginLeft_1: React.CSSProperties = { fontSize: 15, fontWeight: "500", marginLeft: 3 };
+const style_justifyContent_display_width: React.CSSProperties = { justifyContent: "center", display: "flex", width: "100%" };
+const style_fontSize_color: React.CSSProperties = { fontSize: 14, color: "#757575" };
+const style_fontSize_fontWeight_color: React.CSSProperties = { fontSize: 16, fontWeight: 600, color: "#015aa4" };
 function Header(props: HeaderProps) {
   const [cookies, setCookie, removeCookie] = useCookies();
   const { valueBranch, handleChangeValueBranch, listBranch, newListBranch, searchListBranch, paramBranch } = props;
@@ -790,15 +796,15 @@ function Header(props: HeaderProps) {
               {valueBranch?.label.length > 30 ? (
                 <Tippy content={valueBranch?.label}>
                   <div>
-                    <span style={{ fontSize: 15, fontWeight: "500", marginLeft: 3, cursor: "pointer" }}>
+                    <span style={style_fontSize_fontWeight_marginLeft}>
                       {valueBranch?.label.substring(0, 22)}...
                     </span>
                   </div>
                 </Tippy>
               ) : (
-                <span style={{ fontSize: 15, fontWeight: "500", marginLeft: 3 }}>{valueBranch?.label}</span>
+                <span style={style_fontSize_fontWeight_marginLeft_1}>{valueBranch?.label}</span>
               )}
-              {/* <span style={{ fontSize: 15, fontWeight: "500", marginLeft: 3 }}>{valueBranch?.label}</span> */}
+              {/* <span style={style_fontSize_fontWeight_marginLeft_1}>{valueBranch?.label}</span> */}
             </div>
 
             {showPopoverBranch && (
@@ -859,8 +865,8 @@ function Header(props: HeaderProps) {
                             );
                           })
                         ) : (
-                          <div style={{ justifyContent: "center", display: "flex", width: "100%" }}>
-                            <span style={{ fontSize: 14, color: "#757575" }}>Chưa có dữ liệu</span>
+                          <div style={style_justifyContent_display_width}>
+                            <span style={style_fontSize_color}>Chưa có dữ liệu</span>
                           </div>
                         )}
                       </div>
@@ -876,7 +882,7 @@ function Header(props: HeaderProps) {
               <div className="icon-location">
                 <Icon name="Location" />
               </div>
-              <span style={{ fontSize: 15, fontWeight: "500", marginLeft: 3 }}>{valueBranch?.label}</span>
+              <span style={style_fontSize_fontWeight_marginLeft_1}>{valueBranch?.label}</span>
             </div>
           </div>
         )}
@@ -978,7 +984,7 @@ function Header(props: HeaderProps) {
             >
               <div className="container-notification">
                 <div className="popover-title">
-                  <span style={{ fontSize: 16, fontWeight: 600, color: "#015aa4" }}>Thông báo</span>
+                  <span style={style_fontSize_fontWeight_color}>Thông báo</span>
                   <div
                     className="button-close"
                     onClick={() => {

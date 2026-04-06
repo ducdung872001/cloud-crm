@@ -13,6 +13,8 @@ import { useWindowDimensions } from "utils/hookCustom";
 import { getDomain } from "reborn-util";
 import "./sidebar.scss";
 
+
+const style_height_width: React.CSSProperties = { height: "100%", width: "auto" };
 function Sidebar() {
   const location = useLocation();
   const [isMouseOver, setIsMouseOver] = useState<boolean>(false);
@@ -53,7 +55,7 @@ function Sidebar() {
       >
         <div className="sidebar-logo d-flex align-items-center justify-content-between">
           <Link to="/" className="logo">
-            {/* {logoOrganization ? <img loading="lazy" src={logoOrganization} style={{ height: "100%", width: "auto" }} /> : <LogoMenu />} */}
+            {/* {logoOrganization ? <img loading="lazy" src={logoOrganization} style={style_height_width} /> : <LogoMenu />} */}
             <LogoMenu />
           </Link>
           {isMouseOver || !isCollapsedSidebar ? (

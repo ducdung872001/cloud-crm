@@ -22,6 +22,10 @@ import ModalComplexGateway from "pages/BPM/BusinessProcessCreate/partials/ModalC
 import ModalSubprocess from "pages/BPM/BusinessProcessCreate/partials/ModalSubprocess";
 import ModalSequenceFlow from "pages/BPM/BusinessProcessCreate/partials/ModalSequenceFlow";
 
+
+const style_display_alignItems_justifyContent: React.CSSProperties = { display: "flex", alignItems: "center", justifyContent: "space-between" };
+const style_marginTop_cursor: React.CSSProperties = { marginTop: -5, cursor: "pointer" };
+const style_width_height: React.CSSProperties = { width: 15, height: 15 };
 export default function ViewProcess(props) {
   const { dataObject } = props;
 
@@ -286,10 +290,10 @@ export default function ViewProcess(props) {
 
       {showGuide ? (
         <div className="note__process">
-          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+          <div style={style_display_alignItems_justifyContent}>
             <span className="hight-line">Lưu ý:</span>
-            <div style={{ marginTop: -5, cursor: "pointer" }} onClick={() => setShowGuide(false)}>
-              <Icon name="Times" style={{ width: 15, height: 15 }} />
+            <div style={style_marginTop_cursor} onClick={() => setShowGuide(false)}>
+              <Icon name="Times" style={style_width_height} />
             </div>
           </div>
 

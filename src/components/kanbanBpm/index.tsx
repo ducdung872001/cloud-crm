@@ -8,6 +8,9 @@ import ColumnComponent from "./ColumnComponent";
 import HistoryKanbanBpm from "./HistoryKanbanBpm";
 import isEqual from "lodash/isEqual";
 
+
+const style_width_marginBottom: React.CSSProperties = { width: "100%", marginBottom: "1.5rem" };
+const style_textAlign_padding: React.CSSProperties = { textAlign: "center", padding: 12 };
 const colorData = [
   "#E98E4C",
   "#ED6665",
@@ -208,7 +211,7 @@ export default function KanbanBpm({ processId, processCode, itemShow, params, se
     <>
       <div className={`wrapper-kanban-bpm ${showHistory ? "d-none" : ""}`}>
         <div className="__special-kanban--business-process">
-          <div className="box__task--kanban" style={{ width: "100%", marginBottom: "1.5rem" }}>
+          <div className="box__task--kanban" style={style_width_marginBottom}>
             <DragDropContext onDragEnd={onDragEnd}>
               {listStepProcess.map((colDef, idx) => {
                 const columnState = columnsById.get(colDef.id); // stable reference if columns unchanged
@@ -232,7 +235,7 @@ export default function KanbanBpm({ processId, processCode, itemShow, params, se
         </div>
 
         {isLoadingKanban && (
-          <div style={{ textAlign: "center", padding: 12 }}>
+          <div style={style_textAlign_padding}>
             <Loading />
           </div>
         )}

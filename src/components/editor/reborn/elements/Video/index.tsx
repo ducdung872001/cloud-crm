@@ -6,6 +6,10 @@ import Icon from "components/icon";
 import { Button } from "../../../components";
 import { createParagraphNode } from "utils/editor";
 
+
+const style_width_height: React.CSSProperties = { width: '100%', height: 'auto' };
+const style_cursor_marginTop: React.CSSProperties = { cursor: 'pointer', marginTop: '10px' };
+const style_textAlign_fontStyle: React.CSSProperties = { textAlign: "center", fontStyle: "italic" };
 const Video = ({ attributes, children, element }) => {
     const editor = useSlateStatic()
     const path = ReactEditor.findPath(editor, element)
@@ -31,7 +35,7 @@ const Video = ({ attributes, children, element }) => {
                 playVideo ?
                     <p {...attributes} contentEditable={false}>
                         {children}
-                        <video controls style={{ width: '100%', height: 'auto' }}>
+                        <video controls style={style_width_height}>
                             <source src={element?.url} type={`video/${extension}`} />
                             Trình duyệt không hỗ trợ thẻ video
                         </video>
@@ -39,7 +43,7 @@ const Video = ({ attributes, children, element }) => {
                         {/* Hiển thị gợi ý tạo đoạn mới => Tùng style lại theo link tham khảo nha: Tham khảo UI: https://onlinehtmleditor.dev/ */}
                         {
                             focused && selected ?
-                                <div style={{ cursor: 'pointer', marginTop: '10px' }} onClick={() => insertNewParagraph()}>Tạo đoạn mới</div>
+                                <div style={style_cursor_marginTop} onClick={() => insertNewParagraph()}>Tạo đoạn mới</div>
                                 : null
                         }
                     </p> :
@@ -76,7 +80,7 @@ const Video = ({ attributes, children, element }) => {
                                                 fill: white;`}>
                             </Icon>
 
-                            {desc ? <p className="video-desc" style={{ textAlign: "center", fontStyle: "italic" }}>{desc}</p> : null}
+                            {desc ? <p className="video-desc" style={style_textAlign_fontStyle}>{desc}</p> : null}
                             <Button
                                 active
                                 onClick={() => Transforms.removeNodes(editor, { at: path })}
@@ -122,7 +126,7 @@ const Video = ({ attributes, children, element }) => {
                             {/* Hiển thị gợi ý tạo đoạn mới => Tùng style lại theo link tham khảo nha: Tham khảo UI: https://onlinehtmleditor.dev/ */}
                             {
                                 focused && selected ?
-                                    <div style={{ cursor: 'pointer', marginTop: '10px' }} onClick={() => insertNewParagraph()}>Tạo đoạn mới</div>
+                                    <div style={style_cursor_marginTop} onClick={() => insertNewParagraph()}>Tạo đoạn mới</div>
                                     : null
                             }
                         </div>

@@ -19,6 +19,9 @@ import Button from "components/button/button";
 import HandleTask from "pages/MiddleWork/partials/ListWork/partials/HandleTask/HandleTask";
 import ModalHandleTask from "pages/UserTaskList/partials/ListWork/partials/ModalHandleTask/ModalHandleTask";
 
+
+const style_width_fill_marginRight: React.CSSProperties = { width: 19, fill: "white", marginRight: 7 };
+const style_fontSize_fontWeight_color: React.CSSProperties = { fontSize: 14, fontWeight: "500", color: "white" };
 export default function ListWork(props: { data: Record<string, unknown> }) {
   document.title = "Danh sách công việc";
 
@@ -309,8 +312,8 @@ export default function ListWork(props: { data: Record<string, unknown> }) {
               setIsHandleTask(false);
             }}
           >
-            <Icon name="ChevronLeft" style={{ width: 19, fill: "white", marginRight: 7 }} />
-            <span style={{ fontSize: 14, fontWeight: "500", color: "white" }}>Quay lại danh sách</span>
+            <Icon name="ChevronLeft" style={style_width_fill_marginRight} />
+            <span style={style_fontSize_fontWeight_color}>Quay lại danh sách</span>
           </div>
         </div>
         <div className="container-form">

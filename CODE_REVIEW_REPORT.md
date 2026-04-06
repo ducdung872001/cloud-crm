@@ -145,7 +145,7 @@
 |---|--------|----------|
 | 8_FIX | Image không lazy load | Toàn bộ img tags không có loading="lazy" |
 | 9_FIX | JSON.stringify trong render path | App.tsx dòng 116 — so sánh user object bằng JSON.stringify |
-| 10 | useEffect thiếu cleanup / dependency sai | 19+ files — API calls trong [] không abort |
+| 10_FIX | useEffect thiếu cleanup / dependency sai | 19+ files — API calls trong [] không abort |
 | 11 | Inline style/function objects | 100+ — tạo object mới mỗi render |
 
 ### 4.4 Khuyến nghị hiệu năng

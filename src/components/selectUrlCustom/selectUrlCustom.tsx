@@ -7,6 +7,8 @@ import Icon from "components/icon";
 import Tippy from "@tippyjs/react";
 import { convertParamsToString } from "reborn-util";
 
+
+const style_alignItems_display_marginLeft: React.CSSProperties = { alignItems: "center", display: "flex", marginLeft: 5, marginBottom: 5, cursor: "pointer" };
 const fetchData = async (Uri: string, params: Record<string, string | number | boolean>, signal?: AbortSignal) => {
   if (!Uri) return { code: -1, message: "No lookupUri provided" };
   let _params = params || {};
@@ -427,7 +429,7 @@ function SelectUrlCustom(props: SelectCustomProps) {
             </label>
             {warningHistory && (
               <Tippy content={"Lịch sử thay đổi"}>
-                <div style={{ alignItems: "center", display: "flex", marginLeft: 5, marginBottom: 5, cursor: "pointer" }} onClick={onWarningHistory}>
+                <div style={style_alignItems_display_marginLeft} onClick={onWarningHistory}>
                   <Icon name="WarningCircle" style={{ width: "1.5rem", height: "1.5rem", fill: "var(--warning-color)" }} />
                 </div>
               </Tippy>

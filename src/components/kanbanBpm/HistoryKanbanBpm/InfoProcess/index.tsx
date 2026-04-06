@@ -23,6 +23,8 @@ import { showToast } from "utils/common";
 import ListWork from "./ListWork/ListWork";
 import ObjectInfo from "../ObjectInfo";
 
+
+const style_display_marginBottom: React.CSSProperties = { display: "flex", marginBottom: "1.2rem" };
 export default function InfoProcess(props: { data: Record<string, unknown> }) {
   const { data } = props;
   // console.log('data', data);
@@ -536,7 +538,7 @@ export default function InfoProcess(props: { data: Record<string, unknown> }) {
           </tbody>
         </table>
       )} */}
-      <div style={{ display: "flex", marginBottom: "1.2rem" }}>
+      <div style={style_display_marginBottom}>
         {tabData.map((item, index) => (
           <div
             key={item.value}

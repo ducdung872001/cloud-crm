@@ -60,6 +60,8 @@ interface NumericInputProps {
   warningHistory?: boolean;
   onWarningHistory?: React.MouseEventHandler<HTMLDivElement>;
 }
+
+const style_alignItems_display_marginLeft: React.CSSProperties = { alignItems:'center', display:'flex', marginLeft: 5, marginBottom: 5, cursor:'pointer' };
 function NummericInput(props: NumericInputProps) {
   const {
     id,
@@ -281,7 +283,7 @@ function NummericInput(props: NumericInputProps) {
             {warningHistory && 
               <Tippy content={'Lịch sử thay đổi'}>
                 <div 
-                  style={{ alignItems:'center', display:'flex', marginLeft: 5, marginBottom: 5, cursor:'pointer'}}
+                  style={style_alignItems_display_marginLeft}
                   onClick={onWarningHistory}
                 >
                   <Icon name="WarningCircle" style={{width:'1.5rem', height:'1.5rem', fill: 'var(--warning-color)'}}/>

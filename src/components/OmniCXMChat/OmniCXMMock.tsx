@@ -100,6 +100,40 @@ const MOCK_ROOMS: MockRoom[] = [
 
 // ── Styles dùng chung ────────────────────────────────────────────────────────
 
+
+const style_display_alignItems_gap: React.CSSProperties = { display: "flex", alignItems: "center", gap: 10 };
+const style_fontWeight_fontSize: React.CSSProperties = { fontWeight: 700, fontSize: 15 };
+const style_fontSize_opacity: React.CSSProperties = { fontSize: 11, opacity: 0.8 };
+const style_flex_minWidth: React.CSSProperties = { flex: 1, minWidth: 0 };
+const style_fontWeight_fontSize_1: React.CSSProperties = { fontWeight: 600, fontSize: 13 };
+const style_display_gap_flexShrink: React.CSSProperties = { display: "flex", gap: 6, flexShrink: 0 };
+const style_fontSize_fontWeight_opacity: React.CSSProperties = { fontSize: 12, fontWeight: 600, opacity: 0.9 };
+const style_fontWeight_fontSize_color: React.CSSProperties = { fontWeight: 600, fontSize: 13, color: "#1a1a2e" };
+const style_textAlign_padding_color: React.CSSProperties = { textAlign: "center", padding: "40px 20px", color: "#9ca3af", fontSize: 13 };
+const style_fontSize_marginTop_opacity: React.CSSProperties = { fontSize: 10, marginTop: 4, opacity: 0.6, textAlign: "right" };
+const style_fontSize_color: React.CSSProperties = { fontSize: 12, color: "#9ca3af" };
+const style_display_alignItems_gap_1: React.CSSProperties = { display: "flex", alignItems: "center", gap: 8 };
+const style_fontSize_fontWeight_color: React.CSSProperties = { fontSize: 13, fontWeight: 600, color: "#111" };
+const style_fontSize_color_1: React.CSSProperties = { fontSize: 11, color: "#6b7280" };
+const style_marginLeft_fontSize_color: React.CSSProperties = { marginLeft: "auto", fontSize: 11, color: "#22c55e", fontWeight: 600 };
+const style_display_alignItems_gap_2: React.CSSProperties = { display: "flex", alignItems: "center", gap: 6 };
+const style_fontSize_fontWeight_color_1: React.CSSProperties = { fontSize: 12, fontWeight: 600, color: "#374151" };
+const style_fontSize_color_2: React.CSSProperties = { fontSize: 11, color: "#9ca3af" };
+const style_fontSize_color_3: React.CSSProperties = { fontSize: 14, color: "#9ca3af" };
+const style_width_height_borderRadius: React.CSSProperties = { width: 32, height: 32, borderRadius: 6, objectFit: "cover", flexShrink: 0 };
+const style_fontSize_color_fontWeight: React.CSSProperties = { fontSize: 16, color: "#0068FF", fontWeight: 700 };
+const style_flex_overflowY_padding: React.CSSProperties = { flex: 1, overflowY: "auto", padding: "8px 14px", display: "flex", flexDirection: "column", gap: 6 };
+const style_textAlign_padding_color_1: React.CSSProperties = { textAlign: "center", padding: "30px 0", color: "#9ca3af", fontSize: 12 };
+const style_display_alignItems_gap_3: React.CSSProperties = { display: "flex", alignItems: "center", gap: 4 };
+const style_fontSize_fontWeight_minWidth: React.CSSProperties = { fontSize: 13, fontWeight: 600, minWidth: 20, textAlign: "center" };
+const style_fontSize_fontWeight_color_2: React.CSSProperties = { fontSize: 12, fontWeight: 600, color: "#0068FF", minWidth: 60, textAlign: "right" };
+const style_display_alignItems_gap_4: React.CSSProperties = { display: "flex", alignItems: "center", gap: 8, marginBottom: 8 };
+const style_fontSize_color_flex: React.CSSProperties = { fontSize: 12, color: "#6b7280", flex: 1 };
+const style_display_justifyContent_alignItems: React.CSSProperties = { display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 8 };
+const style_fontSize_color_4: React.CSSProperties = { fontSize: 13, color: "#374151" };
+const style_fontSize_fontWeight_color_3: React.CSSProperties = { fontSize: 16, fontWeight: 700, color: "#0068FF" };
+const style_display_gap_marginBottom: React.CSSProperties = { display: "flex", gap: 6, marginBottom: 10 };
+const style_color: React.CSSProperties = { color: "#FFFFFF" };
 const btn = (bg: string, color = "#fff", extra: React.CSSProperties = {}): React.CSSProperties => ({
   border: "none", cursor: "pointer", borderRadius: 8, fontWeight: 600,
   fontSize: 12, padding: "6px 12px", background: bg, color, ...extra,
@@ -348,7 +382,7 @@ export default function OmniCXMMock({ onEvent }: Props) {
 
   const renderHeader = () => (
     <div style={{ background: "var(--primary-bg-color)", padding: "12px 14px", color: "#fff", flexShrink: 0 }}>
-      <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+      <div style={style_display_alignItems_gap}>
         {/* Back button */}
         {(view === "chat" || view === "quick_order") && (
           <button
@@ -364,8 +398,8 @@ export default function OmniCXMMock({ onEvent }: Props) {
           <>
             <div style={{ fontSize: 20 }}>💬</div>
             <div>
-              <div style={{ fontWeight: 700, fontSize: 15 }}>Reborn CRM</div>
-              <div style={{ fontSize: 11, opacity: 0.8 }}>Service Chat · Mock</div>
+              <div style={style_fontWeight_fontSize}>Reborn CRM</div>
+              <div style={style_fontSize_opacity}>Service Chat · Mock</div>
             </div>
             <div style={{ marginLeft: "auto", fontSize: 11, background: "rgba(255,255,255,0.2)", padding: "3px 8px", borderRadius: 20 }}>
               {waitingRooms.length} chờ · {activeRooms.length} xử lý
@@ -383,13 +417,13 @@ export default function OmniCXMMock({ onEvent }: Props) {
             }}>
               {activeRoom.avatar}
             </div>
-            <div style={{ flex: 1, minWidth: 0 }}>
-              <div style={{ fontWeight: 600, fontSize: 13 }}>{activeRoom.customer}</div>
-              <div style={{ fontSize: 11, opacity: 0.8 }}>
+            <div style={style_flex_minWidth}>
+              <div style={style_fontWeight_fontSize_1}>{activeRoom.customer}</div>
+              <div style={style_fontSize_opacity}>
                 {SOURCE_ICONS[activeRoom.source]} {activeRoom.source} · {activeRoom.phone}
               </div>
             </div>
-            <div style={{ display: "flex", gap: 6, flexShrink: 0 }}>
+            <div style={style_display_gap_flexShrink}>
               {view === "chat" && (
                 <>
                   <button
@@ -407,7 +441,7 @@ export default function OmniCXMMock({ onEvent }: Props) {
                 </>
               )}
               {view === "quick_order" && (
-                <span style={{ fontSize: 12, fontWeight: 600, opacity: 0.9 }}>Lên đơn nhanh</span>
+                <span style={style_fontSize_fontWeight_opacity}>Lên đơn nhanh</span>
               )}
             </div>
           </>
@@ -458,8 +492,8 @@ export default function OmniCXMMock({ onEvent }: Props) {
                 {SOURCE_ICONS[room.source]}
               </div>
             </div>
-            <div style={{ flex: 1, minWidth: 0 }}>
-              <div style={{ fontWeight: 600, fontSize: 13, color: "#1a1a2e" }}>{room.customer}</div>
+            <div style={style_flex_minWidth}>
+              <div style={style_fontWeight_fontSize_color}>{room.customer}</div>
               <div style={{ fontSize: 12, color: "#6b7280", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
                 {room.messages[room.messages.length - 1]?.text}
               </div>
@@ -479,7 +513,7 @@ export default function OmniCXMMock({ onEvent }: Props) {
           </div>
         ))}
         {(tab === "queue" ? waitingRooms : activeRooms).length === 0 && (
-          <div style={{ textAlign: "center", padding: "40px 20px", color: "#9ca3af", fontSize: 13 }}>
+          <div style={style_textAlign_padding_color}>
             {tab === "queue" ? "Không có hội thoại nào đang chờ" : "Không có hội thoại nào đang xử lý"}
           </div>
         )}
@@ -500,7 +534,7 @@ export default function OmniCXMMock({ onEvent }: Props) {
               boxShadow: "0 1px 4px rgba(0,0,0,0.08)",
             }}>
               {msg.text}
-              <div style={{ fontSize: 10, marginTop: 4, opacity: 0.6, textAlign: "right" }}>{msg.time}</div>
+              <div style={style_fontSize_marginTop_opacity}>{msg.time}</div>
             </div>
           </div>
         ))}
@@ -531,26 +565,26 @@ export default function OmniCXMMock({ onEvent }: Props) {
       {/* Khách hàng */}
       <div style={{ background: "#fff", padding: "10px 14px", borderBottom: "1px solid #e8edf5", flexShrink: 0 }}>
         {customerLoading ? (
-          <div style={{ fontSize: 12, color: "#9ca3af" }}>Đang tìm khách hàng...</div>
+          <div style={style_fontSize_color}>Đang tìm khách hàng...</div>
         ) : foundCustomer ? (
-          <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+          <div style={style_display_alignItems_gap_1}>
             <div style={{ width: 28, height: 28, borderRadius: "50%", background: "#0068FF", color: "#fff", display: "flex", alignItems: "center", justifyContent: "center", fontWeight: 700, fontSize: 12, flexShrink: 0 }}>
               {foundCustomer.name?.[0] || "K"}
             </div>
             <div>
-              <div style={{ fontSize: 13, fontWeight: 600, color: "#111" }}>{foundCustomer.name}</div>
-              <div style={{ fontSize: 11, color: "#6b7280" }}>{foundCustomer.phone} · {foundCustomer.totalPoint ? `${foundCustomer.totalPoint} điểm` : "Chưa có điểm"}</div>
+              <div style={style_fontSize_fontWeight_color}>{foundCustomer.name}</div>
+              <div style={style_fontSize_color_1}>{foundCustomer.phone} · {foundCustomer.totalPoint ? `${foundCustomer.totalPoint} điểm` : "Chưa có điểm"}</div>
             </div>
-            <div style={{ marginLeft: "auto", fontSize: 11, color: "#22c55e", fontWeight: 600 }}>✓ Đã tìm thấy</div>
+            <div style={style_marginLeft_fontSize_color}>✓ Đã tìm thấy</div>
           </div>
         ) : (
-          <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
+          <div style={style_display_alignItems_gap_2}>
             <div style={{ width: 28, height: 28, borderRadius: "50%", background: "#e0e7ff", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 14 }}>👤</div>
             <div>
-              <div style={{ fontSize: 12, fontWeight: 600, color: "#374151" }}>
+              <div style={style_fontSize_fontWeight_color_1}>
                 {activeRoom?.customer} · {activeRoom?.phone}
               </div>
-              <div style={{ fontSize: 11, color: "#9ca3af" }}>Khách vãng lai (chưa có trong hệ thống)</div>
+              <div style={style_fontSize_color_2}>Khách vãng lai (chưa có trong hệ thống)</div>
             </div>
           </div>
         )}
@@ -559,14 +593,14 @@ export default function OmniCXMMock({ onEvent }: Props) {
       {/* Tìm sản phẩm */}
       <div style={{ padding: "10px 14px", background: "#fff", borderBottom: "1px solid #e8edf5", flexShrink: 0, position: "relative" }}>
         <div style={{ display: "flex", alignItems: "center", gap: 8, border: "1px solid #e0e7ff", borderRadius: 8, padding: "6px 10px", background: "#f8faff" }}>
-          <span style={{ fontSize: 14, color: "#9ca3af" }}>🔍</span>
+          <span style={style_fontSize_color_3}>🔍</span>
           <input
             value={productSearch}
             onChange={(e) => handleProductSearch(e.target.value)}
             placeholder="Tìm sản phẩm để thêm..."
             style={{ flex: 1, border: "none", outline: "none", fontSize: 13, background: "transparent", fontFamily: "inherit" }}
           />
-          {productLoading && <span style={{ fontSize: 11, color: "#9ca3af" }}>...</span>}
+          {productLoading && <span style={style_fontSize_color_2}>...</span>}
         </div>
 
         {/* Kết quả tìm kiếm */}
@@ -585,16 +619,16 @@ export default function OmniCXMMock({ onEvent }: Props) {
                 onMouseLeave={(e) => (e.currentTarget.style.background = "")}
               >
                 {p.avatar
-                  ? <img loading="lazy" src={p.avatar} alt="" style={{ width: 32, height: 32, borderRadius: 6, objectFit: "cover", flexShrink: 0 }} />
+                  ? <img loading="lazy" src={p.avatar} alt="" style={style_width_height_borderRadius} />
                   : <div style={{ width: 32, height: 32, borderRadius: 6, background: "#e0e7ff", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 16, flexShrink: 0 }}>📦</div>
                 }
-                <div style={{ flex: 1, minWidth: 0 }}>
+                <div style={style_flex_minWidth}>
                   <div style={{ fontSize: 12, fontWeight: 600, color: "#111", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{p.name}</div>
-                  <div style={{ fontSize: 11, color: "#6b7280" }}>
+                  <div style={style_fontSize_color_1}>
                     {formatCurrency(p.originalPrice)} · Tồn: {p.stockQuantity ?? "—"}
                   </div>
                 </div>
-                <span style={{ fontSize: 16, color: "#0068FF", fontWeight: 700 }}>+</span>
+                <span style={style_fontSize_color_fontWeight}>+</span>
               </div>
             ))}
           </div>
@@ -602,9 +636,9 @@ export default function OmniCXMMock({ onEvent }: Props) {
       </div>
 
       {/* Giỏ hàng */}
-      <div style={{ flex: 1, overflowY: "auto", padding: "8px 14px", display: "flex", flexDirection: "column", gap: 6 }}>
+      <div style={style_flex_overflowY_padding}>
         {cart.length === 0 ? (
-          <div style={{ textAlign: "center", padding: "30px 0", color: "#9ca3af", fontSize: 12 }}>
+          <div style={style_textAlign_padding_color_1}>
             🛒 Chưa có sản phẩm nào<br />
             <span style={{ fontSize: 11 }}>Tìm và thêm sản phẩm phía trên</span>
           </div>
@@ -614,19 +648,19 @@ export default function OmniCXMMock({ onEvent }: Props) {
             background: "#fff", borderRadius: 10, padding: "8px 10px",
             border: "1px solid #e8edf5",
           }}>
-            <div style={{ flex: 1, minWidth: 0 }}>
+            <div style={style_flex_minWidth}>
               <div style={{ fontSize: 12, fontWeight: 600, color: "#111", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
                 {item.productName}
               </div>
-              <div style={{ fontSize: 11, color: "#6b7280" }}>{formatCurrency(item.price)}</div>
+              <div style={style_fontSize_color_1}>{formatCurrency(item.price)}</div>
             </div>
             {/* Qty control */}
-            <div style={{ display: "flex", alignItems: "center", gap: 4 }}>
+            <div style={style_display_alignItems_gap_3}>
               <button onClick={() => updateQty(item.variantId, -1)} style={btn("#f3f4f6", "#374151", { width: 22, height: 22, padding: 0, borderRadius: 6, fontSize: 14, display: "flex", alignItems: "center", justifyContent: "center" })}>−</button>
-              <span style={{ fontSize: 13, fontWeight: 600, minWidth: 20, textAlign: "center" }}>{item.qty}</span>
+              <span style={style_fontSize_fontWeight_minWidth}>{item.qty}</span>
               <button onClick={() => updateQty(item.variantId, 1)} style={btn("#0068FF", "#fff", { width: 22, height: 22, padding: 0, borderRadius: 6, fontSize: 14, display: "flex", alignItems: "center", justifyContent: "center" })}>+</button>
             </div>
-            <div style={{ fontSize: 12, fontWeight: 600, color: "#0068FF", minWidth: 60, textAlign: "right" }}>
+            <div style={style_fontSize_fontWeight_color_2}>
               {formatCurrency(item.price * item.qty)}
             </div>
             <button onClick={() => removeFromCart(item.variantId)} style={{ background: "none", border: "none", cursor: "pointer", color: "#ef4444", fontSize: 14, padding: "0 2px" }}>✕</button>
@@ -638,8 +672,8 @@ export default function OmniCXMMock({ onEvent }: Props) {
       {cart.length > 0 && (
         <div style={{ background: "#fff", borderTop: "1px solid #e8edf5", padding: "10px 14px", flexShrink: 0 }}>
           {/* Giảm giá */}
-          <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 8 }}>
-            <span style={{ fontSize: 12, color: "#6b7280", flex: 1 }}>Giảm giá:</span>
+          <div style={style_display_alignItems_gap_4}>
+            <span style={style_fontSize_color_flex}>Giảm giá:</span>
             <input
               type="number"
               value={discount || ""}
@@ -647,17 +681,17 @@ export default function OmniCXMMock({ onEvent }: Props) {
               placeholder="0"
               style={{ width: 90, border: "1px solid #e0e7ff", borderRadius: 6, padding: "3px 8px", fontSize: 12, textAlign: "right", outline: "none" }}
             />
-            <span style={{ fontSize: 11, color: "#9ca3af" }}>₫</span>
+            <span style={style_fontSize_color_2}>₫</span>
           </div>
 
           {/* Tổng */}
-          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 8 }}>
-            <span style={{ fontSize: 13, color: "#374151" }}>Tổng cộng:</span>
-            <span style={{ fontSize: 16, fontWeight: 700, color: "#0068FF" }}>{formatCurrency(finalAmount)}</span>
+          <div style={style_display_justifyContent_alignItems}>
+            <span style={style_fontSize_color_4}>Tổng cộng:</span>
+            <span style={style_fontSize_fontWeight_color_3}>{formatCurrency(finalAmount)}</span>
           </div>
 
           {/* Thanh toán */}
-          <div style={{ display: "flex", gap: 6, marginBottom: 10 }}>
+          <div style={style_display_gap_marginBottom}>
             {(["CASH", "TRANSFER"] as const).map((pt) => (
               <button
                 key={pt}
@@ -708,7 +742,7 @@ export default function OmniCXMMock({ onEvent }: Props) {
         onMouseEnter={(e) => (e.currentTarget.style.transform = "scale(1.1)")}
         onMouseLeave={(e) => (e.currentTarget.style.transform = "scale(1)")}
       >
-        {isOpen ? <div style={{ color: "#FFFFFF" }}>✕</div> : "💬"}
+        {isOpen ? <div style={style_color}>✕</div> : "💬"}
         {unread > 0 && !isOpen && (
           <div style={{
             position: "absolute", top: -2, right: -2,

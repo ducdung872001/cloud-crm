@@ -10,6 +10,9 @@ import "./TabMenuList.scss";
  *   groups    – array of { label, items[] } để hiển thị section headers
  *   onClick   – callback khi click card
  */
+
+const style_fontSize_fontWeight: React.CSSProperties = { fontSize: 14, fontWeight: "500" };
+const style_fontSize_fontWeight_1: React.CSSProperties = { fontSize: 12, fontWeight: "400" };
 function TabMenuList(props: Record<string, unknown>) {
   const { listTab, groups, onClick } = props;
 
@@ -24,10 +27,10 @@ function TabMenuList(props: Record<string, unknown>) {
         <Icon name={item.icon} style={{ stroke: item.strokeColor }} />
       </div>
       <div className="item-body">
-        <span style={{ fontSize: 14, fontWeight: "500" }}>{item.title}</span>
+        <span style={style_fontSize_fontWeight}>{item.title}</span>
         {item?.des && (
           <div>
-            <span style={{ fontSize: 12, fontWeight: "400" }}>{item.des}</span>
+            <span style={style_fontSize_fontWeight_1}>{item.des}</span>
           </div>
         )}
       </div>

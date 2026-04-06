@@ -42,7 +42,8 @@
       "Bash(node migrate_moment.js)",
       "Bash(node fix_date_broken.js)",
       "Bash(node fix_img_lazy.js)",
-      "Bash(node fix_useeffect_cleanup.js)"
+      "Bash(node fix_useeffect_cleanup.js)",
+      "Bash(node fix_inline_styles.js)"
     ]
   }
 }

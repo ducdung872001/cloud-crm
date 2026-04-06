@@ -3,6 +3,9 @@ import { DragDropContext } from "react-beautiful-dnd";
 import "./index.scss";
 import ColumnCommon from "./ColumnCommon";
 
+
+const style_width_marginBottom: React.CSSProperties = { width: "100%",
+              marginBottom: "1.5rem", };
 const colorData = [
   "#E98E4C",
   "#ED6665",
@@ -120,10 +123,7 @@ export default function KanbanCommon({ itemShow, listStep, functionGetDataItem, 
         <div className="__special-kanban--business-process">
           <div
             className="box__task--kanban"
-            style={{
-              width: "100%",
-              marginBottom: "1.5rem",
-            }}
+            style={style_width_marginBottom}
           >
             <DragDropContext onDragEnd={onDragEnd}>
               {listStep.map((colDef, idx) => {

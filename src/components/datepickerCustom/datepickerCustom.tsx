@@ -45,6 +45,8 @@ interface DatePickerCustomProps {
   warningHistory?: boolean;
   onWarningHistory?: React.MouseEventHandler<HTMLDivElement>;
 }
+
+const style_alignItems_display_marginLeft: React.CSSProperties = { alignItems: "center", display: "flex", marginLeft: 5, marginBottom: 5, cursor: "pointer" };
 function DatePickerCustom(props: DatePickerCustomProps) {
   const {
     id,
@@ -213,7 +215,7 @@ function DatePickerCustom(props: DatePickerCustomProps) {
             </label>
             {warningHistory && (
               <Tippy content={"Lịch sử thay đổi"}>
-                <div style={{ alignItems: "center", display: "flex", marginLeft: 5, marginBottom: 5, cursor: "pointer" }} onClick={onWarningHistory}>
+                <div style={style_alignItems_display_marginLeft} onClick={onWarningHistory}>
                   <Icon name="WarningCircle" style={{ width: "1.5rem", height: "1.5rem", fill: "var(--warning-color)" }} />
                 </div>
               </Tippy>

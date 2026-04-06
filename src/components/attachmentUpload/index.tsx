@@ -40,6 +40,8 @@ type Props = {
   showToast?: (message: string, type?: "error" | "success") => void;
 };
 
+
+const style_width_height: React.CSSProperties = { width: 25, height: 25 };
 const DEFAULT_ACCEPT = "image/*,.xlsx,.xls,.doc,.docx,.ppt,.pptx,.txt,.pdf";
 
 function inferTypeFromName(name: string) {
@@ -512,7 +514,7 @@ const FileIcon: React.FC<{ type: string }> = ({ type }) => {
       <div className={`file-icon`} aria-hidden>
         <img loading="lazy" src={t == "xlsx" || t == "xls" ? ImgExcel : t === "docx" || t === "doc" ? ImgWord : t === "pptx" || t === "ppt" ? ImgPowerpoint : ""}
           alt="File Type"
-          style={{ width: 25, height: 25 }}
+          style={style_width_height}
         />
       </div>
     );

@@ -4,6 +4,8 @@ import { removeTable } from "../../plugins/withTables";
 import Icon from "components/icon";
 import './index.scss';
 
+
+const style_userSelect: React.CSSProperties = { userSelect: "none" };
 const Table = ({ attributes, children, element }) => {
   const editor = useSlateStatic();
   const selected = useSelected();
@@ -15,7 +17,7 @@ const Table = ({ attributes, children, element }) => {
 
   return (
     <Fragment>
-      <div className="editor-table-wrap" contentEditable={false} style={{ userSelect: "none" }}>
+      <div className="editor-table-wrap" contentEditable={false} style={style_userSelect}>
         {/* Table chính — contentEditable phải nằm trong attributes */}
         <div contentEditable suppressContentEditableWarning>
           <table id={`${element?.id}`} className="editor-table">

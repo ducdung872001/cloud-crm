@@ -4,6 +4,10 @@ import "./ModalConfirm.scss";
 import _, { at, get, set } from "lodash";
 import Icon from "components/icon";
 
+
+const style_fontSize_fontWeight_color: React.CSSProperties = { fontSize: 20, fontWeight: '600', color: '#ED1B34' };
+const style_fontSize_fontWeight_color_1: React.CSSProperties = { fontSize: 14, fontWeight: '400', color: '#2C2C2C' };
+const style_fontSize_fontWeight: React.CSSProperties = { fontSize: 14, fontWeight: '500' };
 function ModalConfirm(props: { onShow: boolean; onHide: (value: boolean) => void; title: string; content: string; onSubmit: () => void; isSubmit?: boolean }) {
   const { onShow, onHide, title, content, onSubmit, isSubmit} = props;
 
@@ -27,10 +31,10 @@ function ModalConfirm(props: { onShow: boolean; onHide: (value: boolean) => void
           <ModalBody>
             <div className="container-confirm">
                 <div className="box-title">
-                    <span style={{fontSize: 20, fontWeight: '600', color: '#ED1B34'}}>Xác nhận {title}</span>
+                    <span style={style_fontSize_fontWeight_color}>Xác nhận {title}</span>
                 </div>
                 <div className="box-content">
-                    <span style={{fontSize: 14, fontWeight: '400', color: '#2C2C2C'}}>Bạn có chắc chắn muốn {content}?</span>
+                    <span style={style_fontSize_fontWeight_color_1}>Bạn có chắc chắn muốn {content}?</span>
                 </div>
                 <div className="box-footer">
                     <div className="button-cancel"
@@ -38,7 +42,7 @@ function ModalConfirm(props: { onShow: boolean; onHide: (value: boolean) => void
                           handClearForm(false)
                       }}
                     >
-                        <span style={{fontSize: 14, fontWeight: '500'}}>Huỷ</span>
+                        <span style={style_fontSize_fontWeight}>Huỷ</span>
                     </div>
                     <div 
                       className="button-accept"
@@ -48,7 +52,7 @@ function ModalConfirm(props: { onShow: boolean; onHide: (value: boolean) => void
                         }
                       }}
                     >
-                        <span style={{fontSize: 14, fontWeight: '500'}}>Tôi chắc chắn</span>
+                        <span style={style_fontSize_fontWeight}>Tôi chắc chắn</span>
                         {isSubmit ? 
                           <Icon name="Loading" />
                         : null}

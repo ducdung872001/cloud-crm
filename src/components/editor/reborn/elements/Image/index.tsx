@@ -9,6 +9,11 @@ import EditImageModal from "./partials/EditImageModal";
 import { updateImage } from "../../plugins/withMedias";
 import { createParagraphNode } from "utils/editor";
 
+
+const style_float_marginLeft: React.CSSProperties = { float: "right", marginLeft: "20px" };
+const style_cursor_marginTop: React.CSSProperties = { cursor: "pointer", marginTop: "10px" };
+const style_float_marginRight: React.CSSProperties = { float: "left", marginRight: "20px" };
+const style_textAlign_fontStyle: React.CSSProperties = { textAlign: "center", fontStyle: "italic" };
 const Image = ({ attributes, children, element }) => {
   const editor = useSlateStatic();
   const path = ReactEditor.findPath(editor, element);
@@ -59,13 +64,13 @@ const Image = ({ attributes, children, element }) => {
             width={width ? width : "150px"}
             height={height ? height : "150px"}
             alt={desc || ""}
-            style={{ float: "right", marginLeft: "20px" }}
+            style={style_float_marginLeft}
           />
           {getControl(element, desc, link, editor, path, selected, focused, width, height, align, showModalEdit, setShowModalEdit)}
 
           {/* Hiển thị gợi ý tạo đoạn mới => Tùng style lại theo link tham khảo nha: Tham khảo UI: https://onlinehtmleditor.dev/ */}
           {focused && selected ? (
-            <div style={{ cursor: "pointer", marginTop: "10px" }} onClick={() => insertNewParagraph()}>
+            <div style={style_cursor_marginTop} onClick={() => insertNewParagraph()}>
               Tạo đoạn mới
             </div>
           ) : null}
@@ -94,13 +99,13 @@ const Image = ({ attributes, children, element }) => {
             width={width ? width : "150px"}
             height={height ? height : "150px"}
             alt={desc || ""}
-            style={{ float: "left", marginRight: "20px" }}
+            style={style_float_marginRight}
           />
           {getControl(element, desc, link, editor, path, selected, focused, width, height, align, showModalEdit, setShowModalEdit)}
 
           {/* Hiển thị gợi ý tạo đoạn mới => Tùng style lại theo link tham khảo nha: Tham khảo UI: https://onlinehtmleditor.dev/ */}
           {focused && selected ? (
-            <div style={{ cursor: "pointer", marginTop: "10px" }} onClick={() => insertNewParagraph()}>
+            <div style={style_cursor_marginTop} onClick={() => insertNewParagraph()}>
               Tạo đoạn mới
             </div>
           ) : null}
@@ -135,7 +140,7 @@ const Image = ({ attributes, children, element }) => {
 
           {/* Hiển thị gợi ý tạo đoạn mới => Tùng style lại theo link tham khảo nha: Tham khảo UI: https://onlinehtmleditor.dev/ */}
           {focused && selected ? (
-            <div style={{ cursor: "pointer", marginTop: "10px" }} onClick={() => insertNewParagraph()}>
+            <div style={style_cursor_marginTop} onClick={() => insertNewParagraph()}>
               Tạo đoạn mới
             </div>
           ) : null}
@@ -149,7 +154,7 @@ const getControl = (element, desc, link, editor, path, selected, focused, width,
   return (
     <Fragment>
       {desc ? (
-        <p className="img-desc" style={{ textAlign: "center", fontStyle: "italic" }}>
+        <p className="img-desc" style={style_textAlign_fontStyle}>
           {desc}
         </p>
       ) : null}

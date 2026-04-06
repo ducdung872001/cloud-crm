@@ -5,6 +5,8 @@ import ObjectGroupService from "services/ObjectGroupService";
 import { showToast } from "utils/common";
 import "./index.scss";
 
+
+const style_width_pointerEvents: React.CSSProperties = { width: "100%", pointerEvents: "auto" };
 const defaultSchema = {
   type: "default",
   components: [],
@@ -42,7 +44,7 @@ export default function ObjectInfo({ data }) {
   };
 
   return (
-    <div className="bpm-form-viewer-object-info" style={{ width: "100%", pointerEvents: "auto" }}>
+    <div className="bpm-form-viewer-object-info" style={style_width_pointerEvents}>
       <div className="form-viewer-container">
         {isLoading ? (
           <Loading />

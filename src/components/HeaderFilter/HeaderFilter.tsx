@@ -5,6 +5,8 @@ import SearchBox from "components/searchBox/searchBox";
 import TitleAction, { ITitleActions } from "components/titleAction/titleAction";
 import "./HeaderFilter.scss";
 
+
+const style_fontSize_fontWeight: React.CSSProperties = { fontSize: 14, fontWeight: "400" };
 function HeaderFilter(props: {
   params: Record<string, unknown>;
   setParams: (params: Record<string, unknown>) => void;
@@ -65,7 +67,7 @@ function HeaderFilter(props: {
       <div className="header_bottom">
         {listIdChecked?.length > 0 ? (
           <div>
-            <span style={{ fontSize: 14, fontWeight: "400" }}>Đang chọn {listIdChecked?.length}</span>
+            <span style={style_fontSize_fontWeight}>Đang chọn {listIdChecked?.length}</span>
           </div>
         ) : null}
 

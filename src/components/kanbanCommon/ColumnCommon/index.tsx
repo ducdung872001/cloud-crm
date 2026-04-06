@@ -164,7 +164,7 @@ const ColumnCommon: React.FC<ColumnProps> = ({
             </div>
 
             {isLoading ? (
-              <div className="column-loading" style={{ padding: 8, textAlign: "center" }}>
+              <div className="column-loading" style={style_padding_textAlign}>
                 <Loading />
               </div>
             ) : (
@@ -203,7 +203,7 @@ const ColumnCommon: React.FC<ColumnProps> = ({
                       );
                     })}
                     {localLoading ? (
-                      <div style={{ padding: 4, textAlign: "center" }}>
+                      <div style={style_padding_textAlign_1}>
                         <Loading />
                       </div>
                     ) : null}
@@ -211,7 +211,7 @@ const ColumnCommon: React.FC<ColumnProps> = ({
                 ) : (
                   <div style={{ padding: 8 }}>
                     {!hasMore && !isLoading && items && items.length === 0 && (
-                      <div style={{ padding: 8, textAlign: "center", color: "#666" }}>Không có dữ liệu</div>
+                      <div style={style_padding_textAlign_color}>Không có dữ liệu</div>
                     )}
                   </div>
                 )}
@@ -226,6 +226,10 @@ const ColumnCommon: React.FC<ColumnProps> = ({
 };
 
 // Custom comparator to avoid unnecessary re-renders
+
+const style_padding_textAlign: React.CSSProperties = { padding: 8, textAlign: "center" };
+const style_padding_textAlign_1: React.CSSProperties = { padding: 4, textAlign: "center" };
+const style_padding_textAlign_color: React.CSSProperties = { padding: 8, textAlign: "center", color: "#666" };
 function areEqual(prev: ColumnProps, next: ColumnProps) {
   const aState = prev.columnState;
   const bState = next.columnState;

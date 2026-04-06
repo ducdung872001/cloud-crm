@@ -11,6 +11,10 @@ import ViewProcess from "./ViewProcess";
 import BusinessProcessService from "services/BusinessProcessService";
 import Icon from "components/icon";
 
+
+const style_display_alignItems_gap: React.CSSProperties = { display: "flex",
+                      alignItems: "center",
+                      gap: 16, };
 export default function HistoryKanbanBpm(props: { onShow: boolean; onHide?: (value: boolean) => void; dataObject: Record<string, unknown>; type?: string; onBack: () => void }) {
   const { onShow, onHide, dataObject, type, onBack } = props;
 
@@ -106,11 +110,7 @@ export default function HistoryKanbanBpm(props: { onShow: boolean; onHide?: (val
                   <span>{item.name}</span>
                 ) : (
                   <span
-                    style={{
-                      display: "flex",
-                      alignItems: "center",
-                      gap: 16,
-                    }}
+                    style={style_display_alignItems_gap}
                   >
                     <Icon name="ChevronLeft" />
                     {item.name}

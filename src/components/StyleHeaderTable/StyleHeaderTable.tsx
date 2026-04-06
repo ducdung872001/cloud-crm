@@ -2,7 +2,7 @@ import React from "react";
 
 export const StyleHeaderTable = (props) => {
     return (
-      <div style={{width: '100%', display: 'flex', justifyContent: 'center'}}>
+      <div style={style_width_display_justifyContent}>
         {props.displayName}
       </div>
     )
