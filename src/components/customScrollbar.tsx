@@ -10,7 +10,7 @@ interface CustomScrollbarProps {
 }
 
 
-const style_width_height: React.CSSProperties = { width: width, height: height };
+const style_width_height: React.CSSProperties = { width: 25, height: 25 };
 function CustomScrollbar(props: CustomScrollbarProps) {
   const { children, className, width, height, autoHide, handleScroll } = props;
   const renderThumb = ({ style, ...props }) => {
