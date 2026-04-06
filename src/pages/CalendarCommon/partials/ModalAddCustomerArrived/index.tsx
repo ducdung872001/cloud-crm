@@ -332,6 +332,7 @@ export default function ModalAddCustomerArrived(props: IAddSignerFSAndQuoteProps
   }, [formData?.lstVar]);
 
   useEffect(() => {
+    let isMounted = true;
     if (formData?.groupId) {
       ObjectGroupService.detail(formData.groupId).then((res) => {
         if (res?.code === 0 && res.result) {
@@ -343,6 +344,7 @@ export default function ModalAddCustomerArrived(props: IAddSignerFSAndQuoteProps
     } else {
       setValueGroup(null);
     }
+    return () => { isMounted = false; };
   }, [formData?.groupId]);
 
   const handleClearForm = (acc) => {

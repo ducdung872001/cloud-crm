@@ -105,6 +105,7 @@ export default function AddLoyaltyRewardModal(props: AddLoyaltyRewardProps) {
 
   // Fetch label sản phẩm cho mục đích edit
   useEffect(() => {
+    let isMounted = true;
     if (!onShow || !data || !data.rewardItems) return;
 
     const fetchLabels = async () => {
@@ -133,6 +134,7 @@ export default function AddLoyaltyRewardModal(props: AddLoyaltyRewardProps) {
     };
 
     fetchLabels();
+    return () => { isMounted = false; };
   }, [onShow, data]);
 
   // reset form when data changes

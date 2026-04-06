@@ -461,10 +461,12 @@ export default function AddConsultationScheduleModal(props: IAddConsultationSche
   };
 
   useEffect(() => {
+    let isMounted = true;
     if (detailService && detailService?.length > 0) {
       const takeIdService = detailService.map((item) => item.value);
       setFormData({ ...formData, values: { ...formData?.values, services: JSON.stringify(takeIdService) } });
     }
+    return () => { isMounted = false; };
   }, [detailService]);
 
   useEffect(() => {

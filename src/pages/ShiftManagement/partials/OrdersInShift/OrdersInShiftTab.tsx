@@ -54,6 +54,7 @@ function InvoiceDetailModal({ invoiceId, onClose }: { invoiceId: number; onClose
   const [items, setItems] = useState<Record<string, unknown>[]>([]);
 
   useEffect(() => {
+    let isMounted = true;
     setLoading(true);
     InvoiceService.listInvoiceDetail(invoiceId)
       .then((res: Record<string, unknown>) => {
@@ -71,6 +72,7 @@ function InvoiceDetailModal({ invoiceId, onClose }: { invoiceId: number; onClose
       })
       .catch(() => { })
       .finally(() => setLoading(false));
+    return () => { isMounted = false; };
   }, [invoiceId]);
 
   // Đóng khi click backdrop

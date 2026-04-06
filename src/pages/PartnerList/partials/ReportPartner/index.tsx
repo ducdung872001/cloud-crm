@@ -45,6 +45,7 @@ export default function ReportPartner() {
     toTime: "",
   });
   // useEffect(() => {
+  let isMounted = true;
   //   setDataEmployee({ value: dataInfoEmployee.id, label: name });
   // }, [dataInfoEmployee.id]);
   // useEffect(() => {
@@ -141,6 +142,7 @@ export default function ReportPartner() {
   };
   useEffect(() => {
     fetchData();
+  return () => { isMounted = false; };
   }, [params]);
   useEffect(() => {
     setDataPreview((prevState) =>

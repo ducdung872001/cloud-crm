@@ -80,6 +80,7 @@ export default function AddPromotionalModal({ onShow, data, onHide }: Props) {
 
   // Load danh sách SP khi mở modal edit CT đồng giá
   useEffect(() => {
+    let isMounted = true;
     if (onShow && data?.id && data?.promotionType === 7) {
       setFpLoading(true);
       FixedPriceService.getProducts(data.id)
@@ -91,6 +92,7 @@ export default function AddPromotionalModal({ onShow, data, onHide }: Props) {
     } else if (onShow && !data?.id) {
       setFpProducts([]);
     }
+    return () => { isMounted = false; };
   }, [onShow, data?.id]);
 
   const [formData, setFormData] = useState<IFormData>({ values });

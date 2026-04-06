@@ -169,6 +169,7 @@ export default function ExchangeFast(props: IExchangeFastProps) {
   };
 
   useEffect(() => {
+    let isMounted = true;
     if (params.page == 1) {
       scrollToLastMessage();
     }
@@ -296,6 +297,7 @@ export default function ExchangeFast(props: IExchangeFastProps) {
         uploadDocumentFormData(lastFile, (onSuccess = onSuccessDocument), (onError = onErrorDocument), (onProgress = onProgressDocument));
       }
     }
+    return () => { isMounted = false; };
   }, [files]);
 
   const boxContentMedia = (item) => {

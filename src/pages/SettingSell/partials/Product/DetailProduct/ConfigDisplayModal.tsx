@@ -54,6 +54,7 @@ export default function ConfigDisplayModal({ onShow, onHide }: ConfigDisplayModa
 
   // Load từ API khi mở modal
   useEffect(() => {
+    let isMounted = true;
     if (!onShow) return;
     setIsLoading(true);
     ProductService.wWebsiteSettingDefaultGet()
@@ -74,6 +75,7 @@ export default function ConfigDisplayModal({ onShow, onHide }: ConfigDisplayModa
       })
       .catch(() => showToast("Không thể tải cài đặt hiển thị", "error"))
       .finally(() => setIsLoading(false));
+    return () => { isMounted = false; };
   }, [onShow]);
 
   const hasChanges = JSON.stringify(settings) !== JSON.stringify(initialSettings);

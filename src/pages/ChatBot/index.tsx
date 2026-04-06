@@ -33,6 +33,7 @@ export default function ChatBot() {
   const { setIsShowChatBot, isShowChatBot, isShowFeedback, avatar } = useContext(UserContext) as ContextType;
 
   useEffect(() => {
+    let isMounted = true;
     if(isShowFeedback){
       setIsShowChatBot(false);
     }
@@ -59,6 +60,7 @@ export default function ChatBot() {
     if (isShowChatBot) {
       getDetailEmployeeInfo();
     }
+    return () => { isMounted = false; };
   }, [isShowChatBot]);
 
   // ── Ẩn/hiện toàn bộ widget (icon + cửa sổ chat) bằng phím F2 ─────────────

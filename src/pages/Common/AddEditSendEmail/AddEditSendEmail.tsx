@@ -1208,6 +1208,7 @@ export default function AddEditSendEmail(props: ISendEmail) {
   // };
 
   // useEffect(() => {
+  let isMounted = true;
   //   if(isLoadingFile === false){
   //     setShowProgress(0);
   //   }
@@ -1500,6 +1501,7 @@ export default function AddEditSendEmail(props: ISendEmail) {
         setPlaceholder(element);
       }
     }
+  return () => { isMounted = false; };
   }, [listApproach]);
 
   const getListplaceholderCustomer = async () => {

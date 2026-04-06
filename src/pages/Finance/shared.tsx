@@ -437,6 +437,7 @@ export function CashbookSlideOver({ open, onClose, onSuccess }: CashbookSlideOve
 
   // ── Load dropdowns khi mở ───────────────────────────────────────────────────
   React.useEffect(() => {
+    let isMounted = true;
     if (!open) return;
     setDropdownLoading(true);
 
@@ -473,6 +474,7 @@ export function CashbookSlideOver({ open, onClose, onSuccess }: CashbookSlideOve
         );
       }
     }).finally(() => setDropdownLoading(false));
+    return () => { isMounted = false; };
   }, [open]);
 
   // ── Reset khi đóng ──────────────────────────────────────────────────────────

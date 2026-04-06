@@ -65,6 +65,7 @@ export default function CreateProductionOrderModal({ isOpen, onClose, onSuccess 
 
   // Fetch warehouses
   useEffect(() => {
+    let isMounted = true;
     if (!isOpen) return;
     WarehouseService.list({ limit: 100 })
       .then((res: Record<string, unknown>) => {
@@ -75,6 +76,7 @@ export default function CreateProductionOrderModal({ isOpen, onClose, onSuccess 
         }
       })
       .catch(() => {});
+    return () => { isMounted = false; };
   }, [isOpen]);
 
   // Reset on close
@@ -138,6 +140,7 @@ export default function CreateProductionOrderModal({ isOpen, onClose, onSuccess 
 
   // Khi thay đổi plannedQty → rescale NVL
   useEffect(() => {
+    let isMounted = true;
     if (!selectedBom || lines.length === 0) return;
     const factor = parseFloat(plannedQty) || 1;
     // Recalculate from BOM ratio: plannedQty = ingredient.quantity * batches
@@ -153,6 +156,7 @@ export default function CreateProductionOrderModal({ isOpen, onClose, onSuccess 
         })));
       }
     });
+    return () => { isMounted = false; };
   }, [plannedQty]);
 
   // Variant search debounce

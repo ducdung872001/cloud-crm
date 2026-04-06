@@ -424,6 +424,7 @@ export default function SettingAttribute(props: SettingAttributeProps) {
   const [dataField, setDataField] = useState(null);
 
   // useEffect(() => {
+  let isMounted = true;
   //   //Nếu rỗng thì thay đổi
   //   let fieldName = convertToId(dataField['name']) || "";
   //   fieldName = fieldName.replace(new RegExp(`[^A-Za-z0-9]`, 'g'), '');
@@ -663,6 +664,7 @@ export default function SettingAttribute(props: SettingAttributeProps) {
     if (dataObjectGroup?.id) {
       getDataObjectGroup(dataObjectGroup.id);
     }
+  return () => { isMounted = false; };
   }, [dataObjectGroup]);
 
   const handleDeleteItemChildren = async (id, dataField) => {

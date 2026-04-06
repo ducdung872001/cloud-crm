@@ -77,12 +77,14 @@ export default function ModalPaymentMethod({ open, data, branchId = 0, onClose }
 
   // Fetch available templates khi thêm mới
   useEffect(() => {
+    let isMounted = true;
     if (!open || isEdit) return;
     setLoadingTemplates(true);
     StorePaymentConfigService.availableTemplates(branchId)
       .then((res) => { if (res.code === 0) setTemplates(res.result ?? []); })
       .catch(() => { })
       .finally(() => setLoadingTemplates(false));
+    return () => { isMounted = false; };
   }, [open, isEdit, branchId]);
 
   // Fetch fund list cho dropdown liên kết quỹ

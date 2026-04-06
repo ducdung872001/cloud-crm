@@ -88,6 +88,7 @@ export default function ServiceProductList(props: IServiceProductListProps) {
 
   // Lấy thông tin card name, avatar từ cardId
   useEffect(() => {
+    let isMounted = true;
     const fetchCardInfo = async () => {
       // Lấy tất cả cardId unique từ boughtCards
       const cardIds = listProductInvoiceService
@@ -123,6 +124,7 @@ export default function ServiceProductList(props: IServiceProductListProps) {
     };
 
     fetchCardInfo();
+    return () => { isMounted = false; };
   }, [listProductInvoiceService]);
 
   useEffect(() => {

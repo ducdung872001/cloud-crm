@@ -190,6 +190,7 @@ export default function PaymentBill(props: Record<string, unknown>) {
   };
 
   // useEffect(() => {
+  let isMounted = true;
   //   // loadOptionBranch("", "", { page: 1 });
   //   setFormData({ ...formData, branchId: dataBranch.value });
   //   setDetailBranch(dataBranch)
@@ -294,6 +295,7 @@ export default function PaymentBill(props: Record<string, unknown>) {
     if ((formData?.amount || dataPaymentBill?.amount) < (formData?.discount || dataPaymentBill?.discount)) {
       setFormData({ ...formData, fee: 0, paid: 0, debt: 0 });
     }
+  return () => { isMounted = false; };
   }, [formData?.discount, formData?.amount]);
 
   //! đoạn này tính toán lại số tiền đã trả

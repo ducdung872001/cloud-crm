@@ -189,6 +189,7 @@ export default function AddProductImportModal(props: AddProductImportModalProps)
 
   // ── Tự load lại khi edit ──────────────────────────────────────────────────
   useEffect(() => {
+    let isMounted = true;
     if (!data?.productId) return;
 
     ProductService.detail(data.productId).then((res) => {
@@ -198,6 +199,7 @@ export default function AddProductImportModal(props: AddProductImportModalProps)
         loadVariants(r.id);
       }
     });
+    return () => { isMounted = false; };
   }, [data?.productId]);
 
   // ── Auto-fill ngày từ batch no ────────────────────────────────────────────

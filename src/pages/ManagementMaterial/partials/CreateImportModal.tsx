@@ -41,10 +41,12 @@ export default function CreateImportModal({ isOpen, onClose, onSuccess }: Props)
 
   // Load materials from API if available
   useEffect(() => {
+    let isMounted = true;
     if (!isOpen) return;
     MaterialService.list({ limit: 200, page: 1 })
       .then((res) => { if (res?.code === 0 && res.result?.items?.length) setMaterials(res.result.items); })
       .catch(() => {});
+    return () => { isMounted = false; };
   }, [isOpen]);
 
   // Reset on close

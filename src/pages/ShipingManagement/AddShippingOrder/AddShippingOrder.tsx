@@ -36,12 +36,14 @@ function useAddressOptions() {
 
   // Load tỉnh khi mount
   useEffect(() => {
+    let isMounted = true;
     setLoadingProvinces(true);
     ShippingService.provinces()
       .then((data) => {
         if (data.code === 0) setProvinces(data.result ?? []);
       })
       .finally(() => setLoadingProvinces(false));
+    return () => { isMounted = false; };
   }, []);
 
   // Khi provinces load xong VÀ có pending fill → apply

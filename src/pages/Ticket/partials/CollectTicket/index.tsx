@@ -74,6 +74,7 @@ export default function CollectTicket() {
   };
 
   // useEffect(() => {
+  let isMounted = true;
   //   if (data?.supportId) {
   //     onSelectOpenSupport();
   //   }
@@ -184,6 +185,7 @@ export default function CollectTicket() {
     if (detailCustomer) {
       setFormData({ ...formData, values: { ...formData?.values, customerId: detailCustomer.value } });
     }
+  return () => { isMounted = false; };
   }, [detailCustomer]);
 
   const handleDetailCustomer = async (id: number) => {

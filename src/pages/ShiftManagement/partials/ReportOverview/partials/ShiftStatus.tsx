@@ -52,6 +52,7 @@ export default function ShiftStatus({ branchId }: Props) {
   }, []);
 
   useEffect(() => {
+    let isMounted = true;
     if (!branchId) return;
     ShiftService.getGeneralReport(branchId)
       .then((res) => {
@@ -73,6 +74,7 @@ export default function ShiftStatus({ branchId }: Props) {
         );
       })
       .catch(() => {});
+    return () => { isMounted = false; };
   }, [branchId]);
 
   const formatElapsed = (seconds: number): string => {

@@ -22,6 +22,7 @@ export default function ConfigIntegrateModal(props: Record<string, unknown>) {
   const [step, setStep] = useState(1);
 
   useEffect(() => {
+    let isMounted = true;
     if (type) {
       setParams({ ...params, type: type })
     }
@@ -61,6 +62,7 @@ export default function ConfigIntegrateModal(props: Record<string, unknown>) {
     if (onShow && params) {
       handleLstApp(params);
     }
+    return () => { isMounted = false; };
   }, [onShow, params]);
 
 

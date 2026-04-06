@@ -83,6 +83,7 @@ export default function AddStep(props: IStepModalProps) {
   );
 
   useEffect(() => {
+    let isMounted = true;
     if (data?.employees) {
       const takeEmployees = JSON.parse(data?.employees || "[]");
 
@@ -297,6 +298,7 @@ export default function AddStep(props: IStepModalProps) {
     if (data?.departmentId) {
       getDetailDepartment();
     }
+    return () => { isMounted = false; };
   }, [data?.departmentId]);
 
   useEffect(() => {

@@ -57,6 +57,7 @@ export default function AddAdjustmentSlip(props: IAddAdjustmentSlipProps) {
 
   // ── Load chi tiết phiếu khi edit ─────────────────────────────────────────
   useEffect(() => {
+    let isMounted = true;
     if (onShow && id) {
       (async () => {
         setIsLoading(true);
@@ -82,6 +83,7 @@ export default function AddAdjustmentSlip(props: IAddAdjustmentSlipProps) {
         setIsLoading(false);
       })();
     }
+    return () => { isMounted = false; };
   }, [onShow, id]);
 
   useEffect(() => {

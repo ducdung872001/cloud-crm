@@ -80,6 +80,7 @@ export default function AddDestroySlip({ id, isViewMode = false, onHide }: Props
 
   // ── Load phiếu xem/sửa ───────────────────────────────────────────────────
   useEffect(() => {
+    let isMounted = true;
     if (id) {
       (async () => {
         setIsLoading(true);
@@ -194,6 +195,7 @@ export default function AddDestroySlip({ id, isViewMode = false, onHide }: Props
         setIsLoading(false);
       })();
     }
+    return () => { isMounted = false; };
   }, [id, isReadOnly]);
 
   useEffect(() => {

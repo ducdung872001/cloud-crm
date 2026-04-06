@@ -26,6 +26,7 @@ export default function ModalProgressMA(props: Record<string, unknown>) {
     const [status, setStatus] = useState(null);
 
     useEffect(() => {
+        let isMounted = true;
         if(onShow && nodesData && edgesData){
             // setNodes(nodesData);
             setEdges(edgesData);
@@ -92,6 +93,7 @@ export default function ModalProgressMA(props: Record<string, unknown>) {
         if(onShow && maId && dataCustomer){
             getDetailProgress(maId, dataCustomer.id)
         }
+        return () => { isMounted = false; };
     }, [onShow, maId, dataCustomer]);
 
     

@@ -162,6 +162,7 @@ export default function InitBpmModalV2(props: Record<string, unknown>) {
   };
 
   useEffect(() => {
+    let isMounted = true;
     if (!onShow) {
       // Reset form khi đóng modal
       setValueProcess(null);
@@ -180,6 +181,7 @@ export default function InitBpmModalV2(props: Record<string, unknown>) {
       };
       loadCurrentMapping();
     }
+    return () => { isMounted = false; };
   }, [onShow, idCampaign]);
 
   return (

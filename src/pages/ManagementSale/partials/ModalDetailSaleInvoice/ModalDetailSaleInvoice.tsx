@@ -73,12 +73,14 @@ export default function ModalDetailSaleInvoice(props: ShowModalDetailSaleInvoice
   };
 
   useEffect(() => {
+    let isMounted = true;
     if (lstIdService && lstIdService.length > 0) {
       const changeLstIdService = uniq(lstIdService);
       const result = changeLstIdService.join(",");
 
       getPomService(result);
     }
+    return () => { isMounted = false; };
   }, [lstIdService, lstService]);
 
   const getDetailInvoice = async () => {

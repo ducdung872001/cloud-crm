@@ -144,6 +144,7 @@ export default function OmniCXMMock({ onEvent }: Props) {
 
   // Khi mở quick order → tìm khách theo SĐT của room hiện tại
   useEffect(() => {
+    let isMounted = true;
     if (view === "quick_order" && activeRoom) {
       setFoundCustomer(null);
       setCustomerLoading(true);
@@ -156,6 +157,7 @@ export default function OmniCXMMock({ onEvent }: Props) {
         .catch(() => {})
         .finally(() => setCustomerLoading(false));
     }
+    return () => { isMounted = false; };
   }, [view, activeRoom]);
 
   const emitEvent = useCallback((eventName: string, room: MockRoom, extra?: Partial<OmniChatPayload>) => {

@@ -40,6 +40,7 @@ export default function ShowInvoiceOrder(props: IShowInvoiceOrderProps) {
   const [isPrintSmall, setIsPrintSmall] = useState<boolean>(false);
 
   useEffect(() => {
+    let isMounted = true;
     if (onShow && id) {
       setInfoInvoice(data);
       setInfoPrintSmall(data);
@@ -96,6 +97,7 @@ export default function ShowInvoiceOrder(props: IShowInvoiceOrderProps) {
       fetchSaleDetails();
       fetchProductDetails();
     }
+    return () => { isMounted = false; };
   }, [onShow, id, data]);
 
   const titles = ["Mã sản phẩm", "Tên sản phẩm", "Hạn dùng", "Đơn vị tính", "Giá bán", "Số lượng", "Thành tiền", "Ghi chú"];

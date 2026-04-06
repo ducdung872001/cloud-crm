@@ -57,6 +57,7 @@ export default function ModalStockInitImport({ isOpen, onClose, onSuccess }: Pro
   };
 
   useEffect(() => {
+    let isMounted = true;
     if (!isOpen) return;
     setStep("upload"); setFile(null); setResult(null);
     setWId(0); setDone(null); sessRef.current = "";
@@ -65,6 +66,7 @@ export default function ModalStockInitImport({ isOpen, onClose, onSuccess }: Pro
       setWH(items);
       if (items.length === 1) setWId(items[0].id);
     }).catch(() => {});
+    return () => { isMounted = false; };
   }, [isOpen]);
 
   const pickFile = (f: File) => { if (isXlsx(f)) setFile(f); else showToast("Chỉ nhận .xlsx hoặc .xls", "error"); };

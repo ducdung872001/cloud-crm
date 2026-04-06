@@ -37,6 +37,7 @@ export default function ReportService(props: IReportCommonProps) {
   }, [params]);
 
   useEffect(() => {
+    let isMounted = true;
     let takeMaxTotalService = 0;
 
     if (listService.length > 0) {
@@ -48,6 +49,7 @@ export default function ReportService(props: IReportCommonProps) {
 
       setMaxTotalService(takeMaxTotalService);
     }
+    return () => { isMounted = false; };
   }, [listService]);
 
   return (

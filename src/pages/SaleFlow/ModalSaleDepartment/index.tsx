@@ -54,6 +54,7 @@ export default function ModalSaleDepartment(props: Record<string, unknown>) {
   };
 
   useEffect(() => {
+    let isMounted = true;
     if (detailSaleflowSale) {
       setDetailDepartment({ value: detailSaleflowSale.departmentId, label: detailSaleflowSale.departmentName });
       const newEmployees =
@@ -153,6 +154,7 @@ export default function ModalSaleDepartment(props: Record<string, unknown>) {
 
   useEffect(() => {
     loadedOptionSales("", undefined, { page: 1 });
+    return () => { isMounted = false; };
   }, [detailDepartment]);
 
   const formatOptionLabelSales = ({ label, avatar, departmentName, branchName }) => {

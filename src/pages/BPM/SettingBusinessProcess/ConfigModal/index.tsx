@@ -558,6 +558,7 @@ export default function ConfigModal(props: Record<string, unknown>) {
     const [listEformAttribute, setListEformAttribute] = useState([]);
 
     useEffect(() => {
+      let isMounted = true;
       const fetchEformAttributes = async () => {
         if (!idEform) return;
 
@@ -581,6 +582,7 @@ export default function ConfigModal(props: Record<string, unknown>) {
       };
 
       fetchEformAttributes();
+      return () => { isMounted = false; };
     }, [idEform]);
 
     return (

@@ -189,6 +189,7 @@ export default function ChartJobProcess(props: ReportRevenueProps) {
     },
   });
   // useEffect(() => {
+  let isMounted = true;
   //   if (listRevenue && listRevenue.length > 0) {
   //     setChartData({
   //       ...chartData,
@@ -262,6 +263,7 @@ export default function ChartJobProcess(props: ReportRevenueProps) {
 
   useEffect(() => {
     fetchData();
+  return () => { isMounted = false; };
   }, [params]);
 
   const [showOption, setShowOption] = useState<boolean>(false);

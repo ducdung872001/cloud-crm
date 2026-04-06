@@ -110,6 +110,7 @@ const CounterSales: React.FC = () => {
 
   // ── Load fixed price map khi chi nhánh thay đổi ──────────────────────────
   useEffect(() => {
+    let isMounted = true;
     if (!dataBranch?.value) return;
     FixedPriceService.getActiveEntries()
       .then((res) => {
@@ -122,6 +123,7 @@ const CounterSales: React.FC = () => {
         setFixedPriceMap(map);
       })
       .catch(() => setFixedPriceMap(new Map()));
+    return () => { isMounted = false; };
   }, [dataBranch]);
 
   const handleTabChange = (tab: TabType) => {

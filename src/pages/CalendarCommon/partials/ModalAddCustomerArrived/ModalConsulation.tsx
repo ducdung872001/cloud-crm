@@ -231,6 +231,7 @@ export default function ModalAddCustomerArrivedConsultation(props: IAddSignerFSA
   }, [formData?.lstVar]);
 
   useEffect(() => {
+    let isMounted = true;
     if (formData?.groupId) {
       ObjectGroupService.detail(formData.groupId).then((res) => {
         if (res?.code === 0 && res.result) {
@@ -242,6 +243,7 @@ export default function ModalAddCustomerArrivedConsultation(props: IAddSignerFSA
     } else {
       setValueGroup(null);
     }
+    return () => { isMounted = false; };
   }, [formData?.groupId]);
 
   const handleClearForm = (acc) => {

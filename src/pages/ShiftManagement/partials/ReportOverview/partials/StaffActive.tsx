@@ -29,6 +29,7 @@ export default function StaffActive({ branchId }: Props) {
   const [activeStaff, setActiveStaff] = useState<StaffItem[]>([]);
 
   useEffect(() => {
+    let isMounted = true;
     if (!branchId) return;
     ShiftService.getGeneralReport(branchId)
       .then((res) => {
@@ -48,6 +49,7 @@ export default function StaffActive({ branchId }: Props) {
         setActiveStaff(mapped);
       })
       .catch(() => {});
+    return () => { isMounted = false; };
   }, [branchId]);
 
   return (

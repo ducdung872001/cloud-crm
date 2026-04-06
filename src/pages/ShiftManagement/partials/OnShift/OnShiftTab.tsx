@@ -57,6 +57,7 @@ export default function OnShiftTab({ shiftId, branchId, onEndShift, onViewOrders
   const [startedAt, setStartedAt] = useState<number>(Date.now());
 
   useEffect(() => {
+    let isMounted = true;
     if (!branchId) return;
     setLoading(true);
 
@@ -112,6 +113,7 @@ export default function OnShiftTab({ shiftId, branchId, onEndShift, onViewOrders
         // Lỗi mạng — giữ empty state, không hiển thị mock
       })
       .finally(() => setLoading(false));
+    return () => { isMounted = false; };
   }, [branchId, shiftId]);
 
   // Đồng hồ đếm giờ real-time

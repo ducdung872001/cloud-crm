@@ -73,6 +73,7 @@ export default function ShowModalSubsystem(props: IShowModalSubsystemProps) {
   });
 
   useEffect(() => {
+    let isMounted = true;
     setParamFreeResource({ ...paramFreeResource, app: data?.app });
     setParamResource({ ...paramResource, app: data?.app });
   }, [data])
@@ -98,6 +99,7 @@ export default function ShowModalSubsystem(props: IShowModalSubsystemProps) {
     if (onShow) {
       getListFreeResource();
     }
+    return () => { isMounted = false; };
   }, [onShow, paramFreeResource]);
 
   //! đoạn này cập nhập lại biến paramFreeResource mỗi lần gõ vào ô tìm kiếm

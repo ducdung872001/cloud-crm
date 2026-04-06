@@ -37,6 +37,7 @@ export default function CloseShiftTab({ shiftId, branchId, onShiftClosed }: Prop
   } | null>(null);
 
   useEffect(() => {
+    let isMounted = true;
     if (!branchId) return;
     ShiftService.getActiveDashboard(branchId)
       .then((res: Record<string, unknown>) => {
@@ -55,6 +56,7 @@ export default function CloseShiftTab({ shiftId, branchId, onShiftClosed }: Prop
         if (d.currentCash > 0) setTotalRaw(String(Math.round(d.currentCash)));
       })
       .catch(() => {});
+    return () => { isMounted = false; };
   }, [branchId]);
 
   const closingAmount = mode === "total"

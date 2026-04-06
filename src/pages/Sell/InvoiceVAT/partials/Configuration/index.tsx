@@ -95,6 +95,7 @@ export default function Configuration() {
 
   // ── Load config on mount ────────────────────────────────────────────────
   useEffect(() => {
+    let isMounted = true;
     setLoadingGet(true);
     VatInvoiceService.getConfig()
       .then((res: Record<string, unknown>) => {
@@ -129,6 +130,7 @@ export default function Configuration() {
       })
       .catch(() => {})
       .finally(() => setLoadingGet(false));
+    return () => { isMounted = false; };
   }, []);
 
   // ── Save config ──────────────────────────────────────────────────────────

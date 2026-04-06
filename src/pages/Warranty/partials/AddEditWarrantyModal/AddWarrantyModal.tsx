@@ -61,6 +61,7 @@ export default function AddWarrantyModal(props: IAddWarrantyModelProps) {
   };
 
   // useEffect(() => {
+  let isMounted = true;
   //   if (data?.departmentId) {
   //     onSelectOpenDepartment();
   //   }
@@ -104,6 +105,7 @@ export default function AddWarrantyModal(props: IAddWarrantyModelProps) {
     if (data?.reasonId === null) {
       setListReason([]);
     }
+  return () => { isMounted = false; };
   }, [data]);
 
   // Chọn khách hàng cần bảo hành

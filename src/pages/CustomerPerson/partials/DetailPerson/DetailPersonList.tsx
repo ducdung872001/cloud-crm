@@ -118,20 +118,24 @@ export default function DetailPersonList() {
 
   // Load tổng công nợ thực từ cloud-billing
   useEffect(() => {
+    let isMounted = true;
     if (!id) return;
     setBillingDebt(null);
     DebtManagementService.getCustomerTotalDebt(+id)
       .then((total) => setBillingDebt(total))
       .catch(() => setBillingDebt(null));
+    return () => { isMounted = false; };
   }, [id]);
 
   // Load tổng doanh số thực từ cloud-sales (tách riêng, không phụ thuộc viewMode)
   useEffect(() => {
+    let isMounted = true;
     if (!id) return;
     setCustomerSalesStats(null);
     InvoiceService.getCustomerStats(+id)
       .then((stats) => setCustomerSalesStats(stats))
       .catch(() => setCustomerSalesStats(null));
+    return () => { isMounted = false; };
   }, [id]);
 
   const lstInteract = [

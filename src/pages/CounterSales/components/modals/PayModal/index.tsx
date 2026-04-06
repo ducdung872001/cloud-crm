@@ -82,6 +82,7 @@ export default function PayModal({
 
   // ── Fetch store_payment_config 1 lần ─────────────────────────────────────
   useEffect(() => {
+    let isMounted = true;
     if (loaded) return;
     StorePaymentConfigService.list()
       .then((res) => {
@@ -91,6 +92,7 @@ export default function PayModal({
       })
       .catch(() => {})
       .finally(() => setLoaded(true));
+    return () => { isMounted = false; };
   }, [loaded]);
 
   // ── Config đang active ────────────────────────────────────────────────────

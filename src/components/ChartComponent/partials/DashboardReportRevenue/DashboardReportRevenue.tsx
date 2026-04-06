@@ -83,6 +83,7 @@ export default function DashboardReportRevenue(props: ReportRevenueProps) {
   };
 
   // useEffect(() => {
+  let isMounted = true;
   //   if (dataBranch) {
   //     setValueBranch(dataBranch);
   //     setParams({ ...params, branchId: dataBranch.value });
@@ -110,6 +111,7 @@ export default function DashboardReportRevenue(props: ReportRevenueProps) {
     if (params.fromTime && params.toTime && dataBranch) {
       getRevenue(params, dataBranch);
     }
+  return () => { isMounted = false; };
   }, [params, dataBranch]);
 
   const [categoriesRevenue, setCategoriesRevenue] = useState([]);

@@ -615,6 +615,7 @@ export default function SettingAttributeEform(props: Record<string, unknown>) {
   };
 
   useEffect(() => {
+    let isMounted = true;
     if(eformId){
       getDataObjectGroup(eformId);
     }
@@ -715,6 +716,7 @@ export default function SettingAttributeEform(props: Record<string, unknown>) {
         </div>
       );
     });
+    return () => { isMounted = false; };
   }, [dataTabConfig.layouts, breakpoint, dataField]);
   
   const handleDrop = async (layout, item, e) => {

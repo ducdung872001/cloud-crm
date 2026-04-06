@@ -54,6 +54,7 @@ export default function AddContactAttributeModal(props: AddContactAttributeModal
   const [checkFieldName, setCheckFieldName] = useState(false);
 
   useEffect(() => {
+    let isMounted = true;
     setData(dataContactAttribute)
   }, [dataContactAttribute])
 
@@ -126,6 +127,7 @@ export default function AddContactAttributeModal(props: AddContactAttributeModal
     if (data?.datatype == 'formula' && data?.attributes) {
       setSelectedFormula(JSON.parse(data?.attributes).formula || '');
     }
+    return () => { isMounted = false; };
   }, [data]);
 
 

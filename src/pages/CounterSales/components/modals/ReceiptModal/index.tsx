@@ -168,6 +168,7 @@ export default function ReceiptModal({
 
   // ── Auto-fill email khách hàng ─────────────────────────────────────────────
   useEffect(() => {
+    let isMounted = true;
     if (!open) return;
     // Reset email states mỗi lần mở modal
     setEmailInput("");
@@ -189,6 +190,7 @@ export default function ReceiptModal({
       }).catch(() => {});
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
+    return () => { isMounted = false; };
   }, [open, customerId]);
 
   const handleClose = () => {

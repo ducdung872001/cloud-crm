@@ -37,6 +37,7 @@ export default function ReportCardService(props: IReportCommonProps) {
   }, [params]);
 
   useEffect(() => {
+    let isMounted = true;
     let takeMaxTotalCardService = 0;
 
     if (lstCardService.length > 0) {
@@ -48,6 +49,7 @@ export default function ReportCardService(props: IReportCommonProps) {
 
       setMaxTotalCardService(takeMaxTotalCardService);
     }
+    return () => { isMounted = false; };
   }, [lstCardService]);
 
   return (

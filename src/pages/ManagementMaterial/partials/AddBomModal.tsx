@@ -47,10 +47,12 @@ export default function AddBomModal({ isOpen, data, onClose, onSuccess }: Props)
 
   // Load materials
   useEffect(() => {
+    let isMounted = true;
     if (!isOpen) return;
     MaterialService.list({ limit: 200, page: 1 })
       .then((res) => { if (res?.code === 0 && res.result?.items?.length) setMaterials(res.result.items); })
       .catch(() => {});
+    return () => { isMounted = false; };
   }, [isOpen]);
 
   // Populate from data

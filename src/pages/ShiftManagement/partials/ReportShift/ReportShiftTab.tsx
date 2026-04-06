@@ -52,6 +52,7 @@ export default function ShiftReportTab({ shiftId, branchId }: Props) {
   const [isExporting, setIsExporting] = useState(false);
 
   useEffect(() => {
+    let isMounted = true;
     if (!shiftId || shiftId <= 0) { setLoading(false); return; }
     setLoading(true);
     ShiftService.getCloseReport(shiftId)
@@ -77,6 +78,7 @@ export default function ShiftReportTab({ shiftId, branchId }: Props) {
       })
       .catch(() => {})
       .finally(() => setLoading(false));
+    return () => { isMounted = false; };
   }, [shiftId]);
 
   const handlePrint = () => {

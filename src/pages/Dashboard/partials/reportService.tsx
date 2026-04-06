@@ -103,6 +103,7 @@ export default function ReportProduct(props: ReportProductProps) {
   }, [params]);
 
   useEffect(() => {
+    let isMounted = true;
     let takeMaxTotalService = 0;
 
     if (listService.length > 0) {
@@ -114,6 +115,7 @@ export default function ReportProduct(props: ReportProductProps) {
 
       setMaxTotalService(takeMaxTotalService);
     }
+    return () => { isMounted = false; };
   }, [listService]);
 
   const takeFromTimeAndToTime = (fromTime, toTime) => {

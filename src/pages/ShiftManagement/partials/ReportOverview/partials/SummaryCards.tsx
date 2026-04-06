@@ -23,6 +23,7 @@ export default function SummaryCards({ branchId }: Props) {
   const [cards, setCards] = useState<CardData[]>([]);
 
   useEffect(() => {
+    let isMounted = true;
     if (!branchId) return;
     ShiftService.getGeneralReport(branchId)
       .then((res) => {
@@ -79,6 +80,7 @@ export default function SummaryCards({ branchId }: Props) {
       .catch(() => {
         // Lỗi mạng → giữ mock
       });
+    return () => { isMounted = false; };
   }, [branchId]);
 
   return (
