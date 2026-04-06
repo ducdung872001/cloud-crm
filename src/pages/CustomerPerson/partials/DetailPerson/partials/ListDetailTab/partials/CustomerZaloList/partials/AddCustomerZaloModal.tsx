@@ -247,7 +247,7 @@ export default function AddCustomerZaloModal(props: IAddCustomerZaloModelProps) 
                     listCategoryZalo.length > 0 &&
                     listCategoryZalo.map((item, idx) => {
                       return (
-                        <div key={idx} className={`${idCategoryZalo === item.id ? "active-template-zalo" : "item-template-zalo"}`}>
+                        <div key={item.id} className={`${idCategoryZalo === item.id ? "active-template-zalo" : "item-template-zalo"}`}>
                           {idCategoryZalo === item.id ? (
                             <span className="iconCheck">
                               <Icon name="CheckedCircle" />

@@ -747,7 +747,7 @@ export default function CreateOrder() {
               <thead>
                 <tr>
                   {titles?.map((title, idx) => (
-                    <th key={idx} className="">
+                    <th key={item.code} className="">
                       {title}
                     </th>
                   ))}
@@ -757,7 +757,7 @@ export default function CreateOrder() {
               <tbody>
                 {conditionCommon.orderDetails.map((item, idx) => {
                   return (
-                    <tr key={idx}>
+                    <tr key={item.code}>
                       <td className="box__info--pro">
                         <div className="info__pro">
                           <div className="image__pro">

@@ -212,7 +212,7 @@ export default function InternalMailList() {
           <div className="list-conversation" onScroll={handleScroll}>
             {listMailbox.map((item, idx) => (
               <div
-                key={idx}
+                key={item.id}
                 className={`conversation__item ${dataMailbox?.id == item.id ? "active" : ""}`}
                 onClick={() => {
                   setDataMailbox(item);
@@ -239,7 +239,7 @@ export default function InternalMailList() {
                       <ul className="menu-option">
                         {optionMailBox.map((element, idx) => (
                           <li
-                            key={idx}
+                            key={item.id}
                             className={`option-item ${element.className ? element.className : ""}`}
                             onClick={(e) => {
                               e.preventDefault();

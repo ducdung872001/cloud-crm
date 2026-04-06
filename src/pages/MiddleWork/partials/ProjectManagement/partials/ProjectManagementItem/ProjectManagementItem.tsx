@@ -163,7 +163,7 @@ export default function ProjectManagementItem(props: Record<string, unknown>) {
               listProjectChildren.length > 0 &&
               listProjectChildren.map((item, idx) => {
                 return (
-                  <div key={idx} className={`project__management-lv2 ${idProjectChildren === item?.id ? "active__project-management--lv2" : ""}`}>
+                  <div key={item.id} className={`project__management-lv2 ${idProjectChildren === item?.id ? "active__project-management--lv2" : ""}`}>
                     <div
                       className="name__product-lv2"
                       onClick={(e) => {

@@ -245,7 +245,7 @@ export default function ExportListModal(props: IExportListModalProps) {
                     const check = item.id == detailFile?.id;
 
                     return (
-                      <div key={idx} className={`item-file ${check ? "active__item" : ""}`}>
+                      <div key={item.id} className={`item-file ${check ? "active__item" : ""}`}>
                         <div className="img-file">
                           <Image src={ExcelIcon} alt={""} />
                         </div>

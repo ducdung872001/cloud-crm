@@ -225,7 +225,7 @@ export default function AddRelatedWorkModal(props: IAddRelatedWorkModelProps) {
                           const isChecked = listIdChecked && setListIdChecked && listIdChecked.some((id) => id === item.id) ? true : false;
 
                           return (
-                            <Fragment key={index}>
+                            <Fragment key={item.id}>
                               <tr
                                 onClick={() => {
                                   checkOne(item.id, !isChecked);

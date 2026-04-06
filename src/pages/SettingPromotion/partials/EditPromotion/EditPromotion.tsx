@@ -1149,7 +1149,7 @@ export default function EditPromotion(props: Record<string, unknown>) {
                               </div>
                               {filterUser.length > 0 ? (
                                 filterUser.map((item, idx) => (
-                                  <div key={idx} className="wrapper-user">
+                                  <div key={item.id} className="wrapper-user">
                                     <div className="info-user">
                                       {!item.avatar ? (
                                         <Image src={item.gender == 2 ? AvatarMale : AvatarFemale} alt={item.name} />
@@ -1191,7 +1191,7 @@ export default function EditPromotion(props: Record<string, unknown>) {
             <div className="body-condition">
               {listCondition.map((item, idx) => {
                 return (
-                  <div className="condition-item" key={idx}>
+                  <div className="condition-item" key={item.id}>
                     <div className="input-item">
                       <div
                         title="Xóa điều kiện"
@@ -1392,7 +1392,7 @@ export default function EditPromotion(props: Record<string, unknown>) {
                     formValues.priceRules.length > 0 &&
                     formValues.priceRules.map((priceRule, index) => {
                       return (
-                        <div className="review-price-rule" key={index}>
+                        <div className="review-price-rule" key={priceRule.value}>
                           <h4>Điều kiện {index + 1}</h4>
                           <ul>
                             <li>

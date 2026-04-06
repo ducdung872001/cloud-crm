@@ -827,7 +827,7 @@ function Header(props: HeaderProps) {
                           (listBranch || []).map((item, key) => {
                             return (
                               <label
-                                key={key}
+                                key={item.value}
                                 onClick={() => {
                                   handleChangeValueBranch(item);
                                   setShowPopoverBranch(false);
@@ -843,9 +843,9 @@ function Header(props: HeaderProps) {
                         {newListBranch && newListBranch.length > 0 ? (
                           (newListBranch || []).map((item, key) => {
                             return (
-                              <div key={key} style={{ marginLeft: item.level * 10, color: valueBranch.value === item.value ? "#015aa4" : "" }}>
+                              <div key={item.value} style={{ marginLeft: item.level * 10, color: valueBranch.value === item.value ? "#015aa4" : "" }}>
                                 <label
-                                  key={key}
+                                  key={item.value}
                                   onClick={() => {
                                     handleChangeValueBranch(item);
                                     setShowPopoverBranch(false);

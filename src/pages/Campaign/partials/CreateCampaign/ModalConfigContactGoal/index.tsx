@@ -317,7 +317,7 @@ export default function ModalConfigContactGoal(props: Record<string, unknown>) {
                   {actionList &&
                     actionList.length > 0 &&
                     actionList.map((item, index) => (
-                      <div key={index} className="box-action">
+                      <div key={item.value} className="box-action">
                         <div>
                           <span style={{ fontSize: 14, fontWeight: "400" }}>{item.interactionName}:</span>
                         </div>

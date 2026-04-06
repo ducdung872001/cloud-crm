@@ -25,7 +25,7 @@ export default function PreviewTemplateZalo(props: { dataTemplateZalo: Record<st
                 ) : item.type === "table" ? (
                     item.content.map((el, index) => {
                     return (
-                        <div key={index} className="item__table">
+                        <div key={el.value} className="item__table">
                         <h4 className="key">{el.key}</h4>
                         <h4 className="value">{el.value}</h4>
                         </div>

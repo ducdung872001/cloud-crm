@@ -34,7 +34,8 @@
       "Bash(grep -B1 \"^\\\\\\(src/.*-\\\\\\)\\\\s*$\\\\|^\\\\\\(src/.*-\\\\\\)\\\\s*}\\\\s*$\")",
       "Bash(node convert_lazy.js)",
       "Bash(xargs grep:*)",
-      "Bash(node add_memo.js)"
+      "Bash(node add_memo.js)",
+      "Bash(node fix_keys.js)"
     ]
   }
 }

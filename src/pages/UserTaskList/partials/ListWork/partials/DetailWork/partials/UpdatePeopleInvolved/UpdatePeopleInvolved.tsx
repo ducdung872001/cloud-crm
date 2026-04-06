@@ -210,7 +210,7 @@ export default function UpdatePeopleInvolved(props: Record<string, unknown>) {
             {
               !isLoading && participants && participants.length > 0
                 ? participants.map((item, idx) => (
-                    <div key={idx} className="participant-item">
+                    <div key={item.id} className="participant-item">
                       <div className="info-participant">
                         <img src={item?.avatar ? item?.avatar : ImageThirdGender} alt={item?.name} />
                         {item?.name}
@@ -245,7 +245,7 @@ export default function UpdatePeopleInvolved(props: Record<string, unknown>) {
             </div>
             {!isLoading && relatedCustomers && relatedCustomers.length > 0 ? (
               relatedCustomers.map((item, idx) => (
-                <div key={idx} className="related__customers--item">
+                <div key={item.id} className="related__customers--item">
                   <div className="info__related--customers">
                     <img src={item?.avatar ? item?.avatar : ImageThirdGender} alt={item?.name} />
                     {item?.name}

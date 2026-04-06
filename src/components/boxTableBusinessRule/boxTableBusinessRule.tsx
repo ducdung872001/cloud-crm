@@ -173,7 +173,7 @@ export default function BoxTableBusinessRule(props: BoxTableProps) {
               const isChecked = listIdChecked && setListIdChecked && listIdChecked.some((id) => id === item.id) ? true : false;
               const itemDetail = listDetailData?.find((d) => d.id === item.id);
               return (
-                <Fragment key={index}>
+                <Fragment key={item.id}>
                   <tr
                     onClick={() => onClickRow && onClickRow(item.raw)}
                     className={`${onClickRow ? "cursor-pointer" : ""}${

@@ -981,7 +981,7 @@ export default function CustomerPersonList() {
                         [...defaultFieldTableDis, ...lstFieldActive].map((el, idx) => {
                           return (
                             <Checkbox
-                              key={idx}
+                              key={el.value}
                               value={el.value}
                               label={el.label}
                               disabled={el.hide ? true : false}
@@ -1016,7 +1016,7 @@ export default function CustomerPersonList() {
                         lstFieldUnActive.map((el, idx) => {
                           return (
                             <Checkbox
-                              key={idx}
+                              key={el.value}
                               value={el.value}
                               label={el.label}
                               defaultChecked={el.isTable}
@@ -1380,7 +1380,7 @@ export default function CustomerPersonList() {
           {data.lstOpportunity &&
             data.lstOpportunity.slice(0, 2).map((item, idx) => {
               return (
-                <div key={idx} className={`item__b--two--b ${data.lstOpportunity.length >= 3 ? "fade-out" : ""}`}>
+                <div key={item.id} className={`item__b--two--b ${data.lstOpportunity.length >= 3 ? "fade-out" : ""}`}>
                   <div className="__header">
                     <span
                       className="name__pro"
@@ -3089,7 +3089,7 @@ export default function CustomerPersonList() {
                 >
                   {listRelationship?.map((item, idx) => {
                     return (
-                      <SwiperSlide key={idx} className="list__relationship--slide">
+                      <SwiperSlide key={item.id} className="list__relationship--slide">
                         <div
                           className={`item-relationship ${item.id == idRelationship ? "active__item-block" : ""}`}
                           style={{ backgroundColor: item.color, color: item.colorText }}
@@ -3110,7 +3110,7 @@ export default function CustomerPersonList() {
                 {listRelationship?.map((item, idx) => {
                   return (
                     <div
-                      key={idx}
+                      key={item.id}
                       className={`relationship-item ${item.id == idRelationship ? "active__relationship--item" : ""}`}
                       style={{ backgroundColor: item.color, color: item.colorText }}
                       onClick={(e) => {
@@ -3131,7 +3131,7 @@ export default function CustomerPersonList() {
               {lstTitleHeader.map((item, idx) => {
                 return listPartner && listPartner.length > 0 ? (
                   <li
-                    key={idx}
+                    key={item.id}
                     className={`item-title ${activeTitleHeader === item.type ? "active__item--title" : ""}`}
                     onClick={() => setActiveTitleHeader(item.type)}
                   >
@@ -3139,7 +3139,7 @@ export default function CustomerPersonList() {
                   </li>
                 ) : item.type === 1 || item.type === 2 || item.type === 5 ? (
                   <li
-                    key={idx}
+                    key={item.id}
                     className={`item-title ${activeTitleHeader === item.type ? "active__item--title" : ""}`}
                     onClick={() => setActiveTitleHeader(item.type)}
                   >
@@ -3155,7 +3155,7 @@ export default function CustomerPersonList() {
                   {listPartner.map((item, idx) => {
                     return item.name ? (
                       <div
-                        key={idx}
+                        key={item.id}
                         className={`relationship-item ${item.targetBsnId == targetBsnId ? "active__relationship--item" : ""}`}
                         style={{ backgroundColor: item.color, color: item.colorText }}
                         onClick={(e) => {

@@ -122,7 +122,7 @@ export default function MultiChannelSales() {
             <div className="container-tab-list">
                 {tabList.map((item, index) => (
                     <div 
-                        key={index} 
+                        key={item.value} 
                         className={item.value === tab ? "item-tab item-tab--active" : "item-tab item-tab--inactive"}
                         onClick={() => {
                             setTab(item.value);

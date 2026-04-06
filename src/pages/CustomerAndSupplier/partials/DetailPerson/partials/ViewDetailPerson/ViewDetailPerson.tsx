@@ -825,7 +825,7 @@ export default function ViewDetailPerson(props: IViewDetailPersonProps) {
             {isShowInfoContact && (
               <div className="list-info-contact">
                 {listInfoContact.map((item, idx) => (
-                  <div key={idx} className="item__contact">
+                  <div key={item.value} className="item__contact">
                     <span className="item__contact--left">{item.title}</span>
                     <span className="item__contact--right">{item.name}</span>
                   </div>
@@ -853,7 +853,7 @@ export default function ViewDetailPerson(props: IViewDetailPersonProps) {
               <div className="list-info-other">
                 {dataOther.map((item, idx) => {
                   return (
-                    <div key={idx} className="item__other">
+                    <div key={item.value} className="item__other">
                       <span className="item__other--left">{item.label}</span>
                       <span className="item__other--right">{item.value}</span>
                     </div>
@@ -888,7 +888,7 @@ export default function ViewDetailPerson(props: IViewDetailPersonProps) {
             {isShowInfoDetail && (
               <div className="list-info-detail">
                 {listDetailInfoTNEX.map((item, idx) => (
-                  <div key={idx} className="item__detail">
+                  <div key={item.value} className="item__detail">
                     <h4 className="item__detail--left">{item.title}</h4>
                     <h4 className="item__detail--right">{item.name}</h4>
                   </div>

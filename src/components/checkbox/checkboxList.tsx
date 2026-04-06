@@ -46,7 +46,7 @@ function CheckboxList(props: CheckboxListProps) {
       <div className="form-group">
         {options.map((option, index) => (
           <Checkbox
-            key={index}
+            key={option.value}
             label={option.label}
             value={option.value}
             checked={value && value.split(",").includes(option.value.toString())}

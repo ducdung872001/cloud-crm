@@ -331,7 +331,7 @@ export default function HistoryModal(props: Record<string, unknown>) {
               <div style={{display: 'flex', marginBottom: '1.2rem'}}>
                 {dataTab.map((item, index) => (
                     <div 
-                      key={index}
+                      key={item.value}
                       style={{borderBottom: tab === item.value ? '1px solid' : '', paddingLeft: 12, paddingRight: 12, paddingBottom: 3, cursor:'pointer'}}
                       onClick = {() => {
                         setTab(item.value)

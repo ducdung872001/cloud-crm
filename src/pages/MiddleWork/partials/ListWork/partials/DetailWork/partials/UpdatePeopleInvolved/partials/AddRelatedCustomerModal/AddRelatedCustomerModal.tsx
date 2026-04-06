@@ -237,7 +237,7 @@ export default function AddRelatedCustomerModal(props: IAddRelatedCustomerModalP
 
                           return (
                             <tr
-                              key={index}
+                              key={item.id}
                               onClick={() => {
                                 checkOne(item.id, !isChecked);
                               }}

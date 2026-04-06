@@ -274,7 +274,7 @@ export default function ConfigIntegrateModal(props: Record<string, unknown>) {
                       const condition = item.config ? true : (dataApp && item.id === dataApp.id);
                       return (
                         <div
-                          key={idx}
+                          key={item.id}
                           className={`item-template ${(condition && !item.config) ? "item-template-active" : ""}`}
                           onClick={() => {
                             if (!item.config) {

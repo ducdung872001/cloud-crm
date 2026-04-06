@@ -1000,7 +1000,7 @@ export default function ListWork(props: Record<string, unknown>) {
             <div className="header_tab">
               {dataHeaderTab.map((item, index) => (
                 <div
-                  key={index}
+                  key={item.value}
                   className={item.value === headerTab ? "item_tab_active" : "item_tab_inactive"}
                   onClick={() => {
                     setHeaderTab(item.value);

@@ -166,7 +166,7 @@ export default function WorkChatArea(props: IContentExchangeWorkProps) {
         <div className="lst-media">
           {dataMedia.map((item, idx) => {
             return (
-              <div key={idx} className="item-media">
+              <div key={item.id} className="item-media">
                 {item.type == "image" ? (
                   <Fancybox>
                     <a key={item.id} data-fancybox="gallery" data-download-src={item.url} href={item.url}>
@@ -219,7 +219,7 @@ export default function WorkChatArea(props: IContentExchangeWorkProps) {
             <div onScroll={handleScroll} className="lst__data--exchange">
               {lstDataExchange.map((item: Record<string, unknown>, idx) => {
                 return (
-                  <div key={idx} className={`${item.employeeId === dataEmployee.id ? "data__item--right" : "data__item--left"}`}>
+                  <div key={item.id} className={`${item.employeeId === dataEmployee.id ? "data__item--right" : "data__item--left"}`}>
                     <img src={item.employeeAvatar ? item.employeeAvatar : ThirdGender} alt={item.employeeName} className="avatar-employee" />
                     <div className="info__content">
                       <div className="info__content--left">

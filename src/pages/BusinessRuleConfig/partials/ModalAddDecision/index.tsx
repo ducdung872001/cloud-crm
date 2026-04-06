@@ -275,7 +275,7 @@ export default function ModalAddDecision(props: Record<string, unknown>) {
                 </div>
                 <div className="list-condition">
                   {inputs.map((item, index) => (
-                    <div className="item" key={index}>
+                    <div className="item" key={item.id}>
                       <div className="item-name">{item.name}</div>
                       <div className="item-condition">
                         <SelectCustom
@@ -505,7 +505,7 @@ export default function ModalAddDecision(props: Record<string, unknown>) {
                 </div>
                 <div className="list-decision">
                   {outputs.map((item, index) => (
-                    <div className="item" key={index}>
+                    <div className="item" key={item.id}>
                       <div className="item-name-decision">{item.name}</div>
                       <div className="item-input-decision">
                         {item.dataType === "Long" ? (

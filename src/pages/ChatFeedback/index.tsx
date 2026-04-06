@@ -126,7 +126,7 @@ export default function ChatFeedback() {
         <div className="lst-media">
           {dataMedia.map((item, idx) => {
             return (
-              <div key={idx} className="item-media">
+              <div key={item.id} className="item-media">
                 {item.type == "image" ? (
                   <Fancybox>
                     <a key={item.id} data-fancybox="gallery" data-download-src={item.url} href={item.url}>
@@ -186,7 +186,7 @@ export default function ChatFeedback() {
               {lstStatus.map((item, idx) => {
                 return (
                   <li
-                    key={idx}
+                    key={item.id}
                     className={`item__status--feedback ${item.value === activeStatus ? "active__status" : ""}`}
                     onClick={() => {
                       setIsChangeStatus(false);
@@ -211,7 +211,7 @@ export default function ChatFeedback() {
           <div className="lst__content--feedback" key={lstFeedback.length} onScroll={handleScroll}>
             {lstFeedback.map((item, idx) => {
               return (
-                <div key={idx} className="item__content--feedback">
+                <div key={item.id} className="item__content--feedback">
                   
 
                   <div className="desc__content">

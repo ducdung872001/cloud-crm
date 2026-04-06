@@ -676,7 +676,7 @@ export default function AssignWorkModal(props: IAddWorkModelProps) {
                   <ul className="menu__time--workload" ref={refOptionTimeWorkLoad}>
                     {listOptionTimeWorkLoad.map((item, idx) => (
                       <li
-                        key={idx}
+                        key={item.value}
                         className={`item--workload ${dataTimeWorkLoad.value === item.value ? "active__item--workload" : ""}`}
                         onClick={(e) => {
                           e.preventDefault();

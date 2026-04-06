@@ -289,7 +289,7 @@ export default function ModalDetailOrder(props: Record<string, unknown>) {
 
             <div className="list-product">
               {listProduct.map((item, index) => (
-                <div key={index} className="item-product">
+                <div key={item.value} className="item-product">
                   <div className="body-product">
                     <span style={{ fontSize: 14, fontWeight: "500" }}>{item.title}</span>
                     <div>
@@ -309,7 +309,7 @@ export default function ModalDetailOrder(props: Record<string, unknown>) {
 
             <div className="total-money">
               {dataTotal.map((item, index) => (
-                <div key={index} className="item-money" style={index === dataTotal?.length - 1 ? { borderBottom: 0 } : {}}>
+                <div key={item.value} className="item-money" style={index === dataTotal?.length - 1 ? { borderBottom: 0 } : {}}>
                   <span style={{ fontSize: 14, fontWeight: "500" }}>{item.lable}</span>
 
                   <div>
@@ -327,7 +327,7 @@ export default function ModalDetailOrder(props: Record<string, unknown>) {
 
             <div>
               {infoUser.map((item, index) => (
-                <div key={index} className="item-info" style={index === dataTotal?.length - 1 ? { borderBottom: 0 } : {}}>
+                <div key={item.value} className="item-info" style={index === dataTotal?.length - 1 ? { borderBottom: 0 } : {}}>
                   <span style={{ fontSize: 14, fontWeight: "500" }}>{item.lable}</span>
                   <div>
                     <span style={{ fontSize: 14, fontWeight: "600" }}>{item.value}</span>

@@ -1784,7 +1784,7 @@ export default function AddCustomerPersonModal(props: AddCustomerModalProps) {
                   {Object.entries(mapCustomerAttribute).map((lstCustomerAttribute: Record<string, unknown>, key: number) => (
                     <Fragment key={key}>
                       {(lstCustomerAttribute[1] || []).map((customerAttribute, index: number) => (
-                        <Fragment key={index}>
+                        <Fragment key={customerAttribute.id}>
                           {!customerAttribute.parentId ? (
                             <label className="label-title" key={`parent_${key}`}>
                               {customerAttribute.name}
@@ -1821,7 +1821,7 @@ export default function AddCustomerPersonModal(props: AddCustomerModalProps) {
                   {Object.entries(mapCustomerAttribute).map((lstCustomerAttribute: Record<string, unknown>, key: number) => (
                     <Fragment key={key}>
                       {(lstCustomerAttribute[1] || []).map((customerAttribute, index: number) => (
-                        <Fragment key={index}>
+                        <Fragment key={customerAttribute.id}>
                           {!customerAttribute.parentId ? (
                             <label className="label-title" key={`parent_${key}`}>
                               {customerAttribute.name}

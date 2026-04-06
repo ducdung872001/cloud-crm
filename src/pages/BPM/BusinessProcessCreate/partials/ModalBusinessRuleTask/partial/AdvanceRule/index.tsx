@@ -888,7 +888,7 @@ export default function AdvaceRule({ dataNode, processId, childProcessId, dataCo
                                 if (field?.children && field?.children?.length > 0) {
                                   // Nếu có children thì hiển thị children
                                   return (
-                                    <td key={fieldIndex} className={`column-body-${field.columnType}`} colSpan={field.children.length}>
+                                    <td key={field.value} className={`column-body-${field.columnType}`} colSpan={field.children.length}>
                                       {field?.isOtherwise ? (
                                         <div className="component">
                                           <div className="italic-text">{field?.value}</div>
@@ -935,7 +935,7 @@ export default function AdvaceRule({ dataNode, processId, childProcessId, dataCo
                                             >
                                               {field.children.map((child, index) => {
                                                 return (
-                                                  <div key={index} className="field-child">
+                                                  <div key={child.value} className="field-child">
                                                     <div className="component">
                                                       {child.type === "number" ? (
                                                         <NummericInput

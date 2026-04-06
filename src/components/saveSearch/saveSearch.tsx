@@ -110,7 +110,7 @@ function SaveSearch(props: SaveSearchProps) {
       {saveSearchItems.map((item, idx) => {
         return (
           <li
-            key={idx}
+            key={item.key}
             className={item.is_active ? "active" : ""}
             onClick={() => {
               changeSaveSearch(item.key);

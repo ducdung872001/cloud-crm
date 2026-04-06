@@ -572,7 +572,7 @@ export default function ModalAddCustomerArrived(props: IAddSignerFSAndQuoteProps
                 </div>
                 {listDataVar && listDataVar.length > 0 ?
                   listDataVar.map((item, index) => (
-                    <div key={index} className="box-var">
+                    <div key={item.key} className="box-var">
                       <div className="box-var-header">
                         <Input
                           name={`var_key_${index}`}
@@ -618,7 +618,7 @@ export default function ModalAddCustomerArrived(props: IAddSignerFSAndQuoteProps
 
                       <div className="fields-list">
                         {(item.fields || []).map((field, fi) => (
-                          <div className="field-item" key={fi}>
+                          <div className="field-item" key={field.value}>
                             <Input
                               name={`field_k_${index}_${fi}`}
                               value={field.fieldName}

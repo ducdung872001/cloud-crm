@@ -301,7 +301,7 @@ export default function KanbanProject(props: IKanbanProjectProps) {
           <DragDropContext onDragEnd={onDragEnd}>
             {columns.map((column, idx) => {
               return (
-                <Droppable key={idx} droppableId={idx.toString()}>
+                <Droppable key={column.id} droppableId={idx.toString()}>
                   {(provided, snapshot) => {
                     return (
                       <div

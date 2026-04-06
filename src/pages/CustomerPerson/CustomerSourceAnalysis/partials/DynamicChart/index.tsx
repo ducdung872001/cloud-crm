@@ -1268,7 +1268,7 @@ export default function DynamicChart({ lstChartDynamic, callBack }) {
 
                           {item.filters.conditions.map((ol, index) => {
                             return (
-                              <div key={index} className="item-item item-filter">
+                              <div key={ol.value} className="item-item item-filter">
                                 <div className="info-filter">
                                   <div className="form-filter">
                                     <SelectCustom
@@ -1339,7 +1339,7 @@ export default function DynamicChart({ lstChartDynamic, callBack }) {
                         <div className="lst-item lst__group">
                           {item.groups.map((ol, index) => {
                             return (
-                              <div key={index} className="item-item item-group">
+                              <div key={ol.value} className="item-item item-group">
                                 <div className="info-group">
                                   <div className="form-group">
                                     <SelectCustom

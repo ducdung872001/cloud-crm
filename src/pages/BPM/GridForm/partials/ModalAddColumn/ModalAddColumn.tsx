@@ -1062,7 +1062,7 @@ export default function ModalAddColumn(props: Record<string, unknown>) {
                   </div>
                   {addFieldAttributes.map((item, idx) => {
                     return (
-                      <div key={idx} className="attribute__item">
+                      <div key={item.value} className="attribute__item">
                         <div className="list-field-attribute">
                           <div className="form-group">
                             <Input
@@ -1192,7 +1192,7 @@ export default function ModalAddColumn(props: Record<string, unknown>) {
                     {detailBindingField &&
                       (detailBindingField || []).map((item, index) => {
                         return (
-                          <div key={index} className="binding-list-item">
+                          <div key={item.value} className="binding-list-item">
                             {item.label}
                             <div className="checkbox">
                               <Checkbox

@@ -223,7 +223,7 @@ export default function AddWarehouseBookModal(props: Record<string, unknown>) {
                   { label: "Ngày thực hiện", value: data.createdAt },
                   ...(data.note ? [{ label: "Ghi chú", value: data.note }] : []),
                 ].map((row, i) => (
-                  <div key={i} className="warehouse__detail-row">
+                  <div key={row.value} className="warehouse__detail-row">
                     <span className="label">{row.label}</span>
                     <span className={`value${row.highlight ? " highlight" : ""}`}>{row.value}</span>
                   </div>

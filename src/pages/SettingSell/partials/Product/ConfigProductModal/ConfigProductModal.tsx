@@ -778,7 +778,7 @@ export default function ConfigProductModal(props: Record<string, unknown>) {
                 <div className="tab-form">
                     {actionData.map((item, index) => (
                         <div 
-                            key={index} 
+                            key={item.value} 
                             className= {tabData.includes(item.value ) ? 'tab-box-active' : 'tab-box'}
                             onClick={() => {
                                 if(tabData.includes(item.value )){
@@ -805,7 +805,7 @@ export default function ConfigProductModal(props: Record<string, unknown>) {
                         {ind === 0 ? null :
                             <div style={{marginTop: '1.5rem', display:'flex', marginLeft: 10}}>
                                 {connectData.map((el, idx) => (
-                                    <div key={idx}
+                                    <div key={el.value}
                                         style={{display:'flex', alignItems:'center', marginRight: 20}}
                                         onClick= {() => {
                                             setAddFieldCondition(current =>
@@ -832,7 +832,7 @@ export default function ConfigProductModal(props: Record<string, unknown>) {
                                 ))}
                             </div>
                         }
-                        {/* <div key={ind}  className="input-action">
+                        {/* <div key={item.id}  className="input-action">
                             <div style={{ width: '95%'}}>
                                 <Input
                                     type="text"
@@ -876,7 +876,7 @@ export default function ConfigProductModal(props: Record<string, unknown>) {
                                 </div>
                                 <div style={{display:'flex', marginTop: 10}}>
                                     {timeData.map((el, idx) => (
-                                        <div key={idx} className="radio-select-time"
+                                        <div key={el.value} className="radio-select-time"
                                             onClick={() => {
                                                 if(time.type !== el.value){
                                                     setTime({
@@ -1016,7 +1016,7 @@ export default function ConfigProductModal(props: Record<string, unknown>) {
                                 </div>
                                 <div style={{display:'flex', marginTop: 10}}>
                                     {paymentData.map((el, idx) => (
-                                        <div key={idx} className="radio-select-payment"
+                                        <div key={el.value} className="radio-select-payment"
                                             onClick={() => {
                                                 if(time.type !== el.value){
                                                     setTotalPayment({

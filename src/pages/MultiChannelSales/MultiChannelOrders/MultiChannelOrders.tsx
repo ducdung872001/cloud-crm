@@ -432,7 +432,7 @@ export default function MultiChannelOrders() {
 
       <div className="list-tab-status">
         {listTabStatus.map((item, index) => (
-          <div key={index} className="item-tab-status" style={item.id === 1 ? { backgroundColor: "var(--primary-bg-color)" } : {}}>
+          <div key={item.id} className="item-tab-status" style={item.id === 1 ? { backgroundColor: "var(--primary-bg-color)" } : {}}>
             <span style={{ fontSize: 14, fontWeight: "600", color: item.id === 1 ? "white" : "" }}>{item.lable}</span>
             <div className="item-number" style={{ backgroundColor: item.color }}>
               <span style={{ fontSize: 12, fontWeight: "500", color: "white" }}>{item.value}</span>

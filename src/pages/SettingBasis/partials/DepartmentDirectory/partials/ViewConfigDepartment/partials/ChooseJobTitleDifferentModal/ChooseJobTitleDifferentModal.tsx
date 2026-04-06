@@ -114,7 +114,7 @@ export default function ChooseJobTitleDifferentModal(props: IChooseJobTitleDiffe
             <div className="list-form-group">
               {listJobTitleDifferent.map((item, idx) => (
                 <div
-                  key={idx}
+                  key={item.id}
                   className="form-group"
                   onClick={(e) => {
                     e.preventDefault();

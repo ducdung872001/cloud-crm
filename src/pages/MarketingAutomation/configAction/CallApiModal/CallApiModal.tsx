@@ -342,7 +342,7 @@ export default function CallApiModal(props: Record<string, unknown>) {
               <div className="list-form-group-call-api">
                 <div className="header_option">
                   {dataTab.map((item, index) => (
-                    <div key={index} className="item_option">
+                    <div key={item.value} className="item_option">
                       <Radio
                         value={item.value}
                         label={item.label}
@@ -403,7 +403,7 @@ export default function CallApiModal(props: Record<string, unknown>) {
                         <div>
                           <div className="container_body">
                             {attributeData.map((item, index) => (
-                              <div key={index} className="box_attribute">
+                              <div key={item.value} className="box_attribute">
                                 <div className="box_title">
                                   <span style={{ fontSize: 14 }}>{item.name}</span>
                                 </div>
@@ -467,7 +467,7 @@ export default function CallApiModal(props: Record<string, unknown>) {
 
                               <div className="body_content">
                                 {attributeData.map((item, index) => (
-                                  <div key={index} className="item_content">
+                                  <div key={item.value} className="item_content">
                                     <div className="name">
                                       <span style={{ fontSize: 14 }}>{`"${item.name}"`}:</span>
                                     </div>
@@ -526,7 +526,7 @@ export default function CallApiModal(props: Record<string, unknown>) {
                 </div>
                 {/* {listField.map((field, index) => (
                     <FieldCustomize
-                    key={index}
+                    key={item.value}
                     field={field}
                     handleUpdate={(value) => handleChangeValidate(value, field, formData, validations, listField, setFormData)}
                     formData={formData}

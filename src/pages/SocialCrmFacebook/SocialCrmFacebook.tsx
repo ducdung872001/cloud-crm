@@ -166,7 +166,7 @@ export default function SocialCrmFacebook() {
             {listTabs.map((item, idx) => {
               return (
                 <li
-                  key={idx}
+                  key={item.id}
                   className={item.is_active == tab.name ? "active" : ""}
                   onClick={(e) => {
                     e && e.preventDefault();
@@ -194,7 +194,7 @@ export default function SocialCrmFacebook() {
                 listFanpageDialog.map((item, idx) => {
                   return (
                     <div
-                      key={idx}
+                      key={item.id}
                       className={`user-item ${item.id == dataFanpageDialog?.id ? "active-user" : ""}`}
                       onClick={() => setDataFanpageDialog(item)}
                     >

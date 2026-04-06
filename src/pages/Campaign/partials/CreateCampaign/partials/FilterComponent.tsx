@@ -2430,7 +2430,7 @@ export default function FilterComponent(props: Record<string, unknown>) {
                           formData.rule.length > 0 &&
                           formData.rule.map((item, idx) => {
                             return (
-                              <Fragment key={idx}>
+                              <Fragment key={item.value}>
                                 <div className="item__rule">
                                   <div className="lst__info--rule">
                                     <div className="info-item">
@@ -2649,7 +2649,7 @@ export default function FilterComponent(props: Record<string, unknown>) {
                                     item.rule.length > 0 &&
                                     item.rule.map((el, index) => {
                                       return (
-                                        <Fragment key={index}>
+                                        <Fragment key={el.value}>
                                           <div className="item__rule">
                                             <div className="lst__info--rule">
                                               <div className="info-item">
@@ -2862,7 +2862,7 @@ export default function FilterComponent(props: Record<string, unknown>) {
                                                   el.rule.length > 0 &&
                                                   el.rule.map((ol, index) => {
                                                     return (
-                                                      <Fragment key={index}>
+                                                      <Fragment key={ol.value}>
                                                         <div className="item__rule">
                                                           <div className="lst__info--rule">
                                                             <div className="info-item">
@@ -3015,7 +3015,7 @@ export default function FilterComponent(props: Record<string, unknown>) {
 
               <div className="option_select">
                 {optionDivisionMethod_2.map((item, index) => (
-                  <div key={index}>
+                  <div key={item.value}>
                     <Radio
                       value={item.value}
                       label={item.label}
@@ -3041,7 +3041,7 @@ export default function FilterComponent(props: Record<string, unknown>) {
                   </div>
                   {listBranchValue.map((item, index) => {
                     return (
-                      <div key={index} className="box_branch" style={index > 0 ? { marginTop: 20 } : {}}>
+                      <div key={item.value} className="box_branch" style={index > 0 ? { marginTop: 20 } : {}}>
                         <div className="select_branch">
                           <SelectCustom
                             key={
@@ -3259,7 +3259,7 @@ export default function FilterComponent(props: Record<string, unknown>) {
                                 <ul className="menu__option--rank" ref={refOptionSpecialize}>
                                   {rankData.map((el, index) => (
                                     <li
-                                      key={index}
+                                      key={el.value}
                                       className={`item--rank ${item.rank?.value === el.value ? "active__item--rank" : ""}`}
                                       onClick={(e) => {
                                         e.preventDefault();

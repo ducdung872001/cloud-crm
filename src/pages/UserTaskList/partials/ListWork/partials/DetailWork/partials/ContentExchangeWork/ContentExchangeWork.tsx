@@ -178,7 +178,7 @@ export default function ContentExchangeWork(props: IContentExchangeWorkProps) {
         <div className="lst-media">
           {dataMedia.map((item, idx) => {
             return (
-              <div key={idx} className="item-media">
+              <div key={item.id} className="item-media">
                 {item.type == "image" ? (
                   <Fancybox>
                     <a key={item.id} data-fancybox="gallery" data-download-src={item.url} href={item.url}>
@@ -264,7 +264,7 @@ export default function ContentExchangeWork(props: IContentExchangeWorkProps) {
               {lstDataExchange.map((item: Record<string, unknown>, idx) => {
                 return (
                   <div
-                    key={idx}
+                    key={item.id}
                     // className={`${item.employeeId === dataEmployee.id ? "data__item--right" : "data__item--left"}`}
                     className={`${"data__item--left"}`}
                   >

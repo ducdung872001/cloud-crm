@@ -159,7 +159,7 @@ export default (props) => {
                   <span className='condition-title'>{item.title}</span>
                 </div>
                 {item.actionList?.map((el, index) => (
-                  <div className='conditon-child' key={index} onDragStart={(event) => onDragStart(event, 'input', el.label)} draggable>
+                  <div className='conditon-child' key={el.code} onDragStart={(event) => onDragStart(event, 'input', el.label)} draggable>
                     <span className='condition-label'>{el.label}</span>
                   </div>
                 ))}
@@ -168,7 +168,7 @@ export default (props) => {
           {conditionData.map((el, index) => (
             <div 
               className={statusMA === 1 ? "conditon-child-disable" : "conditon-child" }
-              key={index} 
+              key={el.code} 
               onDragStart={(event) => onDragStart(event, "default", el.label, el.code, el.type)} 
               draggable={statusMA === 1 ? false : true}
             >
@@ -198,7 +198,7 @@ export default (props) => {
             <Tippy content="Đẩy vào chiến dịch bán hàng">
               <div 
                 className={statusMA === 1 ? "action-child-disable" : "action-child" }
-                key={idx} 
+                key={item.code} 
                 onDragStart={(event) => onDragStart(event, "default", item.label, item.code, item.type)} 
                 draggable={statusMA === 1 ? false : true}
               >
@@ -208,7 +208,7 @@ export default (props) => {
             :
             <div 
               className={statusMA === 1 ? "action-child-disable" : "action-child" }
-              key={idx} 
+              key={item.code} 
               onDragStart={(event) => onDragStart(event, "default", item.label, item.code, item.type)} 
               draggable={statusMA === 1 ? false : true}
             >

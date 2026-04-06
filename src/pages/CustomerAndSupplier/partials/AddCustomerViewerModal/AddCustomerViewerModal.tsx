@@ -222,7 +222,7 @@ export default function AddCustomerViewerModal(props: IAddCustomerViewerModalPro
                       {checkDuplicateDataEmployee.map((item, idx) => {
                         return (
                           <div
-                            key={idx}
+                            key={item.id}
                             className={`item-employee ${item.id === idEmployee ? "active-employee" : ""} ${isAddViewerCustomer ? "cursor-none" : ""}`}
                             onClick={() => handCheckEmployee(item)}
                           >
@@ -314,7 +314,7 @@ export default function AddCustomerViewerModal(props: IAddCustomerViewerModalPro
 
                     {lstViewerCustomer.map((item, idx) => {
                       return (
-                        <div key={idx} className="item-viewer">
+                        <div key={item.id} className="item-viewer">
                           <div className="item-viewer--left">
                             <div className="avatar-viewer">
                               <Image src={item.employeeAvatar || ImgThirdGender} alt={item.employeeName} />

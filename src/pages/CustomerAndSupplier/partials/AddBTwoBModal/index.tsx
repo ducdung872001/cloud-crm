@@ -1039,7 +1039,7 @@ export default function AddBTwoBModal(props: IAddBTwoBModalProps) {
                       {lstMenu.map((item, idx) => {
                         return (
                           <li
-                            key={idx}
+                            key={item.id}
                             className={`menu-item ${activeItemMenu === item.id ? "active__item--menu" : ""}`}
                             onClick={() => setActiveItemMenu(item.id)}
                           >

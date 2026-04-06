@@ -24,7 +24,7 @@ export default function ReportKpiGrid({ items, className = '', cardClassName = '
   return ( 
     <div className={`report-shared-kpi-grid ${className}`.trim()}> 
       {items.map((item, index) => ( 
-        <div key={index} className={`report-shared-kpi-card ${cardClassName} ${item.cardClassName || ''}`.trim()} style={item.style}> 
+        <div key={item.value} className={`report-shared-kpi-card ${cardClassName} ${item.cardClassName || ''}`.trim()} style={item.style}> 
           {item.icon ? <div className={`report-shared-kpi-card__icon ${item.iconClassName || ''}`.trim()}>{item.icon}</div> : null} 
           <div className='report-shared-kpi-card__body'> 
             <div className={`report-shared-kpi-card__label ${item.labelClassName || ''}`.trim()}>{item.label}</div> 

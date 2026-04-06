@@ -38,7 +38,7 @@ function SortBy(props: SortProps) {
             <div className="list-sortby">
               {sortByItems?.map((item, index) => (
                 <Radio
-                  key={index}
+                  key={item.value}
                   name="sortby"
                   value={item.value}
                   checked={params.sort_by ? item.value === params.sort_by : item.value === ""}

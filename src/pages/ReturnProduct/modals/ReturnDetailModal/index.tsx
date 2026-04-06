@@ -146,7 +146,7 @@ export default function ReturnDetailModal({
         {/* Info grid */}
         <div className="rdm-info-grid">
           {INFO_ROWS.map((r, i) => (
-            <div key={i} className="rdm-info-row">
+            <div key={r.value} className="rdm-info-row">
               <span className="rdm-info-row__label">{r.label}</span>
               <span className="rdm-info-row__value">{r.value}</span>
             </div>

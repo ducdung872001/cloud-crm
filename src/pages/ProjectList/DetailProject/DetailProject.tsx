@@ -325,7 +325,7 @@ export default function DetailProject() {
       <div style={{ display: "flex", marginTop: 10, marginBottom: "1.2rem" }}>
         {dataStep.map((item, index) => (
           <div
-            key={index}
+            key={item.value}
             style={{
               borderBottom: tabProject === item.value ? "1px solid" : "",
               paddingLeft: 12,
@@ -352,7 +352,7 @@ export default function DetailProject() {
 
           {tabData.map((item, index) => (
             <div
-              key={index}
+              key={item.value}
               style={{
                 padding: "1.2rem",
                 borderBottom: "1px solid #cfd7df",
@@ -371,7 +371,7 @@ export default function DetailProject() {
               {/* <div style={{display: 'flex', marginBottom: '1.2rem'}}>
                   {dataTabStep_1.map((item, index) => (
                       <div 
-                        key={index}
+                        key={item.value}
                         style={{borderBottom: tabStep_1 === item.value ? '1px solid' : '', paddingLeft: 12, paddingRight: 12, paddingBottom: 3, cursor:'pointer'}}
                         onClick = {() => {
                           setTabStep_1(item.value)
@@ -428,7 +428,7 @@ export default function DetailProject() {
                         <div style={{ display: "flex", flexWrap: "wrap" }}>
                           {projectInfo?.lstParticipant &&
                             projectInfo?.lstParticipant?.map((item, index) => (
-                              <span key={index} style={{ marginRight: 5 }} className="text">{`${item.name},`}</span>
+                              <span key={item.value} style={{ marginRight: 5 }} className="text">{`${item.name},`}</span>
                             ))}
                         </div>
                       </div>
@@ -454,7 +454,7 @@ export default function DetailProject() {
                             <span className="title_template">Tài liệu dự án</span>
                           </div>
                           {infoFile.map((item, index) => (
-                            <div key={index} className="box_template">
+                            <div key={item.value} className="box_template">
                               <div className="box__update--attachment">
                                 <AddFile takeFileAdd={() => {}} infoFile={item} setInfoFile={setInfoFile} notAddFile={true} />
                               </div>
@@ -471,14 +471,14 @@ export default function DetailProject() {
                     {Object.entries(mapProjectAttribute).map((lstProjectAttribute: Record<string, unknown>, key: number) => (
                       <Fragment key={key}>
                         {(lstProjectAttribute[1] || []).map((projectAttribute, index: number) => (
-                          <Fragment key={index}>
+                          <Fragment key={projectAttribute.id}>
                             {!projectAttribute.parentId ? (
                               <label className="label-title" key={`parent_${key}`}>
                                 {projectAttribute.name}
                               </label>
                             ) : null}
                             {projectAttribute.parentId ? (
-                              <div key={index} className="box-title">
+                              <div key={projectAttribute.id} className="box-title">
                                 <span>
                                   <span style={{ fontSize: 14, fontWeight: "500" }}>{projectAttribute.name}: </span>
                                   <span style={{ fontSize: 14 }}>

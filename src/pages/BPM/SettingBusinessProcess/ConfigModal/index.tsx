@@ -1588,7 +1588,7 @@ export default function ConfigModal(props: Record<string, unknown>) {
 
                   {listStep && listStep.length > 0 ? 
                     listStep.map((item, index) => (
-                      <div key={index} className="item-people">
+                      <div key={item.id} className="item-people">
                         <div className="action-next">
                           <Button
                             color={item.actionNext === 1 ? "primary" : "secondary"}
@@ -1643,7 +1643,7 @@ export default function ConfigModal(props: Record<string, unknown>) {
                         
                         {item.lstBpmParticipant && item.lstBpmParticipant.length > 0 ? 
                           item.lstBpmParticipant.map((el, ind) => (
-                            <div key={ind} className="item-employee">
+                            <div key={el.id} className="item-employee">
                               <div style={{display: 'flex', alignItems:'center', gap: '0 0.5rem'}}>
                                 <div className="avatar">
                                   <img src={ImageThirdGender} alt={'Trung Nguyen'} />

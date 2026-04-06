@@ -397,7 +397,7 @@ export default function CreateMarketingAutomationV2() {
         <h3 className="title__info">Nguồn cấp dữ liệu</h3>
         <div className="data_supply_source">
           {dataSupplySource.map((item, index) => (
-            <div key={index} className="item_data_supply_source">
+            <div key={item.value} className="item_data_supply_source">
               <Checkbox
                 value={item.value}
                 label={item.label}

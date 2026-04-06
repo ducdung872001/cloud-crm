@@ -162,7 +162,7 @@ export default function DetailPartner() {
       {/* <div style={{display: 'flex', marginTop: 10, marginBottom: '1.2rem'}}>
         {dataStep.map((item, index) => (
             <div 
-              key={index}
+              key={item.value}
               style={{borderBottom: tabPartner === item.value ? '1px solid' : '', paddingLeft: 12, paddingRight: 12, paddingBottom: 3, cursor:'pointer'}}
               onClick = {() => {
                 setTabPartner(item.value)
@@ -184,7 +184,7 @@ export default function DetailPartner() {
                         {dataDetail.map((item, index) => (
                             item.label === 'Số điện thoại: ' ?
                                 <div 
-                                    key={index} 
+                                    key={item.value} 
                                     className='box-title'
                                 >
                                     <span className="title">{item.label}</span>
@@ -205,7 +205,7 @@ export default function DetailPartner() {
                                 </div>
                              :
                             <div 
-                                key={index} 
+                                key={item.value} 
                                 className={
                                     item.label === 'Địa chỉ đăng ký kinh doanh: ' 
                                         ? "box-title-full" 
@@ -245,7 +245,7 @@ export default function DetailPartner() {
                         {listBank && listBank?.length > 0 ?
                             <div className="box-bank">
                                     {listBank.map((item, index) => (
-                                        <div key={index} className="list-bank">
+                                        <div key={item.value} className="list-bank">
                                             <div className="item-bank">
                                                 <span className="title">Số tài khoản: </span>
                                                 <span className={'text'}>{item.number}</span>

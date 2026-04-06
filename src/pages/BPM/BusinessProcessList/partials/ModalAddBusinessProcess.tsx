@@ -942,7 +942,7 @@ export default function ModalAddBusinessProcess(props: Record<string, unknown>) 
             <div style={{ display: "flex", margin: "12px 0 0 12px" }}>
               {dataStep.map((item, index) => (
                 <div
-                  key={index}
+                  key={item.value}
                   style={{
                     borderBottom: tabStep === item.value ? "1px solid" : "",
                     paddingLeft: 12,
@@ -965,7 +965,7 @@ export default function ModalAddBusinessProcess(props: Record<string, unknown>) 
                 <div className="list-field-item list-field-basic">
                   {listFieldBasic.map((field, index) => (
                     <FieldCustomize
-                      key={index}
+                      key={item.value}
                       field={field}
                       handleUpdate={(value) => handleChangeValidate(value, field, formData, validations, listFieldBasic, setFormData)}
                       formData={formData}
@@ -994,7 +994,7 @@ export default function ModalAddBusinessProcess(props: Record<string, unknown>) 
                 </div>
                 {listStepProcess && listStepProcess.length > 0 ? (
                   listStepProcess.map((item, index) => (
-                    <div key={index} className="container_step">
+                    <div key={item.id} className="container_step">
                       <div className="item_step">
                         <Input
                           fill={true}
@@ -1085,7 +1085,7 @@ export default function ModalAddBusinessProcess(props: Record<string, unknown>) 
                       {Object.entries(mapObjectAttribute).map((lstEformAttribute: Record<string, unknown>, key: number) => (
                         <Fragment key={key}>
                           {(lstEformAttribute[1] || []).map((eformAttribute, index: number) => (
-                            <Fragment key={index}>
+                            <Fragment key={item.id}>
                               <div
                                 // className={`form-group ${eformAttribute.name.length >= 38 || lstEformAttribute[1].length == 2 ? "special-case" : ""}`}
                                 className={`form-group `}

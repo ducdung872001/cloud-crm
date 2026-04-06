@@ -146,7 +146,7 @@ export default function OptManagementItem(props: IOptManagementItemProps) {
               listOptChildren.length > 0 &&
               listOptChildren.map((item, idx) => {
                 return (
-                  <div key={idx} className={`project__management-lv2 ${idOptChildren === item?.id ? "active__project-management--lv2" : ""}`}>
+                  <div key={item.id} className={`project__management-lv2 ${idOptChildren === item?.id ? "active__project-management--lv2" : ""}`}>
                     <div
                       className="name__product-lv2"
                       onClick={(e) => {

@@ -84,7 +84,7 @@ export default function SummaryCards({ branchId }: Props) {
   return (
     <div className="summary-grid">
       {cards.map((item, idx) => (
-        <div key={idx} className="summary-item" style={{ borderTop: `4px solid ${item.color}` }}>
+        <div key={item.value} className="summary-item" style={{ borderTop: `4px solid ${item.color}` }}>
           <span className="item-title">{item.title}</span>
           <h2 className="item-value" style={{ color: item.color }}>
             {item.value}

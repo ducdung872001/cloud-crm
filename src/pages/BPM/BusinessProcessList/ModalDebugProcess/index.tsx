@@ -413,7 +413,7 @@ export default function ModalDebugProcess({ onShow, onHide, dataProcess }) {
               <div style={{display: 'flex', marginTop: '1rem', marginLeft: '2rem'}}>
                 {dataTab.map((item, index) => (
                     <div 
-                      key={index}
+                      key={item.value}
                       style={{borderBottom: tab === item.value ? '1px solid' : '', paddingLeft: 12, paddingRight: 12, paddingBottom: 3, cursor:'pointer'}}
                       onClick = {() => {
                         setTab(item.value)

@@ -133,7 +133,7 @@ export default function InfoExchangeTicket(props: IInfoExchangeTicketProps) {
             <CustomScrollbar width="100%" height="55rem" handleScroll={handleScroll}>
               <div className="content-chat">
                 {listExchangeTicket.map((item, idx) => (
-                  <div key={idx} className={`${item.userId === id ? "content__item--right" : "content__item--left"}`}>
+                  <div key={item.id} className={`${item.userId === id ? "content__item--right" : "content__item--left"}`}>
                     <img src={item.employeeAvatar ? item.employeeAvatar : ThirdGender} alt="" />
                     <div className="info__content">
                       <div className="info__content--left">

@@ -269,7 +269,7 @@ export default function AddTemplateFSQuote(props: IAddTemplateFSQuoteProps) {
                     {lstTemplate.map((item, idx) => {
                       const condition = dataTemplate && item.id === dataTemplate.id;
                       return (
-                        <div key={idx} className={`item-template ${condition ? "item-template-active" : ""}`} onClick={() => setDataTemplate(item)}>
+                        <div key={item.id} className={`item-template ${condition ? "item-template-active" : ""}`} onClick={() => setDataTemplate(item)}>
                           <div className="header-item">
                             <div
                               className="view-item"

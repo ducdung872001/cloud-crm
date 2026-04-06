@@ -755,7 +755,7 @@ function DetailCampaign(props: Record<string, unknown>) {
         <div style={{ display: "flex", alignItems: "center" }}>
           {tabData.map((item, index) => (
             <div
-              key={index}
+              key={item.value}
               style={{ paddingLeft: 12, paddingRight: 12, borderBottom: tabStep === item.value ? "1px solid" : "", cursor: "pointer" }}
               onClick={() => {
                 setTabStep(item.value);
@@ -911,7 +911,7 @@ function DetailCampaign(props: Record<string, unknown>) {
                       
                         {listGoal.map((item, index) => (
                           <div 
-                            key={index}
+                            key={item.value}
                             className="info__basic--body"
                             style={item.value === typeGoal ? {backgroundColor:'var(--extra-color-20)'} : {}}
                             onClick={() => {
@@ -930,13 +930,13 @@ function DetailCampaign(props: Record<string, unknown>) {
                     {typeGoal === 1 ? 
                       <div>
                         {dataFinance && dataFinance.map((item,index) => (
-                          <div className="box_goal" key={index}>
+                          <div className="box_goal" key={item.value}>
                             <div>
                               <span style={{fontSize: 16, fontWeight: '500'}}>{item.label}</span>
                             </div>
                             <div className="box_attribute">
                               {item.data.map((el, idx) => (
-                                <div className="item_attribute" key={idx}>
+                                <div className="item_attribute" key={el.value}>
                                   <div className="title_attribute">
                                     <span style={{fontSize: 14, fontWeight:'400'}}>{el.label}</span>
                                   </div>
@@ -955,13 +955,13 @@ function DetailCampaign(props: Record<string, unknown>) {
                     {typeGoal === 2 ? 
                       <div>
                         {dataCustomer && dataCustomer.map((item,index) => (
-                          <div className="box_goal" key={index}>
+                          <div className="box_goal" key={item.value}>
                             <div>
                               <span style={{fontSize: 16, fontWeight: '500'}}>{item.label}</span>
                             </div>
                             <div className="box_attribute">
                               {item.data.map((el, idx) => (
-                                <div className="item_attribute" key={idx}>
+                                <div className="item_attribute" key={el.value}>
                                   <div className="title_attribute">
                                     <span style={{fontSize: 14, fontWeight:'400'}}>{el.label}</span>
                                   </div>

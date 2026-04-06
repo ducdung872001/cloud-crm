@@ -217,7 +217,7 @@ export default function AddCustomerEmailModal(props: IAddCustomerEmailModelProps
                         listCategoryEmail.length > 0 &&
                         listCategoryEmail.map((item, idx) => {
                           return (
-                            <div key={idx} className={`${idCategoryEmail === item.id ? "active-template-email" : "item-template-email"}`}>
+                            <div key={item.id} className={`${idCategoryEmail === item.id ? "active-template-email" : "item-template-email"}`}>
                               {idCategoryEmail === item.id ? (
                                 <span className="iconCheck">
                                   <Icon name="CheckedCircle" />

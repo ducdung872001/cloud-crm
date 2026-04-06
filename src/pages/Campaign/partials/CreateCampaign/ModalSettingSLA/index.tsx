@@ -436,7 +436,7 @@ export default function ModalSettingSLA(props: Record<string, unknown>) {
                             <span style={{fontSize: '1.4rem', fontWeight:'600'}}>Thông báo cho</span>
                             <div style={{display:'flex', gap: '0 2rem', marginTop: 5, marginLeft: 15}}>
                                 {notifyData.map((item, index) => (
-                                    <div key={index}>
+                                    <div key={item.value}>
                                         <Checkbox
                                             value={item.value}
                                             label={item.label}
@@ -460,7 +460,7 @@ export default function ModalSettingSLA(props: Record<string, unknown>) {
                             <span style={{fontSize: '1.4rem', fontWeight:'600'}}>Kênh thông báo</span>
                             <div style={{display:'flex', gap: '0 2rem', marginTop: 5, marginLeft: 15}}>
                                 {channelData.map((item, index) => (
-                                    <div key={index}>
+                                    <div key={item.value}>
                                         <Checkbox
                                             value={item.value}
                                             label={item.label}

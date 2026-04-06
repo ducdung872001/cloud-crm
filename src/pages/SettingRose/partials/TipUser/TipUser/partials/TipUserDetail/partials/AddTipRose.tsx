@@ -519,7 +519,7 @@ export default function AddTipRose(props: IAddTipRoseProps) {
 
                     {addOrderValue.map((item, idx) => {
                       return (
-                        <div key={idx} className="order-item">
+                        <div key={item.value} className="order-item">
                           <Input
                             fill={true}
                             value={item.value}
@@ -619,7 +619,7 @@ export default function AddTipRose(props: IAddTipRoseProps) {
                           <ul className="menu__option--rate" ref={refOptionRate}>
                             {dataRate.map((el, index) => (
                               <li
-                                key={index}
+                                key={el.value}
                                 className={`item--rate ${valueBenefitRate?.type === el.type ? "active__item--rate" : ""}`}
                                 onClick={(e) => {
                                   e.preventDefault();
@@ -641,7 +641,7 @@ export default function AddTipRose(props: IAddTipRoseProps) {
                       <div className="list__product">
                         {addProduct.map((el, index) => {
                           return (
-                            <div key={index} className="item-product">
+                            <div key={el.value} className="item-product">
                               <div className="info-product">
                                 <SelectCustom
                                   id="productId"
@@ -679,7 +679,7 @@ export default function AddTipRose(props: IAddTipRoseProps) {
                       <div className="list__service">
                         {addService.map((el, index) => {
                           return (
-                            <div key={index} className="item-service">
+                            <div key={el.value} className="item-service">
                               <div className="info-service">
                                 <SelectCustom
                                   id="serviceId"
@@ -716,7 +716,7 @@ export default function AddTipRose(props: IAddTipRoseProps) {
                       <div className="list__card--service">
                         {addCardService.map((el, index) => {
                           return (
-                            <div key={index} className="item__card">
+                            <div key={el.value} className="item__card">
                               <div className="info__card">
                                 <SelectCustom
                                   id="cardServiceId"

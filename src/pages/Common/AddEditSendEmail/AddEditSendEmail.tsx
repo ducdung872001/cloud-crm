@@ -1734,7 +1734,7 @@ export default function AddEditSendEmail(props: ISendEmail) {
                               const isChecked = listIdSourceEmail.some((id) => id === item.value) ? true : false;
                               return (
                                 <Checkbox
-                                  key={idx}
+                                  key={item.value}
                                   checked={isChecked}
                                   onChange={(e) => handleChangeCheckOneSourceEmail(+item.value, e.target.checked)}
                                   label={item.label}
@@ -1952,7 +1952,7 @@ export default function AddEditSendEmail(props: ISendEmail) {
                                 </div>
                                 {filterUser.length > 0 ? (
                                   filterUser.map((item, idx) => (
-                                    <div key={idx} className="wrapper-user">
+                                    <div key={item.id} className="wrapper-user">
                                       <div className="info-user">
                                         {!item.avatar ? (
                                           <Image src={item.gender == 2 ? AvatarMale : AvatarFemale} alt={item.name} />

@@ -1213,7 +1213,7 @@ export default function AddWorkModal(props: IAddWorkModelProps) {
                   <ul className="menu__time--workload" ref={refOptionTimeWorkLoad}>
                     {listOptionTimeWorkLoad.map((item, idx) => (
                       <li
-                        key={idx}
+                        key={item.value}
                         className={`item--workload ${dataTimeWorkLoad.value === item.value ? "active__item--workload" : ""}`}
                         onClick={(e) => {
                           e.preventDefault();
@@ -1248,7 +1248,7 @@ export default function AddWorkModal(props: IAddWorkModelProps) {
                   <Fragment>
                     <div className="d-flex align-items-center">
                       {listImageWork.map((item, idx) => (
-                        <div key={idx} className="image-item">
+                        <div key={item.value} className="image-item">
                           <img
                             src={item.type == "xlsx" ? ImgExcel : item.type === "docx" ? ImgWord : item.type === "pptx" ? ImgPowerpoint : item.url}
                             alt="image-warranty"
@@ -1508,7 +1508,7 @@ export default function AddWorkModal(props: IAddWorkModelProps) {
         //                   {listOption.map((item, idx) => {
         //                     return (
         //                       <li
-        //                         key={idx}
+        //                         key={item.value}
         //                         className={`${valueDecisionTime.value === item.value ? "active__item--item" : "item-time"}`}
         //                         onClick={(e) => {
         //                           e && e.preventDefault();
@@ -1548,7 +1548,7 @@ export default function AddWorkModal(props: IAddWorkModelProps) {
         //           <div className="list__apply--notification">
         //             {dataListNotification.map((item, idx) => {
         //               return (
-        //                 <div key={idx} className="apply-item">
+        //                 <div key={item.value} className="apply-item">
         //                   <h4 className="name-notification">{`Thông báo trước ${
         //                     item.time.day ? `${item.time.day} ngày` : item.time.hour ? `${item.time.hour} giờ` : `${item.time.minute} phút`
         //                   } qua ${item.method.join(", ")}`}</h4>
@@ -1583,7 +1583,7 @@ export default function AddWorkModal(props: IAddWorkModelProps) {
                 <div className="lst__option--periodic--schedule">
                   {lstPeriodicSchedule.map((item, idx) => {
                     return (
-                      <div key={idx} className="item__periodic--schedule">
+                      <div key={item.value} className="item__periodic--schedule">
                         <span className="name__option">{item.name}</span>
 
                         <div className="choose__setting--schedule">

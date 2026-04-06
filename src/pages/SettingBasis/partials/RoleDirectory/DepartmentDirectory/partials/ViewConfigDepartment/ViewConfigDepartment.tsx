@@ -416,7 +416,7 @@ export default function ViewConfigDepartment(props: IViewConfigDepartmentProps) 
                     <SearchBox params={params} updateParams={(paramsNew) => setParams(paramsNew)} />
                   </div>
                   {jobTitles.map((item, idx) => (
-                    <div key={idx} className={`header__decentralization--item department__permission--${jobTitles.length}`}>
+                    <div key={jobTitle.id} className={`header__decentralization--item department__permission--${jobTitles.length}`}>
                       <div className="name--title">
                         {item.title}
                         <Tippy content="Sao chép quyền từ chức danh khác" delay={[120, 100]} animation="scale">
@@ -472,7 +472,7 @@ export default function ViewConfigDepartment(props: IViewConfigDepartmentProps) 
                       {item.lstResource.length > 0 &&
                         item.lstResource.map((element, idx) => {
                           return (
-                            <div key={idx} className={`decentralization__item resource--item`}>
+                            <div key={element.id} className={`decentralization__item resource--item`}>
                               <div
                                 className={`department__permission--0  ${item.parentId === null || item.parentId === 0 ? "lv__children" : "lv__sub--children"
                                   }`}

@@ -340,7 +340,7 @@ export default function Kanban(props: Record<string, unknown>) {
             {columns.map((column, idx) => {
               const lstSActivity = column.lstSaleflowActivity || [];
               return (
-                <Droppable key={idx} droppableId={idx.toString()}>
+                <Droppable key={column.id} droppableId={idx.toString()}>
                   {(provided, snapshot) => {
                     return (
                       <div
@@ -387,7 +387,7 @@ export default function Kanban(props: Record<string, unknown>) {
                           {column.items?.map((item, idx) => {
                             return (
                               <TaskItem
-                                key={idx}
+                                key={column.id}
                                 item={item}
                                 index={idx}
                                 column={column}

@@ -570,7 +570,7 @@ export default function AddCustomerSurvey(props: IAddCustomerSurveyProps) {
                     {formData.range == 2 &&
                       ["😞", "😐", "🙂", "😊", "😄"].map((item, key) => {
                         return (
-                          <span key={key} className="item__emotion">
+                          <span key={item.value} className="item__emotion">
                             {item}
                           </span>
                         );
@@ -589,7 +589,7 @@ export default function AddCustomerSurvey(props: IAddCustomerSurveyProps) {
               {formData.params &&
                 formData.params.map((item, idx) => {
                   return (
-                    <div key={idx} className="item__params">
+                    <div key={item.value} className="item__params">
                       <div className="info--parmas">
                         <div className="form-group">
                           <Input name="key" value={item.key} fill={true} placeholder="Nhập key" onChange={(e) => handleChangeValueKey(e, idx)} />

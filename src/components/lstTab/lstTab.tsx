@@ -37,7 +37,7 @@ export default function LstTab(props: ILstTabProps) {
         {lstData.map((item, idx) => {
           return (
             <li
-              key={idx}
+              key={item.key}
               className={item.key === valueTab ? "active" : ""}
               onClick={(e) => {
                 e.preventDefault();

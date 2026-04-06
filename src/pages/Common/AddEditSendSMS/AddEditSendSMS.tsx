@@ -1402,7 +1402,7 @@ export default function AddEditSendSMS(props: ISendSMS) {
                                 </div>
                                 {filterUser.length > 0 ? (
                                   filterUser.map((item, idx) => (
-                                    <div key={idx} className="wrapper-user">
+                                    <div key={item.id} className="wrapper-user">
                                       <div className="info-user">
                                         {item.avatar ? (
                                           <Image src={item.avatar} alt={item.name} />

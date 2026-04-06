@@ -151,7 +151,7 @@ export default function ExchangeContentList(props: IExchangeContentListProps) {
         <div className="lst-media">
           {dataMedia.map((item, idx) => {
             return (
-              <div key={idx} className="item-media">
+              <div key={item.id} className="item-media">
                 {item.type == "image" ? (
                   <Fancybox>
                     <a key={item.id} data-fancybox="gallery" data-download-src={item.url} href={item.url}>
@@ -211,7 +211,7 @@ export default function ExchangeContentList(props: IExchangeContentListProps) {
           {detailExchange && detailExchange.length > 0 ? (
             <div onScroll={handleScroll} className={`list-content ${isBroadly ? "isActiveBroadly" : ""}`}>
               {detailExchange.map((item, idx) => (
-                <div key={idx} className={`${item.userId === id ? "content__item--right" : "content__item--left"}`}>
+                <div key={item.id} className={`${item.userId === id ? "content__item--right" : "content__item--left"}`}>
                   <img
                     src={item.employeeAvatar ? item.employeeAvatar : ThirdGender}
                     alt={item.employeeName}

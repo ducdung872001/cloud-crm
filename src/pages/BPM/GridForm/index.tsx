@@ -1601,7 +1601,7 @@ export default function GridFormNew(props: Record<string, unknown>) {
                           <>
                             {field.key != "documentType" ? (
                               <div
-                                key={fieldIndex}
+                                key={field.key}
                                 className={`form-field form-field--header`}
                                 // style={{ borderBottom: "1px solid var(--extra-color-50)" }}
                               >
@@ -1686,7 +1686,7 @@ export default function GridFormNew(props: Record<string, unknown>) {
                           <>
                             {field.key != "documentType" ? (
                               <div
-                                key={fieldIndex}
+                                key={field.value}
                                 className={rowIndex == dataRow.length - 1 ? `form-field form-field--last` : `form-field`}
                                 style={{ height: row?.find((item) => item?.isRegexFalse) ? "80px" : "" }}
                               >

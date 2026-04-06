@@ -451,7 +451,7 @@ export default function ViewConfigRole(props: IViewConfigDepartmentProps) {
                       {item.lstResource.length > 0 &&
                         item.lstResource.map((element, idx) => {
                           return (
-                            <div key={idx} className={`decentralization__item resource--item`}>
+                            <div key={element.id} className={`decentralization__item resource--item`}>
                               <div
                                 className={`department__permission--0  ${item.parentId === null || item.parentId === 0 ? "lv__children" : "lv__sub--children"
                                   }`}

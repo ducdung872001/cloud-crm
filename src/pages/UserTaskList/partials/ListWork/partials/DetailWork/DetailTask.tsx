@@ -805,7 +805,7 @@ const DetailTask = (props: Record<string, unknown>) => {
                     </div>
 
                     {listStepProcess.map((item, index) => (
-                      <div key={index} className="item_roadmap">
+                      <div key={item.id} className="item_roadmap">
                         <div className="line_border" style={item.stepNumber < data?.workflowStep ? { backgroundColor: "#B7B8B9" } : {}}>
                           {data?.workflowId === item.id ? (
                             <div style={{ width: "100%", height: "0.5rem", backgroundColor: "blue", borderRadius: 10 }}></div>

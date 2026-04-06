@@ -112,7 +112,7 @@ export default function ModalAddChannel(props: Record<string, unknown>) {
           <div className="list-app">
             {listApp.map((item, index) => (
                 <div 
-                    key={index} 
+                    key={item.id} 
                     className="item-app" 
                     style={selectApp.id === item.id ? {borderColor: 'green'} : {}}
                     onClick={() => setSelectApp(item)}
@@ -136,7 +136,7 @@ export default function ModalAddChannel(props: Record<string, unknown>) {
 
           <div className="list-step">
             {dataStep.map((item, index) => (
-                <div key={index} className="item-step">
+                <div key={item.id} className="item-step">
                     <div className="number">
                         <span style={{fontSize: 14, fontWeight: '600', color: 'white'}}>{item.step}</span>
                     </div>

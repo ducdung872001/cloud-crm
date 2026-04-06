@@ -808,7 +808,7 @@ export default function GridForm(props: Record<string, unknown>) {
                   {row.map((field, fieldIndex) => {
                     return rowIndex == 0 ? ( // Hàng đầu tiên là tiêu đề
                       <div
-                        key={fieldIndex}
+                        key={field.key}
                         className={`form-field`}
                         // style={{ borderBottom: "1px solid var(--extra-color-50)" }}
                       >
@@ -848,7 +848,7 @@ export default function GridForm(props: Record<string, unknown>) {
                       </div>
                     ) : (
                       <div
-                        key={fieldIndex}
+                        key={field.key}
                         className={rowIndex == dataRow.length - 1 ? `form-field form-field--last` : `form-field`}
                         style={{ height: row?.find((item) => item.isRegexFalse) ? "80px" : "" }}
                       >

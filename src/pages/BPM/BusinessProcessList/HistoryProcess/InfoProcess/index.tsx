@@ -506,7 +506,7 @@ export default function InfoProcess(props: Record<string, unknown>) {
             <tr>
               {lstData.lstThead.map((item, idx) => {
                 return (
-                  <th key={idx} style={{ textAlign: `${item.type === "number" ? "right" : item.type === "select" ? "center" : "left"}` }}>
+                  <th key={item.value} style={{ textAlign: `${item.type === "number" ? "right" : item.type === "select" ? "center" : "left"}` }}>
                     {item.name}
                   </th>
                 );
@@ -516,7 +516,7 @@ export default function InfoProcess(props: Record<string, unknown>) {
           <tbody>
             {lstData.lstTbody.map((item, idx) => {
               return (
-                <tr key={idx}>
+                <tr key={item.value}>
                   {item.map((el, index) => {
                     return (
                       <td key={index} style={{ textAlign: `${el.type === "number" ? "right" : el.type === "select" ? "center" : "left"}` }}>
@@ -533,7 +533,7 @@ export default function InfoProcess(props: Record<string, unknown>) {
       <div style={{ display: "flex", marginBottom: "1.2rem" }}>
         {tabData.map((item, index) => (
           <div
-            key={index}
+            key={item.value}
             style={{
               borderBottom: tab === item.value ? "1px solid" : "",
               paddingLeft: 12,
@@ -584,7 +584,7 @@ export default function InfoProcess(props: Record<string, unknown>) {
               {Object.entries(mapObjectAttribute).map((lstEformAttribute: Record<string, unknown>, key: number) => (
                 <Fragment key={key}>
                   {(lstEformAttribute[1] || []).map((eformAttribute, index: number) => (
-                    <Fragment key={index}>
+                    <Fragment key={item.value}>
                       <div
                         // className={`form-group ${eformAttribute.name.length >= 38 || lstEformAttribute[1].length == 2 ? "special-case" : ""}`}
                         className={`form-group `}

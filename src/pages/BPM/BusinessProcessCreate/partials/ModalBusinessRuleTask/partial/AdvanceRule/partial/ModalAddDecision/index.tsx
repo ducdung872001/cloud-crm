@@ -394,7 +394,7 @@ export default function ModalAddDecision({ onShow, onHide, setListColumn, listKe
                     </div>
                     {listAttribute && listAttribute.length > 0
                       ? listAttribute.map((item, index) => (
-                          <div key={index} className="item-attribute">
+                          <div key={item.key} className="item-attribute">
                             <div className="box-attribute">
                               <div className="name-attribute">
                                 <Input
@@ -550,7 +550,7 @@ export default function ModalAddDecision({ onShow, onHide, setListColumn, listKe
                     </div>
                     {addFieldAttributes.map((item, idx) => {
                       return (
-                        <div key={idx} className="attribute__item">
+                        <div key={item.value} className="attribute__item">
                           <div className="list-field-attribute">
                             <div className="form-group">
                               <Input

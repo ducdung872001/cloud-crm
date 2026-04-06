@@ -246,7 +246,7 @@ export default function AddCustomerSMSModal(props: IAddCustomerSMSModelProps) {
                     listCategorySMS.length > 0 &&
                     listCategorySMS.map((item, idx) => {
                       return (
-                        <div key={idx} className={`${idCategorySMS === item.id ? "active-template-sms" : "item-template-sms"}`}>
+                        <div key={item.id} className={`${idCategorySMS === item.id ? "active-template-sms" : "item-template-sms"}`}>
                           {idCategorySMS === item.id ? (
                             <span className="iconCheck">
                               <Icon name="CheckedCircle" />

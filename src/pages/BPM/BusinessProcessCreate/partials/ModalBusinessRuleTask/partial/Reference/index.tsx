@@ -299,7 +299,7 @@ export default function Reference({ processId, dataBusinessRule, listMappingInpu
           {dataTab &&
             dataTab.map((item, index) => (
               <div
-                key={index}
+                key={item.value}
                 style={{
                   borderBottom: tabMapping === item.value ? "1px solid" : "",
                   paddingLeft: 12,

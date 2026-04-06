@@ -182,7 +182,7 @@ export default function ChooseDepartmentDifferentModal(props: IChooseDepartmentD
                     listDepartmentDifferent.map((item, idx) => {
                       return (
                         <div
-                          key={idx}
+                          key={item.id}
                           className="department__item"
                           onClick={(e) => {
                             e.preventDefault();
@@ -202,7 +202,7 @@ export default function ChooseDepartmentDifferentModal(props: IChooseDepartmentD
                               {listJobTitles.map((element, idx) => {
                                 return (
                                   <div
-                                    key={idx}
+                                    key={item.id}
                                     className="job__title--item"
                                     onClick={(e) => {
                                       e.preventDefault();
@@ -253,7 +253,7 @@ export default function ChooseDepartmentDifferentModal(props: IChooseDepartmentD
                           : false;
 
                       return (
-                        <div key={idx} className="check__one--jobtitle">
+                        <div key={item.id} className="check__one--jobtitle">
                           <Checkbox checked={isChecked} label={item.title} onChange={(e) => checkOne(item.id, e.target.checked)} />
                         </div>
                       );

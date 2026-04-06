@@ -34,7 +34,7 @@ export default function Warehouse(props: WarehouseProps) {
       </div>
       <ul className="d-flex flex-column">
         {warehouse.map((w, index) => (
-          <li key={index} className="d-flex align-items-center justify-content-between">
+          <li key={w.value} className="d-flex align-items-center justify-content-between">
             <span className="label">{w.label}</span>
             <span className="value">{w.type === "amount" ? formatCurrency(w.value, ".") : w.value}</span>
           </li>

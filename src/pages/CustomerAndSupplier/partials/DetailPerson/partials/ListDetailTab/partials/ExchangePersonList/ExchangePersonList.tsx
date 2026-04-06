@@ -140,7 +140,7 @@ export default function ExchangePersonList(props: IExchangePersonListProps) {
             medias.length > 0 &&
             medias.map((media, idx) => {
               return (
-                <div key={idx} className="item--media">
+                <div key={media.id} className="item--media">
                   {media.type === "image" ? (
                     // <div className="__media--image">
                     //   <img src={media.url} alt={data.content} />
@@ -198,7 +198,7 @@ export default function ExchangePersonList(props: IExchangePersonListProps) {
             <div className="wrapper__content--chat-message" onScroll={handleScroll}>
               <div className="content-chat">
                 {listExchange.map((item, idx) => (
-                  <div key={idx} className={`${item.employeeUserId === id ? "content__item--right" : "content__item--left"}`}>
+                  <div key={media.id} className={`${item.employeeUserId === id ? "content__item--right" : "content__item--left"}`}>
                     <img src={item.employeeAvatar ? item.employeeAvatar : ThirdGender} alt="" />
                     <div className="info__content">
                       <div className="info__content--left">

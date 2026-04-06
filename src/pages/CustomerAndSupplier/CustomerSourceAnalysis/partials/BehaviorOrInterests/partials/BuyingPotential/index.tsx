@@ -140,7 +140,7 @@ export default function BuyingPotential(props) {
               {lstOption.map((item, idx) => {
                 return (
                   <div
-                    key={idx}
+                    key={item.value}
                     className="item__option"
                     onClick={(e) => {
                       e && e.preventDefault();

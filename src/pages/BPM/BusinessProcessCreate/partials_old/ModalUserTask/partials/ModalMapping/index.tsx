@@ -566,7 +566,7 @@ export default function ModalMapping({ onShow, onHide, dataNode, listComponent, 
                 {dataTab &&
                   dataTab.map((item, index) => (
                     <div
-                      key={index}
+                      key={item.value}
                       style={{
                         borderBottom: tabMapping === item.value ? "1px solid" : "",
                         paddingLeft: 12,
@@ -627,7 +627,7 @@ export default function ModalMapping({ onShow, onHide, dataNode, listComponent, 
               <div>
                 {listMapping && listMapping.length > 0
                   ? listMapping.map((item, index) => (
-                      <div key={index} className="container-mapping">
+                      <div key={item.id} className="container-mapping">
                         <div className="form-group">
                           <SelectCustom
                             id="fieldName"

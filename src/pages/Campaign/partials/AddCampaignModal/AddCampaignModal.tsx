@@ -1688,7 +1688,7 @@ export default function AddCampaignModal(props: IAddCampaignModalProps) {
                             <ul className="menu__option--rank" ref={refOptionSpecialize}>
                               {rankData.map((el, index) => (
                                 <li
-                                  key={index}
+                                  key={el.value}
                                   className={`item--rank ${item.rank?.value === el.value ? "active__item--rank" : ""}`}
                                   onClick={(e) => {
                                     e.preventDefault();
@@ -1769,7 +1769,7 @@ export default function AddCampaignModal(props: IAddCampaignModalProps) {
 
                 {listApproach.map((item, idx) => {
                   return (
-                    <div key={idx} className="item__approach">
+                    <div key={item.id} className="item__approach">
                       <div className="info__approach">
                         <Input
                           fill={true}

@@ -178,7 +178,7 @@ export default function ChatBot() {
         <div className="lst-media">
           {dataMedia.map((item, idx) => {
             return (
-              <div key={idx} className="item-media">
+              <div key={item.id} className="item-media">
                 {item.type == "image" ? (
                   <Fancybox>
                     <a key={item.id} data-fancybox="gallery" data-download-src={item.url} href={item.url}>
@@ -297,7 +297,7 @@ export default function ChatBot() {
                                 {lstStatus.map((item, idx) => {
                                     return (
                                         <li
-                                            key={idx}
+                                            key={item.value}
                                             className={`item__status--bot ${item.value === activeStatus ? "active__status" : ""}`}
                                             onClick={() => {
                                                 setIsChangeStatus(false);
@@ -328,7 +328,7 @@ export default function ChatBot() {
                             {lstFeedback.map((item, idx) => {
                                 return (
                                   item.role === 'user' ?
-                                    <div key={idx} className="item__content--bot">
+                                    <div key={item.id} className="item__content--bot">
                                         <div className="desc__content__send">
                                             {/* <div
                                                 className="desc__content__send--right"
@@ -382,7 +382,7 @@ export default function ChatBot() {
                                         </div>
                                     </div>
                                     :
-                                    <div key={idx} className="item__content--bot">
+                                    <div key={item.id} className="item__content--bot">
                                         <div className="avatar-bot">
                                             <img src={NoImageChatBot} alt="" />
                                         </div>

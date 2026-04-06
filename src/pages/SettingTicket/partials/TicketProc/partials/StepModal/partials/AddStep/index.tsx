@@ -456,7 +456,7 @@ export default function AddStep(props: IStepModalProps) {
                 <ul className="menu__time" ref={refOptionUnit}>
                   {listOptionUnit.map((item, idx) => (
                     <li
-                      key={idx}
+                      key={item.value}
                       className={`item--time ${dataUnit.value === item.value ? "active__item--time" : ""}`}
                       onClick={(e) => {
                         e.preventDefault();
@@ -513,7 +513,7 @@ export default function AddStep(props: IStepModalProps) {
               {/* listEmployees  => Danh sách người hỗ trợ */}
               {listEmployees.map((item, idx) => {
                 return (
-                  <div key={idx} className="item__employees">
+                  <div key={item.value} className="item__employees">
                     <div className="info__detail--sale">
                       <SelectCustom
                         id="employeeId"
@@ -555,7 +555,7 @@ export default function AddStep(props: IStepModalProps) {
                           <ul className="menu__option--rank" ref={refOptionSpecialize}>
                             {rankData.map((el, index) => (
                               <li
-                                key={index}
+                                key={el.value}
                                 className={`item--rank ${item.rank?.value === el.value ? "active__item--rank" : ""}`}
                                 onClick={(e) => {
                                   e.preventDefault();

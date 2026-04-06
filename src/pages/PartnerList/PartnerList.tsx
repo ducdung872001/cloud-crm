@@ -378,7 +378,7 @@ export default function PartnerList() {
                         [...defaultFieldTableDis, ...lstFieldActive].map((el, idx) => {
                           return (
                             <Checkbox
-                              key={idx}
+                              key={el.value}
                               value={el.value}
                               label={el.label}
                               disabled={el.hide ? true : false}
@@ -412,7 +412,7 @@ export default function PartnerList() {
                         lstFieldUnActive.map((el, idx) => {
                           return (
                             <Checkbox
-                              key={idx}
+                              key={el.value}
                               value={el.value}
                               label={el.label}
                               defaultChecked={el.isTable}

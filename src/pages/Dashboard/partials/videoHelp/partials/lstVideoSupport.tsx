@@ -100,7 +100,7 @@ export default function LstVideoSupport(props: ILstVideoSupportProps) {
                         const idThumbnailYoutube = takeThumbnailImgYoutube(el.link);
                         return (
                           <div
-                            key={idx}
+                            key={el.id}
                             className={`item-video ${el.id == detailVideo.id ? "active-video" : ""}`}
                             onClick={() => {
                               if (el.id !== detailVideo.id) {

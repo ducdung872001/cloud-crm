@@ -299,7 +299,7 @@ export default function UpgradePackageService(props: IUpgradePackageServiceProps
                             }`;
 
                             return (
-                              <div key={ids} className={`item-option ${condition ? "item-option-active" : ""}`} onClick={() => setDataExtend(item)}>
+                              <div key={item.id} className={`item-option ${condition ? "item-option-active" : ""}`} onClick={() => setDataExtend(item)}>
                                 {condition && (
                                   <span className="icon-check">
                                     <Icon name="Checked" />

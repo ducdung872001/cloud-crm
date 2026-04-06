@@ -67,7 +67,7 @@ function RadioList(props: RadioListProps) {
       <div className="form-group">
         {options.map((option, index) => (
           <Radio
-            key={index}
+            key={option.value}
             label={option.label}
             value={option.value}
             checked={value && value === option.value}

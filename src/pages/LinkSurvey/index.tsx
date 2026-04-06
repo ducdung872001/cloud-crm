@@ -227,7 +227,7 @@ export default function LinkSurvey() {
               <div className="lst-evaluate--emoticon">
                 {lstEmotion.map((item, idx) => {
                   return (
-                    <div key={idx} className="item__evaluate">
+                    <div key={item.id} className="item__evaluate">
                       <Tippy content={item.name}>
                         <div
                           className="icon-emoticon"

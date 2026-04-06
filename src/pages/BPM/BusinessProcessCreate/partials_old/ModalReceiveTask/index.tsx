@@ -1169,7 +1169,7 @@ export default function ModalReceiveTask({ onShow, onHide, dataNode, processId, 
                 </div>
                 {listCondition && listCondition.length > 0
                   ? listCondition.map((item, index) => (
-                      <div key={index} className="list-item-condition">
+                      <div key={item.key} className="list-item-condition">
                         <div className="item-condition">
                           <Input
                             id="key"

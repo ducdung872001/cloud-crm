@@ -633,8 +633,8 @@ export default function AddEventModal(props: Record<string, unknown>) {
               <div className="list__customer">
                 {addFieldCustomer.map((item, idx) => {
                   return (
-                    <div key={idx}>
-                      <div key={idx} className="customer__item">
+                    <div key={item.id}>
+                      <div key={item.id} className="customer__item">
                         {addFieldCustomer && addFieldCustomer.length > 1 ? (
                           <span className="add-email">
                             <Tippy content="Chọn làm đại diện chính" delay={[100, 0]} animation="scale-extreme">

@@ -1741,7 +1741,7 @@ export default function ModalServiceTask({ onShow, onHide, dataNode, processId, 
                 </div>
                 {dataHeaderHTTP && dataHeaderHTTP.length > 0
                   ? dataHeaderHTTP.map((item, index) => (
-                      <div key={index} className="list-HTTP">
+                      <div key={item.key} className="list-HTTP">
                         <div className="form-group">
                           <Input
                             id="key"

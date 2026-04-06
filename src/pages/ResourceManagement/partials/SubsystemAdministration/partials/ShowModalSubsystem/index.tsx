@@ -211,7 +211,7 @@ export default function ShowModalSubsystem(props: IShowModalSubsystemProps) {
                   <div className="list__resource--body">
                     {listResource.map((item, idx) => (
                       <div
-                        key={idx}
+                        key={item.id}
                         className={`item-resource ${idResource === item.id ? "active__item--resource" : ""}`}
                         onClick={() => setIdResource(item.id)}
                       >
@@ -239,7 +239,7 @@ export default function ShowModalSubsystem(props: IShowModalSubsystemProps) {
                   <div className="list__freeresource--body">
                     {listFreeResource.map((item, idx) => (
                       <div
-                        key={idx}
+                        key={item.id}
                         className={`item-freeresource ${idFreeResource === item.id ? "active__item--freeresource" : ""}`}
                         onClick={() => setIdFreeResource(item.id)}
                       >

@@ -49,7 +49,7 @@ function ReportOverview(props: Record<string, unknown>) {
             </div>
             <div className="list-report">
                 {data && data.map((item, index) => (
-                    <div key={index} className="item-report">
+                    <div key={item.value} className="item-report">
                         <div className="title-report">
                             <span style={{fontSize: 14, fontWeight:'500'}}>{item.label}</span>
                         </div>

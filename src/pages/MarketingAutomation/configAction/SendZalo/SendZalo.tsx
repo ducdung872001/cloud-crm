@@ -501,7 +501,7 @@ export default function SendZalo(props: Record<string, unknown>) {
                             listCategoryZalo.length > 0 &&
                             listCategoryZalo.map((item, idx) => {
                             return (
-                                <div key={idx} className={`${idCategoryZalo === item.id ? "active-template-sms" : "item-template-sms"}`}>
+                                <div key={item.id} className={`${idCategoryZalo === item.id ? "active-template-sms" : "item-template-sms"}`}>
                                 {idCategoryZalo === item.id ? (
                                     <span className="iconCheck">
                                     <Icon name="CheckedCircle" />

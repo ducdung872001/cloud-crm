@@ -1149,7 +1149,7 @@ export default function AddTreatmentScheduleModal(props: IScheduleTreatmentRespo
                           {listOption.map((item, idx) => {
                             return (
                               <li
-                                key={idx}
+                                key={item.value}
                                 className={`${valueDecisionTime.value === item.value ? "active__item--item" : "item-time"}`}
                                 onClick={(e) => {
                                   e && e.preventDefault();
@@ -1189,7 +1189,7 @@ export default function AddTreatmentScheduleModal(props: IScheduleTreatmentRespo
                   <div className="list__apply--notification">
                     {dataListNotification.map((item, idx) => {
                       return (
-                        <div key={idx} className="apply-item">
+                        <div key={item.value} className="apply-item">
                           <h4 className="name-notification">{`Thông báo trước ${
                             item.time.day ? `${item.time.day} ngày` : item.time.hour ? `${item.time.hour} giờ` : `${item.time.minute} phút`
                           } qua ${item.method.join(", ")}`}</h4>
@@ -1224,7 +1224,7 @@ export default function AddTreatmentScheduleModal(props: IScheduleTreatmentRespo
                 <div className="lst__option--periodic--schedule">
                   {lstPeriodicSchedule.map((item, idx) => {
                     return (
-                      <div key={idx} className="item__periodic--schedule">
+                      <div key={item.value} className="item__periodic--schedule">
                         <span className="name__option">{item.name}</span>
 
                         <div className="choose__setting--schedule">

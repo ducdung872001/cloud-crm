@@ -154,7 +154,7 @@ export default function FeedbackCustomer() {
         <div style={{ marginBottom: "0.5rem" }}>{data.content}</div>
         {data.medias.map((item, idx) => {
           return (
-            <div key={idx} className="item__media">
+            <div key={item.id} className="item__media">
               {item.type == "image" ? (
                 <Fancybox>
                   <a key={item.id} data-fancybox="gallery" href={item.url}>

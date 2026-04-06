@@ -144,7 +144,7 @@ export default function CustomerSourceAnalysis() {
           {lstType.map((item, idx) => {
             return (
               <div
-                key={idx}
+                key={item.id}
                 className={`item__choose ${item.type === infoType ? "item__choose--active" : ""}`}
                 onClick={() => setInfoType(item.type)}
               >
@@ -158,7 +158,7 @@ export default function CustomerSourceAnalysis() {
             {defaultOptionView.map((item, idx) => {
               return (
                 <div
-                  key={idx}
+                  key={item.id}
                   className={`option__view ${item.id === activeOptionView ? "active__option" : ""}`}
                   onClick={() => setActiveOptionView(item.id)}
                 >
@@ -186,7 +186,7 @@ export default function CustomerSourceAnalysis() {
                 {lstOptionChart.map((item, idx) => {
                   return (
                     <div
-                      key={idx}
+                      key={item.id}
                       className="item__chart"
                       onClick={() => {
                         setIsShowOptionChart(false);

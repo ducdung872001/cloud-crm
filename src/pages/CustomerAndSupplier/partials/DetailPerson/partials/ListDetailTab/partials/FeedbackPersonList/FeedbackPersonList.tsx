@@ -141,7 +141,7 @@ export default function FeedbackPersonList(props: IFeedbackPersonListProps) {
             medias.length > 0 &&
             medias.map((media, idx) => {
               return (
-                <div key={idx} className="item--media">
+                <div key={media.id} className="item--media">
                   {media.type === "image" ? (
                     // <div className="__media--image">
                     //   <img src={media.url} alt={data.content} />
@@ -199,7 +199,7 @@ export default function FeedbackPersonList(props: IFeedbackPersonListProps) {
             <CustomScrollbar width="100%" height="52rem" handleScroll={handleScroll}>
               <div className="content-chat">
                 {listFeedback.map((item, idx) => (
-                  <div key={idx} className={`${item.employeeUserId === id ? "content__item--right" : "content__item--left"}`}>
+                  <div key={media.id} className={`${item.employeeUserId === id ? "content__item--right" : "content__item--left"}`}>
                     <img
                       src={item.employeeAvatar ? item.employeeAvatar : ThirdGender}
                       alt=""

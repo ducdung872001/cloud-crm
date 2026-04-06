@@ -295,7 +295,7 @@ export default function ShowModalPackage(props: IShowModalPackageProps) {
                                       {item.listData.map((ol, ids) => {
                                         return (
                                           <div
-                                            key={ids}
+                                            key={ol.id}
                                             className={`item-extend ${item.data.disabled ? "item-extend-disabled" : ""}`}
                                             onClick={() => {
                                               if (!item.disabled) {

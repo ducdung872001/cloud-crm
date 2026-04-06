@@ -99,7 +99,7 @@ export default function ReportDaily() {
         <div className="box__view--total">
           {dataPreview.map((item, idx) => {
             return (
-              <div key={idx} className={`item item__${item.color}`}>
+              <div key={item.value} className={`item item__${item.color}`}>
                 <div className={"un_active--icon"}>
                   <Icon name="CheckedCircle" />
                 </div>
@@ -116,7 +116,7 @@ export default function ReportDaily() {
         <div className="box__view--total">
           {dataStatusJob.map((item, idx) => {
             return (
-              <div key={idx} className={`item item__${item.color}`}>
+              <div key={item.value} className={`item item__${item.color}`}>
                 <div className={"un_active--icon"}>
                   <Icon name="CheckedCircle" />
                 </div>

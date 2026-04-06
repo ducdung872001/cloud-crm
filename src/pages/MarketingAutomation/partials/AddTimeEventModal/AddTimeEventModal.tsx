@@ -454,7 +454,7 @@ export default function AddTimeEventModal(props: Record<string, unknown>) {
                                 <div className="day-of-week">
                                     {dayOfWeek.map((item, index) => (
                                         <Checkbox
-                                            key={index}
+                                            key={item.value}
                                             className="checkbox"
                                             disabled = {infoEvent.timeType !== 'week'}
                                             checked={infoEvent.day_of_week.includes(item.value)}
@@ -509,8 +509,8 @@ export default function AddTimeEventModal(props: Record<string, unknown>) {
                     <span style={{fontWeight: '500', marginRight: 10}}>Nhắm mục tiêu:<span style={{color: 'var(--error-color)'}}> * </span></span>
                     <div style={{marginTop: 10}}>
                       {target.map((item, index) => (
-                        <div key={index} style={{border: '1px solid #d3d5d7',  padding:' 1.6rem', borderRadius: 5, borderStyle: 'dotted', marginBottom: 15}}>
-                          <div key={index} className = "condition_form">
+                        <div key={item.value} style={{border: '1px solid #d3d5d7',  padding:' 1.6rem', borderRadius: 5, borderStyle: 'dotted', marginBottom: 15}}>
+                          <div key={item.value} className = "condition_form">
                             <SelectCustom
                               className="condition_name"
                               // label={'Vui lòng chọn'}

@@ -3312,7 +3312,7 @@ export default function CreateCampaign() {
                 <span style={{ fontSize: "1.4rem", fontWeight: "600" }}>Loại chiến dịch</span>
                 <div className="option_select_type_campaign">
                   {typeCampaign.map((item, index) => (
-                    <div key={index}>
+                    <div key={item.value}>
                       <Radio
                         value={item.value}
                         label={item.label}
@@ -3635,7 +3635,7 @@ export default function CreateCampaign() {
               <h3 className="title__info">Nguồn cấp dữ liệu</h3>
               <div className="data_supply_source">
                 {dataSupplySource.map((item, index) => (
-                  <div key={index} className="item_data_supply_source">
+                  <div key={item.value} className="item_data_supply_source">
                     <Checkbox
                       value={item.value}
                       label={item.label}
@@ -3706,7 +3706,7 @@ export default function CreateCampaign() {
               <div className="opportunity_sale">
                 <div className="option_select">
                   {optionDivisionMethod.map((item, index) => (
-                    <div key={index}>
+                    <div key={item.value}>
                       <Radio
                         value={item.value}
                         label={item.label}
@@ -3767,7 +3767,7 @@ export default function CreateCampaign() {
                   <div className="option_select_divisionMethod_2">
                     <div className="option_select">
                       {optionDivisionMethod_2.map((item, index) => (
-                        <div key={index}>
+                        <div key={item.value}>
                           <Radio
                             value={item.value}
                             label={item.label}
@@ -3785,7 +3785,7 @@ export default function CreateCampaign() {
                       <div style={{ marginTop: "2rem" }}>
                         {listBranchValue.map((item, index) => {
                           return (
-                            <div key={index} className="box_branch" style={index > 0 ? { marginTop: 20 } : {}}>
+                            <div key={item.value} className="box_branch" style={index > 0 ? { marginTop: 20 } : {}}>
                               <div className="select_branch">
                                 <SelectCustom
                                   key={
@@ -4004,7 +4004,7 @@ export default function CreateCampaign() {
                                       <ul className="menu__option--rank" ref={refOptionSpecialize}>
                                         {rankData.map((el, index) => (
                                           <li
-                                            key={index}
+                                            key={el.value}
                                             className={`item--rank ${item.rank?.value === el.value ? "active__item--rank" : ""}`}
                                             onClick={(e) => {
                                               e.preventDefault();
@@ -4058,7 +4058,7 @@ export default function CreateCampaign() {
 
                     {listRuleData.length > 0 &&
                       listRuleData.map((item, index) => (
-                        <div key={index} className="box_rule">
+                        <div key={el.value} className="box_rule">
                           <div>
                             <span style={{ fontSize: 14, fontWeight: "500" }}>{item.name}</span>
                           </div>
@@ -4213,7 +4213,7 @@ export default function CreateCampaign() {
               formData.values.type === "biz" ? (
                 item.value === 2 ? null : (
                   <div
-                    key={index}
+                    key={item.id}
                     className={childStepOfStep6 === item.value ? "box_tab_active" : "box_tab_inactive"}
                     onClick={() => {
                       setChildStepOfStep6(item.value);
@@ -4224,7 +4224,7 @@ export default function CreateCampaign() {
                 )
               ) : (
                 <div
-                  key={index}
+                  key={item.id}
                   className={childStepOfStep6 === item.value ? "box_tab_active" : "box_tab_inactive"}
                   onClick={() => {
                     setChildStepOfStep6(item.value);
@@ -4243,7 +4243,7 @@ export default function CreateCampaign() {
                 <span style={{ fontSize: 16, fontWeight: "500" }}>Email</span>
                 <div style={{ marginTop: 10 }}>
                   {settingEmail.map((item, index) => (
-                    <div key={index} className="setting">
+                    <div key={item.value} className="setting">
                       <div style={{ width: "30%" }}>
                         <SelectCustom
                           id=""
@@ -4932,7 +4932,7 @@ export default function CreateCampaign() {
               formData.values.type === "biz" ? (
                 item.value === 1 ? null : (
                   <div
-                    key={index}
+                    key={item.value}
                     className={childStepOfStep7 === item.value ? "box_tab_active" : "box_tab_inactive"}
                     onClick={() => {
                       setChildStepOfStep7(item.value);
@@ -4943,7 +4943,7 @@ export default function CreateCampaign() {
                 )
               ) : (
                 <div
-                  key={index}
+                  key={item.value}
                   className={childStepOfStep7 === item.value ? "box_tab_active" : "box_tab_inactive"}
                   onClick={() => {
                     setChildStepOfStep7(item.value);

@@ -150,7 +150,7 @@ export default function CustomerContact({ idCustomer }) {
                         lstFieldActive.map((el, idx) => {
                           return (
                             <Checkbox
-                              key={idx}
+                              key={el.value}
                               value={el.value}
                               label={el.label}
                               defaultChecked={el.isTable}
@@ -183,7 +183,7 @@ export default function CustomerContact({ idCustomer }) {
                         lstFieldUnActive.map((el, idx) => {
                           return (
                             <Checkbox
-                              key={idx}
+                              key={el.value}
                               value={el.value}
                               label={el.label}
                               defaultChecked={el.isTable}

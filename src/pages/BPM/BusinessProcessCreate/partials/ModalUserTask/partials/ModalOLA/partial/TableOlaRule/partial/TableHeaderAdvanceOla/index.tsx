@@ -122,7 +122,7 @@ const TableHeaderAdvanceOla: React.FC<TableHeaderAdvanceOlaProps> = ({
               className={`column-${column.columnType}`}
             >
               {/* {column.name}  */}
-              <div key={columnIndex} className={`form-field__header`}>
+              <div key={column.key} className={`form-field__header`}>
                 {editColumn[columnIndex]?.isShowEdit ? (
                   <div className="edit-position">
                     <NummericInput

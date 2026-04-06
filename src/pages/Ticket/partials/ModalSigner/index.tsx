@@ -282,7 +282,7 @@ export default function ModalSigner(props: IAddSignerFSAndQuoteProps) {
                 </div>
                 {listDataVar && listDataVar.length > 0 ? 
                   listDataVar.map((item, index) => (
-                    <div key={index} className="box-var">
+                    <div key={item.value} className="box-var">
                       <div className="form-group-var">
                         <SelectCustom
                           name=""

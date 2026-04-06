@@ -268,7 +268,7 @@ export default function SocialCrmZalo() {
                           zaloFollowerList.items.map((item, idx) => {
                             return (
                                 <div
-                                  key={idx}
+                                  key={item.id}
                                   className={`user-item ${item.id == dataDialog?.id ? "active-user" : ""}`}
                                   onClick={() => setDataDialog(item)}
                                 >

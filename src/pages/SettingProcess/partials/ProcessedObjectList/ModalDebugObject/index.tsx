@@ -322,7 +322,7 @@ export default function ModalDebugObject({ onShow, onHide, dataObject }) {
             <div style={{ display: "flex", marginTop: "1rem", marginLeft: "2rem" }}>
               {dataTab.map((item, index) => (
                 <div
-                  key={index}
+                  key={item.value}
                   style={{
                     borderBottom: tab === item.value ? "1px solid" : "",
                     paddingLeft: 12,

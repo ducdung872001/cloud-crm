@@ -231,7 +231,7 @@ export default function RepeatTime(props: IRepeatTimeProps) {
 
                 return (
                   <div
-                    key={idx}
+                    key={item.value}
                     className={`item__repeat--week ${formData.repeatWeekOns.includes(item.value) ? "active__repeat--week" : ""}`}
                     onClick={handleClickItemRepeat}
                   >
@@ -267,7 +267,7 @@ export default function RepeatTime(props: IRepeatTimeProps) {
 
                 return (
                   <div
-                    key={idx}
+                    key={item.value}
                     className={`item__repeat--moth ${formData.repeatMonthOns.includes(item.value) ? "active__repeat--moth" : ""}`}
                     onClick={handleClickItemRepeatMonth}
                   >
@@ -329,7 +329,7 @@ export default function RepeatTime(props: IRepeatTimeProps) {
             formData.timeRanges.length > 0 &&
             formData.timeRanges.map((item, idx) => {
               return (
-                <div key={idx} className="item__time--period">
+                <div key={item.value} className="item__time--period">
                   <div className="info__time">
                     <div className="start__time">
                       <span className="name--time">Bắt đầu</span>

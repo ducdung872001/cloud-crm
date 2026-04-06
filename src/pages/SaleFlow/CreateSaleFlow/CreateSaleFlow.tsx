@@ -519,7 +519,7 @@ export default function CreateSaleflow() {
       <div style={{ display: "flex", marginBottom: 10 }}>
         {dataStep.map((item, index) => (
           <div
-            key={index}
+            key={obj.id}
             style={{
               borderBottom: setupStep === item.value ? "1px solid" : "",
               paddingLeft: 12,

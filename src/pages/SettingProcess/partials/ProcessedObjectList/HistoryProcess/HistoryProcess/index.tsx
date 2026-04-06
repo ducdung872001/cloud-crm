@@ -745,7 +745,7 @@ export default function DetailHistoryProcess(props) {
             <div style={{ display: "flex", marginBottom: "1.2rem" }}>
               {listNode.map((item, index) => (
                 <div
-                  key={index}
+                  key={item.id}
                   style={{
                     borderBottom: tabNode === item.id ? "1px solid" : "",
                     paddingLeft: 12,
@@ -768,7 +768,7 @@ export default function DetailHistoryProcess(props) {
               <div style={{ display: "flex", marginBottom: "1.2rem" }}>
                 {listTabInNode.map((item, index) => (
                   <div
-                    key={index}
+                    key={item.id}
                     style={{
                       borderBottom: tabInNode === item.id ? "1px solid" : "",
                       paddingLeft: 12,
@@ -791,7 +791,7 @@ export default function DetailHistoryProcess(props) {
                 <div className="list__contract--attribute">
                   <Fragment>
                     {listEformAttribute.map((contractAttribute, index: number) => (
-                      <Fragment key={index}>
+                      <Fragment key={item.id}>
                         {/* {!contractAttribute.parentId ? (
                             <label className= {index === 0 ? 'label-title-first' :  "label-title"}>
                               {contractAttribute.name}
@@ -858,7 +858,7 @@ export default function DetailHistoryProcess(props) {
           <div style={{ display: "flex", marginBottom: "1.2rem" }}>
             {listTabHistory.map((item, index) => (
               <div
-                key={index}
+                key={item.id}
                 style={{
                   borderBottom: tabHistory === item.value ? "1px solid" : "",
                   paddingLeft: 12,
@@ -879,7 +879,7 @@ export default function DetailHistoryProcess(props) {
         <div className="list-history">
           {listHistory && listHistory.length > 0
             ? listHistory.map((item, index) => (
-                <div key={index} className="item-history">
+                <div key={item.value} className="item-history">
                   <div style={{ width: "40%" }}>
                     <div>
                       <span style={{ fontSize: 14, fontWeight: "400" }}>

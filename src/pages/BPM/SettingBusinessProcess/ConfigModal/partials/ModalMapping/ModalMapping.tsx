@@ -315,7 +315,7 @@ export default function ModalMapping({ onShow, onHide, dataComponent, dataNode }
                 {eformList &&
                   eformList.map((item, index) => (
                     <div
-                      key={index}
+                      key={item.id}
                       style={{
                         borderBottom: tabEform === item.id ? "1px solid" : "",
                         paddingLeft: 12,
@@ -364,7 +364,7 @@ export default function ModalMapping({ onShow, onHide, dataComponent, dataNode }
               <div>
                 {listEformMappingSource && listEformMappingSource.length > 0
                   ? listEformMappingSource.map((item, index) => (
-                      <div key={index} className="container-mapping">
+                      <div key={item.id} className="container-mapping">
                         <div className="form-group">
                           <SelectCustom
                             key={formData.sourceEformId}

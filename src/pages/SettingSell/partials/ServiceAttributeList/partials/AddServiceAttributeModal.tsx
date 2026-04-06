@@ -817,7 +817,7 @@ export default function AddServiceAttributeModal(props: Record<string, unknown>)
                     </div>
                     {addFieldAttributes.map((item, idx) => {
                       return (
-                        <div key={idx} className="attribute__item">
+                        <div key={item.value} className="attribute__item">
                           <div className="list-field-attribute">
                             <div className="form-group">
                               <Input

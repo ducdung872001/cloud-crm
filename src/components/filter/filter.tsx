@@ -143,7 +143,7 @@ function Filter(props: FilterProps) {
             <Popover alignment="left" isTriangle={true} className="popover-filter" refPopover={refFilter} refContainer={refFilterContainer}>
               {listFilterItemState.map((filter, index) => (
                 <FilterOption
-                  key={index}
+                  key={filter.key}
                   filterItem={filter}
                   handleChangeFilter={(filterItem) => changeValueFilter(filterItem)}
                   removeFilter={() => removeFilter(index)}
@@ -217,7 +217,7 @@ function Filter(props: FilterProps) {
                 }
                 return (
                   <FilterFeatured
-                    key={index}
+                    key={filter.value}
                     handleChangeFilter={(filterItem) => changeValueFilter(filterItem)}
                     filterItem={filter}
                     onChangeFilter={() => submitFilter()}
@@ -256,14 +256,14 @@ function Filter(props: FilterProps) {
             }
             return listFilterItem.length > 4 ? (
               <FilterFeatured
-                key={index}
+                key={filter.value}
                 handleChangeFilter={(filterItem) => changeValueFilter(filterItem)}
                 filterItem={filter}
                 onChangeFilter={() => submitFilter()}
               ></FilterFeatured>
             ) : (
               <FilterFeatured
-                key={index}
+                key={filter.value}
                 handleChangeFilter={(filterItem) => changeValueFilter(filterItem)}
                 filterItem={filter}
                 onChangeFilter={() => submitFilter()}
@@ -448,7 +448,7 @@ function FilterRadio(props: FilterItemProps) {
     <div className="filter-item filter-item--radio">
       {filterItem.list?.map((item, index) => (
         <Radio
-          key={index}
+          key={item.value}
           name={handleize(filterItem.name)}
           value={item.value}
           checked={filterItem.value === item.value}
@@ -678,7 +678,7 @@ export function ListFilterChoose(props: ListFilterChooseProps) {
                 if (item.value || item.value === 0) {
                   if (item.type !== "date" && item.type !== "date-two") {
                     return (
-                      <li key={index}>
+                      <li key={item.value}>
                         {item.name}: {' '}
                         {item.type === "select" || item.type === "radio"
                           ? item.list && item.list.length > 0
@@ -694,7 +694,7 @@ export function ListFilterChoose(props: ListFilterChooseProps) {
                     );
                   } else {
                     return (
-                      <li key={index}>
+                      <li key={item.value}>
                         {item.name}: {item.value}
                         {item.value_extra ? ` - ${item.value_extra}` : ""}
                         <span className="btn-remove" onClick={() => removeValueFilter(item.key)}>

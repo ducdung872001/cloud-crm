@@ -344,7 +344,7 @@ export default function AddSwitchboardModel(props: IAddSwitchboardModelProps) {
                 <label className="title-config">Cấu hình</label>
                 {addFieldConfig.map((item, idx) => {
                   return (
-                    <div key={idx} className={`field-config-item ${validateFieldConfig ? "emty__value" : ""}`}>
+                    <div key={item.value} className={`field-config-item ${validateFieldConfig ? "emty__value" : ""}`}>
                       <div className="change-value-config">
                         <div className="form-group">
                           <Input type="text" value={item.key} fill={true} placeholder="Nhập khóa" disabled={true} />

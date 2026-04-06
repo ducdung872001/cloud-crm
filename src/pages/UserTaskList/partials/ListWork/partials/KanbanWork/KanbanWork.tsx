@@ -73,7 +73,7 @@ export default function KanbanWork(props: Record<string, unknown>) {
         <ul className="lst__tab">
           {lstTab.map((item, idx) => {
             return (
-              <li key={idx} className={`tab__item ${activeTab === item.id ? "active" : ""}`} onClick={() => setActiveTab(item.id)}>
+              <li key={item.id} className={`tab__item ${activeTab === item.id ? "active" : ""}`} onClick={() => setActiveTab(item.id)}>
                 {`Công việc ${item.id === 1 || item.id === 2 ? "theo" : ""} ${item.name}`}
               </li>
             );

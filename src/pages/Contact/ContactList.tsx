@@ -275,7 +275,7 @@ export default function ContactList() {
                         lstFieldActive.map((el, idx) => {
                           return (
                             <Checkbox
-                              key={idx}
+                              key={el.value}
                               value={el.value}
                               label={el.label}
                               defaultChecked={el.isTable}
@@ -308,7 +308,7 @@ export default function ContactList() {
                         lstFieldUnActive.map((el, idx) => {
                           return (
                             <Checkbox
-                              key={idx}
+                              key={el.value}
                               value={el.value}
                               label={el.label}
                               defaultChecked={el.isTable}
@@ -1024,7 +1024,7 @@ export default function ContactList() {
                   JSON.parse(item.customers).length > 0 &&
                   JSON.parse(item.customers).find((el) => el.isPrimary === 1)) ||
                 "";
-              return el.id === customerInfo?.customerId ? <div key={idx}>{el.name}</div> : null;
+              return el.id === customerInfo?.customerId ? <div key={el.id}>{el.name}</div> : null;
             }),
           item.emails &&
             JSON.parse(item.emails) &&
@@ -1410,9 +1410,9 @@ export default function ContactList() {
                     listPipeline.length > 0 &&
                     listPipeline.map((item, idx) => {
                       return (
-                        <SwiperSlide key={idx} className="list__relationship--slide">
+                        <SwiperSlide key={item.value} className="list__relationship--slide">
                           <li
-                            key={idx}
+                            key={item.value}
                             className={`${item.value == contractType ? "active" : "unactive"}`}
                             onClick={(e) => {
                               e && e.preventDefault();
@@ -1442,7 +1442,7 @@ export default function ContactList() {
                   listPipeline.map((item, idx) => {
                     return (
                       <li
-                        key={idx}
+                        key={item.value}
                         className={`${item.value == contractType ? "active" : "unactive"}`}
                         onClick={(e) => {
                           e && e.preventDefault();
@@ -1474,7 +1474,7 @@ export default function ContactList() {
                 >
                   {listStatus.map((item, idx) => {
                     return (
-                      <SwiperSlide key={idx} className="list__relationship--slide">
+                      <SwiperSlide key={item.value} className="list__relationship--slide">
                         <div
                           className={`item-relationship ${item.value == statusId ? "active__item-block" : ""}`}
                           style={{ backgroundColor: item.color, color: item.colorText }}
@@ -1494,7 +1494,7 @@ export default function ContactList() {
                   {listStatus.map((item, idx) => {
                     return (
                       <div
-                        key={idx}
+                        key={item.value}
                         className={`relationship-item ${item.value == statusId ? "active__relationship--item" : ""}`}
                         style={{ backgroundColor: item.color, color: item.colorText }}
                         onClick={(e) => {

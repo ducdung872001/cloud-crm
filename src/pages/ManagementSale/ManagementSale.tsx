@@ -921,7 +921,7 @@ ${dataRows.join("\n")}
               >
                 {listApproach.map((item, idx) => {
                   return item.label ? (
-                    <SwiperSlide key={idx} className="list__relationship--slide">
+                    <SwiperSlide key={item.value} className="list__relationship--slide">
                       <div
                         className={`item-relationship ${item.value == approachId ? "active__item-block" : ""}`}
                         style={{ backgroundColor: item.color, color: item.colorText }}
@@ -941,7 +941,7 @@ ${dataRows.join("\n")}
                 {listApproach.map((item, idx) => {
                   return item.label ? (
                     <div
-                      key={idx}
+                      key={item.value}
                       className={`relationship-item ${item.value == approachId ? "active__relationship--item" : ""}`}
                       style={{ backgroundColor: item.color, color: item.colorText }}
                       onClick={(e) => {

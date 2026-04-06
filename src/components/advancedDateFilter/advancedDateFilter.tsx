@@ -249,7 +249,7 @@ export default function AdvancedDateFilter(props: IAdvancedDateFilterProps) {
             {dataOption.map((item, idx) => {
               return (
                 <div
-                  key={idx}
+                  key={item.value}
                   className={`item-option ${item.value == valueOption?.value ? "active__option" : ""}`}
                   onClick={(e) => {
                     e && e.preventDefault();

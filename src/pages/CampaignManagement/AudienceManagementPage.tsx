@@ -92,7 +92,7 @@ export default function AudienceManagementPage({ onBackProps }: { onBackProps: (
           </div>
           <div className="cm-conditions-title">Điều kiện lọc</div>
           {conditions.map((c, idx) => (
-            <div className="cm-condition-row" key={idx}>
+            <div className="cm-condition-row" key={c.value}>
               <select value={c.field} onChange={e => updateCondition(idx, "field", e.target.value)}>
                 <option value="">-- Chọn trường --</option>
                 <option>Hạng thành viên</option>

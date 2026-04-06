@@ -333,7 +333,7 @@ export default function DetailApplication(props: IDetailApplicationProps) {
           <div className="lst__application">
             {lstApplication.map((item, idx) => {
               return (
-                <div key={idx} className="item__application">
+                <div key={item.code} className="item__application">
                   <div className="avatar-app">
                     <img
                       src={
@@ -424,7 +424,7 @@ export default function DetailApplication(props: IDetailApplicationProps) {
               lstAppOther.length > 0 &&
               lstAppOther.map((item, idx) => {
                 return (
-                  <div key={idx} className="item-other">
+                  <div key={item.code} className="item-other">
                     <div className="basic__info--other">
                       <div className="avatar-app">
                         <img

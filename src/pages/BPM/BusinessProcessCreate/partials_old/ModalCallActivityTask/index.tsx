@@ -1752,7 +1752,7 @@ export default function ModalCallActivityTask({ onShow, onHide, dataNode, proces
                         </div>
                         {listTriggerCondition && listTriggerCondition.length > 0 ? 
                             listTriggerCondition.map((item, index) => (
-                                <div key={index} className="list-item-trigger-condition">
+                                <div key={item.key} className="list-item-trigger-condition">
                                     <div className="item-trigger-condition">
                                         <Input
                                             id="key"
@@ -1850,7 +1850,7 @@ export default function ModalCallActivityTask({ onShow, onHide, dataNode, proces
                         </div>
                         {listCompletionConditions && listCompletionConditions.length > 0 ? 
                             listCompletionConditions.map((item, index) => (
-                                <div key={index} className="list-item-completion-condition">
+                                <div key={item.value} className="list-item-completion-condition">
                                     <div className="item-completion-condition">
                                         <Input
                                             id="key"
@@ -1948,7 +1948,7 @@ export default function ModalCallActivityTask({ onShow, onHide, dataNode, proces
                         </div>
                         {listParameterMapping && listParameterMapping.length > 0 ? 
                             listParameterMapping.map((item, index) => (
-                                <div key={index} className="list-item-parameter-mapping">
+                                <div key={item.value} className="list-item-parameter-mapping">
                                     <div className="item-parameter-mapping">
                                         <Input
                                             id="name"

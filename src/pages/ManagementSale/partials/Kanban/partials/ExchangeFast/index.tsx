@@ -306,7 +306,7 @@ export default function ExchangeFast(props: IExchangeFastProps) {
         <div className="lst-media">
           {dataMedia.map((item, idx) => {
             return (
-              <div key={idx} className="item-media">
+              <div key={item.id} className="item-media">
                 {item.type == "image" ? (
                   <Fancybox>
                     <a key={item.id} data-fancybox="gallery" data-download-src={item.url} href={item.url}>
@@ -395,7 +395,7 @@ export default function ExchangeFast(props: IExchangeFastProps) {
                 {lstDataExchange.map((item, idx) => {
                   return (
                     <div
-                      key={idx}
+                      key={item.id}
                       className={`item__content ${item.employeeId === dataEmployee.id ? "item__content--right" : "item__content--left"}`}
                     >
                       <div className="avatar-employee">

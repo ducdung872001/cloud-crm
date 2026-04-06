@@ -918,7 +918,7 @@ export default function AddTemplateZalo(props: IAddZaloMarkettingProps) {
                           const isText = customTemplateZalo.filter((el) => el.type === "text").length >= 2;
 
                           return (
-                            <li key={idx} className={`item-option`}>
+                            <li key={item.id} className={`item-option`}>
                               {(isButton && item.type === "buttons") || (isText && item.type === "text") ? (
                                 <span className="dis__item--option">{item.type}</span>
                               ) : (
@@ -942,7 +942,7 @@ export default function AddTemplateZalo(props: IAddZaloMarkettingProps) {
                     <div className="render__ui--choose">
                       {customTemplateZalo.map((item, idx) => {
                         return (
-                          <div key={idx} className="item__render--choose">
+                          <div key={item.id} className="item__render--choose">
                             {item.type === "banner" ? (
                               <div
                                 className={`box--ui box__ui--banner ${item.id === idChange ? "active--ui active__ui--banner" : ""}`}
@@ -1061,7 +1061,7 @@ export default function AddTemplateZalo(props: IAddZaloMarkettingProps) {
                               >
                                 {item.content.map((el, index) => {
                                   return (
-                                    <div key={index} className="item-table" ref={refAction}>
+                                    <div key={el.value} className="item-table" ref={refAction}>
                                       <div className="content__key--value" onClick={() => setIdxTable(index)}>
                                         <div className="key">
                                           <input
@@ -1136,7 +1136,7 @@ export default function AddTemplateZalo(props: IAddZaloMarkettingProps) {
                                   const lstOption = lstTypeButtons.filter((ol) => !item.content.some((v) => v.type === ol.value));
 
                                   return (
-                                    <div key={index} className="item-button" ref={refAction}>
+                                    <div key={el.value} className="item-button" ref={refAction}>
                                       <div className="content__button--value" onClick={() => setIdxButton(index)}>
                                         <div className="value__title">
                                           <div className="title-button">
@@ -1271,7 +1271,7 @@ export default function AddTemplateZalo(props: IAddZaloMarkettingProps) {
                             ) : item.type === "table" ? (
                               item.content.map((el, index) => {
                                 return (
-                                  <div key={index} className="item__table">
+                                  <div key={el.value} className="item__table">
                                     <h4 className="key">{el.key}</h4>
                                     <h4 className="value">{el.value}</h4>
                                   </div>
