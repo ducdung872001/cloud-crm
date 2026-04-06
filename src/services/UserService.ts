@@ -1,5 +1,6 @@
+import { apiDelete, apiGet, apiPost } from "services/apiHelper";
 import { urlsApi } from "configs/urls";
-import { convertParamsToString } from "reborn-util";
+
 import { IChangePasswordRequest, IUserRequest, ISelectUsersFilterRequest } from "model/user/UserRequestModel";
 
 export default {
@@ -16,16 +17,10 @@ export default {
     }).then((res) => res.json());
   },
   create: (body: IUserRequest) => {
-    return fetch(urlsApi.user.create, {
-      method: "POST",
-      body: JSON.stringify(body),
-    }).then((res) => res.json());
+    return apiPost(urlsApi.user.create, body);
   },
   update: (body: IUserRequest) => {
-    return fetch(urlsApi.user.update, {
-      method: "POST",
-      body: JSON.stringify(body),
-    }).then((res) => res.json());
+    return apiPost(urlsApi.user.update, body);
   },
   detail: (id: number) => {
     return fetch(`${urlsApi.user.detail}?id=${id}`, {
@@ -33,57 +28,33 @@ export default {
     }).then((res) => res.json());
   },
   selectUsers: (params?: ISelectUsersFilterRequest, signal?: AbortSignal) => {
-    return fetch(`${urlsApi.user.selectUsers}${convertParamsToString(params)}`, {
-      signal,
-      method: "GET",
-    }).then((res) => res.json());
+    return apiGet(urlsApi.user.selectUsers, params, signal);
   },
   //Admin thực hiện
   resetPass: (body: IUserRequest) => {
-    return fetch(urlsApi.user.resetPass, {
-      method: "POST",
-      body: JSON.stringify(body),
-    }).then((res) => res.json());
+    return apiPost(urlsApi.user.resetPass, body);
   },
   changePass: (body: IChangePasswordRequest) => {
-    return fetch(urlsApi.user.changePass, {
-      method: "POST",
-      body: JSON.stringify(body),
-    }).then((res) => res.json());
+    return apiPost(urlsApi.user.changePass, body);
   },
   // thay đổi thông tin cá nhân
   basicInfo: (body) => {
-    return fetch(urlsApi.user.basicInfo, {
-      method: "POST",
-      body: JSON.stringify(body),
-    }).then((res) => res.json());
+    return apiPost(urlsApi.user.basicInfo, body);
   },
   checkLogin: (params: Record<string, unknown>) => {
-    return fetch(`${urlsApi.user.checkLogin}${convertParamsToString(params)}`, {
-      method: "GET",
-    }).then((res) => res.json());
+    return apiGet(urlsApi.user.checkLogin, params);
   },
   detailTimeLogin: (params: Record<string, unknown>) => {
-    return fetch(`${urlsApi.user.detailTimeLogin}${convertParamsToString(params)}`, {
-      method: "GET",
-    }).then((res) => res.json());
+    return apiGet(urlsApi.user.detailTimeLogin, params);
   },
   delete: (id: number) => {
-    return fetch(`${urlsApi.user.delete}?id=${id}`, {
-      method: "DELETE",
-    }).then((res) => res.json());
+    return apiDelete(`${urlsApi.user.delete}?id=${id}`);
   },
   list: (params: Record<string, unknown>, signal?: AbortSignal) => {
-    return fetch(`${urlsApi.user.list}${convertParamsToString(params)}`, {
-      signal,
-      method: "GET",
-    }).then((res) => res.json());
+    return apiGet(urlsApi.user.list, params, signal);
   },
   // lưu FCM thông báo
   fcmDevice: (body) => {
-    return fetch(urlsApi.user.fcmDevice, {
-      method: "POST",
-      body: JSON.stringify(body),
-    }).then((res) => res.json());
+    return apiPost(urlsApi.user.fcmDevice, body);
   },
 };

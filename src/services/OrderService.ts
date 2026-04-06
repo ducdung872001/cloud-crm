@@ -1,13 +1,11 @@
+import { apiDelete, apiGet, apiPost } from "services/apiHelper";
 import { urlsApi } from "configs/urls";
 import { update } from "lodash";
-import { convertParamsToString } from "reborn-util";
+
 
 export default {
   list: (params?: Record<string, unknown>, signal?: AbortSignal) => {
-    return fetch(`${urlsApi.order.list}${convertParamsToString(params)}`, {
-      signal,
-      method: "GET",
-    }).then((res) => res.json());
+    return apiGet(urlsApi.order.list, params, signal);
   },
   detail: (id: number) => {
     return fetch(`${urlsApi.order.detail}?id=${id}`, {
@@ -15,21 +13,12 @@ export default {
     }).then((res) => res.json());
   },
   create: (data: Record<string, unknown>) => {
-    return fetch(`${urlsApi.order.update}`, {
-      method: "POST",
-      body: JSON.stringify(data),
-    }).then((res) => res.json());
+    return apiPost(`${urlsApi.order.update}`, data);
   },
   update: (data: Record<string, unknown>, id: number) => {
-    return fetch(`${urlsApi.order.update}?id=${id}`, {
-      method: "POST",
-      body: JSON.stringify(data),
-    }).then((res) => res.json());
+    return apiPost(`${urlsApi.order.update}?id=${id}`, data);
   },
   delete: (id: number, signal?: AbortSignal) => {
-    return fetch(`${urlsApi.order.delete}/${id}`, {
-      signal,
-      method: "DELETE",
-    }).then((res) => res.json());
+    return apiDelete(`${urlsApi.order.delete}/${id}`);
   },
 };

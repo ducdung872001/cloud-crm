@@ -1,3 +1,4 @@
+import { apiGet } from "services/apiHelper";
 import { urlsApi } from "configs/urls";
 import { convertParamsToString } from "reborn-util";
 import {
@@ -15,10 +16,7 @@ import {
 export default {
   /** Danh sách phiếu trả / đổi hàng */
   list: (params?: IReturnInvoiceListParams, signal?: AbortSignal) => {
-    return fetch(`${urlsApi.returnInvoice.list}${convertParamsToString(params)}`, {
-      signal,
-      method: "GET",
-    }).then((res) => res.json());
+    return apiGet(urlsApi.returnInvoice.list, params, signal);
   },
 
   /** Chi tiết 1 phiếu */
@@ -39,10 +37,7 @@ export default {
       page: 0,
       limit: 1,
     };
-    return fetch(`${urlsApi.invoice.list}${convertParamsToString(params)}`, {
-      signal,
-      method: "GET",
-    }).then((res) => res.json());
+    return apiGet(urlsApi.invoice.list, params, signal);
   },
 
   /**

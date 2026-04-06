@@ -1,24 +1,16 @@
+import { apiDelete, apiGet, apiPost } from "services/apiHelper";
 import { urlsApi } from "configs/urls";
-import { convertParamsToString } from "reborn-util";
+
 
 export default {
   list: (params?: Record<string, unknown>, signal?: AbortSignal) => {
-    return fetch(`${urlsApi.objectGroup.list}${convertParamsToString(params)}`, {
-      signal,
-      method: "GET",
-    }).then((res) => res.json());
+    return apiGet(urlsApi.objectGroup.list, params, signal);
   },
   update: (body: Record<string, unknown>) => {
-    return fetch(urlsApi.objectGroup.update, {
-      method: "POST",
-      body: JSON.stringify(body),
-    }).then((res) => res.json());
+    return apiPost(urlsApi.objectGroup.update, body);
   },
   updateConfig: (body: Record<string, unknown>) => {
-    return fetch(urlsApi.objectGroup.updateConfig, {
-      method: "POST",
-      body: JSON.stringify(body),
-    }).then((res) => res.json());
+    return apiPost(urlsApi.objectGroup.updateConfig, body);
   },
   detail: (id: number) => {
     return fetch(`${urlsApi.objectGroup.detail}?id=${id}`, {
@@ -31,8 +23,6 @@ export default {
     }).then((res) => res.json());
   },
   delete: (id: number) => {
-    return fetch(`${urlsApi.objectGroup.delete}?id=${id}`, {
-      method: "DELETE",
-    }).then((res) => res.json());
+    return apiDelete(`${urlsApi.objectGroup.delete}?id=${id}`);
   },
 };

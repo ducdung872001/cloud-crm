@@ -1,3 +1,4 @@
+import { apiDelete, apiGet, apiPost } from "services/apiHelper";
 import { urlsApi } from "configs/urls";
 import { convertParamsToString } from "reborn-util";
 import { IEmailFilterRequest, IEmailRequest } from "model/email/EmailRequestModel";
@@ -5,16 +6,10 @@ import { IEmailFilterRequest, IEmailRequest } from "model/email/EmailRequestMode
 // Dịch vụ outlook mail, gmail
 export default {
   list: (params: IEmailFilterRequest, signal?: AbortSignal) => {
-    return fetch(`${urlsApi.email.list}${convertParamsToString(params)}`, {
-      signal,
-      method: "GET",
-    }).then((res) => res.json());
+    return apiGet(urlsApi.email.list, params, signal);
   },
   lstEmail: (params: IEmailFilterRequest) => {
-    return fetch(`${urlsApi.email.lstEmail}`, {
-      method: "POST",
-      body: JSON.stringify(params),
-    }).then((res) => res.json());
+    return apiPost(`${urlsApi.email.lstEmail}`, params);
   },
   // Xem chi tiết email
   detail: (id: number) => {
@@ -24,24 +19,15 @@ export default {
   },
   // Gửi email
   sendEmail: (body: IEmailRequest) => {
-    return fetch(urlsApi.email.sendEmail, {
-      method: "POST",
-      body: JSON.stringify(body),
-    }).then((res) => res.json());
+    return apiPost(urlsApi.email.sendEmail, body);
   },
   //gui thong tin voucher
   sendVoucher: (body: IEmailRequest, params: Record<string, unknown>) => {
-    return fetch(`${urlsApi.email.sendEmailConfirm}${convertParamsToString(params)}`, {
-      method: "POST",
-      body: JSON.stringify(body),
-    }).then((res) => res.json());
+    return apiPost(`${urlsApi.email.sendEmailConfirm}${convertParamsToString(params)}`, body);
   },
   //gui phieu uu dai
   sendEmailSale: (body: IEmailRequest, params: Record<string, unknown>) => {
-    return fetch(`${urlsApi.email.sendEmailConfirm}${convertParamsToString(params)}`, {
-      method: "POST",
-      body: JSON.stringify(body),
-    }).then((res) => res.json());
+    return apiPost(`${urlsApi.email.sendEmailConfirm}${convertParamsToString(params)}`, body);
   },
   // Gửi email mới với FormData (có file đính kèm)
   sendEmailNew: (body, id, takeResult) => {
@@ -68,8 +54,6 @@ export default {
   },
   // Xóa 1 email
   delete: (id: number) => {
-    return fetch(`${urlsApi.email.delete}?id=${id}`, {
-      method: "DELETE",
-    }).then((res) => res.json());
+    return apiDelete(`${urlsApi.email.delete}?id=${id}`);
   },
 };

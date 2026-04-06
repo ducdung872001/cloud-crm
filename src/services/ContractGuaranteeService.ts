@@ -1,18 +1,13 @@
+import { apiDelete, apiGet, apiPost } from "services/apiHelper";
 import { urlsApi } from "configs/urls";
 import { convertParamsToString } from "reborn-util";
 
 export default {
   list: (params?: Record<string, unknown>, signal?: AbortSignal) => {
-    return fetch(`${urlsApi.contractGuarantee.list}${convertParamsToString(params)}`, {
-      signal,
-      method: "GET",
-    }).then((res) => res.json());
+    return apiGet(urlsApi.contractGuarantee.list, params, signal);
   },
   update: (body: Record<string, unknown>) => {
-    return fetch(urlsApi.contractGuarantee.update, {
-      method: "POST",
-      body: JSON.stringify(body),
-    }).then((res) => res.json());
+    return apiPost(urlsApi.contractGuarantee.update, body);
   },
   detail: (id: number) => {
     return fetch(`${urlsApi.contractGuarantee.detail}?id=${id}`, {
@@ -20,75 +15,47 @@ export default {
     }).then((res) => res.json());
   },
   delete: (id: number) => {
-    return fetch(`${urlsApi.contractGuarantee.delete}?id=${id}`, {
-      method: "DELETE",
-    }).then((res) => res.json());
+    return apiDelete(`${urlsApi.contractGuarantee.delete}?id=${id}`);
   },
 
 
   guaranteeTypeList: (params?: Record<string, unknown>, signal?: AbortSignal) => {
-    return fetch(`${urlsApi.contractGuarantee.guaranteeTypeList}${convertParamsToString(params)}`, {
-      signal,
-      method: "GET",
-    }).then((res) => res.json());
+    return apiGet(urlsApi.contractGuarantee.guaranteeTypeList, params, signal);
   },
 
   guaranteeTypeUpdate: (body: Record<string, unknown>) => {
-    return fetch(urlsApi.contractGuarantee.guaranteeTypeUpdate, {
-      method: "POST",
-      body: JSON.stringify(body),
-    }).then((res) => res.json());
+    return apiPost(urlsApi.contractGuarantee.guaranteeTypeUpdate, body);
   },
   guaranteeTypeDelete: (id: number) => {
-    return fetch(`${urlsApi.contractGuarantee.guaranteeTypeDelete}?id=${id}`, {
-      method: "DELETE",
-    }).then((res) => res.json());
+    return apiDelete(`${urlsApi.contractGuarantee.guaranteeTypeDelete}?id=${id}`);
   },
 
   competencyGuaranteeList: (params?: Record<string, unknown>, signal?: AbortSignal) => {
-    return fetch(`${urlsApi.contractGuarantee.competencyList}${convertParamsToString(params)}`, {
-      signal,
-      method: "GET",
-    }).then((res) => res.json());
+    return apiGet(urlsApi.contractGuarantee.competencyList, params, signal);
   },
 
   competencyGuaranteeUpdate: (body: Record<string, unknown>) => {
-    return fetch(urlsApi.contractGuarantee.competencyUpdate, {
-      method: "POST",
-      body: JSON.stringify(body),
-    }).then((res) => res.json());
+    return apiPost(urlsApi.contractGuarantee.competencyUpdate, body);
   },
   competencyGuaranteeDelete: (id: number) => {
-    return fetch(`${urlsApi.contractGuarantee.competencyDelete}?id=${id}`, {
-      method: "DELETE",
-    }).then((res) => res.json());
+    return apiDelete(`${urlsApi.contractGuarantee.competencyDelete}?id=${id}`);
   },
 
   bankList: (params?: Record<string, unknown>, signal?: AbortSignal) => {
-    return fetch(`${urlsApi.contractGuarantee.bankList}${convertParamsToString(params)}`, {
-      signal,
-      method: "GET",
-    }).then((res) => res.json());
+    return apiGet(urlsApi.contractGuarantee.bankList, params, signal);
   },
 
   bankUpdate: (body: Record<string, unknown>) => {
-    return fetch(urlsApi.contractGuarantee.bankUpdate, {
-      method: "POST",
-      body: JSON.stringify(body),
-    }).then((res) => res.json());
+    return apiPost(urlsApi.contractGuarantee.bankUpdate, body);
   },
   bankDelete: (id: number) => {
-    return fetch(`${urlsApi.contractGuarantee.bankDelete}?id=${id}`, {
-      method: "DELETE",
-    }).then((res) => res.json());
+    return apiDelete(`${urlsApi.contractGuarantee.bankDelete}?id=${id}`);
   },
 
   ///lấy danh sách các trường chọn để import
 
   exAttributes: (params) => {
-    return fetch(`${urlsApi.contractGuarantee.exAttributes}${convertParamsToString(params)}`, {
-      method: "GET",
-    }).then((res) => res.json());
+    return apiGet(urlsApi.contractGuarantee.exAttributes, params);
   },
 
   numberFieldGuarantee: (body, params) => {
@@ -106,10 +73,7 @@ export default {
 
   // import khách hàng b2
   autoProcess: (body: Record<string, unknown>) => {
-    return fetch(urlsApi.contractGuarantee.autoProcess, {
-      method: "POST",
-      body: JSON.stringify(body),
-    }).then((res) => res.json());
+    return apiPost(urlsApi.contractGuarantee.autoProcess, body);
   },
   // download file lỗi
   downloadFile: (id: number) => {

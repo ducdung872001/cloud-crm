@@ -1,5 +1,6 @@
+import { apiDelete, apiGet, apiPost } from "services/apiHelper";
 import { urlsApi } from "configs/urls";
-import { convertParamsToString } from "reborn-util";
+
 import {
   IMailBoxFilterRequest,
   IMailboxViewerFilterRequest,
@@ -11,16 +12,10 @@ import {
 
 export default {
   list: (params: IMailBoxFilterRequest, signal?: AbortSignal) => {
-    return fetch(`${urlsApi.mailBox.list}${convertParamsToString(params)}`, {
-      signal,
-      method: "GET",
-    }).then((res) => res.json());
+    return apiGet(urlsApi.mailBox.list, params, signal);
   },
   update: (body: IMailBoxRequestModel) => {
-    return fetch(urlsApi.mailBox.update, {
-      method: "POST",
-      body: JSON.stringify(body),
-    }).then((res) => res.json());
+    return apiPost(urlsApi.mailBox.update, body);
   },
   detail: (id: number) => {
     return fetch(`${urlsApi.mailBox.detail}?id=${id}`, {
@@ -28,9 +23,7 @@ export default {
     }).then((res) => res.json());
   },
   delete: (id: number) => {
-    return fetch(`${urlsApi.mailBox.delete}?id=${id}`, {
-      method: "DELETE",
-    }).then((res) => res.json());
+    return apiDelete(`${urlsApi.mailBox.delete}?id=${id}`);
   },
   viewer: (id: IMailboxViewerFilterRequest) => {
     return fetch(`${urlsApi.mailBox.viewer}?id=${id}`, {
@@ -38,25 +31,15 @@ export default {
     }).then((res) => res.json());
   },
   updateViewer: (body: IMailBoxViewerRequestModel) => {
-    return fetch(urlsApi.mailBox.updateViewer, {
-      method: "POST",
-      body: JSON.stringify(body),
-    }).then((res) => res.json());
+    return apiPost(urlsApi.mailBox.updateViewer, body);
   },
   mailboxExchangeList: (params: IMailboxExchangeFilterRequest) => {
-    return fetch(`${urlsApi.mailBox.mailboxExchangeList}${convertParamsToString(params)}`, {
-      method: "GET",
-    }).then((res) => res.json());
+    return apiGet(urlsApi.mailBox.mailboxExchangeList, params);
   },
   mailboxExchangeUpdate: (body: IMailboxExchangeRequestModel) => {
-    return fetch(urlsApi.mailBox.mailboxExchangeUpdate, {
-      method: "POST",
-      body: JSON.stringify(body),
-    }).then((res) => res.json());
+    return apiPost(urlsApi.mailBox.mailboxExchangeUpdate, body);
   },
   mailboxExchangeDelete: (id: number) => {
-    return fetch(`${urlsApi.mailBox.mailboxExchangeDelete}?id=${id}`, {
-      method: "DELETE",
-    }).then((res) => res.json());
+    return apiDelete(`${urlsApi.mailBox.mailboxExchangeDelete}?id=${id}`);
   },
 };

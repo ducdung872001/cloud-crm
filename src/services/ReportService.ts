@@ -1,54 +1,34 @@
+import { apiGet } from "services/apiHelper";
 import { urlsApi } from "configs/urls";
-import { convertParamsToString } from "reborn-util";
+
 import { IReportCommonFilterRequest } from "model/report/ReportRequest";
 
 export default {
   revenue: (params?: IReportCommonFilterRequest, signal?: AbortSignal) => {
-    return fetch(`${urlsApi.report.revenue}${convertParamsToString(params)}`, {
-      signal,
-      method: "GET",
-    }).then((res) => res.json());
+    return apiGet(urlsApi.report.revenue, params, signal);
   },
 
   employee: (params?: IReportCommonFilterRequest, signal?: AbortSignal) => {
-    return fetch(`${urlsApi.report.employee}${convertParamsToString(params)}`, {
-      signal,
-      method: "GET",
-    }).then((res) => res.json());
+    return apiGet(urlsApi.report.employee, params, signal);
   },
 
   product: (params?: IReportCommonFilterRequest, signal?: AbortSignal) => {
-    return fetch(`${urlsApi.report.product}${convertParamsToString(params)}`, {
-      signal,
-      method: "GET",
-    }).then((res) => res.json());
+    return apiGet(urlsApi.report.product, params, signal);
   },
 
   cardService: (params?: IReportCommonFilterRequest, signal?: AbortSignal) => {
-    return fetch(`${urlsApi.report.cardService}${convertParamsToString(params)}`, {
-      signal,
-      method: "GET",
-    }).then((res) => res.json());
+    return apiGet(urlsApi.report.cardService, params, signal);
   },
 
   service: (params?: IReportCommonFilterRequest, signal?: AbortSignal) => {
-    return fetch(`${urlsApi.report.service}${convertParamsToString(params)}`, {
-      signal,
-      method: "GET",
-    }).then((res) => res.json());
+    return apiGet(urlsApi.report.service, params, signal);
   },
 
   city: (params?: IReportCommonFilterRequest, signal?: AbortSignal) => {
-    return fetch(`${urlsApi.report.city}${convertParamsToString(params)}`, {
-      signal,
-      method: "GET",
-    }).then((res) => res.json());
+    return apiGet(urlsApi.report.city, params, signal);
   },
 
   customer: (params?: IReportCommonFilterRequest, signal?: AbortSignal) => {
-    return fetch(`${urlsApi.report.customer}${convertParamsToString(params)}`, {
-      signal,
-      method: "GET",
-    }).then((res) => res.json());
+    return apiGet(urlsApi.report.customer, params, signal);
   },
 };

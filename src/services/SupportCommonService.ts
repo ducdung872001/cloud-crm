@@ -1,24 +1,17 @@
+import { apiDelete, apiGet, apiPost } from "services/apiHelper";
 import { urlsApi } from "configs/urls";
-import { convertParamsToString } from "reborn-util";
+
 
 export default {
   // config
   lstConfig: (params: Record<string, unknown>, signal?: AbortSignal) => {
-    return fetch(`${urlsApi.supportCommon.supportConfigLst}${convertParamsToString(params)}`, {
-      signal,
-      method: "GET",
-    }).then((res) => res.json());
+    return apiGet(urlsApi.supportCommon.supportConfigLst, params, signal);
   },
   updateConfig: (body: Record<string, unknown>) => {
-    return fetch(urlsApi.supportCommon.supportConfigUpdate, {
-      method: "POST",
-      body: JSON.stringify(body),
-    }).then((res) => res.json());
+    return apiPost(urlsApi.supportCommon.supportConfigUpdate, body);
   },
   deleteConfig: (id: number) => {
-    return fetch(`${urlsApi.supportCommon.supportConfigDelete}?id=${id}`, {
-      method: "DELETE",
-    }).then((res) => res.json());
+    return apiDelete(`${urlsApi.supportCommon.supportConfigDelete}?id=${id}`);
   },
   detailConfig: (id: number) => {
     return fetch(`${urlsApi.supportCommon.supportConfigDetail}?id=${id}`, {
@@ -27,94 +20,54 @@ export default {
   },
   //link
   lstLink: (params: Record<string, unknown>, signal?: AbortSignal) => {
-    return fetch(`${urlsApi.supportCommon.supportLinkLst}${convertParamsToString(params)}`, {
-      signal,
-      method: "GET",
-    }).then((res) => res.json());
+    return apiGet(urlsApi.supportCommon.supportLinkLst, params, signal);
   },
   updateLink: (body: Record<string, unknown>) => {
-    return fetch(urlsApi.supportCommon.supportLinkUpdate, {
-      method: "POST",
-      body: JSON.stringify(body),
-    }).then((res) => res.json());
+    return apiPost(urlsApi.supportCommon.supportLinkUpdate, body);
   },
   deleteLink: (id: number) => {
-    return fetch(`${urlsApi.supportCommon.supportLinkDelete}?id=${id}`, {
-      method: "DELETE",
-    }).then((res) => res.json());
+    return apiDelete(`${urlsApi.supportCommon.supportLinkDelete}?id=${id}`);
   },
   //object
   lstObject: (params: Record<string, unknown>, signal?: AbortSignal) => {
-    return fetch(`${urlsApi.supportCommon.supportObjectLst}${convertParamsToString(params)}`, {
-      signal,
-      method: "GET",
-    }).then((res) => res.json());
+    return apiGet(urlsApi.supportCommon.supportObjectLst, params, signal);
   },
   takeObject: (params: Record<string, unknown>) => {
-    return fetch(`${urlsApi.supportCommon.takeObject}${convertParamsToString(params)}`, {
-      method: "GET",
-    }).then((res) => res.json());
+    return apiGet(urlsApi.supportCommon.takeObject, params);
   },
   checkApproved: (params: Record<string, unknown>) => {
-    return fetch(`${urlsApi.supportCommon.checkApproved}${convertParamsToString(params)}`, {
-      method: "GET",
-    }).then((res) => res.json());
+    return apiGet(urlsApi.supportCommon.checkApproved, params);
   },
   updateObject: (body: Record<string, unknown>) => {
-    return fetch(urlsApi.supportCommon.supportObjectUpdate, {
-      method: "POST",
-      body: JSON.stringify(body),
-    }).then((res) => res.json());
+    return apiPost(urlsApi.supportCommon.supportObjectUpdate, body);
   },
   deleteObject: (id: number) => {
-    return fetch(`${urlsApi.supportCommon.supportObjectDelete}?id=${id}`, {
-      method: "DELETE",
-    }).then((res) => res.json());
+    return apiDelete(`${urlsApi.supportCommon.supportObjectDelete}?id=${id}`);
   },
   //log
   lstLog: (params: Record<string, unknown>, signal?: AbortSignal) => {
-    return fetch(`${urlsApi.supportCommon.supportLogLst}${convertParamsToString(params)}`, {
-      signal,
-      method: "GET",
-    }).then((res) => res.json());
+    return apiGet(urlsApi.supportCommon.supportLogLst, params, signal);
   },
   updateLog: (body: Record<string, unknown>) => {
-    return fetch(urlsApi.supportCommon.supportLogUpdate, {
-      method: "POST",
-      body: JSON.stringify(body),
-    }).then((res) => res.json());
+    return apiPost(urlsApi.supportCommon.supportLogUpdate, body);
   },
   deleteLog: (id: number) => {
-    return fetch(`${urlsApi.supportCommon.supportLogDelete}?id=${id}`, {
-      method: "DELETE",
-    }).then((res) => res.json());
+    return apiDelete(`${urlsApi.supportCommon.supportLogDelete}?id=${id}`);
   },
 
   // cập nhật trạng thái
   updateStatusSupport: (body: Record<string, unknown>) => {
-    return fetch(urlsApi.supportCommon.updateStatusSupport, {
-      method: "POST",
-      body: JSON.stringify(body),
-    }).then((res) => res.json());
+    return apiPost(urlsApi.supportCommon.updateStatusSupport, body);
   },
 
   // đoạn này là action confirm nút
   processDone: (body: Record<string, unknown>) => {
-    return fetch(urlsApi.supportCommon.processDone, {
-      method: "POST",
-      body: JSON.stringify(body),
-    }).then((res) => res.json());
+    return apiPost(urlsApi.supportCommon.processDone, body);
   },
   processReceive: (body: Record<string, unknown>) => {
-    return fetch(urlsApi.supportCommon.processReceive, {
-      method: "POST",
-      body: JSON.stringify(body),
-    }).then((res) => res.json());
+    return apiPost(urlsApi.supportCommon.processReceive, body);
   },
   processRejected: (body: Record<string, unknown>) => {
-    return fetch(urlsApi.supportCommon.processRejected, {
-      method: "POST",
-      body: JSON.stringify(body),
-    }).then((res) => res.json());
+    return apiPost(urlsApi.supportCommon.processRejected, body);
   },
 };

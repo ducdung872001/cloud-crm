@@ -1,3 +1,4 @@
+import { apiGet } from "services/apiHelper";
 import { urlsApi } from "configs/urls";
 import { ShortcutKey } from "model/dashboard/DashboardModel";
 
@@ -9,9 +10,7 @@ interface ShortcutApiResponse {
 
 const ShortcutService = {
   get: (): Promise<ShortcutApiResponse> => {
-    return fetch(urlsApi.shortcut.get, {
-      method: "GET",
-    }).then((res) => res.json());
+    return apiGet(urlsApi.shortcut.get);
   },
 
   update: (shortcuts: ShortcutKey[]): Promise<ShortcutApiResponse> => {

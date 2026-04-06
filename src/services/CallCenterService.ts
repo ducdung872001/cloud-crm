@@ -1,5 +1,6 @@
+import { apiGet } from "services/apiHelper";
 import { urlsApi } from "configs/urls";
-import { convertParamsToString } from "reborn-util";
+
 import { ITransferCallModel, IMakeCallOTPModel, ICallHistoryListFilterRequest } from "model/callCenter/CallCenterRequestModel";
 
 export default {
@@ -23,9 +24,7 @@ export default {
   },
   //* Chuyển một cuộc gọi sang máy khác
   transferCall: (params?: ITransferCallModel) => {
-    return fetch(`${urlsApi.callCenter.transferCall}${convertParamsToString(params)}`, {
-      method: "GET",
-    }).then((res) => res.json());
+    return apiGet(urlsApi.callCenter.transferCall, params);
   },
   //* Thực hiện ngắt cuộc gọi
   hangupCall: (customerId?: number) => {
@@ -35,15 +34,10 @@ export default {
   },
   //* Tạo 1 cuộc gọi đọc mã OTP cho người đăng ký
   makeCallOTP: (params?: IMakeCallOTPModel) => {
-    return fetch(`${urlsApi.callCenter.makeCallOTP}${convertParamsToString(params)}`, {
-      method: "GET",
-    }).then((res) => res.json());
+    return apiGet(urlsApi.callCenter.makeCallOTP, params);
   },
   //* Danh sách lịch sử cuộc gọi
   callHistoryList: (params?: ICallHistoryListFilterRequest, signal?: AbortSignal) => {
-    return fetch(`${urlsApi.callCenter.customerCallList}${convertParamsToString(params)}`, {
-      signal,
-      method: "GET",
-    }).then((res) => res.json());
+    return apiGet(urlsApi.callCenter.customerCallList, params, signal);
   },
 };

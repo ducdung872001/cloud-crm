@@ -1,3 +1,4 @@
+import { apiDelete, apiGet } from "services/apiHelper";
 import { urlsApi } from "configs/urls";
 
 // ---- Response types từ API ----
@@ -54,10 +55,7 @@ const ShippingPartnerService = {
    * GET /logistics/carrier/list
    */
   getCarrierList: (signal?: AbortSignal): Promise<Record<string, unknown>> => {
-    return fetch(urlsApi.shippingPartner.carrierList, {
-      method: "GET",
-      signal,
-    }).then((res) => res.json());
+    return apiGet(urlsApi.shippingPartner.carrierList, undefined, signal);
   },
 
   /**
@@ -65,10 +63,7 @@ const ShippingPartnerService = {
    * GET /integration/carrier/configs
    */
   getCarrierConfigs: (signal?: AbortSignal): Promise<Record<string, unknown>> => {
-    return fetch(urlsApi.shippingPartner.carrierConfigs, {
-      method: "GET",
-      signal,
-    }).then((res) => res.json());
+    return apiGet(urlsApi.shippingPartner.carrierConfigs, undefined, signal);
   },
 
   /**
@@ -88,9 +83,7 @@ const ShippingPartnerService = {
    * DELETE /integration/carrier/disconnect?carrierCode=GHN
    */
   disconnectCarrier: (carrierCode: string): Promise<Record<string, unknown>> => {
-    return fetch(`${urlsApi.shippingPartner.disconnect}?carrierCode=${carrierCode}`, {
-      method: "DELETE",
-    }).then((res) => res.json());
+    return apiDelete(`${urlsApi.shippingPartner.disconnect}?carrierCode=${carrierCode}`);
   },
 
   /**

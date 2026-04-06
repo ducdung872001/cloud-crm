@@ -1,12 +1,10 @@
+import { apiDelete, apiGet, apiPost } from "services/apiHelper";
 import { urlsApi } from "configs/urls";
-import { convertParamsToString } from "reborn-util";
+
 
 export default {
   list: (params: Record<string, unknown>, signal?: AbortSignal) => {
-    return fetch(`${urlsApi.bpmParticipant.lst}${convertParamsToString(params)}`, {
-      signal,
-      method: "GET",
-    }).then((res) => res.json());
+    return apiGet(urlsApi.bpmParticipant.lst, params, signal);
   },
   detail: (id: number) => {
     return fetch(`${urlsApi.bpmParticipant.detail}?id=${id}`, {
@@ -14,14 +12,9 @@ export default {
     }).then((res) => res.json());
   },
   update: (body: Record<string, unknown>) => {
-    return fetch(urlsApi.bpmParticipant.update, {
-      method: "POST",
-      body: JSON.stringify(body),
-    }).then((res) => res.json());
+    return apiPost(urlsApi.bpmParticipant.update, body);
   },
   delete: (id: number) => {
-    return fetch(`${urlsApi.bpmParticipant.delete}?id=${id}`, {
-      method: "DELETE",
-    }).then((res) => res.json());
+    return apiDelete(`${urlsApi.bpmParticipant.delete}?id=${id}`);
   },
 };

@@ -1,19 +1,14 @@
+import { apiDelete, apiGet, apiPost } from "services/apiHelper";
 import { urlsApi } from "configs/urls";
-import { convertParamsToString } from "reborn-util";
+
 import { ISwitchboardFilterRequest, ISwitchboardRequestModel } from "model/switchboard/SwitchboardRequestModel";
 
 export default {
   list: (params?: ISwitchboardFilterRequest, signal?: AbortSignal) => {
-    return fetch(`${urlsApi.switchboard.list}${convertParamsToString(params)}`, {
-      signal,
-      method: "GET",
-    }).then((res) => res.json());
+    return apiGet(urlsApi.switchboard.list, params, signal);
   },
   update: (body: ISwitchboardRequestModel) => {
-    return fetch(urlsApi.switchboard.update, {
-      method: "POST",
-      body: JSON.stringify(body),
-    }).then((res) => res.json());
+    return apiPost(urlsApi.switchboard.update, body);
   },
   detail: (id: number) => {
     return fetch(`${urlsApi.switchboard.detail}?id=${id}`, {
@@ -21,15 +16,10 @@ export default {
     }).then((res) => res.json());
   },
   delete: (id: number) => {
-    return fetch(`${urlsApi.switchboard.delete}?id=${id}`, {
-      method: "DELETE",
-    }).then((res) => res.json());
+    return apiDelete(`${urlsApi.switchboard.delete}?id=${id}`);
   },  
 
   updateStatus: (body: Record<string, unknown>) => {
-    return fetch(urlsApi.switchboard.updateStatus, {
-      method: "POST",
-      body: JSON.stringify(body),
-    }).then((res) => res.json());
+    return apiPost(urlsApi.switchboard.updateStatus, body);
   },
 };

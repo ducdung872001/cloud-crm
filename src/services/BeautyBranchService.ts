@@ -1,31 +1,21 @@
+import { apiDelete, apiGet, apiPost } from "services/apiHelper";
 import { urlsApi } from "configs/urls";
-import { convertParamsToString } from "reborn-util";
+
 import { IBeautyBranchFilterRequest, IBeautyBranchRequest } from "model/beautyBranch/BeautyBranchRequestModel";
 
 export default {
   list: (params: IBeautyBranchFilterRequest, signal?: AbortSignal) => {
-    return fetch(`${urlsApi.beautyBranch.list}${convertParamsToString(params)}`, {
-      signal,
-      method: "GET",
-    }).then((res) => res.json());
+    return apiGet(urlsApi.beautyBranch.list, params, signal);
   },
 
   childList: (params: IBeautyBranchFilterRequest, signal?: AbortSignal) => {
-    return fetch(`${urlsApi.beautyBranch.childList}${convertParamsToString(params)}`, {
-      signal,
-      method: "GET",
-    }).then((res) => res.json());
+    return apiGet(urlsApi.beautyBranch.childList, params, signal);
   },
   update: (body: IBeautyBranchRequest) => {
-    return fetch(urlsApi.beautyBranch.update, {
-      method: "POST",
-      body: JSON.stringify(body),
-    }).then((res) => res.json());
+    return apiPost(urlsApi.beautyBranch.update, body);
   },
   delete: (id: number) => {
-    return fetch(`${urlsApi.beautyBranch.delete}?id=${id}`, {
-      method: "DELETE",
-    }).then((res) => res.json());
+    return apiDelete(`${urlsApi.beautyBranch.delete}?id=${id}`);
   },
   getByBeauty: (token: string) => {
     return fetch(urlsApi.beautyBranch.getByBeauty, {
@@ -44,24 +34,15 @@ export default {
 
   //tìm đối tác (chi nhánh) bằng mã
   getBeautyBranchByCode: (params: Record<string, unknown>, signal?: AbortSignal) => {
-    return fetch(`${urlsApi.beautyBranch.getBeautyBranchByCode}${convertParamsToString(params)}`, {
-      signal,
-      method: "GET",
-    }).then((res) => res.json());
+    return apiGet(urlsApi.beautyBranch.getBeautyBranchByCode, params, signal);
   },
 
   // thay đổi trạng thái chi nhánh
   unActivate: (body: Record<string, unknown>) => {
-    return fetch(urlsApi.beautyBranch.unActivate, {
-      method: "POST",
-      body: JSON.stringify(body),
-    }).then((res) => res.json());
+    return apiPost(urlsApi.beautyBranch.unActivate, body);
   },
 
   activate: (body: Record<string, unknown>) => {
-    return fetch(urlsApi.beautyBranch.activate, {
-      method: "POST",
-      body: JSON.stringify(body),
-    }).then((res) => res.json());
+    return apiPost(urlsApi.beautyBranch.activate, body);
   },
 };

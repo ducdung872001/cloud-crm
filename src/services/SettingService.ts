@@ -1,23 +1,16 @@
+import { apiDelete, apiGet, apiPost } from "services/apiHelper";
 import { urlsApi } from "configs/urls";
-import { convertParamsToString } from "reborn-util";
+
 import { ISettingFilterRequest, ISettingRequest } from "model/setting/SettingRequestModel";
 
 export default {
   list: (params: ISettingFilterRequest, signal?: AbortSignal) => {
-    return fetch(`${urlsApi.setting.list}${convertParamsToString(params)}`, {
-      signal,
-      method: "GET",
-    }).then((res) => res.json());
+    return apiGet(urlsApi.setting.list, params, signal);
   },
   update: (body: ISettingRequest) => {
-    return fetch(urlsApi.setting.update, {
-      method: "POST",
-      body: JSON.stringify(body),
-    }).then((res) => res.json());
+    return apiPost(urlsApi.setting.update, body);
   },
   delete: (id: number) => {
-    return fetch(`${urlsApi.setting.delete}?id=${id}`, {
-      method: "DELETE",
-    }).then((res) => res.json());
+    return apiDelete(`${urlsApi.setting.delete}?id=${id}`);
   },
 };

@@ -1,10 +1,9 @@
+import { apiGet } from "services/apiHelper";
 import { urlsApi } from "configs/urls";
-import { convertParamsToString } from "reborn-util";
+
 
 export default {
   list: (params: Record<string, unknown>) => {
-    return fetch(`${urlsApi.customer.area}${convertParamsToString(params)}`, {
-      method: "GET",
-    }).then((res) => res.json());
+    return apiGet(urlsApi.customer.area, params);
   },
 };

@@ -1,5 +1,6 @@
+import { apiDelete, apiGet, apiPost } from "services/apiHelper";
 import { urlsApi } from "configs/urls";
-import { convertParamsToString } from "reborn-util";
+
 import {
   ITreatmentRoomRequestModal,
   ITreatmentRoomFilterRequest,
@@ -8,22 +9,13 @@ import {
 
 export default {
   list: (params: ITreatmentRoomFilterRequest, signal?: AbortSignal) => {
-    return fetch(`${urlsApi.treatmentRoom.list}${convertParamsToString(params)}`, {
-      signal,
-      method: "GET",
-    }).then((res) => res.json());
+    return apiGet(urlsApi.treatmentRoom.list, params, signal);
   },
   update: (body: ITreatmentRoomRequestModal) => {
-    return fetch(urlsApi.treatmentRoom.update, {
-      method: "POST",
-      body: JSON.stringify(body),
-    }).then((res) => res.json());
+    return apiPost(urlsApi.treatmentRoom.update, body);
   },
   checkTreatmentRoom: (body: ICheckTreatmentRoomRequestModal) => {
-    return fetch(urlsApi.treatmentRoom.checkTreatmentRoom, {
-      method: "POST",
-      body: JSON.stringify(body),
-    }).then((res) => res.json());
+    return apiPost(urlsApi.treatmentRoom.checkTreatmentRoom, body);
   },
   detail: (id: number) => {
     return fetch(`${urlsApi.treatmentRoom.detail}?id=${id}`, {
@@ -31,8 +23,6 @@ export default {
     }).then((res) => res.json());
   },
   delete: (id: number) => {
-    return fetch(`${urlsApi.treatmentRoom.delete}?id=${id}`, {
-      method: "DELETE",
-    }).then((res) => res.json());
+    return apiDelete(`${urlsApi.treatmentRoom.delete}?id=${id}`);
   },
 };

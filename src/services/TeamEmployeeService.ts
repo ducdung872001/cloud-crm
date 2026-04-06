@@ -1,19 +1,14 @@
+import { apiDelete, apiGet, apiPost } from "services/apiHelper";
 import { urlsApi } from "configs/urls";
-import { convertParamsToString } from "reborn-util";
+
 import { ISwitchboardFilterRequest, ISwitchboardRequestModel } from "model/switchboard/SwitchboardRequestModel";
 
 export default {
   list: (params?: Record<string, unknown>, signal?: AbortSignal) => {
-    return fetch(`${urlsApi.teamEmployee.list}${convertParamsToString(params)}`, {
-      signal,
-      method: "GET",
-    }).then((res) => res.json());
+    return apiGet(urlsApi.teamEmployee.list, params, signal);
   },
   update: (body: Record<string, unknown>) => {
-    return fetch(urlsApi.teamEmployee.update, {
-      method: "POST",
-      body: JSON.stringify(body),
-    }).then((res) => res.json());
+    return apiPost(urlsApi.teamEmployee.update, body);
   },
   detail: (id: number) => {
     return fetch(`${urlsApi.teamEmployee.detail}?id=${id}`, {
@@ -21,29 +16,19 @@ export default {
     }).then((res) => res.json());
   },
   delete: (id: number) => {
-    return fetch(`${urlsApi.teamEmployee.delete}?id=${id}`, {
-      method: "DELETE",
-    }).then((res) => res.json());
+    return apiDelete(`${urlsApi.teamEmployee.delete}?id=${id}`);
   },  
 
   listEmployee: (params?: Record<string, unknown>, signal?: AbortSignal) => {
-    return fetch(`${urlsApi.teamEmployee.listEmployee}${convertParamsToString(params)}`, {
-      signal,
-      method: "GET",
-    }).then((res) => res.json());
+    return apiGet(urlsApi.teamEmployee.listEmployee, params, signal);
   },
 
   updateEmployee: (body: Record<string, unknown>) => {
-    return fetch(urlsApi.teamEmployee.updateEmployee, {
-      method: "POST",
-      body: JSON.stringify(body),
-    }).then((res) => res.json());
+    return apiPost(urlsApi.teamEmployee.updateEmployee, body);
   },
 
   deleteEmployee: (id: number) => {
-    return fetch(`${urlsApi.teamEmployee.deleteEmployee}?id=${id}`, {
-      method: "DELETE",
-    }).then((res) => res.json());
+    return apiDelete(`${urlsApi.teamEmployee.deleteEmployee}?id=${id}`);
   },  
 
 };

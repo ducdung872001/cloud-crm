@@ -1,13 +1,11 @@
+import { apiDelete, apiGet, apiPost } from "services/apiHelper";
 import { urlsApi } from "configs/urls";
 import { convertParamsToString } from "reborn-util";
 import { IContactFilterRequest, IContactRequest, IContactFieldFilterRequest } from "model/contact/ContactRequestModel";
 
 export default {
   list: (params: IContactFilterRequest, signal?: AbortSignal) => {
-    return fetch(`${urlsApi.contact.list}${convertParamsToString(params)}`, {
-      signal,
-      method: "GET",
-    }).then((res) => res.json());
+    return apiGet(urlsApi.contact.list, params, signal);
   },
   detail: (id: number) => {
     return fetch(`${urlsApi.contact.detail}?id=${id}`, {
@@ -15,39 +13,25 @@ export default {
     }).then((res) => res.json());
   },
   update: (body: IContactRequest) => {
-    return fetch(urlsApi.contact.update, {
-      method: "POST",
-      body: JSON.stringify(body),
-    }).then((res) => res.json());
+    return apiPost(urlsApi.contact.update, body);
   },
   delete: (id: number) => {
-    return fetch(`${urlsApi.contact.delete}?id=${id}`, {
-      method: "DELETE",
-    }).then((res) => res.json());
+    return apiDelete(`${urlsApi.contact.delete}?id=${id}`);
   },
   fieldTable: (params: IContactFieldFilterRequest) => {
-    return fetch(`${urlsApi.contact.fieldTable}${convertParamsToString(params)}`, {
-      method: "GET",
-    }).then((res) => res.json());
+    return apiGet(urlsApi.contact.fieldTable, params);
   },
 
   contactExchange: (params: Record<string, unknown>) => {
-    return fetch(`${urlsApi.contact.contactExchange}${convertParamsToString(params)}`, {
-      method: "GET",
-    }).then((res) => res.json());
+    return apiGet(urlsApi.contact.contactExchange, params);
   },
   // xóa đi 1 trao đổi 
   deleteContactExchange: (id: number) => {
-    return fetch(`${urlsApi.contact.deleteContactExchange}?id=${id}`, {
-      method: "DELETE",
-    }).then((res) => res.json());
+    return apiDelete(`${urlsApi.contact.deleteContactExchange}?id=${id}`);
   },
   // thêm mới trao đổi 
   addContactExchange: (body) => {
-    return fetch(urlsApi.contact.addContactExchange, {
-      method: "POST",
-      body: JSON.stringify(body),
-    }).then((res) => res.json());
+    return apiPost(urlsApi.contact.addContactExchange, body);
   },
 
   // cập nhật lại trao đổi 
@@ -61,9 +45,7 @@ export default {
   ///lấy danh sách các trường chọn để import
 
   exAttributes: (params) => {
-    return fetch(`${urlsApi.contact.exAttributes}${convertParamsToString(params)}`, {
-      method: "GET",
-    }).then((res) => res.json());
+    return apiGet(urlsApi.contact.exAttributes, params);
   },
 
   numberFieldContact: (body, params) => {
@@ -81,10 +63,7 @@ export default {
 
   // import khách hàng b2
   autoProcess: (body: Record<string, unknown>) => {
-    return fetch(urlsApi.contact.autoProcess, {
-      method: "POST",
-      body: JSON.stringify(body),
-    }).then((res) => res.json());
+    return apiPost(urlsApi.contact.autoProcess, body);
   },
   // download file lỗi
   downloadFile: (id: number) => {

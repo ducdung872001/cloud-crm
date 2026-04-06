@@ -1,98 +1,60 @@
+import { apiDelete, apiGet, apiPost } from "services/apiHelper";
 import { urlsApi } from "configs/urls";
-import { convertParamsToString } from "reborn-util";
+
 import { IKpiFilterRequest, IKpiRequest } from "model/kpi/KpiRequestModel";
 
 export default {
   list: (params: IKpiFilterRequest, signal?: AbortSignal) => {
-    return fetch(`${urlsApi.kpi.list}${convertParamsToString(params)}`, {
-      signal,
-      method: "GET",
-    }).then((res) => res.json());
+    return apiGet(urlsApi.kpi.list, params, signal);
   },
   update: (body: IKpiRequest) => {
-    return fetch(urlsApi.kpi.update, {
-      method: "POST",
-      body: JSON.stringify(body),
-    }).then((res) => res.json());
+    return apiPost(urlsApi.kpi.update, body);
   },
   delete: (id: number) => {
-    return fetch(`${urlsApi.kpi.delete}?id=${id}`, {
-      method: "DELETE",
-    }).then((res) => res.json());
+    return apiDelete(`${urlsApi.kpi.delete}?id=${id}`);
   },
 
   checkKpiCampaign: (params: Record<string, unknown>, signal?: AbortSignal) => {
-    return fetch(`${urlsApi.kpi.checkKpiCampaign}${convertParamsToString(params)}`, {
-      signal,
-      method: "GET",
-    }).then((res) => res.json());
+    return apiGet(urlsApi.kpi.checkKpiCampaign, params, signal);
   },
 
   updateKpi: (body: Record<string, unknown>) => {
-    return fetch(urlsApi.kpi.updateKpi, {
-      method: "POST",
-      body: JSON.stringify(body),
-    }).then((res) => res.json());
+    return apiPost(urlsApi.kpi.updateKpi, body);
   },
 
   listEmployeeKpi: (params: Record<string, unknown>, signal?: AbortSignal) => {
-    return fetch(`${urlsApi.kpi.listEmployeeKpi}${convertParamsToString(params)}`, {
-      signal,
-      method: "GET",
-    }).then((res) => res.json());
+    return apiGet(urlsApi.kpi.listEmployeeKpi, params, signal);
   },
 
   addEmployeeToKpi: (params: Record<string, unknown>, signal?: AbortSignal) => {
-    return fetch(`${urlsApi.kpi.addEmployeeToKpi}${convertParamsToString(params)}`, {
-      signal,
-      method: "GET",
-    }).then((res) => res.json());
+    return apiGet(urlsApi.kpi.addEmployeeToKpi, params, signal);
   },
 
   listGoalKpiEmployee: (params: Record<string, unknown>, signal?: AbortSignal) => {
-    return fetch(`${urlsApi.kpi.listGoalKpiEmployee}${convertParamsToString(params)}`, {
-      signal,
-      method: "GET",
-    }).then((res) => res.json());
+    return apiGet(urlsApi.kpi.listGoalKpiEmployee, params, signal);
   },
 
   saveKpiEmployee: (body: Record<string, unknown>) => {
-    return fetch(urlsApi.kpi.saveKpiEmployee, {
-      method: "POST",
-      body: JSON.stringify(body),
-    }).then((res) => res.json());
+    return apiPost(urlsApi.kpi.saveKpiEmployee, body);
   },
 
   deleteEmployeeKpi: (id: number) => {
-    return fetch(`${urlsApi.kpi.deleteEmployeeKpi}?id=${id}`, {
-      method: "DELETE",
-    }).then((res) => res.json());
+    return apiDelete(`${urlsApi.kpi.deleteEmployeeKpi}?id=${id}`);
   },
 
   addEmployeeToKpiContact: (params: Record<string, unknown>, signal?: AbortSignal) => {
-    return fetch(`${urlsApi.kpi.addEmployeeToKpiContact}${convertParamsToString(params)}`, {
-      signal,
-      method: "GET",
-    }).then((res) => res.json());
+    return apiGet(urlsApi.kpi.addEmployeeToKpiContact, params, signal);
   },
 
   saveKpiContactEmployee: (body: Record<string, unknown>) => {
-    return fetch(urlsApi.kpi.saveKpiContactEmployee, {
-      method: "POST",
-      body: JSON.stringify(body),
-    }).then((res) => res.json());
+    return apiPost(urlsApi.kpi.saveKpiContactEmployee, body);
   },
 
   listEmployeeKpiContact: (params: Record<string, unknown>, signal?: AbortSignal) => {
-    return fetch(`${urlsApi.kpi.listEmployeeKpiContact}${convertParamsToString(params)}`, {
-      signal,
-      method: "GET",
-    }).then((res) => res.json());
+    return apiGet(urlsApi.kpi.listEmployeeKpiContact, params, signal);
   },
 
   deleteEmployeeKpiContact: (employeeId: number, campaignId: number) => {
-    return fetch(`${urlsApi.kpi.deleteEmployeeKpiContact}?employeeId=${employeeId}&campaignId=${campaignId}`, {
-      method: "DELETE",
-    }).then((res) => res.json());
+    return apiDelete(`${urlsApi.kpi.deleteEmployeeKpiContact}?employeeId=${employeeId}&campaignId=${campaignId}`);
   },
 };

@@ -1,18 +1,13 @@
+import { apiDelete, apiGet, apiPost } from "services/apiHelper";
 import { urlsApi } from "configs/urls";
-import { convertParamsToString } from "reborn-util";
+
 
 export default {
   lst: (params?: Record<string, unknown>, signal?: AbortSignal) => {
-    return fetch(`${urlsApi.sheetFieldQuoteForm.list}${convertParamsToString(params)}`, {
-      signal,
-      method: "GET",
-    }).then((res) => res.json());
+    return apiGet(urlsApi.sheetFieldQuoteForm.list, params, signal);
   },
   update: (body: Record<string, unknown>) => {
-    return fetch(urlsApi.sheetFieldQuoteForm.update, {
-      method: "POST",
-      body: JSON.stringify(body),
-    }).then((res) => res.json());
+    return apiPost(urlsApi.sheetFieldQuoteForm.update, body);
   },
   detail: (id: number) => {
     return fetch(`${urlsApi.sheetFieldQuoteForm.detail}?id=${id}`, {
@@ -20,14 +15,9 @@ export default {
     }).then((res) => res.json());
   },
   delete: (id: number) => {
-    return fetch(`${urlsApi.sheetFieldQuoteForm.delete}?id=${id}`, {
-      method: "DELETE",
-    }).then((res) => res.json());
+    return apiDelete(`${urlsApi.sheetFieldQuoteForm.delete}?id=${id}`);
   },
   updatePostion: (body: Record<string, unknown>) => {
-    return fetch(urlsApi.sheetFieldQuoteForm.updatePosition, {
-      method: "POST",
-      body: JSON.stringify(body),
-    }).then((res) => res.json());
+    return apiPost(urlsApi.sheetFieldQuoteForm.updatePosition, body);
   },
 };

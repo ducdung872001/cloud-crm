@@ -1,24 +1,17 @@
+import { apiDelete, apiGet } from "services/apiHelper";
 import { urlsApi } from "configs/urls";
-import { convertParamsToString } from "reborn-util";
+
 
 export default {
   list: (params?: Record<string, unknown>, signal?: AbortSignal) => {
-    return fetch(`${urlsApi.organization.list}${convertParamsToString(params)}`, {
-      signal,
-      method: "GET",
-    }).then((res) => res.json());
+    return apiGet(urlsApi.organization.list, params, signal);
   },
   customerUploadList: (params?: Record<string, unknown>, signal?: AbortSignal) => {
-    return fetch(`${urlsApi.organization.customerUploadList}${convertParamsToString(params)}`, {
-      signal,
-      method: "GET",
-    }).then((res) => res.json());
+    return apiGet(urlsApi.organization.customerUploadList, params, signal);
   },
 
   customerUploadDelete: (id: number) => {
-    return fetch(`${urlsApi.organization.customerUploadDelete}?uploadId=${id}`, {
-      method: "DELETE",
-    }).then((res) => res.json());
+    return apiDelete(`${urlsApi.organization.customerUploadDelete}?uploadId=${id}`);
   },
 
   // customerUploadDelete: (body: any, id: NumberConstructor) => {

@@ -1,35 +1,22 @@
+import { apiDelete, apiGet, apiPost } from "services/apiHelper";
 import { urlsApi } from "configs/urls";
-import { convertParamsToString } from "reborn-util";
+
 import { IContractAttributeFilterRequest, IContractAttributeRequest } from "model/contractAttribute/ContractAttributeRequest";
 
 export default {
   list: (params: IContractAttributeFilterRequest, signal?: AbortSignal) => {
-    return fetch(`${urlsApi.warrantyAttribute.list}${convertParamsToString(params)}`, {
-      signal,
-      method: "GET",
-    }).then((res) => res.json());
+    return apiGet(urlsApi.warrantyAttribute.list, params, signal);
   },
   update: (body: IContractAttributeRequest) => {
-    return fetch(urlsApi.warrantyAttribute.update, {
-      method: "POST",
-      body: JSON.stringify(body),
-    }).then((res) => res.json());
+    return apiPost(urlsApi.warrantyAttribute.update, body);
   },
   delete: (id: number) => {
-    return fetch(`${urlsApi.warrantyAttribute.delete}?id=${id}`, {
-      method: "DELETE",
-    }).then((res) => res.json());
+    return apiDelete(`${urlsApi.warrantyAttribute.delete}?id=${id}`);
   },
   listAll: (params?: Record<string, unknown>, signal?: AbortSignal) => {
-    return fetch(`${urlsApi.warrantyAttribute.listAll}${convertParamsToString(params)}`, {
-      signal,
-      method: "GET",
-    }).then((res) => res.json());
+    return apiGet(urlsApi.warrantyAttribute.listAll, params, signal);
   },
   checkDuplicated: (params: Record<string, unknown>, signal?: AbortSignal) => {
-    return fetch(`${urlsApi.warrantyAttribute.checkDuplicated}${convertParamsToString(params)}`, {
-      signal,
-      method: "GET",
-    }).then((res) => res.json());
+    return apiGet(urlsApi.warrantyAttribute.checkDuplicated, params, signal);
   },
 };

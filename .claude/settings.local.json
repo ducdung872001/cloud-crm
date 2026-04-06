@@ -52,7 +52,9 @@
       "Bash(rm -rf src/components/importModal)",
       "Bash(mv src/components/importModalBackup src/components/importModal)",
       "Bash(cp -r src/components/importModalBackup src/components/importModal)",
-      "Bash(rm -rf src/components/importModalBackup)"
+      "Bash(rm -rf src/components/importModalBackup)",
+      "Bash(ls src/services/*.ts src/services/*.tsx)",
+      "Bash(node refactor_services.js)"
     ]
   }
 }

@@ -1,30 +1,19 @@
+import { apiGet, apiPost } from "services/apiHelper";
 import { urlsApi } from "configs/urls";
-import { convertParamsToString } from "reborn-util";
+
 
 export default {
   list: (params: Record<string, unknown>, signal?: AbortSignal) => {
-    return fetch(`${urlsApi.application.lst}${convertParamsToString(params)}`, {
-      signal,
-      method: "GET",
-    }).then((res) => res.json());
+    return apiGet(urlsApi.application.lst, params, signal);
   },
   listAll: (params: Record<string, unknown>, signal?: AbortSignal) => {
-    return fetch(`${urlsApi.application.lstAll}${convertParamsToString(params)}`, {
-      signal,
-      method: "GET",
-    }).then((res) => res.json());
+    return apiGet(urlsApi.application.lstAll, params, signal);
   },
   update: (body) => {
-    return fetch(`${urlsApi.application.update}`, {
-      method: "POST",
-      body: JSON.stringify(body),
-    }).then((res) => res.json());
+    return apiPost(`${urlsApi.application.update}`, body);
   },
   confirmBill: (body) => {
-    return fetch(`${urlsApi.application.confirmBill}`, {
-      method: "POST",
-      body: JSON.stringify(body),
-    }).then((res) => res.json());
+    return apiPost(`${urlsApi.application.confirmBill}`, body);
   },
   detail: (id: number) => {
     return fetch(`${urlsApi.application.detail}?id=${id}`, {

@@ -1,12 +1,10 @@
+import { apiDelete, apiGet, apiPost } from "services/apiHelper";
 import { urlsApi } from "configs/urls";
-import { convertParamsToString } from "reborn-util";
+
 
 export default {
   listSource: (params: Record<string, unknown>, signal?: AbortSignal) => {
-    return fetch(`${urlsApi.bpmEformMapping.lstSource}${convertParamsToString(params)}`, {
-      signal,
-      method: "GET",
-    }).then((res) => res.json());
+    return apiGet(urlsApi.bpmEformMapping.lstSource, params, signal);
   },
   detail: (id: number) => {
     return fetch(`${urlsApi.bpmEformMapping.detail}?id=${id}`, {
@@ -14,21 +12,13 @@ export default {
     }).then((res) => res.json());
   },
   update: (body: Record<string, unknown>) => {
-    return fetch(urlsApi.bpmEformMapping.update, {
-      method: "POST",
-      body: JSON.stringify(body),
-    }).then((res) => res.json());
+    return apiPost(urlsApi.bpmEformMapping.update, body);
   },
   delete: (id: number) => {
-    return fetch(`${urlsApi.bpmEformMapping.delete}?id=${id}`, {
-      method: "DELETE",
-    }).then((res) => res.json());
+    return apiDelete(`${urlsApi.bpmEformMapping.delete}?id=${id}`);
   },
 
   listEform: (params: Record<string, unknown>, signal?: AbortSignal) => {
-    return fetch(`${urlsApi.bpmEformMapping.lstEform}${convertParamsToString(params)}`, {
-      signal,
-      method: "GET",
-    }).then((res) => res.json());
+    return apiGet(urlsApi.bpmEformMapping.lstEform, params, signal);
   },
 };

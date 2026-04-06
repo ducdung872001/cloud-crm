@@ -1,18 +1,13 @@
+import { apiDelete, apiGet, apiPost } from "services/apiHelper";
 import { urlsApi } from "configs/urls";
-import { convertParamsToString } from "reborn-util";
+
 
 export default {
   list: (params?: Record<string, unknown>, signal?: AbortSignal) => {
-    return fetch(`${urlsApi.project.list}${convertParamsToString(params)}`, {
-      signal,
-      method: "GET",
-    }).then((res) => res.json());
+    return apiGet(urlsApi.project.list, params, signal);
   },
   update: (body: Record<string, unknown>) => {
-    return fetch(urlsApi.project.update, {
-      method: "POST",
-      body: JSON.stringify(body),
-    }).then((res) => res.json());
+    return apiPost(urlsApi.project.update, body);
   },
   detail: (id: number) => {
     return fetch(`${urlsApi.project.detail}?id=${id}`, {
@@ -20,14 +15,9 @@ export default {
     }).then((res) => res.json());
   },
   delete: (id: number) => {
-    return fetch(`${urlsApi.project.delete}?id=${id}`, {
-      method: "DELETE",
-    }).then((res) => res.json());
+    return apiDelete(`${urlsApi.project.delete}?id=${id}`);
   },
   report: (params?: Record<string, unknown>, signal?: AbortSignal) => {
-    return fetch(`${urlsApi.projectReport.report}${convertParamsToString(params)}`, {
-      signal,
-      method: "GET",
-    }).then((res) => res.json());
+    return apiGet(urlsApi.projectReport.report, params, signal);
   },
 };

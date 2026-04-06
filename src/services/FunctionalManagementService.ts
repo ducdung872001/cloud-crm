@@ -1,5 +1,6 @@
+import { apiDelete, apiGet, apiPost } from "services/apiHelper";
 import { urlsApi } from "configs/urls";
-import { convertParamsToString } from "reborn-util";
+
 import {
   IFunctionalManagementFilterRequest,
   IFreeResourceFilterRequest,
@@ -8,16 +9,10 @@ import {
 
 export default {
   list: (params?: IFunctionalManagementFilterRequest, signal?: AbortSignal) => {
-    return fetch(`${urlsApi.functionalManagement.list}${convertParamsToString(params)}`, {
-      signal,
-      method: "GET",
-    }).then((res) => res.json());
+    return apiGet(urlsApi.functionalManagement.list, params, signal);
   },
   update: (body: IFunctionalManagementRequest) => {
-    return fetch(urlsApi.functionalManagement.update, {
-      method: "POST",
-      body: JSON.stringify(body),
-    }).then((res) => res.json());
+    return apiPost(urlsApi.functionalManagement.update, body);
   },
   detail: (id: number) => {
     return fetch(`${urlsApi.functionalManagement.detail}?id=${id}`, {
@@ -25,15 +20,10 @@ export default {
     }).then((res) => res.json());
   },
   delete: (id: number) => {
-    return fetch(`${urlsApi.functionalManagement.delete}?id=${id}`, {
-      method: "DELETE",
-    }).then((res) => res.json());
+    return apiDelete(`${urlsApi.functionalManagement.delete}?id=${id}`);
   },
   // lấy ra danh sách tài nguyên chưa thuộc phân hệ nào
   freeResource: (params?: IFreeResourceFilterRequest, signal?: AbortSignal) => {
-    return fetch(`${urlsApi.functionalManagement.freeResource}${convertParamsToString(params)}`, {
-      signal,
-      method: "GET",
-    }).then((res) => res.json());
+    return apiGet(urlsApi.functionalManagement.freeResource, params, signal);
   },
 };

@@ -1,23 +1,16 @@
+import { apiDelete, apiGet, apiPost } from "services/apiHelper";
 import { urlsApi } from "configs/urls";
 import { IPaymentHistoryFilterRequest, IPaymentHistoryRequest } from "model/paymentHistory/PaymentHistoryRequestModel";
-import { convertParamsToString } from "reborn-util";
+
 
 export default {
   filter: (params: IPaymentHistoryFilterRequest, signal?: AbortSignal) => {
-    return fetch(`${urlsApi.paymentHistory.filter}${convertParamsToString(params)}`, {
-      signal,
-      method: "GET",
-    }).then((res) => res.json());
+    return apiGet(urlsApi.paymentHistory.filter, params, signal);
   },
   update: (body: IPaymentHistoryRequest) => {
-    return fetch(urlsApi.paymentHistory.update, {
-      method: "POST",
-      body: JSON.stringify(body),
-    }).then((res) => res.json());
+    return apiPost(urlsApi.paymentHistory.update, body);
   },
   delete: (id: number) => {
-    return fetch(`${urlsApi.paymentHistory.delete}?id=${id}`, {
-      method: "DELETE",
-    }).then((res) => res.json());
+    return apiDelete(`${urlsApi.paymentHistory.delete}?id=${id}`);
   },
 };

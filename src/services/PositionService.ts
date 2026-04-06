@@ -1,5 +1,6 @@
+import { apiDelete, apiGet, apiPost } from "services/apiHelper";
 import { urlsApi } from "configs/urls";
-import { convertParamsToString } from "reborn-util";
+
 import { IPositionFilterRequest, IPositionRequest } from "model/position/PositionRequestModel";
 
 /**
@@ -7,20 +8,12 @@ import { IPositionFilterRequest, IPositionRequest } from "model/position/Positio
  */
 export default {
   list: (params: IPositionFilterRequest, signal?: AbortSignal) => {
-    return fetch(`${urlsApi.position.list}${convertParamsToString(params)}`, {
-      signal,
-      method: "GET",
-    }).then((res) => res.json());
+    return apiGet(urlsApi.position.list, params, signal);
   },
   update: (body: IPositionRequest) => {
-    return fetch(urlsApi.position.update, {
-      method: "POST",
-      body: JSON.stringify(body),
-    }).then((res) => res.json());
+    return apiPost(urlsApi.position.update, body);
   },
   delete: (id: number) => {
-    return fetch(`${urlsApi.position.delete}?id=${id}`, {
-      method: "DELETE",
-    }).then((res) => res.json());
+    return apiDelete(`${urlsApi.position.delete}?id=${id}`);
   },
 };

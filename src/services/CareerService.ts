@@ -1,23 +1,16 @@
+import { apiDelete, apiGet, apiPost } from "services/apiHelper";
 import { urlsApi } from "configs/urls";
-import { convertParamsToString } from "reborn-util";
+
 import { ICareerFilterRequest, ICareerRequest } from "model/career/CareerRequest";
 
 export default {
   list: (params?: ICareerFilterRequest, signal?: AbortSignal) => {
-    return fetch(`${urlsApi.career.list}${convertParamsToString(params)}`, {
-      signal,
-      method: "GET",
-    }).then((res) => res.json());
+    return apiGet(urlsApi.career.list, params, signal);
   },
   update: (body: ICareerRequest) => {
-    return fetch(urlsApi.career.update, {
-      method: "POST",
-      body: JSON.stringify(body),
-    }).then((res) => res.json());
+    return apiPost(urlsApi.career.update, body);
   },
   delete: (id: number) => {
-    return fetch(`${urlsApi.career.delete}?id=${id}`, {
-      method: "DELETE",
-    }).then((res) => res.json());
+    return apiDelete(`${urlsApi.career.delete}?id=${id}`);
   },
 };

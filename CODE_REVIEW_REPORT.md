@@ -176,7 +176,7 @@
 |---|--------|----------|
 | 1 | Monolithic CRM | Retail + Beauty/Spa + Real Estate + BPM + HR trong 1 bundle |
 | 2_FIX | 1 Context duy nhất | UserContext — không có state management rõ ràng |
-| 3 | 254 service files | Nhiều file duplicate fetch + JSON.stringify pattern |
+| 3_FIX | 254 service files | Nhiều file duplicate fetch + JSON.stringify pattern |
 | 4 | Validation duplicated | makeValidateField.ts copy ít nhất 4+ nơi |
 | 5 | Hardcoded URLs | 50+ endpoints trong src/configs/urls.ts, một số dev/test lẫn prod |
 

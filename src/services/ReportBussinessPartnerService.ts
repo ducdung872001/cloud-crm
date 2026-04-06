@@ -1,19 +1,14 @@
+import { apiGet } from "services/apiHelper";
 import { urlsApi } from "configs/urls";
-import { convertParamsToString } from "reborn-util";
+
 import { IAnalysisFilterRequest } from "model/analysis/AnalysisRequestModel";
 
 export default {
   reportBussinessParner: (params?: Record<string, unknown>, signal?: AbortSignal) => {
-    return fetch(`${urlsApi.reportBussinessParner.report}${convertParamsToString(params)}`, {
-      signal,
-      method: "GET",
-    }).then((res) => res.json());
+    return apiGet(urlsApi.reportBussinessParner.report, params, signal);
   },
   // Chi tiết báo cáo đối tác
   reportDetail: (params?: Record<string, unknown>, signal?: AbortSignal) => {
-    return fetch(`${urlsApi.reportBussinessParner.reportDetail}${convertParamsToString(params)}`, {
-      signal,
-      method: "GET",
-    }).then((res) => res.json());
+    return apiGet(urlsApi.reportBussinessParner.reportDetail, params, signal);
   },
 };

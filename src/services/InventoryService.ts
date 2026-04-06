@@ -1,5 +1,6 @@
+import { apiDelete, apiGet, apiPost } from "services/apiHelper";
 import { urlsApi } from "configs/urls";
-import { convertParamsToString } from "reborn-util";
+
 import { IInventoryFilterRequest, IInventoryLedgerFilterRequest, IInventoryRequest } from "model/inventory/InventoryRequestModel";
 
 export interface IVariantStockFilterRequest {
@@ -36,33 +37,22 @@ export interface IStockTransferFilterRequest {
 export default {
   // ── Warehouse list (danh sách kho) ──────────────────────────────────────
   list: (params?: IInventoryFilterRequest, signal?: AbortSignal) => {
-    return fetch(`${urlsApi.inventory.list}${convertParamsToString(params)}`, {
-      signal,
-      method: "GET",
-    }).then((res) => res.json());
+    return apiGet(urlsApi.inventory.list, params, signal);
   },
 
   update: (body: IInventoryRequest) => {
-    return fetch(urlsApi.inventory.update, {
-      method: "POST",
-      body: JSON.stringify(body),
-    }).then((res) => res.json());
+    return apiPost(urlsApi.inventory.update, body);
   },
 
   delete: (id: number) => {
-    return fetch(`${urlsApi.inventory.delete}?id=${id}`, {
-      method: "DELETE",
-    }).then((res) => res.json());
+    return apiDelete(`${urlsApi.inventory.delete}?id=${id}`);
   },
 
   // ── Sổ kho (Ledger) ──────────────────────────────────────────────────────
   // GET /inventoryTransaction/ledger/list
   // refType: "" | "IMPORT" | "SALE" | "RETURN" | "TRANSFER" | "ADJUSTMENT" | "DESTROY"
   ledgerList: (params?: IInventoryLedgerFilterRequest, signal?: AbortSignal) => {
-    return fetch(`${urlsApi.inventory.ledgerList}${convertParamsToString(params)}`, {
-      signal,
-      method: "GET",
-    }).then((res) => res.json());
+    return apiGet(urlsApi.inventory.ledgerList, params, signal);
   },
 
   // GET /inventoryTransaction/ledger/get?id=:id
@@ -79,19 +69,13 @@ export default {
   //                  productName, batchNo, expiryDate, unitName, quantity,
   //                  warehouseName, updatedTime
   stockProductList: (params?: IStockProductFilterRequest, signal?: AbortSignal) => {
-    return fetch(`${urlsApi.inventoryBalance.stockProductList}${convertParamsToString(params)}`, {
-      signal,
-      method: "GET",
-    }).then((res) => res.json());
+    return apiGet(urlsApi.inventoryBalance.stockProductList, params, signal);
   },
 
   // ── Chuyển kho ──────────────────────────────────────────────────────────
   // GET /stockTransfer/list
   stockTransferList: (params?: IStockTransferFilterRequest, signal?: AbortSignal) => {
-    return fetch(`${urlsApi.stockTransfer.list}${convertParamsToString(params)}`, {
-      signal,
-      method: "GET",
-    }).then((res) => res.json());
+    return apiGet(urlsApi.stockTransfer.list, params, signal);
   },
 
   // GET /stockTransfer/get?id=:id
@@ -111,17 +95,12 @@ export default {
     note?: string;
     status?: number;
   }) => {
-    return fetch(urlsApi.stockTransfer.update, {
-      method: "POST",
-      body: JSON.stringify(body),
-    }).then((res) => res.json());
+    return apiPost(urlsApi.stockTransfer.update, body);
   },
 
   // DELETE /stockTransfer/delete?id=:id
   stockTransferDelete: (id: number) => {
-    return fetch(`${urlsApi.stockTransfer.delete}?id=${id}`, {
-      method: "DELETE",
-    }).then((res) => res.json());
+    return apiDelete(`${urlsApi.stockTransfer.delete}?id=${id}`);
   },
 
   // GET /stockTransfer/approve?id=:id
@@ -149,24 +128,17 @@ export default {
     quantity: number;
     note?: string;
   }) => {
-    return fetch(urlsApi.stockTransferDetail.update, {
-      method: "POST",
-      body: JSON.stringify(body),
-    }).then((res) => res.json());
+    return apiPost(urlsApi.stockTransferDetail.update, body);
   },
 
   // DELETE /stockTransferDetail/delete?id=:id
   stockTransferDetailDelete: (id: number) => {
-    return fetch(`${urlsApi.stockTransferDetail.delete}?id=${id}`, {
-      method: "DELETE",
-    }).then((res) => res.json());
+    return apiDelete(`${urlsApi.stockTransferDetail.delete}?id=${id}`);
   },
 
   // GET /stockTransferDetail/list?transferId=:id&productId=-1
   stockTransferDetailList: (params: { transferId: number; productId?: number; limit?: number }) => {
-    return fetch(`${urlsApi.stockTransferDetail.list}${convertParamsToString(params)}`, {
-      method: "GET",
-    }).then((res) => res.json());
+    return apiGet(urlsApi.stockTransferDetail.list, params);
   },
   
   // ── Tồn kho theo biến thể + đơn vị bán + giá vốn ───────────────────────
@@ -176,10 +148,7 @@ export default {
   //           sellingUnitId, sellingUnitName, sellingPrice,
   //           avgCost, quantity, warehouseId, warehouseName, stockStatus
   variantStockList: (params?: IVariantStockFilterRequest, signal?: AbortSignal) => {
-    return fetch(`${urlsApi.inventoryBalance.variantList}${convertParamsToString(params)}`, {
-      signal,
-      method: "GET",
-    }).then((res) => res.json());
+    return apiGet(urlsApi.inventoryBalance.variantList, params, signal);
   },
 
   // ── Giá vốn bình quân — tái sử dụng /inventoryBalance/variant/list ────────
@@ -190,10 +159,7 @@ export default {
   // GET /inventoryBalance/cost/summary
   // Response: { totalProducts, totalQty, totalCostValue, avgCostOverall }
   costSummary: (params?: { warehouseId?: number }, signal?: AbortSignal) => {
-    return fetch(`${urlsApi.inventory.costSummary}${convertParamsToString(params)}`, {
-      signal,
-      method: "GET",
-    }).then((res) => res.json());
+    return apiGet(urlsApi.inventory.costSummary, params, signal);
   },
 
   // ── Phiếu xuất hủy — aggregate từ inventory_transaction (ref_type=DESTROY) ──
@@ -216,10 +182,7 @@ export default {
       .then(async r => { const j = await r.json(); if (j.code !== 0) throw new Error(j.message ?? "Xuất Excel thất bại"); return j.result as string; });
   },
   destroyList: (params?: { warehouseId?: number; keyword?: string; page?: number; size?: number }, signal?: AbortSignal) => {
-    return fetch(`${urlsApi.inventory.destroyList}${convertParamsToString(params)}`, {
-      signal,
-      method: "GET",
-    }).then((res) => res.json());
+    return apiGet(urlsApi.inventory.destroyList, params, signal);
   },
 
   destroyDetail: (id: number, signal?: AbortSignal) => {
@@ -232,10 +195,7 @@ export default {
   // GET /inventoryTransaction/destroy/summary
   // Response: { totalDestroy, totalQty, totalCost, totalProduct }
   destroySummary: (signal?: AbortSignal) => {
-    return fetch(urlsApi.inventory.destroySummary, {
-      signal,
-      method: "GET",
-    }).then((res) => res.json());
+    return apiGet(urlsApi.inventory.destroySummary, undefined, signal);
   },
 
   // ── Phiếu xuất kho — aggregate từ inventory_transaction (ref_type=SALE) ──
@@ -245,19 +205,13 @@ export default {
   // GET /inventoryTransaction/sale/list
   // Params: warehouseId, keyword, page, size
   saleExportList: (params?: { warehouseId?: number; keyword?: string; page?: number; size?: number }, signal?: AbortSignal) => {
-    return fetch(`${urlsApi.inventory.saleExportList}${convertParamsToString(params)}`, {
-      signal,
-      method: "GET",
-    }).then((res) => res.json());
+    return apiGet(urlsApi.inventory.saleExportList, params, signal);
   },
 
   // GET /inventoryTransaction/sale/summary
   // Response: { totalExport, totalQty, totalCost, totalProduct }
   saleExportSummary: (signal?: AbortSignal) => {
-    return fetch(urlsApi.inventory.saleExportSummary, {
-      signal,
-      method: "GET",
-    }).then((res) => res.json());
+    return apiGet(urlsApi.inventory.saleExportSummary, undefined, signal);
   },
 
 };

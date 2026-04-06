@@ -1,92 +1,56 @@
+import { apiDelete, apiGet, apiPost } from "services/apiHelper";
 import { urlsApi } from "configs/urls";
 import { convertParamsToString } from "reborn-util";
 
 export default {
   list: (params?: Record<string, unknown>, signal?: AbortSignal) => {
-    return fetch(`${urlsApi.processedObject.lst}${convertParamsToString(params)}`, {
-      signal,
-      method: "GET",
-    }).then((res) => res.json());
+    return apiGet(urlsApi.processedObject.lst, params, signal);
   },
   update: (body: Record<string, unknown>) => {
-    return fetch(urlsApi.processedObject.update, {
-      method: "POST",
-      body: JSON.stringify(body),
-    }).then((res) => res.json());
+    return apiPost(urlsApi.processedObject.update, body);
   },
   updateProcess: (body: Record<string, unknown>) => {
-    return fetch(urlsApi.processedObject.updateProcess, {
-      method: "POST",
-      body: JSON.stringify(body),
-    }).then((res) => res.json());
+    return apiPost(urlsApi.processedObject.updateProcess, body);
   },
   updateProcessInstance: (body: Record<string, unknown>) => {
-    return fetch(urlsApi.processedObject.updateProcessInstance, {
-      method: "POST",
-      body: JSON.stringify(body),
-    }).then((res) => res.json());
+    return apiPost(urlsApi.processedObject.updateProcessInstance, body);
   },
   updateStatus: (body: Record<string, unknown>) => {
-    return fetch(urlsApi.processedObject.updateStatus, {
-      method: "POST",
-      body: JSON.stringify(body),
-    }).then((res) => res.json());
+    return apiPost(urlsApi.processedObject.updateStatus, body);
   },
   resetSignature: (params: Record<string, unknown>) => {
-    return fetch(`${urlsApi.processedObject.resetSignal}${convertParamsToString(params)}`, {
-      method: "GET",
-    }).then((res) => res.json());
+    return apiGet(urlsApi.processedObject.resetSignal, params);
   },
   delete: (id: number) => {
-    return fetch(`${urlsApi.processedObject.delete}?id=${id}`, {
-      method: "DELETE",
-    }).then((res) => res.json());
+    return apiDelete(`${urlsApi.processedObject.delete}?id=${id}`);
   },
 
 
   bpmStart: (body: Record<string, unknown>) => {
-    return fetch(urlsApi.processedObject.bpmStart, {
-      method: "POST",
-      body: JSON.stringify(body),
-    }).then((res) => res.json());
+    return apiPost(urlsApi.processedObject.bpmStart, body);
   },
 
   bpmExecListNode: (params?: Record<string, unknown>, signal?: AbortSignal) => {
-    return fetch(`${urlsApi.processedObject.bpmExecListNode}${convertParamsToString(params)}`, {
-      signal,
-      method: "GET",
-    }).then((res) => res.json());
+    return apiGet(urlsApi.processedObject.bpmExecListNode, params, signal);
   },
 
   bpmProcess: (body: Record<string, unknown>) => {
-    return fetch(urlsApi.processedObject.bpmProcess, {
-      method: "POST",
-      body: JSON.stringify(body),
-    }).then((res) => res.json());
+    return apiPost(urlsApi.processedObject.bpmProcess, body);
   },
 
   //lấy dữ liệu đã lưu hiển thị lại trên eform bước tiếp theo
   bpmArtifactData: (params?: Record<string, unknown>, signal?: AbortSignal) => {
-    return fetch(`${urlsApi.processedObject.bpmArtifactData}${convertParamsToString(params)}`, {
-      signal,
-      method: "GET",
-    }).then((res) => res.json());
+    return apiGet(urlsApi.processedObject.bpmArtifactData, params, signal);
   },
 
   //lịch sử xử lý
   bpmParticipantProcesslog: (params?: Record<string, unknown>, signal?: AbortSignal) => {
-    return fetch(`${urlsApi.processedObject.bpmParticipantProcesslog}${convertParamsToString(params)}`, {
-      signal,
-      method: "GET",
-    }).then((res) => res.json());
+    return apiGet(urlsApi.processedObject.bpmParticipantProcesslog, params, signal);
   },
 
   //check đã xử lý đến node nào để hiển thị trên sơ đồ
   processedObjectLog: (params?: Record<string, unknown>, signal?: AbortSignal) => {
-    return fetch(`${urlsApi.processedObject.processedObjectLog}${convertParamsToString(params)}`, {
-      signal,
-      method: "GET",
-    }).then((res) => res.json());
+    return apiGet(urlsApi.processedObject.processedObjectLog, params, signal);
   },
 
   // cloneQuote: (body: any) => {

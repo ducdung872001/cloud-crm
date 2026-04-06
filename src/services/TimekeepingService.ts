@@ -1,19 +1,14 @@
+import { apiGet, apiPost } from "services/apiHelper";
 import { urlsApi } from "configs/urls";
 import { ITimekeepingFilterRequest, ITimekeepingRequest } from "model/timekeeping/TimekeepingRequestModel";
-import { convertParamsToString } from "reborn-util";
+
 
 export default {
   list: (params: ITimekeepingFilterRequest, signal?: AbortSignal) => {
-    return fetch(`${urlsApi.timekeeping.list}${convertParamsToString(params)}`, {
-      signal,
-      method: "GET",
-    }).then((res) => res.json());
+    return apiGet(urlsApi.timekeeping.list, params, signal);
   },
   update: (body: ITimekeepingRequest) => {
-    return fetch(urlsApi.timekeeping.update, {
-      method: "POST",
-      body: JSON.stringify(body),
-    }).then((res) => res.json());
+    return apiPost(urlsApi.timekeeping.update, body);
   },
   delete: (id: number) => {
     return fetch(`${urlsApi.timekeeping.delete}?id=${id}`, {

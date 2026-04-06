@@ -1,19 +1,14 @@
+import { apiDelete, apiGet, apiPost } from "services/apiHelper";
 import { urlsApi } from "configs/urls";
-import { convertParamsToString } from "reborn-util";
+
 import { ITemplateCategoryFilterRequest, ITemplateCategoryRequestModel } from "model/templateCategory/TemplateCategoryRequest";
 
 export default {
   list: (params?: ITemplateCategoryFilterRequest, signal?: AbortSignal) => {
-    return fetch(`${urlsApi.templateCategory.list}${convertParamsToString(params)}`, {
-      signal,
-      method: "GET",
-    }).then((res) => res.json());
+    return apiGet(urlsApi.templateCategory.list, params, signal);
   },
   update: (body: ITemplateCategoryRequestModel) => {
-    return fetch(urlsApi.templateCategory.update, {
-      method: "POST",
-      body: JSON.stringify(body),
-    }).then((res) => res.json());
+    return apiPost(urlsApi.templateCategory.update, body);
   },
   detail: (id: number) => {
     return fetch(`${urlsApi.templateCategory.detail}?id=${id}`, {
@@ -21,8 +16,6 @@ export default {
     }).then((res) => res.json());
   },
   delete: (id: number) => {
-    return fetch(`${urlsApi.templateCategory.delete}?id=${id}`, {
-      method: "DELETE",
-    }).then((res) => res.json());
+    return apiDelete(`${urlsApi.templateCategory.delete}?id=${id}`);
   },
 };

@@ -1,11 +1,9 @@
+import { apiGet } from "services/apiHelper";
 import { urlsApi } from "configs/urls";
-import { convertParamsToString } from "reborn-util";
+
 
 export default {
   detail: (params?: Record<string, unknown>, signal?: AbortSignal) => {
-    return fetch(`${urlsApi.dashboard.detail}${convertParamsToString(params)}`, {
-      signal,
-      method: "GET",
-    }).then((res) => res.json());
+    return apiGet(urlsApi.dashboard.detail, params, signal);
   },
 };

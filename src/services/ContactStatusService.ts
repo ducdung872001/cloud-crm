@@ -1,7 +1,8 @@
+import { apiDelete, apiGet, apiPost } from "services/apiHelper";
 import { urlsApi } from "configs/urls";
 import { IContactFilterRequest } from "model/contact/ContactRequestModel";
 import { IContactStatusRequest } from "model/contactStatus/ContactStatusRequestModel";
-import { convertParamsToString } from "reborn-util";
+
 
 export default {
   list: (pipelineId: number) => {
@@ -10,16 +11,10 @@ export default {
     }).then((res) => res.json());
   },
   listForContact: (params: IContactFilterRequest, signal?: AbortSignal) => {
-    return fetch(`${urlsApi.contactStatus.list}${convertParamsToString(params)}`, {
-      signal,
-      method: "GET",
-    }).then((res) => res.json());
+    return apiGet(urlsApi.contactStatus.list, params, signal);
   },
   update: (body: IContactStatusRequest) => {
-    return fetch(urlsApi.contactStatus.update, {
-      method: "POST",
-      body: JSON.stringify(body),
-    }).then((res) => res.json());
+    return apiPost(urlsApi.contactStatus.update, body);
   },
   detail: (id: number) => {
     return fetch(`${urlsApi.contactStatus.detail}?id=${id}`, {
@@ -27,8 +22,6 @@ export default {
     }).then((res) => res.json());
   },
   delete: (id: number) => {
-    return fetch(`${urlsApi.contactStatus.delete}?id=${id}`, {
-      method: "DELETE",
-    }).then((res) => res.json());
+    return apiDelete(`${urlsApi.contactStatus.delete}?id=${id}`);
   },
 };

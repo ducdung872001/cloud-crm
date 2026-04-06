@@ -1,35 +1,21 @@
+import { apiGet } from "services/apiHelper";
 import { urlsApi } from "configs/urls";
-import { convertParamsToString } from "reborn-util";
+
 
 export default {
   guarantee: (params?: Record<string, unknown>, signal?: AbortSignal) => {
-    return fetch(`${urlsApi.placeholder.guarantee}${convertParamsToString(params)}`, {
-      signal,
-      method: "GET",
-    }).then((res) => res.json());
+    return apiGet(urlsApi.placeholder.guarantee, params, signal);
   },
   contractWarranty: (params?: Record<string, unknown>, signal?: AbortSignal) => {
-    return fetch(`${urlsApi.placeholder.contractWarranty}${convertParamsToString(params)}`, {
-      signal,
-      method: "GET",
-    }).then((res) => res.json());
+    return apiGet(urlsApi.placeholder.contractWarranty, params, signal);
   },
   contract: (params?: Record<string, unknown>, signal?: AbortSignal) => {
-    return fetch(`${urlsApi.placeholder.contract}${convertParamsToString(params)}`, {
-      signal,
-      method: "GET",
-    }).then((res) => res.json());
+    return apiGet(urlsApi.placeholder.contract, params, signal);
   },
   customer: (params?: Record<string, unknown>, signal?: AbortSignal) => {
-    return fetch(`${urlsApi.placeholder.customer}${convertParamsToString(params)}`, {
-      signal,
-      method: "GET",
-    }).then((res) => res.json());
+    return apiGet(urlsApi.placeholder.customer, params, signal);
   },
   contact: (params?: Record<string, unknown>, signal?: AbortSignal) => {
-    return fetch(`${urlsApi.placeholder.contact}${convertParamsToString(params)}`, {
-      signal,
-      method: "GET",
-    }).then((res) => res.json());
+    return apiGet(urlsApi.placeholder.contact, params, signal);
   },
 };

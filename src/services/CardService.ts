@@ -1,23 +1,16 @@
+import { apiDelete, apiGet, apiPost } from "services/apiHelper";
 import { urlsApi } from "configs/urls";
-import { convertParamsToString } from "reborn-util";
+
 import { ICardFilterRequest, ICardRequest } from "model/card/CardRequestModel";
 
 export default {
   list: (params: ICardFilterRequest, signal?: AbortSignal) => {
-    return fetch(`${urlsApi.card.list}${convertParamsToString(params)}`, {
-      signal,
-      method: "GET",
-    }).then((res) => res.json());
+    return apiGet(urlsApi.card.list, params, signal);
   },
   update: (body: ICardRequest) => {
-    return fetch(urlsApi.card.update, {
-      method: "POST",
-      body: JSON.stringify(body),
-    }).then((res) => res.json());
+    return apiPost(urlsApi.card.update, body);
   },
   delete: (id: number) => {
-    return fetch(`${urlsApi.card.delete}?id=${id}`, {
-      method: "DELETE",
-    }).then((res) => res.json());
+    return apiDelete(`${urlsApi.card.delete}?id=${id}`);
   },
 };

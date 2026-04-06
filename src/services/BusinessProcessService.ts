@@ -1,26 +1,18 @@
+import { apiDelete, apiGet, apiPost } from "services/apiHelper";
 import { urlsApi } from "configs/urls";
 import { convertParamsToString } from "reborn-util";
 
 export default {
   list: (params?: Record<string, unknown>, signal?: AbortSignal) => {
-    return fetch(`${urlsApi.businessProcess.list}${convertParamsToString(params)}`, {
-      signal,
-      method: "GET",
-    }).then((res) => res.json());
+    return apiGet(urlsApi.businessProcess.list, params, signal);
   },
 
   clone: (body: Record<string, unknown>) => {
-    return fetch(urlsApi.businessProcess.clone, {
-      method: "POST",
-      body: JSON.stringify(body),
-    }).then((res) => res.json());
+    return apiPost(urlsApi.businessProcess.clone, body);
   },
 
   update: (body: Record<string, unknown>) => {
-    return fetch(urlsApi.businessProcess.update, {
-      method: "POST",
-      body: JSON.stringify(body),
-    }).then((res) => res.json());
+    return apiPost(urlsApi.businessProcess.update, body);
   },
 
   detail: (id: number) => {
@@ -29,108 +21,67 @@ export default {
     }).then((res) => res.json());
   },
   delete: (id: number) => {
-    return fetch(`${urlsApi.businessProcess.delete}?id=${id}`, {
-      method: "DELETE",
-    }).then((res) => res.json());
+    return apiDelete(`${urlsApi.businessProcess.delete}?id=${id}`);
   },
 
   addNode: (body: Record<string, unknown>) => {
-    return fetch(urlsApi.businessProcess.addNode, {
-      method: "POST",
-      body: JSON.stringify(body),
-    }).then((res) => res.json());
+    return apiPost(urlsApi.businessProcess.addNode, body);
   },
 
   deleteNode: (id: number) => {
-    return fetch(`${urlsApi.businessProcess.deleteNode}?nodeId=${id}`, {
-      method: "DELETE",
-    }).then((res) => res.json());
+    return apiDelete(`${urlsApi.businessProcess.deleteNode}?nodeId=${id}`);
   },
 
   updateLinkNode: (body: Record<string, unknown>) => {
-    return fetch(urlsApi.businessProcess.updateLinkNode, {
-      method: "POST",
-      body: JSON.stringify(body),
-    }).then((res) => res.json());
+    return apiPost(urlsApi.businessProcess.updateLinkNode, body);
   },
 
   //bpm
   //lấy danh sách các bước
   listStep: (params?: Record<string, unknown>, signal?: AbortSignal) => {
-    return fetch(`${urlsApi.businessProcess.listStep}${convertParamsToString(params)}`, {
-      signal,
-      method: "GET",
-    }).then((res) => res.json());
+    return apiGet(urlsApi.businessProcess.listStep, params, signal);
   },
   updateStep: (body: Record<string, unknown>) => {
-    return fetch(urlsApi.businessProcess.updateStep, {
-      method: "POST",
-      body: JSON.stringify(body),
-    }).then((res) => res.json());
+    return apiPost(urlsApi.businessProcess.updateStep, body);
   },
   deleteStep: (id: number) => {
-    return fetch(`${urlsApi.businessProcess.deleteStep}?id=${id}`, {
-      method: "DELETE",
-    }).then((res) => res.json());
+    return apiDelete(`${urlsApi.businessProcess.deleteStep}?id=${id}`);
   },
 
   //update SLA
   updateSLA: (body: Record<string, unknown>) => {
-    return fetch(urlsApi.businessProcess.updateSLA, {
-      method: "POST",
-      body: JSON.stringify(body),
-    }).then((res) => res.json());
+    return apiPost(urlsApi.businessProcess.updateSLA, body);
   },
 
   //Lấy danh sách công việc trong quy trình
   listWorkFlow: (params?: Record<string, unknown>, signal?: AbortSignal) => {
-    return fetch(`${urlsApi.businessProcess.listWorkflow}${convertParamsToString(params)}`, {
-      signal,
-      method: "GET",
-    }).then((res) => res.json());
+    return apiGet(urlsApi.businessProcess.listWorkflow, params, signal);
   },
   //Lấy danh sách công việc trong quy trình
   listWorkflowCloud: (params?: Record<string, unknown>, signal?: AbortSignal) => {
-    return fetch(`${urlsApi.businessProcess.listWorkflowCloud}${convertParamsToString(params)}`, {
-      signal,
-      method: "GET",
-    }).then((res) => res.json());
+    return apiGet(urlsApi.businessProcess.listWorkflowCloud, params, signal);
   },
   deleteWorkFlow: (id: number) => {
-    return fetch(`${urlsApi.businessProcess.deleteWorkflow}?id=${id}`, {
-      method: "DELETE",
-    }).then((res) => res.json());
+    return apiDelete(`${urlsApi.businessProcess.deleteWorkflow}?id=${id}`);
   },
 
   //lấy về danh sách biến quy trình
   listVariableDeclare: (params?: Record<string, unknown>, signal?: AbortSignal) => {
-    return fetch(`${urlsApi.businessProcess.listVariableDeclare}${convertParamsToString(params)}`, {
-      signal,
-      method: "GET",
-    }).then((res) => res.json());
+    return apiGet(urlsApi.businessProcess.listVariableDeclare, params, signal);
   },
 
   //lấy về giá trị biến quy trình
   listVariableInstance: (params?: Record<string, unknown>, signal?: AbortSignal) => {
-    return fetch(`${urlsApi.businessProcess.listVariableInstance}${convertParamsToString(params)}`, {
-      signal,
-      method: "GET",
-    }).then((res) => res.json());
+    return apiGet(urlsApi.businessProcess.listVariableInstance, params, signal);
   },
 
   //lấy về danh sách toàn bộ biến quy trình
   listVariableDeclareGlobal: (params?: Record<string, unknown>, signal?: AbortSignal) => {
-    return fetch(`${urlsApi.businessProcess.listVariableDeclareGlobal}${convertParamsToString(params)}`, {
-      signal,
-      method: "GET",
-    }).then((res) => res.json());
+    return apiGet(urlsApi.businessProcess.listVariableDeclareGlobal, params, signal);
   },
 
   updateVariableDeclare: (body: Record<string, unknown>) => {
-    return fetch(urlsApi.businessProcess.updateVariableDeclare, {
-      method: "POST",
-      body: JSON.stringify(body),
-    }).then((res) => res.json());
+    return apiPost(urlsApi.businessProcess.updateVariableDeclare, body);
   },
 
   detailVariableDeclare: (id: string | number) => {
@@ -139,27 +90,17 @@ export default {
     }).then((res) => res.json());
   },
   deleteVariableDeclare: (id: number) => {
-    return fetch(`${urlsApi.businessProcess.deleteVariableDeclare}?id=${id}`, {
-      method: "DELETE",
-    }).then((res) => res.json());
+    return apiDelete(`${urlsApi.businessProcess.deleteVariableDeclare}?id=${id}`);
   },
   //add node
   bpmAddNode: (body: Record<string, unknown>) => {
-    return fetch(urlsApi.businessProcess.bpmAddNode, {
-      method: "POST",
-      body: JSON.stringify(body),
-    }).then((res) => res.json());
+    return apiPost(urlsApi.businessProcess.bpmAddNode, body);
   },
   bpmAddNameNode: (body: Record<string, unknown>) => {
-    return fetch(urlsApi.businessProcess.bpmAddNameNode, {
-      method: "POST",
-      body: JSON.stringify(body),
-    }).then((res) => res.json());
+    return apiPost(urlsApi.businessProcess.bpmAddNameNode, body);
   },
   bpmDeleteNode: (id: number) => {
-    return fetch(`${urlsApi.businessProcess.bpmDeleteNode}?nodeId=${id}`, {
-      method: "DELETE",
-    }).then((res) => res.json());
+    return apiDelete(`${urlsApi.businessProcess.bpmDeleteNode}?nodeId=${id}`);
   },
 
   bpmDetailNode: (id: string | number) => {
@@ -170,51 +111,31 @@ export default {
 
   //list node
   bpmListNode: (params?: Record<string, unknown>, signal?: AbortSignal) => {
-    return fetch(`${urlsApi.businessProcess.bpmListNode}${convertParamsToString(params)}`, {
-      signal,
-      method: "GET",
-    }).then((res) => res.json());
+    return apiGet(urlsApi.businessProcess.bpmListNode, params, signal);
   },
 
   //add link node
   bpmAddLinkNode: (body: Record<string, unknown>) => {
-    return fetch(urlsApi.businessProcess.bpmAddLinkNode, {
-      method: "POST",
-      body: JSON.stringify(body),
-    }).then((res) => res.json());
+    return apiPost(urlsApi.businessProcess.bpmAddLinkNode, body);
   },
   bpmAddNameLinkNode: (body: Record<string, unknown>) => {
-    return fetch(urlsApi.businessProcess.bpmAddNameLinkNode, {
-      method: "POST",
-      body: JSON.stringify(body),
-    }).then((res) => res.json());
+    return apiPost(urlsApi.businessProcess.bpmAddNameLinkNode, body);
   },
   bpmAddLinkNodeConfig: (body: Record<string, unknown>) => {
-    return fetch(urlsApi.businessProcess.bpmAddLinkNodeConfig, {
-      method: "POST",
-      body: JSON.stringify(body),
-    }).then((res) => res.json());
+    return apiPost(urlsApi.businessProcess.bpmAddLinkNodeConfig, body);
   },
 
   bpmDeleteLinkNode: (params) => {
-    return fetch(`${urlsApi.businessProcess.bpmDeleteLinkNode}${convertParamsToString(params)}`, {
-      method: "DELETE",
-    }).then((res) => res.json());
+    return apiDelete(`${urlsApi.businessProcess.bpmDeleteLinkNode}${convertParamsToString(params)}`);
   },
 
   bpmGetLinkNode: (params?: Record<string, unknown>, signal?: AbortSignal) => {
-    return fetch(`${urlsApi.businessProcess.bpmGetLinkNode}${convertParamsToString(params)}`, {
-      signal,
-      method: "GET",
-    }).then((res) => res.json());
+    return apiGet(urlsApi.businessProcess.bpmGetLinkNode, params, signal);
   },
 
   //lưu toàn bộ sợ đồ
   saveDiagram: (body: Record<string, unknown>) => {
-    return fetch(urlsApi.businessProcess.saveDiagram, {
-      method: "POST",
-      body: JSON.stringify(body),
-    }).then((res) => res.json());
+    return apiPost(urlsApi.businessProcess.saveDiagram, body);
   },
   //get dữ liệu đã lưu
   getDetailDiagram: (id: number) => {
@@ -225,10 +146,7 @@ export default {
 
   //user task
   updateUserTask: (body: Record<string, unknown>) => {
-    return fetch(urlsApi.businessProcess.updateUserTask, {
-      method: "POST",
-      body: JSON.stringify(body),
-    }).then((res) => res.json());
+    return apiPost(urlsApi.businessProcess.updateUserTask, body);
   },
   detailUserTask: (id: string | number) => {
     return fetch(`${urlsApi.businessProcess.detailUserTask}?nodeId=${id}`, {
@@ -236,65 +154,41 @@ export default {
     }).then((res) => res.json());
   },
   cloneUserTask: (body: Record<string, unknown>) => {
-    return fetch(urlsApi.businessProcess.cloneUserTask, {
-      method: "POST",
-      body: JSON.stringify(body),
-    }).then((res) => res.json());
+    return apiPost(urlsApi.businessProcess.cloneUserTask, body);
   },
   // clone mapping
   cloneFormMapping: (params?: Record<string, unknown>, signal?: AbortSignal) => {
-    return fetch(`${urlsApi.businessProcess.cloneFormMapping}${convertParamsToString(params)}`, {
-      signal,
-      method: "GET",
-    }).then((res) => res.json());
+    return apiGet(urlsApi.businessProcess.cloneFormMapping, params, signal);
   },
 
   //list trường trong form
   listBpmForm: (params?: Record<string, unknown>, signal?: AbortSignal) => {
-    return fetch(`${urlsApi.businessProcess.listBpmForm}${convertParamsToString(params)}`, {
-      signal,
-      method: "GET",
-    }).then((res) => res.json());
+    return apiGet(urlsApi.businessProcess.listBpmForm, params, signal);
   },
 
   //list toàn bộ trường trong form
   listBpmFormGlobal: (params?: Record<string, unknown>, signal?: AbortSignal) => {
-    return fetch(`${urlsApi.businessProcess.listBpmFormGlobal}${convertParamsToString(params)}`, {
-      signal,
-      method: "GET",
-    }).then((res) => res.json());
+    return apiGet(urlsApi.businessProcess.listBpmFormGlobal, params, signal);
   },
 
   //lấy list giá trị của form trong quy trình
   listBpmFormData: (params?: Record<string, unknown>, signal?: AbortSignal) => {
-    return fetch(`${urlsApi.businessProcess.listBpmFormData}${convertParamsToString(params)}`, {
-      signal,
-      method: "GET",
-    }).then((res) => res.json());
+    return apiGet(urlsApi.businessProcess.listBpmFormData, params, signal);
   },
 
   //lấy cụ thể giá trị của form trong quy trình
   getBpmFormDataByNodeId: (params?: Record<string, unknown>, signal?: AbortSignal) => {
-    return fetch(`${urlsApi.businessProcess.getBpmFormDataByNodeId}${convertParamsToString(params)}`, {
-      signal,
-      method: "GET",
-    }).then((res) => res.json());
+    return apiGet(urlsApi.businessProcess.getBpmFormDataByNodeId, params, signal);
   },
 
   //list trường trong form để sao chép mapping
   listBpmFormMapping: (params?: Record<string, unknown>, signal?: AbortSignal) => {
-    return fetch(`${urlsApi.businessProcess.listBpmFormMapping}${convertParamsToString(params)}`, {
-      signal,
-      method: "GET",
-    }).then((res) => res.json());
+    return apiGet(urlsApi.businessProcess.listBpmFormMapping, params, signal);
   },
 
   //service task
   updateServiceTask: (body: Record<string, unknown>) => {
-    return fetch(urlsApi.businessProcess.updateServiceTask, {
-      method: "POST",
-      body: JSON.stringify(body),
-    }).then((res) => res.json());
+    return apiPost(urlsApi.businessProcess.updateServiceTask, body);
   },
   detailServiceTask: (id: string | number) => {
     return fetch(`${urlsApi.businessProcess.detailServiceTask}?nodeId=${id}`, {
@@ -302,18 +196,12 @@ export default {
     }).then((res) => res.json());
   },
   cloneServiceTask: (body: Record<string, unknown>) => {
-    return fetch(urlsApi.businessProcess.cloneServiceTask, {
-      method: "POST",
-      body: JSON.stringify(body),
-    }).then((res) => res.json());
+    return apiPost(urlsApi.businessProcess.cloneServiceTask, body);
   },
 
   //Script task
   updateScriptTask: (body: Record<string, unknown>) => {
-    return fetch(urlsApi.businessProcess.updateScriptTask, {
-      method: "POST",
-      body: JSON.stringify(body),
-    }).then((res) => res.json());
+    return apiPost(urlsApi.businessProcess.updateScriptTask, body);
   },
   detailScriptTask: (id: string | number) => {
     return fetch(`${urlsApi.businessProcess.detailScriptTask}?nodeId=${id}`, {
@@ -321,18 +209,12 @@ export default {
     }).then((res) => res.json());
   },
   cloneScriptTask: (body: Record<string, unknown>) => {
-    return fetch(urlsApi.businessProcess.cloneScriptTask, {
-      method: "POST",
-      body: JSON.stringify(body),
-    }).then((res) => res.json());
+    return apiPost(urlsApi.businessProcess.cloneScriptTask, body);
   },
 
   //Manual task
   updateManualTask: (body: Record<string, unknown>) => {
-    return fetch(urlsApi.businessProcess.updateManualTask, {
-      method: "POST",
-      body: JSON.stringify(body),
-    }).then((res) => res.json());
+    return apiPost(urlsApi.businessProcess.updateManualTask, body);
   },
   detailManualTask: (id: string | number) => {
     return fetch(`${urlsApi.businessProcess.detailManualTask}?nodeId=${id}`, {
@@ -340,30 +222,18 @@ export default {
     }).then((res) => res.json());
   },
   cloneManualTask: (body: Record<string, unknown>) => {
-    return fetch(urlsApi.businessProcess.cloneManualTask, {
-      method: "POST",
-      body: JSON.stringify(body),
-    }).then((res) => res.json());
+    return apiPost(urlsApi.businessProcess.cloneManualTask, body);
   },
 
   //business rule task
   updateBusinessRuleTask: (body: Record<string, unknown>) => {
-    return fetch(urlsApi.businessProcess.updateBusinessRuleTask, {
-      method: "POST",
-      body: JSON.stringify(body),
-    }).then((res) => res.json());
+    return apiPost(urlsApi.businessProcess.updateBusinessRuleTask, body);
   },
   updateBusinessRuleTaskAdvance: (body: Record<string, unknown>) => {
-    return fetch(urlsApi.businessProcess.updateBusinessRuleTaskAdvance, {
-      method: "POST",
-      body: JSON.stringify(body),
-    }).then((res) => res.json());
+    return apiPost(urlsApi.businessProcess.updateBusinessRuleTaskAdvance, body);
   },
   updateBusinessRuleTaskComplex: (body: Record<string, unknown>) => {
-    return fetch(urlsApi.businessProcess.updateBusinessRuleTaskComplex, {
-      method: "POST",
-      body: JSON.stringify(body),
-    }).then((res) => res.json());
+    return apiPost(urlsApi.businessProcess.updateBusinessRuleTaskComplex, body);
   },
 
   detailBusinessRuleTask: (id: string | number) => {
@@ -372,9 +242,7 @@ export default {
     }).then((res) => res.json());
   },
   detailBusinessRuleTaskAdvance: (params: Record<string, unknown>) => {
-    return fetch(`${urlsApi.businessProcess.detailBusinessRuleTaskAdvance}${convertParamsToString(params)}`, {
-      method: "GET",
-    }).then((res) => res.json());
+    return apiGet(urlsApi.businessProcess.detailBusinessRuleTaskAdvance, params);
   },
   detailBusinessRuleTaskComplex: (id: string | number) => {
     return fetch(`${urlsApi.businessProcess.detailBusinessRuleTaskComplex}?nodeId=${id}&type=DT`, {
@@ -383,10 +251,7 @@ export default {
   },
 
   cloneBusinessRuleTask: (body: Record<string, unknown>) => {
-    return fetch(urlsApi.businessProcess.cloneBusinessRuleTask, {
-      method: "POST",
-      body: JSON.stringify(body),
-    }).then((res) => res.json());
+    return apiPost(urlsApi.businessProcess.cloneBusinessRuleTask, body);
   },
   checkType: (id: string | number) => {
     return fetch(`${urlsApi.businessProcess.checkType}?nodeId=${id}`, {
@@ -395,24 +260,16 @@ export default {
   },
 
   checkTypeOLA: (params: Record<string, unknown>) => {
-    return fetch(`${urlsApi.businessProcess.checkTypeOLA}${convertParamsToString(params)}`, {
-      method: "GET",
-    }).then((res) => res.json());
+    return apiGet(urlsApi.businessProcess.checkTypeOLA, params);
   },
 
   updatePickMode: (body: Record<string, unknown>) => {
-    return fetch(urlsApi.businessProcess.updatePickMode, {
-      method: "POST",
-      body: JSON.stringify(body),
-    }).then((res) => res.json());
+    return apiPost(urlsApi.businessProcess.updatePickMode, body);
   },
 
   //send task
   updateSendTask: (body: Record<string, unknown>) => {
-    return fetch(urlsApi.businessProcess.updateSendTask, {
-      method: "POST",
-      body: JSON.stringify(body),
-    }).then((res) => res.json());
+    return apiPost(urlsApi.businessProcess.updateSendTask, body);
   },
   detailSendTask: (id: string | number) => {
     return fetch(`${urlsApi.businessProcess.detailSendTask}?nodeId=${id}`, {
@@ -420,18 +277,12 @@ export default {
     }).then((res) => res.json());
   },
   cloneSendTask: (body: Record<string, unknown>) => {
-    return fetch(urlsApi.businessProcess.cloneSendTask, {
-      method: "POST",
-      body: JSON.stringify(body),
-    }).then((res) => res.json());
+    return apiPost(urlsApi.businessProcess.cloneSendTask, body);
   },
 
   //Message Intermediate Throw Event
   updateMessageIntermediateThrowEvent: (body: Record<string, unknown>) => {
-    return fetch(urlsApi.businessProcess.updateMessageIntermediateThrowEvent, {
-      method: "POST",
-      body: JSON.stringify(body),
-    }).then((res) => res.json());
+    return apiPost(urlsApi.businessProcess.updateMessageIntermediateThrowEvent, body);
   },
   detailMessageIntermediateThrowEvent: (id: string | number) => {
     return fetch(`${urlsApi.businessProcess.detailMessageIntermediateThrowEvent}?nodeId=${id}`, {
@@ -439,18 +290,12 @@ export default {
     }).then((res) => res.json());
   },
   cloneMessageIntermediateThrowEvent: (body: Record<string, unknown>) => {
-    return fetch(urlsApi.businessProcess.cloneMessageIntermediateThrowEvent, {
-      method: "POST",
-      body: JSON.stringify(body),
-    }).then((res) => res.json());
+    return apiPost(urlsApi.businessProcess.cloneMessageIntermediateThrowEvent, body);
   },
 
   //Message Intermediate Catch Event
   updateMessageIntermediateCatchEvent: (body: Record<string, unknown>) => {
-    return fetch(urlsApi.businessProcess.updateMessageIntermediateCatchEvent, {
-      method: "POST",
-      body: JSON.stringify(body),
-    }).then((res) => res.json());
+    return apiPost(urlsApi.businessProcess.updateMessageIntermediateCatchEvent, body);
   },
   detailMessageIntermediateCatchEvent: (id: string | number) => {
     return fetch(`${urlsApi.businessProcess.detailMessageIntermediateCatchEvent}?nodeId=${id}`, {
@@ -458,18 +303,12 @@ export default {
     }).then((res) => res.json());
   },
   cloneMessageIntermediateCatchEvent: (body: Record<string, unknown>) => {
-    return fetch(urlsApi.businessProcess.cloneMessageIntermediateCatchEvent, {
-      method: "POST",
-      body: JSON.stringify(body),
-    }).then((res) => res.json());
+    return apiPost(urlsApi.businessProcess.cloneMessageIntermediateCatchEvent, body);
   },
 
   //receive task
   updateReceiveTask: (body: Record<string, unknown>) => {
-    return fetch(urlsApi.businessProcess.updateReceiveTask, {
-      method: "POST",
-      body: JSON.stringify(body),
-    }).then((res) => res.json());
+    return apiPost(urlsApi.businessProcess.updateReceiveTask, body);
   },
   detailReceiveTask: (id: string | number) => {
     return fetch(`${urlsApi.businessProcess.detailReceiveTask}?nodeId=${id}`, {
@@ -477,18 +316,12 @@ export default {
     }).then((res) => res.json());
   },
   cloneReceiveTask: (body: Record<string, unknown>) => {
-    return fetch(urlsApi.businessProcess.cloneReceiveTask, {
-      method: "POST",
-      body: JSON.stringify(body),
-    }).then((res) => res.json());
+    return apiPost(urlsApi.businessProcess.cloneReceiveTask, body);
   },
 
   //call activity
   updateCallActivityTask: (body: Record<string, unknown>) => {
-    return fetch(urlsApi.businessProcess.updateCallActivityTask, {
-      method: "POST",
-      body: JSON.stringify(body),
-    }).then((res) => res.json());
+    return apiPost(urlsApi.businessProcess.updateCallActivityTask, body);
   },
   detailCallActivityTask: (id: string | number) => {
     return fetch(`${urlsApi.businessProcess.detailCallActivityTask}?nodeId=${id}`, {
@@ -496,18 +329,12 @@ export default {
     }).then((res) => res.json());
   },
   cloneCallActivityTask: (body: Record<string, unknown>) => {
-    return fetch(urlsApi.businessProcess.cloneCallActivityTask, {
-      method: "POST",
-      body: JSON.stringify(body),
-    }).then((res) => res.json());
+    return apiPost(urlsApi.businessProcess.cloneCallActivityTask, body);
   },
 
   //parallel gateway
   updateParallelGateway: (body: Record<string, unknown>) => {
-    return fetch(urlsApi.businessProcess.updateParallelGateway, {
-      method: "POST",
-      body: JSON.stringify(body),
-    }).then((res) => res.json());
+    return apiPost(urlsApi.businessProcess.updateParallelGateway, body);
   },
   detailParallelGateway: (id: string | number) => {
     return fetch(`${urlsApi.businessProcess.detailParallelGateway}?nodeId=${id}`, {
@@ -515,18 +342,12 @@ export default {
     }).then((res) => res.json());
   },
   cloneParallelGateway: (body: Record<string, unknown>) => {
-    return fetch(urlsApi.businessProcess.cloneParallelGateway, {
-      method: "POST",
-      body: JSON.stringify(body),
-    }).then((res) => res.json());
+    return apiPost(urlsApi.businessProcess.cloneParallelGateway, body);
   },
 
   //exclusive gateway
   updateExclusiveGateway: (body: Record<string, unknown>) => {
-    return fetch(urlsApi.businessProcess.updateExclusiveGateway, {
-      method: "POST",
-      body: JSON.stringify(body),
-    }).then((res) => res.json());
+    return apiPost(urlsApi.businessProcess.updateExclusiveGateway, body);
   },
   detailExclusiveGateway: (id: string | number) => {
     return fetch(`${urlsApi.businessProcess.detailExclusiveGateway}?nodeId=${id}`, {
@@ -534,18 +355,12 @@ export default {
     }).then((res) => res.json());
   },
   cloneExclusiveGateway: (body: Record<string, unknown>) => {
-    return fetch(urlsApi.businessProcess.cloneExclusiveGateway, {
-      method: "POST",
-      body: JSON.stringify(body),
-    }).then((res) => res.json());
+    return apiPost(urlsApi.businessProcess.cloneExclusiveGateway, body);
   },
 
   //inclusive gateway
   updateInclusiveGateway: (body: Record<string, unknown>) => {
-    return fetch(urlsApi.businessProcess.updateInclusiveGateway, {
-      method: "POST",
-      body: JSON.stringify(body),
-    }).then((res) => res.json());
+    return apiPost(urlsApi.businessProcess.updateInclusiveGateway, body);
   },
   detailInclusiveGateway: (id: string | number) => {
     return fetch(`${urlsApi.businessProcess.detailInclusiveGateway}?nodeId=${id}`, {
@@ -553,18 +368,12 @@ export default {
     }).then((res) => res.json());
   },
   cloneInclusiveGateway: (body: Record<string, unknown>) => {
-    return fetch(urlsApi.businessProcess.cloneInclusiveGateway, {
-      method: "POST",
-      body: JSON.stringify(body),
-    }).then((res) => res.json());
+    return apiPost(urlsApi.businessProcess.cloneInclusiveGateway, body);
   },
 
   //complex gateway
   updateComplexGateway: (body: Record<string, unknown>) => {
-    return fetch(urlsApi.businessProcess.updateComplexGateway, {
-      method: "POST",
-      body: JSON.stringify(body),
-    }).then((res) => res.json());
+    return apiPost(urlsApi.businessProcess.updateComplexGateway, body);
   },
   detailComplexGateway: (id: string | number) => {
     return fetch(`${urlsApi.businessProcess.detailComplexGateway}?nodeId=${id}`, {
@@ -572,18 +381,12 @@ export default {
     }).then((res) => res.json());
   },
   cloneComplexGateway: (body: Record<string, unknown>) => {
-    return fetch(urlsApi.businessProcess.cloneComplexGateway, {
-      method: "POST",
-      body: JSON.stringify(body),
-    }).then((res) => res.json());
+    return apiPost(urlsApi.businessProcess.cloneComplexGateway, body);
   },
 
   //subprocess
   updateSubprocess: (body: Record<string, unknown>) => {
-    return fetch(urlsApi.businessProcess.updateSubprocess, {
-      method: "POST",
-      body: JSON.stringify(body),
-    }).then((res) => res.json());
+    return apiPost(urlsApi.businessProcess.updateSubprocess, body);
   },
   detailSubprocess: (id: string | number) => {
     return fetch(`${urlsApi.businessProcess.detailSubprocess}?nodeId=${id}`, {
@@ -591,18 +394,12 @@ export default {
     }).then((res) => res.json());
   },
   cloneSubprocess: (body: Record<string, unknown>) => {
-    return fetch(urlsApi.businessProcess.cloneSubprocess, {
-      method: "POST",
-      body: JSON.stringify(body),
-    }).then((res) => res.json());
+    return apiPost(urlsApi.businessProcess.cloneSubprocess, body);
   },
 
   //timer start event
   updateTimerStartEvent: (body: Record<string, unknown>) => {
-    return fetch(urlsApi.businessProcess.updateTimerStartEvent, {
-      method: "POST",
-      body: JSON.stringify(body),
-    }).then((res) => res.json());
+    return apiPost(urlsApi.businessProcess.updateTimerStartEvent, body);
   },
   detailTimerStartEvent: (id: string | number) => {
     return fetch(`${urlsApi.businessProcess.detailTimerStartEvent}?nodeId=${id}`, {
@@ -610,18 +407,12 @@ export default {
     }).then((res) => res.json());
   },
   cloneTimerStartEvent: (body: Record<string, unknown>) => {
-    return fetch(urlsApi.businessProcess.cloneTimerStartEvent, {
-      method: "POST",
-      body: JSON.stringify(body),
-    }).then((res) => res.json());
+    return apiPost(urlsApi.businessProcess.cloneTimerStartEvent, body);
   },
 
   //timer intermediate catch event
   updateTimerIntermediateCatchEvent: (body: Record<string, unknown>) => {
-    return fetch(urlsApi.businessProcess.updateTimerIntermediateCatchEvent, {
-      method: "POST",
-      body: JSON.stringify(body),
-    }).then((res) => res.json());
+    return apiPost(urlsApi.businessProcess.updateTimerIntermediateCatchEvent, body);
   },
   detailTimerIntermediateCatchEvent: (id: string | number) => {
     return fetch(`${urlsApi.businessProcess.detailTimerIntermediateCatchEvent}?nodeId=${id}`, {
@@ -629,18 +420,12 @@ export default {
     }).then((res) => res.json());
   },
   cloneTimerIntermediateCatchEvent: (body: Record<string, unknown>) => {
-    return fetch(urlsApi.businessProcess.cloneTimerIntermediateCatchEvent, {
-      method: "POST",
-      body: JSON.stringify(body),
-    }).then((res) => res.json());
+    return apiPost(urlsApi.businessProcess.cloneTimerIntermediateCatchEvent, body);
   },
 
   //start event
   updateStartTaskEvent: (body: Record<string, unknown>) => {
-    return fetch(urlsApi.businessProcess.updateStartTaskEvent, {
-      method: "POST",
-      body: JSON.stringify(body),
-    }).then((res) => res.json());
+    return apiPost(urlsApi.businessProcess.updateStartTaskEvent, body);
   },
   detailStartTaskEvent: (id: string | number) => {
     return fetch(`${urlsApi.businessProcess.detailStartTaskEvent}?nodeId=${id}`, {
@@ -648,17 +433,11 @@ export default {
     }).then((res) => res.json());
   },
   cloneStartTaskEvent: (body: Record<string, unknown>) => {
-    return fetch(urlsApi.businessProcess.cloneStartTaskEvent, {
-      method: "POST",
-      body: JSON.stringify(body),
-    }).then((res) => res.json());
+    return apiPost(urlsApi.businessProcess.cloneStartTaskEvent, body);
   },
   //start message event
   updateStartMessageEvent: (body: Record<string, unknown>) => {
-    return fetch(urlsApi.businessProcess.updateStartMessageEvent, {
-      method: "POST",
-      body: JSON.stringify(body),
-    }).then((res) => res.json());
+    return apiPost(urlsApi.businessProcess.updateStartMessageEvent, body);
   },
   detailStartMessageEvent: (id: string | number) => {
     return fetch(`${urlsApi.businessProcess.detailStartMessageEvent}?nodeId=${id}`, {
@@ -666,17 +445,11 @@ export default {
     }).then((res) => res.json());
   },
   cloneStartMessageEvent: (body: Record<string, unknown>) => {
-    return fetch(urlsApi.businessProcess.cloneStartMessageEvent, {
-      method: "POST",
-      body: JSON.stringify(body),
-    }).then((res) => res.json());
+    return apiPost(urlsApi.businessProcess.cloneStartMessageEvent, body);
   },
   //end event
   updateEndTaskEvent: (body: Record<string, unknown>) => {
-    return fetch(urlsApi.businessProcess.updateEndTaskEvent, {
-      method: "POST",
-      body: JSON.stringify(body),
-    }).then((res) => res.json());
+    return apiPost(urlsApi.businessProcess.updateEndTaskEvent, body);
   },
   detailEndTaskEvent: (id: string | number) => {
     return fetch(`${urlsApi.businessProcess.detailEndTaskEvent}?nodeId=${id}`, {
@@ -684,17 +457,11 @@ export default {
     }).then((res) => res.json());
   },
   cloneEndTaskEvent: (body: Record<string, unknown>) => {
-    return fetch(urlsApi.businessProcess.cloneEndTaskEvent, {
-      method: "POST",
-      body: JSON.stringify(body),
-    }).then((res) => res.json());
+    return apiPost(urlsApi.businessProcess.cloneEndTaskEvent, body);
   },
   //end message event
   updateEndMessageEvent: (body: Record<string, unknown>) => {
-    return fetch(urlsApi.businessProcess.updateEndMessageEvent, {
-      method: "POST",
-      body: JSON.stringify(body),
-    }).then((res) => res.json());
+    return apiPost(urlsApi.businessProcess.updateEndMessageEvent, body);
   },
   detailEndMessageEvent: (id: string | number) => {
     return fetch(`${urlsApi.businessProcess.detailEndMessageEvent}?nodeId=${id}`, {
@@ -702,18 +469,12 @@ export default {
     }).then((res) => res.json());
   },
   cloneEndMessageEvent: (body: Record<string, unknown>) => {
-    return fetch(urlsApi.businessProcess.cloneEndMessageEvent, {
-      method: "POST",
-      body: JSON.stringify(body),
-    }).then((res) => res.json());
+    return apiPost(urlsApi.businessProcess.cloneEndMessageEvent, body);
   },
 
   //Escalation intermediate throw event
   updateEscalationIntermediateThrowEvent: (body: Record<string, unknown>) => {
-    return fetch(urlsApi.businessProcess.updateEscalationIntermediateThrowEvent, {
-      method: "POST",
-      body: JSON.stringify(body),
-    }).then((res) => res.json());
+    return apiPost(urlsApi.businessProcess.updateEscalationIntermediateThrowEvent, body);
   },
   detailEscalationIntermediateThrowEvent: (id: string | number) => {
     return fetch(`${urlsApi.businessProcess.detailEscalationIntermediateThrowEvent}?nodeId=${id}`, {
@@ -721,18 +482,12 @@ export default {
     }).then((res) => res.json());
   },
   cloneEscalationIntermediateThrowEvent: (body: Record<string, unknown>) => {
-    return fetch(urlsApi.businessProcess.cloneEscalationIntermediateThrowEvent, {
-      method: "POST",
-      body: JSON.stringify(body),
-    }).then((res) => res.json());
+    return apiPost(urlsApi.businessProcess.cloneEscalationIntermediateThrowEvent, body);
   },
   //Escalation end event
 
   updateEscalationEndEvent: (body: Record<string, unknown>) => {
-    return fetch(urlsApi.businessProcess.updateEscalationIntermediateThrowEvent, {
-      method: "POST",
-      body: JSON.stringify(body),
-    }).then((res) => res.json());
+    return apiPost(urlsApi.businessProcess.updateEscalationIntermediateThrowEvent, body);
   },
   detailEscalationEndEvent: (id: string | number) => {
     return fetch(`${urlsApi.businessProcess.detailEscalationIntermediateThrowEvent}?nodeId=${id}`, {
@@ -740,18 +495,12 @@ export default {
     }).then((res) => res.json());
   },
   cloneEscalationEndEvent: (body: Record<string, unknown>) => {
-    return fetch(urlsApi.businessProcess.cloneEscalationIntermediateThrowEvent, {
-      method: "POST",
-      body: JSON.stringify(body),
-    }).then((res) => res.json());
+    return apiPost(urlsApi.businessProcess.cloneEscalationIntermediateThrowEvent, body);
   },
 
   //Escalation start event
   updateEscalationStartEvent: (body: Record<string, unknown>) => {
-    return fetch(urlsApi.businessProcess.updateEscalationStartEvent, {
-      method: "POST",
-      body: JSON.stringify(body),
-    }).then((res) => res.json());
+    return apiPost(urlsApi.businessProcess.updateEscalationStartEvent, body);
   },
   detailEscalationStartEvent: (id: string | number) => {
     return fetch(`${urlsApi.businessProcess.detailEscalationStartEvent}?nodeId=${id}`, {
@@ -759,18 +508,12 @@ export default {
     }).then((res) => res.json());
   },
   cloneEscalationStartEvent: (body: Record<string, unknown>) => {
-    return fetch(urlsApi.businessProcess.cloneEscalationStartEvent, {
-      method: "POST",
-      body: JSON.stringify(body),
-    }).then((res) => res.json());
+    return apiPost(urlsApi.businessProcess.cloneEscalationStartEvent, body);
   },
 
   //Conditional Catch Intermediate
   updateConditionalCatchEventTask: (body: Record<string, unknown>) => {
-    return fetch(urlsApi.businessProcess.updateConditionalCatchEventTask, {
-      method: "POST",
-      body: JSON.stringify(body),
-    }).then((res) => res.json());
+    return apiPost(urlsApi.businessProcess.updateConditionalCatchEventTask, body);
   },
   detailConditionalCatchEventTask: (id: string | number) => {
     return fetch(`${urlsApi.businessProcess.detailConditionalCatchEventTask}?nodeId=${id}`, {
@@ -780,10 +523,7 @@ export default {
 
   //signal start event
   updateSignalStartEvent: (body: Record<string, unknown>) => {
-    return fetch(urlsApi.businessProcess.updateSignalStartEvent, {
-      method: "POST",
-      body: JSON.stringify(body),
-    }).then((res) => res.json());
+    return apiPost(urlsApi.businessProcess.updateSignalStartEvent, body);
   },
   detailSignalStartEvent: (id: string | number) => {
     return fetch(`${urlsApi.businessProcess.detailSignalStartEvent}?nodeId=${id}`, {
@@ -791,18 +531,12 @@ export default {
     }).then((res) => res.json());
   },
   cloneSignalStartEvent: (body: Record<string, unknown>) => {
-    return fetch(urlsApi.businessProcess.cloneSignalStartEvent, {
-      method: "POST",
-      body: JSON.stringify(body),
-    }).then((res) => res.json());
+    return apiPost(urlsApi.businessProcess.cloneSignalStartEvent, body);
   },
 
   //signal end event
   updateSignalEndEvent: (body: Record<string, unknown>) => {
-    return fetch(urlsApi.businessProcess.updateSignalEndEvent, {
-      method: "POST",
-      body: JSON.stringify(body),
-    }).then((res) => res.json());
+    return apiPost(urlsApi.businessProcess.updateSignalEndEvent, body);
   },
   detailSignalEndEvent: (id: string | number) => {
     return fetch(`${urlsApi.businessProcess.detailSignalEndEvent}?nodeId=${id}`, {
@@ -810,18 +544,12 @@ export default {
     }).then((res) => res.json());
   },
   cloneSignalEndEvent: (body: Record<string, unknown>) => {
-    return fetch(urlsApi.businessProcess.cloneSignalEndEvent, {
-      method: "POST",
-      body: JSON.stringify(body),
-    }).then((res) => res.json());
+    return apiPost(urlsApi.businessProcess.cloneSignalEndEvent, body);
   },
 
   //signal intermediate throw event
   updateSignalIntermediateThrowEvent: (body: Record<string, unknown>) => {
-    return fetch(urlsApi.businessProcess.updateSignalIntermediateThrowEvent, {
-      method: "POST",
-      body: JSON.stringify(body),
-    }).then((res) => res.json());
+    return apiPost(urlsApi.businessProcess.updateSignalIntermediateThrowEvent, body);
   },
   detailSignalIntermediateThrowEvent: (id: string | number) => {
     return fetch(`${urlsApi.businessProcess.detailSignalIntermediateThrowEvent}?nodeId=${id}`, {
@@ -829,18 +557,12 @@ export default {
     }).then((res) => res.json());
   },
   cloneSignalIntermediateThrowEvent: (body: Record<string, unknown>) => {
-    return fetch(urlsApi.businessProcess.cloneSignalIntermediateThrowEvent, {
-      method: "POST",
-      body: JSON.stringify(body),
-    }).then((res) => res.json());
+    return apiPost(urlsApi.businessProcess.cloneSignalIntermediateThrowEvent, body);
   },
 
   //signal intermediate catch event
   updateSignalIntermediateCatchEvent: (body: Record<string, unknown>) => {
-    return fetch(urlsApi.businessProcess.updateSignalIntermediateCatchEvent, {
-      method: "POST",
-      body: JSON.stringify(body),
-    }).then((res) => res.json());
+    return apiPost(urlsApi.businessProcess.updateSignalIntermediateCatchEvent, body);
   },
   detailSignalIntermediateCatchEvent: (id: string | number) => {
     return fetch(`${urlsApi.businessProcess.detailSignalIntermediateCatchEvent}?nodeId=${id}`, {
@@ -848,18 +570,12 @@ export default {
     }).then((res) => res.json());
   },
   cloneSignalIntermediateCatchEvent: (body: Record<string, unknown>) => {
-    return fetch(urlsApi.businessProcess.cloneSignalIntermediateCatchEvent, {
-      method: "POST",
-      body: JSON.stringify(body),
-    }).then((res) => res.json());
+    return apiPost(urlsApi.businessProcess.cloneSignalIntermediateCatchEvent, body);
   },
 
   //conditional start event
   updateConditionalStartEvent: (body: Record<string, unknown>) => {
-    return fetch(urlsApi.businessProcess.updateConditionalStartEvent, {
-      method: "POST",
-      body: JSON.stringify(body),
-    }).then((res) => res.json());
+    return apiPost(urlsApi.businessProcess.updateConditionalStartEvent, body);
   },
   detailConditionalStartEvent: (id: string | number) => {
     return fetch(`${urlsApi.businessProcess.detailConditionalStartEvent}?nodeId=${id}`, {
@@ -869,10 +585,7 @@ export default {
 
   //compensation Intermediate throw event
   updateCompensationIntermediateThrowEvent: (body: Record<string, unknown>) => {
-    return fetch(urlsApi.businessProcess.updateCompensationIntermediateThrowEvent, {
-      method: "POST",
-      body: JSON.stringify(body),
-    }).then((res) => res.json());
+    return apiPost(urlsApi.businessProcess.updateCompensationIntermediateThrowEvent, body);
   },
   detailCompensationIntermediateThrowEvent: (id: string | number) => {
     return fetch(`${urlsApi.businessProcess.detailCompensationIntermediateThrowEvent}?nodeId=${id}`, {
@@ -880,10 +593,7 @@ export default {
     }).then((res) => res.json());
   },
   cloneCompensationIntermediateThrowEvent: (body: Record<string, unknown>) => {
-    return fetch(urlsApi.businessProcess.cloneCompensationIntermediateThrowEvent, {
-      method: "POST",
-      body: JSON.stringify(body),
-    }).then((res) => res.json());
+    return apiPost(urlsApi.businessProcess.cloneCompensationIntermediateThrowEvent, body);
   },
   listCompensationRef: (processId: string | number) => {
     return fetch(`${urlsApi.businessProcess.getCompensationRef}?processId=${processId}`, {
@@ -893,10 +603,7 @@ export default {
 
   //Compensation End Event
   updateCompensationEndEvent: (body: Record<string, unknown>) => {
-    return fetch(urlsApi.businessProcess.updateCompensationEndEvent, {
-      method: "POST",
-      body: JSON.stringify(body),
-    }).then((res) => res.json());
+    return apiPost(urlsApi.businessProcess.updateCompensationEndEvent, body);
   },
   detailCompensationEndEvent: (id: string | number) => {
     return fetch(`${urlsApi.businessProcess.detailCompensationEndEvent}?nodeId=${id}`, {
@@ -904,18 +611,12 @@ export default {
     }).then((res) => res.json());
   },
   cloneCompensationEndEvent: (body: Record<string, unknown>) => {
-    return fetch(urlsApi.businessProcess.cloneCompensationEndEvent, {
-      method: "POST",
-      body: JSON.stringify(body),
-    }).then((res) => res.json());
+    return apiPost(urlsApi.businessProcess.cloneCompensationEndEvent, body);
   },
 
   //Terminate End Event
   updateTerminateEndEvent: (body: Record<string, unknown>) => {
-    return fetch(urlsApi.businessProcess.updateTerminateEndEvent, {
-      method: "POST",
-      body: JSON.stringify(body),
-    }).then((res) => res.json());
+    return apiPost(urlsApi.businessProcess.updateTerminateEndEvent, body);
   },
   detailTerminateEndEvent: (id: string | number) => {
     return fetch(`${urlsApi.businessProcess.detailTerminateEndEvent}?nodeId=${id}`, {
@@ -923,18 +624,12 @@ export default {
     }).then((res) => res.json());
   },
   cloneTerminateEndEvent: (body: Record<string, unknown>) => {
-    return fetch(urlsApi.businessProcess.cloneTerminateEndEvent, {
-      method: "POST",
-      body: JSON.stringify(body),
-    }).then((res) => res.json());
+    return apiPost(urlsApi.businessProcess.cloneTerminateEndEvent, body);
   },
 
   //Error end event
   updateErrorEndEvent: (body: Record<string, unknown>) => {
-    return fetch(urlsApi.businessProcess.updateErrorEndEvent, {
-      method: "POST",
-      body: JSON.stringify(body),
-    }).then((res) => res.json());
+    return apiPost(urlsApi.businessProcess.updateErrorEndEvent, body);
   },
   detailErrorEndEvent: (id: string | number) => {
     return fetch(`${urlsApi.businessProcess.detailErrorEndEvent}?nodeId=${id}`, {
@@ -942,18 +637,12 @@ export default {
     }).then((res) => res.json());
   },
   cloneErrorEndEvent: (body: Record<string, unknown>) => {
-    return fetch(urlsApi.businessProcess.cloneErrorEndEvent, {
-      method: "POST",
-      body: JSON.stringify(body),
-    }).then((res) => res.json());
+    return apiPost(urlsApi.businessProcess.cloneErrorEndEvent, body);
   },
 
   // error start event
   updateErrorStartEvent: (body: Record<string, unknown>) => {
-    return fetch(urlsApi.businessProcess.updateErrorStartEvent, {
-      method: "POST",
-      body: JSON.stringify(body),
-    }).then((res) => res.json());
+    return apiPost(urlsApi.businessProcess.updateErrorStartEvent, body);
   },
   detailErrorStartEvent: (id: string | number) => {
     return fetch(`${urlsApi.businessProcess.detailErrorStartEvent}?nodeId=${id}`, {
@@ -961,18 +650,12 @@ export default {
     }).then((res) => res.json());
   },
   cloneErrorStartEvent: (body: Record<string, unknown>) => {
-    return fetch(urlsApi.businessProcess.cloneErrorStartEvent, {
-      method: "POST",
-      body: JSON.stringify(body),
-    }).then((res) => res.json());
+    return apiPost(urlsApi.businessProcess.cloneErrorStartEvent, body);
   },
 
   //Link Catch Intermediate
   updateLinkCatchEventTask: (body: Record<string, unknown>) => {
-    return fetch(urlsApi.businessProcess.updateLinkCatchEventTask, {
-      method: "POST",
-      body: JSON.stringify(body),
-    }).then((res) => res.json());
+    return apiPost(urlsApi.businessProcess.updateLinkCatchEventTask, body);
   },
   detailLinkCatchEventTask: (id: string | number) => {
     return fetch(`${urlsApi.businessProcess.detailLinkCatchEventTask}?nodeId=${id}`, {
@@ -982,10 +665,7 @@ export default {
 
   //bpm participant
   updateBpmParticipant: (body: Record<string, unknown>) => {
-    return fetch(urlsApi.businessProcess.updateBpmParticipant, {
-      method: "POST",
-      body: JSON.stringify(body),
-    }).then((res) => res.json());
+    return apiPost(urlsApi.businessProcess.updateBpmParticipant, body);
   },
 
   detailBpmParticipant: (id: string | number) => {
@@ -996,82 +676,52 @@ export default {
 
   //lấy về danh sách luồng tới
   listLinkTo: (params?: Record<string, unknown>, signal?: AbortSignal) => {
-    return fetch(`${urlsApi.businessProcess.listLinkTo}${convertParamsToString(params)}`, {
-      signal,
-      method: "GET",
-    }).then((res) => res.json());
+    return apiGet(urlsApi.businessProcess.listLinkTo, params, signal);
   },
 
   //lấy về danh sách luồng ra
   listLinkFrom: (params?: Record<string, unknown>, signal?: AbortSignal) => {
-    return fetch(`${urlsApi.businessProcess.listLinkForm}${convertParamsToString(params)}`, {
-      signal,
-      method: "GET",
-    }).then((res) => res.json());
+    return apiGet(urlsApi.businessProcess.listLinkForm, params, signal);
   },
 
   //handle task
   updateHandleTask: (body: Record<string, unknown>) => {
-    return fetch(urlsApi.businessProcess.updateHandleTask, {
-      method: "POST",
-      body: JSON.stringify(body),
-    }).then((res) => res.json());
+    return apiPost(urlsApi.businessProcess.updateHandleTask, body);
   },
 
   //handle task init
   updateHandleTaskInit: (body: Record<string, unknown>) => {
-    return fetch(urlsApi.businessProcess.updateHandleTaskInit, {
-      method: "POST",
-      body: JSON.stringify(body),
-    }).then((res) => res.json());
+    return apiPost(urlsApi.businessProcess.updateHandleTaskInit, body);
   },
 
   //handle task draff
   updateHandleTaskDraft: (body: Record<string, unknown>) => {
-    return fetch(urlsApi.businessProcess.updateHandleTaskDraft, {
-      method: "POST",
-      body: JSON.stringify(body),
-    }).then((res) => res.json());
+    return apiPost(urlsApi.businessProcess.updateHandleTaskDraft, body);
   },
 
   //tạo ycms
   purchaseRequestApprove: (body: Record<string, unknown>) => {
-    return fetch(urlsApi.businessProcess.purchaseRequestApprove, {
-      method: "POST",
-      body: JSON.stringify(body),
-    }).then((res) => res.json());
+    return apiPost(urlsApi.businessProcess.purchaseRequestApprove, body);
   },
 
   //tạo ycms draff
   purchaseRequestDraft: (body: Record<string, unknown>) => {
-    return fetch(urlsApi.businessProcess.purchaseRequestDraft, {
-      method: "POST",
-      body: JSON.stringify(body),
-    }).then((res) => res.json());
+    return apiPost(urlsApi.businessProcess.purchaseRequestDraft, body);
   },
 
   //lấy về dữ liệu khởi tạo của form xử lý task
   getDataForm: (params?: Record<string, unknown>, signal?: AbortSignal) => {
-    return fetch(`${urlsApi.businessProcess.getDataForm}${convertParamsToString(params)}`, {
-      signal,
-      method: "GET",
-    }).then((res) => res.json());
+    return apiGet(urlsApi.businessProcess.getDataForm, params, signal);
   },
 
   //lấy về lịch sử đối tượng trong quy trình
   getProcessedObjectLog: (params?: Record<string, unknown>, signal?: AbortSignal) => {
-    return fetch(`${urlsApi.businessProcess.getProcessedObjectLog}${convertParamsToString(params)}`, {
-      signal,
-      method: "GET",
-    }).then((res) => res.json());
+    return apiGet(urlsApi.businessProcess.getProcessedObjectLog, params, signal);
   },
 
   //Mô phỏng quy trình
   listBpmTrigger: (params?: Record<string, unknown>, signal?: AbortSignal) => {
-    return fetch(`${urlsApi.businessProcess.listBpmTrigger}${convertParamsToString(params)}`, {
-      signal,
-      method: "GET",
-    }).then((res) => res.json());
+    return apiGet(urlsApi.businessProcess.listBpmTrigger, params, signal);
   },
 
   activeBpmTrigger: (id: string | number) => {
@@ -1082,131 +732,80 @@ export default {
 
   //lịch sử xử lý
   processedObjectLog: (params?: Record<string, unknown>, signal?: AbortSignal) => {
-    return fetch(`${urlsApi.businessProcess.processedObjectLog}${convertParamsToString(params)}`, {
-      signal,
-      method: "GET",
-    }).then((res) => res.json());
+    return apiGet(urlsApi.businessProcess.processedObjectLog, params, signal);
   },
   //lịch sử xử lý
   processedObjectLogPage: (params?: Record<string, unknown>, signal?: AbortSignal) => {
-    return fetch(`${urlsApi.businessProcess.processedObjectLogPage}${convertParamsToString(params)}`, {
-      signal,
-      method: "GET",
-    }).then((res) => res.json());
+    return apiGet(urlsApi.businessProcess.processedObjectLogPage, params, signal);
   },
 
   //OLA, SLA
   updateServiceLevel: (body: Record<string, unknown>) => {
-    return fetch(urlsApi.businessProcess.updateServiceLevel, {
-      method: "POST",
-      body: JSON.stringify(body),
-    }).then((res) => res.json());
+    return apiPost(urlsApi.businessProcess.updateServiceLevel, body);
   },
 
   listServiceLevel: (params?: Record<string, unknown>, signal?: AbortSignal) => {
-    return fetch(`${urlsApi.businessProcess.listServiceLevel}${convertParamsToString(params)}`, {
-      signal,
-      method: "GET",
-    }).then((res) => res.json());
+    return apiGet(urlsApi.businessProcess.listServiceLevel, params, signal);
   },
 
   updateHistoryOLA: (body: Record<string, unknown>) => {
-    return fetch(urlsApi.businessProcess.updateHistoryOLA, {
-      method: "POST",
-      body: JSON.stringify(body),
-    }).then((res) => res.json());
+    return apiPost(urlsApi.businessProcess.updateHistoryOLA, body);
   },
 
   listHistoryOLA: (params?: Record<string, unknown>, signal?: AbortSignal) => {
-    return fetch(`${urlsApi.businessProcess.listHistoryOLA}${convertParamsToString(params)}`, {
-      signal,
-      method: "GET",
-    }).then((res) => res.json());
+    return apiGet(urlsApi.businessProcess.listHistoryOLA, params, signal);
   },
 
   //Tiếp nhận xử lý
   receiveProcessedObjectLog: (body: Record<string, unknown>) => {
-    return fetch(urlsApi.businessProcess.receiveProcessedObjectLog, {
-      method: "POST",
-      body: JSON.stringify(body),
-    }).then((res) => res.json());
+    return apiPost(urlsApi.businessProcess.receiveProcessedObjectLog, body);
   },
 
   //Tạm dừng xử lý
   onholdProcessedObjectLog: (body: Record<string, unknown>) => {
-    return fetch(urlsApi.businessProcess.onholdProcessedObjectLog, {
-      method: "POST",
-      body: JSON.stringify(body),
-    }).then((res) => res.json());
+    return apiPost(urlsApi.businessProcess.onholdProcessedObjectLog, body);
   },
 
   //Tiếp tục xử lý
   onContinue: (params?: Record<string, unknown>, signal?: AbortSignal) => {
-    return fetch(`${urlsApi.businessProcess.onContinue}${convertParamsToString(params)}`, {
-      signal,
-      method: "GET",
-    }).then((res) => res.json());
+    return apiGet(urlsApi.businessProcess.onContinue, params, signal);
   },
 
   // Thu hồi công việc:
   // Lấy trạng thái công việc
   onWorkRecall: (params?: Record<string, unknown>, signal?: AbortSignal) => {
-    return fetch(`${urlsApi.businessProcess.onWorkRecall}${convertParamsToString(params)}`, {
-      signal,
-      method: "GET",
-    }).then((res) => res.json());
+    return apiGet(urlsApi.businessProcess.onWorkRecall, params, signal);
   },
   onPollCheckResult: (params?: Record<string, unknown>, signal?: AbortSignal) => {
-    return fetch(`${urlsApi.businessProcess.onCheckWorkResult}${convertParamsToString(params)}`, {
-      signal,
-      method: "GET",
-    }).then((res) => res.json());
+    return apiGet(urlsApi.businessProcess.onCheckWorkResult, params, signal);
   },
   // Xác nhận thu hồi công việc
   onConfirmRecall: (params?: Record<string, unknown>, signal?: AbortSignal) => {
-    return fetch(`${urlsApi.businessProcess.confirmWorkRecall}${convertParamsToString(params)}`, {
-      signal,
-      method: "GET",
-    }).then((res) => res.json());
+    return apiGet(urlsApi.businessProcess.confirmWorkRecall, params, signal);
   },
   //lấy về các node của một quy trình để debug
   debugListNodeProcess: (params?: Record<string, unknown>, signal?: AbortSignal) => {
-    return fetch(`${urlsApi.businessProcess.debugListNodeProcess}${convertParamsToString(params)}`, {
-      signal,
-      method: "GET",
-    }).then((res) => res.json());
+    return apiGet(urlsApi.businessProcess.debugListNodeProcess, params, signal);
   },
 
   //lấy về các node start của một quy trình để debug
   debugListNodeStartProcess: (params?: Record<string, unknown>, signal?: AbortSignal) => {
-    return fetch(`${urlsApi.businessProcess.debugListNodeStartProcess}${convertParamsToString(params)}`, {
-      signal,
-      method: "GET",
-    }).then((res) => res.json());
+    return apiGet(urlsApi.businessProcess.debugListNodeStartProcess, params, signal);
   },
 
   //lấy về các link của một quy trình để debug
   debugListLinkNodeProcess: (params?: Record<string, unknown>, signal?: AbortSignal) => {
-    return fetch(`${urlsApi.businessProcess.debugListLinkNodeProcess}${convertParamsToString(params)}`, {
-      signal,
-      method: "GET",
-    }).then((res) => res.json());
+    return apiGet(urlsApi.businessProcess.debugListLinkNodeProcess, params, signal);
   },
 
   //lấy danh sách bước (node) để từ chối rồi quay lại
   listNodeHistory: (params?: Record<string, unknown>, signal?: AbortSignal) => {
-    return fetch(`${urlsApi.businessProcess.listNodeHistory}${convertParamsToString(params)}`, {
-      signal,
-      method: "GET",
-    }).then((res) => res.json());
+    return apiGet(urlsApi.businessProcess.listNodeHistory, params, signal);
   },
 
   //thêm cột trong grid
   AddArtifactGrid: (body: Record<string, unknown>) => {
-    return fetch(urlsApi.businessProcess.addArtifactGrid, {
-      method: "POST",
-      body: JSON.stringify(body),
-    }).then((res) => res.json());
+    return apiPost(urlsApi.businessProcess.addArtifactGrid, body);
   },
   detailArtifactGrid: (id: number) => {
     return fetch(`${urlsApi.businessProcess.getArtifactGrid}?id=${id}`, {
@@ -1216,18 +815,12 @@ export default {
 
   //Timer
   updateTimer: (body: Record<string, unknown>) => {
-    return fetch(urlsApi.businessProcess.updateTimer, {
-      method: "POST",
-      body: JSON.stringify(body),
-    }).then((res) => res.json());
+    return apiPost(urlsApi.businessProcess.updateTimer, body);
   },
 
   //type user task
   updateType: (body: Record<string, unknown>) => {
-    return fetch(urlsApi.businessProcess.updateType, {
-      method: "POST",
-      body: JSON.stringify(body),
-    }).then((res) => res.json());
+    return apiPost(urlsApi.businessProcess.updateType, body);
   },
 
   // getTimer: (id: number) => {
@@ -1238,17 +831,11 @@ export default {
 
   //Thêm artifact vào list để cấu hình
   updateArtifactMetadata: (body: Record<string, unknown>) => {
-    return fetch(urlsApi.businessProcess.updateArtifactMetadata, {
-      method: "POST",
-      body: JSON.stringify(body),
-    }).then((res) => res.json());
+    return apiPost(urlsApi.businessProcess.updateArtifactMetadata, body);
   },
 
   listArtifactMetadata: (params?: Record<string, unknown>, signal?: AbortSignal) => {
-    return fetch(`${urlsApi.businessProcess.listArtifactMetadata}${convertParamsToString(params)}`, {
-      signal,
-      method: "GET",
-    }).then((res) => res.json());
+    return apiGet(urlsApi.businessProcess.listArtifactMetadata, params, signal);
   },
 
   getArtifactMetadata: (id: number) => {
@@ -1258,82 +845,51 @@ export default {
   },
 
   deleteArtifactMetadata: (nodeId, fieldName) => {
-    return fetch(`${urlsApi.businessProcess.deleteArtifactMetadata}?nodeId=${nodeId}&fieldName=${fieldName}`, {
-      method: "DELETE",
-    }).then((res) => res.json());
+    return apiDelete(`${urlsApi.businessProcess.deleteArtifactMetadata}?nodeId=${nodeId}&fieldName=${fieldName}`);
   },
 
   //thêm cấu trúc hồ sơ
   updateBpmObject: (body: Record<string, unknown>) => {
-    return fetch(urlsApi.businessProcess.updateBpmObject, {
-      method: "POST",
-      body: JSON.stringify(body),
-    }).then((res) => res.json());
+    return apiPost(urlsApi.businessProcess.updateBpmObject, body);
   },
 
   detailBpmObject: (params?: Record<string, unknown>, signal?: AbortSignal) => {
-    return fetch(`${urlsApi.businessProcess.detailBpmObject}${convertParamsToString(params)}`, {
-      signal,
-      method: "GET",
-    }).then((res) => res.json());
+    return apiGet(urlsApi.businessProcess.detailBpmObject, params, signal);
   },
 
   onGetErrorLog: (params?: Record<string, unknown>, signal?: AbortSignal) => {
-    return fetch(`${urlsApi.businessProcess.getErrorLogData}${convertParamsToString(params)}`, {
-      signal,
-      method: "GET",
-    }).then((res) => res.json());
+    return apiGet(urlsApi.businessProcess.getErrorLogData, params, signal);
   },
 
   //export data process
   exportDataProcess: (body: Record<string, unknown>) => {
-    return fetch(urlsApi.businessProcess.exportDataProcess, {
-      method: "POST",
-      body: JSON.stringify(body),
-    }).then((res) => res.json());
+    return apiPost(urlsApi.businessProcess.exportDataProcess, body);
   },
 
   //api lấy về link url để tải file
   getUrlExportDataProcess: (params?: Record<string, unknown>, signal?: AbortSignal) => {
-    return fetch(`${urlsApi.businessProcess.getUrlExportDataProcess}${convertParamsToString(params)}`, {
-      signal,
-      method: "GET",
-    }).then((res) => res.json());
+    return apiGet(urlsApi.businessProcess.getUrlExportDataProcess, params, signal);
   },
 
   //import data process
   importDataProcess: (body: Record<string, unknown>) => {
-    return fetch(urlsApi.businessProcess.importDataProcess, {
-      method: "POST",
-      body: JSON.stringify(body),
-    }).then((res) => res.json());
+    return apiPost(urlsApi.businessProcess.importDataProcess, body);
   },
 
   // state
   listStates: (params?: Record<string, unknown>, signal?: AbortSignal) => {
-    return fetch(`${urlsApi.businessProcess.listState}${convertParamsToString(params)}`, {
-      signal,
-      method: "GET",
-    }).then((res) => res.json());
+    return apiGet(urlsApi.businessProcess.listState, params, signal);
   },
 
   createState: (body: Record<string, unknown>) => {
-    return fetch(urlsApi.businessProcess.createState, {
-      method: "POST",
-      body: JSON.stringify(body),
-    }).then((res) => res.json());
+    return apiPost(urlsApi.businessProcess.createState, body);
   },
 
   updateState: (body: Record<string, unknown>) => {
-    return fetch(urlsApi.businessProcess.updateState, {
-      method: "POST",
-      body: JSON.stringify(body),
-    }).then((res) => res.json());
+    return apiPost(urlsApi.businessProcess.updateState, body);
   },
 
   deleteState: (id: number) => {
-    return fetch(`${urlsApi.businessProcess.deleteState}?id=${id}`, {
-      method: "DELETE",
-    }).then((res) => res.json());
+    return apiDelete(`${urlsApi.businessProcess.deleteState}?id=${id}`);
   },
 };

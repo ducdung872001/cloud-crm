@@ -1,25 +1,17 @@
+import { apiGet } from "services/apiHelper";
 import { urlsApi } from "configs/urls";
-import { convertParamsToString } from "reborn-util";
+
 import { IWarehouseFilterRequest, IListWarehouseProductFilterRequest, IInfoExpiryDateProductionDate } from "model/warehouse/WarehouseRequestModel";
 
 export default {
   list: (params?: IWarehouseFilterRequest, signal?: AbortSignal) => {
-    return fetch(`${urlsApi.warehouse.list}${convertParamsToString(params)}`, {
-      signal,
-      method: "GET",
-    }).then((res) => res.json());
+    return apiGet(urlsApi.warehouse.list, params, signal);
   },
   listInternal: (params?: IWarehouseFilterRequest, signal?: AbortSignal) => {
-    return fetch(`${urlsApi.adjustmentSlip.productList}${convertParamsToString(params)}`, {
-      signal,
-      method: "GET",
-    }).then((res) => res.json());
+    return apiGet(urlsApi.adjustmentSlip.productList, params, signal);
   },
   productList: (params?: IListWarehouseProductFilterRequest, signal?: AbortSignal) => {
-    return fetch(`${urlsApi.warehouse.productList}${convertParamsToString(params)}`, {
-      signal,
-      method: "GET",
-    }).then((res) => res.json());
+    return apiGet(urlsApi.warehouse.productList, params, signal);
   },
   /**
    * GET /inventory/inventoryBalance/stockProduct/export
@@ -45,9 +37,6 @@ export default {
   },
 
   infoExpiryDateProductionDate: (params?: IInfoExpiryDateProductionDate, signal?: AbortSignal) => {
-    return fetch(`${urlsApi.warehouse.infoExpiryDateProductionDate}${convertParamsToString(params)}`, {
-      signal,
-      method: "GET",
-    }).then((res) => res.json());
+    return apiGet(urlsApi.warehouse.infoExpiryDateProductionDate, params, signal);
   },
 };

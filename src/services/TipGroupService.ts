@@ -1,5 +1,6 @@
+import { apiDelete, apiGet, apiPost } from "services/apiHelper";
 import { urlsApi } from "configs/urls";
-import { convertParamsToString } from "reborn-util";
+
 import {
   ITipGroupFilterRequest,
   ITipGroupRequest,
@@ -9,37 +10,21 @@ import {
 
 export default {
   list: (params: ITipGroupFilterRequest, signal?: AbortSignal) => {
-    return fetch(`${urlsApi.tipGroup.list}${convertParamsToString(params)}`, {
-      signal,
-      method: "GET",
-    }).then((res) => res.json());
+    return apiGet(urlsApi.tipGroup.list, params, signal);
   },
   update: (body: ITipGroupRequest) => {
-    return fetch(urlsApi.tipGroup.update, {
-      method: "POST",
-      body: JSON.stringify(body),
-    }).then((res) => res.json());
+    return apiPost(urlsApi.tipGroup.update, body);
   },
   delete: (id: number) => {
-    return fetch(`${urlsApi.tipGroup.delete}?id=${id}`, {
-      method: "DELETE",
-    }).then((res) => res.json());
+    return apiDelete(`${urlsApi.tipGroup.delete}?id=${id}`);
   },
   listGroupTipEmloyee: (params?: ITipGroupToTipGroupEmployeeFilterRequest, signal?: AbortSignal) => {
-    return fetch(`${urlsApi.tipGroup.listTipGroupEmloyee}${convertParamsToString(params)}`, {
-      signal,
-      method: "GET",
-    }).then((res) => res.json());
+    return apiGet(urlsApi.tipGroup.listTipGroupEmloyee, params, signal);
   },
   updateGroupTipEmloyee: (body: ITipGroupToTipGroupEmployeeRequest) => {
-    return fetch(urlsApi.tipGroup.updateTipGroupEmloyee, {
-      method: "POST",
-      body: JSON.stringify(body),
-    }).then((res) => res.json());
+    return apiPost(urlsApi.tipGroup.updateTipGroupEmloyee, body);
   },
   deleteGroupTipEmloyee: (id: number) => {
-    return fetch(`${urlsApi.tipGroup.deleteTipGroupEmloyee}?id=${id}`, {
-      method: "DELETE",
-    }).then((res) => res.json());
+    return apiDelete(`${urlsApi.tipGroup.deleteTipGroupEmloyee}?id=${id}`);
   },
 };

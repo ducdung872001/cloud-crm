@@ -1,23 +1,16 @@
+import { apiDelete, apiGet, apiPost } from "services/apiHelper";
 import { urlsApi } from "configs/urls";
-import { convertParamsToString } from "reborn-util";
+
 
 export default {
   warrantyAttachmentList: (params?: Record<string, unknown>, signal?: AbortSignal) => {
-    return fetch(`${urlsApi.warrantyAttachment.warrantyAttachmentList}${convertParamsToString(params)}`, {
-      signal,
-      method: "GET",
-    }).then((res) => res.json());
+    return apiGet(urlsApi.warrantyAttachment.warrantyAttachmentList, params, signal);
   },
 
   warrantyAttachmentUpdate: (body: Record<string, unknown>) => {
-    return fetch(urlsApi.warrantyAttachment.warrantyAttachmentUpdate, {
-      method: "POST",
-      body: JSON.stringify(body),
-    }).then((res) => res.json());
+    return apiPost(urlsApi.warrantyAttachment.warrantyAttachmentUpdate, body);
   },
   warrantyAttachmentDelete: (id: number) => {
-    return fetch(`${urlsApi.warrantyAttachment.warrantyAttachmentDelete}?id=${id}`, {
-      method: "DELETE",
-    }).then((res) => res.json());
+    return apiDelete(`${urlsApi.warrantyAttachment.warrantyAttachmentDelete}?id=${id}`);
   },
 };

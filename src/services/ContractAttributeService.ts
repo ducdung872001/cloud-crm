@@ -1,35 +1,22 @@
+import { apiDelete, apiGet, apiPost } from "services/apiHelper";
 import { urlsApi } from "configs/urls";
-import { convertParamsToString } from "reborn-util";
+
 import { IContractAttributeFilterRequest, IContractAttributeRequest } from "model/contractAttribute/ContractAttributeRequest";
 
 export default {
   list: (params: IContractAttributeFilterRequest, signal?: AbortSignal) => {
-    return fetch(`${urlsApi.contractAttribute.list}${convertParamsToString(params)}`, {
-      signal,
-      method: "GET",
-    }).then((res) => res.json());
+    return apiGet(urlsApi.contractAttribute.list, params, signal);
   },
   update: (body: IContractAttributeRequest) => {
-    return fetch(urlsApi.contractAttribute.update, {
-      method: "POST",
-      body: JSON.stringify(body),
-    }).then((res) => res.json());
+    return apiPost(urlsApi.contractAttribute.update, body);
   },
   delete: (id: number) => {
-    return fetch(`${urlsApi.contractAttribute.delete}?id=${id}`, {
-      method: "DELETE",
-    }).then((res) => res.json());
+    return apiDelete(`${urlsApi.contractAttribute.delete}?id=${id}`);
   },
   listAll: (params?: Record<string, unknown>, signal?: AbortSignal) => {
-    return fetch(`${urlsApi.contractAttribute.listAll}${convertParamsToString(params)}`, {
-      signal,
-      method: "GET",
-    }).then((res) => res.json());
+    return apiGet(urlsApi.contractAttribute.listAll, params, signal);
   },
   checkDuplicated: (params: Record<string, unknown>, signal?: AbortSignal) => {
-    return fetch(`${urlsApi.contractAttribute.checkDuplicated}${convertParamsToString(params)}`, {
-      signal,
-      method: "GET",
-    }).then((res) => res.json());
+    return apiGet(urlsApi.contractAttribute.checkDuplicated, params, signal);
   },
 };

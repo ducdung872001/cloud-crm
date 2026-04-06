@@ -1,19 +1,14 @@
+import { apiDelete, apiGet, apiPost } from "services/apiHelper";
 import { urlsApi } from "configs/urls";
-import { convertParamsToString } from "reborn-util";
+
 import { IWarrantyCategoryFilterRequest, IWarrantyCategoryRequest } from "model/warrantyCategory/WarrantyCategoryRequestModel";
 
 export default {
   list: (params?: IWarrantyCategoryFilterRequest, signal?: AbortSignal) => {
-    return fetch(`${urlsApi.warrantyCategory.list}${convertParamsToString(params)}`, {
-      signal,
-      method: "GET",
-    }).then((res) => res.json());
+    return apiGet(urlsApi.warrantyCategory.list, params, signal);
   },
   update: (body: IWarrantyCategoryRequest) => {
-    return fetch(urlsApi.warrantyCategory.update, {
-      method: "POST",
-      body: JSON.stringify(body),
-    }).then((res) => res.json());
+    return apiPost(urlsApi.warrantyCategory.update, body);
   },
   detail: (id: number) => {
     return fetch(`${urlsApi.warrantyCategory.detail}?id=${id}`, {
@@ -21,8 +16,6 @@ export default {
     }).then((res) => res.json());
   },
   delete: (id: number) => {
-    return fetch(`${urlsApi.warrantyCategory.delete}?id=${id}`, {
-      method: "DELETE",
-    }).then((res) => res.json());
+    return apiDelete(`${urlsApi.warrantyCategory.delete}?id=${id}`);
   },
 };

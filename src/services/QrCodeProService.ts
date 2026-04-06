@@ -1,11 +1,9 @@
+import { apiPost } from "services/apiHelper";
 import { urlsApi } from "configs/urls";
 
 export default {
   generate: (body) => {
-    return fetch(`${urlsApi.qrCodePro.generate}`, {
-      method: "POST",
-      body: JSON.stringify(body),
-    }).then((res) => res.json());
+    return apiPost(`${urlsApi.qrCodePro.generate}`, body);
   },
   reconciliation: (params) => {
     const query = new URLSearchParams(params).toString();

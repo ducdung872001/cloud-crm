@@ -1,25 +1,17 @@
+import { apiDelete, apiGet, apiPost } from "services/apiHelper";
 import { urlsApi } from "configs/urls";
 import { ICategoryServiceFilterRequest, ICategoryServiceRequestModel } from "model/categoryService/CategoryServiceRequestModel";
-import { convertParamsToString } from "reborn-util";
+
 
 export default {
   list: (params?: ICategoryServiceFilterRequest, signal?: AbortSignal) => {
-    return fetch(`${urlsApi.categoryService.list}${convertParamsToString(params)}`, {
-      signal,
-      method: "GET",
-    }).then((res) => res.json());
+    return apiGet(urlsApi.categoryService.list, params, signal);
   },
   update: (body: ICategoryServiceRequestModel) => {
-    return fetch(urlsApi.categoryService.update, {
-      method: "POST",
-      body: JSON.stringify(body),
-    }).then((res) => res.json());
+    return apiPost(urlsApi.categoryService.update, body);
   },
   updatePositions: (items: { id: number; position: number }[]) => {
-    return fetch(urlsApi.categoryService.updatePositions, {
-      method: "POST",
-      body: JSON.stringify(items),
-    }).then((res) => res.json());
+    return apiPost(urlsApi.categoryService.updatePositions, items);
   },
   detail: (id: number) => {
     return fetch(`${urlsApi.categoryService.detail}?id=${id}`, {
@@ -27,9 +19,7 @@ export default {
     }).then((res) => res.json());
   },
   delete: (id: number) => {
-    return fetch(`${urlsApi.categoryService.delete}?id=${id}`, {
-      method: "DELETE",
-    }).then((res) => res.json());
+    return apiDelete(`${urlsApi.categoryService.delete}?id=${id}`);
   },
   mediaGet: (categoryId: number) => {
     return fetch(`${urlsApi.product.categoryMediaGet}?categoryId=${categoryId}`, {
@@ -37,9 +27,7 @@ export default {
     }).then((res) => res.json());
   },
   mediaDelete: (categoryId: number) => {
-    return fetch(`${urlsApi.product.categoryMediaDelete}?categoryId=${categoryId}`, {
-      method: "DELETE",
-    }).then((res) => res.json());
+    return apiDelete(`${urlsApi.product.categoryMediaDelete}?categoryId=${categoryId}`);
   },
   mediaUpload: (categoryId: number, file: File) => {
     const formData = new FormData();

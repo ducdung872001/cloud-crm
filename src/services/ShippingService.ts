@@ -1,5 +1,6 @@
+import { apiDelete, apiGet, apiPost } from "services/apiHelper";
 import { urlsApi } from "configs/urls";
-import { convertParamsToString } from "reborn-util";
+
 import {
   IShippingOrderFilterRequest,
   IShippingOrderCreateRequest,
@@ -9,10 +10,7 @@ import {
 export default {
   // Danh sách / lọc đơn vận chuyển
   filter: (params: IShippingOrderFilterRequest, signal?: AbortSignal) => {
-      return fetch(`${urlsApi.shipping.list}${convertParamsToString(params)}`, {
-      signal,
-      method: "GET",
-    }).then((res) => res.json());
+      return apiGet(urlsApi.shipping.list, params, signal);
   },
 
   // Chi tiết đơn vận chuyển
@@ -24,10 +22,7 @@ export default {
 
   // Tạo đơn vận chuyển
   create: (body: IShippingOrderCreateRequest) => {
-    return fetch(urlsApi.shipping.create, {
-      method: "POST",
-      body: JSON.stringify(body),
-    }).then((res) => res.json());
+    return apiPost(urlsApi.shipping.create, body);
   },
 
   // Cập nhật đơn vận chuyển
@@ -39,9 +34,7 @@ export default {
 
   // Hủy đơn vận chuyển
   cancel: (id: string) => {
-    return fetch(`${urlsApi.shipping.shipment}/${id}/cancel`, {
-      method: "DELETE",
-    }).then((res) => res.json());
+    return apiDelete(`${urlsApi.shipping.shipment}/${id}/cancel`);
   },
 
   // Đẩy đơn sang hãng vận chuyển

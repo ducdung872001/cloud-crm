@@ -1,18 +1,13 @@
+import { apiDelete, apiGet, apiPost } from "services/apiHelper";
 import { urlsApi } from "configs/urls";
-import { convertParamsToString } from "reborn-util";
+
 
 export default {
   list: (params?: Record<string, unknown>, signal?: AbortSignal) => {
-    return fetch(`${urlsApi.managementAsked.list}${convertParamsToString(params)}`, {
-      signal,
-      method: "GET",
-    }).then((res) => res.json());
+    return apiGet(urlsApi.managementAsked.list, params, signal);
   },
   update: (body: Record<string, unknown>) => {
-    return fetch(urlsApi.managementAsked.update, {
-      method: "POST",
-      body: JSON.stringify(body),
-    }).then((res) => res.json());
+    return apiPost(urlsApi.managementAsked.update, body);
   },
 
   detail: (id: number) => {
@@ -21,30 +16,19 @@ export default {
     }).then((res) => res.json());
   },
   delete: (id: number) => {
-    return fetch(`${urlsApi.managementAsked.delete}?id=${id}`, {
-      method: "DELETE",
-    }).then((res) => res.json());
+    return apiDelete(`${urlsApi.managementAsked.delete}?id=${id}`);
   },
 
   replyAsked: (body: Record<string, unknown>) => {
-    return fetch(urlsApi.managementAsked.replyAsked, {
-      method: "POST",
-      body: JSON.stringify(body),
-    }).then((res) => res.json());
+    return apiPost(urlsApi.managementAsked.replyAsked, body);
   },
 
   getClarificationDetail: (params?: Record<string, unknown>, signal?: AbortSignal) => {
-    return fetch(`${urlsApi.clarificationDetail.list}${convertParamsToString(params)}`, {
-      signal,
-      method: "GET",
-    }).then((res) => res.json());
+    return apiGet(urlsApi.clarificationDetail.list, params, signal);
   },
 
   assignRequest: (body: Record<string, unknown>) => {
-    return fetch(urlsApi.managementAsked.assignRequest, {
-      method: "POST",
-      body: JSON.stringify(body),
-    }).then((res) => res.json());
+    return apiPost(urlsApi.managementAsked.assignRequest, body);
   },
 
   detailClarification: (id: number) => {
@@ -54,17 +38,11 @@ export default {
   },
 
   updateStatusClarification: (body: Record<string, unknown>) => {
-    return fetch(urlsApi.clarificationDetail.updateStatus, {
-      method: "POST",
-      body: JSON.stringify(body),
-    }).then((res) => res.json());
+    return apiPost(urlsApi.clarificationDetail.updateStatus, body);
   },
 
   saveReply: (body: Record<string, unknown>) => {
-    return fetch(urlsApi.managementAsked.saveReply, {
-      method: "POST",
-      body: JSON.stringify(body),
-    }).then((res) => res.json());
+    return apiPost(urlsApi.managementAsked.saveReply, body);
   },
 
   getDetailReply: (id: number) => {
@@ -74,17 +52,11 @@ export default {
   },
 
   getRepsonseList: (params?: Record<string, unknown>, signal?: AbortSignal) => {
-    return fetch(`${urlsApi.managementAsked.getRepsonseList}${convertParamsToString(params)}`, {
-      signal,
-      method: "GET",
-    }).then((res) => res.json());
+    return apiGet(urlsApi.managementAsked.getRepsonseList, params, signal);
   },
 
   insertRepsonse: (body: Record<string, unknown>) => {
-    return fetch(urlsApi.managementAsked.insertRepsonse, {
-      method: "POST",
-      body: JSON.stringify(body),
-    }).then((res) => res.json());
+    return apiPost(urlsApi.managementAsked.insertRepsonse, body);
   },
 
 };

@@ -1,24 +1,17 @@
+import { apiDelete, apiGet, apiPost } from "services/apiHelper";
 import { urlsApi } from "configs/urls";
-import { convertParamsToString } from "reborn-util";
+
 import { IKpiGoalFilterRequest, IKpiGoalRequest } from "model/kpiGoal/KpiGoalRequestModel";
 
 export default {
   list: (params: IKpiGoalFilterRequest, signal?: AbortSignal) => {
-    return fetch(`${urlsApi.kpiGoal.list}${convertParamsToString(params)}`, {
-      signal,
-      method: "GET",
-    }).then((res) => res.json());
+    return apiGet(urlsApi.kpiGoal.list, params, signal);
   },
   update: (body: IKpiGoalRequest) => {
-    return fetch(urlsApi.kpiGoal.update, {
-      method: "POST",
-      body: JSON.stringify(body),
-    }).then((res) => res.json());
+    return apiPost(urlsApi.kpiGoal.update, body);
   },
   delete: (id: number) => {
-    return fetch(`${urlsApi.kpiGoal.delete}?id=${id}`, {
-      method: "DELETE",
-    }).then((res) => res.json());
+    return apiDelete(`${urlsApi.kpiGoal.delete}?id=${id}`);
   },  
   detail: (id: number) => {
     return fetch(`${urlsApi.kpiGoal.detail}?id=${id}`, {

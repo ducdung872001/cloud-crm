@@ -1,3 +1,4 @@
+import { apiDelete, apiGet, apiPost } from "services/apiHelper";
 import { urlsApi } from "configs/urls";
 import { convertParamsToString } from "reborn-util";
 import {
@@ -12,46 +13,25 @@ import {
 
 export default {
   list: (params?: IPurchaseFilterRequest, signal?: AbortSignal) => {
-    return fetch(`${urlsApi.purchaseRequest.list}${convertParamsToString(params)}`, {
-      signal,
-      method: "GET",
-    }).then((res) => res.json());
+    return apiGet(urlsApi.purchaseRequest.list, params, signal);
   },
   listReport: (params?: IPurchaseFilterRequest, signal?: AbortSignal) => {
-    return fetch(`${urlsApi.purchaseRequest.listReport}${convertParamsToString(params)}`, {
-      signal,
-      method: "GET",
-    }).then((res) => res.json());
+    return apiGet(urlsApi.purchaseRequest.listReport, params, signal);
   },
   collect: (body: Record<string, unknown>, params?: Record<string, unknown>) => {
-    return fetch(`${urlsApi.purchaseRequest.collect}${convertParamsToString(params)}`, {
-      method: "POST",
-      body: JSON.stringify(body),
-    }).then((res) => res.json());
+    return apiPost(`${urlsApi.purchaseRequest.collect}${convertParamsToString(params)}`, body);
   },
   statisticList: (params?: IPurchaseFilterRequest, signal?: AbortSignal) => {
-    return fetch(`${urlsApi.purchaseRequest.statisticList}${convertParamsToString(params)}`, {
-      signal,
-      method: "GET",
-    }).then((res) => res.json());
+    return apiGet(urlsApi.purchaseRequest.statisticList, params, signal);
   },
   statisticStatus: (params?: IPurchaseFilterRequest, signal?: AbortSignal) => {
-    return fetch(`${urlsApi.purchaseRequest.statisticStatus}${convertParamsToString(params)}`, {
-      signal,
-      method: "GET",
-    }).then((res) => res.json());
+    return apiGet(urlsApi.purchaseRequest.statisticStatus, params, signal);
   },
   statisticStatusByDate: (params?: IPurchaseFilterRequest, signal?: AbortSignal) => {
-    return fetch(`${urlsApi.purchaseRequest.statisticStatusByDate}${convertParamsToString(params)}`, {
-      signal,
-      method: "GET",
-    }).then((res) => res.json());
+    return apiGet(urlsApi.purchaseRequest.statisticStatusByDate, params, signal);
   },
   update: (body: IPurchaseRequestModel) => {
-    return fetch(urlsApi.purchaseRequest.update, {
-      method: "POST",
-      body: JSON.stringify(body),
-    }).then((res) => res.json());
+    return apiPost(urlsApi.purchaseRequest.update, body);
   },
   detail: (id: number) => {
     return fetch(`${urlsApi.purchaseRequest.detail}?id=${id}`, {
@@ -59,84 +39,47 @@ export default {
     }).then((res) => res.json());
   },
   delete: (id: number) => {
-    return fetch(`${urlsApi.purchaseRequest.delete}?id=${id}`, {
-      method: "DELETE",
-    }).then((res) => res.json());
+    return apiDelete(`${urlsApi.purchaseRequest.delete}?id=${id}`);
   },
   purchaseRequestProcessUpdate: (body: IPurchaseProcessRequestModel, processCode?: string) => {
     const url = processCode
       ? `${urlsApi.purchaseRequest.purchaseRequestProcess}?processCode=${processCode}`
       : urlsApi.purchaseRequest.purchaseRequestProcess;
 
-    return fetch(url, {
-      method: "POST",
-      body: JSON.stringify(body),
-    }).then((res) => res.json());
+    return apiPost(url, body);
   },
   updateStatus: (body: IPurchaseStatusRequestModel) => {
-    return fetch(urlsApi.purchaseRequest.updateStatus, {
-      method: "POST",
-      body: JSON.stringify(body),
-    }).then((res) => res.json());
+    return apiPost(urlsApi.purchaseRequest.updateStatus, body);
   },
 
   resetTransferVotes: (params: Record<string, unknown>) => {
-    return fetch(`${urlsApi.purchaseRequest.resetTransferVotes}${convertParamsToString(params)}`, {
-      method: "GET",
-    }).then((res) => res.json());
+    return apiGet(urlsApi.purchaseRequest.resetTransferVotes, params);
   },
   categoryList: (params?: IPurchaseCategoryFilterRequest, signal?: AbortSignal) => {
-    return fetch(`${urlsApi.purchaseRequest.purchaseCategory}${convertParamsToString(params)}`, {
-      signal,
-      method: "GET",
-    }).then((res) => res.json());
+    return apiGet(urlsApi.purchaseRequest.purchaseCategory, params, signal);
   },
   purchaseProduct: (params?: IPurchaseCategoryFilterRequest, signal?: AbortSignal) => {
-    return fetch(`${urlsApi.purchaseRequest.purchaseProduct}${convertParamsToString(params)}`, {
-      signal,
-      method: "GET",
-    }).then((res) => res.json());
+    return apiGet(urlsApi.purchaseRequest.purchaseProduct, params, signal);
   },
   paymentBill: (params?: Record<string, unknown>, signal?: AbortSignal) => {
-    return fetch(`${urlsApi.purchaseRequest.paymentBill}${convertParamsToString(params)}`, {
-      signal,
-      method: "GET",
-    }).then((res) => res.json());
+    return apiGet(urlsApi.purchaseRequest.paymentBill, params, signal);
   },
   contractInfo: (params?: Record<string, unknown>, signal?: AbortSignal) => {
-    return fetch(`${urlsApi.purchaseRequest.contractInfo}${convertParamsToString(params)}`, {
-      signal,
-      method: "GET",
-    }).then((res) => res.json());
+    return apiGet(urlsApi.purchaseRequest.contractInfo, params, signal);
   },
   renewalContract: (body: Record<string, unknown>, params?: Record<string, unknown>) => {
-    return fetch(`${urlsApi.purchaseRequest.renewalContract}${convertParamsToString(params)}`, {
-      method: "POST",
-      body: JSON.stringify(body),
-    }).then((res) => res.json());
+    return apiPost(`${urlsApi.purchaseRequest.renewalContract}${convertParamsToString(params)}`, body);
   },
   initReceiveTask: (body: Record<string, unknown>, params?: Record<string, unknown>) => {
-    return fetch(`${urlsApi.purchaseRequest.initReceiveTask}${convertParamsToString(params)}`, {
-      method: "POST",
-      body: JSON.stringify(body),
-    }).then((res) => res.json());
+    return apiPost(`${urlsApi.purchaseRequest.initReceiveTask}${convertParamsToString(params)}`, body);
   },
   updateCertificate: (body: Record<string, unknown>, params?: Record<string, unknown>) => {
-    return fetch(`${urlsApi.purchaseRequest.updateCertificate}${convertParamsToString(params)}`, {
-      method: "POST",
-      body: JSON.stringify(body),
-    }).then((res) => res.json());
+    return apiPost(`${urlsApi.purchaseRequest.updateCertificate}${convertParamsToString(params)}`, body);
   },
   getJssdk: (params?: Record<string, unknown>, signal?: AbortSignal) => {
-    return fetch(`${urlsApi.purchaseRequest.getJssdk}${convertParamsToString(params)}`, {
-      signal,
-      method: "GET",
-    }).then((res) => res.json());
+    return apiGet(urlsApi.purchaseRequest.getJssdk, params, signal);
   },
   getProductJssdk: (params?: Record<string, unknown>, signal?: AbortSignal) => {
-    return fetch(`${urlsApi.purchaseRequest.getProductJssdk}${convertParamsToString(params)}`, {
-      signal,
-      method: "GET",
-    }).then((res) => res.json());
+    return apiGet(urlsApi.purchaseRequest.getProductJssdk, params, signal);
   },
 };

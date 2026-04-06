@@ -1,4 +1,5 @@
-import { convertParamsToString } from "reborn-util";
+import { apiDelete, apiGet } from "services/apiHelper";
+
 
 // Base URL khớp với prefixSales = "/sales" trong urls.ts
 const prefixBiz = "/bizapi";
@@ -71,9 +72,7 @@ export default {
     const cleanParams = Object.fromEntries(
       Object.entries(params).filter(([, v]) => v !== undefined && v !== null && v !== "")
     );
-    return fetch(`${SHIFT_URLS.orders}${convertParamsToString(cleanParams)}`, {
-      method: "GET",
-    }).then((res) => res.json());
+    return apiGet(SHIFT_URLS.orders, cleanParams);
   },
 
   /** Tab "Đóng ca" — đóng ca */
@@ -129,9 +128,7 @@ export default {
 
   /** Thiết lập ca — xóa 1 ca */
   deleteConfig: (configId: number) => {
-    return fetch(`${SHIFT_URLS.deleteConfig}?configId=${configId}`, {
-      method: "DELETE",
-    }).then((res) => res.json());
+    return apiDelete(`${SHIFT_URLS.deleteConfig}?configId=${configId}`);
   },
 
   /** Thiết lập ca — lưu phân công nhân viên */

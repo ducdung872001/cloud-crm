@@ -1,19 +1,14 @@
+import { apiDelete, apiGet, apiPost } from "services/apiHelper";
 import { urlsApi } from "configs/urls";
-import { convertParamsToString } from "reborn-util";
+
 import { IBrandNameFilterRequest, IBrandNameRequestModel } from "model/brandName/BrandNameRequestModel";
 
 export default {
   list: (params?: IBrandNameFilterRequest, signal?: AbortSignal) => {
-    return fetch(`${urlsApi.brandName.list}${convertParamsToString(params)}`, {
-      signal,
-      method: "GET",
-    }).then((res) => res.json());
+    return apiGet(urlsApi.brandName.list, params, signal);
   },
   update: (body: IBrandNameRequestModel) => {
-    return fetch(urlsApi.brandName.update, {
-      method: "POST",
-      body: JSON.stringify(body),
-    }).then((res) => res.json());
+    return apiPost(urlsApi.brandName.update, body);
   },
   detail: (id: number) => {
     return fetch(`${urlsApi.brandName.delete}?id=${id}`, {
@@ -21,34 +16,21 @@ export default {
     }).then((res) => res.json());
   },
   delete: (id: number) => {
-    return fetch(`${urlsApi.brandName.delete}?id=${id}`, {
-      method: "DELETE",
-    }).then((res) => res.json());
+    return apiDelete(`${urlsApi.brandName.delete}?id=${id}`);
   },
 
   listWhiteList: (params?: Record<string, unknown>, signal?: AbortSignal) => {
-    return fetch(`${urlsApi.brandName.listWhiteList}${convertParamsToString(params)}`, {
-      signal,
-      method: "GET",
-    }).then((res) => res.json());
+    return apiGet(urlsApi.brandName.listWhiteList, params, signal);
   },
   updateWhiteList: (body: Record<string, unknown>) => {
-    return fetch(urlsApi.brandName.updateWhiteList, {
-      method: "POST",
-      body: JSON.stringify(body),
-    }).then((res) => res.json());
+    return apiPost(urlsApi.brandName.updateWhiteList, body);
   },
  
   deleteWhiteList: (id: number) => {
-    return fetch(`${urlsApi.brandName.deleteWhiteList}?id=${id}`, {
-      method: "DELETE",
-    }).then((res) => res.json());
+    return apiDelete(`${urlsApi.brandName.deleteWhiteList}?id=${id}`);
   },
 
   changeStatusWhiteList: (body: Record<string, unknown>) => {
-    return fetch(urlsApi.brandName.changeStatusWhiteList, {
-      method: "POST",
-      body: JSON.stringify(body),
-    }).then((res) => res.json());
+    return apiPost(urlsApi.brandName.changeStatusWhiteList, body);
   },
 };

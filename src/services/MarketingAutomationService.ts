@@ -1,19 +1,14 @@
+import { apiDelete, apiGet, apiPost } from "services/apiHelper";
 import { urlsApi } from "configs/urls";
-import { convertParamsToString } from "reborn-util";
+
 import { IKpiFilterRequest, IKpiRequest } from "model/kpi/KpiRequestModel";
 
 export default {
   list: (params: Record<string, unknown>, signal?: AbortSignal) => {
-    return fetch(`${urlsApi.ma.list}${convertParamsToString(params)}`, {
-      signal,
-      method: "GET",
-    }).then((res) => res.json());
+    return apiGet(urlsApi.ma.list, params, signal);
   },
   update: (body: Record<string, unknown>) => {
-    return fetch(urlsApi.ma.update, {
-      method: "POST",
-      body: JSON.stringify(body),
-    }).then((res) => res.json());
+    return apiPost(urlsApi.ma.update, body);
   },
 
   detail: (id: number) => {
@@ -22,29 +17,19 @@ export default {
     }).then((res) => res.json());
   },
   delete: (id: number) => {
-    return fetch(`${urlsApi.ma.delete}?id=${id}`, {
-      method: "DELETE",
-    }).then((res) => res.json());
+    return apiDelete(`${urlsApi.ma.delete}?id=${id}`);
   },
 
   addNode: (body: Record<string, unknown>) => {
-    return fetch(urlsApi.ma.addNode, {
-      method: "POST",
-      body: JSON.stringify(body),
-    }).then((res) => res.json());
+    return apiPost(urlsApi.ma.addNode, body);
   },
 
   deleteNode: (id: number) => {
-    return fetch(`${urlsApi.ma.deleteNode}?nodeId=${id}`, {
-      method: "DELETE",
-    }).then((res) => res.json());
+    return apiDelete(`${urlsApi.ma.deleteNode}?nodeId=${id}`);
   },
 
   updateNode: (body: Record<string, unknown>) => {
-    return fetch(urlsApi.ma.updateNode, {
-      method: "POST",
-      body: JSON.stringify(body),
-    }).then((res) => res.json());
+    return apiPost(urlsApi.ma.updateNode, body);
   },
 
   detailConfigMA: (id: number) => {
@@ -60,76 +45,45 @@ export default {
   },
 
   updateConfigNode: (body: Record<string, unknown>) => {
-    return fetch(urlsApi.ma.updateConfigNode, {
-      method: "POST",
-      body: JSON.stringify(body),
-    }).then((res) => res.json());
+    return apiPost(urlsApi.ma.updateConfigNode, body);
   },
 
   approveMA: (body: Record<string, unknown>) => {
-    return fetch(urlsApi.ma.updateStatus, {
-      method: "POST",
-      body: JSON.stringify(body),
-    }).then((res) => res.json());
+    return apiPost(urlsApi.ma.updateStatus, body);
   },
 
   listCustomer: (params: Record<string, unknown>, signal?: AbortSignal) => {
-    return fetch(`${urlsApi.ma.listCustomer}${convertParamsToString(params)}`, {
-      signal,
-      method: "GET",
-    }).then((res) => res.json());
+    return apiGet(urlsApi.ma.listCustomer, params, signal);
   },
   listCustomerByType: (params: Record<string, unknown>, signal?: AbortSignal) => {
-    return fetch(`${urlsApi.ma.listCustomerByType}${convertParamsToString(params)}`, {
-      signal,
-      method: "GET",
-    }).then((res) => res.json());
+    return apiGet(urlsApi.ma.listCustomerByType, params, signal);
   },
   listCustomerByCareer: (params: Record<string, unknown>, signal?: AbortSignal) => {
     //Phân bổ gửi email theo nghề nghiệp khách hàng
-    return fetch(`${urlsApi.ma.listCustomerByCareer}${convertParamsToString(params)}`, {
-      signal,
-      method: "GET",
-    }).then((res) => res.json());
+    return apiGet(urlsApi.ma.listCustomerByCareer, params, signal);
   },
   listCustomerByCustCard: (params: Record<string, unknown>, signal?: AbortSignal) => {
     //Phân bổ gửi email theo nhóm khách hàng
-    return fetch(`${urlsApi.ma.listCustomerByCustCard}${convertParamsToString(params)}`, {
-      signal,
-      method: "GET",
-    }).then((res) => res.json());
+    return apiGet(urlsApi.ma.listCustomerByCustCard, params, signal);
   },
   listCustomerByCustGroup: (params: Record<string, unknown>, signal?: AbortSignal) => {
     //Tỉ lệ tương tác theo nhóm khách hàng
-    return fetch(`${urlsApi.ma.listCustomerByCustGroup}${convertParamsToString(params)}`, {
-      signal,
-      method: "GET",
-    }).then((res) => res.json());
+    return apiGet(urlsApi.ma.listCustomerByCustGroup, params, signal);
   },
   listCustomerByDate: (params: Record<string, unknown>, signal?: AbortSignal) => {
     //Tỉ lệ tương theo từng ngày trong chiến dịch
-    return fetch(`${urlsApi.ma.listCustomerByDate}${convertParamsToString(params)}`, {
-      signal,
-      method: "GET",
-    }).then((res) => res.json());
+    return apiGet(urlsApi.ma.listCustomerByDate, params, signal);
   },
 
   detailCustomer: (params: Record<string, unknown>) => {
-    return fetch(`${urlsApi.ma.detailCustomer}${convertParamsToString(params)}`, {
-      method: "GET",
-    }).then((res) => res.json());
+    return apiGet(urlsApi.ma.detailCustomer, params);
   },
 
   deleteCustomer: (id: number) => {
-    return fetch(`${urlsApi.ma.deleteCustomer}?id=${id}`, {
-      method: "DELETE",
-    }).then((res) => res.json());
+    return apiDelete(`${urlsApi.ma.deleteCustomer}?id=${id}`);
   },
   updateMapping: (body: Record<string, unknown>) => {
-    return fetch(urlsApi.ma.updateMapping, {
-      method: "POST",
-      body: JSON.stringify(body),
-    }).then((res) => res.json());
+    return apiPost(urlsApi.ma.updateMapping, body);
   },
 
   detailMapping: (id: number) => {

@@ -1,3 +1,4 @@
+import { apiDelete } from "services/apiHelper";
 import { urlsApi } from "configs/urls";
 
 export interface IProductUnit {
@@ -30,8 +31,6 @@ export default {
 
   // DELETE /inventory/unitExchange/delete?id=xxx
   delete: (id: number) => {
-    return fetch(`${urlsApi.unitExchange.delete}?id=${id}`, {
-      method: "DELETE",
-    }).then((res) => res.json());
+    return apiDelete(`${urlsApi.unitExchange.delete}?id=${id}`);
   },
 };

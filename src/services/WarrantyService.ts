@@ -1,3 +1,4 @@
+import { apiDelete, apiGet, apiPost } from "services/apiHelper";
 import { urlsApi } from "configs/urls";
 import { convertParamsToString } from "reborn-util";
 import {
@@ -11,16 +12,10 @@ import {
 
 export default {
   list: (params?: IWarrantyFilterRequest, signal?: AbortSignal) => {
-    return fetch(`${urlsApi.warranty.list}${convertParamsToString(params)}`, {
-      signal,
-      method: "GET",
-    }).then((res) => res.json());
+    return apiGet(urlsApi.warranty.list, params, signal);
   },
   update: (body: IWarrantyRequestModel) => {
-    return fetch(urlsApi.warranty.update, {
-      method: "POST",
-      body: JSON.stringify(body),
-    }).then((res) => res.json());
+    return apiPost(urlsApi.warranty.update, body);
   },
   detail: (id: number) => {
     return fetch(`${urlsApi.warranty.detail}?id=${id}`, {
@@ -28,48 +23,27 @@ export default {
     }).then((res) => res.json());
   },
   delete: (id: number) => {
-    return fetch(`${urlsApi.warranty.delete}?id=${id}`, {
-      method: "DELETE",
-    }).then((res) => res.json());
+    return apiDelete(`${urlsApi.warranty.delete}?id=${id}`);
   },
   warrantyProcessUpdate: (body: IWarrantyProcessRequestModel) => {
-    return fetch(urlsApi.warranty.warrantyProcess, {
-      method: "POST",
-      body: JSON.stringify(body),
-    }).then((res) => res.json());
+    return apiPost(urlsApi.warranty.warrantyProcess, body);
   },
   updateStatus: (body: IWarrantyStatusRequestModel) => {
-    return fetch(urlsApi.warranty.updateStatus, {
-      method: "POST",
-      body: JSON.stringify(body),
-    }).then((res) => res.json());
+    return apiPost(urlsApi.warranty.updateStatus, body);
   },
   warrantyExchangeList: (params?: IWarrantyExchangeFilterRequestModel, signal?: AbortSignal) => {
-    return fetch(`${urlsApi.warranty.warrantyExchangeList}${convertParamsToString(params)}`, {
-      signal,
-      method: "GET",
-    }).then((res) => res.json());
+    return apiGet(urlsApi.warranty.warrantyExchangeList, params, signal);
   },
   warrantyExchangeUpdate: (body: IWarrantyExchangeUpdateRequestModel) => {
-    return fetch(urlsApi.warranty.warrantyExchangeUpdate, {
-      method: "POST",
-      body: JSON.stringify(body),
-    }).then((res) => res.json());
+    return apiPost(urlsApi.warranty.warrantyExchangeUpdate, body);
   },
   warrantyExchangeDelete: (id: number) => {
-    return fetch(`${urlsApi.warranty.warrantyExchangeDelete}?id=${id}`, {
-      method: "DELETE",
-    }).then((res) => res.json());
+    return apiDelete(`${urlsApi.warranty.warrantyExchangeDelete}?id=${id}`);
   },
   resetTransferVotes: (params: Record<string, unknown>) => {
-    return fetch(`${urlsApi.warranty.resetTransferVotes}${convertParamsToString(params)}`, {
-      method: "GET",
-    }).then((res) => res.json());
+    return apiGet(urlsApi.warranty.resetTransferVotes, params);
   },
   collect: (body: IWarrantyRequestModel, params?: Record<string, unknown>) => {
-    return fetch(`${urlsApi.warranty.collect}${convertParamsToString(params)}`, {
-      method: "POST",
-      body: JSON.stringify(body),
-    }).then((res) => res.json());
+    return apiPost(`${urlsApi.warranty.collect}${convertParamsToString(params)}`, body);
   },
 };

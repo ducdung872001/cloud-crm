@@ -1,23 +1,16 @@
+import { apiDelete, apiGet, apiPost } from "services/apiHelper";
 import { urlsApi } from "configs/urls";
-import { convertParamsToString } from "reborn-util";
+
 import { ICustomerGroupFilterRequest, ICustomerGroupRequest } from "model/customerGroup/CustomerGroupRequestModel";
 
 export default {
   list: (params?: ICustomerGroupFilterRequest, signal?: AbortSignal) => {
-    return fetch(`${urlsApi.customerGroup.list}${convertParamsToString(params)}`, {
-      signal,
-      method: "GET",
-    }).then((res) => res.json());
+    return apiGet(urlsApi.customerGroup.list, params, signal);
   },
   update: (body: ICustomerGroupRequest) => {
-    return fetch(urlsApi.customerGroup.update, {
-      method: "POST",
-      body: JSON.stringify(body),
-    }).then((res) => res.json());
+    return apiPost(urlsApi.customerGroup.update, body);
   },
   delete: (id: number) => {
-    return fetch(`${urlsApi.customerGroup.delete}?id=${id}`, {
-      method: "DELETE",
-    }).then((res) => res.json());
+    return apiDelete(`${urlsApi.customerGroup.delete}?id=${id}`);
   },
 };

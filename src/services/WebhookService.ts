@@ -1,19 +1,14 @@
+import { apiDelete, apiGet, apiPost } from "services/apiHelper";
 import { urlsApi } from "configs/urls";
-import { convertParamsToString } from "reborn-util";
+
 import { IInstallApplicationFilterRequest, IInstallApplicationRequest } from "model/installApplication/InstallApplicationRequestModel";
 
 export default {
   list: (params?: Record<string, unknown>, signal?: AbortSignal) => {
-    return fetch(`${urlsApi.webhook.list}${convertParamsToString(params)}`, {
-      signal,
-      method: "GET",
-    }).then((res) => res.json());
+    return apiGet(urlsApi.webhook.list, params, signal);
   },
   update: (body: Record<string, unknown>) => {
-    return fetch(urlsApi.webhook.update, {
-      method: "POST",
-      body: JSON.stringify(body),
-    }).then((res) => res.json());
+    return apiPost(urlsApi.webhook.update, body);
   },
   detail: (id: number) => {
     return fetch(`${urlsApi.webhook.detail}?id=${id}`, {
@@ -21,8 +16,6 @@ export default {
     }).then((res) => res.json());
   },
   delete: (id: number) => {
-    return fetch(`${urlsApi.webhook.delete}?id=${id}`, {
-      method: "DELETE",
-    }).then((res) => res.json());
+    return apiDelete(`${urlsApi.webhook.delete}?id=${id}`);
   },
 };

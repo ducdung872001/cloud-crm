@@ -1,5 +1,6 @@
+import { apiDelete, apiGet, apiPost } from "services/apiHelper";
 import { urlsApi } from "configs/urls";
-import { convertParamsToString } from "reborn-util";
+
 import {
   ICampaignOpportunityFilterRequest,
   ICampaignOpportunityRequestModel,
@@ -11,29 +12,17 @@ import {
 
 export default {
   list: (params?: ICampaignOpportunityFilterRequest, signal?: AbortSignal) => {
-    return fetch(`${urlsApi.campaignOpportunity.list}${convertParamsToString(params)}`, {
-      signal,
-      method: "GET",
-    }).then((res) => res.json());
+    return apiGet(urlsApi.campaignOpportunity.list, params, signal);
   },
   listViewSale: (params?: ICampaignOpportunityFilterRequest, signal?: AbortSignal) => {
-    return fetch(`${urlsApi.campaignOpportunity.listViewSale}${convertParamsToString(params)}`, {
-      signal,
-      method: "GET",
-    }).then((res) => res.json());
+    return apiGet(urlsApi.campaignOpportunity.listViewSale, params, signal);
   },
   update: (body: ICampaignOpportunityRequestModel) => {
-    return fetch(urlsApi.campaignOpportunity.update, {
-      method: "POST",
-      body: JSON.stringify(body),
-    }).then((res) => res.json());
+    return apiPost(urlsApi.campaignOpportunity.update, body);
   },
   //Thêm nhanh khách hàng vào chiến dịch bán hàng
   updateBatch: (body: ICampaignOpportunityRequestModel) => {
-    return fetch(urlsApi.campaignOpportunity.updateBatch, {
-      method: "POST",
-      body: JSON.stringify(body),
-    }).then((res) => res.json());
+    return apiPost(urlsApi.campaignOpportunity.updateBatch, body);
   },
   detail: (id: number) => {
     return fetch(`${urlsApi.campaignOpportunity.detail}?id=${id}`, {
@@ -41,51 +30,31 @@ export default {
     }).then((res) => res.json());
   },
   delete: (id: number) => {
-    return fetch(`${urlsApi.campaignOpportunity.delete}?id=${id}`, {
-      method: "DELETE",
-    }).then((res) => res.json());
+    return apiDelete(`${urlsApi.campaignOpportunity.delete}?id=${id}`);
   },
   opportunityProcessUpdate: (body: IOpportunityProcessUpdateRequestModel) => {
-    return fetch(`${urlsApi.campaignOpportunity.opportunityProcessUpdate}`, {
-      method: "POST",
-      body: JSON.stringify(body),
-    }).then((res) => res.json());
+    return apiPost(`${urlsApi.campaignOpportunity.opportunityProcessUpdate}`, body);
   },
   opportunityProcessDelete: (id: number) => {
-    return fetch(`${urlsApi.campaignOpportunity.opportunityProcessDelete}?id=${id}`, {
-      method: "DELETE",
-    }).then((res) => res.json());
+    return apiDelete(`${urlsApi.campaignOpportunity.opportunityProcessDelete}?id=${id}`);
   },
   changeEmployee: (body: IChangeEmployeeRequestModel) => {
-    return fetch(`${urlsApi.campaignOpportunity.changeEmployee}`, {
-      method: "POST",
-      body: JSON.stringify(body),
-    }).then((res) => res.json());
+    return apiPost(`${urlsApi.campaignOpportunity.changeEmployee}`, body);
   },
   changeSale: (body: IChangeSaleRequestModel) => {
-    return fetch(`${urlsApi.campaignOpportunity.changeSale}`, {
-      method: "POST",
-      body: JSON.stringify(body),
-    }).then((res) => res.json());
+    return apiPost(`${urlsApi.campaignOpportunity.changeSale}`, body);
   },
 
   opportunityExchange: (params: IOpportunityExchangeFilterRequest) => {
-    return fetch(`${urlsApi.campaignOpportunity.opportunityExchange}${convertParamsToString(params)}`, {
-      method: "GET",
-    }).then((res) => res.json());
+    return apiGet(urlsApi.campaignOpportunity.opportunityExchange, params);
   },
   // xóa đi 1 trao đổi
   deleteOpportunityExchange: (id: number) => {
-    return fetch(`${urlsApi.campaignOpportunity.deleteOpportunityExchange}?id=${id}`, {
-      method: "DELETE",
-    }).then((res) => res.json());
+    return apiDelete(`${urlsApi.campaignOpportunity.deleteOpportunityExchange}?id=${id}`);
   },
   // thêm mới trao đổi
   addOpportunityExchange: (body) => {
-    return fetch(urlsApi.campaignOpportunity.addOpportunityExchange, {
-      method: "POST",
-      body: JSON.stringify(body),
-    }).then((res) => res.json());
+    return apiPost(urlsApi.campaignOpportunity.addOpportunityExchange, body);
   },
 
   // cập nhật lại trao đổi
@@ -97,60 +66,38 @@ export default {
 
   //lấy danh sách cơ hội dành cho chiến dịch doanh nghiệp
   listOpportunity: (params?: Record<string, unknown>, signal?: AbortSignal) => {
-    return fetch(`${urlsApi.campaignOpportunity.listOpportunity}${convertParamsToString(params)}`, {
-      signal,
-      method: "GET",
-    }).then((res) => res.json());
+    return apiGet(urlsApi.campaignOpportunity.listOpportunity, params, signal);
   },
 
   opportunityCheck: (params: Record<string, unknown>) => {
-    return fetch(`${urlsApi.campaignOpportunity.opportunityCheck}${convertParamsToString(params)}`, {
-      method: "GET",
-    }).then((res) => res.json());
+    return apiGet(urlsApi.campaignOpportunity.opportunityCheck, params);
   },
 
   sendEmail: (body: Record<string, unknown>) => {
-    return fetch(urlsApi.campaignOpportunity.sendEmail, {
-      method: "POST",
-      body: JSON.stringify(body),
-    }).then((res) => res.json());
+    return apiPost(urlsApi.campaignOpportunity.sendEmail, body);
   },
 
   opportunityContact: (body: Record<string, unknown>) => {
-    return fetch(urlsApi.campaignOpportunity.opportunityContact, {
-      method: "POST",
-      body: JSON.stringify(body),
-    }).then((res) => res.json());
+    return apiPost(urlsApi.campaignOpportunity.opportunityContact, body);
   },
 
   detailOpportunityContact: (params: Record<string, unknown>) => {
-    return fetch(`${urlsApi.campaignOpportunity.detailOpportunityContact}${convertParamsToString(params)}`, {
-      method: "GET",
-    }).then((res) => res.json());
+    return apiGet(urlsApi.campaignOpportunity.detailOpportunityContact, params);
   },
 
   ///eform thu thập thông tin
 
   OpportunityEformUpdate: (body: Record<string, unknown>) => {
-    return fetch(urlsApi.campaignOpportunity.opportunityEformUpdate, {
-      method: "POST",
-      body: JSON.stringify(body),
-    }).then((res) => res.json());
+    return apiPost(urlsApi.campaignOpportunity.opportunityEformUpdate, body);
   },
 
   OpportunityEformDetail: (params?: Record<string, unknown>, signal?: AbortSignal) => {
-    return fetch(`${urlsApi.campaignOpportunity.opportunityEformDetail}${convertParamsToString(params)}`, {
-      signal,
-      method: "GET",
-    }).then((res) => res.json());
+    return apiGet(urlsApi.campaignOpportunity.opportunityEformDetail, params, signal);
   },
 
   // thêm mới nhiều người xem cho 1 khách hàng
   addCoyViewer: (body: Record<string, unknown>) => {
-    return fetch(urlsApi.campaignOpportunity.addCoyViewer, {
-      method: "POST",
-      body: JSON.stringify(body),
-    }).then((res) => res.json());
+    return apiPost(urlsApi.campaignOpportunity.addCoyViewer, body);
   },
   // lấy về danh sách người xem
   lstCoyViewer: (id: number) => {
@@ -160,8 +107,6 @@ export default {
   },
   // xóa đi 1 người xem
   deleteCoyViewer: (id: number) => {
-    return fetch(`${urlsApi.campaignOpportunity.deleteCoyViewer}?id=${id}`, {
-      method: "DELETE",
-    }).then((res) => res.json());
+    return apiDelete(`${urlsApi.campaignOpportunity.deleteCoyViewer}?id=${id}`);
   },
 };

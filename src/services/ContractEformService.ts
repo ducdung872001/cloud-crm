@@ -1,18 +1,13 @@
+import { apiDelete, apiGet, apiPost } from "services/apiHelper";
 import { urlsApi } from "configs/urls";
-import { convertParamsToString } from "reborn-util";
+
 
 export default {
   list: (params?: Record<string, unknown>, signal?: AbortSignal) => {
-    return fetch(`${urlsApi.contractEform.list}${convertParamsToString(params)}`, {
-      signal,
-      method: "GET",
-    }).then((res) => res.json());
+    return apiGet(urlsApi.contractEform.list, params, signal);
   },
   update: (body: Record<string, unknown>) => {
-    return fetch(urlsApi.contractEform.update, {
-      method: "POST",
-      body: JSON.stringify(body),
-    }).then((res) => res.json());
+    return apiPost(urlsApi.contractEform.update, body);
   },
   detail: (id: number) => {
     return fetch(`${urlsApi.contractEform.detail}?id=${id}`, {
@@ -20,29 +15,18 @@ export default {
     }).then((res) => res.json());
   },
   delete: (id: number) => {
-    return fetch(`${urlsApi.contractEform.delete}?id=${id}`, {
-      method: "DELETE",
-    }).then((res) => res.json());
+    return apiDelete(`${urlsApi.contractEform.delete}?id=${id}`);
   },
 
   listEformExtraInfo: (params?: Record<string, unknown>, signal?: AbortSignal) => {
-    return fetch(`${urlsApi.contractEform.listEformExtraInfo}${convertParamsToString(params)}`, {
-      signal,
-      method: "GET",
-    }).then((res) => res.json());
+    return apiGet(urlsApi.contractEform.listEformExtraInfo, params, signal);
   },
   updateEformExtraInfo: (body: Record<string, unknown>) => {
-    return fetch(urlsApi.contractEform.updateEformExtraInfo, {
-      method: "POST",
-      body: JSON.stringify(body),
-    }).then((res) => res.json());
+    return apiPost(urlsApi.contractEform.updateEformExtraInfo, body);
   },
 
   updateEformExtraInfoPosition: (body: Record<string, unknown>) => {
-    return fetch(urlsApi.contractEform.updateEformExtraInfoPosition, {
-      method: "POST",
-      body: JSON.stringify(body),
-    }).then((res) => res.json());
+    return apiPost(urlsApi.contractEform.updateEformExtraInfoPosition, body);
   },
 
   detailEformExtraInfo: (id: number) => {
@@ -51,22 +35,14 @@ export default {
     }).then((res) => res.json());
   },
   deleteEformExtraInfo: (id: number) => {
-    return fetch(`${urlsApi.contractEform.deleteEformExtraInfo}?id=${id}`, {
-      method: "DELETE",
-    }).then((res) => res.json());
+    return apiDelete(`${urlsApi.contractEform.deleteEformExtraInfo}?id=${id}`);
   },
 
   listEformAttribute: (params?: Record<string, unknown>, signal?: AbortSignal) => {
-    return fetch(`${urlsApi.contractEform.listEformAttribute}${convertParamsToString(params)}`, {
-      signal,
-      method: "GET",
-    }).then((res) => res.json());
+    return apiGet(urlsApi.contractEform.listEformAttribute, params, signal);
   },
   updateEformAttribute: (body: Record<string, unknown>) => {
-    return fetch(urlsApi.contractEform.updateEformAttribute, {
-      method: "POST",
-      body: JSON.stringify(body),
-    }).then((res) => res.json());
+    return apiPost(urlsApi.contractEform.updateEformAttribute, body);
   },
 
   detailEformAttribute: (id: number) => {
@@ -75,36 +51,22 @@ export default {
     }).then((res) => res.json());
   },
   deleteEformAttribute: (id: number) => {
-    return fetch(`${urlsApi.contractEform.deleteEformAttribute}?id=${id}`, {
-      method: "DELETE",
-    }).then((res) => res.json());
+    return apiDelete(`${urlsApi.contractEform.deleteEformAttribute}?id=${id}`);
   },
 
   listEformAttributeAll: (params?: Record<string, unknown>, signal?: AbortSignal) => {
-    return fetch(`${urlsApi.contractEform.listEformAttributeAll}${convertParamsToString(params)}`, {
-      signal,
-      method: "GET",
-    }).then((res) => res.json());
+    return apiGet(urlsApi.contractEform.listEformAttributeAll, params, signal);
   },
 
   checkDuplicated: (params: Record<string, unknown>, signal?: AbortSignal) => {
-    return fetch(`${urlsApi.contractEform.checkDuplicated}${convertParamsToString(params)}`, {
-      signal,
-      method: "GET",
-    }).then((res) => res.json());
+    return apiGet(urlsApi.contractEform.checkDuplicated, params, signal);
   },
 
   ContractEformUpdate: (body: Record<string, unknown>) => {
-    return fetch(urlsApi.contractEform.contractEformUpdate, {
-      method: "POST",
-      body: JSON.stringify(body),
-    }).then((res) => res.json());
+    return apiPost(urlsApi.contractEform.contractEformUpdate, body);
   },
 
   ContractEformDetail: (params?: Record<string, unknown>, signal?: AbortSignal) => {
-    return fetch(`${urlsApi.contractEform.contractEformDetail}${convertParamsToString(params)}`, {
-      signal,
-      method: "GET",
-    }).then((res) => res.json());
+    return apiGet(urlsApi.contractEform.contractEformDetail, params, signal);
   },
 };

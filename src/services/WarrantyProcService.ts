@@ -1,19 +1,14 @@
+import { apiDelete, apiGet, apiPost } from "services/apiHelper";
 import { urlsApi } from "configs/urls";
-import { convertParamsToString } from "reborn-util";
+
 import { IWarrantyProcFilterRequest, IWarrantyProcRequest } from "model/warrantyProc/WarrantyProcRequestModel";
 
 export default {
   list: (params?: IWarrantyProcFilterRequest, signal?: AbortSignal) => {
-    return fetch(`${urlsApi.warrantyProc.list}${convertParamsToString(params)}`, {
-      signal,
-      method: "GET",
-    }).then((res) => res.json());
+    return apiGet(urlsApi.warrantyProc.list, params, signal);
   },
   update: (body: IWarrantyProcRequest) => {
-    return fetch(urlsApi.warrantyProc.update, {
-      method: "POST",
-      body: JSON.stringify(body),
-    }).then((res) => res.json());
+    return apiPost(urlsApi.warrantyProc.update, body);
   },
   detail: (id: number) => {
     return fetch(`${urlsApi.warrantyProc.detail}?id=${id}`, {
@@ -21,8 +16,6 @@ export default {
     }).then((res) => res.json());
   },
   delete: (id: number) => {
-    return fetch(`${urlsApi.warrantyProc.delete}?id=${id}`, {
-      method: "DELETE",
-    }).then((res) => res.json());
+    return apiDelete(`${urlsApi.warrantyProc.delete}?id=${id}`);
   },
 };

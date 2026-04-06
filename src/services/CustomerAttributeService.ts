@@ -1,24 +1,17 @@
+import { apiDelete, apiGet, apiPost } from "services/apiHelper";
 import { urlsApi } from "configs/urls";
-import { convertParamsToString } from "reborn-util";
+
 import { ICustomerAttributeFilterRequest, ICustomerAttributeRequest } from "model/customerAttribute/CustomerAttributeRequest";
 
 export default {
   list: (params: ICustomerAttributeFilterRequest, signal?: AbortSignal) => {
-    return fetch(`${urlsApi.customerAttribute.list}${convertParamsToString(params)}`, {
-      signal,
-      method: "GET",
-    }).then((res) => res.json());
+    return apiGet(urlsApi.customerAttribute.list, params, signal);
   },
   update: (body: ICustomerAttributeRequest) => {
-    return fetch(urlsApi.customerAttribute.update, {
-      method: "POST",
-      body: JSON.stringify(body),
-    }).then((res) => res.json());
+    return apiPost(urlsApi.customerAttribute.update, body);
   },
   delete: (id: number) => {
-    return fetch(`${urlsApi.customerAttribute.delete}?id=${id}`, {
-      method: "DELETE",
-    }).then((res) => res.json());
+    return apiDelete(`${urlsApi.customerAttribute.delete}?id=${id}`);
   },
   // listAll: (signal?: AbortSignal) => {
   //   return fetch(`${urlsApi.customerAttribute.listAll}`, {
@@ -34,9 +27,6 @@ export default {
   },
 
   checkDuplicated: (params: Record<string, unknown>, signal?: AbortSignal) => {
-    return fetch(`${urlsApi.customerAttribute.checkDuplicated}${convertParamsToString(params)}`, {
-      signal,
-      method: "GET",
-    }).then((res) => res.json());
+    return apiGet(urlsApi.customerAttribute.checkDuplicated, params, signal);
   },
 };

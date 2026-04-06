@@ -1,28 +1,18 @@
+import { apiDelete, apiGet, apiPost } from "services/apiHelper";
 import { urlsApi } from "configs/urls";
-import { convertParamsToString } from "reborn-util";
+
 
 export default {
   list: (params: Record<string, unknown>, signal?: AbortSignal) => {
-    return fetch(`${urlsApi.feedback.lst}${convertParamsToString(params)}`, {
-      signal,
-      method: "GET",
-    }).then((res) => res.json());
+    return apiGet(urlsApi.feedback.lst, params, signal);
   },
   update: (body) => {
-    return fetch(urlsApi.feedback.update, {
-      method: "POST",
-      body: JSON.stringify(body),
-    }).then((res) => res.json());
+    return apiPost(urlsApi.feedback.update, body);
   },
   delete: (id: number) => {
-    return fetch(`${urlsApi.feedback.delete}?id=${id}`, {
-      method: "DELETE",
-    }).then((res) => res.json());
+    return apiDelete(`${urlsApi.feedback.delete}?id=${id}`);
   },
   changeStatus: (body) => {
-    return fetch(urlsApi.feedback.changeStatus, {
-      method: "POST",
-      body: JSON.stringify(body),
-    }).then((res) => res.json());
+    return apiPost(urlsApi.feedback.changeStatus, body);
   },
 };

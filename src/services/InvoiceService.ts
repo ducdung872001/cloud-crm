@@ -1,3 +1,4 @@
+import { apiDelete, apiGet, apiPost } from "services/apiHelper";
 import { urlsApi } from "configs/urls";
 import { convertParamsToString } from "reborn-util";
 import {
@@ -9,10 +10,7 @@ import {
 
 export default {
   list: (params: IInvoiceFilterRequest, signal?: AbortSignal) => {
-    return fetch(`${urlsApi.invoice.list}${convertParamsToString(params)}`, {
-      signal,
-      method: "GET",
-    }).then((res) => res.json());
+    return apiGet(urlsApi.invoice.list, params, signal);
   },
 
   /**
@@ -65,16 +63,10 @@ export default {
   },
 
   createInvoice: (params: Record<string, unknown>, signal?: AbortSignal) => {
-    return fetch(`${urlsApi.invoice.createInvoice}${convertParamsToString(params)}`, {
-      signal,
-      method: "GET",
-    }).then((res) => res.json());
+    return apiGet(urlsApi.invoice.createInvoice, params, signal);
   },
   invoiceDetail: (params: Record<string, unknown>, signal?: AbortSignal) => {
-    return fetch(`${urlsApi.invoice.invoiceDetail}${convertParamsToString(params)}`, {
-      signal,
-      method: "GET",
-    }).then((res) => res.json());
+    return apiGet(urlsApi.invoice.invoiceDetail, params, signal);
   },
   // Xem chi tiết hóa đơn
   listInvoiceDetail: (id: number) => {
@@ -83,10 +75,7 @@ export default {
     }).then((res) => res.json());
   },
   create: (body: IInvoiceCreateRequest) => {
-    return fetch(urlsApi.invoice.create, {
-      method: "POST",
-      body: JSON.stringify(body),
-    }).then((res) => res.json());
+    return apiPost(urlsApi.invoice.create, body);
   },
   cardService: (id: number) => {
     return fetch(`${urlsApi.invoice.cardService}?customerId=${id}`, {
@@ -101,9 +90,7 @@ export default {
   },
   //Hủy hóa đơn
   cancelInvoice: (id: number) => {
-    return fetch(`${urlsApi.invoice.cancelInvoice}?id=${id}`, {
-      method: "DELETE",
-    }).then((res) => res.json());
+    return apiDelete(`${urlsApi.invoice.cancelInvoice}?id=${id}`);
   },
   // lấy danh sách thu tiền, chi tiền của khách
   debtInvoice: (id: number) => {
@@ -113,10 +100,7 @@ export default {
   },
   // lưu tạm hóa đơn
   temporarilyInvoices: (body: ITemporarilyInvoiceRequest) => {
-    return fetch(urlsApi.invoice.temporarilyInvoice, {
-      method: "POST",
-      body: JSON.stringify(body),
-    }).then((res) => res.json());
+    return apiPost(urlsApi.invoice.temporarilyInvoice, body);
   },
   // lịch sử tiêu dùng thẻ
   historyUseCard: (id: number) => {
@@ -132,10 +116,7 @@ export default {
     }).then((res) => res.json());
   },
   importUpdate: (body: Record<string, unknown>) => {
-    return fetch(urlsApi.invoiceImport.update, {
-      method: "POST",
-      body: JSON.stringify(body),
-    }).then((res) => res.json());
+    return apiPost(urlsApi.invoiceImport.update, body);
   },
   importGet: (id: number) => {
     return fetch(`${urlsApi.invoiceImport.get}?id=${id}`, {
@@ -143,9 +124,7 @@ export default {
     }).then((res) => res.json());
   },
   importList: (params?: Record<string, unknown>) => {
-    return fetch(`${urlsApi.invoiceImport.list}${convertParamsToString(params)}`, {
-      method: "GET",
-    }).then((res) => res.json());
+    return apiGet(urlsApi.invoiceImport.list, params);
   },
   /**
    * GET /sales/invoice/export?invoiceTypes=["IV4"]&...
@@ -191,10 +170,7 @@ export default {
   // GET /invoice/import/summary
   // Response: { totalSlip, totalAmount, completed, pending, cancelled }
   importSummary: (signal?: AbortSignal) => {
-    return fetch(urlsApi.invoiceImport.summary, {
-      signal,
-      method: "GET",
-    }).then((res) => res.json());
+    return apiGet(urlsApi.invoiceImport.summary, undefined, signal);
   },
   // Gửi biên lai qua email
   // payload: { invoiceId, customerEmail }

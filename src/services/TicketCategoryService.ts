@@ -1,19 +1,14 @@
+import { apiDelete, apiGet, apiPost } from "services/apiHelper";
 import { urlsApi } from "configs/urls";
-import { convertParamsToString } from "reborn-util";
+
 import { ITicketCategoryFilterRequest, ITicketCategoryRequest } from "model/ticketCategory/TicketCategoryRequestModel";
 
 export default {
   list: (params?: ITicketCategoryFilterRequest, signal?: AbortSignal) => {
-    return fetch(`${urlsApi.ticketCategory.list}${convertParamsToString(params)}`, {
-      signal,
-      method: "GET",
-    }).then((res) => res.json());
+    return apiGet(urlsApi.ticketCategory.list, params, signal);
   },
   update: (body: ITicketCategoryRequest) => {
-    return fetch(urlsApi.ticketCategory.update, {
-      method: "POST",
-      body: JSON.stringify(body),
-    }).then((res) => res.json());
+    return apiPost(urlsApi.ticketCategory.update, body);
   },
   detail: (id: number) => {
     return fetch(`${urlsApi.ticketCategory.detail}?id=${id}`, {
@@ -21,8 +16,6 @@ export default {
     }).then((res) => res.json());
   },
   delete: (id: number) => {
-    return fetch(`${urlsApi.ticketCategory.delete}?id=${id}`, {
-      method: "DELETE",
-    }).then((res) => res.json());
+    return apiDelete(`${urlsApi.ticketCategory.delete}?id=${id}`);
   },
 };

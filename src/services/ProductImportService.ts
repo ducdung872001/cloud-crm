@@ -1,3 +1,4 @@
+import { apiDelete, apiPost } from "services/apiHelper";
 import { urlsApi } from "configs/urls";
 import { IProductImportRequest } from "model/productImport/ProductImportRequestModel"; // tạm thời cho work đã
 import { IInvoiceDetailRequest } from "model/invoice/InvoiceRequestModel";
@@ -14,14 +15,9 @@ export default {
     }).then((res) => res.json());
   },
   update: (body: IInvoiceDetailRequest) => {
-    return fetch(urlsApi.productImport.update, {
-      method: "POST",
-      body: JSON.stringify(body),
-    }).then((res) => res.json());
+    return apiPost(urlsApi.productImport.update, body);
   },
   delete: (id: number) => {
-    return fetch(`${urlsApi.productImport.delete}?id=${id}`, {
-      method: "DELETE",
-    }).then((res) => res.json());
+    return apiDelete(`${urlsApi.productImport.delete}?id=${id}`);
   },
 };

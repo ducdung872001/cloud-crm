@@ -1,19 +1,14 @@
+import { apiDelete, apiGet, apiPost } from "services/apiHelper";
 import { urlsApi } from "configs/urls";
-import { convertParamsToString } from "reborn-util";
+
 import { ITemplateSMSFilterRequest, ITemplateSMSRequest } from "model/templateSMS/TemplateSMSRequest";
 
 export default {
   list: (params?: ITemplateSMSFilterRequest, signal?: AbortSignal) => {
-    return fetch(`${urlsApi.templateSMS.list}${convertParamsToString(params)}`, {
-      signal,
-      method: "GET",
-    }).then((res) => res.json());
+    return apiGet(urlsApi.templateSMS.list, params, signal);
   },
   update: (body: ITemplateSMSRequest) => {
-    return fetch(urlsApi.templateSMS.update, {
-      method: "POST",
-      body: JSON.stringify(body),
-    }).then((res) => res.json());
+    return apiPost(urlsApi.templateSMS.update, body);
   },
   detail: (id: number) => {
     return fetch(`${urlsApi.templateSMS.detail}?id=${id}`, {
@@ -21,8 +16,6 @@ export default {
     }).then((res) => res.json());
   },
   delete: (id: number) => {
-    return fetch(`${urlsApi.templateSMS.delete}?id=${id}`, {
-      method: "DELETE",
-    }).then((res) => res.json());
+    return apiDelete(`${urlsApi.templateSMS.delete}?id=${id}`);
   },
 };

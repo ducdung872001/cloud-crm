@@ -1,3 +1,4 @@
+import { apiDelete, apiGet, apiPost } from "services/apiHelper";
 import { urlsApi } from "configs/urls";
 import {
   ITreamentFilterByScheduler,
@@ -6,42 +7,25 @@ import {
   ITreamentUpdateNextRequest,
   ITreamentRequest,
 } from "model/treatment/TreamentRequestModel";
-import { convertParamsToString } from "reborn-util";
+
 
 export default {
   filter: (params: ITreamentFilterRequest, signal?: AbortSignal) => {
-    return fetch(`${urlsApi.treatment.filterSchedule}${convertParamsToString(params)}`, {
-      signal,
-      method: "GET",
-    }).then((res) => res.json());
+    return apiGet(urlsApi.treatment.filterSchedule, params, signal);
   },
   filterByScheduler: (params: ITreamentFilterByScheduler, signal?: AbortSignal) => {
-    return fetch(`${urlsApi.treatment.filterByScheduler}${convertParamsToString(params)}`, {
-      signal,
-      method: "GET",
-    }).then((res) => res.json());
+    return apiGet(urlsApi.treatment.filterByScheduler, params, signal);
   },
   updateNext: (body: ITreamentUpdateNextRequest) => {
-    return fetch(urlsApi.treatment.updateNext, {
-      method: "POST",
-      body: JSON.stringify(body),
-    }).then((res) => res.json());
+    return apiPost(urlsApi.treatment.updateNext, body);
   },
   updateCaringEmployee: (body: ITreamentUpdateCaringEmployeeRequest) => {
-    return fetch(urlsApi.treatment.updateCaringEmployee, {
-      method: "POST",
-      body: JSON.stringify(body),
-    }).then((res) => res.json());
+    return apiPost(urlsApi.treatment.updateCaringEmployee, body);
   },
   delete: (id: number) => {
-    return fetch(`${urlsApi.treatment.delete}?id=${id}`, {
-      method: "DELETE",
-    }).then((res) => res.json());
+    return apiDelete(`${urlsApi.treatment.delete}?id=${id}`);
   },
   update: (body: ITreamentRequest) => {
-    return fetch(urlsApi.treatment.update, {
-      method: "POST",
-      body: JSON.stringify(body),
-    }).then((res) => res.json());
+    return apiPost(urlsApi.treatment.update, body);
   },
 };

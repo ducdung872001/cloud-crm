@@ -1,39 +1,25 @@
+import { apiDelete, apiGet, apiPost } from "services/apiHelper";
 import { urlsApi } from "configs/urls";
-import { convertParamsToString } from "reborn-util";
+
 
 export default {
   list: (params?: Record<string, unknown>, signal?: AbortSignal) => {
-    return fetch(`${urlsApi.saleflowInvoice.list}${convertParamsToString(params)}`, {
-      signal,
-      method: "GET",
-    }).then((res) => res.json());
+    return apiGet(urlsApi.saleflowInvoice.list, params, signal);
   },
 
   update: (body: Record<string, unknown>) => {
-    return fetch(urlsApi.saleflowInvoice.update, {
-      method: "POST",
-      body: JSON.stringify(body),
-    }).then((res) => res.json());
+    return apiPost(urlsApi.saleflowInvoice.update, body);
   },
   updateApproach: (body: Record<string, unknown>) => {
-    return fetch(urlsApi.saleflowInvoice.updateApproach, {
-      method: "POST",
-      body: JSON.stringify(body),
-    }).then((res) => res.json());
+    return apiPost(urlsApi.saleflowInvoice.updateApproach, body);
   },
 
   updateApproachSuccess: (body: Record<string, unknown>) => {
-    return fetch(urlsApi.saleflowInvoice.updateApproachSuccess, {
-      method: "POST",
-      body: JSON.stringify(body),
-    }).then((res) => res.json());
+    return apiPost(urlsApi.saleflowInvoice.updateApproachSuccess, body);
   },
 
   updateApproachCancel: (body: Record<string, unknown>) => {
-    return fetch(urlsApi.saleflowInvoice.updateApproachCancel, {
-      method: "POST",
-      body: JSON.stringify(body),
-    }).then((res) => res.json());
+    return apiPost(urlsApi.saleflowInvoice.updateApproachCancel, body);
   },
   
   detail: (id: number) => {
@@ -42,28 +28,19 @@ export default {
     }).then((res) => res.json());
   },
   delete: (id: number) => {
-    return fetch(`${urlsApi.saleflowInvoice.delete}?id=${id}`, {
-      method: "DELETE",
-    }).then((res) => res.json());
+    return apiDelete(`${urlsApi.saleflowInvoice.delete}?id=${id}`);
   },
 
   invoiceExchange: (params: Record<string, unknown>) => {
-    return fetch(`${urlsApi.saleflowInvoice.invoiceExchange}${convertParamsToString(params)}`, {
-      method: "GET",
-    }).then((res) => res.json());
+    return apiGet(urlsApi.saleflowInvoice.invoiceExchange, params);
   },
   // xóa đi 1 trao đổi 
   deleteInvoiceExchange: (id: number) => {
-    return fetch(`${urlsApi.saleflowInvoice.deleteInvoiceExchange}?id=${id}`, {
-      method: "DELETE",
-    }).then((res) => res.json());
+    return apiDelete(`${urlsApi.saleflowInvoice.deleteInvoiceExchange}?id=${id}`);
   },
   // thêm mới trao đổi 
   addInvoiceExchange: (body: Record<string, unknown>) => {
-    return fetch(urlsApi.saleflowInvoice.addInvoiceExchange, {
-      method: "POST",
-      body: JSON.stringify(body),
-    }).then((res) => res.json());
+    return apiPost(urlsApi.saleflowInvoice.addInvoiceExchange, body);
   },
 
   // cập nhật lại trao đổi 

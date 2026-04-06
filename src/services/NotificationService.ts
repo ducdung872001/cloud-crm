@@ -1,18 +1,13 @@
+import { apiDelete, apiGet, apiPost } from "services/apiHelper";
 import { urlsApi } from "configs/urls";
-import { convertParamsToString } from "reborn-util";
+
 
 export default {
   list: (params?: Record<string, unknown>, signal?: AbortSignal) => {
-    return fetch(`${urlsApi.notificationHistory.list}${convertParamsToString(params)}`, {
-      signal,
-      method: "GET",
-    }).then((res) => res.json());
+    return apiGet(urlsApi.notificationHistory.list, params, signal);
   },
   update: (body: Record<string, unknown>) => {
-    return fetch(urlsApi.notificationHistory.update, {
-      method: "POST",
-      body: JSON.stringify(body),
-    }).then((res) => res.json());
+    return apiPost(urlsApi.notificationHistory.update, body);
   },
   detail: (id: number) => {
     return fetch(`${urlsApi.notificationHistory.detail}?id=${id}`, {
@@ -20,23 +15,15 @@ export default {
     }).then((res) => res.json());
   },
   delete: (id: number) => {
-    return fetch(`${urlsApi.notificationHistory.delete}?id=${id}`, {
-      method: "DELETE",
-    }).then((res) => res.json());
+    return apiDelete(`${urlsApi.notificationHistory.delete}?id=${id}`);
   },
 
   updateUnread: (body: Record<string, unknown>) => {
-    return fetch(urlsApi.notificationHistory.updateUnread, {
-      method: "POST",
-      body: JSON.stringify(body),
-    }).then((res) => res.json());
+    return apiPost(urlsApi.notificationHistory.updateUnread, body);
   },
 
   updateReadAll: (body: Record<string, unknown>) => {
-    return fetch(urlsApi.notificationHistory.updateReadAll, {
-      method: "POST",
-      body: JSON.stringify(body),
-    }).then((res) => res.json());
+    return apiPost(urlsApi.notificationHistory.updateReadAll, body);
   },
 
   countUnread: () => {

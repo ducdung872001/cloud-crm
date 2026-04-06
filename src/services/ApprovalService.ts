@@ -1,118 +1,69 @@
+import { apiDelete, apiGet, apiPost } from "services/apiHelper";
 import { urlsApi } from "configs/urls";
-import { convertParamsToString } from "reborn-util";
+
 
 export default {
   list: (params: Record<string, unknown>, signal?: AbortSignal) => {
-    return fetch(`${urlsApi.approval.lst}${convertParamsToString(params)}`, {
-      signal,
-      method: "GET",
-    }).then((res) => res.json());
+    return apiGet(urlsApi.approval.lst, params, signal);
   },
   update: (body: Record<string, unknown>) => {
-    return fetch(urlsApi.approval.update, {
-      method: "POST",
-      body: JSON.stringify(body),
-    }).then((res) => res.json());
+    return apiPost(urlsApi.approval.update, body);
   },
   delete: (id: number) => {
-    return fetch(`${urlsApi.approval.delete}?id=${id}`, {
-      method: "DELETE",
-    }).then((res) => res.json());
+    return apiDelete(`${urlsApi.approval.delete}?id=${id}`);
   },
   updateStatus: (body: Record<string, unknown>) => {
     // truyền vào id và status ==> status == 0 (Chưa phê duyệt) <==> status == 1 (Đã phê duyệt)
-    return fetch(urlsApi.approval.updateStatus, {
-      method: "POST",
-      body: JSON.stringify(body),
-    }).then((res) => res.json());
+    return apiPost(urlsApi.approval.updateStatus, body);
   },
   // config
   lstConfig: (params: Record<string, unknown>, signal?: AbortSignal) => {
-    return fetch(`${urlsApi.approval.lstConfig}${convertParamsToString(params)}`, {
-      signal,
-      method: "GET",
-    }).then((res) => res.json());
+    return apiGet(urlsApi.approval.lstConfig, params, signal);
   },
   updateConfig: (body: Record<string, unknown>) => {
-    return fetch(urlsApi.approval.updateConfig, {
-      method: "POST",
-      body: JSON.stringify(body),
-    }).then((res) => res.json());
+    return apiPost(urlsApi.approval.updateConfig, body);
   },
   deleteConfig: (id: number) => {
-    return fetch(`${urlsApi.approval.deleteConfig}?id=${id}`, {
-      method: "DELETE",
-    }).then((res) => res.json());
+    return apiDelete(`${urlsApi.approval.deleteConfig}?id=${id}`);
   },
   //link
   lstLink: (params: Record<string, unknown>, signal?: AbortSignal) => {
-    return fetch(`${urlsApi.approval.lstLink}${convertParamsToString(params)}`, {
-      signal,
-      method: "GET",
-    }).then((res) => res.json());
+    return apiGet(urlsApi.approval.lstLink, params, signal);
   },
   updateLink: (body: Record<string, unknown>) => {
-    return fetch(urlsApi.approval.updateLink, {
-      method: "POST",
-      body: JSON.stringify(body),
-    }).then((res) => res.json());
+    return apiPost(urlsApi.approval.updateLink, body);
   },
   deleteLink: (id: number) => {
-    return fetch(`${urlsApi.approval.deleteLink}?id=${id}`, {
-      method: "DELETE",
-    }).then((res) => res.json());
+    return apiDelete(`${urlsApi.approval.deleteLink}?id=${id}`);
   },
   //object
   lstObject: (params: Record<string, unknown>, signal?: AbortSignal) => {
-    return fetch(`${urlsApi.approval.lstObject}${convertParamsToString(params)}`, {
-      signal,
-      method: "GET",
-    }).then((res) => res.json());
+    return apiGet(urlsApi.approval.lstObject, params, signal);
   },
   takeObject: (params: Record<string, unknown>) => {
-    return fetch(`${urlsApi.approval.takeObject}${convertParamsToString(params)}`, {
-      method: "GET",
-    }).then((res) => res.json());
+    return apiGet(urlsApi.approval.takeObject, params);
   },
   checkApproved: (params: Record<string, unknown>) => {
-    return fetch(`${urlsApi.approval.checkApproved}${convertParamsToString(params)}`, {
-      method: "GET",
-    }).then((res) => res.json());
+    return apiGet(urlsApi.approval.checkApproved, params);
   },
   updateObject: (body: Record<string, unknown>) => {
-    return fetch(urlsApi.approval.updateObject, {
-      method: "POST",
-      body: JSON.stringify(body),
-    }).then((res) => res.json());
+    return apiPost(urlsApi.approval.updateObject, body);
   },
   deleteObject: (id: number) => {
-    return fetch(`${urlsApi.approval.deleteObject}?id=${id}`, {
-      method: "DELETE",
-    }).then((res) => res.json());
+    return apiDelete(`${urlsApi.approval.deleteObject}?id=${id}`);
   },
   //log
   lstLog: (params: Record<string, unknown>, signal?: AbortSignal) => {
-    return fetch(`${urlsApi.approval.lstLog}${convertParamsToString(params)}`, {
-      signal,
-      method: "GET",
-    }).then((res) => res.json());
+    return apiGet(urlsApi.approval.lstLog, params, signal);
   },
   updateLog: (body: Record<string, unknown>) => {
-    return fetch(urlsApi.approval.updateLog, {
-      method: "POST",
-      body: JSON.stringify(body),
-    }).then((res) => res.json());
+    return apiPost(urlsApi.approval.updateLog, body);
   },
   deleteLog: (id: number) => {
-    return fetch(`${urlsApi.approval.deleteLog}?id=${id}`, {
-      method: "DELETE",
-    }).then((res) => res.json());
+    return apiDelete(`${urlsApi.approval.deleteLog}?id=${id}`);
   },
 
   updateAlert: (body: Record<string, unknown>) => {
-    return fetch(urlsApi.approval.updateAlert, {
-      method: "POST",
-      body: JSON.stringify(body),
-    }).then((res) => res.json());
+    return apiPost(urlsApi.approval.updateAlert, body);
   },
 };

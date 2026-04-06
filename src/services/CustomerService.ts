@@ -1,3 +1,4 @@
+import { apiDelete, apiGet, apiPost } from "services/apiHelper";
 import { urlsApi } from "configs/urls";
 import {
   ICustomerFilterRequest,
@@ -28,18 +29,12 @@ import { convertParamsToString } from "reborn-util";
 export default {
   //? thêm mới, cập nhập, xem, xem chi tiết khách hàng
   filter: (params?: ICustomerFilterRequest, signal?: AbortSignal) => {
-    return fetch(`${urlsApi.customer.filter}${convertParamsToString(params)}`, {
-      signal,
-      method: "GET",
-    }).then((res) => res.json());
+    return apiGet(urlsApi.customer.filter, params, signal);
   },
 
   ///list khách hàng của đối tác
   listshared: (params?: ICustomerFilterRequest, signal?: AbortSignal) => {
-    return fetch(`${urlsApi.customer.listshared}${convertParamsToString(params)}`, {
-      signal,
-      method: "GET",
-    }).then((res) => res.json());
+    return apiGet(urlsApi.customer.listshared, params, signal);
   },
 
   detail: (id: number) => {
@@ -48,89 +43,48 @@ export default {
     }).then((res) => res.json());
   },
   update: (body: ICustomerRequest) => {
-    return fetch(urlsApi.customer.update, {
-      method: "POST",
-      body: JSON.stringify(body),
-    }).then((res) => res.json());
+    return apiPost(urlsApi.customer.update, body);
   },
   telesaleCallList: (params?: Record<string, unknown>, signal?: AbortSignal) => {
-    return fetch(`${urlsApi.customer.telesaleCallList}${convertParamsToString(params)}`, {
-      signal,
-      method: "GET",
-    }).then((res) => res.json());
+    return apiGet(urlsApi.customer.telesaleCallList, params, signal);
   },
   telesaleCallUpdate: (body: Record<string, unknown>) => {
-    return fetch(urlsApi.customer.telesaleCallUpdate, {
-      method: "POST",
-      body: JSON.stringify(body),
-    }).then((res) => res.json());
+    return apiPost(urlsApi.customer.telesaleCallUpdate, body);
   },
   updateByField: (body: Record<string, unknown>) => {
-    return fetch(urlsApi.customer.updateByField, {
-      method: "POST",
-      body: JSON.stringify(body),
-    }).then((res) => res.json());
+    return apiPost(urlsApi.customer.updateByField, body);
   },
   delete: (id: number) => {
-    return fetch(`${urlsApi.customer.delete}?id=${id}`, {
-      method: "DELETE",
-    }).then((res) => res.json());
+    return apiDelete(`${urlsApi.customer.delete}?id=${id}`);
   },
   deleteAll: (body) => {
-    return fetch(`${urlsApi.customer.delete}`, {
-      method: "POST",
-      body: JSON.stringify(body),
-    }).then((res) => res.json());
+    return apiPost(`${urlsApi.customer.delete}`, body);
   },
   checkInProcess: (body) => {
-    return fetch(`${urlsApi.customer.checkInProcess}`, {
-      method: "POST",
-      body: JSON.stringify(body),
-    }).then((res) => res.json());
+    return apiPost(`${urlsApi.customer.checkInProcess}`, body);
   },
   addOther: (body) => {
-    return fetch(urlsApi.customer.addOther, {
-      method: "POST",
-      body: JSON.stringify(body),
-    }).then((res) => res.json());
+    return apiPost(urlsApi.customer.addOther, body);
   },
   //* Lấy ra danh sách khách hàng dự vào lstId
   listById: (params?: IListByIdFilterRequest, signal?: AbortSignal) => {
-    return fetch(`${urlsApi.customer.listById}${convertParamsToString(params)}`, {
-      signal,
-      method: "GET",
-    }).then((res) => res.json());
+    return apiGet(urlsApi.customer.listById, params, signal);
   },
   //? cập nhật hàng loạt
   updateCustomerGroup: (body: IUpdateCustomerGroupRequest) => {
-    return fetch(urlsApi.customer.updateCustomerGroup, {
-      method: "POST",
-      body: JSON.stringify(body),
-    }).then((res) => res.json());
+    return apiPost(urlsApi.customer.updateCustomerGroup, body);
   },
   updateOneRelationship: (body: IUpdateOneRelationshipRequest) => {
-    return fetch(urlsApi.customer.updateOneRelationship, {
-      method: "POST",
-      body: JSON.stringify(body),
-    }).then((res) => res.json());
+    return apiPost(urlsApi.customer.updateOneRelationship, body);
   },
   updateCustomeRelationship: (body: IUpdateCustomeRelationshipRequest) => {
-    return fetch(urlsApi.customer.updateCustomeRelationship, {
-      method: "POST",
-      body: JSON.stringify(body),
-    }).then((res) => res.json());
+    return apiPost(urlsApi.customer.updateCustomeRelationship, body);
   },
   updateCustomerSource: (body: IUpdateCustomerSourceRequest) => {
-    return fetch(urlsApi.customer.updateCustomerSource, {
-      method: "POST",
-      body: JSON.stringify(body),
-    }).then((res) => res.json());
+    return apiPost(urlsApi.customer.updateCustomerSource, body);
   },
   updateCustomerEmployee: (body: IUpdateCustomerEmployeeRequest) => {
-    return fetch(urlsApi.customer.updateCustomerEmployee, {
-      method: "POST",
-      body: JSON.stringify(body),
-    }).then((res) => res.json());
+    return apiPost(urlsApi.customer.updateCustomerEmployee, body);
   },
   //? thêm mới, cập nhật, xem, xem chi tiết lịch điều trị
   linkUser: (id: number, userId: number) => {
@@ -140,16 +94,10 @@ export default {
     }).then((res) => res.json());
   },
   filterScheduler: (params: ICustomerSchedulerFilterRequest, signal?: AbortSignal) => {
-    return fetch(`${urlsApi.customer.filterScheduler}${convertParamsToString(params)}`, {
-      signal,
-      method: "GET",
-    }).then((res) => res.json());
+    return apiGet(urlsApi.customer.filterScheduler, params, signal);
   },
   updateScheduler: (body: ICustomerSchedulerRequest) => {
-    return fetch(urlsApi.customer.updateScheduler, {
-      method: "POST",
-      body: JSON.stringify(body),
-    }).then((res) => res.json());
+    return apiPost(urlsApi.customer.updateScheduler, body);
   },
   cancelScheduler: (id: number) => {
     return fetch(`${urlsApi.customer.cancelScheduler}?id=${id}`, {
@@ -163,21 +111,13 @@ export default {
   },
   //* Thêm mới, cập nhật xóa một trao đổi
   customerExchangeList: (params: ICustomerExchangeFilterRequest, signal?: AbortSignal) => {
-    return fetch(`${urlsApi.customer.customerExchangeList}${convertParamsToString(params)}`, {
-      signal,
-      method: "GET",
-    }).then((res) => res.json());
+    return apiGet(urlsApi.customer.customerExchangeList, params, signal);
   },
   customerExchangeUpdate: (body: ICustomerExchangeUpdateRequestModel) => {
-    return fetch(urlsApi.customer.customerExchangeUpdate, {
-      method: "POST",
-      body: JSON.stringify(body),
-    }).then((res) => res.json());
+    return apiPost(urlsApi.customer.customerExchangeUpdate, body);
   },
   customerExchangeDelete: (id: number) => {
-    return fetch(`${urlsApi.customer.customerExchangeDelete}?id=${id}`, {
-      method: "DELETE",
-    }).then((res) => res.json());
+    return apiDelete(`${urlsApi.customer.customerExchangeDelete}?id=${id}`);
   },
   //* Gửi sms, gửi email
   // customerSendSMS: (body: ICustomerSendSMSRequestModel) => {
@@ -186,22 +126,13 @@ export default {
   //   }).then((res) => res.json());
   // },
   customerSendSMS: (body: ICustomerSendSMSRequestModel) => {
-    return fetch(urlsApi.customer.customerSendSMS, {
-      method: "POST",
-      body: JSON.stringify(body),
-    }).then((res) => res.json());
+    return apiPost(urlsApi.customer.customerSendSMS, body);
   },
   customerSendEmail: (body: ICustomerSendEmailRequestModel) => {
-    return fetch(urlsApi.customer.customerSendEmail, {
-      method: "POST",
-      body: JSON.stringify(body),
-    }).then((res) => res.json());
+    return apiPost(urlsApi.customer.customerSendEmail, body);
   },
   customerSendZalo: (body: ICustomerSendZaloRequestModel) => {
-    return fetch(urlsApi.customer.customerSendZalo, {
-      method: "POST",
-      body: JSON.stringify(body),
-    }).then((res) => res.json());
+    return apiPost(urlsApi.customer.customerSendZalo, body);
   },
   //? Lấy số điện thoại, email bị che
   viewPhone: (id: number) => {
@@ -210,9 +141,7 @@ export default {
     }).then((res) => res.json());
   },
   viewFullPhone: (params: Record<string, unknown>) => {
-    return fetch(`${urlsApi.customer.viewFullPhone}${convertParamsToString(params)}`, {
-      method: "GET",
-    }).then((res) => res.json());
+    return apiGet(urlsApi.customer.viewFullPhone, params);
   },
   viewEmail: (id: number) => {
     return fetch(`${urlsApi.customer.viewEmail}?id=${id}`, {
@@ -236,10 +165,7 @@ export default {
   },
   // thêm mới nhiều người xem cho 1 khách hàng
   addCustomerViewer: (body: IAddCustomerViewerRequestModel) => {
-    return fetch(urlsApi.customer.addCustomerViewer, {
-      method: "POST",
-      body: JSON.stringify(body),
-    }).then((res) => res.json());
+    return apiPost(urlsApi.customer.addCustomerViewer, body);
   },
   // lấy về danh sách người xem
   lstCustomerViewer: (id: number) => {
@@ -249,33 +175,22 @@ export default {
   },
   // xóa đi 1 người xem
   deleteCustomerViewer: (id: number) => {
-    return fetch(`${urlsApi.customer.deleteCustomerViewer}?id=${id}`, {
-      method: "DELETE",
-    }).then((res) => res.json());
+    return apiDelete(`${urlsApi.customer.deleteCustomerViewer}?id=${id}`);
   },
 
   // thêm khách hàng vào chương trình MA
   addCustomerMA: (body: Record<string, unknown>) => {
-    return fetch(urlsApi.customer.addCustomerMA, {
-      method: "POST",
-      body: JSON.stringify(body),
-    }).then((res) => res.json());
+    return apiPost(urlsApi.customer.addCustomerMA, body);
   },
 
   //Danh sách tỉnh/thành phố
   areaList: (params?: Record<string, unknown>, signal?: AbortSignal) => {
-    return fetch(`${urlsApi.customer.area}${convertParamsToString(params)}`, {
-      signal,
-      method: "GET",
-    }).then((res) => res.json());
+    return apiGet(urlsApi.customer.area, params, signal);
   },
 
   // import khách hàng b2
   autoProcess: (body: IAutoProcessModalProps) => {
-    return fetch(urlsApi.customer.autoProcess, {
-      method: "POST",
-      body: JSON.stringify(body),
-    }).then((res) => res.json());
+    return apiPost(urlsApi.customer.autoProcess, body);
   },
   // download file lỗi
   downloadFile: (id: number) => {
@@ -285,53 +200,36 @@ export default {
   },
   // tương tác khách hàng
   customerReport: (params: ICustomerReportProps) => {
-    return fetch(`${urlsApi.customer.customerReport}${convertParamsToString(params)}`, {
-      method: "GET",
-    }).then((res) => res.json());
+    return apiGet(urlsApi.customer.customerReport, params);
   },
   detailCustomerReport: (params: IDetailCustomerReportProps) => {
-    return fetch(`${urlsApi.customer.detailCustomerReport}${convertParamsToString(params)}`, {
-      method: "GET",
-    }).then((res) => res.json());
+    return apiGet(urlsApi.customer.detailCustomerReport, params);
   },
   // danh sách các file đã tải
   lstAttachments: (params: ILstAttachmentsFilterRequest) => {
-    return fetch(`${urlsApi.customer.lstAttachments}${convertParamsToString(params)}`, {
-      method: "GET",
-    }).then((res) => res.json());
+    return apiGet(urlsApi.customer.lstAttachments, params);
   },
   // chi tiết tương tác từng khách hàng trong mục chi tiết khách hàng
   descCustomerReport: (params: IDescCustomerReportFilterRequest) => {
-    return fetch(`${urlsApi.customer.descCustomerReport}${convertParamsToString(params)}`, {
-      method: "GET",
-    }).then((res) => res.json());
+    return apiGet(urlsApi.customer.descCustomerReport, params);
   },
 
   //khách hàng theo doi tk Zalo nào
   customerZaloOA: (params: Record<string, unknown>) => {
-    return fetch(`${urlsApi.customer.customerZaloOA}${convertParamsToString(params)}`, {
-      method: "GET",
-    }).then((res) => res.json());
+    return apiGet(urlsApi.customer.customerZaloOA, params);
   },
 
   // đoạn này là api bộ lọc nâng cao
   filterAdvanced: (params) => {
-    return fetch(`${urlsApi.customer.filterAdvanced}${convertParamsToString(params)}`, {
-      method: "GET",
-    }).then((res) => res.json());
+    return apiGet(urlsApi.customer.filterAdvanced, params);
   },
 
   createFilterAdvanced: (body) => {
-    return fetch(urlsApi.customer.createFilterAdvanced, {
-      method: "POST",
-      body: JSON.stringify(body),
-    }).then((res) => res.json());
+    return apiPost(urlsApi.customer.createFilterAdvanced, body);
   },
 
   deleteFilterAdvanced: (id: number) => {
-    return fetch(`${urlsApi.customer.deleteFilterAdvanced}?id=${id}`, {
-      method: "DELETE",
-    }).then((res) => res.json());
+    return apiDelete(`${urlsApi.customer.deleteFilterAdvanced}?id=${id}`);
   },
 
   customerAttributes: () => {
@@ -348,9 +246,7 @@ export default {
 
   // lấy ra các trường trong table
   filterTable: (params?: IFieldCustomerFilterRequest) => {
-    return fetch(`${urlsApi.customer.filterTable}${convertParamsToString(params)}`, {
-      method: "GET",
-    }).then((res) => res.json());
+    return apiGet(urlsApi.customer.filterTable, params);
   },
 
   numberFieldCustomer: (body, params) => {
@@ -367,26 +263,17 @@ export default {
   },
 
   exAttributes: (params) => {
-    return fetch(`${urlsApi.customer.exAttributes}${convertParamsToString(params)}`, {
-      method: "GET",
-    }).then((res) => res.json());
+    return apiGet(urlsApi.customer.exAttributes, params);
   },
 
   createOpportunity: (body) => {
-    return fetch(urlsApi.customer.createOpportunity, {
-      method: "POST",
-      body: JSON.stringify(body),
-    }).then((res) => res.json());
+    return apiPost(urlsApi.customer.createOpportunity, body);
   },
   lstOpportunity: (params) => {
-    return fetch(`${urlsApi.customer.lstOpportunity}${convertParamsToString(params)}`, {
-      method: "GET",
-    }).then((res) => res.json());
+    return apiGet(urlsApi.customer.lstOpportunity, params);
   },
   deleteOpportunity: (id) => {
-    return fetch(`${urlsApi.customer.deleteOpportunity}?id=${id}`, {
-      method: "DELETE",
-    }).then((res) => res.json());
+    return apiDelete(`${urlsApi.customer.deleteOpportunity}?id=${id}`);
   },
   detailOpportunity: (id) => {
     return fetch(`${urlsApi.customer.detailOpportunity}?id=${id}`, {
@@ -395,119 +282,81 @@ export default {
   },
 
   lstUpload: (params) => {
-    return fetch(`${urlsApi.customer.lstUpload}${convertParamsToString(params)}`, {
-      method: "GET",
-    }).then((res) => res.json());
+    return apiGet(urlsApi.customer.lstUpload, params);
   },
 
   // api phân tích chân dung khách hàng
   classifyAge: (params) => {
-    return fetch(`${urlsApi.customer.classifyAge}${convertParamsToString(params)}`, {
-      method: "GET",
-    }).then((res) => res.json());
+    return apiGet(urlsApi.customer.classifyAge, params);
   },
 
   classifyGender: (params) => {
-    return fetch(`${urlsApi.customer.classifyGender}${convertParamsToString(params)}`, {
-      method: "GET",
-    }).then((res) => res.json());
+    return apiGet(urlsApi.customer.classifyGender, params);
   },
 
   classifyIdentify: (params) => {
-    return fetch(`${urlsApi.customer.classifyIdentify}${convertParamsToString(params)}`, {
-      method: "GET",
-    }).then((res) => res.json());
+    return apiGet(urlsApi.customer.classifyIdentify, params);
   },
 
   classifyTopRevenue: (params) => {
-    return fetch(`${urlsApi.customer.classifyTopRevenue}${convertParamsToString(params)}`, {
-      method: "GET",
-    }).then((res) => res.json());
+    return apiGet(urlsApi.customer.classifyTopRevenue, params);
   },
 
   classifyTopBought: (params) => {
-    return fetch(`${urlsApi.customer.classifyTopBought}${convertParamsToString(params)}`, {
-      method: "GET",
-    }).then((res) => res.json());
+    return apiGet(urlsApi.customer.classifyTopBought, params);
   },
 
   classifyTopValueInvoice: (params) => {
-    return fetch(`${urlsApi.customer.classifyTopValueInvoice}${convertParamsToString(params)}`, {
-      method: "GET",
-    }).then((res) => res.json());
+    return apiGet(urlsApi.customer.classifyTopValueInvoice, params);
   },
 
   classifyNotInteractDay: (params) => {
-    return fetch(`${urlsApi.customer.classifyNotInteractDay}${convertParamsToString(params)}`, {
-      method: "GET",
-    }).then((res) => res.json());
+    return apiGet(urlsApi.customer.classifyNotInteractDay, params);
   },
 
   classifyTopInteract: (params) => {
-    return fetch(`${urlsApi.customer.classifyTopInteract}${convertParamsToString(params)}`, {
-      method: "GET",
-    }).then((res) => res.json());
+    return apiGet(urlsApi.customer.classifyTopInteract, params);
   },
 
   classifyCampaignJoined: (params) => {
-    return fetch(`${urlsApi.customer.classifyCampaignJoined}${convertParamsToString(params)}`, {
-      method: "GET",
-    }).then((res) => res.json());
+    return apiGet(urlsApi.customer.classifyCampaignJoined, params);
   },
 
   classifyCustType: (params) => {
-    return fetch(`${urlsApi.customer.classifyCustType}${convertParamsToString(params)}`, {
-      method: "GET",
-    }).then((res) => res.json());
+    return apiGet(urlsApi.customer.classifyCustType, params);
   },
 
   classifyCustGroup: (params) => {
-    return fetch(`${urlsApi.customer.classifyCustGroup}${convertParamsToString(params)}`, {
-      method: "GET",
-    }).then((res) => res.json());
+    return apiGet(urlsApi.customer.classifyCustGroup, params);
   },
 
   classifyCustSource: (params) => {
-    return fetch(`${urlsApi.customer.classifyCustSource}${convertParamsToString(params)}`, {
-      method: "GET",
-    }).then((res) => res.json());
+    return apiGet(urlsApi.customer.classifyCustSource, params);
   },
 
   classifyCustCareer: (params) => {
-    return fetch(`${urlsApi.customer.classifyCustCareer}${convertParamsToString(params)}`, {
-      method: "GET",
-    }).then((res) => res.json());
+    return apiGet(urlsApi.customer.classifyCustCareer, params);
   },
 
   classifyCustArea: (params) => {
-    return fetch(`${urlsApi.customer.classifyCustArea}${convertParamsToString(params)}`, {
-      method: "GET",
-    }).then((res) => res.json());
+    return apiGet(urlsApi.customer.classifyCustArea, params);
   },
 
   classifyCustomerCard: (params) => {
-    return fetch(`${urlsApi.customer.classifyCustomerCard}${convertParamsToString(params)}`, {
-      method: "GET",
-    }).then((res) => res.json());
+    return apiGet(urlsApi.customer.classifyCustomerCard, params);
   },
 
   classifyInteractTimes: (params) => {
-    return fetch(`${urlsApi.customer.classifyInteractTimes}${convertParamsToString(params)}`, {
-      method: "GET",
-    }).then((res) => res.json());
+    return apiGet(urlsApi.customer.classifyInteractTimes, params);
   },
 
   // gợi ý các sản phẩm/dịch vụ cho khách hàng
   serviceSuggestions: (params) => {
-    return fetch(`${urlsApi.customer.serviceSuggestions}${convertParamsToString(params)}`, {
-      method: "GET",
-    }).then((res) => res.json());
+    return apiGet(urlsApi.customer.serviceSuggestions, params);
   },
   // phiên bản v2
   serviceSuggestionsv2: (params) => {
-    return fetch(`${urlsApi.customer.serviceSuggestionsv2}${convertParamsToString(params)}`, {
-      method: "GET",
-    }).then((res) => res.json());
+    return apiGet(urlsApi.customer.serviceSuggestionsv2, params);
   },
   // lấy ra các field động view nên chart
   fieldChart: () => {
@@ -521,15 +370,10 @@ export default {
     }).then((res) => res.json());
   },
   updateChartDynamicChart: (body) => {
-    return fetch(urlsApi.customer.updateChartDynamicChart, {
-      method: "POST",
-      body: JSON.stringify(body),
-    }).then((res) => res.json());
+    return apiPost(urlsApi.customer.updateChartDynamicChart, body);
   },
   deleteChartDynamicChart: (id: number) => {
-    return fetch(`${urlsApi.customer.deleteChartDynamicChart}?id=${id}`, {
-      method: "DELETE",
-    }).then((res) => res.json());
+    return apiDelete(`${urlsApi.customer.deleteChartDynamicChart}?id=${id}`);
   },
   detailChartDynamicChart: (id: number) => {
     return fetch(`${urlsApi.customer.detailChartDynamicChart}?id=${id}`, {
@@ -557,16 +401,10 @@ export default {
 
   //create call TNEX-Athena
   loginAccountAthena: (body: Record<string, unknown>) => {
-    return fetch(urlsApi.customer.loginAccountAthena, {
-      method: "POST",
-      body: JSON.stringify(body),
-    }).then((res) => res.json());
+    return apiPost(urlsApi.customer.loginAccountAthena, body);
   },
   createCall: (body: Record<string, unknown>) => {
-    return fetch(urlsApi.customer.update, {
-      method: "POST",
-      body: JSON.stringify(body),
-    }).then((res) => res.json());
+    return apiPost(urlsApi.customer.update, body);
   },
   getAccountCall: () => {
     return fetch(`${urlsApi.customer.getAccountCall}`, {
@@ -576,18 +414,12 @@ export default {
 
   //Chạy lại dữ liệu
   reloadData: (body: Record<string, unknown>) => {
-    return fetch(urlsApi.customer.reloadData, {
-      method: "POST",
-      body: JSON.stringify(body),
-    }).then((res) => res.json());
+    return apiPost(urlsApi.customer.reloadData, body);
   },
 
   // chia data khách hàng Tnex
   customerAssign: (body: Record<string, unknown>) => {
-    return fetch(urlsApi.customer.customerAssign, {
-      method: "POST",
-      body: JSON.stringify(body),
-    }).then((res) => res.json());
+    return apiPost(urlsApi.customer.customerAssign, body);
   },
 
 };

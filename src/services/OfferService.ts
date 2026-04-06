@@ -1,5 +1,6 @@
+import { apiDelete, apiGet, apiPost } from "services/apiHelper";
 import { urlsApi } from "configs/urls";
-import { convertParamsToString } from "reborn-util";
+
 import {
   IOfferFilterRequest,
   IOfferDetailFilterRequest,
@@ -9,16 +10,10 @@ import {
 
 export default {
   list: (params: IOfferFilterRequest, signal?: AbortSignal) => {
-    return fetch(`${urlsApi.offer.list}${convertParamsToString(params)}`, {
-      signal,
-      method: "GET",
-    }).then((res) => res.json());
+    return apiGet(urlsApi.offer.list, params, signal);
   },
   offerDetail: (params: IOfferDetailFilterRequest, signal?: AbortSignal) => {
-    return fetch(`${urlsApi.offer.offerDetail}${convertParamsToString(params)}`, {
-      signal,
-      method: "GET",
-    }).then((res) => res.json());
+    return apiGet(urlsApi.offer.offerDetail, params, signal);
   },
   // Xem chi tiết hóa đơn
   listOfferDetail: (id: number) => {
@@ -27,10 +22,7 @@ export default {
     }).then((res) => res.json());
   },
   create: (body: IOfferCreateRequest) => {
-    return fetch(urlsApi.offer.create, {
-      method: "POST",
-      body: JSON.stringify(body),
-    }).then((res) => res.json());
+    return apiPost(urlsApi.offer.create, body);
   },
   cardService: (id: number) => {
     return fetch(`${urlsApi.offer.cardService}?customerId=${id}`, {
@@ -45,9 +37,7 @@ export default {
   },
   //Hủy hóa đơn
   cancelOffer: (id: number) => {
-    return fetch(`${urlsApi.offer.cancelOffer}?id=${id}`, {
-      method: "DELETE",
-    }).then((res) => res.json());
+    return apiDelete(`${urlsApi.offer.cancelOffer}?id=${id}`);
   },
   // lấy danh sách thu tiền, chi tiền của khách
   debtOffer: (id: number) => {
@@ -57,9 +47,6 @@ export default {
   },
   // lưu tạm hóa đơn
   temporarilyOffers: (body: ITemporarilyOfferRequest) => {
-    return fetch(urlsApi.offer.temporarilyOffer, {
-      method: "POST",
-      body: JSON.stringify(body),
-    }).then((res) => res.json());
+    return apiPost(urlsApi.offer.temporarilyOffer, body);
   }, 
 };

@@ -1,25 +1,17 @@
+import { apiDelete, apiGet, apiPost } from "services/apiHelper";
 import { urlsApi } from "configs/urls";
-import { convertParamsToString } from "reborn-util";
+
 import { IScheduleConsultantFilterRequest, IScheduleConsultantRequestModelProps } from "model/scheduleConsultant/ScheduleConsultantRequestModel";
 
 export default {
   list: (params?: IScheduleConsultantFilterRequest, signal?: AbortSignal) => {
-    return fetch(`${urlsApi.scheduleConsultant.list}${convertParamsToString(params)}`, {
-      signal,
-      method: "GET",
-    }).then((res) => res.json());
+    return apiGet(urlsApi.scheduleConsultant.list, params, signal);
   },
   update: (body: IScheduleConsultantRequestModelProps) => {
-    return fetch(urlsApi.scheduleConsultant.update, {
-      method: "POST",
-      body: JSON.stringify(body),
-    }).then((res) => res.json());
+    return apiPost(urlsApi.scheduleConsultant.update, body);
   },
   updateKafka: (body: IScheduleConsultantRequestModelProps) => {
-    return fetch(urlsApi.scheduleConsultant.updateKafka, {
-      method: "POST",
-      body: JSON.stringify(body),
-    }).then((res) => res.json());
+    return apiPost(urlsApi.scheduleConsultant.updateKafka, body);
   },
   detail: (id: number) => {
     return fetch(`${urlsApi.scheduleConsultant.detail}?id=${id}`, {
@@ -27,8 +19,6 @@ export default {
     }).then((res) => res.json());
   },
   delete: (id: number) => {
-    return fetch(`${urlsApi.scheduleConsultant.delete}?id=${id}`, {
-      method: "DELETE",
-    }).then((res) => res.json());
+    return apiDelete(`${urlsApi.scheduleConsultant.delete}?id=${id}`);
   },
 };

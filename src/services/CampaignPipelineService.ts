@@ -1,18 +1,13 @@
+import { apiDelete, apiGet, apiPost } from "services/apiHelper";
 import { urlsApi } from "configs/urls";
-import { convertParamsToString } from "reborn-util";
+
 
 export default {
   list: (params?: Record<string, unknown>, signal?: AbortSignal) => {
-    return fetch(`${urlsApi.campaignPipeline.list}${convertParamsToString(params)}`, {
-      signal,
-      method: "GET",
-    }).then((res) => res.json());
+    return apiGet(urlsApi.campaignPipeline.list, params, signal);
   },
   update: (body: Record<string, unknown>) => {
-    return fetch(urlsApi.campaignPipeline.update, {
-      method: "POST",
-      body: JSON.stringify(body),
-    }).then((res) => res.json());
+    return apiPost(urlsApi.campaignPipeline.update, body);
   },
   detail: (id: number) => {
     return fetch(`${urlsApi.campaignPipeline.detail}?id=${id}`, {
@@ -20,8 +15,6 @@ export default {
     }).then((res) => res.json());
   },
   delete: (id: number) => {
-    return fetch(`${urlsApi.campaignPipeline.delete}?id=${id}`, {
-      method: "DELETE",
-    }).then((res) => res.json());
+    return apiDelete(`${urlsApi.campaignPipeline.delete}?id=${id}`);
   },
 };

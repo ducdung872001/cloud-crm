@@ -1,3 +1,4 @@
+import { apiDelete, apiGet, apiPost } from "services/apiHelper";
 import { urlsApi } from "configs/urls";
 import { convertParamsToString } from "reborn-util";
 import {
@@ -9,16 +10,10 @@ import {
 
 export default {
   list: (params: IBoughtProductFilterRequest, signal?: AbortSignal) => {
-    return fetch(`${urlsApi.boughtProduct.list}${convertParamsToString(params)}`, {
-      signal,
-      method: "GET",
-    }).then((res) => res.json());
+    return apiGet(urlsApi.boughtProduct.list, params, signal);
   },
   addProductToInvoice: (body: IBoughtProductToInvoiceRequest) => {
-    return fetch(urlsApi.boughtProduct.addToInvoice, {
-      method: "POST",
-      body: JSON.stringify(body),
-    }).then((res) => res.json());
+    return apiPost(urlsApi.boughtProduct.addToInvoice, body);
   },
   getByCustomerId: (id: number) => {
     return fetch(`${urlsApi.boughtProduct.getByCustomer}?customerId=${id}`, {
@@ -26,16 +21,10 @@ export default {
     }).then((res) => res.json());
   },
   update: (body: IBoughtProductRequest) => {
-    return fetch(urlsApi.boughtProduct.update, {
-      method: "POST",
-      body: JSON.stringify(body),
-    }).then((res) => res.json());
+    return apiPost(urlsApi.boughtProduct.update, body);
   },
   insert: (body: IInsertedItem[], params?: Record<string, any>) => {
-    return fetch(`${urlsApi.boughtProduct.insert}${convertParamsToString(params)}`, {
-      method: "POST",
-      body: JSON.stringify(body),
-    }).then((res) => res.json());
+    return apiPost(`${urlsApi.boughtProduct.insert}${convertParamsToString(params)}`, body);
   },
   detail: (id: number) => {
     return fetch(`${urlsApi.boughtProduct.detail}?id=${id}`, {
@@ -43,8 +32,6 @@ export default {
     }).then((res) => res.json());
   },
   delete: (id: number) => {
-    return fetch(`${urlsApi.boughtProduct.delete}?id=${id}`, {
-      method: "DELETE",
-    }).then((res) => res.json());
+    return apiDelete(`${urlsApi.boughtProduct.delete}?id=${id}`);
   },
 };

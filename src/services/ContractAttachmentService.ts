@@ -1,18 +1,13 @@
+import { apiDelete, apiGet, apiPost } from "services/apiHelper";
 import { urlsApi } from "configs/urls";
-import { convertParamsToString } from "reborn-util";
+
 
 export default {
   list: (params?: Record<string, unknown>, signal?: AbortSignal) => {
-    return fetch(`${urlsApi.contractAttachment.list}${convertParamsToString(params)}`, {
-      signal,
-      method: "GET",
-    }).then((res) => res.json());
+    return apiGet(urlsApi.contractAttachment.list, params, signal);
   },
   update: (body: Record<string, unknown>) => {
-    return fetch(urlsApi.contractAttachment.update, {
-      method: "POST",
-      body: JSON.stringify(body),
-    }).then((res) => res.json());
+    return apiPost(urlsApi.contractAttachment.update, body);
   },
   detail: (id: number) => {
     return fetch(`${urlsApi.contractAttachment.detail}?id=${id}`, {
@@ -20,28 +15,18 @@ export default {
     }).then((res) => res.json());
   },
   delete: (id: number) => {
-    return fetch(`${urlsApi.contractAttachment.delete}?id=${id}`, {
-      method: "DELETE",
-    }).then((res) => res.json());
+    return apiDelete(`${urlsApi.contractAttachment.delete}?id=${id}`);
   },
 
 
   contractAttachmentList: (params?: Record<string, unknown>, signal?: AbortSignal) => {
-    return fetch(`${urlsApi.contractAttachment.contractAttachmentList}${convertParamsToString(params)}`, {
-      signal,
-      method: "GET",
-    }).then((res) => res.json());
+    return apiGet(urlsApi.contractAttachment.contractAttachmentList, params, signal);
   },
 
   contractAttachmentUpdate: (body: Record<string, unknown>) => {
-    return fetch(urlsApi.contractAttachment.contractAttachmentUpdate, {
-      method: "POST",
-      body: JSON.stringify(body),
-    }).then((res) => res.json());
+    return apiPost(urlsApi.contractAttachment.contractAttachmentUpdate, body);
   },
   contractAttachmentDelete: (id: number) => {
-    return fetch(`${urlsApi.contractAttachment.contractAttachmentDelete}?id=${id}`, {
-      method: "DELETE",
-    }).then((res) => res.json());
+    return apiDelete(`${urlsApi.contractAttachment.contractAttachmentDelete}?id=${id}`);
   },
 };

@@ -1,3 +1,4 @@
+import { apiDelete, apiGet, apiPost } from "services/apiHelper";
 import { urlsApi } from "configs/urls";
 import { convertParamsToString } from "reborn-util";
 import {
@@ -11,22 +12,13 @@ import {
 
 export default {
   list: (params?: ITicketFilterRequest, signal?: AbortSignal) => {
-    return fetch(`${urlsApi.ticket.list}${convertParamsToString(params)}`, {
-      signal,
-      method: "GET",
-    }).then((res) => res.json());
+    return apiGet(urlsApi.ticket.list, params, signal);
   },
   update: (body: ITicketRequestModel) => {
-    return fetch(urlsApi.ticket.update, {
-      method: "POST",
-      body: JSON.stringify(body),
-    }).then((res) => res.json());
+    return apiPost(urlsApi.ticket.update, body);
   },
   collect: (body: ITicketRequestModel, params?: Record<string, unknown>) => {
-    return fetch(`${urlsApi.ticket.collect}${convertParamsToString(params)}`, {
-      method: "POST",
-      body: JSON.stringify(body),
-    }).then((res) => res.json());
+    return apiPost(`${urlsApi.ticket.collect}${convertParamsToString(params)}`, body);
   },
   detail: (id: number) => {
     return fetch(`${urlsApi.ticket.detail}?id=${id}`, {
@@ -34,42 +26,24 @@ export default {
     }).then((res) => res.json());
   },
   delete: (id: number) => {
-    return fetch(`${urlsApi.ticket.delete}?id=${id}`, {
-      method: "DELETE",
-    }).then((res) => res.json());
+    return apiDelete(`${urlsApi.ticket.delete}?id=${id}`);
   },
   ticketProcessUpdate: (body: ITicketProcessRequestModel) => {
-    return fetch(urlsApi.ticket.ticketProcess, {
-      method: "POST",
-      body: JSON.stringify(body),
-    }).then((res) => res.json());
+    return apiPost(urlsApi.ticket.ticketProcess, body);
   },
   updateStatus: (body: ITicketStatusRequestModel) => {
-    return fetch(urlsApi.ticket.updateStatus, {
-      method: "POST",
-      body: JSON.stringify(body),
-    }).then((res) => res.json());
+    return apiPost(urlsApi.ticket.updateStatus, body);
   },
   ticketExchangeList: (params?: ITicketExchangeFilterRequestModel, signal?: AbortSignal) => {
-    return fetch(`${urlsApi.ticket.ticketExchangeList}${convertParamsToString(params)}`, {
-      signal,
-      method: "GET",
-    }).then((res) => res.json());
+    return apiGet(urlsApi.ticket.ticketExchangeList, params, signal);
   },
   ticketExchangeUpdate: (body: ITicketExchangeUpdateRequestModel) => {
-    return fetch(urlsApi.ticket.ticketExchangeUpdate, {
-      method: "POST",
-      body: JSON.stringify(body),
-    }).then((res) => res.json());
+    return apiPost(urlsApi.ticket.ticketExchangeUpdate, body);
   },
   ticketExchangeDelete: (id: number) => {
-    return fetch(`${urlsApi.ticket.ticketExchangeDelete}?id=${id}`, {
-      method: "DELETE",
-    }).then((res) => res.json());
+    return apiDelete(`${urlsApi.ticket.ticketExchangeDelete}?id=${id}`);
   },
   resetTransferVotes: (params: Record<string, unknown>) => {
-    return fetch(`${urlsApi.ticket.resetTransferVotes}${convertParamsToString(params)}`, {
-      method: "GET",
-    }).then((res) => res.json());
+    return apiGet(urlsApi.ticket.resetTransferVotes, params);
   },
 };

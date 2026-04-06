@@ -1,5 +1,6 @@
+import { apiDelete, apiGet, apiPost } from "services/apiHelper";
 import { urlsApi } from "configs/urls";
-import { convertParamsToString } from "reborn-util";
+
 import { IPomRequest } from "model/pom/PomRequestModel";
 
 export default {
@@ -9,10 +10,7 @@ export default {
     }).then((res) => res.json());
   },
   update: (body: IPomRequest) => {
-    return fetch(urlsApi.pom.update, {
-      method: "POST",
-      body: JSON.stringify(body),
-    }).then((res) => res.json());
+    return apiPost(urlsApi.pom.update, body);
   },
   detail: (id: number) => {
     return fetch(`${urlsApi.pom.detail}?id=${id}`, {
@@ -20,13 +18,9 @@ export default {
     }).then((res) => res.json());
   },
   delete: (id: number) => {
-    return fetch(`${urlsApi.pom.delete}?id=${id}`, {
-      method: "DELETE",
-    }).then((res) => res.json());
+    return apiDelete(`${urlsApi.pom.delete}?id=${id}`);
   },
   lstPomSales: (params: Record<string, unknown>) => {
-    return fetch(`${urlsApi.pom.lstPomSales}${convertParamsToString(params)}`, {
-      method: "GET",
-    }).then((res) => res.json());
+    return apiGet(urlsApi.pom.lstPomSales, params);
   },
 };

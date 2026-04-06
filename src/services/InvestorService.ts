@@ -1,29 +1,19 @@
+import { apiDelete, apiGet, apiPost } from "services/apiHelper";
 import { urlsApi } from "configs/urls";
-import { convertParamsToString } from "reborn-util";
+
 
 export default {
   list: (params: Record<string, unknown>, signal?: AbortSignal) => {
-    return fetch(`${urlsApi.bpmInvestor.list}${convertParamsToString(params)}`, {
-      signal,
-      method: "GET",
-    }).then((res) => res.json());
+    return apiGet(urlsApi.bpmInvestor.list, params, signal);
   },
   update: (body: Record<string, unknown>) => {
-    return fetch(urlsApi.bpmInvestor.update, {
-      method: "POST",
-      body: JSON.stringify(body),
-    }).then((res) => res.json());
+    return apiPost(urlsApi.bpmInvestor.update, body);
   },
   delete: (id: number) => {
-    return fetch(`${urlsApi.bpmInvestor.delete}?id=${id}`, {
-      method: "DELETE",
-    }).then((res) => res.json());
+    return apiDelete(`${urlsApi.bpmInvestor.delete}?id=${id}`);
   },
   updateStatus: (body: Record<string, unknown>) => {
-    return fetch(urlsApi.bpmInvestor.updateStatus, {
-      method: "POST",
-      body: JSON.stringify(body),
-    }).then((res) => res.json());
+    return apiPost(urlsApi.bpmInvestor.updateStatus, body);
   },
   detail: (id: number) => {
     return fetch(`${urlsApi.bpmInvestor.detail}?id=${id}`, {

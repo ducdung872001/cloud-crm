@@ -1,5 +1,6 @@
+import { apiDelete, apiGet, apiPost } from "services/apiHelper";
 import { urlsApi } from "configs/urls";
-import { convertParamsToString } from "reborn-util";
+
 import {
   ITreatmentHistoryFilterRequest,
   ITreatmentHistoryListByCustomerFilterRequest,
@@ -8,22 +9,13 @@ import {
 
 export default {
   list: (params: ITreatmentHistoryFilterRequest, signal?: AbortSignal) => {
-    return fetch(`${urlsApi.treatmentHistory.list}${convertParamsToString(params)}`, {
-      signal,
-      method: "GET",
-    }).then((res) => res.json());
+    return apiGet(urlsApi.treatmentHistory.list, params, signal);
   },
   listByCustomer: (params: ITreatmentHistoryListByCustomerFilterRequest, signal?: AbortSignal) => {
-    return fetch(`${urlsApi.treatmentHistory.listByCustomer}${convertParamsToString(params)}`, {
-      signal,
-      method: "GET",
-    }).then((res) => res.json());
+    return apiGet(urlsApi.treatmentHistory.listByCustomer, params, signal);
   },
   update: (body: ITreatmentHistoryRequestModel[]) => {
-    return fetch(urlsApi.treatmentHistory.update, {
-      method: "POST",
-      body: JSON.stringify(body),
-    }).then((res) => res.json());
+    return apiPost(urlsApi.treatmentHistory.update, body);
   },
   detail: (id: number) => {
     return fetch(`${urlsApi.treatmentHistory.detail}?id=${id}`, {
@@ -31,8 +23,6 @@ export default {
     }).then((res) => res.json());
   },
   delete: (id: number) => {
-    return fetch(`${urlsApi.treatmentHistory.delete}?id=${id}`, {
-      method: "DELETE",
-    }).then((res) => res.json());
+    return apiDelete(`${urlsApi.treatmentHistory.delete}?id=${id}`);
   },
 };

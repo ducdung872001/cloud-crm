@@ -1,23 +1,16 @@
+import { apiDelete, apiGet, apiPost } from "services/apiHelper";
 import { urlsApi } from "configs/urls";
-import { convertParamsToString } from "reborn-util";
+
 import { IReportTemplateFilterRequest, IReportTemplateRequest } from "model/reportTemplate/ReportTemplateRequestModel";
 
 export default {
   list: (params: IReportTemplateFilterRequest, signal?: AbortSignal) => {
-    return fetch(`${urlsApi.reportTemplate.list}${convertParamsToString(params)}`, {
-      signal,
-      method: "GET",
-    }).then((res) => res.json());
+    return apiGet(urlsApi.reportTemplate.list, params, signal);
   },
   update: (body: IReportTemplateRequest) => {
-    return fetch(urlsApi.reportTemplate.update, {
-      method: "POST",
-      body: JSON.stringify(body),
-    }).then((res) => res.json());
+    return apiPost(urlsApi.reportTemplate.update, body);
   },
   delete: (id: number) => {
-    return fetch(`${urlsApi.reportTemplate.delete}?id=${id}`, {
-      method: "DELETE",
-    }).then((res) => res.json());
+    return apiDelete(`${urlsApi.reportTemplate.delete}?id=${id}`);
   },
 };

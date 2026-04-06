@@ -1,19 +1,14 @@
+import { apiDelete, apiGet, apiPost } from "services/apiHelper";
 import { urlsApi } from "configs/urls";
-import { convertParamsToString } from "reborn-util";
+
 import { ITicketProcFilterRequest, ITicketProcRequest } from "model/ticketProc/TicketProcRequestModel";
 
 export default {
   list: (params?: ITicketProcFilterRequest, signal?: AbortSignal) => {
-    return fetch(`${urlsApi.ticketProc.list}${convertParamsToString(params)}`, {
-      signal,
-      method: "GET",
-    }).then((res) => res.json());
+    return apiGet(urlsApi.ticketProc.list, params, signal);
   },
   update: (body: ITicketProcRequest) => {
-    return fetch(urlsApi.ticketProc.update, {
-      method: "POST",
-      body: JSON.stringify(body),
-    }).then((res) => res.json());
+    return apiPost(urlsApi.ticketProc.update, body);
   },
   detail: (id: number) => {
     return fetch(`${urlsApi.ticketProc.detail}?id=${id}`, {
@@ -21,8 +16,6 @@ export default {
     }).then((res) => res.json());
   },
   delete: (id: number) => {
-    return fetch(`${urlsApi.ticketProc.delete}?id=${id}`, {
-      method: "DELETE",
-    }).then((res) => res.json());
+    return apiDelete(`${urlsApi.ticketProc.delete}?id=${id}`);
   },
 };

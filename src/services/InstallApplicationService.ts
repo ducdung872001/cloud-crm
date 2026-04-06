@@ -1,19 +1,14 @@
+import { apiDelete, apiGet, apiPost } from "services/apiHelper";
 import { urlsApi } from "configs/urls";
-import { convertParamsToString } from "reborn-util";
+
 import { IInstallApplicationFilterRequest, IInstallApplicationRequest } from "model/installApplication/InstallApplicationRequestModel";
 
 export default {
   list: (params?: IInstallApplicationFilterRequest, signal?: AbortSignal) => {
-    return fetch(`${urlsApi.installApp.list}${convertParamsToString(params)}`, {
-      signal,
-      method: "GET",
-    }).then((res) => res.json());
+    return apiGet(urlsApi.installApp.list, params, signal);
   },
   update: (body: IInstallApplicationRequest) => {
-    return fetch(urlsApi.installApp.update, {
-      method: "POST",
-      body: JSON.stringify(body),
-    }).then((res) => res.json());
+    return apiPost(urlsApi.installApp.update, body);
   },
   detail: (id: number) => {
     return fetch(`${urlsApi.installApp.detail}?id=${id}`, {
@@ -21,9 +16,7 @@ export default {
     }).then((res) => res.json());
   },
   delete: (id: number) => {
-    return fetch(`${urlsApi.installApp.delete}?id=${id}`, {
-      method: "DELETE",
-    }).then((res) => res.json());
+    return apiDelete(`${urlsApi.installApp.delete}?id=${id}`);
   },
   takeKey: () => {
     return fetch(`${urlsApi.installApp.takeKey}`, {

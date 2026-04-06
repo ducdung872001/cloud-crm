@@ -1,19 +1,14 @@
+import { apiDelete, apiGet, apiPost } from "services/apiHelper";
 import { urlsApi } from "configs/urls";
-import { convertParamsToString } from "reborn-util";
+
 import { IDeclareEmailFilterRequest, IDeclareEmailRequestModel } from "model/declareEmail/DeclareEmailRequestModel";
 
 export default {
   list: (params?: IDeclareEmailFilterRequest, signal?: AbortSignal) => {
-    return fetch(`${urlsApi.emailConfig.list}${convertParamsToString(params)}`, {
-      signal,
-      method: "GET",
-    }).then((res) => res.json());
+    return apiGet(urlsApi.emailConfig.list, params, signal);
   },
   update: (body: IDeclareEmailRequestModel) => {
-    return fetch(urlsApi.emailConfig.update, {
-      method: "POST",
-      body: JSON.stringify(body),
-    }).then((res) => res.json());
+    return apiPost(urlsApi.emailConfig.update, body);
   },
   detail: (id: number) => {
     return fetch(`${urlsApi.emailConfig.delete}?id=${id}`, {
@@ -21,15 +16,10 @@ export default {
     }).then((res) => res.json());
   },
   delete: (id: number) => {
-    return fetch(`${urlsApi.emailConfig.delete}?id=${id}`, {
-      method: "DELETE",
-    }).then((res) => res.json());
+    return apiDelete(`${urlsApi.emailConfig.delete}?id=${id}`);
   },
 
   checkEmail: (body: Record<string, unknown>) => {
-    return fetch(urlsApi.emailConfig.checkEmail, {
-      method: "POST",
-      body: JSON.stringify(body),
-    }).then((res) => res.json());
+    return apiPost(urlsApi.emailConfig.checkEmail, body);
   },
 };

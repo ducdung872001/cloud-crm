@@ -1,37 +1,23 @@
+import { apiDelete, apiGet, apiPost } from "services/apiHelper";
 import { urlsApi } from "configs/urls";
 import { ICashbookFilterRequest, ICashbookRequest } from "model/cashbook/CashbookRequestModel";
-import { convertParamsToString } from "reborn-util";
+
 
 export default {
   list: (params?: ICashbookFilterRequest, signal?: AbortSignal) => {
-    return fetch(`${urlsApi.orderRequest.list}${convertParamsToString(params)}`, {
-      signal,
-      method: "GET",
-    }).then((res) => res.json());
+    return apiGet(urlsApi.orderRequest.list, params, signal);
   },
   listOne: (params?: ICashbookFilterRequest, signal?: AbortSignal) => {
-    return fetch(`${urlsApi.orderRequest.listOne}${convertParamsToString(params)}`, {
-      signal,
-      method: "GET",
-    }).then((res) => res.json());
+    return apiGet(urlsApi.orderRequest.listOne, params, signal);
   },
   update: (body: ICashbookRequest) => {
-    return fetch(urlsApi.orderRequest.update, {
-      method: "POST",
-      body: JSON.stringify(body),
-    }).then((res) => res.json());
+    return apiPost(urlsApi.orderRequest.update, body);
   },
   updateStatus: (body: Record<string, unknown>) => {
-    return fetch(urlsApi.orderRequest.updateStatus, {
-      method: "POST",
-      body: JSON.stringify(body),
-    }).then((res) => res.json());
+    return apiPost(urlsApi.orderRequest.updateStatus, body);
   },
   confirm: (body: Record<string, unknown>) => {
-    return fetch(urlsApi.orderRequest.confirm, {
-      method: "POST",
-      body: JSON.stringify(body),
-    }).then((res) => res.json());
+    return apiPost(urlsApi.orderRequest.confirm, body);
   },
   detail: (id: number) => {
     return fetch(`${urlsApi.orderRequest.detail}?id=${id}`, {
@@ -39,14 +25,9 @@ export default {
     }).then((res) => res.json());
   },
   delete: (id: number) => {
-    return fetch(`${urlsApi.orderRequest.delete}?id=${id}`, {
-      method: "DELETE",
-    }).then((res) => res.json());
+    return apiDelete(`${urlsApi.orderRequest.delete}?id=${id}`);
   },
   export: (params?: Record<string, unknown>, signal?: AbortSignal) => {
-    return fetch(`${urlsApi.orderRequest.export}${convertParamsToString(params)}`, {
-      signal,
-      method: "GET",
-    }).then((res) => res.json());
+    return apiGet(urlsApi.orderRequest.export, params, signal);
   },
 };

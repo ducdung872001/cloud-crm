@@ -1,34 +1,21 @@
+import { apiDelete, apiGet, apiPost } from "services/apiHelper";
 import { urlsApi } from "configs/urls";
-import { convertParamsToString } from "reborn-util";
+
 
 export default {
   list: (params: Record<string, unknown>, signal?: AbortSignal) => {
-    return fetch(`${urlsApi.productAttribute.list}${convertParamsToString(params)}`, {
-      signal,
-      method: "GET",
-    }).then((res) => res.json());
+    return apiGet(urlsApi.productAttribute.list, params, signal);
   },
   update: (body: Record<string, unknown>) => {
-    return fetch(urlsApi.productAttribute.update, {
-      method: "POST",
-      body: JSON.stringify(body),
-    }).then((res) => res.json());
+    return apiPost(urlsApi.productAttribute.update, body);
   },
   delete: (id: number) => {
-    return fetch(`${urlsApi.productAttribute.delete}?id=${id}`, {
-      method: "DELETE",
-    }).then((res) => res.json());
+    return apiDelete(`${urlsApi.productAttribute.delete}?id=${id}`);
   },
   listAll: (params?: Record<string, unknown>, signal?: AbortSignal) => {
-    return fetch(`${urlsApi.productAttribute.listAll}${convertParamsToString(params)}`, {
-      signal,
-      method: "GET",
-    }).then((res) => res.json());
+    return apiGet(urlsApi.productAttribute.listAll, params, signal);
   },
   checkDuplicated: (params: Record<string, unknown>, signal?: AbortSignal) => {
-    return fetch(`${urlsApi.productAttribute.checkDuplicated}${convertParamsToString(params)}`, {
-      signal,
-      method: "GET",
-    }).then((res) => res.json());
+    return apiGet(urlsApi.productAttribute.checkDuplicated, params, signal);
   },
 };

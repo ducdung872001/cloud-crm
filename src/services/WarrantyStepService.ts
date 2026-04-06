@@ -1,19 +1,14 @@
+import { apiDelete, apiGet, apiPost } from "services/apiHelper";
 import { urlsApi } from "configs/urls";
-import { convertParamsToString } from "reborn-util";
+
 import { IWarrantyStepFilterRequest, IWarrantyStepRequest } from "model/warrantyStep/WarrantyStepRequestModel";
 
 export default {
   list: (params?: IWarrantyStepFilterRequest, signal?: AbortSignal) => {
-    return fetch(`${urlsApi.warrantyStep.list}${convertParamsToString(params)}`, {
-      signal,
-      method: "GET", 
-    }).then((res) => res.json());
+    return apiGet(urlsApi.warrantyStep.list, params, signal);
   },
   update: (body: IWarrantyStepRequest) => {
-    return fetch(urlsApi.warrantyStep.update, {
-      method: "POST",
-      body: JSON.stringify(body),
-    }).then((res) => res.json());
+    return apiPost(urlsApi.warrantyStep.update, body);
   },
   detail: (id: number) => {
     return fetch(`${urlsApi.warrantyStep.detail}?id=${id}`, {
@@ -21,8 +16,6 @@ export default {
     }).then((res) => res.json());
   },
   delete: (id: number) => {
-    return fetch(`${urlsApi.warrantyStep.delete}?id=${id}`, {
-      method: "DELETE",
-    }).then((res) => res.json());
+    return apiDelete(`${urlsApi.warrantyStep.delete}?id=${id}`);
   },
 };

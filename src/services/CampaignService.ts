@@ -1,25 +1,17 @@
+import { apiDelete, apiGet, apiPost } from "services/apiHelper";
 import { urlsApi } from "configs/urls";
 import { convertParamsToString } from "reborn-util";
 import { ICampaignFilterRequest, ICampaignRequestModel } from "model/campaign/CampaignRequestModel";
 
 export default {
   list: (params?: ICampaignFilterRequest, signal?: AbortSignal) => {
-    return fetch(`${urlsApi.campaign.list}${convertParamsToString(params)}`, {
-      signal,
-      method: "GET",
-    }).then((res) => res.json());
+    return apiGet(urlsApi.campaign.list, params, signal);
   },
   listViewSale: (params?: ICampaignFilterRequest, signal?: AbortSignal) => {
-    return fetch(`${urlsApi.campaign.listViewSale}${convertParamsToString(params)}`, {
-      signal,
-      method: "GET",
-    }).then((res) => res.json());
+    return apiGet(urlsApi.campaign.listViewSale, params, signal);
   },
   update: (body: ICampaignRequestModel) => {
-    return fetch(urlsApi.campaign.update, {
-      method: "POST",
-      body: JSON.stringify(body),
-    }).then((res) => res.json());
+    return apiPost(urlsApi.campaign.update, body);
   },
   detail: (id: number) => {
     return fetch(`${urlsApi.campaign.detail}?id=${id}`, {
@@ -27,9 +19,7 @@ export default {
     }).then((res) => res.json());
   },
   delete: (id: number) => {
-    return fetch(`${urlsApi.campaign.delete}?id=${id}`, {
-      method: "DELETE",
-    }).then((res) => res.json());
+    return apiDelete(`${urlsApi.campaign.delete}?id=${id}`);
   },
 
   listConvertRate: (id?: Record<string, unknown>, signal?: AbortSignal) => {
@@ -40,76 +30,46 @@ export default {
   },
 
   updateStatus: (body: Record<string, unknown>) => {
-    return fetch(urlsApi.campaign.updateStatus, {
-      method: "POST",
-      body: JSON.stringify(body),
-    }).then((res) => res.json());
+    return apiPost(urlsApi.campaign.updateStatus, body);
   },
 
   listActionScore: (params?: Record<string, unknown>, signal?: AbortSignal) => {
-    return fetch(`${urlsApi.campaign.listActionScore}${convertParamsToString(params)}`, {
-      signal,
-      method: "GET",
-    }).then((res) => res.json());
+    return apiGet(urlsApi.campaign.listActionScore, params, signal);
   },
 
   //cài đặt điểm khách hàng
   updateStep3: (body: Record<string, unknown>) => {
-    return fetch(urlsApi.campaign.updateStep3, {
-      method: "POST",
-      body: JSON.stringify(body),
-    }).then((res) => res.json());
+    return apiPost(urlsApi.campaign.updateStep3, body);
   },
 
   
   listDataStep3: (params?: Record<string, unknown>, signal?: AbortSignal) => {
-    return fetch(`${urlsApi.campaign.listDataStep3}${convertParamsToString(params)}`, {
-      signal,
-      method: "GET",
-    }).then((res) => res.json());
+    return apiGet(urlsApi.campaign.listDataStep3, params, signal);
   },
 
   //cài đặt điểm nhân viên
   updateStep4: (body: Record<string, unknown>) => {
-    return fetch(urlsApi.campaign.updateStep4, {
-      method: "POST",
-      body: JSON.stringify(body),
-    }).then((res) => res.json());
+    return apiPost(urlsApi.campaign.updateStep4, body);
   },
 
   listDataScoreEmployee: (params?: Record<string, unknown>, signal?: AbortSignal) => {
-    return fetch(`${urlsApi.campaign.listDataScoreEmployee}${convertParamsToString(params)}`, {
-      signal,
-      method: "GET",
-    }).then((res) => res.json());
+    return apiGet(urlsApi.campaign.listDataScoreEmployee, params, signal);
   },
 
   listSale: (params?: Record<string, unknown>, signal?: AbortSignal) => {
-    return fetch(`${urlsApi.campaign.listSale}${convertParamsToString(params)}`, {
-      signal,
-      method: "GET",
-    }).then((res) => res.json());
+    return apiGet(urlsApi.campaign.listSale, params, signal);
   },
 
   statisticApproach: (params?: Record<string, unknown>, signal?: AbortSignal) => {
-    return fetch(`${urlsApi.campaign.statisticApproach}${convertParamsToString(params)}`, {
-      signal,
-      method: "GET",
-    }).then((res) => res.json());
+    return apiGet(urlsApi.campaign.statisticApproach, params, signal);
   },
 
   statisticSale: (params?: Record<string, unknown>, signal?: AbortSignal) => {
-    return fetch(`${urlsApi.campaign.statisticSale}${convertParamsToString(params)}`, {
-      signal,
-      method: "GET",
-    }).then((res) => res.json());
+    return apiGet(urlsApi.campaign.statisticSale, params, signal);
   },
 
   statisticConvertRate: (params?: Record<string, unknown>, signal?: AbortSignal) => {
-    return fetch(`${urlsApi.campaign.statisticConvertRate}${convertParamsToString(params)}`, {
-      signal,
-      method: "GET",
-    }).then((res) => res.json());
+    return apiGet(urlsApi.campaign.statisticConvertRate, params, signal);
   },
 
   exportResult: (params: Record<string, unknown>, signal?: AbortSignal) => {
@@ -134,9 +94,6 @@ export default {
   },
 
   updateConfigSLA: (body: Record<string, unknown>) => {
-    return fetch(urlsApi.campaign.updateConfigSLA, {
-      method: "POST",
-      body: JSON.stringify(body),
-    }).then((res) => res.json());
+    return apiPost(urlsApi.campaign.updateConfigSLA, body);
   },
 };

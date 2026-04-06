@@ -1,18 +1,13 @@
+import { apiDelete, apiGet, apiPost } from "services/apiHelper";
 import { urlsApi } from "configs/urls";
-import { convertParamsToString } from "reborn-util";
+
 
 export default {
   list: (params: Record<string, unknown>, signal?: AbortSignal) => {
-    return fetch(`${urlsApi.bpmFormArtifact.lst}${convertParamsToString(params)}`, {
-      signal,
-      method: "GET",
-    }).then((res) => res.json());
+    return apiGet(urlsApi.bpmFormArtifact.lst, params, signal);
   },
   update: (body: Record<string, unknown>) => {
-    return fetch(urlsApi.bpmFormArtifact.update, {
-      method: "POST",
-      body: JSON.stringify(body),
-    }).then((res) => res.json());
+    return apiPost(urlsApi.bpmFormArtifact.update, body);
   },
   detail: (id: number) => {
     return fetch(`${urlsApi.bpmFormArtifact.detail}?id=${id}`, {
@@ -20,28 +15,17 @@ export default {
     }).then((res) => res.json());
   },
   delete: (id: number) => {
-    return fetch(`${urlsApi.bpmFormArtifact.delete}?id=${id}`, {
-      method: "DELETE",
-    }).then((res) => res.json());
+    return apiDelete(`${urlsApi.bpmFormArtifact.delete}?id=${id}`);
   },
 
   updatePosition: (body: Record<string, unknown>) => {
-    return fetch(urlsApi.bpmFormArtifact.updatePosition, {
-      method: "POST",
-      body: JSON.stringify(body),
-    }).then((res) => res.json());
+    return apiPost(urlsApi.bpmFormArtifact.updatePosition, body);
   },
 
   updateConfig: (body: Record<string, unknown>) => {
-    return fetch(urlsApi.bpmFormArtifact.updateConfig, {
-      method: "POST",
-      body: JSON.stringify(body),
-    }).then((res) => res.json());
+    return apiPost(urlsApi.bpmFormArtifact.updateConfig, body);
   },
   updateEform: (body: Record<string, unknown>) => {
-    return fetch(urlsApi.bpmFormArtifact.updateEform, {
-      method: "POST",
-      body: JSON.stringify(body),
-    }).then((res) => res.json());
+    return apiPost(urlsApi.bpmFormArtifact.updateEform, body);
   },
 };

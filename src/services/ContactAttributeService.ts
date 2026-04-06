@@ -1,36 +1,23 @@
+import { apiDelete, apiGet, apiPost } from "services/apiHelper";
 import { urlsApi } from "configs/urls";
-import { convertParamsToString } from "reborn-util";
+
 import { IContactAttributeFilterRequest, IContactAttributeRequest } from "model/contactAttribute/ContactAttributeRequest";
 
 export default {
   list: (params: IContactAttributeFilterRequest, signal?: AbortSignal) => {
-    return fetch(`${urlsApi.contactAttribute.list}${convertParamsToString(params)}`, {
-      signal,
-      method: "GET",
-    }).then((res) => res.json());
+    return apiGet(urlsApi.contactAttribute.list, params, signal);
   },
   update: (body: IContactAttributeRequest) => {
-    return fetch(urlsApi.contactAttribute.update, {
-      method: "POST",
-      body: JSON.stringify(body),
-    }).then((res) => res.json());
+    return apiPost(urlsApi.contactAttribute.update, body);
   },
   delete: (id: number) => {
-    return fetch(`${urlsApi.contactAttribute.delete}?id=${id}`, {
-      method: "DELETE",
-    }).then((res) => res.json());
+    return apiDelete(`${urlsApi.contactAttribute.delete}?id=${id}`);
   },
   listAll: (params?: Record<string, unknown>, signal?: AbortSignal) => {
-    return fetch(`${urlsApi.contactAttribute.listAll}${convertParamsToString(params)}`, {
-      signal,
-      method: "GET",
-    }).then((res) => res.json());
+    return apiGet(urlsApi.contactAttribute.listAll, params, signal);
   },
 
   checkDuplicated: (params: Record<string, unknown>, signal?: AbortSignal) => {
-    return fetch(`${urlsApi.contactAttribute.checkDuplicated}${convertParamsToString(params)}`, {
-      signal,
-      method: "GET",
-    }).then((res) => res.json());
+    return apiGet(urlsApi.contactAttribute.checkDuplicated, params, signal);
   },
 };

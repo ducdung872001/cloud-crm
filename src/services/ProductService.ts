@@ -1,3 +1,4 @@
+import { apiDelete, apiGet, apiPost } from "services/apiHelper";
 import { urlsApi } from "configs/urls";
 import { convertParamsToString } from "reborn-util";
 import { IProductFilterRequest, IProductRequest } from "model/product/ProductRequestModel";
@@ -35,28 +36,16 @@ export default {
     }).then((res) => res.json());
   },
   filterWarehouse: (params: Record<string, unknown>, signal?: AbortSignal) => {
-    return fetch(`${urlsApi.product.filterWarehouse}${convertParamsToString(params)}`, {
-      signal,
-      method: "GET",
-    }).then((res) => res.json());
+    return apiGet(urlsApi.product.filterWarehouse, params, signal);
   },
   list: (params?: IProductFilterRequest, signal?: AbortSignal) => {
-    return fetch(`${urlsApi.product.list}${convertParamsToString(params)}`, {
-      signal,
-      method: "GET",
-    }).then((res) => res.json());
+    return apiGet(urlsApi.product.list, params, signal);
   },
   listById: (params?: Record<string, unknown>, signal?: AbortSignal) => {
-    return fetch(`${urlsApi.product.listById}${convertParamsToString(params)}`, {
-      signal,
-      method: "GET",
-    }).then((res) => res.json());
+    return apiGet(urlsApi.product.listById, params, signal);
   },
   update: (body: IProductRequest) => {
-    return fetch(urlsApi.product.update, {
-      method: "POST",
-      body: JSON.stringify(body),
-    }).then((res) => res.json());
+    return apiPost(urlsApi.product.update, body);
   },
   detail: (id: number) => {
     return fetch(`${urlsApi.product.detail}?id=${id}`, {
@@ -64,21 +53,13 @@ export default {
     }).then((res) => res.json());
   },
   delete: (id: number) => {
-    return fetch(`${urlsApi.product.delete}?id=${id}`, {
-      method: "DELETE",
-    }).then((res) => res.json());
+    return apiDelete(`${urlsApi.product.delete}?id=${id}`);
   },
   listShared: (params?: Record<string, unknown>, signal?: AbortSignal) => {
-    return fetch(`${urlsApi.product.listShared}${convertParamsToString(params)}`, {
-      signal,
-      method: "GET",
-    }).then((res) => res.json());
+    return apiGet(urlsApi.product.listShared, params, signal);
   },
   updateContent: (body: Record<string, unknown>) => {
-    return fetch(urlsApi.product.updateContent, {
-      method: "POST",
-      body: JSON.stringify(body),
-    }).then((res) => res.json());
+    return apiPost(urlsApi.product.updateContent, body);
   },
 
   // ── Warehouse API (tài liệu mới) ──
@@ -109,10 +90,7 @@ export default {
 
   // ── Public APIs (không cần auth) ──
   publicList: (params?: IProductFilterRequest, signal?: AbortSignal) => {
-    return fetch(`${urlsApi.product.publicList}${convertParamsToString(params)}`, {
-      signal,
-      method: "GET",
-    }).then((res) => res.json());
+    return apiGet(urlsApi.product.publicList, params, signal);
   },
   publicDetail: (id: number, signal?: AbortSignal) => {
     return fetch(`${urlsApi.product.publicDetail}?id=${id}`, {
@@ -121,35 +99,21 @@ export default {
     }).then((res) => res.json());
   },
   publicCategoryList: (params?: { keyword?: string; status?: number; limit?: number; offset?: number }, signal?: AbortSignal) => {
-    return fetch(`${urlsApi.product.publicCategoryList}${convertParamsToString(params)}`, {
-      signal,
-      method: "GET",
-    }).then((res) => res.json());
+    return apiGet(urlsApi.product.publicCategoryList, params, signal);
   },
   publicMediaList: (params?: { productId: number; limit?: number; offset?: number }, signal?: AbortSignal) => {
-    return fetch(`${urlsApi.product.publicMediaList}${convertParamsToString(params)}`, {
-      signal,
-      method: "GET",
-    }).then((res) => res.json());
+    return apiGet(urlsApi.product.publicMediaList, params, signal);
   },
 
   // ── Media APIs (cần auth) ──
   mediaList: (params?: { productId: number; limit?: number; offset?: number }, signal?: AbortSignal) => {
-    return fetch(`${urlsApi.product.mediaList}${convertParamsToString(params)}`, {
-      signal,
-      method: "GET",
-    }).then((res) => res.json());
+    return apiGet(urlsApi.product.mediaList, params, signal);
   },
   mediaUpdate: (body: { id?: number; productId: number; position?: number; status?: number; url: string }) => {
-    return fetch(urlsApi.product.mediaUpdate, {
-      method: "POST",
-      body: JSON.stringify(body),
-    }).then((res) => res.json());
+    return apiPost(urlsApi.product.mediaUpdate, body);
   },
   mediaDelete: (params: { productId: number; id: number }) => {
-    return fetch(`${urlsApi.product.mediaDelete}${convertParamsToString(params)}`, {
-      method: "DELETE",
-    }).then((res) => res.json());
+    return apiDelete(`${urlsApi.product.mediaDelete}${convertParamsToString(params)}`);
   },
   mediaUpload: (params: { productId: number; file: File; id?: number; position?: number; status?: number }) => {
     const formData = new FormData();
@@ -166,28 +130,18 @@ export default {
 
   // ── Variant Groups ──
   variantGroupsUpdate: (body: { productId: number; variantGroups: { key: string; value: string[] }[] }) => {
-    return fetch(urlsApi.product.variantGroupsUpdate, {
-      method: "POST",
-      body: JSON.stringify(body),
-    }).then((res) => res.json());
+    return apiPost(urlsApi.product.variantGroupsUpdate, body);
   },
   variantGroupsDelete: (params: { productId: number; key: string }) => {
-    return fetch(`${urlsApi.product.variantGroupsDelete}${convertParamsToString(params)}`, {
-      method: "DELETE",
-    }).then((res) => res.json());
+    return apiDelete(`${urlsApi.product.variantGroupsDelete}${convertParamsToString(params)}`);
   },
 
   // ── Specifications ──
   specificationsUpdate: (body: { productId: number; specifications: { key: string; value: string }[] }) => {
-    return fetch(urlsApi.product.specificationsUpdate, {
-      method: "POST",
-      body: JSON.stringify(body),
-    }).then((res) => res.json());
+    return apiPost(urlsApi.product.specificationsUpdate, body);
   },
   specificationsDelete: (params: { productId: number; key: string }) => {
-    return fetch(`${urlsApi.product.specificationsDelete}${convertParamsToString(params)}`, {
-      method: "DELETE",
-    }).then((res) => res.json());
+    return apiDelete(`${urlsApi.product.specificationsDelete}${convertParamsToString(params)}`);
   },
 
   wDetail: (id: number) => {
@@ -196,10 +150,7 @@ export default {
     }).then((res) => res.json());
   },
   wUpdate: (body: IProductRequest) => {
-    return fetch(urlsApi.product.wUpdate, {
-      method: "POST",
-      body: JSON.stringify(body),
-    }).then((res) => res.json());
+    return apiPost(urlsApi.product.wUpdate, body);
   },
   wUpdateFormData: (formData: FormData) => {
     return fetch(urlsApi.product.wUpdate, {
@@ -208,26 +159,16 @@ export default {
     }).then((res) => res.json());
   },
   wDelete: (id: number) => {
-    return fetch(`${urlsApi.product.wDelete}?id=${id}`, {
-      method: "DELETE",
-    }).then((res) => res.json());
+    return apiDelete(`${urlsApi.product.wDelete}?id=${id}`);
   },
   wDeleteVariant: (productId: number, variantId: number) => {
-    return fetch(`${urlsApi.product.variantDelete}?productId=${productId}&variantId=${variantId}`, {
-      method: "DELETE",
-    }).then((res) => res.json());
+    return apiDelete(`${urlsApi.product.variantDelete}?productId=${productId}&variantId=${variantId}`);
   },
   wDashboard: (signal?: AbortSignal) => {
-    return fetch(urlsApi.product.wDashboard, {
-      signal,
-      method: "GET",
-    }).then((res) => res.json());
+    return apiGet(urlsApi.product.wDashboard, undefined, signal);
   },
   wUpdateStatus: (body: { id: number; status: number }) => {
-    return fetch(urlsApi.product.wUpdateStatus, {
-      method: "POST",
-      body: JSON.stringify(body),
-    }).then((res) => res.json());
+    return apiPost(urlsApi.product.wUpdateStatus, body);
   },
   wUpdatePrice: (body: {
     id: number;
@@ -237,16 +178,10 @@ export default {
     pricePromotion?: number;
     costPrice?: number;
   }) => {
-    return fetch(urlsApi.product.wUpdatePrice, {
-      method: "POST",
-      body: JSON.stringify(body),
-    }).then((res) => res.json());
+    return apiPost(urlsApi.product.wUpdatePrice, body);
   },
   wUpdateInventory: (body: { id: number; trackInventory?: number; lowStockThreshold?: number }) => {
-    return fetch(urlsApi.product.wUpdateInventory, {
-      method: "POST",
-      body: JSON.stringify(body),
-    }).then((res) => res.json());
+    return apiPost(urlsApi.product.wUpdateInventory, body);
   },
   wWebsiteSettingGet: (productId: number) => {
     return fetch(`${urlsApi.product.wWebsiteSettingGet}?productId=${productId}`, {
@@ -254,28 +189,17 @@ export default {
     }).then((res) => res.json());
   },
   wWebsiteSettingUpdate: (body: Record<string, unknown>) => {
-    return fetch(urlsApi.product.wWebsiteSettingUpdate, {
-      method: "POST",
-      body: JSON.stringify(body),
-    }).then((res) => res.json());
+    return apiPost(urlsApi.product.wWebsiteSettingUpdate, body);
   },
   // ── Cài đặt mặc định toàn hệ thống ──
   wWebsiteSettingDefaultGet: () => {
-    return fetch(urlsApi.product.wWebsiteSettingDefaultGet, {
-      method: "GET",
-    }).then((res) => res.json());
+    return apiGet(urlsApi.product.wWebsiteSettingDefaultGet);
   },
   wWebsiteSettingDefaultUpdate: (body: Record<string, unknown>) => {
-    return fetch(urlsApi.product.wWebsiteSettingDefaultUpdate, {
-      method: "POST",
-      body: JSON.stringify(body),
-    }).then((res) => res.json());
+    return apiPost(urlsApi.product.wWebsiteSettingDefaultUpdate, body);
   },
   wWebsiteToggle: (body: { productId: number; showOnWebsite: number }) => {
-    return fetch(urlsApi.product.wWebsiteToggle, {
-      method: "POST",
-      body: JSON.stringify(body),
-    }).then((res) => res.json());
+    return apiPost(urlsApi.product.wWebsiteToggle, body);
   },
   wInventoryCurrent: (productId: number) => {
     return fetch(`${urlsApi.product.wInventoryCurrent}?productId=${productId}`, {
@@ -295,10 +219,7 @@ export default {
     }).then((res) => res.json());
   },
   wDescriptionUpdate: (body: { productId: number; content: string; contentDelta: string }) => {
-    return fetch(urlsApi.product.wDescriptionUpdate, {
-      method: "POST",
-      body: JSON.stringify(body),
-    }).then((res) => res.json());
+    return apiPost(urlsApi.product.wDescriptionUpdate, body);
   },
 
   // ── Tags ──
@@ -308,10 +229,7 @@ export default {
     }).then((res) => res.json());
   },
   wTagUpdate: (body: { productId: number; tagIds: number[] }) => {
-    return fetch(urlsApi.product.wTagUpdate, {
-      method: "POST",
-      body: JSON.stringify(body),
-    }).then((res) => res.json());
+    return apiPost(urlsApi.product.wTagUpdate, body);
   },
   wTagCreate: (body: { name: string; status?: number }) => {
     return fetch(urlsApi.product.wTagCreate, {
@@ -366,10 +284,7 @@ export default {
     });
   },
   wImportConfirm: (body: { importSessionId: string }) => {
-    return fetch(urlsApi.product.wImportConfirm, {
-      method: "POST",
-      body: JSON.stringify(body),
-    }).then((res) => res.json());
+    return apiPost(urlsApi.product.wImportConfirm, body);
   },
   wImportCancel: (sessionId: string) => {
     return fetch(`${urlsApi.product.wImportCancel}?sessionId=${encodeURIComponent(sessionId)}`, {

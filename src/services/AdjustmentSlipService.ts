@@ -1,5 +1,6 @@
+import { apiDelete, apiGet, apiPost } from "services/apiHelper";
 import { urlsApi } from "configs/urls";
-import { convertParamsToString } from "reborn-util";
+
 import {
   IAddUpdateProRequest,
   IAdjustmentSlipFilterRequest,
@@ -9,10 +10,7 @@ import {
 
 export default {
   list: (params?: IAdjustmentSlipFilterRequest, signal?: AbortSignal) => {
-    return fetch(`${urlsApi.adjustmentSlip.list}${convertParamsToString(params)}`, {
-      signal,
-      method: "GET",
-    }).then((res) => res.json());
+    return apiGet(urlsApi.adjustmentSlip.list, params, signal);
   },
   temp: (inventoryId: number) => {
     return fetch(`${urlsApi.adjustmentSlip.temp}?inventoryId=${inventoryId}`, {
@@ -20,28 +18,17 @@ export default {
     }).then((res) => res.json());
   },
   addUpdatePro: (body: IAddUpdateProRequest) => {
-    return fetch(urlsApi.adjustmentSlip.addUpdatePro, {
-      method: "POST",
-      body: JSON.stringify(body),
-    }).then((res) => res.json());
+    return apiPost(urlsApi.adjustmentSlip.addUpdatePro, body);
   },
   deletePro: (id: number) => {
-    return fetch(`${urlsApi.adjustmentSlip.deletePro}?id=${id}`, {
-      method: "DELETE",
-    }).then((res) => res.json());
+    return apiDelete(`${urlsApi.adjustmentSlip.deletePro}?id=${id}`);
   },
   warehouse: (params: IWarehouseProFilterRequest, signal?: AbortSignal) => {
-    return fetch(`${urlsApi.product.list}${convertParamsToString(params)}`, {
-      signal,
-      method: "GET",
-    }).then((res) => res.json());
+    return apiGet(urlsApi.product.list, params, signal);
   },
   // đoạn này dùng để tạo phiếu chính thức
   createAdjSlip: (body: IAdjustmentSlipRequest) => {
-    return fetch(urlsApi.adjustmentSlip.createAdjSlip, {
-      method: "POST",
-      body: JSON.stringify(body),
-    }).then((res) => res.json());
+    return apiPost(urlsApi.adjustmentSlip.createAdjSlip, body);
   },
   // xem chi tiết phiếu
   view: (id: number) => {

@@ -1,23 +1,16 @@
+import { apiDelete, apiGet, apiPost } from "services/apiHelper";
 import { urlsApi } from "configs/urls";
-import { convertParamsToString } from "reborn-util";
+
 
 export default {
   lst: (params?: Record<string, unknown>, signal?: AbortSignal) => {
-    return fetch(`${urlsApi.qrCode.list}${convertParamsToString(params)}`, {
-      signal,
-      method: "GET",
-    }).then((res) => res.json());
+    return apiGet(urlsApi.qrCode.list, params, signal);
   },
   update: (body) => {
-    return fetch(urlsApi.qrCode.update, {
-      method: "POST",
-      body: JSON.stringify(body),
-    }).then((res) => res.json());
+    return apiPost(urlsApi.qrCode.update, body);
   },
   delete: (id: number) => {
-    return fetch(`${urlsApi.qrCode.delete}?id=${id}`, {
-      method: "DELETE",
-    }).then((res) => res.json());
+    return apiDelete(`${urlsApi.qrCode.delete}?id=${id}`);
   },
   detail: (id: number) => {
     return fetch(`${urlsApi.qrCode.detail}?id=${id}`, {

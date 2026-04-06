@@ -1,19 +1,14 @@
+import { apiDelete, apiGet, apiPost } from "services/apiHelper";
 import { urlsApi } from "configs/urls";
-import { convertParamsToString } from "reborn-util";
+
 import { ISendEmailFilterRequest, ISendEmailRequestModel } from "model/sendEmail/SendEmailRequest";
 
 export default {
   listSendEmail: (params?: ISendEmailFilterRequest, signal?: AbortSignal) => {
-    return fetch(`${urlsApi.sendEmail.listEmail}${convertParamsToString(params)}`, {
-      signal,
-      method: "GET",
-    }).then((res) => res.json());
+    return apiGet(urlsApi.sendEmail.listEmail, params, signal);
   },
   sendEmail: (body: ISendEmailRequestModel) => {
-    return fetch(urlsApi.sendEmail.updateEmail, {
-      method: "POST",
-      body: JSON.stringify(body),
-    }).then((res) => res.json());
+    return apiPost(urlsApi.sendEmail.updateEmail, body);
   },
   detailSendEmail: (id: number) => {
     return fetch(`${urlsApi.sendEmail.detailEmail}?id=${id}`, {
@@ -21,9 +16,7 @@ export default {
     }).then((res) => res.json());
   },
   deleteSendEmail: (id: number) => {
-    return fetch(`${urlsApi.sendEmail.deleteEmail}?id=${id}`, {
-      method: "DELETE",
-    }).then((res) => res.json());
+    return apiDelete(`${urlsApi.sendEmail.deleteEmail}?id=${id}`);
   },
   approveEmail: (id: number) => {
     return fetch(`${urlsApi.sendEmail.approveEmail}?id=${id}`, {

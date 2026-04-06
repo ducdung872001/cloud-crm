@@ -1,6 +1,7 @@
+import { apiDelete, apiGet, apiPost } from "services/apiHelper";
 import { urlsApi } from "configs/urls";
 import { IPermissionDepartmentAddRequest, IPermissionCloneRequest } from "model/permission/PermissionRequestModel";
-import { convertParamsToString } from "reborn-util";
+
 
 export default {
   getPermissionResources: () => {
@@ -16,10 +17,7 @@ export default {
   },
   //API thêm quyền cho phòng ban
   permissionDepartmentAdd: (body: IPermissionDepartmentAddRequest) => {
-    return fetch(urlsApi.permission.permissionDepartmentAdd, {
-      method: "POST",
-      body: JSON.stringify(body),
-    }).then((res) => res.json());
+    return apiPost(urlsApi.permission.permissionDepartmentAdd, body);
   },
   //API xóa quyền cho phòng ban
   permissionDepartmentDelete: (body: IPermissionDepartmentAddRequest) => {
@@ -30,56 +28,36 @@ export default {
   },
   //Sao quyền đã có cho một đối tượng muốn sao chép
   permissionClone: (body: IPermissionCloneRequest) => {
-    return fetch(urlsApi.permission.permissionClone, {
-      method: "POST",
-      body: JSON.stringify(body),
-    }).then((res) => res.json());
+    return apiPost(urlsApi.permission.permissionClone, body);
   },
 
   //danh sách yêu cầu xin quyền truy cập (mình xin quyền)
   requestPermissionSource: (params: Record<string, unknown>, signal?: AbortSignal) => {
-    return fetch(`${urlsApi.permission.requestPermissionSource}${convertParamsToString(params)}`, {
-      signal,
-      method: "GET",
-    }).then((res) => res.json());
+    return apiGet(urlsApi.permission.requestPermissionSource, params, signal);
   },
 
   //gửi yêu cầu xin phê duyệt
   updateRequestPermission: (body: Record<string, unknown>) => {
-    return fetch(urlsApi.permission.updateRequestPermission, {
-      method: "POST",
-      body: JSON.stringify(body),
-    }).then((res) => res.json());
+    return apiPost(urlsApi.permission.updateRequestPermission, body);
   },
 
   //API xóa qyêu cầu xin phê duyệt
   deleteRequestPermission: (id: number) => {
-    return fetch(`${urlsApi.permission.deleteRequestPermission}?id=${id}`, {
-      method: "DELETE",
-    }).then((res) => res.json());
+    return apiDelete(`${urlsApi.permission.deleteRequestPermission}?id=${id}`);
   },
 
   //danh sách cấp quyền truy cập (đối tác xin quyền)
   requestPermissionTarget: (params: Record<string, unknown>, signal?: AbortSignal) => {
-    return fetch(`${urlsApi.permission.requestPermissionTarget}${convertParamsToString(params)}`, {
-      signal,
-      method: "GET",
-    }).then((res) => res.json());
+    return apiGet(urlsApi.permission.requestPermissionTarget, params, signal);
   },
 
   //phê duyệt yêu cầu truy cập
   updateApprovePermission: (body: Record<string, unknown>) => {
-    return fetch(urlsApi.permission.updateApprovePermission, {
-      method: "POST",
-      body: JSON.stringify(body),
-    }).then((res) => res.json());
+    return apiPost(urlsApi.permission.updateApprovePermission, body);
   },
 
   //từ chối yêu cầu truy cập
   updateRejectPermission: (body: Record<string, unknown>) => {
-    return fetch(urlsApi.permission.updateRejectPermission, {
-      method: "POST",
-      body: JSON.stringify(body),
-    }).then((res) => res.json());
+    return apiPost(urlsApi.permission.updateRejectPermission, body);
   },
 };

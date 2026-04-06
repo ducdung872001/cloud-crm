@@ -1,18 +1,13 @@
+import { apiDelete, apiGet, apiPost } from "services/apiHelper";
 import { urlsApi } from "configs/urls";
-import { convertParamsToString } from "reborn-util";
+
 
 export default {
   list: (params?: Record<string, unknown>, signal?: AbortSignal) => {
-    return fetch(`${urlsApi.partner.list}${convertParamsToString(params)}`, {
-      signal,
-      method: "GET",
-    }).then((res) => res.json());
+    return apiGet(urlsApi.partner.list, params, signal);
   },
   update: (body: Record<string, unknown>) => {
-    return fetch(urlsApi.partner.update, {
-      method: "POST",
-      body: JSON.stringify(body),
-    }).then((res) => res.json());
+    return apiPost(urlsApi.partner.update, body);
   },
   detail: (id: number) => {
     return fetch(`${urlsApi.partner.detail}?id=${id}`, {
@@ -20,9 +15,7 @@ export default {
     }).then((res) => res.json());
   },
   delete: (id: number) => {
-    return fetch(`${urlsApi.partner.delete}?id=${id}`, {
-      method: "DELETE",
-    }).then((res) => res.json());
+    return apiDelete(`${urlsApi.partner.delete}?id=${id}`);
   },
   // download file lỗi
   downloadFile: (id: number) => {
@@ -57,10 +50,7 @@ export default {
   },
 
   autoProcess: (body: Record<string, unknown>) => {
-    return fetch(urlsApi.partner.autoProcess, {
-      method: "POST",
-      body: JSON.stringify(body),
-    }).then((res) => res.json());
+    return apiPost(urlsApi.partner.autoProcess, body);
   },
 
   exAttributes: () => {
@@ -71,27 +61,17 @@ export default {
 
   // lấy ra các trường trong table
   filterTable: (params?: Record<string, unknown>) => {
-    return fetch(`${urlsApi.partner.filterTable}${convertParamsToString(params)}`, {
-      method: "GET",
-    }).then((res) => res.json());
+    return apiGet(urlsApi.partner.filterTable, params);
   },
 
   partnerExchangeList: (params: Record<string, unknown>, signal?: AbortSignal) => {
-    return fetch(`${urlsApi.partner.partnerExchangeList}${convertParamsToString(params)}`, {
-      signal,
-      method: "GET",
-    }).then((res) => res.json());
+    return apiGet(urlsApi.partner.partnerExchangeList, params, signal);
   },
 
   partnerExchangeUpdate: (body: Record<string, unknown>) => {
-    return fetch(urlsApi.partner.partnerExchangeUpdate, {
-      method: "POST",
-      body: JSON.stringify(body),
-    }).then((res) => res.json());
+    return apiPost(urlsApi.partner.partnerExchangeUpdate, body);
   },
   partnerExchangeDelete: (id: number) => {
-    return fetch(`${urlsApi.partner.partnerExchangeDelete}?id=${id}`, {
-      method: "DELETE",
-    }).then((res) => res.json());
+    return apiDelete(`${urlsApi.partner.partnerExchangeDelete}?id=${id}`);
   },
 };

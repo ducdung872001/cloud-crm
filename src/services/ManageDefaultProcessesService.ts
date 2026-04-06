@@ -1,18 +1,13 @@
+import { apiDelete, apiGet, apiPost } from "services/apiHelper";
 import { urlsApi } from "configs/urls";
-import { convertParamsToString } from "reborn-util";
+
 
 export default {
   list: (params?: Record<string, unknown>, signal?: AbortSignal) => {
-    return fetch(`${urlsApi.manageDefaultProcesses.list}${convertParamsToString(params)}`, {
-      signal,
-      method: "GET",
-    }).then((res) => res.json());
+    return apiGet(urlsApi.manageDefaultProcesses.list, params, signal);
   },
   update: (body: Record<string, unknown>) => {
-    return fetch(urlsApi.manageDefaultProcesses.update, {
-      method: "POST",
-      body: JSON.stringify(body),
-    }).then((res) => res.json());
+    return apiPost(urlsApi.manageDefaultProcesses.update, body);
   },
   detail: (id: number) => {
     return fetch(`${urlsApi.manageDefaultProcesses.detail}?id=${id}`, {
@@ -20,8 +15,6 @@ export default {
     }).then((res) => res.json());
   },
   delete: (id: number) => {
-    return fetch(`${urlsApi.manageDefaultProcesses.delete}?id=${id}`, {
-      method: "DELETE",
-    }).then((res) => res.json());
+    return apiDelete(`${urlsApi.manageDefaultProcesses.delete}?id=${id}`);
   },
 };

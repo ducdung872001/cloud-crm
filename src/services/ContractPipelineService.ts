@@ -1,19 +1,14 @@
+import { apiDelete, apiGet, apiPost } from "services/apiHelper";
 import { urlsApi } from "configs/urls";
-import { convertParamsToString } from "reborn-util";
+
 import { IContractPipelineFilterRequest, IContractPipelineRequest } from "model/contractPipeline/ContractPipelineRequestModel";
 
 export default {
   list: (params?: IContractPipelineFilterRequest, signal?: AbortSignal) => {
-    return fetch(`${urlsApi.contractPipeline.list}${convertParamsToString(params)}`, {
-      signal,
-      method: "GET",
-    }).then((res) => res.json());
+    return apiGet(urlsApi.contractPipeline.list, params, signal);
   },
   update: (body: IContractPipelineRequest) => {
-    return fetch(urlsApi.contractPipeline.update, {
-      method: "POST",
-      body: JSON.stringify(body),
-    }).then((res) => res.json());
+    return apiPost(urlsApi.contractPipeline.update, body);
   },
   detail: (id: number) => {
     return fetch(`${urlsApi.contractPipeline.detail}?id=${id}`, {
@@ -21,16 +16,11 @@ export default {
     }).then((res) => res.json());
   },
   delete: (id: number) => {
-    return fetch(`${urlsApi.contractPipeline.delete}?id=${id}`, {
-      method: "DELETE",
-    }).then((res) => res.json());
+    return apiDelete(`${urlsApi.contractPipeline.delete}?id=${id}`);
   },
   
   contractSubPipelineUpdate: (body: Record<string, unknown>) => {
-    return fetch(urlsApi.contractPipeline.contractSubPipelineUpdate, {
-      method: "POST",
-      body: JSON.stringify(body),
-    }).then((res) => res.json());
+    return apiPost(urlsApi.contractPipeline.contractSubPipelineUpdate, body);
   },
 
 };

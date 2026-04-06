@@ -1,5 +1,6 @@
+import { apiDelete, apiGet, apiPost } from "services/apiHelper";
 import { urlsApi } from "configs/urls";
-import { convertParamsToString } from "reborn-util";
+
 import {
   IZaloOAConnectFilterRequest,
   IZaloFollowerFilterRequest,
@@ -13,69 +14,42 @@ import {
 export default {
   // Thêm mới zalo vào danh sách hoặc cập nhật thông tin zalo
   connect: (params: IZaloOAConnectFilterRequest, signal?: AbortSignal) => {
-    return fetch(`${urlsApi.zaloOA.connect}${convertParamsToString(params)}`, {
-      signal,
-      method: "GET",
-    }).then((res) => res.json());
+    return apiGet(urlsApi.zaloOA.connect, params, signal);
   },
   // Lấy ra danh sách các fanpage
   list: () => {
-    return fetch(urlsApi.zaloOA.list, {
-      method: "GET",
-    }).then((res) => res.json());
+    return apiGet(urlsApi.zaloOA.list);
   },
   // Gỡ fanpage không theo dõi
   delete: (id: string) => {
-    return fetch(`${urlsApi.zaloOA.delete}?oaId=${id}`, {
-      method: "DELETE",
-    }).then((res) => res.json());
+    return apiDelete(`${urlsApi.zaloOA.delete}?oaId=${id}`);
   },
   //* Lấy danh sách hội thoại chat
   listZaloFollower: (params: IZaloFollowerFilterRequest, signal?: AbortSignal) => {
-    return fetch(`${urlsApi.zaloOA.listZaloFollower}${convertParamsToString(params)}`, {
-      signal,
-      method: "GET",
-    }).then((res) => res.json());
+    return apiGet(urlsApi.zaloOA.listZaloFollower, params, signal);
   },
   //* Danh sách tin nhắn chat từ người dùng tương tác với zalo
   listZaloChat: (params: IZaloChatFilterRequest, signal?: AbortSignal) => {
-    return fetch(`${urlsApi.zaloOA.listZaloChat}${convertParamsToString(params)}`, {
-      signal,
-      method: "GET",
-    }).then((res) => res.json());
+    return apiGet(urlsApi.zaloOA.listZaloChat, params, signal);
   },
   //* Nhắn tin cho người dùng
   sendZaloChat: (body: ISendZaloChatRequest) => {
-    return fetch(urlsApi.zaloOA.sendZaloChat, {
-      method: "POST",
-      body: JSON.stringify(body),
-    }).then((res) => res.json());
+    return apiPost(urlsApi.zaloOA.sendZaloChat, body);
   },
   //* Gửi tin nhắn dạng link ảnh
   linkImageSendZaloChat: (body: ILinkImageSendZaloChatRequest) => {
-    return fetch(urlsApi.zaloOA.linkImageSendZaloChat, {
-      method: "POST",
-      body: JSON.stringify(body),
-    }).then((res) => res.json());
+    return apiPost(urlsApi.zaloOA.linkImageSendZaloChat, body);
   },
   //* Gửi tin nhắn đính kèm file
   fileSendZaloChat: (body: IFileSendZaloChatRequest) => {
-    return fetch(urlsApi.zaloOA.fileSendZaloChat, {
-      method: "POST",
-      body: JSON.stringify(body),
-    }).then((res) => res.json());
+    return apiPost(urlsApi.zaloOA.fileSendZaloChat, body);
   },
   //* Phản hồi lại 1 tin nhắn (trả lời 1 tin nhắn khác)
   answerSendZaloChat: (body: IAnswerSendZaloChatRequest) => {
-    return fetch(urlsApi.zaloOA.answerSendZaloChat, {
-      method: "POST",
-      body: JSON.stringify(body),
-    }).then((res) => res.json());
+    return apiPost(urlsApi.zaloOA.answerSendZaloChat, body);
   },
   //* Gỡ 1 tin nhắn chat
   deleteZaloChat: (id: number) => {
-    return fetch(`${urlsApi.zaloOA.deleteZaloChat}=id${id}`, {
-      method: "DELETE",
-    }).then((res) => res.json());
+    return apiDelete(`${urlsApi.zaloOA.deleteZaloChat}=id${id}`);
   },
 };

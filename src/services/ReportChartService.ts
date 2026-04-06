@@ -1,41 +1,26 @@
+import { apiDelete, apiGet, apiPost } from "services/apiHelper";
 import { urlsApi } from "configs/urls";
-import { convertParamsToString } from "reborn-util";
+
 
 export default {
   listReportArtifact: (params?: Record<string, unknown>, signal?: AbortSignal) => {
-    return fetch(`${urlsApi.reportChart.listReportArtifact}${convertParamsToString(params)}`, {
-      signal,
-      method: "GET",
-    }).then((res) => res.json());
+    return apiGet(urlsApi.reportChart.listReportArtifact, params, signal);
   },
   updateReportArtifact: (body: Record<string, unknown>) => {
-    return fetch(urlsApi.reportChart.updateReportArtifact, {
-      method: "POST",
-      body: JSON.stringify(body),
-    }).then((res) => res.json());
+    return apiPost(urlsApi.reportChart.updateReportArtifact, body);
   },
   deleteReportArtifact: (id: number) => {
-    return fetch(`${urlsApi.reportChart.deleteReportArtifact}?id=${id}`, {
-      method: "DELETE",
-    }).then((res) => res.json());
+    return apiDelete(`${urlsApi.reportChart.deleteReportArtifact}?id=${id}`);
   },
 
   listReportDashboard: (params?: Record<string, unknown>, signal?: AbortSignal) => {
-    return fetch(`${urlsApi.reportChart.listReportDashboard}${convertParamsToString(params)}`, {
-      signal,
-      method: "GET",
-    }).then((res) => res.json());
+    return apiGet(urlsApi.reportChart.listReportDashboard, params, signal);
   },
   updateReportDashboard: (body: Record<string, unknown>) => {
-    return fetch(urlsApi.reportChart.updateReportDashboard, {
-      method: "POST",
-      body: JSON.stringify(body),
-    }).then((res) => res.json());
+    return apiPost(urlsApi.reportChart.updateReportDashboard, body);
   },
   deleteReportDashboard: (id: number) => {
-    return fetch(`${urlsApi.reportChart.deleteReportDashboard}?id=${id}`, {
-      method: "DELETE",
-    }).then((res) => res.json());
+    return apiDelete(`${urlsApi.reportChart.deleteReportDashboard}?id=${id}`);
   },
 
   // detail: (id: number) => {
@@ -45,47 +30,28 @@ export default {
   // },
 
   listArtifactByDashboard: (params?: Record<string, unknown>, signal?: AbortSignal) => {
-    return fetch(`${urlsApi.reportChart.listArtifactByDashboard}${convertParamsToString(params)}`, {
-      signal,
-      method: "GET",
-    }).then((res) => res.json());
+    return apiGet(urlsApi.reportChart.listArtifactByDashboard, params, signal);
   },
 
   listArtifactByEmployee: (params?: Record<string, unknown>, signal?: AbortSignal) => {
-    return fetch(`${urlsApi.reportChart.listArtifactByEmployee}${convertParamsToString(params)}`, {
-      signal,
-      method: "GET",
-    }).then((res) => res.json());
+    return apiGet(urlsApi.reportChart.listArtifactByEmployee, params, signal);
   },
 
   updateReportConfig: (body: Record<string, unknown>) => {
-    return fetch(urlsApi.reportChart.updateReportConfig, {
-      method: "POST",
-      body: JSON.stringify(body),
-    }).then((res) => res.json());
+    return apiPost(urlsApi.reportChart.updateReportConfig, body);
   },
   deleteReportConfig: (id: number) => {
-    return fetch(`${urlsApi.reportChart.deleteReportConfig}?id=${id}`, {
-      method: "DELETE",
-    }).then((res) => res.json());
+    return apiDelete(`${urlsApi.reportChart.deleteReportConfig}?id=${id}`);
   },
 
   listReportRole: (params?: Record<string, unknown>, signal?: AbortSignal) => {
-    return fetch(`${urlsApi.reportChart.listReportRole}${convertParamsToString(params)}`, {
-      signal,
-      method: "GET",
-    }).then((res) => res.json());
+    return apiGet(urlsApi.reportChart.listReportRole, params, signal);
   },
   updateReportRole: (body: Record<string, unknown>) => {
-    return fetch(urlsApi.reportChart.updateReportRole, {
-      method: "POST",
-      body: JSON.stringify(body),
-    }).then((res) => res.json());
+    return apiPost(urlsApi.reportChart.updateReportRole, body);
   },
   deleteReportRole: (id: number) => {
-    return fetch(`${urlsApi.reportChart.deleteReportRole}?id=${id}`, {
-      method: "DELETE",
-    }).then((res) => res.json());
+    return apiDelete(`${urlsApi.reportChart.deleteReportRole}?id=${id}`);
   },
 
 };

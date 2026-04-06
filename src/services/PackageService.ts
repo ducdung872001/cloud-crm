@@ -1,18 +1,13 @@
+import { apiDelete, apiGet, apiPost } from "services/apiHelper";
 import { urlsApi } from "configs/urls";
-import { convertParamsToString } from "reborn-util";
+
 
 export default {
   lst: (params?: Record<string, unknown>, signal?: AbortSignal) => {
-    return fetch(`${urlsApi.package.list}${convertParamsToString(params)}`, {
-      signal,
-      method: "GET",
-    }).then((res) => res.json());
+    return apiGet(urlsApi.package.list, params, signal);
   },
   update: (body: Record<string, unknown>) => {
-    return fetch(urlsApi.package.update, {
-      method: "POST",
-      body: JSON.stringify(body),
-    }).then((res) => res.json());
+    return apiPost(urlsApi.package.update, body);
   },
   detail: (id: number) => {
     return fetch(`${urlsApi.package.detail}?id=${id}`, {
@@ -20,44 +15,24 @@ export default {
     }).then((res) => res.json());
   },
   delete: (id: number) => {
-    return fetch(`${urlsApi.package.delete}?id=${id}`, {
-      method: "DELETE",
-    }).then((res) => res.json());
+    return apiDelete(`${urlsApi.package.delete}?id=${id}`);
   },
   updateStatus: (body) => {
-    return fetch(`${urlsApi.package.updateStatus}`, {
-      method: "POST",
-      body: JSON.stringify(body),
-    }).then((res) => res.json());
+    return apiPost(`${urlsApi.package.updateStatus}`, body);
   },
   addOrgApp: (body) => {
-    return fetch(urlsApi.package.addOrgApp, {
-      method: "POST",
-      body: JSON.stringify(body),
-    }).then((res) => res.json());
+    return apiPost(urlsApi.package.addOrgApp, body);
   },
   updateBill: (body) => {
-    return fetch(urlsApi.package.updateBill, {
-      method: "POST",
-      body: JSON.stringify(body),
-    }).then((res) => res.json());
+    return apiPost(urlsApi.package.updateBill, body);
   },
   calcPrice: (body) => {
-    return fetch(urlsApi.package.calcPrice, {
-      method: "POST",
-      body: JSON.stringify(body),
-    }).then((res) => res.json());
+    return apiPost(urlsApi.package.calcPrice, body);
   },
   extend: (body) => {
-    return fetch(urlsApi.package.extend, {
-      method: "POST",
-      body: JSON.stringify(body),
-    }).then((res) => res.json());
+    return apiPost(urlsApi.package.extend, body);
   },
   upgrade: (body) => {
-    return fetch(urlsApi.package.upgrade, {
-      method: "POST",
-      body: JSON.stringify(body),
-    }).then((res) => res.json());
+    return apiPost(urlsApi.package.upgrade, body);
   },
 };

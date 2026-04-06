@@ -1,3 +1,4 @@
+import { apiDelete, apiGet, apiPost } from "services/apiHelper";
 import { urlsApi } from "configs/urls";
 import { ICashbookFilterRequest, ICashbookRequest } from "model/cashbook/CashbookRequestModel";
 import { convertParamsToString } from "reborn-util";
@@ -36,16 +37,10 @@ function buildFilename(prefix: string) {
 
 export default {
   list: (params?: ICashbookFilterRequest, signal?: AbortSignal) => {
-    return fetch(`${urlsApi.cashbook.list}${convertParamsToString(params)}`, {
-      signal,
-      method: "GET",
-    }).then((res) => res.json());
+    return apiGet(urlsApi.cashbook.list, params, signal);
   },
   update: (body: ICashbookRequest) => {
-    return fetch(urlsApi.cashbook.update, {
-      method: "POST",
-      body: JSON.stringify(body),
-    }).then((res) => res.json());
+    return apiPost(urlsApi.cashbook.update, body);
   },
   detail: (id: number) => {
     return fetch(`${urlsApi.cashbook.detail}?id=${id}`, {
@@ -53,15 +48,10 @@ export default {
     }).then((res) => res.json());
   },
   delete: (id: number) => {
-    return fetch(`${urlsApi.cashbook.delete}?id=${id}`, {
-      method: "DELETE",
-    }).then((res) => res.json());
+    return apiDelete(`${urlsApi.cashbook.delete}?id=${id}`);
   },
   export: (params?: ICashbookFilterRequest, signal?: AbortSignal) => {
-    return fetch(`${urlsApi.cashbook.export}${convertParamsToString(params)}`, {
-      signal,
-      method: "GET",
-    }).then((res) => res.json());
+    return apiGet(urlsApi.cashbook.export, params, signal);
   },
 
   exportFile: async (
