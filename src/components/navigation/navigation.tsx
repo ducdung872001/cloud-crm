@@ -1,4 +1,4 @@
-import React, {useContext, useState, memo} from "react";
+import React, {useCallback, useContext, useState, memo} from "react";
 import { useLocation, Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import Icon from "components/icon";
@@ -53,36 +53,34 @@ function Navigation(props: NavigationProps) {
   );
 
   // Toggle submenu của item có children
-  const setShowChildren = (idx: number) => {
-    const menuListNew = cloneDeep(menuList);
-    setMenuList(
-      menuListNew.map((m, index) => {
+  const setShowChildren = useCallback((idx: number) => {
+    setMenuList((prev) =>
+      prev.map((m, index) => {
         return {
           ...m,
           is_show_children: m.is_show_children === true ? false : index === idx,
         };
       })
     );
-  };
+  }, []);
 
   // ✅ FIX: Đóng tất cả submenu đang mở
-  const closeAllChildren = () => {
-    const menuListNew = cloneDeep(menuList);
-    setMenuList(
-      menuListNew.map((m) => ({
+  const closeAllChildren = useCallback(() => {
+    setMenuList((prev) =>
+      prev.map((m) => ({
         ...m,
         is_show_children: false,
       }))
     );
-  };
+  }, []);
 
-  const handShowChildren = (item) => {
+  const handShowChildren = useCallback((item) => {
     if (item.children == undefined || item.children == null) {
       setHasShowChildren(false);
     } else {
       setHasShowChildren(true);
     }
-  };
+  }, []);
 
   const { t } = useTranslation();
 

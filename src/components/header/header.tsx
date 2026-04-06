@@ -123,7 +123,7 @@ function Header(props: HeaderProps) {
 
   const [isLogoutLoading, setIsLogoutLoading] = useState<boolean>(false);
 
-  const handleLogout = () => {
+  const handleLogout = useCallback(() => {
     setIsLogoutLoading(true);
     // UserService.logout().then(() => {
     //   removeCookie("user", { path: "/", domain: rootDomain });
@@ -190,7 +190,7 @@ function Header(props: HeaderProps) {
       localStorage.removeItem("targetBsnId_product");
       removeCookie("access_token_athena", { path: "/", domain: rootDomain });
     }
-  };
+  }, [navigate, removeCookie]);
 
   const logoutAccountAthena = async (accessTokenAthena: string) => {
     const url = "https://api-athenaspear-prod.athenafs.io/api/v1/account/logout";
@@ -289,7 +289,7 @@ function Header(props: HeaderProps) {
     }
   }, [newNotificationPayload]);
 
-  const onUnread = async (id: number) => {
+  const onUnread = useCallback(async (id: number) => {
     const response = await NotificationService.updateUnread({ id: id });
     if (response.code === 0) {
       getListNotify({
@@ -300,9 +300,9 @@ function Header(props: HeaderProps) {
     } else {
       showToast(response.message ?? "Có lỗi xảy ra. Vui lòng thử lại sau", "error");
     }
-  };
+  }, []);
 
-  const onReadAll = async () => {
+  const onReadAll = useCallback(async () => {
     if (isReadingAll) return;
     setIsReadingAll(true);
     try {
@@ -322,7 +322,7 @@ function Header(props: HeaderProps) {
     } finally {
       setIsReadingAll(false);
     }
-  };
+  }, [isReadingAll, setCountUnread]);
 
   const readNotification = (e, item: INotificationItem) => {
     e.preventDefault();
@@ -348,7 +348,7 @@ function Header(props: HeaderProps) {
     // }
   };
 
-  const showMenuMobile = () => {
+  const showMenuMobile = useCallback(() => {
     const overlay = document.querySelector(".overlay-sidebar__mobile");
     if (overlay) {
       const body = document.getElementsByTagName("body")[0];
@@ -361,7 +361,7 @@ function Header(props: HeaderProps) {
       }
     }
     setIsCollapsedSidebar(!isCollapsedSidebar);
-  };
+  }, [isCollapsedSidebar, setIsCollapsedSidebar]);
 
   // đoạn này mình fix tạm vậy sau có nhiều khách hàng tính giải pháp sau
   const location = window.location;
@@ -535,7 +535,7 @@ function Header(props: HeaderProps) {
     else setSearchOpen(false);
   }, [searchQuery]);
 
-  const handleSearchSelect = (item: SearchResult) => {
+  const handleSearchSelect = useCallback((item: SearchResult) => {
     setSearchQuery("");
     setSearchOpen(false);
     if (item.group === "customer") {
@@ -548,7 +548,7 @@ function Header(props: HeaderProps) {
       // Mở danh sách đơn hàng + tự động bật popup chi tiết đơn
       navigate(`/sale_invoice?openInvoice=${item.id}`);
     }
-  };
+  }, [navigate]);
 
   const GROUP_LABEL: Record<SearchGroup, string> = {
     customer: "👤 Khách hàng",
@@ -582,7 +582,7 @@ function Header(props: HeaderProps) {
     }
   }
 
-  const handleNotificationClick = (item: NotificationItem) => {
+  const handleNotificationClick = useCallback((item: NotificationItem) => {
     // unread: 0 = chưa đọc, unread: 1 = đã đọc
     if (item.unread === 0 || item.unread === null) {
       onUnread(item.id);
@@ -624,7 +624,7 @@ function Header(props: HeaderProps) {
           break;
       }
     }
-  };
+  }, [navigate, onUnread]);
 
   const getNotificationIconName = (item: NotificationItem): string => {
     if (item.payload && isJsonString(item.payload)) {

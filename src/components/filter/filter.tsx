@@ -1,4 +1,4 @@
-import React, {Fragment, useContext, useEffect, useRef, useState, memo} from "react";
+import React, {Fragment, useCallback, useContext, useEffect, useRef, useState, memo} from "react";
 import cloneDeep from "lodash/cloneDeep";
 import debounce from "lodash/debounce";
 import isEmpty from "lodash/isEmpty";
@@ -35,40 +35,44 @@ function Filter(props: FilterProps) {
   const [left, setLeft] = useState<number>(20);
   const [disabledBtnNext, setDisableBtnNext] = useState<boolean>(false);
 
-  const changeValueFilter = (filterItem: IFilterItem) => {
-    const index = listFilterItemState.findIndex((filter) => filter.key === filterItem.key);
-    if (listFilterItemState.length > 0 && index > -1) {
-      const listFilterItemNew = cloneDeep(listFilterItemState);
-      listFilterItemNew[index] = filterItem;
-      setListFilterItemState(listFilterItemNew);
-    } else {
-      setListFilterItemState([...listFilterItemState, filterItem]);
-    }
-  };
+  const changeValueFilter = useCallback((filterItem: IFilterItem) => {
+    setListFilterItemState((prev) => {
+      const index = prev.findIndex((filter) => filter.key === filterItem.key);
+      if (prev.length > 0 && index > -1) {
+        const listFilterItemNew = cloneDeep(prev);
+        listFilterItemNew[index] = filterItem;
+        return listFilterItemNew;
+      } else {
+        return [...prev, filterItem];
+      }
+    });
+  }, []);
 
   const refFilter = useRef();
   const refFilterContainer = useRef();
   const [showPopoverFilter, setShowPopoverFilter] = useState<boolean>(false);
   useOnClickOutside(refFilter, () => setShowPopoverFilter(false), ["filter-dropdown-general", "react-datepicker-popper"]);
 
-  const addFilterItem = (selectedOption) => {
+  const addFilterItem = useCallback((selectedOption) => {
     if (selectedOption.value) {
-      setListFilterItemState([...listFilterItemState, listFilterItem.find((filter) => filter.key === selectedOption.value)]);
+      setListFilterItemState((prev) => [...prev, listFilterItem.find((filter) => filter.key === selectedOption.value)]);
     }
-  };
+  }, [listFilterItem]);
 
-  const removeFilter = (index) => {
-    const listFilterItemStateTemp = cloneDeep(listFilterItemState);
-    listFilterItemStateTemp.splice(index, 1);
-    setListFilterItemState(listFilterItemStateTemp);
-  };
+  const removeFilter = useCallback((index) => {
+    setListFilterItemState((prev) => {
+      const listFilterItemStateTemp = cloneDeep(prev);
+      listFilterItemStateTemp.splice(index, 1);
+      return listFilterItemStateTemp;
+    });
+  }, []);
 
   useEffect(() => {
     const listFilterCurrent = listFilterItem.filter((filterItem) => (filterItem.value && filterItem.value !== "") || filterItem.value === 0);
     setListFilterItemState(listFilterCurrent);
   }, [listFilterItem]);
 
-  const submitFilter = () => {
+  const submitFilter = useCallback(() => {
     let listFilterItemTemp = cloneDeep(listFilterItem);
     listFilterItemTemp = listFilterItemTemp.map((filter) => {
       const filterItemState = listFilterItemState.find((filterState) => filterState.key === filter.key);
@@ -80,7 +84,7 @@ function Filter(props: FilterProps) {
       };
     });
     onChangeFilter(listFilterItemTemp);
-  };
+  }, [listFilterItem, listFilterItemState, onChangeFilter]);
 
   const handleDisabledNext = (e) => {
     //In ra vị trí của last-item nếu tìm được

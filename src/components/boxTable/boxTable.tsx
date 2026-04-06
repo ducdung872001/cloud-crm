@@ -1,5 +1,5 @@
 /* eslint-disable prefer-const */
-import React, {Fragment, useEffect, useState, memo} from "react";
+import React, {Fragment, useCallback, useEffect, useState, memo} from "react";
 import BulkAction, { BulkActionItemModel } from "components/bulkAction/bulkAction";
 import Checkbox from "components/checkbox/checkbox";
 import ReactTooltip from "react-tooltip";
@@ -70,7 +70,7 @@ function BoxTable(props: BoxTableProps) {
   bulkActionItems = (bulkActionItems || []).filter((item) => item);
 
   const [listItem, setListItem] = useState<{ id: number; data: void; raw: BoxTableItem; showActionRow: boolean; onShowDetail: boolean }[]>();
-  const checkAll = (isChecked: boolean) => {
+  const checkAll = useCallback((isChecked: boolean) => {
     if (isChecked) {
       setListIdChecked &&
         setListIdChecked(
@@ -81,15 +81,15 @@ function BoxTable(props: BoxTableProps) {
     } else {
       setListIdChecked && setListIdChecked([]);
     }
-  };
+  }, [items, setListIdChecked]);
 
-  const checkOne = (id: number, isChecked: boolean) => {
+  const checkOne = useCallback((id: number, isChecked: boolean) => {
     if (isChecked) {
       setListIdChecked && setListIdChecked([...(listIdChecked ?? []), id]);
     } else {
       setListIdChecked && setListIdChecked(listIdChecked?.filter((i) => i !== id) ?? []);
     }
-  };
+  }, [listIdChecked, setListIdChecked]);
 
   const mapData = (data: BoxTableItem[]) => {
     return data?.map((item, index) => ({
@@ -112,15 +112,14 @@ function BoxTable(props: BoxTableProps) {
     ReactTooltip.rebuild();
   }, [listItem]);
 
-  const handleShowActionRow = (id: number, isShow?: boolean) => {
-    const listItemTemp = listItem?.map((item) => {
+  const handleShowActionRow = useCallback((id: number, isShow?: boolean) => {
+    setListItem((prev) => prev?.map((item) => {
       return {
         ...item,
         showActionRow: id === 0 ? false : item.id === id ? isShow : false,
       };
-    });
-    setListItem(listItemTemp);
-  };
+    }));
+  }, []);
 
   return (
     <div className="box-table" style={style || {}}>

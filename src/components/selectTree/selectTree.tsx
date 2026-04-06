@@ -1,4 +1,4 @@
-import React, {Fragment, ReactElement, useEffect, useRef, useState, memo} from "react";
+import React, {Fragment, ReactElement, useCallback, useEffect, useRef, useState, memo} from "react";
 import Select, { components } from "react-select";
 import { AsyncPaginate } from "react-select-async-paginate";
 import AsyncSelect from "react-select/async";
@@ -181,17 +181,17 @@ function SelectTree(props: SelectCustomProps) {
 
   const containerRef = useRef(null);
 
-  const handleClickOutside = (e: MouseEvent) => {
+  const handleClickOutside = useCallback((e: MouseEvent) => {
     if (containerRef.current && !containerRef.current.contains(e.target)) {
       handleBlur(); // Hàm bạn muốn gọi khi blur ra ngoài
     }
-  };
+  }, [handleBlur]);
 
-  const handleBlur = () => {
+  const handleBlur = useCallback(() => {
     setDropdownVisible(false);
     setOnFocusSelect(false);
     setValueSearch("");
-  };
+  }, []);
 
   useEffect(() => {
     document.addEventListener("mousedown", handleClickOutside);

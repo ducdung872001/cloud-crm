@@ -1,4 +1,4 @@
-import React, {Fragment, ReactElement, useEffect, useRef, useState, memo} from "react";
+import React, {Fragment, ReactElement, useCallback, useEffect, useRef, useState, memo} from "react";
 import Select, { components } from "react-select";
 import { AsyncPaginate } from "react-select-async-paginate";
 import { IOption } from "model/OtherModel";
@@ -286,7 +286,7 @@ function SelectUrlCustom(props: SelectCustomProps) {
     return isShowDropdownIcon ? <components.DropdownIndicator {...props} /> : null;
   };
 
-  const handleOnChange = (e: IOption | IOption[] | null) => {
+  const handleOnChange = useCallback((e: IOption | IOption[] | null) => {
     setInternalValue(e);
 
     if (isMulti) {
@@ -298,7 +298,7 @@ function SelectUrlCustom(props: SelectCustomProps) {
     if (refSelect) refSelect.current?.blur();
 
     if (onChange) onChange(e);
-  };
+  }, [isMulti, refSelect, onChange]);
 
   const dynamicStyles = {
     valueContainer: (provided) => ({

@@ -1,4 +1,4 @@
-import React, {Fragment, useState, useEffect, useMemo, memo} from "react";
+import React, {Fragment, useCallback, useState, useEffect, useMemo, memo} from "react";
 import classNames from "classnames";
 import Loading from "components/loading";
 import Image from "components/image";
@@ -111,15 +111,15 @@ function ChooseItem(props: IChooseItemProps) {
 
   const dataFormat = ["text-center", "image", "", "", "", "text-right"];
 
-  const handleScroll = (e) => {
+  const handleScroll = useCallback((e) => {
     if (isLoading || responseData.total === lstItems.length) {
       return;
     }
     const lastScroll = e.target.scrollHeight - Math.round(e.target.scrollTop) === e.target.clientHeight;
     if (lastScroll) {
-      setParams({ ...params, page: responseData.page + 1 });
+      setParams((prev) => ({ ...prev, page: responseData.page + 1 }));
     }
-  };
+  }, [isLoading, responseData, lstItems.length]);
 
   return (
     <Fragment>

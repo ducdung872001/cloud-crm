@@ -1,4 +1,4 @@
-import React, {useMemo, useRef, memo} from "react";
+import React, {useCallback, useMemo, useRef, memo} from "react";
 import { AgGridReact } from "ag-grid-react";
 import { Pagination, PaginationProps } from "components/pagination/pagination";
 import BulkAction, { BulkActionItemModel } from "components/bulkAction/bulkAction";
@@ -51,15 +51,15 @@ function BoxTableAdvanced(props: IBoxTableAdvancedProps) {
     };
   }, []);
 
-  const onSelectionChanged = () => {
+  const onSelectionChanged = useCallback(() => {
     const selectedNodes = gridApiRef.current.getSelectedNodes();
     const selectedData = selectedNodes.map((node) => node.data);
 
     const result = selectedData.map((item) => item.id);
     setListIdChecked(result, selectedData);
-  };
+  }, [setListIdChecked]);
 
-  const onColumnResized = (params) => {
+  const onColumnResized = useCallback((params) => {
     const takeActualWidth = params.column;
 
     const changeTakeActualWidth = {
@@ -68,16 +68,16 @@ function BoxTableAdvanced(props: IBoxTableAdvancedProps) {
     };
 
     setWidthColumns([...widthColumns, changeTakeActualWidth]);
-  };
+  }, [widthColumns, setWidthColumns]);
 
-  const onColumnMoved = (params) => {
+  const onColumnMoved = useCallback((params) => {
     if (!saveColumnName) return;
     const columnOrder = params.columnApi.getColumnState().map((col) => col.colId);
 
     localStorage.setItem(saveColumnName, JSON.stringify(columnOrder));
-  };
+  }, [saveColumnName]);
 
-  const onGridReady = (params) => {
+  const onGridReady = useCallback((params) => {
     gridApiRef.current = params.api;
     params.api.addEventListener("selectionChanged", onSelectionChanged);
     if (!saveColumnName) return;
@@ -91,7 +91,7 @@ function BoxTableAdvanced(props: IBoxTableAdvancedProps) {
         applyOrder: true,
       });
     }
-  };
+  }, [onSelectionChanged, saveColumnName]);
 
   return (
     <div className="table__ag--template">

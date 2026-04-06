@@ -1,4 +1,4 @@
-import React, {Fragment, useContext, useEffect, useState, memo} from "react";
+import React, {Fragment, useCallback, useContext, useEffect, useState, memo} from "react";
 import Navigation from "components/navigation/navigation";
 import LogoMenu from "assets/images/logo-menu.svg";
 import { menu } from "configs/routes";
@@ -23,7 +23,7 @@ function Sidebar() {
     return localStorage.getItem("logoOrganization") || "";
   });
 
-  const showMenuMobile = () => {
+  const showMenuMobile = useCallback(() => {
     const overlay = document.querySelector(".overlay-sidebar__mobile");
     if (overlay) {
       const body = document.getElementsByTagName("body")[0];
@@ -36,7 +36,7 @@ function Sidebar() {
       }
     }
     setIsCollapsedSidebar(!isCollapsedSidebar);
-  };
+  }, [isCollapsedSidebar, setIsCollapsedSidebar]);
 
   useEffect(() => {
     if (isCollapsedSidebar && width < 1200) {

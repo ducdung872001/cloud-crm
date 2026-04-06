@@ -1,4 +1,4 @@
-import React, {useEffect, useState, memo} from "react";
+import React, {useCallback, useEffect, useState, memo} from "react";
 import { IFilterItem, ISaveSearch, ISaveSearchParam } from "model/OtherModel";
 import "./saveSearch.scss";
 
@@ -19,8 +19,8 @@ function SaveSearch(props: SaveSearchProps) {
     setSaveSearchItems(listSaveSearch);
   }, [listSaveSearch]);
 
-  const changeSaveSearch = (key: string | number) => {
-    const saveSearchListTemp = saveSearchItems.map((saveSearch) => {
+  const changeSaveSearch = useCallback((key: string | number) => {
+    setSaveSearchItems((prev) => prev.map((saveSearch) => {
       if (saveSearch.key === key) {
         return {
           ...saveSearch,
@@ -28,10 +28,9 @@ function SaveSearch(props: SaveSearchProps) {
         };
       }
       return { ...saveSearch, is_active: false };
-    });
-    setSaveSearchItems(saveSearchListTemp);
+    }));
     setDisabledSaveSearch(true);
-  };
+  }, [setDisabledSaveSearch]);
 
   const buildSaveSearch = () => {
     const searchCurrent: ISaveSearchParam[] = [];

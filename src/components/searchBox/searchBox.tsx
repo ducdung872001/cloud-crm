@@ -1,4 +1,4 @@
-import React, {Fragment, useEffect, useState, memo} from "react";
+import React, {Fragment, useCallback, useEffect, useState, memo} from "react";
 import Icon from "components/icon";
 import Input from "components/input/input";
 import { IFilterItem, ISaveSearch, ISortItem } from "model/OtherModel";
@@ -237,7 +237,7 @@ function SearchBox(props: SearchBoxProps) {
     updateFilterItemsWithParams();
   }, []);
 
-  const callbackSaveSearch = (saveSearch: ISaveSearch) => {
+  const callbackSaveSearch = useCallback((saveSearch: ISaveSearch) => {
     if (saveSearch.params && saveSearch.params.length > 0) {
       const paramsTemp = BuildObjectFilter(params, filterItems, saveSearch);
       if (!isEqual(params, paramsTemp)) {
@@ -274,11 +274,11 @@ function SearchBox(props: SearchBoxProps) {
         setQuery(paramsTemp["query"] ?? "");
       }
     }
-  };
+  }, [params, filterItems, updateParams]);
 
-  const callbackSortby = (value: string) => {
+  const callbackSortby = useCallback((value: string) => {
     updateParams({ ...params, page: 1, sort_by: value });
-  };
+  }, [params, updateParams]);
 
   return (
     <Fragment>

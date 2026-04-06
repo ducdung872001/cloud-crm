@@ -1,4 +1,4 @@
-import React, {ReactElement, memo} from "react";
+import React, {ReactElement, useCallback, memo} from "react";
 import Checkbox, { CheckboxProps } from "./checkbox";
 import "./checkboxList.scss";
 
@@ -21,7 +21,7 @@ function CheckboxList(props: CheckboxListProps) {
   const { title, titlePosition, options, disabled, required, value, defaultValue, error, message, warning, messageWarning, onChange, onClick } =
     props;
 
-  const onChangeValue = (e) => {
+  const onChangeValue = useCallback((e) => {
     const values = value.split(",").filter((value) => value);
     if (e.target.checked) {
       !values.includes(e.target.value) ? values.push(e.target.value) : "";
@@ -29,7 +29,7 @@ function CheckboxList(props: CheckboxListProps) {
     } else {
       onChange(values.filter((value) => value !== e.target.value).toString());
     }
-  };
+  }, [value, onChange]);
 
   return (
     <div
