@@ -32,7 +32,7 @@ import { UserContext, ContextType } from "contexts/userContext";
 import AddEditSendSMS from "pages/Common/AddEditSendSMS/AddEditSendSMS";
 import RelationShipService from "services/RelationShipService";
 import RecoverPublicDebts from "pages/Common/RecoverPublicDebts";
-import ImportModal from "components/importModalBackup";
+import ImportModal from "components/importModal";
 import ExportListModal from "pages/Common/ExportListModal/ExportListModal";
 
 //Thêm riêng lẻ 1 cơ hội vào chiến dịch bán hàng (quy trình bán hàng)

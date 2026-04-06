@@ -29,7 +29,7 @@ import AddCustomerPersonModal from "./partials/AddCustomerPersonModal";
 import AddEditSendSMS from "pages/Common/AddEditSendSMS/AddEditSendSMS";
 import RelationShipService from "services/RelationShipService";
 import RecoverPublicDebts from "pages/Common/RecoverPublicDebts";
-import ImportModal from "components/importModalBackup";
+import ImportModal from "components/importModal";
 import AddBTwoBModal from "./partials/AddBTwoBModal";
 import ViewOpportunityBTwoB from "./partials/ViewOpportunityBTwoB";
 import "swiper/css/grid";

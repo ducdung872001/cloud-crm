@@ -1,10 +1,11 @@
-import React, {useEffect, useRef, useState, memo} from "react";
+import React, { useEffect, useRef, useState } from "react";
 import Icon from "components/icon";
 import { showToast } from "utils/common";
 import ExcelIcon from "assets/images/img-excel.png";
 
 interface IAddFileProps {
   code?: string;
+  fileProps?: File;
   takeFileAdd: (data) => void;
 }
 
@@ -13,12 +14,20 @@ interface IAddFileProps {
  * @param props
  * @returns
  */
-function AddFile(props: IAddFileProps) {
-  const { takeFileAdd } = props;
+export default function AddFile(props: IAddFileProps) {
+  const { takeFileAdd, code, fileProps } = props;
 
   const refInputUpload = useRef<HTMLInputElement | null>(null);
   const [dragging, setDragging] = useState<boolean>(false);
   const [files, setFiles] = useState([]);
+
+  useEffect(() => {
+    if (fileProps) {
+      setFiles([fileProps]);
+    } else {
+      setFiles([]);
+    }
+  }, [fileProps]);
 
   function handleDragStart(e) {
     e.preventDefault();
@@ -123,5 +132,3 @@ function AddFile(props: IAddFileProps) {
     </div>
   );
 }
-
-export default memo(AddFile);

@@ -48,7 +48,11 @@
       "Bash(rm -rf \"src/pages/BPM/GridAg/GridAgTable_old.tsx\")",
       "Bash(rm -rf \"src/pages/BPM/BusinessProcessCreate/partials_old\")",
       "Bash(rm -rf \"src/assets/icons_old\")",
-      "Bash(rm -rf \"src/assets/images/logo-menu copy.svg\")"
+      "Bash(rm -rf \"src/assets/images/logo-menu copy.svg\")",
+      "Bash(rm -rf src/components/importModal)",
+      "Bash(mv src/components/importModalBackup src/components/importModal)",
+      "Bash(cp -r src/components/importModalBackup src/components/importModal)",
+      "Bash(rm -rf src/components/importModalBackup)"
     ]
   }
 }

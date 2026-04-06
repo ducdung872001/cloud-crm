@@ -93,8 +93,7 @@ const CreateCampaign = React.lazy(() => import("pages/Campaign/partials/CreateCa
 const CustomerSegment = React.lazy(() => import("pages/customerSegment"));
 const MarketingAutomationList = React.lazy(() => import("pages/MarketingAutomation/MarketingAutomationList"));
 const CreateMarketingAutomation = React.lazy(() => import("pages/MarketingAutomation/CreateMarketingAutomation/CreateMarketingAutomation"));
-// import EmailList from "pages/Email/EmailList";
-const EmailList = React.lazy(() => import("pages/Email/EmailListBackup"));
+const EmailList = React.lazy(() => import("pages/Email/EmailList"));
 const SettingContactList = React.lazy(() => import("pages/SettingContact/SettingContactList"));
 const FeedbackCustomer = React.lazy(() => import("pages/FeedbackCustomer/FeedbackCustomer"));
 import { getDomain } from "reborn-util";
