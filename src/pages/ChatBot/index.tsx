@@ -57,6 +57,7 @@ export default function ChatBot() {
   };
 
   useEffect(() => {
+    let isMounted = true;
     if (isShowChatBot) {
       getDetailEmployeeInfo();
     }
