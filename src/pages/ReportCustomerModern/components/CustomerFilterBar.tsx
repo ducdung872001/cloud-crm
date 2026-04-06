@@ -22,7 +22,7 @@ export default function CustomerFilterBar(props: Props) {
     <ReportFilterShell className="report-topbar">
       <div className="report-topbar__left">
         <div className="report-topbar__title">Toàn cảnh khách hàng</div>
-        <div className="report-topbar__subtitle">Cập nhật lúc {formatDateCustom(, "HH:mm")} · {formatDate()}</div>
+        <div className="report-topbar__subtitle">Cập nhật lúc {formatDateCustom(new Date(), "HH:mm")} · {formatDate(new Date())}</div>
       </div>
 
       <div className="report-topbar__filters">

@@ -240,7 +240,7 @@ export default function AssignWorkModal(props: IAddWorkModelProps) {
     ({
       name: data?.name ?? "",
       content: data?.content ?? "",
-      // startTime: idWork ? data?.startTime : startDate ? startDate : formatDateCustom(, "MM/EEEEEE/yyyy"),
+      // startTime: idWork ? data?.startTime : startDate ? startDate : formatDateCustom(new Date(), "MM/EEEEEE/yyyy"),
       startTime: data?.startTime ? new Date(data?.startTime) : "",
       endTime: data?.endTime ? new Date(data?.endTime) : "",
       workLoad: data?.workLoad ?? "",

@@ -49,7 +49,7 @@ export default function ReportPartner() {
   //   setDataEmployee({ value: dataInfoEmployee.id, label: name });
   // }, [dataInfoEmployee.id]);
   // useEffect(() => {
-  //   const currentDate = formatDate();
+  //   const currentDate = formatDate(new Date());
 
   //   const fourteenDaysAgo = moment().subtract(14, "days").format("DD/MM/yyyy");
 

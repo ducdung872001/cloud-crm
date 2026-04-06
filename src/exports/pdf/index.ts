@@ -69,7 +69,7 @@ import { INumber, IUnit } from "types/product/productResponseModel";
 
 export const ExportPdf = async (docDef, fileName) => {
   // const pdf = pdfMake.createPdf(docDef);
-  // pdf.download(`${fileName}-${formatDateCustom(, "yyyyMMEEEEEEHHmm")}.pdf`);
+  // pdf.download(`${fileName}-${formatDateCustom(new Date(), "yyyyMMEEEEEEHHmm")}.pdf`);
 };
 
 export const PrintQrcode = (canvasElement, productStore: IProductStore, productName: string, number: INumber, units: IUnit[]) => {

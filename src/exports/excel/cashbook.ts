@@ -11,7 +11,7 @@ export const exportExcelCashbookOverview = (searchParams, cashBookData, info) =>
     ["Số điện thoại", info.product_store.phone],
     ["Địa chỉ", info.product_store.address],
     ["Người tạo", info.name],
-    ["Ngày xuất phiếu", `${formatDateCustom(, "yyyy-MM-dd")}`],
+    ["Ngày xuất phiếu", `${formatDateCustom(new Date(), "yyyy-MM-dd")}`],
   ];
 
   const header = [

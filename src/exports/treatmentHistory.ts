@@ -133,13 +133,13 @@ export async function ExportTreatmentHistoryExcel(
   //     options.footer = [options.footer];
   //   }
 
-  const nameWeekday = `${formatDateCustom(, "EEEE").charAt(0).toUpperCase() + formatDateCustom(, "EEEE").slice(1)}`;
+  const nameWeekday = `${formatDateCustom(new Date(), "EEEE").charAt(0).toUpperCase() + formatDateCustom(new Date(), "EEEE").slice(1)}`;
 
   const defaultInfoHeader = {
     avatar: beautySalon?.avatar,
     content: {
       name: beautySalon?.name || "Bảng theo dõi dịch vụ làm cho khách",
-      time: `${nameWeekday} - ${formatDateCustom(, "EEEEEE/MM/yyyy HH:mm:ss")}`,
+      time: `${nameWeekday} - ${formatDateCustom(new Date(), "EEEEEE/MM/yyyy HH:mm:ss")}`,
       exporter: options.info?.name ?? name,
     },
   };
@@ -155,6 +155,6 @@ export async function ExportTreatmentHistoryExcel(
     const blob = new Blob([data], {
       type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
     });
-    fs.saveAs(blob, (options.fileName || options.title) + "-" + formatDateCustom(, "yyyyMMEEEEEEHHmm") + ".xlsx");
+    fs.saveAs(blob, (options.fileName || options.title) + "-" + formatDateCustom(new Date(), "yyyyMMEEEEEEHHmm") + ".xlsx");
   });
 }

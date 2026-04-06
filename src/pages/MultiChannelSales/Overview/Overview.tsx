@@ -43,7 +43,7 @@ const EMPTY_STAT: IStatCards = {
 export default function Overview() {
   document.title = "Bán hàng đa kênh";
 
-  const today  = formatDate();
+  const today  = formatDate(new Date());
   const params = { fromTime: today, toTime: today, branchId: 0 };
 
   const [modalConnect, setModalConnect] = useState(false);

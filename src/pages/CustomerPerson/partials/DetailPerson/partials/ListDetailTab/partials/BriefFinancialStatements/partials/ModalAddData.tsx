@@ -32,7 +32,7 @@ export default function ModalAddData({ onShow, onHide, dataProps, customerId }) 
       revenue: data?.revenue ?? "",
       capital: data?.capital ?? "",
       creditRating: data?.creditRating ?? "",
-      // startTime: formatDateCustom(, "MM/EEEEEE/yyyy"),
+      // startTime: formatDateCustom(new Date(), "MM/EEEEEE/yyyy"),
       shortTermAsset: data?.shortTermAsset ?? "",
       longTermAsset: data?.longTermAsset ?? "",
       shortTermDebt: data?.shortTermDebt ?? "",
