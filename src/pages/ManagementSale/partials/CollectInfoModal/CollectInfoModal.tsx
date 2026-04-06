@@ -23,7 +23,8 @@ import { SystemNotification } from "components/systemNotification/systemNotifica
 import Loading from "components/loading";
 import { Parser } from "formula-functionizer";
 import { SelectOptionData } from "utils/selectCommon";
-import moment from "moment";
+import { formatDateCustom } from "utils/dateUtils";
+
 import SaleflowEformService from "services/SaleflowEformService";
 
 export default function CollectInfoModal(props: Record<string, unknown>) {
@@ -354,7 +355,7 @@ export default function CollectInfoModal(props: Record<string, unknown>) {
             fill={true}
             value={getContractAttributeValue(contractAttribute.id)}
             onChange={(e) => {
-              const newDate = new Date(moment(e).format("YYYY/MM/DD ") + moment(new Date()).format("HH:mm"));
+              const newDate = new Date(formatDateCustom(e, "yyyy/MM/dd ") + formatDateCustom(new Date(), "HH:mm"));
               updateContractAttribute(contractAttribute.id, newDate);
             }}
             placeholder={`Nhập ${contractAttribute.name.toLowerCase()}`}

@@ -1,5 +1,6 @@
 
-import moment from "moment";
+import { formatDate, formatDateCustom } from "utils/dateUtils";
+
 // import pdfMake from "pdfmake/build/pdfmake";
 // import pdfFonts from "pdfmake/build/vfs_fonts";
 import { borderBoldTable } from "./config";
@@ -68,7 +69,7 @@ import { INumber, IUnit } from "types/product/productResponseModel";
 
 export const ExportPdf = async (docDef, fileName) => {
   // const pdf = pdfMake.createPdf(docDef);
-  // pdf.download(`${fileName}-${moment().format("YYYYMMDDHHmm")}.pdf`);
+  // pdf.download(`${fileName}-${formatDateCustom(, "yyyyMMEEEEEEHHmm")}.pdf`);
 };
 
 export const PrintQrcode = (canvasElement, productStore: IProductStore, productName: string, number: INumber, units: IUnit[]) => {
@@ -238,7 +239,7 @@ export const printBill = (productStore: IProductStore, invoiceData: IInvoiceDeta
   //           },
   //           {
   //             width: "*",
-  //             text: `${moment(invoiceData.invoice.receipt_date).format("DD/MM/YYYY")}`,
+  //             text: `${formatDate(invoiceData.invoice.receipt_date)}`,
   //             alignment: "center",
   //             margin: [5, 0, 5, 0],
   //           },
@@ -289,7 +290,7 @@ export const printBill = (productStore: IProductStore, invoiceData: IInvoiceDeta
   //         {
   //           stack: [
   //             `Mã HĐ: ${invoiceData.invoice.invoice_code}`,
-  //             `Ngày hóa đơn: ${moment(invoiceData.invoice.receipt_date).format("DD/MM/YYYY")}`,
+  //             `Ngày hóa đơn: ${formatDate(invoiceData.invoice.receipt_date)}`,
   //             `Khách hàng: ${invoiceData.invoice.customer_name || "Khách lẻ"}`,
   //             invoiceData.invoice.number_phone ? `Số ĐT: ${invoiceData.invoice.number_phone}` : null,
   //             `DS phụ trách: ${invoiceData.invoice.user_fullname}`,

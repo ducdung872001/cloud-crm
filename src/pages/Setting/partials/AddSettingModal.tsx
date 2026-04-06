@@ -12,7 +12,8 @@ import Validate, { handleChangeValidate } from "utils/validate";
 import { showToast } from "utils/common";
 import { isDifferenceObj } from 'reborn-util';
 import Icon from "components/icon";
-import moment from "moment";
+import { formatDateCustom } from "utils/dateUtils";
+
 
 export default function AddSettingModal(props: AddSettingProps) {
   const { onShow, onHide, data } = props;
@@ -152,8 +153,8 @@ export default function AddSettingModal(props: AddSettingProps) {
     const body: ISettingRequest = {
       ...(formData.values as ISettingRequest),
       ...(data ? { id: data.id } : {}),
-      startDate: moment(formData.values.startDate).format('YYYY-MM-DDTHH:mm:ss'),
-      endDate: moment(formData.values.endDate).format('YYYY-MM-DDTHH:mm:ss'),
+      startDate: formatDateCustom(formData.values.startDate, "yyyy-MM-EEEEEETHH:mm:ss"),
+      endDate: formatDateCustom(formData.values.endDate, "yyyy-MM-EEEEEETHH:mm:ss"),
     };
 
     const response = await SettingService.update(body);

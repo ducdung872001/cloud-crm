@@ -1,5 +1,6 @@
 import React, { Fragment, useEffect, useState } from "react";
-import moment from "moment";
+import { formatDate } from "utils/dateUtils";
+
 import { useParams } from "react-router-dom";
 import { formatCurrency, getPageOffset } from "reborn-util";
 import { IAction } from "model/OtherModel";
@@ -64,7 +65,7 @@ export default function ServiceCardPurchased(props: IServiceCardPurchasedProps) 
     getPageOffset(params) + index + 1,
     <div key={item.id}>
       <span>{item.serviceId ? "Thẻ liệu trình" : "Thẻ đa năng"}</span> <br />
-      <i>{`${item.invoiceCode || ""} - ${item.receiptDate ? moment(item.receiptDate).format("DD/MM/YYYY") : ""}`}</i>
+      <i>{`${item.invoiceCode || ""} - ${item.receiptDate ? formatDate(item.receiptDate) : ""}`}</i>
     </div>,
     <div key={item.id} className="info__card">
       <div className="avatar__card">

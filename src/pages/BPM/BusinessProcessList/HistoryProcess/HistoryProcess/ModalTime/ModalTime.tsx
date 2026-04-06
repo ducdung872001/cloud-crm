@@ -1,7 +1,8 @@
 import React, { Fragment, useState, useEffect, useCallback, useMemo, useRef } from "react";
 import Modal, { ModalBody, ModalFooter, ModalHeader } from "components/modal/modal";
 import "./ModalTime.scss";
-import moment from "moment";
+import { formatDateTime } from "utils/dateUtils";
+
 
 export default function ModalTime(props: Record<string, unknown>) {
   const { onShow, data, onHide } = props;  
@@ -25,7 +26,7 @@ export default function ModalTime(props: Record<string, unknown>) {
                   <span style={{fontSize: 14}}>Thời gian chuyển:</span>
                 </div>
                 <div style={{flex: 1}}>
-                  <span style={{fontSize: 14, fontWeight: '600'}}>{data?.transitTime ? moment(data.transitTime).format('DD/MM/YYYY HH:mm') : ''}</span>
+                  <span style={{fontSize: 14, fontWeight: '600'}}>{data?.transitTime ? formatDateTime(data.transitTime) : ''}</span>
                 </div>
               </div>
 
@@ -34,7 +35,7 @@ export default function ModalTime(props: Record<string, unknown>) {
                   <span style={{fontSize: 14}}>Thời gian tiếp nhận:</span>
                 </div>
                 <div style={{flex: 1}}>
-                  <span style={{fontSize: 14, fontWeight: '600'}}>{data?.receivedTime ? moment(data.receivedTime).format('DD/MM/YYYY HH:mm') : ''}</span>
+                  <span style={{fontSize: 14, fontWeight: '600'}}>{data?.receivedTime ? formatDateTime(data.receivedTime) : ''}</span>
                 </div>
               </div>
 
@@ -43,7 +44,7 @@ export default function ModalTime(props: Record<string, unknown>) {
                   <span style={{fontSize: 14}}>Thời gian xử lý:</span>
                 </div>
                 <div style={{flex: 1}}>
-                  <span style={{fontSize: 14, fontWeight: '600'}}>{data?.processedTime ? moment(data.processedTime).format('DD/MM/YYYY HH:mm') : ''}</span>
+                  <span style={{fontSize: 14, fontWeight: '600'}}>{data?.processedTime ? formatDateTime(data.processedTime) : ''}</span>
                 </div>
               </div>
             </div>

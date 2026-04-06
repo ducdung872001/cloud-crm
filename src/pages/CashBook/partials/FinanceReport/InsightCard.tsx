@@ -1,5 +1,6 @@
 import React from "react";
-import moment from "moment";
+import { formatDateTime } from "utils/dateUtils";
+
 import Icon from "components/icon";
 import ReportPanel from "components/reportShared/ReportPanel";
 import { formatCurrency } from "reborn-util";
@@ -90,7 +91,7 @@ export default function InsightCard(props: RecentTransactionsCardProps) {
                           <td className={`text-right ${+item.type === 1 ? "val-green" : "val-red"}`}>
                             {`${+item.type === 1 ? "+" : "-"}${formatCurrency(item.amount || 0)}`}
                           </td>
-                          <td>{moment(item.transDate).format("DD/MM/YYYY HH:mm")}</td>
+                          <td>{formatDateTime(item.transDate)}</td>
                           <td>
                             <span className={`badge ${status.className}`}>{status.label}</span>
                           </td>

@@ -1,7 +1,8 @@
 import DatePickerCustom from "components/datepickerCustom/datepickerCustom";
 import NummericInput from "components/input/numericInput";
 import SelectCustom from "components/selectCustom/selectCustom";
-import moment from "moment";
+import { formatDate } from "utils/dateUtils";
+
 import React, { memo } from "react";
 import "./index.scss";
 
@@ -51,7 +52,7 @@ const SpecialInput: React.FC<SpecialInputProps> = ({ field, rowIndex, fieldIndex
         <DatePickerCustom
           name={field.name}
           fill={false}
-          value={field?.value ? moment(field.value).format("DD/MM/YYYY") : ""}
+          value={field?.value ? formatDate(field.value) : ""}
           iconPosition="left"
           onChange={(e) => {
             handChangeValueItem(rowIndex, fieldIndex, e, field.type);

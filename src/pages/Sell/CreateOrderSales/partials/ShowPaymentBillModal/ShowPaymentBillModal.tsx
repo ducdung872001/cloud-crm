@@ -2,7 +2,8 @@ import React, { useState, useEffect, useMemo, Fragment, useRef } from "react";
 import uniq from "lodash/uniq";
 
 import { useReactToPrint } from "react-to-print";
-import moment from "moment";
+import { formatDate } from "utils/dateUtils";
+
 import { useNavigate } from "react-router-dom";
 import ModalReceipt, { ModalBodyReceipt, ModalFooterReceipt, ModalReceiptHeader } from "components/modalReceipt/modalReceipt";
 import { IBeautyBranchResponse } from "model/beautyBranch/BeautyBranchResponseModel";
@@ -314,7 +315,7 @@ export default function ShowPaymentBillModal(props: ShowPaymentBillModalProps) {
                 phone={detaiInvoice?.customerPhone}
                 address={detaiInvoice?.customerAddress}
                 importer={detaiInvoice?.customerName}
-                billDate={moment(detaiInvoice?.receiptDate).format("DD/MM/YYYY")}
+                billDate={formatDate(detaiInvoice?.receiptDate)}
                 totalMoney={detaiInvoice?.amount || 0}
                 discount={detaiInvoice?.discount || 0}
                 vat={0}

@@ -1,7 +1,8 @@
 import React, { Fragment, useEffect, useRef, useState } from "react";
 import cloneDeep from "lodash/cloneDeep";
 
-import moment from "moment";
+import { formatDate } from "utils/dateUtils";
+
 import Tippy from "@tippyjs/react";
 import Icon from "components/icon";
 import Loading from "components/loading";
@@ -232,11 +233,11 @@ export default function TicketPersonList(props: ITicketPersonListProps) {
                       </div> */}
                       <div className="item-child day-reception">
                         <h4 className="title">Ngày tiếp nhận</h4>
-                        <h4 className="name">{item.createdTime ? moment(item.createdTime).format("DD/MM/YYYY") : ""}</h4>
+                        <h4 className="name">{item.createdTime ? formatDate(item.createdTime) : ""}</h4>
                       </div>
                       <div className="item-child estimated-completion">
                         <h4 className="title">Ngày dự kiến xong</h4>
-                        <h4 className="name">{item.endDate ? moment(item.endDate).format("DD/MM/YYYY") : ""}</h4>
+                        <h4 className="name">{item.endDate ? formatDate(item.endDate) : ""}</h4>
                       </div>
                       <div className="item-child status">
                         <h4 className="title">Trạng thái xử lý</h4>

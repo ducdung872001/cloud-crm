@@ -14,7 +14,8 @@ import cloneDeep from "lodash/cloneDeep";
 
 import { ICustomerResponse } from "model/customer/CustomerResponseModel";
 import CustomerService from "services/CustomerService";
-import moment from "moment";
+import { formatDate, formatDateCustom } from "utils/dateUtils";
+
 import { ICustomerSchedulerFilterRequest } from "model/customer/CustomerRequestModel";
 import { ITreamentFilterRequest } from "model/treatment/TreamentRequestModel";
 import TreamentService from "services/TreamentService";
@@ -110,11 +111,11 @@ export default function ScheduleNextList() {
   const getListScheduleNext = async (paramsSearch: ICustomerSchedulerFilterRequest) => {
     setIsLoading(true);
     if (paramsSearch.fromTime) {
-      paramsSearch["fmtStartDay"] = moment(paramsSearch.fromTime).format("DD/MM/YYYY");
+      paramsSearch["fmtStartDay"] = formatDate(paramsSearch.fromTime);
       delete paramsSearch["fromTime"];
     }
     if (paramsSearch.toTime) {
-      paramsSearch["fmtEndDay"] = moment(paramsSearch.toTime).format("DD/MM/YYYY");
+      paramsSearch["fmtEndDay"] = formatDate(paramsSearch.toTime);
       delete paramsSearch["toTime"];
     }
     const response = await TreamentService.filter(paramsSearch, abortController.signal);
@@ -189,7 +190,7 @@ export default function ScheduleNextList() {
     item.customerPhone,
     item.serviceName,
     `Buổi thứ ${item.treatmentTh + 1}`,
-    moment(item.scheduleNext).format("HH:mm DD/MM/YYYY"),
+    formatDateCustom(item.scheduleNext, "HH:mm EEEEEE/MM/yyyy"),
     "",
     <a
       key={item.id}

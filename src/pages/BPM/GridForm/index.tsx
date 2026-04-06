@@ -26,7 +26,7 @@ import { showToast } from "utils/common";
 // import { setTime } from "react-datepicker/dist/date_utils";
 import ModalComment from "./partials/ModalComment";
 import DatePickerCustom from "components/datepickerCustom/datepickerCustom";
-import moment from "moment";
+import { formatDate } from "utils/dateUtils";
 // import ModalAddSupplier from "pages/Supplier/partials/ModalAddSupplier";
 import ActionRow from "./partials/ActionRowPopup/ActionRow";
 import { Textarea } from "@bpmn-io/form-js-viewer";
@@ -338,8 +338,8 @@ export default function GridFormNew(props: Record<string, unknown>) {
             };
           } else if (field.type == "time_range" && field?.timeRange) {
             let timeRange = JSON.parse(field.timeRange);
-            const startDate = moment(new Date(listMapKeyValue[rIdx][timeRange.startDate]), "MM/DD/YYYY");
-            const endDate = moment(new Date(listMapKeyValue[rIdx][timeRange.endDate]), "MM/DD/YYYY");
+            const startDate = new Date(new Date(listMapKeyValue[rIdx][timeRange.startDate]), "MM/DD/YYYY");
+            const endDate = new Date(new Date(listMapKeyValue[rIdx][timeRange.endDate]), "MM/DD/YYYY");
 
             let count = 0;
             let currentDate = startDate.clone();
@@ -635,8 +635,8 @@ export default function GridFormNew(props: Record<string, unknown>) {
             };
           } else if (field.type == "time_range" && field?.timeRange) {
             let timeRange = JSON.parse(field.timeRange);
-            const startDate = moment(new Date(listMapKeyValue[rIdx][timeRange.startDate]), "MM/DD/YYYY");
-            const endDate = moment(new Date(listMapKeyValue[rIdx][timeRange.endDate]), "MM/DD/YYYY");
+            const startDate = new Date(new Date(listMapKeyValue[rIdx][timeRange.startDate]), "MM/DD/YYYY");
+            const endDate = new Date(new Date(listMapKeyValue[rIdx][timeRange.endDate]), "MM/DD/YYYY");
 
             let count = 0;
             let currentDate = startDate.clone();
@@ -974,8 +974,8 @@ export default function GridFormNew(props: Record<string, unknown>) {
           const valueStart = element[nameValueStart] || "";
           const valueEnd = element[nameValueEnd] || "";
 
-          const startDate = valueStart ? moment(excelDateToJSDate(valueStart), "MM/DD/YYYY") : null;
-          const endDate = valueEnd ? moment(excelDateToJSDate(valueEnd), "MM/DD/YYYY") : null;
+          const startDate = valueStart ? new Date(excelDateToJSDate(valueStart), "MM/DD/YYYY") : null;
+          const endDate = valueEnd ? new Date(excelDateToJSDate(valueEnd), "MM/DD/YYYY") : null;
 
           let count = 0;
           if (startDate && endDate) {
@@ -1743,7 +1743,7 @@ export default function GridFormNew(props: Record<string, unknown>) {
                                     name={field.name}
                                     fill={false}
                                     // value={field.value}
-                                    value={field.value ? moment(field.value).format("DD/MM/YYYY") : ""}
+                                    value={field.value ? formatDate(field.value) : ""}
                                     iconPosition="left"
                                     disabled={!enableEditCell ? true : field.readOnly}
                                     // icon={<Icon name="Calendar" />}

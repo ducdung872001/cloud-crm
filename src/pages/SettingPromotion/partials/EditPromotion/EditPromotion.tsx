@@ -30,7 +30,8 @@ import { handleChangeValidate } from "utils/validate";
 import RepeatTime from "pages/Common/RepeatTime";
 import AddCustomerSendModal from "pages/Common/AddCustomerSendModal/AddCustomerSendModal";
 import Badge from "components/badge/badge";
-import moment from "moment";
+import { formatDateCustom } from "utils/dateUtils";
+
 import { formatCurrency } from "utils/common";
 
 interface IFilterUser {
@@ -1360,8 +1361,8 @@ export default function EditPromotion(props: Record<string, unknown>) {
                     <li>Áp dụng với {formData?.values?.status === "all" ? "tất cả khách hàng" : `${listIdCustomer.length} khách hàng`}</li>
                     {formData?.values?.startDate && (
                       <li>
-                        Áp dụng từ {moment(formData?.values?.startDate).format("HH:mm DD/MM/YYYY")}{" "}
-                        {isFinishTime && formData?.values?.endDate ? `đến ${moment(formData?.values?.endDate).format("HH:mm DD/MM/YYYY")}` : ""}
+                        Áp dụng từ {formatDateCustom(formData?.values?.startDate, "HH:mm EEEEEE/MM/yyyy")}{" "}
+                        {isFinishTime && formData?.values?.endDate ? `đến ${formatDateCustom(formData?.values?.endDate, "HH:mm EEEEEE/MM/yyyy")}` : ""}
                       </li>
                     )}
                     {/* {formValues.discountType === 'discount' &&

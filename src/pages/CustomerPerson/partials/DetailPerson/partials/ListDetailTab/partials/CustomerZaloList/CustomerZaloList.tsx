@@ -1,7 +1,8 @@
 import React, { Fragment, useEffect, useRef, useState } from "react";
 import cloneDeep from "lodash/cloneDeep";
 
-import moment from "moment";
+import { formatDate } from "utils/dateUtils";
+
 import Tippy from "@tippyjs/react";
 import Icon from "components/icon";
 import Loading from "components/loading";
@@ -200,7 +201,7 @@ export default function CustomerZaloList(props: ICustomerZaloListProps) {
 
                 <div className="info-item info-date">
                   <h4 className="title">Ngày gửi</h4>
-                  <h4 className="name">{item.createdTime ? moment(item.createdTime).format("DD/MM/YYYY") : ""}</h4>
+                  <h4 className="name">{item.createdTime ? formatDate(item.createdTime) : ""}</h4>
                 </div>
 
                 <div className="info-item info-status">

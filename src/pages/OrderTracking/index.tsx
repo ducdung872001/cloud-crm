@@ -17,7 +17,8 @@ import { getPageOffset, isDifferenceObj } from "reborn-util";
 import "./index.scss";
 import { useSearchParams } from "react-router-dom";
 import OrderRequestService from "services/OrderRequestService";
-import moment from "moment";
+import { formatDate } from "utils/dateUtils";
+
 import ModalRequestDetail from "./partials/ModalRequestDetail";
 import KanbanOrderTracking from "./partials/KanbanOrderTracking";
 import SelectCustom from "components/selectCustom/selectCustom";
@@ -223,7 +224,7 @@ export default function OrderTracking() {
     >
       {"Xem " + (item?.orderInfo ? JSON.parse(item.orderInfo)?.items?.length : "0") + " sản phẩm"}
     </a>,
-    item?.createdAt ? moment(item.createdAt).format("DD/MM/YYYY") : "",
+    item?.createdAt ? formatDate(item.createdAt) : "",
     item?.src || "",
     item?.note || "",
     <div

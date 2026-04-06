@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef, useCallback } from "react";
-import moment from "moment";
+import { formatDate } from "utils/dateUtils";
+
 import Loading from "components/loading";
 import "./Overview.scss";
 import ModalAddChannel from "./ModalAddChannel/ModalAddChannel";
@@ -42,7 +43,7 @@ const EMPTY_STAT: IStatCards = {
 export default function Overview() {
   document.title = "Bán hàng đa kênh";
 
-  const today  = moment().format("DD/MM/YYYY");
+  const today  = formatDate();
   const params = { fromTime: today, toTime: today, branchId: 0 };
 
   const [modalConnect, setModalConnect] = useState(false);

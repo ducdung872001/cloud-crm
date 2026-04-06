@@ -21,7 +21,8 @@ import "./AddTimeEventModal.scss";
 import Radio from "components/radio/radio";
 import Checkbox from "components/checkbox/checkbox";
 import DatePickerCustom from "components/datepickerCustom/datepickerCustom";
-import moment from "moment";
+import { formatDateCustom } from "utils/dateUtils";
+
 import { listDay } from "pages/CalendarCommon/partials/MockData";
 import DatePicker from "react-datepicker";
 
@@ -214,7 +215,7 @@ export default function AddTimeEventModal(props: Record<string, unknown>) {
         timeType: infoEvent.timeType,
         day_of_week: infoEvent.day_of_week,
         day_of_month: infoEvent.day_of_month,
-        time_action: moment(infoEvent.time_action).format('HH:mm'),
+        time_action: formatDateCustom(infoEvent.time_action, "HH:mm"),
         target: target
     }
 
@@ -416,7 +417,7 @@ export default function AddTimeEventModal(props: Record<string, unknown>) {
                                         fill={true}
                                         value={infoEvent.day.toString()}
                                         onChange={(e) => {
-                                            const newDate = new Date(moment(e).format("YYYY/MM/DD "));
+                                            const newDate = new Date(formatDateCustom(e, "yyyy/MM/dd "));
                                             setInfoEvent({...infoEvent, day: newDate})
                                         }}
                                         placeholder="Chọn ngày"

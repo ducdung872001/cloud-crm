@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
-import moment from "moment";
+import { formatDateCustom } from "utils/dateUtils";
+
 import { IOption } from "model/OtherModel";
 import Image from "components/image";
 import Loading from "components/loading";
@@ -282,7 +283,7 @@ export default function SocialCrmZalo() {
                                       <p className="preview-message">{item.content}</p>
                                     </div>
                                 </div>
-                                {/* <span className="time-chat">{moment(item.publishedTime).format("HH:mm")}</span> */}
+                                {/* <span className="time-chat">{formatDateCustom(item.publishedTime, "HH:mm")}</span> */}
                                 </div>
                             );
                           })

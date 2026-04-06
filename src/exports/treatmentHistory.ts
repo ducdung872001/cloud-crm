@@ -1,5 +1,6 @@
 import ExcelJS from "exceljs";
-import moment from "moment";
+import { formatDateCustom } from "utils/dateUtils";
+
 import fs from "file-saver";
 import { removeAccents } from "reborn-util";
 import { styles, columnFormat, columnWidth, formats } from "./config";
@@ -132,13 +133,13 @@ export async function ExportTreatmentHistoryExcel(
   //     options.footer = [options.footer];
   //   }
 
-  const nameWeekday = `${moment().format("dddd").charAt(0).toUpperCase() + moment().format("dddd").slice(1)}`;
+  const nameWeekday = `${formatDateCustom(, "EEEE").charAt(0).toUpperCase() + formatDateCustom(, "EEEE").slice(1)}`;
 
   const defaultInfoHeader = {
     avatar: beautySalon?.avatar,
     content: {
       name: beautySalon?.name || "Bảng theo dõi dịch vụ làm cho khách",
-      time: `${nameWeekday} - ${moment().format("DD/MM/YYYY HH:mm:ss")}`,
+      time: `${nameWeekday} - ${formatDateCustom(, "EEEEEE/MM/yyyy HH:mm:ss")}`,
       exporter: options.info?.name ?? name,
     },
   };
@@ -154,6 +155,6 @@ export async function ExportTreatmentHistoryExcel(
     const blob = new Blob([data], {
       type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
     });
-    fs.saveAs(blob, (options.fileName || options.title) + "-" + moment().format("YYYYMMDDHHmm") + ".xlsx");
+    fs.saveAs(blob, (options.fileName || options.title) + "-" + formatDateCustom(, "yyyyMMEEEEEEHHmm") + ".xlsx");
   });
 }

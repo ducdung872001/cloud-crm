@@ -1,7 +1,8 @@
 import React, { Fragment, useEffect, useMemo, useRef, useState } from "react";
 import cloneDeep from "lodash/cloneDeep";
 
-import moment from "moment";
+import { formatDateTime } from "utils/dateUtils";
+
 import { useNavigate, useSearchParams } from "react-router-dom";
 import Icon from "components/icon";
 import Loading from "components/loading";
@@ -302,9 +303,9 @@ export default function EmailMarkettingList(props) {
   const dataMappingArray = (item: ISendEmailResponseModel, index: number) => [
     getPageOffset(params) + index + 1,
     item.employeeName,
-    item.createdTime ? moment(item.createdTime).format("DD/MM/YYYY HH:mm") : "",
+    item.createdTime ? formatDateTime(item.createdTime) : "",
     item.title,
-    item.timeAt ? moment(item.timeAt).format("DD/MM/YYYY HH:mm") : "",
+    item.timeAt ? formatDateTime(item.timeAt) : "",
     <Badge
       key={item.id}
       text={item.statusAction === 0 ? "Chờ phê duyệt" : item.statusAction === 1 ? "Đã phê duyệt" : "Hủy yêu cầu"}

@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useMemo, Fragment, useRef } from "react";
 import { useReactToPrint } from "react-to-print";
-import moment from "moment";
+import { formatDateTime } from "utils/dateUtils";
+
 import ModalReceipt, { ModalBodyReceipt, ModalFooterReceipt } from "components/modalReceipt/modalReceipt";
 import Loading from "components/loading";
 import BoxTable from "components/boxTable/boxTable";
@@ -185,7 +186,7 @@ export default function ViewAdjustmentSlip(props: IViewAdjustmentSlipProps) {
               type={INVOICE_ADJUST_INVENTORY}
               name="Danh sách mặt hàng"
               code={data.stockAdjust.code}
-              billDate={moment(data.stockAdjust.created_at).format("DD/MM/YYYY HH:mm")}
+              billDate={formatDateTime(data.stockAdjust.created_at)}
               importer={data.stockAdjust.creatorName || name}
               address={data.stockAdjust.inventoryName}
               status={data.stockAdjust.status}

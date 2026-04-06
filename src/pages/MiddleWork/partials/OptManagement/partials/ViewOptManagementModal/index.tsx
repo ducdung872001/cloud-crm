@@ -1,5 +1,6 @@
 import React, { Fragment, useEffect, useMemo, useState } from "react";
-import moment from "moment";
+import { formatDateTime } from "utils/dateUtils";
+
 import { IActionModal } from "model/OtherModel";
 import { IViewProjectManagementModalProps } from "model/workProject/PropsModel";
 import Loading from "components/loading";
@@ -81,11 +82,11 @@ export default function ViewProjectManagementModal(props: IViewProjectManagement
                 )}
                 <div className={`item__info--left ${detailProjectManagement?.parentId !== 0 ? "dependent__sub" : ""} starttime--project`}>
                   <h4 className="title">Bắt đầu</h4>
-                  <h4 className="name">{moment(detailProjectManagement?.startTime).format("DD/MM/YYYY HH:mm")}</h4>
+                  <h4 className="name">{formatDateTime(detailProjectManagement?.startTime)}</h4>
                 </div>
                 <div className={`item__info--left ${detailProjectManagement?.parentId !== 0 ? "dependent__sub" : ""} endtime--project`}>
                   <h4 className="title">Kết thúc</h4>
-                  <h4 className="name">{moment(detailProjectManagement?.endTime).format("DD/MM/YYYY HH:mm")}</h4>
+                  <h4 className="name">{formatDateTime(detailProjectManagement?.endTime)}</h4>
                 </div>
                 <div className={`item__info--left ${detailProjectManagement?.parentId !== 0 ? "dependent__sub" : ""} content--project`}>
                   <h4 className="title">Nội dung</h4>

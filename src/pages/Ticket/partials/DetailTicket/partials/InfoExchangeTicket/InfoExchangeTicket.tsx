@@ -1,5 +1,6 @@
 import React, { Fragment, useState, useEffect, useContext, useRef } from "react";
-import moment from "moment";
+import { formatDateCustom } from "utils/dateUtils";
+
 import Icon from "components/icon";
 import Loading from "components/loading";
 import CustomScrollbar from "components/customScrollbar";
@@ -142,7 +143,7 @@ export default function InfoExchangeTicket(props: IInfoExchangeTicketProps) {
                       </div>
                       <div className="info__content--right">
                         <span className="time-content">
-                          {moment(item.createdTime).format("HH:mm")} {item.userId === id ? <Icon name="Checked" /> : ""}
+                          {formatDateCustom(item.createdTime, "HH:mm")} {item.userId === id ? <Icon name="Checked" /> : ""}
                         </span>
                       </div>
                       <div

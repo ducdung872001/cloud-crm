@@ -3,7 +3,8 @@ import React, { useState } from "react";
 import "./index.scss";
 import DatePickerCustom from "components/datepickerCustom/datepickerCustom";
 import TimeConfigBox from "./partial/TimeConfigBox";
-import moment from "moment";
+import { formatDateCustom } from "utils/dateUtils";
+
 import RunTimeConfig from "./partial/RunTimeConfig";
 
 export default function CycleConfig({ setFormData, formData, repeatDuration, setRepeatDuration, config, setConfig }: Record<string, unknown>) {
@@ -18,7 +19,7 @@ export default function CycleConfig({ setFormData, formData, repeatDuration, set
           fill={true}
           required={false}
           isFmtText={true}
-          value={formData.start ? moment(formData.start).format("DD/MM/YYYY HH:mm:ss") : ""}
+          value={formData.start ? formatDateCustom(formData.start, "EEEEEE/MM/yyyy HH:mm:ss") : ""}
           onChange={(e) => {
             setFormData((prev) => ({ ...prev, start: e ? e : null }));
           }}

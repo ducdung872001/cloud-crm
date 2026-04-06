@@ -1,7 +1,8 @@
 import React, { Fragment, useEffect, useRef, useState } from "react";
 import cloneDeep from "lodash/cloneDeep";
 
-import moment from "moment";
+import { formatDateTime } from "utils/dateUtils";
+
 import Loading from "components/loading";
 import SearchBox from "components/searchBox/searchBox";
 import BoxTable from "components/boxTable/boxTable";
@@ -379,7 +380,7 @@ export default function WarehouseBookList() {
     getPageOffset(params) + index + 1,
     renderRefCode(item),
     renderRefType(item),
-    item.createdTime ? moment(item.createdTime).format("DD/MM/YYYY HH:mm") : "—",
+    item.createdTime ? formatDateTime(item.createdTime) : "—",
     // Sản phẩm: tên + SKU/lô phụ
     <div key={`prod-${item.id}`}>
       <div className="wbl-prod-name">{item.productName ?? "—"}</div>

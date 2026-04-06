@@ -8,7 +8,8 @@ import Checkbox from "components/checkbox/checkbox";
 import Tippy from "@tippyjs/react";
 // import TippyInvoiceInfo from "./partials/TippyInvoiceInfo";
 import { formatCurrency } from "reborn-util";
-import moment from "moment";
+import { formatDate } from "utils/dateUtils";
+
 import Badge from "components/badge/badge";
 
 export default function TaskItem(props: Record<string, unknown>) {
@@ -119,8 +120,8 @@ export default function TaskItem(props: Record<string, unknown>) {
                 <div style={{ display: "flex" }}>
                   <Icon name="Calendar" style={{ width: 14, top: 0, fill: "#1c8cff" }} />
                   <span style={{ fontSize: 12, fontWeight: "500", marginLeft: 5 }}>
-                    {item.startDate ? moment(item.startDate).format("DD/MM/YYYY") : ""} -{" "}
-                    {item.endDate ? moment(item.endDate).format("DD/MM/YYYY") : ""}
+                    {item.startDate ? formatDate(item.startDate) : ""} -{" "}
+                    {item.endDate ? formatDate(item.endDate) : ""}
                   </span>
                 </div>
               ) : null}

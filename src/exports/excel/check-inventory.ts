@@ -1,4 +1,5 @@
-import moment from "moment";
+import { formatDate } from "utils/dateUtils";
+
 
 export const getCheckInventoryOneBillExcelDoc = (data) => {
   return {
@@ -21,7 +22,7 @@ export const getCheckInventoryOneBillExcelDoc = (data) => {
       i + 1,
       e.productName,
       e.number,
-      moment(e.expiryDate).format("DD/MM/YYYY"),
+      formatDate(e.expiryDate),
       e.unit_name,
       +e.amount,
       +e.current_amount,

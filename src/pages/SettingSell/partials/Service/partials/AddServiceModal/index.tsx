@@ -30,7 +30,8 @@ import CheckboxList from "components/checkbox/checkboxList";
 import Checkbox from "components/checkbox/checkbox";
 import RadioList from "components/radio/radioList";
 import DatePickerCustom from "components/datepickerCustom/datepickerCustom";
-import moment from "moment";
+import { formatDateCustom } from "utils/dateUtils";
+
 import ServiceAttributeService from "services/ServiceAttributeService";
 import ServiceExtraInfoService from "services/ServiceExtraInfoService";
 import CategoryServiceService from "services/CategoryServiceService";
@@ -899,7 +900,7 @@ export default function AddServiceModal(props: IAddServiceModalProps) {
             fill={true}
             value={getAttributeValue(attribute.id)}
             onChange={(e) => {
-              const newDate = new Date(moment(e).format("YYYY/MM/DD ") + moment(new Date()).format("HH:mm"));
+              const newDate = new Date(formatDateCustom(e, "yyyy/MM/dd ") + formatDateCustom(new Date(), "HH:mm"));
               updateAttribute(attribute.id, newDate);
             }}
             placeholder={`Nhập ${attribute.name.toLowerCase()}`}

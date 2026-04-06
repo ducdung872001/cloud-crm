@@ -1,7 +1,8 @@
 import React, { Fragment, useEffect, useMemo, useRef, useState } from "react";
 import cloneDeep from "lodash/cloneDeep";
 
-import moment from "moment";
+import { formatDateTime } from "utils/dateUtils";
+
 import Tippy from "@tippyjs/react";
 import { useSearchParams } from "react-router-dom";
 import Icon from "components/icon";
@@ -268,7 +269,7 @@ export default function SMSMarkettingList(props) {
   const dataMappingArray = (item: ISendSMSResponseModel, index: number) => [
     getPageOffset(params) + index + 1,
     item.employeeName,
-    item.createdTime ? moment(item.createdTime).format("DD/MM/YYYY HH:mm") : "",
+    item.createdTime ? formatDateTime(item.createdTime) : "",
     <span key={item.id}>
       {item.content && item.content.length > 52 ? (
         <Fragment>
@@ -280,7 +281,7 @@ export default function SMSMarkettingList(props) {
         item.content
       )}
     </span>,
-    item.timeAt ? moment(item.timeAt).format("DD/MM/YYYY HH:mm") : "",
+    item.timeAt ? formatDateTime(item.timeAt) : "",
     item.status == 1 ? <span className="pending-status">Đang chờ gửi</span> : <span className="success-status">Đã hoàn thành</span>,
     item.brandName,
     item.statusAction === 0 ? (

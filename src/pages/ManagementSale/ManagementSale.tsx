@@ -2,7 +2,8 @@ import React, { Fragment, useState, useEffect, useRef, useMemo, useContext } fro
 import cloneDeep from "lodash/cloneDeep";
 
 import Tippy from "@tippyjs/react";
-import moment from "moment";
+import { formatDate } from "utils/dateUtils";
+
 import { isDifferenceObj, formatCurrency, getPageOffset, getSearchParameters, trimContent } from "reborn-util";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { CircularProgressbar } from "react-circular-progressbar";
@@ -535,7 +536,7 @@ ${dataRows.join("\n")}
   const dataMappingArray = (item: Record<string, unknown>, index: number) => [
     getPageOffset(params) + index + 1,
     item.invoiceResponse?.invoiceCode,
-    item.invoiceResponse?.receiptDate ? moment(item.receiptDate).format("DD/MM/YYYY") : "",
+    item.invoiceResponse?.receiptDate ? formatDate(item.receiptDate) : "",
     formatCurrency(item.invoiceResponse?.amount || 0),
     0,
     formatCurrency(item.invoiceResponse?.discount || 0),

@@ -12,7 +12,8 @@ import ZnsTemplateService from "services/ZnsTemplateService";
 import AddZnsTemplate from "./partials/AddZnsTemplate";
 import TableZnsTemplate from "./partials/TableZnsTemplate";
 import "./index.scss";
-import moment from "moment";
+import { formatDateTime } from "utils/dateUtils";
+
 
 export default function ZnsTemplateModal(props: AddZnsTemplateModalProps) {
   const { onShow, onHide, zaloOa } = props;
@@ -88,7 +89,7 @@ export default function ZnsTemplateModal(props: AddZnsTemplateModalProps) {
   }
 
   const dataMappingArray = (item: IZnsTemplateResponse, index: number) => [index + 1, item.templateName, getStatusName(item.status),
-  moment(item.createdTime).format('DD/MM/YYYY HH:mm')
+  formatDateTime(item.createdTime)
   ];
 
   const actionsTable = (item: IZnsTemplateResponse): IAction[] => {

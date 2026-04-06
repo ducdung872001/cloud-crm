@@ -16,7 +16,8 @@ import ModalSetting from "../ModalUserTask/partials/ModalSetting";
 import ModalSelectNodeOther from "../ModalSelectNodeOther";
 import ModalDebug from "../ModalUserTask/partials/ModalDebug";
 import Checkbox from "components/checkbox/checkbox";
-import moment from "moment";
+import { formatDate } from "utils/dateUtils";
+
 import ListButtonHeader from "../../components/ListButtonHeader/ListButtonHeader";
 
 export default function ModalConditionalIntermediateCatchEvent({ onShow, onHide, dataNode, processId, changeNameNodeXML, disable }) {
@@ -830,13 +831,13 @@ export default function ModalConditionalIntermediateCatchEvent({ onShow, onHide,
               result[key] = data[key].map((rule) => {
                 if (rule.operator === "in" && rule.value !== undefined) {
                   if (rule.type === "date") {
-                    rule.value = JSON.stringify([moment(rule.value).format("DD/MM/YYYY")]);
+                    rule.value = JSON.stringify([formatDate(rule.value)]);
                   } else {
                     rule.value = JSON.stringify([rule.value]);
                   }
                 } else if (rule.type === "date") {
                   // && typeof rule.value === "string"
-                  rule.value = moment(rule.value).format("DD/MM/YYYY");
+                  rule.value = formatDate(rule.value);
                 }
     
                 return transformData(rule);

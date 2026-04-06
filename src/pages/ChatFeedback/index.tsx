@@ -1,5 +1,6 @@
 import React, { useContext, useEffect, useRef, useState } from "react";
-import moment from "moment";
+import { formatDateCustom } from "utils/dateUtils";
+
 import Icon from "components/icon";
 import Image from "components/image";
 import Loading from "components/loading";
@@ -258,7 +259,7 @@ export default function ChatFeedback() {
                         <div className="content-res">{item.medias && item.medias.length > 0 ? boxContentMedia(item) : item.content}</div>
                       </div>
                       <span className="time-content">
-                        {moment(item.createdTime).format("HH:mm")} <Icon name="Checked" />
+                        {formatDateCustom(item.createdTime, "HH:mm")} <Icon name="Checked" />
                       </span>
                     </div>
 

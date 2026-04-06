@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useMemo, Fragment, useRef } from "react";
-import moment from "moment";
+import { formatDate } from "utils/dateUtils";
+
 import { formatCurrency } from "reborn-util";
 import { IInvoiceResponse } from "model/invoice/InvoiceResponse";
 import { IHistoryUseCardModalProps } from "model/invoice/PropsModel";
@@ -50,7 +51,7 @@ export default function HistoryUseCardModal(props: IHistoryUseCardModalProps) {
   const dataMappingArray = (item: IInvoiceResponse, index: number) => [
     index + 1,
     item.invoiceCode,
-    moment(item.receiptDate).format("DD/MM/YYYY"),
+    formatDate(item.receiptDate),
     formatCurrency(item.fee),
     "0",
     formatCurrency(item.discount ? item.discount : "0"),

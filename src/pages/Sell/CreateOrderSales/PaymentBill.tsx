@@ -1,5 +1,6 @@
 import React, { Fragment, useState, useEffect, useContext } from "react";
-import moment from "moment";
+import { formatDateCustom } from "utils/dateUtils";
+
 import { useNavigate } from "react-router-dom";
 import { formatCurrency } from "reborn-util";
 import Tippy from "@tippyjs/react";
@@ -186,7 +187,7 @@ export default function PaymentBill(props: IPaymentBillProps) {
   const handleChangeValueReceiptDate = (e) => {
     setValidateFieldReceiptDate(false);
 
-    const newReceiptDate = new Date(moment(e).format("YYYY/MM/DD ") + moment(new Date()).format("HH:mm"));
+    const newReceiptDate = new Date(formatDateCustom(e, "yyyy/MM/dd ") + formatDateCustom(new Date(), "HH:mm"));
 
     setFormData({ ...formData, receiptDate: newReceiptDate });
   };

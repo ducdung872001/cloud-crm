@@ -40,7 +40,8 @@ import Button from "components/button/button";
 import Checkbox from "components/checkbox/checkbox";
 import Input from "components/input/input";
 import Popover from "components/popover/popover";
-import moment from "moment";
+import { formatDate } from "utils/dateUtils";
+
 import ExchangeFast from "./ExchangeFast";
 import ImportModal from "./ImportModal";
 import XmlAddContact from "./XmlAddContact";
@@ -828,7 +829,7 @@ export default function ContactList() {
               }
 
               if (ol.datatype === "date") {
-                return { ...ol, attributeValue: moment(ol.attributeValue).format("DD/MM/YYYY") };
+                return { ...ol, attributeValue: formatDate(ol.attributeValue) };
               }
 
               return ol;
@@ -1191,7 +1192,7 @@ export default function ContactList() {
             }
 
             if (ol.datatype === "date") {
-              return { ...ol, attributeValue: moment(ol.attributeValue).format("DD/MM/YYYY") };
+              return { ...ol, attributeValue: formatDate(ol.attributeValue) };
             }
 
             return ol;

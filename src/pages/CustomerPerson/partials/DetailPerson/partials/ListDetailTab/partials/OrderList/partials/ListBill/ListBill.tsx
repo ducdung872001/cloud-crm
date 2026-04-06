@@ -1,5 +1,6 @@
 import React, { Fragment, useEffect, useState } from "react";
-import moment from "moment";
+import { formatDate } from "utils/dateUtils";
+
 import Tippy from "@tippyjs/react";
 import { useParams } from "react-router-dom";
 import { formatCurrency, getPageOffset } from "reborn-util";
@@ -92,9 +93,9 @@ export default function ListBill(props: IListBillProps) {
       </span>,
 
       inv.createdTime
-        ? moment(inv.createdTime).format("DD/MM/YYYY")
+        ? formatDate(inv.createdTime)
         : inv.receiptDate
-          ? moment(inv.receiptDate).format("DD/MM/YYYY")
+          ? formatDate(inv.receiptDate)
           : "—",
 
       formatCurrency(inv.fee ?? inv.amount ?? 0),

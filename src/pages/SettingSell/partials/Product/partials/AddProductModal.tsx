@@ -29,7 +29,8 @@ import ProductExtraInfoService from "services/ProductExtraInfoService";
 import ProductAttributeService from "services/ProductAttributeService";
 import CategoryServiceService from "services/CategoryServiceService";
 import DatePickerCustom from "components/datepickerCustom/datepickerCustom";
-import moment from "moment";
+import { formatDateCustom } from "utils/dateUtils";
+
 import RadioList from "components/radio/radioList";
 import Checkbox from "components/checkbox/checkbox";
 import CheckboxList from "components/checkbox/checkboxList";
@@ -993,7 +994,7 @@ export default function AddProductModal(props: AddProductProps) {
             fill={true}
             value={getAttributeValue(attribute.id)}
             onChange={(e) => {
-              const newDate = new Date(moment(e).format("YYYY/MM/DD ") + moment(new Date()).format("HH:mm"));
+              const newDate = new Date(formatDateCustom(e, "yyyy/MM/dd ") + formatDateCustom(new Date(), "HH:mm"));
               updateAttribute(attribute.id, newDate);
             }}
             placeholder={`Nhập ${attribute.name.toLowerCase()}`}

@@ -19,7 +19,8 @@ import BusinessProcessService from "@/services/BusinessProcessService";
 import BeautyBranchService from "@/services/BeautyBranchService";
 import ImgPushCustomer from "assets/images/img-push.png";
 import ImageThirdGender from "assets/images/third-gender.png";
-import moment from "moment";
+import { formatDateCustom, isValidDate } from "utils/dateUtils";
+
 
 export default function AddProgramLoyaltyModal(props: AddProgramRoyaltyModalProps) {
   const { onShow, onHide, data } = props;
@@ -45,8 +46,8 @@ export default function AddProgramLoyaltyModal(props: AddProgramRoyaltyModalProp
       active: data?.active ?? true,
       priorityLevel: data?.priorityLevel ?? 0,
       processCode: data?.processCode ?? "",
-      startDate: data?.startDate ? moment(data.startDate) : "",
-      endDate: data?.endDate ? moment(data.endDate) : "",
+      startDate: data?.startDate ? new Date(data.startDate) : "",
+      endDate: data?.endDate ? new Date(data.endDate) : "",
     } as IProgramRoyaltyRequest),
     [data, onShow]
   );
@@ -284,8 +285,8 @@ export default function AddProgramLoyaltyModal(props: AddProgramRoyaltyModalProp
   const validateDateRange = (values: Record<string, unknown>) => {
     const errors: Record<string, string> = {};
     if (values?.startDate && values?.endDate) {
-      const start = moment(values.startDate);
-      const end = moment(values.endDate);
+      const start = new Date(values.startDate);
+      const end = new Date(values.endDate);
       if (start.isValid() && end.isValid() && !start.isBefore(end)) {
         errors["endDate"] = "Ngày kết thúc phải sau ngày bắt đầu";
       }
@@ -481,11 +482,11 @@ export default function AddProgramLoyaltyModal(props: AddProgramRoyaltyModalProp
       ...(data ? { id: data.id } : {}),
       processCode: (processData as Record<string, unknown>)?.code || formData.values.processCode || "",
       branchIds: JSON.stringify(formData.values.branchIds || []),
-      startDate: formData.values.startDate && moment(formData.values.startDate).isValid()
-        ? moment(formData.values.startDate).format("YYYY-MM-DDTHH:mm:ss")
+      startDate: formData.values.startDate && isValidDate(formData.values.startDate)
+        ? formatDateCustom(formData.values.startDate, "yyyy-MM-EEEEEETHH:mm:ss")
         : "",
-      endDate: formData.values.endDate && moment(formData.values.endDate).isValid()
-        ? moment(formData.values.endDate).format("YYYY-MM-DDTHH:mm:ss")
+      endDate: formData.values.endDate && isValidDate(formData.values.endDate)
+        ? formatDateCustom(formData.values.endDate, "yyyy-MM-EEEEEETHH:mm:ss")
         : "",
     };
 

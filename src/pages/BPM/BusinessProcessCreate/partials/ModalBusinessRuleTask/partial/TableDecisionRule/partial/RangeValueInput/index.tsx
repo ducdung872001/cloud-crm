@@ -1,6 +1,7 @@
 import DatePickerCustom from "components/datepickerCustom/datepickerCustom";
 import NummericInput from "components/input/numericInput";
-import moment from "moment";
+import { formatDate, isValidDate } from "utils/dateUtils";
+
 import React, { memo, useState, useEffect } from "react";
 import "./index.scss";
 
@@ -37,8 +38,8 @@ const RangeValueInput: React.FC<RangeValueInputProps> = ({ child, rowIndex, fiel
       });
     } else if (type === "date") {
       let haveError = false;
-      const val0 = child[0].value ? moment(child[0].value) : null;
-      const val1 = child[1].value ? moment(child[1].value) : null;
+      const val0 = child[0].value ? new Date(child[0].value) : null;
+      const val1 = child[1].value ? new Date(child[1].value) : null;
       if (val0 && val1 && val0.isValid() && val1.isValid() && !val0.isBefore(val1)) {
         setError("Ngày min phải nhỏ hơn ngày max");
         haveError = true;
@@ -97,7 +98,7 @@ const RangeValueInput: React.FC<RangeValueInputProps> = ({ child, rowIndex, fiel
           <DatePickerCustom
             name={child[0].name}
             fill={false}
-            value={child[0].value ? moment(child[0].value).format("DD/MM/YYYY") : ""}
+            value={child[0].value ? formatDate(child[0].value) : ""}
             iconPosition="left"
             onChange={(e) => {
               handChangeValueItem(rowIndex, fieldIndex, e, type, 0);
@@ -113,7 +114,7 @@ const RangeValueInput: React.FC<RangeValueInputProps> = ({ child, rowIndex, fiel
           <DatePickerCustom
             name={child[1].name}
             fill={false}
-            value={child[1].value ? moment(child[1].value).format("DD/MM/YYYY") : ""}
+            value={child[1].value ? formatDate(child[1].value) : ""}
             iconPosition="left"
             onChange={(e) => {
               handChangeValueItem(rowIndex, fieldIndex, e, type, 1);

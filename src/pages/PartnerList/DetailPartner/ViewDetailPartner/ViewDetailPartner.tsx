@@ -1,5 +1,6 @@
 import React, { useState, useEffect, Fragment, useMemo } from "react";
-import moment from "moment";
+import { formatDate } from "utils/dateUtils";
+
 import Tippy from "@tippyjs/react";
 import parser from "html-react-parser";
 import { useNavigate } from "react-router-dom";
@@ -74,7 +75,7 @@ export default function ViewDetailPartner(props: Record<string, unknown>) {
 
     return datatype === "date"
       ? attributeValue
-        ? moment(attributeValue).format("DD/MM/YYYY")
+        ? formatDate(attributeValue)
         : ""
       : datatype === "number"
       ? formatCurrency(attributeValue, ",", "")

@@ -1,5 +1,6 @@
 import React, { Fragment, useState, useEffect, useMemo, useCallback } from "react";
-import moment from "moment";
+import { formatDateCustom, isValidDate } from "utils/dateUtils";
+
 import { IActionModal } from "model/OtherModel";
 import { IFieldCustomize, IFormData, IValidation } from "model/FormModel";
 import FieldCustomize from "components/fieldCustomize/fieldCustomize";
@@ -21,7 +22,7 @@ interface Props {
 
 function toISODate(val: Record<string, unknown>): string {
   if (!val) return "";
-  const m = moment.isMoment(val) ? val : moment(val);
+  const m = moment.isMoment(val) ? val : new Date(val);
   return m.isValid() ? m.format("YYYY-MM-DD") : "";
 }
 
@@ -38,7 +39,7 @@ export default function AddPromoCodeModal({ onShow, data, onHide }: Props) {
     discountValue: String(data?.discountValue        ?? ""),
     minOrder:      String(data?.minOrder             ?? 0),
     maxUses:       String(data?.maxUses              ?? ""),
-    expiryDate:    data?.expiryDate ? moment(data.expiryDate) : "",
+    expiryDate:    data?.expiryDate ? new Date(data.expiryDate) : "",
     description:   data?.description                ?? "",
   }), [data, onShow]);
 

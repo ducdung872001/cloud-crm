@@ -3,7 +3,8 @@ import React, { Fragment, useCallback, useContext, useEffect, useMemo, useRef, u
 import isEqual from "lodash/isEqual";
 import cloneDeep from "lodash/cloneDeep";
 
-import moment from "moment";
+import { formatDate } from "utils/dateUtils";
+
 import Tippy from "@tippyjs/react";
 import { getSearchParameters, getPageOffset } from "reborn-util";
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
@@ -836,13 +837,13 @@ export default function PartnerList() {
                 name: item.name,
                 phoneMasked: item.phoneMasked,
                 profileLink: item.profileLink ? "Đi tới" : "",
-                lastBoughtDate: item.lastBoughtDate ? moment(item.lastBoughtDate).format("DD/MM/YYYY") : "",
+                lastBoughtDate: item.lastBoughtDate ? formatDate(item.lastBoughtDate) : "",
                 fee: formatCurrency(+item.fee || "0"),
                 paid: formatCurrency(+item.paid || "0"),
                 debt: item.debt ? "Tạo" : formatCurrency(+item.debt || "0"),
                 createOpportunities: "Tạo",
                 gender: item.gender === 1 ? "Nữ" : "Nam",
-                birthday: item.birthday ? moment(item.birthday).format("DD/MM/YYYY") : "",
+                birthday: item.birthday ? formatDate(item.birthday) : "",
                 lstOpportunities: item.custType ? await handleGetOpportunity(item.id) : null,
               },
               ...result
@@ -1057,7 +1058,7 @@ export default function PartnerList() {
         .flat()
         .map((ol) => {
           if (ol.datatype === "date") {
-            return { ...ol, attributeValue: moment(ol.attributeValue).format("DD/MM/YYYY") };
+            return { ...ol, attributeValue: formatDate(ol.attributeValue) };
           }
 
           return ol;
@@ -1364,7 +1365,7 @@ export default function PartnerList() {
           .flat()
           .map((ol) => {
             if (ol.datatype === "date") {
-              return { ...ol, attributeValue: moment(ol.attributeValue).format("DD/MM/YYYY") };
+              return { ...ol, attributeValue: formatDate(ol.attributeValue) };
             }
 
             return ol;

@@ -1,7 +1,8 @@
 import React, { Fragment, useState, useEffect, useCallback, useMemo, useRef, useContext } from "react";
 import isEqual from "lodash/isEqual";
 
-import moment from "moment";
+import { formatDateCustom } from "utils/dateUtils";
+
 import { getSearchParameters, isDifferenceObj, trimContent } from "reborn-util";
 import { IActionModal } from "model/OtherModel";
 import { IFieldCustomize, IFormData, IValidation } from "model/FormModel";
@@ -772,7 +773,7 @@ export default function ModalAddWorkBpm(props: Record<string, unknown>) {
                         name="startTime"
                         fill={true}
                         required={true}
-                        value={formData.values.startTime ? moment(formData.values.startTime).format("DD/MM/YYYY - HH:mm") : ""}
+                        value={formData.values.startTime ? formatDateCustom(formData.values.startTime, "EEEEEE/MM/yyyy - HH:mm") : ""}
                         onChange={(e) => {
                           setFormData({ ...formData, values: { ...formData?.values, startTime: e } });
                         }}
@@ -789,7 +790,7 @@ export default function ModalAddWorkBpm(props: Record<string, unknown>) {
                         name="endTime"
                         fill={true}
                         required={true}
-                        value={formData.values.endTime ? moment(formData.values.endTime).format("DD/MM/YYYY - HH:mm") : ""}
+                        value={formData.values.endTime ? formatDateCustom(formData.values.endTime, "EEEEEE/MM/yyyy - HH:mm") : ""}
                         onChange={(e) => {
                           setFormData({ ...formData, values: { ...formData?.values, endTime: e } });
                         }}

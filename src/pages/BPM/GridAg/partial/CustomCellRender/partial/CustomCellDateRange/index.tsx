@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useGridAg } from "pages/BPM/GridAg/GridAgContext";
-import moment from "moment";
+import {  } from "utils/dateUtils";
+
 
 const CustomCellDateRange = (props) => {
   const { rowData } = useGridAg();
@@ -14,8 +15,8 @@ const CustomCellDateRange = (props) => {
         setLabelDateRange("");
         return;
       }
-      const startDate = typeof dataRow[timeRange.startDate] !== "undefined" ? moment(new Date(dataRow[timeRange.startDate]), "MM/DD/YYYY") : moment();
-      const endDate = typeof dataRow[timeRange.endDate] !== "undefined" ? moment(new Date(dataRow[timeRange.endDate]), "MM/DD/YYYY") : moment();
+      const startDate = typeof dataRow[timeRange.startDate] !== "undefined" ? new Date(new Date(dataRow[timeRange.startDate]), "MM/DD/YYYY") : new Date();
+      const endDate = typeof dataRow[timeRange.endDate] !== "undefined" ? new Date(new Date(dataRow[timeRange.endDate]), "MM/DD/YYYY") : new Date();
 
       let count = 0;
       const currentDate = startDate.clone();

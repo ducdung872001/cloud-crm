@@ -17,7 +17,8 @@ import { urls } from "configs/urls";
 import SettingService from "services/SettingService";
 import AddSettingModal from "./partials/AddSettingModal";
 import { getPageOffset } from 'reborn-util';
-import moment from "moment";
+import { formatDate } from "utils/dateUtils";
+
 
 export default function SettingList() {
   document.title = "Cài đặt cấu hình chung";
@@ -128,8 +129,8 @@ export default function SettingList() {
     getPageOffset(params) + index + 1,
     item.name,
     item.code,
-    item.startDate ? moment(item.startDate).format("DD/MM/YYYY") : "",
-    item.endDate ? moment(item.endDate).format("DD/MM/YYYY") : "",
+    item.startDate ? formatDate(item.startDate) : "",
+    item.endDate ? formatDate(item.endDate) : "",
     item.value,
     item.type
   ];

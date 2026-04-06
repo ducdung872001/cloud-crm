@@ -36,7 +36,8 @@ import CheckboxList from "components/checkbox/checkboxList";
 import NummericInput from "components/input/numericInput";
 import TextArea from "components/textarea/textarea";
 import { Parser } from "formula-functionizer";
-import moment from "moment";
+import { formatDateCustom } from "utils/dateUtils";
+
 import ObjectExtraInfoService from "services/ObjectExtraInfoService";
 import ObjectAttributeService from "services/ObjectAttributeService";
 
@@ -782,7 +783,7 @@ export default function AddObject(props: IAddObjectProps) {
             fill={true}
             value={getCustomerAttributeValue(customerAttribute.id)}
             onChange={(e) => {
-              const newDate = new Date(moment(e).format("YYYY/MM/DD ") + moment(new Date()).format("HH:mm"));
+              const newDate = new Date(formatDateCustom(e, "yyyy/MM/dd ") + formatDateCustom(new Date(), "HH:mm"));
               updateCustomerAttribute(customerAttribute.id, newDate);
             }}
             placeholder={`Nhập ${customerAttribute.name.toLowerCase()}`}

@@ -19,7 +19,8 @@ import { getPageOffset } from 'reborn-util';
 import IntegrationPartnerService from "services/IntegrationPartnerService";
 import "./IntegratedMonitoring.scss";
 import Badge from "components/badge/badge";
-import moment from "moment";
+import { formatDate } from "utils/dateUtils";
+
 import Image from "components/image";
 
 export default function IntegratedMonitoring() {
@@ -148,7 +149,7 @@ export default function IntegratedMonitoring() {
       <Image src={item.partner.avatar || ''} alt={''} width={"64rem"} />
     </div>,
     item.partnerName || '',
-    item.syncedTime ? moment(item.syncedTime).format('DD/MM/YYYY') : '',
+    item.syncedTime ? formatDate(item.syncedTime) : '',
     item.messageType === 'product' ? 'Sản phẩm' : item.messageType === 'service' ? 'Dịch vụ' : '',
     <Badge
         key={item.id}

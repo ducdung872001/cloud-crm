@@ -1,5 +1,6 @@
 import React, { Fragment, useState, useEffect, useMemo, useCallback } from "react";
-import moment from "moment";
+import { formatDateCustom, isValidDate } from "utils/dateUtils";
+
 import { IActionModal } from "model/OtherModel";
 import { IFieldCustomize, IFormData, IValidation } from "model/FormModel";
 import FieldCustomize from "components/fieldCustomize/fieldCustomize";
@@ -32,7 +33,7 @@ interface Props {
  */
 function toISOStr(val: Record<string, unknown>): string {
   if (!val) return "";
-  const m = moment.isMoment(val) ? val : moment(val);
+  const m = moment.isMoment(val) ? val : new Date(val);
   return m.isValid() ? m.format("YYYY-MM-DDTHH:mm:ss") : "";
 }
 
@@ -55,8 +56,8 @@ export default function AddPromotionalModal({ onShow, data, onHide }: Props) {
   const values = useMemo(
     () => ({
       name:          data?.name                             ?? "",
-      startTime:     data?.startTime ? moment(data.startTime) : "",
-      endTime:       data?.endTime   ? moment(data.endTime)   : "",
+      startTime:     data?.startTime ? new Date(data.startTime) : "",
+      endTime:       data?.endTime   ? new Date(data.endTime)   : "",
       promotionType: String(data?.promotionType ?? 1),
       discount:      String(data?.discount      ?? ""),
       discountType:  String(data?.discountType  ?? 1),

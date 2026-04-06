@@ -19,6 +19,7 @@ import { SystemNotification } from "components/systemNotification/systemNotifica
 
 import "./ModalTypeForm.scss";
 import BpmFormArtifactService from "services/BpmFormArtifactService";
+import { formatDateCustom } from "utils/dateUtils";
 
 export default function ModalTypeForm({ onShow, onHide, dataComponent, callBack }) {
   const formRef = useRef(null);
@@ -252,7 +253,7 @@ export default function ModalTypeForm({ onShow, onHide, dataComponent, callBack 
             disabled={true}
             // value={getContractAttributeValue(contractAttribute.id)}
             // onChange={(e) => {
-            //   const newDate = new Date(moment(e).format("YYYY/MM/DD ") + moment(new Date()).format("HH:mm"));
+            //   const newDate = formatDateCustom(moment(e, "YYYY/MM/DD ") + moment(new Date()).format("HH:mm"));
             //   updateContractAttribute(contractAttribute.id, newDate);
             // }}
             placeholder={`Nhập ${contractAttribute.name.toLowerCase()}`}

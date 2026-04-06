@@ -9,7 +9,8 @@ import Loading from "components/loading";
 import BoxTable from "components/boxTable/boxTable";
 import { showToast } from "utils/common";
 import BusinessProcessService from "services/BusinessProcessService";
-import moment from "moment";
+import { formatDateTime } from "utils/dateUtils";
+
 
 
 export default function ModalHistoryOLA(props: Record<string, unknown>) {
@@ -41,7 +42,7 @@ export default function ModalHistoryOLA(props: Record<string, unknown>) {
       if(result && result.length > 0){
         result.map(item => {
           listHistory.push({
-            date: item.startTime ? moment(item.startTime).format('DD/MM/YYYY HH:mm') : '',
+            date: item.startTime ? formatDateTime(item.startTime) : '',
             responseTime: `${item.responseDay} ngày, ${item.responseHour} giờ, ${item.responseMinute} phút`,
             processedTime: `${item.processDay} ngày, ${item.processHour} giờ, ${item.processMinute} phút`,
           })

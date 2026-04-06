@@ -1,7 +1,8 @@
 import React, { Fragment, useState, useEffect, useRef, useContext } from "react";
 import cloneDeep from "lodash/cloneDeep";
 
-import moment from "moment";
+import { formatDate } from "utils/dateUtils";
+
 import { Link, useNavigate } from "react-router-dom";
 import { IAction, ISaveSearch } from "model/OtherModel";
 import { ICampaignFilterRequest } from "model/campaign/CampaignRequestModel";
@@ -200,8 +201,8 @@ export default function MarketingAutomationList() {
     >
       <a>Xem thêm</a>
     </div>,
-    item.startDate ? moment(item.startDate).format("DD/MM/YYYY") : "",
-    item.endDate ? moment(item.endDate).format("DD/MM/YYYY") : "",
+    item.startDate ? formatDate(item.startDate) : "",
+    item.endDate ? formatDate(item.endDate) : "",
     // item.startDate ,
     // item.endDate ,
     <Badge key={index} variant={item.status === 1 ? "success" : "secondary"} text={item.status === 1 ? "Đã phê duyệt" : "Chưa phê duyệt"} />,

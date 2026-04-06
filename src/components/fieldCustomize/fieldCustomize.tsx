@@ -8,7 +8,8 @@ import CheckboxList from "components/checkbox/checkboxList";
 import { getField, getTextFromReactElement } from "utils/common";
 import { convertToId, capitalize } from "reborn-util";
 import DatePickerCustom from "components/datepickerCustom/datepickerCustom";
-import moment from "moment";
+import {  } from "utils/dateUtils";
+
 import TextArea from "components/textarea/textarea";
 import RebornEditor from "components/editor/reborn";
 // import RebornEditor from "components/editor/richtext";
@@ -217,7 +218,7 @@ export default function FieldCustomize(props: { field: IFieldCustomize; handleUp
             placeholder={field.placeholder ? field.placeholder : field.hasSelectTime ? "hh:mm dd/mm/yyyy" : "dd/mm/yyyy"}
             onChange={(e) => {
               field.onChange ? field.onChange(e) : undefined;
-              handleUpdate(moment(e));
+              handleUpdate(new Date(e));
             }}
             disabled={field.disabled}
             required={field.required}

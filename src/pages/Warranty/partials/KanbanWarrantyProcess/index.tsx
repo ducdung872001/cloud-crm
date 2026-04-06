@@ -2,7 +2,8 @@ import React, { useState, useCallback, memo } from "react";
 import "./index.scss";
 import KanbanBpm from "components/kanbanBpm";
 import Icon from "components/icon";
-import moment from "moment";
+import { formatDateCustom } from "utils/dateUtils";
+
 import Badge from "components/badge/badge";
 import Tippy from "@tippyjs/react";
 import { Draggable } from "react-beautiful-dnd";
@@ -79,7 +80,7 @@ const KanbanWarrantyProcess = (props: Record<string, unknown>) => {
 
                 <div>
                   <span style={{ fontSize: 12, fontWeight: "400" }}>
-                    Thời gian tạo: {orderRequest?.createdAt ? moment(orderRequest?.createdAt).format("DD/MM/YYYY  HH:mm") : ""}
+                    Thời gian tạo: {orderRequest?.createdAt ? formatDateCustom(orderRequest?.createdAt, "EEEEEE/MM/yyyy  HH:mm") : ""}
                   </span>
                 </div>
 

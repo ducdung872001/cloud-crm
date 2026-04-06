@@ -6,7 +6,8 @@ import { ICustomerResponse } from "model/customer/CustomerResponseModel";
 import CustomerService from "services/CustomerService";
 import { getPermissions, showToast } from "utils/common";
 import "./DetailProject.scss";
-import moment from "moment";
+import { formatDate } from "utils/dateUtils";
+
 import { convertToId, formatCurrency } from "reborn-util";
 // import ProjectAttributeService from "services/ProjectAttributeService";
 // import ProjectExtraInfoService from "services/ProjectExtraInfoService";
@@ -151,7 +152,7 @@ export default function DetailProject() {
 
     return datatype === "date"
       ? attributeValue
-        ? moment(attributeValue).format("DD/MM/YYYY")
+        ? formatDate(attributeValue)
         : ""
       : datatype === "number"
       ? formatCurrency(attributeValue, ",", "")
@@ -258,8 +259,8 @@ export default function DetailProject() {
     departmentName: detailProject?.departmentName ?? "",
     employeeName: detailProject?.employeeName ?? "",
     lstParticipant: detailProject?.lstParticipant ?? [],
-    startTime: detailProject?.startTime ? moment(detailProject?.startTime).format("DD/MM/YYYY") : "",
-    endTime: detailProject?.endTime ? moment(detailProject?.endTime).format("DD/MM/YYYY") : "",
+    startTime: detailProject?.startTime ? formatDate(detailProject?.startTime) : "",
+    endTime: detailProject?.endTime ? formatDate(detailProject?.endTime) : "",
     description: detailProject?.description ?? "",
   };
 

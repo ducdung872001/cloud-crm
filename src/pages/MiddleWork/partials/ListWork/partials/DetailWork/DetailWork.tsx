@@ -1,6 +1,7 @@
 import React, { Fragment, memo, useEffect, useState } from "react";
 import { CircularProgressbar } from "react-circular-progressbar";
-import moment from "moment";
+import { formatDateTime } from "utils/dateUtils";
+
 import Icon from "components/icon";
 import Loading from "components/loading";
 import CustomScrollbar from "components/customScrollbar";
@@ -91,12 +92,12 @@ const DetailWork = (props: IDetailWorkProps) => {
     {
       className: "time-start",
       title: "Thời gian bắt đầu",
-      name: moment(data?.startTime).format("DD/MM/YYYY HH:mm"),
+      name: formatDateTime(data?.startTime),
     },
     {
       className: "time-end",
       title: "Thời gian kết thúc",
-      name: moment(data?.endTime).format("DD/MM/YYYY HH:mm"),
+      name: formatDateTime(data?.endTime),
     },
     {
       className: "amount-work",

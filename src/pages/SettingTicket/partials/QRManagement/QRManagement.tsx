@@ -1,5 +1,6 @@
 import React, { Fragment, useState, useEffect, useRef } from "react";
-import moment from "moment";
+import { formatDate } from "utils/dateUtils";
+
 import cloneDeep from "lodash/cloneDeep";
 
 import Icon from "components/icon";
@@ -130,8 +131,8 @@ export default function QRManagement(props) {
   const dataMappingArray = (item: Record<string, unknown>, index: number) => [
     getPageOffset(params) + index + 1,
     item.name,
-    moment(item.startDate).format("DD/MM/YYYY"),
-    moment(item.endDate).format("DD/MM/YYYY"),
+    formatDate(item.startDate),
+    formatDate(item.endDate),
   ];
 
   const actionsTable = (item: Record<string, unknown>): IAction[] => {

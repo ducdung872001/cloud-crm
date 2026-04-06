@@ -1,5 +1,6 @@
 import React, { Fragment, useEffect, useState } from "react";
-import moment from "moment";
+import { formatDate, formatDateCustom } from "utils/dateUtils";
+
 import Icon from "components/icon";
 import Button from "components/button/button";
 import TextArea from "components/textarea/textarea";
@@ -508,7 +509,7 @@ export default function DetailHistoryProcess(props) {
             fill={true}
             value={getContractAttributeValue(contractAttribute.id, contractAttribute.fieldName)}
             onChange={(e) => {
-              const newDate = new Date(moment(e).format("YYYY/MM/DD ") + moment(new Date()).format("HH:mm"));
+              const newDate = new Date(formatDateCustom(e, "yyyy/MM/dd ") + formatDateCustom(new Date(), "HH:mm"));
               updateContractAttribute(contractAttribute.id, newDate, contractAttribute.fieldName);
             }}
             placeholder={`Nhập ${contractAttribute.name.toLowerCase()}`}
@@ -889,7 +890,7 @@ export default function DetailHistoryProcess(props) {
                     <div>
                       <span style={{ fontSize: 14, fontWeight: "400" }}>
                         Thời gian xử lý:{" "}
-                        <span style={{ fontWeight: "500" }}>{item.processedTime ? moment(item.processedTime).format("DD/MM/YYYY") : ""}</span>
+                        <span style={{ fontWeight: "500" }}>{item.processedTime ? formatDate(item.processedTime) : ""}</span>
                       </span>
                     </div>
                   </div>

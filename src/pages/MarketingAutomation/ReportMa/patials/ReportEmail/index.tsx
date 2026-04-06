@@ -5,7 +5,8 @@ import ChartCustomerType from "./ChartCustomerType";
 import ChartActionByCustomerType from "./ChartActionByCustomerType";
 import ChartActionDaily from "./ChartActionDaily";
 import ChartActionCumulative from "./ChartActionCumulative";
-import moment from "moment";
+import { formatDate } from "utils/dateUtils";
+
 import MarketingAutomationService from "services/MarketingAutomationService";
 
 interface ICardItem {
@@ -21,8 +22,8 @@ interface ICardItem {
 type IReportCard = ICardItem[];
 
 export default function ReportEmail({ dataCampaign }) {
-  const startDateCampaign = dataCampaign?.startDate ? moment(dataCampaign.startDate).format("DD/MM/YYYY") : " ... ";
-  const endDateCampaign = dataCampaign?.endDate ? moment(dataCampaign.endDate).format("DD/MM/YYYY") : " ... ";
+  const startDateCampaign = dataCampaign?.startDate ? formatDate(dataCampaign.startDate) : " ... ";
+  const endDateCampaign = dataCampaign?.endDate ? formatDate(dataCampaign.endDate) : " ... ";
 
   const [params, setParams] = useState({
     maId: dataCampaign?.id,

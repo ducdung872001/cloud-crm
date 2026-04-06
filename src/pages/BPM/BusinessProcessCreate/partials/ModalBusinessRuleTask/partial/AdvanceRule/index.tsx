@@ -6,7 +6,8 @@ import Icon from "components/icon";
 import NummericInput from "components/input/numericInput";
 import Checkbox from "components/checkbox/checkbox";
 import DatePickerCustom from "components/datepickerCustom/datepickerCustom";
-import moment from "moment";
+import { formatDate } from "utils/dateUtils";
+
 import SelectCustom from "components/selectCustom/selectCustom";
 import Popover from "components/popover/popover";
 import ActionRow from "../ActionRowPopup/ActionRow";
@@ -403,8 +404,8 @@ export default function AdvaceRule({ dataNode, processId, childProcessId, dataCo
               };
             } else if (field.type == "time_range" && field?.timeRange) {
               let timeRange = JSON.parse(field.timeRange);
-              const startDate = moment(new Date(listMapKeyValue[rIdx][timeRange.startDate]), "MM/DD/YYYY");
-              const endDate = moment(new Date(listMapKeyValue[rIdx][timeRange.endDate]), "MM/DD/YYYY");
+              const startDate = new Date(new Date(listMapKeyValue[rIdx][timeRange.startDate]), "MM/DD/YYYY");
+              const endDate = new Date(new Date(listMapKeyValue[rIdx][timeRange.endDate]), "MM/DD/YYYY");
 
               let count = 0;
               let currentDate = startDate.clone();
@@ -962,7 +963,7 @@ export default function AdvaceRule({ dataNode, processId, childProcessId, dataCo
                                                         <DatePickerCustom
                                                           name={child.name}
                                                           fill={false}
-                                                          value={child.value ? moment(child.value).format("DD/MM/YYYY") : ""}
+                                                          value={child.value ? formatDate(child.value) : ""}
                                                           iconPosition="left"
                                                           //   disabled={!true ? true : field.readOnly}
                                                           // icon={<Icon name="Calendar" />}
@@ -1226,7 +1227,7 @@ export default function AdvaceRule({ dataNode, processId, childProcessId, dataCo
                                                     <DatePickerCustom
                                                       name={field.name}
                                                       fill={false}
-                                                      value={field.value ? moment(field.value).format("DD/MM/YYYY") : ""}
+                                                      value={field.value ? formatDate(field.value) : ""}
                                                       iconPosition="left"
                                                       //   disabled={!true ? true : field.readOnly}
                                                       // icon={<Icon name="Calendar" />}

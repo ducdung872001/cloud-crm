@@ -24,7 +24,8 @@ import AddEmailModal from "./partials/AddEmailModal";
 import { useMsal } from "@azure/msal-react";
 import { AccountInfo, SilentRequest } from "@azure/msal-browser";
 import { IEmployeeRequest } from "model/employee/EmployeeRequestModel";
-import moment from "moment";
+import { formatDateCustom } from "utils/dateUtils";
+
 import Tippy from "@tippyjs/react";
 import SendEmailModal from "./SendEmailModal/SendEmailModal";
 
@@ -177,7 +178,7 @@ export default function EmailList() {
         <span>{item.name}</span>
       </div>
       <label style={{ fontStyle: "italic", fontSize: "1.3rem" }}>{item.emailFrom}</label>
-      <label style={{ fontStyle: "italic", fontSize: "1.3rem" }}>{moment(item.receivedDateTime).format("DD/MM/YYYY HH:mm:ss")}</label>
+      <label style={{ fontStyle: "italic", fontSize: "1.3rem" }}>{formatDateCustom(item.receivedDateTime, "EEEEEE/MM/yyyy HH:mm:ss")}</label>
     </div>,
     item.title,
     <Fragment key={index}>

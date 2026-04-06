@@ -12,7 +12,8 @@ import { DataPaginationDefault, PaginationProps } from "components/pagination/pa
 import { useSearchParams } from "react-router-dom";
 import cloneDeep from "lodash/cloneDeep";
 
-import moment from "moment";
+import { formatDate } from "utils/dateUtils";
+
 import { getPageOffset } from "reborn-util";
 import ApplicationService from "services/ApplicationService";
 import Badge from "components/badge/badge";
@@ -178,7 +179,7 @@ export default function ExtensionList() {
     item.phone,
     item.code,
     item.packageName,
-    item.startDate ? moment(item.startDate).format("DD/MM/YYYY") : "",
+    item.startDate ? formatDate(item.startDate) : "",
     <Badge
       key={item.id}
       text={`${!item.status ? "Chưa thanh toán" : item.status === 1 ? "Đã thanh toán" : item.status === 2 ? "Chờ thanh toán" : "Thất bại"}`}

@@ -6,7 +6,8 @@ import Input from "components/input/input";
 import SelectLookupGrid from "./partials/SelectLookupGrid";
 import Checkbox from "components/checkbox/checkbox";
 import DatePickerCustom from "components/datepickerCustom/datepickerCustom";
-import moment from "moment";
+import {  } from "utils/dateUtils";
+
 import { useGridAg } from "../../GridAgContext";
 import { Parser } from "formula-functionizer";
 import { genKeyLookupGrid } from "../../function/lookupGrid";
@@ -93,9 +94,9 @@ const CustomCellEdit = (props) => {
   //         const timeRange = JSON.parse(col.timeRange);
   //         const dataRow = props.data;
   //         const startDate =
-  //           props.colDef.field == timeRange.startDate ? moment(_value, "MM/DD/YYYY") : moment(new Date(dataRow[timeRange.startDate]), "MM/DD/YYYY");
+  //           props.colDef.field == timeRange.startDate ? new Date(_value, "MM/DD/YYYY") : new Date(new Date(dataRow[timeRange.startDate]), "MM/DD/YYYY");
   //         const endDate =
-  //           props.colDef.field == timeRange.endDate ? moment(_value, "MM/DD/YYYY") : moment(new Date(dataRow[timeRange.endDate]), "MM/DD/YYYY");
+  //           props.colDef.field == timeRange.endDate ? new Date(_value, "MM/DD/YYYY") : new Date(new Date(dataRow[timeRange.endDate]), "MM/DD/YYYY");
   //         let count = 0;
   //         const currentDate = startDate.clone();
 
@@ -242,10 +243,10 @@ const CustomCellEdit = (props) => {
           const dataRow = newData;
           const startDate =
             fieldKey === timeRange.startDate
-              ? moment(_value, "MM/DD/YYYY")
-              : moment(new Date(safeGet(dataRow, timeRange.startDate, null)), "MM/DD/YYYY");
+              ? new Date(_value, "MM/DD/YYYY")
+              : new Date(new Date(safeGet(dataRow, timeRange.startDate, null)), "MM/DD/YYYY");
           const endDate =
-            fieldKey === timeRange.endDate ? moment(_value, "MM/DD/YYYY") : moment(new Date(safeGet(dataRow, timeRange.endDate, null)), "MM/DD/YYYY");
+            fieldKey === timeRange.endDate ? new Date(_value, "MM/DD/YYYY") : new Date(new Date(safeGet(dataRow, timeRange.endDate, null)), "MM/DD/YYYY");
 
           let count = -1;
           const currentDate = startDate.clone();

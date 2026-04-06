@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useMemo, Fragment, useRef } from "react";
 import { useReactToPrint } from "react-to-print";
-import moment from "moment";
+import { formatDate } from "utils/dateUtils";
+
 import ModalReceipt, { ModalBodyReceipt, ModalFooterReceipt, ModalReceiptHeader } from "components/modalReceipt/modalReceipt";
 import { IBeautyBranchResponse } from "model/beautyBranch/BeautyBranchResponseModel";
 import { IActionModal } from "model/OtherModel";
@@ -116,7 +117,7 @@ export default function SeeReceipt(props: SeeReceiptProps) {
                 phone={detaiInvoice?.employeePhone}
                 address={detaiInvoice?.employeeAddress}
                 importer={detaiInvoice?.employeeName}
-                billDate={moment(detaiInvoice?.receiptDate).format("DD/MM/YYYY")}
+                billDate={formatDate(detaiInvoice?.receiptDate)}
                 totalMoney={detaiInvoice?.amount || 0}
                 discount={detaiInvoice?.discount || 0}
                 vat={0}

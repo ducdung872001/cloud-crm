@@ -2,7 +2,8 @@ import React, { Fragment, useState, useEffect, useRef } from "react";
 import cloneDeep from "lodash/cloneDeep";
 
 import Tippy from "@tippyjs/react";
-import moment from "moment";
+import { formatDate } from "utils/dateUtils";
+
 import Button from "components/button/button";
 import { formatCurrency, getPageOffset } from "reborn-util";
 import { showToast } from "utils/common";
@@ -107,7 +108,7 @@ export default function TransactionInformation({ data }) {
 
   const dataMappingArray = (item: Record<string, unknown>, index: number) => [
     getPageOffset(params) + index + 1,
-    item.transactionDate ? moment(item.transactionDate).format("DD/MM/YYYY") : "",
+    item.transactionDate ? formatDate(item.transactionDate) : "",
     formatCurrency(item.casa, ","),
     formatCurrency(item.fd, ","),
     formatCurrency(item.trf, ","),

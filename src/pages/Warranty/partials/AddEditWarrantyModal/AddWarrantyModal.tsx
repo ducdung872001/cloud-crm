@@ -6,7 +6,8 @@ import { IWarrantyRequestModel } from "model/warranty/WarrantyRequestModel";
 import { IEmployeeFilterRequest } from "model/employee/EmployeeRequestModel";
 import { IWarrantyCategoryFilterRequest } from "model/warrantyCategory/WarrantyCategoryRequestModel";
 import Icon from "components/icon";
-import moment from "moment";
+import { formatDateCustom } from "utils/dateUtils";
+
 import SelectCustom from "components/selectCustom/selectCustom";
 import Dialog, { IContentDialog } from "components/dialog/dialog";
 import Modal, { ModalBody, ModalFooter, ModalHeader } from "components/modal/modal";
@@ -394,8 +395,8 @@ export default function AddWarrantyModal(props: IAddWarrantyModelProps) {
       ...(formData.values as IWarrantyRequestModel),
       ...(saleflowId ? { saleflowId: saleflowId } : {}),
       ...(sieId ? { sieId: sieId } : {}),
-      startDate: moment(formData.values.startDate).format('YYYY-MM-DDTHH:mm:ss'),
-      endDate: moment(formData.values.endDate).format('YYYY-MM-DDTHH:mm:ss'),
+      startDate: formatDateCustom(formData.values.startDate, "yyyy-MM-EEEEEETHH:mm:ss"),
+      endDate: formatDateCustom(formData.values.endDate, "yyyy-MM-EEEEEETHH:mm:ss"),
     };
 
     const response = await WarrantyService.update(body);

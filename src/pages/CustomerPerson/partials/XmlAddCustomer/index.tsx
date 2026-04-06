@@ -16,7 +16,8 @@ import Loading from "components/loading";
 import FormViewerComponent from "pages/BPM/BpmForm/FormViewer";
 import ObjectGroupService from "services/ObjectGroupService";
 import { mapConfigData } from "utils/mapConfigData";
-import moment from "moment";
+import { formatDateCustom } from "utils/dateUtils";
+
 
 const defaultSchema = {
   type: "default",
@@ -81,11 +82,11 @@ export default function XmlAddCustomer(props: Record<string, unknown>) {
 
   const toFormDate = (value) => {
     if (!value) return "";
-    return moment(value).format("YYYY-MM-DD");
+    return formatDateCustom(value, "yyyy-MM-dd");
   };
 
   const toApiDate = (value: Record<string, unknown>) => {
-    return value ? moment(value, ["MM-DD-YYYY", moment.ISO_8601]).format("YYYY-MM-DDTHH:mm:ss") : "";
+    return value ? formatDateCustom(value, ["MM-DD-YYYY", moment.ISO_8601], "yyyy-MM-EEEEEETHH:mm:ss") : "";
   };
 
   const normalizeMultiSelectToString = (input: Record<string, unknown>) => {

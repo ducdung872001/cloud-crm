@@ -1,5 +1,6 @@
 import React, { Fragment, useEffect, useMemo, useState } from "react";
-import moment from "moment";
+import { formatDate } from "utils/dateUtils";
+
 import Loading from "components/loading";
 import Image from "components/image";
 import BoxTable from "components/boxTable/boxTable";
@@ -28,7 +29,7 @@ export default function ViewDetailLoginModal({ onShow, onHide, data }) {
 
     const params = {
       userId: data.id,
-      date: moment(data.actionTime).format("DD/MM/YYYY"),
+      date: formatDate(data.actionTime),
     };
 
     const response = await UserService.detailTimeLogin(params);

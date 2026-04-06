@@ -10,7 +10,8 @@ import WorkOrderService from "services/WorkOrderService";
 import { ContextType, UserContext } from "contexts/userContext";
 import BusinessProcessService from "services/BusinessProcessService";
 import { ExportExcel } from "exports";
-import moment from "moment";
+import { formatDateCustom } from "utils/dateUtils";
+
 
 export default function ModalSelectProcessOLA(props: Record<string, unknown>) {
   const { onShow, onHide, data } = props;
@@ -186,11 +187,11 @@ export default function ModalSelectProcessOLA(props: Record<string, unknown>) {
           `${item.planExecutionDay || 0} ngày, ${item.planExecutionHour < 10 ? `0${item.planExecutionHour || 0}` : item.planExecutionHour}:${
             item.planExecutionMinute < 10 ? `0${item.planExecutionMinute || 0}` : item.planExecutionMinute
           }`,
-          item.transitTime ? moment(item.transitTime).format("DD/MM/YYYY HH:mm:ss") : "",
-          item.firstSeenTime ? moment(item.firstSeenTime).format("DD/MM/YYYY HH:mm:ss") : "",
-          item.receivedTime ? moment(item.receivedTime).format("DD/MM/YYYY HH:mm:ss") : "",
-          item.processedTime ? moment(item.processedTime).format("DD/MM/YYYY HH:mm:ss") : "",
-          item.lastProcessedTime ? moment(item.lastProcessedTime).format("DD/MM/YYYY HH:mm:ss") : "",
+          item.transitTime ? formatDateCustom(item.transitTime, "EEEEEE/MM/yyyy HH:mm:ss") : "",
+          item.firstSeenTime ? formatDateCustom(item.firstSeenTime, "EEEEEE/MM/yyyy HH:mm:ss") : "",
+          item.receivedTime ? formatDateCustom(item.receivedTime, "EEEEEE/MM/yyyy HH:mm:ss") : "",
+          item.processedTime ? formatDateCustom(item.processedTime, "EEEEEE/MM/yyyy HH:mm:ss") : "",
+          item.lastProcessedTime ? formatDateCustom(item.lastProcessedTime, "EEEEEE/MM/yyyy HH:mm:ss") : "",
           item.repeatNumber,
           `${item.actualResponseDay || 0} ngày, ${item.actualResponseHour < 10 ? `0${item.actualResponseHour || 0}` : item.actualResponseHour}:${
             item.actualResponseMinute < 10 ? `0${item.actualResponseMinute}` : item.actualResponseMinute

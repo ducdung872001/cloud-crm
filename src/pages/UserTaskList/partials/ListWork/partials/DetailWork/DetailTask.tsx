@@ -1,6 +1,7 @@
 import React, { Fragment, memo, useCallback, useEffect, useState } from "react";
 import { CircularProgressbar } from "react-circular-progressbar";
-import moment from "moment";
+import { formatDateTime, formatDateCustom } from "utils/dateUtils";
+
 import Icon from "components/icon";
 import Loading from "components/loading";
 import CustomScrollbar from "components/customScrollbar";
@@ -272,12 +273,12 @@ const DetailTask = (props: Record<string, unknown>) => {
   //   {
   //     className: "time-start",
   //     title: "Thời gian bắt đầu",
-  //     name: moment(data?.startTime).format("DD/MM/YYYY HH:mm"),
+  //     name: formatDateTime(data?.startTime),
   //   },
   //   {
   //     className: "time-end",
   //     title: "Thời gian kết thúc",
-  //     name: moment(data?.endTime).format("DD/MM/YYYY HH:mm"),
+  //     name: formatDateTime(data?.endTime),
   //   },
   //   {
   //     className: "amount-work",
@@ -450,11 +451,11 @@ const DetailTask = (props: Record<string, unknown>) => {
           `${item.planExecutionDay || 0} ngày, ${item.planExecutionHour < 10 ? `0${item.planExecutionHour || 0}` : item.planExecutionHour}:${
             item.planExecutionMinute < 10 ? `0${item.planExecutionMinute || 0}` : item.planExecutionMinute
           }`,
-          item.transitTime ? moment(item.transitTime).format("DD/MM/YYYY HH:mm:ss") : "",
-          item.firstSeenTime ? moment(item.firstSeenTime).format("DD/MM/YYYY HH:mm:ss") : "",
-          item.receivedTime ? moment(item.receivedTime).format("DD/MM/YYYY HH:mm:ss") : "",
-          item.processedTime ? moment(item.processedTime).format("DD/MM/YYYY HH:mm:ss") : "",
-          item.lastProcessedTime ? moment(item.lastProcessedTime).format("DD/MM/YYYY HH:mm:ss") : "",
+          item.transitTime ? formatDateCustom(item.transitTime, "EEEEEE/MM/yyyy HH:mm:ss") : "",
+          item.firstSeenTime ? formatDateCustom(item.firstSeenTime, "EEEEEE/MM/yyyy HH:mm:ss") : "",
+          item.receivedTime ? formatDateCustom(item.receivedTime, "EEEEEE/MM/yyyy HH:mm:ss") : "",
+          item.processedTime ? formatDateCustom(item.processedTime, "EEEEEE/MM/yyyy HH:mm:ss") : "",
+          item.lastProcessedTime ? formatDateCustom(item.lastProcessedTime, "EEEEEE/MM/yyyy HH:mm:ss") : "",
           item.repeatNumber,
           `${item.actualResponseDay || 0} ngày, ${item.actualResponseHour < 10 ? `0${item.actualResponseHour || 0}` : item.actualResponseHour}:${
             item.actualResponseMinute < 10 ? `0${item.actualResponseMinute}` : item.actualResponseMinute
@@ -640,11 +641,11 @@ const DetailTask = (props: Record<string, unknown>) => {
                   : JSON.parse(item.ola)?.processTime?.minute
               }`
             : "",
-          item.transitTime ? moment(item.transitTime).format("DD/MM/YYYY HH:mm:ss") : "",
-          item.firstSeenTime ? moment(item.firstSeenTime).format("DD/MM/YYYY HH:mm:ss") : "",
-          item.receivedTime ? moment(item.receivedTime).format("DD/MM/YYYY HH:mm:ss") : "",
-          item.processedTime ? moment(item.processedTime).format("DD/MM/YYYY HH:mm:ss") : "",
-          item.lastProcessedTime ? moment(item.lastProcessedTime).format("DD/MM/YYYY HH:mm:ss") : "",
+          item.transitTime ? formatDateCustom(item.transitTime, "EEEEEE/MM/yyyy HH:mm:ss") : "",
+          item.firstSeenTime ? formatDateCustom(item.firstSeenTime, "EEEEEE/MM/yyyy HH:mm:ss") : "",
+          item.receivedTime ? formatDateCustom(item.receivedTime, "EEEEEE/MM/yyyy HH:mm:ss") : "",
+          item.processedTime ? formatDateCustom(item.processedTime, "EEEEEE/MM/yyyy HH:mm:ss") : "",
+          item.lastProcessedTime ? formatDateCustom(item.lastProcessedTime, "EEEEEE/MM/yyyy HH:mm:ss") : "",
           item.repeatNumber,
           `${item.actualResponseDay || 0} ngày, ${item.actualResponseHour < 10 ? `0${item.actualResponseHour || 0}` : item.actualResponseHour}:${
             item.actualResponseMinute < 10 ? `0${item.actualResponseMinute}` : item.actualResponseMinute
@@ -1105,11 +1106,11 @@ const DetailTask = (props: Record<string, unknown>) => {
                         <div className="line_3">
                           <div className="start_time">
                             <span className="title">Thời gian bắt đầu</span>
-                            <div className="content">{moment(data?.startTime).format("HH:mm DD/MM/YYYY")}</div>
+                            <div className="content">{formatDateCustom(data?.startTime, "HH:mm EEEEEE/MM/yyyy")}</div>
                           </div>
                           <div className="end_time">
                             <span className="title">Thời gian kết thúc</span>
-                            <div className="content">{moment(data?.endTime).format("HH:mm DD/MM/YYYY")}</div>
+                            <div className="content">{formatDateCustom(data?.endTime, "HH:mm EEEEEE/MM/yyyy")}</div>
                           </div>
                         </div>
 
@@ -1463,7 +1464,7 @@ const DetailTask = (props: Record<string, unknown>) => {
                                 </div>
                                 <div className="time">
                                   <span style={{ fontSize: 12, fontWeight: "500", color: "#939394" }}>
-                                    {moment(item.createdTime).format("DD/MM/YYYY - HH:mm")}
+                                    {formatDateCustom(item.createdTime, "EEEEEE/MM/yyyy - HH:mm")}
                                   </span>
                                 </div>
                               </div>

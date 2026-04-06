@@ -1,7 +1,8 @@
 import React, { Fragment, useEffect, useRef, useState } from "react";
 import cloneDeep from "lodash/cloneDeep";
 
-import moment from "moment";
+import { formatDate } from "utils/dateUtils";
+
 import { IAction, ISaveSearch } from "model/OtherModel";
 import { ITipUserDetail } from "model/tipUser/PropsModel";
 import Icon from "components/icon";
@@ -120,8 +121,8 @@ export default function TipUserDetail(props: ITipUserDetail) {
   const dataMappingArray = (item, index: number) => [
     getPageOffset(params) + index + 1,
     item.name,
-    item.startDate ? moment(item.startDate).format("DD/MM/YYYY") : "",
-    item.endDate ? moment(item.endDate).format("DD/MM/YYYY") : "",
+    item.startDate ? formatDate(item.startDate) : "",
+    item.endDate ? formatDate(item.endDate) : "",
     <a
       key={item.id}
       onClick={(e) => {

@@ -8,7 +8,8 @@ import { SystemNotification } from "components/systemNotification/systemNotifica
 import { ContextType, UserContext } from "contexts/userContext";
 import { IContractFilterRequest } from "model/contract/ContractRequestModel";
 import { IContractResponse } from "model/contract/ContractResponseModel";
-import moment from "moment";
+import { formatDate } from "utils/dateUtils";
+
 import React, { Fragment, useContext, useEffect, useRef, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { getPageOffset } from "reborn-util";
@@ -516,7 +517,7 @@ export default function TableContractReport({ dataProjectReport }) {
         .flat()
         .map((ol) => {
           if (ol.datatype === "date") {
-            return { ...ol, attributeValue: moment(ol.attributeValue).format("DD/MM/YYYY") };
+            return { ...ol, attributeValue: formatDate(ol.attributeValue) };
           }
 
           return ol;

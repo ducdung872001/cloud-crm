@@ -2,7 +2,8 @@ import React, { Fragment, useEffect, useMemo, useState } from "react";
 import cloneDeep from "lodash/cloneDeep";
 import isEqual from "lodash/isEqual";
 
-import moment from "moment";
+import { formatDate } from "utils/dateUtils";
+
 import Tippy from "@tippyjs/react";
 import { convertParamsToString, createArrayFromTo, createArrayFromToR } from "reborn-util";
 import Icon from "components/icon";
@@ -1451,13 +1452,13 @@ export default function AddCustomerSegment(props: IAddCustomerSegmentProps) {
           result[key] = data[key].map((rule) => {
             if (rule.operator === "in" && rule.value !== undefined) {
               if (rule.type === "date") {
-                rule.value = JSON.stringify([moment(rule.value).format("DD/MM/YYYY")]);
+                rule.value = JSON.stringify([formatDate(rule.value)]);
               } else {
                 rule.value = JSON.stringify([rule.value]);
               }
             } else if (rule.type === "date") {
               // && typeof rule.value === "string"
-              rule.value = moment(rule.value).format("DD/MM/YYYY");
+              rule.value = formatDate(rule.value);
             }
 
             return transformData(rule);

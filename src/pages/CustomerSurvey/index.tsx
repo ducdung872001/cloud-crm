@@ -1,7 +1,8 @@
 import React, { Fragment, useState, useEffect, useRef } from "react";
 import cloneDeep from "lodash/cloneDeep";
 
-import moment from "moment";
+import { formatDate } from "utils/dateUtils";
+
 import Icon from "components/icon";
 import Loading from "components/loading";
 import SearchBox from "components/searchBox/searchBox";
@@ -135,8 +136,8 @@ export default function CustomerSurvey() {
   const dataMappingArray = (item, index: number) => [
     getPageOffset(params) + index + 1,
     item.name,
-    moment(item.startTime).format("DD/MM/YYYY"),
-    moment(item.endTime).format("DD/MM/YYYY"),
+    formatDate(item.startTime),
+    formatDate(item.endTime),
     <a
       key={item.id}
       onClick={() => {

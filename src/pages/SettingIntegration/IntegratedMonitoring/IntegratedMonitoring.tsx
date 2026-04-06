@@ -19,7 +19,8 @@ import "./IntegratedMonitoring.scss";
 import Badge from "components/badge/badge";
 import IntegrationPartnerService from "services/IntegrationPartnerService";
 import WorkTypeService from "services/WorkTypeService";
-import moment from "moment";
+import { formatDate } from "utils/dateUtils";
+
 import { IWorkTypeFilterRequest } from "model/workType/WorkTypeRequestModel";
 
 export default function IntegratedMonitoring(props: Record<string, unknown>) {
@@ -150,7 +151,7 @@ export default function IntegratedMonitoring(props: Record<string, unknown>) {
       <Image src={item.partner.avatar || ''} alt={''} width={"64rem"} />
     </div>,
     item.partnerName || '',
-    item.syncedTime ? moment(item.syncedTime).format('DD/MM/YYYY') : '',
+    item.syncedTime ? formatDate(item.syncedTime) : '',
     item.messageType === 'product' ? 'Sản phẩm' : item.messageType === 'service' ? 'Dịch vụ' : '',
     <Badge
         key={item.id}

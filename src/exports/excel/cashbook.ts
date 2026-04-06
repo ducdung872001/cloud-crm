@@ -1,6 +1,7 @@
 import VNnum2words from "vn-num2words";
 import { ExportExcel } from "exports/excel";
-import moment from "moment";
+import { formatDateCustom } from "utils/dateUtils";
+
 
 export const exportExcelCashbookOverview = (searchParams, cashBookData, info) => {
   // const state = store.getState();
@@ -10,7 +11,7 @@ export const exportExcelCashbookOverview = (searchParams, cashBookData, info) =>
     ["Số điện thoại", info.product_store.phone],
     ["Địa chỉ", info.product_store.address],
     ["Người tạo", info.name],
-    ["Ngày xuất phiếu", `${moment().format("YYYY-MM-DD")}`],
+    ["Ngày xuất phiếu", `${formatDateCustom(, "yyyy-MM-dd")}`],
   ];
 
   const header = [
@@ -60,8 +61,8 @@ export const exportExcelCashbookOverview = (searchParams, cashBookData, info) =>
       reserveFund = reserveFund + +cashbook.amount;
     }
     return [
-      moment(cashbook.created_at).format("YYYY-MM-DD"),
-      moment(cashbook.cash_date).format("YYYY-MM-DD"),
+      formatDateCustom(cashbook.created_at, "yyyy-MM-dd"),
+      formatDateCustom(cashbook.cash_date, "yyyy-MM-dd"),
       cashbook.cash_type_type === "receipt" ? cashbook.code : null,
       cashbook.cash_type_type === "pay_slip" ? cashbook.code : null,
       `${cashbook.cash_type_name} - ${cashbook.reason}`,
@@ -154,7 +155,7 @@ export const getCashbookDetail = async (cashbook, type) => {
   const titleExtra = [
     [`PHIẾU ${type === "PT" ? "THU" : "CHI"}`],
     [
-      `Ngày ${moment(cashbook?.cashDate).format("DD")} tháng ${moment(cashbook?.cashDate).format("MM")} năm ${moment(cashbook?.cashDate).format(
+      `Ngày ${formatDateCustom(cashbook?.cashDate, "EEEEEE")} tháng ${formatDateCustom(cashbook?.cashDate, "MM")} năm ${moment(cashbook?.cashDate).format(
         "YYYY"
       )}`,
     ],

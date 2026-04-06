@@ -15,7 +15,8 @@ import { ICustomerFilterRequest } from "model/customer/CustomerRequestModel";
 import CustomerService from "services/CustomerService";
 import ChartOptNewDaily from "./ChartOptNewDaily";
 import ReportBussinessPartnerService from "services/ReportBussinessPartnerService";
-import moment from "moment";
+import { formatDate } from "utils/dateUtils";
+
 import PartnerService from "services/PartnerService";
 import { formatCurrency } from "reborn-util";
 import AdvancedDateFilter from "components/advancedDateFilter/advancedDateFilter";
@@ -47,7 +48,7 @@ export default function ReportPartner() {
   //   setDataEmployee({ value: dataInfoEmployee.id, label: name });
   // }, [dataInfoEmployee.id]);
   // useEffect(() => {
-  //   const currentDate = moment().format("DD/MM/yyyy");
+  //   const currentDate = formatDate();
 
   //   const fourteenDaysAgo = moment().subtract(14, "days").format("DD/MM/yyyy");
 

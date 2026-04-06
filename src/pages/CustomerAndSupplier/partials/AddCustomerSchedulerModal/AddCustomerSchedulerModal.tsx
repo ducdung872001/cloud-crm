@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo, Fragment, useCallback } from "react";
-import moment from "moment";
+
 import { IActionModal } from "model/OtherModel";
 import { IFieldCustomize, IFormData, IValidation } from "model/FormModel";
 import { AddSchedulerModalProps } from "model/customer/PropsModel";

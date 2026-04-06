@@ -1,5 +1,6 @@
 import React, { useEffect, useMemo, useState } from "react";
-import moment from "moment";
+import { formatDateCustom } from "utils/dateUtils";
+
 import { useNavigate } from "react-router-dom";
 import { PaymentImportInvoicesProps } from "model/invoice/PropsModel";
 import { IInvoiceCreateRequest } from "model/invoice/InvoiceRequestModel";
@@ -164,7 +165,7 @@ export default function PaymentImportInvoices(props: PaymentImportInvoicesProps)
 
   const handleChangeValueReceiptDate = (e) => {
     setValidateReceiptDate(false);
-    const newReceiptDate = new Date(moment(e).format("YYYY/MM/DD ") + moment(new Date()).format("HH:mm"));
+    const newReceiptDate = new Date(formatDateCustom(e, "yyyy/MM/dd ") + formatDateCustom(new Date(), "HH:mm"));
     setFormData({ ...formData, receiptDate: newReceiptDate });
   };
 
@@ -187,7 +188,7 @@ export default function PaymentImportInvoices(props: PaymentImportInvoicesProps)
       ...(formData?.id ? { id: formData.id } : {}),
       invoiceType: "IV4",
       inventoryId: formData.inventoryId,
-      receiptDate: moment(formData.receiptDate).format("YYYY-MM-DDTHH:mm:ss"),
+      receiptDate: formatDateCustom(formData.receiptDate, "yyyy-MM-EEEEEETHH:mm:ss"),
     };
 
     const response = await InvoiceService.importUpdate(body);

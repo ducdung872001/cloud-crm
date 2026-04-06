@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
-import moment from "moment";
+import { formatDateCustom } from "utils/dateUtils";
+
 import Icon from "components/icon";
 import Button from "components/button/button";
 import TextArea from "components/textarea/textarea";
@@ -55,7 +56,7 @@ export default function SignedRejectedHistory(props) {
     index + 1,
     item.employeeName,
     item.departmentName,
-    item.receiverTime ? moment(item.receiverTime).format("DD/MM/YYYY HH:mm:ss") : "",
+    item.receiverTime ? formatDateCustom(item.receiverTime, "EEEEEE/MM/yyyy HH:mm:ss") : "",
     item.note,
     <Badge key={item.id} text={item.status ? "Phê duyệt" : "Từ chối"} variant={item.status ? "success" : "error"} />,
   ];

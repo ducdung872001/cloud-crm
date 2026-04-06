@@ -1,7 +1,8 @@
 import React, { Fragment, useState, useEffect, useRef, useContext, useMemo } from "react";
 import cloneDeep from "lodash/cloneDeep";
 
-import moment from "moment";
+import { formatDate, formatDateCustom } from "utils/dateUtils";
+
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { IAction, IFilterItem, ISaveSearch } from "model/OtherModel";
 import { ICampaignFilterRequest } from "model/campaign/CampaignRequestModel";
@@ -270,8 +271,8 @@ export default function SaleFlowList() {
   };
 
   const getPercentTime = (item) => {
-    // const startTime = item?.startDate ? new Date(moment(item?.startDate).format('MM/DD/YYYY HH:mm:ss')) : new Date();
-    // const endTime = item?.endDate ? new Date(moment(item?.endDate).format('MM/DD/YYYY HH:mm:ss')) : new Date();
+    // const startTime = item?.startDate ? new Date(formatDateCustom(item?.startDate, "MM/EEEEEE/yyyy HH:mm:ss")) : new Date();
+    // const endTime = item?.endDate ? new Date(formatDateCustom(item?.endDate, "MM/EEEEEE/yyyy HH:mm:ss")) : new Date();
 
     const startTime = new Date(item?.startDate).getTime();
     const endTime = new Date(item?.endDate).getTime();
@@ -314,8 +315,8 @@ export default function SaleFlowList() {
       {item.name}
     </Link>,
     item.code,
-    item.startDate ? moment(item.startDate).format("DD/MM/YYYY") : "",
-    item.endDate ? moment(item.endDate).format("DD/MM/YYYY") : "",
+    item.startDate ? formatDate(item.startDate) : "",
+    item.endDate ? formatDate(item.endDate) : "",
     item.employeeName,
     // <div
     //   key={item.id}

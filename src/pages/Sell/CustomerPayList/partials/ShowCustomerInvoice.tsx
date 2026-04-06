@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useMemo, Fragment, useRef } from "react";
 import { useReactToPrint } from "react-to-print";
-import moment from "moment";
+import { formatDate } from "utils/dateUtils";
+
 import ModalReceipt, { ModalBodyReceipt, ModalFooterReceipt, ModalReceiptHeader } from "components/modalReceipt/modalReceipt";
 import { IActionModal } from "model/OtherModel";
 import { IShowCustomerInvoiceProps } from "model/sell/PropsModel";
@@ -80,7 +81,7 @@ export default function ShowCustomerInvoice(props: IShowCustomerInvoiceProps) {
           toEmail: email,
           subject: `Biên lai hóa đơn ${detailInvoice?.invoiceCode ?? ""}`,
           body: `<p>Kính gửi quý khách,</p>
-                 <p>Đây là biên lai hóa đơn <b>${detailInvoice?.invoiceCode ?? ""}</b> ngày <b>${moment(detailInvoice?.receiptDate).format("DD/MM/YYYY")}</b>.</p>
+                 <p>Đây là biên lai hóa đơn <b>${detailInvoice?.invoiceCode ?? ""}</b> ngày <b>${formatDate(detailInvoice?.receiptDate)}</b>.</p>
                  <p>Tổng thanh toán: <b>${formatCurrency(detailInvoice?.fee ?? 0)}</b></p>
                  <p>Cảm ơn quý khách!</p>`,
         }),
@@ -162,7 +163,7 @@ export default function ShowCustomerInvoice(props: IShowCustomerInvoiceProps) {
                 phone={detailInvoice?.employeePhone}
                 address={detailInvoice?.employeeAddress}
                 importer={detailInvoice?.employeeName}
-                billDate={moment(detailInvoice?.receiptDate).format("DD/MM/YYYY")}
+                billDate={formatDate(detailInvoice?.receiptDate)}
                 totalMoney={detailInvoice?.amount || 0}
                 discount={detailInvoice?.discount || 0}
                 vat={0}

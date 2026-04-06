@@ -1,7 +1,8 @@
 import React, { Fragment, useState, useEffect, useRef, useContext } from "react";
 import cloneDeep from "lodash/cloneDeep";
 
-import moment from "moment";
+import { formatDateTime } from "utils/dateUtils";
+
 import Icon from "components/icon";
 import { useNavigate } from "react-router-dom";
 import Loading from "components/loading";
@@ -179,7 +180,7 @@ export default function EmailList() {
     trimContent(item.snippet, 100, true, true),
     item.payload.headers.find((item) => item.name == "From").value,
     item.payload.headers.find((item) => item.name == "To").value,
-    moment(item.payload.headers.find((item) => item.name == "Date").value).format("DD/MM/YYYY HH:mm"),
+    new Date(item.payload.headers.find((item) => item.name == "Date").value).format("DD/MM/YYYY HH:mm"),
   ];
 
   const actionsTable = (item): IAction[] => {

@@ -1,5 +1,6 @@
 import { excelEditCell, worksheetAddRow } from "exports/excel/index";
-import moment from "moment";
+import { formatDateCustom } from "utils/dateUtils";
+
 
 export const getInvoiceDetailExcelDoc = async (invoiceData) => {
   const { invoice } = invoiceData;
@@ -8,10 +9,10 @@ export const getInvoiceDetailExcelDoc = async (invoiceData) => {
     [],
     isWarehousingInvoice ? ["Nhà cung cấp", invoice.supplier_name] : ["Khách hàng", invoice.customer_name || "Khách lẻ"],
     ["Mã hoá đơn", invoice.invoice_code],
-    ["Ngày hoá đơn", moment(invoice.receipt_date).format("YYYY-MM-DD")],
+    ["Ngày hoá đơn", formatDateCustom(invoice.receipt_date, "yyyy-MM-dd")],
     ...(isWarehousingInvoice
       ? [
-          ["Ngày nhập hàng", moment(invoice.created_at).format("YYYY-MM-DD")],
+          ["Ngày nhập hàng", formatDateCustom(invoice.created_at, "yyyy-MM-dd")],
           ["Người tạo hóa đơn", invoice.user_fullname],
         ]
       : [["DS phụ trách", invoice.user_fullname]]),
@@ -44,7 +45,7 @@ export const getInvoiceDetailExcelDoc = async (invoiceData) => {
       item?.invoice_detail?.product_code,
       item.product_id < 0 ? item.combo_name : item?.invoice_detail.product_name,
       item.number ?? item.invoice_detail.number,
-      moment(item.expiry_date).format("YYYY-MM-DD"),
+      formatDateCustom(item.expiry_date, "yyyy-MM-dd"),
       item.unit_name ?? item.invoice_detail.unit_name,
       +item.quantity || +item.invoice_detail.quantity,
       ...(isWarehousingInvoice

@@ -4,7 +4,8 @@ import Icon from "components/icon";
 import OtherGenders from "assets/images/third-gender.png";
 import "./TaskItem.scss";
 import Tippy from "@tippyjs/react";
-import moment from "moment";
+import { formatDate } from "utils/dateUtils";
+
 
 export default function TaskItem(props: Record<string, unknown>) {
   const { item, index, column, callbackHistory, callBackAction } = props;
@@ -51,7 +52,7 @@ export default function TaskItem(props: Record<string, unknown>) {
                 <div className="task-meta__row">
                   <span className="task-meta__label">Thời gian</span>
                   <span className="task-meta__value">
-                    {item.startTime ? moment(item.startTime).format("DD/MM/YYYY") : "—"}
+                    {item.startTime ? formatDate(item.startTime) : "—"}
                   </span>
                 </div>
               </div>

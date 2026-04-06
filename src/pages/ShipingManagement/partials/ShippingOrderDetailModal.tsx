@@ -1,7 +1,8 @@
 import React, { Fragment, useEffect, useState } from "react";
 import Modal, { ModalBody, ModalHeader } from "components/modal/modal";
 import Icon from "components/icon";
-import moment from "moment";
+import { formatDateCustom } from "utils/dateUtils";
+
 import { formatCurrency } from "reborn-util";
 import { showToast } from "utils/common";
 import ShippingService from "services/ShippingService";
@@ -212,7 +213,7 @@ export default function ShippingOrderDetailModal({ onShow, data, onHide, onReloa
               {/* Thời gian + địa điểm — dùng eventTime thay vì timestamp */}
               {timelineItem?.eventTime ? (
                 <div className="timestamp">
-                  {moment(timelineItem.eventTime).format("HH:mm - DD/MM/YYYY")}
+                  {formatDateCustom(timelineItem.eventTime, "HH:mm - EEEEEE/MM/yyyy")}
                   {timelineItem.location ? ` · ${timelineItem.location}` : ""}
                 </div>
               ) : isFuture ? (
@@ -295,7 +296,7 @@ export default function ShippingOrderDetailModal({ onShow, data, onHide, onReloa
       <div className="info-row">
         <span className="info-label">Ngày tạo</span>
         <span className="info-value">
-          {data.createdAt ? moment(data.createdAt).format("HH:mm DD/MM/YYYY") : "—"}
+          {data.createdAt ? formatDateCustom(data.createdAt, "HH:mm EEEEEE/MM/yyyy") : "—"}
         </span>
       </div>
       {data.noteForShipper && (

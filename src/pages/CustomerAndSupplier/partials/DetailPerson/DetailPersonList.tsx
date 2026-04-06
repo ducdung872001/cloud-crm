@@ -1,7 +1,8 @@
 import React, { Fragment, useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import parser from "html-react-parser";
-import moment from "moment";
+import { formatDate } from "utils/dateUtils";
+
 import Tippy from "@tippyjs/react";
 import Icon from "components/icon";
 import Loading from "components/loading";
@@ -253,9 +254,9 @@ export default function DetailPersonList() {
                 <span className="rds-kpi__label">Lần mua cuối</span>
                 <span className="rds-kpi__value rds-kpi__value--sm">
                   {invoiceStats?.lastBoughtDate
-                    ? moment(invoiceStats.lastBoughtDate).format("DD/MM/YYYY")
+                    ? formatDate(invoiceStats.lastBoughtDate)
                     : d.lastBoughtDate
-                      ? moment(d.lastBoughtDate).format("DD/MM/YYYY")
+                      ? formatDate(d.lastBoughtDate)
                       : notData}
                 </span>
               </div>
@@ -305,7 +306,7 @@ export default function DetailPersonList() {
                   <div className="rds-info-row"><span>Người phụ trách</span><span>{d.employeeName || notData}</span></div>
                   <div className="rds-info-row">
                     <span>Ngày sinh</span>
-                    <span>{d.birthday ? moment(d.birthday).format("DD/MM/YYYY") : notData}</span>
+                    <span>{d.birthday ? formatDate(d.birthday) : notData}</span>
                   </div>
                   <div className="rds-info-row"><span>Địa chỉ</span><span>{d.address || notData}</span></div>
                 </div>
@@ -324,7 +325,7 @@ export default function DetailPersonList() {
                   <div className="rds-info-row"><span>Chưa liên hệ</span><span>{d.dayNotContact || 0} ngày</span></div>
                   <div className="rds-info-row">
                     <span>Liên hệ gần nhất</span>
-                    <span>{d.lastContactDate ? moment(d.lastContactDate).format("DD/MM/YYYY") : notData}</span>
+                    <span>{d.lastContactDate ? formatDate(d.lastContactDate) : notData}</span>
                   </div>
                 </div>
               )}

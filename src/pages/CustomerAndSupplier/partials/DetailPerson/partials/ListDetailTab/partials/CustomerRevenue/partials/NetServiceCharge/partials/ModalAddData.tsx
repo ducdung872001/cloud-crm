@@ -1,7 +1,8 @@
 import React, { Fragment, useState, useEffect, useCallback, useMemo, useRef, useContext } from "react";
 import isEqual from "lodash/isEqual";
 
-import moment from "moment";
+import { formatDateCustom } from "utils/dateUtils";
+
 import { isDifferenceObj } from "reborn-util";
 import { IActionModal } from "model/OtherModel";
 import { IFieldCustomize, IFormData, IValidation } from "model/FormModel";
@@ -140,7 +141,7 @@ export default function ModalAddData({ onShow, onHide, dataProps, customerId }) 
       ...(data ? { id: data?.id } : {}),
       ...(formData.values as Record<string, unknown>),
       customerId,
-      transactionDate: moment(formData.values.transactionDate).format('YYYY-MM-DDTHH:mm:ss'),
+      transactionDate: formatDateCustom(formData.values.transactionDate, "yyyy-MM-EEEEEETHH:mm:ss"),
     };
 
     const response = null;

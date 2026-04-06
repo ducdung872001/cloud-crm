@@ -5,7 +5,8 @@ import Modal, { ModalHeader } from "components/modal/modal";
 import { DataPaginationDefault, PaginationProps } from "components/pagination/pagination";
 import cloneDeep from "lodash/cloneDeep";
 
-import moment from "moment";
+import { formatDateCustom } from "utils/dateUtils";
+
 import React, { Fragment, useEffect, useState } from "react";
 import BusinessProcessService from "services/BusinessProcessService";
 

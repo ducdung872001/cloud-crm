@@ -4,7 +4,7 @@ import Icon from "components/icon";
 import Loading from "components/loading";
 import { showToast } from "utils/common";
 import "./DetailPartner.scss";
-import moment from "moment";
+
 import { convertToId, formatCurrency } from "reborn-util";
 import { Parser } from "formula-functionizer";
 import PartnerService from "services/PartnerService";

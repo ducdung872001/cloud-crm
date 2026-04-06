@@ -33,7 +33,8 @@ import CheckboxList from "components/checkbox/checkboxList";
 import Checkbox from "components/checkbox/checkbox";
 import RadioList from "components/radio/radioList";
 import DatePickerCustom from "components/datepickerCustom/datepickerCustom";
-import moment from "moment";
+import { formatDateCustom } from "utils/dateUtils";
+
 import CareerService from "services/CareerService";
 import EmployeeService from "services/EmployeeService";
 import { uploadDocumentFormData } from "utils/document";
@@ -1491,7 +1492,7 @@ export default function AddCustomerPersonModal(props: AddCustomerModalProps) {
             fill={true}
             value={getCustomerAttributeValue(customerAttribute.id)}
             onChange={(e) => {
-              const newDate = new Date(moment(e).format("YYYY/MM/DD ") + moment(new Date()).format("HH:mm"));
+              const newDate = new Date(formatDateCustom(e, "yyyy/MM/dd ") + formatDateCustom(new Date(), "HH:mm"));
               updateCustomerAttribute(customerAttribute.id, newDate);
             }}
             placeholder={`Nhập ${customerAttribute.name.toLowerCase()}`}

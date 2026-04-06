@@ -18,7 +18,7 @@ import Loading from "components/loading";
 import WorkOrderService from "services/WorkOrderService";
 import { EMAIL_REGEX, PHONE_REGEX_NEW } from "utils/constant";
 import Tippy from "@tippyjs/react";
-import moment from "moment";
+
 import ModalConfirmRelease from "../ModalConfirmRelease/ModalConfirmRelease";
 import OnRejectModal from "../../../HandleTask/OnRejectModal/OnRejectModal";
 import OnHoldModal from "../../../HandleTask/OnHoldModal/OnHoldModal";

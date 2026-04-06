@@ -9,7 +9,8 @@ import { SystemNotification } from "components/systemNotification/systemNotifica
 import Loading from "components/loading";
 import BoxTable from "components/boxTable/boxTable";
 import ContractService from "services/ContractService";
-import moment from "moment";
+import { formatDate, formatDateTime } from "utils/dateUtils";
+
 import { formatCurrency, getPageOffset } from "reborn-util";
 import { DataPaginationDefault, PaginationProps } from "components/pagination/pagination";
 import { IInvoiceResponse } from "model/invoice/InvoiceResponse";
@@ -175,7 +176,7 @@ export default function HistoryModal(props: Record<string, unknown>) {
       <span key={index}>
         {item.invoiceCode}
       </span>,
-      moment(item.receiptDate).format("DD/MM/YYYY"),
+      formatDate(item.receiptDate),
       formatCurrency(item.amount),
       "0",
       formatCurrency(item.discount ? item.discount : "0"),
@@ -215,7 +216,7 @@ export default function HistoryModal(props: Record<string, unknown>) {
   
       return (
         <div className="d-flex align-items-center flex-column view__time--call">
-          <span className="time-end">{moment(end.endTime).format("DD/MM/YYYY HH:mm")}</span>
+          <span className="time-end">{formatDateTime(end.endTime)}</span>
           <span className="total-item">{result}</span>
         </div>
       );

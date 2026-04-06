@@ -3,7 +3,8 @@ import React, { Fragment, useCallback, useContext, useEffect, useMemo, useRef, u
 import isEqual from "lodash/isEqual";
 import cloneDeep from "lodash/cloneDeep";
 
-import moment from "moment";
+import { formatDate } from "utils/dateUtils";
+
 import Tippy from "@tippyjs/react";
 import { getSearchParameters, getPageOffset } from "reborn-util";
 import { useNavigate, useSearchParams } from "react-router-dom";
@@ -695,8 +696,8 @@ export default function ProjectList() {
                 dataItem: item,
                 name: item.name,
                 code: item.code,
-                startTime: item.startTime ? moment(item.startTime).format("DD/MM/YYYY") : "",
-                endTime: item.endTime ? moment(item.endTime).format("DD/MM/YYYY") : "",
+                startTime: item.startTime ? formatDate(item.startTime) : "",
+                endTime: item.endTime ? formatDate(item.endTime) : "",
                 report: "Xem báo cáo",
               },
               ...result
@@ -880,7 +881,7 @@ export default function ProjectList() {
         .flat()
         .map((ol) => {
           if (ol.datatype === "date") {
-            return { ...ol, attributeValue: moment(ol.attributeValue).format("DD/MM/YYYY") };
+            return { ...ol, attributeValue: formatDate(ol.attributeValue) };
           }
 
           return ol;
@@ -1018,8 +1019,8 @@ export default function ProjectList() {
           const body = Object.assign({
             idx: getPageOffset(params) + index + 1,
             ...item,
-            startTime: item.startTime ? moment(item.startTime).format("DD/MM/YYYY") : "",
-            endTime: item.endTime ? moment(item.endTime).format("DD/MM/YYYY") : "",
+            startTime: item.startTime ? formatDate(item.startTime) : "",
+            endTime: item.endTime ? formatDate(item.endTime) : "",
           });
 
           return body;

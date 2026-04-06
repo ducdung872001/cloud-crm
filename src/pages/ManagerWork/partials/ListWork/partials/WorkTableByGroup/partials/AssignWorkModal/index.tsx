@@ -27,7 +27,8 @@ import { ContextType, UserContext } from "contexts/userContext";
 
 import "./index.scss";
 import AttachmentUploader, { UploadedItem } from "components/attachmentUpload";
-import moment from "moment";
+import { formatDateCustom } from "utils/dateUtils";
+
 
 interface IDataListNotificationProps {
   method: string[];
@@ -239,9 +240,9 @@ export default function AssignWorkModal(props: IAddWorkModelProps) {
     ({
       name: data?.name ?? "",
       content: data?.content ?? "",
-      // startTime: idWork ? data?.startTime : startDate ? startDate : moment().format("MM/DD/YYYY"),
-      startTime: data?.startTime ? moment(data?.startTime) : "",
-      endTime: data?.endTime ? moment(data?.endTime) : "",
+      // startTime: idWork ? data?.startTime : startDate ? startDate : formatDateCustom(, "MM/EEEEEE/yyyy"),
+      startTime: data?.startTime ? new Date(data?.startTime) : "",
+      endTime: data?.endTime ? new Date(data?.endTime) : "",
       workLoad: data?.workLoad ?? "",
       workLoadUnit: data?.workLoadUnit ?? "H",
       wteId: data?.wteId ?? null,

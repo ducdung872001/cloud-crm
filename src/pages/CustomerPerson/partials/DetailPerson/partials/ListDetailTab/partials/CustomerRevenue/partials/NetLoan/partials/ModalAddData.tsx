@@ -5,7 +5,8 @@ import { isDifferenceObj } from "reborn-util";
 import { IActionModal } from "model/OtherModel";
 import { IFieldCustomize, IFormData, IValidation } from "model/FormModel";
 import Icon from "components/icon";
-import moment from "moment";
+import { formatDateCustom } from "utils/dateUtils";
+
 import FieldCustomize from "components/fieldCustomize/fieldCustomize";
 import Modal, { ModalBody, ModalFooter, ModalHeader } from "components/modal/modal";
 import Dialog, { IContentDialog } from "components/dialog/dialog";
@@ -112,7 +113,7 @@ export default function ModalAddData({ onShow, onHide, dataProps, customerId }) 
       ...(data ? { id: data?.id } : {}),
       ...(formData.values as Record<string, unknown>),
       customerId,
-      transactionDate: moment(formData.values.transactionDate).format('YYYY-MM-DDTHH:mm:ss'),
+      transactionDate: formatDateCustom(formData.values.transactionDate, "yyyy-MM-EEEEEETHH:mm:ss"),
     };
 
     const response = null;

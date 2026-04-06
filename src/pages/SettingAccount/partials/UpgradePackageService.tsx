@@ -1,5 +1,6 @@
 import React, { Fragment, useEffect, useMemo, useState } from "react";
-import moment from "moment";
+import { formatDate } from "utils/dateUtils";
+
 import Icon from "components/icon";
 import Input from "components/input/input";
 import NummericInput from "components/input/numericInput";
@@ -242,7 +243,7 @@ export default function UpgradePackageService(props: IUpgradePackageServiceProps
                   name="endDate"
                   label={`Ngày hết hạn ${nameCommon}`}
                   fill={true}
-                  value={moment(data.endDate).format("DD/MM/YYYY")}
+                  value={formatDate(data.endDate)}
                   disabled={true}
                 />
               </div>

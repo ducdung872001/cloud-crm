@@ -24,7 +24,8 @@ import BoughtCardService from "services/BoughtCardService";
 import { ICustomerRoyaltyPointListProps } from "model/loyaltyPoint/PropsModal";
 import { IRoyaltyPointResposne } from "model/loyaltyPoint/RoyaltyPointResposne";
 import { IRoyaltyPointFilterRequest } from "model/loyaltyPoint/RoyaltyPointRequest";
-import moment from "moment";
+import { formatDateTime } from "utils/dateUtils";
+
 
 export default function CustomerLoyaltyPointLedger(props: ICustomerRoyaltyPointListProps) {
   document.title = "Lịch sử điểm tích lũy của khách hàng";
@@ -133,7 +134,7 @@ export default function CustomerLoyaltyPointLedger(props: ICustomerRoyaltyPointL
     getPageOffset(params) + index + 1,
     item.customerName,
     item.cardNumber,
-    item.createdTime ? moment(item.createdTime).format("DD/MM/YYYY HH:mm") : "",
+    item.createdTime ? formatDateTime(item.createdTime) : "",
     <span className={`point__value--${(item.point || 0) >= 0 ? "revenue" : "expenditure"}`}>
       {item.point}
     </span>,

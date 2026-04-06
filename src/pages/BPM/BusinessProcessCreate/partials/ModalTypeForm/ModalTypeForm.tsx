@@ -18,6 +18,7 @@ import Loading from "components/loading";
 import { SystemNotification } from "components/systemNotification/systemNotification";
 
 import "./ModalTypeForm.scss";
+import { formatDateCustom } from "utils/dateUtils";
 
 export default function ModalTypeForm({ onShow, onHide, data, callBack }) {
   const formRef = useRef(null);
@@ -226,7 +227,7 @@ export default function ModalTypeForm({ onShow, onHide, data, callBack }) {
             disabled={true}
             // value={getContractAttributeValue(contractAttribute.id)}
             // onChange={(e) => {
-            //   const newDate = new Date(moment(e).format("YYYY/MM/DD ") + moment(new Date()).format("HH:mm"));
+            //   const newDate = formatDateCustom(moment(e, "YYYY/MM/DD ") + moment(new Date()).format("HH:mm"));
             //   updateContractAttribute(contractAttribute.id, newDate);
             // }}
             placeholder={`Nhập ${contractAttribute.name.toLowerCase()}`}

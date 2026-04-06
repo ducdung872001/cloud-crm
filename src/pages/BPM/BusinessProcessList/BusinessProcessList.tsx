@@ -1,7 +1,8 @@
 import React, { Fragment, useState, useEffect, useRef, useContext, useCallback } from "react";
 import cloneDeep from "lodash/cloneDeep";
 
-import moment from "moment";
+import { formatDate, formatDateCustom } from "utils/dateUtils";
+
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { IAction, ISaveSearch } from "model/OtherModel";
 import { ICampaignFilterRequest } from "model/campaign/CampaignRequestModel";
@@ -829,11 +830,11 @@ export default function BusinessProcessList() {
           `${item.planExecutionDay || 0} ngày, ${item.planExecutionHour < 10 ? `0${item.planExecutionHour || 0}` : item.planExecutionHour}:${
             item.planExecutionMinute < 10 ? `0${item.planExecutionMinute || 0}` : item.planExecutionMinute
           }`,
-          item.transitTime ? moment(item.transitTime).format("DD/MM/YYYY HH:mm:ss") : "",
-          item.firstSeenTime ? moment(item.firstSeenTime).format("DD/MM/YYYY HH:mm:ss") : "",
-          item.receivedTime ? moment(item.receivedTime).format("DD/MM/YYYY HH:mm:ss") : "",
-          item.processedTime ? moment(item.processedTime).format("DD/MM/YYYY HH:mm:ss") : "",
-          item.lastProcessedTime ? moment(item.lastProcessedTime).format("DD/MM/YYYY HH:mm:ss") : "",
+          item.transitTime ? formatDateCustom(item.transitTime, "EEEEEE/MM/yyyy HH:mm:ss") : "",
+          item.firstSeenTime ? formatDateCustom(item.firstSeenTime, "EEEEEE/MM/yyyy HH:mm:ss") : "",
+          item.receivedTime ? formatDateCustom(item.receivedTime, "EEEEEE/MM/yyyy HH:mm:ss") : "",
+          item.processedTime ? formatDateCustom(item.processedTime, "EEEEEE/MM/yyyy HH:mm:ss") : "",
+          item.lastProcessedTime ? formatDateCustom(item.lastProcessedTime, "EEEEEE/MM/yyyy HH:mm:ss") : "",
           item.repeatNumber,
           `${item.actualResponseDay || 0} ngày, ${item.actualResponseHour < 10 ? `0${item.actualResponseHour || 0}` : item.actualResponseHour}:${
             item.actualResponseMinute < 10 ? `0${item.actualResponseMinute}` : item.actualResponseMinute
@@ -867,7 +868,7 @@ export default function BusinessProcessList() {
         limit: 10000,
         processId: data.id,
         fromTime: "07/01/2025",
-        toTime: moment(new Date()).format("DD/MM/YYYY"),
+        toTime: formatDate(new Date()),
         // employeeId: data.employeeId
       });
     }
@@ -969,8 +970,8 @@ export default function BusinessProcessList() {
                 `${item.planExecutionDay || 0} ngày, ${item.planExecutionHour < 10 ? `0${item.planExecutionHour || 0}` : item.planExecutionHour}:${
                   item.planExecutionMinute < 10 ? `0${item.planExecutionMinute || 0}` : item.planExecutionMinute
                 }`,
-                item.startTime ? moment(item.startTime).format("DD/MM/YYYY HH:mm:ss") : "",
-                item.endTime ? moment(item.endTime).format("DD/MM/YYYY HH:mm:ss") : "",
+                item.startTime ? formatDateCustom(item.startTime, "EEEEEE/MM/yyyy HH:mm:ss") : "",
+                item.endTime ? formatDateCustom(item.endTime, "EEEEEE/MM/yyyy HH:mm:ss") : "",
                 `${item.executionDay || 0} ngày, ${item.executionHour < 10 ? `0${item.executionHour || 0}` : item.executionHour}:${
                   item.executionMinute < 10 ? `0${item.executionMinute || 0}` : item.executionMinute
                 }`

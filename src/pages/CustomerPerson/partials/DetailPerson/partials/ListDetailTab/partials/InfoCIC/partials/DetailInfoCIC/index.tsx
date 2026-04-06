@@ -1,7 +1,8 @@
 import React, { Fragment, useState, useEffect, useRef } from "react";
 import cloneDeep from "lodash/cloneDeep";
 
-import moment from "moment";
+import { formatDate } from "utils/dateUtils";
+
 import { formatCurrency, getPageOffset } from "reborn-util";
 import { showToast } from "utils/common";
 import { PaginationProps, DataPaginationDefault } from "components/pagination/pagination";
@@ -109,8 +110,8 @@ export default function DetailInfoCIC({ data, onShow, callBack }) {
     item.contractNo,    
     formatCurrency(item.creditLimit, ","),
     item.creditRating,
-    item.openingDate ? moment(item.openingDate).format("DD/MM/YYYY") : "",
-    item.dateDue ? moment(item.dateDue).format("DD/MM/YYYY") : "",
+    item.openingDate ? formatDate(item.openingDate) : "",
+    item.dateDue ? formatDate(item.dateDue) : "",
     formatCurrency(item.loan, ","),
     item.currency,
     item.exchangeRate,
@@ -121,7 +122,7 @@ export default function DetailInfoCIC({ data, onShow, callBack }) {
     item.collateral,
     formatCurrency(item.collateralAsset, ","),
     item.groupDebt,
-    item.badDebtDate ? moment(item.badDebtDate).format("DD/MM/YYYY") : "",
+    item.badDebtDate ? formatDate(item.badDebtDate) : "",
     formatCurrency(item.badDebtAmount, ","),
     item.badDebtType
   ];

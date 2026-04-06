@@ -1,7 +1,8 @@
 import React, { Fragment, useState, useEffect, useCallback, useMemo, useRef, useContext } from "react";
 import isEqual from "lodash/isEqual";
 
-import moment from "moment";
+import { formatDateCustom } from "utils/dateUtils";
+
 import { isDifferenceObj } from "reborn-util";
 import { IActionModal } from "model/OtherModel";
 import { IFieldCustomize, IFormData, IValidation } from "model/FormModel";
@@ -31,7 +32,7 @@ export default function ModalAddData({ onShow, onHide, dataProps, customerId }) 
       revenue: data?.revenue ?? "",
       capital: data?.capital ?? "",
       creditRating: data?.creditRating ?? "",
-      // startTime: moment().format("MM/DD/YYYY"),
+      // startTime: formatDateCustom(, "MM/EEEEEE/yyyy"),
       shortTermAsset: data?.shortTermAsset ?? "",
       longTermAsset: data?.longTermAsset ?? "",
       shortTermDebt: data?.shortTermDebt ?? "",

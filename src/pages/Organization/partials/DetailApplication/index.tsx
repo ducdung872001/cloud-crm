@@ -1,7 +1,8 @@
 import React, { Fragment, useEffect, useMemo, useState } from "react";
 import cloneDeep from "lodash/cloneDeep";
 
-import moment from "moment";
+import { formatDate } from "utils/dateUtils";
+
 import { formatCurrency } from "reborn-util";
 import Icon from "components/icon";
 import Loading from "components/loading";
@@ -192,8 +193,8 @@ export default function DetailApplication(props: IDetailApplicationProps) {
     ) : (
       item.packageName
     ),
-    moment(item.startDate).format("DD/MM/YYYY"),
-    item.endDate ? moment(item.endDate).format("DD/MM/YYYY") : "",
+    formatDate(item.startDate),
+    item.endDate ? formatDate(item.endDate) : "",
     <strong key={item.id}>{item.numDay <= 0 ? "Đã hết" : `${item.numDay} ngày`}</strong>,
     arrayData[0].id === item.id && (
       <div key={item.id} className="action-apply">
@@ -357,11 +358,11 @@ export default function DetailApplication(props: IDetailApplicationProps) {
                     </div>
                     <div className="item-info">
                       <span className="key">Ngày bắt đầu</span>
-                      <span className="value">{item.startDate ? moment(item.startDate).format("DD/MM/YYYY") : ""}</span>
+                      <span className="value">{item.startDate ? formatDate(item.startDate) : ""}</span>
                     </div>
                     <div className="item-info">
                       <span className="key">Ngày kết thúc</span>
-                      <span className="value">{item.endDate ? moment(item.endDate).format("DD/MM/YYYY") : ""}</span>
+                      <span className="value">{item.endDate ? formatDate(item.endDate) : ""}</span>
                     </div>
                   </div>
 

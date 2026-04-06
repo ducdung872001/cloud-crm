@@ -22,7 +22,8 @@ import { showToast } from "utils/common";
 import Radio from "components/radio/radio";
 import CustomerService from "services/CustomerService";
 import { convertParamsToString, createArrayFromTo, createArrayFromToR } from "reborn-util";
-import moment from "moment";
+import { formatDate } from "utils/dateUtils";
+
 
 interface IFilterAdvancedModalProps {
   onShow: boolean;
@@ -1446,13 +1447,13 @@ export default function FilterComponent(props: Record<string, unknown>) {
           result[key] = data[key].map((rule) => {
             if (rule.operator === "in" && rule.value !== undefined) {
               if (rule.type === "date") {
-                rule.value = JSON.stringify([moment(rule.value).format("DD/MM/YYYY")]);
+                rule.value = JSON.stringify([formatDate(rule.value)]);
               } else {
                 rule.value = JSON.stringify([rule.value]);
               }
             } else if (rule.type === "date") {
               // && typeof rule.value === "string"
-              rule.value = moment(rule.value).format("DD/MM/YYYY");
+              rule.value = formatDate(rule.value);
             }
 
             return transformData(rule);

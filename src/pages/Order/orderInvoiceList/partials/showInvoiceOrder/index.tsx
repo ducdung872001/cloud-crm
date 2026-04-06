@@ -1,5 +1,6 @@
 import React, { Fragment, useState, useEffect, useMemo, useContext, useRef } from "react";
-import moment from "moment";
+import { formatDate } from "utils/dateUtils";
+
 import classNames from "classnames";
 import { useNavigate } from "react-router-dom";
 import { useReactToPrint } from "react-to-print";
@@ -104,7 +105,7 @@ export default function ShowInvoiceOrder(props: IShowInvoiceOrderProps) {
   const dataMappingArray = (item) => [
     item.code,
     item.name,
-    moment(item.expiry_date).format("DD/MM/YYYY"),
+    formatDate(item.expiry_date),
     item.unitName,
     formatCurrency(+item.cost),
     +item.quantity,
@@ -192,10 +193,10 @@ export default function ShowInvoiceOrder(props: IShowInvoiceOrderProps) {
                             Mã hóa đơn: <strong className="ml-1">{infoInvoice?.orderCode}</strong>
                           </div>
                           <div className="item-top">
-                            Ngày đặt hàng: <strong className="ml-1">{moment(infoInvoice?.orderDate).format("DD/MM/YYYY")}</strong>
+                            Ngày đặt hàng: <strong className="ml-1">{formatDate(infoInvoice?.orderDate)}</strong>
                           </div>
                           <div className="item-top">
-                            Ngày nhận hàng mong muốn: <strong className="ml-1">{moment(infoInvoice?.expectedDate).format("DD/MM/YYYY")}</strong>
+                            Ngày nhận hàng mong muốn: <strong className="ml-1">{formatDate(infoInvoice?.expectedDate)}</strong>
                           </div>
                           <div className="item-top">
                             Hình thức thanh toán:

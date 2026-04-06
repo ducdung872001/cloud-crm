@@ -1,7 +1,8 @@
 import React, { Fragment, useEffect, useRef, useState } from "react";
 import cloneDeep from "lodash/cloneDeep";
 
-import moment from "moment";
+import { formatDate } from "utils/dateUtils";
+
 import { ISaveSearch } from "model/OtherModel";
 import { IAddRelatedWorkModelProps } from "model/workOrder/PropsModel";
 import { IWorkOrderFilterRequest, IUpdateRelatedWorkRequestModel } from "model/workOrder/WorkOrderRequestModel";
@@ -240,8 +241,8 @@ export default function AddRelatedWorkModal(props: IAddRelatedWorkModelProps) {
                                 )}
                                 <td className="text-center">{index + 1}</td>
                                 <td>{item.name}</td>
-                                <td>{moment(item.startTime).format("DD/MM/YYYY")}</td>
-                                <td>{moment(item.endTime).format("DD/MM/YYYY")}</td>
+                                <td>{formatDate(item.startTime)}</td>
+                                <td>{formatDate(item.endTime)}</td>
                                 <td>{item.projectName}</td>
                                 <td className="text-center">
                                   {item.status == 0 ? (

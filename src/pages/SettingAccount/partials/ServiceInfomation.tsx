@@ -1,5 +1,6 @@
 import React, { Fragment, useContext, useState } from "react";
-import moment from "moment";
+import { formatDate } from "utils/dateUtils";
+
 import { ContextType, UserContext } from "contexts/userContext";
 import Button from "components/button/button";
 import UpgradePackageService from "./UpgradePackageService";
@@ -113,7 +114,7 @@ export default function ServiceInfomation({ checkUser }) {
           <div className="time-package">
             <div className="desc--time">
               <span className="key">Ngày hết hạn</span>
-              <span className="value">{moment(dataExpired.endDate).format("DD/MM/YYYY")}</span>
+              <span className="value">{formatDate(dataExpired.endDate)}</span>
             </div>
           </div>
           {+checkUser == 1 && (

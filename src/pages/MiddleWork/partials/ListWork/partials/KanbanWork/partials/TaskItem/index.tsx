@@ -1,5 +1,6 @@
 import React, { Fragment, useEffect, useRef, useState } from "react";
-import moment from "moment";
+import { formatDate } from "utils/dateUtils";
+
 import Tippy from "@tippyjs/react";
 import { trimContent } from "reborn-util";
 import { Draggable } from "react-beautiful-dnd";
@@ -93,12 +94,12 @@ export default function TaskItem(props: ITaskItemProps) {
                 <div className="time__work--left">
                   <div className="start-work">
                     <span className="key">Bắt đầu</span>
-                    <span className="value">{moment(item.startTime).format("DD/MM/YYYY")}</span>
+                    <span className="value">{formatDate(item.startTime)}</span>
                   </div>
 
                   <div className="end-work">
                     <span className="key">Kết thúc</span>
-                    <span className="value">{moment(item.endTime).format("DD/MM/YYYY")}</span>
+                    <span className="value">{formatDate(item.endTime)}</span>
                   </div>
                 </div>
                 <div

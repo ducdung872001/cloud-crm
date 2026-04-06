@@ -1,5 +1,6 @@
 import React, { Fragment, useEffect, useState } from "react";
-import moment from "moment";
+import { formatDateCustom } from "utils/dateUtils";
+
 import { IFanpageCommentResponse } from "model/fanpageFacebook/FanpageResponseModel";
 import { IListCommentProps } from "model/fanpageFacebook/PropsModel";
 import { IFanpageCommentFilterRequest } from "model/fanpageFacebook/FanpageFacebookRequestModel";
@@ -184,7 +185,7 @@ export default function ListComment(props: IListCommentProps) {
                         <div className="info__user">
                           <h5>{item.profileName}</h5>
                           <p className="desc__content">{item.content}</p>
-                          <span className="time-comment">{moment(item.publishedTime).format("HH:mm")}</span>
+                          <span className="time-comment">{formatDateCustom(item.publishedTime, "HH:mm")}</span>
                         </div>
 
                         <div className="action__footer">
@@ -208,7 +209,7 @@ export default function ListComment(props: IListCommentProps) {
                             <div key={index} className="info__owner">
                               <p className="desc__content">{el.content}</p>
                               <span className="time-comment">
-                                {moment(el.publishedTime).format("HH:mm")} {el._profile_id === el._fanpage_id ? <Icon name="Checked" /> : ""}
+                                {formatDateCustom(el.publishedTime, "HH:mm")} {el._profile_id === el._fanpage_id ? <Icon name="Checked" /> : ""}
                               </span>
                             </div>
                           );

@@ -2,7 +2,8 @@ import React from "react";
 import SelectCustom from "components/selectCustom/selectCustom";
 import DatePickerCustom from "components/datepickerCustom/datepickerCustom";
 import ReportFilterShell from "components/reportShared/ReportFilterShell";
-import moment from "moment";
+import { formatDate, formatDateCustom } from "utils/dateUtils";
+
 import { RANGE_OPTIONS, SOURCE_OPTIONS } from "../mockData";
 
 interface Props {
@@ -21,7 +22,7 @@ export default function CustomerFilterBar(props: Props) {
     <ReportFilterShell className="report-topbar">
       <div className="report-topbar__left">
         <div className="report-topbar__title">Toàn cảnh khách hàng</div>
-        <div className="report-topbar__subtitle">Cập nhật lúc {moment().format("HH:mm")} · {moment().format("DD/MM/YYYY")}</div>
+        <div className="report-topbar__subtitle">Cập nhật lúc {formatDateCustom(, "HH:mm")} · {formatDate()}</div>
       </div>
 
       <div className="report-topbar__filters">

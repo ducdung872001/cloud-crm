@@ -8,7 +8,8 @@ import { showToast } from "utils/common";
 import cloneDeep from "lodash/cloneDeep";
 
 import { getPageOffset } from "reborn-util";
-import moment from "moment";
+import { formatDate } from "utils/dateUtils";
+
 import Loading from "components/loading";
 import { SystemNotification } from "components/systemNotification/systemNotification";
 import BoxTable from "components/boxTable/boxTable";
@@ -127,8 +128,8 @@ export default function CustomerSchedule({ idCustomer }) {
     getPageOffset(params) + index + 1,
     item.title,
     item.employeeName,
-    moment(item.startTime).format("DD/MM/YYYY"),
-    moment(item.endTime).format("DD/MM/YYYY"),
+    formatDate(item.startTime),
+    formatDate(item.endTime),
     <Badge
       key={item.id}
       variant={item.type === 2 ? "primary" : item.type === 3 ? "secondary" : "warning"}

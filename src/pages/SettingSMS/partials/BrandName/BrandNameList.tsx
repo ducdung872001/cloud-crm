@@ -1,7 +1,8 @@
 import React, { Fragment, useState, useEffect, useRef } from "react";
 import cloneDeep from "lodash/cloneDeep";
 
-import moment from "moment";
+import { formatDate } from "utils/dateUtils";
+
 import Icon from "components/icon";
 import Loading from "components/loading";
 import SearchBox from "components/searchBox/searchBox";
@@ -148,7 +149,7 @@ export default function BrandNameList(props: IBrandNameListProps) {
   const dataMappingArray = (item: IBrandNameResponseModel, index: number) => [
     getPageOffset(params) + index + 1,
     item.name,
-    item.expiredDate ? moment(item.expiredDate).format("DD/MM/YYYY") : "",
+    item.expiredDate ? formatDate(item.expiredDate) : "",
     item.partnerName,
     !item.whitelist ? 
     <span 

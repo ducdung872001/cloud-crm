@@ -10,7 +10,8 @@ import { showToast } from "utils/common";
 import cloneDeep from "lodash/cloneDeep";
 
 import { getPageOffset } from "reborn-util";
-import moment from "moment";
+import { formatDate } from "utils/dateUtils";
+
 import { CircularProgressbar } from "react-circular-progressbar";
 import Dialog, { IContentDialog } from "components/dialog/dialog";
 import Loading from "components/loading";
@@ -167,7 +168,7 @@ export default function CustomerJob({ dataCustomer }) {
     getPageOffset(params) + index + 1,
     item.name,
     item.employeeName,
-    item.startTime || item.endTime ? `${moment(item.startTime).format("DD/MM/YYYY")} - ${moment(item.endTime).format("DD/MM/YYYY")}` : "",
+    item.startTime || item.endTime ? `${formatDate(item.startTime)} - ${formatDate(item.endTime)}` : "",
     item.projectName,
     <div key={item.id} className="percent__finish--work">
       <CircularProgressbar value={item.percent || 0} text={`${item.percent || 0}%`} className="value-percent" />

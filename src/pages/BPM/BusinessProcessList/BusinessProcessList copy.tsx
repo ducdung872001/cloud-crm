@@ -1,6 +1,6 @@
 import React, { Fragment, useState, useEffect, useRef, useContext } from "react";
 import _, { set } from "lodash";
-import moment from "moment";
+
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { IAction, ISaveSearch } from "model/OtherModel";
 import { ICampaignFilterRequest } from "model/campaign/CampaignRequestModel";

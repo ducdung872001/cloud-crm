@@ -1,7 +1,8 @@
 import React, { Fragment, useState, useEffect, useRef, useMemo, useCallback, useContext } from "react";
 import cloneDeep from "lodash/cloneDeep";
 
-import moment from "moment";
+import { formatDate } from "utils/dateUtils";
+
 import classNames from "classnames";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { ExportPdf } from "exports/pdf";
@@ -295,8 +296,8 @@ export default function TemporaryOrderList() {
   const dataMappingArray = (item: IOrderResponseModel, index: number, type?: string) => [
     getPageOffset(params) + index + 1,
     item.orderCode,
-    moment(item.orderDate).format("DD/MM/YYYY"),
-    moment(item.expectedDate).format("DD/MM/YYYY"),
+    formatDate(item.orderDate),
+    formatDate(item.expectedDate),
     item.employeeName,
     formatCurrency(item.amount),
     item.note,

@@ -37,7 +37,10 @@
       "Bash(node add_memo.js)",
       "Bash(node fix_keys.js)",
       "Bash(xargs -I{} grep -n \"_\\\\.\" {})",
-      "Bash(node fix_lodash.js)"
+      "Bash(node fix_lodash.js)",
+      "Bash(xargs -I{} sh -c 'echo \"$\\(grep -c \"moment\" \"{}\" \\) {}\"')",
+      "Bash(node migrate_moment.js)",
+      "Bash(node fix_date_broken.js)"
     ]
   }
 }

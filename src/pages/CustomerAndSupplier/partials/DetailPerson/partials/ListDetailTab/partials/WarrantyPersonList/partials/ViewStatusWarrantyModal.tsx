@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useMemo, Fragment } from "react";
-import moment from "moment";
+import { formatDateCustom } from "utils/dateUtils";
+
 import { IActionModal } from "model/OtherModel";
 import { IViewStatusWarrantyModalProps } from "model/warranty/PropsModel";
 import Loading from "components/loading";
@@ -24,8 +25,8 @@ export default function ViewStatusWarrantyModal(props: IViewStatusWarrantyModalP
     index + 1,
     item.departmentName,
     item.employeeName,
-    item.receiverTime ? moment(item.receiverTime).format("DD/MM/YYYY HH:mm:ss") : "",
-    item.assignedTime ? moment(item.assignedTime).format("DD/MM/YYYY HH:mm:ss") : "",
+    item.receiverTime ? formatDateCustom(item.receiverTime, "EEEEEE/MM/yyyy HH:mm:ss") : "",
+    item.assignedTime ? formatDateCustom(item.assignedTime, "EEEEEE/MM/yyyy HH:mm:ss") : "",
     item.note,
     <Badge
       key={item.id}

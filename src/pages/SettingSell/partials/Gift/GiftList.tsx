@@ -1,7 +1,8 @@
 import React, { Fragment, useState, useEffect, useRef } from "react";
 import cloneDeep from "lodash/cloneDeep";
 
-import moment from "moment";
+import { formatDate } from "utils/dateUtils";
+
 import Icon from "components/icon";
 import Image from "components/image";
 import Loading from "components/loading";
@@ -139,8 +140,8 @@ export default function GiftList(props: IGiftListProps) {
     getPageOffset(params) + index + 1,
     item.cover ? <Image src={item.cover} alt={item.name} width={"64rem"} /> : "",
     item.name,
-    moment(item.startDate).format("DD/MM/YYYY"),
-    moment(item.endDate).format("DD/MM/YYYY"),
+    formatDate(item.startDate),
+    formatDate(item.endDate),
     item.objectType === 1 ? "Voucher" : item.objectType === 2 ? "Giảm giá dịch vụ" : "Sự kiện",
   ];
 

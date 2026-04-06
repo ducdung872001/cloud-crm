@@ -1,7 +1,8 @@
 import React, { useState, memo, useCallback, useEffect } from "react";
 import "./index.scss";
 import Icon from "components/icon";
-import moment from "moment";
+import { formatDate, isValidDate } from "utils/dateUtils";
+
 import Tippy from "@tippyjs/react";
 import { EMAIL_REGEX, PHONE_REGEX_NEW } from "utils/constant";
 import CustomCellLookup from "./partial/CustomCellLookup";
@@ -48,12 +49,12 @@ const CustomCellRender = (props) => {
 
   function formatDate(input: string | Date): string {
     // Kiểm tra xem input có phải là ngày hợp lệ
-    if (!moment(input).isValid()) {
+    if (!isValidDate(input)) {
       return "Invalid date";
     }
 
     // Định dạng ngày thành "DD/MM/YYYY"
-    return moment(input).format("DD/MM/YYYY");
+    return formatDate(input);
   }
 
   const handleChangeValue = (e?) => {

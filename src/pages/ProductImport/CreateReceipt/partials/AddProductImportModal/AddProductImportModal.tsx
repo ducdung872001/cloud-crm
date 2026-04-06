@@ -22,7 +22,8 @@ import ImageThirdGender from "assets/images/third-gender.png";
 import { isDifferenceObj } from "reborn-util";
 import { urlsApi } from "configs/urls";
 import "./AddProductImportModal.scss";
-import moment from "moment";
+import { formatDateCustom } from "utils/dateUtils";
+
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -463,9 +464,9 @@ export default function AddProductImportModal(props: AddProductImportModalProps)
       unitId: selectedVariant.unitId,
       discount: discountVal,
       mfgDate: formData.values.mfgDate
-        ? moment(formData.values.mfgDate).format("YYYY-MM-DDTHH:mm:ss")
+        ? formatDateCustom(formData.values.mfgDate, "yyyy-MM-EEEEEETHH:mm:ss")
         : null,
-      expiryDate: moment(formData.values.expiryDate).format("YYYY-MM-DDTHH:mm:ss"),
+      expiryDate: formatDateCustom(formData.values.expiryDate, "yyyy-MM-EEEEEETHH:mm:ss"),
     };
 
     const response = await ProductImportService.update(body);

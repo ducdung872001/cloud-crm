@@ -1,7 +1,8 @@
 import React, { Fragment, useState, useEffect, useRef, useMemo } from "react";
 import cloneDeep from "lodash/cloneDeep";
 
-import moment from "moment";
+import { formatDate } from "utils/dateUtils";
+
 import Icon from "components/icon";
 import Image from "components/image";
 import Loading from "components/loading";
@@ -128,7 +129,7 @@ export default function PaymentHistoryList() {
 
   const dataMappingArray = (item: IPaymentHistoryResponse, index: number) => [
     getPageOffset(params) + index + 1,
-    item.transDate ? moment(item.transDate).format("DD/MM/YYYY") : "",
+    item.transDate ? formatDate(item.transDate) : "",
     item.recommenderPhone,
     formatCurrency(+item.amount, ","),
     item.content,

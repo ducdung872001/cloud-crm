@@ -43,6 +43,7 @@ import BpmFormProcessService from "services/BpmFormProcessService";
 import BpmParticipantService from "services/BpmParticipantService";
 import ModalMapping from "./partials/ModalMapping/ModalMapping";
 import SettingAttributeEform from "./partials/SettingAttributeEform/SettingAttributeEform";
+import { formatDateCustom } from "utils/dateUtils";
 
 const ResponsiveReactGridLayout = WidthProvider(Responsive);
 
@@ -423,7 +424,7 @@ export default function ConfigModal(props: Record<string, unknown>) {
             disabled={true}
             // value={getContractAttributeValue(contractAttribute.id)}
             // onChange={(e) => {
-            //   const newDate = new Date(moment(e).format("YYYY/MM/DD ") + moment(new Date()).format("HH:mm"));
+            //   const newDate = formatDateCustom(moment(e, "YYYY/MM/DD ") + moment(new Date()).format("HH:mm"));
             //   updateContractAttribute(contractAttribute.id, newDate);
             // }}
             placeholder={`Nhập ${contractAttribute.name.toLowerCase()}`}

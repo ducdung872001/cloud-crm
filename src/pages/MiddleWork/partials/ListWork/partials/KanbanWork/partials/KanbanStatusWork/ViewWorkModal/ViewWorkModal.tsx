@@ -1,5 +1,6 @@
 import React, { Fragment, useState, useEffect, useMemo } from "react";
-import moment from "moment";
+import { formatDateTime } from "utils/dateUtils";
+
 import { IActionModal } from "model/OtherModel";
 import { IViewWorkModalProps } from "model/workOrder/PropsModel";
 import { IWorkOrderResponseModel } from "model/workOrder/WorkOrderResponseModel";
@@ -38,12 +39,12 @@ export default function ViewWorkModal(props: IViewWorkModalProps) {
   const listInfoWorkLeft = [
     {
       title: "Ngày bắt đầu",
-      name: moment(detailWork?.startTime).format("DD/MM/YYYY HH:mm"),
+      name: formatDateTime(detailWork?.startTime),
       className: "start--work",
     },
     {
       title: "Ngày kết thúc",
-      name: moment(detailWork?.endTime).format("DD/MM/YYYY HH:mm"),
+      name: formatDateTime(detailWork?.endTime),
       className: "end--work",
     },
     {

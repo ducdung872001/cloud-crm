@@ -1,7 +1,8 @@
 import React, { Fragment, useEffect, useMemo, useRef, useState, useContext } from "react";
 import cloneDeep from "lodash/cloneDeep";
 
-import moment from "moment";
+import { formatDateTime } from "utils/dateUtils";
+
 import Tippy from "@tippyjs/react";
 import { useSearchParams, useNavigate } from "react-router-dom";
 import Icon from "components/icon";
@@ -247,8 +248,8 @@ export default function WarrantyList() {
     <span key={item.id} style={{ color: "#dc3545" }}>
       {item.reasonName}
     </span>,
-    item.startDate ? moment(item.startDate).format("DD/MM/YYYY HH:mm") : "",
-    item.endDate ? moment(item.endDate).format("DD/MM/YYYY HH:mm") : "",
+    item.startDate ? formatDateTime(item.startDate) : "",
+    item.endDate ? formatDateTime(item.endDate) : "",
     <div
       key={item.id}
       className="processing__department"

@@ -2,7 +2,8 @@ import React, { Fragment, useState, useEffect, useRef } from "react";
 import cloneDeep from "lodash/cloneDeep";
 
 import Tippy from "@tippyjs/react";
-import moment from "moment";
+import { formatDate } from "utils/dateUtils";
+
 import Button from "components/button/button";
 import { formatCurrency, getPageOffset } from "reborn-util";
 import { showToast } from "utils/common";
@@ -105,7 +106,7 @@ export default function ProductNeeds({ data }) {
     getPageOffset(params) + index + 1,
     item.type,
     item.name,
-    item.usedTime ? moment(item.usedTime).format("DD/MM/YYYY") : "",
+    item.usedTime ? formatDate(item.usedTime) : "",
     item.quantity,
     item.favorites,
     item.statistics,

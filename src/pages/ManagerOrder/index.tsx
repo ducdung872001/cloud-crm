@@ -1,7 +1,8 @@
 import React, { Fragment, useState, useEffect, useRef, useMemo, useCallback, useContext } from "react";
 import cloneDeep from "lodash/cloneDeep";
 
-import moment from "moment";
+import { formatDate } from "utils/dateUtils";
+
 import classNames from "classnames";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { ExportPdf } from "exports/pdf";
@@ -320,8 +321,8 @@ export default function ManageOrder() {
   const dataMappingArray = (item: IOrderResponseModel, index: number, type?: string) => [
     index + 1,
     item.order_code,
-    moment(item.order_date).format("DD/MM/YYYY"),
-    item.expected_date ? moment(item.expected_date).format("DD/MM/YYYY") : "",
+    formatDate(item.order_date),
+    item.expected_date ? formatDate(item.expected_date) : "",
     name,
     formatCurrency(item.amount),
     item.note,

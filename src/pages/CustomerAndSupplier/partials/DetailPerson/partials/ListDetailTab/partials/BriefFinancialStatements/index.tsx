@@ -2,7 +2,7 @@ import React, { Fragment, useState, useEffect, useRef } from "react";
 import cloneDeep from "lodash/cloneDeep";
 
 import Tippy from "@tippyjs/react";
-import moment from "moment";
+
 import Button from "components/button/button";
 import { formatCurrency, getPageOffset } from "reborn-util";
 import { showToast } from "utils/common";

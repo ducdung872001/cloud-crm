@@ -1,7 +1,8 @@
 import React, { Fragment, useState, useEffect, useRef, useMemo, useContext } from "react";
 import cloneDeep from "lodash/cloneDeep";
 
-import moment from "moment";
+import { formatDate } from "utils/dateUtils";
+
 import Loading from "components/loading";
 import SearchBox from "components/searchBox/searchBox";
 import BoxTable from "components/boxTable/boxTable";
@@ -149,7 +150,7 @@ export default function ProductInventoryList() {
     getPageOffset(params) + index + 1,
     item.productName,
     item.batchNo,
-    moment(item.expiryDate).format("DD/MM/YYYY"),
+    formatDate(item.expiryDate),
     item.unitName,
     item.quantity,
     item.warehouseName,

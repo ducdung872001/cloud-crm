@@ -1,5 +1,5 @@
 import React, { Fragment, useCallback, useContext, useEffect, useMemo, useRef, useState } from "react";
-import moment from "moment";
+import { formatDate } from "utils/dateUtils";
 import Tippy from "@tippyjs/react";
 import { isDifferenceObj, getPageOffset } from "reborn-util";
 import { useNavigate, useSearchParams } from "react-router-dom";
@@ -264,8 +264,8 @@ export default function FilterModal(props: Record<string, unknown>) {
     const body = {
       ...(typeWork ? { isPriority: typeWork?.value } : {}),
       ...(dataEmployee ? { employeeId: dataEmployee?.value } : {}),
-      ...(startDate ? { startDate: moment(startDate).format("DD/MM/YYYY") } : {}),
-      ...(endDate ? { endDate: moment(endDate).format("DD/MM/YYYY") } : {}),
+      ...(startDate ? { startDate: formatDate(startDate) } : {}),
+      ...(endDate ? { endDate: formatDate(endDate) } : {}),
       ...(statusWork ? { status: statusWork?.value } : {}),
       ...(biddingName ? { prName: biddingName } : {}),
       ...(dataProject ? { projectId: dataProject.value } : {}),
@@ -395,7 +395,7 @@ export default function FilterModal(props: Record<string, unknown>) {
                   fill={true}
                   required={false}
                   isFmtText={true}
-                  value={startDate ? moment(startDate).format("DD/MM/YYYY") : ""}
+                  value={startDate ? formatDate(startDate) : ""}
                   onChange={(e) => {
                     setStartDate(e);
                   }}
@@ -411,7 +411,7 @@ export default function FilterModal(props: Record<string, unknown>) {
                   fill={true}
                   required={false}
                   isFmtText={true}
-                  value={endDate ? moment(endDate).format("DD/MM/YYYY") : ""}
+                  value={endDate ? formatDate(endDate) : ""}
                   onChange={(e) => {
                     setEndDate(e);
                   }}

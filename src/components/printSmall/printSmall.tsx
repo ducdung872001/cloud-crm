@@ -1,5 +1,6 @@
 import React, {Fragment, useContext, useEffect, useRef, useState, memo} from "react";
-import moment from "moment";
+import { formatDate, formatDateCustom } from "utils/dateUtils";
+
 import { useReactToPrint } from "react-to-print";
 import ImgQrBill from "assets/images/qr-bill.png";
 import ImgBill from "assets/images/logo-print.png";
@@ -83,7 +84,7 @@ function PrintSmall(props: IPrintSmallProps) {
                 <div className="title-invoice">
                   <h2>Hóa đơn bán hàng</h2>
                   <span className="date-shopping">
-                    Ngày bán: {moment(data.receipt_date).format("DD/MM/YYYY")} - {moment(data.receipt_date).format("HH:mm")}
+                    Ngày bán: {formatDate(data.receipt_date)} - {formatDateCustom(data.receipt_date, "HH:mm")}
                   </span>
                 </div>
 

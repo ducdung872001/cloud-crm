@@ -11,7 +11,8 @@ import { DataPaginationDefault, PaginationProps } from "components/pagination/pa
 import { useNavigate, useSearchParams } from "react-router-dom";
 import cloneDeep from "lodash/cloneDeep";
 
-import moment from "moment";
+import { formatDateTime } from "utils/dateUtils";
+
 import { PHONE_REGEX, EMAIL_REGEX } from "utils/constant";
 import AddUserModal from "pages/User/partials/AddUserModal";
 import UserService from "services/UserService";
@@ -218,7 +219,7 @@ export default function UserList() {
     >
       Xem tổ chức
     </a>,
-    moment(item.regisDate).format("DD/MM/YYYY HH:mm"),
+    formatDateTime(item.regisDate),
     item.seeder == null || item.seeder == 0 ? "Người dùng thật" : "Seeder",
   ];
 

@@ -1,7 +1,8 @@
 import Icon from "components/icon";
 import { IActionModal } from "model/OtherModel";
 import { IWorkOrderDocFile, IWorkOrderResponseModel } from "model/workOrder/WorkOrderResponseModel";
-import moment from "moment";
+import { formatDateTime } from "utils/dateUtils";
+
 import React, { useEffect, useMemo, useState, useRef, useLayoutEffect } from "react";
 import { CircularProgressbar } from "react-circular-progressbar";
 import EmployeeService from "services/EmployeeService";
@@ -65,7 +66,7 @@ export default function InfoWorkArea(props: Record<string, unknown>) {
 
   const convertTime = (time: string) => {
     if (!time) return "";
-    return moment(time).format("DD/MM/YYYY HH:mm");
+    return formatDateTime(time);
   };
 
   const convertWorkLoadUnit = (workLoad: number, unit: string) => {

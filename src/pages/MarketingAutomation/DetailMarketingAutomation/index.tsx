@@ -1,7 +1,7 @@
 import React, { Fragment, useState, useEffect, useRef, useContext, useMemo } from "react";
 import cloneDeep from "lodash/cloneDeep";
 
-import moment from "moment";
+
 import { Link, useNavigate, useParams, useSearchParams } from "react-router-dom";
 import { IAction, IFilterItem, ISaveSearch } from "model/OtherModel";
 import { ICampaignFilterRequest } from "model/campaign/CampaignRequestModel";

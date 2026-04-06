@@ -11,7 +11,8 @@ import { showToast } from "utils/common";
 import ModalSetting from "../ModalUserTask/partials/ModalSetting";
 import ModalSelectNodeOther from "../ModalSelectNodeOther";
 import ModalDebug from "../ModalUserTask/partials/ModalDebug";
-import moment from "moment";
+import { formatDate } from "utils/dateUtils";
+
 import ListButtonHeader from "../../components/ListButtonHeader/ListButtonHeader";
 
 export default function ModalLinkThrowEvent({ onShow, onHide, dataNode, processId, changeNameNodeXML, disable }) {
@@ -297,13 +298,13 @@ export default function ModalLinkThrowEvent({ onShow, onHide, dataNode, processI
               result[key] = data[key].map((rule) => {
                 if (rule.operator === "in" && rule.value !== undefined) {
                   if (rule.type === "date") {
-                    rule.value = JSON.stringify([moment(rule.value).format("DD/MM/YYYY")]);
+                    rule.value = JSON.stringify([formatDate(rule.value)]);
                   } else {
                     rule.value = JSON.stringify([rule.value]);
                   }
                 } else if (rule.type === "date") {
                   // && typeof rule.value === "string"
-                  rule.value = moment(rule.value).format("DD/MM/YYYY");
+                  rule.value = formatDate(rule.value);
                 }
     
                 return transformData(rule);

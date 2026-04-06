@@ -1,5 +1,6 @@
 import React, { useState, Fragment } from "react";
-import moment from "moment";
+import { formatDate } from "utils/dateUtils";
+
 import CustomScrollbar from "components/customScrollbar";
 import { IViewInfoWarrantyProps } from "model/warranty/PropsModel";
 import AddTransferVotes from "pages/Common/AddTransferVotes";
@@ -28,7 +29,7 @@ export default function ViewInfoWarranty(props: IViewInfoWarrantyProps) {
     {
       className: "completion-time",
       title: "Ngày hoàn thành",
-      name: moment(data.endDate).format("DD/MM/YYYY"),
+      name: formatDate(data.endDate),
     },
     {
       className: "note",

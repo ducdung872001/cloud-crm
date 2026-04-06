@@ -1,7 +1,8 @@
 import React, { Fragment, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import cloneDeep from "lodash/cloneDeep";
 
-import moment from "moment";
+import { formatDate, formatDateTime } from "utils/dateUtils";
+
 import Tippy from "@tippyjs/react";
 import { isDifferenceObj, getPageOffset } from "reborn-util";
 import { useNavigate, useSearchParams } from "react-router-dom";
@@ -725,7 +726,7 @@ export default function ListWork(props: Record<string, unknown>) {
           </div>,
           <div>
             {item.startTime || item.endTime
-              ? `${moment(item.startTime).format("DD/MM/YYYY HH:mm")} - ${moment(item.endTime).format("DD/MM/YYYY HH:mm")}`
+              ? `${formatDateTime(item.startTime)} - ${formatDateTime(item.endTime)}`
               : ""}
           </div>,
           // <div style={{ width: "20rem" }}>{item.extendedData && JSON.parse(item.extendedData) ? JSON.parse(item.extendedData).prName : ""}</div>,
@@ -738,7 +739,7 @@ export default function ListWork(props: Record<string, unknown>) {
           getPageOffset(params) + index + 1,
           item.nodeName || item.name,
           item.projectName,
-          item.startTime || item.endTime ? `${moment(item.startTime).format("DD/MM/YYYY")} - ${moment(item.endTime).format("DD/MM/YYYY")}` : "",
+          item.startTime || item.endTime ? `${formatDate(item.startTime)} - ${formatDate(item.endTime)}` : "",
           item.prName,
           item.employeeName,
           item.status === 0

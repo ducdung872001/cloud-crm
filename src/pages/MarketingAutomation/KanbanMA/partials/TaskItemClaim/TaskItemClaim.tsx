@@ -3,7 +3,8 @@ import { Draggable } from "react-beautiful-dnd";
 import Icon from "components/icon";
 import "./TaskItemClaim.scss";
 import Tippy from "@tippyjs/react";
-import moment from "moment";
+import { formatDateCustom } from "utils/dateUtils";
+
 import Badge from "components/badge/badge";
 
 export default function TaskItemClaim(props: Record<string, unknown>) {
@@ -69,7 +70,7 @@ export default function TaskItemClaim(props: Record<string, unknown>) {
 
               <div>
                 <span style={{ fontSize: 12, fontWeight: "400" }}>
-                  Thời gian tạo: {item?.dataDetail?.createdTime ? moment(item?.dataDetail?.createdTime).format("DD/MM/YYYY  HH:mm") : ""}
+                  Thời gian tạo: {item?.dataDetail?.createdTime ? formatDateCustom(item?.dataDetail?.createdTime, "EEEEEE/MM/yyyy  HH:mm") : ""}
                 </span>
               </div>
 

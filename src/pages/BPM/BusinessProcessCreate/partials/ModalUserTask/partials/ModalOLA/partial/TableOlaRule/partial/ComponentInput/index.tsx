@@ -4,7 +4,8 @@ import SelectCustom from "components/selectCustom/selectCustom";
 import NummericInput from "components/input/numericInput";
 import Checkbox from "components/checkbox/checkbox";
 import DatePickerCustom from "components/datepickerCustom/datepickerCustom";
-import moment from "moment";
+import { formatDate } from "utils/dateUtils";
+
 import Input from "components/input/input";
 import "./index.scss";
 import SelectLookupOla from "./partial/SelectLookupOla";
@@ -121,7 +122,7 @@ const ComponentInput: React.FC<ComponentInputProps> = ({
                 <DatePickerCustom
                   name={field.name}
                   fill={false}
-                  value={field.value ? moment(field.value).format("DD/MM/YYYY") : ""}
+                  value={field.value ? formatDate(field.value) : ""}
                   iconPosition="left"
                   //   disabled={!true ? true : field.readOnly}
                   // icon={<Icon name="Calendar" />}

@@ -1,6 +1,7 @@
 import React, { Fragment, useEffect, useMemo, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import moment from "moment";
+import { formatDate } from "utils/dateUtils";
+
 import Icon from "components/icon";
 import Loading from "components/loading";
 import Button from "components/button/button";
@@ -170,8 +171,8 @@ export default function CreateReceipt() {
       )}
     </div>,
     item.batchNo,
-    item.mfgDate ? moment(item.mfgDate).format("DD/MM/YYYY") : "",
-    item.expiryDate ? moment(item.expiryDate).format("DD/MM/YYYY") : "",
+    item.mfgDate ? formatDate(item.mfgDate) : "",
+    item.expiryDate ? formatDate(item.expiryDate) : "",
     item.unitName, item.quantity,
     formatCurrency(item.mainCost),
     formatCurrency((item.mainCost || 0) * (item.quantity || 0)),
@@ -291,7 +292,7 @@ export default function CreateReceipt() {
                   <div className="cr-invoice-option">
                     <div className="cr-invoice-option__title">{option.label}</div>
                     <div className="cr-invoice-option__meta">
-                      <span>{option.receiptDate ? moment(option.receiptDate).format("DD/MM/YYYY") : "Chưa có ngày"}</span>
+                      <span>{option.receiptDate ? formatDate(option.receiptDate) : "Chưa có ngày"}</span>
                       <StatusBadge status={option.status ?? 2} />
                     </div>
                   </div>

@@ -18,7 +18,8 @@ import ModalSetting from "../ModalUserTask/partials/ModalSetting";
 import ModalSelectNodeOther from "../ModalSelectNodeOther";
 import ModalDebug from "../ModalUserTask/partials/ModalDebug";
 import DatePickerCustom from "components/datepickerCustom/datepickerCustom";
-import moment from "moment";
+import { formatDate } from "utils/dateUtils";
+
 import Checkbox from "components/checkbox/checkbox";
 import ListButtonHeader from "../../components/ListButtonHeader/ListButtonHeader";
 import CycleConfig from "../../components/CycleConfig";
@@ -518,7 +519,7 @@ export default function ModalTimerStartEventTask({ onShow, onHide, dataNode, pro
                     fill={true}
                     required={false}
                     isFmtText={true}
-                    value={config.date ? moment(config.date).format("DD/MM/YYYY") : ""}
+                    value={config.date ? formatDate(config.date) : ""}
                     onChange={(e) => {
                       setConfig({ ...config, date: e });
                     }}

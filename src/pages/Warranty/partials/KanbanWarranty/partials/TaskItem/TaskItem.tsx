@@ -1,5 +1,6 @@
 import React from "react";
-import moment from "moment";
+import { formatDate } from "utils/dateUtils";
+
 import { Draggable } from "react-beautiful-dnd";
 import Icon from "components/icon";
 import { ITaskItemProps } from "model/warranty/PropsModel";
@@ -38,7 +39,7 @@ export default function TaskItem(props: ITaskItemProps) {
             <div className="task-footer">
               <div className="time-task">
                 <Icon name="Clock" />
-                {item.createdTime ? moment(item.createdTime).format("DD/MM/YYYY") : ""}
+                {item.createdTime ? formatDate(item.createdTime) : ""}
               </div>
               <div className="avatar" title={item.customerName}>
                 <img src={item.customerAvatar ? item.customerAvatar : OtherGenders} alt={item.customerName} />

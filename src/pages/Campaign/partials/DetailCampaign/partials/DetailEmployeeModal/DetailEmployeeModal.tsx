@@ -7,7 +7,7 @@ import Loading from "components/loading";
 
 import ReportService from "services/ReportService";
 import { showToast } from "utils/common";
-import moment from "moment";
+
 import { SystemNotification } from "components/systemNotification/systemNotification";
 import { FunnelChart } from "react-funnel-pipeline";
 import "react-funnel-pipeline/dist/index.css";

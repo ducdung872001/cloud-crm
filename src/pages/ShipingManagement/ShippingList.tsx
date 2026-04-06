@@ -1,7 +1,8 @@
 import React, { Fragment, useCallback, useEffect, useRef, useState } from "react";
 import cloneDeep from "lodash/cloneDeep";
 
-import moment from "moment";
+import { formatDate } from "utils/dateUtils";
+
 import Tippy from "@tippyjs/react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import Icon from "components/icon";
@@ -354,7 +355,7 @@ export default function ShippingOrderList() {
       item.carrierName,
       item.receiverName,
       item.receiverPhone,
-      item.createdAt ? moment(item.createdAt).format("DD/MM/YYYY") : "",
+      item.createdAt ? formatDate(item.createdAt) : "",
       codValue > 0 ? `${formatCurrency(codValue)}` : "0đ",
 
       <Badge

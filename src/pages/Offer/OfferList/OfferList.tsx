@@ -1,7 +1,8 @@
 import React, { Fragment, useState, useEffect, useRef, useMemo, useCallback, useContext } from "react";
 import cloneDeep from "lodash/cloneDeep";
 
-import moment from "moment";
+import { formatDate } from "utils/dateUtils";
+
 import Tippy from "@tippyjs/react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import Icon from "components/icon";
@@ -268,7 +269,7 @@ export default function SaleOfferList() {
           >
             {item.offerCode}
           </span>,
-          moment(item.receiptDate).format("DD/MM/YYYY"),
+          formatDate(item.receiptDate),
           formatCurrency(item.amount),
           "0",
           formatCurrency(item.discount ? item.discount : "0"),
@@ -281,7 +282,7 @@ export default function SaleOfferList() {
       : [
           getPageOffset(params) + index + 1,
           item.offerCode,
-          moment(item.receiptDate).format("DD/MM/YYYY"),
+          formatDate(item.receiptDate),
           item.amount || 0,
           0,
           item.discount || 0,

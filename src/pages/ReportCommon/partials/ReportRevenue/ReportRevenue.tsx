@@ -1,5 +1,6 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
-import moment from "moment";
+import { formatDateCustom } from "utils/dateUtils";
+
 import { formatCurrency } from "reborn-util";
 import Highcharts from "highcharts";
 import HighchartsReact from "highcharts-react-official";
@@ -191,7 +192,7 @@ export default function ReportRevenue(props: IReportCommonProps) {
     () =>
       listRevenue.map((item) => {
         const date = item.time || item.date;
-        return `${moment(date).format("DD/MM")}<br/><span style="font-size:10px;color:#9a9890">${moment(date).format("ddd")}</span>`;
+        return `${formatDateCustom(date, "EEEEEE/MM")}<br/><span style="font-size:10px;color:#9a9890">${formatDateCustom(date, "EEE")}</span>`;
       }),
     [listRevenue]
   );
@@ -269,7 +270,7 @@ export default function ReportRevenue(props: IReportCommonProps) {
       credits: { enabled: false },
       legend: { enabled: false },
       xAxis: {
-        categories: listRevenue.map((item) => moment(item.time || item.date).format("DD/MM")),
+        categories: listRevenue.map((item) => formatDateCustom(item.time || item.date, "EEEEEE/MM")),
         lineWidth: 0,
         tickWidth: 0,
         labels: { style: { color: "#9a9890", fontSize: "11px" } },

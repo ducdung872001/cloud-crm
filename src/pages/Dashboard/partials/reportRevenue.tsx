@@ -1,5 +1,6 @@
 import React, { useContext, useEffect, useState } from "react";
-import moment from "moment";
+import { formatDate } from "utils/dateUtils";
+
 import { formatCurrency } from "reborn-util";
 import { useTranslation } from "react-i18next";
 import Highcharts from "highcharts";
@@ -116,7 +117,7 @@ export default function ReportRevenue(props: ReportRevenueProps) {
         .map((el) => {
           return `<span style="color: #0070B3; text-transform: capitalize; font-size: 14px; line-height: 16px;">${moment(el).format(
             "dddd"
-          )}</span><br /><i style="font-size: 12px; line-height: 14px;">${moment(el).format("DD/MM/yyyy")}</i>`;
+          )}</span><br /><i style="font-size: 12px; line-height: 14px;">${formatDate(el)}</i>`;
         });
 
       setCategoriesRevenue(changeDate);

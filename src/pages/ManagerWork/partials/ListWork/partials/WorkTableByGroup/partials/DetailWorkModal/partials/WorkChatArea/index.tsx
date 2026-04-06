@@ -1,7 +1,8 @@
 import React, { Fragment, useState, useEffect, useRef } from "react";
 import { IWorkExchangeFilterRequest } from "model/workOrder/WorkOrderRequestModel";
 import { IWorkExchangeResponseModal } from "model/workOrder/WorkOrderResponseModel";
-import moment from "moment";
+import { formatDateCustom } from "utils/dateUtils";
+
 import Icon from "components/icon";
 import Loading from "components/loading";
 import Dialog, { IContentDialog } from "components/dialog/dialog";
@@ -228,7 +229,7 @@ export default function WorkChatArea(props: IContentExchangeWorkProps) {
                       </div>
                       <div className="info__content--right">
                         <span className="time-content">
-                          {moment(item.createdTime).format("HH:mm")} {item.employeeId === dataEmployee.id ? <Icon name="Checked" /> : ""}
+                          {formatDateCustom(item.createdTime, "HH:mm")} {item.employeeId === dataEmployee.id ? <Icon name="Checked" /> : ""}
                         </span>
                       </div>
                       <div

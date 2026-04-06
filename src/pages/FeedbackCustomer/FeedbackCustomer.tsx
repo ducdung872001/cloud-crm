@@ -1,7 +1,8 @@
 import React, { Fragment, useState, useEffect, useRef, useMemo } from "react";
 import cloneDeep from "lodash/cloneDeep";
 
-import moment from "moment";
+import { formatDateCustom } from "utils/dateUtils";
+
 import { useSearchParams } from "react-router-dom";
 import Loading from "components/loading";
 import Badge from "components/badge/badge";
@@ -204,7 +205,7 @@ export default function FeedbackCustomer() {
     item.beautySalonName,
     item.employeeName,
     <Badge key={item.id} text={item.status == 2 ? "Đã xử lý" : "Đang xử lý"} variant={item.status == 2 ? "success" : "warning"} />,
-    item.createdTime ? moment(item.createdTime).format("HH:mm DD/MM/YYYY") : "",
+    item.createdTime ? formatDateCustom(item.createdTime, "HH:mm EEEEEE/MM/yyyy") : "",
   ];
 
   const actionsTable = (item): IAction[] => {

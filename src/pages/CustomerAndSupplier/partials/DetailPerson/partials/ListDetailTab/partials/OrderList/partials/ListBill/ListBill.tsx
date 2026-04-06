@@ -1,7 +1,8 @@
 import React, { Fragment, useEffect, useState } from "react";
 import cloneDeep from "lodash/cloneDeep";
 
-import moment from "moment";
+import { formatDate } from "utils/dateUtils";
+
 import Tippy from "@tippyjs/react";
 import { useParams } from "react-router-dom";
 import { formatCurrency, getPageOffset } from "reborn-util";
@@ -92,7 +93,7 @@ export default function ListBill(props: IListBillProps) {
     >
       {item.invoiceCode}
     </span>,
-    moment(item.receiptDate).format("DD/MM/YYYY"),
+    formatDate(item.receiptDate),
     formatCurrency(item.amount),
     "0",
     formatCurrency(item.discount ? item.discount : "0"),

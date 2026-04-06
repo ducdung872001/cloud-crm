@@ -3,7 +3,8 @@ import uniq from "lodash/uniq";
 
 import Tippy from "@tippyjs/react";
 import { useReactToPrint } from "react-to-print";
-import moment from "moment";
+import { formatDate } from "utils/dateUtils";
+
 import { IBeautyBranchResponse } from "model/beautyBranch/BeautyBranchResponseModel";
 import { IActionModal } from "model/OtherModel";
 import { ShowModalDetailSaleInvoiceProps } from "model/invoice/PropsModel";
@@ -258,7 +259,7 @@ export default function ModalDetailSaleInvoice(props: ShowModalDetailSaleInvoice
                 phone={detaiInvoice?.customerPhone}
                 address={detaiInvoice?.customerAddress}
                 importer={detaiInvoice?.customerName}
-                billDate={moment(detaiInvoice?.receiptDate).format("DD/MM/YYYY")}
+                billDate={formatDate(detaiInvoice?.receiptDate)}
                 totalMoney={detaiInvoice?.amount || 0}
                 discount={detaiInvoice?.discount || 0}
                 vat={0}

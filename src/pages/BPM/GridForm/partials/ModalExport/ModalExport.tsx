@@ -8,7 +8,8 @@ import * as XLSX from "xlsx";
 import { convertToFileName } from "reborn-util";
 import { saveAs } from "file-saver";
 import { IColumnGrid } from "../..";
-import moment from "moment";
+import { formatDate } from "utils/dateUtils";
+
 
 export interface ExportModalProps {
   type?: "one_option" | "two_option";
@@ -48,7 +49,7 @@ export default function ModalExport(props: ExportModalProps) {
               obj[column.name] = column.options.find((option) => option.value == item[column.key])?.label;
             }
           } else if (column.type == "date") {
-            obj[column.name] = item[column.key] ? moment(item[column.key]).format("DD/MM/YYYY") : "";
+            obj[column.name] = item[column.key] ? formatDate(item[column.key]) : "";
           } else {
             obj[column.name] = item[column.key];
           }

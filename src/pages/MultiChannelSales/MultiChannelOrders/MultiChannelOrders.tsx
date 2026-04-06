@@ -10,7 +10,8 @@ import { IAction } from "@/model/OtherModel";
 import Icon from "@/components/icon";
 import ModalDetailOrder from "./ModaDetailOrder/ModalDetailOrder";
 import OrderRequestService from "@/services/OrderRequestService";
-import moment from "moment";
+import { formatDateTime } from "utils/dateUtils";
+
 import { showToast } from "@/utils/common";
 import { useLocation, useNavigate } from "react-router-dom";
 
@@ -266,7 +267,7 @@ export default function MultiChannelOrders() {
           : "error"
       }
     />,
-    <div style={{ width: "10rem" }}>{moment(item.orderDate).format("DD/MM/YYYY HH:mm")}</div>,
+    <div style={{ width: "10rem" }}>{formatDateTime(item.orderDate)}</div>,
     <div style={{ width: "10rem" }}>
       {item.status === "PENDING" ? (
         <div

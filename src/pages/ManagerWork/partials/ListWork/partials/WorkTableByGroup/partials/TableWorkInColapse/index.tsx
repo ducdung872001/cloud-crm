@@ -16,7 +16,8 @@ import { showToast } from "utils/common";
 import { IAction } from "model/OtherModel";
 import Icon from "components/icon";
 import { BulkActionItemModel } from "components/bulkAction/bulkAction";
-import moment from "moment";
+import { formatDate } from "utils/dateUtils";
+
 import StatusTask from "../StatusTask";
 
 export default function TableWorkInColapse(props: ITableWorkInColapsedProps) {
@@ -225,7 +226,7 @@ export default function TableWorkInColapse(props: ITableWorkInColapsedProps) {
       </a>
     ),
 
-    item.startTime || item.endTime ? `${moment(item.startTime).format("DD/MM/YYYY")} - ${moment(item.endTime).format("DD/MM/YYYY")}` : "",
+    item.startTime || item.endTime ? `${formatDate(item.startTime)} - ${formatDate(item.endTime)}` : "",
     // <div
     //   key={item.id}
     //   className="percent__finish--work"

@@ -3,7 +3,8 @@ import cloneDeep from "lodash/cloneDeep";
 import debounce from "lodash/debounce";
 import isEmpty from "lodash/isEmpty";
 
-import moment from "moment";
+import { formatDate, formatDateCustom } from "utils/dateUtils";
+
 import Button from "components/button/button";
 import Icon from "components/icon";
 import Radio from "components/radio/radio";
@@ -482,12 +483,12 @@ function FilterDate(props: FilterItemProps) {
           if (filterItem.key === "time_sync") {
             handleChangeFilter({
               ...filterItem,
-              value: moment(e).format("DD/MM/YYYY HH:mm:ss"),
+              value: formatDateCustom(e, "EEEEEE/MM/yyyy HH:mm:ss"),
             });
           } else {
             handleChangeFilter({
               ...filterItem,
-              value: moment(e).format("DD/MM/YYYY"),
+              value: formatDate(e),
             });
           }
         }}
@@ -507,12 +508,12 @@ function FilterDate(props: FilterItemProps) {
               if (filterItem.key === "time_sync") {
                 handleChangeFilter({
                   ...filterItem,
-                  value_extra: moment(e).format("DD/MM/YYYY HH:mm:ss"),
+                  value_extra: formatDateCustom(e, "EEEEEE/MM/yyyy HH:mm:ss"),
                 });
               } else {
                 handleChangeFilter({
                   ...filterItem,
-                  value_extra: moment(e).format("DD/MM/YYYY"),
+                  value_extra: formatDate(e),
                 });
               }
             }}

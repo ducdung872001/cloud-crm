@@ -1,5 +1,6 @@
 import React, { Fragment, useState, useEffect, useMemo, useRef } from "react";
-import moment from "moment";
+import { formatDate } from "utils/dateUtils";
+
 import cloneDeep from "lodash/cloneDeep";
 
 import { Link, useSearchParams } from "react-router-dom";
@@ -162,7 +163,7 @@ export default function CustomerCareList() {
     getPageOffset(params) + index + 1,
     item.name,
     item.phoneMasked,
-    item.birthday ? moment(item.birthday).format("DD/MM/YYYY") : "",
+    item.birthday ? formatDate(item.birthday) : "",
     item.profileLink ? (
       <Link to={item.profileLink} key={index}>
         Đi tới

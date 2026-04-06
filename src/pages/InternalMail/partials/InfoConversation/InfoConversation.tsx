@@ -1,5 +1,6 @@
 import React, { Fragment, useState, useEffect } from "react";
-import moment from "moment";
+import { formatDateCustom } from "utils/dateUtils";
+
 import Icon from "components/icon";
 import Loading from "components/loading";
 import { IMailBoxResponseModel, IMailboxViewerResponseModel } from "model/mailBox/MailBoxResponseModel";
@@ -85,7 +86,7 @@ export default function InfoConversation(props: IInfoConversationProps) {
                 </div>
                 <div className="info-creator">
                   <span className="name">{detailMailBox.senderName}</span>
-                  <span className="date">Tạo lúc: {moment(detailMailBox.createdTime).format("HH:mm DD/MM/YYYY")}</span>
+                  <span className="date">Tạo lúc: {formatDateCustom(detailMailBox.createdTime, "HH:mm EEEEEE/MM/yyyy")}</span>
                 </div>
               </div>
               <div className="detail__creator--content">

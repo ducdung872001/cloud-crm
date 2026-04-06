@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useMemo, Fragment, useCallback, useContext } from "react";
-import moment from "moment";
+import { formatDateCustom } from "utils/dateUtils";
+
 import { IActionModal, IOption } from "model/OtherModel";
 import { IFieldCustomize, IFormData, IValidation } from "model/FormModel";
 import { IAddTicketModalProps } from "model/ticket/PropsModel";
@@ -389,8 +390,8 @@ export default function AddTicketModal(props: IAddTicketModalProps) {
   ], [listSupport, isLoadingSupport, detailCustomer, idCustomer, isLoadingCustomer, data?.customerId, formData?.values?.customerId, isShowPhone, loadingPhone, idCustomer, data?.customerId]);
 
   const listFieldDate: IFieldCustomize[] = useMemo(() => {
-    const startDate = formData?.values?.startDate ? moment(formData.values.startDate) : null;
-    const endDate = formData?.values?.endDate ? moment(formData.values.endDate) : null;
+    const startDate = formData?.values?.startDate ? new Date(formData.values.startDate) : null;
+    const endDate = formData?.values?.endDate ? new Date(formData.values.endDate) : null;
 
     const isEndDateBeforeStartDate = startDate && endDate && endDate.isBefore(startDate);
 
@@ -472,8 +473,8 @@ export default function AddTicketModal(props: IAddTicketModalProps) {
       ...(formData.values as ITicketRequestModel),
       ...(saleflowId ? { saleflowId: saleflowId } : {}),
       ...(sieId ? { sieId: sieId } : {}),
-      startDate: moment(formData.values.startDate).format("YYYY-MM-DDTHH:mm:ss"),
-      endDate: moment(formData.values.endDate).format("YYYY-MM-DDTHH:mm:ss"),
+      startDate: formatDateCustom(formData.values.startDate, "yyyy-MM-EEEEEETHH:mm:ss"),
+      endDate: formatDateCustom(formData.values.endDate, "yyyy-MM-EEEEEETHH:mm:ss"),
     };
 
     const response = await TicketService.update(body);

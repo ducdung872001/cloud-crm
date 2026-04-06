@@ -1,5 +1,6 @@
 import React, { Fragment, useEffect, useRef, useState } from "react";
-import moment from "moment";
+import { formatDate } from "utils/dateUtils";
+
 import Tippy from "@tippyjs/react";
 import { trimContent } from "reborn-util";
 import { Draggable } from "react-beautiful-dnd";
@@ -151,7 +152,7 @@ export default function TaskItem(props: Record<string, unknown>) {
               <div className="container_time__work">
                 <div className="time__work">
                   <Icon name='CalenderWork'/>
-                  <span className="text_date">{moment(item.startTime).format("DD/MM/YYYY")} - {moment(item.endTime).format("DD/MM/YYYY")}</span>
+                  <span className="text_date">{formatDate(item.startTime)} - {formatDate(item.endTime)}</span>
                 </div>
                 {item.status === 1 ?
                   <div className="item_expire">

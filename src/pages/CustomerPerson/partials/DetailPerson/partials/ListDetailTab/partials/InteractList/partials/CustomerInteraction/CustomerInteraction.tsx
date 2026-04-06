@@ -1,5 +1,6 @@
 import React, { Fragment, useEffect, useState } from "react";
-import moment from "moment";
+import { formatDateTime } from "utils/dateUtils";
+
 import Icon from "components/icon";
 import Loading from "components/loading";
 import CustomerService from "services/CustomerService";
@@ -80,7 +81,7 @@ export default function CustomerInteraction(props) {
                     </div>
                     <div className="desc-interaction">
                       <p className="content">{item.content}</p>
-                      <span className="time">{moment(item.createdAt).format("DD/MM/YYYY HH:mm")}</span>
+                      <span className="time">{formatDateTime(item.createdAt)}</span>
                     </div>
                   </div>
                   <div className="vertical__line" />

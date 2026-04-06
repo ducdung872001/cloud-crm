@@ -11,7 +11,8 @@ import Image from "components/image";
 import Loading from "components/loading";
 import { SystemNotification } from "components/systemNotification/systemNotification";
 import BoxTable from "components/boxTable/boxTable";
-import moment from "moment";
+import { formatDate } from "utils/dateUtils";
+
 import { getPageOffset } from 'reborn-util';
 
 export default function PurchasedService(props: IPurchasedServiceProps) {
@@ -57,7 +58,7 @@ export default function PurchasedService(props: IPurchasedServiceProps) {
     <Image key={item.id} src={item.serviceAvatar || ImageThirdGender} alt={item.serviceName} width={"64rem"} />,
     <div key={item.id}>
       <span>{item.serviceName}</span> <br />
-      <i>{`${item.invoiceCode || ""} - ${item.receiptDate ? moment(item.receiptDate).format("DD/MM/YYYY") : ""}`}</i>
+      <i>{`${item.invoiceCode || ""} - ${item.receiptDate ? formatDate(item.receiptDate) : ""}`}</i>
     </div>,
     item.serviceNumber,
     item.qty ? item.qty : 1,

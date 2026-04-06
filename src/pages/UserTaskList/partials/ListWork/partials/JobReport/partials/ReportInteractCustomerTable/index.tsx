@@ -2,7 +2,8 @@
 import React, { Fragment, useCallback, useContext, useEffect, useMemo, useRef, useState } from "react";
 import cloneDeep from "lodash/cloneDeep";
 
-import moment from "moment";
+import { formatDate } from "utils/dateUtils";
+
 import { getSearchParameters, getPageOffset } from "reborn-util";
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import Icon from "components/icon";
@@ -195,7 +196,7 @@ export default function ReportInteractCustomerTable() {
 
   const dataMappingArray = (item: Record<string, unknown>, index: number, type?: string) => [
     getPageOffset(params) + index + 1,
-    item.lastActionTime ? moment(item.lastActionTime).format("DD/MM/YYYY") : "",
+    item.lastActionTime ? formatDate(item.lastActionTime) : "",
     item.customer?.name,
     item?.contactName,
     item.customer?.phoneMasked,

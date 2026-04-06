@@ -2,7 +2,8 @@ import React, { Fragment, useState, useEffect, useRef } from "react";
 import cloneDeep from "lodash/cloneDeep";
 
 import { formatCurrency, getPageOffset } from "reborn-util";
-import moment from "moment";
+import { formatDate } from "utils/dateUtils";
+
 import { showToast } from "utils/common";
 import { PaginationProps, DataPaginationDefault } from "components/pagination/pagination";
 import Dialog, { IContentDialog } from "components/dialog/dialog";
@@ -100,7 +101,7 @@ export default function NetLoan({ data, onShow, callBack }) {
 
   const dataMappingArray = (item: Record<string, unknown>, index: number) => [
     getPageOffset(params) + index + 1,
-    item.transactionDate ? moment(item.transactionDate).format("DD/MM/YYYY") : "",
+    item.transactionDate ? formatDate(item.transactionDate) : "",
     formatCurrency(item.shortTerm, ","),
     formatCurrency(item.longTerm, ","),
     formatCurrency(item.other, ","),

@@ -1,7 +1,8 @@
 import React, { Fragment, useEffect, useMemo, useRef, useState } from "react";
 import cloneDeep from "lodash/cloneDeep";
 
-import moment from "moment";
+import { formatDate } from "utils/dateUtils";
+
 import { useSearchParams } from "react-router-dom";
 import Loading from "components/loading";
 import Image from "components/image";
@@ -144,7 +145,7 @@ export default function ReportLogin() {
     item?.jteName ?? "",
     item?.managerName ?? "",
     item.numLogin,
-    item.actionTime ? moment(item.actionTime).format("DD/MM/YYYY") : "",
+    item.actionTime ? formatDate(item.actionTime) : "",
   ];
 
   const actionsTable = (item: Record<string, unknown>): IAction[] => {

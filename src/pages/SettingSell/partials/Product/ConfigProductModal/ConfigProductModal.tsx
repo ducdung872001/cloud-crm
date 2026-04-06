@@ -23,7 +23,8 @@ import "./ConfigProductModal.scss";
 import Input from "components/input/input";
 import Radio from "components/radio/radio";
 import DatePickerCustom from "components/datepickerCustom/datepickerCustom";
-import moment from "moment";
+import { formatDate } from "utils/dateUtils";
+
 import { before } from "lodash";
 import CustomerSourceService from "services/CustomerSourceService";
 import CustomerService from "services/CustomerService";
@@ -912,7 +913,7 @@ export default function ConfigProductModal(props: Record<string, unknown>) {
                                             fill={true}
                                             isFmtText={true}
                                             required={true}
-                                            value={time.beforeTime ?  moment(time.beforeTime).format("DD/MM/YYYY") : ''}
+                                            value={time.beforeTime ?  formatDate(time.beforeTime) : ''}
                                             onChange={(e) => setTime({ ...time, beforeTime: e })}
                                             // disabled={formData.never !== "1"}
                                             placeholder="DD/MM/YYYY"
@@ -928,7 +929,7 @@ export default function ConfigProductModal(props: Record<string, unknown>) {
                                             fill={true}
                                             required={true}
                                             isFmtText={true}
-                                            value={time.afterTime ?  moment(time.afterTime).format("DD/MM/YYYY") : ''}
+                                            value={time.afterTime ?  formatDate(time.afterTime) : ''}
                                             onChange={(e) => setTime({ ...time, afterTime: e })}
                                             // disabled={formData.never !== "1"}
                                             placeholder="DD/MM/YYYY"
@@ -945,7 +946,7 @@ export default function ConfigProductModal(props: Record<string, unknown>) {
                                                 fill={true}
                                                 required={true}
                                                 isFmtText={true}
-                                                value={time.startTime ?  moment(time.startTime).format("DD/MM/YYYY") : ''}
+                                                value={time.startTime ?  formatDate(time.startTime) : ''}
                                                 onChange={(e) => setTime({ ...time, startTime: e })}
                                                 // disabled={formData.never !== "1"}
                                                 placeholder="DD/MM/YYYY"
@@ -960,7 +961,7 @@ export default function ConfigProductModal(props: Record<string, unknown>) {
                                                 fill={true}
                                                 required={true}
                                                 isFmtText={true}
-                                                value={time.endTime ?  moment(time.endTime).format("DD/MM/YYYY") : ''}
+                                                value={time.endTime ?  formatDate(time.endTime) : ''}
                                                 onChange={(e) => setTime({ ...time, endTime: e })}
                                                 // disabled={formData.never !== "1"}
                                                 placeholder="DD/MM/YYYY"

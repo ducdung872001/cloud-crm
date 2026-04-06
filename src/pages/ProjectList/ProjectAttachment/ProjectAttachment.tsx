@@ -7,7 +7,7 @@ import Button from "components/button/button";
 import Icon from "components/icon";
 import Dialog, { IContentDialog } from "components/dialog/dialog";
 import { DataPaginationDefault, PaginationProps } from "components/pagination/pagination";
-import moment from "moment";
+
 import { IAction } from "model/OtherModel";
 import BoxTable from "components/boxTable/boxTable";
 import Loading from "components/loading";

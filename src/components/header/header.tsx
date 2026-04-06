@@ -1,7 +1,8 @@
 import React, {useEffect, useRef, useState, useContext, useCallback, memo} from "react";
 import debounce from "lodash/debounce";
 
-import moment from "moment";
+import { formatDateCustom } from "utils/dateUtils";
+
 import { useCookies } from "react-cookie";
 import { useNavigate } from "react-router-dom";
 import { Swiper, SwiperSlide } from "swiper/react";
@@ -673,7 +674,7 @@ function Header(props: HeaderProps) {
             </div>
           ) : null}
           <div className="footer-notification">
-            <span className="time">{item.sentAt ? moment(item.sentAt).format("DD/MM/YYYY - HH:mm") : ""}</span>
+            <span className="time">{item.sentAt ? formatDateCustom(item.sentAt, "EEEEEE/MM/yyyy - HH:mm") : ""}</span>
           </div>
         </div>
       </div>
@@ -947,7 +948,7 @@ function Header(props: HeaderProps) {
                       )}
                       <div className="notification-item__body">
                         <h3>{n.title}</h3>
-                        <time className="text-muted">{moment(n.created_at).format("H:mm | DD-MM-yyyy")}</time>
+                        <time className="text-muted">{formatDateCustom(n.created_at, "H:mm | EEEEEE-MM-yyyy")}</time>
                       </div>
                     </li>
                   ))}

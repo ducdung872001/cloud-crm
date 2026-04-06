@@ -8,7 +8,8 @@ import Checkbox from "components/checkbox/checkbox";
 import Tippy from "@tippyjs/react";
 // import TippyInvoiceInfo from "./partials/TippyInvoiceInfo";
 import { formatCurrency } from "reborn-util";
-import moment from "moment";
+import { formatDate } from "utils/dateUtils";
+
 
 export default function TaskItem(props: Record<string, unknown>) {
   const { item, 
@@ -76,7 +77,7 @@ export default function TaskItem(props: Record<string, unknown>) {
                     <span style={{fontSize: 12, fontWeight:'400'}}>Người trình: {item.employeeName}</span>
                 </div>
                 <div>
-                    <span style={{fontSize: 12, fontWeight:'400'}}>Thời gian trình: {item.processedObject?.createdTime ? moment(item.processedObject?.createdTime).format('DD/MM/YYYY') : ''}</span>
+                    <span style={{fontSize: 12, fontWeight:'400'}}>Thời gian trình: {item.processedObject?.createdTime ? formatDate(item.processedObject?.createdTime) : ''}</span>
                 </div>
 
                 <div>

@@ -1,5 +1,6 @@
 import React, { Fragment, useState, useEffect, useCallback, useMemo, useContext } from "react";
-import moment from "moment";
+import { formatDate } from "utils/dateUtils";
+
 import { IActionModal } from "model/OtherModel";
 import { IFieldCustomize, IFormData, IValidation } from "model/FormModel";
 import FieldCustomize from "components/fieldCustomize/fieldCustomize";
@@ -231,8 +232,8 @@ export default function SearchProjectManagementModal(props: ISearchProjectManage
       limit: 20,
       ...(formData.values.employeeId ? { employeeId: formData.values.employeeId } : {}),
       ...(formData.values.departmentId ? { departmentId: formData.values.departmentId } : {}),
-      ...(formData.values.startTime ? { startTime: moment(formData.values.startTime).format("DD/MM/YYYY") } : {}),
-      ...(formData.values.endTime ? { endTime: moment(formData.values.endTime).format("DD/MM/YYYY") } : {}),
+      ...(formData.values.startTime ? { startTime: formatDate(formData.values.startTime) } : {}),
+      ...(formData.values.endTime ? { endTime: formatDate(formData.values.endTime) } : {}),
     };
 
     setIsSubmit(true);

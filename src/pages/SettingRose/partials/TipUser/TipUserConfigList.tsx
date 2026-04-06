@@ -18,7 +18,8 @@ import { showToast } from "utils/common";
 import { getPageOffset } from "reborn-util";
 import TipUserConfigService from "services/TipUserConfigService";
 import AddTipUserConfigModal from "./partials/AddTipUserConfigModal";
-import moment from "moment";
+import { formatDate } from "utils/dateUtils";
+
 import "./TipUserConfigList.scss";
 
 export default function TipUserConfigsList(props: ITipUserConfigListProps) {
@@ -157,8 +158,8 @@ export default function TipUserConfigsList(props: ITipUserConfigListProps) {
     getPageOffset(params) + index + 1,
     item.employeeName,
     <a key={index}>5 dịch vụ</a>,
-    item.effectFrom ? moment(item.effectFrom).format("DD/MM/YYYY") : "",
-    item.effectTo ? moment(item.effectTo).format("DD/MM/YYYY") : "",
+    item.effectFrom ? formatDate(item.effectFrom) : "",
+    item.effectTo ? formatDate(item.effectTo) : "",
     "Xem chi tiết",
   ];
 

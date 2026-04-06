@@ -1,7 +1,8 @@
 import React, { useCallback, useContext, useEffect, useRef, useState } from "react";
 import cloneDeep from "lodash/cloneDeep";
 
-import moment from "moment";
+import { formatDate, formatDateCustom } from "utils/dateUtils";
+
 import Tippy from "@tippyjs/react";
 import { Calendar, momentLocalizer } from "react-big-calendar";
 import { IScheduleCommonFilterRequest } from "model/scheduleCommon/ScheduleCommonRequestModal";
@@ -150,7 +151,7 @@ export default function CalendarCommon() {
     };
 
     const label = () => {
-      const date = moment(toolbar.date);
+      const date = new Date(toolbar.date);
       return (
         <div className="info-date">
           <span>{date.format("DD")}</span>
@@ -296,8 +297,8 @@ export default function CalendarCommon() {
         lstCustomerId: filterCalendar.lstCustomerId.join(),
         types: filterCalendar.chooseTypeCalendar.join(),
         sources: filterCalendar.sourcesCalendar.join(),
-        startTime: filterCalendar.startTime ? moment(filterCalendar.startTime).format("DD/MM/YYYY") : "",
-        endTime: filterCalendar.endTime ? moment(filterCalendar.endTime).format("DD/MM/YYYY") : "",
+        startTime: filterCalendar.startTime ? formatDate(filterCalendar.startTime) : "",
+        endTime: filterCalendar.endTime ? formatDate(filterCalendar.endTime) : "",
       });
   }, [filterCalendar, idEmployee]);
 

@@ -15,7 +15,8 @@ import Loading from "components/loading";
 import { DataPaginationDefault, PaginationProps } from "components/pagination/pagination";
 import Button from "components/button/button";
 import BoxTable from "components/boxTable/boxTable";
-import moment from "moment";
+import { formatDate } from "utils/dateUtils";
+
 
 export default function MarketingReport(props: Record<string, unknown>) {
   const { onShow, onHide, data} = props;
@@ -90,7 +91,7 @@ export default function MarketingReport(props: Record<string, unknown>) {
         getPageOffset(params) + index + 1,
         item.name,
         formatCurrency(item.budget || 0),
-        item.reportDate ? moment(item.reportDate).format('DD/MM/YYYY') : '',
+        item.reportDate ? formatDate(item.reportDate) : '',
     ];
 
     const actionsTable = (item: Record<string, unknown>): IAction[] => {

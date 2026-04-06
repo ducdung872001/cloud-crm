@@ -1,5 +1,6 @@
 import React, { Fragment, useEffect, useMemo, useState } from "react";
-import moment from "moment";
+import { formatDateTime } from "utils/dateUtils";
+
 import Icon from "components/icon";
 import BoxTable from "components/boxTable/boxTable";
 import Modal, { ModalBody, ModalFooter, ModalHeader } from "components/modal/modal";
@@ -24,7 +25,7 @@ export default function ViewInteractModal(props: IViewInteractModalProps) {
   const dataSize = [12, 41];
 
   const dataMappingArray = (item, idx) => [
-    moment(item.createdAt).format("DD/MM/YYYY HH:mm"),
+    formatDateTime(item.createdAt),
     <div key={idx} className="view__content--interact">
       <span className="icon-interact">
         <Icon name={item.type == "invoice" ? "Bill" : item.type == "call" ? "PhoneFill" : item.type == "sms" ? "SMS" : "Feedback"} />

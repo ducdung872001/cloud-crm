@@ -27,7 +27,8 @@ import NummericInput from "components/input/numericInput";
 import Checkbox from "components/checkbox/checkbox";
 import DatePickerCustom from "components/datepickerCustom/datepickerCustom";
 import RadioList from "components/radio/radioList";
-import moment from "moment";
+import { formatDateCustom } from "utils/dateUtils";
+
 import { Parser } from "formula-functionizer";
 import { validateEmail } from "reborn-validation";
 import "./AddContactModal.scss";
@@ -1214,7 +1215,7 @@ export default function AddContactModal(props: AddContactModalProps) {
             fill={true}
             value={getContactAttributeValue(contactAttribute.id)}
             onChange={(e) => {
-              const newDate = new Date(moment(e).format("YYYY/MM/DD ") + moment(new Date()).format("HH:mm"));
+              const newDate = new Date(formatDateCustom(e, "yyyy/MM/dd ") + formatDateCustom(new Date(), "HH:mm"));
               updateContactAttribute(contactAttribute.id, newDate);
             }}
             placeholder={`Nhập ${contactAttribute.name.toLowerCase()}`}

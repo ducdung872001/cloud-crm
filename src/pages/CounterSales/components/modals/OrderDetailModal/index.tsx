@@ -3,7 +3,8 @@ import Modal, { ModalBody, ModalFooter, ModalHeader } from "components/modal/mod
 import { IActionModal } from "model/OtherModel";
 import "./index.scss";
 import { useGetDetailInvoice } from "@/hooks/useGetDetailInvoice";
-import moment from "moment";
+import { formatDateCustom } from "utils/dateUtils";
+
 import { formatCurrency } from "reborn-util";
 
 interface OrderDetailModalProps {
@@ -146,7 +147,7 @@ export default function OrderDetailModal({ open, onClose, onPrint, onConfirm, in
                   TT: <b>💵 Tiền mặt</b>
                 </div>
                 <div className="od-panel__sub">
-                  Tạo lúc: <b>{dataInvoice?.createdTime ? moment(dataInvoice.createdTime).format("HH:mm · DD/MM") : ""}</b>
+                  Tạo lúc: <b>{dataInvoice?.createdTime ? formatDateCustom(dataInvoice.createdTime, "HH:mm · EEEEEE/MM") : ""}</b>
                 </div>
               </div>
             </div>

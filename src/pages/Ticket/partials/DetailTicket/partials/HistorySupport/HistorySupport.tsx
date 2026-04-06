@@ -1,5 +1,6 @@
 import React, { useContext, useEffect, useState } from "react";
-import moment from "moment";
+import { formatDateCustom } from "utils/dateUtils";
+
 import SupportCommonService from "services/SupportCommonService";
 import { showToast } from "utils/common";
 import Badge from "components/badge/badge";
@@ -29,7 +30,7 @@ export default function HistorySupport(props) {
   const dataMappingArray = (item: Record<string, unknown>, index: number) => [
     index + 1,
     item.departmentName,
-    item.receiverTime ? moment(item.receiverTime).format("DD/MM/YYYY HH:mm:ss") : "",
+    item.receiverTime ? formatDateCustom(item.receiverTime, "EEEEEE/MM/yyyy HH:mm:ss") : "",
     item.employeeName ? (
       item.employeeName
     ) : (
@@ -37,7 +38,7 @@ export default function HistorySupport(props) {
         Chờ xác nhận...
       </span>
     ),
-    item.assignedTime ? moment(item.assignedTime).format("DD/MM/YYYY HH:mm:ss") : "",
+    item.assignedTime ? formatDateCustom(item.assignedTime, "EEEEEE/MM/yyyy HH:mm:ss") : "",
     item.note,
     <Badge
       key={item.id}

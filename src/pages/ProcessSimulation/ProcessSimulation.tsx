@@ -18,7 +18,8 @@ import { getPageOffset } from "reborn-util";
 
 import "./ProcessSimulation.scss";
 import BusinessProcessService from "services/BusinessProcessService";
-import moment from "moment";
+import { formatDateCustom } from "utils/dateUtils";
+
 import Badge from "components/badge/badge";
 import { color } from "highcharts";
 import { LogErrorTableModal } from "./LogErrorTableModal";
@@ -156,7 +157,7 @@ export default function ProcessSimulation(props: Record<string, unknown>) {
     item.fromNodeId,
     item.toNodeId,
     item.potId,
-    item.createdTime ? moment(item.createdTime).format("DD/MM/YYYY HH:mm:ss") : "",
+    item.createdTime ? formatDateCustom(item.createdTime, "EEEEEE/MM/yyyy HH:mm:ss") : "",
     <Badge
       key={index}
       variant={

@@ -14,7 +14,8 @@ import _, { set } from "lodash";
 import HeaderFilter from "components/HeaderFilter/HeaderFilter";
 import { ContextType, UserContext } from "contexts/userContext";
 import Tippy from "@tippyjs/react";
-import moment from "moment";
+import { formatDate, formatDateCustom } from "utils/dateUtils";
+
 import Icon from "components/icon";
 import RadioList from "components/radio/radioList";
 import CheckboxList from "components/checkbox/checkboxList";
@@ -398,10 +399,10 @@ export default function NotificationList(props: Record<string, unknown>) {
       newParams.status = statusWork.value;
     }
     if (startDate) {
-      newParams.fromTime = moment(startDate).format('DD/MM/YYYY');
+      newParams.fromTime = formatDate(startDate);
     }
     if (endDate) {
-      newParams.toTime = moment(endDate).format('DD/MM/YYYY');
+      newParams.toTime = formatDate(endDate);
     }
     setListNotification([]);
     setParams(newParams);
@@ -508,7 +509,7 @@ export default function NotificationList(props: Record<string, unknown>) {
             </div>
           ) : null}
           <div className="footer-notification">
-            <span className="time">{item.sentAt ? moment(item.sentAt).format("DD/MM/YYYY - HH:mm") : ""}</span>
+            <span className="time">{item.sentAt ? formatDateCustom(item.sentAt, "EEEEEE/MM/yyyy - HH:mm") : ""}</span>
           </div>
         </div>
       </div>
@@ -715,7 +716,7 @@ export default function NotificationList(props: Record<string, unknown>) {
                   fill={true}
                   required={false}
                   isFmtText={true}
-                  value={startDate ? moment(startDate).format("DD/MM/YYYY") : ''}
+                  value={startDate ? formatDate(startDate) : ''}
                   onChange={(e) => {
                     setStartDate(e);
                   }}
@@ -731,7 +732,7 @@ export default function NotificationList(props: Record<string, unknown>) {
                   fill={true}
                   required={false}
                   isFmtText={true}
-                  value={endDate ? moment(endDate).format("DD/MM/YYYY") : ''}
+                  value={endDate ? formatDate(endDate) : ''}
                   onChange={(e) => {
                     setEndDate(e);
                   }}

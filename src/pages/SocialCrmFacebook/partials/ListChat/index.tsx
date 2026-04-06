@@ -1,5 +1,6 @@
 import React, { Fragment, useEffect, useRef, useState } from "react";
-import moment from "moment";
+import { formatDateCustom } from "utils/dateUtils";
+
 import { IListChatProps } from "model/fanpageFacebook/PropsModel";
 import { IFanpageChatResponse } from "model/fanpageFacebook/FanpageResponseModel";
 import { IFanpageChatFilterRequest } from "model/fanpageFacebook/FanpageFacebookRequestModel";
@@ -146,7 +147,7 @@ export default function ListChat(props: IListChatProps) {
                       <div className="info__user">
                         <h5>{item.senderName}</h5>
                         <p className="desc__content">{item.content}</p>
-                        <span className="time-chat">{moment(item.publishedTime).format("HH:mm")}</span>
+                        <span className="time-chat">{formatDateCustom(item.publishedTime, "HH:mm")}</span>
                       </div>
                     ) : (
                       <div className="info__owner">
@@ -176,7 +177,7 @@ export default function ListChat(props: IListChatProps) {
                           })}
                         </div>
                         <span className="time-chat">
-                          {moment(item.createdTime).format("HH:mm")} {item.senderId === item._fanpage_id ? <Icon name="Checked" /> : ""}
+                          {formatDateCustom(item.createdTime, "HH:mm")} {item.senderId === item._fanpage_id ? <Icon name="Checked" /> : ""}
                         </span>
                       </div>
                     )}

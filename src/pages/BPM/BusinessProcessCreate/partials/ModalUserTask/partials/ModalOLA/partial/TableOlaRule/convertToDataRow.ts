@@ -6,7 +6,8 @@
  * }>
  */
 
-import moment from "moment";
+import { formatDate } from "utils/dateUtils";
+
 
 type CellData = {
   key: string;
@@ -37,7 +38,7 @@ export function convertToDataRow(rawTable: CellData[][]): Record<string, unknown
                 childObj["min"] = cell.compare;
                 childObj["max"] = cell.value
                   ? cell.type == "date"
-                    ? moment(cell.value).format("DD/MM/YYYY")
+                    ? formatDate(cell.value)
                     : cell.type == "number"
                     ? cell.value
                     : cell.value
@@ -46,7 +47,7 @@ export function convertToDataRow(rawTable: CellData[][]): Record<string, unknown
                 // Nếu là kiểu date, đổi sang dạng "DD/MM/YYYY" bằng moment
                 childObj[child.key ?? child.name ?? "value"] = child.value
                   ? cell.type == "date"
-                    ? moment(child.value).format("DD/MM/YYYY")
+                    ? formatDate(child.value)
                     : cell.type == "number"
                     ? child.value
                     : cell.value
@@ -102,7 +103,7 @@ export function convertToDataRow(rawTable: CellData[][]): Record<string, unknown
                   // Nếu là kiểu date, đổi sang dạng "DD/MM/YYYY" bằng moment
                   result[cell.key] = {
                     condition: cell.compare ? (cell.compare == "not_in" ? "not in" : cell.compare == "=" ? "equal" : cell.compare) : "",
-                    value: cell.value ? moment(cell.value).format("DD/MM/YYYY") : cell.value,
+                    value: cell.value ? formatDate(cell.value) : cell.value,
                   };
                 } else {
                   result[cell.key] = {
@@ -124,7 +125,7 @@ export function convertToDataRow(rawTable: CellData[][]): Record<string, unknown
             result[cell.key] = cell.value;
           } else if (cell.type === "date") {
             // Nếu là kiểu date, đổi sang dạng "DD/MM/YYYY" bằng monent
-            result[cell.key] = cell.value ? moment(cell.value).format("DD/MM/YYYY") : cell.value;
+            result[cell.key] = cell.value ? formatDate(cell.value) : cell.value;
           } else if (cell.key === "stt") {
             result[cell.key] = cell.value && cell.value != "" ? cell.value : index + 1; // nếu không có giá trị thì mặc định là 0
           } else {

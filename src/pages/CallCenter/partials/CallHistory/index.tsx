@@ -1,7 +1,8 @@
 import React, { Fragment, useState, useEffect, useRef, useMemo, useContext } from "react";
 import cloneDeep from "lodash/cloneDeep";
 
-import moment from "moment";
+import { formatDateTime } from "utils/dateUtils";
+
 import { isDifferenceObj, getPageOffset } from "reborn-util";
 import { useSearchParams } from "react-router-dom";
 import Image from "components/image";
@@ -200,7 +201,7 @@ export default function CallHistory(props: ICallHistoryProps) {
 
     return (
       <div className="d-flex align-items-center flex-column view__time--call">
-        <span className="time-end">{moment(end).format("DD/MM/YYYY HH:mm")}</span>
+        <span className="time-end">{formatDateTime(end)}</span>
         <span className="total-item">{result}</span>
       </div>
     );

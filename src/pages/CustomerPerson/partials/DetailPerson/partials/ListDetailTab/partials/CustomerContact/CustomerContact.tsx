@@ -17,7 +17,8 @@ import { useOnClickOutside } from "utils/hookCustom";
 import Popover from "components/popover/popover";
 import Input from "components/input/input";
 import Checkbox from "components/checkbox/checkbox";
-import moment from "moment";
+import { formatDate } from "utils/dateUtils";
+
 import BoxTableAdvanced from "components/boxTableAdvanced/boxTableAdvanced";
 import AddContactModal from "pages/Contact/partials/AddContactModal";
 
@@ -652,7 +653,7 @@ export default function CustomerContact({ idCustomer }) {
               }
 
               if (ol.datatype === "date") {
-                return { ...ol, attributeValue: moment(ol.attributeValue).format("DD/MM/YYYY") };
+                return { ...ol, attributeValue: formatDate(ol.attributeValue) };
               }
 
               return ol;

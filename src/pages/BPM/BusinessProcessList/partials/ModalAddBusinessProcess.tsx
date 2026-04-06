@@ -26,7 +26,8 @@ import CheckboxList from "components/checkbox/checkboxList";
 import Checkbox from "components/checkbox/checkbox";
 import RadioList from "components/radio/radioList";
 import DatePickerCustom from "components/datepickerCustom/datepickerCustom";
-import moment from "moment";
+import { formatDateCustom } from "utils/dateUtils";
+
 import { SelectOptionData } from "utils/selectCommon";
 import { Parser } from "formula-functionizer";
 import SettingSLA from "./SettingSLA/SettingSLA";
@@ -843,7 +844,7 @@ export default function ModalAddBusinessProcess(props: Record<string, unknown>) 
             fill={true}
             value={getCustomerAttributeValue(customerAttribute.id)}
             onChange={(e) => {
-              const newDate = new Date(moment(e).format("YYYY/MM/DD ") + moment(new Date()).format("HH:mm"));
+              const newDate = new Date(formatDateCustom(e, "yyyy/MM/dd ") + formatDateCustom(new Date(), "HH:mm"));
               updateCustomerAttribute(customerAttribute.id, newDate);
             }}
             placeholder={`Nhập ${customerAttribute.name.toLowerCase()}`}

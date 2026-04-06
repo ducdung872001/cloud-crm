@@ -1,5 +1,6 @@
 import React, { Fragment, useEffect, useRef, useState } from "react";
-import moment from "moment";
+import { formatDateTime } from "utils/dateUtils";
+
 import Icon from "components/icon";
 import { getPermissions, showToast } from "utils/common";
 import "./index.scss";
@@ -156,7 +157,7 @@ export default function HistoryOfKanban(props) {
           setShowModalTime(true);
         }}
       >
-        <span className="text-time">{moment(item.processedTime).format("DD/MM/YYYY HH:mm")}</span>
+        <span className="text-time">{formatDateTime(item.processedTime)}</span>
       </div>
     ) : (
       ""

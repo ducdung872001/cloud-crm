@@ -16,7 +16,8 @@ import AddLoyaltyPointLedgerModal from "./partials/AddLoyaltyPointLedgerModal";
 import { ILoyaltyPointLedgerRequest } from "@/model/loyalty/RoyaltyRequest";
 import { ILoyaltyPointLedgerResposne } from "@/model/loyalty/RoyaltyResposne";
 import LoyaltyService from "@/services/LoyaltyService";
-import moment from "moment";
+import { formatDate } from "utils/dateUtils";
+
 import HeaderTabMenu from "@/components/HeaderTabMenu/HeaderTabMenu";
 
 interface Props {
@@ -176,7 +177,7 @@ export default function LoyaltyPointLedger(props: Props) {
       ? <span className="ledger-employee">{item.employeeName}</span>
       : <span className="ledger-dash">—</span>,
     item.createdTime
-      ? <span className="ledger-date">{moment(item.createdTime).format("DD/MM/YYYY")}</span>
+      ? <span className="ledger-date">{formatDate(item.createdTime)}</span>
       : <span className="ledger-dash">—</span>,
   ];
 

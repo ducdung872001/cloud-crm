@@ -4,7 +4,8 @@ import { toast } from "react-toastify";
 import Cookies from "universal-cookie";
 import { getDomain } from "reborn-util";
 import { isArray, isObject, transform } from "lodash";
-import moment from "moment";
+import { formatDate, formatDateCustom, isValidDate } from "utils/dateUtils";
+
 const cookies = new Cookies();
 
 /**
@@ -352,17 +353,17 @@ export const getAppSSOLink = (rootDomain: string) => {
  *@param {string} endTime // thời gian kết thúc
  */
 
-export function listTimeSlots(startTime, endTime, intervalMinutes) {
-  const timeSlots = [];
-  let currentTime = moment(startTime);
+export function listTimeSlots(startTime: string | Date, endTime: string | Date, intervalMinutes: number) {
+  const timeSlots: { value: string; label: string }[] = [];
+  let current = new Date(startTime);
+  const end = new Date(endTime);
 
-  while (currentTime.isBefore(endTime)) {
-    const data = {
-      value: currentTime.format("HH:mm:ss"),
-      label: currentTime.format("HH:mm"),
-    };
-    timeSlots.push(data);
-    currentTime.add(intervalMinutes, "minutes");
+  while (current < end) {
+    const hh = String(current.getHours()).padStart(2, "0");
+    const mm = String(current.getMinutes()).padStart(2, "0");
+    const ss = String(current.getSeconds()).padStart(2, "0");
+    timeSlots.push({ value: `${hh}:${mm}:${ss}`, label: `${hh}:${mm}` });
+    current = new Date(current.getTime() + intervalMinutes * 60 * 1000);
   }
 
   return timeSlots;
@@ -574,9 +575,8 @@ export const toApiDateFormat = (dateStr: string | null | undefined): string => {
   const isoMatch = s.match(/^(\d{4})-(\d{2})-(\d{2})/);
   if (isoMatch) return `${isoMatch[3]}/${isoMatch[2]}/${isoMatch[1]}`;
 
-  // Fallback: dùng moment nếu format lạ khác
-  const m = moment(s);
-  return m.isValid() ? m.format("DD/MM/YYYY") : "";
+  // Fallback
+  return isValidDate(s) ? formatDate(s) : "";
 };
 
 /**
@@ -600,17 +600,16 @@ export const formatDisplayDate = (
   showTime = false
 ): string => {
   if (!dateStr) return "";
-  const m = moment(dateStr);
-  if (!m.isValid()) return "";
-  return showTime ? m.format("DD/MM/YYYY · HH:mm") : m.format("DD/MM/YYYY");
+  if (!isValidDate(dateStr)) return "";
+  return showTime ? formatDateCustom(dateStr, "dd/MM/yyyy · HH:mm") : formatDate(dateStr);
 };
 
 /**
  * Lấy ngày hôm nay ở format "dd/MM/yyyy" (format API).
  */
-export const todayApiFormat = (): string => moment().format("DD/MM/YYYY");
+export const todayApiFormat = (): string => formatDate(new Date());
 
 /**
  * Lấy ngày hôm nay ở format "yyyy-MM-dd" (format HTML input[type=date]).
  */
-export const todayInputFormat = (): string => moment().format("YYYY-MM-DD");
+export const todayInputFormat = (): string => formatDateCustom(new Date(), "yyyy-MM-dd");

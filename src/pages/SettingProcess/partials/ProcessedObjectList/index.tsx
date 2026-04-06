@@ -1,7 +1,8 @@
 import React, { Fragment, useState, useEffect, useRef, useContext, useMemo, useCallback } from "react";
 import cloneDeep from "lodash/cloneDeep";
 
-import moment from "moment";
+import { formatDate, formatDateCustom } from "utils/dateUtils";
+
 import Icon from "components/icon";
 import Loading from "components/loading";
 import SearchBox from "components/searchBox/searchBox";
@@ -189,9 +190,9 @@ export default function ProcessedObjectList(props) {
   const dataMappingArray = (item, index: number) => [
     getPageOffset(params) + index + 1,
     item.name,
-    item.createdTime ? moment(item.createdTime).format("DD/MM/YYYY") : "",
-    item.startTime ? moment(item.startTime).format("DD/MM/YYYY") : "",
-    item.endTime ? moment(item.endTime).format("DD/MM/YYYY") : "",
+    item.createdTime ? formatDate(item.createdTime) : "",
+    item.startTime ? formatDate(item.startTime) : "",
+    item.endTime ? formatDate(item.endTime) : "",
     item.employeeName,
     <Badge
       key={item.id}
@@ -578,11 +579,11 @@ export default function ProcessedObjectList(props) {
           `${item.planExecutionDay || 0} ngày, ${item.planExecutionHour < 10 ? `0${item.planExecutionHour || 0}` : item.planExecutionHour}:${
             item.planExecutionMinute < 10 ? `0${item.planExecutionMinute || 0}` : item.planExecutionMinute
           }`,
-          item.transitTime ? moment(item.transitTime).format("DD/MM/YYYY HH:mm:ss") : "",
-          item.firstSeenTime ? moment(item.firstSeenTime).format("DD/MM/YYYY HH:mm:ss") : "",
-          item.receivedTime ? moment(item.receivedTime).format("DD/MM/YYYY HH:mm:ss") : "",
-          item.processedTime ? moment(item.processedTime).format("DD/MM/YYYY HH:mm:ss") : "",
-          item.lastProcessedTime ? moment(item.lastProcessedTime).format("DD/MM/YYYY HH:mm:ss") : "",
+          item.transitTime ? formatDateCustom(item.transitTime, "EEEEEE/MM/yyyy HH:mm:ss") : "",
+          item.firstSeenTime ? formatDateCustom(item.firstSeenTime, "EEEEEE/MM/yyyy HH:mm:ss") : "",
+          item.receivedTime ? formatDateCustom(item.receivedTime, "EEEEEE/MM/yyyy HH:mm:ss") : "",
+          item.processedTime ? formatDateCustom(item.processedTime, "EEEEEE/MM/yyyy HH:mm:ss") : "",
+          item.lastProcessedTime ? formatDateCustom(item.lastProcessedTime, "EEEEEE/MM/yyyy HH:mm:ss") : "",
           item.repeatNumber,
           `${item.actualResponseDay || 0} ngày, ${item.actualResponseHour < 10 ? `0${item.actualResponseHour || 0}` : item.actualResponseHour}:${
             item.actualResponseMinute < 10 ? `0${item.actualResponseMinute}` : item.actualResponseMinute

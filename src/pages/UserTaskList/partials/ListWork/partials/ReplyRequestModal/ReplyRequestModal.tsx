@@ -20,7 +20,8 @@ import FileService from "services/FileService";
 import ManagementAskedService from "services/ManagementAskedService";
 import JSZip from "jszip";
 import { saveAs } from "file-saver";
-import moment from "moment";
+import { formatDateCustom } from "utils/dateUtils";
+
 import Loading from "components/loading";
 
 export default function ReplyRequestModal({ onShow, onHide, data }) {
@@ -398,7 +399,7 @@ export default function ReplyRequestModal({ onShow, onHide, data }) {
                         <div className="content">
                           <Icon name="CalendarDot" />
                           <span className="name">
-                            {tenderPackageResponse?.invitationDate ? moment(tenderPackageResponse?.invitationDate).format("DD/MM/YYYY - HH:mm") : ""}
+                            {tenderPackageResponse?.invitationDate ? formatDateCustom(tenderPackageResponse?.invitationDate, "EEEEEE/MM/yyyy - HH:mm") : ""}
                           </span>
                         </div>
                       </div>
@@ -407,7 +408,7 @@ export default function ReplyRequestModal({ onShow, onHide, data }) {
                         <div className="content">
                           <Icon name="CalendarDot" />
                           <span className="name">
-                            {tenderPackageResponse?.closedDate ? moment(tenderPackageResponse?.closedDate).format("DD/MM/YYYY - HH:mm") : ""}
+                            {tenderPackageResponse?.closedDate ? formatDateCustom(tenderPackageResponse?.closedDate, "EEEEEE/MM/yyyy - HH:mm") : ""}
                           </span>
                         </div>
                       </div>

@@ -1,7 +1,8 @@
 import React, { Fragment, useState, useEffect, useRef, useMemo, useContext } from "react";
 import cloneDeep from "lodash/cloneDeep";
 
-import moment from "moment";
+import { formatDate } from "utils/dateUtils";
+
 import { useSearchParams } from "react-router-dom";
 import Loading from "components/loading";
 import SearchBox from "components/searchBox/searchBox";
@@ -163,7 +164,7 @@ export default function ProductSoldList() {
     item.name,
     item.customerName,
     item.batchNo,
-    item.receiptDate ? moment(item.receiptDate).format("DD/MM/YYYY") : "",
+    item.receiptDate ? formatDate(item.receiptDate) : "",
     item.unitName,
   ];
 

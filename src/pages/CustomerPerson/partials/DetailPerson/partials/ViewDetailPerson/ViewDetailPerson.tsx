@@ -1,5 +1,6 @@
 import React, { useState, useEffect, Fragment, useMemo } from "react";
-import moment from "moment";
+import { formatDate, formatDateTime } from "utils/dateUtils";
+
 import Tippy from "@tippyjs/react";
 import parser from "html-react-parser";
 import { useNavigate } from "react-router-dom";
@@ -85,7 +86,7 @@ export default function ViewDetailPerson(props: IViewDetailPersonProps) {
 
     return datatype === "date"
       ? attributeValue
-        ? moment(attributeValue).format("DD/MM/YYYY")
+        ? formatDate(attributeValue)
         : ""
       : datatype === "number"
       ? formatCurrency(attributeValue, ",", "")
@@ -227,7 +228,7 @@ export default function ViewDetailPerson(props: IViewDetailPersonProps) {
         },
         {
           title: "Ngày phân bổ cho Telesale",
-          name: data?.saleAssignDate ? moment(data.saleAssignDate).format("DD/MM/YYYY HH:mm") : "",
+          name: data?.saleAssignDate ? formatDateTime(data.saleAssignDate) : "",
         },
         {
           title: "Sản phẩm",
@@ -363,7 +364,7 @@ export default function ViewDetailPerson(props: IViewDetailPersonProps) {
     },
     {
       title: "Lần mua gần nhất",
-      name: data.lastBoughtDate ? moment(data.lastBoughtDate).format("DD/MM/YYYY") : notData,
+      name: data.lastBoughtDate ? formatDate(data.lastBoughtDate) : notData,
     },
     {
       title: "Tổng doanh số",
@@ -389,7 +390,7 @@ export default function ViewDetailPerson(props: IViewDetailPersonProps) {
   const listInfoContact = [
     {
       title: "Liên hệ lần cuối",
-      name: data.lastContactDate ? moment(data.lastContactDate).format("DD/MM/YYYY") : notData,
+      name: data.lastContactDate ? formatDate(data.lastContactDate) : notData,
     },
     {
       title: "Số tương tác",
@@ -667,7 +668,7 @@ export default function ViewDetailPerson(props: IViewDetailPersonProps) {
                   </div>
                 </Tippy>
               </div>
-              <span className="info__item--right">{data.birthday ? moment(data.birthday).format("DD/MM/YYYY") : notData}</span>
+              <span className="info__item--right">{data.birthday ? formatDate(data.birthday) : notData}</span>
             </div>
           ) : null}
 
@@ -983,7 +984,7 @@ export default function ViewDetailPerson(props: IViewDetailPersonProps) {
                         <div>
                           <span style={{ fontSize: 14, fontWeight: "600" }}>
                             Thời gian thực hiện:{" "}
-                            <span style={{ fontWeight: "400" }}>{item.callTime ? moment(item.callTime).format("DD/MM/YYYY HH:mm") : ""}</span>
+                            <span style={{ fontWeight: "400" }}>{item.callTime ? formatDateTime(item.callTime) : ""}</span>
                           </span>
                         </div>
                       </div>
@@ -1050,7 +1051,7 @@ export default function ViewDetailPerson(props: IViewDetailPersonProps) {
                           <span style={{ fontSize: 14, fontWeight: "600" }}>
                             Thời gian thực hiện:{" "}
                             <span style={{ fontWeight: "400" }}>
-                              {telesaleCallList[2].callTime ? moment(telesaleCallList[2].callTime).format("DD/MM/YYYY HH:mm") : null}
+                              {telesaleCallList[2].callTime ? formatDateTime(telesaleCallList[2].callTime) : null}
                             </span>
                           </span>
                         </div>

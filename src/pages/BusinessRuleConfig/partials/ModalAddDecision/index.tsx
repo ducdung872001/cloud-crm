@@ -16,7 +16,8 @@ import NummericInput from "components/input/numericInput";
 import Tippy from "@tippyjs/react";
 import ModalEditValueIn from "./partial/ModalEditValueIn";
 import DatePickerCustom from "components/datepickerCustom/datepickerCustom";
-import moment from "moment";
+import { formatDate } from "utils/dateUtils";
+
 import BusinessRuleItemService from "services/BusinessRuleItemService";
 import Icon from "components/icon";
 import Button from "components/button/button";
@@ -317,7 +318,7 @@ export default function ModalAddDecision(props: Record<string, unknown>) {
                                     name={item.name}
                                     fill={true}
                                     // value={field.value}
-                                    value={item.value ? moment(item.value).format("DD/MM/YYYY") : ""}
+                                    value={item.value ? formatDate(item.value) : ""}
                                     iconPosition="left"
                                     disabled={false}
                                     // icon={<Icon name="Calendar" />}
@@ -336,7 +337,7 @@ export default function ModalAddDecision(props: Record<string, unknown>) {
                                     name={item.name}
                                     fill={true}
                                     // value={field.value}
-                                    value={item.value2 ? moment(item.value2).format("DD/MM/YYYY") : ""}
+                                    value={item.value2 ? formatDate(item.value2) : ""}
                                     iconPosition="left"
                                     disabled={false}
                                     // icon={<Icon name="Calendar" />}
@@ -459,7 +460,7 @@ export default function ModalAddDecision(props: Record<string, unknown>) {
                                   name={item.name}
                                   fill={true}
                                   // value={field.value}
-                                  value={item.value ? moment(item.value).format("DD/MM/YYYY") : ""}
+                                  value={item.value ? formatDate(item.value) : ""}
                                   iconPosition="left"
                                   disabled={false}
                                   // icon={<Icon name="Calendar" />}
@@ -571,7 +572,7 @@ export default function ModalAddDecision(props: Record<string, unknown>) {
                             name={item.name}
                             fill={true}
                             // value={field.value}
-                            value={item.value ? moment(item.value).format("DD/MM/YYYY") : ""}
+                            value={item.value ? formatDate(item.value) : ""}
                             iconPosition="left"
                             disabled={false}
                             // icon={<Icon name="Calendar" />}

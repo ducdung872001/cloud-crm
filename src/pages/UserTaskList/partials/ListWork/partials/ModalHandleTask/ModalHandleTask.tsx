@@ -20,7 +20,7 @@ import Loading from "components/loading";
 import WorkOrderService from "services/WorkOrderService";
 import { EMAIL_REGEX, PHONE_REGEX_NEW } from "utils/constant";
 import Tippy from "@tippyjs/react";
-import moment from "moment";
+
 import ModalConfirmRelease from "./partials/ModalConfirmRelease/ModalConfirmRelease";
 import ModalCustomPopup from "./partials/ModalCustomPopup";
 import ModalSelectJump from "./partials/ModalSelectJump/ModalSelectJump";

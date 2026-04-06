@@ -8,7 +8,8 @@
 // Tab "Giá vốn"     → API: GET /inventoryBalance/variant/list (tái sử dụng) ✅
 
 import React, { Fragment, useState, useEffect, useRef } from "react";
-import moment from "moment";
+import { formatDate, formatDateTime } from "utils/dateUtils";
+
 import Icon from "components/icon";
 import Loading from "components/loading";
 import SearchBox from "components/searchBox/searchBox";
@@ -756,7 +757,7 @@ export default function InventoryManagement() {
               : "—",
             item.employeeName ?? "—",
             item.exportTime
-              ? moment(item.exportTime).format("DD/MM/YYYY HH:mm")
+              ? formatDateTime(item.exportTime)
               : "—",
             <span key={`st-${item.refId}`}
               style={{
@@ -850,9 +851,9 @@ export default function InventoryManagement() {
             // Người tạo
             item.createdBy ?? "—",
             // Ngày nhận hàng
-            item.receiptDate ? moment(item.receiptDate).format("DD/MM/YYYY") : "—",
+            item.receiptDate ? formatDate(item.receiptDate) : "—",
             // Ngày tạo phiếu
-            item.createdTime ? moment(item.createdTime).format("DD/MM/YYYY HH:mm") : "—",
+            item.createdTime ? formatDateTime(item.createdTime) : "—",
             // Trạng thái
             renderBadge(item.status ?? 0, IMPORT_STATUS_MAP),
           ],
@@ -916,7 +917,7 @@ export default function InventoryManagement() {
             item.fromWarehouseName ?? "—",
             item.toWarehouseName ?? "—",
             item.createdBy ?? "—",
-            item.createdTime ? moment(item.createdTime).format("DD/MM/YYYY HH:mm") : "—",
+            item.createdTime ? formatDateTime(item.createdTime) : "—",
             item.note ?? "—",
             renderBadge(item.status ?? 0, TRANSFER_STATUS_MAP),
           ],
@@ -975,7 +976,7 @@ export default function InventoryManagement() {
             item.productCount != null ? `${item.productCount} loại` : "—",
             item.totalQty != null ? item.totalQty.toLocaleString() : "—",
             item.employeeName ?? "—",
-            item.destroyTime ? moment(item.destroyTime).format("DD/MM/YYYY HH:mm") : "—",
+            item.destroyTime ? formatDateTime(item.destroyTime) : "—",
             renderBadge(item.status ?? 0, DESTROY_STATUS_MAP),
           ],
           actions: (item: IDestroyItem): IAction[] => [
@@ -1047,7 +1048,7 @@ export default function InventoryManagement() {
             <span key={item.id} className="inventory__code">{item.code ?? `#${item.id}`}</span>,
             item.inventoryName ?? "—",
             item.creatorName ?? "—",
-            item.createdTime ? moment(item.createdTime).format("DD/MM/YYYY HH:mm") : "—",
+            item.createdTime ? formatDateTime(item.createdTime) : "—",
             renderBadge(item.status ?? 0, CHECK_STATUS_MAP),
           ],
           actions: (item: IStockAdjustItem): IAction[] => [

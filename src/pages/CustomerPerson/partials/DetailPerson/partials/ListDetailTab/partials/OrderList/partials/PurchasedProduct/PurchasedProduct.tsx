@@ -1,7 +1,8 @@
 import React, { Fragment, useEffect, useState } from "react";
 import cloneDeep from "lodash/cloneDeep";
 
-import moment from "moment";
+import { formatDate } from "utils/dateUtils";
+
 import { useParams } from "react-router-dom";
 import { formatCurrency, getPageOffset } from "reborn-util";
 import { IPurchasedProductProps } from "model/customer/PropsModel";
@@ -73,7 +74,7 @@ export default function PurchasedProduct(props: IPurchasedProductProps) {
     <Image key={item.id} src={item.avatar || ImageThirdGender} alt={item.name} width={"64rem"} />,
     <div key={index}>
       <span>{item.name}</span> <br />
-      <i>{`${item.invoiceCode || ""} - ${item.receiptDate ? moment(item.receiptDate).format("DD/MM/YYYY") : ""}`}</i>
+      <i>{`${item.invoiceCode || ""} - ${item.receiptDate ? formatDate(item.receiptDate) : ""}`}</i>
     </div>,
     item.batchNo,
     item.unitName,

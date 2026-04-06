@@ -7,7 +7,8 @@ import NummericInput from "components/input/numericInput";
 import RadioList from "components/radio/radioList";
 import SelectCustom from "components/selectCustom/selectCustom";
 import TextArea from "components/textarea/textarea";
-import moment from "moment";
+import { formatDateCustom } from "utils/dateUtils";
+
 import React, { Fragment, useContext, useEffect, useState } from "react";
 import { convertToId, formatCurrency } from "reborn-util";
 import "./index.scss";
@@ -372,7 +373,7 @@ export default function InfoProcess(props: { data: Record<string, unknown> }) {
             fill={true}
             value={getCustomerAttributeValue(customerAttribute.id)}
             onChange={(e) => {
-              const newDate = new Date(moment(e).format("YYYY/MM/DD ") + moment(new Date()).format("HH:mm"));
+              const newDate = new Date(formatDateCustom(e, "yyyy/MM/dd ") + formatDateCustom(new Date(), "HH:mm"));
               updateCustomerAttribute(customerAttribute.id, newDate);
             }}
             placeholder={`Nhập ${customerAttribute.name.toLowerCase()}`}

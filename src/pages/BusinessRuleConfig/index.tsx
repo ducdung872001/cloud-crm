@@ -24,7 +24,8 @@ import BoxTableBusinessRule from "components/boxTableBusinessRule/boxTableBusine
 import ListColumnInput from "./partials/ListColumnInput";
 import ListColumnOutput from "./partials/ListColumnOutput";
 import ModalAddDecision from "./partials/ModalAddDecision";
-import moment from "moment";
+import { formatDate } from "utils/dateUtils";
+
 
 export default function BusinessRuleConfig(props: Record<string, unknown>) {
   document.title = "Loại luật nghiệp vụ";
@@ -312,7 +313,7 @@ export default function BusinessRuleConfig(props: Record<string, unknown>) {
                       ? formatCurrency(item[titleKey.key]?.value, ",", "")
                       : titleKey.type == "Date"
                       ? item[titleKey.key]?.value
-                        ? moment(item[titleKey.key]?.value).format("DD/MM/YYYY")
+                        ? formatDate(item[titleKey.key]?.value)
                         : ""
                       : item[titleKey.key]?.value}
                     {" --> "}
@@ -320,7 +321,7 @@ export default function BusinessRuleConfig(props: Record<string, unknown>) {
                       ? formatCurrency(item[titleKey.key]?.value2, ",", "")
                       : titleKey.type == "Date"
                       ? item[titleKey.key]?.value2
-                        ? moment(item[titleKey.key]?.value2).format("DD/MM/YYYY")
+                        ? formatDate(item[titleKey.key]?.value2)
                         : ""
                       : item[titleKey.key]?.value2}
                   </span>
@@ -358,7 +359,7 @@ export default function BusinessRuleConfig(props: Record<string, unknown>) {
                         ? formatCurrency(item[titleKey.key]?.value, ",", "")
                         : titleKey.type == "Date"
                         ? item[titleKey.key]?.value
-                          ? moment(item[titleKey.key]?.value).format("DD/MM/YYYY")
+                          ? formatDate(item[titleKey.key]?.value)
                           : ""
                         : item[titleKey.key]?.value}
                     </span>
@@ -387,7 +388,7 @@ export default function BusinessRuleConfig(props: Record<string, unknown>) {
             ? formatCurrency(item[titleKey.key], ",", "")
             : titleKey.type == "Date"
             ? item[titleKey.key]
-              ? moment(item[titleKey.key]).format("DD/MM/YYYY")
+              ? formatDate(item[titleKey.key])
               : ""
             : item[titleKey.key];
         }

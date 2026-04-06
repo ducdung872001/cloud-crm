@@ -1,7 +1,8 @@
 import React, { Fragment, useContext, useEffect, useMemo, useRef, useState } from "react";
 import isEqual from "lodash/isEqual";
 
-import moment from "moment";
+import { formatDate } from "utils/dateUtils";
+
 import { getDomain, getSearchParameters } from "reborn-util";
 import { useCookies } from "react-cookie";
 import { useTranslation } from "react-i18next";
@@ -233,7 +234,7 @@ export default function SettingAccount() {
 
     const changeValueInfo = {
       ...valueInfo,
-      fmtBirthDay: moment(valueInfo.fmtBirthDay).format("DD/MM/YYYY"),
+      fmtBirthDay: formatDate(valueInfo.fmtBirthDay),
     };
 
     const body = {

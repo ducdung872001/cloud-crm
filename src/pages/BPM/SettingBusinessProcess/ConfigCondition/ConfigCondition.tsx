@@ -8,7 +8,8 @@ import { showToast } from "utils/common";
 import { convertParamsToString, createArrayFromTo, createArrayFromToR, isDifferenceObj } from "reborn-util";
 import CustomerService from "services/CustomerService";
 import "./ConfigCondition.scss";
-import moment from "moment";
+import { formatDate } from "utils/dateUtils";
+
 import Input from "components/input/input";
 import NummericInput from "components/input/numericInput";
 import SelectCustom from "components/selectCustom/selectCustom";
@@ -1427,13 +1428,13 @@ export default function ConfigCondition(props: Record<string, unknown>) {
           result[key] = data[key].map((rule) => {
             if (rule.operator === "in" && rule.value !== undefined) {
               if (rule.type === "date") {
-                rule.value = JSON.stringify([moment(rule.value).format("DD/MM/YYYY")]);
+                rule.value = JSON.stringify([formatDate(rule.value)]);
               } else {
                 rule.value = JSON.stringify([rule.value]);
               }
             } else if (rule.type === "date") {
               // && typeof rule.value === "string"
-              rule.value = moment(rule.value).format("DD/MM/YYYY");
+              rule.value = formatDate(rule.value);
             }
 
             return transformData(rule);

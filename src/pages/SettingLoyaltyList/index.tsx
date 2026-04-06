@@ -18,7 +18,8 @@ import AddProgramLoyaltyModal from "./partials/AddProgramLoyaltyModal";
 import { IRoyaltyFilterRequest } from "@/model/loyalty/RoyaltyRequest";
 import { IProgramRoyaltyResposne } from "@/model/loyalty/RoyaltyResposne";
 import LoyaltyService from "@/services/LoyaltyService";
-import moment from "moment";
+import { formatDate } from "utils/dateUtils";
+
 import { ICustomerRoyaltyListProps } from "@/model/loyalty/PropsModal";
 import HeaderTabMenu from "@/components/HeaderTabMenu/HeaderTabMenu";
 
@@ -102,8 +103,8 @@ export default function SettingLoyaltyList(props: ICustomerRoyaltyListProps) {
     item.name,
     item.processCode,
     item.employeeName ?? "—",
-    item.startDate ? moment(item.startDate).format("DD/MM/YYYY") : "—",
-    item.endDate ? moment(item.endDate).format("DD/MM/YYYY") : "—",
+    item.startDate ? formatDate(item.startDate) : "—",
+    item.endDate ? formatDate(item.endDate) : "—",
     item.active ? "Kích hoạt" : "Không kích hoạt",
   ];
 

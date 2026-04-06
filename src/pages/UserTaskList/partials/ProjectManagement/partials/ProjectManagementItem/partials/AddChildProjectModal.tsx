@@ -1,7 +1,8 @@
 import React, { useState, useEffect, useMemo, Fragment, useCallback } from "react";
 import isEqual from "lodash/isEqual";
 
-import moment from "moment";
+import { formatDate } from "utils/dateUtils";
+
 import { IActionModal } from "model/OtherModel";
 import { IFieldCustomize, IFormData, IValidation } from "model/FormModel";
 import { IAddChildProjectModal } from "model/workProject/PropsModel";
@@ -389,8 +390,8 @@ export default function AddChildProjectModal(props: IAddChildProjectModal) {
   };
 
   // lấy thông tin ngày bắt đầu tiếp nhận, và ngày cuối cùng tiếp nhận
-  const startDay = moment(formData.values.startTime).format("DD/MM/YYYY");
-  const endDay = moment(formData.values.endTime).format("DD/MM/YYYY");
+  const startDay = formatDate(formData.values.startTime);
+  const endDay = formatDate(formData.values.endTime);
 
   const listFieldBasic = useMemo(
     () =>

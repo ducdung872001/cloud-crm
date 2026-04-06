@@ -1,7 +1,8 @@
 import React, { useState, useCallback, memo, useEffect } from "react";
 import "./index.scss";
 import Icon from "components/icon";
-import moment from "moment";
+import { formatDateCustom } from "utils/dateUtils";
+
 import Badge from "components/badge/badge";
 import Tippy from "@tippyjs/react";
 import { Draggable } from "react-beautiful-dnd";
@@ -141,7 +142,7 @@ export default function KanbanOrderTracking(props: Record<string, unknown>) {
 
                 <div>
                   <span style={{ fontSize: 12, fontWeight: "400" }}>
-                    Thời gian tạo: {item?.createdAt ? moment(item?.createdAt).format("DD/MM/YYYY  HH:mm") : ""}
+                    Thời gian tạo: {item?.createdAt ? formatDateCustom(item?.createdAt, "EEEEEE/MM/yyyy  HH:mm") : ""}
                   </span>
                 </div>
 

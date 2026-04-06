@@ -1,7 +1,8 @@
 import React, { useState, useCallback, memo, useEffect } from "react";
 import "./index.scss";
 import Icon from "components/icon";
-import moment from "moment";
+import { formatDate } from "utils/dateUtils";
+
 import Badge from "components/badge/badge";
 import Tippy from "@tippyjs/react";
 import { Draggable } from "react-beautiful-dnd";
@@ -121,8 +122,8 @@ export default function KanbanOrderTracking(props: Record<string, unknown>) {
                   <div style={{ display: "flex" }}>
                     <Icon name="Calendar" style={{ width: 14, top: 0, fill: "#1c8cff" }} />
                     <span style={{ fontSize: 12, fontWeight: "500", marginLeft: 5 }}>
-                      {item.startDate ? moment(item.startDate).format("DD/MM/YYYY") : ""} -{" "}
-                      {item.endDate ? moment(item.endDate).format("DD/MM/YYYY") : ""}
+                      {item.startDate ? formatDate(item.startDate) : ""} -{" "}
+                      {item.endDate ? formatDate(item.endDate) : ""}
                     </span>
                   </div>
                 ) : null}

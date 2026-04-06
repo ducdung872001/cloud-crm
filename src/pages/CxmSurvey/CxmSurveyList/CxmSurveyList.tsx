@@ -23,7 +23,7 @@ import SpaceList from "pages/SettingOperate/partials/Space/SpaceList";
 import AddBuildingFloorModal from "pages/SettingOperate/partials/BuildingFloorList/partials/AddBuildingFloorModal";
 import AddSpaceModal from "pages/SettingOperate/partials/Space/partials/AddSpaceModal";
 import BuildingFloorList from "pages/SettingOperate/partials/BuildingFloorList/BuildingFloorList";
-import moment from "moment";
+import { formatDate } from "utils/dateUtils";
 import AddCxmSurvey from "./patials/AddCxmSurvey";
 import CxmSurveyService from "services/CxmSurveyService";
 import CxmQuestionList from "../CxmQuestionList/CxmQuestionList";
@@ -203,7 +203,7 @@ export default function CxmSurveyList(props: Record<string, unknown>) {
     <div key={item.id} className={`action__view--customer`} onClick={() => { /* TODO */ }}>
       <a>Xem báo cáo</a>
     </div>,
-    moment(item.createdTime).format("DD/MM/YYYY"),
+    formatDate(item.createdTime),
     <Badge key={item.id} text={item.status === 0 ? "Ngừng khảo sát" : "Đang khảo sát"} variant={item.status == 0 ? "warning" : "success"} />,
   ];
 

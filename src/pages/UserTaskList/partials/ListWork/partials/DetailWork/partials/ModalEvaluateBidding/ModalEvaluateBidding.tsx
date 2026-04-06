@@ -14,7 +14,7 @@ import TextArea from "components/textarea/textarea";
 import { uploadDocumentFormData } from "utils/document";
 import JSZip from "jszip";
 import { saveAs } from "file-saver";
-import moment from "moment";
+
 import Tippy from "@tippyjs/react";
 import Loading from "components/loading";
 import { DataPaginationDefault, PaginationProps } from "components/pagination/pagination";

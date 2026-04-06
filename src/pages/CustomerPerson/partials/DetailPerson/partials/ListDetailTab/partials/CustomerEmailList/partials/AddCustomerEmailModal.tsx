@@ -2,7 +2,8 @@
 import React, { Fragment, useState, useEffect, useMemo, useRef } from "react";
 import cloneDeep from "lodash/cloneDeep";
 
-import moment from "moment";
+import { formatDate } from "utils/dateUtils";
+
 import { useSearchParams } from "react-router-dom";
 import { IActionModal, IFilterItem } from "model/OtherModel";
 import Icon from "components/icon";
@@ -293,7 +294,7 @@ export default function AddCustomerEmailModal(props: IAddCustomerEmailModelProps
                   <div className="detail-info">
                     <div className="date-created">
                       <h4 className="item-title">Ngày tạo</h4>
-                      <h4 className="item-name">{moment(new Date()).format("DD/MM/YYYY")}</h4>
+                      <h4 className="item-name">{formatDate(new Date())}</h4>
                     </div>
                     <div className="customer">
                       <h4 className="item-title">Khách hàng</h4>

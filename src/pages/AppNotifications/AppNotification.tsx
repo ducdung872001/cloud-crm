@@ -1,7 +1,8 @@
 import React, { Fragment, useEffect, useMemo, useRef, useState } from "react";
 import cloneDeep from "lodash/cloneDeep";
 
-import moment from "moment";
+import { formatDate } from "utils/dateUtils";
+
 import { useNavigate, useSearchParams } from "react-router-dom";
 import Icon from "components/icon";
 import Loading from "components/loading";
@@ -223,7 +224,7 @@ export default function AppNotificationList(props) {
     <span key={`rate-${item.id}`} className={`open-rate ${item.openRate >= 70 ? "open-rate--high" : item.openRate >= 50 ? "open-rate--medium" : "open-rate--low"}`}>
       {item.openRate}%
     </span>,
-    item.sendDate ? moment(item.sendDate).format("DD/MM/YYYY") : "",
+    item.sendDate ? formatDate(item.sendDate) : "",
     <Badge
       key={item.id}
       text={item.status === 1 ? "Đang chạy" : item.status === 2 ? "Hoàn thành" : "Đã hủy"}

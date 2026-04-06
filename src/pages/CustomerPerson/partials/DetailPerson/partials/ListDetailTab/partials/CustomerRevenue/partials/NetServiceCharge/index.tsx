@@ -1,7 +1,8 @@
 import React, { Fragment, useState, useEffect, useRef } from "react";
 import cloneDeep from "lodash/cloneDeep";
 
-import moment from "moment";
+import { formatDate } from "utils/dateUtils";
+
 import { formatCurrency, getPageOffset } from "reborn-util";
 import { CircularProgressbar } from "react-circular-progressbar";
 import { showToast } from "utils/common";
@@ -101,7 +102,7 @@ export default function NetServiceCharge({ data, onShow, callBack }) {
 
   const dataMappingArray = (item: Record<string, unknown>, index: number) => [
     getPageOffset(params) + index + 1,
-    item.transactionDate ? moment(item.transactionDate).format("DD/MM/YYYY") : "",
+    item.transactionDate ? formatDate(item.transactionDate) : "",
     formatCurrency(item.accountManagement, ","),
     formatCurrency(item.transactionFee, ","),
     formatCurrency(item.guaranteeFee, ","),

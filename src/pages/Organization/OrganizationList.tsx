@@ -11,7 +11,8 @@ import { DataPaginationDefault, PaginationProps } from "components/pagination/pa
 import { useSearchParams } from "react-router-dom";
 import cloneDeep from "lodash/cloneDeep";
 
-import moment from "moment";
+import { formatDateCustom } from "utils/dateUtils";
+
 import BeautySalonService from "services/BeautySalonService";
 import Dialog, { IContentDialog } from "components/dialog/dialog";
 import { getPageOffset } from "reborn-util";
@@ -255,7 +256,7 @@ export default function OrganizationList() {
     item.address,
     item.phone,
     <Badge key={item.id} text={getPublishedName(item.published)} variant={item.published ? "success" : "warning"} />,
-    moment(item.createdTime).format("DD/MM/YYYY HH:mm:ss"),
+    formatDateCustom(item.createdTime, "EEEEEE/MM/yyyy HH:mm:ss"),
     <a
       key={item.id}
       onClick={() => {

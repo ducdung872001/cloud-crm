@@ -15,7 +15,7 @@ import Loading from "components/loading";
 import { DataPaginationDefault, PaginationProps } from "components/pagination/pagination";
 import Button from "components/button/button";
 import BoxTable from "components/boxTable/boxTable";
-import moment from "moment";
+
 import BrandNameService from "services/BrandNameService";
 import { PHONE_REGEX } from "utils/constant";
 

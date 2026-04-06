@@ -1,5 +1,6 @@
 import React, { memo } from "react";
-import moment from "moment";
+import { formatDateCustom } from "utils/dateUtils";
+
 
 interface PrettyTimeProps {
   time: string | number | Date;
@@ -32,7 +33,7 @@ function PrettyTime(props: PrettyTimeProps) {
     return <span className={`time ${className ? className : ""}`}>{Math.round(offset / 3600 / 24)} ngày trước</span>;
   }
 
-  return <span className={`time ${className ? className : ""}`}>{moment(time).format("DD/MM/YYYY HH:mm:ss")}</span>;
+  return <span className={`time ${className ? className : ""}`}>{formatDateCustom(time, "EEEEEE/MM/yyyy HH:mm:ss")}</span>;
 }
 
 export default memo(PrettyTime);

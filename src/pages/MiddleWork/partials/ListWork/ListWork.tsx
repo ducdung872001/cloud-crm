@@ -1,7 +1,8 @@
 import React, { Fragment, useCallback, useContext, useEffect, useMemo, useRef, useState } from "react";
 import cloneDeep from "lodash/cloneDeep";
 
-import moment from "moment";
+import { formatDate } from "utils/dateUtils";
+
 import Tippy from "@tippyjs/react";
 import { isDifferenceObj, getPageOffset } from "reborn-util";
 import { useSearchParams } from "react-router-dom";
@@ -513,7 +514,7 @@ export default function ListWork(props: IListWorkProps) {
             {item.name}
           </span>,
           item.employeeName,
-          item.startTime || item.endTime ? `${moment(item.startTime).format("DD/MM/YYYY")} - ${moment(item.endTime).format("DD/MM/YYYY")}` : "",
+          item.startTime || item.endTime ? `${formatDate(item.startTime)} - ${formatDate(item.endTime)}` : "",
           item.projectName,
           <div
             key={item.id}
@@ -548,7 +549,7 @@ export default function ListWork(props: IListWorkProps) {
           getPageOffset(params) + index + 1,
           item.name,
           item.employeeName,
-          `${moment(item.startTime).format("DD/MM/YYYY")} - ${moment(item.endTime).format("DD/MM/YYYY")}`,
+          `${formatDate(item.startTime)} - ${formatDate(item.endTime)}`,
           item.projectName,
           `${item.percent || 0}%`,
           item.status == 0

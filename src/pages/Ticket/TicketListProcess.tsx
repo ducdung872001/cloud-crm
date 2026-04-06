@@ -1,7 +1,8 @@
 import React, { Fragment, useEffect, useMemo, useRef, useState, useContext } from "react";
 import cloneDeep from "lodash/cloneDeep";
 
-import moment from "moment";
+import { formatDateTime } from "utils/dateUtils";
+
 import Tippy from "@tippyjs/react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import Icon from "components/icon";
@@ -272,8 +273,8 @@ export default function TicketListProcess() {
       {item.customerName}
     </span>,
     item.supportName,
-    item.createdTime ? moment(item.createdTime).format("DD/MM/YYYY HH:mm") : "",
-    item.endDate ? moment(item.endDate).format("DD/MM/YYYY HH:mm") : "",
+    item.createdTime ? formatDateTime(item.createdTime) : "",
+    item.endDate ? formatDateTime(item.endDate) : "",
     item.creatorName,
     <div
       key={item.id}

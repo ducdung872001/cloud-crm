@@ -1,5 +1,6 @@
 import React, { Fragment, useState } from "react";
-import moment from "moment";
+import { formatDate } from "utils/dateUtils";
+
 import CustomScrollbar from "components/customScrollbar";
 import { IViewInfoTicketProps } from "model/ticket/PropsModel";
 import AddTransferVotes from "pages/Common/AddTransferVotes";
@@ -22,7 +23,7 @@ export default function ViewInfoTicket(props: IViewInfoTicketProps) {
     {
       className: "completion-time",
       title: "Ngày hoàn thành",
-      name: data.endDate ? moment(data.endDate).format("DD/MM/YYYY") : "",
+      name: data.endDate ? formatDate(data.endDate) : "",
     },
     {
       className: "note",

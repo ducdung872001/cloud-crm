@@ -1,5 +1,6 @@
 import React, { Fragment, useEffect, useRef, useState } from "react";
-import moment from "moment";
+import { formatDateCustom } from "utils/dateUtils";
+
 import Icon from "components/icon";
 import Loading from "components/loading";
 import EmployeeService from "services/EmployeeService";
@@ -408,7 +409,7 @@ export default function ExchangeFast(props: IExchangeFastProps) {
                             <div className="content-res">{item.medias && item.medias.length > 0 ? boxContentMedia(item) : item.content}</div>
                           </div>
                           <span className="time-content">
-                            {moment(item.createdTime).format("HH:mm")} {item.employeeId === dataEmployee.id ? <Icon name="Checked" /> : ""}
+                            {formatDateCustom(item.createdTime, "HH:mm")} {item.employeeId === dataEmployee.id ? <Icon name="Checked" /> : ""}
                           </span>
                         </div>
 

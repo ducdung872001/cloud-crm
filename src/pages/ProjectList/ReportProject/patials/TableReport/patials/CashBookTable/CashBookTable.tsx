@@ -13,7 +13,8 @@ import { ICashbookFilterRequest } from "model/cashbook/CashbookRequestModel";
 import { ICashBookResponse } from "model/cashbook/CashbookResponseModel";
 import { ICustomerResponse } from "model/customer/CustomerResponseModel";
 import { IAction, IFilterItem } from "model/OtherModel";
-import moment from "moment";
+import { formatDateTime } from "utils/dateUtils";
+
 // import AddCashBookModal from "pages/CashBook/partials/AddCashBookModal";
 import ExportListModal from "pages/Common/ExportListModal/ExportListModal";
 import React, { Fragment, useContext, useEffect, useMemo, useRef, useState } from "react";
@@ -263,7 +264,7 @@ export default function CashBookTable({ dataProjectReport }) {
   const dataMappingArray = (item: ICashBookResponse, index: number) => [
     getPageOffset(params) + index + 1,
     item.empName,
-    moment(item.transDate).format("DD/MM/YYYY HH:mm"),
+    formatDateTime(item.transDate),
     item.categoryName,
     item.note,
     formatCurrency(item.amount),
@@ -431,7 +432,7 @@ export default function CashBookTable({ dataProjectReport }) {
 
   const dataMappingArrayReport = (item: ICashBookResponse, index: number) => [
     getPageOffset(params) + index + 1,
-    moment(item.transDate).format("DD/MM/YYYY HH:mm"),
+    formatDateTime(item.transDate),
     item.note,
     item.type == 1 ? formatCurrency(item.amount) : "",
     item.type == 2 || item.type == -1 ? formatCurrency(item.amount) : "",
