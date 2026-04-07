@@ -46,7 +46,7 @@ export default function AddCustomerAttributeModal(props: AddCustomerAttributeMod
 
   const [listLookup, setListLookup] = useState<IOption[]>([{
     value: "customer",
-    label: "Khách hàng"
+    label: "Thành viên"
   }, {
     value: "employee",
     label: "Nhân viên"
