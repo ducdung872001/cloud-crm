@@ -1,0 +1,218 @@
+// [CH] Community Hub - Accommodation page styles
+.ch-accommodation-page {
+  padding: 2rem;
+
+  &__header {
+    margin-bottom: 2rem;
+    h2 {
+      font-size: 2rem;
+      font-weight: 600;
+      color: var(--ch-text, #2C2318);
+    }
+  }
+
+  &__rooms {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(28rem, 1fr));
+    gap: 1.6rem;
+    margin-bottom: 2rem;
+
+    .room-card {
+      background: var(--ch-surface, #fff);
+      border-radius: 1.2rem;
+      padding: 2rem;
+      cursor: pointer;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+      border: 2px solid transparent;
+      transition: all 0.2s;
+
+      &:hover {
+        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+      }
+
+      &.active {
+        border-color: var(--ch-primary, #8B5E3C);
+      }
+
+      &__header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1.2rem;
+
+        h3 {
+          font-size: 1.6rem;
+          font-weight: 600;
+        }
+
+        .gender-badge {
+          padding: 0.3rem 0.8rem;
+          border-radius: 0.4rem;
+          font-size: 1.2rem;
+          font-weight: 500;
+
+          &.male {
+            background: #e3f2fd;
+            color: #1565c0;
+          }
+
+          &.female {
+            background: #fce4ec;
+            color: #c62828;
+          }
+        }
+      }
+
+      &__stats {
+        .occupancy-bar {
+          height: 0.8rem;
+          background: #f0ebe5;
+          border-radius: 0.4rem;
+          overflow: hidden;
+          margin-bottom: 0.6rem;
+
+          &__fill {
+            height: 100%;
+            background: var(--ch-accent, #4CAF7D);
+            border-radius: 0.4rem;
+            transition: width 0.3s;
+          }
+        }
+
+        .occupancy-text {
+          font-size: 1.3rem;
+          color: var(--ch-text-muted, #7A6B5A);
+        }
+      }
+    }
+  }
+
+  &__detail {
+    background: var(--ch-surface, #fff);
+    border-radius: 1.2rem;
+    padding: 2rem;
+    margin-bottom: 2rem;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+
+    h3 {
+      font-size: 1.5rem;
+      font-weight: 600;
+      margin-bottom: 1.5rem;
+    }
+
+    .bed-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(12rem, 1fr));
+      gap: 1rem;
+
+      .bed-card {
+        padding: 1.2rem;
+        border-radius: 0.8rem;
+        text-align: center;
+        cursor: pointer;
+        border: 2px solid transparent;
+        transition: all 0.2s;
+
+        &.occupied {
+          background: #fff3e0;
+        }
+
+        &.available {
+          background: #e8f5e9;
+        }
+
+        &.selected {
+          border-color: var(--ch-primary, #8B5E3C);
+        }
+
+        .bed-number {
+          font-size: 1.2rem;
+          font-weight: 600;
+          color: var(--ch-text-muted, #7A6B5A);
+          margin-bottom: 0.4rem;
+        }
+
+        .bed-status-icon {
+          font-size: 2rem;
+          margin-bottom: 0.4rem;
+        }
+
+        .bed-member-name {
+          font-size: 1.1rem;
+          color: var(--ch-text, #2C2318);
+          white-space: nowrap;
+          overflow: hidden;
+          text-overflow: ellipsis;
+        }
+
+        .bed-available {
+          font-size: 1.2rem;
+          color: var(--ch-success, #3D9E6A);
+          font-weight: 500;
+        }
+      }
+    }
+  }
+
+  &__bed-detail {
+    background: var(--ch-surface, #fff);
+    border-radius: 1.2rem;
+    padding: 2rem;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+
+    h4 {
+      font-size: 1.4rem;
+      font-weight: 600;
+      margin-bottom: 1.5rem;
+    }
+
+    .bed-detail-info {
+      margin-bottom: 1.5rem;
+
+      .info-row {
+        display: flex;
+        justify-content: space-between;
+        padding: 0.6rem 0;
+        border-bottom: 1px solid #f0ebe5;
+        font-size: 1.3rem;
+
+        .label {
+          color: var(--ch-text-muted, #7A6B5A);
+        }
+
+        .value {
+          font-weight: 500;
+        }
+      }
+    }
+
+    .bed-detail-actions {
+      display: flex;
+      gap: 1rem;
+
+      button {
+        padding: 0.8rem 1.6rem;
+        border-radius: 0.6rem;
+        font-size: 1.3rem;
+        cursor: pointer;
+        border: none;
+        font-weight: 500;
+
+        &.btn-extend {
+          background: var(--ch-accent, #4CAF7D);
+          color: #fff;
+        }
+
+        &.btn-checkout {
+          background: var(--ch-warning, #E8922A);
+          color: #fff;
+        }
+
+        &.btn-assign {
+          background: var(--ch-primary, #8B5E3C);
+          color: #fff;
+        }
+      }
+    }
+  }
+}

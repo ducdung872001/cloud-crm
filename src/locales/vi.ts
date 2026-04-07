@@ -63,9 +63,19 @@ const vi = {
   },
 
   sidebar: {
-    dashboard: "Bảng điều khiển",
+    dashboard: "Tổng quan",
     notification: "Thông báo",
     personal: "Cá nhân",
+
+    // [CH] Community Hub menu items
+    chCheckin: "Check-in / Cửa vào",
+    chAccommodation: "Lưu trú",
+    chServices: "Dịch vụ & Booking",
+    chHealthBeauty: "Sức khỏe & Sắc đẹp",
+    chCourses: "Khóa học & CLB",
+    chPartners: "Đối tác (KOL/PO)",
+    chFeedback: "Phản hồi",
+    chReports: "Báo cáo",
     internalMail: "Thư nội bộ",
     document: "Tài liệu",
     createKPIFramework: "Tạo bộ KPI",
@@ -79,11 +89,11 @@ const vi = {
     jobReport: "Báo cáo công việc",
     calendar: "Lịch",
 
-    customer: "Khách hàng & Đối tác",
+    customer: "Thành viên",
     partner: "Đối tác",
     teacher: "Giáo viên",
-    customerProfile: "Hồ sơ khách hàng",
-    customerList: "Khách hàng",
+    customerProfile: "Hồ sơ thành viên",
+    customerList: "Thành viên",
     supplierList: "Nhà cung cấp",
     partnerProfile: "Nhà cung cấp",
     customerSegments: "Phân khúc & Nhãn",

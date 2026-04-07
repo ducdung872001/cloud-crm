@@ -41,7 +41,7 @@
     }
     &.active {
       & > a {
-        background: #015aa4; // var(--menu-active-color)
+        background: var(--ch-primary, #8B5E3C); // [CH] Community Hub active color
         color: var(--white-color);
         svg {
           // fill: var(--white-color);
@@ -74,7 +74,7 @@
       &.active {
         & > a {
           background: transparent;
-          color: var(--menu-active-children-color);
+          color: var(--ch-primary-light, #C4956A); // [CH] Community Hub children active
           pointer-events: none;
         }
       }

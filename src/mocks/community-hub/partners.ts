@@ -1,0 +1,53 @@
+// [CH] Community Hub - Mock data for partners (KOL/KOC/PO) module
+export const MOCK_PARTNERS = [
+  {
+    id: "P001",
+    name: "Pham Thi E",
+    role: "KOL" as const,
+    area: "F&B",
+    avatar: null,
+    courses_created: 3,
+    total_students: 45,
+    commission_this_month_vnd: 1200000,
+    commission_rate: 0.3,
+    referrals: 7,
+  },
+  {
+    id: "P002",
+    name: "Nguyen Van I",
+    role: "PO" as const,
+    area: "Spa & Beauty",
+    avatar: null,
+    courses_created: 0,
+    total_students: 0,
+    commission_this_month_vnd: 2500000,
+    commission_rate: 0.25,
+    referrals: 12,
+  },
+  {
+    id: "P003",
+    name: "Le Van H",
+    role: "KOL" as const,
+    area: "Education",
+    avatar: null,
+    courses_created: 2,
+    total_students: 30,
+    commission_this_month_vnd: 800000,
+    commission_rate: 0.3,
+    referrals: 5,
+  },
+  {
+    id: "P004",
+    name: "Tran Thi K",
+    role: "KOC" as const,
+    area: "Wellness",
+    avatar: null,
+    courses_created: 1,
+    total_students: 15,
+    commission_this_month_vnd: 500000,
+    commission_rate: 0.2,
+    referrals: 3,
+  },
+];
+
+export type PartnerRole = "KOL" | "KOC" | "PO";

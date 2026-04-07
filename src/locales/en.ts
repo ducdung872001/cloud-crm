@@ -63,9 +63,19 @@ const en = {
   },
 
   sidebar: {
-    dashboard: "Dashboard",
+    dashboard: "Overview",
     notification: "Notifications",
     personal: "Personal",
+
+    // [CH] Community Hub menu items
+    chCheckin: "Check-in / Gate",
+    chAccommodation: "Accommodation",
+    chServices: "Services & Booking",
+    chHealthBeauty: "Health & Beauty",
+    chCourses: "Courses & Clubs",
+    chPartners: "Partners (KOL/PO)",
+    chFeedback: "Feedback",
+    chReports: "Reports",
     internalMail: "Internal mail",
     document: "Documents",
     createKPIFramework: "Create KPIs",
@@ -79,11 +89,11 @@ const en = {
     jobReport: "Task report",
     calendar: "Calendar",
 
-    customer: "Customers & Partners",
+    customer: "Members",
     partner: "Partners",
     teacher: "Teachers",
-    customerProfile: "Customer profile",
-    customerList: "Customers",
+    customerProfile: "Member profile",
+    customerList: "Members",
     supplierList: "Suppliers",
     partnerProfile: "Suppliers",
     customerSegments: "Segments & Tags",
