@@ -1,13 +1,12 @@
 import React, { useState } from "react";
 import TabMenuList from "@/components/TabMenuList/TabMenuList";
-import ViettelIntegration from "@/pages/ViettelIntegration/ViettelIntegration";
 import InstallApplication from "pages/SettingIntegration/InstallApplication/InstallApplication";
-import Webhook from "pages/SettingIntegration/Webhook/Webhook";
 import IntegratedMonitoring from "pages/SettingIntegration/IntegratedMonitoring/IntegratedMonitoring";
 
 /**
  * Menu cấp 1: "Tích hợp và kết nối"  →  /setting_integrations
- * Items cấp 2: Hệ sinh thái Viettel | Ứng dụng bên thứ ba | Giám sát tích hợp & webhook
+ * Items cấp 2: Ứng dụng bên thứ ba | Giám sát tích hợp & webhook
+ * [CH] Đã bỏ "Hệ sinh thái Viettel" — không liên quan Community Hub
  */
 export default function SettingIntegrations() {
   document.title = "Tích hợp và kết nối";
@@ -18,13 +17,6 @@ export default function SettingIntegrations() {
   const back = (isBack: boolean) => { if (isBack) setIsDetail(false); };
 
   const listTab = [
-    {
-      title: "Hệ sinh thái Viettel",
-      is_tab: "viettel",
-      icon: "IntegrationViettelMenu",
-      backgroundColor: "#E6F1FB",
-      des: "Kết nối và quản lý các dịch vụ Viettel: Tendoo Mall, BHD Hub, Viettel Cloud, Tendoo Host.",
-    },
     {
       title: "Ứng dụng bên thứ ba",
       is_tab: "apps",
@@ -51,10 +43,8 @@ export default function SettingIntegrations() {
         />
       )}
 
-      {isDetail && tab === "viettel"  && <ViettelIntegration  onBackProps={back} />}
       {isDetail && tab === "apps"     && <InstallApplication  onBackProps={back} />}
       {isDetail && tab === "monitor"  && <IntegratedMonitoring onBackProps={back} />}
-      {/* Note: Webhook nằm trong tab "monitor" — user vào IntegratedMonitoring rồi có thể switch sang Webhook */}
     </div>
   );
 }

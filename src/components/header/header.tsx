@@ -710,7 +710,7 @@ function Header(props: HeaderProps) {
             ref={searchInputRef}
             className="gs-input"
             type="text"
-            placeholder="Tìm khách hàng, sản phẩm, đơn hàng..."
+            placeholder="Tìm thành viên, dịch vụ, đơn hàng..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             onFocus={() => { if (searchQuery.trim()) setSearchOpen(true); }}
