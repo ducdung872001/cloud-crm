@@ -29,7 +29,7 @@ import RecoverPublicDebts from "pages/Common/RecoverPublicDebts";
 import "./DetailPersonList.scss";
 
 export default function DetailPersonList() {
-  document.title = "Chi tiết khách hàng";
+  document.title = "Chi tiết thành viên";
 
   const { id } = useParams();
   const navigate = useNavigate();
@@ -127,25 +127,25 @@ export default function DetailPersonList() {
   const d = detailPerson;
 
   return (
-    <div className="page-content page-detail-person retail-detail">
+    <div className="page-content page-detail-person ch-member-detail">
 
       {/* ── Header ──────────────────────────────────────────────── */}
-      <div className="retail-detail__header">
-        <div className="retail-detail__breadcrumb">
-          <span className="retail-detail__back-link" onClick={backScreenList}>
+      <div className="ch-member-detail__header">
+        <div className="ch-member-detail__breadcrumb">
+          <span className="ch-member-detail__back-link" onClick={backScreenList}>
             <Icon name="ChevronLeft" />
-            <span>Danh sách khách hàng</span>
+            <span>Danh sách thành viên</span>
           </span>
-          <span className="retail-detail__sep">/</span>
-          <span className="retail-detail__page-title">Chi tiết khách hàng</span>
+          <span className="ch-member-detail__sep">/</span>
+          <span className="ch-member-detail__page-title">Chi tiết thành viên</span>
         </div>
 
-        <div className="retail-detail__actions">
+        <div className="ch-member-detail__actions">
           {lstInteract.map((item, idx) => (
             <Button
               key={idx}
               variant="outline"
-              className="retail-detail__action-btn"
+              className="ch-member-detail__action-btn"
               onClick={() => {
                 if (item.type === "call") {
                   if (d?.phoneUnmasked) {
@@ -168,12 +168,12 @@ export default function DetailPersonList() {
 
       {/* ── Body ────────────────────────────────────────────────── */}
       {isLoading ? (
-        <div className="retail-detail__loading"><Loading /></div>
+        <div className="ch-member-detail__loading"><Loading /></div>
       ) : d ? (
-        <div className="retail-detail__body">
+        <div className="ch-member-detail__body">
 
           {/* ─── LEFT SIDEBAR ───────────────────────────────────── */}
-          <aside className="retail-detail__sidebar">
+          <aside className="ch-member-detail__sidebar">
 
             {/* Avatar + tên */}
             <div className="rds-identity">
@@ -334,7 +334,7 @@ export default function DetailPersonList() {
           </aside>
 
           {/* ─── RIGHT CONTENT — tabs ──────────────────────────── */}
-          <div className="retail-detail__main">
+          <div className="ch-member-detail__main">
             <ListDetailTab data={d} onInvoiceStatsLoaded={setInvoiceStats} />
           </div>
 

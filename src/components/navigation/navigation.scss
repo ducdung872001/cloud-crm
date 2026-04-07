@@ -34,14 +34,14 @@
       }
     }
     &.show-children {
-      background: var(--menu-background-children-color);
+      background: rgba(0, 0, 0, 0.18); // [CH] children bg
       & > a {
-        background: var(--primary-bg-color); // #242e53
+        background: rgba(45, 106, 90, 0.3); // [CH] teal tint khi mở children
       }
     }
     &.active {
       & > a {
-        background: var(--ch-primary, #8B5E3C); // [CH] Community Hub active color
+        background: var(--ch-sidebar-active, #2D6A5A); // [CH] earthy teal active
         color: var(--white-color);
         svg {
           // fill: var(--white-color);
@@ -74,7 +74,7 @@
       &.active {
         & > a {
           background: transparent;
-          color: var(--ch-primary-light, #C4956A); // [CH] Community Hub children active
+          color: var(--ch-primary-light, #7ECBB5); // [CH] sage highlight children active
           pointer-events: none;
         }
       }

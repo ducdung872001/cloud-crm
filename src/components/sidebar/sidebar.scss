@@ -1,6 +1,6 @@
 .sidebar {
-  // [CH] Community Hub - sidebar background
-  background: #3C2A1A; // nâu đậm ấm - community feeling
+  // [CH] Community Hub — Warm Sage sidebar
+  background: var(--ch-sidebar-bg, #1B2E2A);
   width: var(--sidebar-width);
   box-shadow: var(--box-shadow);
   height: 100%;
@@ -19,7 +19,7 @@
   &-logo {
     padding: 0.7rem 2rem 0.7rem 1.5rem;
     transition: all 0.5s ease-in-out;
-    border-bottom: 1px solid #aaa;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.15); // [CH] nhẹ nhàng hơn
     .logo {
       display: flex;
       align-items: center;
@@ -54,7 +54,7 @@
   }
 
   &-menu {
-    border-top: 1px solid #4e4e4e;
+    border-top: 1px solid rgba(255, 255, 255, 0.1); // [CH]
     height: calc(100% - 5.7rem);
   }
 

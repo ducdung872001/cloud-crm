@@ -1,11 +1,11 @@
-// ── Trang chi tiết khách hàng — Retail layout ────────────────────────────
+// ── Trang chi tiết khách hàng — Community Hub layout ────────────────────────────
 
 .page-detail-person {
   .action-navigation { display: none; }
 }
 
 // ── Header ────────────────────────────────────────────────────────────────
-.retail-detail {
+.ch-member-detail {
   display: flex;
   flex-direction: column;
   height: 100%;
@@ -370,8 +370,8 @@
 }
 
 // ── Tab panel override ────────────────────────────────────────────────────
-.retail-detail__main {
-  .retail-wrapper-tab {
+.ch-member-detail__main {
+  .ch-member-wrapper-tab {
     width: 100%;
     border-left: none;
     padding: 0 1.6rem 2rem;

@@ -160,7 +160,7 @@ const TotalChat = React.lazy(() => import("pages/Fanpage/TotalChat"));
 const BusinessRule = React.lazy(() => import("pages/BusinessRule"));
 const BusinessRuleConfig = React.lazy(() => import("pages/BusinessRuleConfig"));
 const MultiChannelSales = React.lazy(() => import("@/pages/MultiChannelSales/MultiChannelSales"));
-const DashboardRetail = React.lazy(() => import("pages/DashboardRetail"));
+const DashboardCH = React.lazy(() => import("pages/DashboardCH"));
 const DashboardLoyalty = React.lazy(() => import("@/pages/DashboardLoyalty"));
 const SettingPaymentMethod = React.lazy(() => import("@/pages/SettingPaymentMethod"));
 const PromotionalProgram = React.lazy(() => import("@/pages/PromotionalProgram"));
@@ -234,44 +234,44 @@ export const menu: IMenuItem[] = [
   {
     title: "chCheckin", // [CH] Check-in / Cửa vào - MỚI
     path: "/ch_checkin",
-    icon: <Icon name="Barchart" />,
+    icon: <Icon name="PosMenu" />,
     code: "",
   },
   {
     title: "chAccommodation", // [CH] Lưu trú - MỚI
     path: "/ch_accommodation",
-    icon: <Icon name="Buildings" />,
+    icon: <Icon name="WarehouseListMenu" />,
     code: "",
   },
   {
     title: "chServices", // [CH] Dịch vụ & Booking - MỚI (thay Bán hàng)
     path: "/ch_services",
-    icon: <Icon name="Beauty" />,
+    icon: <Icon name="MemberListMenu" />,
     code: "",
   },
   {
     title: "chCourses", // [CH] Khóa học & CLB - MỚI
     path: "/ch_courses",
-    icon: <Icon name="ManageWork" />,
+    icon: <Icon name="ProcessMenu" />,
     code: "",
   },
   {
     title: "chPartners", // [CH] Đối tác (KOL/PO) - MỚI
     path: "/ch_partners",
-    icon: <Icon name="Partner" />,
+    icon: <Icon name="PartnerMenu" />,
     code: "",
   },
   {
     title: "chFeedback", // [CH] Phản hồi - MỚI
     path: "/ch_feedback",
-    icon: <Icon name="SupportMenu" />,
+    icon: <Icon name="SupportSettingMenu" />,
     code: "",
   },
   // [CH] Community Hub - Báo cáo (điều chỉnh nội dung)
   {
     title: "chReports", // [CH] Báo cáo
     path: "/ch_reports",
-    icon: <Icon name="ReportFill" />,
+    icon: <Icon name="SalesReportMenu" />,
     code: "",
   },
   {
@@ -373,7 +373,7 @@ export const routes: IRouter[] = [
   // Dashboard
   {
     path: "",
-    component: <DashboardRetail />,
+    component: <DashboardCH />,
   },
   {
     path: urls.notification,
@@ -384,7 +384,7 @@ export const routes: IRouter[] = [
     // component: <Dashboard />,
     component: (
       <Fragment>
-        <DashboardRetail />
+        <DashboardCH />
         {/* <Dashboard /> */}
       </Fragment>
     ),

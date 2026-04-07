@@ -171,15 +171,18 @@ $page-padding-large: 2.4rem 3.2rem 4rem;
   --sh2: 0 4px 16px rgba(10, 15, 30, 0.09);
   --sh3: 0 20px 60px rgba(10, 15, 30, 0.18);
 
-  // [CH] Community Hub color palette
-  --ch-primary: #8B5E3C;
-  --ch-primary-light: #C4956A;
-  --ch-accent: #4CAF7D;
-  --ch-bg: #F8F5F0;
-  --ch-surface: #FFFFFF;
-  --ch-text: #2C2318;
-  --ch-text-muted: #7A6B5A;
+  // [CH] Community Hub — "Warm Sage" palette
+  // Xanh rừng ấm, phù hợp wellness / co-living / community space
+  --ch-primary: #2D6A5A;        // earthy teal — màu chủ đạo
+  --ch-primary-light: #7ECBB5;  // sage highlight
+  --ch-accent: #D4A574;         // terracotta / sand — điểm nhấn ấm
+  --ch-bg: #F7F5F2;             // warm off-white nền trang
+  --ch-surface: #FFFFFF;        // card / panel
+  --ch-text: #1B2E2A;           // gần đen xanh — dễ đọc
+  --ch-text-muted: #6B8078;     // xám xanh nhạt
   --ch-danger: #D64B3A;
   --ch-warning: #E8922A;
   --ch-success: #3D9E6A;
+  --ch-sidebar-bg: #1B2E2A;     // deep forest green
+  --ch-sidebar-active: #2D6A5A; // teal active item
 }

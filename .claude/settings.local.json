@@ -66,7 +66,9 @@
       "Bash(sed -i 's|\"https://login.noron.vn/api/upload/|prefixUpload + \"/api/upload/|g' src/configs/urls.ts)",
       "Bash(sed -i 's|\"https://cloud.reborn.vn/market/|prefixCloudMarket + \"/|g' src/configs/urls.ts)",
       "Bash(sed -i 's|\"https://reborn.vn/log-capture/|prefixRebornVn.replace\\(\"/api\", \"\"\\) + \"/log-capture/|g' src/configs/urls.ts)",
-      "Bash(npx vite:*)"
+      "Bash(npx vite:*)",
+      "Bash(mv src/pages/DashboardRetail/index.tsx src/pages/DashboardRetail/index.tsx.reborn-retail.bak)",
+      "Bash(mv src/pages/DashboardRetail/index.scss src/pages/DashboardRetail/index.scss.reborn-retail.bak)"
     ]
   }
 }
