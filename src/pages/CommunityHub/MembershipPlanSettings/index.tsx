@@ -1,9 +1,13 @@
 // [CH] Community Hub - Quản lý gói thành viên (Cài đặt)
 import React, { useState } from "react";
 import { MOCK_MEMBERSHIP_PLANS } from "@/mocks/community-hub/membership-plans";
+import { MOCK_SERVICE_CATALOG } from "@/mocks/community-hub/service-catalog";
 import { formatCurrency } from "reborn-util";
 import Icon from "@/components/icon";
 import "./index.scss";
+
+// [CH] Danh sách dịch vụ để chọn vào gói — sau này thay bằng API ServiceService.list()
+const SERVICE_OPTIONS = MOCK_SERVICE_CATALOG.filter((s) => s.status === "active");
 
 interface ServiceQuota {
   service: string;
@@ -110,6 +114,16 @@ export default function MembershipPlanSettings() {
     setEditingPlan({ ...editingPlan, includes: next });
   };
 
+  // ── Chọn dịch vụ từ dropdown → auto-fill tên + đơn vị ──
+  const handleSelectService = (idx: number, serviceId: string) => {
+    if (!editingPlan) return;
+    const svc = SERVICE_OPTIONS.find((s) => s.id === serviceId);
+    if (!svc) return;
+    const next = [...editingPlan.includes];
+    next[idx] = { ...next[idx], service: svc.name, unit: `${svc.unit}/tháng` };
+    setEditingPlan({ ...editingPlan, includes: next });
+  };
+
   return (
     <div className="ch-plan-settings">
       {/* ── Header ── */}
@@ -132,7 +146,7 @@ export default function MembershipPlanSettings() {
               <div className="plan-name" style={{ color: plan.color }}>{plan.name}</div>
               <div className="plan-actions">
                 <button className="btn-edit" onClick={() => handleEdit(plan)} title="Sửa">
-                  <Icon name="Edit" />
+                  <Icon name="PencilSimpleLine" />
                 </button>
                 <button className="btn-delete" onClick={() => setShowDeleteConfirm(plan.id)} title="Xóa">
                   <Icon name="Trash" />
@@ -259,13 +273,16 @@ export default function MembershipPlanSettings() {
                 <div className="service-rows">
                   {editingPlan.includes.map((inc, idx) => (
                     <div key={idx} className="service-form-row">
-                      <input
-                        type="text"
-                        placeholder="Tên dịch vụ"
-                        value={inc.service}
-                        onChange={(e) => updateServiceRow(idx, "service", e.target.value)}
+                      <select
+                        value={SERVICE_OPTIONS.find((s) => s.name === inc.service)?.id || ""}
+                        onChange={(e) => handleSelectService(idx, e.target.value)}
                         className="input-service"
-                      />
+                      >
+                        <option value="">-- Chọn dịch vụ --</option>
+                        {SERVICE_OPTIONS.map((svc) => (
+                          <option key={svc.id} value={svc.id}>{svc.name}</option>
+                        ))}
+                      </select>
                       <input
                         type="number"
                         placeholder="Quota (trống = ∞)"
@@ -275,10 +292,11 @@ export default function MembershipPlanSettings() {
                       />
                       <input
                         type="text"
-                        placeholder="Đơn vị (lần/tháng...)"
+                        placeholder="Đơn vị"
                         value={inc.unit}
                         onChange={(e) => updateServiceRow(idx, "unit", e.target.value)}
                         className="input-unit"
+                        readOnly
                       />
                       <button className="btn-remove-row" onClick={() => removeServiceRow(idx)} title="Xóa dòng">✕</button>
                     </div>
