@@ -5,6 +5,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover" />
     <title>Community Hub</title>
     <link rel="icon" type="image/png" href="/src/assets/images/favicon.ico" />
+    <style>
+      @media print {
+        .sidebar, .overlay-sidebar__mobile, .header, .no-print, .notification__warning--package { display: none !important; width: 0 !important; min-width: 0 !important; }
+        .page-wrapper { margin-left: 0 !important; width: 100% !important; }
+        .main-content { padding: 0 !important; }
+        .report-signature { display: block !important; }
+      }
+    </style>
   </head>
   <body ontouchstart>
     <div id="root"></div>

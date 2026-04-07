@@ -886,7 +886,7 @@ export default function AddBTwoBModal(props: IAddBTwoBModalProps) {
         showToast(`Thêm mới cơ hội vào chiến dịch thành công`, "success");
       }
     } else {
-      const conditionMessage = "Đã tồn tại cơ hội của khách hàng";
+      const conditionMessage = "Đã tồn tại cơ hội của thành viên";
       showToast(response.message ?? "Có lỗi xảy ra. Vui lòng thử lại sau !", response.message == conditionMessage ? "warning" : "error");
       setIsSubmit(false);
     }
@@ -1293,7 +1293,7 @@ export default function AddBTwoBModal(props: IAddBTwoBModalProps) {
                           name="customerId"
                           special={true}
                           value={valueStepTwo.dataCustomer}
-                          label="Khách hàng"
+                          label="Thành viên"
                           options={[]}
                           fill={true}
                           disabled={true}

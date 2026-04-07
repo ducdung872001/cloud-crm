@@ -2,6 +2,8 @@ import React from "react";
 import { MOCK_FINANCE_REPORT } from "@/mocks/community-hub/reports";
 import { formatCurrency } from "reborn-util";
 import "../index.scss";
+import ReportHeader from "../ReportHeader";
+import ReportSignature from "../ReportSignature";
 
 export default function ReportFinance() {
   document.title = "Báo cáo Tài chính & Công nợ";
@@ -9,7 +11,7 @@ export default function ReportFinance() {
 
   return (
     <div className="ch-reports-page">
-      <div className="ch-reports-page__header"><h2>Tài chính & Công nợ</h2></div>
+      <ReportHeader title="Tài chính & Công nợ" />
       <div className="ch-reports-page__section">
         <div className="report-cards">
           <div className="report-card"><div className="report-card__label">Doanh thu tháng</div><div className="report-card__value">{f(MOCK_FINANCE_REPORT.revenue_this_month)}đ</div></div>
@@ -56,6 +58,7 @@ export default function ReportFinance() {
           Biên lợi nhuận {MOCK_FINANCE_REPORT.profit_margin_pct}% — tăng dần qua 4 tháng.
         </div>
       </div>
+      <ReportSignature />
     </div>
   );
 }

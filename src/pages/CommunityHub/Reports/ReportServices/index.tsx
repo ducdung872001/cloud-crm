@@ -2,6 +2,8 @@ import React from "react";
 import { MOCK_SERVICE_REPORT } from "@/mocks/community-hub/reports";
 import { formatCurrency } from "reborn-util";
 import "../index.scss";
+import ReportHeader from "../ReportHeader";
+import ReportSignature from "../ReportSignature";
 
 export default function ReportServices() {
   document.title = "Báo cáo Dịch vụ";
@@ -9,7 +11,7 @@ export default function ReportServices() {
 
   return (
     <div className="ch-reports-page">
-      <div className="ch-reports-page__header"><h2>Báo cáo Dịch vụ</h2></div>
+      <ReportHeader title="Báo cáo Dịch vụ" />
       <div className="ch-reports-page__section">
         <div className="report-cards">
           <div className="report-card"><div className="report-card__label">Tổng lượt sử dụng</div><div className="report-card__value">{MOCK_SERVICE_REPORT.total_usage_this_month}</div></div>
@@ -45,6 +47,7 @@ export default function ReportServices() {
           </div>
         )}
       </div>
+      <ReportSignature />
     </div>
   );
 }

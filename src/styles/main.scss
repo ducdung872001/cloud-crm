@@ -12,3 +12,31 @@ body {
     z-index: 99999;
   }
 }
+
+// [CH] Community Hub — Global print styles
+@media print {
+  .sidebar,
+  .overlay-sidebar__mobile,
+  .header,
+  .no-print,
+  .notification__warning--package {
+    display: none !important;
+    width: 0 !important;
+    height: 0 !important;
+    overflow: hidden !important;
+  }
+
+  .page-wrapper {
+    margin-left: 0 !important;
+    width: 100% !important;
+  }
+
+  .main-content {
+    padding: 0 !important;
+    width: 100% !important;
+  }
+
+  .report-signature {
+    display: block !important;
+  }
+}

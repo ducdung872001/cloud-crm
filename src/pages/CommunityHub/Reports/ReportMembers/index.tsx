@@ -2,6 +2,8 @@ import React from "react";
 import { MOCK_MEMBER_REPORT } from "@/mocks/community-hub/reports";
 import { formatCurrency } from "reborn-util";
 import "../index.scss";
+import ReportHeader from "../ReportHeader";
+import ReportSignature from "../ReportSignature";
 
 export default function ReportMembers() {
   document.title = "Báo cáo Thành viên";
@@ -9,7 +11,7 @@ export default function ReportMembers() {
 
   return (
     <div className="ch-reports-page">
-      <div className="ch-reports-page__header"><h2>Báo cáo Thành viên</h2></div>
+      <ReportHeader title="Báo cáo Thành viên" />
       <div className="ch-reports-page__section">
         <div className="report-cards">
           <div className="report-card"><div className="report-card__label">Tổng đăng ký</div><div className="report-card__value">{MOCK_MEMBER_REPORT.total}</div></div>
@@ -46,6 +48,7 @@ export default function ReportMembers() {
           {MOCK_MEMBER_REPORT.expiring_7_days} thành viên sắp hết hạn trong 7 ngày — cần liên hệ gia hạn.
         </div>
       </div>
+      <ReportSignature />
     </div>
   );
 }

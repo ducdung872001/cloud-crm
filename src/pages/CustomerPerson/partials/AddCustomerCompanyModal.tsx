@@ -511,18 +511,18 @@ export default function AddCustomerCompanyModal(props: AddCustomerModalProps) {
           },
         },
         {
-          label: "Loại khách hàng",
+          label: "Loại thành viên",
           name: "isExternal",
           type: "radio",
           fill: true,
           options: [
             {
               value: "0",
-              label: "Khách hàng nội bộ",
+              label: "Thành viên nội bộ",
             },
             {
               value: "1",
-              label: "Khách hàng ngoài",
+              label: "Thành viên ngoài",
             },
           ],
         },
@@ -644,7 +644,7 @@ export default function AddCustomerCompanyModal(props: AddCustomerModalProps) {
 
   //? End xử lý người đại diện pháp luật
 
-  //? Start xử lý đối tượng khách hàng
+  //? Start xử lý đối tượng thành viên
 
   const [showModalAddSource, setShowModalAddSource] = useState(false);
 
@@ -663,7 +663,7 @@ export default function AddCustomerCompanyModal(props: AddCustomerModalProps) {
 
       return {
         options: [
-          ...(dataOption.length == 0 ? [{ value: "", label: "Thêm mới đối tượng khách hàng", isShowModal: true, avatar: "custom" }] : []),
+          ...(dataOption.length == 0 ? [{ value: "", label: "Thêm mới đối tượng thành viên", isShowModal: true, avatar: "custom" }] : []),
           ...(dataOption.length > 0
             ? dataOption.map((item) => {
                 return {
@@ -715,7 +715,7 @@ export default function AddCustomerCompanyModal(props: AddCustomerModalProps) {
     }
   };
 
-  //? End xử lý đối tượng khách hàng
+  //? End xử lý đối tượng thành viên
   const sourceDomain = getDomain(decodeURIComponent(document.location.href));
 
   const listFieldInfoDetailCustomer = useMemo(
@@ -798,7 +798,7 @@ export default function AddCustomerCompanyModal(props: AddCustomerModalProps) {
     [isShowPhone, isShowEmail, data, listContact, isLoadingContact, countCheck, dataContact, formData, sourceDomain]
   );
 
-  //! đoạn này lấy danh sách khách hàng liên quan
+  //! đoạn này lấy danh sách thành viên liên quan
   const [relatedCustomers, setRelatedCustomers] = useState([]);
 
   const loadedOptionRelatedCustomers = async (search, loadedOptions, { page }) => {
@@ -840,7 +840,7 @@ export default function AddCustomerCompanyModal(props: AddCustomerModalProps) {
     setRelatedCustomers(e);
   };
 
-  //* đoạn này xử lý vấn đề hiển thị hình ảnh khách hàng liên quan
+  //* đoạn này xử lý vấn đề hiển thị hình ảnh thành viên liên quan
   const formatOptionLabelRelatedCustomers = ({ label, avatar }) => {
     return (
       <div className="selected--item">
@@ -852,7 +852,7 @@ export default function AddCustomerCompanyModal(props: AddCustomerModalProps) {
     );
   };
 
-  // danh sách nhóm khách hàng
+  // danh sách nhóm thành viên
   const [cgpData, setCgpData] = useState(null);
   const [showModalCgp, setShowModalCgp] = useState(false);
 
@@ -871,7 +871,7 @@ export default function AddCustomerCompanyModal(props: AddCustomerModalProps) {
 
       return {
         options: [
-          ...(dataOption.length == 0 ? [{ value: "", label: "Thêm mới nhóm khách hàng", isShowModal: true, avatar: "custom" }] : []),
+          ...(dataOption.length == 0 ? [{ value: "", label: "Thêm mới nhóm thành viên", isShowModal: true, avatar: "custom" }] : []),
           ...(dataOption.length > 0
             ? dataOption.map((item) => {
                 return {
@@ -952,7 +952,7 @@ export default function AddCustomerCompanyModal(props: AddCustomerModalProps) {
           messageErrorRegex: "Số điện thoại không đúng định dạng",
         },
         // {
-        //   label: "Đối tượng khách hàng",
+        //   label: "Đối tượng thành viên",
         //   name: "sourceId",
         //   type: "select",
         //   fill: true,
@@ -961,7 +961,7 @@ export default function AddCustomerCompanyModal(props: AddCustomerModalProps) {
         //   isLoading: isLoadingCustomerSource,
         // },
         {
-          label: "Đối tượng khách hàng",
+          label: "Đối tượng thành viên",
           name: "sourceId",
           type: "custom",
           snippet: (
@@ -969,7 +969,7 @@ export default function AddCustomerCompanyModal(props: AddCustomerModalProps) {
               key={countCheckAddSource}
               id="sourceId"
               name="sourceId"
-              label="Đối tượng khách hàng"
+              label="Đối tượng thành viên"
               fill={true}
               // required={true}
               options={[]}
@@ -978,13 +978,13 @@ export default function AddCustomerCompanyModal(props: AddCustomerModalProps) {
               isFormatOptionLabel={true}
               isAsyncPaginate={true}
               loadOptionsPaginate={loadedOptionSource}
-              placeholder="Chọn đối tượng khách hàng"
+              placeholder="Chọn đối tượng thành viên"
               additional={{
                 page: 1,
               }}
               formatOptionLabel={formatOptionLabelSource}
               // isLoading={isLoadingOption}
-              message="Đối tượng khách hàng không được để trống"
+              message="Đối tượng thành viên không được để trống"
             />
           ),
         },
@@ -1030,7 +1030,7 @@ export default function AddCustomerCompanyModal(props: AddCustomerModalProps) {
               key={countCheckAddCgp}
               id="cgpId"
               name="cgpId"
-              label="Nhóm khách hàng"
+              label="Nhóm thành viên"
               fill={true}
               options={[]}
               // isMulti={true}
@@ -1039,7 +1039,7 @@ export default function AddCustomerCompanyModal(props: AddCustomerModalProps) {
               isAsyncPaginate={true}
               isFormatOptionLabel={true}
               loadOptionsPaginate={loadedOptionCgp}
-              placeholder="Chọn nhóm khách hàng"
+              placeholder="Chọn nhóm thành viên"
               additional={{
                 page: 1,
               }}
@@ -1048,7 +1048,7 @@ export default function AddCustomerCompanyModal(props: AddCustomerModalProps) {
           ),
         },
         // {
-        //   label: "Phân loại khách hàng",
+        //   label: "Phân loại thành viên",
         //   name: "cgpId",
         //   type: "select",
         //   fill: true,
@@ -1078,7 +1078,7 @@ export default function AddCustomerCompanyModal(props: AddCustomerModalProps) {
             <SelectCustom
               id="customers"
               name="customers"
-              label="Khách hàng liên quan"
+              label="Thành viên liên quan"
               fill={true}
               options={[]}
               isMulti={true}
@@ -1087,7 +1087,7 @@ export default function AddCustomerCompanyModal(props: AddCustomerModalProps) {
               isAsyncPaginate={true}
               isFormatOptionLabel={true}
               loadOptionsPaginate={loadedOptionRelatedCustomers}
-              placeholder="Chọn khách hàng liên quan"
+              placeholder="Chọn thành viên liên quan"
               additional={{
                 page: 1,
               }}
@@ -1236,7 +1236,7 @@ export default function AddCustomerCompanyModal(props: AddCustomerModalProps) {
     const response = await CustomerService.update(body);
 
     if (response.code === 0) {
-      showToast(`${data ? "Cập nhật" : "Thêm mới"} khách hàng thành công`, "success");
+      showToast(`${data ? "Cập nhật" : "Thêm mới"} thành viên thành công`, "success");
       clearForm(true);
       setCustomerExtraInfos([]);
       takeInfoCustomer && takeInfoCustomer(response.result);
@@ -1564,7 +1564,7 @@ export default function AddCustomerCompanyModal(props: AddCustomerModalProps) {
       case "lookup":
         let attrs = customerAttribute.attributes ? JSON.parse(customerAttribute.attributes) : {};
 
-        //1. Trường hợp là customer (khách hàng)
+        //1. Trường hợp là customer (thành viên)
         //2. Trường hợp là employee (nhân viên)
         //3. Trường hợp là contract (hợp đồng)
         //4. Trường hợp là contact (người liên hệ)
@@ -1703,7 +1703,7 @@ export default function AddCustomerCompanyModal(props: AddCustomerModalProps) {
       >
         <form className="form-customer-group" onSubmit={(e) => onSubmit(e)}>
           <ModalHeader
-            title={`${data ? "Chỉnh sửa" : "Thêm mới"} khách hàng`}
+            title={`${data ? "Chỉnh sửa" : "Thêm mới"} thành viên`}
             toggle={() => {
               if (!isSubmit) {
                 clearForm(false);

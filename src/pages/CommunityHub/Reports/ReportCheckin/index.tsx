@@ -1,13 +1,15 @@
 import React from "react";
 import { MOCK_CHECKIN_REPORT } from "@/mocks/community-hub/reports";
 import "../index.scss";
+import ReportHeader from "../ReportHeader";
+import ReportSignature from "../ReportSignature";
 
 export default function ReportCheckin() {
   document.title = "Báo cáo Check-in";
 
   return (
     <div className="ch-reports-page">
-      <div className="ch-reports-page__header"><h2>Báo cáo Check-in</h2></div>
+      <ReportHeader title="Báo cáo Check-in" />
       <div className="ch-reports-page__section">
         <div className="report-cards">
           <div className="report-card"><div className="report-card__label">Hôm nay</div><div className="report-card__value">{MOCK_CHECKIN_REPORT.today} lượt</div></div>
@@ -45,6 +47,7 @@ export default function ReportCheckin() {
           </div>
         </div>
       </div>
+      <ReportSignature />
     </div>
   );
 }

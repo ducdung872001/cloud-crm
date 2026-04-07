@@ -2,6 +2,8 @@ import React from "react";
 import { MOCK_MRR_REPORT } from "@/mocks/community-hub/reports";
 import { formatCurrency } from "reborn-util";
 import "../index.scss";
+import ReportHeader from "../ReportHeader";
+import ReportSignature from "../ReportSignature";
 
 export default function ReportRevenue() {
   document.title = "Báo cáo Doanh thu & MRR";
@@ -9,7 +11,7 @@ export default function ReportRevenue() {
 
   return (
     <div className="ch-reports-page">
-      <div className="ch-reports-page__header"><h2>Doanh thu & MRR</h2></div>
+      <ReportHeader title="Doanh thu & MRR" />
       <div className="ch-reports-page__section">
         <div className="report-cards">
           <div className="report-card"><div className="report-card__label">MRR tháng này</div><div className="report-card__value">{f(MOCK_MRR_REPORT.current_month.mrr_vnd)}đ</div></div>
@@ -51,6 +53,7 @@ export default function ReportRevenue() {
           </div>
         </div>
       </div>
+      <ReportSignature />
     </div>
   );
 }

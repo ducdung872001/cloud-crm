@@ -2,6 +2,8 @@ import React from "react";
 import { MOCK_PARTNER_REPORT } from "@/mocks/community-hub/reports";
 import { formatCurrency } from "reborn-util";
 import "../index.scss";
+import ReportHeader from "../ReportHeader";
+import ReportSignature from "../ReportSignature";
 
 export default function ReportPartners() {
   document.title = "Báo cáo Đối tác";
@@ -9,7 +11,7 @@ export default function ReportPartners() {
 
   return (
     <div className="ch-reports-page">
-      <div className="ch-reports-page__header"><h2>Báo cáo Đối tác</h2></div>
+      <ReportHeader title="Báo cáo Đối tác" />
       <div className="ch-reports-page__section">
         <div className="report-cards">
           <div className="report-card"><div className="report-card__label">Tổng đối tác</div><div className="report-card__value">{MOCK_PARTNER_REPORT.total_partners}</div></div>
@@ -41,6 +43,7 @@ export default function ReportPartners() {
           </div>
         </div>
       </div>
+      <ReportSignature />
     </div>
   );
 }
