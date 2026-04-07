@@ -137,7 +137,7 @@ export default function DashboardRetail() {
             noMask: true,
           },
         ].map((card, i) => (
-          <div key={card.value} className="stat-card">
+          <div key={i} className="stat-card">
             <div className={`stat-card-icon ${i === 2 ? "danger" : "safe"}`}>{card.icon}</div>
             <div className="stat-card-content">
               <div className="stat-card-label">{card.label}</div>
@@ -187,16 +187,9 @@ export default function DashboardRetail() {
             </div>
           </div>
           {/* Mini chart bars */}
-          {/* <div className="mini-chart">
-            {[30, 50, 40, 70, 55, 80, 45, 65, 90, 60, 75, 85, 50, 70, 40].map((h, i) => (
-              <div key={card.value} className={`mini-chart-bar ${i === 8 ? "active" : ""}`} style={{ height: `${h}%` }} />
-            ))}
-          </div> */}
-
-          {/* Mini chart bars */}
           <div className="mini-chart">
             {dataRevenue.listOrderByHour?.map((value, i) => (
-              <div key={card.value} className="mini-chart-bar-container">
+              <div key={i} className="mini-chart-bar-container">
                 <div className="bar-value">{value}</div>
                 <div className={`mini-chart-bar ${i === 8 ? "active" : ""}`} style={{ height: `${value}%` }} />
                 <div className="bar-label">{i}:00</div>
