@@ -201,7 +201,12 @@ const CHServiceBookingPage = React.lazy(() => import("@/pages/CommunityHub/Servi
 const CHCoursesPage = React.lazy(() => import("@/pages/CommunityHub/Courses"));
 const CHPartnersPage = React.lazy(() => import("@/pages/CommunityHub/Partners"));
 const CHFeedbackPage = React.lazy(() => import("@/pages/CommunityHub/Feedback"));
-const CHReportsPage = React.lazy(() => import("@/pages/CommunityHub/Reports"));
+const CHReportRevenue = React.lazy(() => import("@/pages/CommunityHub/Reports/ReportRevenue"));
+const CHReportMembers = React.lazy(() => import("@/pages/CommunityHub/Reports/ReportMembers"));
+const CHReportCheckin = React.lazy(() => import("@/pages/CommunityHub/Reports/ReportCheckin"));
+const CHReportServices = React.lazy(() => import("@/pages/CommunityHub/Reports/ReportServices"));
+const CHReportPartners = React.lazy(() => import("@/pages/CommunityHub/Reports/ReportPartners"));
+const CHReportFinance = React.lazy(() => import("@/pages/CommunityHub/Reports/ReportFinance"));
 const CHMembershipPlanSettings = React.lazy(() => import("@/pages/CommunityHub/MembershipPlanSettings"));
 const CHServiceManagement = React.lazy(() => import("@/pages/CommunityHub/ServiceManagement"));
 
@@ -284,9 +289,17 @@ export const menu: IMenuItem[] = [
   },
   {
     title: "chReports", // Báo cáo
-    path: "/ch_reports",
+    path: "/ch_report_revenue",
     icon: <Icon name="SalesReportMenu" />,
     code: "",
+    children: [
+      { title: "chReportRevenue", path: "/ch_report_revenue", icon: <Icon name="FinanceInfoMenu" />, code: "" },
+      { title: "chReportMembers", path: "/ch_report_members", icon: <Icon name="CustomerMenu" />, code: "" },
+      { title: "chReportCheckin", path: "/ch_report_checkin", icon: <Icon name="OverviewMenu" />, code: "" },
+      { title: "chReportServices", path: "/ch_report_services", icon: <Icon name="MemberListMenu" />, code: "" },
+      { title: "chReportPartners", path: "/ch_report_partners", icon: <Icon name="PartnerMenu" />, code: "" },
+      { title: "chReportFinance", path: "/ch_report_finance", icon: <Icon name="CashbookMenu" />, code: "" },
+    ],
   },
 
   // ═══ TIẾP THỊ & CHĂM SÓC ════════════════════════════════════════════
@@ -311,6 +324,7 @@ export const menu: IMenuItem[] = [
     code: "MENU_INVENTORY",
     children: [
       { title: "managementMaterial", path: urls.material, icon: <Icon name="MaterialsMenu" />, code: "" },
+      { title: "supplierList", path: urls.supplier_list, icon: <Icon name="PartnerMenu" />, code: "CUSTOMER" },              // Nhà cung cấp
       { title: "warehouseList", path: urls.warehouse, icon: <Icon name="WarehouseListMenu" />, code: "" },
       { title: "warehouseManagement", path: urls.inventory, icon: <Icon name="LedgerMenu" />, code: "INVENTORY" },
       { title: "warehouseChecking", path: urls.inventory_checking, icon: <Icon name="AuditMenu" />, code: "INVENTORY" },
@@ -424,10 +438,12 @@ export const routes: IRouter[] = [
     path: "/ch_feedback",
     component: <CHFeedbackPage />,
   },
-  {
-    path: "/ch_reports",
-    component: <CHReportsPage />,
-  },
+  { path: "/ch_report_revenue", component: <CHReportRevenue /> },
+  { path: "/ch_report_members", component: <CHReportMembers /> },
+  { path: "/ch_report_checkin", component: <CHReportCheckin /> },
+  { path: "/ch_report_services", component: <CHReportServices /> },
+  { path: "/ch_report_partners", component: <CHReportPartners /> },
+  { path: "/ch_report_finance", component: <CHReportFinance /> },
   {
     path: "/ch_membership_plans",
     component: <CHMembershipPlanSettings />,

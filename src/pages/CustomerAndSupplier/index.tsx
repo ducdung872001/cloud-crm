@@ -941,11 +941,6 @@ export default function CustomerAndSupplier(props: Record<string, unknown>) {
       type: "update",
       contactType: 1,
     },
-    {
-      title: "NCC (26)",
-      type: "not_forget",
-      contactType: 2,
-    },
   ];
 
   const titleActions: ITitleActions = {
@@ -1486,13 +1481,6 @@ export default function CustomerAndSupplier(props: Record<string, unknown>) {
               <div>
                 <div className="num">200</div>
                 <div className="lbl">Thành viên</div>
-              </div>
-            </div>
-            <div className="stat-pill">
-              <div className="dot" style={{ background: "#8b5cf6" }}></div>
-              <div>
-                <div className="num">35</div>
-                <div className="lbl">NCC</div>
               </div>
             </div>
             <div className="stat-pill">

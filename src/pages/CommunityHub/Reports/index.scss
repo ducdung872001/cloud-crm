@@ -120,14 +120,72 @@
       }
     }
 
-    .coming-soon {
-      text-align: center;
-      padding: 6rem 2rem;
-      color: var(--ch-text-muted, #7A6B5A);
-      font-size: 1.6rem;
-      background: var(--ch-surface, #fff);
-      border-radius: 1rem;
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+    .report-row {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(30rem, 1fr));
+      gap: 1.6rem;
+      margin-bottom: 2rem;
+
+      .report-table-card { margin-bottom: 0; }
     }
+
+    .report-insight {
+      background: rgba(45, 106, 90, 0.06);
+      border-left: 4px solid var(--ch-primary, #2D6A5A);
+      padding: 1.4rem 1.8rem;
+      border-radius: 0 0.8rem 0.8rem 0;
+      font-size: 1.3rem;
+      line-height: 1.6;
+      color: var(--ch-text, #1B2E2A);
+      margin-bottom: 2rem;
+    }
+
+    .tag {
+      display: inline-block;
+      padding: 0.2rem 0.7rem;
+      border-radius: 0.4rem;
+      font-size: 1.1rem;
+      font-weight: 500;
+
+      &.in-plan { background: rgba(45, 106, 90, 0.1); color: var(--ch-primary, #2D6A5A); }
+      &.extra { background: rgba(212, 165, 116, 0.15); color: #9a7340; }
+      &.role-kol { background: #e8eaf6; color: #3f51b5; }
+      &.role-koc { background: #e0f7fa; color: #00838f; }
+      &.role-po { background: #fce4ec; color: #c62828; }
+    }
+
+    .occupancy-bar {
+      display: flex;
+      align-items: center;
+      gap: 0.8rem;
+      height: 1.8rem;
+      background: #f0f0ec;
+      border-radius: 0.4rem;
+      overflow: visible;
+      position: relative;
+      min-width: 12rem;
+
+      .occupancy-fill {
+        height: 100%;
+        border-radius: 0.4rem;
+        transition: width 0.3s;
+
+        &.high { background: var(--ch-warning, #E8922A); }
+        &.medium { background: var(--ch-primary, #2D6A5A); }
+        &.low { background: var(--ch-success, #3D9E6A); }
+      }
+
+      span {
+        font-size: 1.1rem;
+        font-weight: 600;
+        white-space: nowrap;
+      }
+    }
+
+    .report-card {
+      &.warning .report-card__value { color: var(--ch-warning, #E8922A); }
+    }
+
+    td.accent { color: var(--ch-primary, #2D6A5A); font-weight: 600; }
   }
 }
