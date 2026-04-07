@@ -20,9 +20,9 @@ export default function ConfigIntegrateModal(props: Record<string, unknown>) {
 
   const [isSubmit, setIsSubmit] = useState<boolean>(false);
   const [step, setStep] = useState(1);
+  let isMounted = true; // [CH] fix: shared across useEffects
 
   useEffect(() => {
-    let isMounted = true;
     if (type) {
       setParams({ ...params, type: type })
     }

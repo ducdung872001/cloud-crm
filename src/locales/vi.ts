@@ -227,7 +227,7 @@ const vi = {
     loyaltyPointLedger: "Lịch sử điểm",
     memberList: "Danh sách thành viên",
     settingLoyalty: "Cài đặt hệ thống tích điểm",
-    settingSales: "Danh mục sản phẩm",
+    settingSales: "Danh mục sản phẩm & dịch vụ",
     multiChannelCommunication: "Kênh liên lạc",
     settingContract: "Cài đặt hợp đồng",
     settingEform: "Cài đặt biểu mẫu",

@@ -372,10 +372,10 @@ export const menu: IMenuItem[] = [
     children: [
       // ── [CH] Dịch vụ & Gói thành viên ────────────────────────────────
       {
-        title: "chServiceCatalogSetting", // Danh mục dịch vụ
-        path: "/ch_service_catalog",
+        title: "chServiceCatalogSetting", // Danh mục dịch vụ → trang SettingSell (sản phẩm/dịch vụ đầy đủ)
+        path: urls.setting_sell,
         icon: <Icon name="ProductCategoryMenu" />,
-        code: "",
+        code: "MENU_SETUP_SELL",
       },
       {
         title: "chMembershipPlans", // Cấu hình gói thành viên

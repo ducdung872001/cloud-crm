@@ -5,11 +5,23 @@ import { formatCurrency } from "reborn-util";
 import Icon from "@/components/icon";
 import "./index.scss";
 
+const EMPTY_SERVICE: IServiceItem = {
+  id: "",
+  name: "",
+  category: "fnb_space",
+  unit: "",
+  price: 0,
+  sellable: true,
+  description: "",
+  status: "active",
+};
+
 export default function ServiceManagement() {
   document.title = "Quản lý dịch vụ";
   const [activeCategory, setActiveCategory] = useState<ServiceCategory | "all">("all");
   const [services, setServices] = useState(MOCK_SERVICE_CATALOG);
   const [showForm, setShowForm] = useState(false);
+  const [editingService, setEditingService] = useState<IServiceItem | null>(null);
 
   const filtered = activeCategory === "all"
     ? services
@@ -18,6 +30,36 @@ export default function ServiceManagement() {
   const countByCategory = (cat: ServiceCategory) =>
     services.filter((s) => s.category === cat && s.status === "active").length;
 
+  const handleAdd = () => {
+    setEditingService({ ...EMPTY_SERVICE, id: `SVC-${Date.now()}` });
+    setShowForm(true);
+  };
+
+  const handleEdit = (svc: IServiceItem) => {
+    setEditingService({ ...svc });
+    setShowForm(true);
+  };
+
+  const handleSave = () => {
+    if (!editingService || !editingService.name.trim()) return;
+    setServices((prev) => {
+      const idx = prev.findIndex((s) => s.id === editingService.id);
+      if (idx >= 0) {
+        const next = [...prev];
+        next[idx] = editingService;
+        return next;
+      }
+      return [...prev, editingService];
+    });
+    setShowForm(false);
+    setEditingService(null);
+  };
+
+  const handleClose = () => {
+    setShowForm(false);
+    setEditingService(null);
+  };
+
   return (
     <div className="ch-service-mgmt">
       <div className="ch-service-mgmt__header">
@@ -25,7 +67,7 @@ export default function ServiceManagement() {
           <h2>Quản lý dịch vụ</h2>
           <p className="subtitle">Danh mục tất cả dịch vụ của Hub — dùng để cấu hình gói thành viên & bán lẻ tại POS</p>
         </div>
-        <button className="btn-add" onClick={() => setShowForm(true)}>
+        <button className="btn-add" onClick={handleAdd}>
           <Icon name="PlusCircleFill" />
           <span>Thêm dịch vụ</span>
         </button>
@@ -93,7 +135,7 @@ export default function ServiceManagement() {
                     {svc.status === "active" ? "Hoạt động" : "Tạm ngưng"}
                   </td>
                   <td>
-                    <button className="btn-action" title="Sửa"><Icon name="Edit" /></button>
+                    <button className="btn-action" title="Sửa" onClick={() => handleEdit(svc)}><Icon name="Edit" /></button>
                     <button
                       className="btn-action toggle"
                       title={svc.status === "active" ? "Tạm ngưng" : "Kích hoạt"}
@@ -120,6 +162,97 @@ export default function ServiceManagement() {
           <div className="empty">Không có dịch vụ nào trong nhóm này</div>
         )}
       </div>
+
+      {/* ── Modal Thêm / Sửa dịch vụ ── */}
+      {showForm && editingService && (
+        <div className="svc-modal-overlay" onClick={handleClose}>
+          <div className="svc-modal" onClick={(e) => e.stopPropagation()}>
+            <div className="svc-modal__header">
+              <h3>{services.some((s) => s.id === editingService.id) ? "Sửa dịch vụ" : "Thêm dịch vụ mới"}</h3>
+              <button className="btn-close" onClick={handleClose}>✕</button>
+            </div>
+
+            <div className="svc-modal__body">
+              <div className="form-group">
+                <label>Tên dịch vụ <span className="req">*</span></label>
+                <input
+                  type="text"
+                  placeholder="VD: Massage 60 phút, Co-working..."
+                  value={editingService.name}
+                  onChange={(e) => setEditingService({ ...editingService, name: e.target.value })}
+                />
+              </div>
+
+              <div className="form-group">
+                <label>Nhóm ngành <span className="req">*</span></label>
+                <select
+                  value={editingService.category}
+                  onChange={(e) => setEditingService({ ...editingService, category: e.target.value as ServiceCategory })}
+                >
+                  {SERVICE_CATEGORIES.map((cat) => (
+                    <option key={cat.key} value={cat.key}>{cat.icon} {cat.label}</option>
+                  ))}
+                </select>
+              </div>
+
+              <div className="form-group">
+                <label>Đơn vị tính <span className="req">*</span></label>
+                <input
+                  type="text"
+                  placeholder="lần, giờ, buổi, kg..."
+                  value={editingService.unit}
+                  onChange={(e) => setEditingService({ ...editingService, unit: e.target.value })}
+                />
+              </div>
+
+              <div className="form-group">
+                <label>Giá bán lẻ (VNĐ)</label>
+                <input
+                  type="number"
+                  placeholder="0 = Miễn phí"
+                  value={editingService.price || ""}
+                  onChange={(e) => setEditingService({ ...editingService, price: Number(e.target.value) })}
+                />
+              </div>
+
+              <div className="form-group">
+                <label>Cho phép bán lẻ?</label>
+                <div className="toggle-row">
+                  <label className="toggle-label">
+                    <input
+                      type="checkbox"
+                      checked={editingService.sellable}
+                      onChange={(e) => setEditingService({ ...editingService, sellable: e.target.checked })}
+                    />
+                    <span>{editingService.sellable ? "Có — hiển thị trên POS" : "Không — chỉ dùng trong gói"}</span>
+                  </label>
+                </div>
+              </div>
+
+              <div className="form-group">
+                <label>Mô tả</label>
+                <textarea
+                  rows={2}
+                  placeholder="Mô tả ngắn về dịch vụ..."
+                  value={editingService.description}
+                  onChange={(e) => setEditingService({ ...editingService, description: e.target.value })}
+                />
+              </div>
+            </div>
+
+            <div className="svc-modal__footer">
+              <button className="btn-cancel" onClick={handleClose}>Hủy</button>
+              <button
+                className="btn-save"
+                disabled={!editingService.name.trim() || !editingService.unit.trim()}
+                onClick={handleSave}
+              >
+                Lưu dịch vụ
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

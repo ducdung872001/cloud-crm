@@ -24,6 +24,7 @@ import PomModal from "./partials/PomModal";
 import CustomerCharacteristics from "pages/Common/CustomerCharacteristics";
 
 import "./ServiceList.scss";
+import "../Product/ProductList.scss"; // [CH] Reuse product list styles
 import PermissionService from "services/PermissionService";
 import ConfigIntegrateModal from "../Product/ConfigIntegrateModal/ConfigIntegrateModal";
 import DetailServiceModal from "./partials/DetailService/DetailServiceModal";
@@ -300,6 +301,7 @@ export default function ServiceList(props: IServiceListProps) {
     getListPartner();
   }, []);
 
+  // [CH] Community Hub — actions dịch vụ
   const titleActions: ITitleActions = {
     actions: [
       ...(isAddEditService
@@ -315,7 +317,7 @@ export default function ServiceList(props: IServiceListProps) {
             ...(tab === "tab_one"
               ? [
                   permissions["SERVICE_ADD"] == 1 && {
-                    title: "Thêm mới",
+                    title: "Thêm dịch vụ",
                     callback: () => {
                       setDataService(null);
                       setIsAddEditService(!isAddEditService);
@@ -324,6 +326,24 @@ export default function ServiceList(props: IServiceListProps) {
                 ]
               : []),
           ]),
+    ].filter((action) => action),
+    actions_extra: [
+      ...(!isAddEditService && tab === "tab_one"
+        ? [
+            {
+              title: "Nhập Excel",
+              callback: () => {
+                showToast("Chức năng nhập Excel dịch vụ đang phát triển", "info");
+              },
+            },
+            {
+              title: "Xuất Excel",
+              callback: () => {
+                showToast("Chức năng xuất Excel dịch vụ đang phát triển", "info");
+              },
+            },
+          ]
+        : []),
     ].filter((action) => action),
   };
 
@@ -521,7 +541,7 @@ export default function ServiceList(props: IServiceListProps) {
             className={`title-first ${isAddEditService && width <= 768 ? "d-none" : ""}`}
             title="Quay lại"
           >
-            Cài đặt bán hàng
+            Danh mục sản phẩm & dịch vụ
           </h1>
           <Icon
             name="ChevronRight"
