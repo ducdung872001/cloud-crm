@@ -82,6 +82,8 @@ const en = {
     chDeductQuota: "Deduct Quota",
     chBooking: "Book Service",
     chOrders: "Transactions",
+    chServiceCatalog: "Service Catalog",
+    chServiceCatalogSetting: "Service Catalog",
     internalMail: "Internal mail",
     document: "Documents",
     createKPIFramework: "Create KPIs",

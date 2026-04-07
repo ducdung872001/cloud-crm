@@ -82,6 +82,8 @@ const vi = {
     chDeductQuota: "Trừ quota dịch vụ",
     chBooking: "Đặt lịch dịch vụ",
     chOrders: "Giao dịch",
+    chServiceCatalog: "Quản lý dịch vụ",
+    chServiceCatalogSetting: "Danh mục dịch vụ",
     internalMail: "Thư nội bộ",
     document: "Tài liệu",
     createKPIFramework: "Tạo bộ KPI",

@@ -203,9 +203,10 @@ const CHPartnersPage = React.lazy(() => import("@/pages/CommunityHub/Partners"))
 const CHFeedbackPage = React.lazy(() => import("@/pages/CommunityHub/Feedback"));
 const CHReportsPage = React.lazy(() => import("@/pages/CommunityHub/Reports"));
 const CHMembershipPlanSettings = React.lazy(() => import("@/pages/CommunityHub/MembershipPlanSettings"));
+const CHServiceManagement = React.lazy(() => import("@/pages/CommunityHub/ServiceManagement"));
 
 // [CH] Community Hub - Menu chính
-// Sắp xếp theo workflow: Vận hành → Cộng đồng → Tài chính → Hệ thống
+// Mô hình: POS bán lẻ + bán thẻ thành viên | Dịch vụ quản lý tập trung
 export const menu: IMenuItem[] = [
   {
     title: "dashboard", // Tổng quan
@@ -214,13 +215,19 @@ export const menu: IMenuItem[] = [
     code: "DASHBOARD",
   },
 
-  // ═══ VẬN HÀNH HÀNG NGÀY ═══════════════════════════════════════════════
+  // ═══ BÁN HÀNG & VẬN HÀNH ═════════════════════════════════════════════
   {
-    title: "chReception", // Lễ tân — gom tất cả thao tác front desk
-    path: "/ch_services",
+    title: "chReception", // Lễ tân — POS + Check-in + Trừ quota
+    path: urls.create_sale_add,
     icon: <Icon name="PosMenu" />,
     code: "",
     children: [
+      {
+        title: "createSalesOrder", // Bán hàng (POS) — giữ nguyên POS gốc
+        path: urls.create_sale_add,
+        icon: <Icon name="SaleOrderMenu" />,
+        code: "CREATE_SALE_ORDER",
+      },
       {
         title: "chCheckin", // Check-in / Cửa vào
         path: "/ch_checkin",
@@ -228,25 +235,41 @@ export const menu: IMenuItem[] = [
         code: "",
       },
       {
-        title: "chSellCard", // Bán thẻ thành viên
-        path: "/ch_services",
-        icon: <Icon name="LoyaltyMenu" />,
-        code: "",
-      },
-      {
         title: "chDeductQuota", // Trừ quota dịch vụ
-        path: "/ch_services", // same page, tab trừ quota
+        path: "/ch_services",
         icon: <Icon name="EndShiftMenu" />,
         code: "",
       },
       {
-        title: "chBooking", // Đặt lịch dịch vụ
-        path: "/ch_services", // same page, tab đặt lịch
+        title: "shiftManagement", // Quản lý ca
+        path: urls.shift_management,
         icon: <Icon name="ShiftReportMenu" />,
         code: "",
       },
     ],
   },
+  {
+    title: "chOrders", // Giao dịch — Đơn hàng & Hóa đơn
+    path: urls.sale_invoice,
+    icon: <Icon name="OrderListMenu" />,
+    code: "SALE_INVOICE",
+    children: [
+      {
+        title: "salesInvoice", // Danh sách đơn
+        path: urls.sale_invoice,
+        icon: <Icon name="OrderListMenu" />,
+        code: "SALE_INVOICE",
+      },
+      {
+        title: "invoiceVAT", // Hóa đơn điện tử
+        path: urls.invoiceVAT,
+        icon: <Icon name="VatInvoiceMenu" />,
+        code: "",
+      },
+    ],
+  },
+
+  // ═══ THÀNH VIÊN & DỊCH VỤ ═════════════════════════════════════════════
   {
     title: "customer", // Thành viên
     path: urls.customer,
@@ -254,7 +277,7 @@ export const menu: IMenuItem[] = [
     code: "CUSTOMER",
     children: [
       {
-        title: "customerList", // Danh sách thành viên
+        title: "customerList",
         path: urls.customer_list,
         icon: <Icon name="CustomerMenu" />,
         code: "CUSTOMER",
@@ -268,15 +291,9 @@ export const menu: IMenuItem[] = [
     ],
   },
   {
-    title: "chAccommodation", // Lưu trú
+    title: "chAccommodation", // Lưu trú (chi tiết giường/phòng)
     path: "/ch_accommodation",
     icon: <Icon name="WarehouseListMenu" />,
-    code: "",
-  },
-  {
-    title: "chCourses", // Khóa học & CLB
-    path: "/ch_courses",
-    icon: <Icon name="ProcessMenu" />,
     code: "",
   },
 
@@ -296,26 +313,6 @@ export const menu: IMenuItem[] = [
 
   // ═══ TÀI CHÍNH & BÁO CÁO ═════════════════════════════════════════════
   {
-    title: "chOrders", // Giao dịch — đơn hàng & hóa đơn
-    path: urls.sale_invoice,
-    icon: <Icon name="OrderListMenu" />,
-    code: "SALE_INVOICE",
-    children: [
-      {
-        title: "salesInvoice", // Đơn hàng
-        path: urls.sale_invoice,
-        icon: <Icon name="OrderListMenu" />,
-        code: "SALE_INVOICE",
-      },
-      {
-        title: "invoiceVAT", // Hóa đơn VAT
-        path: urls.invoiceVAT,
-        icon: <Icon name="VatInvoiceMenu" />,
-        code: "",
-      },
-    ],
-  },
-  {
     title: "financeManagement", // Tài chính
     path: urls.finance_management,
     icon: <Icon name="FinanceMenu" />,
@@ -328,7 +325,7 @@ export const menu: IMenuItem[] = [
         code: "",
       },
       {
-        title: "financeCashbook", // Sổ thu chi
+        title: "financeCashbook",
         path: urls.finance_management_cashbook,
         icon: <Icon name="CashbookMenu" />,
         code: "",
@@ -346,13 +343,13 @@ export const menu: IMenuItem[] = [
         code: "",
       },
       {
-        title: "debtManagement", // Công nợ
+        title: "debtManagement",
         path: urls.finance_management_debt_management,
         icon: <Icon name="DebtMenu" />,
         code: "",
       },
       {
-        title: "paymentControl", // Đối soát
+        title: "paymentControl",
         path: urls.payment_control,
         icon: <Icon name="PaymentMethodMenu" />,
         code: "",
@@ -373,14 +370,20 @@ export const menu: IMenuItem[] = [
     icon: <Icon name="SettingsMenu" />,
     code: "",
     children: [
-      // ── [CH] Quản lý gói thành viên ─────────────────────────────────
+      // ── [CH] Dịch vụ & Gói thành viên ────────────────────────────────
       {
-        title: "chMembershipPlans", // Quản lý gói thành viên
+        title: "chServiceCatalogSetting", // Danh mục dịch vụ
+        path: "/ch_service_catalog",
+        icon: <Icon name="ProductCategoryMenu" />,
+        code: "",
+      },
+      {
+        title: "chMembershipPlans", // Cấu hình gói thành viên
         path: "/ch_membership_plans",
         icon: <Icon name="LoyaltyMenu" />,
         code: "",
       },
-      // ── NHÓM 1: Vận hành cửa hàng ──────────────────────────────────
+      // ── NHÓM 1: Vận hành cơ sở ─────────────────────────────────────
       {
         title: "settingBasis", // Vận hành cửa hàng (cửa hàng, thanh toán, ca, cấu hình chung)
         path: urls.setting_basis,
@@ -473,6 +476,10 @@ export const routes: IRouter[] = [
   {
     path: "/ch_membership_plans",
     component: <CHMembershipPlanSettings />,
+  },
+  {
+    path: "/ch_service_catalog",
+    component: <CHServiceManagement />,
   },
   // Dashboard
   {
