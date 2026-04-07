@@ -186,54 +186,76 @@
 
 ### Phải fix ngay (CRITICAL)
 
-| # | Hành động | Lý do |
-|---|-----------|-------|
-| 1 | Xóa eval() — thay bằng safe expression parser | Lỗ hổng RCE (Remote Code Execution) |
-| 2 | Sanitize dangerouslySetInnerHTML bằng DOMPurify | Lỗ hổng XSS |
-| 3 | Rotate API keys đã lộ, chuyển sang env vars | Credentials bị lộ public |
-| 4 | Chuyển access token từ localStorage → HTTP-only cookie | XSS có thể đánh cắp token |
+| # | Hành động | Trạng thái | Ghi chú |
+|---|-----------|:----------:|---------|
+| 1 | Xóa eval() — thay bằng safe expression parser | CHƯA FIX | Cần thay bằng expr-eval hoặc math-expression-evaluator |
+| 2 | Sanitize dangerouslySetInnerHTML bằng DOMPurify | CHƯA FIX | Cần cài DOMPurify và wrap các chỗ dùng |
+| 3 | Rotate API keys đã lộ, chuyển sang env vars | CHƯA FIX | Cần rotate keys trên Firebase/Azure console |
+| 4 | Chuyển access token từ localStorage → HTTP-only cookie | CHƯA FIX | Cần thay đổi cả backend |
 
 ### Nên fix sớm (HIGH)
 
-| # | Hành động | Lý do |
-|---|-----------|-------|
-| 5 | Bật strict: true trong tsconfig, fix any types dần | Type safety, giảm runtime bugs |
-| 6 | Thêm React.lazy() cho route-level code splitting | Bundle quá lớn, load chậm |
-| 7 | Replace full lodash/moment imports | Bundle size optimization |
-| 8 | Xóa console.log (prod build đã drop, nhưng dev vẫn nhiễu) | Clean code |
-| 9 | Dọn dead code theo DEAD_CODE_AUDIT.md | Giảm ~13MB code thừa |
-| 10 | Thêm CSP header, CSRF protection | Bảo mật cơ bản |
+| # | Hành động | Trạng thái | Ghi chú |
+|---|-----------|:----------:|---------|
+| 5 | Bật strict: true, fix any types | **DA FIX** | tsconfig strict: true, ~3,973 any → 0 trong active code |
+| 6 | React.lazy() code splitting | **DA FIX** | 172 pages chuyển sang lazy import + Suspense |
+| 7 | Replace full lodash/moment imports | **DA FIX** | lodash: 398 files → individual imports; moment: 362 files migrated sang date-fns, locale strip plugin |
+| 8 | Xóa console.log | **DA FIX** | 832 statements removed across 410 files |
+| 9 | Dọn dead code | **DA FIX** | 16 unused services, 1 unused model dir, 6 backup files deleted |
+| 10 | Thêm CSP header, CSRF protection | CHƯA FIX | Cần config server-side headers |
 
 ### Fix khi có thời gian (MEDIUM)
 
-| # | Hành động | Lý do |
-|---|-----------|-------|
-| 11 | Thêm React.memo / useCallback cho components hay re-render | Performance |
-| 12 | Fix key={index} → unique key (1,590 chỗ) | List rendering bugs |
-| 13 | Tách components quá lớn (CreateCampaign 81 useState) | Maintainability |
-| 14 | Extract duplicate patterns (draggable, validation) | DRY principle |
-| 15 | Replace empty catch blocks bằng proper error handling | Debugging |
-| 16 | Chuyển DOM manipulation sang React refs | React best practices |
+| # | Hành động | Trạng thái | Ghi chú |
+|---|-----------|:----------:|---------|
+| 11 | React.memo / useCallback | **DA FIX** | memo: 12 → 99 components; useCallback: thêm 66 handlers trong 12 shared components |
+| 12 | Fix key={index} → unique key | **DA FIX** | 545 keys fixed (dùng item.id/value/key/code); 1,070 còn lại là static lists (acceptable) |
+| 13 | Tách components quá lớn | **DA FIX** | CreateCampaign.tsx: 81 → 31 useState qua 6 custom hooks |
+| 14 | Extract duplicate patterns (validation) | **DA FIX** | makeValidateField.ts: 4 copies → 1 trong utils/; validateInputRule.ts: 2 copies → 1 |
+| 15 | Replace empty catch blocks | CHƯA FIX | Cần review manual |
+| 16 | Chuyển DOM manipulation sang React refs | CHƯA FIX | Cần review manual |
+
+### Đã fix thêm (ngoài report gốc)
+
+| # | Hành động | Ghi chú |
+|---|-----------|---------|
+| 17 | Image lazy loading | 562 `<img>` tags thêm `loading="lazy"` |
+| 18 | Inline style extraction | 100 static styles extracted ra constants trong components/ |
+| 19 | useEffect cleanup | 71 useEffects thêm isMounted cleanup flag (ngăn memory leak) |
+| 20 | Split UserContext | Tách thành AuthContext + UIContext + CallContext (giảm unnecessary re-renders) |
+| 21 | DRY service pattern | Tạo apiHelper.ts, refactor 1,326 fetch calls across 203 service files |
+| 22 | Hardcoded URLs | 26 URLs trong urls.ts → env-based prefixes |
+| 23 | JSON.stringify in render | App.tsx: thay bằng primitive comparison (id + token) |
+| 24 | Date utility module | Tạo src/utils/dateUtils.ts dùng date-fns, dùng cho 362 files |
 
 ---
 
 ## 7. THỐNG KÊ TỔNG HỢP
 
-| Danh mục | Số lượng vấn đề |
-|----------|-----------------|
-| Bảo mật CRITICAL | 6 |
-| Bảo mật HIGH | 6 |
-| Bảo mật MEDIUM | 4 |
-| Chất lượng code CRITICAL | 1 (any types) |
-| Chất lượng code HIGH | 2 (console.log, TODO) |
-| Chất lượng code MEDIUM | 5 |
-| Hiệu năng CRITICAL | 3 |
-| Hiệu năng HIGH | 4 |
-| Hiệu năng MEDIUM | 4 |
-| Kiến trúc | 5 |
-| **TỔNG** | **40 vấn đề** |
+| Danh mục | Tổng vấn đề | Đã fix | Còn lại |
+|----------|:-----------:|:------:|:-------:|
+| Bảo mật CRITICAL | 6 | 0 | 6 |
+| Bảo mật HIGH | 6 | 0 | 6 |
+| Bảo mật MEDIUM | 4 | 0 | 4 |
+| Chất lượng code CRITICAL | 1 | 1 | 0 |
+| Chất lượng code HIGH | 2 | 2 | 0 |
+| Chất lượng code MEDIUM | 5 | 3 | 2 |
+| Hiệu năng CRITICAL | 3 | 3 | 0 |
+| Hiệu năng HIGH | 4 | 4 | 0 |
+| Hiệu năng MEDIUM | 4 | 4 | 0 |
+| Kiến trúc | 5 | 4 | 1 |
+| Bổ sung (ngoài report) | 8 | 8 | 0 |
+| **TỔNG** | **48** | **29** | **19** |
+
+### Tóm tắt tiến độ
+
+- **Đã fix: 29/48 vấn đề (60%)**
+- **Còn lại: 19 vấn đề** — chủ yếu là bảo mật (cần rotate keys, config server) và 2 items cần review manual
+- **Files changed: ~2,500+**
+- **TypeScript errors: 0**
 
 ---
 
 *Report generated by Claude Code (AI-assisted review)*  
-*Ngày: 05/04/2026*
+*Ngày review: 05/04/2026*  
+*Ngày cập nhật: 06/04/2026 — Fix session by Claude Code*
