@@ -4,6 +4,8 @@ import { CartItem, Customer, OrderType, ShippingInfo } from "../../types";
 import "./index.scss";
 import InvoiceService from "@/services/InvoiceService";
 import BoughtProductService from "@/services/BoughtProductService";
+import BoughtServiceService from "@/services/BoughtServiceService";
+import BoughtCardService from "@/services/BoughtCardService";
 import CouponService from "@/services/CouponService";
 import ShippingFeeConfigService from "@/services/ShippingFeeConfigService";
 import { showToast } from "utils/common";
@@ -209,19 +211,59 @@ const Cart: React.FC<CartProps> = ({
         return;
       }
       const invoiceId: number = draftRes.result.invoiceId;
-      const body = items.map((item) => ({
-        productId: Number(item.id), variantId: Number(item.variantId),
-        price: item.price, customerId: Number(customer?.id ?? -1),
-        qty: item.qty, name: item.name, avatar: item.avatar ?? "",
-        unitName: item.unitName ?? item.unit ?? "", fee: item.price * item.qty,
-      }));
-      const insertRes = await BoughtProductService.insert(body, { invoiceId });
-      if (insertRes.code !== 0) {
-        await fetch(`${urlsApi.invoice.draftDelete}?id=${invoiceId}`, { method: "DELETE" });
-        showToast(insertRes.message ?? t("pageCounterSales.draftProductFailed"), "error");
-        return;
+
+      // [CH] Tách items theo loại: product / service / membership
+      const productItems = items.filter((i) => !i.itemType || i.itemType === "product");
+      const serviceItems = items.filter((i) => i.itemType === "service");
+      const membershipItems = items.filter((i) => i.itemType === "membership");
+
+      // Insert sản phẩm
+      if (productItems.length > 0) {
+        const body = productItems.map((item) => ({
+          productId: Number(item.id), variantId: Number(item.variantId),
+          price: item.price, customerId: Number(customer?.id ?? -1),
+          qty: item.qty, name: item.name, avatar: item.avatar ?? "",
+          unitName: item.unitName ?? item.unit ?? "", fee: item.price * item.qty,
+        }));
+        const insertRes = await BoughtProductService.insert(body, { invoiceId });
+        if (insertRes.code !== 0) {
+          await fetch(`${urlsApi.invoice.draftDelete}?id=${invoiceId}`, { method: "DELETE" });
+          showToast(insertRes.message ?? t("pageCounterSales.draftProductFailed"), "error");
+          return;
+        }
       }
-      showToast(`${t("pageCounterSales.draftSaved")} (${items.length} ${t("common.product")})`, "success");
+
+      // [CH] Insert dịch vụ
+      if (serviceItems.length > 0) {
+        for (const svc of serviceItems) {
+          try {
+            await BoughtServiceService.addProductToInvoice({
+              invoiceId,
+              serviceId: Number(svc.id),
+              price: svc.price,
+              qty: svc.qty,
+              customerId: Number(customer?.id ?? -1),
+            } as any);
+          } catch { /* silent — log lỗi nhưng không block */ }
+        }
+      }
+
+      // [CH] Insert thẻ thành viên
+      if (membershipItems.length > 0) {
+        for (const card of membershipItems) {
+          try {
+            await BoughtCardService.add({
+              invoiceId,
+              cardId: Number(card.id),
+              price: card.price,
+              qty: card.qty,
+              customerId: Number(customer?.id ?? -1),
+            } as any);
+          } catch { /* silent */ }
+        }
+      }
+
+      showToast(`${t("pageCounterSales.draftSaved")} (${items.length} items)`, "success");
       onSavedDraft?.();
     } catch {
       showToast(t("common.error"), "error");

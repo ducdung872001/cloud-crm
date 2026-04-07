@@ -89,6 +89,7 @@ const vi = {
     chBooking: "Đặt lịch dịch vụ",
     chOrders: "Giao dịch",
     chServiceCatalog: "Quản lý dịch vụ",
+    chTenantConfig: "Cấu hình toàn cục",
     chServiceCatalogSetting: "Danh mục dịch vụ",
     internalMail: "Thư nội bộ",
     document: "Tài liệu",

@@ -1,3 +1,63 @@
+// [CH] Button styles cho OrderList (toolbar + actions)
+.order-list .btn,
+.ol-toolbar .btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.6rem 1.4rem;
+  border-radius: 0.6rem;
+  font-size: 1.25rem;
+  font-weight: 500;
+  cursor: pointer;
+  white-space: nowrap;
+  border: 1px solid #d0d0d0;
+  background: #fff;
+  color: #333;
+  transition: all 0.15s;
+
+  &:hover { border-color: var(--ch-primary, #2D6A5A); color: var(--ch-primary, #2D6A5A); }
+  &:disabled { opacity: 0.5; cursor: not-allowed; }
+}
+
+.order-list .btn--lime,
+.ol-toolbar .btn--lime {
+  background: var(--ch-primary, #2D6A5A);
+  color: #fff;
+  border-color: var(--ch-primary, #2D6A5A);
+  &:hover { background: #245a4c; color: #fff; }
+}
+
+.order-list .btn--outline,
+.ol-toolbar .btn--outline {
+  background: #fff;
+  border: 1px solid #d0d0d0;
+  color: #333;
+  &:hover { border-color: var(--ch-primary, #2D6A5A); color: var(--ch-primary, #2D6A5A); }
+}
+
+.order-list .btn--sm,
+.ol-toolbar .btn--sm {
+  padding: 0.5rem 1.2rem;
+  font-size: 1.2rem;
+}
+
+.order-list .btn--xs {
+  padding: 0.4rem 0.8rem;
+  font-size: 1.1rem;
+}
+
+.order-list .btn--confirm {
+  background: var(--ch-primary, #2D6A5A);
+  color: #fff;
+  border-color: var(--ch-primary, #2D6A5A);
+}
+
+.order-list .btn--debt-collect {
+  background: #E8922A;
+  color: #fff;
+  border-color: #E8922A;
+}
+
 .order-list {
   display: flex;
   flex-direction: column;
@@ -213,6 +273,7 @@
 .oc-actions {
   display: flex;
   gap: 0.6rem;
+  flex-wrap: wrap;
 }
 
 /* Badges */

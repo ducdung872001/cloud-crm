@@ -161,13 +161,29 @@ const mappedDataInvoice = (invoiceDataApi) => {
     paymentMethod: invoiceDataApi.invoice.paymentType === 1 ? "Tiền mặt" : "Phương thức khác", // Cần map từ paymentType
     createdTime: invoiceDataApi.invoice.createdTime,
     status: invoiceDataApi.invoice.status === 1 ? "pending" : invoiceDataApi.invoice.status === 2 ? "success" : "cancelled", // Cần map từ status
-    items: invoiceDataApi.products.map((product) => ({
-      icon: "📦", // Cần map từ một trường nào đó trong product
-      image: product?.productAvatar || "", // Cần map từ productAvatar
-      name: product.name,
-      detail: `${product.qty} × ${formatCurrency(product.price)}`, // Cần map từ qty và price
-      total: `${product.qty * product.price}`, // Cần tính toán từ qty và price
-    })),
+    items: [
+      ...(invoiceDataApi.products ?? []).map((product) => ({
+        icon: "📦",
+        image: product?.productAvatar || "",
+        name: product.name,
+        detail: `${product.qty} × ${formatCurrency(product.price)}`,
+        total: `${product.qty * product.price}`,
+      })),
+      ...(invoiceDataApi.services ?? []).map((service) => ({
+        icon: "💆",
+        image: service?.serviceAvatar || "",
+        name: service.serviceName || service.name,
+        detail: `${service.qty ?? service.quantity ?? 1} × ${formatCurrency(service.price ?? service.mainCost ?? service.amount ?? 0)}`,
+        total: `${(service.qty ?? service.quantity ?? 1) * (service.price ?? service.mainCost ?? service.amount ?? 0)}`,
+      })),
+      ...(invoiceDataApi.boughtCards ?? []).map((card) => ({
+        icon: "💳",
+        image: "",
+        name: card.cardName || card.name || "Thẻ thành viên",
+        detail: `${card.qty ?? 1} × ${formatCurrency(card.price ?? card.amount ?? 0)}`,
+        total: `${(card.qty ?? 1) * (card.price ?? card.amount ?? 0)}`,
+      })),
+    ],
     timeLine: [
       { icon: "✅", label: "Tạo đơn", done: true, active: false },
       { icon: "⏳", label: "Chờ xử lý", done: invoiceDataApi.invoice.status === 1, active: invoiceDataApi.invoice.status === 1 },

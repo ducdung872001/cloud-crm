@@ -21,6 +21,8 @@ import QrScanModal from "./components/modals/QrScanModal";
 import SyncModal from "./components/modals/SyncModal";
 import CustomerModal from "./components/modals/CustomerModal";
 import BoughtProductService from "@/services/BoughtProductService";
+import BoughtServiceService from "@/services/BoughtServiceService";
+import BoughtCardService from "@/services/BoughtCardService";
 import { showToast } from "@/utils/common";
 import AddCustomerPersonModal from "../CustomerPerson/partials/AddCustomerPersonModal";
 import QrCodeProService from "@/services/QrCodeProService";
@@ -335,7 +337,22 @@ const CounterSales: React.FC = () => {
     // Đánh dấu đang chuyển sang ReceiptModal — không để onClose reset invoiceId
     transitioningToReceiptRef.current = true;
     try {
-      const body = cartItems.map((item: CartItem) => ({
+      // [CH] Tách items theo loại
+      const productItems = cartItems.filter((i: CartItem) => !i.itemType || i.itemType === "product");
+      const serviceItems = cartItems.filter((i: CartItem) => i.itemType === "service");
+      const membershipItems = cartItems.filter((i: CartItem) => i.itemType === "membership");
+
+      const loyaltyDiscount = promoDiscount + moneyFromPoints;
+      const extraParams = {
+        invoiceId,
+        ...(loyaltyDiscount > 0 ? { loyaltyDiscount } : {}),
+        paid,
+        debt,
+        ...(activePayConfig?.fundId ? { fundId: activePayConfig.fundId } : {}),
+      };
+
+      // Insert sản phẩm (hoặc mảng rỗng để finalize invoice)
+      const productBody = productItems.map((item: CartItem) => ({
         productId: Number(item.id),
         variantId: Number(item.variantId),
         price: item.price,
@@ -347,16 +364,33 @@ const CounterSales: React.FC = () => {
         ...(warehouseId ? { inventoryId: warehouseId } : {}),
       }));
 
-      const loyaltyDiscount = promoDiscount + moneyFromPoints;
+      const paidInvoice = await BoughtProductService.insert(productBody, extraParams);
 
-      const paidInvoice = await BoughtProductService.insert(body, {
-        invoiceId,
-        ...(loyaltyDiscount > 0 ? { loyaltyDiscount } : {}),
-        paid,    // ← tiền thực thu (có thể nhỏ hơn total nếu ghi nợ)
-        debt,    // ← tiền còn nợ (0 nếu thanh toán đủ)
-        // fundId từ PTTT KH đã chọn → billing ghi cashbook vào đúng quỹ
-        ...(activePayConfig?.fundId ? { fundId: activePayConfig.fundId } : {}),
-      });
+      // [CH] Insert dịch vụ
+      for (const svc of serviceItems) {
+        try {
+          await BoughtServiceService.addProductToInvoice({
+            invoiceId,
+            serviceId: Number(svc.id),
+            price: svc.price,
+            qty: svc.qty,
+            customerId: Number(customer?.id ?? -1),
+          } as any);
+        } catch { /* silent */ }
+      }
+
+      // [CH] Insert thẻ thành viên
+      for (const card of membershipItems) {
+        try {
+          await BoughtCardService.add({
+            invoiceId,
+            cardId: Number(card.id),
+            price: card.price,
+            qty: card.qty,
+            customerId: Number(customer?.id ?? -1),
+          } as any);
+        } catch { /* silent */ }
+      }
 
       if (paidInvoice.code == 0) {
         // ── Nếu là đơn ship → tạo shipment ────────────────────────────────

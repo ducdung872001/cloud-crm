@@ -6,6 +6,7 @@ import { IMenuItem } from "model/OtherModel";
 import { getPermissions } from "utils/common";
 import { ContextType, UserContext } from "contexts/userContext";
 import cloneDeep from "lodash/cloneDeep";
+import TenantConfigService from "@/services/TenantConfigService";
 
 import "./navigation.scss";
 
@@ -17,9 +18,20 @@ interface NavigationProps {
 
 const filterMenuItemList = (menuItemList: IMenuItem[]) => {
   const permissions = getPermissions();
+  const tenantConfig = TenantConfigService.get();
+
+  // [CH] Map title → tenant config key để ẩn/hiện menu
+  const TENANT_MENU_MAP: Record<string, keyof typeof tenantConfig> = {
+    warehouse: "warehouse_enabled",
+    chAccommodation: "accommodation_enabled",
+  };
 
   return menuItemList
     .map((m) => {
+      // [CH] Kiểm tra tenant config — ẩn menu nếu config tắt
+      const configKey = TENANT_MENU_MAP[m?.title];
+      if (configKey && !tenantConfig[configKey]) return null;
+
       if (m?.code) {
         if (permissions[m.code + "_VIEW"] == 1) {
           return m;

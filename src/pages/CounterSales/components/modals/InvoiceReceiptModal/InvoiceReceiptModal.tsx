@@ -121,7 +121,18 @@ export default function InvoiceReceiptModal({ open, invoiceId, onClose }: Props)
       }
 
       const raw = res.result;
+      console.log("[Receipt] invoiceDetail raw:", raw);
       const inv = raw.invoice ?? raw;
+
+      // [CH] Gọi thêm API listInvoiceDetail để lấy chi tiết sản phẩm/dịch vụ đã bán
+      let detailItems: Record<string, unknown>[] = [];
+      try {
+        const detailRes = await InvoiceService.listInvoiceDetail(id);
+        console.log("[CH] listInvoiceDetail response:", detailRes);
+        if (detailRes?.code === 0) {
+          detailItems = Array.isArray(detailRes.result) ? detailRes.result : (detailRes.result?.data ?? []);
+        }
+      } catch { /* silent */ }
 
       // Fetch thêm thông tin email khách hàng nếu có customerId
       let customerEmail = inv.customerEmail ?? "";
@@ -138,16 +149,52 @@ export default function InvoiceReceiptModal({ open, invoiceId, onClose }: Props)
         }
       }
 
-      const products = (raw.products ?? []).map((p: Record<string, unknown>) => ({
-        name: p.productName || p.name || "",
-        qty: p.qty ?? 1,
-        price: p.price ?? p.mainCost ?? 0,
+      // [CH] Parse items từ 2 nguồn: invoiceDetail (raw) + listInvoiceDetail (detailItems)
+      const rawProducts = raw.products ?? raw.boughtProducts ?? [];
+      const rawServices = raw.services ?? raw.boughtServices ?? [];
+      const rawCards = raw.boughtCards ?? raw.boughtCardServices ?? [];
+
+      // Từ listInvoiceDetail — chứa tất cả items lẫn lộn
+      const detailProducts = detailItems.filter((d) => d.type === "product" || d.productId || d.variantId);
+      const detailServices = detailItems.filter((d) => d.type === "service" || d.serviceId);
+
+      const mergedProducts = [
+        ...(Array.isArray(rawProducts) ? rawProducts : []),
+        ...detailProducts,
+      ];
+      const mergedServices = [
+        ...(Array.isArray(rawServices) ? rawServices : []),
+        ...detailServices,
+      ];
+
+      const products = mergedProducts.map((p: Record<string, unknown>) => ({
+        name: (p.productName || p.variantName || p.name || "") as string,
+        qty: Number(p.qty ?? p.quantity ?? 1),
+        price: Number(p.price ?? p.mainCost ?? p.amount ?? p.fee ?? 0),
+      })).filter((p) => p.name);
+
+      const services = mergedServices.map((s: Record<string, unknown>) => ({
+        name: (s.serviceName || s.name || "") as string,
+        qty: Number(s.qty ?? s.quantity ?? 1),
+        price: Number(s.price ?? s.mainCost ?? s.amount ?? s.fee ?? 0),
+      })).filter((s) => s.name);
+
+      const cards = (Array.isArray(rawCards) ? rawCards : []).map((c: Record<string, unknown>) => ({
+        name: (c.cardName || c.name || "Thẻ thành viên") as string,
+        qty: Number(c.qty ?? c.quantity ?? 1),
+        price: Number(c.price ?? c.amount ?? 0),
       }));
-      const services = (raw.services ?? []).map((s: Record<string, unknown>) => ({
-        name: s.serviceName || s.name || "",
-        qty: s.qty ?? 1,
-        price: s.price ?? s.mainCost ?? 0,
-      }));
+
+      console.log("[Receipt] rawProducts:", rawProducts, "rawServices:", rawServices, "parsedProducts:", products, "parsedServices:", services);
+
+      // [CH] Nếu vẫn rỗng, thử parse toàn bộ detailItems không phân loại
+      const allFromDetail = (products.length === 0 && services.length === 0 && detailItems.length > 0)
+        ? detailItems.map((d: Record<string, unknown>) => ({
+            name: (d.productName || d.variantName || d.serviceName || d.name || d.cardName || "") as string,
+            qty: Number(d.qty ?? d.quantity ?? 1),
+            price: Number(d.price ?? d.mainCost ?? d.amount ?? d.fee ?? 0),
+          })).filter((d) => d.name)
+        : [];
 
       setReceipt({
         invoiceCode: inv.invoiceCode ?? "",
@@ -156,7 +203,7 @@ export default function InvoiceReceiptModal({ open, invoiceId, onClose }: Props)
         customerName: inv.customerName ?? "Khách vãng lai",
         customerPhone: inv.customerPhone ?? "",
         customerEmail,
-        products,
+        products: [...products, ...cards, ...allFromDetail], // [CH] Gộp tất cả items
         services,
         amount: inv.amount ?? 0,
         discount: inv.discount ?? 0,

@@ -209,6 +209,7 @@ const CHReportPartners = React.lazy(() => import("@/pages/CommunityHub/Reports/R
 const CHReportFinance = React.lazy(() => import("@/pages/CommunityHub/Reports/ReportFinance"));
 const CHMembershipPlanSettings = React.lazy(() => import("@/pages/CommunityHub/MembershipPlanSettings"));
 const CHServiceManagement = React.lazy(() => import("@/pages/CommunityHub/ServiceManagement"));
+const CHTenantConfig = React.lazy(() => import("@/pages/CommunityHub/TenantConfig"));
 
 // [CH] Community Hub - Menu chính
 // Sắp xếp: dùng nhiều nhất ở trên → ít dùng ở dưới
@@ -339,6 +340,13 @@ export const menu: IMenuItem[] = [
     icon: <Icon name="SettingsMenu" />,
     code: "",
     children: [
+      // ── [CH] Cấu hình toàn cục (admin tenant) ────────────────────────
+      {
+        title: "chTenantConfig",
+        path: "/ch_tenant_config",
+        icon: <Icon name="GeneralConfigMenu" />,
+        code: "",
+      },
       // ── [CH] Dịch vụ & Gói thành viên ────────────────────────────────
       {
         title: "chServiceCatalogSetting", // Danh mục dịch vụ → trang SettingSell (sản phẩm/dịch vụ đầy đủ)
@@ -451,6 +459,10 @@ export const routes: IRouter[] = [
   {
     path: "/ch_service_catalog",
     component: <CHServiceManagement />,
+  },
+  {
+    path: "/ch_tenant_config",
+    component: <CHTenantConfig />,
   },
   // Dashboard
   {
