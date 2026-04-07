@@ -521,12 +521,12 @@ export default function ReportCustomer() {
     }
   };
 
-  // khách hàng
+  // thành viên
   const [detailCustomer, setDetailCustomer] = useState(null);
   const [isLoadingCustomer, setIsLoadingCustomer] = useState<boolean>(false);
   const [checkFieldCustomer, setCheckFieldCustomer] = useState<boolean>(false);
 
-  //! đoạn này xử lý vấn đề lấy ra danh sách khách hàng
+  //! đoạn này xử lý vấn đề lấy ra danh sách thành viên
   const loadedOptionCustomer = async (search, loadedOptions, { page }) => {
     const param: ICustomerFilterRequest = {
       keyword: search,
@@ -650,7 +650,7 @@ export default function ReportCustomer() {
               <SelectCustom
                 id="customerId"
                 name="customerId"
-                label="Khách hàng"
+                label="Thành viên"
                 options={[]}
                 fill={true}
                 value={detailCustomer}
@@ -660,14 +660,14 @@ export default function ReportCustomer() {
                 onChange={(e) => handleChangeValueCustomer(e)}
                 isAsyncPaginate={true}
                 isFormatOptionLabel={true}
-                placeholder="Tất cả khách hàng"
+                placeholder="Tất cả thành viên"
                 additional={{
                   page: 1,
                 }}
                 loadOptionsPaginate={loadedOptionCustomer}
                 formatOptionLabel={formatOptionLabelCustomer}
                 error={checkFieldCustomer}
-                message="Khách hàng không được bỏ trống"
+                message="Thành viên không được bỏ trống"
                 // isLoading={data?.customerId ? isLoadingCustomer : null}
               />
             </div>

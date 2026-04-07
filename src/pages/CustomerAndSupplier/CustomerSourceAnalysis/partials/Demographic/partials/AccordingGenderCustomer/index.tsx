@@ -101,7 +101,7 @@ export default function AccordingGenderCustomer(props) {
         ],
       });
     } else {
-      showToast("Báo cáo theo giới tính khách hàng lỗi. Vui lòng xem lại sau!", "error");
+      showToast("Báo cáo theo giới tính thành viên lỗi. Vui lòng xem lại sau!", "error");
     }
   };
 
@@ -155,7 +155,7 @@ export default function AccordingGenderCustomer(props) {
   return (
     <div className="page__according__gender--customer">
       <div className="title__common d-flex align-items-start">
-        <h2 className="name-common">Theo giới tính khách hàng</h2>
+        <h2 className="name-common">Theo giới tính thành viên</h2>
         <div
           ref={refOptionContainer}
           className={`icon__option--download ${showOption ? "active__option" : ""}`}

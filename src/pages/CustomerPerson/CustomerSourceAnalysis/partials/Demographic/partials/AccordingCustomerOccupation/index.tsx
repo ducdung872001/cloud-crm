@@ -117,7 +117,7 @@ export default function AccordingCustomerOccupation(props) {
         ],
       });
     } else {
-      showToast("Báo cáo theo nghề nghiệp khách hàng lỗi. Vui lòng xem lại sau!", "error");
+      showToast("Báo cáo theo nghề nghiệp thành viên lỗi. Vui lòng xem lại sau!", "error");
     }
   };
 
@@ -171,7 +171,7 @@ export default function AccordingCustomerOccupation(props) {
   return (
     <div className="page__according__customer--according">
       <div className="title__common d-flex align-items-start">
-        <h2 className="name-common">Theo nghề nghiệp khách hàng</h2>
+        <h2 className="name-common">Theo nghề nghiệp thành viên</h2>
         <div
           ref={refOptionContainer}
           className={`icon__option--download ${showOption ? "active__option" : ""}`}

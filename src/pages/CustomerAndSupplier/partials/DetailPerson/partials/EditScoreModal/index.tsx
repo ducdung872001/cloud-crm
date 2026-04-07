@@ -57,7 +57,7 @@ export default function EditScoreModal(props: IAddCustomerViewerModalProps) {
           <ModalHeader title="Chỉnh sửa điểm" toggle={() => handleClear()} />
           <ModalBody>
             <div className="mb-3">
-              <Input label="Tên khách hàng" name="name" fill={true} required={true} value={"MTP Entertainment"} placeholder="Tên khách hàng" />
+              <Input label="Tên thành viên" name="name" fill={true} required={true} value={"MTP Entertainment"} placeholder="Tên thành viên" />
             </div>
             <div className="mb-3">
               <SelectCustom

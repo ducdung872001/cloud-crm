@@ -263,3 +263,126 @@
   margin: 1.2rem auto;
   display: block;
 }
+
+// [CH] Main tabs: Sản phẩm / Dịch vụ / Thẻ thành viên
+.pg-main-tabs {
+  display: flex;
+  gap: 0;
+  padding: 0 16px;
+  border-bottom: 2px solid #e8ebe9;
+  flex-shrink: 0;
+
+  .pg-main-tab {
+    padding: 1rem 2rem;
+    border: none;
+    outline: none;
+    background: transparent;
+    cursor: pointer;
+    font-size: 1.3rem;
+    font-weight: 500;
+    color: #6B8078;
+    border-bottom: 2px solid transparent;
+    margin-bottom: -2px;
+    transition: all 0.15s;
+    white-space: nowrap;
+    border-radius: 0;
+    box-shadow: none;
+
+    &:focus { outline: none; box-shadow: none; }
+
+    &.active {
+      color: var(--ch-primary, #2D6A5A);
+      border-bottom-color: var(--ch-primary, #2D6A5A);
+      font-weight: 600;
+    }
+
+    &:hover:not(.active) {
+      color: #333;
+    }
+  }
+}
+
+.pg-loading {
+  padding: 4rem 2rem;
+  text-align: center;
+  color: #6B8078;
+  font-size: 1.3rem;
+  grid-column: 1 / -1;
+}
+
+// [CH] Service card style
+.pg-card--service {
+  .pg-promo {
+    color: var(--ch-primary, #2D6A5A);
+    font-weight: 500;
+    font-size: 1.1rem;
+  }
+}
+
+// [CH] Membership plan cards
+.pg-grid--membership {
+  padding: 1.6rem;
+  gap: 1.4rem;
+  grid-template-columns: repeat(auto-fill, minmax(22rem, 1fr)) !important;
+}
+
+.pg-membership-card {
+  background: #fff;
+  border-radius: 1rem;
+  padding: 1.6rem;
+  border: 1px solid #e8ebe9;
+  border-top: 4px solid #ccc;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+
+  &__name {
+    font-size: 1.5rem;
+    font-weight: 700;
+  }
+
+  &__price {
+    font-size: 1.8rem;
+    font-weight: 800;
+    color: #1B2E2A;
+  }
+
+  &__duration {
+    font-size: 1.2rem;
+    color: #6B8078;
+  }
+
+  &__desc {
+    font-size: 1.15rem;
+    color: #6B8078;
+    margin: 0.4rem 0;
+    line-height: 1.4;
+  }
+
+  &__includes {
+    list-style: none;
+    padding: 0;
+    margin: 0.4rem 0;
+    font-size: 1.15rem;
+
+    li {
+      padding: 0.2rem 0;
+      strong { color: var(--ch-primary, #2D6A5A); }
+    }
+  }
+
+  &__btn {
+    margin-top: 0.8rem;
+    padding: 0.8rem;
+    background: var(--ch-primary, #2D6A5A);
+    color: #fff;
+    border: none;
+    border-radius: 0.6rem;
+    cursor: pointer;
+    font-size: 1.2rem;
+    font-weight: 600;
+    transition: all 0.15s;
+
+    &:hover { background: #245a4c; }
+  }
+}

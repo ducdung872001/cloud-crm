@@ -27,7 +27,7 @@ interface ModalAddMAProps {
 }
 
 export default function ModalAddMA(props: ModalAddMAProps) {
-  //isBatch: Thêm hàng loạt cơ hội (thêm nhanh từ màn hình danh sách khách hàng)
+  //isBatch: Thêm hàng loạt cơ hội (thêm nhanh từ màn hình danh sách thành viên)
   const { onShow, onHide, idData, idCustomer } = props;
 
   const focusedElement = useActiveElement();
@@ -121,19 +121,19 @@ export default function ModalAddMA(props: ModalAddMAProps) {
     setIsLoadingCustomer(false);
   };
 
-  // Nếu như có id khách hàng fill mặc định khách hàng vào và không cho sửa
+  // Nếu như có id thành viên fill mặc định thành viên vào và không cho sửa
   useEffect(() => {
     if (idCustomer && onShow) {
       getDetailCustomer(idCustomer);
     }
   }, [idCustomer, onShow]);
 
-  // Xử lý dữ liệu khách hàng, nhân viên
+  // Xử lý dữ liệu thành viên, nhân viên
   const [dataCustomer, setDataCustomer] = useState(null);
   const [dataEmployee, setDataEmployee] = useState(null);
   const [checkFieldCustomer, setCheckFieldCustomer] = useState<boolean>(false);
 
-  //! đoạn này xử lý vấn đề lấy ra danh sách khách hàng
+  //! đoạn này xử lý vấn đề lấy ra danh sách thành viên
   const loadedOptionCustomer = async (search, loadedOptions, { page }) => {
     const param: ICustomerFilterRequest = {
       keyword: search,
@@ -454,7 +454,7 @@ export default function ModalAddMA(props: ModalAddMAProps) {
         //         key={dataCampaign?.type}
         //         id="customerId"
         //         name="customerId"
-        //         label="Khách hàng"
+        //         label="Thành viên"
         //         options={[]}
         //         fill={true}
         //         value={dataCustomer}
@@ -462,14 +462,14 @@ export default function ModalAddMA(props: ModalAddMAProps) {
         //         onChange={(e) => handleChangeValueCustomer(e)}
         //         isAsyncPaginate={true}
         //         isFormatOptionLabel={true}
-        //         placeholder="Chọn khách hàng"
+        //         placeholder="Chọn thành viên"
         //         additional={{
         //           page: 1,
         //         }}
         //         loadOptionsPaginate={loadedOptionCustomer}
         //         formatOptionLabel={formatOptionLabelCustomer}
         //         error={checkFieldCustomer}
-        //         message="Khách hàng không được bỏ trống"
+        //         message="Thành viên không được bỏ trống"
         //         // disabled={data?.id || idCustomer ? true : false}
         //         disabled={idCustomer ? true : false}
         //         isLoading={idCustomer ? isLoadingCustomer : null}
@@ -620,7 +620,7 @@ export default function ModalAddMA(props: ModalAddMAProps) {
     <Fragment>
       <Modal isFade={true} isOpen={onShow} isCentered={true} staticBackdrop={true} toggle={() => !isSubmit && onHide(false)} className="modal-add-ma">
         <form className="form-add-ma" onSubmit={(e) => onSubmit(e)}>
-          <ModalHeader title={`${idData ? "Chỉnh sửa" : "Thêm mới"} khách hàng vào MA`} toggle={() => !isSubmit && handClearForm()} />
+          <ModalHeader title={`${idData ? "Chỉnh sửa" : "Thêm mới"} thành viên vào MA`} toggle={() => !isSubmit && handClearForm()} />
           <ModalBody>
             <div className="list-form-group-addMA">
               {listField.map((field, index) => (

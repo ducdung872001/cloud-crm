@@ -67,7 +67,7 @@ export default function QuantityCustomerSource(props) {
             sum: 120,
           },
           {
-            name: "Khách hàng vãng lai",
+            name: "Thành viên vãng lai",
             y: 9.47,
             sum: 80,
           },
@@ -122,7 +122,7 @@ export default function QuantityCustomerSource(props) {
         ],
       });
     } else {
-      showToast("Báo cáo theo nguồn khách hàng lỗi. Vui lòng xem lại sau!", "error");
+      showToast("Báo cáo theo nguồn thành viên lỗi. Vui lòng xem lại sau!", "error");
     }
   };
 
@@ -176,7 +176,7 @@ export default function QuantityCustomerSource(props) {
   return (
     <div className="page__quantity__customer--source">
       <div className="title__common d-flex align-items-start">
-        <h2 className="name-common">Theo nguồn khách hàng</h2>
+        <h2 className="name-common">Theo nguồn thành viên</h2>
         <div
           ref={refOptionContainer}
           className={`icon__option--download ${showOption ? "active__option" : ""}`}

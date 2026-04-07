@@ -118,13 +118,13 @@ export default function ModalAddData({ onShow, onHide, dataProps, customerId }) 
           fill: true,
         },
         {
-          label: "Tần suất giao dịch của khách hàng",
+          label: "Tần suất giao dịch của thành viên",
           name: "transactionFrequency",
           type: "number",
           fill: true,
         },
         {
-          label: "Lịch sử giao dịch của khách hàng",
+          label: "Lịch sử giao dịch của thành viên",
           name: "transactionHistory",
           type: "textarea",
           fill: true,

@@ -95,7 +95,7 @@ export default function AddCustomerViewerModal(props: IAddCustomerViewerModalPro
     }
   };
 
-  // khi mà đã có id của nhân viên và có id của nhân viên và id của khách hàng thì call api thêm người xem
+  // khi mà đã có id của nhân viên và có id của nhân viên và id của thành viên thì call api thêm người xem
   const handAddViewerCustomer = async (idEmployee, idCustomer) => {
     if (!idEmployee || !idCustomer) return;
 
@@ -125,7 +125,7 @@ export default function AddCustomerViewerModal(props: IAddCustomerViewerModalPro
     }
   }, [onShow, dataCustomer, idEmployee]);
 
-  // đoạn này xử lý lấy ra danh sách khách hàng
+  // đoạn này xử lý lấy ra danh sách thành viên
   const [isLoadingCustomer, setIsLoadingCustomer] = useState<boolean>(false);
   const [lstViewerCustomer, setLstViewerCustomer] = useState([]);
 

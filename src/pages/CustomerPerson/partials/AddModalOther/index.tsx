@@ -174,7 +174,7 @@ export default function AddModalOther(props: IAddModalOtherProps) {
         className="modal-add-view-customer"
       >
         <form className="form-foodunit-group" onSubmit={(e) => onSubmit(e)}>
-          <ModalHeader title={`Chọn nhân viên xem khách hàng`} toggle={() => !isSubmit && handleClearForm(false)} />
+          <ModalHeader title={`Chọn nhân viên xem thành viên`} toggle={() => !isSubmit && handleClearForm(false)} />
           <ModalBody>
             <div className="list-form-group">
               <div className="form-group">

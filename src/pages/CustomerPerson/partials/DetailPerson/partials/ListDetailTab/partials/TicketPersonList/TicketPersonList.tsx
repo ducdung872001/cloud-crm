@@ -135,7 +135,7 @@ export default function TicketPersonList(props: ITicketPersonListProps) {
       title: <Fragment>Xóa...</Fragment>,
       message: (
         <Fragment>
-          Bạn có chắc chắn muốn xóa hỗ trợ cho khách hàng
+          Bạn có chắc chắn muốn xóa hỗ trợ cho thành viên
           {item ? <strong> {item.customerName}</strong> : ""}? Thao tác này không thể khôi phục.
         </Fragment>
       ),
@@ -184,7 +184,7 @@ export default function TicketPersonList(props: ITicketPersonListProps) {
                   <div className="ticket__item--body">
                     <div className="body-left">
                       <div className="item-child name-customer">
-                        <h4 className="title">Tên khách hàng</h4>
+                        <h4 className="title">Tên thành viên</h4>
                         <h4 className="name">{item.customerName}</h4>
                       </div>
                       {/* <div className="item-child service-customer">

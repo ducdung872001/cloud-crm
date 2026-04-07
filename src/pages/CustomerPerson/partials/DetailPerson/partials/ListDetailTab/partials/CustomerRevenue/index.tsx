@@ -37,7 +37,7 @@ export default function CustomerRevenue({ data }) {
 
   const [pagination, setPagination] = useState<PaginationProps>({
     ...DataPaginationDefault,
-    name: "Thu thuần từ khách hàng",
+    name: "Thu thuần từ thành viên",
     isChooseSizeLimit: true,
     setPage: (page) => {
       setParams((prevParams) => ({ ...prevParams, page: page }));

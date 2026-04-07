@@ -53,7 +53,7 @@ export default function BuyingPotential(props) {
 
     tooltip: {
       headerFormat: '<span style="font-size:11px">{series.name}</span><br>',
-      pointFormat: '<span style="color:{point.color}">{point.name}</span>: <b>{point.sum} khách hàng</b> (chiếm: {point.y}%)',
+      pointFormat: '<span style="color:{point.color}">{point.name}</span>: <b>{point.sum} thành viên</b> (chiếm: {point.y}%)',
     },
 
     series: [

@@ -142,7 +142,7 @@ export default function ModalImportCustomer(props: IModalImportCustomerProps) {
         className="modal-import-customer"
       >
         <div className="form-import-customer">
-          <ModalHeader title={"Nhập danh sách khách hàng"} toggle={() => !isSubmit && onHide()} />
+          <ModalHeader title={"Nhập danh sách thành viên"} toggle={() => !isSubmit && onHide()} />
           <ModalBody>
             <div className="box-import-customer">
               <div

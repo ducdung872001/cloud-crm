@@ -39,22 +39,22 @@ export default function ChartCustomerJob(props) {
                 {
                   name: "Khách đã tư vấn",
                   y: dataRelationShip["Đã tư vấn"] ? dataRelationShip["Đã tư vấn"] : 0,
-                  text: `${dataRelationShip["Đã tư vấn"] ? dataRelationShip["Đã tư vấn"] : 0} khách hàng`,
+                  text: `${dataRelationShip["Đã tư vấn"] ? dataRelationShip["Đã tư vấn"] : 0} thành viên`,
                 },
                 {
                   name: "Khách đã tiếp cận",
                   y: dataRelationShip["Đã tiếp cận"] ? dataRelationShip["Đã tiếp cận"] : 0,
-                  text: `${dataRelationShip["Đã tiếp cận"] ? dataRelationShip["Đã tiếp cận"] : 0} khách hàng`,
+                  text: `${dataRelationShip["Đã tiếp cận"] ? dataRelationShip["Đã tiếp cận"] : 0} thành viên`,
                 },
                 {
                   name: "Đã đặt cọc",
                   y: dataRelationShip["Đã đặt cọc"] ? dataRelationShip["Đã đặt cọc"] : 0,
-                  text: `${dataRelationShip["Đã đặt cọc"] ? dataRelationShip["Đã đặt cọc"] : 0} khách hàng`,
+                  text: `${dataRelationShip["Đã đặt cọc"] ? dataRelationShip["Đã đặt cọc"] : 0} thành viên`,
                 },
                 {
                   name: "Đã mua hàng",
                   y: dataRelationShip["Đã mua hàng"] ? dataRelationShip["Đã mua hàng"] : 0,
-                  text: `${dataRelationShip["Đã mua hàng"] ? dataRelationShip["Đã mua hàng"] : 0} khách hàng`,
+                  text: `${dataRelationShip["Đã mua hàng"] ? dataRelationShip["Đã mua hàng"] : 0} thành viên`,
                 },
               ],
             },
@@ -119,22 +119,22 @@ export default function ChartCustomerJob(props) {
           {
             name: "Khách đã liên hệ",
             y: 10,
-            text: "10 khách hàng",
+            text: "10 thành viên",
           },
           {
             name: "Khách mời",
             y: 20,
-            text: "20 khách hàng",
+            text: "20 thành viên",
           },
           {
             name: "Đã đặt cọc",
             y: 10,
-            text: "10 khách hàng",
+            text: "10 thành viên",
           },
           {
             name: "Đã mua hàng",
             y: 18,
-            text: "18 khách hàng",
+            text: "18 thành viên",
           },
         ],
       },
@@ -189,7 +189,7 @@ export default function ChartCustomerJob(props) {
   return (
     <div className="card-box page__customer--campaign chart-report__detail">
       <div className="title__common d-flex align-items-start">
-        <h2 className="name-common">Thống kê khách hàng theo quan hệ</h2>
+        <h2 className="name-common">Thống kê thành viên theo quan hệ</h2>
         <div
           ref={refOptionContainer}
           className={`icon__option--download ${showOption ? "active__option" : ""}`}

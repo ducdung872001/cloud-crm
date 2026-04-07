@@ -113,7 +113,7 @@ export default function HighlyEngagedCustomers(props) {
         ],
       });
     } else {
-      showToast("Báo cáo theo top 5 khách hàng tương tác nhiều lỗi. Vui lòng xem lại sau!", "error");
+      showToast("Báo cáo theo top 5 thành viên tương tác nhiều lỗi. Vui lòng xem lại sau!", "error");
     }
   };
 
@@ -167,7 +167,7 @@ export default function HighlyEngagedCustomers(props) {
   return (
     <div className="page__highly__engaged--customers">
       <div className="title__common d-flex align-items-start">
-        <h2 className="name-common">Top 05 khách hàng tương tác nhiều</h2>
+        <h2 className="name-common">Top 05 thành viên tương tác nhiều</h2>
         <div
           ref={refOptionContainer}
           className={`icon__option--download ${showOption ? "active__option" : ""}`}

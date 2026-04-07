@@ -104,7 +104,7 @@ export default function InfoPerson(props: IInfoPersonProps) {
     const response = await CustomerService.updateOneRelationship(body);
 
     if (response.code === 0) {
-      showToast("Cập nhật mối quan hệ khách hàng thành công", "success");
+      showToast("Cập nhật mối quan hệ thành viên thành công", "success");
     } else {
       showToast(response.message ?? "Có lỗi xảy ra. Vui lòng thử lại sau", "error");
     }
@@ -126,7 +126,7 @@ export default function InfoPerson(props: IInfoPersonProps) {
       </div>
       <div className="info-right">
         <div className="customer-relationship vertical-tiles">
-          <label className="title">{width > 1440 ? "Mối quan hệ khách hàng" : "Chọn mối quan hệ"}</label>
+          <label className="title">{width > 1440 ? "Mối quan hệ thành viên" : "Chọn mối quan hệ"}</label>
           <form className="form-update-relationship" onSubmit={(e) => handleSubmit(e)}>
             <div className="list-form-group">
               {listField.map((field, index) => (

@@ -297,7 +297,7 @@ export default function AddCustomerEmailModal(props: IAddCustomerEmailModelProps
                       <h4 className="item-name">{formatDate(new Date())}</h4>
                     </div>
                     <div className="customer">
-                      <h4 className="item-title">Khách hàng</h4>
+                      <h4 className="item-title">Thành viên</h4>
                       <h4 className="item-name">{dataCustomer?.name}</h4>
                     </div>
                     <div className="recipient">

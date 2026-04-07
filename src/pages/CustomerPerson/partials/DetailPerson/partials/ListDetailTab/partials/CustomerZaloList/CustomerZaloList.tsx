@@ -136,7 +136,7 @@ export default function CustomerZaloList(props: ICustomerZaloListProps) {
       title: <Fragment>Không thể gửi Zalo</Fragment>,
       message: (
         <Fragment>
-          Khách hàng {customerName ? <strong>{customerName}</strong> : ""} chưa theo dõi Zalo của tổ chức.
+          Thành viên {customerName ? <strong>{customerName}</strong> : ""} chưa theo dõi Zalo của tổ chức.
         </Fragment>
       ),
       // cancelText: "Đóng",

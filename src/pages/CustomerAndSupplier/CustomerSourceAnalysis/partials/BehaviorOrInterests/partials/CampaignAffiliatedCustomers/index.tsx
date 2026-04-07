@@ -53,7 +53,7 @@ export default function CampaignAffiliatedCustomers(props) {
 
     tooltip: {
       headerFormat: '<span style="font-size:11px">{series.name}</span><br>',
-      pointFormat: '<span style="color:{point.color}">{point.name}</span>: <b>{point.sum} khách hàng</b> (chiếm: {point.y}%)',
+      pointFormat: '<span style="color:{point.color}">{point.name}</span>: <b>{point.sum} thành viên</b> (chiếm: {point.y}%)',
     },
 
     series: [
@@ -133,7 +133,7 @@ export default function CampaignAffiliatedCustomers(props) {
         ],
       });
     } else {
-      showToast("Báo cáo theo khách hàng thuộc về chiến dịch lỗi. Vui lòng xem lại sau!", "error");
+      showToast("Báo cáo theo thành viên thuộc về chiến dịch lỗi. Vui lòng xem lại sau!", "error");
     }
   };
 
@@ -187,7 +187,7 @@ export default function CampaignAffiliatedCustomers(props) {
   return (
     <div className="page__campaign__affiliated--customer">
       <div className="title__common d-flex align-items-start">
-        <h2 className="name-common">Khách hàng thuộc về chiến dịch</h2>
+        <h2 className="name-common">Thành viên thuộc về chiến dịch</h2>
         <div
           ref={refOptionContainer}
           className={`icon__option--download ${showOption ? "active__option" : ""}`}

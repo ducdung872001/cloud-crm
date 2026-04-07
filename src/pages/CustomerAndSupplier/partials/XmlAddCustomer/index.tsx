@@ -26,7 +26,7 @@ const defaultSchema = {
   components: [],
 };
 
-const XMLtype = "modalAddCustomer"; // Khách hàng
+const XMLtype = "modalAddCustomer"; // Thành viên
 
 const getCustomerAttributes = async () => {
   let dataOption = null;
@@ -158,8 +158,8 @@ const mapCareerToMultiSelect = (data) => {
     };
     const getAlldata = async () => {
       const configInit = await getOjectGroup(XMLtype); // Lấy cấu hình form từ ObjectGroup
-      const mapAttribute = await getCustomerAttributes(); // Lấy các trường thông tin mở rộng của khách hàng
-      const extraInfos = data?.id ? await getCustomerExtraInfos(data?.id) : []; // Lấy giá trị của các trường thông tin mở rộng của khách hàng nếu có data.id (id của khách hàng)
+      const mapAttribute = await getCustomerAttributes(); // Lấy các trường thông tin mở rộng của thành viên
+      const extraInfos = data?.id ? await getCustomerExtraInfos(data?.id) : []; // Lấy giá trị của các trường thông tin mở rộng của thành viên nếu có data.id (id của thành viên)
       const mapped = mapConfigData(configInit, data, mapAttribute, extraInfos, exceptionField); // Map dữ liệu ban đầu vào cấu hình form
       if (data?.id) {
         
@@ -273,7 +273,7 @@ const mapCareerToMultiSelect = (data) => {
     const response = await CustomerService.update(body);
 
     if (response.code === 0) {
-      showToast(`${data ? "Cập nhật" : "Thêm mới"} khách hàng thành công`, "success");
+      showToast(`${data ? "Cập nhật" : "Thêm mới"} thành viên thành công`, "success");
       handleClear(true);
       takeInfoCustomer && takeInfoCustomer(response.result);
     } else {
@@ -365,7 +365,7 @@ const mapCareerToMultiSelect = (data) => {
         <form className="form-handle-task" onSubmit={(e) => onSubmit(e)}>
           <div className="container-header">
             <div className="box-title">
-              <h4>{`${data ? "Chỉnh sửa" : "Thêm mới"} khách hàng`}</h4>
+              <h4>{`${data ? "Chỉnh sửa" : "Thêm mới"} thành viên`}</h4>
             </div>
             <div className="container-button">
               {!showFullScreen ? (

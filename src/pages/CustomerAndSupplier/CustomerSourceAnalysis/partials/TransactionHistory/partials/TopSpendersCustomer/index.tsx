@@ -112,7 +112,7 @@ export default function TopSpendersCustomer(props) {
         ],
       });
     } else {
-      showToast("Báo cáo theo top 5 khách hàng mua nhiều nhất lỗi. Vui lòng xem lại sau!", "error");
+      showToast("Báo cáo theo top 5 thành viên mua nhiều nhất lỗi. Vui lòng xem lại sau!", "error");
     }
   };
 
@@ -166,7 +166,7 @@ export default function TopSpendersCustomer(props) {
   return (
     <div className="page__top__spenders--customer">
       <div className="title__common d-flex align-items-start">
-        <h2 className="name-common">Top 05 khách hàng mua nhiều nhất</h2>
+        <h2 className="name-common">Top 05 thành viên mua nhiều nhất</h2>
         <div
           ref={refOptionContainer}
           className={`icon__option--download ${showOption ? "active__option" : ""}`}

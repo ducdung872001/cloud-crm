@@ -108,7 +108,7 @@ export default function ModalCalling(props: Record<string, unknown>) {
           <ModalBody>
             <div className="list-form-calling">
                 <div>
-                    <span style={{fontSize: 16, fontWeight: 500}}>Khách hàng: {dataCustomer?.name}</span>
+                    <span style={{fontSize: 16, fontWeight: 500}}>Thành viên: {dataCustomer?.name}</span>
                 </div>
                 <div>
                     <span style={{fontSize: 16, fontWeight: 500}}>Số điện thoại: {dataCustomer?.phoneUnmasked || dataCustomer?.phoneMasked}</span>

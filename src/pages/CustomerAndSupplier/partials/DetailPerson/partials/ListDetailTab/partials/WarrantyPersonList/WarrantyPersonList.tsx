@@ -134,7 +134,7 @@ export default function WarrantyPersonList(props: IWarrantyListProps) {
       title: <Fragment>Xóa...</Fragment>,
       message: (
         <Fragment>
-          Bạn có chắc chắn muốn xóa bảo hành cho khách hàng
+          Bạn có chắc chắn muốn xóa bảo hành cho thành viên
           {item ? <strong> {item.customerName}</strong> : ""}? Thao tác này không thể khôi phục.
         </Fragment>
       ),
@@ -182,11 +182,11 @@ export default function WarrantyPersonList(props: IWarrantyListProps) {
                   <div className="warranty__item--body">
                     <div className="body-left">
                       <div className="item-child name-customer">
-                        <h4 className="title">Tên khách hàng</h4>
+                        <h4 className="title">Tên thành viên</h4>
                         <h4 className="name">{item.customerName}</h4>
                       </div>
                       <div className="item-child service-customer">
-                        <h4 className="title">Dịch vụ khách hàng</h4>
+                        <h4 className="title">Dịch vụ thành viên</h4>
                         <h4 className="name">{item.serviceName}</h4>
                       </div>
                       <div className="item-child category-warranty">

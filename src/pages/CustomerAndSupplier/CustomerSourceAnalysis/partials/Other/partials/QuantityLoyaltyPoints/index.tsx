@@ -105,7 +105,7 @@ export default function QuantityLoyaltyPoints(props) {
         // tiếp tục xử lý nếu như mà có giá trị
       }
     } else {
-      showToast("Báo cáo theo phân hạng khách hàng lỗi. Vui lòng xem lại sau!", "error");
+      showToast("Báo cáo theo phân hạng thành viên lỗi. Vui lòng xem lại sau!", "error");
     }
   };
 
@@ -159,7 +159,7 @@ export default function QuantityLoyaltyPoints(props) {
   return (
     <div className="page__quantity__loyalty--point">
       <div className="title__common d-flex align-items-start">
-        <h2 className="name-common">Theo phân hạng khách hàng</h2>
+        <h2 className="name-common">Theo phân hạng thành viên</h2>
         <div
           ref={refOptionContainer}
           className={`icon__option--download ${showOption ? "active__option" : ""} ${isNotication ? "d-none" : ""}`}
@@ -190,7 +190,7 @@ export default function QuantityLoyaltyPoints(props) {
       </div>
 
       {isNotication ? (
-        <SystemNotification description={<span>Hiện tại chưa có dữ liệu về phân hạng khách hàng.</span>} type="no-item" />
+        <SystemNotification description={<span>Hiện tại chưa có dữ liệu về phân hạng thành viên.</span>} type="no-item" />
       ) : (
         <div className="chart__common">
           <HighchartsReact highcharts={Highcharts} ref={chartRef} allowChartUpdate={true} options={chartData} />

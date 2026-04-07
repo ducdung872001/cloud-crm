@@ -122,7 +122,7 @@ export default function ViewDetailPerson(props: IViewDetailPersonProps) {
 
     const response = await CustomerService.delete(id);
     if (response.code === 0) {
-      showToast(`Xóa khách hàng thành công`, "success");
+      showToast(`Xóa thành viên thành công`, "success");
       setDeleteSignal(true);
       navigate(
         `/customer?contactType=${takeUrlCustomerLocalStorage.contactType}&page=${
@@ -142,10 +142,10 @@ export default function ViewDetailPerson(props: IViewDetailPersonProps) {
       className: "dialog-delete",
       isCentered: true,
       isLoading: true,
-      title: <Fragment>Xóa khách hàng</Fragment>,
+      title: <Fragment>Xóa thành viên</Fragment>,
       message: (
         <Fragment>
-          Bạn có chắc chắn muốn xóa khách hàng
+          Bạn có chắc chắn muốn xóa thành viên
           {item ? <strong> {item.name}</strong> : ""}? Thao tác này không thể khôi phục.
         </Fragment>
       ),
@@ -165,7 +165,7 @@ export default function ViewDetailPerson(props: IViewDetailPersonProps) {
 
   const listDetailInfo = [
     {
-      title: "Mã thẻ khách hàng",
+      title: "Mã thẻ thành viên",
       name: data.code || notData,
     },
     {
@@ -185,11 +185,11 @@ export default function ViewDetailPerson(props: IViewDetailPersonProps) {
       name: data.careerName || notData,
     },
     {
-      title: "Nhóm khách hàng",
+      title: "Nhóm thành viên",
       name: data.groupName || notData,
     },
     {
-      title: "Nguồn khách hàng",
+      title: "Nguồn thành viên",
       name: data.sourceName || notData,
     },
   ];
@@ -204,7 +204,7 @@ export default function ViewDetailPerson(props: IViewDetailPersonProps) {
         },
 
         {
-          title: "Mã khách hàng",
+          title: "Mã thành viên",
           name: data?.code,
         },
         {
@@ -248,14 +248,14 @@ export default function ViewDetailPerson(props: IViewDetailPersonProps) {
   //       {
   //         title: 'Follow 1',
   //         value: {
-  //           infoCall: 'Khách hàng bận gọi lại sau',
+  //           infoCall: 'Thành viên bận gọi lại sau',
   //           time: '01/01/2024 08:30:00'
   //         }
   //       },
   //       {
   //         title: 'Follow 2',
   //         value: {
-  //           infoCall: 'Khách hàng đồng ý vay nhưng chưa thực hiện đăng ký',
+  //           infoCall: 'Thành viên đồng ý vay nhưng chưa thực hiện đăng ký',
   //           time: '02/01/2024 08:30:00'
   //         }
   //       },
@@ -526,8 +526,8 @@ export default function ViewDetailPerson(props: IViewDetailPersonProps) {
       label: "KH bận gọi lại sau",
     },
     {
-      value: "SĐT khách hàng thuê bao",
-      label: "SĐT khách hàng thuê bao",
+      value: "SĐT thành viên thuê bao",
+      label: "SĐT thành viên thuê bao",
     },
     {
       value: "SĐT không đúng hoặc đang tạm khóa",

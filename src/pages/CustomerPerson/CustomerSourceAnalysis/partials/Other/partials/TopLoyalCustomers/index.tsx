@@ -36,7 +36,7 @@ export default function TopLoyalCustomers(props) {
   return (
     <div className="page__toployal--customer">
       <div className="title__common d-flex align-items-start justify-content-between">
-        <h2 className="name-common">Top 05 khách hàng trung thành</h2>
+        <h2 className="name-common">Top 05 thành viên trung thành</h2>
       </div>
 
       <div className="lst__toployal--customer">

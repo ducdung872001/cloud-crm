@@ -317,7 +317,7 @@ export default function CustomerContact({ idCustomer }) {
       field: "employeeName",
     },
     {
-      headerName: "Khách hàng đại diện chính",
+      headerName: "Thành viên đại diện chính",
       field: "lstCustomer",
       width: 250,
     },

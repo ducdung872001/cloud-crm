@@ -33,14 +33,14 @@ export default function ChartCustomerType(props) {
               colorByPoint: true,
               data: [
                 {
-                  name: "Khách hàng nội bộ",
+                  name: "Thành viên nội bộ",
                   y: dataExternalOrnot.internal,
-                  text: `${dataExternalOrnot.internal} khách hàng`,
+                  text: `${dataExternalOrnot.internal} thành viên`,
                 },
                 {
-                  name: "Khách hàng ngoài",
+                  name: "Thành viên ngoài",
                   y: dataExternalOrnot.external,
-                  text: `${dataExternalOrnot.external} khách hàng`,
+                  text: `${dataExternalOrnot.external} thành viên`,
                 },
               ],
             },
@@ -103,14 +103,14 @@ export default function ChartCustomerType(props) {
         colorByPoint: true,
         data: [
           {
-            name: "Khách hàng nội bộ",
+            name: "Thành viên nội bộ",
             y: 0,
-            text: "0 khách hàng",
+            text: "0 thành viên",
           },
           {
-            name: "Khách hàng ngoài",
+            name: "Thành viên ngoài",
             y: 0,
-            text: "0 khách hàng",
+            text: "0 thành viên",
           },
           // {
           //   name: "Nhóm thu nhập thấp",
@@ -175,7 +175,7 @@ export default function ChartCustomerType(props) {
   return (
     <div className="card-box page__customer--campaign chart-report__detail">
       <div className="title__common d-flex align-items-start">
-        <h2 className="name-common">Thống kê khách hàng</h2>
+        <h2 className="name-common">Thống kê thành viên</h2>
         <div
           ref={refOptionContainer}
           className={`icon__option--download ${showOption ? "active__option" : ""}`}

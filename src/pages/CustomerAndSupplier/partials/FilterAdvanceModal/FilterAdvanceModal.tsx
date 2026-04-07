@@ -173,7 +173,7 @@ export default function FilterAdvanceModal(props: Record<string, unknown>) {
     setFormData({ ...formData, values: { ...formData?.values, employeeIds: e } });
   };
 
-  //! đoạn này xử lý call api lấy ra thông tin nguồn khách hàng
+  //! đoạn này xử lý call api lấy ra thông tin nguồn thành viên
   const loadOptionCustomerSource = async (search, loadedOptions, { page }) => {
     const param: Record<string, unknown> = {
       name: search,
@@ -283,7 +283,7 @@ export default function FilterAdvanceModal(props: Record<string, unknown>) {
             <SelectCustom
               id="sourceIds"
               name="sourceIds"
-              label="Nguồn khách hàng"
+              label="Nguồn thành viên"
               fill={true}
               options={[]}
               isMulti={true}
@@ -292,7 +292,7 @@ export default function FilterAdvanceModal(props: Record<string, unknown>) {
               isAsyncPaginate={true}
               isFormatOptionLabel={true}
               loadOptionsPaginate={loadOptionCustomerSource}
-              placeholder="Chọn nguồn khách hàng"
+              placeholder="Chọn nguồn thành viên"
               additional={{
                 page: 1,
               }}
@@ -324,8 +324,8 @@ export default function FilterAdvanceModal(props: Record<string, unknown>) {
                   label: "KH bận gọi lại sau",
                 },
                 {
-                  value: "SĐT khách hàng thuê bao",
-                  label: "SĐT khách hàng thuê bao",
+                  value: "SĐT thành viên thuê bao",
+                  label: "SĐT thành viên thuê bao",
                 },
                 {
                   value: "SĐT không đúng hoặc đang tạm khóa",

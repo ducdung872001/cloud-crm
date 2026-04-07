@@ -42,11 +42,13 @@ import AddEditSendEmail from "pages/Common/AddEditSendEmail/AddEditSendEmail";
 import PermissionService from "services/PermissionService";
 import ModalExportCustomer from "./ModalExportCustomer/ModalExportCustomer";
 import { StyleHeaderTable } from "components/StyleHeaderTable/StyleHeaderTable";
+import QuickAddMember from "@/pages/CommunityHub/QuickAddMember";
 
 export default function CustomerAndSupplier(props: Record<string, unknown>) {
   const {type} = props;
   const [showPageSendSMS, setShowPageSendSMS] = useState<boolean>(false);
   const [showPageSendEmail, setShowPageSendEmail] = useState<boolean>(false);
+  const [showQuickAdd, setShowQuickAdd] = useState<boolean>(false);
   const [activeTitleHeader, setActiveTitleHeader] = useState(1);
   const sourceDomain = getDomain(decodeURIComponent(document.location.href));
   const takeUrlFilterAdvance = (localStorage.getItem("filterAdvance") && JSON.parse(localStorage.getItem("filterAdvance"))) || null;
@@ -319,14 +321,8 @@ export default function CustomerAndSupplier(props: Record<string, unknown>) {
           <div
             className="item__action update"
             onClick={() => {
-              localStorage.setItem("customer.custType", data.dataItem?.custType?.toString());
-              setDataCustomer(data.dataItem);
-
-              if (data.dataItem?.custType == 0) {
-                setShowModalAdd(true);
-              } else {
-                setShowModalCompanyAdd(true);
-              }
+              // [CH] Navigate đến trang chi tiết thành viên (full page)
+              navigate(`/detail_person/customerId/${data.dataItem?.id}`);
             }}
           >
             <Tippy content="Sửa">
@@ -948,17 +944,9 @@ export default function CustomerAndSupplier(props: Record<string, unknown>) {
       ...(activeTitleHeader !== 3
         ? [
             permissions["CUSTOMER_ADD"] == 1 && {
-              title: "Thêm mới",
+              title: "Thêm nhanh",
               callback: () => {
-                setDataCustomer(null);
-                //Lưu cũ là gì để bật popup tương ứng (null, undefined hoặc 0)
-                if (checkCustType == "0" || !checkCustType) {
-                  //Test trước
-                  setShowModalAdd(true);
-                } else {
-                  //Khách hàng doanh nghiệp
-                  setShowModalCompanyAdd(true);
-                }
+                setShowQuickAdd(true);
               },
             },
           ]
@@ -1685,6 +1673,14 @@ export default function CustomerAndSupplier(props: Record<string, unknown>) {
           type="customer"
         />
         <Dialog content={contentDialog} isOpen={showDialog} />
+        {/* [CH] Slide-in Thêm nhanh thành viên */}
+        <QuickAddMember
+          isOpen={showQuickAdd}
+          onClose={(reload) => {
+            setShowQuickAdd(false);
+            if (reload) getListCustomer(params, activeTitleHeader);
+          }}
+        />
       </div>
       <div className={`${showPageSendSMS ? "" : "d-none"}`}>
         <AddEditSendSMS

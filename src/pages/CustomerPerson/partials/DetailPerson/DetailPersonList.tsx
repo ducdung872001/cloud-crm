@@ -192,7 +192,7 @@ export default function DetailPersonList() {
                   if (d?.phoneUnmasked) {
                     window.open(`tel:${d.phoneUnmasked}`);
                   } else {
-                    showToast("Khách hàng chưa có số điện thoại", "error");
+                    showToast("Thành viên chưa có số điện thoại", "error");
                   }
                   return;
                 }

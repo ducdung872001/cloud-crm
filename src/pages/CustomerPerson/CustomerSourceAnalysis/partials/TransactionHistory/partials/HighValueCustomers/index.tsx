@@ -113,7 +113,7 @@ export default function HighValueCustomers(props) {
         ],
       });
     } else {
-      showToast("Báo cáo theo top 5 khách hàng có giá trị đơn hàng cao lỗi. Vui lòng xem lại sau!", "error");
+      showToast("Báo cáo theo top 5 thành viên có giá trị đơn hàng cao lỗi. Vui lòng xem lại sau!", "error");
     }
   };
 
@@ -167,7 +167,7 @@ export default function HighValueCustomers(props) {
   return (
     <div className="page__high__value--customer">
       <div className="title__common d-flex align-items-start">
-        <h2 className="name-common">Top 05 khách hàng có giá trị đơn hàng cao</h2>
+        <h2 className="name-common">Top 05 thành viên có giá trị đơn hàng cao</h2>
         <div
           ref={refOptionContainer}
           className={`icon__option--download ${showOption ? "active__option" : ""}`}

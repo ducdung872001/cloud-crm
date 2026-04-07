@@ -14,6 +14,10 @@ export interface CartItem {
   fixedPrice?: number;
   /** Tên CT đồng giá để hiển thị tooltip */
   promoName?: string;
+  /** [CH] Loại item: product (mặc định), service, membership */
+  itemType?: "product" | "service" | "membership";
+  /** [CH] Thời hạn gói (tháng) — chỉ cho membership */
+  durationMonths?: number;
 }
 
 export interface Product {

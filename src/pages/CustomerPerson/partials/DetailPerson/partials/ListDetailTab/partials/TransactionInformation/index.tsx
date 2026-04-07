@@ -98,8 +98,8 @@ export default function TransactionInformation({ data }) {
     };
   }, [params]);
 
-  const titles = ["STT", "Ngày giao dịch", "CASA", "FD", "TRF", "Cho vay", "Loại tiền tệ", "Tỷ giá quy đổi", "Lịch sử giao dịch của khách hàng",
-    "Tần suất giao dịch của khách hàng"
+  const titles = ["STT", "Ngày giao dịch", "CASA", "FD", "TRF", "Cho vay", "Loại tiền tệ", "Tỷ giá quy đổi", "Lịch sử giao dịch của thành viên",
+    "Tần suất giao dịch của thành viên"
   ];
 
   const dataFormat = ["text-center", "text-center", "text-right", "text-right", "text-right", "text-right", "", "text-right", "",

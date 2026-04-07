@@ -284,6 +284,22 @@ const Cart: React.FC<CartProps> = ({
             <div className="ci__info">
               <div className="ci__name">
                 {item.name}
+                {item.itemType === "service" && (
+                  <span style={{
+                    marginLeft: 6, fontSize: 10, fontWeight: 700,
+                    background: "#2D6A5A", color: "#fff",
+                    padding: "1px 6px", borderRadius: 99,
+                    verticalAlign: "middle",
+                  }}>Dịch vụ</span>
+                )}
+                {item.itemType === "membership" && (
+                  <span style={{
+                    marginLeft: 6, fontSize: 10, fontWeight: 700,
+                    background: "#D4A574", color: "#fff",
+                    padding: "1px 6px", borderRadius: 99,
+                    verticalAlign: "middle",
+                  }}>Thẻ TV</span>
+                )}
                 {item.fixedPrice && (
                   <span style={{
                     marginLeft: 6, fontSize: 10, fontWeight: 700,
