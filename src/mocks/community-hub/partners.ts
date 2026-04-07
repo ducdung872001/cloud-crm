@@ -2,7 +2,7 @@
 export const MOCK_PARTNERS = [
   {
     id: "P001",
-    name: "Pham Thi E",
+    name: "Phạm Thị Hà",
     role: "KOL" as const,
     area: "F&B",
     avatar: null,
@@ -14,9 +14,9 @@ export const MOCK_PARTNERS = [
   },
   {
     id: "P002",
-    name: "Nguyen Van I",
+    name: "Nguyễn Văn Ích",
     role: "PO" as const,
-    area: "Spa & Beauty",
+    area: "Spa & Làm đẹp",
     avatar: null,
     courses_created: 0,
     total_students: 0,
@@ -26,9 +26,9 @@ export const MOCK_PARTNERS = [
   },
   {
     id: "P003",
-    name: "Le Van H",
+    name: "Lê Văn Hùng",
     role: "KOL" as const,
-    area: "Education",
+    area: "Giáo dục",
     avatar: null,
     courses_created: 2,
     total_students: 30,
@@ -38,9 +38,9 @@ export const MOCK_PARTNERS = [
   },
   {
     id: "P004",
-    name: "Tran Thi K",
+    name: "Trần Thị Kim",
     role: "KOC" as const,
-    area: "Wellness",
+    area: "Sức khỏe",
     avatar: null,
     courses_created: 1,
     total_students: 15,

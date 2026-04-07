@@ -74,7 +74,7 @@ export default function CustomerPersonList() {
   const takeUrlFilterAdvance = (localStorage.getItem("filterAdvance") && JSON.parse(localStorage.getItem("filterAdvance"))) || null;
 
   document.title = `${
-    showPageSendEmail ? "Gửi email" : showPageSendSMS ? "Gửi SMS" : activeTitleHeader === 1 ? "Danh sách khách hàng" : "Phân tích nguồn khách hàng"
+    showPageSendEmail ? "Gửi email" : showPageSendSMS ? "Gửi SMS" : activeTitleHeader === 1 ? "Danh sách thành viên" : "Phân tích nguồn thành viên"
   }`;
 
   const navigate = useNavigate();
@@ -146,7 +146,7 @@ export default function CustomerPersonList() {
   const [listSaveSearch] = useState<ISaveSearch[]>([
     {
       key: "all",
-      name: "Danh sách khách hàng",
+      name: "Danh sách thành viên",
       is_active: true,
     },
   ]);
@@ -871,7 +871,7 @@ export default function CustomerPersonList() {
 
   const [pagination, setPagination] = useState<PaginationProps>({
     ...DataPaginationDefault,
-    name: sourceDomain === "hasedu.reborn.vn" ? "Học sinh" : "Khách hàng",
+    name: "Thành viên", // [CH]
     isChooseSizeLimit: true,
     setPage: (page) => {
       setParams((prevParams) => ({ ...prevParams, page: page }));
@@ -883,7 +883,7 @@ export default function CustomerPersonList() {
 
   const [paginationPartner, setPaginationPartner] = useState<PaginationProps>({
     ...DataPaginationDefault,
-    name: sourceDomain === "hasedu.reborn.vn" ? "Học sinh" : "Khách hàng",
+    name: "Thành viên", // [CH]
     isChooseSizeLimit: true,
     setPage: (page) => {
       setParamsCustomerPartner((prevParams) => ({ ...prevParams, page: page }));
@@ -2273,7 +2273,7 @@ export default function CustomerPersonList() {
               },
             },
             permissions["CUSTOMER_ADD"] == 1 && {
-              title: "Thêm mới",
+              title: "Đăng ký thành viên mới", // [CH] Community Hub
               callback: () => {
                 setDataCustomer(null);
                 //Lưu cũ là gì để bật popup tương ứng (null, undefined hoặc 0)
@@ -2915,8 +2915,8 @@ export default function CustomerPersonList() {
 
         if (extension === "excel") {
           ExportExcel({
-            fileName: "KhachHang",
-            title: "Khách hàng",
+            fileName: "ThanhVien",
+            title: "Thành viên",
             header: titleExport.map((item) => item.headerName), // titles("export")
             formatExcel: formatExcel,
             data: dataMappingArray,
@@ -2991,25 +2991,22 @@ export default function CustomerPersonList() {
     }
   }, [valueShowPhone, idxCustomer, idCustomer, dataCustomer, isShowPhone]);
 
+  // [CH] Community Hub - tabs thành viên
   const lstTitleHeader = [
     {
-      name: sourceDomain === "hasedu.reborn.vn" ? "Danh sách học sinh" : "Danh sách khách hàng",
+      name: "Danh sách thành viên",
       type: 1,
     },
     {
-      name: "Danh sách khách hàng của đối tác",
+      name: "Thành viên đối tác",
       type: 3,
     },
     {
-      name: "Thống kê khách hàng",
+      name: "Thống kê thành viên",
       type: 5,
     },
-    // {
-    //   name: "Thống kê khách hàng",
-    //   type: 4,
-    // },
     {
-      name: sourceDomain === "hasedu.reborn.vn" ? "Phân tích nguồn học sinh" : "Phân tích nguồn khách hàng",
+      name: "Phân tích nguồn thành viên",
       type: 2,
     },
   ];
@@ -3056,7 +3053,7 @@ export default function CustomerPersonList() {
       <div
         className={`page-content page-customer${isNoItem ? " bg-white" : ""}${showPageSendSMS ? " d-none" : ""}${showPageSendEmail ? " d-none" : ""}`}
       >
-        <TitleAction title={sourceDomain === "hasedu.reborn.vn" ? "Học sinh" : "Khách hàng"} titleActions={titleActions} />
+        <TitleAction title="Thành viên" titleActions={titleActions} />
         <div className="card-box d-flex flex-column">
           <div className="quick__search">
             <ul className="quick__search--left">
@@ -3178,8 +3175,8 @@ export default function CustomerPersonList() {
               <div className="desc__search">
                 <div style={{ flex: 1 }}>
                   <SearchBox
-                    name="Khách hàng"
-                    placeholderSearch="Theo Tên/ĐT/Email/Mã KH/Mã ST"
+                    name="Thành viên"
+                    placeholderSearch="Theo Tên/SĐT/Email/Mã TV"
                     params={activeTitleHeader === 1 ? params : paramsCustomerPartner}
                     isFilter={true}
                     isSaveSearch={false}
@@ -3496,7 +3493,7 @@ export default function CustomerPersonList() {
           {activeTitleHeader === 1 || activeTitleHeader === 3 ? (
             !isLoading && listCustomer && listCustomer.length > 0 ? (
               <BoxTableAdvanced
-                name="Khách hàng"
+                name="Thành viên"
                 columnDefs={columnDefs}
                 rowData={rowData}
                 dragColumnDefs={false}
@@ -3677,7 +3674,7 @@ export default function CustomerPersonList() {
           }}
         />
         <ModalExportCustomer
-          name="Khách hàng"
+          name="Thành viên"
           params={params}
           onShow={onShowModalExport}
           onHide={() => setOnShowModalExport(false)}

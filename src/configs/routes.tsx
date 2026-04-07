@@ -202,6 +202,7 @@ const CHCoursesPage = React.lazy(() => import("@/pages/CommunityHub/Courses"));
 const CHPartnersPage = React.lazy(() => import("@/pages/CommunityHub/Partners"));
 const CHFeedbackPage = React.lazy(() => import("@/pages/CommunityHub/Feedback"));
 const CHReportsPage = React.lazy(() => import("@/pages/CommunityHub/Reports"));
+const CHMembershipPlanSettings = React.lazy(() => import("@/pages/CommunityHub/MembershipPlanSettings"));
 
 // [CH] Community Hub - Menu chính (refactored)
 export const menu: IMenuItem[] = [
@@ -280,6 +281,13 @@ export const menu: IMenuItem[] = [
     icon: <Icon name="SettingsMenu" />,
     code: "",
     children: [
+      // ── [CH] Quản lý gói thành viên ─────────────────────────────────
+      {
+        title: "chMembershipPlans", // Quản lý gói thành viên
+        path: "/ch_membership_plans",
+        icon: <Icon name="LoyaltyMenu" />,
+        code: "",
+      },
       // ── NHÓM 1: Vận hành cửa hàng ──────────────────────────────────
       {
         title: "settingBasis", // Vận hành cửa hàng (cửa hàng, thanh toán, ca, cấu hình chung)
@@ -369,6 +377,10 @@ export const routes: IRouter[] = [
   {
     path: "/ch_reports",
     component: <CHReportsPage />,
+  },
+  {
+    path: "/ch_membership_plans",
+    component: <CHMembershipPlanSettings />,
   },
   // Dashboard
   {

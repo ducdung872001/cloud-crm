@@ -19,8 +19,8 @@ export const MOCK_CHECKIN_REPORT = {
     { area: "Co-working", count: 210 },
     { area: "Khu Spa", count: 85 },
     { area: "Khu F&B", count: 150 },
-    { area: "Phong hop", count: 65 },
-    { area: "Phong nghi", count: 70 },
+    { area: "Phòng họp", count: 65 },
+    { area: "Phòng nghỉ", count: 70 },
   ],
   by_hour: [
     { hour: "07:00", count: 12 },
@@ -41,10 +41,10 @@ export const MOCK_CHECKIN_REPORT = {
 export const MOCK_SERVICE_REPORT = {
   total_usage_this_month: 580,
   by_service: [
-    { service: "Do uong", usage: 210, revenue: 0 },
+    { service: "Đồ uống", usage: 210, revenue: 0 },
     { service: "Co-working", usage: 180, revenue: 0 },
     { service: "Spa & Massage", usage: 85, revenue: 4250000 },
-    { service: "Phong hop", usage: 65, revenue: 3250000 },
-    { service: "Cat toc", usage: 40, revenue: 2000000 },
+    { service: "Phòng họp", usage: 65, revenue: 3250000 },
+    { service: "Cắt tóc", usage: 40, revenue: 2000000 },
   ],
 };

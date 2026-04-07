@@ -1,28 +1,68 @@
-// [CH] Community Hub - Dịch vụ & Booking module
-import React, { useState } from "react";
+// [CH] Community Hub - Dịch vụ & Booking module (bao gồm Bán thẻ thành viên)
+import React, { useState, useMemo } from "react";
 import { MOCK_SERVICES, MOCK_BOOKING_SLOTS } from "@/mocks/community-hub/services";
 import { MOCK_SCAN_RESULT } from "@/mocks/community-hub/checkin";
+import { MOCK_MEMBERSHIP_PLANS, MOCK_PAYMENT_METHODS } from "@/mocks/community-hub/membership-plans";
+import { formatCurrency } from "reborn-util";
 import "./index.scss";
+
+type ActiveTab = "sell-card" | "deduct" | "booking";
 
 export default function ServiceBookingPage() {
   document.title = "Dịch vụ & Booking";
-  const [activeTab, setActiveTab] = useState<"deduct" | "booking">("deduct");
+  const [activeTab, setActiveTab] = useState<ActiveTab>("sell-card");
+
+  // ── Bán thẻ state ──
+  const [memberSearch, setMemberSearch] = useState("");
+  const [memberSelected, setMemberSelected] = useState(false);
+  const [selectedPlan, setSelectedPlan] = useState<string | null>(null);
+  const [selectedPayment, setSelectedPayment] = useState<string | null>(null);
+  const [showConfirm, setShowConfirm] = useState(false);
+
+  // ── Trừ quota state ──
   const [selectedService, setSelectedService] = useState<string | null>(null);
-  const [selectedMember, setSelectedMember] = useState<string>("");
+  const [serviceSearch, setServiceSearch] = useState("");
+
+  const plan = useMemo(
+    () => MOCK_MEMBERSHIP_PLANS.find((p) => p.id === selectedPlan),
+    [selectedPlan],
+  );
+
+  const handleSelectMember = () => {
+    if (memberSearch.trim()) setMemberSelected(true);
+  };
+
+  const handleConfirmSell = () => {
+    alert(
+      `Đã bán thẻ "${plan?.name}" cho ${MOCK_SCAN_RESULT.name}\n` +
+      `Giá: ${formatCurrency(plan?.price ?? 0, ".", "")}đ\n` +
+      `Thời hạn: ${plan?.duration_months} tháng`,
+    );
+    // Reset
+    setSelectedPlan(null);
+    setSelectedPayment(null);
+    setMemberSearch("");
+    setMemberSelected(false);
+    setShowConfirm(false);
+  };
 
   const handleDeductQuota = () => {
-    if (selectedService && selectedMember) {
-      alert(`Đã trừ quota dịch vụ ${selectedService} cho thành viên!`);
+    if (selectedService && serviceSearch) {
+      alert(`Đã trừ quota dịch vụ cho thành viên!`);
       setSelectedService(null);
-      setSelectedMember("");
+      setServiceSearch("");
     }
   };
 
   return (
     <div className="ch-service-page">
+      {/* ── Header + Tabs ── */}
       <div className="ch-service-page__header">
         <h2>Dịch vụ & Booking</h2>
         <div className="tab-switch">
+          <button className={activeTab === "sell-card" ? "active" : ""} onClick={() => setActiveTab("sell-card")}>
+            Bán thẻ thành viên
+          </button>
           <button className={activeTab === "deduct" ? "active" : ""} onClick={() => setActiveTab("deduct")}>
             Trừ quota
           </button>
@@ -32,19 +72,179 @@ export default function ServiceBookingPage() {
         </div>
       </div>
 
+      {/* ═══════════════ TAB: BÁN THẺ THÀNH VIÊN (POS-style) ═══════════════ */}
+      {activeTab === "sell-card" && (
+        <div className="ch-service-page__sell-card">
+          <div className="sell-card-layout">
+            {/* ── Bên trái: Danh sách gói ── */}
+            <div className="sell-card-plans">
+              <h3>Chọn gói thành viên</h3>
+              <div className="plans-grid">
+                {MOCK_MEMBERSHIP_PLANS.map((p) => (
+                  <div
+                    key={p.id}
+                    className={`plan-card ${selectedPlan === p.id ? "selected" : ""}`}
+                    style={{ borderColor: selectedPlan === p.id ? p.color : undefined }}
+                    onClick={() => setSelectedPlan(p.id)}
+                  >
+                    {"popular" in p && p.popular && <span className="plan-badge popular">Phổ biến</span>}
+                    {"badge" in p && p.badge && <span className="plan-badge promo">{p.badge as string}</span>}
+                    <div className="plan-card__name" style={{ color: p.color }}>{p.name}</div>
+                    <div className="plan-card__price">
+                      {formatCurrency(p.price, ".", "")}đ
+                    </div>
+                    <div className="plan-card__duration">
+                      {p.duration_months} tháng
+                    </div>
+                    <p className="plan-card__desc">{p.description}</p>
+                    <ul className="plan-card__includes">
+                      {p.includes.map((inc, i) => (
+                        <li key={i}>
+                          <span className="check-icon">✓</span>
+                          {inc.service}: <strong>{inc.quota ? `${inc.quota} ${inc.unit}` : inc.unit}</strong>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* ── Bên phải: Giỏ hàng / Thanh toán (POS style) ── */}
+            <div className="sell-card-cart">
+              <div className="cart-header">
+                <h3>Thanh toán</h3>
+              </div>
+
+              {/* Chọn khách */}
+              <div className="cart-section">
+                <label>Thành viên</label>
+                {!memberSelected ? (
+                  <div className="cart-member-search">
+                    <input
+                      type="text"
+                      placeholder="Tìm tên, SĐT, mã TV..."
+                      value={memberSearch}
+                      onChange={(e) => setMemberSearch(e.target.value)}
+                      onKeyDown={(e) => e.key === "Enter" && handleSelectMember()}
+                    />
+                    <button onClick={handleSelectMember} disabled={!memberSearch.trim()}>Tìm</button>
+                  </div>
+                ) : (
+                  <div className="cart-member-info">
+                    <div className="member-avatar">{MOCK_SCAN_RESULT.name.charAt(0)}</div>
+                    <div className="member-detail">
+                      <strong>{MOCK_SCAN_RESULT.name}</strong>
+                      <span>Gói hiện tại: {MOCK_SCAN_RESULT.plan}</span>
+                    </div>
+                    <button className="btn-change" onClick={() => { setMemberSelected(false); setMemberSearch(""); }}>Đổi</button>
+                  </div>
+                )}
+              </div>
+
+              {/* Gói đã chọn */}
+              <div className="cart-section">
+                <label>Gói đã chọn</label>
+                {plan ? (
+                  <div className="cart-plan-selected">
+                    <div className="cart-plan-name">{plan.name}</div>
+                    <div className="cart-plan-meta">{plan.duration_months} tháng</div>
+                    <div className="cart-plan-price">{formatCurrency(plan.price, ".", "")}đ</div>
+                  </div>
+                ) : (
+                  <div className="cart-empty">Chưa chọn gói</div>
+                )}
+              </div>
+
+              {/* Phương thức thanh toán */}
+              <div className="cart-section">
+                <label>Thanh toán bằng</label>
+                <div className="payment-methods">
+                  {MOCK_PAYMENT_METHODS.map((pm) => (
+                    <button
+                      key={pm.id}
+                      className={`payment-btn ${selectedPayment === pm.id ? "active" : ""}`}
+                      onClick={() => setSelectedPayment(pm.id)}
+                    >
+                      {pm.icon === "cash" && "💵"}
+                      {pm.icon === "bank" && "🏦"}
+                      {pm.icon === "card" && "💳"}
+                      {pm.icon === "momo" && "📱"}
+                      <span>{pm.name}</span>
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Tổng & Nút xác nhận */}
+              <div className="cart-footer">
+                <div className="cart-total">
+                  <span>TỔNG THANH TOÁN</span>
+                  <span className="cart-total-amount">
+                    {plan ? `${formatCurrency(plan.price, ".", "")}đ` : "0đ"}
+                  </span>
+                </div>
+                <button
+                  className="btn-sell"
+                  disabled={!plan || !memberSelected || !selectedPayment}
+                  onClick={() => setShowConfirm(true)}
+                >
+                  Xác nhận bán thẻ
+                </button>
+              </div>
+            </div>
+          </div>
+
+          {/* Modal xác nhận */}
+          {showConfirm && plan && (
+            <div className="confirm-overlay" onClick={() => setShowConfirm(false)}>
+              <div className="confirm-modal" onClick={(e) => e.stopPropagation()}>
+                <h3>Xác nhận bán thẻ thành viên</h3>
+                <div className="confirm-details">
+                  <div className="confirm-row">
+                    <span>Thành viên:</span>
+                    <strong>{MOCK_SCAN_RESULT.name}</strong>
+                  </div>
+                  <div className="confirm-row">
+                    <span>Gói:</span>
+                    <strong>{plan.name}</strong>
+                  </div>
+                  <div className="confirm-row">
+                    <span>Thời hạn:</span>
+                    <strong>{plan.duration_months} tháng</strong>
+                  </div>
+                  <div className="confirm-row">
+                    <span>Thanh toán:</span>
+                    <strong>{MOCK_PAYMENT_METHODS.find((p) => p.id === selectedPayment)?.name}</strong>
+                  </div>
+                  <div className="confirm-row total">
+                    <span>Tổng tiền:</span>
+                    <strong>{formatCurrency(plan.price, ".", "")}đ</strong>
+                  </div>
+                </div>
+                <div className="confirm-actions">
+                  <button className="btn-cancel" onClick={() => setShowConfirm(false)}>Hủy</button>
+                  <button className="btn-confirm-sell" onClick={handleConfirmSell}>Xác nhận & In hóa đơn</button>
+                </div>
+              </div>
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* ═══════════════ TAB: TRỪ QUOTA ═══════════════ */}
       {activeTab === "deduct" && (
         <div className="ch-service-page__deduct">
-          {/* Member search */}
           <div className="deduct-step">
             <h3>1. Chọn thành viên</h3>
             <input
               type="text"
               placeholder="Tìm thành viên (tên, SĐT, mã TV)..."
-              value={selectedMember}
-              onChange={(e) => setSelectedMember(e.target.value)}
+              value={serviceSearch}
+              onChange={(e) => setServiceSearch(e.target.value)}
               className="member-search"
             />
-            {selectedMember && (
+            {serviceSearch && (
               <div className="member-preview">
                 <div className="member-preview__avatar">{MOCK_SCAN_RESULT.name.charAt(0)}</div>
                 <div className="member-preview__info">
@@ -55,7 +255,6 @@ export default function ServiceBookingPage() {
             )}
           </div>
 
-          {/* Service selection */}
           <div className="deduct-step">
             <h3>2. Chọn dịch vụ</h3>
             <div className="service-grid">
@@ -80,19 +279,15 @@ export default function ServiceBookingPage() {
             </div>
           </div>
 
-          {/* Confirm */}
           <div className="deduct-step">
-            <button
-              className="btn-confirm"
-              disabled={!selectedService || !selectedMember}
-              onClick={handleDeductQuota}
-            >
+            <button className="btn-confirm" disabled={!selectedService || !serviceSearch} onClick={handleDeductQuota}>
               Xác nhận trừ lượt
             </button>
           </div>
         </div>
       )}
 
+      {/* ═══════════════ TAB: ĐẶT LỊCH ═══════════════ */}
       {activeTab === "booking" && (
         <div className="ch-service-page__booking">
           <div className="booking-info">

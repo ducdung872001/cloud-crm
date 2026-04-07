@@ -76,6 +76,7 @@ const en = {
     chPartners: "Partners (KOL/PO)",
     chFeedback: "Feedback",
     chReports: "Reports",
+    chMembershipPlans: "Membership Plans",
     internalMail: "Internal mail",
     document: "Documents",
     createKPIFramework: "Create KPIs",

@@ -76,6 +76,7 @@ const vi = {
     chPartners: "Đối tác (KOL/PO)",
     chFeedback: "Phản hồi",
     chReports: "Báo cáo",
+    chMembershipPlans: "Quản lý gói thành viên",
     internalMail: "Thư nội bộ",
     document: "Tài liệu",
     createKPIFramework: "Tạo bộ KPI",
