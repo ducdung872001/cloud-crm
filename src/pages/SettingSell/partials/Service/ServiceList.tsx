@@ -76,10 +76,6 @@ export default function ServiceList(props: IServiceListProps) {
       title: "Danh sách dịch vụ",
       is_active: "tab_one",
     },
-    {
-      title: "Danh sách dịch vụ của đối tác",
-      is_active: "tab_two",
-    },
   ];
 
   const [permissions, setPermissions] = useState(getPermissions());

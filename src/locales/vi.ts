@@ -175,7 +175,7 @@ const vi = {
     manageOrder: "Yêu cầu mua hàng",
     productList: "Thống kê sản phẩm",
 
-    warehouse: "Hàng hóa & Kho",
+    warehouse: "Kho & Nguyên vật liệu",
     createPurchaseOrder: "Tạo phiếu nhập kho",
     purchaseInvoice: "Hóa đơn nhập kho",
     createOutboundDelivery: "Tạo phiếu xuất kho",

@@ -1,3 +1,19 @@
+// [CH] Tăng padding cho tất cả sub-page danh sách trong Setting Sell
+.page-setting-sell {
+  .page-content {
+    padding-left: 1.6rem;
+    padding-right: 1.6rem;
+
+    .card-box {
+      padding: 0 1.6rem 1.6rem;
+    }
+
+    .pagination {
+      padding: 1.6rem 0.8rem;
+    }
+  }
+}
+
 .page-setting-sell {
   .menu {
     li {

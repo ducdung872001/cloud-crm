@@ -140,8 +140,8 @@ export default function CategoryServiceList(props: ICategoryServiceListProps) {
 
   const dataMappingArray = (item: ICategoryServiceResponseModel, index: number) => [
     getPageOffset(params) + index + 1,
-    <a key={item.id} data-fancybox="gallery" href={item.avatar}>
-      <Image src={item.avatar} alt={item.name} width={"64rem"} />
+    <a key={item.id} data-fancybox="gallery" href={item.avatar || undefined}>
+      <Image src={item.avatar || ""} alt={item.name} width={"64px"} height={"64px"} />
     </a>,
     item.name,
     item.position,
@@ -268,7 +268,7 @@ export default function CategoryServiceList(props: ICategoryServiceListProps) {
             className="title-first"
             title="Quay lại"
           >
-            Cài đặt bán hàng
+            Danh mục sản phẩm & dịch vụ
           </h1>
           <Icon
             name="ChevronRight"

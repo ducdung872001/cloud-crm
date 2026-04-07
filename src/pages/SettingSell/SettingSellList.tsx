@@ -89,13 +89,6 @@ export default function SettingSellList() {
       des: "Quản lý toàn bộ dịch vụ, giá bán lẻ, mã vạch, chia sẻ. Dịch vụ không có tồn kho."
     },
     {
-      title: "Thẻ dịch vụ",
-      is_tab: "service_tab_three",
-      backgroundColor: "#FAEEDA",
-      icon: "ProductGroupList",
-      des: "Quản lý các loại thẻ dịch vụ (thẻ lượt, thẻ giá trị) để bán cho thành viên."
-    },
-    {
       title: "Trường bổ sung dịch vụ",
       is_tab: "service_tab_four",
       backgroundColor: "#EAF3DE",

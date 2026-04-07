@@ -206,100 +206,72 @@ const CHMembershipPlanSettings = React.lazy(() => import("@/pages/CommunityHub/M
 const CHServiceManagement = React.lazy(() => import("@/pages/CommunityHub/ServiceManagement"));
 
 // [CH] Community Hub - Menu chính
-// Mô hình: POS bán lẻ + bán thẻ thành viên | Dịch vụ quản lý tập trung
+// Sắp xếp: dùng nhiều nhất ở trên → ít dùng ở dưới
 export const menu: IMenuItem[] = [
   {
-    title: "dashboard", // Tổng quan
+    title: "dashboard",
     path: urls.dashboard,
     icon: <Icon name="DashboardMenu" />,
     code: "DASHBOARD",
   },
 
-  // ═══ BÁN HÀNG & VẬN HÀNH ═════════════════════════════════════════════
+  // ═══ DÙNG HÀNG NGÀY (Lễ tân / Bán hàng) ══════════════════════════════
   {
-    title: "chReception", // Lễ tân — POS + Check-in + Trừ quota
+    title: "chReception", // Lễ tân
     path: urls.create_sale_add,
     icon: <Icon name="PosMenu" />,
     code: "",
     children: [
-      {
-        title: "createSalesOrder", // Bán hàng (POS) — giữ nguyên POS gốc
-        path: urls.create_sale_add,
-        icon: <Icon name="SaleOrderMenu" />,
-        code: "CREATE_SALE_ORDER",
-      },
-      {
-        title: "chCheckin", // Check-in / Cửa vào
-        path: "/ch_checkin",
-        icon: <Icon name="OverviewMenu" />,
-        code: "",
-      },
-      {
-        title: "chDeductQuota", // Trừ quota dịch vụ
-        path: "/ch_services",
-        icon: <Icon name="EndShiftMenu" />,
-        code: "",
-      },
-      {
-        title: "shiftManagement", // Quản lý ca
-        path: urls.shift_management,
-        icon: <Icon name="ShiftReportMenu" />,
-        code: "",
-      },
+      { title: "createSalesOrder", path: urls.create_sale_add, icon: <Icon name="SaleOrderMenu" />, code: "CREATE_SALE_ORDER" },
+      { title: "chCheckin", path: "/ch_checkin", icon: <Icon name="OverviewMenu" />, code: "" },
+      { title: "chDeductQuota", path: "/ch_services", icon: <Icon name="EndShiftMenu" />, code: "" },
+      { title: "shiftManagement", path: urls.shift_management, icon: <Icon name="ShiftReportMenu" />, code: "" },
     ],
   },
-  {
-    title: "chOrders", // Giao dịch — Đơn hàng & Hóa đơn
-    path: urls.sale_invoice,
-    icon: <Icon name="OrderListMenu" />,
-    code: "SALE_INVOICE",
-    children: [
-      {
-        title: "salesInvoice", // Danh sách đơn
-        path: urls.sale_invoice,
-        icon: <Icon name="OrderListMenu" />,
-        code: "SALE_INVOICE",
-      },
-      {
-        title: "invoiceVAT", // Hóa đơn điện tử
-        path: urls.invoiceVAT,
-        icon: <Icon name="VatInvoiceMenu" />,
-        code: "",
-      },
-    ],
-  },
-
-  // ═══ THÀNH VIÊN & DỊCH VỤ ═════════════════════════════════════════════
   {
     title: "customer", // Thành viên
     path: urls.customer,
     icon: <Icon name="CustomersMenu" />,
     code: "CUSTOMER",
     children: [
-      {
-        title: "customerList",
-        path: urls.customer_list,
-        icon: <Icon name="CustomerMenu" />,
-        code: "CUSTOMER",
-      },
-      {
-        title: "settingCustomer", // Cài đặt thành viên
-        path: urls.setting_customer,
-        icon: <Icon name="CustomerSettingMenu" />,
-        code: "MENU_SETUP_CUSTOMER",
-      },
+      { title: "customerList", path: urls.customer_list, icon: <Icon name="CustomerMenu" />, code: "CUSTOMER" },
+      { title: "settingCustomer", path: urls.setting_customer, icon: <Icon name="CustomerSettingMenu" />, code: "MENU_SETUP_CUSTOMER" },
     ],
   },
   {
-    title: "chAccommodation", // Lưu trú (chi tiết giường/phòng)
+    title: "chOrders", // Giao dịch
+    path: urls.sale_invoice,
+    icon: <Icon name="OrderListMenu" />,
+    code: "SALE_INVOICE",
+    children: [
+      { title: "salesInvoice", path: urls.sale_invoice, icon: <Icon name="OrderListMenu" />, code: "SALE_INVOICE" },
+      { title: "invoiceVAT", path: urls.invoiceVAT, icon: <Icon name="VatInvoiceMenu" />, code: "" },
+    ],
+  },
+  {
+    title: "chAccommodation", // Lưu trú
     path: "/ch_accommodation",
     icon: <Icon name="WarehouseListMenu" />,
     code: "",
   },
 
-  // ═══ CỘNG ĐỒNG ════════════════════════════════════════════════════════
+  // ═══ DÙNG THƯỜNG XUYÊN (Tài chính / Cộng đồng) ═══════════════════════
   {
-    title: "chPartners", // Đối tác (KOL/PO)
+    title: "financeManagement", // Tài chính
+    path: urls.finance_management,
+    icon: <Icon name="FinanceMenu" />,
+    code: "",
+    children: [
+      { title: "financeDashboard", path: urls.finance_management_dashboard, icon: <Icon name="FinanceInfoMenu" />, code: "" },
+      { title: "financeCashbook", path: urls.finance_management_cashbook, icon: <Icon name="CashbookMenu" />, code: "" },
+      { title: "fundManagement", path: urls.finance_management_fund_management, icon: <Icon name="FundMenu" />, code: "" },
+      { title: "categoryManagement", path: urls.finance_management_category_management, icon: <Icon name="CashbookMenu" />, code: "" },
+      { title: "debtManagement", path: urls.finance_management_debt_management, icon: <Icon name="DebtMenu" />, code: "" },
+      { title: "paymentControl", path: urls.payment_control, icon: <Icon name="PaymentMethodMenu" />, code: "" },
+    ],
+  },
+  {
+    title: "chPartners", // Đối tác
     path: "/ch_partners",
     icon: <Icon name="PartnerMenu" />,
     code: "",
@@ -310,57 +282,26 @@ export const menu: IMenuItem[] = [
     icon: <Icon name="SupportSettingMenu" />,
     code: "",
   },
-
-  // ═══ TÀI CHÍNH & BÁO CÁO ═════════════════════════════════════════════
-  {
-    title: "financeManagement", // Tài chính
-    path: urls.finance_management,
-    icon: <Icon name="FinanceMenu" />,
-    code: "",
-    children: [
-      {
-        title: "financeDashboard",
-        path: urls.finance_management_dashboard,
-        icon: <Icon name="FinanceInfoMenu" />,
-        code: "",
-      },
-      {
-        title: "financeCashbook",
-        path: urls.finance_management_cashbook,
-        icon: <Icon name="CashbookMenu" />,
-        code: "",
-      },
-      {
-        title: "fundManagement",
-        path: urls.finance_management_fund_management,
-        icon: <Icon name="FundMenu" />,
-        code: "",
-      },
-      {
-        title: "categoryManagement",
-        path: urls.finance_management_category_management,
-        icon: <Icon name="CashbookMenu" />,
-        code: "",
-      },
-      {
-        title: "debtManagement",
-        path: urls.finance_management_debt_management,
-        icon: <Icon name="DebtMenu" />,
-        code: "",
-      },
-      {
-        title: "paymentControl",
-        path: urls.payment_control,
-        icon: <Icon name="PaymentMethodMenu" />,
-        code: "",
-      },
-    ],
-  },
   {
     title: "chReports", // Báo cáo
     path: "/ch_reports",
     icon: <Icon name="SalesReportMenu" />,
     code: "",
+  },
+
+  // ═══ ÍT DÙNG (Kho / Cài đặt) ═════════════════════════════════════════
+  {
+    title: "warehouse", // Kho & Nguyên vật liệu
+    path: urls.product_import,
+    icon: <Icon name="InventoryMenu" />,
+    code: "MENU_INVENTORY",
+    children: [
+      { title: "managementMaterial", path: urls.material, icon: <Icon name="MaterialsMenu" />, code: "" },
+      { title: "warehouseList", path: urls.warehouse, icon: <Icon name="WarehouseListMenu" />, code: "" },
+      { title: "warehouseManagement", path: urls.inventory, icon: <Icon name="LedgerMenu" />, code: "INVENTORY" },
+      { title: "warehouseChecking", path: urls.inventory_checking, icon: <Icon name="AuditMenu" />, code: "INVENTORY" },
+      { title: "reportWarhouse", path: urls.report_warehouse, icon: <Icon name="SalesReportMenu" />, code: "" },
+    ],
   },
 
   // ═══ HỆ THỐNG ═════════════════════════════════════════════════════════

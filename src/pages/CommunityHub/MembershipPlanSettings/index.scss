@@ -69,29 +69,31 @@
 
       .plan-actions {
         display: flex;
-        gap: 0.4rem;
+        gap: 0.6rem;
 
         button {
-          width: 3.2rem;
-          height: 3.2rem;
+          width: 3.4rem;
+          height: 3.4rem;
           border-radius: 0.6rem;
-          border: 1px solid #e0e0e0;
-          background: #fff;
+          border: none;
           cursor: pointer;
           display: flex;
           align-items: center;
           justify-content: center;
+          transition: all 0.15s;
 
-          svg { width: 1.4rem; height: 1.4rem; fill: currentColor; }
+          svg { width: 1.6rem; height: 1.6rem; fill: currentColor; }
 
           &.btn-edit {
+            background: rgba(45, 106, 90, 0.1);
             color: var(--ch-primary, #2D6A5A);
-            &:hover { background: rgba(45, 106, 90, 0.06); }
+            &:hover { background: rgba(45, 106, 90, 0.2); }
           }
 
           &.btn-delete {
+            background: rgba(214, 75, 58, 0.1);
             color: var(--ch-danger, #D64B3A);
-            &:hover { background: rgba(214, 75, 58, 0.06); }
+            &:hover { background: rgba(214, 75, 58, 0.2); }
           }
         }
       }

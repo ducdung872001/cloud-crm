@@ -37,6 +37,9 @@ import ServiceExtraInfoService from "services/ServiceExtraInfoService";
 import CategoryServiceService from "services/CategoryServiceService";
 import FileService from "services/FileService";
 import { uploadDocumentFormData } from "utils/document";
+import RebornEditor from "components/editor/reborn";
+import ShareLinkModal from "../../../Product/partials/ShareLinkModal";
+import BarcodePrintModal from "../../../Product/partials/BarcodePrintModal";
 
 export default function AddServiceModal(props: IAddServiceModalProps) {
   const { onShow, onHide, data } = props;
@@ -48,6 +51,9 @@ export default function AddServiceModal(props: IAddServiceModalProps) {
   const [contentDialog, setContentDialog] = useState<IContentDialog>(null);
 
   const [showModalAddPrice, setShowModalAddPrice] = useState<boolean>(false);
+  const [showShareModal, setShowShareModal] = useState<boolean>(false);
+  const [showBarcodeModal, setShowBarcodeModal] = useState<boolean>(false);
+  const [contentEditor, setContentEditor] = useState<string>(data?.content || "");
 
   //! đoạn này xử lý vấn đề call api danh sách dịch vụ
   const [listCategoryService, setListCategoryService] = useState<IOption[]>(null);
@@ -1175,6 +1181,33 @@ export default function AddServiceModal(props: IAddServiceModalProps) {
             />
           </div>
 
+          {/* [CH] Mô tả chi tiết — RebornEditor */}
+          <div className="list__field--content">
+            <label className="label-title">Mô tả chi tiết dịch vụ</label>
+            <div className="editor-wrapper">
+              <RebornEditor
+                initialValue={contentEditor}
+                onChangeContent={(value: string) => setContentEditor(value)}
+                placeholder="Nhập mô tả chi tiết dịch vụ..."
+              />
+            </div>
+          </div>
+
+          {/* [CH] Chia sẻ & Mã vạch */}
+          {data?.id && (
+            <div className="list__field--share">
+              <label className="label-title">Chia sẻ & Mã vạch</label>
+              <div className="share-actions">
+                <button type="button" className="btn-share" onClick={() => setShowShareModal(true)}>
+                  <Icon name="Share" /> Chia sẻ dịch vụ
+                </button>
+                <button type="button" className="btn-barcode" onClick={() => setShowBarcodeModal(true)}>
+                  <Icon name="Barchart" /> In mã vạch
+                </button>
+              </div>
+            </div>
+          )}
+
           {mapServiceAttribute ? (
             <div className="list--attribute">
               {Object.entries(mapServiceAttribute).map((lstAttribute: Record<string, unknown>, key: number) => (
@@ -1213,6 +1246,24 @@ export default function AddServiceModal(props: IAddServiceModalProps) {
         }}
       />
       <Dialog content={contentDialog} isOpen={showDialog} />
+
+      {/* [CH] Modal Chia sẻ dịch vụ */}
+      {showShareModal && data && (
+        <ShareLinkModal
+          onShow={showShareModal}
+          data={{ id: data.id, name: data.name, avatar: data.avatar }}
+          onHide={() => setShowShareModal(false)}
+        />
+      )}
+
+      {/* [CH] Modal In mã vạch */}
+      {showBarcodeModal && data && (
+        <BarcodePrintModal
+          onShow={showBarcodeModal}
+          data={{ id: data.id, name: data.name, code: data.code, barcode: data.barcode }}
+          onHide={() => setShowBarcodeModal(false)}
+        />
+      )}
     </div>
   );
 }
