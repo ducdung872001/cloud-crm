@@ -116,7 +116,7 @@ export default function CustomerList(props: ICustomerListProps) {
 
   const [pagination, setPagination] = useState<PaginationProps>({
     ...DataPaginationDefault,
-    name: "Khách hàng",
+    name: "Thành viên",
     isChooseSizeLimit: true,
     setPage: (page) => {
       setParams((prevParams) => ({ ...prevParams, page: page }));
@@ -195,7 +195,7 @@ export default function CustomerList(props: ICustomerListProps) {
   const titles = [
     "STT",
     "Ảnh đại diện",
-    "Tên khách hàng",
+    "Tên thành viên",
     "Giới tính",
     "Điện thoại",
     "Email",
@@ -472,17 +472,17 @@ export default function CustomerList(props: ICustomerListProps) {
         <audio ref={remoteAudioRef} autoPlay />
       </div> */}
       <SearchBox
-        name="Khách hàng"
+        name="Thành viên"
         params={params}
         isFilter={true}
         listFilterItem={customerFilterList}
-        placeholderSearch="Tìm kiếm theo tên, số điện thoại, email khách hàng"
+        placeholderSearch="Tìm kiếm theo tên, số điện thoại, email thành viên"
         updateParams={(paramNew) => setParams(paramNew)}
       />
 
       {!isLoading && listCustomer && listCustomer.length > 0 ? (
         <BoxTable
-          name="Khách hàng"
+          name="Thành viên"
           titles={titles}
           items={listCustomer}
           isPagination={true}
@@ -498,7 +498,7 @@ export default function CustomerList(props: ICustomerListProps) {
       ) : (
         <Fragment>
           {!isNoItem ? (
-            <SystemNotification description={<span>Hiện tại chưa có khách hàng nào.</span>} type="no-item" />
+            <SystemNotification description={<span>Hiện tại chưa có thành viên nào.</span>} type="no-item" />
           ) : (
             <SystemNotification
               description={

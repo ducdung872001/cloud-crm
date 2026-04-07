@@ -52,7 +52,7 @@ export default function CustomerAndSupplier(props: Record<string, unknown>) {
   const takeUrlFilterAdvance = (localStorage.getItem("filterAdvance") && JSON.parse(localStorage.getItem("filterAdvance"))) || null;
 
   document.title = `${
-    showPageSendEmail ? "Gửi email" : showPageSendSMS ? "Gửi SMS" : activeTitleHeader === 1 ? "Danh sách khách hàng" : "Phân tích nguồn khách hàng"
+    showPageSendEmail ? "Gửi email" : showPageSendSMS ? "Gửi SMS" : activeTitleHeader === 1 ? "Danh sách thành viên" : "Phân tích nguồn thành viên"
   }`;
 
   const navigate = useNavigate();
@@ -72,7 +72,7 @@ export default function CustomerAndSupplier(props: Record<string, unknown>) {
   const [showModalImport, setShowModalImport] = useState<boolean>(false);
   const takeParamsUrl = getSearchParameters();
 
-  //! đoạn này call API mối quan hệ khách hàng
+  //! đoạn này call API mối quan hệ thành viên
   const [listRelationship, setListRelationship] = useState<IRelationShipResposne[]>([]);
   // biến này tạo ra với mục đích tìm kiếm nhanh
   const [contactType, setContactType] = useState<number>(() => {
@@ -116,7 +116,7 @@ export default function CustomerAndSupplier(props: Record<string, unknown>) {
   const [isShowPhone, setIsShowPhone] = useState<boolean>(false);
   const [valueShowPhone, setValueShowPhone] = useState<string>("");
 
-  //modal chia data khách hàng TNEX
+  //modal chia data thành viên TNEX
   const [filterAdvance, setFilterAdvance] = useState(() => {
     return (takeParamsUrl.sourceIds || takeParamsUrl.employeeIds || takeParamsUrl.callStatuses || takeParamsUrl.customerExtraInfo) &&
       takeUrlFilterAdvance
@@ -219,7 +219,7 @@ export default function CustomerAndSupplier(props: Record<string, unknown>) {
 
   const [pagination, setPagination] = useState<PaginationProps>({
     ...DataPaginationDefault,
-    name: sourceDomain === "hasedu.reborn.vn" ? "Học sinh" : "Khách hàng",
+    name: sourceDomain === "hasedu.reborn.vn" ? "Học sinh" : "Thành viên",
     isChooseSizeLimit: true,
     setPage: (page) => {
       setParams((prevParams) => ({ ...prevParams, page: page }));
@@ -231,7 +231,7 @@ export default function CustomerAndSupplier(props: Record<string, unknown>) {
 
   const [paginationPartner, setPaginationPartner] = useState<PaginationProps>({
     ...DataPaginationDefault,
-    name: sourceDomain === "hasedu.reborn.vn" ? "Học sinh" : "Khách hàng",
+    name: sourceDomain === "hasedu.reborn.vn" ? "Học sinh" : "Thành viên",
     isChooseSizeLimit: true,
     setPage: (page) => {
       setParamsCustomerPartner((prevParams) => ({ ...prevParams, page: page }));
@@ -363,14 +363,14 @@ export default function CustomerAndSupplier(props: Record<string, unknown>) {
     );
   };
 
-  const types = ["Khách hàng", "NCC"];
+  const types = ["Thành viên", "NCC"];
 
   const CustomerTypeRenderer = ({ data }) => {
     return (
       <div className="type-cell">
         <div className="badge badge-blue">
           {
-            //Ngẫu nhiên trong 2 loại khách hàng và nhà cung cấp
+            //Ngẫu nhiên trong 2 loại thành viên và nhà cung cấp
             types[Math.floor(Math.random() * types.length)]
           }
         </div>
@@ -468,7 +468,7 @@ export default function CustomerAndSupplier(props: Record<string, unknown>) {
     },
     { headerName: "Id", field: "id", hide: true },
     { headerName: "dataItem", field: "data", hide: true },
-    { headerName: "Tên khách hàng", field: "name", cellRenderer: CustomerNameRenderer },
+    { headerName: "Tên thành viên", field: "name", cellRenderer: CustomerNameRenderer },
     { headerName: "Phân loại", field: "type", cellRenderer: CustomerTypeRenderer },
     { headerName: "Nhóm/Nhãn", field: "type", cellRenderer: CustomerGroupRenderer },
     {
@@ -507,7 +507,7 @@ export default function CustomerAndSupplier(props: Record<string, unknown>) {
   const [columnDefs, setColumnDefs] = useState<Record<string, unknown>>(defaultValueColumnDefs);
 
   const defaultFieldCustomer = [
-    { id: 1, name: "Mã khách hàng", fieldName: "code", isTable: false },
+    { id: 1, name: "Mã thành viên", fieldName: "code", isTable: false },
 
     { value: 9, name: "Ngày mua cuối", fieldName: "lastBoughtDate", isTable: false },
     { value: 10, name: "Tổng doanh số", fieldName: "fee", isTable: false },
@@ -522,8 +522,8 @@ export default function CustomerAndSupplier(props: Record<string, unknown>) {
     { id: 15, name: "Cân nặng", fieldName: "weight", isTable: false, type: "rightAligned" },
     { id: 8, name: "Facebook", fieldName: "profileLink", isTable: false },
     { id: 16, name: "Người tạo", fieldName: "creatorId", isTable: false },
-    { id: 17, name: "Đối tượng khách hàng", fieldName: "cardId", isTable: false },
-    { id: 18, name: "Nhóm khách hàng", fieldName: "cgpId", isTable: false },
+    { id: 17, name: "Đối tượng thành viên", fieldName: "cardId", isTable: false },
+    { id: 18, name: "Nhóm thành viên", fieldName: "cgpId", isTable: false },
     { id: 19, name: "Chi nhánh", fieldName: "branchId", isTable: false },
     { id: 20, name: "Nhân viên", fieldName: "employeeName", isTable: false },
   ] as Record<string, unknown>[];
@@ -937,7 +937,7 @@ export default function CustomerAndSupplier(props: Record<string, unknown>) {
       contactType: -1,
     },
     {
-      title: "Khách hàng (200)",
+      title: "Thành viên (200)",
       type: "update",
       contactType: 1,
     },
@@ -1007,7 +1007,7 @@ export default function CustomerAndSupplier(props: Record<string, unknown>) {
   const onDelete = async (id: number, parma: Record<string, unknown>) => {
     const response = await CustomerService.delete(id);
     if (response.code === 0) {
-      showToast(`Xóa khách hàng thành công`, "success");
+      showToast(`Xóa thành viên thành công`, "success");
       getListCustomer(parma, activeTitleHeader);
     } else {
       showToast(response.message ?? "Có lỗi xảy ra. Vui lòng thử lại sau", "error");
@@ -1047,7 +1047,7 @@ export default function CustomerAndSupplier(props: Record<string, unknown>) {
         type === "one" ? showDialogConfirmDelete(item, params) : showDialogConfirmDelete();
       }
     } else {
-      showToast("Kiểm tra khách hàng đang trong chiến dịch, hợp đồng đang lỗi!", "error");
+      showToast("Kiểm tra thành viên đang trong chiến dịch, hợp đồng đang lỗi!", "error");
     }
   };
 
@@ -1060,7 +1060,7 @@ export default function CustomerAndSupplier(props: Record<string, unknown>) {
     const response = await CustomerService.deleteAll(body);
 
     if (response.code === 0) {
-      showToast("Xóa khách hàng thành công", "success");
+      showToast("Xóa thành viên thành công", "success");
       getListCustomer(params, activeTitleHeader);
       setListIdChecked([]);
     } else {
@@ -1077,30 +1077,30 @@ export default function CustomerAndSupplier(props: Record<string, unknown>) {
       className: "dialog-delete",
       isCentered: true,
       isLoading: true,
-      title: <Fragment>Xóa khách hàng</Fragment>,
+      title: <Fragment>Xóa thành viên</Fragment>,
       message: (
         <Fragment>
           Bạn có chắc chắn muốn xóa{" "}
           {item ? (
             <span>
-              khách hàng <strong>{item.name}</strong>
+              thành viên <strong>{item.name}</strong>
             </span>
           ) : (
             <span>
-              <strong>{listIdChecked.length}</strong> khách hàng đã chọn
+              <strong>{listIdChecked.length}</strong> thành viên đã chọn
               {dataCheckDeleteCustomer && listIdChecked.length > 1 && (
                 <Fragment>
                   , trong đó{" "}
                   {dataCheckDeleteCustomer.inCampaigns?.length > 0 ? (
                     <Fragment>
-                      <strong>{dataCheckDeleteCustomer.inCampaigns.length}</strong> khách hàng có chiến dịch bán hàng
+                      <strong>{dataCheckDeleteCustomer.inCampaigns.length}</strong> thành viên có chiến dịch bán hàng
                     </Fragment>
                   ) : (
                     ""
                   )}
                   {dataCheckDeleteCustomer.inContract?.length > 0 ? (
                     <Fragment>
-                      <strong>, {dataCheckDeleteCustomer.inContract.length}</strong> khách hàng có hợp đồng
+                      <strong>, {dataCheckDeleteCustomer.inContract.length}</strong> thành viên có hợp đồng
                     </Fragment>
                   ) : (
                     ""
@@ -1109,18 +1109,18 @@ export default function CustomerAndSupplier(props: Record<string, unknown>) {
               )}
               {dataCheckDeleteCustomer && listIdChecked.length === 1 && (
                 <Fragment>
-                  , khách hàng đang có{" "}
+                  , thành viên đang có{" "}
                   {dataCheckDeleteCustomer.inCampaigns.length > 0 && dataCheckDeleteCustomer.inContract?.length <= 0 ? (
                     <Fragment>
                       <strong>{dataCheckDeleteCustomer.inCampaigns.length}</strong> chiến dịch bán hàng
                     </Fragment>
                   ) : dataCheckDeleteCustomer.inContract?.length > 0 && dataCheckDeleteCustomer.inCampaigns.length <= 0 ? (
                     <Fragment>
-                      <strong>{dataCheckDeleteCustomer.inContract.length}</strong> khách hàng có hợp đồng
+                      <strong>{dataCheckDeleteCustomer.inContract.length}</strong> thành viên có hợp đồng
                     </Fragment>
                   ) : (
                     <Fragment>
-                      <strong>{dataCheckDeleteCustomer.inCampaigns.length}</strong> chiến dịch bán hàng và khách hàng có{" "}
+                      <strong>{dataCheckDeleteCustomer.inCampaigns.length}</strong> chiến dịch bán hàng và thành viên có{" "}
                       <strong>{dataCheckDeleteCustomer.inContract.length}</strong> hợp đồng
                     </Fragment>
                   )}
@@ -1130,18 +1130,18 @@ export default function CustomerAndSupplier(props: Record<string, unknown>) {
           )}
           {item && dataCheckDeleteCustomer ? (
             <span>
-              <strong>{item.name}</strong>, khách hàng đang có{" "}
+              <strong>{item.name}</strong>, thành viên đang có{" "}
               {dataCheckDeleteCustomer.inCampaigns.length > 0 && dataCheckDeleteCustomer.inContract?.length <= 0 ? (
                 <Fragment>
                   <strong>{dataCheckDeleteCustomer.inCampaigns.length}</strong> chiến dịch bán hàng
                 </Fragment>
               ) : dataCheckDeleteCustomer.inContract?.length > 0 && dataCheckDeleteCustomer.inCampaigns.length <= 0 ? (
                 <Fragment>
-                  <strong>{dataCheckDeleteCustomer.inContract.length}</strong> khách hàng có hợp đồng
+                  <strong>{dataCheckDeleteCustomer.inContract.length}</strong> thành viên có hợp đồng
                 </Fragment>
               ) : (
                 <Fragment>
-                  <strong>{dataCheckDeleteCustomer.inCampaigns.length}</strong> chiến dịch bán hàng và khách hàng có{" "}
+                  <strong>{dataCheckDeleteCustomer.inCampaigns.length}</strong> chiến dịch bán hàng và thành viên có{" "}
                   <strong>{dataCheckDeleteCustomer.inContract.length}</strong> hợp đồng
                 </Fragment>
               )}
@@ -1190,22 +1190,22 @@ export default function CustomerAndSupplier(props: Record<string, unknown>) {
   };
   const bulkActionList: BulkActionItemModel[] = [
     {
-      title: "Đổi nguồn khách hàng",
+      title: "Đổi nguồn thành viên",
       callback: () => {
         setShowModalUpdateCommon(true);
         setIsActiveCustomerSource(true);
-        setTitleProps("Cập nhật nguồn khách hàng");
+        setTitleProps("Cập nhật nguồn thành viên");
         setIsActiveCustomerGroup(false);
         setIsActiveCustomeRelationship(false);
         setIsActiveCustomerEmployee(false);
       },
     },
     {
-      title: "Đổi nhóm khách hàng",
+      title: "Đổi nhóm thành viên",
       callback: () => {
         setShowModalUpdateCommon(true);
         setIsActiveCustomerGroup(true);
-        setTitleProps("Cập nhật nhóm khách hàng");
+        setTitleProps("Cập nhật nhóm thành viên");
         setIsActiveCustomerSource(false);
         setIsActiveCustomeRelationship(false);
         setIsActiveCustomerEmployee(false);
@@ -1217,7 +1217,7 @@ export default function CustomerAndSupplier(props: Record<string, unknown>) {
         if (typeCampain && typeCampain.type != "all") {
           setShowModalAddManagementOpportunity(true);
         } else {
-          showToast("Bạn cần chọn cụ thể, tạo cơ hội cho khách hàng cá nhân hay khách hàng doanh nghiệp !", "warning");
+          showToast("Bạn cần chọn cụ thể, tạo cơ hội cho thành viên cá nhân hay thành viên doanh nghiệp !", "warning");
         }
       },
     },
@@ -1240,7 +1240,7 @@ export default function CustomerAndSupplier(props: Record<string, unknown>) {
       },
     },
     permissions["CUSTOMER_DELETE"] == 1 && {
-      title: "Xóa khách hàng",
+      title: "Xóa thành viên",
       callback: () => handleCheckCustomerDelete(),
     },
   ];
@@ -1252,7 +1252,7 @@ export default function CustomerAndSupplier(props: Record<string, unknown>) {
     () => [
       {
         value: "all",
-        label: "Tất cả khách hàng ",
+        label: "Tất cả thành viên ",
       },
       {
         value: "current_page",
@@ -1261,7 +1261,7 @@ export default function CustomerAndSupplier(props: Record<string, unknown>) {
       },
       {
         value: "current_search",
-        label: `${pagination.totalItem} khách hàng phù hợp với kết quả tìm kiếm hiện tại`,
+        label: `${pagination.totalItem} thành viên phù hợp với kết quả tìm kiếm hiện tại`,
         disabled: pagination.totalItem === 0 || !isDifferenceObj(params, { keyword: "" }),
       },
     ],
@@ -1349,7 +1349,7 @@ export default function CustomerAndSupplier(props: Record<string, unknown>) {
         if (extension === "excel") {
           ExportExcel({
             fileName: "KhachHang",
-            title: "Khách hàng",
+            title: "Thành viên",
             header: titleExport.map((item) => item.headerName), // titles("export")
             formatExcel: formatExcel,
             data: dataMappingArray,
@@ -1435,7 +1435,7 @@ export default function CustomerAndSupplier(props: Record<string, unknown>) {
           showPageSendEmail ? " d-none" : ""
         }`}
       >
-        <TitleAction title={`Quản lý ${type === 'customer' ? 'khách hàng' : 'nhà cung cấp'}`} titleActions={titleActions} />
+        <TitleAction title={`Quản lý ${type === 'customer' ? 'thành viên' : 'nhà cung cấp'}`} titleActions={titleActions} />
         <div className="card-box d-flex flex-column">
           <div className="quick__search">
             <div className="quick__search--start">
@@ -1485,7 +1485,7 @@ export default function CustomerAndSupplier(props: Record<string, unknown>) {
               <div className="dot" style={{ background: "#10b981" }}></div>
               <div>
                 <div className="num">200</div>
-                <div className="lbl">Khách hàng</div>
+                <div className="lbl">Thành viên</div>
               </div>
             </div>
             <div className="stat-pill">
@@ -1515,7 +1515,7 @@ export default function CustomerAndSupplier(props: Record<string, unknown>) {
 
           {!isLoading && listCustomer && listCustomer.length > 0 ? (
             <BoxTableAdvanced
-              name="Khách hàng"
+              name="Thành viên"
               columnDefs={columnDefs}
               rowData={rowData}
               dragColumnDefs={false}
@@ -1541,12 +1541,12 @@ export default function CustomerAndSupplier(props: Record<string, unknown>) {
                 <SystemNotification
                   description={
                     <span>
-                      Hiện tại chưa có khách hàng nào. <br />
-                      {activeTitleHeader === 1 ? `Hãy thêm mới khách hàng đầu tiên nhé!` : ""}
+                      Hiện tại chưa có thành viên nào. <br />
+                      {activeTitleHeader === 1 ? `Hãy thêm mới thành viên đầu tiên nhé!` : ""}
                     </span>
                   }
                   type="no-item"
-                  titleButton={activeTitleHeader === 1 ? "Thêm mới khách hàng" : ""}
+                  titleButton={activeTitleHeader === 1 ? "Thêm mới thành viên" : ""}
                   action={() => {
                     if (activeTitleHeader === 1) {
                       setDataCustomer(null);
@@ -1677,7 +1677,7 @@ export default function CustomerAndSupplier(props: Record<string, unknown>) {
           }}
         />
         <ModalExportCustomer
-          name="Khách hàng"
+          name="Thành viên"
           params={params}
           onShow={onShowModalExport}
           onHide={() => setOnShowModalExport(false)}
@@ -1686,7 +1686,7 @@ export default function CustomerAndSupplier(props: Record<string, unknown>) {
           callback={(type, extension) => exportCallback(type, extension)}
         />
         <ImportModal
-          name="Nhập danh sách khách hàng"
+          name="Nhập danh sách thành viên"
           onShow={showModalImport}
           onHide={(reload) => {
             if (reload) {

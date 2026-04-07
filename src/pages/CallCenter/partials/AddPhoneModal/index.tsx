@@ -78,7 +78,7 @@ export default function AddPhoneModal(props: IAddPhoneModalProps) {
 
   const dataInfoBasicCustomer = [
     {
-      title: "Khách hàng",
+      title: "Thành viên",
       name: dataCustomer?.name,
       className: "outstanding-name",
     },

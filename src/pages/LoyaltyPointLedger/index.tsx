@@ -134,6 +134,7 @@ export default function LoyaltyPointLedger(props: Props) {
         title:    isExporting ? "Đang xuất..." : "Xuất Excel",
         icon:     <Icon name="FileDown" />,
         disabled: isExporting,
+        color:    "outline",
         callback: handleExportExcel,
       },
     ],
@@ -141,7 +142,7 @@ export default function LoyaltyPointLedger(props: Props) {
 
   // ── Table columns ──────────────────────────────────────────────
   const titles = [
-    "STT", "Khách hàng", "Số điểm", "Lý do",
+    "STT", "Thành viên", "Số điểm", "Lý do",
     "Chương trình thân thiết", "Đổi thưởng", "Người phụ trách", "Ngày tạo",
   ];
   const dataFormat = [
@@ -195,7 +196,7 @@ export default function LoyaltyPointLedger(props: Props) {
             ? `Lịch sử điểm — ${filteredCustomerName}`
             : "Lịch sử điểm"
         }
-        titleBack="Khách hàng thành viên"
+        titleBack="Ưu đãi & Chăm sóc"
         onBackProps={onBackProps}
         titleActions={titleActions}
       />

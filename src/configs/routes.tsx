@@ -289,6 +289,20 @@ export const menu: IMenuItem[] = [
     code: "",
   },
 
+  // ═══ TIẾP THỊ & CHĂM SÓC ════════════════════════════════════════════
+  {
+    title: "marketing", // Tiếp thị & Chăm sóc
+    path: urls.maketing,
+    icon: <Icon name="PromotionMenu" />,
+    code: "MARKETING",
+    children: [
+      { title: "promotionalProgram", path: urls.promotional_program, icon: <Icon name="PromotionMenu" />, code: "" },       // Khuyến mãi & Voucher
+      { title: "loyaltyPoints", path: urls.member_list, icon: <Icon name="LoyaltyMenu" />, code: "" },                      // Tích điểm hội viên (hub: DS TV + hạng + lịch sử + quy tắc + báo cáo)
+      { title: "marketingCampaign", path: urls.marketing_campaign, icon: <Icon name="BroadcastMenu" />, code: "MA" },        // Chiến dịch marketing
+      { title: "customerCare", path: urls.customer_care_page, icon: <Icon name="SupportMenu" />, code: "" },                 // Chăm sóc thành viên
+    ],
+  },
+
   // ═══ ÍT DÙNG (Kho / Cài đặt) ═════════════════════════════════════════
   {
     title: "warehouse", // Kho & Nguyên vật liệu

@@ -11,13 +11,13 @@ import HeaderTabMenu from "@/components/HeaderTabMenu/HeaderTabMenu";
 export default function CallCenterList(props) {
   document.title = "Tổng đài";
   const { onBackProps } = props;
-  const [tab, setTab] = useState({ name: "tab_one", namePagination: "Khách hàng", status: null });
+  const [tab, setTab] = useState({ name: "tab_one", namePagination: "Thành viên", status: null });
   const [showModalAdd, setShowModalAdd] = useState<boolean>(false);
   const [reload, setReload] = useState<boolean>(false);
 
   const listTabs = [
     {
-      name: "Khách hàng",
+      name: "Thành viên",
       is_active: "tab_one",
       status: null,
     },
@@ -56,8 +56,8 @@ export default function CallCenterList(props) {
   return (
     <div className={`page-content page__call--center`}>
       <HeaderTabMenu
-        title="Cuộc gọi CSKH"
-        titleBack="Chăm sóc khách hàng"
+        title="Cuộc gọi CSTV"
+        titleBack="Chăm sóc thành viên"
         onBackProps={onBackProps}
       />
       <div className="card-box d-flex flex-column">
@@ -82,7 +82,7 @@ export default function CallCenterList(props) {
                   type="button"  
                   onClick={() => setShowModalAdd(true)}
                 >
-                  Tạo mới khách hàng 
+                  Tạo mới thành viên
                 </Button>
             </div>
           </div>
