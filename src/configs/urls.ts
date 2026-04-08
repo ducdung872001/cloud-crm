@@ -655,58 +655,9 @@ export const urlsApi = {
     deleteEmployee: prefixAdmin + "/groupEmployee/delete",
   },
 
-  treatment: {
-    // đoạn api này cần xem lại chút
-    filterSchedule: prefixAdmin + "/treatmentTime/list_schedule_next",
-    filterByScheduler: prefixAdmin + "/treatmentTime/get_byscheduler",
-    updateNext: prefixAdmin + "/treatmentTime/update_next",
-    delete: prefixAdmin + "/treatmentTime/delete",
-    updateCaringEmployee: prefixAdmin + "/treatmentTime/update_caring_employee",
-    update: prefixAdmin + "/treatmentTime/update",
-  },
-  // lịch sử điều trị
-  treatmentHistory: {
-    list: prefixAdmin + "/treatmentHistory/list_all",
-    update: prefixAdmin + "/treatmentHistory/update",
-    detail: prefixAdmin + "/treatmentHistory/get",
-    delete: prefixAdmin + "/treatmentHistory/delete",
-    listByCustomer: prefixAdmin + "/treatmentHistory/list_by_customer",
-  },
-  // nhật ký điều trị
-  diarySurgery: {
-    list: prefixAdmin + "/diarySurgery/listAll",
-    update: prefixAdmin + "/diarySurgery/update",
-    detail: prefixAdmin + "/diarySurgery/get",
-    delete: prefixAdmin + "/diarySurgery/delete",
-  },
-  // lịch trình tư vấn
-  scheduleConsultant: {
-    list: prefixAdmin + "/scheduleConsultant/list",
-    update: prefixAdmin + "/scheduleConsultant/update",
-    detail: prefixAdmin + "/scheduleConsultant/get",
-    delete: prefixAdmin + "/scheduleConsultant/delete",
-    updateKafka: prefixBpm + "/kafka/activate/receiveTask",
-  },
-  // lịch điều trị
-  scheduleTreatment: {
-    list: prefixAdmin + "/scheduleTreatment/list",
-    update: prefixAdmin + "/scheduleTreatment/update",
-    detail: prefixAdmin + "/scheduleTreatment/get",
-    delete: prefixAdmin + "/scheduleTreatment/delete",
-    updateKafka: prefixBpm + "/kafka/activateProcess",
-  },
-  // lịch chung (điều trị, tư vấn, công việc)
   scheduleCommon: {
     list: prefixAdmin + "/schedule/list",
     listRelatedToCustomer: prefixAdmin + "/schedule/list/by_customer",
-  },
-  // phòng điều trị
-  treatmentRoom: {
-    list: prefixAdmin + "/treatmentRoom/list",
-    update: prefixAdmin + "/treatmentRoom/update",
-    detail: prefixAdmin + "/treatmentRoom/get",
-    delete: prefixAdmin + "/treatmentRoom/delete",
-    checkTreatmentRoom: prefixAdmin + "/treatmentRoom/check",
   },
   crmCareHistory: {
     list: prefixAdmin + "/crmCareHistory/list",
@@ -3342,7 +3293,6 @@ export const urls = {
   partner: "/partner",
   detail_partner: "/detail_partner/partnerId/:id?",
 
-  schedule_next: "/schedule_next",
   schedule: "/schedule",
   timekeeping: "/timekeeping",
   cashbook: "/cashbook",
@@ -3518,10 +3468,6 @@ export const urls = {
   public_connect_zalo: "/public_connect_zalo",
   // đường dẫn quản trị tài nguyên
   resource_management: "/resource_management",
-  // đường dẫn lịch sử điều trị
-  treatment_history: "/treatment_history",
-  // đường dẫn nhật ký điều trị
-  diary_surgery: "/diary_surgery",
   // lịch
   calendar_common: "/calendar_common",
   // quy trình bán hàng
@@ -3589,7 +3535,6 @@ export const urls = {
   bpm: "/bpm",
   bpm_create: "/bpm/create/:id",
   manage_processes: "/manage_processes",
-  manage_default_processes: "/manage_default_processes",
   process_simulation: "/process_simulation",
   object_manage: "/object_manage",
   //cài đặt quy trình

@@ -17,7 +17,6 @@ import { ICustomerSchedulerFilterRequest } from "model/customer/CustomerRequestM
 import { showToast } from "utils/common";
 import CustomerService from "services/CustomerService";
 import AddPhoneModal from "../AddPhoneModal";
-import AddConsultationScheduleModal from "pages/CalendarCommon/partials/AddConsultationScheduleModal/AddConsultationScheduleModal";
 import { ContextType, UserContext } from "contexts/userContext";
 import EmployeeAgentService from "services/EmployeeAgentService";
 import JsSIP from "jssip";
@@ -54,7 +53,6 @@ export default function CustomerList(props: ICustomerListProps) {
   const [listCustomer, setListCustomer] = useState<ICustomerResponse[]>([]);
   const [dataCustomer, setDataCustomer] = useState<ICustomerResponse>(null);
   const [idCustomer, setIdCustomer] = useState<number>(null);
-  const [showModalAddConsultationScheduleModal, setShowModalAddConsultationScheduleModal] = useState<boolean>(false);
 
   const [params, setParams] = useState<IParamsCustomerInCallCenter>({
     keyword: "",
@@ -221,7 +219,6 @@ export default function CustomerList(props: ICustomerListProps) {
       style={{ color: "var(--primary-color-90)", fontWeight: "500", cursor: "pointer" }}
       onClick={() => {
         setIdCustomer(item.id);
-        setShowModalAddConsultationScheduleModal(true);
       }}
     >
       Tạo
@@ -539,19 +536,6 @@ export default function CustomerList(props: ICustomerListProps) {
       /> */}
       {/* <AddPhoneModal onShow={showModalPhone} dataCustomer={dataCustomer} onHide={() => setShowModalPhone(false)} /> */}      
 
-      <AddConsultationScheduleModal
-        onShow={showModalAddConsultationScheduleModal}
-        idData={null}
-        idCustomer={idCustomer}
-        startDate={new Date()}
-        endDate={new Date(new Date().setMinutes(new Date().getMinutes() + 10))}
-        onHide={(reload) => {
-          if (reload) {
-            // getListSchedule(params);
-          }
-          setShowModalAddConsultationScheduleModal(false);
-        }}
-      />
     </Fragment>
   );
 }

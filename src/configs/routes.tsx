@@ -6,7 +6,7 @@ import urls from "./urls";
 
 const CustomerPersonList = React.lazy(() => import("pages/CustomerPerson/CustomerPersonList"));
 const ContactList = React.lazy(() => import("pages/Contact/ContactList"));
-const ScheduleNextList = React.lazy(() => import("pages/Schedule/ScheduleNextList"));
+// ScheduleNextList removed (non-retail treatment/spa)
 // Removed: TreatmentSchedule (non-retail beauty/spa)
 const TimeKeepingList = React.lazy(() => import("pages/Timekeeping/TimekeepingList"));
 const CashBookList = React.lazy(() => import("pages/CashBook/CashBookList"));
@@ -153,7 +153,7 @@ const Package = React.lazy(() => import("pages/Package"));
 const ExtensionList = React.lazy(() => import("pages/Extension/ExtensionList"));
 const UserList = React.lazy(() => import("pages/User/UserList"));
 const FieldMannagement = React.lazy(() => import("pages/FieldManagement/FieldManagement"));
-const ManageDefaultProcesses = React.lazy(() => import("pages/ManageDefaultProcesses"));
+// ManageDefaultProcesses removed (non-retail BPM)
 const ManagerWork = React.lazy(() => import("pages/ManagerWork"));
 const Fanpage = React.lazy(() => import("pages/Fanpage"));
 const TotalChat = React.lazy(() => import("pages/Fanpage/TotalChat"));
@@ -921,10 +921,6 @@ export const routes: IRouter[] = [
     path: urls.detail_project,
     component: <DetailProject />,
   },
-  {
-    path: urls.schedule_next,
-    component: <ScheduleNextList />,
-  },
   // Removed: TreatmentSchedule (non-retail beauty/spa)
   {
     path: urls.timekeeping,
@@ -1499,10 +1495,6 @@ export const routes: IRouter[] = [
   {
     path: urls.manage_processes,
     component: <BusinessProcessList />,
-  },
-  {
-    path: urls.manage_default_processes,
-    component: <ManageDefaultProcesses />,
   },
   {
     path: urls.business_rule,

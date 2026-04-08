@@ -20,7 +20,6 @@ import AddCustomPlaceholderEmailModal from "./partials/ListDetailTab/partials/Cu
 import AddWorkModal from "pages/MiddleWork/partials/ListWork/partials/AddWorkModal/AddWorkModal";
 import AddCustomerSMSModal from "./partials/ListDetailTab/partials/CustomerSMSList/partials/AddCustomerSMSModal";
 import AddCustomPlaceholderSMSModal from "./partials/ListDetailTab/partials/CustomerSMSList/partials/CustomPlaceholder/AddCustomPlaceholderModal";
-import AddConsultationScheduleModal from "pages/CalendarCommon/partials/AddConsultationScheduleModal/AddConsultationScheduleModal";
 import AddPhoneModal from "pages/CallCenter/partials/AddPhoneModal";
 import ScoreHistoryModal from "./partials/ScoreHistoryModal";
 import EditScoreModal from "./partials/EditScoreModal";
@@ -419,14 +418,6 @@ export default function DetailPersonList() {
           onHide={() => setShowModalAdd(false)}
           customerId={detailPerson?.id}
           customerName={detailPerson?.name}
-        />
-      )}
-      {showTypeModal === "calendar" && (
-        <AddConsultationScheduleModal
-          onShow={showModalAdd}
-          onHide={() => setShowModalAdd(false)}
-          idCustomer={detailPerson?.id}
-          startDate={new Date()}
         />
       )}
       {showTypeModal === "sms" && (

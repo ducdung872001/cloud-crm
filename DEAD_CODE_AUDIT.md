@@ -4,11 +4,20 @@ Danh sach code thua khong lien quan den Retail, phan loai theo do an toan khi xo
 
 ---
 
-## TIER 1: XOA AN TOAN
+## TIER 1: DA XOA XONG
 
-> 13 service files BDS + 10 model directories + backup files: **DA XOA XONG**
-> `PurchaseRequest/`, `kpiGoal/`: da xac nhan dang duoc dung (Campaign pages) — khong phai dead code
-> `treatmentHistory.ts`: da xac nhan dang duoc dung (CustomerPerson, CustomerAndSupplier) — khong phai dead code
+- 13 service files BDS
+- 10 model directories (earnings, rentalType, diarySurgery, contractApproach, contractProduct, kpiApply, kpiDatasource, kpiObject, kpiTemplate, kpiTemplateGoal)
+- Backup files
+- Spa/Treatment: model (treatmentHistory, treatmentRoom, scheduleTreatment, scheduleConsultant, treatment), services (TreatmentHistoryService, TreatmentRoomService, ScheduleTreatmentService, ScheduleConsultantService, TreamentService), exports (treatmentHistory.ts)
+- BDS services: SpaceCustomerService, OperationProjectService, TenderPackageService, 5 Tier 3 services
+- BDS URLs: 16 endpoint blocks + prefixOperation + route URLs (configs/urls.ts + services/urls.ts)
+- BDS pages: CxmSurvey
+- BDS locales: pageSettingOperate section (vi.ts + en.ts)
+- Non-retail pages: ManageDefaultProcesses, Schedule (ScheduleNextList)
+- Non-retail models: PurchaseRequest (service file xoa, model xoa)
+- Consultation modals: AddConsultationScheduleModal, ModalAddCustomerArrived
+- Cleanup imports: CalendarCommon, CustomerPerson, CustomerAndSupplier, CallCenter, selectCommon.ts
 
 **Con lai — Component khong duoc import:**
 
@@ -18,7 +27,7 @@ Danh sach code thua khong lien quan den Retail, phan loai theo do an toan khi xo
 
 ---
 
-## TIER 2: XOA CO DIEU KIEN - Pages non-retail (can xoa route tuong ung trong routes.tsx)
+## TIER 2: CHUA XOA - Pages non-retail (can xoa route tuong ung trong routes.tsx)
 
 **Nhom BPM/Workflow (~12MB):**
 
@@ -34,9 +43,10 @@ Danh sach code thua khong lien quan den Retail, phan loai theo do an toan khi xo
 | 8 | `src/pages/UserTaskList/` | 1.4 MB | User Task List |
 | 9 | `src/pages/TaskProcessPage/` | 5 KB | Task Processing |
 | 10 | `src/pages/ProcessSimulation/` | 21 KB | Process Simulation |
-| 11 | `src/pages/ManageDefaultProcesses/` | 33 KB | Default Processes |
-| 12 | `src/pages/ManageDataSharing/` | 57 KB | Data Sharing |
-| 13 | `src/pages/SettingProcess/` | - | Process Settings |
+| 11 | `src/pages/ManageDataSharing/` | 57 KB | Data Sharing |
+| 12 | `src/pages/SettingProcess/` | - | Process Settings |
+
+> Luu y: `ManageDefaultProcesses` da xoa. Con lai ProjectRealtyService + PurchaseRequestService + TenderPackageService references trong BPM/UserTaskList — se clean khi xoa Tier 2.
 
 **Nhom Project Management (~380KB):**
 
@@ -52,12 +62,6 @@ Danh sach code thua khong lien quan den Retail, phan loai theo do an toan khi xo
 | 1 | `src/pages/Timekeeping/` | 4 KB |
 | 2 | `src/pages/SettingTimekeeping/` | 1 KB |
 
-**Nhom Treatment/Beauty (~59KB):**
-
-| # | Page Directory | Size |
-|---|---------------|------|
-| 1 | `src/pages/TreatmentSchedule/` | 59 KB |
-
 **Nhom khac:**
 
 | # | Page Directory | Size | Mo ta |
@@ -67,10 +71,7 @@ Danh sach code thua khong lien quan den Retail, phan loai theo do an toan khi xo
 
 ---
 
-## TIER 3: CAN XEM XET - Co su dung nhung khong phai retail core
-
-**Services non-retail:** DA XOA (5 service files). `ProjectRealtyService` con duoc goi trong BPM/UserTaskList (Tier 2) — se clean khi xoa Tier 2.
-**CxmSurvey pages:** DA XOA (`src/pages/CxmSurvey/` + route).
+## TIER 3: CAN XEM XET
 
 **Model directories co it reference (1-2 pages):**
 
@@ -78,7 +79,6 @@ Danh sach code thua khong lien quan den Retail, phan loai theo do an toan khi xo
 |-------|-----------|---------|
 | `src/model/kpiSetup/` | 1 page | KPI setup |
 | `src/model/kpi/` | 2 pages | KPI |
-| `src/model/scheduleConsultant/` | 1 page | Consultant |
 | `src/model/estimate/` | 4 pages | Estimate/Quote |
 
 **Hook:**
@@ -93,9 +93,9 @@ Danh sach code thua khong lien quan den Retail, phan loai theo do an toan khi xo
 
 | Nhom | Trang thai | Con lai |
 |------|-----------|---------|
-| **TIER 1** (xoa an toan) | DA XOA gan het (13 services + 10 models) | 1 component (OmniCXMChat) |
-| **TIER 2** (xoa pages non-retail) | CHUA XOA | ~19 page directories (~12 MB) |
-| **TIER 3** (xem xet) | CHUA XOA | ~5 services + ~7 model dirs + 1 hook (~200 KB) |
+| **TIER 1** (xoa an toan) | **DA XOA HET** | 1 component (OmniCXMChat) |
+| **TIER 2** (xoa pages non-retail) | CHUA XOA | ~16 page directories (~12 MB) |
+| **TIER 3** (xem xet) | CHUA XOA | ~3 model dirs + 1 hook |
 
 ---
 

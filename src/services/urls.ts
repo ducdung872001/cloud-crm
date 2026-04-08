@@ -344,45 +344,6 @@ export const urlsApi = {
     update: prefixAdmin + "/employeeAgent/update",
     delete: prefixAdmin + "/employeeAgent/delete",
   },
-  treatment: {
-    // đoạn api này cần xem lại chút
-    filterSchedule: prefixAdmin + "/treatmentTime/list_schedule_next",
-    filterByScheduler: prefixAdmin + "/treatmentTime/get_byscheduler",
-    updateNext: prefixAdmin + "/treatmentTime/update_next",
-    delete: prefixAdmin + "/treatmentTime/delete",
-    updateCaringEmployee: prefixAdmin + "/treatmentTime/update_caring_employee",
-    update: prefixAdmin + "/treatmentTime/update",
-  },
-  // lịch sử điều trị
-  treatmentHistory: {
-    list: prefixAdmin + "/treatmentHistory/list_all",
-    update: prefixAdmin + "/treatmentHistory/update",
-    detail: prefixAdmin + "/treatmentHistory/get",
-    delete: prefixAdmin + "/treatmentHistory/delete",
-    listByCustomer: prefixAdmin + "/treatmentHistory/list_by_customer",
-  },
-  // nhật ký điều trị
-  diarySurgery: {
-    list: prefixAdmin + "/diarySurgery/listAll",
-    update: prefixAdmin + "/diarySurgery/update",
-    detail: prefixAdmin + "/diarySurgery/get",
-    delete: prefixAdmin + "/diarySurgery/delete",
-  },
-  // lịch trình tư vấn
-  scheduleConsultant: {
-    list: prefixAdmin + "/scheduleConsultant/list",
-    update: prefixAdmin + "/scheduleConsultant/update",
-    detail: prefixAdmin + "/scheduleConsultant/get",
-    delete: prefixAdmin + "/scheduleConsultant/delete",
-  },
-  // lịch điều trị
-  scheduleTreatment: {
-    list: prefixAdmin + "/scheduleTreatment/list",
-    update: prefixAdmin + "/scheduleTreatment/update",
-    detail: prefixAdmin + "/scheduleTreatment/get",
-    delete: prefixAdmin + "/scheduleTreatment/delete",
-  },
-  // lịch chung (điều trị, tư vấn, công việc)
   scheduleCommon: {
     list: prefixAdmin + "/schedule/list",
     listRelatedToCustomer: prefixAdmin + "/schedule/list/by_customer",
@@ -2127,10 +2088,6 @@ export const urls = {
   public_connect_zalo: "/public_connect_zalo",
   // đường dẫn quản trị tài nguyên
   resource_management: "/resource_management",
-  // đường dẫn lịch sử điều trị
-  treatment_history: "/treatment_history",
-  // đường dẫn nhật ký điều trị
-  diary_surgery: "/diary_surgery",
   // lịch
   calendar_common: "/calendar_common",
   // quy trình bán hàng
