@@ -35,6 +35,7 @@ import LinkSurvey from "pages/LinkSurvey";
 import { PublicClientApplication } from "@azure/msal-browser";
 import { MsalProvider } from "@azure/msal-react";
 import { msalConfig } from "./configs/authConfig";
+import ErrorBoundary from "components/ErrorBoundary/ErrorBoundary";
 import UploadDocument from "pages/BPM/UploadDocument/UploadDocument";
 import CollectTicket from "pages/Ticket/partials/CollectTicket";
 import CollectWarranty from "pages/Warranty/partials/CollectWarranty";
@@ -56,7 +57,7 @@ export default function App() {
   const navigate = useNavigate();
   const location = useLocation();
   const returnUrl = new URLSearchParams(location.search).get("returnUrl");
-  const [cookies, setCookie, removeCookie] = useCookies();
+  const [cookies] = useCookies();
   const [isLogin, setIsLogin] = useState<boolean>(false);
   const [user, setUser] = useState<IUser>(null);
   const [isRunRefresh, setIsRunRefresh] = useState<boolean>(false);
@@ -121,9 +122,6 @@ export default function App() {
             setIsLogin(true);
             if (cookies.user?.expired_cookie && isRunRefresh === false) {
               setIsRunRefresh(true);
-              const dateExpired = moment(cookies.user.expired_cookie);
-              let timeOut = dateExpired.valueOf() - moment().valueOf();
-              timeOut = timeOut > 0 ? timeOut : 0;
             }
 
             if (location.pathname === "/" || location.pathname === "/login") {
@@ -148,6 +146,7 @@ export default function App() {
     if (location.pathname !== "/send_email_confirm" && location.pathname !== "/voucher_confirm") {
       checkEmployeeStatus();
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [cookies.user, location]);
 
   const [dataExpired, setDataExpired] = useState({
@@ -237,6 +236,7 @@ export default function App() {
     if (valueLanguage.shortName) {
       i18n.changeLanguage(valueLanguage.shortName);
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [valueLanguage]);
 
   const getCountUnread = async () => {
@@ -257,6 +257,7 @@ export default function App() {
       getCountUnread();
       setNewNotificationPayload(payload);
     });
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // Khởi tạo tổng đài
@@ -285,7 +286,7 @@ export default function App() {
       try {
         await audioRef.current?.play();
         audioRef.current?.pause();
-        audioRef.current!.currentTime = 0;
+        if (audioRef.current) audioRef.current.currentTime = 0;
         unlockedRef.current = true;
       } catch (err) {
         // vẫn bị chặn
@@ -386,6 +387,7 @@ export default function App() {
   };
 
   return (
+    <ErrorBoundary>
     <AuthContext.Provider value={authValue}>
     <UIContext.Provider value={uiValue}>
     <CallContext.Provider value={callValue}>
@@ -437,5 +439,6 @@ export default function App() {
     </CallContext.Provider>
     </UIContext.Provider>
     </AuthContext.Provider>
+    </ErrorBoundary>
   );
 }

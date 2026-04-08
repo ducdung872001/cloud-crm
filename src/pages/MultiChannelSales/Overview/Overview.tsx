@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef, useCallback } from "react";
 import { formatDate } from "utils/dateUtils";
 
 import Loading from "components/loading";
+import { showToast } from "utils/common";
 import "./Overview.scss";
 import ModalAddChannel from "./ModalAddChannel/ModalAddChannel";
 import OrderRequestService from "services/OrderRequestService";
@@ -52,7 +53,7 @@ export default function Overview() {
   const [isExporting, setIsExporting] = useState(false);
   const [statCards, setStatCards]   = useState<IStatCards | null>(null);
   const [channels,  setChannels]    = useState<IChannelRow[] | null>(null);
-  const [statError, setStatError]   = useState(false);
+  const [, setStatError]   = useState(false);
   const [chError,   setChError]     = useState(false);
 
   const abortStat = useRef<AbortController | null>(null);
@@ -81,6 +82,7 @@ export default function Overview() {
           setStatError(true);
         }
       });
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // ── Fetch channel breakdown ─────────────────────────────────────────────────
@@ -109,6 +111,7 @@ export default function Overview() {
           setChError(true);
         }
       });
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
@@ -118,6 +121,7 @@ export default function Overview() {
       abortStat.current?.abort();
       abortCh.current?.abort();
     };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // ── Derived KPI ─────────────────────────────────────────────────────────────
@@ -190,7 +194,7 @@ export default function Overview() {
       a.download = `don_hang_da_kenh_${new Date().toISOString().slice(0, 10)}.xlsx`;
       document.body.appendChild(a); a.click(); a.remove(); URL.revokeObjectURL(url);
     } catch (e: unknown) {
-      alert(e?.message ?? "Xuất Excel thất bại. Vui lòng thử lại.");
+      showToast(e?.message ?? "Xuất Excel thất bại. Vui lòng thử lại.", "error");
     } finally {
       setIsExporting(false);
     }
@@ -202,7 +206,6 @@ export default function Overview() {
     const chs = channels  ?? [];
     const esc = (s: string) =>
       String(s ?? "").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
-    const fmtNum = (n: number) => (n ?? 0).toLocaleString("vi-VN");
     const fmtPct = (n: number) => (n > 0 ? "+" : "") + (n ?? 0).toFixed(1) + "%";
     const trendLabel = (t: string) => t === "UP" ? "↑ Tăng" : t === "DOWN" ? "↓ Giảm" : "→ Ổn định";
 

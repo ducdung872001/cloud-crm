@@ -7,6 +7,7 @@ import CreateReturnModal from "./modals/CreateReturnModal";
 import ReturnDetailModal from "./modals/ReturnDetailModal";
 import ReturnTopbar from "./components/ReturnTopbar";
 import ReturnInvoiceService from "@/services/ReturnInvoiceService";
+import { showToast } from "utils/common";
 
 const PAGE_SIZE = 20;
 
@@ -39,8 +40,8 @@ const ReturnProductPage: React.FC = () => {
   const [filterType,   setFilterType]   = useState("");
   const [filterStatus, setFilterStatus] = useState("");
   const [search,       setSearch]       = useState("");
-  const [fromDate,     setFromDate]     = useState("");
-  const [toDate,       setToDate]       = useState("");
+  const [fromDate]     = useState("");
+  const [toDate]       = useState("");
 
   // ── Modal state ─────────────────────────────────────────────────────────────
   const [isExporting,   setIsExporting]   = useState(false);
@@ -196,7 +197,7 @@ const ReturnProductPage: React.FC = () => {
       a.download = `doi_tra_hang_${new Date().toISOString().slice(0, 10)}.xlsx`;
       document.body.appendChild(a); a.click(); a.remove(); URL.revokeObjectURL(url);
     } catch (e: unknown) {
-      alert(e?.message ?? "Xuất Excel thất bại. Vui lòng thử lại.");
+      showToast(e?.message ?? "Xuất Excel thất bại. Vui lòng thử lại.", "error");
     } finally {
       setIsExporting(false);
     }

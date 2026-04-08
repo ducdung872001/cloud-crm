@@ -1,9 +1,10 @@
 import isUrl from "is-url";
-import { ImageElement, LinkElement, VideoElement } from "../../custom-types";
+import { ImageElement, VideoElement } from "../../custom-types";
 import { Transforms } from "slate";
 import imageApi from "services/ImageService";
 import { uploadVideoFromFiles } from "utils/videoBlob";
 import { getMeta } from "reborn-util";
+import { showToast } from "utils/common";
 
 const withMedias = (editor) => {
   const { insertData, isVoid } = editor;
@@ -32,8 +33,7 @@ const withMedias = (editor) => {
               (imageLink) => {
                 insertImage(editor, imageLink);
               },
-              (percent) => {
-              }
+              () => { /* progress */ }
             );
           });
 
@@ -46,7 +46,8 @@ const withMedias = (editor) => {
             (videoLink) => {
               insertVideo(editor, videoLink, thumbnail);
             },
-            (percent) => {
+            () => {
+              // progress callback placeholder
             },
             (imageLink) => {
               thumbnail = imageLink;
@@ -84,12 +85,13 @@ const uploadImageFromDirect = (data, callback, showStatus) => {
         showStatus(percent);
       }
     },
-    onError: (error) => {
-      alert("Có lỗi xảy ra trong quá trình upload ảnh");
+    onError: () => {
+      showToast("Có lỗi xảy ra trong quá trình upload ảnh");
     },
   });
 };
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const insertVideo = (editor, url, thumbnail) => {
   const text = { text: "" };
   const video: VideoElement = { type: "video", url, children: [text] };
@@ -127,7 +129,7 @@ const insertImage = (editor, url) => {
  * @param point
  */
 const updateImage = (editor, url, newUrl, link, width, height, desc, align, point) => {
-  let imgObj = {
+  const imgObj = {
     type: "image",
     url: newUrl,
     alt: `${desc}`,

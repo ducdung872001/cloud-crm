@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import HeaderTabMenu from "@/components/HeaderTabMenu/HeaderTabMenu";
-import { ITitleActions } from "components/titleAction/titleAction";
+import { showToast } from "utils/common";
 import "./index.scss";
 
 const MOCK_REVIEWS = [
@@ -162,7 +162,7 @@ export default function CustomerReview(props: { onBackProps?: (v: boolean) => vo
                         <span className="cr-review-item__product">📦 {r.product}</span>
                         <div className="cr-review-item__actions">
                           {r.status === "pending" && (
-                            <button className="cr-btn cr-btn--approve" onClick={() => alert(`Đã duyệt đánh giá #${r.id} (demo)`)}>Duyệt đăng</button>
+                            <button className="cr-btn cr-btn--approve" onClick={() => showToast(`Đã duyệt đánh giá #${r.id}`, "success")}>Duyệt đăng</button>
                           )}
                           <button className="cr-btn cr-btn--reply" onClick={() => { setReplyingId(replyingId === r.id ? null : r.id); setReplyText(""); }}>
                             {replyingId === r.id ? "Hủy" : "Phản hồi"}
@@ -172,7 +172,7 @@ export default function CustomerReview(props: { onBackProps?: (v: boolean) => vo
                       {replyingId === r.id && (
                         <div className="cr-reply-box">
                           <textarea rows={2} placeholder="Nhập phản hồi..." value={replyText} onChange={e => setReplyText(e.target.value)} />
-                          <button className="cr-btn cr-btn--send" onClick={() => { alert(`Đã gửi phản hồi (demo)`); setReplyingId(null); setReplyText(""); }}>Gửi</button>
+                          <button className="cr-btn cr-btn--send" onClick={() => { showToast("Đã gửi phản hồi", "success"); setReplyingId(null); setReplyText(""); }}>Gửi</button>
                         </div>
                       )}
                     </div>

@@ -7,7 +7,6 @@ import { DataPaginationDefault, PaginationProps } from "@/components/pagination/
 import Badge from "@/components/badge/badge";
 import { BulkActionItemModel } from "@/components/bulkAction/bulkAction";
 import { IAction } from "@/model/OtherModel";
-import Icon from "@/components/icon";
 import ModalDetailOrder from "./ModaDetailOrder/ModalDetailOrder";
 import OrderRequestService from "@/services/OrderRequestService";
 import { formatDateTime } from "utils/dateUtils";
@@ -55,12 +54,13 @@ export default function MultiChannelOrders() {
       
       getDetailOrderRequest(orderIdFromNotification);
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [orderIdFromNotification]);
 
   const isMounted = useRef(false);
-  const [isNoItem, setIsNoItem] = useState<boolean>(false);
-  const [isPermissions, setIsPermissions] = useState<boolean>(false);
-  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [, setIsNoItem] = useState<boolean>(false);
+  const [, setIsPermissions] = useState<boolean>(false);
+  const [, setIsLoading] = useState<boolean>(false);
   const [isExporting, setIsExporting] = useState<boolean>(false);
 
   const [listOrder, setListOrder] = useState([]);
@@ -73,6 +73,7 @@ export default function MultiChannelOrders() {
   useEffect(() => {
     const paramsTemp = cloneDeep(params);
     setParams((prevParams) => ({ ...prevParams, ...paramsTemp }));
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   //   const fetchData = async () => {
@@ -107,7 +108,7 @@ export default function MultiChannelOrders() {
       document.body.appendChild(a); a.click(); a.remove(); URL.revokeObjectURL(url);
     } catch (e: unknown) {
       console.error("Export failed", e);
-      alert(e?.message ?? "Xuất Excel thất bại. Vui lòng thử lại.");
+      showToast(e?.message ?? "Xuất Excel thất bại. Vui lòng thử lại.", "error");
     } finally {
       setIsExporting(false);
     }
@@ -159,6 +160,7 @@ export default function MultiChannelOrders() {
     return () => {
       abortController.abort();
     };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [params]);
 
   const [listIdChecked, setListIdChecked] = useState<number[]>([]);
@@ -177,9 +179,10 @@ export default function MultiChannelOrders() {
   const titles = ["Mã đơn", "Kênh", "Khách hàng", "Sản phẩm", "Giá trị", "Trạng thái", "Thời gian", ""];
   const dataFormat = ["", "", "t", "", "", "text-center", ""];
 
-  const dataMappingArray = (item: Record<string, unknown>, index: number) => [
+  const dataMappingArray = (item: Record<string, unknown>) => [
     // index + 1,
     <div
+      key={`code-${item.id}`}
       style={{ width: "5rem", cursor: "pointer" }}
       onClick={() => {
         setModalDetail(true);
@@ -189,13 +192,13 @@ export default function MultiChannelOrders() {
       {`#OD${item.id}`}
     </div>,
     item.src,
-    <div style={{ width: "15rem" }}>
+    <div key={`cust-${item.id}`} style={{ width: "15rem" }}>
       <span style={{ fontSize: 14, fontWeight: "600" }}>{JSON.parse(item.customerInfo).user.name}</span>
       <div>
         <span style={{ fontSize: 12, fontWeight: "400" }}>{JSON.parse(item.customerInfo).user.phone}</span>
       </div>
     </div>,
-    <div style={{ width: "15rem" }}>
+    <div key={`prod-${item.id}`} style={{ width: "15rem" }}>
       <a
         style={{ fontSize: 14, fontWeight: "600" }}
         onClick={() => {
@@ -267,8 +270,8 @@ export default function MultiChannelOrders() {
           : "error"
       }
     />,
-    <div style={{ width: "10rem" }}>{formatDateTime(item.orderDate)}</div>,
-    <div style={{ width: "10rem" }}>
+    <div key={`time-${item.id}`} style={{ width: "10rem" }}>{formatDateTime(item.orderDate)}</div>,
+    <div key={`act-${item.id}`} style={{ width: "10rem" }}>
       {item.status === "PENDING" ? (
         <div
           style={{
@@ -355,10 +358,11 @@ export default function MultiChannelOrders() {
   const bulkActionList: BulkActionItemModel[] = [
     {
       title: "Xóa hoá đơn",
-      callback: () => {},
+      callback: () => { /* TODO: implement delete */ },
     },
   ];
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const actionsTable = (item: Record<string, unknown>): IAction[] => {
     return [
       //   {
@@ -433,7 +437,7 @@ export default function MultiChannelOrders() {
       </div>
 
       <div className="list-tab-status">
-        {listTabStatus.map((item, index) => (
+        {listTabStatus.map((item) => (
           <div key={item.id} className="item-tab-status" style={item.id === 1 ? { backgroundColor: "var(--primary-bg-color)" } : {}}>
             <span style={{ fontSize: 14, fontWeight: "600", color: item.id === 1 ? "white" : "" }}>{item.lable}</span>
             <div className="item-number" style={{ backgroundColor: item.color }}>

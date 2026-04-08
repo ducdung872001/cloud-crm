@@ -8,9 +8,9 @@
   "extends": ["plugin:react/recommended", "plugin:@typescript-eslint/recommended", "prettier"],
   "rules": {
     "react-hooks/rules-of-hooks": "error",
-    "react-hooks/exhaustive-deps": "off",
+    "react-hooks/exhaustive-deps": "warn",
     "react/prop-types": "off",
-    "@typescript-eslint/no-explicit-any": "off"
+    "@typescript-eslint/no-explicit-any": "warn"
   },
   "settings": {
     "react": {

@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import HeaderTabMenu from "@/components/HeaderTabMenu/HeaderTabMenu";
 import { ITitleActions } from "components/titleAction/titleAction";
 import Badge from "components/badge/badge";
+import { showToast } from "utils/common";
 import "./CampaignManagementPage.scss";
 
 interface Campaign {
@@ -118,7 +119,7 @@ export default function CampaignManagementPage({ onBackProps }: { onBackProps: (
           {step === "audience" && (
             <div className="cm-form-section">
               <h3>Chọn đối tượng mục tiêu</h3>
-              <p className="cm-form-hint">Chọn từ danh sách đối tượng đã tạo trong mục "Đối tượng chiến dịch"</p>
+              <p className="cm-form-hint">Chọn từ danh sách đối tượng đã tạo trong mục &ldquo;Đối tượng chiến dịch&rdquo;</p>
               <div className="cm-segment-grid">
                 {[
                   { id: "vip",       name: "Khách hàng VIP",         count: 875  },
@@ -233,7 +234,7 @@ export default function CampaignManagementPage({ onBackProps }: { onBackProps: (
           <div style={{ flex: 1 }} />
           {stepIdx < STEPS.length - 1
             ? <button className="cm-btn cm-btn--primary" onClick={() => setStep(STEPS[stepIdx + 1].key)}>Tiếp theo →</button>
-            : <button className="cm-btn cm-btn--success" onClick={() => { alert("Chiến dịch đã tạo (demo)"); setView("list"); setStep("info"); }}>🚀 Tạo chiến dịch</button>
+            : <button className="cm-btn cm-btn--success" onClick={() => { showToast("Chiến dịch đã tạo", "success"); setView("list"); setStep("info"); }}>🚀 Tạo chiến dịch</button>
           }
         </div>
       </div>
