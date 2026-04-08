@@ -69,6 +69,7 @@ export interface IDebtPayRequest {
   amount:     number;
   fundId:     number;
   note?:      string;
+  requestId?: string;
 }
 
 export interface IFundListItem {
