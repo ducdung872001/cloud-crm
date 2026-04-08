@@ -137,7 +137,7 @@ const SettingDashboard = React.lazy(() => import("pages/SettingDashboard/Setting
 const DetailProject = React.lazy(() => import("pages/ProjectList/DetailProject/DetailProject"));
 const SettingPromotionList = React.lazy(() => import("pages/SettingPromotion/SettingPromotionList"));
 const DetailPartner = React.lazy(() => import("pages/PartnerList/DetailPartner/DetailPartner"));
-const CxmSurveyList = React.lazy(() => import("pages/CxmSurvey/CxmSurveyList/CxmSurveyList"));
+// CxmSurveyList removed (non-retail)
 const ProcessSimulation = React.lazy(() => import("pages/ProcessSimulation/ProcessSimulation"));
 const BusinessProcessCreate = React.lazy(() => import("pages/BPM/BusinessProcessCreate"));
 const CampaignListParent = React.lazy(() => import("pages/Campaign/CampaignListParent"));
@@ -969,10 +969,6 @@ export const routes: IRouter[] = [
   {
     path: urls.finance_management_shift_inventory,
     component: <FinanceShiftInventory />,
-  },
-  {
-    path: urls.cxmSurvey, // Thông tin khảo sát
-    component: <CxmSurveyList />,
   },
   {
     path: urls.fanpage,

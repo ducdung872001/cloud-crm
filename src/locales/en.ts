@@ -625,21 +625,6 @@ const en = {
     managementStore: "Store management",
   },
 
-  pageSettingOperate: {
-    title: "Operations settings",
-    electricityRate: "Electricity rate",
-    electricityIndex: "Electricity index",
-    electrictiyMeter: "Electricity meters",
-    waterRate: "Water rate",
-    waterMeter: "Water meters",
-    waterIndex: "Water index",
-    building: "Building/Floor/Apartment",
-    project: "Projects",
-    managementFeeRate: "Management fee rate",
-    managementFee: "Monthly management fee",
-    pakingFee: "Parking fee",
-    spaceType: "Space type",
-  },
 
   pageSettingPersonal: {
     title: "Personal settings",

@@ -178,98 +178,6 @@ export const urlsApi = {
     delete: prefixAdmin + "/workProject/delete",
   },
 
-  // Khu vực quản lý vận hành ---
-  space: {
-    list: prefixAdmin + "/space/list",
-    update: prefixAdmin + "/space/update",
-    detail: prefixAdmin + "/space/get",
-    delete: prefixAdmin + "/space/delete",
-  },
-  spaceType: {
-    list: prefixAdmin + "/spaceType/list",
-    update: prefixAdmin + "/spaceType/update",
-    detail: prefixAdmin + "/spaceType/get",
-    delete: prefixAdmin + "/spaceType/delete",
-  },
-  spaceCustomer: {
-    list: prefixAdmin + "/spaceCustomer/list",
-    update: prefixAdmin + "/spaceCustomer/update",
-    detail: prefixAdmin + "/spaceCustomer/get",
-    delete: prefixAdmin + "/spaceCustomer/delete",
-  },
-  ortherFee: {
-    list: prefixAdmin + "/otherFee/list",
-    update: prefixAdmin + "/otherFee/update",
-    detail: prefixAdmin + "/otherFee/get",
-    delete: prefixAdmin + "/otherFee/delete",
-  },
-  utilityReading: {
-    list: prefixAdmin + "/utilityReading/list",
-    update: prefixAdmin + "/utilityReading/update",
-    detail: prefixAdmin + "/utilityReading/get",
-    delete: prefixAdmin + "/utilityReading/delete",
-  },
-  managementFee: {
-    list: prefixAdmin + "/managementFee/list",
-    update: prefixAdmin + "/managementFee/update",
-    detail: prefixAdmin + "/managementFee/get",
-    delete: prefixAdmin + "/managementFee/delete",
-  },
-  vehicleRegistration: {
-    list: prefixAdmin + "/vehicleRegistration/list",
-    update: prefixAdmin + "/vehicleRegistration/update",
-    detail: prefixAdmin + "/vehicleRegistration/get",
-    delete: prefixAdmin + "/vehicleRegistration/delete",
-  },
-  vehicle: {
-    list: prefixAdmin + "/vehicle/list",
-    update: prefixAdmin + "/vehicle/update",
-    detail: prefixAdmin + "/vehicle/get",
-    delete: prefixAdmin + "/vehicle/delete",
-  },
-  building: {
-    list: prefixAdmin + "/building/list",
-    update: prefixAdmin + "/building/update",
-    detail: prefixAdmin + "/building/get",
-    delete: prefixAdmin + "/building/delete",
-  },
-  buildingFloor: {
-    list: prefixAdmin + "/buildingFloor/list",
-    update: prefixAdmin + "/buildingFloor/update",
-    detail: prefixAdmin + "/buildingFloor/get",
-    delete: prefixAdmin + "/buildingFloor/delete",
-  },
-  operationProject: {
-    list: prefixAdmin + "/project/list",
-    update: prefixAdmin + "/project/update",
-    detail: prefixAdmin + "/project/get",
-    delete: prefixAdmin + "/project/delete",
-  },
-  electricityRate: {
-    list: prefixAdmin + "/electricityRate/list",
-    update: prefixAdmin + "/electricityRate/update",
-    detail: prefixAdmin + "/electricityRate/get",
-    delete: prefixAdmin + "/electricityRate/delete",
-  },
-  waterRate: {
-    list: prefixAdmin + "/waterRate/list",
-    update: prefixAdmin + "/waterRate/update",
-    detail: prefixAdmin + "/waterRate/get",
-    delete: prefixAdmin + "/waterRate/delete",
-  },
-  managementFeeRate: {
-    list: prefixAdmin + "/managementFeeRate/list",
-    update: prefixAdmin + "/managementFeeRate/update",
-    detail: prefixAdmin + "/managementFeeRate/get",
-    delete: prefixAdmin + "/managementFeeRate/delete",
-  },
-  parkingFee: {
-    list: prefixAdmin + "/parkingFee/list",
-    update: prefixAdmin + "/parkingFee/update",
-    detail: prefixAdmin + "/parkingFee/get",
-    delete: prefixAdmin + "/parkingFee/delete",
-  },
-  //--- Khu vực quản lý vận hành
 
   historySend: {
     historySendSMS: prefixAdmin + "/customerSms/list",
@@ -2294,15 +2202,6 @@ export const urls = {
   outbound_invoice: "/outbound_invoice",
   inventory_transfer_document: "/inventory_transfer_document",
 
-  // Cài đặt vận hành
-  ortherFee: "/orther_fee",
-  utilityReading: "/utility_reading",
-  spaceCustomer: "/space_customer",
-  managementFee: "/management_fee",
-  vehicleRegistration: "/vehicle_registration",
-  vehicle: "/vehicle",
-  building: "/building",
-  buildingFloor: "/building_floor",
 };
 
 export default urls;

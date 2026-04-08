@@ -69,15 +69,8 @@ Danh sach code thua khong lien quan den Retail, phan loai theo do an toan khi xo
 
 ## TIER 3: CAN XEM XET - Co su dung nhung khong phai retail core
 
-**Services dung boi non-retail pages:**
-
-| Service | Dung boi | Ghi chu |
-|---------|----------|---------|
-| `ProjectRealtyService.ts` | BPM dynamic lookups | Xoa cung BPM |
-| `BuildingService.ts` | CxmSurvey | Chi 1 page dung |
-| `SpaceService.ts` | CxmSurvey | Chi 1 page dung |
-| `BuildingFloorService.ts` | 1 import | Gan nhu unused |
-| `SpaceTypeService.ts` | 2 imports | Gan nhu unused |
+**Services non-retail:** DA XOA (5 service files). `ProjectRealtyService` con duoc goi trong BPM/UserTaskList (Tier 2) — se clean khi xoa Tier 2.
+**CxmSurvey pages:** DA XOA (`src/pages/CxmSurvey/` + route).
 
 **Model directories co it reference (1-2 pages):**
 
@@ -85,10 +78,7 @@ Danh sach code thua khong lien quan den Retail, phan loai theo do an toan khi xo
 |-------|-----------|---------|
 | `src/model/kpiSetup/` | 1 page | KPI setup |
 | `src/model/kpi/` | 2 pages | KPI |
-| `src/model/scheduleTreatment/` | 1 page | Treatment |
 | `src/model/scheduleConsultant/` | 1 page | Consultant |
-| `src/model/treatmentHistory/` | 2 pages | Treatment |
-| `src/model/treatmentRoom/` | 3 pages | Treatment |
 | `src/model/estimate/` | 4 pages | Estimate/Quote |
 
 **Hook:**

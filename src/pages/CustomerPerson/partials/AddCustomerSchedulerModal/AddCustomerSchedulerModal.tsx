@@ -4,7 +4,6 @@ import { IActionModal } from "model/OtherModel";
 import { IFieldCustomize, IFormData, IValidation } from "model/FormModel";
 import { AddSchedulerModalProps } from "model/customer/PropsModel";
 import { IEmployeeFilterRequest } from "model/employee/EmployeeRequestModel";
-import { ITreatmentHistoryRequestModel } from "model/treatmentHistory/TreatmentHistoryRequestModel";
 import Icon from "components/icon";
 import NummericInput from "components/input/numericInput";
 import CustomScrollbar from "components/customScrollbar";
@@ -20,7 +19,6 @@ import { showToast } from "utils/common";
 import ImageThirdGender from "assets/images/third-gender.png";
 import CustomerService from "services/CustomerService";
 import EmployeeService from "services/EmployeeService";
-import TreatmentHistoryService from "services/TreatmentHistoryService";
 import BoughtServiceService from "services/BoughtServiceService";
 import "./AddCustomerSchedulerModal.scss";
 
@@ -70,7 +68,7 @@ export default function AddCustomerSchedulerModal(props: AddSchedulerModalProps)
         treatmentTh: detailCustomer?.treatmentTh + detailCustomer?.treatmentNum ?? 0,
         serviceNumber: detailCustomer?.serviceNumber ?? null,
         cardNumber: detailCustomer?.cardNumber ?? null,
-      } as ITreatmentHistoryRequestModel),
+      }),
     [detailCustomer, onShow, detailCustomer?.phoneMasked]
   );
 

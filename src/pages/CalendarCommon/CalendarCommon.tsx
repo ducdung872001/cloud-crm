@@ -15,7 +15,6 @@ import EmployeeService from "services/EmployeeService";
 import ScheduleCommonService from "services/ScheduleCommonService";
 import FilterCalendarModal from "./partials/FilterCalendarModal/FilterCalendarModal";
 import AddWorkModal from "pages/MiddleWork/partials/ListWork/partials/AddWorkModal/AddWorkModal";
-import AddTreatmentScheduleModal from "./partials/AddTreatmentScheduleModal/AddTreatmentScheduleModal";
 import AddConsultationScheduleModal from "./partials/AddConsultationScheduleModal/AddConsultationScheduleModal";
 import "tippy.js/animations/scale.css";
 import "react-big-calendar/lib/css/react-big-calendar.css";
@@ -255,7 +254,6 @@ export default function CalendarCommon() {
   const [startDate, setStartDate] = useState<string>("");
   const [endDate, setEndDate] = useState<string>("");
   const [idItemCalendar, setIdItemCalendar] = useState<number>(null);
-  const [showModalAddTreatmentSchedule, setShowModalAddTreatmentSchedule] = useState<boolean>(false);
   const [showModalAddWork, setShowModalAddWork] = useState<boolean>(false);
   const [idEmployee, setIdEmployee] = useState<number>(null);
 
@@ -376,8 +374,6 @@ export default function CalendarCommon() {
 
         if (valueOptionAdd.value == "2") {
           setShowModalAddConsultationScheduleModal(true);
-        } else if (valueOptionAdd.value == "3") {
-          setShowModalAddTreatmentSchedule(true);
         } else {
           setShowModalAddWork(true);
         }
@@ -397,8 +393,6 @@ export default function CalendarCommon() {
         setEndDate(event.end);
       } else if (event.type == 2) {
         setShowModalAddConsultationScheduleModal(true);
-      } else {
-        setShowModalAddTreatmentSchedule(true);
       }
     }
   }, []);
@@ -459,18 +453,6 @@ export default function CalendarCommon() {
             getListSchedule(params);
           }
           setShowModalAddWork(false);
-        }}
-      />
-      <AddTreatmentScheduleModal
-        onShow={showModalAddTreatmentSchedule}
-        idData={idItemCalendar}
-        startDate={startDate}
-        endDate={endDate}
-        onHide={(reload) => {
-          if (reload) {
-            getListSchedule(params);
-          }
-          setShowModalAddTreatmentSchedule(false);
         }}
       />
       <AddConsultationScheduleModal

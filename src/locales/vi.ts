@@ -626,21 +626,6 @@ const vi = {
     managementStore: "Quản lý cửa hàng",
   },
 
-  pageSettingOperate: {
-    title: "Cài đặt vận hành",
-    electricityRate: "Đơn giá điện",
-    electricityIndex: "Chỉ số điện",
-    electrictiyMeter: "Danh mục công tơ điện",
-    waterRate: "Đơn giá nước",
-    waterMeter: "Danh mục công tơ nước",
-    waterIndex: "Chỉ số nước",
-    building: "Tòa nhà/Tầng/Căn hộ",
-    project: "Danh sách dự án",
-    managementFeeRate: "Biểu giá phí quản lý",
-    managementFee: "Biểu phí kết xuất hàng tháng",
-    pakingFee: "Biểu phí đỗ xe",
-    spaceType: "Loại căn hộ",
-  },
 
   pageSettingPersonal: {
     title: "Cài đặt cá nhân",

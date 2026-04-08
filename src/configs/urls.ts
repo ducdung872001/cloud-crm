@@ -12,7 +12,6 @@ const prefixCs = "/cs";
 const prefixApplication = "/application";
 const prefixHr = "/hr";
 const prefixRebornVn = (process.env.APP_AUTHENTICATOR_URL || "https://reborn.vn") + "/api";
-const prefixOperation = (process.env.APP_AUTHENTICATOR_URL || "https://reborn.vn") + "/operation";
 const prefixCloudMarket = (process.env.APP_API_URL || "https://cloud.reborn.vn") + "/market";
 const prefixConnect = process.env.APP_CONNECT_URL || "https://connect.reborn.vn";
 const prefixUpload = process.env.APP_UPLOAD_URL || "https://login.noron.vn";
@@ -296,104 +295,6 @@ export const urlsApi = {
     report: prefixAdmin + "/cashbook/report",
   },
 
-  // Khu vực quản lý vận hành ---
-  space: {
-    list: prefixOperation + "/space/list",
-    update: prefixOperation + "/space/update",
-    detail: prefixOperation + "/space/get",
-    delete: prefixOperation + "/space/delete",
-  },
-  spaceType: {
-    list: prefixOperation + "/spaceType/list",
-    update: prefixOperation + "/spaceType/update",
-    detail: prefixOperation + "/spaceType/get",
-    delete: prefixOperation + "/spaceType/delete",
-  },
-  spaceCustomer: {
-    list: prefixOperation + "/spaceCustomer/list",
-    update: prefixOperation + "/spaceCustomer/update",
-    detail: prefixOperation + "/spaceCustomer/get",
-    delete: prefixOperation + "/spaceCustomer/delete",
-  },
-  ortherFee: {
-    list: prefixOperation + "/otherFee/list",
-    update: prefixOperation + "/otherFee/update",
-    detail: prefixOperation + "/otherFee/get",
-    delete: prefixOperation + "/otherFee/delete",
-  },
-  utilityReading: {
-    list: prefixOperation + "/utilityReading/list",
-    update: prefixOperation + "/utilityReading/update",
-    detail: prefixOperation + "/utilityReading/get",
-    delete: prefixOperation + "/utilityReading/delete",
-  },
-  managementFee: {
-    list: prefixOperation + "/managementFee/list",
-    update: prefixOperation + "/managementFee/update",
-    detail: prefixOperation + "/managementFee/get",
-    delete: prefixOperation + "/managementFee/delete",
-  },
-  vehicleRegistration: {
-    list: prefixOperation + "/vehicleRegistration/list",
-    update: prefixOperation + "/vehicleRegistration/update",
-    detail: prefixOperation + "/vehicleRegistration/get",
-    delete: prefixOperation + "/vehicleRegistration/delete",
-  },
-  vehicle: {
-    list: prefixOperation + "/vehicle/list",
-    update: prefixOperation + "/vehicle/update",
-    detail: prefixOperation + "/vehicle/get",
-    delete: prefixOperation + "/vehicle/delete",
-  },
-  building: {
-    list: prefixOperation + "/building/list",
-    update: prefixOperation + "/building/update",
-    detail: prefixOperation + "/building/get",
-    delete: prefixOperation + "/building/delete",
-  },
-  buildingFloor: {
-    list: prefixOperation + "/buildingFloor/list",
-    update: prefixOperation + "/buildingFloor/update",
-    detail: prefixOperation + "/buildingFloor/get",
-    delete: prefixOperation + "/buildingFloor/delete",
-  },
-  operationProject: {
-    list: prefixOperation + "/project/list",
-    update: prefixOperation + "/project/update",
-    detail: prefixOperation + "/project/get",
-    delete: prefixOperation + "/project/delete",
-  },
-  electricityMeter: {
-    list: prefixOperation + "/electricMeter/list",
-    update: prefixOperation + "/electricMeter/update",
-    detail: prefixOperation + "/electricMeter/get",
-    delete: prefixOperation + "/electricMeter/delete",
-  },
-  electricityRate: {
-    list: prefixOperation + "/electricityRate/list",
-    update: prefixOperation + "/electricityRate/update",
-    detail: prefixOperation + "/electricityRate/get",
-    delete: prefixOperation + "/electricityRate/delete",
-  },
-  waterRate: {
-    list: prefixOperation + "/waterRate/list",
-    update: prefixOperation + "/waterRate/update",
-    detail: prefixOperation + "/waterRate/get",
-    delete: prefixOperation + "/waterRate/delete",
-  },
-  managementFeeRate: {
-    list: prefixOperation + "/managementFeeRate/list",
-    update: prefixOperation + "/managementFeeRate/update",
-    detail: prefixOperation + "/managementFeeRate/get",
-    delete: prefixOperation + "/managementFeeRate/delete",
-  },
-  parkingFee: {
-    list: prefixOperation + "/parkingFee/list",
-    update: prefixOperation + "/parkingFee/update",
-    detail: prefixOperation + "/parkingFee/get",
-    delete: prefixOperation + "/parkingFee/delete",
-  },
-  //--- Khu vực quản lý vận hành
 
   historySend: {
     historySendSMS: prefixAdmin + "/customerSms/list",
@@ -3714,17 +3615,6 @@ export const urls = {
   outbound_invoice: "/outbound_invoice",
   inventory_transfer_document: "/inventory_transfer_document",
 
-  // Cài đặt vận hành
-  ortherFee: "/orther_fee",
-  // utilityReading: "/utility_reading",
-  electricityIndex: "/electricity_index",
-  waterIndex: "/water_index",
-  spaceCustomer: "/space_customer",
-  managementFee: "/management_fee",
-  vehicleRegistration: "/vehicle_registration",
-  vehicle: "/vehicle",
-  building: "/building",
-  buildingFloor: "/building_floor",
   //quản lý nguyên vật liệu
   material: "/material",
 

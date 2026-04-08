@@ -37,11 +37,6 @@ import ContactPipelineService from "services/ContactPipelineService";
 import TicketProcService from "services/TicketProcService";
 import TicketCategoryService from "services/TicketCategoryService";
 import ProjectService from "services/ProjectService";
-import OperationProjectService from "services/OperationProjectService";
-// VehicleService removed (non-retail BDS)
-// SpaceTypeService removed (non-retail BDS)
-import SpaceCustomerService from "services/SpaceCustomerService";
-// BuildingService removed (non-retail BDS)
 import CustomerMarketingLeadService from "services/CustomerMarketingLeadService";
 import RoleService from "services/RoleService";
 import PromotionService from "services/PromotionService";
@@ -223,9 +218,6 @@ export async function SelectOptionData(key: string, params?: Record<string, unkn
     case "projectId":
       response = await WorkProjectService.list({ ...params, parentId: -1 });
       break;
-    case "operationProjectId":
-      response = await OperationProjectService.list(params);
-      break;
     case "wteId":
       response = await WorkTypeService.list(params);
       break;
@@ -285,18 +277,6 @@ export async function SelectOptionData(key: string, params?: Record<string, unkn
 
     case "supportId":
       response = await TicketCategoryService.list(params);
-      break;
-    case "vehicleId":
-      // VehicleService removed (non-retail BDS)
-      break;
-    case "steId":
-      // SpaceTypeService removed (non-retail BDS)
-      break;
-    case "scrId":
-      response = await SpaceCustomerService.list(params);
-      break;
-    case "buildingId":
-      // BuildingService removed (non-retail BDS)
       break;
     case "rolePermission":
       response = await RoleService.list(params);
@@ -373,9 +353,6 @@ export async function SelectOptionData(key: string, params?: Record<string, unkn
         }
         if (key === "promotionId") {
           return { value: item.id, label: `${item.name}` };
-        }
-        if (key === "scrId") {
-          return { value: item.id, label: `${item.unitNumber} - ${item.customerName}` };
         }
         if (key === "marketingSendLeadSource") {
           return { value: item.name, label: `${item.name}` };
