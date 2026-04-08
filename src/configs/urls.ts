@@ -235,20 +235,6 @@ export const urlsApi = {
     customerAssign: prefixAdmin + "/customer/assign",
   },
 
-  careScenario: {
-    list: prefixBiz + "/market/careScenario/list",
-    stats: prefixBiz + "/market/careScenario/stats",
-    get: prefixBiz + "/market/careScenario/get",
-    update: prefixBiz + "/market/careScenario/update",
-    toggleActive: prefixBiz + "/market/careScenario/toggle-active",
-    delete: prefixBiz + "/market/careScenario/delete",
-  },
-
-  // GHD api chống chế =))))))))))))
-  payroll: {
-    export: prefixAdmin + "/payroll/export",
-  },
-
   partner: {
     list: prefixAdmin + "/businessPartner/list_paid",
     update: prefixAdmin + "/businessPartner/update",

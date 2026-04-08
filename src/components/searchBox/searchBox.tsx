@@ -84,7 +84,7 @@ function SearchBox(props: SearchBoxProps) {
 
   useEffect(() => {
     const paramsTemp = BuildObjectFilter(params, filterItems);
-    if (!isEqual(params, paramsTemp)) {
+    if (!_.isEqual(params, paramsTemp)) {      
       updateParams({ ...paramsTemp, page: 1 });
     }
   }, [filterItems]);
