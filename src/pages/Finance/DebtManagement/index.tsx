@@ -255,12 +255,14 @@ function PayModal({ debt, funds, onClose, onSuccess }: PayModalProps) {
       return;
     }
     setSubmitting(true);
+    const requestId = crypto.randomUUID();
     try {
       const res = await DebtManagementService.pay({
         debtId: debt.id,
         amount,
         fundId,
         note: note.trim() || undefined,
+        requestId,
       });
       const remaining = typeof res === "number" ? res : 0;
       const isFullPaid = remaining <= 0;
@@ -273,7 +275,12 @@ function PayModal({ debt, funds, onClose, onSuccess }: PayModalProps) {
       onSuccess(debt.id, remaining);
       onClose();
     } catch (e: unknown) {
-      showToast(e?.message ?? "Có lỗi xảy ra khi thu tiền", "error");
+      if (e?.message?.includes("trùng requestId")) {
+        showToast("Thanh toán đã được ghi nhận trước đó", "info");
+        onClose();
+      } else {
+        showToast(e?.message ?? "Có lỗi xảy ra khi thu tiền", "error");
+      }
     } finally {
       setSubmitting(false);
     }

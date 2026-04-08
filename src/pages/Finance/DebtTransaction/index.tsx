@@ -123,17 +123,24 @@ export default function FinanceDebtTransaction(props) {
 
     setError("");
     setSubmitting(true);
+    const requestId = crypto.randomUUID();
     try {
       await DebtManagementService.pay({
         debtId: Number(selectedDebt.id),
         amount: amountNumber,
         fundId: 0,
         note: note || undefined,
+        requestId,
       });
       setSubmitted(true);
       showToast(t("pageFinance.transactionSuccess"), "success");
     } catch (e: unknown) {
-      setError(e?.message ?? "Tạo giao dịch thất bại. Vui lòng thử lại.");
+      if (e?.message?.includes("trùng requestId")) {
+        setSubmitted(true);
+        showToast("Thanh toán đã được ghi nhận trước đó", "info");
+      } else {
+        setError(e?.message ?? "Tạo giao dịch thất bại. Vui lòng thử lại.");
+      }
     } finally {
       setSubmitting(false);
     }
