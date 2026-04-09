@@ -144,6 +144,7 @@ const OrderList: React.FC<OrderListProps> = ({
         const cartItems = products.map((p: Record<string, unknown>) => ({
           id: String(p.productId),
           variantId: String(p.variantId ?? p.productId),
+          unitId: p.unitId != null ? Number(p.unitId) : undefined,
           name: p.name || p.productName || "Sản phẩm",
           icon: "📦",
           avatar: p.productAvatar || "",

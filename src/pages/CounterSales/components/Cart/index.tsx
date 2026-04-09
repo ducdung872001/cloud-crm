@@ -211,8 +211,9 @@ const Cart: React.FC<CartProps> = ({
       const invoiceId: number = draftRes.result.invoiceId;
       const body = items.map((item) => ({
         productId: Number(item.id), variantId: Number(item.variantId),
+        ...(item.unitId != null ? { unitId: Number(item.unitId) } : {}),
         price: item.price, customerId: Number(customer?.id ?? -1),
-        qty: item.qty, name: item.name, avatar: item.avatar ?? "",
+        quantity: item.qty, name: item.name, avatar: item.avatar ?? "",
         unitName: item.unitName ?? item.unit ?? "", fee: item.price * item.qty,
       }));
       const insertRes = await BoughtProductService.insert(body, { invoiceId });

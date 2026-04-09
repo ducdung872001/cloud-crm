@@ -1,6 +1,7 @@
 export interface CartItem {
   id: string;
   variantId: string;
+  unitId?: number;
   icon: string;
   avatar?: string;
   image?: string;
@@ -18,6 +19,7 @@ export interface CartItem {
 
 export interface Product {
   id: string;
+  unitId?: number;
   icon: string;
   avatar?: string;
   unitName?: string;

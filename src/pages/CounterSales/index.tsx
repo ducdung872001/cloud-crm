@@ -338,9 +338,10 @@ const CounterSales: React.FC = () => {
       const body = cartItems.map((item: CartItem) => ({
         productId: Number(item.id),
         variantId: Number(item.variantId),
+        ...(item.unitId != null ? { unitId: Number(item.unitId) } : {}),
         price: item.price,
         customerId: customer?.id ?? -1,
-        qty: item.qty,
+        quantity: item.qty,
         name: item.name,
         avatar: item.avatar,
         unitName: item.unitName,
@@ -420,12 +421,12 @@ const CounterSales: React.FC = () => {
   const handleConfirmOrder = useCallback(() => setOrderDetailModalOpen(false), []);
 
   const handleQrAddToCart = useCallback((item: {
-    id: string; variantId: string; name: string;
+    id: string; variantId: string; unitId?: number; name: string;
     price: number; priceLabel: string; unit: string;
     unitName: string; icon: string; qty: number;
   }) => {
     handleAddToCart({
-      id: item.id, variantId: item.variantId, name: item.name,
+      id: item.id, variantId: item.variantId, unitId: item.unitId, name: item.name,
       price: item.price, priceLabel: item.priceLabel,
       unit: item.unit, unitName: item.unitName, icon: item.icon, qty: 1,
     });

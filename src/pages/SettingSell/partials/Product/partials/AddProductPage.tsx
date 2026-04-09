@@ -67,6 +67,22 @@ const DEFAULT_FORM = {
   hideWhenOutOfStock: true,
 };
 
+const readWebsiteSettingFlag = (value: unknown, fallback: boolean) =>
+  value === undefined || value === null ? fallback : value === 1 || value === true;
+
+const WEBSITE_SETTING_FIELD_MAP = {
+  showOnWeb: "showOnWebsite",
+  showImage: "showImage",
+  showUnit: "showUnit",
+  showDesc: "showDescription",
+  showPromoPrice: "showPromotionPrice",
+  showWholesalePrice: "showWholesalePrice",
+  showStock: "showInventory",
+  showBarcode: "showBarcode",
+  showCategory: "showVariant",
+  hideWhenOutOfStock: "hideWhenOutOfStock",
+} as const;
+
 // ── VARIANT TYPES ──
 interface VariantAttribute {
   tempId: string;
@@ -434,6 +450,7 @@ export default function AddProductPage({ idProduct, data, onBack, preFillBarcode
   const [contentHtml, setContentHtml] = useState<string>("");        // HTML → lưu vào content
   const [contentDelta, setContentDelta] = useState<string>("");      // JSON → lưu vào contentDelta
   const [isSavingContent, setIsSavingContent] = useState(false);
+  const [savingWebsiteSettingKeys, setSavingWebsiteSettingKeys] = useState<string[]>([]);
 
   // ── Tags ──
   const [availableTags, setAvailableTags] = useState<{ id: number; name: string }[]>([]);
@@ -461,6 +478,32 @@ export default function AddProductPage({ idProduct, data, onBack, preFillBarcode
   const [scanningUnitKey, setScanningUnitKey] = useState<{ comboKey: string; tempId: string } | null>(null);
 
   const setField = (key: string, value: Record<string, unknown>) => setFormData((prev) => ({ ...prev, [key]: value }));
+
+  const handleWebsiteSettingToggle = async (key: keyof typeof WEBSITE_SETTING_FIELD_MAP, checked: boolean) => {
+    setFormData((prev) => ({ ...prev, [key]: checked }));
+
+    if (!idProduct) return;
+
+    const field = WEBSITE_SETTING_FIELD_MAP[key];
+    setSavingWebsiteSettingKeys((prev) => [...prev, key]);
+    try {
+      const res = await ProductService.wWebsiteSettingUpdateField(field, {
+        productId: idProduct,
+        value: checked ? 1 : 0,
+      });
+
+      if (res.code !== 0) {
+        setFormData((prev) => ({ ...prev, [key]: !checked }));
+        showToast(res.message ?? "Cập nhật cài đặt hiển thị thất bại", "error");
+        return;
+      }
+    } catch {
+      setFormData((prev) => ({ ...prev, [key]: !checked }));
+      showToast("Cập nhật cài đặt hiển thị thất bại", "error");
+    } finally {
+      setSavingWebsiteSettingKeys((prev) => prev.filter((item) => item !== key));
+    }
+  };
 
   const buildProductWebUrl = () => {
     const slug = formData.name
@@ -722,16 +765,16 @@ export default function AddProductPage({ idProduct, data, onBack, preFillBarcode
     if (!r) return;
     setFormData((prev) => ({
       ...prev,
-      showOnWeb:           r.showOnWebsite === 1,
-      showImage:           r.showImage === 1,
-      showUnit:            r.showUnit === 1,
-      showDesc:            r.showDescription === 1,
-      showPromoPrice:      r.showPromotionPrice === 1,
-      showWholesalePrice:  r.showWholesalePrice === 1,
-      showStock:           r.showInventory === 1,
-      showBarcode:         r.showBarcode === 1,
-      showCategory:        r.showVariant === 1,
-      hideWhenOutOfStock:  r.hideWhenOutOfStock === 1,
+      showOnWeb:           readWebsiteSettingFlag(r.showOnWebsite, prev.showOnWeb),
+      showImage:           readWebsiteSettingFlag(r.showImage, prev.showImage),
+      showUnit:            readWebsiteSettingFlag(r.showUnit, prev.showUnit),
+      showDesc:            readWebsiteSettingFlag(r.showDescription, prev.showDesc),
+      showPromoPrice:      readWebsiteSettingFlag(r.showPromotionPrice, prev.showPromoPrice),
+      showWholesalePrice:  readWebsiteSettingFlag(r.showWholesalePrice, prev.showWholesalePrice),
+      showStock:           readWebsiteSettingFlag(r.showInventory, prev.showStock),
+      showBarcode:         readWebsiteSettingFlag(r.showBarcode, prev.showBarcode),
+      showCategory:        readWebsiteSettingFlag(r.showVariant, prev.showCategory),
+      hideWhenOutOfStock:  readWebsiteSettingFlag(r.hideWhenOutOfStock, prev.hideWhenOutOfStock),
     }));
   };
 
@@ -948,22 +991,22 @@ export default function AddProductPage({ idProduct, data, onBack, preFillBarcode
               ProductService.wTagUpdate({ productId: savedId, tagIds: selectedTagIds })
             );
           }
-          // Luôn lưu website settings (kể cả khi tạo mới — ghi đè default)
-          sideEffects.push(
-            ProductService.wWebsiteSettingUpdate({
-              productId: savedId,
-              showOnWebsite:     formData.showOnWeb          ? 1 : 0,
-              showImage:         formData.showImage          ? 1 : 0,
-              showUnit:          formData.showUnit           ? 1 : 0,
-              showDescription:   formData.showDesc           ? 1 : 0,
-              showPromotionPrice:formData.showPromoPrice     ? 1 : 0,
-              showWholesalePrice:formData.showWholesalePrice ? 1 : 0,
-              showInventory:     formData.showStock          ? 1 : 0,
-              showBarcode:       formData.showBarcode        ? 1 : 0,
-              showVariant:       formData.showCategory       ? 1 : 0,
-              hideWhenOutOfStock:formData.hideWhenOutOfStock ? 1 : 0,
-            })
-          );
+          if (!isEdit) {
+            sideEffects.push(
+              ProductService.wWebsiteSettingUpdateMany(savedId, {
+                showOnWebsite: formData.showOnWeb ? 1 : 0,
+                showImage: formData.showImage ? 1 : 0,
+                showUnit: formData.showUnit ? 1 : 0,
+                showDescription: formData.showDesc ? 1 : 0,
+                showPromotionPrice: formData.showPromoPrice ? 1 : 0,
+                showWholesalePrice: formData.showWholesalePrice ? 1 : 0,
+                showInventory: formData.showStock ? 1 : 0,
+                showBarcode: formData.showBarcode ? 1 : 0,
+                showVariant: formData.showCategory ? 1 : 0,
+                hideWhenOutOfStock: formData.hideWhenOutOfStock ? 1 : 0,
+              })
+            );
+          }
           if (sideEffects.length) await Promise.allSettled(sideEffects);
         }
         showToast(isEdit ? "Cập nhật sản phẩm thành công" : "Thêm sản phẩm thành công", "success");
@@ -1710,7 +1753,12 @@ export default function AddProductPage({ idProduct, data, onBack, preFillBarcode
                       <div className="add-prod-toggle-row__sub">{sub}</div>
                     </div>
                     <label className="add-prod-toggle">
-                      <input type="checkbox" checked={!!formData[key]} onChange={(e) => setField(key, e.target.checked)} />
+                      <input
+                        type="checkbox"
+                        checked={!!formData[key]}
+                        disabled={savingWebsiteSettingKeys.includes(key)}
+                        onChange={(e) => handleWebsiteSettingToggle(key as keyof typeof WEBSITE_SETTING_FIELD_MAP, e.target.checked)}
+                      />
                       <span className="add-prod-toggle__slider" />
                     </label>
                   </div>
