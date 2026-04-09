@@ -252,11 +252,13 @@ export default function App() {
   useEffect(() => {
     requestPermission(cookies.token);
 
-    onMessage(messaging, (payload) => {
-      showToast(payload.notification?.title || "Bạn có thông báo mới", "success");
-      getCountUnread();
-      setNewNotificationPayload(payload);
-    });
+    if (messaging) {
+      onMessage(messaging, (payload) => {
+        showToast(payload.notification?.title || "Bạn có thông báo mới", "success");
+        getCountUnread();
+        setNewNotificationPayload(payload);
+      });
+    }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
