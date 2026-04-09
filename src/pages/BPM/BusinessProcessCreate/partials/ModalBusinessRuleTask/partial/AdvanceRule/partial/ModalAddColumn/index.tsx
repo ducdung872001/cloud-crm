@@ -174,7 +174,7 @@ export default function ModalAddColumn({ onShow, onHide, indexColumn, dataNode, 
                 };
                 setListColumn((prev) => {
                   const newList = [...prev];
-                  let numberColumnCondition = prev.filter((column) => column.columnType === "condition").length;
+                  const numberColumnCondition = prev.filter((column) => column.columnType === "condition").length;
                   if (numberColumnCondition === 0) {
                     const lastConditionIndex = newList.findLastIndex((column) => column.columnType === "stt");
                     newList.splice(lastConditionIndex + 1, 0, newColumn);
@@ -222,7 +222,7 @@ export default function ModalAddColumn({ onShow, onHide, indexColumn, dataNode, 
 
     if (response.code === 0) {
       const dataOption = response.result?.items;
-      let listVar = [];
+      const listVar = [];
       dataOption &&
         dataOption.length > 0 &&
         dataOption.map((item) => {
@@ -270,7 +270,7 @@ export default function ModalAddColumn({ onShow, onHide, indexColumn, dataNode, 
 
     if (response.code === 0) {
       const dataOption = response.result?.filter((el) => el.code) || [];
-      let listForm = [];
+      const listForm = [];
       dataOption &&
         dataOption.length > 0 &&
         dataOption.map((item) => {

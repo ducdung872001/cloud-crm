@@ -64,7 +64,7 @@ export default function ModalAddDecision(props: Record<string, unknown>) {
       operator: input.operator,
     }));
 
-    let newOutputs = {};
+    const newOutputs = {};
     outputs.forEach((output) => {
       newOutputs[output.parameter] = output.value;
     });
@@ -145,8 +145,8 @@ export default function ModalAddDecision(props: Record<string, unknown>) {
 
   useEffect(() => {
     if (data) {
-      let dataInputs = data.inputs ? JSON.parse(data.inputs) : [];
-      let dataOutputs = data.outputs ? JSON.parse(data.outputs) : {};
+      const dataInputs = data.inputs ? JSON.parse(data.inputs) : [];
+      const dataOutputs = data.outputs ? JSON.parse(data.outputs) : {};
       const inputFields: IFieldCustomize[] = listDecisionInput.map((item) => ({
         id: item.id,
         name: item.name,

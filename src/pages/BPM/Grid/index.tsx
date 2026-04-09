@@ -357,7 +357,7 @@ export default function GridForm(props: Record<string, unknown>) {
       readOnly: item?.readOnly == 1 ? true : false,
     }));
     setBaseRow(baseRowFist);
-    let list_data_new: Record<string, unknown> = listDataNew.map((item) => {
+    const list_data_new: Record<string, unknown> = listDataNew.map((item) => {
       baseRowFist.map((field) => {
         item = {
           //Thêm các trường không có trong listColumn cũ
@@ -609,7 +609,7 @@ export default function GridForm(props: Record<string, unknown>) {
   };
 
   const addColumn = async (list_column) => {
-    let dataSubmit = {
+    const dataSubmit = {
       nodeId: params?.nodeId || "Activity_0n3i8dv",
       processId: params?.processId || 380,
       fieldName: params?.fieldName || "boq",
@@ -667,7 +667,7 @@ export default function GridForm(props: Record<string, unknown>) {
 
   useEffect(() => {
     if (dataImport) {
-      let dataImportNew = [];
+      const dataImportNew = [];
       for (const key in dataImport) {
         if (dataImport.hasOwnProperty(key)) {
           dataImportNew.push({
@@ -711,7 +711,7 @@ export default function GridForm(props: Record<string, unknown>) {
         bindingField: item?.bindingField || "",
         readOnly: item?.readOnly == 1 ? true : false,
       }));
-      let list_data_new: Record<string, unknown> = dataImportNew.map((item) => {
+      const list_data_new: Record<string, unknown> = dataImportNew.map((item) => {
         baseRowFist.map((field) => {
           item = {
             //Thêm các trường không có trong listColumn cũ
@@ -981,8 +981,8 @@ export default function GridForm(props: Record<string, unknown>) {
             <Button
               color="secondary"
               onClick={() => {
-                let uuid = uuidv4();
-                let _baseRow = baseRow.map((field) => {
+                const uuid = uuidv4();
+                const _baseRow = baseRow.map((field) => {
                   return {
                     ...field,
                     rowKey: uuid,

@@ -54,7 +54,7 @@ export default function AddContactAttributeModal(props: AddContactAttributeModal
   const [checkFieldName, setCheckFieldName] = useState(false);
 
   useEffect(() => {
-    let isMounted = true;
+    const isMounted = true;
     setData(dataContactAttribute)
   }, [dataContactAttribute])
 
@@ -165,7 +165,7 @@ export default function AddContactAttributeModal(props: AddContactAttributeModal
   const getContactAttributes = async () => {
     const response = await ContactAttributeService.listAll();
 
-    let arrField = [];
+    const arrField = [];
 
     if (response.code === 0) {
       const dataOption = response.result;

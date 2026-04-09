@@ -103,7 +103,7 @@ export default function ModalMapping({ onShow, onHide, dataNode, listComponent, 
       // Gọi hàm để lấy các giá trị
       const result = extractKeysAndPaths(listComponent);
 
-      let newOption = [];
+      const newOption = [];
       // const newList = listComponent.filter(el => el.key).map(item => {
       //   return {
       //     value: item.key,

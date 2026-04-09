@@ -192,7 +192,7 @@ export default function ModalImport(props: Record<string, unknown>) {
       setInfoFile(data);
       setDataImportHeader(JSON.parse(data.headers));
       if (data?.requestId) {
-        let lookupDone: boolean = false;
+        let lookupDone = false;
         while (!lookupDone) {
           await new Promise((resolve) => setTimeout(resolve, 3000));
           lookupDone = await getDataRowsUpload(data?.requestId);
@@ -210,7 +210,7 @@ export default function ModalImport(props: Record<string, unknown>) {
 
   const getDataRowsUpload = async (requestId) => {
     let lookupDone = false;
-    let responseDataImport = await GridService.getRowsUpload({ requestId: requestId });
+    const responseDataImport = await GridService.getRowsUpload({ requestId: requestId });
     if (responseDataImport.code === 0) {
       if (responseDataImport?.result?.key == 1) {
         lookupDone = true;
@@ -244,7 +244,7 @@ export default function ModalImport(props: Record<string, unknown>) {
       ...(formData as IAutoProcessModalProps),
     };
 
-    let response = await GridService.importFile(body);
+    const response = await GridService.importFile(body);
     if (response.code === 0) {
       setInfoFile(response.result);
       onHide(true);
@@ -310,7 +310,7 @@ export default function ModalImport(props: Record<string, unknown>) {
     const blob = new Blob([wbout], { type: "application/octet-stream" });
 
     // Tạo liên kết và tải xuống file
-    let code_name = convertToFileName(name);
+    const code_name = convertToFileName(name);
     // return;
     await saveAs(blob, code_name + ".xlsx");
     setIsSubmit(false);

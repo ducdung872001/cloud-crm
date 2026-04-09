@@ -168,7 +168,7 @@ export default function AddServiceAttributeModal(props: Record<string, unknown>)
   const getAttributes = async () => {
     const response = await ServiceAttributeService.listAll();
 
-    let arrField = [];
+    const arrField = [];
 
     if (response.code === 0) {
       const dataOption = response.result;

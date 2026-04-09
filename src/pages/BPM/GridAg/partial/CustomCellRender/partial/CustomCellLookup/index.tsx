@@ -6,7 +6,7 @@ const CustomCellLookup = (props) => {
   const { lookupValues } = useGridAg();
   const [labelLookup, setLabelLookup] = useState("");
 
-  let key = genKeyLookupGrid(props.colDef.cellRendererParams);
+  const key = genKeyLookupGrid(props.colDef.cellRendererParams);
 
   useEffect(() => {
     setLabelLookup(

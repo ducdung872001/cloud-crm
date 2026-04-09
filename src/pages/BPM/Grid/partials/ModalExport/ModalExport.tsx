@@ -35,7 +35,7 @@ export default function ModalExport(props: ExportModalProps) {
     //   { "Tên khách hàng": "Lê Văn C", Tuổi: 28, "Địa chỉ": "Đà Nẵng" },
     // ];
     const data = listData.map((item) => {
-      let obj = {};
+      const obj = {};
       listColumn.map((column) => {
         if (column.type == "select" || column.type == "lookup" || column.type == "binding") {
           if (column.key.includes("NguoiLienHe_")) {
@@ -82,7 +82,7 @@ export default function ModalExport(props: ExportModalProps) {
     const blob = new Blob([wbout], { type: "application/octet-stream" });
 
     // Tạo liên kết và tải xuống file
-    let code_name = convertToFileName(name);
+    const code_name = convertToFileName(name);
     // return;
     await saveAs(blob, code_name + ".xlsx");
     setIsSubmit(false);

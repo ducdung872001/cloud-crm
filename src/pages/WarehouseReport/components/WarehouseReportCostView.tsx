@@ -3,9 +3,7 @@ import Highcharts from "highcharts";
 import HighchartsReact from "highcharts-react-official";
 import moment from "moment";
 import WarehouseReportService, {
-  ICostProductRow,
   ICostReportData,
-  ICostSummary,
 } from "services/WarehouseReportService";
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────
@@ -78,7 +76,7 @@ function buildTrendChart(
 export default function WarehouseReportCostView() {
   const abortRef = useRef<AbortController | null>(null);
 
-  const [periodKey, setPeriodKey]       = useState<PeriodKey>("month");
+  const [periodKey]       = useState<PeriodKey>("month");
   const [costMethod, setCostMethod]     = useState<"AVG" | "FIFO">("AVG");
   const [warehouseId, setWarehouseId]   = useState(0);
   const [warehouseList, setWarehouseList] = useState<{ value: number; label: string }[]>([]);
@@ -127,6 +125,7 @@ export default function WarehouseReportCostView() {
   const groupOptions = useMemo(() => buildGroupChart(groupChartData), [groupChartData]);
   const trendOptions = useMemo(
     () => buildTrendChart(trendLabels, trendInvValues, trendCostValues),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [trendLabels, trendCostValues]
   );
 

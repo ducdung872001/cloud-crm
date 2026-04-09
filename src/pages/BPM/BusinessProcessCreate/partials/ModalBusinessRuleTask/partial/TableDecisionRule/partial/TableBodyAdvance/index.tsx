@@ -97,7 +97,7 @@ const TableBodyAdvance: React.FC<TableBodyAdvanceProps> = ({
 
   const handleDeleteRow = (rowIndex) => {
     setDataRow((prevDataRow) => {
-      let _dataRow = [...prevDataRow];
+      const _dataRow = [...prevDataRow];
       _dataRow.splice(rowIndex, 1);
       return _dataRow;
     });
@@ -106,7 +106,7 @@ const TableBodyAdvance: React.FC<TableBodyAdvanceProps> = ({
   const handleActionRow = (detailAction) => {
     switch (detailAction.action) {
       case "insert":
-        let _baseRow = baseRow.map((field) => {
+        const _baseRow = baseRow.map((field) => {
           return {
             ...field,
             value: "",
@@ -114,7 +114,7 @@ const TableBodyAdvance: React.FC<TableBodyAdvanceProps> = ({
         });
         if (detailAction?.rowIndex !== undefined) {
           setDataRow((prevDataRow) => {
-            let _dataRow = [...prevDataRow];
+            const _dataRow = [...prevDataRow];
             _dataRow.splice(detailAction?.position == "top" ? detailAction.rowIndex : detailAction.rowIndex + 1, 0, _baseRow);
             return _dataRow;
           });
@@ -146,7 +146,7 @@ const TableBodyAdvance: React.FC<TableBodyAdvanceProps> = ({
         setDataRow((prevDataRow) =>
           prevDataRow.map((row, rIdx) => {
             if (rIdx === detailAction.rowIndex) {
-              let rowMapReturn = row.map((field, fIdx) => {
+              const rowMapReturn = row.map((field, fIdx) => {
                 if (fIdx === detailAction.fieldIndex) {
                   return {
                     ...field,

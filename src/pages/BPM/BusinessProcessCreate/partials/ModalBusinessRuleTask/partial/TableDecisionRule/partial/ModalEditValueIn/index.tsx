@@ -48,7 +48,7 @@ export default function ModalEditValueIn({ onShow, onHide, dataFieldEdit, setDat
             disabled: isSubmit,
             is_loading: isSubmit,
             callback: async () => {
-              let dataNew = [];
+              const dataNew = [];
               addFieldAttributes.forEach((item) => {
                 if (dataFieldEdit.type !== "number" && item.trim() !== "") {
                   dataNew.push(item);

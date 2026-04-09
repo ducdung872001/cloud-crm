@@ -22,7 +22,7 @@ export default function ConfigIntegrateModal(props: Record<string, unknown>) {
   const [step, setStep] = useState(1);
 
   useEffect(() => {
-    let isMounted = true;
+    const isMounted = true;
     if (type) {
       setParams({ ...params, type: type })
     }

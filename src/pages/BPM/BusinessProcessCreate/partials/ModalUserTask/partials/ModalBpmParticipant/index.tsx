@@ -216,7 +216,7 @@ export default function ModalBpmParticipant({ onShow, onHide, dataNode, formSche
       ...formData,
     };
     if (formData.type === "4") {
-      let dataConfig = convertDataRow(dataConfigAdvanceEdit, dataNode?.id);
+      const dataConfig = convertDataRow(dataConfigAdvanceEdit, dataNode?.id);
       const body = {
         id: formDataAdvance.id ?? null,
         nodeId: dataNode?.id ?? null,
@@ -572,7 +572,7 @@ export default function ModalBpmParticipant({ onShow, onHide, dataNode, formSche
 
     if (response.code === 0) {
       const dataOption = response.result?.items;
-      let listVar = [];
+      const listVar = [];
       dataOption &&
         dataOption.length > 0 &&
         dataOption.map((item) => {
@@ -619,7 +619,7 @@ export default function ModalBpmParticipant({ onShow, onHide, dataNode, formSche
 
     if (response.code === 0) {
       const dataOption = response.result?.filter((el) => el.code) || [];
-      let listForm = [];
+      const listForm = [];
       dataOption &&
         dataOption.length > 0 &&
         dataOption.map((item) => {
@@ -760,7 +760,7 @@ export default function ModalBpmParticipant({ onShow, onHide, dataNode, formSche
   const [typeNode, setTypeNode] = useState("NONE");
 
   const handleChangeValueTypeNode = async (type) => {
-    let body = {
+    const body = {
       nodeId: dataNode?.id ?? null,
       type: "ASSIGN",
       pickMode: type,

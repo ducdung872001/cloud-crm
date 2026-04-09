@@ -59,7 +59,7 @@ export default function CampaignList({ parentId, parentCampaign, setIsFullPage, 
 
   useEffect(() => {
     if (parentId == -1) {
-      let paramNew = cloneDeep(params);
+      const paramNew = cloneDeep(params);
       delete paramNew["parentId"];
       setParams({ ...paramNew, campaignType: 2 });
     } else {
@@ -88,7 +88,7 @@ export default function CampaignList({ parentId, parentCampaign, setIsFullPage, 
       });
 
       if (!paramsResult?.parentId) {
-        let paramNew = cloneDeep(params);
+        const paramNew = cloneDeep(params);
         delete paramNew["parentId"];
         setParams({ ...paramNew, campaignType: +paramsResult.campaignType });
       } else {

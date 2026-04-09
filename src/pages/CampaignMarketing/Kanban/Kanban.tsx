@@ -294,7 +294,7 @@ export default function Kanban(props: Record<string, unknown>) {
         status: status,
       };
 
-      let response = null;
+      const response = null;
 
       if (response?.code === 0) {
         const result = response.result;

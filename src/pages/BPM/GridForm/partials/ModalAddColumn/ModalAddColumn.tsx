@@ -196,7 +196,7 @@ export default function ModalAddColumn(props: Record<string, unknown>) {
   const getCustomerAttributes = async () => {
     const response = await CustomerAttributeService.listAll(formData?.values["custType"]);
 
-    let arrField = [];
+    const arrField = [];
 
     if (response.code === 0) {
       const dataOption = response.result;
@@ -762,7 +762,7 @@ export default function ModalAddColumn(props: Record<string, unknown>) {
     let includeContactOrg = false;
     let readOnlyContactOrg = true;
 
-    let list_column = [
+    const list_column = [
       ...listColumn,
       {
         name: formData.values["name"],
@@ -813,8 +813,8 @@ export default function ModalAddColumn(props: Record<string, unknown>) {
         : []),
     ];
     if (includeContactOrg) {
-      let indexContactOrg = list_column.findIndex((item) => item.bindingField == "contactOrg");
-      let listColumnBindingContactOrg = listBindingFieldContactOrg.map((item) => {
+      const indexContactOrg = list_column.findIndex((item) => item.bindingField == "contactOrg");
+      const listColumnBindingContactOrg = listBindingFieldContactOrg.map((item) => {
         return {
           name: item.label,
           key: item.key,
@@ -833,7 +833,7 @@ export default function ModalAddColumn(props: Record<string, unknown>) {
       list_column.splice(indexContactOrg + 1, 0, ...listColumnBindingContactOrg);
     }
 
-    let dataSubmit = {
+    const dataSubmit = {
       nodeId: params?.nodeId || "Activity_0n3i8dv",
       processId: params?.processId || 380,
       fieldName: params?.fieldName || "boq",
@@ -1001,7 +1001,7 @@ export default function ModalAddColumn(props: Record<string, unknown>) {
   const [listOptionDate, setlistOptionDate] = useState<IOption[]>([]);
 
   useEffect(() => {
-    let _listOptionDate = [];
+    const _listOptionDate = [];
 
     listColumn.map((item) => {
       if (item.type == "date") {
@@ -1199,7 +1199,7 @@ export default function ModalAddColumn(props: Record<string, unknown>) {
                                 label={"Chỉ xem"}
                                 checked={item.readOnly}
                                 onChange={(e) => {
-                                  let _detailBindingField = detailBindingField.map((x) => {
+                                  const _detailBindingField = detailBindingField.map((x) => {
                                     if (x.value == item.value) {
                                       x.readOnly = e.target.checked;
                                     }
@@ -1213,7 +1213,7 @@ export default function ModalAddColumn(props: Record<string, unknown>) {
                               <Icon
                                 name="Times"
                                 onClick={(e) => {
-                                  let _detailBindingField = detailBindingField.filter((x) => x.value != item.value);
+                                  const _detailBindingField = detailBindingField.filter((x) => x.value != item.value);
                                   setDetailBindingField(_detailBindingField);
                                   setListBindingField([...listBindingField, { ...item, readOnly: true }]);
                                 }}

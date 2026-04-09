@@ -706,7 +706,7 @@ export default function ModalAddColumnAg(props: Record<string, unknown>) {
       });
     }
 
-    let dataSubmit = {
+    const dataSubmit = {
       nodeId: params?.nodeId || "Activity_0n3i8dv",
       processId: params?.processId || 380,
       fieldName: params?.fieldName || "boq",
@@ -872,7 +872,7 @@ export default function ModalAddColumnAg(props: Record<string, unknown>) {
   const [listOptionDate, setlistOptionDate] = useState<IOption[]>([]);
 
   useEffect(() => {
-    let _listOptionDate = [];
+    const _listOptionDate = [];
     listColumn.map((item) => {
       if (item.type == "date") {
         _listOptionDate.push({

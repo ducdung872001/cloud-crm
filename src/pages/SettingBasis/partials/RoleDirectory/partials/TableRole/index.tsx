@@ -43,8 +43,8 @@ export default function TableRole(props: Record<string, unknown>) {
 
   useEffect(() => {
     if (listRole) {
-      let parentArray = [];
-      let newArray = [
+      const parentArray = [];
+      const newArray = [
         [
           {
             v: "",

@@ -102,7 +102,7 @@ export default function ModalServiceTask({ onShow, onHide, dataNode, processId, 
     if (response.code == 0) {
       const result = response.result;
       const authentication = (result?.authentication && JSON.parse(result.authentication)) || null;
-      let authentication_config = authentication?.config ? { ...authentication.config, keyType: authentication?.config?.keyType || 1 } : null;
+      const authentication_config = authentication?.config ? { ...authentication.config, keyType: authentication?.config?.keyType || 1 } : null;
       setAuthenticationData(authentication_config);
       setValueKey(authentication_config?.token ? { value: authentication_config.token, label: authentication_config.token } : null);
 
@@ -557,7 +557,7 @@ export default function ModalServiceTask({ onShow, onHide, dataNode, processId, 
 
     if (response.code === 0) {
       const dataOption = response.result?.items;
-      let listVar = [];
+      const listVar = [];
       dataOption &&
         dataOption.length > 0 &&
         dataOption.map((item) => {
@@ -604,7 +604,7 @@ export default function ModalServiceTask({ onShow, onHide, dataNode, processId, 
 
     if (response.code === 0) {
       const dataOption = response.result?.filter((el) => el.code) || [];
-      let listForm = [];
+      const listForm = [];
       dataOption &&
         dataOption.length > 0 &&
         dataOption.map((item) => {

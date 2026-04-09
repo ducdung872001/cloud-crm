@@ -82,7 +82,7 @@ export default function ModalTimerStartEventTask({ onShow, onHide, dataNode, pro
         minute: [],
         second: [],
       };
-      let _configData = [];
+      const _configData = [];
       if (configData.length > 0 && Array.isArray(configData)) {
         configData.forEach((item) => {
           configDefault = {
@@ -158,7 +158,7 @@ export default function ModalTimerStartEventTask({ onShow, onHide, dataNode, pro
     let configCylce = [];
     if (formData?.timerType == "Cycle" && config?.length) {
       configCylce = config?.map((item) => {
-        let itemCylce = {
+        const itemCylce = {
           second: item.second.map((i) => i.value).join(",") || null,
           minute: item.minute.map((i) => i.value).join(",") || null,
           hour: item.hour.map((i) => i.value).join(",") || null,

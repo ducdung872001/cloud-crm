@@ -423,7 +423,7 @@ export default function CreateSaleflow() {
     setCheckFieldApproach(false);
 
     const value = e.target.value;
-    let item: Record<string, unknown> = {};
+    const item: Record<string, unknown> = {};
 
     if (value) {
       listApproach.map((obj, index) => {

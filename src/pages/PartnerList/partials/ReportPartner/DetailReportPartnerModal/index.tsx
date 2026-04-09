@@ -43,7 +43,7 @@ export default function DetailReportPartnerModal(props: Record<string, unknown>)
   const abortController = new AbortController();
   const getListReport = async (paramsSearch: Record<string, unknown>) => {
     setIsLoading(true);
-    let paramsTemp = _.cloneDeep(params);
+    const paramsTemp = _.cloneDeep(params);
 
     switch (reportDetail.key) {
       case "contractBusinessPartner":
@@ -86,7 +86,7 @@ export default function DetailReportPartnerModal(props: Record<string, unknown>)
       default:
         break;
     }
-    let response = await ReportBussinessPartnerService.reportDetail(paramsTemp, abortController.signal);
+    const response = await ReportBussinessPartnerService.reportDetail(paramsTemp, abortController.signal);
     if (response?.code === 0) {
       const result = response?.result;
 

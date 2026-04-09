@@ -928,7 +928,7 @@ export default function ModalCustomPopup({ onShow, onHide, dataWork, isHandleTas
         const wbout = XLSX.write(wb, { bookType: "xlsx", type: "array" });
         const blob = new Blob([wbout], { type: "application/octet-stream" });
         // Tạo liên kết và tải xuống file
-        let code_name = convertToFileName(name);
+        const code_name = convertToFileName(name);
 
         download(blob, code_name + ".xlsx");
       }
@@ -958,7 +958,7 @@ export default function ModalCustomPopup({ onShow, onHide, dataWork, isHandleTas
         const wbout = XLSX.write(wb, { bookType: "xlsx", type: "array" });
         const blob = new Blob([wbout], { type: "application/octet-stream" });
         // Tạo liên kết và tải xuống file
-        let code_name = convertToFileName(name);
+        const code_name = convertToFileName(name);
         download(blob, code_name + ".xlsx");
       }
 

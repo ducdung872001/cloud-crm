@@ -114,10 +114,10 @@ export default function TableParticipantRule({ dataNode, processId, childProcess
   }, [listColumn, isDataFetch]);
 
   const genNewBaseRow = (listColumn) => {
-    let _baseRow = [];
+    const _baseRow = [];
     listColumn.forEach((item) => {
       if (item?.children && item?.children?.length > 0) {
-        let _children = item.children.map((child) => {
+        const _children = item.children.map((child) => {
           return {
             ...child,
             value: "",
@@ -138,17 +138,17 @@ export default function TableParticipantRule({ dataNode, processId, childProcess
     return _baseRow;
   };
   const genNewDataRow = (dataRow, newBaseRow) => {
-    let newDataRow = [];
+    const newDataRow = [];
     //Lặp qua từng hàng trong dataRow và kiểm tra các hàng trong dataRow so với newBaseRow, nếu số trường trong dataRow không bằng số trường trong _baseRow thì thêm các trường còn thiếu vào dataRow và xoá bớt các trường thừa trong dataRow so với newBaseRow
     if (dataRow && dataRow?.length > 0) {
       for (let i = 0; i < dataRow.length; i++) {
-        let row = dataRow[i];
-        let newRow = [];
+        const row = dataRow[i];
+        const newRow = [];
         for (let j = 0; j < newBaseRow.length; j++) {
-          let field = newBaseRow[j];
-          let fieldBase = row.find((item) => item.key == field.key);
+          const field = newBaseRow[j];
+          const fieldBase = row.find((item) => item.key == field.key);
           if (fieldBase) {
-            let newField = {
+            const newField = {
               ...fieldBase,
               name: field.name, // Cho trường hợp đổi tên cột
               value: fieldBase.value,
@@ -164,7 +164,7 @@ export default function TableParticipantRule({ dataNode, processId, childProcess
             };
             newRow.push(newField);
           } else {
-            let newField = {
+            const newField = {
               ...field,
               name: field.name, // Cho trường hợp đổi tên cột
               value: field.value,
@@ -260,10 +260,10 @@ export default function TableParticipantRule({ dataNode, processId, childProcess
                 if (field.key.includes("_NguoiLienHe")) {
                   const firstKey = Object.keys(value).find((key) => key.includes("NguoiLienHe_"));
                   if (firstKey) {
-                    let listContact = JSON.parse(value[firstKey]);
+                    const listContact = JSON.parse(value[firstKey]);
                     if (listContact?.length) {
-                      let defaultContact = listContact.find((el) => el.isDefault);
-                      let valueKey =
+                      const defaultContact = listContact.find((el) => el.isDefault);
+                      const valueKey =
                         field.key == "SoDienThoai_NguoiLienHe"
                           ? defaultContact?.phone
                           : field.key == "Email_NguoiLienHe"
@@ -311,11 +311,11 @@ export default function TableParticipantRule({ dataNode, processId, childProcess
             ? value
             : value.target.value;
         let check_required = false;
-        let listMapKeyValue = [];
+        const listMapKeyValue = [];
         const updatedData = dataRow.map((row, rIdx) => {
           const mapKeyValue = {};
           if (rIdx === rowIndex) {
-            let rowMapReturn = row.map((field, fIdx) => {
+            const rowMapReturn = row.map((field, fIdx) => {
               mapKeyValue[field.key] = fIdx === fieldIndex ? valueData : field.value;
               if (field?.required && !valueData) {
                 check_required = true;
@@ -352,7 +352,7 @@ export default function TableParticipantRule({ dataNode, processId, childProcess
             if (row.type == "title") {
               return row;
             }
-            let rowMapReturn = row.map((field) => {
+            const rowMapReturn = row.map((field) => {
               mapKeyValue[field.key] = field.value;
               if (rIdx != 0) {
                 if (field?.required && !field.value) {
@@ -386,12 +386,12 @@ export default function TableParticipantRule({ dataNode, processId, childProcess
                 value: result,
               };
             } else if (field.type == "time_range" && field?.timeRange) {
-              let timeRange = JSON.parse(field.timeRange);
+              const timeRange = JSON.parse(field.timeRange);
               const startDate = new Date(new Date(listMapKeyValue[rIdx][timeRange.startDate]), "MM/DD/YYYY");
               const endDate = new Date(new Date(listMapKeyValue[rIdx][timeRange.endDate]), "MM/DD/YYYY");
 
               let count = 0;
-              let currentDate = startDate.clone();
+              const currentDate = startDate.clone();
 
               while (currentDate.isSameOrBefore(endDate)) {
                 const dayOfWeek = currentDate.day();
@@ -436,9 +436,9 @@ export default function TableParticipantRule({ dataNode, processId, childProcess
       let check_required = false;
       const updatedData = dataRow.map((row, rIdx) => {
         if (rIdx === rowIndex) {
-          let rowMapReturn = row.map((field, fIdx) => {
+          const rowMapReturn = row.map((field, fIdx) => {
             if (fIdx === fieldIndex) {
-              let childNew = field.children.map((child, index) => {
+              const childNew = field.children.map((child, index) => {
                 if (index == childIndex) {
                   if (child?.required && !valueData) {
                     check_required = true;
@@ -477,7 +477,7 @@ export default function TableParticipantRule({ dataNode, processId, childProcess
 
   const hanhdleDeleteColumn = (columnIndex) => {
     // Xoá cột trong listColumn
-    let newListColumn = listColumn.filter((item, index) => index != columnIndex);
+    const newListColumn = listColumn.filter((item, index) => index != columnIndex);
     setListColumn(newListColumn);
   };
 
@@ -532,7 +532,7 @@ export default function TableParticipantRule({ dataNode, processId, childProcess
   };
 
   const handleDeleteRow = (dataRow, rowIndex) => {
-    let _dataRow = [...dataRow];
+    const _dataRow = [...dataRow];
     _dataRow.splice(rowIndex, 1);
     setDataRow(_dataRow);
   };
@@ -540,20 +540,20 @@ export default function TableParticipantRule({ dataNode, processId, childProcess
   const handleActionRow = (detailAction) => {
     switch (detailAction.action) {
       case "insert":
-        let _baseRow = baseRow.map((field) => {
+        const _baseRow = baseRow.map((field) => {
           return {
             ...field,
             value: "",
           };
         });
         if (detailAction?.rowIndex !== undefined) {
-          let _dataRow = [...dataRow];
+          const _dataRow = [...dataRow];
           _dataRow.splice(detailAction?.position == "top" ? detailAction.rowIndex : detailAction.rowIndex + 1, 0, _baseRow);
           setDataRow(_dataRow);
         }
         break;
       case "insertTitle":
-        let titleRow = {
+        const titleRow = {
           style: "title-" + detailAction?.stype,
           content: "",
           indexTitle: "",
@@ -561,7 +561,7 @@ export default function TableParticipantRule({ dataNode, processId, childProcess
           isShowEdit: true,
         };
         if (detailAction?.rowIndex !== undefined) {
-          let _dataRow = [...dataRow];
+          const _dataRow = [...dataRow];
           _dataRow.splice(detailAction?.position == "top" ? detailAction.rowIndex : detailAction.rowIndex + 1, 0, titleRow);
           setDataRow(_dataRow);
         }
@@ -583,7 +583,7 @@ export default function TableParticipantRule({ dataNode, processId, childProcess
         setDataRow(
           dataRow.map((row, rIdx) => {
             if (rIdx === detailAction.rowIndex) {
-              let rowMapReturn = row.map((field, fIdx) => {
+              const rowMapReturn = row.map((field, fIdx) => {
                 if (fIdx === detailAction.fieldIndex) {
                   return {
                     ...field,
@@ -604,7 +604,7 @@ export default function TableParticipantRule({ dataNode, processId, childProcess
         setDataRow(
           dataRow.map((row, rIdx) => {
             if (rIdx === detailAction.rowIndex) {
-              let rowMapReturn = row.map((field, fIdx) => {
+              const rowMapReturn = row.map((field, fIdx) => {
                 if (fIdx === detailAction.fieldIndex) {
                   return {
                     ...field,
@@ -626,7 +626,7 @@ export default function TableParticipantRule({ dataNode, processId, childProcess
         setDataRow(
           dataRow.map((row, rIdx) => {
             if (rIdx === detailAction.rowIndex) {
-              let rowMapReturn = row.map((field, fIdx) => {
+              const rowMapReturn = row.map((field, fIdx) => {
                 if (fIdx === detailAction.fieldIndex) {
                   return {
                     ...field,
@@ -647,7 +647,7 @@ export default function TableParticipantRule({ dataNode, processId, childProcess
         setDataRow(
           dataRow.map((row, rIdx) => {
             if (rIdx === detailAction.rowIndex) {
-              let rowMapReturn = row.map((field, fIdx) => {
+              const rowMapReturn = row.map((field, fIdx) => {
                 if (fIdx === detailAction.fieldIndex) {
                   return {
                     ...field,
@@ -745,7 +745,7 @@ export default function TableParticipantRule({ dataNode, processId, childProcess
                               value={editColumn[columnIndex]?.newPosition}
                               autoFocus={true}
                               onValueChange={(e) => {
-                                let newEditColumn = editColumn.map((item, index) => {
+                                const newEditColumn = editColumn.map((item, index) => {
                                   return index == columnIndex ? { ...item, newPosition: e.floatValue } : item;
                                 });
                                 setEditColumn(newEditColumn);

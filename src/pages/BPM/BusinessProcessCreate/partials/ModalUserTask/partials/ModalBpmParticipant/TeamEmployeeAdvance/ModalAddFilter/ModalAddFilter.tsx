@@ -250,7 +250,7 @@ export default function ModalAddFilter(props: Record<string, unknown>) {
 
     if (response.code === 0) {
       const dataOption = response.result?.items;
-      let listVar = []
+      const listVar = []
       dataOption && dataOption.length > 0 && dataOption.map(item => {
         const body = item.body && JSON.parse(item.body) || [];
         body.map(el => {
@@ -299,7 +299,7 @@ export default function ModalAddFilter(props: Record<string, unknown>) {
     if (response.code === 0) {
       const dataOption = response.result;
 
-      let listData = [];      
+      const listData = [];      
 
       if (dataOption) {
         Object.entries(dataOption).map((lstEformAttribute: Record<string, unknown>, key: number) => {
@@ -824,7 +824,7 @@ export default function ModalAddFilter(props: Record<string, unknown>) {
   };
 
   const handChangeValueTypeItemEmployee = (e, idx) => {
-    let value = e.value;
+    const value = e.value;
 
     setFormDataEmployee({
       ...formDataEmployee,

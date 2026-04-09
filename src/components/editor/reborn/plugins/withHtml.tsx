@@ -127,9 +127,9 @@ const getAlign = (el) => {
 
         // eslint-disable-next-line prefer-const
         let style = el.getAttribute("style");
-        let re = /(text\-align[ ]*?:[ ]*?(center|left|right|justify))/;
+        const re = /(text\-align[ ]*?:[ ]*?(center|left|right|justify))/;
 
-        let arr = re.exec(style);
+        const arr = re.exec(style);
         if (arr && arr.length >= 2) {
             align = arr[2];
         }

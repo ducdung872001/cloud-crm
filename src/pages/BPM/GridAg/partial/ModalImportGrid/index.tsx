@@ -162,15 +162,15 @@ export default function ModalImportGrid(props: Record<string, unknown>) {
       }
       const headerTypes = jsonData[3];
 
-      let newDataRow = [];
+      const newDataRow = [];
       if (jsonData.length) {
         for (let index = 4; index < jsonData.length; index++) {
-          let row = jsonData[index];
-          let uuid = uuidv4();
+          const row = jsonData[index];
+          const uuid = uuidv4();
           // Thực hiện sao chép sâu baseRow
           if (row[0]) {
             // Nếu có giá trị ở cột Level tiêu đề thì tạo dòng tiêu đề
-            let newRowTitle = {
+            const newRowTitle = {
               rowKey: uuid,
               isFullWidthRow: true,
               level: row[0] || "",
@@ -179,7 +179,7 @@ export default function ModalImportGrid(props: Record<string, unknown>) {
             };
             newDataRow.push(newRowTitle);
           } else {
-            let newRow = headerKeys.reduce((acc, key, index) => {
+            const newRow = headerKeys.reduce((acc, key, index) => {
               if (headerTypes[index] === "date") {
                 acc[key] = parseDateValue(row[index]) || null; // Giá trị mặc định là null, có thể thay đổi thành "" hoặc giá trị khác
                 return acc;
@@ -216,7 +216,7 @@ export default function ModalImportGrid(props: Record<string, unknown>) {
       ...(formData as IAutoProcessModalProps),
     };
 
-    let response = await GridService.importFile(body);
+    const response = await GridService.importFile(body);
     if (response.code === 0) {
       setInfoFile(response.result);
       onHide(true);
@@ -264,7 +264,7 @@ export default function ModalImportGrid(props: Record<string, unknown>) {
 
   const handleUpdateData = async () => {
     if (dataRowNew && dataRowNew.length > 0) {
-      let _dataLookup = await mapDataWithLookup(listColumn, dataRowNew);
+      const _dataLookup = await mapDataWithLookup(listColumn, dataRowNew);
       setLookupValues(_dataLookup?.dataLookup || {});
       setRowData(_dataLookup?.dataWithLookup || []); // Cập nhật dữ liệu mới vào state
       setIsLoading(false);

@@ -289,8 +289,8 @@ export default function CustomerList(props: ICustomerListProps) {
   // }
 
   const handleMakeCall = () => {
-    var socket = new JsSIP.WebSocketInterface("wss://pbx-athenaspear-prod.athenafs.io:7443");
-    var configuration = {
+    const socket = new JsSIP.WebSocketInterface("wss://pbx-athenaspear-prod.athenafs.io:7443");
+    const configuration = {
       sockets: [socket],
       // uri      : 'sip:alice@example.com',
       // password : 'superpassword'
@@ -298,12 +298,12 @@ export default function CustomerList(props: ICustomerListProps) {
       password: "B44pW9dkW9G9X1dGPo6vcnYFgDES9eDR",
     };
 
-    var ua = new JsSIP.UA(configuration);
+    const ua = new JsSIP.UA(configuration);
 
     ua.start();
 
     // Register callbacks to desired call events
-    var eventHandlers = {
+    const eventHandlers = {
       progress: function (e) {
       },
       failed: function (e) {
@@ -315,12 +315,12 @@ export default function CustomerList(props: ICustomerListProps) {
       },
     };
 
-    var options = {
+    const options = {
       eventHandlers: eventHandlers,
       mediaConstraints: { audio: true, video: true },
     };
 
-    var session = ua.call("sip:athena_101057@pbx-athenaspear-prod.athenafs.io:7443", options);
+    const session = ua.call("sip:athena_101057@pbx-athenaspear-prod.athenafs.io:7443", options);
   };
 
   // const sipUri = new URI("sip", "athena_101057", "pbx-athenaspear-prod.athenafs.io");

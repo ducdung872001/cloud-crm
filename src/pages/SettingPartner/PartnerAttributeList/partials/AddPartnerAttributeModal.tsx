@@ -150,7 +150,7 @@ export default function AddPartnerAttributeModal(props: Record<string, unknown>)
   const getPartnerAttributes = async () => {
     const response = await PartnerAttributeService.listAll();
 
-    let arrField = [];
+    const arrField = [];
 
     if (response.code === 0) {
       const dataOption = response.result;

@@ -74,6 +74,7 @@ export default function ViettelBhdModal({ isOpen, onClose }: ViettelBhdModalProp
                 ],
             },
         }),
+        // eslint-disable-next-line react-hooks/exhaustive-deps
         [onClose, formData, listFieldBhd]
     );
 

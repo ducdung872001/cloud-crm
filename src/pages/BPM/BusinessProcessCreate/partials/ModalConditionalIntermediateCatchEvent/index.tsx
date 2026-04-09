@@ -224,7 +224,7 @@ export default function ModalConditionalIntermediateCatchEvent({ onShow, onHide,
 
     if (response.code === 0) {
       const dataOption = response.result?.items;
-      let listVar = [];
+      const listVar = [];
       dataOption &&
         dataOption.length > 0 &&
         dataOption.map((item) => {

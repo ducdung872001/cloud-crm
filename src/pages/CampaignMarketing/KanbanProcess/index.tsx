@@ -278,11 +278,11 @@ export default function KanbanOrderTracking(props: Record<string, unknown>) {
 
   const OrderRequestServiceList = useCallback(
     async (params: Record<string, unknown>, signal?: AbortSignal) => {
-      let mergedParams = {
+      const mergedParams = {
         ...params,
         ...(processCode ? { bsnId: processCode } : {}),
       };
-      let response = await OrderRequestService.list(mergedParams, signal);
+      const response = await OrderRequestService.list(mergedParams, signal);
       return response;
     },
     [processCode]

@@ -615,7 +615,7 @@ export default function SettingAttributeEform(props: Record<string, unknown>) {
   };
 
   useEffect(() => {
-    let isMounted = true;
+    const isMounted = true;
     if(eformId){
       getDataObjectGroup(eformId);
     }

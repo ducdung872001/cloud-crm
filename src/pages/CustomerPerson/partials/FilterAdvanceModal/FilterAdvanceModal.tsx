@@ -419,7 +419,7 @@ export default function FilterAdvanceModal(props: Record<string, unknown>) {
       const collectStatusTBoss = createCollectStatus("TrangThaiKhoanVayTBoss", dataStatusTBoss);      
       
       //lấy ra danh sách trường động đang lọc
-      let paramsCustomerExtraInfo = params?.customerExtraInfo && JSON.parse(params?.customerExtraInfo) || [];
+      const paramsCustomerExtraInfo = params?.customerExtraInfo && JSON.parse(params?.customerExtraInfo) || [];
       
       // Danh sách các status thu được
       const collectStatuses = [collectStatusCashloan, collectStatusCreditline, collectStatusTBoss].filter(Boolean);

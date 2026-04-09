@@ -171,7 +171,7 @@ export default function AddProductAttributeModal(props: Record<string, unknown>)
   const getAttributes = async () => {
     const response = await ProductAttributeService.listAll();
 
-    let arrField = [];
+    const arrField = [];
 
     if (response.code === 0) {
       const dataOption = response.result;

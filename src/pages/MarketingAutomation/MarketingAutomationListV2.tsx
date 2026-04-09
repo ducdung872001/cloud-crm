@@ -549,7 +549,7 @@ export default function MarketingAutomationListV2() {
       limit: 10,
     };
     const response = await BusinessProcessService.list(param);
-    let optionProcess =
+    const optionProcess =
       page === 1
         ? [
         ]
@@ -689,7 +689,7 @@ export default function MarketingAutomationListV2() {
 
     if (response.code === 0) {
       const result = response.result;
-      let listDataOfStep = [...dataOfStep];
+      const listDataOfStep = [...dataOfStep];
       const indexData = listDataOfStep.findIndex((el) => el.stepId === paramsSearch.workflowId);
 
       if (indexData !== -1) {

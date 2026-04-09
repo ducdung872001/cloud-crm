@@ -51,8 +51,7 @@ export const uploadVideoFromFiles = (files, callback, showStatus, onAddVideoThum
               onSuccess: (res) => {
                 onAddVideoThumbnail(res.image_url, key);
               },
-              onError: (error) => {
-              },
+              onError: () => { /* noop */ },
             });
             URL.revokeObjectURL(url);
             return true;
@@ -96,9 +95,7 @@ export const uploadVideoFromFiles = (files, callback, showStatus, onAddVideoThum
             showStatus(percent, key);
           }
         },
-        onError: (error) => {
-          // setTimeout(() => onError(key, error), 0);
-        },
+        onError: () => { /* noop */ },
       });
     } else {
       setTimeout(() => {

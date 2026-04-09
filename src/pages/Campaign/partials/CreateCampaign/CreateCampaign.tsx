@@ -428,19 +428,19 @@ export default function CreateCampaign() {
         const branches4 = dataBranch?.branches4 || [];
         const dataBranchList = result.lstBranch;
 
-        let listBranchLevel0 = branches0.map((item) => {
+        const listBranchLevel0 = branches0.map((item) => {
           return { value: item.id, label: item.name };
         });
-        let listBranchLevel1 = branches1.map((item) => {
+        const listBranchLevel1 = branches1.map((item) => {
           return { value: item.id, label: item.name };
         });
-        let listBranchLevel2 = branches2.map((item) => {
+        const listBranchLevel2 = branches2.map((item) => {
           return { value: item.id, label: item.name };
         });
-        let listBranchLevel3 = branches3.map((item) => {
+        const listBranchLevel3 = branches3.map((item) => {
           return { value: item.id, label: item.name };
         });
-        let listBranchLevel4 = branches4.map((item) => {
+        const listBranchLevel4 = branches4.map((item) => {
           return { value: item.id, label: item.name };
         });
 
@@ -1175,7 +1175,7 @@ export default function CreateCampaign() {
       return item.value;
     });
 
-    let newArr = [...dataSourceProvider];
+    const newArr = [...dataSourceProvider];
     const index = dataSourceProvider.findIndex((el) => el.type === "ma");
     if (index !== -1) {
       newArr[index] = {
@@ -1227,7 +1227,7 @@ export default function CreateCampaign() {
       return item.value;
     });
 
-    let newArr = [...dataSourceProvider];
+    const newArr = [...dataSourceProvider];
     const index = dataSourceProvider.findIndex((el) => el.type === "filter");
     if (index !== -1) {
       newArr[index] = {
@@ -1510,7 +1510,7 @@ export default function CreateCampaign() {
     if (listBranchDeleted0 && listBranchDeleted0.length > 0 && listBranchValue.length >= 2) {
       let newlistBranch1 = [...listBranchValue[1].value];
 
-      let newListBranchDeleted1 = [];
+      const newListBranchDeleted1 = [];
       if (listBranchValue[1].value.length > 0) {
         listBranchDeleted0.map((item) => {
           const array = newlistBranch1.filter((el) => el.parentId !== item) || [];
@@ -1548,7 +1548,7 @@ export default function CreateCampaign() {
     if (listBranchDeleted1 && listBranchDeleted1.length > 0 && listBranchValue.length >= 3) {
       let newlistBranch2 = [...listBranchValue[2].value];
 
-      let newListBranchDeleted2 = [];
+      const newListBranchDeleted2 = [];
       if (listBranchValue[2].value.length > 0) {
         listBranchDeleted1.map((item) => {
           const array = newlistBranch2.filter((el) => el.parentId !== item) || [];
@@ -1592,7 +1592,7 @@ export default function CreateCampaign() {
   useEffect(() => {
     if (listBranchDeleted2 && listBranchDeleted2.length > 0 && listBranchValue.length >= 4) {
       let newlistBranch3 = [...listBranchValue[3].value];
-      let newListBranchDeleted3 = [];
+      const newListBranchDeleted3 = [];
       if (listBranchValue[3].value.length > 0) {
         listBranchDeleted2.map((item) => {
           const array = newlistBranch3.filter((el) => el.parentId !== item) || [];
@@ -2218,7 +2218,7 @@ export default function CreateCampaign() {
     setCheckFieldApproach(false);
 
     const value = e.target.value;
-    let item: ICampaignApproachRequestModel = {};
+    const item: ICampaignApproachRequestModel = {};
 
     if (value) {
       listApproach.map((obj, index) => {
@@ -2260,7 +2260,7 @@ export default function CreateCampaign() {
 
   const handleChangeValueActivity = (activities, idx) => {
     activities = JSON.stringify(activities.split(","));
-    let item: ICampaignApproachRequestModel = {};
+    const item: ICampaignApproachRequestModel = {};
     listApproach.map((obj, index) => {
       if (index === idx) {
         item.id = obj.id;
@@ -2768,11 +2768,11 @@ export default function CreateCampaign() {
           }
         });
 
-        let expireContact = overdueInteraction;
-        var diffExpireContact = new moment.duration(expireContact * 1000);
+        const expireContact = overdueInteraction;
+        const diffExpireContact = new moment.duration(expireContact * 1000);
 
-        let expireFinish = expiredDeadline;
-        var diffExpireFinish = new moment.duration(expireFinish * 1000);
+        const expireFinish = expiredDeadline;
+        const diffExpireFinish = new moment.duration(expireFinish * 1000);
 
         setMinusPoints({
           getLead: hasAOpportunity,

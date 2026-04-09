@@ -108,7 +108,7 @@ export const getDataGrid = async (actionRow, params): Promise<{ columns: ColDef[
       dataGrid.columns = columnsForGrid;
       dataGrid.columnsConfig = header;
       if (data && data.length > 0) {
-        let _dataLookup = await mapDataWithLookup(header, data);
+        const _dataLookup = await mapDataWithLookup(header, data);
         dataGrid.dataLookup = _dataLookup.dataLookup;
         dataGrid.data = _dataLookup.dataWithLookup;
       }
@@ -193,7 +193,7 @@ export const generateColumns = (header, actionRow, typeNo, params) => {
       return column;
     })
     .sort((a, b) => a.position - b.position);
-  let columnLast: Record<string, unknown> = {
+  const columnLast: Record<string, unknown> = {
     headerName: "Làm rõ",
     field: "cot-lam-ro",
     sortable: false,
@@ -223,14 +223,14 @@ export const mapDataWithLookup = async (header, data) => {
   if (dataLookup && Object.keys(dataLookup).length > 0) {
     // Nếu có dữ liệu lookup, thực hiện gán giá trị từ lookup vào data
     dataWithLookup = data.map((row) => {
-      let colBinding = header.filter((col) => col.type === "binding");
+      const colBinding = header.filter((col) => col.type === "binding");
       if (colBinding.length > 0) {
         colBinding.forEach((col) => {
           const lookupKey = genKeyLookupGrid(col);
           if (row[col.key]) {
-            let listBindingField = col?.listBindingField || [];
-            let lookupData = dataLookup?.[lookupKey]?.listValue || [];
-            let itemLookup = lookupData.find((item) => item.value == row[col.key]);
+            const listBindingField = col?.listBindingField || [];
+            const lookupData = dataLookup?.[lookupKey]?.listValue || [];
+            const itemLookup = lookupData.find((item) => item.value == row[col.key]);
             if (itemLookup) {
               listBindingField.forEach((bindingField) => {
                 row[bindingField.key] = itemLookup[bindingField.key] || null;
@@ -241,7 +241,7 @@ export const mapDataWithLookup = async (header, data) => {
               });
             }
           } else {
-            let listBindingField = col?.listBindingField || [];
+            const listBindingField = col?.listBindingField || [];
             listBindingField.forEach((bindingField) => {
               row[bindingField.key] = null;
             });

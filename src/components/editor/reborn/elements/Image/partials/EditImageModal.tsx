@@ -84,7 +84,7 @@ export default function EditImageModal(props: IEditImageModal) {
         }
       }
 
-      let isNatural = height == naturalHeight && width == naturalWidth;
+      const isNatural = height == naturalHeight && width == naturalWidth;
       setUseNatural(isNatural);
     }
   }, [height]);
@@ -97,7 +97,7 @@ export default function EditImageModal(props: IEditImageModal) {
         }
       }
 
-      let isNatural = height == naturalHeight && width == naturalWidth;
+      const isNatural = height == naturalHeight && width == naturalWidth;
       setUseNatural(isNatural);
     }
   }, [width]);

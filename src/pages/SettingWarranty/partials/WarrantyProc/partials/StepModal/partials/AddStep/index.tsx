@@ -83,7 +83,7 @@ export default function AddStep(props: IStepModalProps) {
   );
 
   useEffect(() => {
-    let isMounted = true;
+    const isMounted = true;
     if (data?.employees) {
       const takeEmployees = JSON.parse(data?.employees || "[]");
 

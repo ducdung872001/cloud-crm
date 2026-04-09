@@ -142,17 +142,17 @@ const GridAgTable = forwardRef<GridAgTableHandle, IGridAgTable>((props: IGridAgT
   }, [isFetchData, location, dataGrid]);
 
   useEffect(() => {
-    let dataGridHeader =
+    const dataGridHeader =
       dataGrid?.headerTable && dataGrid.headerTable
         ? typeof dataGrid.headerTable === "string"
           ? JSON.parse(dataGrid.headerTable)
           : dataGrid.headerTable
         : [];
     setColumnsConfig(dataGridHeader);
-    let dataGridRow =
+    const dataGridRow =
       dataGrid?.dataRow && dataGrid.dataRow ? (typeof dataGrid.dataRow === "string" ? JSON.parse(dataGrid.dataRow) : dataGrid.dataRow) : [];
     const getDataLookupGrid = async (header, data) => {
-      let _dataLookup = await mapDataWithLookup(header, data);
+      const _dataLookup = await mapDataWithLookup(header, data);
       setLookupValues(_dataLookup.dataLookup);
       setRowData(_dataLookup.dataWithLookup);
     };

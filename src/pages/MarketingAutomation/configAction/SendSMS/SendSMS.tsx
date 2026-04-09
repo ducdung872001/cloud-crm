@@ -95,7 +95,7 @@ export default function SendSMS(props: Record<string, unknown>) {
 
   useEffect(() => {
     setParams({ ...params, page: page });
-    return () => { isMounted = false; };
+    return () => { isMounted.current = false; };
   }, [page]);
 
   useEffect(() => {
@@ -128,7 +128,7 @@ export default function SendSMS(props: Record<string, unknown>) {
   );
 
 //   useEffect(() => {
-    let isMounted = true;
+//     let isMounted = true;
 //     setBody({ ...body, templateId: idCategorySMS, customerId: idCustomer });
 //   }, [idCustomer, idCategorySMS]);
 
@@ -181,7 +181,7 @@ export default function SendSMS(props: Record<string, unknown>) {
         setSearchParams(paramsTemp as unknown as Record<string, string | string[]>);
       }
     }
-    return () => { isMounted = false; };
+    return () => { isMounted.current = false; };
   }, [params, onShow]);
 
   const onSubmit = async (e) => {

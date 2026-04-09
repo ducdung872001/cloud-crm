@@ -160,7 +160,7 @@ const CustomCellEdit = (props) => {
       // binding có thể thay đổi nhiều field => build newData
       newData = { ...props.node.data, [fieldKey]: newValue ?? "" };
 
-      let changedFieldKeys: string[] = [];
+      const changedFieldKeys: string[] = [];
 
       if (e != null) {
         if (Array.isArray(e.bindingField) && e.bindingField.length) {
@@ -225,7 +225,7 @@ const CustomCellEdit = (props) => {
     } else if (type === "checkbox") {
       newValue = e ? (e.target.checked ? "true" : "false") : "false";
     } else if (type === "date") {
-      let _value = e ? new Date(e) : "";
+      const _value = e ? new Date(e) : "";
       newValue = _value ? moment(_value).utc().toISOString() : "";
       // kiểm tra related time_range
       const relatedDateRangeColumn = columnsConfig.filter(
@@ -385,7 +385,7 @@ const CustomCellEdit = (props) => {
           );
         case "lookup":
         case "binding":
-          let keyLookup = genKeyLookupGrid(props.colDef.cellRendererParams);
+          const keyLookup = genKeyLookupGrid(props.colDef.cellRendererParams);
           return (
             <SelectLookupGrid
               onBlur={handleBlur}

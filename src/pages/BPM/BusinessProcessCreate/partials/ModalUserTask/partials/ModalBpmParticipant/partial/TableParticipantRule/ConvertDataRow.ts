@@ -1,5 +1,5 @@
 export function convertDataRow(dataConfigAdvance, nodeId): Record<string, any> {
-  let dataConfig: Record<string, any> = {
+  const dataConfig: Record<string, any> = {
     inputs: [],
     outputs: [],
     config: {
@@ -16,18 +16,18 @@ export function convertDataRow(dataConfigAdvance, nodeId): Record<string, any> {
     // dataConfig.inputs bao gồm danh sách key của các cột có columnType = "condition", dataConfig.outputs bao gồm danh sách key của các cột có columnType = "decision"
     dataConfig.inputs = columns.filter((item) => item.columnType === "condition").map((item) => item.key);
     dataConfig.outputs = columns.filter((item) => item.columnType === "decision").map((item) => item.key);
-    let rules = [];
+    const rules = [];
     if (rows && rows.length > 0) {
       for (let i = 0; i < rows.length; i++) {
         const row = rows[i];
-        let rule = {
+        const rule = {
           ruleIndex: i,
           inputs: "",
           outputs: "",
           nodeId: nodeId,
         };
-        let rule_outputs = {};
-        let rule_inputs = [];
+        const rule_outputs = {};
+        const rule_inputs = [];
         for (let j = 1; j < row.length; j++) {
           const field = row[j];
           if (field.columnType == "decision") {
@@ -84,7 +84,7 @@ export function convertDataRow(dataConfigAdvance, nodeId): Record<string, any> {
                 });
               }
             } else {
-              let operator = field.compareType == "in" ? (field.compare == "in" ? "IN" : "NOT_IN") : field.compare == "=" ? "EQUAL" : "NOT_EQUAL";
+              const operator = field.compareType == "in" ? (field.compare == "in" ? "IN" : "NOT_IN") : field.compare == "=" ? "EQUAL" : "NOT_EQUAL";
               rule_inputs.push({
                 parameter: field.key,
                 operator: operator,

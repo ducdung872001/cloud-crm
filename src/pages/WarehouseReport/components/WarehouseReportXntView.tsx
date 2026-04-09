@@ -5,7 +5,6 @@ import moment from "moment";
 import WarehouseReportService, {
   IXntDailyPoint,
   IXntReportData,
-  IXntSummary,
   IXntWarehouseRatio,
 } from "services/WarehouseReportService";
 
@@ -199,7 +198,7 @@ export default function WarehouseReportXntView() {
       <div className="filter-bar">
         <span className="filter-label">Kỳ:</span>
         <div className="filter-group">
-          {(["month", "quarter", "custom"] as PeriodKey[]).map((key, i) => (
+          {(["month", "quarter", "custom"] as PeriodKey[]).map((key) => (
             <button
               key={key}
               className={`f-btn${periodKey === key ? " on" : ""}`}

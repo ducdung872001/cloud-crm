@@ -24,7 +24,7 @@ const CustomHeaderNoMenu = ({ position, onClose }) => {
   }, [onClose]);
 
   const handleSaveTypeNo = async (typeNoChange) => {
-    let dataSubmit = {
+    const dataSubmit = {
       nodeId: params?.nodeId || "Activity_0n3i8dv",
       processId: params?.processId || 380,
       fieldName: params?.fieldName || "boq",

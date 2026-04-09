@@ -196,7 +196,7 @@ export default function ModalAddColumn(props: Record<string, unknown>) {
   const getCustomerAttributes = async () => {
     const response = await CustomerAttributeService.listAll(formData?.values["custType"]);
 
-    let arrField = [];
+    const arrField = [];
 
     if (response.code === 0) {
       const dataOption = response.result;
@@ -720,7 +720,7 @@ export default function ModalAddColumn(props: Record<string, unknown>) {
       };
     });
 
-    let list_column = [
+    const list_column = [
       ...listColumn,
       {
         name: formData.values["name"],
@@ -756,7 +756,7 @@ export default function ModalAddColumn(props: Record<string, unknown>) {
         : []),
     ];
 
-    let dataSubmit = {
+    const dataSubmit = {
       nodeId: params?.nodeId || "Activity_0n3i8dv",
       processId: params?.processId || 380,
       fieldName: params?.fieldName || "boq",

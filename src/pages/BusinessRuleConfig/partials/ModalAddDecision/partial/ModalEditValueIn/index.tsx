@@ -53,7 +53,7 @@ export default function ModalEditValueIn({ onShow, onHide, dataFieldEdit, setInp
               if (dataFieldEdit.type === "input") {
                 setInputs((current) => {
                   const result = [...current];
-                  let dataNew = [];
+                  const dataNew = [];
                   addFieldAttributes.forEach((item) => {
                     if (item.trim() !== "") {
                       dataNew.push(item);
@@ -66,7 +66,7 @@ export default function ModalEditValueIn({ onShow, onHide, dataFieldEdit, setInp
               if (dataFieldEdit.type === "output") {
                 setOutputs((current) => {
                   const result = [...current];
-                  let dataNew = [];
+                  const dataNew = [];
                   addFieldAttributes.forEach((item) => {
                     if (item.trim() !== "") {
                       dataNew.push(item);

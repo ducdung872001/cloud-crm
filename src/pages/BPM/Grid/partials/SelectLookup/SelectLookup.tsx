@@ -185,7 +185,7 @@ export default function SelectLookup(props: SelectLookupProps) {
 
     if (response.code === 0) {
       const dataDetailLookup = response.result;
-      let data_lookup = {
+      const data_lookup = {
         value: dataDetailLookup?.id,
         label:
           lookup == "reason"
@@ -258,7 +258,7 @@ export default function SelectLookup(props: SelectLookupProps) {
             setListColumn(
               listColumn.map((el, index) => {
                 if (index === columnIndex) {
-                  let newItem = {
+                  const newItem = {
                     ...el,
                     options: [item],
                   };

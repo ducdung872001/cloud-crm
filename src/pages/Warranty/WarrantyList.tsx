@@ -11,7 +11,7 @@ import Dialog, { IContentDialog } from "components/dialog/dialog";
 import TitleAction, { ITitleActions } from "components/titleAction/titleAction";
 import { DataPaginationDefault, PaginationProps } from "components/pagination/pagination";
 import { BulkActionItemModel } from "components/bulkAction/bulkAction";
-import { IAction, IFilterItem, ISaveSearch } from "model/OtherModel";
+import { IFilterItem, ISaveSearch } from "model/OtherModel";
 import { IWarrantyFilterRequest } from "model/warranty/WarrantyRequestModel";
 import { IWarrantyResponseModel } from "model/warranty/WarrantyResponseModel";
 import { ContextType, UserContext } from "contexts/userContext";
@@ -159,6 +159,7 @@ export default function WarrantyList() {
       paramsTemp[value] = key;
     });
     setParams((prevParams) => ({ ...prevParams, ...paramsTemp }));
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
@@ -185,6 +186,7 @@ export default function WarrantyList() {
     return () => {
       abortController.abort();
     };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [params]);
 
   const titleActions: ITitleActions = {
@@ -475,6 +477,7 @@ export default function WarrantyList() {
 
     //! đoạn này mục đích xóa sự kiện khi component unmount
     return () => window.removeEventListener("keydown", handleHideShowFullPage);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isCollapsedSidebar]);
 
   const onDelete = async (id: number) => {

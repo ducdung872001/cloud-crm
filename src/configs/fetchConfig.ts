@@ -48,7 +48,7 @@ export default function RegisterFetch() {
           if (url.startsWith(prefixBiz)) {
             url = process.env.APP_BIZ_URL + url.replace(prefixBiz, "");
           } else if (url.startsWith(prefixAdmin) || url.startsWith(prefixApi)) {
-            let rootDomain = getRootDomain(location.hostname || "");
+            const rootDomain = getRootDomain(location.hostname || "");
             if (rootDomain == "localhost") {
               if (url.startsWith(prefixAdmin)) {
                 url = process.env.APP_ADMIN_URL + url;

@@ -950,7 +950,7 @@ export default function AddEmployeeModal(props: AddEmployeeModalProps) {
                 onChange={(e) => {
                   setValueListRole(
                     e.map((item) => {
-                      let check = defaultListRole.find((el) => el.value === item.value);
+                      const check = defaultListRole.find((el) => el.value === item.value);
                       return { value: item.value, label: item.label, id: (check && check?.id) || null };
                     })
                   );
@@ -959,7 +959,7 @@ export default function AddEmployeeModal(props: AddEmployeeModalProps) {
                     values: {
                       ...prev.values,
                       roleEmployeeList: e.map((item) => {
-                        let check = defaultListRole.find((el) => el.value === item.value);
+                        const check = defaultListRole.find((el) => el.value === item.value);
                         return { roleId: item.value, employeeId: data?.id || null, id: (check && check?.id) || null };
                       }),
                     },

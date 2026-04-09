@@ -187,11 +187,11 @@ export default function AddCampaignModal(props: IAddCampaignModalProps) {
       const branches4 = JSON.parse(result.branches4);
       const dataBranchList = result.lstBranch;
 
-      let listBranchLevel0 = [];
-      let listBranchLevel1 = [];
-      let listBranchLevel2 = [];
-      let listBranchLevel3 = [];
-      let listBranchLevel4 = [];
+      const listBranchLevel0 = [];
+      const listBranchLevel1 = [];
+      const listBranchLevel2 = [];
+      const listBranchLevel3 = [];
+      const listBranchLevel4 = [];
 
       if (branches0.length > 0) {
         branches0.map((item) => {
@@ -783,7 +783,7 @@ export default function AddCampaignModal(props: IAddCampaignModalProps) {
     if (listBranchDeleted0 && listBranchDeleted0.length > 0 && listBranchValue.length >= 2) {
       let newlistBranch1 = [...listBranchValue[1].value];
 
-      let newListBranchDeleted1 = [];
+      const newListBranchDeleted1 = [];
       if (listBranchValue[1].value.length > 0) {
         listBranchDeleted0.map((item) => {
           const array = newlistBranch1.filter((el) => el.parentId !== item) || [];
@@ -821,7 +821,7 @@ export default function AddCampaignModal(props: IAddCampaignModalProps) {
     if (listBranchDeleted1 && listBranchDeleted1.length > 0 && listBranchValue.length >= 3) {
       let newlistBranch2 = [...listBranchValue[2].value];
 
-      let newListBranchDeleted2 = [];
+      const newListBranchDeleted2 = [];
       if (listBranchValue[2].value.length > 0) {
         listBranchDeleted1.map((item) => {
           const array = newlistBranch2.filter((el) => el.parentId !== item) || [];
@@ -865,7 +865,7 @@ export default function AddCampaignModal(props: IAddCampaignModalProps) {
   useEffect(() => {
     if (listBranchDeleted2 && listBranchDeleted2.length > 0 && listBranchValue.length >= 4) {
       let newlistBranch3 = [...listBranchValue[3].value];
-      let newListBranchDeleted3 = [];
+      const newListBranchDeleted3 = [];
       if (listBranchValue[3].value.length > 0) {
         listBranchDeleted2.map((item) => {
           const array = newlistBranch3.filter((el) => el.parentId !== item) || [];
@@ -1184,7 +1184,7 @@ export default function AddCampaignModal(props: IAddCampaignModalProps) {
     setCheckFieldApproach(false);
 
     const value = e.target.value;
-    let item: ICampaignApproachRequestModel = {};
+    const item: ICampaignApproachRequestModel = {};
 
     if (value) {
       listApproach.map((obj, index) => {
@@ -1226,7 +1226,7 @@ export default function AddCampaignModal(props: IAddCampaignModalProps) {
 
   const handleChangeValueActivity = (activities, idx) => {
     activities = JSON.stringify(activities.split(","));
-    let item: ICampaignApproachRequestModel = {};
+    const item: ICampaignApproachRequestModel = {};
     listApproach.map((obj, index) => {
       if (index === idx) {
         item.id = obj.id;
