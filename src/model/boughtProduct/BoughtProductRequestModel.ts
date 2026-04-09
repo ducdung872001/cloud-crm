@@ -52,6 +52,7 @@ export interface IInsertedItem {
   price: number;
   priceDiscount?: number; // was number | null
   quantity?: number; // was number | null
+  qty?: number; // legacy alias, service sẽ map sang quantity khi insertBatch
   mfgDate?: string; // was string | null
   expiryDate?: string; // was string | null
   discount?: number; // was number | null

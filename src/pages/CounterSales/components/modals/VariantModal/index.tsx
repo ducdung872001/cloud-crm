@@ -147,6 +147,7 @@ export default function VariantModal({ open, productData, onClose, onAddToCart }
     onAddToCart({
       id: product.id,
       variantId: matchedVariant.id,
+      unitId: matchedVariant.unitId != null ? Number(matchedVariant.unitId) : product.unitId != null ? Number(product.unitId) : undefined,
       image: matchedVariant.images?.[0] || product.avatar || "", // ưu tiên ảnh của biến thể, fallback sang ảnh chung của sản phẩm
       icon: product.icon ?? "📦",
       name: `${product.name} (${variantLabel})`,

@@ -20,6 +20,8 @@ export interface ProductVariant {
   sku: string;
   price: number;
   stock: number;
+  unitId?: number;
+  unitName?: string;
   // map groupId → optionId
   combination: Record<string, string>;
   images?: string[]; // giả sử API mới có thêm trường images là array để chứa nhiều ảnh của biến thể
@@ -32,6 +34,7 @@ export interface VariantProduct {
   avatar?: string; // tạm map image sang avatar để dùng chung component với product list
   icon?: string;
   unit: string;
+  unitId?: number;
   variantGroups: VariantGroup[];
   variants: ProductVariant[];
 }
@@ -533,6 +536,7 @@ function mapToVariantProduct(detail): VariantProduct {
     name: detail.name,
     icon: detail?.icon || "📦",
     unit: detail.unitName ?? detail.unit ?? "",
+    unitId: detail?.unitId != null ? toSafeNumber(detail.unitId) : undefined,
     image: detail.image,
     avatar: detail.avatar, // tạm map image sang avatar để dùng chung component với product list
     variantGroups: detail?.variantGroups
@@ -552,6 +556,8 @@ function mapToVariantProduct(detail): VariantProduct {
           price: toSafeNumber(v.promotionPrice ?? v.price ?? v.priceRetail ?? v.salePrice, basePrice),
           images: v?.images ? v.images.map((img) => img) : [], // giả sử API mới có thêm trường images là array để chứa nhiều ảnh của biến thể
           stock: toSafeNumber(v?.quantity, 0),
+          unitId: v?.unitId != null ? toSafeNumber(v.unitId) : undefined,
+          unitName: v?.unitName ?? detail.unitName ?? detail.unit ?? "",
           combination: v.selectedOptions
             ? v.selectedOptions.reduce((acc, opt) => {
                 acc[String(opt.groupId)] = String(opt.optionValueId);
