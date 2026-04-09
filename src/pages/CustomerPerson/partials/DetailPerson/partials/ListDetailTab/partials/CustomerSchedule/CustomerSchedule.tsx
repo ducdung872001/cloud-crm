@@ -13,7 +13,7 @@ import { SystemNotification } from "components/systemNotification/systemNotifica
 import BoxTable from "components/boxTable/boxTable";
 import { ContextType, UserContext } from "contexts/userContext";
 import ScheduleCommonService from "services/ScheduleCommonService";
-import AddConsultationScheduleModal from "pages/CalendarCommon/partials/AddConsultationScheduleModal/AddConsultationScheduleModal";
+// Removed (non-tech domain) - AddConsultationScheduleModal
 
 import "./CustomerSchedule.scss";
 
@@ -186,18 +186,7 @@ export default function CustomerSchedule({ idCustomer }) {
           </Fragment>
         )}
       </div>
-      <AddConsultationScheduleModal
-        onShow={showModalAdd}
-        onHide={(reload) => {
-          if (reload) {
-            getListSchedule(params);
-          }
-
-          setShowModalAdd(false);
-        }}
-        idCustomer={idCustomer}
-        startDate={new Date()}
-      />
+      {/* Removed (non-tech domain) - AddConsultationScheduleModal JSX */}
     </div>
   );
 }

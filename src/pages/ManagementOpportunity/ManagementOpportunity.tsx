@@ -37,7 +37,6 @@ import AddCustomPlaceholderModal from "pages/CustomerPerson/partials/DetailPerso
 import AddCustomPlaceholderSmsModal from "./partials/PlaceholderSmsModal/AddCustomPlaceholderSmsModal";
 import AddPhoneModal from "pages/CallCenter/partials/AddPhoneModal";
 import ContentMeetingModal from "./partials/ContentMeetingModal/ContentMeetingModal";
-import AddConsultationScheduleModal from "pages/CalendarCommon/partials/AddConsultationScheduleModal/AddConsultationScheduleModal";
 import { ICampaignFilterRequest } from "model/campaign/CampaignRequestModel";
 import CampaignService from "services/CampaignService";
 import { ICampaignResponseModel } from "model/campaign/CampaignResponseModel";
@@ -109,8 +108,6 @@ export default function ManagementOpportunity() {
   //face
   const [showModalFace, setShowModalFace] = useState<boolean>(false);
 
-  //schedule
-  const [showModalAddConsultationScheduleModal, setShowModalAddConsultationScheduleModal] = useState<boolean>(false);
 
   const colorData = [
     "#E98E4C",
@@ -637,24 +634,6 @@ export default function ManagementOpportunity() {
           ]
         : []),
 
-      ...(activities.includes("schedule") && item.status === 1
-        ? [
-            {
-              title: "Đặt lịch",
-              icon: <Icon name="Calendar" style={{ marginRight: 3 }} className={isCheckedItem ? "icon-disabled" : ""}/>,
-              disabled: isCheckedItem,
-              callback: () => {
-                if (!isCheckedItem) {
-                setDataCustomer({
-                  name: item.customerName,
-                  id: item.customerId,
-                });
-                setShowModalAddConsultationScheduleModal(true);
-              }
-              },
-            },
-          ]
-        : []),
 
       ...(item.status === 2
         ? [
@@ -1990,19 +1969,6 @@ export default function ManagementOpportunity() {
 
       <ContentMeetingModal onShow={showModalFace} dataCustomer={dataCustomer} onHide={() => setShowModalFace(false)} />
 
-      <AddConsultationScheduleModal
-        onShow={showModalAddConsultationScheduleModal}
-        idData={null}
-        idCustomer={dataCustomer?.id}
-        startDate={new Date()}
-        endDate={new Date(new Date().setMinutes(new Date().getMinutes() + 10))}
-        onHide={(reload) => {
-          if (reload) {
-            // getListSchedule(params);
-          }
-          setShowModalAddConsultationScheduleModal(false);
-        }}
-      />
 
       {/* <AddChangeProbabilityModal
         onShow={showModalChanceProbability}

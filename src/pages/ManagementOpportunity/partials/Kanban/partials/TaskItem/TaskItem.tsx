@@ -25,7 +25,6 @@ export default function TaskItem(props: any) {
     setShowModalFace,
     setIsCollectInfoEform,
     setIsCollectVOC,
-    setShowModalAddConsultationScheduleModal,
     customerIdlist,
     setCustomerIdList,
     opportunityIdList,
@@ -332,27 +331,6 @@ export default function TaskItem(props: any) {
                     </Tippy>
                   )}
 
-                  {activities.includes("schedule") && column.id !== null && column.id !== "done" && column.id !== "fail" && (
-                    <Tippy content="Đặt lịch">
-                      <div
-                        className="container-action"
-                        onClick={() => {
-                          setDataCustomer({
-                            name: item.customerName,
-                            id: item.customerId,
-                            phoneMasked: item.customerPhone,
-                            address: item.customerAddress,
-                            employeeName: item.employeeName,
-                            coyId: item.id,
-                            approachId: item.approachId,
-                          });
-                          setShowModalAddConsultationScheduleModal(true);
-                        }}
-                      >
-                        <Icon name="Calendar" style={{ width: 20, height: 20, fill: "var(--primary-color)", cursor: "pointer" }} />
-                      </div>
-                    </Tippy>
-                  )}
 
                   {activities.includes("contact") && column.id !== null && column.id !== "done" && column.id !== "fail" && (
                     <Tippy content="Đầu mối làm việc">

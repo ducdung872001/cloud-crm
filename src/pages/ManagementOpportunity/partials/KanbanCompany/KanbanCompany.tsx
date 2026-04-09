@@ -19,7 +19,6 @@ import Tippy from "@tippyjs/react";
 import { ICustomPlaceholderResponse } from "model/customPlaceholder/CustomPlaceholderResponseModel";
 import AddPhoneModal from "pages/CallCenter/partials/AddPhoneModal";
 import ContentMeetingModal from "../ContentMeetingModal/ContentMeetingModal";
-import AddConsultationScheduleModal from "pages/CalendarCommon/partials/AddConsultationScheduleModal/AddConsultationScheduleModal";
 import { formatCurrency } from "reborn-util";
 import Checkbox from "components/checkbox/checkbox";
 import AddCustomerEmailModal from "pages/CustomerPerson/partials/DetailPerson/partials/ListDetailTab/partials/CustomerEmailList/partials/AddCustomerEmailModal";
@@ -548,8 +547,6 @@ export default function KanbanCompany(props: any) {
   //face
   const [showModalFace, setShowModalFace] = useState<boolean>(false);
 
-  //schedule
-  const [showModalAddConsultationScheduleModal, setShowModalAddConsultationScheduleModal] = useState<boolean>(false);
 
   //modal exchange
   const [showModalExchange, setShowModalExchange] = useState<boolean>(false);
@@ -859,21 +856,6 @@ export default function KanbanCompany(props: any) {
             </div>
           </Tippy>
 
-          <Tippy content="Đặt lịch">
-            <div>
-              <Icon
-                name="Calendar"
-                style={{ width: 29, marginRight: 20, fill: customerIdlist.length === 1 ? "var(--primary-color)" : "#AAAAAA", cursor: "pointer" }}
-                onClick={() => {
-                  if (customerIdlist.length === 1) {
-                    setShowModalAddConsultationScheduleModal(true);
-                  } else {
-                    showToast("Vui lòng chọn 1 khách hàng", "warning");
-                  }
-                }}
-              />
-            </div>
-          </Tippy>
 
           <Tippy content="Tạo đơn hàng">
             <div>
@@ -1256,7 +1238,6 @@ export default function KanbanCompany(props: any) {
                                   setShowModalFace={setShowModalFace}
                                   setIsCollectInfoEform={setIsCollectInfoEform}
                                   setIsCollectVOC={setIsCollectVOC}
-                                  setShowModalAddConsultationScheduleModal={setShowModalAddConsultationScheduleModal}
                                   customerIdlist={customerIdlist}
                                   setCustomerIdList={setCustomerIdList}
                                   opportunityIdList={opportunityIdList}
@@ -1328,21 +1309,6 @@ export default function KanbanCompany(props: any) {
         }}
       />
 
-      <AddConsultationScheduleModal
-        onShow={showModalAddConsultationScheduleModal}
-        idData={null}
-        idCustomer={dataCustomer ? dataCustomer?.id : dataCustomerList[0]?.id}
-        // idCustomer={dataCustomer?.id}
-        startDate={new Date()}
-        endDate={new Date(new Date().setMinutes(new Date().getMinutes() + 10))}
-        onHide={(reload) => {
-          if (reload) {
-            // getListSchedule(params);
-          }
-          setShowModalAddConsultationScheduleModal(false);
-          setDataCustomer(null);
-        }}
-      />
 
       <AddCustomerEmailModal
         onShow={showModalSendEmail}

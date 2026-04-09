@@ -19,7 +19,7 @@ import "./EmailConfirm.scss";
 import { useLocation } from "react-router-dom";
 import Button from "components/button/button";
 import EmailService from "services/EmailService";
-import ScheduleConsultantService from "services/ScheduleConsultantService";
+// ScheduleConsultantService removed (non-tech domain)
 import { ca } from "date-fns/locale";
 
 export default function EmailConfirm() {
@@ -150,7 +150,7 @@ export default function EmailConfirm() {
   //! Lấy thông tin lịch tư vấn theo scheduleConsultantId
   const getScheduleDetail = async (scheduleId: number) => {
     try {
-      const response = await ScheduleConsultantService.detail(scheduleId);
+      const response = { code: -1, result: null } as Record<string, unknown>; // ScheduleConsultantService removed
       if (response.code === 0 && response.result) {
         const info = response.result;
         setScheduleInfo(info);

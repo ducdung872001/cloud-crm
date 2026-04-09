@@ -17,8 +17,7 @@ import { showToast } from "utils/common";
 import CustomerService from "services/CustomerService";
 import AddPhoneModal from "../AddPhoneModal";
 import AddManagementOpportunityModal from "pages/ManagementOpportunity/partials/AddManagementOpportunityModal";
-import AddTreatmentScheduleModal from "pages/CalendarCommon/partials/AddTreatmentScheduleModal/AddTreatmentScheduleModal";
-import AddConsultationScheduleModal from "pages/CalendarCommon/partials/AddConsultationScheduleModal/AddConsultationScheduleModal";
+// Removed (non-tech domain) - AddTreatmentScheduleModal, AddConsultationScheduleModal
 import { ContextType, UserContext } from "contexts/userContext";
 import EmployeeAgentService from "services/EmployeeAgentService";
 import JsSIP from "jssip";
@@ -56,7 +55,7 @@ export default function CustomerList(props: ICustomerListProps) {
   const [dataCustomer, setDataCustomer] = useState<ICustomerResponse>(null);
   const [showModalAddManagementOpportunity, setShowModalAddManagementOpportunity] = useState<boolean>(false);
   const [idCustomer, setIdCustomer] = useState<number>(null);
-  const [showModalAddConsultationScheduleModal, setShowModalAddConsultationScheduleModal] = useState<boolean>(false);
+  // Removed (non-tech domain) - showModalAddConsultationScheduleModal state
 
   const [params, setParams] = useState<IParamsCustomerInCallCenter>({
     keyword: "",
@@ -218,16 +217,8 @@ export default function CustomerList(props: ICustomerListProps) {
     item.emailMasked,
     item.address,
     item.employeeName,
-    <span
-      key={item.id}
-      style={{ color: "var(--primary-color-90)", fontWeight: "500", cursor: "pointer" }}
-      onClick={() => {
-        setIdCustomer(item.id);
-        setShowModalAddConsultationScheduleModal(true);
-      }}
-    >
-      Tạo
-    </span>,
+    // Removed (non-tech domain) - consultation schedule create link
+    null,
     <span
       key={item.id}
       style={{ color: "var(--primary-color-90)", fontWeight: "500", cursor: "pointer" }}
@@ -552,19 +543,7 @@ export default function CustomerList(props: ICustomerListProps) {
         onHide={() => setShowModalAddManagementOpportunity(false)}
       />
 
-      <AddConsultationScheduleModal
-        onShow={showModalAddConsultationScheduleModal}
-        idData={null}
-        idCustomer={idCustomer}
-        startDate={new Date()}
-        endDate={new Date(new Date().setMinutes(new Date().getMinutes() + 10))}
-        onHide={(reload) => {
-          if (reload) {
-            // getListSchedule(params);
-          }
-          setShowModalAddConsultationScheduleModal(false);
-        }}
-      />
+      {/* Removed (non-tech domain) - AddConsultationScheduleModal JSX */}
     </Fragment>
   );
 }

@@ -38,7 +38,7 @@ i18n.use(initReactI18next).init({
           teacherProfile: "Teacher profile",
           contactProfile: "Contact Profile",
           parentProfile: "Parent profile",
-          treatmentHistory: "Treatment history",
+          // Removed (non-tech domain) - treatmentHistory
           customerSegments: "Customer Segmentation",
 
           quote: "Quote",
@@ -122,18 +122,11 @@ i18n.use(initReactI18next).init({
 
           // Thông tin khảo sát
           survey: "Customer survey",
-          cxmSurvey: "CXM survey",
+          // Removed (non-tech domain) - cxmSurvey
 
-          // Quản lý vận hành
-          operate: "Operation Management",
-          // utilityReading: "Utility Reading",
-          electricityIndex: "Electricity Index",
-          waterIndex: "Water Index",
-          spaceCustomer: "Space",
-          managementFee: "Management Fee",
-          vehicleRegistration: "Vehicle Registration",
-          vehicle: "Vehicle",
-          ortherFee: "Orther Fee",
+          // Removed (non-tech domain) - BDS/Operation management menu items
+          // (operate, electricityIndex, waterIndex, spaceCustomer, managementFee,
+          // vehicleRegistration, vehicle, ortherFee)
 
           report: "Report",
           // đoạn này là children của report
@@ -204,28 +197,9 @@ i18n.use(initReactI18next).init({
           listRole: "List Role",
           listTeam: "List team",
           listEmployee: "List employee",
-          listTreatmentRooms: "List treatment rooms",
+          // Removed (non-tech domain) - listTreatmentRooms
         },
-        // đoạn là page setting operate
-        pageSettingOperate: {
-          title: "Setting operate",
-          electricityRate: "Electricity rate",
-          electricityIndex: "Electricity index",
-          electrictiyMeter: "Electricity meter",
-          // meterSpace: "Meter space",
-
-          waterRate: "Water rate",
-          waterMeter: "Water meter",
-          waterIndex: "Water index",
-          // meterSpace: "Meter space",
-
-          building: "Building/Floor/Apartment",
-          project: "List project",
-          managementFeeRate: "Management fee rate",
-          managementFee: "Management fee",
-          pakingFee: "Parking fee",
-          spaceType: "Space type",
-        },
+        // Removed (non-tech domain) - pageSettingOperate section
 
         pageSettingPersonal: {
           title: "Setting personal",
@@ -273,7 +247,7 @@ i18n.use(initReactI18next).init({
           teacherProfile: "Hồ sơ giáo viên",
           contactProfile: "Hồ sơ người liên hệ",
           parentProfile: "Hồ sơ phụ huynh",
-          treatmentHistory: "Thực hiện dịch vụ",
+          // Removed (non-tech domain) - treatmentHistory
           customerSegments: "Phân khúc khách hàng",
 
           quote: "Báo giá",
@@ -365,18 +339,11 @@ i18n.use(initReactI18next).init({
           processSimulation: "Mô phỏng quy trình",
           objectManage: "Quản lý hồ sơ",
           manage_data_sharing: "Chia sẻ dữ liệu",
-          cxmSurvey: "Chiến dịch khảo sát",
+          // Removed (non-tech domain) - cxmSurvey
 
-          // Quản lý vận hành
-          operate: "Quản lý vận hành",
-          // utilityReading: "Chỉ số điện/nước",
-          electricityIndex: "Chỉ số điện",
-          waterIndex: "Chỉ số nước",
-          spaceCustomer: "Căn hộ/văn phòng",
-          managementFee: "Phí quản lý",
-          vehicleRegistration: "Phí đậu xe",
-          vehicle: "Đăng kí phương tiện",
-          ortherFee: "Chi phí khác",
+          // Removed (non-tech domain) - BDS/Operation management menu items
+          // (operate, electricityIndex, waterIndex, spaceCustomer, managementFee,
+          // vehicleRegistration, vehicle, ortherFee)
 
           report: "Báo cáo",
           // đoạn này là children của báo cáo
@@ -448,29 +415,9 @@ i18n.use(initReactI18next).init({
           listRole: "Danh sách nhóm quyền",
           listEmployee: "Danh sách nhân viên",
           listTeam: "Danh sách nhóm nhân viên",
-          listTreatmentRooms: "Danh sách phòng điều trị",
+          // Removed (non-tech domain) - listTreatmentRooms
         },
-        // đoạn này là page cài đặt vận hành
-        pageSettingOperate: {
-          title: "Cài đặt vận hành",
-
-          electricityRate: "Đơn giá điện",
-          electricityIndex: "Chỉ số điện",
-          electrictiyMeter: "Danh mục công tơ điện",
-          // meterSpace: "Cài đặt đồng hồ",
-
-          waterRate: "Đơn giá nước",
-          waterIndex: "Chỉ số nước",
-          waterMeter: "Danh mục công tơ nước",
-          // meterSpace: "Meter space",
-
-          building: "Tòa nhà/Tầng/Căn hộ",
-          project: "Danh sách dự án",
-          managementFeeRate: "Biểu giá phí quản lý",
-          managementFee: "Biểu phí kết xuất hàng tháng",
-          pakingFee: "Biểu phí đỗ xe",
-          spaceType: "Loại căn hộ",
-        },
+        // Removed (non-tech domain) - pageSettingOperate section
 
         pageSettingPersonal: {
           title: "Cài đặt cá nhân",

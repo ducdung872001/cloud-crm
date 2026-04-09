@@ -13,8 +13,7 @@ import EmployeeService from "services/EmployeeService";
 import ScheduleCommonService from "services/ScheduleCommonService";
 import FilterCalendarModal from "./partials/FilterCalendarModal/FilterCalendarModal";
 import AddWorkModal from "pages/MiddleWork/partials/ListWork/partials/AddWorkModal/AddWorkModal";
-import AddTreatmentScheduleModal from "./partials/AddTreatmentScheduleModal/AddTreatmentScheduleModal";
-import AddConsultationScheduleModal from "./partials/AddConsultationScheduleModal/AddConsultationScheduleModal";
+// Removed (non-tech domain) - AddTreatmentScheduleModal, AddConsultationScheduleModal
 import "tippy.js/animations/scale.css";
 import "react-big-calendar/lib/css/react-big-calendar.css";
 import "react-big-calendar/lib/addons/dragAndDrop/styles.css";
@@ -43,37 +42,17 @@ export default function CalendarCommon() {
   const isBeauty = localStorage.getItem("isBeauty");
   const { dataBranch } = useContext(UserContext) as ContextType;
 
-  const listOptionNewAdd =
-    isBeauty && isBeauty == "1"
-      ? 
-      [
-          {
-            value: "2",
-            label: "Thêm lịch tư vấn",
-          },
-          {
-            value: "3",
-            label: "Thêm lịch thực hiện dịch vụ",
-          },
-          {
-            value: "1",
-            label: "Thêm lịch công việc",
-          },
-        ]
-      : [
-          {
-            value: "2",
-            label: "Thêm lịch tư vấn",
-          },
-          {
-            value: "1",
-            label: "Thêm lịch công việc",
-          },
-        ];
+  // Removed (non-tech domain) - consultation/treatment schedule options
+  const listOptionNewAdd = [
+    {
+      value: "1",
+      label: "Thêm lịch công việc",
+    },
+  ];
 
   const [valueOptionAdd, setValueOptionAdd] = useState({
-    value: "2",
-    label: "Thêm lịch tư vấn",
+    value: "1",
+    label: "Thêm lịch công việc",
   });
 
   const handleChangeValueOptionAdd = (e) => {
@@ -248,12 +227,11 @@ export default function CalendarCommon() {
   });
 
   const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [showModalAddConsultationScheduleModal, setShowModalAddConsultationScheduleModal] = useState<boolean>(false);
+  // Removed (non-tech domain) - showModalAddConsultationScheduleModal, showModalAddTreatmentSchedule states
   const [showModalSearch, setShowModalSearch] = useState<boolean>(false);
   const [startDate, setStartDate] = useState<string>("");
   const [endDate, setEndDate] = useState<string>("");
   const [idItemCalendar, setIdItemCalendar] = useState<number>(null);
-  const [showModalAddTreatmentSchedule, setShowModalAddTreatmentSchedule] = useState<boolean>(false);
   const [showModalAddWork, setShowModalAddWork] = useState<boolean>(false);
   const [idEmployee, setIdEmployee] = useState<number>(null);
 
@@ -372,13 +350,8 @@ export default function CalendarCommon() {
         setStartDate(start);
         setEndDate(end);
 
-        if (valueOptionAdd.value == "2") {
-          setShowModalAddConsultationScheduleModal(true);
-        } else if (valueOptionAdd.value == "3") {
-          setShowModalAddTreatmentSchedule(true);
-        } else {
-          setShowModalAddWork(true);
-        }
+        // Removed (non-tech domain) - consultation/treatment schedule branches
+        setShowModalAddWork(true);
       }
     },
     [valueOptionAdd]
@@ -389,15 +362,10 @@ export default function CalendarCommon() {
     if (event) {
       setIdItemCalendar(event.id);
 
-      if (event.type == 1) {
-        setShowModalAddWork(true);
-        setStartDate(event.start);
-        setEndDate(event.end);
-      } else if (event.type == 2) {
-        setShowModalAddConsultationScheduleModal(true);
-      } else {
-        setShowModalAddTreatmentSchedule(true);
-      }
+      // Removed (non-tech domain) - consultation (type 2) and treatment (type 3) branches
+      setShowModalAddWork(true);
+      setStartDate(event.start);
+      setEndDate(event.end);
     }
   }, []);
 
@@ -459,30 +427,7 @@ export default function CalendarCommon() {
           setShowModalAddWork(false);
         }}
       />
-      <AddTreatmentScheduleModal
-        onShow={showModalAddTreatmentSchedule}
-        idData={idItemCalendar}
-        startDate={startDate}
-        endDate={endDate}
-        onHide={(reload) => {
-          if (reload) {
-            getListSchedule(params);
-          }
-          setShowModalAddTreatmentSchedule(false);
-        }}
-      />
-      <AddConsultationScheduleModal
-        onShow={showModalAddConsultationScheduleModal}
-        idData={idItemCalendar}
-        startDate={startDate}
-        endDate={endDate}
-        onHide={(reload) => {
-          if (reload) {
-            getListSchedule(params);
-          }
-          setShowModalAddConsultationScheduleModal(false);
-        }}
-      />
+      {/* Removed (non-tech domain) - AddTreatmentScheduleModal, AddConsultationScheduleModal JSX */}
     </div>
   );
 }

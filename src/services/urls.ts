@@ -177,98 +177,10 @@ export const urlsApi = {
     delete: prefixAdmin + "/workProject/delete",
   },
 
-  // Khu vực quản lý vận hành ---
-  space: {
-    list: prefixAdmin + "/space/list",
-    update: prefixAdmin + "/space/update",
-    detail: prefixAdmin + "/space/get",
-    delete: prefixAdmin + "/space/delete",
-  },
-  spaceType: {
-    list: prefixAdmin + "/spaceType/list",
-    update: prefixAdmin + "/spaceType/update",
-    detail: prefixAdmin + "/spaceType/get",
-    delete: prefixAdmin + "/spaceType/delete",
-  },
-  spaceCustomer: {
-    list: prefixAdmin + "/spaceCustomer/list",
-    update: prefixAdmin + "/spaceCustomer/update",
-    detail: prefixAdmin + "/spaceCustomer/get",
-    delete: prefixAdmin + "/spaceCustomer/delete",
-  },
-  ortherFee: {
-    list: prefixAdmin + "/otherFee/list",
-    update: prefixAdmin + "/otherFee/update",
-    detail: prefixAdmin + "/otherFee/get",
-    delete: prefixAdmin + "/otherFee/delete",
-  },
-  utilityReading: {
-    list: prefixAdmin + "/utilityReading/list",
-    update: prefixAdmin + "/utilityReading/update",
-    detail: prefixAdmin + "/utilityReading/get",
-    delete: prefixAdmin + "/utilityReading/delete",
-  },
-  managementFee: {
-    list: prefixAdmin + "/managementFee/list",
-    update: prefixAdmin + "/managementFee/update",
-    detail: prefixAdmin + "/managementFee/get",
-    delete: prefixAdmin + "/managementFee/delete",
-  },
-  vehicleRegistration: {
-    list: prefixAdmin + "/vehicleRegistration/list",
-    update: prefixAdmin + "/vehicleRegistration/update",
-    detail: prefixAdmin + "/vehicleRegistration/get",
-    delete: prefixAdmin + "/vehicleRegistration/delete",
-  },
-  vehicle: {
-    list: prefixAdmin + "/vehicle/list",
-    update: prefixAdmin + "/vehicle/update",
-    detail: prefixAdmin + "/vehicle/get",
-    delete: prefixAdmin + "/vehicle/delete",
-  },
-  building: {
-    list: prefixAdmin + "/building/list",
-    update: prefixAdmin + "/building/update",
-    detail: prefixAdmin + "/building/get",
-    delete: prefixAdmin + "/building/delete",
-  },
-  buildingFloor: {
-    list: prefixAdmin + "/buildingFloor/list",
-    update: prefixAdmin + "/buildingFloor/update",
-    detail: prefixAdmin + "/buildingFloor/get",
-    delete: prefixAdmin + "/buildingFloor/delete",
-  },
-  operationProject: {
-    list: prefixAdmin + "/project/list",
-    update: prefixAdmin + "/project/update",
-    detail: prefixAdmin + "/project/get",
-    delete: prefixAdmin + "/project/delete",
-  },
-  electricityRate: {
-    list: prefixAdmin + "/electricityRate/list",
-    update: prefixAdmin + "/electricityRate/update",
-    detail: prefixAdmin + "/electricityRate/get",
-    delete: prefixAdmin + "/electricityRate/delete",
-  },
-  waterRate: {
-    list: prefixAdmin + "/waterRate/list",
-    update: prefixAdmin + "/waterRate/update",
-    detail: prefixAdmin + "/waterRate/get",
-    delete: prefixAdmin + "/waterRate/delete",
-  },
-  managementFeeRate: {
-    list: prefixAdmin + "/managementFeeRate/list",
-    update: prefixAdmin + "/managementFeeRate/update",
-    detail: prefixAdmin + "/managementFeeRate/get",
-    delete: prefixAdmin + "/managementFeeRate/delete",
-  },
-  parkingFee: {
-    list: prefixAdmin + "/parkingFee/list",
-    update: prefixAdmin + "/parkingFee/update",
-    detail: prefixAdmin + "/parkingFee/get",
-    delete: prefixAdmin + "/parkingFee/delete",
-  },
-  //--- Khu vực quản lý vận hành
+  // Removed (non-tech domain) - All BDS/Operation management API endpoints
+  // (space, spaceType, spaceCustomer, ortherFee, utilityReading, managementFee,
+  // vehicleRegistration, vehicle, building, buildingFloor, operationProject,
+  // electricityRate, waterRate, managementFeeRate, parkingFee)
 
   historySend: {
     historySendSMS: prefixAdmin + "/customerSms/list",
@@ -435,57 +347,14 @@ export const urlsApi = {
     update: prefixAdmin + "/employeeAgent/update",
     delete: prefixAdmin + "/employeeAgent/delete",
   },
-  treatment: {
-    // đoạn api này cần xem lại chút
-    filterSchedule: prefixAdmin + "/treatmentTime/list_schedule_next",
-    filterByScheduler: prefixAdmin + "/treatmentTime/get_byscheduler",
-    updateNext: prefixAdmin + "/treatmentTime/update_next",
-    delete: prefixAdmin + "/treatmentTime/delete",
-    updateCaringEmployee: prefixAdmin + "/treatmentTime/update_caring_employee",
-    update: prefixAdmin + "/treatmentTime/update",
-  },
-  // lịch sử điều trị
-  treatmentHistory: {
-    list: prefixAdmin + "/treatmentHistory/list_all",
-    update: prefixAdmin + "/treatmentHistory/update",
-    detail: prefixAdmin + "/treatmentHistory/get",
-    delete: prefixAdmin + "/treatmentHistory/delete",
-    listByCustomer: prefixAdmin + "/treatmentHistory/list_by_customer",
-  },
-  // nhật ký điều trị
-  diarySurgery: {
-    list: prefixAdmin + "/diarySurgery/listAll",
-    update: prefixAdmin + "/diarySurgery/update",
-    detail: prefixAdmin + "/diarySurgery/get",
-    delete: prefixAdmin + "/diarySurgery/delete",
-  },
-  // lịch trình tư vấn
-  scheduleConsultant: {
-    list: prefixAdmin + "/scheduleConsultant/list",
-    update: prefixAdmin + "/scheduleConsultant/update",
-    detail: prefixAdmin + "/scheduleConsultant/get",
-    delete: prefixAdmin + "/scheduleConsultant/delete",
-  },
-  // lịch điều trị
-  scheduleTreatment: {
-    list: prefixAdmin + "/scheduleTreatment/list",
-    update: prefixAdmin + "/scheduleTreatment/update",
-    detail: prefixAdmin + "/scheduleTreatment/get",
-    delete: prefixAdmin + "/scheduleTreatment/delete",
-  },
+  // Removed (non-tech domain) - treatment, treatmentHistory, diarySurgery,
+  // scheduleConsultant, scheduleTreatment API endpoints
   // lịch chung (điều trị, tư vấn, công việc)
   scheduleCommon: {
     list: prefixAdmin + "/schedule/list",
     listRelatedToCustomer: prefixAdmin + "/schedule/list/by_customer",
   },
-  // phòng điều trị
-  treatmentRoom: {
-    list: prefixAdmin + "/treatmentRoom/list",
-    update: prefixAdmin + "/treatmentRoom/update",
-    detail: prefixAdmin + "/treatmentRoom/get",
-    delete: prefixAdmin + "/treatmentRoom/delete",
-    checkTreatmentRoom: prefixAdmin + "/treatmentRoom/check",
-  },
+  // Removed (non-tech domain) - treatmentRoom API endpoints
   crmCareHistory: {
     list: prefixAdmin + "/crmCareHistory/list",
     update: prefixAdmin + "/crmCareHistory/update",
@@ -503,44 +372,8 @@ export const urlsApi = {
     export: prefixAdmin + "/cashbook/export",
     detail: prefixAdmin + "/cashbook/get",
   },
-  //khu vực trải nghiệm khách hàng
-  cxmSurvey: {
-    list: prefixAdmin + "/cxmSurvey/list",
-    update: prefixAdmin + "/cxmSurvey/update",
-    delete: prefixAdmin + "/cxmSurvey/delete",
-    detail: prefixAdmin + "/cxmSurvey/get",
-  },
-  cxmResponse: {
-    list: prefixAdmin + "/cxmResponse/list",
-    update: prefixAdmin + "/cxmResponse/update",
-    delete: prefixAdmin + "/cxmResponse/delete",
-    detail: prefixAdmin + "/cxmResponse/get",
-  },
-  cxmResponseDetail: {
-    list: prefixAdmin + "/cxmResponseDetail/list",
-    update: prefixAdmin + "/cxmResponseDetail/update",
-    delete: prefixAdmin + "/cxmResponseDetail/delete",
-    detail: prefixAdmin + "/cxmResponseDetail/get",
-  },
-  cxmQuestion: {
-    list: prefixAdmin + "/cxmQuestion/list",
-    update: prefixAdmin + "/cxmQuestion/update",
-    delete: prefixAdmin + "/cxmQuestion/delete",
-    detail: prefixAdmin + "/cxmQuestion/get",
-  },
-  cxmOption: {
-    list: prefixAdmin + "/cxmOption/list",
-    update: prefixAdmin + "/cxmOption/update",
-    delete: prefixAdmin + "/cxmOption/delete",
-    detail: prefixAdmin + "/cxmOption/get",
-  },
-  cxmQuestionCondition: {
-    list: prefixAdmin + "/cxmQuestionCondition/list",
-    update: prefixAdmin + "/cxmQuestionCondition/update",
-    delete: prefixAdmin + "/cxmQuestionCondition/delete",
-    detail: prefixAdmin + "/cxmQuestionCondition/get",
-  },
-  //khu vực trải nghiệm khách hàng
+  // Removed (non-tech domain) - cxmSurvey, cxmResponse, cxmResponseDetail,
+  // cxmQuestion, cxmOption, cxmQuestionCondition API endpoints
   warehouse: {
     list: prefixAdmin + "/warehouse/list",
     //API lấy ra danh sách sản phẩm trong kho
@@ -548,9 +381,7 @@ export const urlsApi = {
     //API lấy ra thông tin ngày hết hạn / sản xuất dựa trên số lô của sản phẩm
     infoExpiryDateProductionDate: prefixAdmin + "/warehouse/get_mfg_expired_date",
   },
-  earnings: {
-    filter: prefixAdmin + "/earnings/admin/list",
-  },
+  // Removed (non-tech domain) - earnings API endpoint
   paymentHistory: {
     filter: prefixAdmin + "/paymentHistory/list",
     update: prefixAdmin + "/paymentHistory/update",
@@ -933,12 +764,7 @@ export const urlsApi = {
     detail: prefixAdmin + "/contractStage/get",
     delete: prefixAdmin + "/contractStage/delete",
   },
-  rentalType: {
-    list: prefixAdmin + "/rentalType/list",
-    update: prefixAdmin + "/rentalType/update",
-    detail: prefixAdmin + "/rentalType/get",
-    delete: prefixAdmin + "/rentalType/delete",
-  },
+  // Removed (non-tech domain) - rentalType API endpoint
   contact: {
     list: prefixAdmin + "/contact/list",
     update: prefixAdmin + "/contact/update",
@@ -2113,11 +1939,11 @@ export const urls = {
   partner: "/partner",
   detail_partner: "/detail_partner/partnerId/:id?",
 
-  schedule_next: "/schedule_next",
+  // Removed (non-tech domain) - schedule_next route path
   schedule: "/schedule",
   timekeeping: "/timekeeping",
   cashbook: "/cashbook",
-  cxmSurvey: "/cxm_survey",
+  // Removed (non-tech domain) - cxmSurvey route path
   // Đường dẫn đặt hàng
   order: "/order",
   // Đường dẫn quản lý đặt hàng
@@ -2166,7 +1992,7 @@ export const urls = {
   //tạo báo giá
   create_offer_add: "/create_offer_add",
   report: "/report",
-  earnings: "/earnings",
+  // Removed (non-tech domain) - earnings route path
   payment_history: "/payment_history",
   customer_care: "/customer_care",
   crm_campaign: "/crm_campaign",
@@ -2198,7 +2024,7 @@ export const urls = {
   setting_common: "/setting_common",
   setting_rose: "/setting_rose",
   setting_basis: "/setting_basis",
-  setting_operate: "/setting_operate",
+  // Removed (non-tech domain) - setting_operate route path
   setting_timekeeping: "/setting_timekeeping",
   setting_customer: "/setting_customer",
   setting_partner: "/setting_partner",
@@ -2234,10 +2060,7 @@ export const urls = {
   public_connect_zalo: "/public_connect_zalo",
   // đường dẫn quản trị tài nguyên
   resource_management: "/resource_management",
-  // đường dẫn lịch sử điều trị
-  treatment_history: "/treatment_history",
-  // đường dẫn nhật ký điều trị
-  diary_surgery: "/diary_surgery",
+  // Removed (non-tech domain) - treatment_history, diary_surgery route paths
   // lịch
   calendar_common: "/calendar_common",
   // quy trình bán hàng
@@ -2309,15 +2132,9 @@ export const urls = {
   outbound_invoice: "/outbound_invoice",
   inventory_transfer_document: "/inventory_transfer_document",
 
-  // Cài đặt vận hành
-  ortherFee: "/orther_fee",
-  utilityReading: "/utility_reading",
-  spaceCustomer: "/space_customer",
-  managementFee: "/management_fee",
-  vehicleRegistration: "/vehicle_registration",
-  vehicle: "/vehicle",
-  building: "/building",
-  buildingFloor: "/building_floor",
+  // Removed (non-tech domain) - BDS/Operation route paths
+  // (ortherFee, utilityReading, spaceCustomer, managementFee,
+  // vehicleRegistration, vehicle, building, buildingFloor)
 };
 
 export default urls;

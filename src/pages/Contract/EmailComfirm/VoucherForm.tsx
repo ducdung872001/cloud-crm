@@ -15,7 +15,7 @@ import { isDifferenceObj } from "reborn-util";
 import FileService from "services/FileService";
 import CustomerService from "services/CustomerService";
 import PromotionService from "services/PromotionService";
-import ScheduleConsultantService from "services/ScheduleConsultantService";
+// ScheduleConsultantService removed (non-tech domain)
 import { UserContext, ContextType } from "contexts/userContext";
 import "./EmailConfirm.scss";
 import Button from "components/button/button";
@@ -137,7 +137,7 @@ export default function VoucherForm() {
   //! Lấy thông tin lịch tư vấn theo ID
   const getScheduleDetail = useCallback(async (scheduleId: number) => {
     try {
-      const response = await ScheduleConsultantService.detail(scheduleId);
+      const response = { code: -1, result: null } as Record<string, unknown>; // ScheduleConsultantService removed
       if (response.code === 0 && response.result) {
         const info = response.result;
         setFormData(prev => ({

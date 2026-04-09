@@ -2,7 +2,6 @@ import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
 import BranchList from "./partials/BranchList/BranchList";
 import EmployeeList from "./partials/EmployeeList/EmployeeList";
-import TreatmentRoomList from "./partials/TreatmentRoom/TreatmentRoomList";
 import DepartmentDirectoryList from "./partials/DepartmentDirectory/DepartmentDirectoryList";
 import "./SettingBasisList.scss";
 import TeamEmployeeList from "./partials/TeamEmployeeList/TeamEmployeeList";
@@ -40,14 +39,6 @@ export default function SettingBasisList() {
       title: t(`pageSettingBasis.listTeam`),
       is_tab: "tab_five",
     },
-    ...(isBeauty && isBeauty == "1"
-      ? [
-          {
-            title: t(`pageSettingBasis.listTreatmentRooms`),
-            is_tab: "tab_four",
-          },
-        ]
-      : []),
   ];
 
   return (
@@ -123,15 +114,7 @@ export default function SettingBasisList() {
           }}
         />
       ) : (
-        isDetailCategory && (
-          <TreatmentRoomList
-            onBackProps={(isBack) => {
-              if (isBack) {
-                setIsDetailCategory(false);
-              }
-            }}
-          />
-        )
+        null
       )}
     </div>
   );

@@ -7,12 +7,11 @@ import urls from "./urls";
 import CustomerPersonList from "pages/CustomerPerson/CustomerPersonList";
 import ContactList from "pages/Contact/ContactList";
 import ContractList from "pages/Contract/ContractList";
-import ScheduleNextList from "pages/Schedule/ScheduleNextList";
-import TreatmentScheduleList from "pages/TreatmentSchedule/TreatmentScheduleList";
+// Removed (non-tech domain) - ScheduleNextList, TreatmentScheduleList
 import TimeKeepingList from "pages/Timekeeping/TimekeepingList";
 import CashBookList from "pages/CashBook/CashBookList";
 import PaymentHistoryList from "pages/PaymentHistory/PaymentHistoryList";
-import EarningList from "pages/Earning/EarningList";
+// Removed (non-tech domain) - EarningList
 import CrmCampaignList from "pages/CrmCampaign/CrmCampaignList";
 import SettingList from "pages/Setting/SettingList";
 import ReportCommon from "pages/ReportCommon/ReportCommon";
@@ -62,10 +61,7 @@ import CreateReceipt from "pages/ProductImport/CreateReceipt/CreateReceipt";
 import CreateOrderSales from "pages/Sell/CreateOrderSales/CreateOrderSales";
 import SaleInvoiceList from "pages/Sell/SaleInvoiceList/SaleInvoiceList";
 import CustomerPayList from "pages/Sell/CustomerPayList/CustomerPayList";
-// Lịch sử điều trị
-import TreatmentHistoryList from "pages/TreatmentHistory/TreatmentHistoryList";
-// Nhật ký điều trị
-import DiarySurgeryList from "pages/DiarySurgery/DiarySurgeryList";
+// Removed (non-tech domain) - TreatmentHistoryList, DiarySurgeryList
 // Lịch
 import CalendarCommon from "pages/CalendarCommon/CalendarCommon";
 // Quản lý chiến dịch
@@ -153,19 +149,9 @@ import SettingPromotionList from "pages/SettingPromotion/SettingPromotionList";
 import WarrantyContract from "pages/Contract/WarrantyContract/WarrantyContract";
 import DetailWarrantyContract from "pages/Contract/WarrantyContract/DetailWarrantyContract/DetailWarrantyContract";
 import DetailPartner from "pages/PartnerList/DetailPartner/DetailPartner";
-import SettingOperate from "pages/SettingOperate/SettingOperate";
-import ManagementFeeList from "pages/OperateManagement/ManagementFee/ManagementFeeList";
-import UtilityReadingList from "pages/OperateManagement/UtilityReading/UtilityReadingList";
-import SpaceList from "pages/SettingOperate/partials/Space/SpaceList";
-import VehicleRegistrationList from "pages/OperateManagement/VehicleRegistration/VehicleRegistrationList";
-import VehicleList from "pages/OperateManagement/Vehicle/VehicleList";
-import OrtherFeeList from "pages/OperateManagement/OrtherFee/OrtherFeeList";
-import BuildingList from "pages/SettingOperate/partials/BuildingList/BuildingList";
-import BuildingFloorList from "pages/SettingOperate/partials/BuildingFloorList/BuildingFloorList";
-import SpaceCustomerList from "pages/OperateManagement/SpaceCustomer/SpaceCustomerList";
-import CxmSurveyList from "pages/CxmSurvey/CxmSurveyList/CxmSurveyList";
-import ElectricityIndexList from "pages/OperateManagement/ElectricityIndex/ElectricityIndexList";
-import WaterIndexList from "pages/OperateManagement/WaterIndex/WaterIndexList";
+// Removed (non-tech domain) - SettingOperate, ManagementFeeList, UtilityReadingList, SpaceList,
+// VehicleRegistrationList, VehicleList, OrtherFeeList, BuildingList, BuildingFloorList,
+// SpaceCustomerList, CxmSurveyList, ElectricityIndexList, WaterIndexList
 import ProcessSimulation from "pages/ProcessSimulation/ProcessSimulation";
 import BusinessProcessCreate from "pages/BPM/BusinessProcessCreate";
 import CampaignListParent from "pages/Campaign/CampaignListParent";
@@ -1291,14 +1277,7 @@ export const routes: IRouter[] = [
     path: urls.detail_project,
     component: <DetailProject />,
   },
-  {
-    path: urls.schedule_next,
-    component: <ScheduleNextList />,
-  },
-  {
-    path: urls.schedule,
-    component: <TreatmentScheduleList />,
-  },
+  // Removed (non-tech domain) - ScheduleNextList, TreatmentScheduleList routes
   {
     path: urls.timekeeping,
     component: <TimeKeepingList />,
@@ -1307,10 +1286,7 @@ export const routes: IRouter[] = [
     path: urls.cashbook,
     component: <CashBookList />,
   },
-  {
-    path: urls.cxmSurvey, // Thông tin khảo sát
-    component: <CxmSurveyList />,
-  },
+  // Removed (non-tech domain) - CxmSurveyList route
   {
     path: urls.manage_data_sharing,
     component: <ManageDataSharing />,
@@ -1369,19 +1345,12 @@ export const routes: IRouter[] = [
     component: <ManagementSale />,
   },
 
-  //
-  {
-    path: urls.earnings,
-    component: <EarningList />,
-  },
+  // Removed (non-tech domain) - EarningList route
   {
     path: urls.payment_history,
     component: <PaymentHistoryList />,
   },
-  {
-    path: urls.treatment_history,
-    component: <TreatmentHistoryList />,
-  },
+  // Removed (non-tech domain) - TreatmentHistoryList route
   {
     path: urls.crm_campaign,
     component: <CrmCampaignList />,
@@ -1446,10 +1415,7 @@ export const routes: IRouter[] = [
     path: urls.detail_ticket,
     component: <DetailTicket />,
   },
-  {
-    path: urls.diary_surgery,
-    component: <DiarySurgeryList />,
-  },
+  // Removed (non-tech domain) - DiarySurgeryList route
   {
     path: urls.setting_ticket,
     component: <SettingTicketList />,
@@ -1510,10 +1476,7 @@ export const routes: IRouter[] = [
     path: urls.setting_basis,
     component: <SettingBasisList />,
   },
-  {
-    path: urls.setting_operate,
-    component: <SettingOperate />,
-  },
+  // Removed (non-tech domain) - SettingOperate route
   {
     path: urls.setting_timekeeping,
     component: <SettingTimekeepingList />,
@@ -1801,43 +1764,8 @@ export const routes: IRouter[] = [
     component: <SettingQuoteForm />,
   },
 
-  //Cài đặt vận hành
-  {
-    path: urls.ortherFee,
-    component: <OrtherFeeList />,
-  },
-  {
-    path: urls.electricityIndex,
-    component: <ElectricityIndexList />,
-  },
-  {
-    path: urls.waterIndex,
-    component: <WaterIndexList />,
-  },
-  {
-    path: urls.spaceCustomer,
-    component: <SpaceCustomerList />,
-  },
-  {
-    path: urls.managementFee,
-    component: <ManagementFeeList />,
-  },
-  {
-    path: urls.vehicleRegistration,
-    component: <VehicleRegistrationList />,
-  },
-  {
-    path: urls.vehicle,
-    component: <VehicleList />,
-  },
-  {
-    path: urls.building,
-    component: <BuildingList />,
-  },
-  {
-    path: urls.buildingFloor,
-    component: <BuildingFloorList />,
-  },
+  // Removed (non-tech domain) - All OperateManagement routes (OrtherFee, ElectricityIndex,
+  // WaterIndex, SpaceCustomer, ManagementFee, VehicleRegistration, Vehicle, Building, BuildingFloor)
 
   // đoạn này dùng để test chức năng mới
   // {
