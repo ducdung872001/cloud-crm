@@ -20,19 +20,17 @@ export default function ConfigIntegrateModal(props: Record<string, unknown>) {
 
   const [isSubmit, setIsSubmit] = useState<boolean>(false);
   const [step, setStep] = useState(1);
+  const [params, setParams] = useState({
+    type: "",
+    limit: 10,
+    page: 1,
+  });
 
   useEffect(() => {
-    let isMounted = true;
     if (type) {
-      setParams({ ...params, type: type })
+      setParams((prev) => ({ ...prev, type: String(type) }));
     }
-  }, [type])
-
-  const [params, setParams] = useState({
-    type: '',
-    limit: 10,
-    page: 1
-  })
+  }, [type]);
 
   const [dataApphub, setDataApphub] = useState({
     clientId: '',
@@ -62,7 +60,6 @@ export default function ConfigIntegrateModal(props: Record<string, unknown>) {
     if (onShow && params) {
       handleLstApp(params);
     }
-    return () => { isMounted = false; };
   }, [onShow, params]);
 
 

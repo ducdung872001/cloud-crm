@@ -144,30 +144,43 @@ export default function ProductList(props: IProductListProps) {
     },
   });
 
-  const abortController = new AbortController();
+  const abortControllerRef = useRef<AbortController | null>(null);
 
   const getListProduct = async (paramsSearch: Record<string, unknown>) => {
     setIsLoading(true);
+    setIsNoItem(false);
+    setIsPermissions(false);
+    abortControllerRef.current?.abort();
+    const controller = new AbortController();
+    abortControllerRef.current = controller;
 
-    const response = await ProductService.wList(paramsSearch, abortController.signal);
+    try {
+      const response = await ProductService.wList(paramsSearch, controller.signal);
 
-    if (response.code === 0) {
-      const result = response.result;
-      setListProduct(result.items);
-      setPagination((prev) => ({
-        ...prev,
-        page: +result.page,
-        sizeLimit: paramsSearch.limit ?? DataPaginationDefault.sizeLimit,
-        totalItem: +result.total,
-        totalPage: Math.ceil(+result.total / +(paramsSearch.limit ?? DataPaginationDefault.sizeLimit)),
-      }));
-      if (+result.total === 0 && +result.page === 1) setIsNoItem(true);
-    } else if (response.code == 400) {
-      setIsPermissions(true);
-    } else {
-      showToast(response.message ?? "Có lỗi xảy ra. Vui lòng thử lại sau", "error");
+      if (response.code === 0) {
+        const result = response.result;
+        setListProduct(result.items);
+        setPagination((prev) => ({
+          ...prev,
+          page: +result.page,
+          sizeLimit: paramsSearch.limit ?? DataPaginationDefault.sizeLimit,
+          totalItem: +result.total,
+          totalPage: Math.ceil(+result.total / +(paramsSearch.limit ?? DataPaginationDefault.sizeLimit)),
+        }));
+        if (+result.total === 0 && +result.page === 1) setIsNoItem(true);
+      } else if (response.code == 400) {
+        setIsPermissions(true);
+      } else {
+        showToast(response.message ?? "Có lỗi xảy ra. Vui lòng thử lại sau", "error");
+      }
+    } catch (error: unknown) {
+      if (error?.name === "AbortError") return;
+      showToast("Có lỗi xảy ra. Vui lòng thử lại sau", "error");
+    } finally {
+      if (abortControllerRef.current === controller) {
+        setIsLoading(false);
+      }
     }
-    setIsLoading(false);
   };
 
   const fetchSummary = async () => {
@@ -189,7 +202,7 @@ export default function ProductList(props: IProductListProps) {
   useEffect(() => {
     getListProduct(params);
     return () => {
-      abortController.abort();
+      abortControllerRef.current?.abort();
     };
   }, [params]);
 
@@ -369,9 +382,10 @@ export default function ProductList(props: IProductListProps) {
 
     patch(newValue);
 
-    const response = await ProductService.wWebsiteToggle({ id: item.id, showOnWebsite: newValue ? 1 : 0 });
+    const response = await ProductService.wWebsiteToggle({ productId: item.id, value: newValue ? 1 : 0 });
 
     if (isSuccessResponse(response)) {
+      fetchSummary();
       showToast(newValue ? "Đã đẩy sản phẩm lên website" : "Đã ẩn sản phẩm khỏi website", "success");
       return;
     }

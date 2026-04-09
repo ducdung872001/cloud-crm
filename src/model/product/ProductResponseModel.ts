@@ -28,15 +28,20 @@ export interface IProductResponse {
   maxStock?: number;
   showOnWeb?: boolean;
   showOnWebsite?: boolean | number;
-  showImage?: boolean;
-  showUnit?: boolean;
+  showImage?: boolean | number;
+  showUnit?: boolean | number;
+  showDescription?: boolean | number;
+  showPromotionPrice?: boolean | number;
+  showWholesalePrice?: boolean | number;
+  showInventory?: boolean | number;
+  showBarcode?: boolean | number;
+  showVariant?: boolean | number;
+  hideWhenOutOfStock?: boolean | number;
+  // Legacy aliases vẫn giữ để tương thích với UI cũ
   showDesc?: boolean;
   showPromoPrice?: boolean;
-  showWholesalePrice?: boolean;
   showStock?: boolean;
-  showBarcode?: boolean;
   showCategory?: boolean;
-  hideWhenOutOfStock?: boolean;
   defaultVariantId?: number;
   variantCount?: number;
   variantGroupCount?: number;

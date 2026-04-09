@@ -3,6 +3,19 @@ import { urlsApi } from "configs/urls";
 import { convertParamsToString } from "reborn-util";
 import { IProductFilterRequest, IProductRequest } from "model/product/ProductRequestModel";
 
+const websiteSettingUpdateUrls = {
+  showOnWebsite: urlsApi.product.wWebsiteSettingUpdateShowOnWebsite,
+  showImage: urlsApi.product.wWebsiteSettingUpdateShowImage,
+  showUnit: urlsApi.product.wWebsiteSettingUpdateShowUnit,
+  showDescription: urlsApi.product.wWebsiteSettingUpdateShowDescription,
+  showPromotionPrice: urlsApi.product.wWebsiteSettingUpdateShowPromotionPrice,
+  showWholesalePrice: urlsApi.product.wWebsiteSettingUpdateShowWholesalePrice,
+  showInventory: urlsApi.product.wWebsiteSettingUpdateShowInventory,
+  showBarcode: urlsApi.product.wWebsiteSettingUpdateShowBarcode,
+  showVariant: urlsApi.product.wWebsiteSettingUpdateShowVariant,
+  hideWhenOutOfStock: urlsApi.product.wWebsiteSettingUpdateHideWhenOutOfStock,
+} as const;
+
 export default {
   // ── API cũ (adminapi) ──
   topProduct: (signal?: AbortSignal) => {
@@ -191,6 +204,26 @@ export default {
   wWebsiteSettingUpdate: (body: Record<string, unknown>) => {
     return apiPost(urlsApi.product.wWebsiteSettingUpdate, body);
   },
+  wWebsiteSettingUpdateField: (
+    field: keyof typeof websiteSettingUpdateUrls,
+    body: { productId: number; value: number }
+  ) => {
+    return apiPost(websiteSettingUpdateUrls[field], body);
+  },
+  wWebsiteSettingUpdateMany: (
+    productId: number,
+    values: Partial<Record<keyof typeof websiteSettingUpdateUrls, number>>
+  ) => {
+    const requests = Object.entries(values)
+      .filter(([, value]) => value !== undefined)
+      .map(([field, value]) =>
+        apiPost(websiteSettingUpdateUrls[field as keyof typeof websiteSettingUpdateUrls], {
+          productId,
+          value: Number(value),
+        })
+      );
+    return Promise.all(requests);
+  },
   // ── Cài đặt mặc định toàn hệ thống ──
   wWebsiteSettingDefaultGet: () => {
     return apiGet(urlsApi.product.wWebsiteSettingDefaultGet);
@@ -198,8 +231,8 @@ export default {
   wWebsiteSettingDefaultUpdate: (body: Record<string, unknown>) => {
     return apiPost(urlsApi.product.wWebsiteSettingDefaultUpdate, body);
   },
-  wWebsiteToggle: (body: { productId: number; showOnWebsite: number }) => {
-    return apiPost(urlsApi.product.wWebsiteToggle, body);
+  wWebsiteToggle: (body: { productId: number; value: number }) => {
+    return apiPost(urlsApi.product.wWebsiteSettingUpdateShowOnWebsite, body);
   },
   wInventoryCurrent: (productId: number) => {
     return fetch(`${urlsApi.product.wInventoryCurrent}?productId=${productId}`, {
