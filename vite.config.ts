@@ -47,9 +47,21 @@ export default defineConfig(({ mode }) => {
       "APP_ATHENA_URL",
     ];
 
+    // Production fallback values (khi CI/CD không có .env.production)
+    const productionDefaults: Record<string, string> = mode === "production" ? {
+      APP_ENV: "prod",
+      APP_API_URL: "https://cloud.reborn.vn",
+      APP_ADMIN_URL: "https://cloud.reborn.vn",
+      APP_BPM_URL: "https://bpmapi.reborn.vn",
+      APP_AUTHENTICATOR_URL: "https://reborn.vn",
+      APP_SSO_LINK: "https://sso.reborn.vn",
+      APP_DOMAIN: "reborn.vn",
+    } : {};
+
     // Add all required environment variables
     requiredEnvVars.forEach((varName) => {
-      definitions[`process.env.${varName}`] = JSON.stringify(envVars[varName] || "");
+      const value = envVars[varName] || productionDefaults[varName] || "";
+      definitions[`process.env.${varName}`] = JSON.stringify(value);
     });
 
     // Add NODE_ENV for development/production checks
