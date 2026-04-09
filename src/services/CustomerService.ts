@@ -549,12 +549,6 @@ export default {
     }).then((res) => res);
   },
 
-  export: (params?: { unitCode: string; month: number; year: number }) => {
-    return fetch(`${urlsApi.payroll.export}${convertParamsToString(params)}`, {
-      method: "GET",
-    }).then((res) => res);
-  },
-
   //create call TNEX-Athena
   loginAccountAthena: (body: any) => {
     return fetch(urlsApi.customer.loginAccountAthena, {

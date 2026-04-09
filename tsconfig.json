@@ -11,12 +11,28 @@
     "resolveJsonModule": true,
     "isolatedModules": true,
     "noEmit": true,
-    "jsx": "react",
+    "jsx": "react-jsx",
     "baseUrl": ".",
+    "types": ["vite/client"],
     "paths": {
-      "*": ["src/*"]
+      "src/*": ["src/*"],
+      "pages/*": ["src/pages/*"],
+      "components/*": ["src/components/*"],
+      "configs/*": ["src/configs/*"],
+      "services/*": ["src/services/*"],
+      "utils/*": ["src/utils/*"],
+      "hooks/*": ["src/hooks/*"],
+      "contexts/*": ["src/contexts/*"],
+      "assets/*": ["src/assets/*"],
+      "styles/*": ["src/styles/*"],
+      "model/*": ["src/model/*"],
+      "exports/*": ["src/exports/*"],
+      "types/*": ["src/types/*"],
+      "webrtc/*": ["src/webrtc/*"],
+      "firebase-config": ["src/firebase-config.ts"],
+      "@/*": ["src/*"]
     }
   },
-  "include": ["src"],
+  "include": ["src", "vite-env.d.ts"],
   "exclude": ["node_modules", "test"]
 }
