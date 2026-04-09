@@ -6,7 +6,7 @@ export function makeAliasOtherwise(conditionMap, columns): Record<string, any> {
   const alias = {};
   for (const key in conditionMap) {
     if (conditionMap.hasOwnProperty(key)) {
-      let _column = columns.find((item) => item.key === key);
+      const _column = columns.find((item) => item.key === key);
 
       if (_column.compareType == "in") {
         const inputGroups = conditionMap[key].filter((item) => item.filter((item) => item.operator == "OTHERWISE").length == 0);

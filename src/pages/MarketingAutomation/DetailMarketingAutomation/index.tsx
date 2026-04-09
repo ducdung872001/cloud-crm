@@ -320,8 +320,8 @@ export default function DetailMarketingAutomation() {
       const result = response.result;
       const configData = result?.configs;
       const nodeList = result?.nodes;
-      let nodeData = [];
-      let edgeData = [];
+      const nodeData = [];
+      const edgeData = [];
 
       setMaName(result.maName);
 

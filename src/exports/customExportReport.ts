@@ -460,7 +460,7 @@ export async function CustomExportReport(userOptions, name?: string, setFilebase
     });
 
     if (notDownload) {
-      let reader = new FileReader();
+      const reader = new FileReader();
       reader.readAsDataURL(blob);
       reader.onloadend = function () {
         const base64data = reader.result as string;

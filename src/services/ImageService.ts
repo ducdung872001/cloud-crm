@@ -1,8 +1,8 @@
 import { urlsApi } from "configs/urls";
 import { getCookie } from "reborn-util";
 
-const processError = (err) => {
-};
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+const processError = (_err: unknown) => { /* default error handler */ };
 
 const uploadFile = (uploadURL, { data, onSuccess, onError = processError, onProgress }) => {
   if (data) {

@@ -79,7 +79,7 @@ export async function exportCustomExcel(listColumns: Record<string, unknown>[], 
         // worksheet.getCell(dataRow, 1).font = { bold: true, size: fontSize, color };
 
         // Cột B: no nếu có, nếu không thì là index của phần tử (bắt đầu từ 1 như bạn yêu cầu)
-        let sttVal = typeNo == "input" ? rowObj.no : idx + 1;
+        const sttVal = typeNo == "input" ? rowObj.no : idx + 1;
         worksheet.getCell(dataRow, 2).value = sttVal;
         worksheet.getCell(dataRow, 2).alignment = { vertical: "middle", horizontal: "center" };
         worksheet.getCell(dataRow, 2).font = { bold: true, size: fontSize, color };

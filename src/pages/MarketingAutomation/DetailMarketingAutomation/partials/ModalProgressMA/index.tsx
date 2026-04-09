@@ -26,7 +26,7 @@ export default function ModalProgressMA(props: Record<string, unknown>) {
     const [status, setStatus] = useState(null);
 
     useEffect(() => {
-        let isMounted = true;
+        const isMounted = true;
         if(onShow && nodesData && edgesData){
             // setNodes(nodesData);
             setEdges(edgesData);

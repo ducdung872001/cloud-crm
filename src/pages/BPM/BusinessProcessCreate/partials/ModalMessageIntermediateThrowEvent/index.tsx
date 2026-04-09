@@ -502,7 +502,7 @@ export default function ModalMessageIntermediateThrowEvent({ onShow, onHide, dat
 
     if (response.code === 0) {
       const dataOption = response.result?.items;
-      let listVar = [];
+      const listVar = [];
       dataOption &&
         dataOption.length > 0 &&
         dataOption.map((item) => {
@@ -549,7 +549,7 @@ export default function ModalMessageIntermediateThrowEvent({ onShow, onHide, dat
 
     if (response.code === 0) {
       const dataOption = response.result?.filter((el) => el.code) || [];
-      let listForm = [];
+      const listForm = [];
       dataOption &&
         dataOption.length > 0 &&
         dataOption.map((item) => {

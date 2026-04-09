@@ -28,7 +28,7 @@ const CustomCellRender = (props) => {
 
   useEffect(() => {
     if (checkComment && checkComment?.listData) {
-      let checkCell = checkComment.listData;
+      const checkCell = checkComment.listData;
       setHaveComment(checkCell[props.data.rowKey + "-" + props.colDef.field] ? true : false);
     }
   }, [checkComment, props]);
@@ -219,7 +219,7 @@ const CustomCellRender = (props) => {
               checked={checkedMap[props.data.rowKey] ? checkedMap[props.data.rowKey][props.colDef.field] || false : false}
               onChange={(e) => {
                 setCheckedMap((prev) => {
-                  let newCheckedMap = { ...prev };
+                  const newCheckedMap = { ...prev };
                   if (!newCheckedMap[props.data.rowKey]) {
                     newCheckedMap[props.data.rowKey] = {};
                   }
@@ -237,9 +237,9 @@ const CustomCellRender = (props) => {
                 (checkedMap[props.data.rowKey] ? checkedMap[props.data.rowKey][props.colDef.field] || false : false) ? "active" : ""
               }`}
               onClick={() => {
-                let currentValue = checkedMap[props.data.rowKey] ? checkedMap[props.data.rowKey][props.colDef.field] || false : false;
+                const currentValue = checkedMap[props.data.rowKey] ? checkedMap[props.data.rowKey][props.colDef.field] || false : false;
                 setCheckedMap((prev) => {
-                  let newCheckedMap = { ...prev };
+                  const newCheckedMap = { ...prev };
                   if (!newCheckedMap[props.data.rowKey]) {
                     newCheckedMap[props.data.rowKey] = {};
                   }

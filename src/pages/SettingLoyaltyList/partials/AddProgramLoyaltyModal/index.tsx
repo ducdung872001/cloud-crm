@@ -146,7 +146,7 @@ export default function AddProgramLoyaltyModal(props: AddProgramRoyaltyModalProp
     );
   };
   const handleChangeValueBranch = (e) => {
-    let lastPick = e[e.length - 1];
+    const lastPick = e[e.length - 1];
 
     if (lastPick?.isShowModal) {
       setShowModalBranch(true);

@@ -211,7 +211,7 @@ export default function Kanban(props: Record<string, unknown>) {
       if (response.code === 0) {
         const result = response.result;
 
-        let newDataOfStep = [...dataOfStep];
+        const newDataOfStep = [...dataOfStep];
         const indexStep = newDataOfStep.findIndex((el) => el.stepId === itemStep.id);
         const stepFind = newDataOfStep.find((el) => el.stepId === itemStep.id);
         if (indexStep !== -1) {

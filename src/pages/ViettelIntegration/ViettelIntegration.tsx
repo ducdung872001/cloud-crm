@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import React, { useState } from "react";
 import TitleAction from "components/titleAction/titleAction";
 import Dialog from "components/dialog/dialog";
 import { IMenuTab } from "model/OtherModel";
@@ -10,20 +10,14 @@ import ViettelWizard from "./partials/ViettelWizard/ViettelWizard";
 import ViettelSettings from "./partials/ViettelSettings/ViettelSettings";
 import ViettelAnalytics from "./partials/ViettelAnalytics/ViettelAnalytics";
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 export default function ViettelIntegration(props: Record<string, unknown>) {
   document.title = "Tích hợp Viettel";
 
-  const { onBackProps } = props;
-
-  const isMounted = useRef(false);
-  const [dataIntegration, setDataIntegration] = useState(null);
-  const [showDialog, setShowDialog] = useState<boolean>(false);
-  const [contentDialog, setContentDialog] = useState<Record<string, unknown>>(null);
-  const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [isNoItem, setIsNoItem] = useState<boolean>(false);
-  const [isPermissions, setIsPermissions] = useState<boolean>(false);
-  const [isSettingIntegration, setIsSettingIntegration] = useState<boolean>(false);
-  const [isPreviewIntegration, setIsPreviewIntegration] = useState(false);
+  const [showDialog] = useState<boolean>(false);
+  const [contentDialog] = useState<Record<string, unknown>>(null);
+  const [isNoItem] = useState<boolean>(false);
+  const [, setIsSettingIntegration] = useState<boolean>(false);
 
   const [activeTab, setActiveTab] = useState<"overview" | "wizard" | "settings" | "analytics">("overview");
 

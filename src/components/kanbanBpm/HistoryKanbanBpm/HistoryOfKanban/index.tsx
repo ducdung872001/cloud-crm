@@ -169,7 +169,7 @@ export default function HistoryOfKanban(props) {
       }
       text={item.status === 0 ? "Chưa xử lý" : item.status === 1 ? "Đang xử lý" : item.status === 2 ? "Hoàn thành" : "Tạm dừng"} // 0 - chưa xử lý, 1-đang xử lý, 2-Hoàn thành, 3-tạm dừng, -1-tạm dừng (lỗi)
     />,
-    <a key={item.id} onClick={(e) => {}}>
+    <a key={item.id} onClick={() => { /* TODO */ }}>
       Xem
     </a>,
   ];

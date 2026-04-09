@@ -46,8 +46,8 @@ const KpiDiagram = () => {
       const result = response.result;
       const configData = result?.configs;
       const nodeList = result?.nodes;
-      let nodeData = [];
-      let edgeData = [];
+      const nodeData = [];
+      const edgeData = [];
 
   
     } else {

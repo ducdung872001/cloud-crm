@@ -26,9 +26,7 @@
     }
   },
   "lint-staged": {
-    "*.{js,ts,tsx}": [
-      "eslint --fix"
-    ]
+    "*.{js,ts,tsx}": "eslint --fix"
   },
   "dependencies": {
     "@azure/msal-browser": "^3.7.0",

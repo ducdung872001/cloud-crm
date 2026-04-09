@@ -239,8 +239,8 @@ export default function DetailHistoryProcess(props) {
   }, [listArtifact, dataObject, listHistory]);
 
   const getContractAttributeFormula = (attributes) => {
-    let attributeValue = attributes ? JSON.parse(attributes)?.formula : "";
-    let attrObj = {};
+    const attributeValue = attributes ? JSON.parse(attributes)?.formula : "";
+    const attrObj = {};
     (contractExtraInfos || []).map((item, idx) => {
       if (item.datatype == "number") {
         attrObj["contractAttribute_" + convertToId(item.attributeName)] = +item.attributeValue;
@@ -265,7 +265,7 @@ export default function DetailHistoryProcess(props) {
   };
 
   const updateContractMultiselectAttribute = (attributeId, e, attributeFieldName) => {
-    let attributeValue = e ? e.split(",") : [];
+    const attributeValue = e ? e.split(",") : [];
     updateContractAttribute(attributeId, JSON.stringify(attributeValue), attributeFieldName);
   };
 
@@ -375,7 +375,7 @@ export default function DetailHistoryProcess(props) {
 
   const getDecimalScale = (attributes) => {
     attributes = attributes ? JSON.parse(attributes) : {};
-    let numberFormat = attributes?.numberFormat || "";
+    const numberFormat = attributes?.numberFormat || "";
     if (numberFormat.endsWith(".#")) {
       return 1;
     }
@@ -437,7 +437,7 @@ export default function DetailHistoryProcess(props) {
             decimalScale={getDecimalScale(contractAttribute.attributes)}
             onChange={(e) => {
               const value = e.target.value;
-              let valueNum = value?.replace(/,/g, "");
+              const valueNum = value?.replace(/,/g, "");
               updateContractAttribute(contractAttribute.id, valueNum, contractAttribute.fieldName);
             }}
           />
@@ -463,7 +463,7 @@ export default function DetailHistoryProcess(props) {
         );
         break;
       case "multiselect":
-        let attris = getContractAttributeValue(contractAttribute.id, contractAttribute.fieldName);
+        const attris = getContractAttributeValue(contractAttribute.id, contractAttribute.fieldName);
         CustomControl = (
           <CheckboxList
             title={contractAttribute.name}
@@ -524,7 +524,7 @@ export default function DetailHistoryProcess(props) {
         );
         break;
       case "lookup":
-        let attrs = contractAttribute.attributes ? JSON.parse(contractAttribute.attributes) : {};
+        const attrs = contractAttribute.attributes ? JSON.parse(contractAttribute.attributes) : {};
 
         //1. Trường hợp là customer (khách hàng)
         //2. Trường hợp là employee (nhân viên)
@@ -654,7 +654,7 @@ export default function DetailHistoryProcess(props) {
     // }
 
     if (listEformAttribute && listEformAttribute.length > 0) {
-      let checkArray = [];
+      const checkArray = [];
 
       listEformAttribute.map((item) => {
         if (item.required === 1 && item.parentId !== 0) {

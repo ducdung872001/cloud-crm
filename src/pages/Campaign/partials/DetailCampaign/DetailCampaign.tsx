@@ -176,7 +176,7 @@ function DetailCampaign(props: Record<string, unknown>) {
     if (response.code === 0) {
       const result = response.result;
 
-      let newArray = [];
+      const newArray = [];
       let sum = 0;
       if (result && result.length > 0) {
         result.map((item) => {
@@ -213,7 +213,7 @@ function DetailCampaign(props: Record<string, unknown>) {
     if (response.code === 0) {
       const result = response.result;
 
-      let newArray = [];
+      const newArray = [];
       let sum = 0;
       if (result && result.length > 0) {
         result.map((item) => {

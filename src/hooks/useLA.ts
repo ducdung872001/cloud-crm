@@ -182,7 +182,7 @@ export const useOlaSetting = (props) => {
     setIsSubmit(true);
 
     if (typeNode === "advanced") {
-      let result = await updateAdvanced();
+      const result = await updateAdvanced();
       if (!result.statusUpdate) {
         setIsSubmit(false);
         return result;

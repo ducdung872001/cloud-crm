@@ -59,7 +59,7 @@ export default function CustomerSchedule({ idCustomer }) {
     const response = await ScheduleCommonService.listCommon(paramsSearch, abortController.signal);
 
     if (response.code == 0) {
-      let _result = response.result;
+      const _result = response.result;
       const result = (_result?.items ? _result?.items : _result || []).map((item) => {
         return {
           id: item.id,

@@ -205,7 +205,7 @@ export default function UploadDocument() {
    * @param e
    */
   const handSubmitForm = async (item: Record<string, unknown>) => {
-    let dataSubmit = {
+    const dataSubmit = {
       nodeId,
       processId,
       workId,

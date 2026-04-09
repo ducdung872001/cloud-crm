@@ -407,7 +407,7 @@ export default function ListWork(props: Record<string, unknown>) {
   };
 
   useEffect(() => {
-    let paramsTemp = cloneDeep(params);
+    const paramsTemp = cloneDeep(params);
 
     searchParams.forEach(async (key, value) => {
       if (value == "filters") {

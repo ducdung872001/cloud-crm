@@ -37,7 +37,7 @@ export default function AddCustomPlaceholderModal(props: ICustomPlaceholderModal
   const [formData, setFormData] = useState<IFormData>({ values: values });
 
   useEffect(() => {
-    let mapCode = {};
+    const mapCode = {};
     (values?.codes || [] as Record<string, unknown>).map(item => {
       mapCode[item] = '';
     });

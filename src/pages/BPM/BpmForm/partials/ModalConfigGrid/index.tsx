@@ -38,7 +38,7 @@ export default function ModalConfigGrid({ onShow, onHide, callBack, dataConfig }
   }, [values]);
 
   const handleSubmit = () => {
-    let latestRowData = handleGetLatest();
+    const latestRowData = handleGetLatest();
     onHide(false);
     callBack({
       headerTable: dataConfigGrid?.headerTable || [],

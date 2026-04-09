@@ -40,7 +40,7 @@ export const lookupOptions = [
 
 export const fetchDataLookupGrid = async (columnsConfig, dataRow) => {
   try {
-    let getLookupValuesResult = await getLookupValue(columnsConfig, dataRow);
+    const getLookupValuesResult = await getLookupValue(columnsConfig, dataRow);
     return getLookupValuesResult;
   } catch (error) {
     console.error("Error fetching data:", error);
@@ -123,7 +123,7 @@ const getLookupValue = async (columnsConfig, dataRow) => {
           page: 1,
           ...(lookup?.paramLookup || {}),
         };
-        let response = await fetchLookupData(lookup.lookupUri, params);
+        const response = await fetchLookupData(lookup.lookupUri, params);
         // switch (key) {
         //   case "field":
         //     response = await FieldListService.list(params);

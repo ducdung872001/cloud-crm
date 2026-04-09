@@ -30,7 +30,7 @@ import OnSuccessExpireModal from "../HandleTask/OnSuccessExprieModal/OnSuccessEx
 import JSZip from "jszip";
 import { saveAs } from "file-saver";
 import ReplyRequestModal from "../ReplyRequestModal/ReplyRequestModal";
-import PurchaseRequestService from "services/PurchaseRequestService";
+// PurchaseRequestService removed (non-retail)
 import ManagementAskedService from "services/ManagementAskedService";
 import ModalEvaluateBidding from "./partials/ModalEvaluateBidding/ModalEvaluateBidding";
 import UserTaskService from "services/UserTaskService";
@@ -193,25 +193,9 @@ const DetailTask = (props: Record<string, unknown>) => {
     }
   };
 
-  const getProcumentType = async (potId: number, dataWork) => {
-    const body: Record<string, unknown> = {
-      potId: potId,
-    };
-
-    const response = await PurchaseRequestService.detail(body);
-
-    if (response.code === 0) {
-      const result = response.result;
-      if (result?.procurementTypeId) {
-        setData({
-          ...dataWork,
-          procurementTypeId: result?.procurementTypeId,
-        });
-      }
-    } else {
-      showToast("Có lỗi xảy ra. Vui lòng thử lại sau!", "error");
-    }
-  };
+  // getProcumentType removed — PurchaseRequestService deleted (non-retail)
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const getProcumentType = async (_potId: number, _dataWork: unknown) => {};
 
   useEffect(() => {
     if (idData) {

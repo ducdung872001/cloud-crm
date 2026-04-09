@@ -116,7 +116,7 @@ export default function ActionRow(props: INoteFieldProps) {
                 key={index}
                 className="item-action"
                 onClick={() => {
-                  let newList = [...listTypeTitle];
+                  const newList = [...listTypeTitle];
                   newList.map((item) => {
                     item.isShow = false;
                   });

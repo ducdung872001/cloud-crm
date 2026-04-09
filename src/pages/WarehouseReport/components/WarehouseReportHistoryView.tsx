@@ -81,6 +81,7 @@ function Skeleton({ h = 20, w = "100%" }: { h?: number; w?: string }) {
   }} />;
 }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 function buildQuery(p: Record<string, any>) {
   const e = Object.entries(p).filter(([,v]) => v !== undefined && v !== "" && v !== 0).map(([k,v]) => [k, String(v)]);
   return e.length ? "?" + new URLSearchParams(e).toString() : "";
@@ -88,6 +89,7 @@ function buildQuery(p: Record<string, any>) {
 
 // ─── Chart builders ───────────────────────────────────────────────────────────
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 function buildStockLineOptions(daily: IDailyPoint[], productName: string): Highcharts.Options {
   return {
     chart: { type: "areaspline", height: 240, backgroundColor: "transparent" },
@@ -147,7 +149,7 @@ export default function WarehouseReportHistoryView() {
       const arr = Array.isArray(r.result) ? r.result
         : Array.isArray(r.result?.items) ? r.result.items : [];
       setWarehouseList(arr.map((i: Record<string, unknown>) => ({ value: i.id, label: i.name })));
-    }).catch(() => {});
+    }).catch(() => { /* noop */ });
   }, []);
 
   // Product search debounce
@@ -204,15 +206,18 @@ export default function WarehouseReportHistoryView() {
   useEffect(() => {
     if (selectedProduct) { fetchHistory(selectedProduct); fetchLedger(selectedProduct); }
     return () => { abortRef.current?.abort(); ledgerAbort.current?.abort(); };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedProduct, period, warehouseId]);
 
   const info     = histData?.productInfo;
   const daily    = histData?.dailyStock  ?? [];
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   const weekly   = histData?.weeklyFlow  ?? [];
-  const [from, to] = getPeriodRange(period);
   const periodLabel = PERIODS.find(p => p.key === period)?.label ?? "";
 
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   const stockLineOpts = useMemo(() => buildStockLineOptions(daily, info?.productName ?? ""), [daily]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   const weeklyOpts    = useMemo(() => buildWeeklyFlowOptions(weekly), [weekly]);
 
   return (

@@ -10,7 +10,7 @@ import { showToast } from "utils/common";
 import { isDifferenceObj } from "reborn-util";
 import "./ModalSelectJump.scss";
 import { useNavigate } from "react-router-dom";
-import PurchaseRequestService from "services/PurchaseRequestService";
+// PurchaseRequestService removed (non-retail)
 
 export default function ModalSelectJump(props: Record<string, unknown>) {
   const { onShow, onHide, data } = props;

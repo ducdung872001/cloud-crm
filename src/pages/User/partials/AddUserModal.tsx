@@ -1,6 +1,6 @@
 import React, { Fragment, useCallback, useEffect, useMemo, useState } from "react";
 import Modal, { ModalBody, ModalFooter, ModalHeader } from "components/modal/modal";
-import { IActionModal, IOption } from "model/OtherModel";
+import { IActionModal } from "model/OtherModel";
 import { IFieldCustomize, IFormData, IValidation } from "model/FormModel";
 import FileUpload from "components/fileUpload/fileUpload";
 import Dialog, { IContentDialog } from "components/dialog/dialog";
@@ -39,6 +39,7 @@ export default function AddUserModal(props: Record<string, unknown>) {
         role: data?.role ?? "mod",
         seeder: 0,
       } as Record<string, unknown>),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [data, onShow]
   );
 
@@ -115,6 +116,7 @@ export default function AddUserModal(props: Record<string, unknown>) {
           fill: true,
         },
       ] as IFieldCustomize[],
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [formData]
   );
 
@@ -124,6 +126,7 @@ export default function AddUserModal(props: Record<string, unknown>) {
     return () => {
       setIsSubmit(false);
     };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [values]);
 
   const onSubmit = async (e) => {
@@ -179,6 +182,7 @@ export default function AddUserModal(props: Record<string, unknown>) {
         ],
       },
     }),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [formData, values, isSubmit]
   );
 
@@ -223,6 +227,7 @@ export default function AddUserModal(props: Record<string, unknown>) {
         }
       }
     },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [formData]
   );
 

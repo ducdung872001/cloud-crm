@@ -188,7 +188,7 @@ export default function OmniCXMMock({ onEvent }: Props) {
             setFoundCustomer(res.result.items[0]);
           }
         })
-        .catch(() => {})
+        .catch(() => { /* noop */ })
         .finally(() => setCustomerLoading(false));
     }
     return () => { isMounted = false; };

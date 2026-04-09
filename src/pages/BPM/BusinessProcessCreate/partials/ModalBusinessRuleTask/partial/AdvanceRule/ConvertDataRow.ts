@@ -2,7 +2,7 @@ import { convertOutsideRangesToConditionGroups } from "./convertOutsideRangesToC
 import { negateInAndNotIn } from "./negateInAndNotIn";
 
 export function convertDataRow(dataConfigAdvance, nodeId): Record<string, any> {
-  let dataConfig: Record<string, any> = {
+  const dataConfig: Record<string, any> = {
     inputs: [],
     outputs: [],
     config: {
@@ -19,11 +19,11 @@ export function convertDataRow(dataConfigAdvance, nodeId): Record<string, any> {
     // dataConfig.inputs bao gồm danh sách key của các cột có columnType = "condition", dataConfig.outputs bao gồm danh sách key của các cột có columnType = "decision"
     dataConfig.inputs = columns.filter((item) => item.columnType === "condition").map((item) => item.key);
     dataConfig.outputs = columns.filter((item) => item.columnType === "decision").map((item) => item.key);
-    let rules = [];
+    const rules = [];
 
     // Mỗi thuộc tính của conditionMap sẽ là 1 item trong dataConfig.inputs
 
-    let conditionMap = {};
+    const conditionMap = {};
 
     dataConfig.inputs.forEach((item) => {
       conditionMap[item] = [];
@@ -32,14 +32,14 @@ export function convertDataRow(dataConfigAdvance, nodeId): Record<string, any> {
     if (rows && rows.length > 0) {
       for (let i = 0; i < rows.length; i++) {
         const row = rows[i];
-        let rule = {
+        const rule = {
           ruleIndex: i,
           inputs: "",
           outputs: "",
           nodeId: nodeId,
         };
-        let rule_outputs = {};
-        let rule_inputs = [];
+        const rule_outputs = {};
+        const rule_inputs = [];
         for (let j = 1; j < row.length; j++) {
           const field = row[j];
           if (field.columnType == "decision") {
@@ -92,7 +92,7 @@ export function convertDataRow(dataConfigAdvance, nodeId): Record<string, any> {
               rule_inputs.push(conditionItem);
               conditionMap[field.key].push([conditionItem]);
             } else if (field.children && field.children.length > 0) {
-              let conditionItemChild = [];
+              const conditionItemChild = [];
               for (let k = 0; k < field.children.length; k++) {
                 const child = field.children[k];
                 conditionItem = {
@@ -105,7 +105,7 @@ export function convertDataRow(dataConfigAdvance, nodeId): Record<string, any> {
               }
               conditionMap[field.key].push(conditionItemChild);
             } else {
-              let operator = field.compareType == "in" ? (field.compare == "in" ? "IN" : "NOT_IN") : field.compare == "=" ? "EQUAL" : "NOT_EQUAL";
+              const operator = field.compareType == "in" ? (field.compare == "in" ? "IN" : "NOT_IN") : field.compare == "=" ? "EQUAL" : "NOT_EQUAL";
               conditionItem = {
                 parameter: field.key,
                 operator: operator,
@@ -151,7 +151,7 @@ export function convertDataRow(dataConfigAdvance, nodeId): Record<string, any> {
     // const simplified = result ? simplifyConditions(result) : false;
     // console.log("negateOrToAnd-simplified:", simplified);
 
-    let alias = {};
+    const alias = {};
 
     for (const key in conditionMap) {
       if (conditionMap.hasOwnProperty(key)) {

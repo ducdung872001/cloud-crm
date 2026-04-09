@@ -95,10 +95,10 @@ export default function TableDecisionRule({ processId, childProcessId, dataConfi
   const [lookupError, setLookupError] = useState(null);
 
   const genNewBaseRow = (listColumn) => {
-    let _baseRow = [];
+    const _baseRow = [];
     listColumn.forEach((item) => {
       if (item?.children && item?.children?.length > 0) {
-        let _children = item.children.map((child) => {
+        const _children = item.children.map((child) => {
           return {
             ...child,
             value: "",
@@ -120,17 +120,17 @@ export default function TableDecisionRule({ processId, childProcessId, dataConfi
   };
 
   const genNewDataRow = (dataRow, newBaseRow) => {
-    let newDataRow = [];
+    const newDataRow = [];
     //Lặp qua từng hàng trong dataRow và kiểm tra các hàng trong dataRow so với newBaseRow, nếu số trường trong dataRow không bằng số trường trong _baseRow thì thêm các trường còn thiếu vào dataRow và xoá bớt các trường thừa trong dataRow so với newBaseRow
     if (dataRow && dataRow.length > 0) {
       for (let i = 0; i < dataRow.length; i++) {
-        let row = dataRow[i];
-        let newRow = [];
+        const row = dataRow[i];
+        const newRow = [];
         for (let j = 0; j < newBaseRow.length; j++) {
-          let field = newBaseRow[j];
-          let fieldBase = row.find((item) => item.key == field.key);
+          const field = newBaseRow[j];
+          const fieldBase = row.find((item) => item.key == field.key);
           if (fieldBase) {
-            let newField = {
+            const newField = {
               ...fieldBase,
               name: field.name, // Cho trường hợp đổi tên cột
               value: fieldBase.value,
@@ -146,7 +146,7 @@ export default function TableDecisionRule({ processId, childProcessId, dataConfi
             };
             newRow.push(newField);
           } else {
-            let newField = {
+            const newField = {
               ...field,
               name: field.name, // Cho trường hợp đổi tên cột
               value: field.value,
@@ -335,7 +335,7 @@ export default function TableDecisionRule({ processId, childProcessId, dataConfi
             color="secondary"
             type="button"
             onClick={() => {
-              let uuid = uuidv4();
+              const uuid = uuidv4();
               setDataRow((prevDataRow) => [
                 ...prevDataRow,
                 baseRow.map((item) => {

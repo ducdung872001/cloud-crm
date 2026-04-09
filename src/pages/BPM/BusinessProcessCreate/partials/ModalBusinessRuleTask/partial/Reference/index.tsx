@@ -127,7 +127,7 @@ export default function Reference({ processId, dataBusinessRule, listMappingInpu
 
     if (response.code === 0) {
       const dataOption = response.result?.items;
-      let listVar = [];
+      const listVar = [];
       dataOption &&
         dataOption.length > 0 &&
         dataOption.map((item) => {
@@ -176,7 +176,7 @@ export default function Reference({ processId, dataBusinessRule, listMappingInpu
     if (response.code === 0) {
       const dataOption = response.result || [];
 
-      let listForm = [];
+      const listForm = [];
       dataOption &&
         dataOption.length > 0 &&
         dataOption.map((item) => {
@@ -447,7 +447,7 @@ export default function Reference({ processId, dataBusinessRule, listMappingInpu
                 onClick={(e) => {
                   if (formData.ruleField && formData.mappingField) {
                     if (tabMapping === "input") {
-                      let newList = [...listMappingInput, formData];
+                      const newList = [...listMappingInput, formData];
                       setListMappingInput(newList);
                       setFormData({
                         mappingType: 1, // 0: input, 1: frm, 2: var
@@ -457,7 +457,7 @@ export default function Reference({ processId, dataBusinessRule, listMappingInpu
                         mappingFieldName: "",
                       });
                     } else {
-                      let newList = [...listMappingOutput, formData];
+                      const newList = [...listMappingOutput, formData];
                       setListMappingOutput(newList);
                       setFormData({
                         mappingType: 2, // 0: input, 1: frm, 2: var
@@ -509,7 +509,7 @@ export default function Reference({ processId, dataBusinessRule, listMappingInpu
                         <div
                           className="action-children-item action-children-delete"
                           onClick={(e) => {
-                            let newList = [...listMappingInput];
+                            const newList = [...listMappingInput];
                             newList.splice(index, 1);
                             setListMappingInput(newList);
                           }}
@@ -555,7 +555,7 @@ export default function Reference({ processId, dataBusinessRule, listMappingInpu
                         <div
                           className="action-children-item action-children-delete"
                           onClick={(e) => {
-                            let newList = [...listMappingOutput];
+                            const newList = [...listMappingOutput];
                             newList.splice(index, 1);
                             setListMappingOutput(newList);
                           }}

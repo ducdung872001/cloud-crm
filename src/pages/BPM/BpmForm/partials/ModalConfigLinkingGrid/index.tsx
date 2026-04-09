@@ -65,7 +65,7 @@ export default function ModalConfigLinkingGrid({ onShow, onHide, callBack, dataC
 
   const handleSubmit = () => {
     onHide(false);
-    let dataConfigGridSubmit = {
+    const dataConfigGridSubmit = {
       ...formData,
       gridDestination:
         formData?.gridDestination && Array.isArray(formData.gridDestination)
@@ -341,7 +341,7 @@ export default function ModalConfigLinkingGrid({ onShow, onHide, callBack, dataC
                     value={formData.gridDestination ? formData.gridDestination : null}
                     onChange={(e) => {
                       let includeValueUndefined = false;
-                      let newE = [];
+                      const newE = [];
                       e.forEach((item) => {
                         if (!item.value) {
                           includeValueUndefined = true;

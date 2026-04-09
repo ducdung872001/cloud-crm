@@ -84,7 +84,7 @@ export const requestPermission = async (jwtToken) => {
           let employeeId = 0;
           let userId = 0;
           if (payload) {
-            let user = JSON.parse(payload.user);
+            const user = JSON.parse(payload.user);
             if (user) {
               employeeId = user.employeeId || 0;
               userId = user.id || 0;

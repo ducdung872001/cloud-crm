@@ -1,6 +1,5 @@
 import React, { Fragment, useEffect, useMemo, useState } from "react";
 import Icon from "components/icon";
-import { IChangePasswordRequest } from "model/user/UserRequestModel";
 import UserService from "services/UserService";
 import Modal, { ModalBody, ModalFooter, ModalHeader } from "components/modal/modal";
 import { IActionModal } from "model/OtherModel";
@@ -76,6 +75,7 @@ export default function ChangePasswordUser(props: Record<string, unknown>) {
           iconClickEvent: () => setIsShowPassword({ ...isShowPassword, newPassword: !isShowPassword.newPassword }),
         },
       ] as IFieldCustomize[],
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [isShowPassword, formData]
   );
 
@@ -85,6 +85,7 @@ export default function ChangePasswordUser(props: Record<string, unknown>) {
     return () => {
       setIsSubmit(false);
     };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [values]);
 
   const onSubmit = async (e) => {
@@ -140,6 +141,7 @@ export default function ChangePasswordUser(props: Record<string, unknown>) {
         ],
       },
     }),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [isSubmit, formData, values]
   );
 

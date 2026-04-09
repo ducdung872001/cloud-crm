@@ -341,7 +341,7 @@ export function makeValidateField(listColumns: Record<string, unknown>[]) {
 
         // 17. Nếu compareType == "equal" và child.name == "value" và item.type == "select"
         if (item.compareType === "equal" && child.name === "value" && item.type === "select") {
-          let itemOptions = item.options.map((opt) => opt.value);
+          const itemOptions = item.options.map((opt) => opt.value);
           validateValue = (value) => {
             if (value === undefined || value === null || value === "") {
               return `Giá trị cho ${fieldName} không được để trống.`;

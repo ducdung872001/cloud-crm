@@ -27,6 +27,7 @@ export default function ConfigIntegrateModal(props: Record<string, unknown>) {
   });
 
   useEffect(() => {
+    const isMounted = true;
     if (type) {
       setParams((prev) => ({ ...prev, type: String(type) }));
     }

@@ -78,7 +78,7 @@ const TableHeaderAdvance: React.FC<TableHeaderAdvanceProps> = ({
 
   const hanhdleDeleteColumn = (columnIndex) => {
     // Xoá cột trong listColumn
-    let newListColumn = listColumn.filter((item, index) => index != columnIndex);
+    const newListColumn = listColumn.filter((item, index) => index != columnIndex);
     setListColumn(newListColumn);
   };
 
@@ -130,7 +130,7 @@ const TableHeaderAdvance: React.FC<TableHeaderAdvanceProps> = ({
                       value={editColumn[columnIndex]?.newPosition}
                       autoFocus={true}
                       onValueChange={(e) => {
-                        let newEditColumn = editColumn.map((item, index) => {
+                        const newEditColumn = editColumn.map((item, index) => {
                           return index == columnIndex ? { ...item, newPosition: e.floatValue } : item;
                         });
                         setEditColumn(newEditColumn);

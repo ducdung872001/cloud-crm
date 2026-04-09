@@ -151,7 +151,7 @@ export default function AddCustomerAttributeModal(props: AddCustomerAttributeMod
   const getCustomerAttributes = async () => {
     const response = await CustomerAttributeService.listAll(formData?.values['custType']);
 
-    let arrField = [];
+    const arrField = [];
 
     if (response.code === 0) {
       const dataOption = response.result;

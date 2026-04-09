@@ -10,7 +10,7 @@ const CustomCellCommentLast = (props) => {
 
   useEffect(() => {
     if (checkComment && checkComment?.listDataLast) {
-      let checkCell = checkComment.listDataLast;
+      const checkCell = checkComment.listDataLast;
       setHaveComment(checkCell[props.data.rowKey] ? true : false);
     }
   }, [checkComment, props]);

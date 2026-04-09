@@ -38,7 +38,7 @@ export const lookupOptions = [
 
 export const fetchDataLookup = async (dataRow) => {
   try {
-    let getLookupValuesResult = await getLookupValue(dataRow);
+    const getLookupValuesResult = await getLookupValue(dataRow);
     return getLookupValuesResult;
   } catch (error) {
     console.error("Error fetching data:", error);

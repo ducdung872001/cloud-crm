@@ -185,7 +185,7 @@ const deserialize = (el: ChildNode, markAttributes = {} as Record<string, boolea
     case "BR":
       return "\n";
     case "P":
-      let pClassName = el.getAttribute("class");
+      const pClassName = el.getAttribute("class");
 
       //Sẽ không deserialize mô tả của ảnh
       if (pClassName == "img-desc") {

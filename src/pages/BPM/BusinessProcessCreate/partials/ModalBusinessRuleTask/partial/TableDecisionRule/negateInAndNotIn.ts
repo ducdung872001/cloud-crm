@@ -24,7 +24,7 @@ export function negateInAndNotIn(conditions: Condition[]): Condition[] {
     value: allValuesNotIn,
   };
 
-  let newResult: Condition[] = result.filter((cond) => cond.operator !== "NOT_IN").concat(newConditionsNotin);
+  const newResult: Condition[] = result.filter((cond) => cond.operator !== "NOT_IN").concat(newConditionsNotin);
 
   // Kiểm tra những phần tử có operator == "IN" trong newResult, nếu có 2 phần tử trở lên thì sẽ xử lý
   const inConditions = newResult.filter((cond) => cond.operator === "IN");

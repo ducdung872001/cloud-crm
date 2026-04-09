@@ -148,7 +148,7 @@ export default function ReportCustomer() {
         }
       })
     );
-    let param = {
+    const param = {
       ...params,
       // startDate: "",
       fromTime: params.startDate,
@@ -250,7 +250,7 @@ export default function ReportCustomer() {
         }
       })
     );
-    let param = {
+    const param = {
       ...params,
       startDate: params.startDate,
       endDate: params.endDate,
@@ -334,7 +334,7 @@ export default function ReportCustomer() {
     }
   };
   const fetchNotInTimePipeline = async () => {
-    let param = {
+    const param = {
       ...params,
       startDate: params.startDate,
       endDate: params.endDate,

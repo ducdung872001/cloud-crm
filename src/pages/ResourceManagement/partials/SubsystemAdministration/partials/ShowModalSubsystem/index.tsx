@@ -73,7 +73,7 @@ export default function ShowModalSubsystem(props: IShowModalSubsystemProps) {
   });
 
   useEffect(() => {
-    let isMounted = true;
+    const isMounted = true;
     setParamFreeResource({ ...paramFreeResource, app: data?.app });
     setParamResource({ ...paramResource, app: data?.app });
   }, [data])

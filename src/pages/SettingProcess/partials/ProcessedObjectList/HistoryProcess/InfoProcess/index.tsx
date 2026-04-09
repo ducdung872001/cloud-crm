@@ -123,12 +123,12 @@ export default function InfoProcess(props: Record<string, unknown>) {
   };
 
   const updateCustomerMultiselectAttribute = (attributeId, e) => {
-    let attributeValue = e ? e.split(",") : [];
+    const attributeValue = e ? e.split(",") : [];
     updateCustomerAttribute(attributeId, JSON.stringify(attributeValue));
   };
 
   const updateCustomerAttribute = (attributeId, attributeValue) => {
-    let objectId = data?.id || 0;
+    const objectId = data?.id || 0;
 
     let found = false;
     (objectExtraInfos || []).map((item, idx) => {
@@ -140,7 +140,7 @@ export default function InfoProcess(props: Record<string, unknown>) {
     });
 
     if (!found) {
-      let item: Record<string, unknown> = {};
+      const item: Record<string, unknown> = {};
       item.attributeId = attributeId;
       item.attributeValue = attributeValue;
       item.objectId = objectId;
@@ -163,7 +163,7 @@ export default function InfoProcess(props: Record<string, unknown>) {
 
   const getDecimalScale = (attributes) => {
     attributes = attributes ? JSON.parse(attributes) : {};
-    let numberFormat = attributes?.numberFormat || "";
+    const numberFormat = attributes?.numberFormat || "";
     if (numberFormat.endsWith(".#")) {
       return 1;
     }
@@ -217,8 +217,8 @@ export default function InfoProcess(props: Record<string, unknown>) {
    * @param isFormula
    */
   const getCustomerAttributeFormula = (attributes) => {
-    let attributeValue = attributes ? JSON.parse(attributes)?.formula : "";
-    let attrObj = {};
+    const attributeValue = attributes ? JSON.parse(attributes)?.formula : "";
+    const attrObj = {};
     (objectExtraInfos || []).map((item, idx) => {
       if (item.datatype == "number") {
         attrObj["customerAttribute_" + convertToId(item.attributeName)] = +item.attributeValue;
@@ -274,7 +274,7 @@ export default function InfoProcess(props: Record<string, unknown>) {
             decimalScale={getDecimalScale(customerAttribute.attributes)}
             onChange={(e) => {
               const value = e.target.value;
-              let valueNum = value?.replace(/,/g, "");
+              const valueNum = value?.replace(/,/g, "");
               updateCustomerAttribute(customerAttribute.id, valueNum);
             }}
             disabled={true}
@@ -302,7 +302,7 @@ export default function InfoProcess(props: Record<string, unknown>) {
         );
         break;
       case "multiselect":
-        let attris = getCustomerAttributeValue(customerAttribute.id);
+        const attris = getCustomerAttributeValue(customerAttribute.id);
         CustomControl = (
           <CheckboxList
             title={customerAttribute.name}
@@ -367,7 +367,7 @@ export default function InfoProcess(props: Record<string, unknown>) {
         );
         break;
       case "lookup":
-        let attrs = customerAttribute.attributes ? JSON.parse(customerAttribute.attributes) : {};
+        const attrs = customerAttribute.attributes ? JSON.parse(customerAttribute.attributes) : {};
 
         //1. Trường hợp là customer (khách hàng)
         //2. Trường hợp là employee (nhân viên)

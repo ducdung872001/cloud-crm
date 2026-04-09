@@ -45,7 +45,7 @@ export default function DetailReportCusModal(props: Record<string, unknown>) {
   const getListReport = async (paramsSearch: Record<string, unknown>) => {
     setIsLoading(true);
     let response: Record<string, unknown> = {};
-    let paramsTemp = cloneDeep(params);
+    const paramsTemp = cloneDeep(params);
 
     switch (reportDetail.key) {
       case "totalCustomer":

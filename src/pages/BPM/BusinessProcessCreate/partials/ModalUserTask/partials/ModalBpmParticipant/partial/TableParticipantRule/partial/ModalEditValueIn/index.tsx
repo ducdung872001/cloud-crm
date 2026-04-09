@@ -52,7 +52,7 @@ export default function ModalEditValueIn({ onShow, onHide, dataFieldEdit, setDat
             callback: async () => {
               setDataRow((current) => {
                 const result = [...current];
-                let dataNew = [];
+                const dataNew = [];
                 addFieldAttributes.forEach((item) => {
                   if (item.trim() !== "") {
                     dataNew.push(item);

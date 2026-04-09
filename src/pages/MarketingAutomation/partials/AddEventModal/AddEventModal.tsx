@@ -421,7 +421,7 @@ export default function AddEventModal(props: Record<string, unknown>) {
 
   //! xóa đi 1 item email
   const handleRemoveItemEmail = (idx) => {
-    let result = [...addFieldEmail];
+    const result = [...addFieldEmail];
     result.splice(idx, 1);
 
     if (result.length > 0 && addFieldEmail[idx].isPrimary === 1) {
@@ -458,7 +458,7 @@ export default function AddEventModal(props: Record<string, unknown>) {
   }, [checkKeyDown]);
 
   const handleSelectPrimaryEmail = (idx) => {
-    let newArray = [...addFieldEmail];
+    const newArray = [...addFieldEmail];
     const index = addFieldEmail.findIndex((el) => el.isPrimary === 1);
 
     if (index !== -1) {
@@ -477,7 +477,7 @@ export default function AddEventModal(props: Record<string, unknown>) {
   };
 
   const handleSelectPrimaryCustomer = (idx) => {
-    let newArray = [...addFieldCustomer];
+    const newArray = [...addFieldCustomer];
     const index = addFieldCustomer.findIndex((el) => el.isPrimary === 1);
 
     if (index !== -1) {

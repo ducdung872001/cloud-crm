@@ -1,7 +1,7 @@
 import { makeAliasOtherwise } from "./makeAliasOtherwise";
 
 export function convertDataRowDT(dataConfigAdvance, nodeId): Record<string, any> {
-  let dataConfig: Record<string, any> = {
+  const dataConfig: Record<string, any> = {
     inputs: [],
     outputs: [],
     config: {
@@ -18,9 +18,9 @@ export function convertDataRowDT(dataConfigAdvance, nodeId): Record<string, any>
     // dataConfig.inputs bao gồm danh sách key của các cột có columnType = "condition", dataConfig.outputs bao gồm danh sách key của các cột có columnType = "decision"
     dataConfig.inputs = columns.filter((item) => item.columnType === "condition").map((item) => item.key);
     dataConfig.outputs = columns.filter((item) => item.columnType === "decision").map((item) => item.key);
-    let rules = [];
+    const rules = [];
 
-    let conditionMap = {};
+    const conditionMap = {};
 
     dataConfig.inputs.forEach((item) => {
       conditionMap[item] = [];
@@ -29,14 +29,14 @@ export function convertDataRowDT(dataConfigAdvance, nodeId): Record<string, any>
     if (rows && rows.length > 0) {
       for (let i = 0; i < rows.length; i++) {
         const row = rows[i];
-        let rule = {
+        const rule = {
           ruleIndex: i,
           inputs: "",
           outputs: "",
           nodeId: nodeId,
         };
-        let rule_outputs = {};
-        let rule_inputs = [];
+        const rule_outputs = {};
+        const rule_inputs = [];
         for (let j = 1; j < row.length; j++) {
           const field = row[j];
           if (field.columnType == "decision") {
@@ -89,8 +89,8 @@ export function convertDataRowDT(dataConfigAdvance, nodeId): Record<string, any>
               rule_inputs.push(conditionItem);
               conditionMap[field.key].push([conditionItem]);
             } else if (field.children && field.children.length > 0 && field.compareType == "range") {
-              let minValue = field.children.find((child) => child.key === "min")?.value || null;
-              let maxValue = field.children.find((child) => child.key === "max")?.value || null;
+              const minValue = field.children.find((child) => child.key === "min")?.value || null;
+              const maxValue = field.children.find((child) => child.key === "max")?.value || null;
 
               rule_inputs.push({
                 parameter: field.key,
@@ -99,7 +99,7 @@ export function convertDataRowDT(dataConfigAdvance, nodeId): Record<string, any>
                 valueMax: maxValue,
               });
               // Tạo mảng conditionItemChild để chứa các điều kiện con
-              let conditionItemChild = [];
+              const conditionItemChild = [];
               for (let k = 0; k < field.children.length; k++) {
                 const child = field.children[k];
                 conditionItem = {
@@ -111,7 +111,7 @@ export function convertDataRowDT(dataConfigAdvance, nodeId): Record<string, any>
               }
               conditionMap[field.key].push(conditionItemChild);
             } else {
-              let operator =
+              const operator =
                 field.compareType == "in"
                   ? field.compare == "in"
                     ? "IN"
@@ -156,7 +156,7 @@ export function convertDataRowDT(dataConfigAdvance, nodeId): Record<string, any>
     }
     dataConfig.rules = rules;
 
-    let alias = makeAliasOtherwise(conditionMap, columns);
+    const alias = makeAliasOtherwise(conditionMap, columns);
 
     dataConfig.alias = alias;
   }
