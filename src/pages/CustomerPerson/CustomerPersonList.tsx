@@ -2684,29 +2684,33 @@ export default function CustomerPersonList() {
         setShowModalOther(true);
       },
     },
-    {
-      title: "Thêm vào chiến dịch bán hàng",
-      callback: () => {
-        if (typeCampain && typeCampain.type != "all") {
-          setIsBatch(true);
-          setShowModalAddManagementOpportunity(true);
-        } else {
-          showToast("Bạn cần chọn cụ thể, tạo cơ hội cho khách hàng cá nhân hay khách hàng doanh nghiệp !", "warning");
-        }
+    
+    ...checkSubdomainTNEX ? [] : 
+    [
+      {
+        title: "Thêm vào chiến dịch bán hàng",
+        callback: () => {
+          if (typeCampain && typeCampain.type != "all") {
+            setIsBatch(true);
+            setShowModalAddManagementOpportunity(true);
+          } else {
+            showToast("Bạn cần chọn cụ thể, tạo cơ hội cho khách hàng cá nhân hay khách hàng doanh nghiệp !", "warning");
+          }
+        },
       },
-    },
-    {
-      title: "Thêm vào Marketing Automation ",
-      callback: () => {
-        setShowModalAddMA(true);
-        // if (typeCampain && typeCampain.type != "all") {
-        //   setIsBatch(true);
-        //   setShowModalAddManagementOpportunity(true);
-        // } else {
-        //   showToast("Bạn cần chọn cụ thể, tạo cơ hội cho khách hàng cá nhân hay khách hàng doanh nghiệp !", "warning");
-        // }
-      },
-    },
+      {
+        title: "Thêm vào Marketing Automation ",
+        callback: () => {
+          setShowModalAddMA(true);
+          // if (typeCampain && typeCampain.type != "all") {
+          //   setIsBatch(true);
+          //   setShowModalAddManagementOpportunity(true);
+          // } else {
+          //   showToast("Bạn cần chọn cụ thể, tạo cơ hội cho khách hàng cá nhân hay khách hàng doanh nghiệp !", "warning");
+          // }
+        },
+      }
+    ],
     {
       title: "Gửi Email",
       callback: () => {
@@ -2725,10 +2729,17 @@ export default function CustomerPersonList() {
         reloadData(listIdChecked);
       },
     },
+    // {
+    //   title: "Reset trạng thái cuộc gọi khách hàng",
+    //   callback: () => {
+    //     // reloadData(listIdChecked);
+    //   },
+    // },
     permissions["CUSTOMER_DELETE"] == 1 && {
       title: "Xóa khách hàng",
       callback: () => handleCheckCustomerDelete(),
     },
+    
   ];
 
   //Export
