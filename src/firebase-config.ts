@@ -33,12 +33,12 @@ function parseJwt(token) {
 }
 
 const firebaseConfig = {
-  apiKey: import.meta.env.VITE_FIREBASE_BPM_API_KEY,
-  authDomain: import.meta.env.VITE_FIREBASE_BPM_AUTH_DOMAIN || "bpm1-9b048.firebaseapp.com",
-  projectId: import.meta.env.VITE_FIREBASE_BPM_PROJECT_ID || "bpm1-9b048",
-  storageBucket: import.meta.env.VITE_FIREBASE_BPM_STORAGE_BUCKET || "bpm1-9b048.firebasestorage.app",
-  messagingSenderId: import.meta.env.VITE_FIREBASE_BPM_MESSAGING_SENDER_ID || "643006751836",
-  appId: import.meta.env.VITE_FIREBASE_BPM_APP_ID,
+  apiKey: import.meta.env.VITE_FIREBASE_BPM_API_KEY || import.meta.env.VITE_FIREBASE_API_KEY,
+  authDomain: import.meta.env.VITE_FIREBASE_BPM_AUTH_DOMAIN || import.meta.env.VITE_FIREBASE_AUTH_DOMAIN || "bpm1-9b048.firebaseapp.com",
+  projectId: import.meta.env.VITE_FIREBASE_BPM_PROJECT_ID || import.meta.env.VITE_FIREBASE_PROJECT_ID || "bpm1-9b048",
+  storageBucket: import.meta.env.VITE_FIREBASE_BPM_STORAGE_BUCKET || import.meta.env.VITE_FIREBASE_STORAGE_BUCKET || "bpm1-9b048.firebasestorage.app",
+  messagingSenderId: import.meta.env.VITE_FIREBASE_BPM_MESSAGING_SENDER_ID || import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID || "643006751836",
+  appId: import.meta.env.VITE_FIREBASE_BPM_APP_ID || import.meta.env.VITE_FIREBASE_APP_ID,
   measurementId: import.meta.env.VITE_FIREBASE_BPM_MEASUREMENT_ID,
 };
 
