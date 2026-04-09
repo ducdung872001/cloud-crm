@@ -1,4 +1,5 @@
 import React, { useState, useMemo, Fragment } from "react";
+import DOMPurify from "dompurify";
 import _ from "lodash";
 import { Responsive, WidthProvider } from "react-grid-layout";
 import { v4 as uuidv4 } from "uuid";
@@ -592,7 +593,7 @@ export default function Test() {
                               children: (
                                 // eslint-disable-next-line react/no-unknown-property
                                 <div key={layoutItem.i} datatype="form" style={{ height: "100%" }}>
-                                  <div dangerouslySetInnerHTML={{ __html: data }} />
+                                  <div dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(data) }} />
                                 </div>
                               ),
                             };
@@ -608,7 +609,7 @@ export default function Test() {
                               return (
                                 // eslint-disable-next-line react/no-unknown-property
                                 <div key={prevChildren.key} datatype="form" style={{ height: "100%" }}>
-                                  <div dangerouslySetInnerHTML={{ __html: data }} />
+                                  <div dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(data) }} />
                                 </div>
                               );
                             }

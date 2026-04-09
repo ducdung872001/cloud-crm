@@ -1,3 +1,4 @@
+import { Parser } from "expr-eval";
 import React, { useEffect, useMemo, useState } from "react";
 import { formatCurrency } from "reborn-util";
 import Input from "components/input/input";
@@ -185,13 +186,9 @@ export default function AddFormQuoteBackup(props: IAddQuoteProps) {
         return row.map((field) => {
           if (field.formula) {
             try {
-              // Thay thế các biến trong công thức bằng giá trị thực tế từ hàng hiện tại
-              const formula = field.formula.replace(/(\w+)/g, (match) => {
-                return dataObj.hasOwnProperty(match) ? dataObj[match] : match;
-              });
-
-              // Tính toán giá trị của công thức
-              const calculatedValue = eval(formula);
+              const parser = new Parser();
+              const expr = parser.parse(field.formula);
+              const calculatedValue = expr.evaluate(dataObj);
 
               return { ...field, [Object.keys(field)[0]]: calculatedValue };
             } catch (error) {

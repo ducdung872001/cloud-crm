@@ -18,6 +18,7 @@ import TemplateEmailService from "services/TemplateEmailService";
 import CustomerService from "services/CustomerService";
 import { showToast } from "utils/common";
 import { trimContent, isDifferenceObj, isObjEmpty } from "reborn-util";
+import DOMPurify from "dompurify";
 import parser from "html-react-parser";
 import "./AddCustomerEmailModal.scss";
 
@@ -288,7 +289,7 @@ export default function AddCustomerEmailModal(props: IAddCustomerEmailModelProps
 
                 <div className={`${isDetailTemplate ? "detail-template" : "d-none"}`}>
                   <h3 className="title-detail">{detailTemplate?.title}</h3>
-                  <p className="content-detail">{parser(detailTemplate?.content || "")}</p>
+                  <p className="content-detail">{parser(DOMPurify.sanitize(detailTemplate?.content || ""))}</p>
                   <div className="detail-info">
                     <div className="date-created">
                       <h4 className="item-title">Ngày tạo</h4>

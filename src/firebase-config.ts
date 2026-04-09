@@ -33,25 +33,14 @@ function parseJwt(token) {
 }
 
 const firebaseConfig = {
-  // Chạy thật
-  apiKey: "AIzaSyCu0hGqHdkOiHwBra4gKz3j2QPw8vKWkOI",
-  authDomain: "bpm1-9b048.firebaseapp.com",
-  projectId: "bpm1-9b048",
-  storageBucket: "bpm1-9b048.firebasestorage.app",
-  messagingSenderId: "643006751836",
-  appId: "1:643006751836:web:d223a2260eb598f045f299",
-  measurementId: "G-2PQCPHTE25",
+  apiKey: import.meta.env.VITE_FIREBASE_BPM_API_KEY,
+  authDomain: import.meta.env.VITE_FIREBASE_BPM_AUTH_DOMAIN || "bpm1-9b048.firebaseapp.com",
+  projectId: import.meta.env.VITE_FIREBASE_BPM_PROJECT_ID || "bpm1-9b048",
+  storageBucket: import.meta.env.VITE_FIREBASE_BPM_STORAGE_BUCKET || "bpm1-9b048.firebasestorage.app",
+  messagingSenderId: import.meta.env.VITE_FIREBASE_BPM_MESSAGING_SENDER_ID || "643006751836",
+  appId: import.meta.env.VITE_FIREBASE_BPM_APP_ID,
+  measurementId: import.meta.env.VITE_FIREBASE_BPM_MEASUREMENT_ID,
 };
-
-// const firebaseConfig = {
-//   // Test Local
-//   apiKey: "AIzaSyAcFW1ZZR6fuKzs9xJLn9DgeYRhj3HL71w",
-//   authDomain: "test-noti-firebase-dc732.firebaseapp.com",
-//   projectId: "test-noti-firebase-dc732",
-//   storageBucket: "test-noti-firebase-dc732.firebasestorage.app",
-//   messagingSenderId: "611354039567",
-//   appId: "1:611354039567:web:2d191e82687e185f9b1a7a",
-// };
 
 // Khởi tạo Firebase
 const app = initializeApp(firebaseConfig);
@@ -82,14 +71,9 @@ export const requestPermission = async (jwtToken) => {
   try {
     const permission = await Notification.requestPermission();
     if (permission === "granted") {
-      console.log("Quyền thông báo đã được cấp.");
-
       try {
-        console.log("Đang lấy token FCM...");
-        const token = await getToken(messaging, {
-          vapidKey: "BEwUxtPTJ8etCqMlF-hgkr5LpWlkSeR_4YBILQLeXDeN6N-eCkflDnSmR2hHoL6lwsgSBxjxg7rHzdegX3NMpZA", // Chạy thật
-          // vapidKey: "BBsV3m5BrNLxFgR544iD9ziyzna2pmBqqnR53pqsPRkPfHYF-Y9QFwHimgrVQU-TS9lXgLzNvWezDtl3W-K8tHw", // Test Local
-        });
+        const vapidKey = import.meta.env.VITE_FIREBASE_BPM_VAPID_KEY;
+        const token = await getToken(messaging, { vapidKey });
         //Lưu token này xuống dưới cơ sở dữ liệu
         try {
           const deviceId = await getDeviceId();
@@ -118,15 +102,8 @@ export const requestPermission = async (jwtToken) => {
       } catch (error) {
         console.error("Lỗi khi lấy token:", error);
       }
-
-      // // Lấy Token
-      // const token = await getToken(messaging, {
-      //   // vapidKey: "BEwUxtPTJ8etCqMlF-hgkr5LpWlkSeR_4YBILQLeXDeN6N-eCkflDnSmR2hHoL6lwsgSBxjxg7rHzdegX3NMpZA",
-      //   vapidKey: "BBsV3m5BrNLxFgR544iD9ziyzna2pmBqqnR53pqsPRkPfHYF-Y9QFwHimgrVQU-TS9lXgLzNvWezDtl3W-K8tHw",
-      // });
-      // console.log("FCM Token:", token);
     } else {
-      console.log("Quyền thông báo bị từ chối.");
+      console.warn("Quyền thông báo bị từ chối.");
     }
   } catch (error) {
     console.error("Lỗi khi yêu cầu quyền thông báo:", error);

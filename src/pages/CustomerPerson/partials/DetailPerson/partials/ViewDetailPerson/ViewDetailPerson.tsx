@@ -1,6 +1,7 @@
 import React, { useState, useEffect, Fragment, useMemo } from "react";
 import moment from "moment";
 import Tippy from "@tippyjs/react";
+import DOMPurify from "dompurify";
 import parser from "html-react-parser";
 import { useNavigate } from "react-router-dom";
 import SwiperCore, { Navigation } from "swiper";
@@ -816,7 +817,7 @@ export default function ViewDetailPerson(props: IViewDetailPersonProps) {
                 {listInfoRevenue.map((item, idx) => (
                   <div key={idx} className="item__revenue">
                     <span className="item__revenue--left">{item.title}</span>
-                    <span className="item__revenue--right">{item.special ? parser(item.name.toString()) : item.name}</span>
+                    <span className="item__revenue--right">{item.special ? parser(DOMPurify.sanitize(item.name.toString())) : item.name}</span>
                   </div>
                 ))}
               </div>

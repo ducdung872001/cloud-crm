@@ -44,12 +44,14 @@
     "bpmn-js-properties-panel": "^5.17.1",
     "camunda-bpmn-moddle": "^7.0.1",
     "date-fns": "^4.1.0",
+    "dompurify": "^3.3.3",
     "emoji-mart": "^5.4.0",
     "escape-html": "^1.0.3",
     "eslint-config-prettier": "^8.3.0",
     "eslint-plugin-prettier": "^4.0.0",
     "exceljs": "^4.3.0",
     "exif-js": "^2.3.0",
+    "expr-eval": "^2.0.2",
     "fetch-intercept": "^2.4.0",
     "file-saver": "^2.0.5",
     "fingerprintjs": "^0.5.3",
@@ -123,6 +125,7 @@
     "xlsx": "^0.18.5"
   },
   "devDependencies": {
+    "@types/dompurify": "^3.0.5",
     "@types/escape-html": "^1.0.2",
     "@types/react": "^17.0.37",
     "@types/react-dom": "^17.0.11",

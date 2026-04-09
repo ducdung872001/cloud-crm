@@ -2,6 +2,7 @@ import React, { Fragment, useEffect, useRef, useState } from "react";
 import _ from "lodash";
 import moment from "moment";
 import Tippy from "@tippyjs/react";
+import DOMPurify from "dompurify";
 import parser from "html-react-parser";
 import Icon from "components/icon";
 import Loading from "components/loading";
@@ -129,7 +130,7 @@ export default function CustomerEmailList(props: ICustomerEmailListProps) {
 
                 <div className="info-item info-content">
                   <h4 className="title">Nội dung</h4>
-                  <h4 className="name __content">{parser(item.content)}</h4>
+                  <h4 className="name __content">{parser(DOMPurify.sanitize(item.content))}</h4>
                 </div>
 
                 <div className="info-item customer-send">

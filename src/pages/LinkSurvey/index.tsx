@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import DOMPurify from "dompurify";
 import parser from "html-react-parser";
 import Tippy from "@tippyjs/react";
 import Icon from "components/icon";
@@ -196,7 +197,7 @@ export default function LinkSurvey() {
     <div className="page__link--survey">
       {!hasNextStep ? (
         <form style={{ width: `${checkParagraph > 600 ? 62 : 50}rem` }} className="form__add--voc" onSubmit={(e) => handSubmitForm(e)}>
-          <div className="content__survey">{detailSurvey && parser(detailSurvey.cta)}</div>
+          <div className="content__survey">{detailSurvey && parser(DOMPurify.sanitize(detailSurvey.cta))}</div>
           <div className="evaluate__survey">
             {detailSurvey && detailSurvey.form == "1" && (
               <div className="lst__star--rating">

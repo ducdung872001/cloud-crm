@@ -1,4 +1,5 @@
 import React, { Fragment, useEffect, useMemo, useState } from "react";
+import DOMPurify from "dompurify";
 import parser from "html-react-parser";
 import _ from "lodash";
 import { IAddCustomerSurveyProps } from "model/surveyForm/PropsModel";
@@ -380,7 +381,7 @@ export default function AddCustomerSurvey(props: IAddCustomerSurveyProps) {
       <form className="desc__form--survey" onSubmit={(e) => onSubmit(e)}>
         <div className="prev__view">
           <span className="note__prev--view">Xem trước</span>
-          <div className="content__survey">{desContent ? parser(desContent) : <div className="draft__content">Nội dung khảo sát</div>}</div>
+          <div className="content__survey">{desContent ? parser(DOMPurify.sanitize(desContent)) : <div className="draft__content">Nội dung khảo sát</div>}</div>
           <div className="emoticon__survey">
             {formData.form == "1" && (
               <div className="lst__emoticon">

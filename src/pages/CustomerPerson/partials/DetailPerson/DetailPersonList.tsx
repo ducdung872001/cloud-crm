@@ -227,7 +227,6 @@ export default function DetailPersonList() {
     const headers = {
       "Content-Type": "application/json",
       "x-access-token": accessTokenAthena,
-      // "x-access-token": "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1aWQiOjEwMTA1NywiY29tcGFueV9pZCI6NiwicyI6ImlRVGV2Y1A0aDE0NzZVMXQxaW9aRTY1dTVqeWJnRDJIdTVsWlU4dmsiLCJpYXQiOjE3MzYxODUyMDUsImV4cCI6MTczNjE4ODgwNX0.wF0EwTQto91jFzMt5ntxtRcWMijAAp80CITXRjpwjbnDS2AoDtlxNDfohx6B4HxsVhcIgNsxN7DiuiGBjCZgWS-o7ghnv3cTzyneuBCWreID_QrK2NW4FZjDbOEesTmx41zV8oqfv1-xX8VdkbXls4IFp3ZqDtuGgQFeDyIMmTFenN7N5MokmP_JHzo-iwybEwVexzA-RjbjQ3gb-eLBd7IFWTZOrlFj4SqaImZnHvsS7Yb1qQ82tYJWTs-yTcChjhXQFn828n2oqGkX6BQN1RSkmK0Z8C8pBAdRYl6eOPQdZlOwtmPxF7Dx15NoWKzxKUFzZ8UipC4uvW9oMg6Q3A",
     };
 
     const body = {

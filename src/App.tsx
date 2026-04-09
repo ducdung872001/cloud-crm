@@ -51,7 +51,9 @@ const msalInstance = new PublicClientApplication(msalConfig);
 export default function App() {
   const navigate = useNavigate();
   const location = useLocation();
-  const returnUrl = new URLSearchParams(location.search).get("returnUrl");
+  const rawReturnUrl = new URLSearchParams(location.search).get("returnUrl");
+  // Chỉ chấp nhận relative path để tránh open redirect
+  const returnUrl = rawReturnUrl && rawReturnUrl.startsWith("/") && !rawReturnUrl.startsWith("//") ? rawReturnUrl : null;
   const [cookies, setCookie, removeCookie] = useCookies();
   const [isLogin, setIsLogin] = useState<boolean>(false);
   const [user, setUser] = useState<IUser>(null);

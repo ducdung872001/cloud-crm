@@ -52,7 +52,6 @@ export default function SocialCrm() {
     const accessToken = response.accessToken;
 
     //Từ accessToken, lấy ra danh sách các fanpage người dùng này đang quản lý
-    console.log("access token =>", accessToken);
     loadFanpages(accessToken);
   };
 

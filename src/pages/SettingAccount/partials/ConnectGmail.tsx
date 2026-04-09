@@ -7,7 +7,9 @@ import { showToast } from "utils/common";
 import Tippy from "@tippyjs/react";
 
 export default function ConnectGmail() {
-  const link = `https://accounts.google.com/o/oauth2/v2/auth?scope=https://mail.google.com/ https://www.googleapis.com/auth/gmail.labels https://www.googleapis.com/auth/gmail.send https://www.googleapis.com/auth/gmail.compose&access_type=offline&include_granted_scopes=true&response_type=code&state=state_parameter_passthrough_value&redirect_uri=http://localhost:4000/crm/setting_account&client_id=484257639452-6f9hmi7v82pc8enb63albllkpptb5b9u.apps.googleusercontent.com`;
+  const googleClientId = import.meta.env.VITE_GOOGLE_CLIENT_ID || "";
+  const googleRedirectUri = import.meta.env.VITE_GOOGLE_REDIRECT_URI || `${window.location.origin}/crm/setting_account`;
+  const link = `https://accounts.google.com/o/oauth2/v2/auth?scope=https://mail.google.com/ https://www.googleapis.com/auth/gmail.labels https://www.googleapis.com/auth/gmail.send https://www.googleapis.com/auth/gmail.compose&access_type=offline&include_granted_scopes=true&response_type=code&state=state_parameter_passthrough_value&redirect_uri=${encodeURIComponent(googleRedirectUri)}&client_id=${googleClientId}`;
 
   const { id } = useContext(UserContext) as ContextType;
 

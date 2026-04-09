@@ -1,3 +1,4 @@
+import { showToast } from "utils/common";
 import isUrl from "is-url";
 import { ImageElement, LinkElement, VideoElement } from "../../custom-types";
 import { Transforms } from "slate";
@@ -88,8 +89,8 @@ const uploadImageFromDirect = (data, callback, showStatus) => {
         showStatus(percent);
       }
     },
-    onError: (error) => {
-      alert("Có lỗi xảy ra trong quá trình upload ảnh");
+    onError: () => {
+      showToast("Có lỗi xảy ra trong quá trình upload ảnh", "error");
     },
   });
 };

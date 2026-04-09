@@ -905,7 +905,10 @@ export default function ModalCustomPopup({ onShow, onHide, dataWork, isHandleTas
 
   useEffect(() => {
     window.addEventListener("message", (event) => {
-      // Kiểm tra thông điệp từ iframe
+      // Chỉ chấp nhận message từ cùng origin hoặc BPM domain
+      const allowedOrigins = [window.location.origin, process.env.APP_BPM_URL, import.meta.env.VITE_BPM_URL].filter(Boolean);
+      if (!allowedOrigins.includes(event.origin)) return;
+
       if (event.data?.type === "EXPORT_XLSX") {
         const listColumn = event.data.listColumn;
         const data = event.data.data;
@@ -1032,7 +1035,14 @@ export default function ModalCustomPopup({ onShow, onHide, dataWork, isHandleTas
 
       if (event.data?.type === "VIEW_DOCUMENT_TAB") {
         const dataLink = event.data.dataLink;
-        window.open(dataLink, "_blank", "noopener,noreferrer");
+        try {
+          const url = new URL(dataLink);
+          if (["http:", "https:", "blob:"].includes(url.protocol)) {
+            window.open(dataLink, "_blank", "noopener,noreferrer");
+          }
+        } catch {
+          // URL không hợp lệ, bỏ qua
+        }
       }
     });
   }, []);
