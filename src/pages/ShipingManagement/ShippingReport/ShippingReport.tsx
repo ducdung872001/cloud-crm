@@ -5,7 +5,7 @@ import Loading from "components/loading";
 import Icon from "components/icon";
 import SelectCustom from "components/selectCustom/selectCustom";
 import DatePickerCustom from "components/datepickerCustom/datepickerCustom";
-import moment from "moment";
+import { format, subDays } from "date-fns";
 import { formatCurrency } from "reborn-util";
 import Highcharts from "highcharts";
 import HighchartsReact from "highcharts-react-official";
@@ -56,8 +56,8 @@ export default function ShippingReport() {
   const [partnerId, setPartnerId]       = useState(0);
   const [groupBy, setGroupBy]           = useState("day");
   const [dateRange, setDateRange]       = useState<[string, string]>([
-    moment().subtract(29, "days").format("YYYY-MM-DD"),
-    moment().format("YYYY-MM-DD"),
+    format(subDays(new Date(), 29), "yyyy-MM-dd"),
+    format(new Date(), "yyyy-MM-dd"),
   ]);
 
   const [summary, setSummary]           = useState(MOCK_REPORT_SUMMARY);

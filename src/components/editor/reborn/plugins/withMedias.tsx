@@ -4,6 +4,7 @@ import { Transforms } from "slate";
 import imageApi from "services/ImageService";
 import { uploadVideoFromFiles } from "utils/videoBlob";
 import { getMeta } from "reborn-util";
+import { showToast } from "utils/common";
 
 const withMedias = (editor) => {
   const { insertData, isVoid } = editor;
@@ -85,7 +86,7 @@ const uploadImageFromDirect = (data, callback, showStatus) => {
       }
     },
     onError: (error) => {
-      alert("Có lỗi xảy ra trong quá trình upload ảnh");
+      showToast("Có lỗi xảy ra trong quá trình upload ảnh", "error");
     },
   });
 };

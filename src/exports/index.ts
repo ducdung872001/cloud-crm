@@ -1,6 +1,6 @@
 import { removeAccents } from "reborn-util";
 import ExcelJS from "exceljs";
-import moment from "moment";
+import { format } from "date-fns";
 import fs from "file-saver";
 import { styles, columnFormat, columnWidth, formats } from "./config";
 import { getCharByCode } from "utils/common";
@@ -231,7 +231,7 @@ export async function ExportExcel(userOptions, product_store?: Record<string, un
       ? [
           //   ["Chi nhánh:", options.info?.product_store.name ?? product_store?.name],
           //   ["Địa chỉ:", options.info?.product_store.address ?? product_store?.address],
-          ["Thời gian xuất:", moment().format("DD/MM/YYYY HH:mm:ss")],
+          ["Thời gian xuất:", format(new Date(), "dd/MM/yyyy HH:mm:ss")],
           ["Người xuất:", options.info?.name ?? name],
         ]
       : [];
@@ -453,7 +453,7 @@ export async function ExportExcel(userOptions, product_store?: Record<string, un
       worksheet,
       rowData.map((data) => {
         if (data instanceof Date) {
-          return moment(data).utcOffset(0, true).toDate();
+          return data;
         }
 
         if (data === null || data === undefined) {
@@ -685,6 +685,6 @@ export async function ExportExcel(userOptions, product_store?: Record<string, un
     const blob = new Blob([data], {
       type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
     });
-    fs.saveAs(blob, (options.fileName || options.title) + "-" + moment().format("YYYYMMDDHHmm") + ".xlsx");
+    fs.saveAs(blob, (options.fileName || options.title) + "-" + format(new Date(), "yyyyMMddHHmm") + ".xlsx");
   });
 }

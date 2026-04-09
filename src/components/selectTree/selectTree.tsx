@@ -377,6 +377,7 @@ function SelectTree(props: SelectCustomProps) {
                           {item?.children.map((child, idx) => {
                             return (
                               <div
+                                key={child.value}
                                 className={`item-child-item${(isAsyncPaginate ? child.value == value.value : child.value == value) ? " active" : ""}${
                                   child.disabled ? " disabled" : ""
                                 }`}

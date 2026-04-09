@@ -25,7 +25,6 @@ import fetchConfig from "./configs/fetchConfig";
 import { routes } from "./configs/routes";
 import { ToastContainer } from "react-toastify";
 import LayoutPage from "pages/layout";
-import moment from "moment";
 import { getAppSSOLink, showToast } from "utils/common";
 import EmployeeService from "services/EmployeeService";
 import { getDomain } from "reborn-util";
@@ -47,6 +46,7 @@ import WebRtcCallIncomeModal from "pages/CallCenter/partials/WebRtcCallIncomeMod
 import ringtone from "assets/sounds/call_in_sound.wav";
 import { useSTWebRTC } from "./webrtc/useSTWebRTC";
 import { messaging, requestPermission } from "./firebase-config";
+import ErrorBoundary from "./components/ErrorBoundary/ErrorBoundary";
 
 // ─────────────────────────────────────────────────────────────────────────────
 
@@ -121,8 +121,8 @@ export default function App() {
             setIsLogin(true);
             if (cookies.user?.expired_cookie && isRunRefresh === false) {
               setIsRunRefresh(true);
-              const dateExpired = moment(cookies.user.expired_cookie);
-              let timeOut = dateExpired.valueOf() - moment().valueOf();
+              const dateExpired = new Date(cookies.user.expired_cookie);
+              let timeOut = dateExpired.getTime() - Date.now();
               timeOut = timeOut > 0 ? timeOut : 0;
             }
 
@@ -386,6 +386,7 @@ export default function App() {
   };
 
   return (
+    <ErrorBoundary>
     <AuthContext.Provider value={authValue}>
     <UIContext.Provider value={uiValue}>
     <CallContext.Provider value={callValue}>
@@ -437,5 +438,6 @@ export default function App() {
     </CallContext.Provider>
     </UIContext.Provider>
     </AuthContext.Provider>
+    </ErrorBoundary>
   );
 }

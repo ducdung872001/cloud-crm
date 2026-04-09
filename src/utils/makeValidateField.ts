@@ -1,4 +1,4 @@
-import moment from "moment";
+import { parse, isValid, isBefore } from "date-fns";
 
 const listEqual = ["equal", ">=", "<=", ">", "<", "!="];
 const listEqualText = ["equal", "!="];
@@ -76,8 +76,11 @@ function parseDateValue(value: Record<string, unknown>): Date | null {
   }
 
   // Kiểm tra nếu giá trị là chuỗi ngày hợp lệ
-  const dateValue = moment(value, "DD/MM/YYYY", true);
-  return dateValue.isValid() ? dateValue.toDate() : null; // Trả về ngày hoặc null nếu không hợp lệ
+  if (typeof value === "string") {
+    const parsed = parse(value, "dd/MM/yyyy", new Date());
+    return isValid(parsed) ? parsed : null;
+  }
+  return null; // Trả về null nếu không hợp lệ
 }
 
 export function makeValidateField(listColumns: Record<string, unknown>[]) {
@@ -246,9 +249,9 @@ export function makeValidateField(listColumns: Record<string, unknown>[]) {
               allValues[item.name + ".min"] !== "" &&
               allValues[item.name + ".max"] !== ""
             ) {
-              const minDate = moment(parseDateValue(allValues[item.name + ".min"]), "DD/MM/YYYY", true);
-              const maxDate = moment(parseDateValue(allValues[item.name + ".max"]), "DD/MM/YYYY", true);
-              if (minDate.isValid() && maxDate.isValid() && minDate.isSameOrAfter(maxDate)) {
+              const minDate = parseDateValue(allValues[item.name + ".min"]);
+              const maxDate = parseDateValue(allValues[item.name + ".max"]);
+              if (minDate && maxDate && isValid(minDate) && isValid(maxDate) && !isBefore(minDate, maxDate)) {
                 return `Giá trị min phải nhỏ hơn giá trị max!`;
               }
             }

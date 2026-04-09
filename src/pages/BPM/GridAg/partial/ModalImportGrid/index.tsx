@@ -14,7 +14,7 @@ import GridService from "services/GridService";
 import { exportCustomExcel } from "./partials/exportExcel";
 import { v4 as uuidv4 } from "uuid";
 // import { fetchDataLookup } from "../../Lookup";
-import moment from "moment";
+import { format, isValid, parse } from "date-fns";
 import { makeValidateField } from "utils/makeValidateField";
 import Button from "components/button/button";
 import { useGridAg } from "../../GridAgContext";
@@ -115,17 +115,17 @@ export default function ModalImportGrid(props: Record<string, unknown>) {
   function parseDateValue(value: Record<string, unknown>): string | null {
     // Kiểm tra nếu giá trị đã là đối tượng Date
     if (value instanceof Date) {
-      return moment(value).utc().toISOString(); // Giữ nguyên nếu đã là đối tượng Date
+      return value.toISOString(); // Giữ nguyên nếu đã là đối tượng Date
     }
 
     // Kiểm tra nếu giá trị là số (Excel serial)
     if (typeof value === "number") {
-      return moment(excelDateToJSDate(value)).utc().toISOString(); // Chuyển đổi từ số serial
+      return excelDateToJSDate(value).toISOString(); // Chuyển đổi từ số serial
     }
 
     // Kiểm tra nếu giá trị là chuỗi ngày hợp lệ
-    const dateValue = moment(value, "DD/MM/YYYY", true);
-    return dateValue.isValid() ? moment(dateValue.toDate()).utc().toISOString() : null; // Trả về ngày hoặc null nếu không hợp lệ
+    const dateValue = parse(value as string, "dd/MM/yyyy", new Date());
+    return isValid(dateValue) ? dateValue.toISOString() : null; // Trả về ngày hoặc null nếu không hợp lệ
   }
 
   const readExcelFile = (file: Blob) => {

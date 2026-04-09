@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import HeaderTabMenu from "@/components/HeaderTabMenu/HeaderTabMenu";
 import { ITitleActions } from "components/titleAction/titleAction";
 import Badge from "components/badge/badge";
+import { showToast } from "@/utils/common";
 import "./CampaignManagementPage.scss";
 
 interface Campaign {
@@ -233,7 +234,7 @@ export default function CampaignManagementPage({ onBackProps }: { onBackProps: (
           <div style={{ flex: 1 }} />
           {stepIdx < STEPS.length - 1
             ? <button className="cm-btn cm-btn--primary" onClick={() => setStep(STEPS[stepIdx + 1].key)}>Tiếp theo →</button>
-            : <button className="cm-btn cm-btn--success" onClick={() => { alert("Chiến dịch đã tạo (demo)"); setView("list"); setStep("info"); }}>🚀 Tạo chiến dịch</button>
+            : <button className="cm-btn cm-btn--success" onClick={() => { showToast("Chiến dịch đã tạo (demo)", "info"); setView("list"); setStep("info"); }}>🚀 Tạo chiến dịch</button>
           }
         </div>
       </div>

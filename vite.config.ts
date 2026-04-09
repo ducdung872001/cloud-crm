@@ -3,24 +3,6 @@ import path from "path";
 import { defineConfig, loadEnv } from "vite";
 import svgr from "vite-plugin-svgr";
 
-// Strip all moment.js locales except Vietnamese (~250KB savings)
-function momentLocaleStrip() {
-  return {
-    name: "moment-locale-strip",
-    resolveId(source: string) {
-      if (source === "moment") return null; // let Vite handle the main module
-      return null;
-    },
-    transform(code: string, id: string) {
-      // Remove all locale files except vi
-      if (/node_modules\/moment\/locale\/(?!vi\.)/.test(id.replace(/\\/g, "/"))) {
-        return { code: "export default {};", map: null };
-      }
-      return null;
-    },
-  };
-}
-
 export default defineConfig(({ mode }) => {
   // Load env file based on `mode` in the current working directory.
   // Set the third parameter to '' to load all env regardless of the `VITE_` prefix.
@@ -60,7 +42,6 @@ export default defineConfig(({ mode }) => {
 
   return {
     plugins: [
-      momentLocaleStrip(),
       react({
         // Cấu hình cho React
         include: "**/*.{jsx,tsx}",

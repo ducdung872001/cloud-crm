@@ -3,7 +3,7 @@ import TitleAction from "components/titleAction/titleAction";
 import ReportPanel from "components/reportShared/ReportPanel";
 import Highcharts from "highcharts";
 import HighchartsReact from "highcharts-react-official";
-import moment from "moment";
+import { format, subMonths, startOfMonth, endOfMonth } from "date-fns";
 import {
   HEALTH_DATA,
   MOVEMENT_DATA,
@@ -94,8 +94,8 @@ export default function InventoryReportModern() {
   const [groupBy, setGroupBy]         = useState("month");
   const [warehouseId, setWarehouseId] = useState(0);
   const [dateRange, setDateRange]     = useState<[string, string]>([
-    moment().subtract(5, "months").startOf("month").format("YYYY-MM-DD"),
-    moment().endOf("month").format("YYYY-MM-DD"),
+    format(startOfMonth(subMonths(new Date(), 5)), "yyyy-MM-dd"),
+    format(endOfMonth(new Date()), "yyyy-MM-dd"),
   ]);
 
   // ── Data state — khởi tạo bằng mock ──────────────────────────────────────

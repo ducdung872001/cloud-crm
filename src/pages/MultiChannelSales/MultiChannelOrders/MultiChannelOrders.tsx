@@ -107,7 +107,7 @@ export default function MultiChannelOrders() {
       document.body.appendChild(a); a.click(); a.remove(); URL.revokeObjectURL(url);
     } catch (e: unknown) {
       console.error("Export failed", e);
-      alert(e?.message ?? "Xuất Excel thất bại. Vui lòng thử lại.");
+      showToast(e?.message ?? "Xuất Excel thất bại. Vui lòng thử lại.", "error");
     } finally {
       setIsExporting(false);
     }

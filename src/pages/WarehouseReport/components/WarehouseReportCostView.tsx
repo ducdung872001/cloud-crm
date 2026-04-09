@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import Highcharts from "highcharts";
 import HighchartsReact from "highcharts-react-official";
-import moment from "moment";
+import { format, startOfMonth, endOfMonth, startOfQuarter, endOfQuarter, getQuarter, getYear } from "date-fns";
 import WarehouseReportService, {
   ICostProductRow,
   ICostReportData,
@@ -13,9 +13,11 @@ import WarehouseReportService, {
 type PeriodKey = "month" | "quarter" | "custom";
 
 function getPeriodRange(key: PeriodKey): [string, string] {
+  const now = new Date();
+  const fmt = "dd/MM/yyyy";
   if (key === "month")
-    return [moment().startOf("month").format("DD/MM/YYYY"), moment().endOf("month").format("DD/MM/YYYY")];
-  return [moment().startOf("quarter").format("DD/MM/YYYY"), moment().endOf("quarter").format("DD/MM/YYYY")];
+    return [format(startOfMonth(now), fmt), format(endOfMonth(now), fmt)];
+  return [format(startOfQuarter(now), fmt), format(endOfQuarter(now), fmt)];
 }
 
 function fmtVnd(n: number): string {
@@ -134,8 +136,8 @@ export default function WarehouseReportCostView() {
   const productRows = data?.productRows ?? [];
 
   const periodLabel = periodKey === "month"
-    ? `Tháng ${moment().format("M/YYYY")}`
-    : `Quý ${moment().quarter()}/${moment().year()}`;
+    ? `Tháng ${format(new Date(), "M/yyyy")}`
+    : `Quý ${getQuarter(new Date())}/${getYear(new Date())}`;
 
   return (
     <div className="warehouse-report-view">

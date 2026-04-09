@@ -1,5 +1,6 @@
 import React, { Fragment, useState, useEffect, useCallback, useMemo, useContext, useRef } from "react";
-import moment from "moment";
+import { startOfDay, endOfDay, isBefore } from "date-fns";
+import { formatDateCustom } from "utils/dateUtils";
 import { isDifferenceObj } from "reborn-util";
 import { IActionModal } from "model/OtherModel";
 import { IAddConsultationScheduleModalProps } from "model/scheduleConsultant/PropsModel";
@@ -171,8 +172,8 @@ export default function AddConsultationScheduleModal(props: IAddConsultationSche
         content: result.content,
         customerId: result.customerId,
         note: result.note,
-        startTime: moment(result.startTime).toDate(),
-        endTime: moment(result.endTime).toDate(),
+        startTime: new Date(result.startTime),
+        endTime: new Date(result.endTime),
         type: result.type,
         notification: result.notification,
       });
@@ -219,7 +220,7 @@ export default function AddConsultationScheduleModal(props: IAddConsultationSche
 
   const isValidDateTimeRange = (start: Record<string, unknown>, end: Record<string, unknown>) => {
     if (!start || !end) return true;
-      return moment(start).isBefore(moment(end));
+      return isBefore(new Date(start), new Date(end));
   };
 
   const [formData, setFormData] = useState<IFormData>({ values: values });
@@ -526,8 +527,8 @@ export default function AddConsultationScheduleModal(props: IAddConsultationSche
 
   // Thời gian bắt đầu và kết thúc
   const intervalMinutes = 15;
-  const startTime = moment(new Date()).startOf("day");
-  const endTime = moment(new Date()).endOf("day");
+  const startTime = startOfDay(new Date());
+  const endTime = endOfDay(new Date());
   const timeSlots = listTimeSlots(startTime, endTime, intervalMinutes);
 
   const [lstPeriodicSchedule, setLstPeriodicSchedule] = useState(defaultPeriodicSchedule);
@@ -1114,8 +1115,8 @@ export default function AddConsultationScheduleModal(props: IAddConsultationSche
       ...(data ? { id: data.id } : {}),
       ...(dataOpp?.coyId ? { coyId: dataOpp.coyId } : {}),
       ...(dataOpp?.approachId ? { approachId: dataOpp.approachId } : {}),
-      startTime: moment(formData.values.startTime).format('YYYY-MM-DDTHH:mm:ss'),
-      endTime: moment(formData.values.endTime).format('YYYY-MM-DDTHH:mm:ss'),
+      startTime: formatDateCustom(formData.values.startTime, "yyyy-MM-dd'T'HH:mm:ss"),
+      endTime: formatDateCustom(formData.values.endTime, "yyyy-MM-dd'T'HH:mm:ss"),
     };
 
     const response = await ScheduleConsultantService.update(body);

@@ -14,7 +14,7 @@ import GridService from "services/GridService";
 import { exportCustomExcel } from "./partials/exportExcel";
 import { v4 as uuidv4 } from "uuid";
 import { fetchDataLookup } from "../../Lookup";
-import moment from "moment";
+import { isValid, parse } from "date-fns";
 import { makeValidateField } from "utils/makeValidateField";
 import Button from "components/button/button";
 import { exportOlaExcel } from "../../exportOla";
@@ -121,8 +121,8 @@ export default function ModalImport(props: Record<string, unknown>) {
     }
 
     // Kiểm tra nếu giá trị là chuỗi ngày hợp lệ
-    const dateValue = moment(value, "DD/MM/YYYY", true);
-    return dateValue.isValid() ? dateValue.toDate() : null; // Trả về ngày hoặc null nếu không hợp lệ
+    const dateValue = parse(value as string, "dd/MM/yyyy", new Date());
+    return isValid(dateValue) ? dateValue : null; // Trả về ngày hoặc null nếu không hợp lệ
   }
 
   const listEqual = ["equal", ">=", "<=", ">", "<", "!="];

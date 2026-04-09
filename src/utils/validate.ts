@@ -1,7 +1,22 @@
 import cloneDeep from "lodash/cloneDeep";
 
-import moment from "moment";
+import { isValid, parse, format, isAfter, isBefore, isEqual } from "date-fns";
 import { getTextFromReactElement } from "utils/common";
+
+function isValidDateDDMMYYYY(value: string): boolean {
+  const parsed = parse(value, "dd/MM/yyyy", new Date());
+  return isValid(parsed);
+}
+
+function formatDateDDMMYYYY(value: string): string {
+  const parsed = parse(value, "dd/MM/yyyy", new Date());
+  return isValid(parsed) ? format(parsed, "dd/MM/yyyy") : "";
+}
+
+function parseDateStr(value: string): Date | null {
+  const parsed = parse(value, "dd/MM/yyyy", new Date());
+  return isValid(parsed) ? parsed : null;
+}
 import { IFieldCustomize, IFormData, IValidation } from "model/FormModel";
 
 export default function Validate(validations: IValidation[], formData: IFormData, listField: IFieldCustomize[]) {
@@ -162,28 +177,28 @@ export function ValidateField(field: IFieldCustomize, validation: IValidation, v
               break;
             case "date":
               min =
-                value["min"] && !moment(value["min"], "DD/MM/yyyy", true).isValid() && values[value["min"]]
+                value["min"] && !isValidDateDDMMYYYY(value["min"]) && values[value["min"]]
                   ? values[value["min"]]
-                  : value["min"] && moment(value["min"], "DD/MM/yyyy", true).isValid()
-                  ? moment(value["min"]).format("DD/MM/yyyy").toString()
+                  : value["min"] && isValidDateDDMMYYYY(value["min"])
+                  ? formatDateDDMMYYYY(value["min"])
                   : null;
               max =
-                value["max"] && !moment(value["max"], "DD/MM/yyyy", true).isValid() && values[value["max"]]
+                value["max"] && !isValidDateDDMMYYYY(value["max"]) && values[value["max"]]
                   ? values[value["max"]]
-                  : value["max"] && moment(value["max"], "DD/MM/yyyy", true).isValid()
-                  ? moment(value["max"]).format("DD/MM/yyyy").toString()
+                  : value["max"] && isValidDateDDMMYYYY(value["max"])
+                  ? formatDateDDMMYYYY(value["max"])
                   : null;
               minEqual =
-                value["min_equal"] && !moment(value["min_equal"], "DD/MM/yyyy", true).isValid() && values[value["min_equal"]]
+                value["min_equal"] && !isValidDateDDMMYYYY(value["min_equal"]) && values[value["min_equal"]]
                   ? values[value["min_equal"]]
-                  : value["min_equal"] && moment(value["min_equal"], "DD/MM/yyyy", true).isValid()
-                  ? moment(value["min_equal"]).format("DD/MM/yyyy").toString()
+                  : value["min_equal"] && isValidDateDDMMYYYY(value["min_equal"])
+                  ? formatDateDDMMYYYY(value["min_equal"])
                   : null;
               maxEqual =
-                value["max_equal"] && !moment(value["max_equal"], "DD/MM/yyyy", true).isValid() && values[value["max_equal"]]
+                value["max_equal"] && !isValidDateDDMMYYYY(value["max_equal"]) && values[value["max_equal"]]
                   ? values[value["max_equal"]]
-                  : value["max_equal"] && moment(value["max_equal"], "DD/MM/yyyy", true).isValid()
-                  ? moment(value["max_equal"]).format("DD/MM/yyyy").toString()
+                  : value["max_equal"] && isValidDateDDMMYYYY(value["max_equal"])
+                  ? formatDateDDMMYYYY(value["max_equal"])
                   : null;
               if (
                 minEqual &&
@@ -340,29 +355,29 @@ export function ValidateField(field: IFieldCustomize, validation: IValidation, v
     if (message) {
       const min =
         key === "length" && value["min"]
-          ? (isNaN(value["min"]) && !moment(value["min"], "DD/MM/yyyy", true).isValid()) ||
-            (!isNaN(value["min"]) && moment(value["min"], "DD/MM/yyyy", true).isValid())
+          ? (isNaN(value["min"]) && !isValidDateDDMMYYYY(value["min"])) ||
+            (!isNaN(value["min"]) && isValidDateDDMMYYYY(value["min"]))
             ? getTextFromReactElement(listField.find((form) => form.name === value["min"].toString())?.label).replace(" *", "")
             : value["min"]
           : "";
       const max =
         key === "length" && value["max"]
-          ? (isNaN(value["max"]) && !moment(value["max"], "DD/MM/yyyy", true).isValid()) ||
-            (!isNaN(value["max"]) && moment(value["max"], "DD/MM/yyyy", true).isValid())
+          ? (isNaN(value["max"]) && !isValidDateDDMMYYYY(value["max"])) ||
+            (!isNaN(value["max"]) && isValidDateDDMMYYYY(value["max"]))
             ? getTextFromReactElement(listField.find((form) => form.name === value["max"].toString())?.label).replace(" *", "")
             : value["max"]
           : "";
       const minEqual =
         key === "length" && value["min_equal"]
-          ? (isNaN(value["min_equal"]) && !moment(value["min_equal"], "DD/MM/yyyy", true).isValid()) ||
-            (!isNaN(value["min_equal"]) && moment(value["min_equal"], "DD/MM/yyyy", true).isValid())
+          ? (isNaN(value["min_equal"]) && !isValidDateDDMMYYYY(value["min_equal"])) ||
+            (!isNaN(value["min_equal"]) && isValidDateDDMMYYYY(value["min_equal"]))
             ? getTextFromReactElement(listField.find((form) => form.name === value["min_equal"].toString())?.label).replace(" *", "")
             : value["min_equal"]
           : "";
       const maxEqual =
         key === "length" && value["max_equal"]
-          ? (isNaN(value["max_equal"]) && !moment(value["max_equal"], "DD/MM/yyyy", true).isValid()) ||
-            (!isNaN(value["max_equal"]) && moment(value["max_equal"], "DD/MM/yyyy", true).isValid())
+          ? (isNaN(value["max_equal"]) && !isValidDateDDMMYYYY(value["max_equal"])) ||
+            (!isNaN(value["max_equal"]) && isValidDateDDMMYYYY(value["max_equal"]))
             ? getTextFromReactElement(listField.find((form) => form.name === value["max_equal"].toString())?.label).replace(" *", "")
             : value["max_equal"]
           : "";
@@ -421,13 +436,16 @@ const validateIsEmptyOrNull = (value: string | number | boolean) => {
 };
 
 const validateDate = (value: string, valueCompare: string) => {
-  if (moment(value).isAfter(moment(valueCompare))) {
+  const d1 = parseDateStr(value);
+  const d2 = parseDateStr(valueCompare);
+  if (!d1 || !d2) return undefined;
+  if (isAfter(d1, d2)) {
     return "after";
   }
-  if (moment(value).isBefore(moment(valueCompare))) {
+  if (isBefore(d1, d2)) {
     return "before";
   }
-  if (moment(value).isSame(moment(valueCompare))) {
+  if (isEqual(d1, d2)) {
     return "same";
   }
 };

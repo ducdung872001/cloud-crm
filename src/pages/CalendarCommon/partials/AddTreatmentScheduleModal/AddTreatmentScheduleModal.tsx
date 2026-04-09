@@ -1,5 +1,6 @@
 import React, { Fragment, useState, useEffect, useCallback, useMemo, useContext, useRef } from "react";
-import moment from "moment";
+import { startOfDay, endOfDay } from "date-fns";
+import { formatDateCustom } from "utils/dateUtils";
 import { isDifferenceObj } from "reborn-util";
 import { IActionModal } from "model/OtherModel";
 import { IScheduleTreatmentResponseModalProps } from "model/scheduleTreatment/PropsModel";
@@ -736,8 +737,8 @@ export default function AddTreatmentScheduleModal(props: IScheduleTreatmentRespo
   ];
 
   const intervalMinutes = 15;
-  const startTime = moment(new Date()).startOf("day");
-  const endTime = moment(new Date()).endOf("day");
+  const startTime = startOfDay(new Date());
+  const endTime = endOfDay(new Date());
   const timeSlots = listTimeSlots(startTime, endTime, intervalMinutes);
 
   const [lstPeriodicSchedule, setLstPeriodicSchedule] = useState(defaultPeriodicSchedule);
@@ -1397,8 +1398,8 @@ export default function AddTreatmentScheduleModal(props: IScheduleTreatmentRespo
     const body: IScheduleTreatmentRequestModal = {
       ...(formData.values as IScheduleTreatmentRequestModal),
       ...(data ? { id: data.id } : {}),
-      startTime: moment(formData.values.startTime).format('YYYY-MM-DDTHH:mm:ss'),
-      endTime: moment(formData.values.endTime).format('YYYY-MM-DDTHH:mm:ss'),
+      startTime: formatDateCustom(formData.values.startTime, "yyyy-MM-dd'T'HH:mm:ss"),
+      endTime: formatDateCustom(formData.values.endTime, "yyyy-MM-dd'T'HH:mm:ss"),
     };
 
     const response = await ScheduleTreatmentService.update(body);

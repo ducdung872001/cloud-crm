@@ -2,6 +2,7 @@ import { urlsApi } from "configs/urls";
 import { getCookie } from "reborn-util";
 
 const processError = (err) => {
+  /* default error handler */
 };
 
 /**

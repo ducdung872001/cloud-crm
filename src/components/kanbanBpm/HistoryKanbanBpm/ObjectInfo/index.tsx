@@ -53,9 +53,9 @@ export default function ObjectInfo({ data }) {
             formContainerRef={formContainerRef}
             formViewerRef={formViewerRef}
             formSchema={initFormSchema}
-            onSchemaSubmit={() => {}}
-            setShowPopupCustom={() => {}}
-            setCodePopupCustom={() => {}}
+            onSchemaSubmit={() => { /* noop */ }}
+            setShowPopupCustom={() => { /* noop */ }}
+            setCodePopupCustom={() => { /* noop */ }}
             dataInit={dataInit}
             contextData={{
               nodeId: "",
@@ -66,7 +66,7 @@ export default function ObjectInfo({ data }) {
               procurementTypeId: "",
             }}
             showOnRejectModal={false}
-            setDataSchemaDraft={(data) => {}}
+            setDataSchemaDraft={(data) => { /* noop */ }}
             isLoading={isLoading}
             setIsLoading={setIsLoading}
           />

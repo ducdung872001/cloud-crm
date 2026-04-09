@@ -30,7 +30,6 @@ import { uploadDocumentFormData } from "utils/document";
 import "./index.scss";
 import CategoryProjectService from "services/CategoryProjectService";
 import { name } from "jssip";
-import moment from "moment";
 
 export default function AddProjectManagementModal(props: IAddWorkProjectModalProps) {
   const { startDate, endDate, onShow, onHide, idData } = props;
@@ -76,8 +75,8 @@ export default function AddProjectManagementModal(props: IAddWorkProjectModalPro
         id: result.id,
         name: result?.name ?? "",
         code: result?.code ?? "",
-        startTime: moment(result.startTime).toDate(),
-        endTime: moment(result.endTime).toDate(),
+        startTime: new Date(result.startTime),
+        endTime: new Date(result.endTime),
         description: result?.description ?? "",
         participants: result?.participants ?? "[]",
         employeeId: result?.employeeId ?? null,

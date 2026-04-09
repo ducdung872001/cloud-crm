@@ -1,6 +1,6 @@
 import { removeAccents } from "reborn-util";
 import ExcelJS from "exceljs";
-import moment from "moment";
+import { format } from "date-fns";
 import fs from "file-saver";
 import { styles, columnFormat, columnWidth, formats } from "./config";
 import { getCharByCode } from "utils/common";
@@ -331,7 +331,7 @@ export async function CustomExportReport(userOptions, name?: string, setFilebase
       worksheet,
       rowData.map((data) => {
         if (data instanceof Date) {
-          return moment(data).utcOffset(0, true).toDate();
+          return data;
         }
 
         if (data === null || data === undefined) {
@@ -468,6 +468,6 @@ export async function CustomExportReport(userOptions, name?: string, setFilebase
       };
     }
 
-    !notDownload && fs.saveAs(blob, (options.fileName || options.title) + "-" + moment().format("YYYYMMDDHHmm") + ".xlsx");
+    !notDownload && fs.saveAs(blob, (options.fileName || options.title) + "-" + format(new Date(), "yyyyMMddHHmm") + ".xlsx");
   });
 }

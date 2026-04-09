@@ -227,7 +227,7 @@ export default function ListWork(props: { data: Record<string, unknown> }) {
         setContentDialog(null);
       },
       defaultText: "Xóa",
-      defaultAction: () => {},
+      defaultAction: () => { /* noop */ },
     };
     setContentDialog(contentDialog);
     setShowDialog(true);

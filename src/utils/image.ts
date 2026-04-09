@@ -48,7 +48,7 @@ export const readRemoteImageFromURL = (url, imageElement) => {
     request.onerror = function (event) {
       if (event) {
         imageElement.parentNode.removeChild(imageElement);
-        alert("Không thể chèn ảnh này.");
+        showToast("Không thể chèn ảnh này.", "error");
       }
     };
 

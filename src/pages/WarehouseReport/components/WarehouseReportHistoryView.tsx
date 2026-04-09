@@ -1,7 +1,8 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import Highcharts from "highcharts";
 import HighchartsReact from "highcharts-react-official";
-import moment from "moment";
+import { format, startOfMonth, endOfMonth, startOfQuarter, endOfQuarter, startOfYear, endOfYear, subMonths } from "date-fns";
+import { formatDate } from "utils/dateUtils";
 import { urlsApi } from "configs/urls";
 import InventoryService from "services/InventoryService";
 
@@ -51,11 +52,12 @@ const PERIODS: { label: string; key: PeriodKey }[] = [
 ];
 
 function getPeriodRange(key: PeriodKey): [string, string] {
-  const fmt = "DD/MM/YYYY";
-  if (key === "month")   return [moment().startOf("month").format(fmt), moment().endOf("month").format(fmt)];
-  if (key === "quarter") return [moment().startOf("quarter").format(fmt), moment().endOf("quarter").format(fmt)];
-  if (key === "half")    return [moment().subtract(6,"months").startOf("month").format(fmt), moment().endOf("month").format(fmt)];
-  return [moment().startOf("year").format(fmt), moment().endOf("year").format(fmt)];
+  const now = new Date();
+  const fmt = "dd/MM/yyyy";
+  if (key === "month")   return [format(startOfMonth(now), fmt), format(endOfMonth(now), fmt)];
+  if (key === "quarter") return [format(startOfQuarter(now), fmt), format(endOfQuarter(now), fmt)];
+  if (key === "half")    return [format(startOfMonth(subMonths(now, 6)), fmt), format(endOfMonth(now), fmt)];
+  return [format(startOfYear(now), fmt), format(endOfYear(now), fmt)];
 }
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────
@@ -418,7 +420,7 @@ export default function WarehouseReportHistoryView() {
                       : row.warehouseName ?? "—";
                     return (
                       <tr key={row.id}>
-                        <td>{row.createdTime ? moment(row.createdTime).format("DD/MM/YYYY") : "—"}</td>
+                        <td>{row.createdTime ? formatDate(row.createdTime) : "—"}</td>
                         <td><span className={`badge ${badgeCls}`}>{typeName}</span></td>
                         <td className="vb">{code}</td>
                         <td className="r vg">{isImport ? `+${qty.toLocaleString("vi-VN")}` : "—"}</td>

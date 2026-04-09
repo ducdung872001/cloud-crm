@@ -1,5 +1,5 @@
 import React, { Fragment, useState, useEffect, useCallback, useMemo, useContext } from "react";
-import moment from "moment";
+import { isValidDate, formatDate as formatDateUtil } from "utils/dateUtils";
 import { isDifferenceObj } from "reborn-util";
 import { IActionModal } from "model/OtherModel";
 import { IFieldCustomize, IFormData, IValidation } from "model/FormModel";
@@ -51,7 +51,7 @@ export default function ModalAddCampaignMA(props: Record<string, unknown>) {
   };
   const formatDate = (date) => {
       if (!date) return "";
-      return moment(date).isValid() ? moment(date).format("DD/MM/yyyy") : "";
+      return isValidDate(date) ? formatDateUtil(date) : "";
     };
 
   useEffect(() => {
@@ -181,8 +181,8 @@ export default function ModalAddCampaignMA(props: Record<string, unknown>) {
 
   // Kiểm tra lỗi ngày
   const hasDateErrors = useMemo(() => {
-    const startDateError = checkFieldStartDate || moment(startDay).isSameOrAfter(moment(endDay));
-    const endDateError = checkFieldEndDate || moment(endDay).isSameOrBefore(moment(startDay));
+    const startDateError = checkFieldStartDate || startDay >= endDay;
+    const endDateError = checkFieldEndDate || endDay <= startDay;
     return startDateError || endDateError;
   }, [checkFieldStartDate, checkFieldEndDate, startDay, endDay]);
 
@@ -355,8 +355,8 @@ export default function ModalAddCampaignMA(props: Record<string, unknown>) {
     e && e.preventDefault();
 
     // Kiểm tra lỗi ngày và ngăn submit nếu có lỗi
-    const startDateError = !formData.values?.startDate || moment(startDay).isSameOrAfter(moment(endDay));
-    const endDateError = !formData.values?.endDate || moment(endDay).isSameOrBefore(moment(startDay));
+    const startDateError = !formData.values?.startDate || startDay >= endDay;
+    const endDateError = !formData.values?.endDate || endDay <= startDay;
 
     if (startDateError || endDateError) {
       if (startDateError) setCheckFieldStartDate(true);
@@ -378,8 +378,7 @@ export default function ModalAddCampaignMA(props: Record<string, unknown>) {
       let d: Record<string, unknown> = null;
       try {
         if (val instanceof Date) d = new Date(val);
-        else if (moment.isMoment && moment.isMoment(val)) d = val.toDate();
-        else if (moment(val).isValid()) d = moment(val).toDate();
+        else if (isValidDate(val)) d = new Date(val);
         else return val;
       } catch (e) {
         return val;
@@ -550,8 +549,8 @@ export default function ModalAddCampaignMA(props: Record<string, unknown>) {
                   required={false}
                   iconPosition="left"
                   icon={<Icon name="Calendar" />}
-                  error={checkFieldStartDate || moment(startDay).isSameOrAfter(moment(endDay))}
-                  message={moment(startDay).isSameOrAfter(moment(endDay)) ? "Ngày bắt đầu nhỏ hơn ngày kết thúc" : "Vui lòng chọn ngày bắt đầu"}
+                  error={checkFieldStartDate || startDay >= endDay}
+                  message={startDay >= endDay ? "Ngày bắt đầu nhỏ hơn ngày kết thúc" : "Vui lòng chọn ngày bắt đầu"}
                 />
               </div>
 
@@ -566,8 +565,8 @@ export default function ModalAddCampaignMA(props: Record<string, unknown>) {
                   required={false}
                   iconPosition="left"
                   icon={<Icon name="Calendar" />}
-                  error={checkFieldEndDate || moment(endDay).isSameOrBefore(moment(startDay))}
-                  message={moment(endDay).isSameOrBefore(moment(startDay)) ? "Ngày kết thúc lớn hơn ngày bắt đầu" : "Vui lòng chọn ngày kết thúc"}
+                  error={checkFieldEndDate || endDay <= startDay}
+                  message={endDay <= startDay ? "Ngày kết thúc lớn hơn ngày bắt đầu" : "Vui lòng chọn ngày kết thúc"}
                 />
               </div>
 

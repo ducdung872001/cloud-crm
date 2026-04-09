@@ -2,6 +2,7 @@
 import React, { useState } from "react";
 import { MOCK_PARTNERS } from "@/mocks/community-hub/partners";
 import { formatCurrency } from "reborn-util";
+import { showToast } from "@/utils/common";
 import "./index.scss";
 
 type Partner = (typeof MOCK_PARTNERS)[number];
@@ -20,7 +21,7 @@ export default function PartnersPage() {
 
   const handlePay = () => {
     if (payPartner) {
-      alert(`Đã thanh toán ${payAmount || formatCurrency(payPartner.commission_this_month_vnd, ".", "")}đ hoa hồng cho ${payPartner.name}`);
+      showToast(`Đã thanh toán ${payAmount || formatCurrency(payPartner.commission_this_month_vnd, ".", "")}đ hoa hồng cho ${payPartner.name}`, "info");
       setPayPartner(null);
       setPayAmount("");
       setPayNote("");

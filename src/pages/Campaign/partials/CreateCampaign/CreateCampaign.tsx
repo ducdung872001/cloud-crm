@@ -56,7 +56,8 @@ import KpiContact from "./KpiContact";
 import SettingPineline from "./SettingPipeline/SettingPineline";
 import { set } from "lodash";
 import BusinessProcessService from "services/BusinessProcessService";
-import moment from "moment";
+import { format } from "date-fns";
+import { isValidDate, formatDate as formatDateUtil } from "utils/dateUtils";
 import { useBranchHierarchy, useSalesAllocation, useKpiConfig, useScoringSystem, useActionSettings, useModalState } from "./hooks";
 
 interface IDataApproach {
@@ -307,7 +308,7 @@ export default function CreateCampaign() {
 
    const formatDate = (date) => {
       if (!date) return "";
-      return moment(date).isValid() ? moment(date).format("DD/MM/yyyy") : "";
+      return isValidDate(date) ? formatDateUtil(date) : "";
     };
 
   const [isOptionRank, setIsOptionRank] = useState<boolean>(false);
@@ -2044,11 +2045,11 @@ export default function CreateCampaign() {
     const body: ICampaignRequestModel = {
       ...(data || campaignId ? { id: data?.id || campaignId } : {}),
       ...(formData?.values as ICampaignRequestModel),
-      startDate: formData.values.startDate && moment(formData.values.startDate).isValid() 
-        ? moment(formData.values.startDate).format("YYYY-MM-DDTHH:mm:ss") 
+      startDate: formData.values.startDate && isValidDate(formData.values.startDate)
+        ? format(new Date(formData.values.startDate), "yyyy-MM-dd'T'HH:mm:ss")
         : "",
-      endDate: formData.values.endDate && moment(formData.values.endDate).isValid() 
-        ? moment(formData.values.endDate).format("YYYY-MM-DDTHH:mm:ss") 
+      endDate: formData.values.endDate && isValidDate(formData.values.endDate)
+        ? format(new Date(formData.values.endDate), "yyyy-MM-dd'T'HH:mm:ss")
         : "",
     };
 
@@ -2737,8 +2738,6 @@ export default function CreateCampaign() {
         let hasAInteraction = 0;
         let hasASuccessOppertunity = 0;
 
-        const moment = require("moment");
-
         result?.criteria.map((item) => {
           if (item.name === "hasAOpportunity") {
             hasAOpportunity = item.value * -1 || 0;
@@ -2768,11 +2767,23 @@ export default function CreateCampaign() {
           }
         });
 
+        // Convert seconds to duration components (replaces moment.duration)
+        const toDuration = (seconds: number) => {
+          const totalMinutes = Math.floor(seconds / 60);
+          const totalHours = Math.floor(seconds / 3600);
+          const totalDays = Math.floor(seconds / 86400);
+          return {
+            asDays: () => totalDays,
+            asHours: () => totalHours,
+            asMinutes: () => totalMinutes,
+          };
+        };
+
         let expireContact = overdueInteraction;
-        var diffExpireContact = new moment.duration(expireContact * 1000);
+        var diffExpireContact = toDuration(expireContact);
 
         let expireFinish = expiredDeadline;
-        var diffExpireFinish = new moment.duration(expireFinish * 1000);
+        var diffExpireFinish = toDuration(expireFinish);
 
         setMinusPoints({
           getLead: hasAOpportunity,

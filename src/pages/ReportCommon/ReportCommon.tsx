@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import moment from "moment";
+import { format, subDays, startOfMonth, endOfMonth, subMonths } from "date-fns";
 import ReportRevenue from "./partials/ReportRevenue/ReportRevenue";
 import "./ReportCommon.scss";
 
@@ -18,26 +18,26 @@ export default function ReportCommon() {
     switch (activeRange) {
       case "today":
         setParams({
-          fromTime: moment().format("DD/MM/YYYY"),
-          toTime: moment().format("DD/MM/YYYY"),
+          fromTime: format(new Date(), "dd/MM/yyyy"),
+          toTime: format(new Date(), "dd/MM/yyyy"),
         });
         break;
       case "7days":
         setParams({
-          fromTime: moment().subtract(6, "days").format("DD/MM/YYYY"),
-          toTime: moment().format("DD/MM/YYYY"),
+          fromTime: format(subDays(new Date(), 6), "dd/MM/yyyy"),
+          toTime: format(new Date(), "dd/MM/yyyy"),
         });
         break;
       case "thisMonth":
         setParams({
-          fromTime: moment().startOf("month").format("DD/MM/YYYY"),
-          toTime: moment().endOf("month").format("DD/MM/YYYY"),
+          fromTime: format(startOfMonth(new Date()), "dd/MM/yyyy"),
+          toTime: format(endOfMonth(new Date()), "dd/MM/yyyy"),
         });
         break;
       case "lastMonth":
         setParams({
-          fromTime: moment().subtract(1, "month").startOf("month").format("DD/MM/YYYY"),
-          toTime: moment().subtract(1, "month").endOf("month").format("DD/MM/YYYY"),
+          fromTime: format(startOfMonth(subMonths(new Date(), 1)), "dd/MM/yyyy"),
+          toTime: format(endOfMonth(subMonths(new Date(), 1)), "dd/MM/yyyy"),
         });
         break;
     }

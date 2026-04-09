@@ -34,6 +34,7 @@ export default function WebRTCEmbed() {
       },
       callbacks: {
         embed_success_handle: (data) => {
+          /* noop */
         },
 
         embed_error_handle: (error) => {
@@ -41,9 +42,11 @@ export default function WebRTCEmbed() {
         },
 
         background_registered_handle: (data) => {
+          /* noop */
         },
 
         background_unregistered_handle: (data) => {
+          /* noop */
         },
 
         background_registrationFailed_handle: (data) => {
@@ -55,15 +58,19 @@ export default function WebRTCEmbed() {
         },
 
         background_outgoingcall_handle: (data) => {
+          /* noop */
         },
 
         background_outgoingringing_handle: (data) => {
+          /* noop */
         },
 
         background_accepted_handle: (data) => {
+          /* noop */
         },
 
         background_ended_handle: (data) => {
+          /* noop */
         },
 
         background_failed_handle: (data) => {

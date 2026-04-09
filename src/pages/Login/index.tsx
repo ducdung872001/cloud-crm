@@ -7,7 +7,7 @@ import EmployeeService from "services/EmployeeService";
 import BeautyBranchService from "services/BeautyBranchService";
 import PermissionService from "services/PermissionService";
 import { useCookies } from "react-cookie";
-import moment from "moment";
+import { addMinutes } from "date-fns";
 import { getAppSSOLink, showToast } from "utils/common";
 import { IUser } from "model/user/UserResponseModel";
 import { getDomain } from "reborn-util";
@@ -89,7 +89,7 @@ export default function Index() {
       }
 
       const userRes = response.result.user;
-      const dateExpires = moment().add(3000, "minutes").toDate();
+      const dateExpires = addMinutes(new Date(), 3000);
       const user: IUser = {
         id: userRes.id,
         name: userRes.name,

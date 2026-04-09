@@ -13,7 +13,7 @@ import Validate, { handleChangeValidate } from "utils/validate";
 import { showToast } from "utils/common";
 
 import "./ModalAddData.scss";
-import moment from "moment";
+import { formatDateCustom } from "utils/dateUtils";
 
 export default function ModalAddData({ onShow, onHide, dataProps, customerId }) {
   const focusedElement = useActiveElement();
@@ -35,7 +35,7 @@ export default function ModalAddData({ onShow, onHide, dataProps, customerId }) 
         exchageRate: data?.exchageRate ?? "",
         transactionHistory: data?.transactionHistory ?? "",
         transactionFrequency: data?.transactionFrequency ?? "",
-        transactionDate: data?.transactionDate ? moment(data?.transactionDate).toDate() : "",
+        transactionDate: data?.transactionDate ? new Date(data?.transactionDate) : "",
         customerId: data?.customerId ?? "",
       } as Record<string, unknown>),
     [onShow, data]
@@ -77,7 +77,7 @@ export default function ModalAddData({ onShow, onHide, dataProps, customerId }) 
           icon: <Icon name="Calendar" />,
           iconPosition: "left",
           hasSelectTime: true,
-          minDate: moment().toDate(),
+          minDate: new Date(),
           placeholder: "Nhập ngày giao dịch",
         },
         {
@@ -149,8 +149,8 @@ export default function ModalAddData({ onShow, onHide, dataProps, customerId }) 
       ...(data ? { id: data?.id } : {}),
       ...(formData.values as Record<string, unknown>),
       customerId,
-      // transactionDate: moment(formData.values.transactionDate).format("YYYY-MM-DD HH:mm:ss"),
-      transactionDate: moment(formData.values.transactionDate).format("YYYY-MM-DD[T]HH:mm:ss"),
+      // transactionDate: formatDateCustom(formData.values.transactionDate, "yyyy-MM-dd HH:mm:ss"),
+      transactionDate: formatDateCustom(formData.values.transactionDate, "yyyy-MM-dd'T'HH:mm:ss"),
     };
 
     const response = null;

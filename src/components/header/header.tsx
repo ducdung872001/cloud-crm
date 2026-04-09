@@ -728,7 +728,7 @@ function Header(props: HeaderProps) {
                 <span className="gs-spin">⏳</span> Đang tìm kiếm...
               </div>
             ) : searchResults.filter(r => !r.title.startsWith("__more__")).length === 0 ? (
-              <div className="gs-empty">Không tìm thấy kết quả cho "<b>{searchQuery}</b>"</div>
+              <div className="gs-empty">Không tìm thấy kết quả cho &ldquo;<b>{searchQuery}</b>&rdquo;</div>
             ) : (
               <div className="gs-scroll">
                 {GROUP_ORDER.map((group) => {

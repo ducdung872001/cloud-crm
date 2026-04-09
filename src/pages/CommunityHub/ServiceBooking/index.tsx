@@ -4,6 +4,7 @@ import { MOCK_SERVICES, MOCK_BOOKING_SLOTS } from "@/mocks/community-hub/service
 import { MOCK_SCAN_RESULT } from "@/mocks/community-hub/checkin";
 import { MOCK_MEMBERSHIP_PLANS, MOCK_PAYMENT_METHODS } from "@/mocks/community-hub/membership-plans";
 import { formatCurrency } from "reborn-util";
+import { showToast } from "@/utils/common";
 import "./index.scss";
 
 type ActiveTab = "sell-card" | "deduct" | "booking";
@@ -33,10 +34,9 @@ export default function ServiceBookingPage() {
   };
 
   const handleConfirmSell = () => {
-    alert(
-      `Đã bán thẻ "${plan?.name}" cho ${MOCK_SCAN_RESULT.name}\n` +
-      `Giá: ${formatCurrency(plan?.price ?? 0, ".", "")}đ\n` +
-      `Thời hạn: ${plan?.duration_months} tháng`,
+    showToast(
+      `Đã bán thẻ "${plan?.name}" cho ${MOCK_SCAN_RESULT.name} — Giá: ${formatCurrency(plan?.price ?? 0, ".", "")}đ — Thời hạn: ${plan?.duration_months} tháng`,
+      "info",
     );
     // Reset
     setSelectedPlan(null);
@@ -48,7 +48,7 @@ export default function ServiceBookingPage() {
 
   const handleDeductQuota = () => {
     if (selectedService && serviceSearch) {
-      alert(`Đã trừ quota dịch vụ cho thành viên!`);
+      showToast("Đã trừ quota dịch vụ cho thành viên!", "info");
       setSelectedService(null);
       setServiceSearch("");
     }

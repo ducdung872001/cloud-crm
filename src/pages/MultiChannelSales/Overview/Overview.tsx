@@ -5,6 +5,7 @@ import Loading from "components/loading";
 import "./Overview.scss";
 import ModalAddChannel from "./ModalAddChannel/ModalAddChannel";
 import OrderRequestService from "services/OrderRequestService";
+import { showToast } from "utils/common";
 import MultiChannelService, {
   IStatCards,
   IChannelRow,
@@ -190,7 +191,7 @@ export default function Overview() {
       a.download = `don_hang_da_kenh_${new Date().toISOString().slice(0, 10)}.xlsx`;
       document.body.appendChild(a); a.click(); a.remove(); URL.revokeObjectURL(url);
     } catch (e: unknown) {
-      alert(e?.message ?? "Xuất Excel thất bại. Vui lòng thử lại.");
+      showToast(e?.message ?? "Xuất Excel thất bại. Vui lòng thử lại.", "error");
     } finally {
       setIsExporting(false);
     }

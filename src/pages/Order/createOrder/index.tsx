@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useContext } from "react";
 
-import moment from "moment";
+import { format, startOfDay, parse } from "date-fns";
+import { formatDate } from "utils/dateUtils";
 import { v4 as uuidv4 } from "uuid";
 import classNames from "classnames";
 import { useNavigate } from "react-router-dom";
@@ -148,8 +149,8 @@ export default function CreateOrder() {
                 formData: {
                   ...item.formData,
                   id: result.id,
-                  expected_date: moment(result.expectedDate).format("DD/MM/YYYY"),
-                  order_date: moment(result.orderDate).format("DD/MM/YYYY"),
+                  expected_date: formatDate(result.expectedDate),
+                  order_date: formatDate(result.orderDate),
                   note: result.note,
                   sale_id: result.saleId,
                   amount: result.amount || 0,
@@ -601,8 +602,8 @@ export default function CreateOrder() {
     const body: Record<string, unknown> = {
       id: changeFormData.id,
       bnsId: 0,
-      orderDate: moment(changeFormData.order_date, "DD/MM/YYYY").startOf("day").format("YYYY-MM-DDTHH:mm:ss"),
-      expectedDate: moment(changeFormData.expected_date, "DD/MM/YYYY").startOf("day").format("YYYY-MM-DDTHH:mm:ss"),
+      orderDate: format(startOfDay(parse(changeFormData.order_date, "dd/MM/yyyy", new Date())), "yyyy-MM-dd'T'HH:mm:ss"),
+      expectedDate: format(startOfDay(parse(changeFormData.expected_date, "dd/MM/yyyy", new Date())), "yyyy-MM-dd'T'HH:mm:ss"),
       invoiceId: null,
       amount: changeFormData.pay_amount,
       vatAmount: changeFormData.vat_amount,

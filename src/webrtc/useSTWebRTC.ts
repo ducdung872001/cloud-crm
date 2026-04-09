@@ -38,6 +38,7 @@ export function useSTWebRTC(options: UseSTWebRTCOptions) {
       },
       callbacks: {
         embed_success_handle: () => {
+          /* noop */
         },
 
         embed_error_handle: (data: Record<string, unknown>) => {

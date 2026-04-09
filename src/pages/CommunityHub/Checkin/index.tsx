@@ -2,6 +2,7 @@
 import React, { useState, useCallback } from "react";
 import { MOCK_SCAN_RESULT, MOCK_RECENT_CHECKINS } from "@/mocks/community-hub/checkin";
 import Icon from "@/components/icon";
+import { showToast } from "@/utils/common";
 import "./index.scss";
 
 type ScanResult = typeof MOCK_SCAN_RESULT | null;
@@ -26,7 +27,7 @@ export default function CheckinPage() {
   }, []);
 
   const handleCheckin = useCallback((area: string) => {
-    alert(`Check-in thành công vào ${area}!`);
+    showToast(`Check-in thành công vào ${area}!`, "success");
     setShowPopup(false);
     setScanResult(null);
   }, []);
