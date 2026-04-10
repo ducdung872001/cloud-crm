@@ -52,7 +52,7 @@ export default defineConfig(({ mode }) => {
       APP_ENV: "prod",
       APP_API_URL: "https://cloud.reborn.vn",
       APP_ADMIN_URL: "https://cloud.reborn.vn",
-      APP_BPM_URL: "https://bpmapi.reborn.vn",
+      APP_BPM_URL: "https://bpm.reborn.vn",
       APP_AUTHENTICATOR_URL: "https://reborn.vn",
       APP_SSO_LINK: "https://sso.reborn.vn",
       APP_DOMAIN: "reborn.vn",
