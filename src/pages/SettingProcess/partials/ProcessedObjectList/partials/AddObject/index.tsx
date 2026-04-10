@@ -998,7 +998,7 @@ export default function AddObject(props: IAddObjectProps) {
                     {Object.entries(mapObjectAttribute).map((lstEformAttribute: Record<string, unknown>, key: number) => (
                       <Fragment key={key}>
                         {(lstEformAttribute[1] || []).map((eformAttribute, index: number) => (
-                          <Fragment key={index}>
+                          <Fragment key={eformAttribute.name || index}>
                             {/* {!eformAttribute.parentId ? (
                               <label className="label-title" key={`parent_${key}`}>
                                 {eformAttribute.name}

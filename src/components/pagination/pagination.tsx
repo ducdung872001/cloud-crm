@@ -127,7 +127,7 @@ export function Pagination(props: PaginationProps) {
                   {listSizeLimit.map((size, index) => {
                     return (
                       <li
-                        key={index}
+                        key={size.id ?? index}
                         onClick={() => {
                           chooseSizeLimit(size);
                           setShowSizeLimit(!showSizeLimit);

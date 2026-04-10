@@ -451,7 +451,7 @@ export default function ModalTypeForm({ onShow, onHide, data, callBack }) {
                       <div className="list__eform">
                         <Fragment>
                           {listEformAttribute.map((contractAttribute, index: number) => (
-                            <Fragment key={index}>
+                            <Fragment key={contractAttribute.name || index}>
                               {!contractAttribute.parentId ? (
                                 <label className={index === 0 ? "label-title-first" : "label-title"}>{contractAttribute.name}</label>
                               ) : null}

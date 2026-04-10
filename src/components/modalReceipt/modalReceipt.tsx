@@ -340,7 +340,7 @@ export function ModalFooterReceipt(props: ModalReceiptFooterProps) {
               color={action.color ? action.color : "primary"}
               onClick={() => action.callback()}
               disabled={action.disabled}
-              key={index}
+              key={action.id ?? index}
             >
               {action.title}
             </Button>
@@ -357,7 +357,7 @@ export function ModalFooterReceipt(props: ModalReceiptFooterProps) {
               color={action.color ? action.color : "primary"}
               onClick={() => action.callback && action.callback()}
               disabled={action.disabled}
-              key={index}
+              key={action.id ?? index}
             >
               {action.title}
               {action.is_loading && <Icon name="Loading" />}

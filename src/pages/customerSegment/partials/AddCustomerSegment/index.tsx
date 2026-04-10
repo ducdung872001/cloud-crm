@@ -2267,7 +2267,7 @@ export default function AddCustomerSegment(props: IAddCustomerSegmentProps) {
                                               el.rule.length > 0 &&
                                               el.rule.map((ol, index) => {
                                                 return (
-                                                  <Fragment key={index}>
+                                                  <Fragment key={ol.id ?? index}>
                                                     <div className="item__rule">
                                                       <div className="lst__info--rule">
                                                         <div className="info-item">

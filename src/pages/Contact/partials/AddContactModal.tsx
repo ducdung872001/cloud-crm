@@ -1660,7 +1660,7 @@ export default function AddContactModal(props: AddContactModalProps) {
                   {Object.entries(mapContactAttribute).map((lstContactAttribute: Record<string, unknown>, key: number) => (
                     <Fragment key={key}>
                       {(lstContactAttribute[1] || []).map((contactAttribute, index: number) => (
-                        <Fragment key={index}>
+                        <Fragment key={contactAttribute.name || index}>
                           {!contactAttribute.parentId ? (
                             <label className="label-title" key={`parent_${key}`}>
                               {contactAttribute.name}

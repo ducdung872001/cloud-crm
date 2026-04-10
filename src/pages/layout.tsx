@@ -348,7 +348,7 @@ export default function Layout() {
                 <Suspense fallback={<div className="page-loading"><Loading /></div>}>
                   <Routes>
                     {routes.map((r, index) => {
-                      return <Route key={index} path={r.path} element={r.component} />;
+                      return <Route key={r.id ?? index} path={r.path} element={r.component} />;
                     })}
                     <Route path="*" element={<Page404 />} />
                   </Routes>

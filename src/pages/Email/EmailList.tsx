@@ -291,7 +291,7 @@ export default function EmailList() {
                       <ul>
                         {listSizeLimit.map((size, index) => (
                           <li
-                            key={index}
+                            key={size.id ?? index}
                             onClick={() => {
                               setSizeLimit(size);
                               setParams({ ...params, max_results: size });

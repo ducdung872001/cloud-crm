@@ -274,7 +274,7 @@ const TableBodyAdvance: React.FC<TableBodyAdvanceProps> = ({
                                 ) : (
                                   field.children.map((child, index) => {
                                     return (
-                                      <div key={index} className="field-child">
+                                      <div key={child.id ?? index} className="field-child">
                                         <div className="component">
                                           <OlaSlaInput
                                             child={child}

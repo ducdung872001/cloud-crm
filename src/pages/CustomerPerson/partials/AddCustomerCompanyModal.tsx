@@ -1775,7 +1775,7 @@ export default function AddCustomerCompanyModal(props: AddCustomerModalProps) {
                   {Object.entries(mapCustomerAttribute).map((lstCustomerAttribute: [string, unknown], key: number) => (
                     <Fragment key={key}>
                       {(lstCustomerAttribute[1] || []).map((customerAttribute, index: number) => (
-                        <Fragment key={index}>
+                        <Fragment key={customerAttribute.name || index}>
                           {!customerAttribute.parentId ? (
                             <label className="label-title" key={`parent_${key}`}>
                               {customerAttribute.name}

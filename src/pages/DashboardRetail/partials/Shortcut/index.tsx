@@ -40,7 +40,7 @@ export default function Shortcuts(props: ShortcutProps) {
       <div className="shortcut__list d-flex justify-content-between">
         {shortcut.map((s, index) => (
           <Link
-            key={index}
+            key={s.id ?? index}
             className="d-flex flex-column align-items-center"
             to={s.path ? s.path : ""}
             title={s.title}

@@ -1280,7 +1280,7 @@ export default function AddProductModal(props: AddProductProps) {
                   {Object.entries(mapProductAttribute).map((lstAttribute: Record<string, unknown>, key: number) => (
                     <Fragment key={key}>
                       {(lstAttribute[1] || []).map((attribute, index: number) => (
-                        <Fragment key={index}>
+                        <Fragment key={attribute.name || index}>
                           {!attribute.parentId ? (
                             <label className="label-title" key={`parent_${key}`}>
                               {attribute.name}

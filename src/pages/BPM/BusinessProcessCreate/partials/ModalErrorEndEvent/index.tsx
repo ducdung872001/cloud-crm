@@ -1206,7 +1206,7 @@ export default function ModalErrorEndEvent({ onShow, onHide, dataNode, processId
                                                                                 el.rule.length > 0 &&
                                                                                 el.rule.map((il, index) => {
                                                                                     return (
-                                                                                        <Fragment key={index}>
+                                                                                        <Fragment key={il.id ?? index}>
                                                                                             <div className="item__rule">
                                                                                                 <div className="lst__info--rule">
                                                                                                     <div className="info-item" style={!il.fieldName ? { width: "100%" } : {}}>

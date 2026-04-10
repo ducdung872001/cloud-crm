@@ -1973,7 +1973,7 @@ export default function ConfigZalo(props: Record<string, unknown>) {
                                 })
                                 .map((ol, index) => {
                                   return (
-                                    <li key={index} className="item__field--drop" onClick={() => handlePushRule(ol, formData.rule)}>
+                                    <li key={ol.id ?? index} className="item__field--drop" onClick={() => handlePushRule(ol, formData.rule)}>
                                       {ol.name}
                                     </li>
                                   );
@@ -2221,7 +2221,7 @@ export default function ConfigZalo(props: Record<string, unknown>) {
                                       <ul className="lst__field--drop" ref={refBlockOptionField}>
                                         {filterBlockFieldRule.map((ol, index) => {
                                           return (
-                                            <li key={index} className="item__field--drop" onClick={() => handlePushRuleBlock(ol, idx, item.rule)}>
+                                            <li key={ol.id ?? index} className="item__field--drop" onClick={() => handlePushRuleBlock(ol, idx, item.rule)}>
                                               {ol.name}
                                             </li>
                                           );
@@ -2461,7 +2461,7 @@ export default function ConfigZalo(props: Record<string, unknown>) {
                                                       {filterBlockChildrenFieldRule.map((ol, index) => {
                                                         return (
                                                           <li
-                                                            key={index}
+                                                            key={ol.id ?? index}
                                                             className="item__field--drop"
                                                             onClick={() => handlePushRuleChildrenBlock(ol, ids, idx, el.rule)}
                                                           >
@@ -2479,7 +2479,7 @@ export default function ConfigZalo(props: Record<string, unknown>) {
                                                     el.rule.length > 0 &&
                                                     el.rule.map((ol, index) => {
                                                       return (
-                                                        <Fragment key={index}>
+                                                        <Fragment key={ol.id ?? index}>
                                                           <div className="item__rule">
                                                             <div className="lst__info--rule">
                                                               <div className="info-item">

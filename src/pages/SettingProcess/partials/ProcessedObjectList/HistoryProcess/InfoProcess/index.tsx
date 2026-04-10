@@ -540,7 +540,7 @@ export default function InfoProcess(props: Record<string, unknown>) {
               {Object.entries(mapObjectAttribute).map((lstEformAttribute: Record<string, unknown>, key: number) => (
                 <Fragment key={key}>
                   {(lstEformAttribute[1] || []).map((eformAttribute, index: number) => (
-                    <Fragment key={index}>
+                    <Fragment key={eformAttribute.name || index}>
                       <div
                         // className={`form-group ${eformAttribute.name.length >= 38 || lstEformAttribute[1].length == 2 ? "special-case" : ""}`}
                         className={`form-group `}

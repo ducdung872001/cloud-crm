@@ -2416,7 +2416,7 @@ export default function FilterComponent(props: Record<string, unknown>) {
                               })
                               .map((ol, index) => {
                                 return (
-                                  <li key={index} className="item__field--drop" onClick={() => handlePushRule(ol, formData.rule)}>
+                                  <li key={ol.id ?? index} className="item__field--drop" onClick={() => handlePushRule(ol, formData.rule)}>
                                     {ol.name}
                                   </li>
                                 );
@@ -2635,7 +2635,7 @@ export default function FilterComponent(props: Record<string, unknown>) {
                                     <ul className="lst__field--drop" ref={refBlockOptionField}>
                                       {filterBlockFieldRule.map((ol, index) => {
                                         return (
-                                          <li key={index} className="item__field--drop" onClick={() => handlePushRuleBlock(ol, idx, item.rule)}>
+                                          <li key={ol.id ?? index} className="item__field--drop" onClick={() => handlePushRuleBlock(ol, idx, item.rule)}>
                                             {ol.name}
                                           </li>
                                         );
@@ -2845,7 +2845,7 @@ export default function FilterComponent(props: Record<string, unknown>) {
                                                     {filterBlockChildrenFieldRule.map((ol, index) => {
                                                       return (
                                                         <li
-                                                          key={index}
+                                                          key={ol.id ?? index}
                                                           className="item__field--drop"
                                                           onClick={() => handlePushRuleChildrenBlock(ol, ids, idx, el.rule)}
                                                         >

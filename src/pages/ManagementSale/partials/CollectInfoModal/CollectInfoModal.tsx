@@ -697,7 +697,7 @@ export default function CollectInfoModal(props: Record<string, unknown>) {
                 <div className="list__contract--attribute">
                   <Fragment>
                     {listEformAttribute.map((contractAttribute, index: number) => (
-                      <Fragment key={index}>
+                      <Fragment key={contractAttribute.name || index}>
                         {!contractAttribute.parentId ? (
                           <label className={index === 0 ? "label-title-first" : "label-title"}>{contractAttribute.name}</label>
                         ) : null}
