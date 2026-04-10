@@ -48,7 +48,7 @@ export default defineConfig(({ mode }) => {
     ];
 
     // Production fallback values (khi CI/CD không có .env.production)
-    const productionDefaults: Record<string, string> = mode === "production" ? {
+    const productionDefaults: Record<string, string> = (mode === "production" || mode === "prod") ? {
       APP_ENV: "prod",
       APP_API_URL: "https://cloud.reborn.vn",
       APP_ADMIN_URL: "https://cloud.reborn.vn",
@@ -214,7 +214,7 @@ export default defineConfig(({ mode }) => {
       },
     }),
 
-    ...(mode === "production" && {
+    ...((mode === "production" || mode === "prod") && {
       build: {
         outDir: "bundle",
         emptyOutDir: true,
