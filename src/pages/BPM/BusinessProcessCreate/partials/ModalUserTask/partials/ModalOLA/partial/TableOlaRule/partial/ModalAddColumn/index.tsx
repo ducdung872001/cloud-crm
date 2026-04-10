@@ -10,7 +10,7 @@ import SelectCustom from "components/selectCustom/selectCustom";
 import Tippy from "@tippyjs/react";
 import Icon from "components/icon";
 import BusinessProcessService from "services/BusinessProcessService";
-import { set } from "lodash";
+import set from "lodash/set";
 import { showToast } from "utils/common";
 import { lookupOptions } from "../../Lookup";
 

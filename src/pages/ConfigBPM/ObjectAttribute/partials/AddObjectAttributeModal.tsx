@@ -18,7 +18,7 @@ import TextArea from "components/textarea/textarea";
 import Icon from "components/icon";
 import { Parser } from "formula-functionizer";
 import { convertToId } from "reborn-util";
-import _, { isNumber } from "lodash";
+import cloneDeep from "lodash/cloneDeep";
 import RadioList from "components/radio/radioList";
 import { v4 as uuidv4 } from "uuid";
 
@@ -530,7 +530,7 @@ export default function AddObjectAttributeModal(props: AddObjectAttributeModalPr
   });
 
   const handleDeleteItemChildren = (id) => {
-    const newLayouts = _.cloneDeep(dataTabConfig.layouts);
+    const newLayouts = cloneDeep(dataTabConfig.layouts);
     newLayouts[breakpoint] = newLayouts[breakpoint].filter((item) => item.i !== id);
 
     setDataTabConfig({
@@ -616,7 +616,7 @@ export default function AddObjectAttributeModal(props: AddObjectAttributeModalPr
     const data = e.dataTransfer.getData("text");
     const newIcon = ["form", "bell", "signature"].includes(type) ? toolboxItems[parseInt(data, 10)] : lstOptionField[parseInt(data, 10)];
 
-    const newLayouts = _.cloneDeep(dataTabConfig.layouts);
+    const newLayouts = cloneDeep(dataTabConfig.layouts);
 
     const body = {
       name: "",
@@ -704,7 +704,7 @@ export default function AddObjectAttributeModal(props: AddObjectAttributeModalPr
       return;
     }
 
-    const newLayouts = _.cloneDeep(layouts);
+    const newLayouts = cloneDeep(layouts);
 
     Object.keys(newLayouts).forEach((size) => {
       newLayouts[size] = newLayouts[size].map((item, index) => {

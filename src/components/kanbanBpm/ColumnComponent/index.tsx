@@ -3,7 +3,7 @@ import { Droppable, Draggable } from "react-beautiful-dnd";
 import Loading from "components/loading";
 import BusinessProcessService from "services/BusinessProcessService";
 import { showToast } from "utils/common";
-import { isEqual } from "lodash";
+import isEqual from "lodash/isEqual";
 
 type ColumnDef = {
   id: string | number;

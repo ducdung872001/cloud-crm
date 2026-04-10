@@ -19,7 +19,6 @@ import ImgFileExcel from "assets/images/img-excel.png";
 import ImgError from "assets/images/error.png";
 import ImgFilePowerpoint from "assets/images/img-powerpoint.png";
 import GridService from "services/GridService";
-import { set } from "lodash";
 import { showToast } from "utils/common";
 
 interface IImportModalProps {

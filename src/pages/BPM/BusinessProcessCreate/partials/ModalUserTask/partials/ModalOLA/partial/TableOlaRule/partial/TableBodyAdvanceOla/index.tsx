@@ -10,7 +10,7 @@ import ComponentInput from "../ComponentInput";
 import Dialog, { IContentDialog } from "components/dialog/dialog";
 import { useOnClickOutside } from "utils/hookCustom";
 import { DataRows } from "../../type";
-import { set } from "lodash";
+import set from "lodash/set";
 
 interface TableBodyAdvanceOlaProps {
   dataRow: DataRows;

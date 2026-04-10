@@ -116,7 +116,7 @@ export default function ShowModalDetailSaleInvoice(props: ShowModalDetailOfferPr
   `;
 
     const styleElement = document.createElement("style");
-    styleElement.innerHTML = style;
+    styleElement.textContent = style;
     document.head.appendChild(styleElement);
   };
 

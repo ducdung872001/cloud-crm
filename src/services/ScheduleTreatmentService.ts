@@ -2,7 +2,7 @@ import { apiDelete, apiGet, apiPost } from "services/apiHelper";
 import { urlsApi } from "configs/urls";
 
 import { IScheduleTreatmentFilterRequest, IScheduleTreatmentRequestModal } from "model/scheduleTreatment/ScheduleTreatmentRequestModel";
-import { update } from "lodash";
+import update from "lodash/update";
 
 export default {
   list: (params?: IScheduleTreatmentFilterRequest, signal?: AbortSignal) => {

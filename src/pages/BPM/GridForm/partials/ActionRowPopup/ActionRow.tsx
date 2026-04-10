@@ -16,7 +16,6 @@ import TextArea from "components/textarea/textarea";
 import Icon from "components/icon";
 import Input from "components/input/input"; 
 import Button from "components/button/button";
-import { set } from "lodash";
 import Popover from "components/popover/popover";
 
 export interface INoteData {

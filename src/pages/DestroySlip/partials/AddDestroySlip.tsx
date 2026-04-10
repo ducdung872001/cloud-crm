@@ -1,4 +1,5 @@
 import React, { Fragment, useCallback, useEffect, useState } from "react";
+import { format } from "date-fns";
 import Icon from "components/icon";
 import Button from "components/button/button";
 import TextArea from "components/textarea/textarea";
@@ -420,7 +421,7 @@ export default function AddDestroySlip({ id, isViewMode = false, onHide }: Props
                             )}
                             {item.batchNo && <div className="ds-batch-no">Lô: {item.batchNo}</div>}
                             {item.lineCreatedTime && (
-                              <div className="ds-batch-no">Tạo lúc: {moment(item.lineCreatedTime).format("DD/MM/YYYY HH:mm")}</div>
+                              <div className="ds-batch-no">Tạo lúc: {format(new Date(item.lineCreatedTime), "dd/MM/yyyy HH:mm")}</div>
                             )}
                           </td>
                           <td className="ds-col-center">

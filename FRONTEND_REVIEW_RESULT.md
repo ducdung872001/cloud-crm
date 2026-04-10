@@ -20,7 +20,6 @@
 
 | # | Item | Status | Chi tiet |
 |---|------|:------:|----------|
-| 1 | innerHTML truc tiep | `MED` | 6 cho dung innerHTML (editor.ts:231, BPM tooltip, Offer style tags) |
 | 2 | Token luu localStorage | `HIGH` | `access_token_athena`, permissions, user.root deu o localStorage |
 | 3 | Logout clear sach | `HIGH` | Chi clear permissions + user.root khi 401. Con sot SelectedRole, access_token_athena |
 | 4 | Firebase keys trong .env | `CRIT` | API key, VAPID key, project ID expose qua VITE_ vars |
@@ -37,8 +36,6 @@
 
 | # | Item | Status | Chi tiet |
 |---|------|:------:|----------|
-| 1 | Lodash full import | `CRIT` | **65 files** `import _ from "lodash"` |
-| 2 | moment.js vs date-fns | `HIGH` | 40 files dung moment (67KB), chi 3 files dung date-fns |
 | 3 | Component qua lon | `CRIT` | Top: CustomerPersonList (71 useState), CustomerAndSupplier (56), ModalCustomPopup (51) |
 | 4 | key={index} | `CRIT` | **597 instances** trong 250+ files |
 | 5 | React.memo | `CRIT` | Chi **12/2,504** files dung memo |

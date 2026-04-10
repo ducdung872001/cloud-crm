@@ -1,5 +1,5 @@
 import React, { useCallback, useContext, useEffect, useState } from "react";
-import _, { assign } from "lodash";
+// lodash: no methods actually used
 import Tippy from "@tippyjs/react";
 import Icon from "components/icon";
 import Button from "components/button/button";

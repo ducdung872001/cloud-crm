@@ -115,7 +115,7 @@ export default function ShowPaymentBillModal(props: ShowPaymentBillModalProps) {
   `;
 
     const styleElement = document.createElement("style");
-    styleElement.innerHTML = style;
+    styleElement.textContent = style;
     document.head.appendChild(styleElement);
   };
 

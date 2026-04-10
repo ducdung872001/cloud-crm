@@ -10,7 +10,7 @@ import SelectCustom from "components/selectCustom/selectCustom";
 import Tippy from "@tippyjs/react";
 import Icon from "components/icon";
 import BusinessProcessService from "services/BusinessProcessService";
-import { set } from "lodash";
+import set from "lodash/set";
 import { convertToId } from "reborn-util";
 import { showToast } from "utils/common";
 import NummericInput from "components/input/numericInput";

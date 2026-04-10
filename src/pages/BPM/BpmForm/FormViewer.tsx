@@ -29,7 +29,7 @@ declare global {
 import "@bpmn-io/form-js/dist/assets/form-js.css";
 import "@bpmn-io/form-js/dist/assets/form-js-editor.css";
 import "@bpmn-io/form-js/dist/assets/form-js-playground.css";
-import _, { set } from "lodash";
+import isEqual from "lodash/isEqual";
 import { SelectOptionEform } from "utils/apiSelectCommon";
 import { CallApiCommon } from "utils/callApiCommon";
 // import { SelectOptionEform } from "utils/apiSelectCommon";
@@ -285,7 +285,7 @@ const FormViewerComponent = (props: Record<string, unknown>) => {
       const newValues = data;
       
       for (const key in newValues){
-        if (!_.isEqual(newValues[key], prevValues[key])){
+        if (!isEqual(newValues[key], prevValues[key])){
           const keyFind = components.find((el) => el.path === key || el.key === key || (el.type !== 'text' && el.id));
           //check nếu trường nào được binding thì sẽ không chạy vào chỗ select binding
           if (keyFind?.properties?.bindingTarget) {

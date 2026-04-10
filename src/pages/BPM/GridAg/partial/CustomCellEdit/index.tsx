@@ -6,7 +6,6 @@ import Input from "components/input/input";
 import SelectLookupGrid from "./partials/SelectLookupGrid";
 import Checkbox from "components/checkbox/checkbox";
 import DatePickerCustom from "components/datepickerCustom/datepickerCustom";
-import {  } from "utils/dateUtils";
 
 import { useGridAg } from "../../GridAgContext";
 import { Parser } from "formula-functionizer";
@@ -226,7 +225,7 @@ const CustomCellEdit = (props) => {
       newValue = e ? (e.target.checked ? "true" : "false") : "false";
     } else if (type === "date") {
       let _value = e ? new Date(e) : "";
-      newValue = _value ? moment(_value).utc().toISOString() : "";
+      newValue = _value ? new Date(_value).toISOString() : "";
       // kiểm tra related time_range
       const relatedDateRangeColumn = columnsConfig.filter(
         (col) =>

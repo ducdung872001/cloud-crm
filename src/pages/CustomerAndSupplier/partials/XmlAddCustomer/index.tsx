@@ -10,16 +10,14 @@ import Tippy from "@tippyjs/react";
 import CustomerService from "services/CustomerService";
 import CustomerExtraInfoService from "services/CustomerExtraInfoService";
 import CustomerAttributeService from "services/CustomerAttributeService";
-import _, { forEach, map } from "lodash";
+import forEach from "lodash/forEach";
 import Button from "components/button/button";
 import Loading from "components/loading";
 import FormViewerComponent from "pages/BPM/BpmForm/FormViewer";
 import ObjectGroupService from "services/ObjectGroupService";
 import { mapConfigData } from "utils/mapConfigData";
 import { formatDateCustom } from "utils/dateUtils";
-
-import { name } from "jssip";
-import { ca } from "date-fns/locale";
+import { isValid, parseISO, parse, format } from "date-fns";
 
 const defaultSchema = {
   type: "default",
@@ -87,8 +85,22 @@ export default function XmlAddCustomer(props: Record<string, unknown>) {
     return formatDateCustom(value, "yyyy-MM-dd");
   };
 
-  const toApiDate = (value: Record<string, unknown>) => {
-    return value ? formatDateCustom(value, ["MM-DD-YYYY", moment.ISO_8601], "yyyy-MM-EEEEEETHH:mm:ss") : "";
+  const toApiDate = (value: unknown) => {
+    if (!value) return "";
+    let d: Date | null = null;
+    if (value instanceof Date) {
+      d = value;
+    } else if (typeof value === "string") {
+      // Try ISO format first
+      d = parseISO(value);
+      if (!isValid(d)) {
+        // Try MM-dd-yyyy format
+        d = parse(value, "MM-dd-yyyy", new Date());
+      }
+    } else {
+      d = new Date(value as number);
+    }
+    return d && isValid(d) ? format(d, "yyyy-MM-dd'T'HH:mm:ss") : "";
   };
 
   const normalizeMultiSelectToString = (input: Record<string, unknown>) => {

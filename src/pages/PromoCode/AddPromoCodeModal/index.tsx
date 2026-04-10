@@ -1,5 +1,5 @@
 import React, { Fragment, useState, useEffect, useMemo, useCallback } from "react";
-import { formatDateCustom, isValidDate } from "utils/dateUtils";
+import { format, isValid } from "date-fns";
 
 import { IActionModal } from "model/OtherModel";
 import { IFieldCustomize, IFormData, IValidation } from "model/FormModel";
@@ -20,10 +20,10 @@ interface Props {
   onHide: (refresh?: boolean) => void;
 }
 
-function toISODate(val: Record<string, unknown>): string {
+function toISODate(val: unknown): string {
   if (!val) return "";
-  const m = moment.isMoment(val) ? val : new Date(val);
-  return m.isValid() ? m.format("YYYY-MM-DD") : "";
+  const d = val instanceof Date ? val : new Date(val as string | number);
+  return isValid(d) ? format(d, "yyyy-MM-dd") : "";
 }
 
 export default function AddPromoCodeModal({ onShow, data, onHide }: Props) {

@@ -10,7 +10,7 @@ import { IAction, IOption, ISaveSearch } from "model/OtherModel";
 import { IContractPipelineResponse } from "model/contractPipeline/ContractPipelineResponseModel";
 import { showToast } from "utils/common";
 import { getPageOffset, isDifferenceObj } from "reborn-util";
-import _, { set } from "lodash";
+import cloneDeep from "lodash/cloneDeep";
 import HeaderFilter from "components/HeaderFilter/HeaderFilter";
 import { ContextType, UserContext } from "contexts/userContext";
 import Tippy from "@tippyjs/react";
@@ -130,7 +130,7 @@ export default function NotificationList(props: Record<string, unknown>) {
   };
 
   useEffect(() => {
-    const paramsTemp = _.cloneDeep(params);
+    const paramsTemp = cloneDeep(params);
     setParams((prevParams) => ({ ...prevParams, ...paramsTemp }));
   }, []);
 
@@ -142,7 +142,7 @@ export default function NotificationList(props: Record<string, unknown>) {
 
     if (isMounted.current === true) {
       getListNotify(params);
-      const paramsTemp = _.cloneDeep(params);
+      const paramsTemp = cloneDeep(params);
       if (paramsTemp.limit === 10) {
         delete paramsTemp["limit"];
       }

@@ -65,8 +65,8 @@ export default function CustomerSchedule({ idCustomer }) {
         return {
           id: item.id,
           title: item.title,
-          start: new Date(moment(item.startTime).format()),
-          end: new Date(moment(item.endTime).format()),
+          start: new Date(item.startTime),
+          end: new Date(item.endTime),
           startTime: item.startTime,
           endTime: item.endTime,
           type: item.type,

@@ -1,6 +1,6 @@
 import { apiDelete, apiGet, apiPost } from "services/apiHelper";
 import { urlsApi } from "configs/urls";
-import { update } from "lodash";
+import update from "lodash/update";
 
 
 export default {

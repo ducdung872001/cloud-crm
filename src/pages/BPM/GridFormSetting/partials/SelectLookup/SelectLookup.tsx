@@ -27,7 +27,6 @@ import WorkCategoryService from "services/WorkCategoryService";
 import BeautyBranchService from "services/BeautyBranchService";
 import EmployeeService from "services/EmployeeService";
 import DepartmentService from "services/DepartmentService";
-import { set } from "lodash";
 
 interface SelectLookupProps {
   id?: string;

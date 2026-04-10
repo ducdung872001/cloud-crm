@@ -14,7 +14,7 @@ import ImageThirdGender from "assets/images/third-gender.png";
 import { ICustomerFilterRequest } from "model/customer/CustomerRequestModel";
 import CustomerService from "services/CustomerService";
 import ReportCustomerService from "services/ReportCustomerService";
-import { set } from "lodash";
+import set from "lodash/set";
 import { formatCurrency } from "reborn-util";
 import AdvancedDateFilter from "components/advancedDateFilter/advancedDateFilter";
 import Loading from "components/loading";

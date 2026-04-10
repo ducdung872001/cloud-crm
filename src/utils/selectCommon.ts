@@ -54,7 +54,7 @@ import ContractGuaranteeService from "services/ContractGuaranteeService";
 import PartnerService from "services/PartnerService";
 import ContractCategoryService from "services/ContractCategoryService";
 import FSQuoteService from "services/FSQuoteService";
-import { add } from "lodash";
+import add from "lodash/add";
 import PackageService from "services/PackageService";
 import ContactStatusService from "services/ContactStatusService";
 import ProcessedObjectService from "services/ProcessedObjectService";

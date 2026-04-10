@@ -1,5 +1,5 @@
 import React, { Fragment, useState, useEffect, useRef, useContext, useCallback } from "react";
-import _, { set } from "lodash";
+import cloneDeep from "lodash/cloneDeep";
 import { formatDate, formatDateCustom } from "utils/dateUtils";
 
 import { Link, useNavigate } from "react-router-dom";
@@ -213,7 +213,7 @@ export default function MarketingAutomationListV2() {
   };
 
   useEffect(() => {
-    const paramsTemp = _.cloneDeep(params);
+    const paramsTemp = cloneDeep(params);
     //! đoạn này bao giờ có chức năng lọc thì viết vào đây
     setParams((prevParams) => ({ ...prevParams, ...paramsTemp }));
   }, []);
@@ -225,7 +225,7 @@ export default function MarketingAutomationListV2() {
     }
     if (isMounted.current === true) {
       getListMarketingAutomation(params);
-      const paramsTemp = _.cloneDeep(params);
+      const paramsTemp = cloneDeep(params);
       if (paramsTemp.limit === 10) {
         delete paramsTemp["limit"];
       }

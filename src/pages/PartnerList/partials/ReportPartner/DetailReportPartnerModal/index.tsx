@@ -4,7 +4,7 @@ import { formatCurrency, getPageOffset } from "reborn-util";
 import BoxTable from "components/boxTable/boxTable";
 import { DataPaginationDefault, PaginationProps } from "components/pagination/pagination";
 import Loading from "components/loading";
-import _, { set } from "lodash";
+import cloneDeep from "lodash/cloneDeep";
 import { showToast } from "utils/common";
 
 import "./index.scss";
@@ -43,7 +43,7 @@ export default function DetailReportPartnerModal(props: Record<string, unknown>)
   const abortController = new AbortController();
   const getListReport = async (paramsSearch: Record<string, unknown>) => {
     setIsLoading(true);
-    let paramsTemp = _.cloneDeep(params);
+    let paramsTemp = cloneDeep(params);
 
     switch (reportDetail.key) {
       case "contractBusinessPartner":
@@ -108,7 +108,7 @@ export default function DetailReportPartnerModal(props: Record<string, unknown>)
   useEffect(() => {
     if (onShow) {
       getListReport(params);
-      const paramsTemp = _.cloneDeep(params);
+      const paramsTemp = cloneDeep(params);
       if (paramsTemp.limit === 10) {
         delete paramsTemp["limit"];
       }

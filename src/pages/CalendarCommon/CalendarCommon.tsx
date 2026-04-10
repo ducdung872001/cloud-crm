@@ -4,7 +4,9 @@ import cloneDeep from "lodash/cloneDeep";
 import { formatDate, formatDateCustom } from "utils/dateUtils";
 
 import Tippy from "@tippyjs/react";
-import { Calendar, momentLocalizer } from "react-big-calendar";
+import { Calendar, dateFnsLocalizer } from "react-big-calendar";
+import { format, parse, startOfWeek, getDay } from "date-fns";
+import { vi } from "date-fns/locale";
 import { IScheduleCommonFilterRequest } from "model/scheduleCommon/ScheduleCommonRequestModal";
 import Icon from "components/icon";
 import Button from "components/button/button";
@@ -34,7 +36,14 @@ interface IDataEventsListCalendarProps {
   status: number;
 }
 
-const localizer = momentLocalizer(moment);
+const locales = { "vi": vi };
+const localizer = dateFnsLocalizer({
+  format,
+  parse,
+  startOfWeek,
+  getDay,
+  locales,
+});
 
 export default function CalendarCommon() {
   document.title = "Lịch";
@@ -318,8 +327,8 @@ export default function CalendarCommon() {
         return {
           id: item.id,
           title: item.title,
-          start: new Date(moment(item.startTime).format()),
-          end: new Date(moment(item.endTime).format()),
+          start: new Date(item.startTime),
+          end: new Date(item.endTime),
           type: item.type,
           employeeId: item.employeeId,
           employeeName: item.employeeName,

@@ -23,7 +23,7 @@ import ModalConfirmRelease from "../ModalConfirmRelease/ModalConfirmRelease";
 import OnRejectModal from "../../../HandleTask/OnRejectModal/OnRejectModal";
 import OnHoldModal from "../../../HandleTask/OnHoldModal/OnHoldModal";
 import FormCategoryService from "services/FormCategoryService";
-import { set } from "lodash";
+import set from "lodash/set";
 
 const defaultSchema = {
   type: "default",

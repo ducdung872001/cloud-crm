@@ -18,7 +18,7 @@ import TextArea from "components/textarea/textarea";
 import Icon from "components/icon";
 import { Parser } from 'formula-functionizer';
 import { convertToId } from "reborn-util";
-import { isNumber } from "lodash";
+import isNumber from "lodash/isNumber";
 import RadioList from "components/radio/radioList";
 
 import "./AddContactAttributeModal.scss";

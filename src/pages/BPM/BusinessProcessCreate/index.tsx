@@ -513,7 +513,7 @@ const BusinessProcessCreate = () => {
       }
 
       // Display tooltip
-      tooltip.innerHTML = name;
+      tooltip.textContent = name;
       tooltip.style.display = "block";
 
       // Position the tooltip near the mouse pointer

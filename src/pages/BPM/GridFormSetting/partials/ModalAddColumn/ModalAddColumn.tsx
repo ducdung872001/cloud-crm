@@ -16,7 +16,6 @@ import Icon from "components/icon";
 import RadioList from "components/radio/radioList";
 import SelectCustom from "components/selectCustom/selectCustom";
 import TextArea from "components/textarea/textarea";
-import { bind, fill, set } from "lodash";
 import GirdService from "services/GridService";
 import { BindingFieldMap } from "./BindingFieldMap";
 import Checkbox from "components/checkbox/checkbox";

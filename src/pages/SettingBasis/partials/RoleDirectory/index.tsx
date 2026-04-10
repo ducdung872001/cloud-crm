@@ -1,5 +1,5 @@
 import React, { Fragment, useState, useEffect, useRef, useMemo, useContext } from "react";
-import _, { set } from "lodash";
+import cloneDeep from "lodash/cloneDeep";
 import Tippy from "@tippyjs/react";
 import Icon from "components/icon";
 import Badge from "components/badge/badge";
@@ -192,7 +192,7 @@ export default function RoleDirectory(props: IDepartmentDirectoryListProps) {
   };
 
   useEffect(() => {
-    const paramsTemp = _.cloneDeep(params);
+    const paramsTemp = cloneDeep(params);
     setParams((prevParams) => ({ ...prevParams, ...paramsTemp }));
   }, []);
 
@@ -204,7 +204,7 @@ export default function RoleDirectory(props: IDepartmentDirectoryListProps) {
 
     if (isMounted.current === true) {
       getListDepartment(params);
-      const paramsTemp = _.cloneDeep(params);
+      const paramsTemp = cloneDeep(params);
       if (paramsTemp.limit === 10) {
         delete paramsTemp["limit"];
       }

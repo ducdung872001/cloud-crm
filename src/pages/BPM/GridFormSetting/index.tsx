@@ -14,7 +14,7 @@ import { useOnClickOutside } from "utils/hookCustom";
 import ImageThirdGender from "assets/images/third-gender.png";
 import Checkbox from "components/checkbox/checkbox";
 import { PHONE_REGEX, EMAIL_REGEX, PHONE_REGEX_NEW } from "utils/constant";
-import _, { set } from "lodash";
+
 import ModalAddColumn from "./partials/ModalAddColumn/ModalAddColumn";
 import SelectLookup from "./partials/SelectLookup/SelectLookup";
 import GridService from "services/GridService";

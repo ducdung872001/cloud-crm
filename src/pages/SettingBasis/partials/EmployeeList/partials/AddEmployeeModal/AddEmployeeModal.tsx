@@ -24,7 +24,8 @@ import Icon from "components/icon";
 
 import "./AddEmployeeModal.scss";
 import Input from "components/input/input";
-import { isEqual, set } from "lodash";
+import isEqual from "lodash/isEqual";
+import set from "lodash/set";
 
 export default function AddEmployeeModal(props: AddEmployeeModalProps) {
   const { onShow, onHide, data } = props;

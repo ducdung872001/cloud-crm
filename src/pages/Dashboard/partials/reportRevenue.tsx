@@ -1,4 +1,5 @@
 import React, { useContext, useEffect, useState } from "react";
+import { format } from "date-fns";
 import { formatDate } from "utils/dateUtils";
 
 import { formatCurrency } from "reborn-util";
@@ -117,9 +118,7 @@ export default function ReportRevenue(props: ReportRevenueProps) {
       const changeDate = listRevenue
         .map((item) => item.time)
         .map((el) => {
-          return `<span style="color: #0070B3; text-transform: capitalize; font-size: 14px; line-height: 16px;">${moment(el).format(
-            "dddd"
-          )}</span><br /><i style="font-size: 12px; line-height: 14px;">${formatDate(el)}</i>`;
+          return `<span style="color: #0070B3; text-transform: capitalize; font-size: 14px; line-height: 16px;">${format(new Date(el), "EEEE")}</span><br /><i style="font-size: 12px; line-height: 14px;">${formatDate(el)}</i>`;
         });
 
       setCategoriesRevenue(changeDate);

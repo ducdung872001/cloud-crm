@@ -1,7 +1,7 @@
 import React, {Fragment, useState, useEffect, useCallback, useMemo, memo} from "react";
 import Modal, { ModalBody, ModalFooter, ModalHeader } from "components/modal/modal";
 import "./ModalConfirm.scss";
-import _, { at, get, set } from "lodash";
+
 import Icon from "components/icon";
 
 

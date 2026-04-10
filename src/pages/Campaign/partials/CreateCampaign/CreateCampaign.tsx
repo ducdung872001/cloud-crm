@@ -54,7 +54,6 @@ import ViolationWarning from "./ViolationWarning";
 import MarketingAutomationService from "services/MarketingAutomationService";
 import KpiContact from "./KpiContact";
 import SettingPineline from "./SettingPipeline/SettingPineline";
-import { set } from "lodash";
 import BusinessProcessService from "services/BusinessProcessService";
 import { format } from "date-fns";
 import { isValidDate, formatDate as formatDateUtil } from "utils/dateUtils";

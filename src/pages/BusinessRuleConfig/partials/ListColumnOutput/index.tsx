@@ -11,7 +11,7 @@ import DecisionTableOutputService from "services/DecisionTableOutputService";
 import { showToast } from "utils/common";
 import Button from "components/button/button";
 import Icon from "components/icon";
-import { set } from "lodash";
+import set from "lodash/set";
 import ModalAddOutputColumn from "../ModalAddOutputColumn";
 
 export default function ListColumnOutput(props: Record<string, unknown>) {
