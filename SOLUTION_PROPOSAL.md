@@ -1,11 +1,9 @@
 # DE XUAT GIAI PHAP TONG THE
-# HE THONG QUAN LY TOA NHA DA DICH VU CONG DONG
-## (Community Hub Platform — Reborn Community)
+# NEN TANG QUAN LY TOA NHA DA DICH VU CONG DONG
+## Reborn Community
 
 **Phien ban:** 1.0
 **Ngay:** 2026-04-10
-**Nhanh phat trien:** community-hub (fork tu Reborn Retail)
-**Nguoi lap:** Team Reborn
 
 ---
 
@@ -13,45 +11,46 @@
 
 1. [Tong quan du an](#1-tong-quan-du-an)
 2. [Mo hinh kinh doanh](#2-mo-hinh-kinh-doanh)
-3. [Kien truc giai phap](#3-kien-truc-giai-phap)
-4. [Phan hoach chuc nang & GAP Analysis](#4-phan-hoach-chuc-nang--gap-analysis)
-5. [Chi tiet cac module moi (GAP)](#5-chi-tiet-cac-module-moi-gap)
-6. [Lo trinh trien khai](#6-lo-trinh-trien-khai)
-7. [Chi phi dau tu](#7-chi-phi-dau-tu)
-8. [Rui ro & Giai phap](#8-rui-ro--giai-phap)
-9. [Phu luc](#9-phu-luc)
+3. [He thong dich — TO BE](#3-he-thong-dich--to-be)
+4. [Kien truc giai phap](#4-kien-truc-giai-phap)
+5. [Lo trinh trien khai](#5-lo-trinh-trien-khai)
+6. [Chi phi dau tu](#6-chi-phi-dau-tu)
+7. [Rui ro & Giai phap](#7-rui-ro--giai-phap)
 
 ---
 
 ## 1. TONG QUAN DU AN
 
-### 1.1. Boi canh
+### 1.1. Boi canh & Nhu cau
 
-Reborn Retail la he thong CRM/Retail da duoc phat trien voi day du cac module: Quan ly khach hang, POS, Kho hang, Marketing, Loyalty, BPM, Tai chinh, Ticket/Warranty, Lich hen, va da co module Community Hub co ban. He thong hien tai phuc vu mo hinh ban le truyen thong.
+Mo hinh "Toa nha da dich vu cong dong" la xu huong moi, ket hop nhieu linh vuc hoat dong trong mot khong gian duy nhat. Viec van hanh mo hinh nay doi hoi mot nen tang so hoa toan dien, dong bo tu quan ly thanh vien, dich vu, tai chinh den xay dung cong dong — thay vi ghep nhieu phan mem roi rac.
 
-Yeu cau moi la xay dung mot **nen tang quan ly toa nha da dich vu cong dong** — noi ket hop 4 linh vuc chinh: An uong & Khong gian sinh hoat, Luu tru, Suc khoe & Sac dep, va Dao tao/Ket noi cong dong — phuc vu khoang **~200 thanh vien** voi mo hinh thanh vien 24/7.
+**Reborn Community** la nen tang duoc thiet ke rieng cho mo hinh nay.
 
 ### 1.2. Tam nhin san pham
 
 > Mot nen tang so hoa toan dien cho mo hinh "Toa nha da dich vu cong dong", noi moi thanh vien co the song, lam viec, hoc tap, ren luyen suc khoe, va ket noi co hoi nghe nghiep — tat ca trong mot he sinh thai so duy nhat.
 
-### 1.3. Doi tuong su dung
+### 1.3. Pham vi ap dung
+
+- **Quy mo:** ~200 thanh vien ban dau, mo rong len 500+
+- **4 linh vuc dich vu:**
+  - An uong & Khong gian sinh hoat (F&B & Co-working)
+  - Luu tru (Accommodation)
+  - Suc khoe & Sac dep (Health & Beauty)
+  - Dao tao & Ket noi cong dong (Courses & Community)
+- **Hoat dong:** 24/7
+- **Mo hinh phi:** Thanh vien hang thang + Dich vu le
+
+### 1.4. Doi tuong su dung
 
 | Vai tro | Mo ta |
 |---------|-------|
 | **Admin / Operator** | Quan ly toa nha, cau hinh dich vu, bao cao, tai chinh |
 | **Nhan vien tiep tan** | Check-in/out, ban hang POS, xu ly dich vu |
-| **Thanh vien (Member)** | Su dung dich vu, tich diem, chia se gia dinh, tuyen thanh vien moi |
-| **KOL/KOC/Leader** | Tao khoa hoc, dan dat CLB, thu hut thanh vien |
-| **PO (Product Owner)** | Quan ly noi dung, khoa hoc, du an |
+| **Thanh vien (Member)** | Su dung dich vu, tich diem, chia se gia dinh, gioi thieu thanh vien moi |
+| **KOL / Leader** | Tao khoa hoc, dan dat CLB, thu hut thanh vien |
 | **Doi tac (Partner)** | Cung cap dich vu tai toa nha (spa, gym, F&B...) |
-
-### 1.4. Quy mo
-
-- ~200 thanh vien ban dau
-- 4 linh vuc dich vu
-- Mo hinh phi thanh vien theo thang
-- Hoat dong 24/7
 
 ---
 
@@ -78,8 +77,8 @@ Yeu cau moi la xay dung mot **nen tang quan ly toa nha da dich vu cong dong** �
 |                                                                    |
 |  3. HOA HONG & CHIA SE DOANH THU                                  |
 |     - Hoa hong tu doi tac (spa, gym, F&B tenant)                  |
-|     - Phi hoa hong tuyen thanh vien (referral)                    |
-|     - Chia se doanh thu khoa hoc (KOL/PO)                         |
+|     - Phi hoa hong gioi thieu thanh vien (referral)               |
+|     - Chia se doanh thu khoa hoc (KOL/Leader)                     |
 |                                                                    |
 |  4. SU KIEN & HOP TAC                                             |
 |     - Cho thue khong gian to chuc su kien                         |
@@ -109,7 +108,7 @@ Hanh dong                              Diem
 Su dung dich vu (moi 10,000 VND)       1 diem
 Check-in hang ngay                     2 diem
 Tham gia khoa hoc                      5 diem
-Tuyen thanh vien moi (Referral)       50 diem
+Gioi thieu thanh vien moi (Referral)  50 diem
 Hoan thanh survey/feedback             3 diem
 Tham gia su kien CLB                   5 diem
 Leader tao khoa hoc thanh cong        20 diem
@@ -122,13 +121,268 @@ Doi diem:
 
 ---
 
-## 3. KIEN TRUC GIAI PHAP
+## 3. HE THONG DICH — TO BE
 
-### 3.1. Kien truc tong the
+He thong Reborn Community bao gom **10 nhom chuc nang chinh**, dap ung toan bo hoat dong core cua mo hinh toa nha da dich vu cong dong.
+
+### TONG QUAN CHUC NANG
+
+```
++------------------------------------------------------------------+
+|                    REBORN COMMUNITY                                |
++------------------------------------------------------------------+
+|                                                                    |
+|  +---------------------------+  +------------------------------+  |
+|  | A. QUAN LY THANH VIEN     |  | B. AN UONG & KHONG GIAN     |  |
+|  |    Dang ky, phan hang,    |  |    POS ban hang, menu,       |  |
+|  |    the NFC/QR, gia dinh,  |  |    kho F&B, co-working,      |  |
+|  |    referral, ho so 360    |  |    dat phong hop              |  |
+|  +---------------------------+  +------------------------------+  |
+|                                                                    |
+|  +---------------------------+  +------------------------------+  |
+|  | C. LUU TRU                |  | D. SUC KHOE & SAC DEP       |  |
+|  |    Phong tap the nam/nu,  |  |    Spa, gym, yoga,           |  |
+|  |    check-in/out, tinh phi,|  |    dat lich, lieu trinh,     |  |
+|  |    cong suat              |  |    doi tac dich vu           |  |
+|  +---------------------------+  +------------------------------+  |
+|                                                                    |
+|  +---------------------------+  +------------------------------+  |
+|  | E. KHOA HOC & CLB         |  | F. KET NOI CONG DONG        |  |
+|  |    Khoa hoc mien phi/phi, |  |    Viec lam, khoi nghiep,    |  |
+|  |    CLB sinh hoat,         |  |    nhan luc, su kien,        |  |
+|  |    KOL/Leader system      |  |    bang tin cong dong        |  |
+|  +---------------------------+  +------------------------------+  |
+|                                                                    |
+|  +---------------------------+  +------------------------------+  |
+|  | G. TAI CHINH              |  | H. BAO CAO & PHAN TICH      |  |
+|  |    Phi dinh ky, vi thanh  |  |    Dashboard, doanh thu,     |  |
+|  |    vien, hoa hong, doi    |  |    thanh vien, dich vu,      |  |
+|  |    soat doi tac           |  |    doi tac, KOL              |  |
+|  +---------------------------+  +------------------------------+  |
+|                                                                    |
+|  +---------------------------+  +------------------------------+  |
+|  | I. XAC THUC & THIET BI    |  | J. VAN HANH & CAU HINH      |  |
+|  |    NFC/QR/Barcode,        |  |    Nhan vien, ca lam,        |  |
+|  |    tru luot tu dong,      |  |    phan quyen, thong bao,    |  |
+|  |    canh bao real-time     |  |    cau hinh dich vu          |  |
+|  +---------------------------+  +------------------------------+  |
+|                                                                    |
++------------------------------------------------------------------+
+```
+
+---
+
+### A. QUAN LY THANH VIEN (Membership Management)
+
+Module trung tam cua he thong — quan ly toan bo vong doi thanh vien tu dang ky den gia han/huy.
+
+| # | Chuc nang | Mo ta chi tiet |
+|---|-----------|----------------|
+| A1 | **Dang ky thanh vien** | Form dang ky, chon goi, thanh toan phi dau tien, kich hoat tai khoan. Ho tro dang ky tai quay hoac online |
+| A2 | **Phan hang thanh vien** | 5 hang (Basic → Enterprise). Tu dong nang/ha hang dua tren tieu chi (diem, thoi gian, chi tieu). Moi hang co quyen loi cu the |
+| A3 | **Thu phi hang thang (Recurring billing)** | Tu dong tao hoa don phi thanh vien hang thang. Nhac phi truoc 7/3/1 ngay. Tu dong gia han hoac tam dung. Ho tro nhieu phuong thuc thanh toan |
+| A4 | **Chia se goi gia dinh** | Thanh vien chinh moi nguoi than (2-4 nguoi tuy goi). Moi nguoi co the/QR rieng. Quota dich vu duoc chia se. Theo doi su dung tung nguoi |
+| A5 | **The thanh vien** | The vat ly (chip NFC + QR code + barcode). Moi thanh vien 1 the. In the tai cho hoac cap the so (QR tren dien thoai) |
+| A6 | **He thong gioi thieu (Referral)** | Moi thanh vien co ma gioi thieu rieng. Khi nguoi duoc gioi thieu dang ky thanh cong → nguoi gioi thieu nhan diem/hoa hong. Theo doi cay gioi thieu, bao cao hieu qua |
+| A7 | **Ho so thanh vien 360 do** | Thong tin ca nhan, lich su check-in, dich vu da su dung, diem tich luy, thanh vien gia dinh, lich su thanh toan, khoa hoc da hoc, CLB tham gia |
+
+**Luong dang ky thanh vien:**
+```
+Khach den toa nha
+  → Tiep tan tao ho so (hoac khach tu dang ky online)
+    → Chon goi thanh vien
+      → Thanh toan phi thang dau
+        → Cap the NFC/QR
+          → Kich hoat tai khoan
+            → Huong dan su dung
+```
+
+---
+
+### B. AN UONG & KHONG GIAN SINH HOAT (F&B & Co-working)
+
+| # | Chuc nang | Mo ta chi tiet |
+|---|-----------|----------------|
+| B1 | **Ban hang F&B tai quay (POS)** | Man hinh cam ung ban hang. Chon do uong/do an tu menu, gio hang, tinh tien, thanh toan (tien mat/chuyen khoan/vi thanh vien). In hoa don/bien lai. Ap dung khuyen mai tu dong |
+| B2 | **Quan ly menu** | Danh muc do uong, do an, combo. Gia ban, hinh anh, mo ta, trang thai (con/het). Phan nhom theo loai |
+| B3 | **Tru do uong mien phi (trong goi)** | Khi thanh vien quet the tai quay F&B → he thong kiem tra goi con luot do uong khong → tru tu dong, khong tinh tien. Hien thi so luot con lai |
+| B4 | **Quan ly khong gian lam viec** | So do mat bang truc quan: vi tri ban, pod, khu vuc. Trang thai real-time (trong/dang su dung). Thanh vien check-in tai khu vuc lam viec |
+| B5 | **Dat phong hop** | Danh sach phong hop, suc chua, thiet bi (may chieu, bang...). Dat theo khe gio, xac nhan tu dong. Lich phong hop dang calendar |
+| B6 | **Quan ly kho nguyen lieu** | Nhap kho nguyen lieu F&B, theo doi ton kho, canh bao sap het. Bao cao xuat/nhap/ton |
+
+---
+
+### C. LUU TRU (Accommodation)
+
+| # | Chuc nang | Mo ta chi tiet |
+|---|-----------|----------------|
+| C1 | **Quan ly phong tap the** | Phan loai phong nam/nu. Quan ly tung giuong/slot (so do giuong). Trang thai: trong, dang o, bao tri |
+| C2 | **Check-in/out phong** | Thanh vien quet the tai khu luu tru → he thong gan giuong cu the → ghi nhan thoi gian vao/ra. Xuat bao cao luot o |
+| C3 | **Tinh phi luu tru** | Thanh vien goi Premium tro len: mien phi (trong goi). Thanh vien khac hoac khach: tinh phi theo dem. Tu dong cong vao hoa don cuoi thang |
+| C4 | **Theo doi cong suat** | Dashboard hien thi: so giuong trong/dang dung theo phong. Ty le lap day theo ngay/tuan/thang. Du bao nhu cau |
+| C5 | **Noi quy luu tru** | Noi quy dien tu, thanh vien xac nhan dong y khi check-in lan dau. Ghi nhan vi pham |
+
+---
+
+### D. SUC KHOE & SAC DEP (Health & Beauty)
+
+| # | Chuc nang | Mo ta chi tiet |
+|---|-----------|----------------|
+| D1 | **Danh muc dich vu** | Spa, gym, yoga, massage, cham soc da... Moi dich vu co: ten, mo ta, thoi luong, gia, huan luyen vien/chuyen vien phu trach |
+| D2 | **Dat lich dich vu** | Thanh vien chon dich vu → chon ngay/gio → chon chuyen vien (neu co) → xac nhan. He thong gui nhac lich truoc 1 gio. Hien thi lich trong/ban cua chuyen vien |
+| D3 | **Tru luot dich vu trong goi** | Quet the tai phong dich vu → kiem tra goi con luot → tru tu dong → hien thi "Con X luot [ten dich vu]". Het luot → de nghi mua them hoac nang cap goi |
+| D4 | **Theo doi lieu trinh** | Lich su su dung dich vu cua thanh vien. Ghi nhan ket qua/nhan xet cua chuyen vien. Theo doi tien trinh lieu trinh dai han (vd: goi 10 buoi yoga) |
+| D5 | **Quan ly doi tac dich vu** | Doi tac (spa, gym) dang ky cung cap dich vu tai toa nha. Hop dong chia se doanh thu (vd: 70/30). Bao cao doanh thu/doi soat hang thang. Danh gia chat luong doi tac |
+| D6 | **Quan ly phong dich vu** | Danh sach phong (phong gym, phong yoga, phong spa...). Lich su dung phong. Bao tri |
+| D7 | **Danh gia chat luong** | Sau moi buoi dich vu, thanh vien danh gia (1-5 sao + nhan xet). Thong ke rating theo dich vu, chuyen vien, doi tac |
+
+---
+
+### E. KHOA HOC & CLB (Courses & Clubs)
+
+| # | Chuc nang | Mo ta chi tiet |
+|---|-----------|----------------|
+| E1 | **Danh muc khoa hoc** | Khoa hoc mien phi (trong goi) va tra phi. Moi khoa hoc: ten, mo ta, giang vien, lich hoc, so buoi, so luong toi da, phi (neu co) |
+| E2 | **Dang ky khoa hoc** | Thanh vien chon khoa hoc → dang ky → thanh toan (neu tra phi) → xac nhan. Gioi han so luong. Danh sach cho khi day |
+| E3 | **Diem danh** | Check-in theo buoi hoc bang QR/NFC. Thong ke ty le tham du. Chung chi hoan thanh khoa hoc (neu dat yeu cau) |
+| E4 | **Quan ly CLB sinh hoat** | Tao CLB (sach, chay bo, nau an, ngoai ngu...). Thanh vien dang ky CLB, leader quan ly. Lich sinh hoat dinh ky. Tin tuc noi bo CLB |
+| E5 | **KOL/Leader tao khoa hoc** | Thanh vien co cap bac Leader co the de xuat khoa hoc → Admin duyet → Mo lop. Doanh thu chia se (vd: 70% Leader - 30% Platform). Cap bac Leader: Rookie → Contributor → Expert → Master |
+| E6 | **Danh gia khoa hoc** | Hoc vien danh gia sau khoa hoc. Rating tong hop cho khoa hoc va giang vien |
+
+**Luong KOL tao khoa hoc:**
+```
+Leader de xuat khoa hoc (noi dung, lich, phi)
+  → Admin xem xet & duyet
+    → Mo dang ky cho thanh vien
+      → Du so luong → Bat dau lop
+        → Ket thuc → Chia se doanh thu
+          → Cap nhat thanh tich Leader
+```
+
+---
+
+### F. KET NOI CONG DONG (Community Connection)
+
+| # | Chuc nang | Mo ta chi tiet |
+|---|-----------|----------------|
+| F1 | **Bang tin viec lam** | Thanh vien/doi tac dang tin tuyen dung. Loc theo linh vuc, ky nang, hinh thuc. Ung tuyen/lien he truc tiep |
+| F2 | **Ho tro khoi nghiep** | Dang du an, tim co-founder/doi nhom. Mentor matching (ket noi voi Leader/chuyen gia trong cong dong). Pitch deck, demo day |
+| F3 | **Ho so ky nang** | Thanh vien tu tao ho so nghe nghiep (ky nang, kinh nghiem, portfolio). Tim kiem nhan luc chat luong trong cong dong |
+| F4 | **Su kien cong dong** | Tao su kien (workshop, meetup, networking). Dang ky tham du, check-in su kien. Bao cao tham du |
+| F5 | **Bang tin / Newsfeed** | Thanh vien dang bai, chia se, binh luan. Admin kiem duyet noi dung. Thong bao su kien, tin tuc toa nha |
+
+---
+
+### G. TAI CHINH & THANH TOAN (Finance)
+
+| # | Chuc nang | Mo ta chi tiet |
+|---|-----------|----------------|
+| G1 | **Thu phi thanh vien dinh ky** | Engine tu dong: tao hoa don hang thang → gui nhac phi → xu ly thanh toan → gia han goi. Ho tro: tam dung, huy, nang/ha cap goi |
+| G2 | **Thanh toan tai quay (POS)** | Nhieu phuong thuc: tien mat, chuyen khoan, QR Pay, vi thanh vien. Tinh tien, tra lai, in hoa don |
+| G3 | **Vi dien tu thanh vien** | Nap tien vao vi. Thanh toan F&B, dich vu, khoa hoc bang vi. Lich su giao dich chi tiet |
+| G4 | **Hoa hong gioi thieu** | Tu dong tinh hoa hong khi referral thanh cong. Chi tra vao vi hoac tien mat. Bao cao hoa hong |
+| G5 | **Doi soat doi tac** | Cau hinh ty le chia se doanh thu theo doi tac/dich vu. Bao cao doi soat hang thang. Xuat file doi soat, thanh toan |
+| G6 | **So cai & Cong no** | Ghi nhan thu/chi hang ngay. Theo doi cong no phai thu (thanh vien no phi), phai tra (doi tac). Nhac no tu dong. QR thanh toan |
+| G7 | **Ca lam viec & Ket ca** | Mo/dong ca. Ket ca: doi chieu tien mat, bao cao doanh thu ca |
+
+---
+
+### H. BAO CAO & PHAN TICH (Reports & Analytics)
+
+| # | Chuc nang | Mo ta chi tiet |
+|---|-----------|----------------|
+| H1 | **Dashboard tong quan** | Hien thi real-time: thanh vien hoat dong hom nay, doanh thu hom nay, cong suat phong, dich vu sap toi, canh bao (het luot, sap het han, no qua han) |
+| H2 | **Bao cao thanh vien** | Tang truong thanh vien, ty le gia han (retention), ty le huy (churn), phan bo theo hang, referral hieu qua |
+| H3 | **Bao cao doanh thu** | Doanh thu theo 4 linh vuc (F&B, luu tru, suc khoe, khoa hoc). So sanh thang/quy/nam. Xu huong tang truong. Breakdown theo dich vu/doi tac |
+| H4 | **Bao cao su dung dich vu** | Top dich vu duoc su dung nhieu nhat. Gio cao diem. Ty le lap day phong. Cong suat chuyen vien |
+| H5 | **Bao cao doi tac** | Doanh thu theo doi tac. Rating trung binh. So luong khach phuc vu. Doi soat hoa hong |
+| H6 | **Bao cao KOL/Leader** | Khoa hoc da tao, so luoc hoc vien, doanh thu tao ra, rating, cap bac |
+| H7 | **Xuat bao cao** | Xuat Excel, PDF. In bao cao co ky ten |
+
+---
+
+### I. XAC THUC & KET NOI THIET BI (Authentication & Hardware)
+
+Day la diem khac biet cot loi — he thong ket noi truc tiep voi thiet bi vat ly de xac thuc thanh vien va tru luot dich vu tu dong.
+
+| # | Chuc nang | Mo ta chi tiet |
+|---|-----------|----------------|
+| I1 | **Xac thuc NFC/Chip** | Thanh vien cham the tai dau doc NFC → he thong nhan dien, kiem tra trang thai, hien thi thong tin |
+| I2 | **Xac thuc QR Code** | Quet ma QR tren the vat ly hoac tren dien thoai thanh vien |
+| I3 | **Xac thuc Barcode** | Doc barcode tren the thanh vien |
+| I4 | **Tru luot tu dong** | Khi quet the tai diem dich vu (quay F&B, phong gym, spa...) → he thong tu dong tru 1 luot tuong ung → hien thi so luot con lai |
+| I5 | **Canh bao real-time** | Popup/thong bao khi: con 3 luot dich vu, the sap het han (7 ngay), het luot, goi bi tam dung |
+| I6 | **Log xac thuc** | Ghi nhan moi lan quet the: thoi gian, dia diem, dich vu, ket qua (thanh cong/tu choi/het luot). Phuc vu bao cao va doi soat |
+
+**Luong quet the tai diem dich vu:**
+```
+Thanh vien quet the (NFC/QR/Barcode)
+  → He thong nhan dien thanh vien
+    → Kiem tra goi con hieu luc?
+      → KHONG: "Goi het han. Vui long gia han."
+      → CO: Kiem tra dich vu con luot?
+        → KHONG: "Het luot [ten DV]. Mua them hoac nang cap goi."
+        → CO: Tru 1 luot → Hien thi:
+              "Xin chao [Ten]. Da su dung 1 luot [DV]. Con lai: X luot."
+  → Ghi log
+  → Gui canh bao (neu con <= 3 luot)
+```
+
+**Thiet bi ho tro:**
+
+| Thiet bi | Muc dich | Giao thuc |
+|----------|----------|-----------|
+| May POS (touch screen) | Ban hang, check-in | USB/Network |
+| Dau doc NFC/Chip | Xac thuc the thanh vien | USB HID |
+| May quet QR/Barcode | Quet the/ma san pham | USB HID |
+| May in hoa don | In bien lai | ESC/POS |
+
+---
+
+### J. VAN HANH & CAU HINH (Operations & Settings)
+
+| # | Chuc nang | Mo ta chi tiet |
+|---|-----------|----------------|
+| J1 | **Quan ly nhan vien** | Ho so nhan vien, phan ca, cham cong, phan quyen theo vai tro |
+| J2 | **Ca lam viec** | Cau hinh ca (sang/chieu/dem). Mo/dong ca. Bao cao theo ca |
+| J3 | **Phan quyen** | Phan quyen theo vai tro (Admin, Tiep tan, Quan ly DV...). Gioi han truy cap theo module |
+| J4 | **Thong bao** | Push notification (FCM), thong bao trong app. Tu dong nhac: lich hen, phi, het luot, su kien |
+| J5 | **Cau hinh goi thanh vien** | Tao/sua goi: ten, gia, quyen loi, so luot dich vu, thoi han |
+| J6 | **Cau hinh dich vu** | Danh muc dich vu, gia, thoi luong, chuyen vien, phong |
+| J7 | **Cau hinh doi tac** | Thong tin doi tac, ty le chia se doanh thu, hop dong |
+| J8 | **Cau hinh loyalty** | Quy tac tich diem, doi diem, cap bac |
+| J9 | **Kenh phan hoi** | Thu thap phan hoi tu thanh vien qua nhieu kenh. Phan loai, xu ly, bao cao |
+
+---
+
+### BANG TONG HOP CHUC NANG THEO LINH VUC KINH DOANH
+
+| Linh vuc kinh doanh | Chuc nang he thong dap ung | Phu hop? |
+|---------------------|---------------------------|:--------:|
+| **An uong & Khong gian** | POS ban hang, menu, kho, tru do uong trong goi, co-working, dat phong | DAP UNG |
+| **Luu tru** | Phong tap the nam/nu, check-in/out giuong, tinh phi, cong suat | DAP UNG |
+| **Suc khoe & Sac dep** | Danh muc DV, dat lich, tru luot, lieu trinh, doi tac, danh gia | DAP UNG |
+| **Khoa hoc & CLB** | Khoa hoc mien phi/phi, CLB, KOL tao noi dung, diem danh, danh gia | DAP UNG |
+| **Thanh vien 24/7** | Dang ky, the NFC/QR, phan hang, phi hang thang, chia se gia dinh | DAP UNG |
+| **Tich diem & Loyalty** | Tich diem theo hanh dong, doi diem, cap bac tu dong | DAP UNG |
+| **Referral / Sponsor** | Ma gioi thieu, cay gioi thieu, hoa hong/diem | DAP UNG |
+| **KOL/KOC/PO** | He thong Leader, de xuat khoa hoc, chia se doanh thu, cap bac | DAP UNG |
+| **Phan hoi khach hang** | Danh gia dich vu, khao sat, thu thap y kien | DAP UNG |
+| **Ket noi POS** | Tich hop POS + dau doc NFC/QR/Barcode, tru luot tu dong | DAP UNG |
+| **Xac thuc the** | NFC chip, QR code, barcode — quet the → tru luot → canh bao | DAP UNG |
+| **Ket noi cong dong** | Viec lam, khoi nghiep, nhan luc, su kien, newsfeed | DAP UNG |
+| **Tai chinh & Doi soat** | Thu phi dinh ky, vi, hoa hong, doi soat doi tac, cong no | DAP UNG |
+| **Bao cao** | 7 loai bao cao: tong quan, thanh vien, doanh thu, dich vu, doi tac, KOL, xuat file | DAP UNG |
+
+---
+
+## 4. KIEN TRUC GIAI PHAP
+
+### 4.1. Kien truc tong the
 
 ```
 +---------------------------------------------------------------+
-|                     REBORN COMMUNITY HUB                       |
+|                     REBORN COMMUNITY                           |
 +---------------------------------------------------------------+
 |                                                                 |
 |  +------------------+  +------------------+  +---------------+  |
@@ -152,8 +406,8 @@ Doi diem:
 |  +--------+ +--------+ +--------+ +--------+ +--------+        |
 |                                                                 |
 |  +-----------------------------------------------------------+  |
-|  |              INFRASTRUCTURE LAYER                          |  |
-|  |  PostgreSQL | Redis | Firebase | MinIO | Kafka             |  |
+|  |              INFRASTRUCTURE                                |  |
+|  |  PostgreSQL | Redis | Firebase | Object Storage | Kafka   |  |
 |  +-----------------------------------------------------------+  |
 +---------------------------------------------------------------+
 
@@ -164,554 +418,147 @@ THIET BI VAT LY:
 +------------------+  +------------------+  +------------------+
 ```
 
-### 3.2. Cong nghe su dung (ke thua tu Reborn Retail)
+### 4.2. Cong nghe
 
-| Tang | Cong nghe | Ghi chu |
-|------|-----------|---------|
-| Frontend | React 18 + TypeScript + Vite | Ke thua |
-| UI Components | AG Grid, Highcharts, Custom Components | Ke thua |
-| State | React Context + React Query (moi) | Nang cap |
-| API | RESTful + Fetch API | Ke thua |
-| Auth | JWT + NFC/QR xac thuc | Mo rong |
-| Realtime | Firebase FCM + WebSocket (moi) | Mo rong |
-| Build | Vite + Docker + Nginx | Ke thua |
-
-### 3.3. Tich hop phan cung
-
-| Thiet bi | Muc dich | Giao thuc |
-|----------|----------|-----------|
-| May POS (touch screen) | Ban hang, check-in | USB/Network |
-| Dau doc NFC/Chip | Xac thuc the thanh vien | HID/Serial |
-| May quet QR/Barcode | Quet the/ma san pham | HID/Serial |
-| May in hoa don | In bien lai | ESC/POS |
-| Camera IP | Giam sat, nhan dien | RTSP (tuy chon) |
+| Tang | Cong nghe |
+|------|-----------|
+| Frontend Admin | React 18 + TypeScript + Vite |
+| UI Components | AG Grid (data table), Highcharts (bieu do), Custom Components |
+| API | RESTful API |
+| Auth | JWT + NFC/QR xac thuc vat ly |
+| Realtime | Firebase Cloud Messaging (push notification) |
+| Build & Deploy | Vite + Docker + Nginx |
 
 ---
 
-## 4. PHAN HOACH CHUC NANG & GAP ANALYSIS
+## 5. LO TRINH TRIEN KHAI
 
-### 4.1. Bang tong hop GAP
-
-**Ky hieu:**
-- **REUSE** = Tai su dung truc tiep tu Reborn Retail, khong can chinh sua
-- **ADAPT** = Co san nhung can dieu chinh/mo rong cho phu hop
-- **NEW** = Chua co, can phat trien moi hoan toan
-- **REMOVE** = Co trong Reborn Retail nhung khong can cho Community Hub
-
-### 4.2. CHI TIET GAP THEO TUNG LINH VUC
-
----
-
-#### A. QUAN LY THANH VIEN (MEMBERSHIP MANAGEMENT)
-
-| # | Chuc nang yeu cau | Module Reborn Retail | Trang thai | Chi tiet GAP |
-|---|-------------------|---------------------|:----------:|--------------|
-| A1 | Dang ky thanh vien | CustomerService, MemberCustomersPage | **ADAPT** | Co quan ly KH. Can them: loai thanh vien, goi dich vu, ngay het han, gia dinh lien ket |
-| A2 | Phan hang thanh vien (Basic/Standard/Premium/Family) | MembershipClass, LoyaltySegment | **ADAPT** | Co loyalty tier. Can them: mapping goi → quyen loi cu the, auto nang/ha hang |
-| A3 | Phi thanh vien hang thang (recurring billing) | — | **NEW** | Reborn Retail chi co ban le 1 lan. Can: recurring billing, auto gia han, nhac phi, hoa don dinh ky |
-| A4 | Chia se goi thanh vien cho gia dinh | — | **NEW** | Chua co khai niem "gia dinh" hay chia se quyen loi. Can: lien ket thanh vien, quota chia se, theo doi su dung rieng |
-| A5 | The thanh vien (chip/QR/barcode) | CardService, QrCodeProService | **ADAPT** | Co the dich vu (CardService). Can them: NFC chip ID, ma QR dong, barcode lien ket, in the |
-| A6 | Xac thuc thanh vien (quet the) | — | **NEW** | Chua co module xac thuc vat ly. Can: API doc NFC, camera QR, middleware POS |
-| A7 | Tru so lan su dung khi quet the | BoughtCardService (quota management) | **ADAPT** | Co theo doi quota the dich vu. Can them: tru tu dong khi quet, canh bao het luot, thong bao real-time |
-| A8 | Canh bao het luot/het han | NotificationService | **ADAPT** | Co FCM notification. Can them: rule canh bao tu dong (con 3 luot, sap het han 7 ngay...) |
-| A9 | Ho so thanh vien 360 do | DetailPerson, CustomerAnalysisPage | **ADAPT** | Co ho so KH day du. Can them: lich su check-in, dich vu da dung, diem tich luy, gia dinh lien ket |
-| A10 | Tuyen thanh vien moi (Referral/Sponsor) | — | **NEW** | Chua co he thong referral. Can: ma gioi thieu, theo doi cay gioi thieu, tinh hoa hong/diem |
-
----
-
-#### B. AN UONG & KHONG GIAN SINH HOAT (F&B & CO-WORKING)
-
-| # | Chuc nang yeu cau | Module Reborn Retail | Trang thai | Chi tiet GAP |
-|---|-------------------|---------------------|:----------:|--------------|
-| B1 | Ban hang F&B tai quay (POS) | CounterSales | **REUSE** | Day du: gio hang, thanh toan, in hoa don, khuyen mai |
-| B2 | Menu do uong/do an | ProductService, SettingSell | **REUSE** | Co quan ly san pham, danh muc, gia |
-| B3 | Tru do uong mien phi (trong goi) | BoughtCardService | **ADAPT** | Co the dich vu voi quota. Can them: logic tru tu dong theo goi thanh vien, gioi han/ngay |
-| B4 | Quan ly khong gian lam viec | — | **NEW** | Chua co. Can: so do mat bang, trang thai cho ngoi, dat cho, check-in/out cho |
-| B5 | Dat cho/phong hop | ScheduleCommonService | **ADAPT** | Co lich hen. Can them: loai tai nguyen (phong hop, ban, pod), khe gio, so do truc quan |
-| B6 | Quan ly kho nguyen lieu F&B | InventoryService, WarehouseService | **REUSE** | Day du: nhap/xuat kho, chuyen kho, kiem ke, bao cao ton kho |
-| B7 | Bao cao doanh thu F&B | ReportService, DashboardRetail | **REUSE** | Co bao cao doanh thu theo san pham, nhan vien, thoi gian |
-
----
-
-#### C. LUU TRU (ACCOMMODATION)
-
-| # | Chuc nang yeu cau | Module Reborn Retail | Trang thai | Chi tiet GAP |
-|---|-------------------|---------------------|:----------:|--------------|
-| C1 | Quan ly phong tap the (nam/nu) | CHAccommodationPage | **ADAPT** | Co quan ly phong co ban. Can them: phan loai nam/nu, giuong/slot, trang thai tung giuong |
-| C2 | Check-in/out phong | CHCheckinPage | **ADAPT** | Co check-in. Can them: gan phong/giuong cu the, thoi gian o, lich su |
-| C3 | Tinh phi luu tru theo thang | — | **NEW** | Can: logic tinh phi theo goi hoac pay-per-night, tich hop recurring billing |
-| C4 | Theo doi cong suat phong | CHReportCheckin | **ADAPT** | Co bao cao check-in. Can them: dashboard cong suat real-time, du bao |
-| C5 | Quy dinh noi quy luu tru | — | **NEW** | Can: module noi quy dien tu, xac nhan dong y, vi pham & xu phat |
-
----
-
-#### D. SUC KHOE & SAC DEP (HEALTH & BEAUTY)
-
-| # | Chuc nang yeu cau | Module Reborn Retail | Trang thai | Chi tiet GAP |
-|---|-------------------|---------------------|:----------:|--------------|
-| D1 | Danh muc dich vu spa/gym/yoga | ServiceService, CHServiceManagement | **ADAPT** | Co quan ly dich vu. Can them: phan loai theo linh vuc, lich trinh, HLV/chuyen vien |
-| D2 | Dat lich dich vu | CHServiceBookingPage, ScheduleTreatmentService | **ADAPT** | Co dat lich. Can them: chon HLV, chon phong, xac nhan tu dong, nhac lich |
-| D3 | Theo doi lieu trinh | TreatmentHistoryService | **REUSE** | Co lich su lieu trinh day du |
-| D4 | Quan ly phong dich vu (spa, gym, yoga) | TreatmentRoomService | **ADAPT** | Co quan ly phong. Can them: lich su dung phong, bao tri, so do |
-| D5 | Tru luot dich vu trong goi | BoughtCardService, BoughtServiceService | **ADAPT** | Co quota. Can them: tru tu dong khi check-in phong, canh bao real-time |
-| D6 | Doi tac cung cap dich vu (tenant spa, gym) | CHPartnersPage, PartnerService | **ADAPT** | Co quan ly doi tac. Can them: hop dong chia se doanh thu, bao cao doi tac, thanh toan |
-| D7 | Danh gia chat luong dich vu | CHFeedbackPage, RateCustomerService | **ADAPT** | Co danh gia/feedback. Can them: rating theo dich vu cu the, theo nhan vien |
-
----
-
-#### E. KHOA HOC & CLB (COURSES & CLUBS)
-
-| # | Chuc nang yeu cau | Module Reborn Retail | Trang thai | Chi tiet GAP |
-|---|-------------------|---------------------|:----------:|--------------|
-| E1 | Danh muc khoa hoc (mien phi & tra phi) | CHCoursesPage | **ADAPT** | Co module khoa hoc co ban. Can them: phan loai mien phi/tra phi, noi dung online, lich hoc |
-| E2 | Dang ky khoa hoc | — | **NEW** | Can: form dang ky, gioi han so luong, danh sach cho, thanh toan phi |
-| E3 | Quan ly CLB sinh hoat | — | **NEW** | Can: tao CLB, quan ly thanh vien CLB, lich sinh hoat, leader CLB, tin tuc CLB |
-| E4 | KOL/KOC tao noi dung & khoa hoc | — | **NEW** | Can: workflow de xuat khoa hoc → duyet → mo lop, chia se doanh thu, ho so KOL |
-| E5 | Diem danh khoa hoc/CLB | — | **NEW** | Can: check-in theo buoi, thong ke tham du, chung chi hoan thanh |
-| E6 | Danh gia khoa hoc | CxmSurveyService | **ADAPT** | Co khao sat. Can them: template danh gia khoa hoc, rating, nhan xet |
-
----
-
-#### F. KET NOI CONG DONG (COMMUNITY CONNECTION)
-
-| # | Chuc nang yeu cau | Module Reborn Retail | Trang thai | Chi tiet GAP |
-|---|-------------------|---------------------|:----------:|--------------|
-| F1 | Ket noi co hoi viec lam | — | **NEW** | Can: bang tin viec lam, dang tin, ung tuyen, loc theo ky nang |
-| F2 | Ho tro khoi nghiep | — | **NEW** | Can: dang du an, tim co-founder, mentor matching, pitch deck |
-| F3 | Tim kiem nhan luc chat luong | — | **NEW** | Can: ho so ky nang thanh vien, search/filter, gioi thieu |
-| F4 | Leader/KOL system | — | **NEW** | Can: cap bac leader, thanh tich, anh huong, thuong/hoa hong |
-| F5 | Bang tin cong dong (newsfeed) | — | **NEW** | Can: dang bai, binh luan, thich, chia se, quan tri noi dung |
-| F6 | Su kien cong dong | ScheduleCommonService | **ADAPT** | Co lich. Can them: tao su kien, dang ky tham du, check-in su kien, bao cao |
-
----
-
-#### G. TAI CHINH & THANH TOAN
-
-| # | Chuc nang yeu cau | Module Reborn Retail | Trang thai | Chi tiet GAP |
-|---|-------------------|---------------------|:----------:|--------------|
-| G1 | Thu phi thanh vien dinh ky | — | **NEW** | Can: recurring billing engine, auto charge, nhac no, gia han/huy |
-| G2 | Thanh toan tai quay (POS) | CounterSales, PaymentMethodService | **REUSE** | Day du |
-| G3 | Vi dien tu thanh vien | LoyaltyWallet | **ADAPT** | Co vi diem. Can them: nap tien, thanh toan bang vi, lich su giao dich |
-| G4 | Hoa hong referral | — | **NEW** | Can: tinh hoa hong, chi tra, bao cao hoa hong, thue (neu co) |
-| G5 | Chia se doanh thu voi doi tac/KOL | — | **NEW** | Can: cau hinh ty le chia se, doi soat, thanh toan doi tac |
-| G6 | Bao cao tai chinh | FinanceDashboard, CashbookService | **ADAPT** | Co bao cao. Can them: bao cao theo linh vuc (F&B, luu tru, khoa hoc), doi soat doi tac |
-| G7 | Quan ly cong no | DebtManagementService | **REUSE** | Day du: cong no phai thu/tra, nhac no, QR thanh toan |
-
----
-
-#### H. BAO CAO & PHAN TICH
-
-| # | Chuc nang yeu cau | Module Reborn Retail | Trang thai | Chi tiet GAP |
-|---|-------------------|---------------------|:----------:|--------------|
-| H1 | Dashboard tong quan Community Hub | DashboardCH | **ADAPT** | Co dashboard co ban. Can them: KPI cong dong, hoat dong hom nay, canh bao |
-| H2 | Bao cao thanh vien | CHReportMembers | **ADAPT** | Co bao cao. Can them: tang truong, retention rate, churn, referral |
-| H3 | Bao cao doanh thu theo linh vuc | CHReportRevenue, CHReportFinance | **ADAPT** | Co. Can them: breakdown 4 linh vuc, so sanh, xu huong |
-| H4 | Bao cao su dung dich vu | CHReportServices | **ADAPT** | Co. Can them: top dich vu, gio cao diem, cong suat, du bao |
-| H5 | Bao cao doi tac | CHReportPartners | **ADAPT** | Co. Can them: doanh thu doi tac, hoa hong, rating |
-| H6 | Bao cao KOL/Leader | — | **NEW** | Can: thanh tich KOL, khoa hoc da tao, hoc vien, doanh thu |
-
----
-
-#### I. MODULES BO DI (REMOVE) — KHONG CAN CHO COMMUNITY HUB
-
-| # | Module Reborn Retail | Ly do bo |
-|---|---------------------|----------|
-| I1 | Warehouse phuc tap (nhieu kho, chuyen kho) | Chi can 1 kho nho cho F&B, khong can multi-warehouse |
-| I2 | Shipping / Van chuyen | Dich vu tai cho, khong giao hang |
-| I3 | VAT Invoice phuc tap | Don gian hoa, chi can hoa don co ban |
-| I4 | Multi-channel Sales (Lazada, Shopee...) | Ban truc tiep tai toa nha |
-| I5 | Contract Management phuc tap | Thay bang hop dong thanh vien don gian |
-| I6 | Social CRM (Facebook, Zalo OA) | Uu tien thap, co the them sau |
-| I7 | Email/SMS Marketing mass | Thay bang thong bao trong app |
-| I8 | Call Center / VoIP | Khong can cho mo hinh nay |
-| I9 | Supplier/Purchase Order phuc tap | Don gian hoa cho F&B |
-| I10 | Manufacturing/Material BOM | Khong ap dung |
-
----
-
-### 4.3. TONG HOP GAP
-
-```
-+------------------------------------------------------------------+
-|                    TONG HOP TRANG THAI                             |
-+------------------------------------------------------------------+
-|                                                                    |
-|   REUSE (Tai su dung truc tiep)              12 chuc nang (18%)   |
-|   ████████████░░░░░░░░░░░░░░░░░░░░░░░░░░░░                       |
-|                                                                    |
-|   ADAPT (Can dieu chinh/mo rong)             28 chuc nang (42%)   |
-|   ████████████████████████████░░░░░░░░░░░░                        |
-|                                                                    |
-|   NEW (Can phat trien moi)                   22 chuc nang (33%)   |
-|   ██████████████████████░░░░░░░░░░░░░░░░░░                        |
-|                                                                    |
-|   REMOVE (Bo di)                             10 module    (—)     |
-|   ██████████░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░                       |
-|                                                                    |
-|   => ~60% codebase co the tai su dung/dieu chinh                  |
-|   => ~33% can phat trien moi                                      |
-+------------------------------------------------------------------+
-```
-
----
-
-## 5. CHI TIET CAC MODULE MOI (GAP)
-
-### 5.1. MODULE: Recurring Billing (Phi dinh ky)
-
-**Do uu tien:** CRITICAL
-**Lien quan:** A3, C3, G1
-
-**Mo ta:** He thong thu phi thanh vien tu dong hang thang, ho tro nhieu goi, gia han, nhac phi.
-
-**Chuc nang chi tiet:**
-
-| # | Chuc nang | Mo ta |
-|---|-----------|-------|
-| 1 | Tao goi thanh vien | Dinh nghia goi (ten, gia, quyen loi, thoi han, so luot dich vu) |
-| 2 | Dang ky goi | Thanh vien chon goi, thanh toan lan dau, kich hoat |
-| 3 | Tu dong gia han | Cron job kiem tra het han, gui nhac phi truoc 7 ngay, 3 ngay, 1 ngay |
-| 4 | Xu ly thanh toan | Tru vi, chuyen khoan, tien mat tai quay |
-| 5 | Tam dung / Huy goi | Freeze goi (giu quyen loi, dung tinh phi), huy vinh vien |
-| 6 | Nang/Ha cap goi | Chuyen doi giua cac goi, tinh chenh lech phi |
-| 7 | Lich su giao dich | Log moi giao dich phi thanh vien |
-| 8 | Bao cao doanh thu dinh ky | Doanh thu theo thang, ty le gia han, ty le huy |
-
-**Entities moi:**
-```
-MembershipSubscription {
-  id, memberId, planId, status (active/paused/cancelled/expired)
-  startDate, endDate, nextBillingDate
-  paymentMethod, autoRenew
-  familyMembers: MemberLink[]
-}
-
-BillingTransaction {
-  id, subscriptionId, amount, type (charge/refund/upgrade)
-  status (pending/paid/failed), paidAt, invoiceId
-}
-```
-
----
-
-### 5.2. MODULE: Chia se gia dinh (Family Sharing)
-
-**Do uu tien:** HIGH
-**Lien quan:** A4
-
-**Chuc nang chi tiet:**
-
-| # | Chuc nang | Mo ta |
-|---|-----------|-------|
-| 1 | Lien ket thanh vien gia dinh | Thanh vien chinh moi nguoi than, xac nhan 2 chieu |
-| 2 | Chia se quyen loi | Quota dich vu duoc chia (vd: 10 luot gym / gia dinh) |
-| 3 | Theo doi su dung rieng | Moi nguoi co log su dung rieng, tong hop cho chu goi |
-| 4 | Gioi han so luong | Toi da 2-4 thanh vien gia dinh tuy goi |
-| 5 | The rieng cho tung nguoi | Moi nguoi co the/QR rieng de check-in |
-
----
-
-### 5.3. MODULE: Xac thuc vat ly (Physical Authentication)
-
-**Do uu tien:** CRITICAL
-**Lien quan:** A6, A7
-
-**Chuc nang chi tiet:**
-
-| # | Chuc nang | Mo ta |
-|---|-----------|-------|
-| 1 | Doc the NFC/Chip | API nhan du lieu tu dau doc NFC, mapping voi memberId |
-| 2 | Quet QR Code | Camera/scanner doc QR tren the hoac app thanh vien |
-| 3 | Quet Barcode | Doc barcode tren the vat ly |
-| 4 | Xac thuc & phan quyen | Kiem tra trang thai thanh vien, goi con hieu luc, quota con lai |
-| 5 | Tru luot tu dong | Khi quet the tai dich vu → tru 1 luot → hien thi so luot con lai |
-| 6 | Canh bao real-time | Toast/popup: "Con 2 luot gym", "The het han sau 5 ngay", "Het luot massage" |
-| 7 | Log xac thuc | Ghi nhan moi lan quet the (thoi gian, dia diem, dich vu, ket qua) |
-
-**Luong xu ly:**
-```
-Quet the → Doc chip/QR/barcode
-  → Tra cuu memberId
-    → Kiem tra subscription (con hieu luc?)
-      → Kiem tra quota dich vu (con luot?)
-        → OK: Tru luot + Hien thi "Chao [Ten]. Con X luot."
-        → FAIL: Hien thi "Het luot" hoac "The het han"
-  → Ghi log
-  → Gui notification (neu can canh bao)
-```
-
----
-
-### 5.4. MODULE: Referral / Sponsor System
-
-**Do uu tien:** HIGH
-**Lien quan:** A10, G4
-
-**Chuc nang chi tiet:**
-
-| # | Chuc nang | Mo ta |
-|---|-----------|-------|
-| 1 | Ma gioi thieu ca nhan | Moi thanh vien co ma duy nhat (VD: REF-NGUYENVANA) |
-| 2 | Theo doi cay gioi thieu | Ai gioi thieu ai, bao nhieu cap (1 cap hoac multi-level) |
-| 3 | Tinh diem/hoa hong | Khi nguoi duoc gioi thieu dang ky thanh cong → X diem/tien cho nguoi gioi thieu |
-| 4 | Dashboard referral | So nguoi da gioi thieu, tong diem/hoa hong, trang thai |
-| 5 | Chi tra hoa hong | Tu dong hoac thu cong, tich hop tai chinh |
-| 6 | Chinh sach referral | Admin cau hinh: diem/hoa hong/cap, dieu kien (phai duy tri 1 thang...) |
-
----
-
-### 5.5. MODULE: KOL/KOC Leader System
-
-**Do uu tien:** MEDIUM
-**Lien quan:** E4, F4, H6
-
-**Chuc nang chi tiet:**
-
-| # | Chuc nang | Mo ta |
-|---|-----------|-------|
-| 1 | Ho so Leader/KOL | Tieu su, linh vuc chuyen mon, thanh tich, rating |
-| 2 | De xuat khoa hoc | Leader tao de xuat → Admin duyet → Mo lop |
-| 3 | Quan ly lop hoc | Danh sach hoc vien, diem danh, tai lieu, bai tap |
-| 4 | Chia se doanh thu | Cau hinh ty le (VD: 70% Leader - 30% Platform) |
-| 5 | Cap bac Leader | Rookie → Contributor → Expert → Master (dua tren thanh tich) |
-| 6 | Dashboard Leader | Khoa hoc da tao, hoc vien, doanh thu, danh gia |
-
----
-
-### 5.6. MODULE: Quan ly CLB (Club Management)
-
-**Do uu tien:** MEDIUM
-**Lien quan:** E3
-
-**Chuc nang chi tiet:**
-
-| # | Chuc nang | Mo ta |
-|---|-----------|-------|
-| 1 | Tao CLB | Ten, mo ta, linh vuc, lich sinh hoat, leader |
-| 2 | Dang ky tham gia CLB | Thanh vien dang ky, admin/leader duyet |
-| 3 | Lich sinh hoat | Lap lich dinh ky (hang tuan/thang), thong bao |
-| 4 | Diem danh sinh hoat | Check-in moi buoi, tich diem |
-| 5 | Tin tuc CLB | Dang bai, thong bao noi bo CLB |
-
----
-
-### 5.7. MODULE: Khong gian lam viec (Co-working Space)
-
-**Do uu tien:** HIGH
-**Lien quan:** B4, B5
-
-**Chuc nang chi tiet:**
-
-| # | Chuc nang | Mo ta |
-|---|-----------|-------|
-| 1 | So do mat bang | Hien thi truc quan vi tri ban/phong, trang thai (trong/dang dung) |
-| 2 | Check-in cho ngoi | Quet the tai khu vuc → gan cho |
-| 3 | Dat phong hop | Chon phong, khe gio, so nguoi, thiet bi ho tro |
-| 4 | Theo doi su dung | Thoi gian su dung, thong ke gio cao diem |
-| 5 | Canh bao qua tai | Thong bao khi gan het cho |
-
----
-
-### 5.8. MODULE: Bang tin cong dong (Community Board)
-
-**Do uu tien:** LOW (Phase 3)
-**Lien quan:** F1, F2, F3, F5
-
-**Chuc nang chi tiet:**
-
-| # | Chuc nang | Mo ta |
-|---|-----------|-------|
-| 1 | Bang tin viec lam | Dang tin tuyen dung, ung tuyen, lien he |
-| 2 | Du an khoi nghiep | Dang du an, tim co-founder, mentor |
-| 3 | Ho so ky nang | Thanh vien tu tao ho so, ky nang, kinh nghiem |
-| 4 | Newsfeed | Dang bai, binh luan, tuong tac cong dong |
-| 5 | Su kien | Tao su kien, dang ky, check-in, bao cao |
-
----
-
-## 6. LO TRINH TRIEN KHAI
-
-### 6.1. TONG QUAN TIMELINE
+### 5.1. Tong quan
 
 ```
 Thang:  1     2     3     4     5     6     7     8     9
         |-----|-----|-----|-----|-----|-----|-----|-----|
-        
+
 Phase 0 |████|
-        Setup & Cleanup
-        
+        Chuan bi & Thiet ke
+
 Phase 1       |█████████████|
-              Core Platform (MVP)
-              
+              MVP — Van hanh co ban
+
 Phase 2                     |█████████████|
                             Mo rong dich vu
-                            
+
 Phase 3                                   |█████████████|
-                                          Cong dong & Toi uu
-                                          
+                                          Cong dong & Hoan thien
+
 Go-live        *MVP          *Full         *Complete
                T3            T6            T9
 ```
 
 ---
 
-### 6.2. PHASE 0 — SETUP & CLEANUP (Thang 1 — 4 tuan)
+### 5.2. PHASE 0 — CHUAN BI & THIET KE (Thang 1 — 4 tuan)
 
-**Muc tieu:** Chuan bi codebase, loai bo module khong can, thiet lap moi truong.
+| Tuan | Cong viec |
+|------|-----------|
+| 1-2 | Thiet ke database, API cho cac module moi. Wireframe UI/UX |
+| 3 | Setup moi truong dev/staging. Thiet lap CI/CD co ban |
+| 4 | PoC tich hop phan cung (dau doc NFC, may quet QR, may POS) |
 
-| Tuan | Cong viec | Output |
-|------|-----------|--------|
-| 1 | Tao nhanh `community-hub` tu Reborn Retail | Branch san sang |
-| 1 | Loai bo 10 module REMOVE (Shipping, VAT phuc tap, Multi-channel, Call Center...) | Codebase gon hon |
-| 2 | Cau hinh TenantConfig cho Community Hub | Toggle bat/tat tinh nang |
-| 2 | Setup moi truong dev/staging | Server + CI/CD co ban |
-| 3 | Thiet ke database schema cho cac entity moi | ERD document |
-| 3 | Thiet ke API contracts cho module moi | API spec (OpenAPI) |
-| 4 | Setup tich hop phan cung (dau doc NFC, may quet QR) | Hardware PoC |
-| 4 | UI/UX wireframe cho cac man hinh moi | Figma/wireframe |
-
-**Nhan su:** 1 Tech Lead + 1 Backend + 1 Frontend
+**Output:** Tai lieu thiet ke, moi truong san sang, PoC phan cung xac nhan kha thi
 
 ---
 
-### 6.3. PHASE 1 — CORE PLATFORM / MVP (Thang 2-3 — 8 tuan)
+### 5.3. PHASE 1 — MVP (Thang 2-3 — 8 tuan)
 
-**Muc tieu:** Ra mat phien ban dau tien co the van hanh co ban.
+**Muc tieu:** Phien ban dau tien co the van hanh — thanh vien dang ky, quet the check-in, su dung dich vu, thanh toan.
 
-**Sprint 1-2 (Tuan 1-4): Thanh vien & Xac thuc**
+**Sprint 1-2 (4 tuan):** Thanh vien & Xac thuc
 
-| # | Task | Do uu tien | Estimate |
-|---|------|-----------|----------|
-| 1 | Adapt module Membership (phan hang, goi dich vu) | CRITICAL | 5 ngay |
-| 2 | Phat trien Recurring Billing engine | CRITICAL | 8 ngay |
-| 3 | Phat trien module Xac thuc vat ly (NFC/QR/Barcode) | CRITICAL | 8 ngay |
-| 4 | Adapt CardService cho tru luot tu dong + canh bao | CRITICAL | 5 ngay |
-| 5 | Tich hop POS voi he thong xac thuc | CRITICAL | 3 ngay |
-| 6 | The thanh vien (in the, gan chip, QR) | HIGH | 3 ngay |
+| # | Cong viec | Thoi gian |
+|---|-----------|-----------|
+| 1 | Module Membership: dang ky, phan hang, goi dich vu | 5 ngay |
+| 2 | Recurring Billing: thu phi hang thang, nhac phi, gia han | 8 ngay |
+| 3 | Xac thuc vat ly: doc NFC/QR/Barcode, mapping thanh vien | 8 ngay |
+| 4 | Tru luot dich vu tu dong + canh bao | 5 ngay |
+| 5 | Tich hop POS voi he thong xac thuc | 3 ngay |
 
-**Sprint 3-4 (Tuan 5-8): Dich vu & Van hanh**
+**Sprint 3-4 (4 tuan):** Dich vu & Van hanh
 
-| # | Task | Do uu tien | Estimate |
-|---|------|-----------|----------|
-| 7 | Adapt Check-in system (gan phong/giuong) | HIGH | 3 ngay |
-| 8 | Adapt Accommodation (phong tap the nam/nu) | HIGH | 5 ngay |
-| 9 | Adapt Service Booking (dat lich spa/gym) | HIGH | 3 ngay |
-| 10 | Adapt F&B POS (tru do uong trong goi) | HIGH | 3 ngay |
-| 11 | Adapt Dashboard Community Hub | HIGH | 5 ngay |
-| 12 | Adapt Bao cao (thanh vien, doanh thu, check-in) | HIGH | 5 ngay |
-| 13 | Testing & bug fix MVP | CRITICAL | 5 ngay |
-| 14 | Training nhan vien van hanh | HIGH | 3 ngay |
+| # | Cong viec | Thoi gian |
+|---|-----------|-----------|
+| 6 | Check-in/out, luu tru phong tap the nam/nu | 5 ngay |
+| 7 | Dat lich dich vu suc khoe | 3 ngay |
+| 8 | POS F&B (tru do uong trong goi) | 3 ngay |
+| 9 | Dashboard & bao cao co ban | 5 ngay |
+| 10 | Testing, fix loi, training nhan vien | 8 ngay |
 
-**Output Phase 1 (MVP):**
-- Dang ky thanh vien, phan hang, thu phi hang thang
-- Quet the NFC/QR check-in, tru luot dich vu
-- Ban hang F&B tai POS, tru do uong trong goi
-- Dat phong luu tru, dat lich dich vu
-- Dashboard & bao cao co ban
-
-**Nhan su:** 1 Tech Lead + 2 Backend + 2 Frontend + 1 QA
+**Output MVP:**
+- Dang ky thanh vien, cap the, thu phi hang thang
+- Quet the NFC/QR check-in, tru luot dich vu, canh bao
+- Ban hang F&B, tru do uong mien phi trong goi
+- Dat phong luu tru, dat lich dich vu suc khoe
+- Dashboard tong quan, bao cao co ban
 
 ---
 
-### 6.4. PHASE 2 — MO RONG DICH VU (Thang 4-6 — 12 tuan)
+### 5.4. PHASE 2 — MO RONG DICH VU (Thang 4-6 — 12 tuan)
 
-**Sprint 5-6 (Tuan 1-4): Gia dinh & Referral**
-
-| # | Task | Estimate |
-|---|------|----------|
-| 1 | Phat trien Family Sharing module | 8 ngay |
-| 2 | Phat trien Referral/Sponsor system | 8 ngay |
-| 3 | Adapt Loyalty tich diem theo hanh dong | 5 ngay |
-| 4 | Adapt Vi dien tu thanh vien | 3 ngay |
-
-**Sprint 7-8 (Tuan 5-8): Khoa hoc & CLB**
-
-| # | Task | Estimate |
-|---|------|----------|
-| 5 | Phat trien Dang ky khoa hoc (mien phi & tra phi) | 8 ngay |
-| 6 | Phat trien CLB Management | 8 ngay |
-| 7 | Phat trien diem danh khoa hoc/CLB | 3 ngay |
-| 8 | Adapt Feedback/Survey cho khoa hoc | 3 ngay |
-
-**Sprint 9-10 (Tuan 9-12): Doi tac & Tai chinh**
-
-| # | Task | Estimate |
-|---|------|----------|
-| 9 | Phat trien chia se doanh thu doi tac | 5 ngay |
-| 10 | Phat trien hoa hong referral (chi tra) | 5 ngay |
-| 11 | Adapt bao cao tai chinh theo linh vuc | 5 ngay |
-| 12 | Phat trien Co-working Space (so do, dat cho) | 8 ngay |
-| 13 | Testing toan dien & UAT | 8 ngay |
+| Sprint | Cong viec | Thoi gian |
+|--------|-----------|-----------|
+| 5-6 | Chia se goi gia dinh | 8 ngay |
+| 5-6 | He thong gioi thieu (Referral) + hoa hong | 8 ngay |
+| 5-6 | Tich diem loyalty theo hanh dong + Vi thanh vien | 8 ngay |
+| 7-8 | Dang ky khoa hoc (mien phi & tra phi) | 8 ngay |
+| 7-8 | Quan ly CLB sinh hoat | 8 ngay |
+| 7-8 | Diem danh khoa hoc/CLB + Danh gia | 6 ngay |
+| 9-10 | Doi soat doanh thu doi tac | 5 ngay |
+| 9-10 | Co-working space (so do, dat phong hop) | 8 ngay |
+| 9-10 | Bao cao nang cao (4 linh vuc, doi tac) | 5 ngay |
+| — | Testing toan dien & UAT | 8 ngay |
 
 **Output Phase 2:**
-- Chia se goi gia dinh
-- He thong referral va hoa hong
-- Khoa hoc mien phi & tra phi
-- CLB sinh hoat
-- Chia se doanh thu doi tac
-- Co-working space management
-
-**Nhan su:** 1 Tech Lead + 2 Backend + 2 Frontend + 1 QA
+- Chia se goi gia dinh, referral, loyalty, vi thanh vien
+- Khoa hoc, CLB, diem danh
+- Doi soat doi tac, co-working
+- Bao cao nang cao
 
 ---
 
-### 6.5. PHASE 3 — CONG DONG & TOI UU (Thang 7-9 — 12 tuan)
+### 5.5. PHASE 3 — CONG DONG & HOAN THIEN (Thang 7-9 — 12 tuan)
 
-**Sprint 11-12: KOL/Leader System**
-
-| # | Task | Estimate |
-|---|------|----------|
-| 1 | Phat trien KOL/KOC Leader System | 10 ngay |
-| 2 | Phat trien workflow de xuat khoa hoc | 5 ngay |
-| 3 | Dashboard Leader/KOL | 5 ngay |
-
-**Sprint 13-14: Ket noi cong dong**
-
-| # | Task | Estimate |
-|---|------|----------|
-| 4 | Phat trien Bang tin viec lam | 8 ngay |
-| 5 | Phat trien Ho so ky nang thanh vien | 5 ngay |
-| 6 | Phat trien Su kien cong dong | 5 ngay |
-| 7 | Newsfeed cong dong (co ban) | 8 ngay |
-
-**Sprint 15-16: Toi uu & Hoan thien**
-
-| # | Task | Estimate |
-|---|------|----------|
-| 8 | Toi uu hieu nang (React.memo, lazy loading, debounce) | 5 ngay |
-| 9 | Bao mat (CSP, CSRF, HTTP-only cookie) | 5 ngay |
-| 10 | Setup CI/CD pipeline hoan chinh | 3 ngay |
-| 11 | Setup Sentry error tracking | 2 ngay |
-| 12 | Testing toan dien, load test | 8 ngay |
-| 13 | Documentation & training | 5 ngay |
+| Sprint | Cong viec | Thoi gian |
+|--------|-----------|-----------|
+| 11-12 | KOL/Leader System (de xuat khoa hoc, cap bac, dashboard) | 15 ngay |
+| 13-14 | Bang tin viec lam + Ho so ky nang | 13 ngay |
+| 13-14 | Su kien cong dong + Newsfeed | 13 ngay |
+| 15-16 | Toi uu hieu nang, bao mat, on dinh | 10 ngay |
+| 15-16 | Testing toan dien, load test, documentation | 13 ngay |
 
 **Output Phase 3:**
-- He thong KOL/Leader day du
-- Bang tin viec lam, ket noi cong dong
-- Su kien cong dong
-- He thong toi uu, bao mat, on dinh
-
-**Nhan su:** 1 Tech Lead + 2 Backend + 2 Frontend + 1 QA
+- KOL/Leader system day du
+- Ket noi cong dong (viec lam, khoi nghiep, su kien)
+- He thong on dinh, bao mat, san sang scale
 
 ---
 
-### 6.6. MILESTONES
+### 5.6. Milestones
 
-| Milestone | Thoi diem | Tieu chi hoan thanh |
-|-----------|-----------|---------------------|
-| **M0: Setup** | Cuoi thang 1 | Branch san sang, schema thiet ke xong, PoC phan cung |
-| **M1: MVP** | Cuoi thang 3 | 200 thanh vien co the dang ky, check-in, su dung dich vu, thanh toan |
-| **M2: Full** | Cuoi thang 6 | Gia dinh, referral, khoa hoc, CLB, co-working hoat dong |
-| **M3: Complete** | Cuoi thang 9 | KOL system, cong dong, toi uu, bao mat, san sang scale |
+| Milestone | Thoi diem | Tieu chi |
+|-----------|-----------|----------|
+| **M0: Chuan bi xong** | Cuoi T1 | Thiet ke xong, PoC phan cung OK, moi truong san sang |
+| **M1: MVP Go-live** | Cuoi T3 | 200 thanh vien dang ky, check-in, dung dich vu, thanh toan duoc |
+| **M2: Full Go-live** | Cuoi T6 | Gia dinh, referral, khoa hoc, CLB, doi soat doi tac hoat dong |
+| **M3: Complete** | Cuoi T9 | KOL, cong dong, on dinh, san sang mo rong quy mo |
 
 ---
 
-## 7. CHI PHI DAU TU
+## 6. CHI PHI DAU TU
 
-### 7.1. Chi phi phat trien phan mem
+### 6.1. Chi phi phat trien phan mem
 
-| Hang muc | So luong | Don gia/thang (VND) | Thoi gian | Thanh tien (VND) |
-|----------|:--------:|--------------------:|:---------:|----------------:|
+| Hang muc | SL | Don gia/thang (VND) | Thoi gian | Thanh tien (VND) |
+|----------|:--:|--------------------:|:---------:|----------------:|
 | Tech Lead / Architect | 1 | 45,000,000 | 9 thang | 405,000,000 |
 | Backend Developer (Senior) | 2 | 35,000,000 | 8 thang | 560,000,000 |
 | Frontend Developer (Senior) | 2 | 32,000,000 | 8 thang | 512,000,000 |
@@ -719,12 +566,12 @@ Go-live        *MVP          *Full         *Complete
 | UI/UX Designer | 1 | 25,000,000 | 3 thang | 75,000,000 |
 | **Tong phan mem** | | | | **1,684,000,000** |
 
-> **Ghi chu:** Neu su dung team in-house da co, chi phi thuc te se thap hon dang ke (chi tinh overhead + co hoi cost). Du toan tren la truong hop thue ngoai/outsource.
+> **Ghi chu:** Neu su dung team in-house da co, chi phi thuc te se thap hon dang ke (chi tinh co hoi cost + overtime). Trien khai MVP truoc (Phase 0+1): khoang **~700 trieu VND**.
 
-### 7.2. Chi phi phan cung & Thiet bi
+### 6.2. Chi phi phan cung & Thiet bi
 
-| Hang muc | So luong | Don gia (VND) | Thanh tien (VND) |
-|----------|:--------:|-------------:|----------------:|
+| Hang muc | SL | Don gia (VND) | Thanh tien (VND) |
+|----------|:--:|-------------:|----------------:|
 | May POS (touch screen + may in) | 2 | 15,000,000 | 30,000,000 |
 | Dau doc NFC/Chip (USB HID) | 3 | 2,000,000 | 6,000,000 |
 | May quet QR/Barcode | 3 | 1,500,000 | 4,500,000 |
@@ -732,20 +579,18 @@ Go-live        *MVP          *Full         *Complete
 | May in the nhua (tuy chon) | 1 | 8,000,000 | 8,000,000 |
 | **Tong phan cung** | | | **53,500,000** |
 
-### 7.3. Chi phi ha tang & Van hanh
+### 6.3. Chi phi ha tang (hang nam)
 
-| Hang muc | Chi phi/thang (VND) | Chi phi/nam (VND) |
-|----------|-------------------:|------------------:|
-| Cloud Server (4 vCPU, 16GB RAM, 200GB SSD) | 3,500,000 | 42,000,000 |
+| Hang muc | /thang (VND) | /nam (VND) |
+|----------|------------:|----------:|
+| Cloud Server (4 vCPU, 16GB RAM) | 3,500,000 | 42,000,000 |
 | Database managed (PostgreSQL) | 2,000,000 | 24,000,000 |
 | Redis Cache | 500,000 | 6,000,000 |
-| Object Storage (MinIO/S3) | 500,000 | 6,000,000 |
-| SSL Certificate | — | 500,000 |
-| Domain | — | 500,000 |
-| Firebase (Notification — Free tier) | 0 | 0 |
+| Object Storage | 500,000 | 6,000,000 |
+| SSL + Domain | — | 1,000,000 |
 | **Tong ha tang/nam** | **6,500,000** | **79,000,000** |
 
-### 7.4. Tong hop chi phi
+### 6.4. Tong hop
 
 | Hang muc | Chi phi (VND) | Ghi chu |
 |----------|-------------:|---------|
@@ -753,143 +598,54 @@ Go-live        *MVP          *Full         *Complete
 | Phan cung & Thiet bi | 53,500,000 | 1 lan |
 | Ha tang nam dau | 79,000,000 | Hang nam |
 | Du phong (10%) | 181,650,000 | |
-| **TONG DAU TU BAN DAU** | **1,998,150,000** | ~2 ty VND |
+| **TONG DAU TU** | **~2,000,000,000** | ~2 ty VND |
 
-> **Phuong an toi uu chi phi:**
-> - Neu su dung team in-house (da co luong): Chi phi phan mem giam con ~30% (chi phi co hoi + overtime)
-> - Neu trien khai theo phase, MVP truoc: Chi phi Phase 0+1 khoang **~700 trieu VND**
-> - Ha tang co the dung shared server voi Reborn Retail ban dau: Tiet kiem ~50% ha tang
+### 6.5. Du kien hoan von
 
-### 7.5. Du kien doanh thu & Hoan von
+| Chi so | Gia tri |
+|--------|---------|
+| So thanh vien muc tieu | 200 |
+| Phi trung binh/thanh vien/thang | 2,000,000 VND |
+| Doanh thu phi thanh vien/thang | 400,000,000 VND |
+| Doanh thu dich vu them/thang (uoc) | 100,000,000 VND |
+| **Tong doanh thu/thang** | **500,000,000 VND** |
+| **Tong doanh thu/nam** | **6,000,000,000 VND** |
+| Chi phi van hanh (uoc 40%) | 2,400,000,000 VND |
+| **Loi nhuan gop/nam** | **3,600,000,000 VND** |
+| **Hoan von phan mem** | **~7 thang** |
 
-| Chi so | Gia tri | Cach tinh |
-|--------|---------|-----------|
-| So thanh vien muc tieu | 200 | Yeu cau ban dau |
-| Phi trung binh/thanh vien/thang | 2,000,000 VND | Trung binh cac goi |
-| Doanh thu phi thanh vien/thang | 400,000,000 VND | 200 x 2,000,000 |
-| Doanh thu dich vu them/thang (uoc) | 100,000,000 VND | F&B, khoa hoc, dich vu le |
-| **Tong doanh thu/thang** | **500,000,000 VND** | |
-| **Tong doanh thu/nam** | **6,000,000,000 VND** | |
-| Chi phi van hanh (40%) | 2,400,000,000 VND | Nhan su, dien nuoc, nguyen lieu |
-| **Loi nhuan gop/nam** | **3,600,000,000 VND** | |
-| **Thoi gian hoan von phan mem** | **~7 thang** | 2 ty / (3.6 ty / 12 thang) |
-
-> **Ghi chu:** Day la uoc tinh lac quan. Thuc te phu thuoc vao toc do tuyen thanh vien va chi phi van hanh cua toa nha.
+> Uoc tinh tham khao. Thuc te phu thuoc toc do tuyen thanh vien va chi phi van hanh toa nha.
 
 ---
 
-## 8. RUI RO & GIAI PHAP
+## 7. RUI RO & GIAI PHAP
 
-### 8.1. Rui ro ky thuat
+### 7.1. Rui ro ky thuat
 
-| # | Rui ro | Muc do | Giai phap |
-|---|--------|:------:|-----------|
-| 1 | Tich hop phan cung (NFC, POS) gap van de tuong thich | CAO | PoC som (Phase 0), chon thiet bi co SDK/API tot, co phuong an du phong (QR thay NFC) |
-| 2 | Performance khi scale (nhieu check-in dong thoi) | TRUNG BINH | Redis cache, database indexing, load testing tu Phase 1 |
-| 3 | Codebase Reborn Retail qua lon, kho bao tri | CAO | Phase 0 cleanup ky, loai bo module REMOVE, refactor component lon |
-| 4 | Khong co test tu dong | CAO | Setup Vitest + RTL tu Phase 0, viet test cho module moi |
-| 5 | Bao mat (token localStorage, thieu CSP) | CAO | Chuyen HTTP-only cookie (Phase 3), them CSP headers |
+| Rui ro | Muc do | Giai phap |
+|--------|:------:|-----------|
+| Tich hop phan cung (NFC, POS) gap van de tuong thich | Cao | PoC som (Phase 0), chon thiet bi co SDK/API tot, QR lam phuong an du phong |
+| Performance khi nhieu check-in dong thoi | TB | Redis cache, database indexing, load testing tu Phase 1 |
+| He thong mat ket noi POS/dau doc | TB | Che do offline co ban, tu dong dong bo khi co mang |
 
-### 8.2. Rui ro kinh doanh
+### 7.2. Rui ro kinh doanh
 
-| # | Rui ro | Muc do | Giai phap |
-|---|--------|:------:|-----------|
-| 1 | Khong du 200 thanh vien ban dau | CAO | MVP som (thang 3), marketing som, chuong trinh early-bird |
-| 2 | Thanh vien huy sau 1-2 thang | TRUNG BINH | Tich diem, CLB, su kien, gia tri cong dong giu chan |
-| 3 | Doi tac khong hop tac | TRUNG BINH | Mo hinh chia se doanh thu hap dan, ho tro marketing |
-| 4 | Thay doi yeu cau lien tuc | CAO | Agile/Sprint 2 tuan, MVP → iterate, user feedback loop |
+| Rui ro | Muc do | Giai phap |
+|--------|:------:|-----------|
+| Khong du 200 thanh vien ban dau | Cao | MVP som (T3), marketing som, chuong trinh early-bird giam gia |
+| Thanh vien huy sau 1-2 thang | TB | Gia tri cong dong (CLB, su kien, ket noi), loyalty giu chan |
+| Doi tac khong hop tac | TB | Mo hinh chia se doanh thu hap dan, ho tro marketing |
+| Yeu cau thay doi lien tuc | Cao | Agile 2 tuan/sprint, MVP → iterate, feedback loop |
 
-### 8.3. Rui ro van hanh
+### 7.3. Rui ro van hanh
 
-| # | Rui ro | Muc do | Giai phap |
-|---|--------|:------:|-----------|
-| 1 | Nhan vien chua quen he thong | TRUNG BINH | Training 2 tuan truoc go-live, tai lieu huong dan, support hotline |
-| 2 | The/thiet bi hong | THAP | Du phong the, QR backup tren app, bao hanh thiet bi |
-| 3 | Server down | THAP | Monitoring (Sentry), backup tu dong, SLA 99.5% |
+| Rui ro | Muc do | Giai phap |
+|--------|:------:|-----------|
+| Nhan vien chua quen he thong | TB | Training 2 tuan truoc go-live, tai lieu huong dan |
+| The/thiet bi hong | Thap | Du phong the, QR backup tren dien thoai |
+| Server down | Thap | Monitoring tu dong, backup hang ngay, SLA 99.5% |
 
 ---
 
-## 9. PHU LUC
-
-### 9.1. Bang doi chieu chuc nang Reborn Retail → Community Hub
-
-| Module Reborn Retail | Trang thai | Module Community Hub |
-|---------------------|:----------:|---------------------|
-| CustomerService | ADAPT | MemberService |
-| MembershipClass | ADAPT | MembershipPlanService |
-| LoyaltyService | ADAPT | PointService |
-| CardService | ADAPT | MemberCardService |
-| CounterSales | REUSE | POS (F&B, dich vu) |
-| ProductService | REUSE | Menu/Catalog (F&B) |
-| InventoryService | REUSE (don gian) | Kho F&B |
-| ServiceService | ADAPT | DichVuService (spa, gym, yoga) |
-| ScheduleTreatment | ADAPT | BookingService |
-| TreatmentHistory | REUSE | LichSuDichVu |
-| CHAccommodation | ADAPT | PhongLuuTru |
-| CHCheckin | ADAPT | CheckInService |
-| CHCourses | ADAPT | KhoaHocService |
-| CHPartners | ADAPT | DoiTacService |
-| CHFeedback | ADAPT | PhanHoiService |
-| CHReport* (6 loai) | ADAPT | BaoCaoService |
-| CashbookService | REUSE | SoCaiTienMat |
-| DebtManagement | REUSE | CongNo |
-| PaymentMethod | REUSE | PhuongThucThanhToan |
-| NotificationService | ADAPT | ThongBaoService |
-| EmployeeService | REUSE | NhanVienService |
-| ShiftService | REUSE | CaLamViec |
-| TimekeepingService | REUSE | ChamCong |
-| DashboardCH | ADAPT | DashboardCongDong |
-| CxmSurvey | ADAPT | KhaoSatService |
-| BPM (workflow) | REUSE | QuyTrinh (duyet khoa hoc, xu ly khieu nai) |
-| — | **NEW** | RecurringBillingService |
-| — | **NEW** | FamilySharingService |
-| — | **NEW** | PhysicalAuthService |
-| — | **NEW** | ReferralService |
-| — | **NEW** | KOLLeaderService |
-| — | **NEW** | ClubManagementService |
-| — | **NEW** | CoWorkingSpaceService |
-| — | **NEW** | CommunityBoardService |
-| Shipping | REMOVE | — |
-| MultiChannelSales | REMOVE | — |
-| CallCenter | REMOVE | — |
-| SocialCRM | REMOVE | — |
-| ContractService (phuc tap) | REMOVE | — |
-| SupplierService (phuc tap) | REMOVE | — |
-
-### 9.2. Tech Stack tong hop
-
-| Layer | Cong nghe | Version |
-|-------|-----------|---------|
-| Frontend | React + TypeScript | 18.3 + 4.5 |
-| Build | Vite | 7.x |
-| UI Grid | AG Grid | 30.x |
-| Charts | Highcharts | 9.x |
-| Calendar | React Big Calendar (date-fns) | 1.x |
-| Editor | Slate.js | 0.x |
-| Workflow | BPMN.js | — |
-| QR Code | QRCode.react | — |
-| State | React Context + React Query (moi) | — |
-| API | Fetch + fetch-intercept | — |
-| Auth | JWT + NFC/QR | — |
-| Notification | Firebase FCM | 9.x |
-| i18n | i18next | — |
-| Styling | SCSS + CSS Variables | — |
-
-### 9.3. Doi ngu de xuat
-
-| Vai tro | So luong | Thoi gian | Ghi chu |
-|---------|:--------:|:---------:|---------|
-| Product Owner | 1 | Full-time | Dinh huong san pham, uu tien backlog |
-| Tech Lead / Architect | 1 | 9 thang | Thiet ke kien truc, code review, mentoring |
-| Senior Backend Dev | 2 | 8 thang | API, database, business logic |
-| Senior Frontend Dev | 2 | 8 thang | UI/UX implementation, tich hop POS |
-| QA Engineer | 1 | 6 thang | Test plan, automation test, UAT |
-| UI/UX Designer | 1 | 3 thang | Wireframe, UI design, user research |
-| DevOps (ban thoi gian) | 1 | 3 thang | CI/CD, server, monitoring |
-
----
-
-*Tai lieu nay duoc tao dua tren phan tich codebase Reborn Retail (nhanh community-hub) va yeu cau nghiep vu moi.*
-*Moi thong tin chi phi la uoc tinh, can duoc xac nhan lai khi trien khai thuc te.*
-
-*— Reborn Team, 2026-04-10*
+*Tai lieu de xuat giai phap — Reborn Community*
+*Ngay: 2026-04-10*
