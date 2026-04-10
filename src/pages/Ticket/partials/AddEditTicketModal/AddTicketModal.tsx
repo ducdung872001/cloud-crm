@@ -635,7 +635,7 @@ export default function AddTicketModal(props: IAddTicketModalProps) {
                 <div className="list-field">
                   {listFieldVoteInfo.map((field, index) => (
                     <FieldCustomize
-                      key={index}
+                      key={field.name || index}
                       field={field}
                       handleUpdate={(value) => handleChangeValidate(value, field, formData, validations, listFieldVoteInfo, setFormData)}
                       formData={formData}
@@ -681,7 +681,7 @@ export default function AddTicketModal(props: IAddTicketModalProps) {
                 <div className="lst-field--date">
                   {listFieldDate.map((field, index) => (
                     <FieldCustomize
-                      key={index}
+                      key={field.name || index}
                       field={field}
                       handleUpdate={(value) => handleChangeValidate(value, field, formData, validations, listFieldDate, setFormData)}
                       formData={formData}

@@ -685,7 +685,7 @@ export default function WarrantyModal(props: IAddWarrantyModelProps) {
                             <div className="list-field">
                             {listFieldWarrantyService.map((field, index) => (
                                 <FieldCustomize
-                                key={index}
+                                key={field.name || index}
                                 field={field}
                                 handleUpdate={(value) => handleChangeValidate(value, field, formData, validations, listFieldWarrantyService, setFormData)}
                                 formData={formData}
@@ -732,7 +732,7 @@ export default function WarrantyModal(props: IAddWarrantyModelProps) {
                         <div className="wrapper-field-reception-department">
                             {listFieldReceptionDepartment.map((field, index) => (
                             <FieldCustomize
-                                key={index}
+                                key={field.name || index}
                                 field={field}
                                 handleUpdate={(value) => handleChangeValidate(value, field, formData, validations, listFieldReceptionDepartment, setFormData)}
                                 formData={formData}

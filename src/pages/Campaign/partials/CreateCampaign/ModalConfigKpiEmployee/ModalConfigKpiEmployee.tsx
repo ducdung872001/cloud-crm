@@ -349,7 +349,7 @@ export default function ModalConfigKpiEmployee(props: Record<string, unknown>) {
               <div className="container-kpi-goal">
                 {listKpiGoal && listKpiGoal.length > 0
                   ? listKpiGoal.map((item, index) => (
-                      <div key={index} style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+                      <div key={item.id ?? index} style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
                         <div className="box-kpi-goal">
                           <div className="name-kpi-goal">
                             <span style={{ fontSize: 14, fontWeight: "400" }}>{item.goalName}</span>

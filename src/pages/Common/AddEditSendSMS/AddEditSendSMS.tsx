@@ -1217,7 +1217,7 @@ export default function AddEditSendSMS(props: ISendSMS) {
                       {listFieldBrandname.map((field, index) => (
                         <FieldCustomize
                           field={field}
-                          key={index}
+                          key={field.name || index}
                           handleUpdate={(value) => handleChangeValidate(value, field, formData, validations, listFieldBrandname, setFormData)}
                           formData={formData}
                         />
@@ -1438,7 +1438,7 @@ export default function AddEditSendSMS(props: ISendSMS) {
                           {listFieldSetupSMS.map((field, index) => (
                             <FieldCustomize
                               field={field}
-                              key={index}
+                              key={field.name || index}
                               handleUpdate={(value) => handleChangeValidate(value, field, formData, validations, listFieldSetupSMS, setFormData)}
                               formData={formData}
                             />

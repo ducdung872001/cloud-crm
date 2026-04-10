@@ -691,7 +691,7 @@ export default function ImportModal(props: IImportModalProps) {
                                               : false;
                                           return (
                                             <Checkbox
-                                              key={index}
+                                              key={el.id ?? index}
                                               checked={isCheckChildren}
                                               label={el.name}
                                               onChange={(e) => checkOneChildren(el, e.target.checked)}

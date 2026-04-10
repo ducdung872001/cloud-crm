@@ -95,7 +95,7 @@ export default function ConnectionChannel() {
 
         <div className="list-app">
             {listChannel.map((item, index) => (
-                <div key={index} className='item-app' style={item.active === 1 ? {borderColor: 'green'} : {}}>
+                <div key={item.id ?? index} className='item-app' style={item.active === 1 ? {borderColor: 'green'} : {}}>
                     <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center'}}>
                         <div className="logo" style={{backgroundColor: item.color}}>
                             <span style={{fontSize: 14, fontWeight: '700', color: 'white'}}>{item.logo}</span>

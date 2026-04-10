@@ -1020,7 +1020,7 @@ export default function AddCashBookModal(props: AddCashBookModalProps) {
               {listField.map((field, index) =>
                 field.name !== "note" ? (
                   <FieldCustomize
-                    key={index}
+                    key={field.name || index}
                     field={field}
                     handleUpdate={(value) => handleChangeValidate(value, field, formData, validations, listField, setFormData)}
                     formData={formData}
@@ -1033,7 +1033,7 @@ export default function AddCashBookModal(props: AddCashBookModalProps) {
               {listField.map((field, index) =>
                 field.name === "note" ? (
                   <FieldCustomize
-                    key={index}
+                    key={field.name || index}
                     field={field}
                     handleUpdate={(value) => handleChangeValidate(value, field, formData, validations, listField, setFormData)}
                     formData={formData}

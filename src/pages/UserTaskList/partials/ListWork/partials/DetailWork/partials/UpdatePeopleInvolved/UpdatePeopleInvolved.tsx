@@ -149,7 +149,7 @@ export default function UpdatePeopleInvolved(props: Record<string, unknown>) {
                 <div style={{ display: "flex", flexDirection: "column", gap: "1rem 0" }}>
                   {jobListAssign && jobListAssign.length > 0
                     ? jobListAssign.map((item, index) => (
-                        <div key={index} className="info-jobassign">
+                        <div key={item.id ?? index} className="info-jobassign">
                           <img loading="lazy" src={item?.avatar ? item?.avatar : ImageThirdGender} alt={item?.name} />
                           <div className="info-manager">
                             <span className="name">{item?.name}</span>

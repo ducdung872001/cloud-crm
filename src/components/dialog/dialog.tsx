@@ -88,7 +88,7 @@ export default function Dialog(props: IDialog) {
                 <div className="dialog__actions--left">
                   {contentDialog?.customButtons?.map((button, index) => (
                     <Button
-                      key={index}
+                      key={button.id ?? index}
                       type={button.type}
                       autoFocus={button.autoFocus}
                       className={button.className}

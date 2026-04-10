@@ -1794,7 +1794,7 @@ export default function ConfigZalo(props: Record<string, unknown>) {
                       {formData.conditionContact &&
                         formData.conditionContact.length > 0 &&
                         formData.conditionContact.map((item, index) => (
-                          <div key={index}>
+                          <div key={item.id ?? index}>
                             <span className="view__logical">{formData.logicalCondition === "and" ? "And" : "Or"}</span>
                             <div className="setting_lv2">
                               <div style={{ width: "46%" }}>
@@ -2236,7 +2236,7 @@ export default function ConfigZalo(props: Record<string, unknown>) {
                                       item.rule.length > 0 &&
                                       item.rule.map((el, index) => {
                                         return (
-                                          <Fragment key={index}>
+                                          <Fragment key={el.id ?? index}>
                                             <div className="item__rule">
                                               <div className="lst__info--rule">
                                                 <div className="info-item">

@@ -789,7 +789,7 @@ export default function ModalImport(props: Record<string, unknown>) {
                                               : false;
                                           return (
                                             <Checkbox
-                                              key={index}
+                                              key={el.id ?? index}
                                               checked={isCheckChildren}
                                               label={el.name}
                                               onChange={(e) => checkOneChildren(el, e.target.checked)}

@@ -714,7 +714,7 @@ export default function CreateSaleflow() {
               </div>
             </div>
             {listApproach.map((item, index) => (
-              <div key={index} className="container_approach_sale">
+              <div key={item.id ?? index} className="container_approach_sale">
                 <div style={{ width: "53%" }}>
                   <Input
                     fill={true}

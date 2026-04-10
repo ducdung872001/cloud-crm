@@ -337,7 +337,7 @@ export default function ModalAddWarehouse(props: AddInventoryModalProps) {
               {listFieldBeautyBranch.map((field, index) => (
                 <FieldCustomize
                   field={field}
-                  key={index}
+                  key={field.name || index}
                   handleUpdate={(value) => handleChangeValidate(value, field, formData, validations, listFieldBeautyBranch, setFormData)}
                   formData={formData}
                 />
@@ -345,7 +345,7 @@ export default function ModalAddWarehouse(props: AddInventoryModalProps) {
 
               {listField.map((field, index) => (
                 <FieldCustomize
-                  key={index}
+                  key={field.name || index}
                   field={field}
                   handleUpdate={(value) => handleChangeValidate(value, field, formData, validations, listField, setFormData)}
                   formData={formData}

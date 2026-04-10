@@ -934,7 +934,7 @@ function Header(props: HeaderProps) {
               <div className="notification__wrapper">
                 <ul>
                   {listNotification.list_noti.map((n, index) => (
-                    <li key={index} onClick={(e) => readNotification(e, n)} className={`notification-item${!n.is_read ? " unread" : ""}`}>
+                    <li key={n.id ?? index} onClick={(e) => readNotification(e, n)} className={`notification-item${!n.is_read ? " unread" : ""}`}>
                       {n.type === "order" ? (
                         <div className="notification-item__icon order">
                           <Icon name="Order" />

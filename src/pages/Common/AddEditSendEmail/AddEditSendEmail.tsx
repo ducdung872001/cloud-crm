@@ -1997,7 +1997,7 @@ export default function AddEditSendEmail(props: ISendEmail) {
                           {listFieldSetupEmail.map((field, index) => (
                             <FieldCustomize
                               field={field}
-                              key={index}
+                              key={field.name || index}
                               handleUpdate={(value) => handleChangeValidate(value, field, formData, validations, listFieldSetupEmail, setFormData)}
                               formData={formData}
                             />

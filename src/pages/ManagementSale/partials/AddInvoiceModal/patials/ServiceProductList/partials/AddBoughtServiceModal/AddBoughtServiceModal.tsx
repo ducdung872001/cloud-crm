@@ -746,7 +746,7 @@ export default function AddBoughtServiceModal(props: AddBoughtServiceProps) {
             <div className={`list-form-group ${data?.serviceNumber ? "dependent" : ""} ${isBeauty && isBeauty != "1" ? "not-spa" : ""}`}>
               {listField.map((field, index) => (
                 <FieldCustomize
-                  key={index}
+                  key={field.name || index}
                   field={field}
                   handleUpdate={(value) => handleChangeValidate(value, field, formData, validations, listField, setFormData)}
                   formData={formData}

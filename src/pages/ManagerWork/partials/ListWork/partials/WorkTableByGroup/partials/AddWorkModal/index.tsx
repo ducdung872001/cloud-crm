@@ -747,7 +747,7 @@ export default function AddWorkModal(props: IAddWorkModelProps) {
                 <div className="title-work">Nội dung công việc</div>
                 {listFieldAddWork.map((field, index) => (
                   <FieldCustomize
-                    key={index}
+                    key={field.name || index}
                     field={field}
                     handleUpdate={(value) =>
                       handleChangeValidate(value, field, formData, validations, listFieldAddWork, setFormData)
@@ -778,7 +778,7 @@ export default function AddWorkModal(props: IAddWorkModelProps) {
                   <div className="title-work">Giao việc</div>
                   {listFieldAssign.map((field, index) => (
                     <FieldCustomize
-                      key={index}
+                      key={field.name || index}
                       field={field}
                       handleUpdate={(value) =>
                         handleChangeValidate(value, field, formData, validations, listFieldAssign, setFormData)

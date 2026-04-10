@@ -230,7 +230,7 @@ export default function ListChat(props: IListChatZaloProps) {
                           {JSON.parse(item.attachments || "[]").map((el, index) => {
                             return (
                               <Fancybox
-                                key={index}
+                                key={el.id ?? index}
                                 options={{
                                   Carousel: {
                                     infinite: true,

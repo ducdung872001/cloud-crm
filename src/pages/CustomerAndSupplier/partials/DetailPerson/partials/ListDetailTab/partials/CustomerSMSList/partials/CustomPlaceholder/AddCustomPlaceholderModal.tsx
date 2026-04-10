@@ -171,7 +171,7 @@ export default function AddCustomPlaceholderModal(props: ICustomPlaceholderModal
           <ModalBody>
             <div className="list-form-group">
               {(formData?.values?.codes ? formData?.values?.codes : []).map((field, index) => (
-                <div className="form-group" id={`Field${convertToId(field)}`} key={index}>
+                <div className="form-group" id={`Field${convertToId(field)}`} key={field.name || index}>
                   <Input
                     type={'text'}
                     label={field}

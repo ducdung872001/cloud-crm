@@ -800,7 +800,7 @@ export default function AddCustomerAttributeModal(props: AddCustomerAttributeMod
             <div className="list-form-group">
               {/* {listField.map((field, index) => (
                 <FieldCustomize
-                  key={index}
+                  key={field.name || index}
                   field={field}
                   handleUpdate={(value) => handleChangeValidate(value, field, formData, validations, listField, setFormData)}
                   formData={formData}
@@ -808,7 +808,7 @@ export default function AddCustomerAttributeModal(props: AddCustomerAttributeMod
               ))} */}
               {listFieldFirst.map((field, index) => (
                 <FieldCustomize
-                  key={index}
+                  key={field.name || index}
                   field={field}
                   handleUpdate={(value) => handleChangeValidate(value, field, formData, validations, listFieldFirst, setFormData)}
                   formData={formData}
@@ -948,7 +948,7 @@ export default function AddCustomerAttributeModal(props: AddCustomerAttributeMod
 
               {listFieldSecond.map((field, index) => (
                 <FieldCustomize
-                  key={index}
+                  key={field.name || index}
                   field={field}
                   handleUpdate={(value) => handleChangeValidate(value, field, formData, validations, listFieldSecond, setFormData)}
                   formData={formData}

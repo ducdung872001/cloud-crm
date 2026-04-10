@@ -279,7 +279,7 @@ export default function AttachmentsList(props: IAttachmentsListProps) {
 
                       {item.medias.map((el, index) => {
                         return (
-                          <div key={index} className="desc__attachment">
+                          <div key={el.id ?? index} className="desc__attachment">
                             <div className="desc__attachment--left">
                               {el.type !== "image" ? (
                                 <div className="img__file">

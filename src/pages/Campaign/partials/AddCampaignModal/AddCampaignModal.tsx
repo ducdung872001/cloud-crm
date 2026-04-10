@@ -2167,7 +2167,7 @@ export default function AddCampaignModal(props: IAddCampaignModalProps) {
               {setupStep == 1
                 ? listField.map((field, index) => (
                     <FieldCustomize
-                      key={index}
+                      key={field.name || index}
                       field={field}
                       handleUpdate={(value) => handleChangeValidate(value, field, formData, validations, listField, setFormData)}
                       formData={formData}
@@ -2175,7 +2175,7 @@ export default function AddCampaignModal(props: IAddCampaignModalProps) {
                   ))
                 : listFieldMethods.map((field, index) => (
                     <FieldCustomize
-                      key={index}
+                      key={field.name || index}
                       field={field}
                       handleUpdate={(value) => handleChangeValidate(value, field, formData, validations, listFieldMethods, setFormData)}
                       formData={formData}

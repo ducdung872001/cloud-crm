@@ -625,7 +625,7 @@ export default function ModalAddMA(props: ModalAddMAProps) {
             <div className="list-form-group-addMA">
               {listField.map((field, index) => (
                 <FieldCustomize
-                  key={index}
+                  key={field.name || index}
                   field={field}
                   handleUpdate={(value) => handleChangeValidate(value, field, formData, validations, listField, setFormData)}
                   formData={formData}

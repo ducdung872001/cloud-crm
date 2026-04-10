@@ -767,7 +767,7 @@ export default function AddObjectAttributeModal(props: AddObjectAttributeModalPr
             <div className="list-form-group">
               {listFieldFirst.map((field, index) => (
                 <FieldCustomize
-                  key={index}
+                  key={field.name || index}
                   field={field}
                   handleUpdate={(value) => handleChangeValidate(value, field, formData, validations, listFieldFirst, setFormData)}
                   formData={formData}

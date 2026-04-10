@@ -479,7 +479,7 @@ export default function Reference({ processId, dataBusinessRule, listMappingInpu
           <div>
             {listMappingInput && listMappingInput.length > 0
               ? listMappingInput.map((item, index) => (
-                  <div key={index} className="container-mapping-show">
+                  <div key={item.id ?? index} className="container-mapping-show">
                     <div className="form-group">
                       <Input
                         fill={true}
@@ -526,7 +526,7 @@ export default function Reference({ processId, dataBusinessRule, listMappingInpu
           <div>
             {listMappingOutput && listMappingOutput.length > 0
               ? listMappingOutput.map((item, index) => (
-                  <div key={index} className="container-mapping-show">
+                  <div key={item.id ?? index} className="container-mapping-show">
                     <div className="form-group">
                       <Input
                         fill={true}

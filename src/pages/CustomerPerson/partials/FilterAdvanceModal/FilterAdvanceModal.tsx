@@ -580,7 +580,7 @@ export default function FilterAdvanceModal(props: Record<string, unknown>) {
                   </div>
                   <div className="filter-option">
                     {listFilterOption.map((item, index) => (
-                      <div key={index} className="filter-item">
+                      <div key={item.id ?? index} className="filter-item">
                         <div
                           onClick={() => {
                             // setFilterAdvance(item.data);
@@ -650,7 +650,7 @@ export default function FilterAdvanceModal(props: Record<string, unknown>) {
               ) : null}
               {listField.map((field, index) => (
                 <FieldCustomize
-                  key={index}
+                  key={field.name || index}
                   field={field}
                   handleUpdate={(value) => handleChangeValidate(value, field, formData, validations, listField, setFormData)}
                   formData={formData}

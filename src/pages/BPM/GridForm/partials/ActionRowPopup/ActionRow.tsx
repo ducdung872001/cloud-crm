@@ -112,7 +112,7 @@ export default function ActionRow(props: INoteFieldProps) {
           {listTypeTitle.map((item, index) => {
             return (
               <div
-                key={index}
+                key={item.id ?? index}
                 className="item-action"
                 onClick={() => {
                   let newList = [...listTypeTitle];

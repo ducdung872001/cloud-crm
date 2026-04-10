@@ -525,7 +525,7 @@ export default function AddEventModal(props: Record<string, unknown>) {
               {listField.map((field, index) =>
                 field.label === "Tên liên hệ" || field.label === "Số điện thoại" ? (
                   <FieldCustomize
-                    key={index}
+                    key={field.name || index}
                     field={field}
                     handleUpdate={(value) => handleChangeValidate(value, field, formData, validations, listField, setFormData)}
                     formData={formData}
@@ -620,7 +620,7 @@ export default function AddEventModal(props: Record<string, unknown>) {
               {listField.map((field, index) =>
                 field.label === "Tên liên hệ" || field.label === "Số điện thoại" ? null : (
                   <FieldCustomize
-                    key={index}
+                    key={field.name || index}
                     field={field}
                     handleUpdate={(value) => handleChangeValidate(value, field, formData, validations, listField, setFormData)}
                     formData={formData}

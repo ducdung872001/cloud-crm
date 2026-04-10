@@ -387,7 +387,7 @@ export default function AddPermissionModal(props: Record<string, unknown>) {
                 <div className="list-form-group">
                   {listField.map((field, index) => (
                     <FieldCustomize
-                      key={index}
+                      key={field.name || index}
                       field={field}
                       handleUpdate={(value) => handleChangeValidate(value, field, formData, validations, listField, setFormData)}
                       formData={formData}
@@ -461,7 +461,7 @@ export default function AddPermissionModal(props: Record<string, unknown>) {
                 <div className="list-form-add-permission">
                   {listFieldAdd.map((field, index) => (
                     <FieldCustomize
-                      key={index}
+                      key={field.name || index}
                       field={field}
                       handleUpdate={(value) => handleChangeValidate(value, field, formDataAdd, validationsAdd, listFieldAdd, setFormDataAdd)}
                       formData={formDataAdd}

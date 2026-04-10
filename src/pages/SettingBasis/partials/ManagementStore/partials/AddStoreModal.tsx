@@ -365,7 +365,7 @@ export default function AddStoreModal(props: AddStoreModalProps) {
               <div className="form-basic-info-branch">
                 {listFieldBasic.map((field, index) =>
                   field.name === "address" ? (
-                    <div key={index} className="address-with-map">
+                    <div key={field.name || index} className="address-with-map">
                       <div className="address-with-map__input">
                         <FieldCustomize
                           field={field}
@@ -379,7 +379,7 @@ export default function AddStoreModal(props: AddStoreModalProps) {
                     </div>
                   ) : (
                     <FieldCustomize
-                      key={index}
+                      key={field.name || index}
                       field={field}
                       handleUpdate={(value) => handleChangeValidate(value, field, formData, validations, listFieldBasic, setFormData)}
                       formData={formData}
@@ -426,7 +426,7 @@ export default function AddStoreModal(props: AddStoreModalProps) {
                 </div>
                 {listFieldAdvanced.map((field, index) => (
                   <FieldCustomize
-                    key={index}
+                    key={field.name || index}
                     field={field}
                     handleUpdate={(value) => handleChangeValidate(value, field, formData, validations, listFieldAdvanced, setFormData)}
                     formData={formData}
@@ -437,7 +437,7 @@ export default function AddStoreModal(props: AddStoreModalProps) {
                 <FileUpload type="avatar" label="Ảnh đại diện" formData={formData} setFormData={setFormData} />
                 {listFieldDescription.map((field, index) => (
                   <FieldCustomize
-                    key={index}
+                    key={field.name || index}
                     field={field}
                     handleUpdate={(value) => handleChangeValidate(value, field, formData, validations, listFieldDescription, setFormData)}
                     formData={formData}

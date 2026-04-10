@@ -919,7 +919,7 @@ export default function ViewDetailPerson(props: IViewDetailPersonProps) {
                   {telesaleCallList.map((item, index) =>
                     index === 0 || index === 1 ? (
                       <div
-                        key={index}
+                        key={item.id ?? index}
                         style={{ border: "1px dashed var(--extra-color-20)", borderRadius: "5px", padding: "1rem", marginBottom: "1rem" }}
                       >
                         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
@@ -1121,7 +1121,7 @@ export default function ViewDetailPerson(props: IViewDetailPersonProps) {
             {
               isShowStatusLoan &&
                 cashStatusTNEX.map((item, index) => (
-                  <div key={index} style={{ paddingLeft: "1.2rem", marginBottom: "1rem", display: "flex", justifyContent: "space-between" }}>
+                  <div key={item.id ?? index} style={{ paddingLeft: "1.2rem", marginBottom: "1rem", display: "flex", justifyContent: "space-between" }}>
                     <div style={{ width: "30%" }}>
                       <span style={{ fontSize: 14, fontWeight: "600" }}>{item.product}</span>
                     </div>
@@ -1201,7 +1201,7 @@ export default function ViewDetailPerson(props: IViewDetailPersonProps) {
             {
               isShowStatusOnboard &&
                 onBoardStatusTNEX.map((item, index) => (
-                  <div key={index} style={{ paddingLeft: "1.2rem", marginBottom: "1rem", display: "flex", justifyContent: "space-between" }}>
+                  <div key={item.id ?? index} style={{ paddingLeft: "1.2rem", marginBottom: "1rem", display: "flex", justifyContent: "space-between" }}>
                     <div style={{ width: "30%" }}>
                       <span style={{ fontSize: 14, fontWeight: "600" }}>{item.product}</span>
                     </div>

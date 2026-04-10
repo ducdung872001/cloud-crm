@@ -1038,7 +1038,7 @@ export default function AddServiceModal(props: IAddServiceModalProps) {
           <div className="list__field--basic">
             {listFieldBasic.map((field, index) => (
               <FieldCustomize
-                key={index}
+                key={field.name || index}
                 field={field}
                 handleUpdate={(value) => handleChangeValidate(value, field, formData, validations, listFieldBasic, setFormData)}
                 formData={formData}
@@ -1050,7 +1050,7 @@ export default function AddServiceModal(props: IAddServiceModalProps) {
             {/* <div className={`list__field--advanced`}>
               {listFieldAdvanced.map((field, index) => (
                 <FieldCustomize
-                  key={index}
+                  key={field.name || index}
                   field={field}
                   handleUpdate={(value) => handleChangeValidate(value, field, formData, validations, listFieldAdvanced, setFormData)}
                   formData={formData}
@@ -1062,7 +1062,7 @@ export default function AddServiceModal(props: IAddServiceModalProps) {
               <div className="field__price--item">
                 {listFieldPrice.map((field, index) => (
                   <FieldCustomize
-                    key={index}
+                    key={field.name || index}
                     field={field}
                     handleUpdate={(value) => handleChangeValidate(value, field, formData, validations, listFieldPrice, setFormData)}
                     formData={formData}
@@ -1075,7 +1075,7 @@ export default function AddServiceModal(props: IAddServiceModalProps) {
           {/* <div className={`list__field--advanced`}>
             {listFieldAdvanced.map((field, index) => (
               <FieldCustomize
-                key={index}
+                key={field.name || index}
                 field={field}
                 handleUpdate={(value) => handleChangeValidate(value, field, formData, validations, listFieldAdvanced, setFormData)}
                 formData={formData}
@@ -1087,7 +1087,7 @@ export default function AddServiceModal(props: IAddServiceModalProps) {
             <div className="field__price--item">
               {listFieldPrice.map((field, index) => (
                 <FieldCustomize
-                  key={index}
+                  key={field.name || index}
                   field={field}
                   handleUpdate={(value) => handleChangeValidate(value, field, formData, validations, listFieldPrice, setFormData)}
                   formData={formData}
@@ -1132,7 +1132,7 @@ export default function AddServiceModal(props: IAddServiceModalProps) {
 
             {listFieldIntroduce.map((field, index) => (
               <FieldCustomize
-                key={index}
+                key={field.name || index}
                 field={field}
                 handleUpdate={(value) => handleChangeValidate(value, field, formData, validations, listFieldIntroduce, setFormData)}
                 formData={formData}

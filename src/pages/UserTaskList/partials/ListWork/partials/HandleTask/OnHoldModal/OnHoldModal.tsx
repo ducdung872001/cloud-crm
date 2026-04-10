@@ -574,7 +574,7 @@ export default function OnHoldModal(props: Record<string, unknown>) {
                     {listAttactment && listAttactment.length > 0
                       ? listAttactment.map((item, index) => (
                           <div
-                            key={index}
+                            key={item.id ?? index}
                             className="item-attachment"
                             onDoubleClick={() => {
                               window.open(

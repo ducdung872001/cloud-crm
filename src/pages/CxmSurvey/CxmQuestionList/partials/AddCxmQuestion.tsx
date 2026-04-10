@@ -274,7 +274,7 @@ export default function AddCxmQuestion(props: Record<string, unknown>) {
               <div className="form-basic-info-cxm_question">
                 {listFieldBasic.map((field, index) => (
                   <FieldCustomize
-                    key={index}
+                    key={field.name || index}
                     field={field}
                     handleUpdate={(value) => handleChangeValidate(value, field, formData, validations, listFieldBasic, setFormData)}
                     formData={formData}

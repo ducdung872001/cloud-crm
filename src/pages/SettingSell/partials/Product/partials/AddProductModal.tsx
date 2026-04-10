@@ -1141,7 +1141,7 @@ export default function AddProductModal(props: AddProductProps) {
             <div className="list-form-group">
               {listFieldBasic.map((field, index) => (
                 <FieldCustomize
-                  key={index}
+                  key={field.name || index}
                   field={field}
                   handleUpdate={(value) => handleChangeValidate(value, field, formData, validations, listFieldBasic, setFormData)}
                   formData={formData}
@@ -1150,7 +1150,7 @@ export default function AddProductModal(props: AddProductProps) {
               <div className="option__field--lst">
                 {listFieldOption.map((field, index) => (
                   <FieldCustomize
-                    key={index}
+                    key={field.name || index}
                     field={field}
                     handleUpdate={(value) => handleChangeValidate(value, field, formData, validations, listFieldOption, setFormData)}
                     formData={formData}
@@ -1201,7 +1201,7 @@ export default function AddProductModal(props: AddProductProps) {
                 <div className="exchange__default">
                   {listFieldAdvanced.map((field, index) => (
                     <FieldCustomize
-                      key={index}
+                      key={field.name || index}
                       field={field}
                       handleUpdate={(value) => handleChangeValidate(value, field, formData, validations, listFieldAdvanced, setFormData)}
                       formData={formData}

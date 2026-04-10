@@ -4149,7 +4149,7 @@ export default function CreateCampaign() {
               </div>
             </div>
             {listApproach.map((item, index) => (
-              <div key={index} className="container_approach_sale">
+              <div key={item.id ?? index} className="container_approach_sale">
                 <div style={{ width: "63%" }}>
                   <Input
                     fill={true}
@@ -4376,7 +4376,7 @@ export default function CreateCampaign() {
                 <span style={{ fontSize: 16, fontWeight: "500" }}>Zalo</span>
                 <div style={{ marginTop: 10 }}>
                   {settingZalo.map((item, index) => (
-                    <div key={index} className="setting">
+                    <div key={item.id ?? index} className="setting">
                       <div style={{ width: "30%" }}>
                         <SelectCustom
                           id=""
@@ -4498,7 +4498,7 @@ export default function CreateCampaign() {
                 <span style={{ fontSize: 16, fontWeight: "500" }}>SMS</span>
                 <div style={{ marginTop: 10 }}>
                   {settingSms.map((item, index) => (
-                    <div key={index} className="setting">
+                    <div key={item.id ?? index} className="setting">
                       <div style={{ width: "30%" }}>
                         <SelectCustom
                           id=""
@@ -4634,7 +4634,7 @@ export default function CreateCampaign() {
                 <span style={{ fontSize: 16, fontWeight: "500" }}>Call</span>
                 <div style={{ marginTop: 10 }}>
                   {settingCall.map((item, index) => (
-                    <div key={index} className="setting">
+                    <div key={item.id ?? index} className="setting">
                       <div style={{ width: "30%" }}>
                         <SelectCustom
                           id=""
@@ -4821,7 +4821,7 @@ export default function CreateCampaign() {
                   <div className="container-kpi-goal">
                     {dataKpiGoal && dataKpiGoal.length > 0
                       ? dataKpiGoal.map((item, index) => (
-                          <div key={index} style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+                          <div key={item.id ?? index} style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
                             <div className="box-kpi-goal">
                               <div className="name-kpi-goal">
                                 <span style={{ fontSize: 14, fontWeight: "400" }}>{item.label}</span>

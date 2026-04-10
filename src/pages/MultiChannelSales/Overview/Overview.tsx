@@ -366,7 +366,7 @@ ${chs.map(ch => `<Row>
             const pct = Math.round((item.revenue / maxRevenue) * 100);
 
             return (
-              <div key={index} className="line-body">
+              <div key={item.id ?? index} className="line-body">
                 <div style={{ display: "flex", gap: "0 1.5rem", alignItems: "center" }}>
                   <div className="avatar" style={{ backgroundColor: cfg.bg }}>
                     <span style={{ fontSize: 12, fontWeight: "700", color: "white" }}>

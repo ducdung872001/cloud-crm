@@ -3324,7 +3324,7 @@ export default function CustomerPersonList() {
                             <span style={{ fontWeight: 500 }}>Nguồn thành viên:</span>{" "}
                             <span style={{ fontSize: 14, fontWeight: 400 }}>
                               {filterAdvance.sourceIds.map((item, index) => (
-                                <span key={index}>
+                                <span key={item.id ?? index}>
                                   {item.label}, {` `}
                                 </span>
                               ))}
@@ -3332,7 +3332,7 @@ export default function CustomerPersonList() {
                           </span>
                         </div>
                         {/* <div>
-                          <span style={{fontSize: 14, fontWeight: 400}}>{filterAdvance.sourceIds.map((item, index) => (<span key={index}>{item.label}, {` `}</span>))}</span>
+                          <span style={{fontSize: 14, fontWeight: 400}}>{filterAdvance.sourceIds.map((item, index) => (<span key={item.id ?? index}>{item.label}, {` `}</span>))}</span>
                         </div> */}
                       </div>
                       <div
@@ -3357,7 +3357,7 @@ export default function CustomerPersonList() {
                             <span style={{ fontWeight: 500 }}>Người phụ trách:</span>{" "}
                             <span style={{ fontSize: 14, fontWeight: 400 }}>
                               {filterAdvance.employeeIds.map((item, index) => (
-                                <span key={index}>
+                                <span key={item.id ?? index}>
                                   {item.label}, {` `}
                                 </span>
                               ))}
@@ -3387,7 +3387,7 @@ export default function CustomerPersonList() {
                             <span style={{ fontWeight: 500 }}>Trạng thái cuộc gọi:</span>{" "}
                             <span style={{ fontSize: 14, fontWeight: 400 }}>
                               {filterAdvance.callStatuses.map((item, index) => (
-                                <span key={index}>
+                                <span key={item.id ?? index}>
                                   {item.label}, {` `}
                                 </span>
                               ))}
@@ -3425,7 +3425,7 @@ export default function CustomerPersonList() {
                               <span style={{ fontWeight: 500 }}>{label}:</span>{" "}
                               <span style={{ fontSize: 14, fontWeight: 400 }}>
                                 {values.map((item, index) => (
-                                  <span key={index}>
+                                  <span key={item.id ?? index}>
                                     {item === "empty" ? "Chưa có trạng thái" : item}
                                     {index < values.length - 1 ? ", " : ""}
                                   </span>

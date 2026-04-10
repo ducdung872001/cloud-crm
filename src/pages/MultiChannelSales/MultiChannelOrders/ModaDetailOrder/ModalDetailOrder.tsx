@@ -245,7 +245,7 @@ export default function ModalDetailOrder(props: Record<string, unknown>) {
         <ModalBody>
           <div className="kanban-order">
             {dataStep.map((item, index) => (
-              <div key={index}>
+              <div key={item.id ?? index}>
                 <div className="item-kanban">
                   <div
                     className="step-kanban"

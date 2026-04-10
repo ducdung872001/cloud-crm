@@ -37,7 +37,6 @@
 | # | Item | Status | Chi tiet |
 |---|------|:------:|----------|
 | 3 | Component qua lon | `CRIT` | Top: CustomerPersonList (71 useState), CustomerAndSupplier (56), ModalCustomPopup (51) |
-| 4 | key={index} | `CRIT` | **597 instances** trong 250+ files |
 | 5 | React.memo | `CRIT` | Chi **12/2,504** files dung memo |
 | 6 | Inline style={{}} | `HIGH` | **1,264 instances** trong 250+ files |
 | 7 | AbortController | `CRIT` | **0 files** dung AbortController (1,210 fetch calls) |
@@ -145,15 +144,12 @@
 |---|------|----------|--------|
 | 1 | Them **ErrorBoundary** component, wrap App root | CRITICAL | Thap |
 | 2 | Bat ESLint: `exhaustive-deps: "warn"`, `no-explicit-any: "warn"` | CRITICAL | Thap |
-| 3 | Thay 13 file **alert()** -> showToast | HIGH | Thap |
 | 4 | Install husky, kich hoat pre-commit hook | HIGH | Thap |
 
 ### Nhom 2 — Fix som (1-2 tuan)
 
 | # | Viec | Severity | Effort |
 |---|------|----------|--------|
-| 5 | Migrate **moment -> date-fns** (40 files) | HIGH | Trung binh |
-| 6 | Fix **lodash full import** (65 files) -> import cu the | CRITICAL | Trung binh |
 | 7 | Them `loading="lazy"` cho img tags | CRITICAL | Thap |
 | 8 | Fix **@types/react** v17 -> v18 | CRITICAL | Thap |
 

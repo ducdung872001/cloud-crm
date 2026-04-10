@@ -304,7 +304,7 @@ export default function AddPartnerEmailModel(props: IAddPartnerEmailModelProps) 
                 {listFieldPartner.map((field, index) => (
                   <FieldCustomize
                     field={field}
-                    key={index}
+                    key={field.name || index}
                     handleUpdate={(value) => handleChangeValidate(value, field, formData, validations, listFieldPartner, setFormData)}
                     formData={formData}
                   />
@@ -356,7 +356,7 @@ export default function AddPartnerEmailModel(props: IAddPartnerEmailModelProps) 
                 {listFieldContact.map((field, index) => (
                   <FieldCustomize
                     field={field}
-                    key={index}
+                    key={field.name || index}
                     handleUpdate={(value) => handleChangeValidate(value, field, formData, validations, listFieldContact, setFormData)}
                     formData={formData}
                   />

@@ -1718,17 +1718,17 @@ export default function AddCustomerCompanyModal(props: AddCustomerModalProps) {
                   listFieldBeautyBranch.map((field, index) => (
                     <FieldCustomize
                       field={field}
-                      key={index}
+                      key={field.name || index}
                       handleUpdate={(value) => handleChangeValidate(value, field, formData, validations, listFieldBeautyBranch, setFormData)}
                       formData={formData}
                     />
                   ))}
                 <div style={{ display: "flex", justifyContent: "space-between", width: "100%" }}>
                   {listFieldCustType.map((field, index) => (
-                    <div key={index} style={{ width: "48%" }}>
+                    <div key={field.name || index} style={{ width: "48%" }}>
                       <FieldCustomize
                         field={field}
-                        key={index}
+                        key={field.name || index}
                         handleUpdate={(value) => handleChangeValidate(value, field, formData, validations, listFieldCustType, setFormData)}
                         formData={formData}
                       />
@@ -1741,7 +1741,7 @@ export default function AddCustomerCompanyModal(props: AddCustomerModalProps) {
                     {listFieldInfoCustomer.map((field, index) => (
                       <FieldCustomize
                         field={field}
-                        key={index}
+                        key={field.name || index}
                         handleUpdate={(value) => handleChangeValidate(value, field, formData, validations, listFieldInfoCustomer, setFormData)}
                         formData={formData}
                       />
@@ -1751,7 +1751,7 @@ export default function AddCustomerCompanyModal(props: AddCustomerModalProps) {
                 {listFieldInfoDetailCustomer.map((field, index) => (
                   <FieldCustomize
                     field={field}
-                    key={index}
+                    key={field.name || index}
                     handleUpdate={(value) => handleChangeValidate(value, field, formData, validations, listFieldInfoDetailCustomer, setFormData)}
                     formData={formData}
                   />
@@ -1762,7 +1762,7 @@ export default function AddCustomerCompanyModal(props: AddCustomerModalProps) {
                 {listFieldInfoAdditionalCustomer.map((field, index) => (
                   <FieldCustomize
                     field={field}
-                    key={index}
+                    key={field.name || index}
                     handleUpdate={(value) => handleChangeValidate(value, field, formData, validations, listFieldInfoAdditionalCustomer, setFormData)}
                     formData={formData}
                   />

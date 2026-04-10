@@ -520,7 +520,7 @@ export default function InfoProcess(props: Record<string, unknown>) {
                 <tr key={item.value}>
                   {item.map((el, index) => {
                     return (
-                      <td key={index} style={{ textAlign: `${el.type === "number" ? "right" : el.type === "select" ? "center" : "left"}` }}>
+                      <td key={el.id ?? index} style={{ textAlign: `${el.type === "number" ? "right" : el.type === "select" ? "center" : "left"}` }}>
                         {el.type === "number" ? formatCurrency(Object.values(el)[0], ",", "") : Object.values(el)[0]}
                       </td>
                     );

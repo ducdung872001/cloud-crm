@@ -290,7 +290,7 @@ export default function ModalComment(props: IImportModalProps) {
                 <div className="list-comment">
                   {dataComment.map((item, index) => {
                     return (
-                      <div className="item-parent" key={index}>
+                      <div className="item-parent" key={item.id ?? index}>
                         <div className="item-comment">
                           <div className={item?.childrent?.length ? "line-comment" : "d-none"}></div>
                           <div className="item-comment--top">

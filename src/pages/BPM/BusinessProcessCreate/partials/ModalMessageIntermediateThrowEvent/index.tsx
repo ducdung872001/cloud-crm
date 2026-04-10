@@ -859,7 +859,7 @@ export default function ModalMessageIntermediateThrowEvent({ onShow, onHide, dat
                 </div>
                 {listInputVar && listInputVar.length > 0
                   ? listInputVar.map((item, index) => (
-                      <div key={index} className="list-item-inputVar">
+                      <div key={item.id ?? index} className="list-item-inputVar">
                         <div className="item-inputVar">
                           <Input
                             id="nameInput"
@@ -1007,7 +1007,7 @@ export default function ModalMessageIntermediateThrowEvent({ onShow, onHide, dat
                 </div>
                 {listOutVar && listOutVar.length > 0
                   ? listOutVar.map((item, index) => (
-                      <div key={index} className="list-item-outVar">
+                      <div key={item.id ?? index} className="list-item-outVar">
                         <div className="item-outVar">
                           <Input
                             id="name"

@@ -444,7 +444,7 @@ export default function AddCustomerCardModal(props: AddCardModalProps) {
             <div className="list-form-group">
               {listField.map((field, index) => (
                 <FieldCustomize
-                  key={index}
+                  key={field.name || index}
                   field={field}
                   handleUpdate={(value) => handleChangeValidate(value, field, formData, validations, listField, setFormData)}
                   formData={formData}
@@ -460,7 +460,7 @@ export default function AddCustomerCardModal(props: AddCardModalProps) {
                   </div>
                   {listInputVar && listInputVar.length > 0
                     ? listInputVar.map((item, index) => (
-                        <div key={index} className="list-item-inputVar">
+                        <div key={item.id ?? index} className="list-item-inputVar">
                           <div className="item-inputVar">
                             <Input
                               id="nameInput"

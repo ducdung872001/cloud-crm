@@ -205,7 +205,7 @@ export default function AddSupplierModal({ onShow, data, onHide }: Props) {
         <div className="list-form-group">
           {LIST_FIELD.map((field, index) => (
             <FieldCustomize
-              key={index}
+              key={field.name || index}
               field={field}
               formData={formData}
               handleUpdate={(value) =>

@@ -206,7 +206,7 @@ export default function ListComment(props: IListCommentProps) {
                       <div className="wrapper__comment--owner">
                         {item.replies.map((el, index) => {
                           return (
-                            <div key={index} className="info__owner">
+                            <div key={el.id ?? index} className="info__owner">
                               <p className="desc__content">{el.content}</p>
                               <span className="time-comment">
                                 {formatDateCustom(el.publishedTime, "HH:mm")} {el._profile_id === el._fanpage_id ? <Icon name="Checked" /> : ""}

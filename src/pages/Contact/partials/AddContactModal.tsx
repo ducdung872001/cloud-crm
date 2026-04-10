@@ -1391,7 +1391,7 @@ export default function AddContactModal(props: AddContactModalProps) {
               {listField.map((field, index) =>
                 field.label === "Tên liên hệ" || field.label === "Số điện thoại" ? (
                   <FieldCustomize
-                    key={index}
+                    key={field.name || index}
                     field={field}
                     handleUpdate={(value) => handleChangeValidate(value, field, formData, validations, listField, setFormData)}
                     formData={formData}
@@ -1490,7 +1490,7 @@ export default function AddContactModal(props: AddContactModalProps) {
               {listField.map((field, index) =>
                 field.label === "Chức vụ" || field.label === "Phòng ban" ? (
                   <FieldCustomize
-                    key={index}
+                    key={field.name || index}
                     field={field}
                     handleUpdate={(value) => handleChangeValidate(value, field, formData, validations, listField, setFormData)}
                     formData={formData}
@@ -1548,7 +1548,7 @@ export default function AddContactModal(props: AddContactModalProps) {
                 field.label === "Ghi chú" ? (
                   <div style={{ width: "100%" }}>
                     <FieldCustomize
-                      key={index}
+                      key={field.name || index}
                       field={field}
                       handleUpdate={(value) => handleChangeValidate(value, field, formData, validations, listField, setFormData)}
                       formData={formData}
@@ -1646,7 +1646,7 @@ export default function AddContactModal(props: AddContactModalProps) {
               {listField.map((field, index) =>
                 field.name === "employeeId" || field.name === "coordinators" ? (
                   <FieldCustomize
-                    key={index}
+                    key={field.name || index}
                     field={field}
                     handleUpdate={(value) => handleChangeValidate(value, field, formData, validations, listField, setFormData)}
                     formData={formData}

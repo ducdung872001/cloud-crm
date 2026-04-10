@@ -116,7 +116,7 @@ export default function ListDetailTabPartner(props: IListTabDetailProps) {
                             <ul className="menu-lv2--list">
                               {item.children.map((el, index) => (
                                 <li
-                                  key={index}
+                                  key={el.id ?? index}
                                   className={`children-item ${el.tab_children === tabChildren ? "active-lv2-children" : ""}`}
                                   onClick={() => {
                                     setTabChildren(el.tab_children);

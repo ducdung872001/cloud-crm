@@ -316,7 +316,7 @@ export default function ModalAddAttachment(props: Record<string, unknown>) {
                     {listFieldBasic.map((field, index) => (
                         field.label === 'Loại tài liệu' &&
                         <FieldCustomize
-                            key={index}
+                            key={field.name || index}
                             field={field}
                             handleUpdate={(value) => handleChangeValidate(value, field, formData, validations, listFieldBasic, setFormData)}
                             formData={formData}
@@ -347,7 +347,7 @@ export default function ModalAddAttachment(props: Record<string, unknown>) {
                     {listFieldBasic.map((field, index) => (
                         field.label !== 'Loại tài liệu' &&
                         <FieldCustomize
-                            key={index}
+                            key={field.name || index}
                             field={field}
                             handleUpdate={(value) => handleChangeValidate(value, field, formData, validations, listFieldBasic, setFormData)}
                             formData={formData}

@@ -250,7 +250,7 @@ export default function AddUserModal(props: Record<string, unknown>) {
               {listField.map((field, index) => (
                 <FieldCustomize
                   field={field}
-                  key={index}
+                  key={field.name || index}
                   handleUpdate={(value) => handleChangeValidate(value, field, formData, validations, listField, setFormData)}
                   formData={formData}
                 />

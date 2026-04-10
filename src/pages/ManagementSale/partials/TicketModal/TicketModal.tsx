@@ -749,7 +749,7 @@ const dataMappingArray = (item: ITicketResponseModel, index: number) => [
                         <div className="list-field">
                         {listFieldVoteInfo.map((field, index) => (
                             <FieldCustomize
-                            key={index}
+                            key={field.name || index}
                             field={field}
                             handleUpdate={(value) => handleChangeValidate(value, field, formData, validations, listFieldVoteInfo, setFormData)}
                             formData={formData}
@@ -796,7 +796,7 @@ const dataMappingArray = (item: ITicketResponseModel, index: number) => [
                     <div className="wrapper-field-reception-department">
                         {listFieldReceptionDepartment.map((field, index) => (
                         <FieldCustomize
-                            key={index}
+                            key={field.name || index}
                             field={field}
                             handleUpdate={(value) => handleChangeValidate(value, field, formData, validations, listFieldReceptionDepartment, setFormData)}
                             formData={formData}

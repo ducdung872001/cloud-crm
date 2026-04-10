@@ -414,7 +414,7 @@ export default function ModalAddWhiteList(props: Record<string, unknown>) {
                 <div className="list-form-group-WhiteList">
                   {listFieldWhiteList.map((field, index) => (
                     <FieldCustomize
-                      key={index}
+                      key={field.name || index}
                       field={field}
                       handleUpdate={(value) =>
                         handleChangeValidate(value, field, formDataWhiteList, validationsWhiteList, listFieldWhiteList, setFormDataWhiteList)

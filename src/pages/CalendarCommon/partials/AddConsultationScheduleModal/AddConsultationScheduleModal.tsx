@@ -951,7 +951,7 @@ export default function AddConsultationScheduleModal(props: IAddConsultationSche
                                   ) : (
                                     item.time.map((el, index) => {
                                       return (
-                                        <div key={index} className="item__choose--time">
+                                        <div key={el.id ?? index} className="item__choose--time">
                                           <div className="data__time">
                                             <div className="form-time" ref={refContainerStartTime}>
                                               <Input
@@ -1400,7 +1400,7 @@ export default function AddConsultationScheduleModal(props: IAddConsultationSche
             <div className="list-form-group">
               {listField.map((field, index) => (
                 <FieldCustomize
-                  key={index}
+                  key={field.name || index}
                   field={field}
                   handleUpdate={(value) => handleChangeValidate(value, field, formData, validations, listField, setFormData)}
                   formData={formData}

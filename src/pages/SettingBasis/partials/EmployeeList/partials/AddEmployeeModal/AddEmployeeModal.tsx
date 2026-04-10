@@ -1078,7 +1078,7 @@ export default function AddEmployeeModal(props: AddEmployeeModalProps) {
                 <div style={{ width: "65%" }}>
                   {listFieldInfoBasicEmployee.map((field, index) => (
                     <FieldCustomize
-                      key={index}
+                      key={field.name || index}
                       field={field}
                       handleUpdate={(value) => handleChangeValidate(value, field, formData, validations, listFieldInfoBasicEmployee, setFormData)}
                       formData={formData}
@@ -1105,7 +1105,7 @@ export default function AddEmployeeModal(props: AddEmployeeModalProps) {
               <div className="list-form-enhance">
                 {listFieldEnhance.map((field, index) => (
                   <FieldCustomize
-                    key={index}
+                    key={field.name || index}
                     field={field}
                     handleUpdate={(value) => handleChangeValidate(value, field, formData, validations, listFieldEnhance, setFormData)}
                     formData={formData}

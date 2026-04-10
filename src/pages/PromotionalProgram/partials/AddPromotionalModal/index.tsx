@@ -364,7 +364,7 @@ export default function AddPromotionalModal({ onShow, data, onHide }: Props) {
             <div className="list-form-group">
               {listField.map((field, index) => (
                 <FieldCustomize
-                  key={index}
+                  key={field.name || index}
                   field={field}
                   handleUpdate={(value) =>
                     handleChangeValidate(

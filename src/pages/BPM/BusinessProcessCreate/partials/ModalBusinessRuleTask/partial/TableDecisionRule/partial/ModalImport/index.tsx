@@ -472,7 +472,7 @@ export default function ModalImport(props: Record<string, unknown>) {
                       </div>
                       <ul>
                         {lstIndexErros.map((item, index) => (
-                          <li key={index}>
+                          <li key={item.id ?? index}>
                             STT {item.rowIndex} - Trường "{item.fieldName.replace(".", " - ")}": {item.errorMessage}
                           </li>
                         ))}

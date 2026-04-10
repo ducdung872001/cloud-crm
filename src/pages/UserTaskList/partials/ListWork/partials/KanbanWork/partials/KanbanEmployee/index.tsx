@@ -166,7 +166,7 @@ export default function KanbanEmployee(props: IKanbanEmployeeProps) {
                           {column.items.map((el, index) => {
                             return (
                               <TaskItem
-                                key={index}
+                                key={el.id ?? index}
                                 totalTask={column.items.length}
                                 item={el}
                                 index={index}

@@ -164,7 +164,7 @@ export default function ViettelWizard({ setActiveTab }: ViettelWizardProps) {
                             <div className="fg mb12">
                                 {listFieldStep1.slice(0, 4).map((field, index) => (
                                     <FieldCustomize
-                                        key={index}
+                                        key={field.name || index}
                                         field={field}
                                         handleUpdate={(value) => handleChangeValidate(value, field, formData, validations, listFieldStep1, setFormData)}
                                         formData={formData}
@@ -174,7 +174,7 @@ export default function ViettelWizard({ setActiveTab }: ViettelWizardProps) {
                             <div className="fg full mb12">
                                 {listFieldStep1.slice(4).map((field, index) => (
                                     <FieldCustomize
-                                        key={index}
+                                        key={field.name || index}
                                         field={field}
                                         handleUpdate={(value) => handleChangeValidate(value, field, formData, validations, listFieldStep1, setFormData)}
                                         formData={formData}
@@ -275,7 +275,7 @@ export default function ViettelWizard({ setActiveTab }: ViettelWizardProps) {
                                 <div className="fg">
                                     {listFieldTendoo.map((field, index) => (
                                         <FieldCustomize
-                                            key={index}
+                                            key={field.name || index}
                                             field={field}
                                             handleUpdate={(value) => handleChangeValidate(value, field, formData, validations, listFieldTendoo, setFormData)}
                                             formData={formData}
@@ -295,7 +295,7 @@ export default function ViettelWizard({ setActiveTab }: ViettelWizardProps) {
                                 <div className="fg">
                                     {listFieldHost.map((field, index) => (
                                         <FieldCustomize
-                                            key={index}
+                                            key={field.name || index}
                                             field={field}
                                             handleUpdate={(value) => handleChangeValidate(value, field, formData, validations, listFieldHost, setFormData)}
                                             formData={formData}
@@ -315,7 +315,7 @@ export default function ViettelWizard({ setActiveTab }: ViettelWizardProps) {
                                 <div className="fg">
                                     {listFieldBhd.map((field, index) => (
                                         <FieldCustomize
-                                            key={index}
+                                            key={field.name || index}
                                             field={field}
                                             handleUpdate={(value) => handleChangeValidate(value, field, formData, validations, listFieldBhd, setFormData)}
                                             formData={formData}

@@ -1151,7 +1151,7 @@ export default function AdvaceRule({ dataNode, processId, childProcessId, dataCo
                                                       field.value.map((item, index) => {
                                                         return (
                                                           <div
-                                                            key={index}
+                                                            key={item.id ?? index}
                                                             className="value-compare-in add-value-compare-in"
                                                             onClick={() => {
                                                               setShowEditListValueIn(true);

@@ -1163,9 +1163,9 @@ const DetailTask = (props: Record<string, unknown>) => {
                               </div>
                               <div className="list_document">
                                 {data?.attachments.map((item, index) => (
-                                  <Tippy key={index} content="Mở File">
+                                  <Tippy key={item.id ?? index} content="Mở File">
                                     <div
-                                      key={index}
+                                      key={item.id ?? index}
                                       className="item_document"
                                       onClick={() => {
                                         // setIsModalViewDocument(true);
@@ -1372,7 +1372,7 @@ const DetailTask = (props: Record<string, unknown>) => {
                     <div className="container_note_project">
                       {/* <div className="column_road">
                             {listWorkPause.map((item, index) => (
-                              <div key={index} className="item_column_road">
+                              <div key={item.id ?? index} className="item_column_road">
                                 <div className="icon">
                                   <Icon name='NoteDetailWork'/>
                                 </div>
@@ -1383,7 +1383,7 @@ const DetailTask = (props: Record<string, unknown>) => {
 
                       <div className="container_step">
                         {listWorkPause.map((item, index) => (
-                          <div key={index} style={{ width: "100%", display: "flex", gap: "0 1.3rem" }}>
+                          <div key={item.id ?? index} style={{ width: "100%", display: "flex", gap: "0 1.3rem" }}>
                             <div className="item_column_road">
                               <div className="icon">
                                 <Icon name="NoteDetailWork" />

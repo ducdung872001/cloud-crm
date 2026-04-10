@@ -458,7 +458,7 @@ export default function MarketingReport(props: Record<string, unknown>) {
                     <div className="list-form-group-marketing-report">
                         {listFieldReport.map((field, index) => (
                             <FieldCustomize
-                                key={index}
+                                key={field.name || index}
                                 field={field}
                                 handleUpdate={(value) => handleChangeValidate(value, field, formDataReport, validationsAppendx, listFieldReport, setFormDataReport)}
                                 formData={formDataReport}

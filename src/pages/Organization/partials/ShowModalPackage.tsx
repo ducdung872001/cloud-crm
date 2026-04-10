@@ -379,7 +379,7 @@ export default function ShowModalPackage(props: IShowModalPackageProps) {
                               <div className="lst__function" style={!item.data.isMore ? { height: "19rem" } : { height: "auto" }}>
                                 {item.data.function.map((el, index) => {
                                   return (
-                                    <div key={index} className="item-function">
+                                    <div key={el.id ?? index} className="item-function">
                                       <span className="icon">
                                         <Icon name="CheckFill" />
                                       </span>

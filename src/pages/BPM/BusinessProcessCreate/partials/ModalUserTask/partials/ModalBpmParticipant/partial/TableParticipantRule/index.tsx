@@ -1136,7 +1136,7 @@ export default function TableParticipantRule({ dataNode, processId, childProcess
                                                       field.value.map((item, index) => {
                                                         return (
                                                           <div
-                                                            key={index}
+                                                            key={item.id ?? index}
                                                             className="value-compare-in add-value-compare-in"
                                                             onClick={() => {
                                                               setShowEditListValueIn(true);
