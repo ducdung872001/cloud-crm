@@ -272,6 +272,7 @@ export default function SaleInvoiceList() {
 
   // ── State ──────────────────────────────────────────────────────────────────
   const [invoiceId, setInvoiceId]                   = useState<number | null>(null);
+  const [selectedCustomerInfo, setSelectedCustomerInfo] = useState<{ name?: string; phone?: string; points?: number; tier?: string } | undefined>(undefined);
   const [orderDetailModalOpen, setOrderDetailOpen]  = useState(false);
   const [receiptInvoiceId, setReceiptInvoiceId]     = useState<number | null>(null);
   const [receiptModalOpen, setReceiptModalOpen]     = useState(false);
@@ -450,7 +451,12 @@ export default function SaleInvoiceList() {
     }
   };
 
-  const handleViewDetail   = useCallback((id: number | null) => { setInvoiceId(id); setOrderDetailOpen(true); }, []);
+  const handleViewDetail   = useCallback((id: number | null) => {
+    setInvoiceId(id);
+    const order = listSaleInvoice.find((o) => Number(o.id) === id);
+    setSelectedCustomerInfo(order ? { name: order.customer.name, phone: order.customer.phone, points: order.customer.points, tier: order.customer.tier } : undefined);
+    setOrderDetailOpen(true);
+  }, [listSaleInvoice]);
   const handleConfirmOrder = useCallback(() => setOrderDetailOpen(false), []);
   const handleViewReceipt  = useCallback((id: number | null) => { setReceiptInvoiceId(id); setReceiptModalOpen(true); }, []);
   const handleCollectDebt  = useCallback((order: Order) => {
@@ -498,7 +504,7 @@ export default function SaleInvoiceList() {
 
       <OrderDetailModal
         open={orderDetailModalOpen}
-        onClose={() => { setInvoiceId(null); setOrderDetailOpen(false); }}
+        onClose={() => { setInvoiceId(null); setSelectedCustomerInfo(undefined); setOrderDetailOpen(false); }}
         onPrint={() => {
           setOrderDetailOpen(false);
           setReceiptInvoiceId(invoiceId);
@@ -506,6 +512,7 @@ export default function SaleInvoiceList() {
         }}
         invoiceId={invoiceId ?? -1}
         onConfirm={handleConfirmOrder}
+        customerInfo={selectedCustomerInfo}
       />
 
       <InvoiceReceiptModal

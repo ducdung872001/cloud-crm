@@ -40,8 +40,8 @@ interface PayModalProps {
   open:            boolean;
   cartItems:       CartItem[];
   onClose:         () => void;
-  /** paid = số tiền khách thực trả; debt = số tiền còn nợ */
-  onConfirm:       (invoiceId: number | null, paid: number, debt: number) => void;
+  /** paid = số tiền thực thu; debt = số tiền còn nợ; cashGiven = tiền khách đưa */
+  onConfirm:       (invoiceId: number | null, paid: number, debt: number, cashGiven: number) => void;
   invoiceId:       number | null;
   method:          PayMethod;
   setMethod:       (method: PayMethod) => void;
@@ -169,7 +169,7 @@ export default function PayModal({
   const handleConfirm = () => {
     // Không cho hoàn thành nếu có nợ mà chưa chọn khách hàng
     if (needCustomerForDebt) return;
-    onConfirm(invoiceId, effectivePaid, debt);
+    onConfirm(invoiceId, effectivePaid, debt, method === "cash" ? customerPaid : total);
   };
 
   const actions: IActionModal = useMemo(() => ({

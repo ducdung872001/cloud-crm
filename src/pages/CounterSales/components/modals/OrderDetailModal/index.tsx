@@ -7,12 +7,20 @@ import { formatDateCustom } from "utils/dateUtils";
 
 import { formatCurrency } from "reborn-util";
 
+interface OrderCustomerInfo {
+  name?: string;
+  phone?: string;
+  points?: number;
+  tier?: string;
+}
+
 interface OrderDetailModalProps {
   open: boolean;
   onClose: () => void;
   onPrint: () => void;
   onConfirm: () => void;
   invoiceId: number | null;
+  customerInfo?: OrderCustomerInfo;
 }
 
 const TIMELINE = [
@@ -49,13 +57,27 @@ const MOCK_DETAIL_INVOICE = {
   ],
 };
 
-export default function OrderDetailModal({ open, onClose, onPrint, onConfirm, invoiceId }: OrderDetailModalProps) {
+export default function OrderDetailModal({ open, onClose, onPrint, onConfirm, invoiceId, customerInfo }: OrderDetailModalProps) {
   const { dataInvoice: dataInvoiceApi, isLoading } = useGetDetailInvoice({
     invoiceId: invoiceId ?? undefined,
     enabled: invoiceId && invoiceId > 0 ? true : false,
   });
 
-  const dataInvoice = dataInvoiceApi ?? MOCK_DETAIL_INVOICE;
+  // Merge customer info từ danh sách order vào data invoice
+  const dataInvoice = useMemo(() => {
+    const base = dataInvoiceApi ?? MOCK_DETAIL_INVOICE;
+    if (!customerInfo) return base;
+    return {
+      ...base,
+      customer: {
+        ...base.customer,
+        name: customerInfo.name || base.customer?.name || "Khách vãng lai",
+        phone: customerInfo.phone || base.customer?.phone || "",
+        points: customerInfo.points ?? base.customer?.points ?? 0,
+        rank: customerInfo.tier || base.customer?.rank || "",
+      },
+    };
+  }, [dataInvoiceApi, customerInfo]);
   const actions = useMemo<IActionModal>(
     () => ({
       actions_right: {
@@ -133,10 +155,14 @@ export default function OrderDetailModal({ open, onClose, onPrint, onConfirm, in
               <div className="od-panel">
                 <div className="od-panel__title">Khách hàng</div>
                 <div className="od-panel__name">{dataInvoice.customer.name}</div>
-                <div className="od-panel__sub">{dataInvoice.customer.phone}</div>
-                <div className="od-panel__sub">
-                  ⭐ {dataInvoice.customer.points} điểm · Hạng {dataInvoice.customer.rank}
-                </div>
+                {dataInvoice.customer.phone && (
+                  <div className="od-panel__sub">{dataInvoice.customer.phone}</div>
+                )}
+                {(dataInvoice.customer.points > 0 || dataInvoice.customer.rank) && (
+                  <div className="od-panel__sub">
+                    ⭐ {dataInvoice.customer.points} điểm{dataInvoice.customer.rank ? ` · Hạng ${dataInvoice.customer.rank}` : ""}
+                  </div>
+                )}
               </div>
               <div className="od-panel">
                 <div className="od-panel__title">Thông tin đơn</div>

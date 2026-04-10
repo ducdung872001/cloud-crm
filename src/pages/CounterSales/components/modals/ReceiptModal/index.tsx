@@ -59,10 +59,14 @@ interface ReceiptModalProps {
   paidAmount?: number;
   /** Số tiền còn nợ (từ PayModal) — ghi vào invoice khi xác nhận */
   debtAmount?: number;
+  /** Tiền khách đưa thực tế (hiển thị trên biên lai) */
+  cashGivenAmount?: number;
   /** Tên khách hàng — truyền vào body để billing dùng khi tạo debt record */
   customerName?: string;
   /** Kho bán hàng (warehouseId) — truyền vào inventoryId để backend lưu */
   warehouseId?: number;
+  /** Phí ship (người nhận trả) */
+  shippingFee?: number;
 }
 
 // ── Component ─────────────────────────────────────────────────────────────────
@@ -74,8 +78,10 @@ export default function ReceiptModal({
   note = "",
   paidAmount,
   debtAmount = 0,
+  cashGivenAmount,
   customerName = "",
   warehouseId,
+  shippingFee = 0,
 }: ReceiptModalProps) {
   const printRef = useRef<HTMLDivElement>(null);
   const qrRef    = useRef<HTMLDivElement>(null);
@@ -93,12 +99,14 @@ export default function ReceiptModal({
   // ── Tính tiền ───────────────────────────────────────────────────────────────
   const subtotal      = cartItems.reduce((s, c) => s + c.price * c.qty, 0);
   const totalDiscount = couponDiscount + promoDiscount;
-  const total         = subtotal - totalDiscount;
+  const total         = subtotal - totalDiscount + shippingFee;
   const fmt           = (n: number) => n.toLocaleString("vi") + " đ";
 
   // Tiền thực thu và nợ — dùng giá trị từ PayModal nếu có, fallback total/0
   const effectivePaid = paidAmount !== undefined ? paidAmount : total;
   const effectiveDebt = debtAmount ?? 0;
+  // Tiền khách đưa thực tế (hiển thị trên biên lai), fallback effectivePaid
+  const displayCashGiven = (cashGivenAmount && cashGivenAmount > 0) ? cashGivenAmount : effectivePaid;
 
   const now     = new Date();
   const dateStr = `${now.getDate().toString().padStart(2,"0")}/${(now.getMonth()+1).toString().padStart(2,"0")}/${now.getFullYear()}`;
@@ -451,6 +459,13 @@ ${html}
               <span style={{ color:"var(--muted)" }}>Giảm giá</span>
               <span className="receipt__discount" style={{ fontWeight:700, color:"var(--red,#e53e3e)" }}>{totalDiscount > 0 ? `−${fmt(totalDiscount)}` : "−0 đ"}</span>
             </div>
+            {shippingFee > 0 && (
+              <div className="receipt__totals-row"
+                style={{ display:"flex", justifyContent:"space-between", padding:"3px 0", fontSize:"1.3rem" }}>
+                <span style={{ color:"var(--muted)" }}>Phí ship</span>
+                <span style={{ fontWeight:700, color:"var(--blue,#0369a1)" }}>+{fmt(shippingFee)}</span>
+              </div>
+            )}
             <div className="receipt__totals-row receipt__totals-row--grand"
               style={{ display:"flex", justifyContent:"space-between", padding:"8px 0",
                        fontSize:"1.5rem", fontWeight:900,
@@ -464,12 +479,12 @@ ${html}
                 <div className="receipt__totals-row"
                   style={{ display:"flex", justifyContent:"space-between", padding:"3px 0", fontSize:"1.3rem" }}>
                   <span style={{ color:"var(--muted)" }}>Tiền khách đưa</span>
-                  <span style={{ fontWeight:700 }}>{fmt(effectivePaid)}</span>
+                  <span style={{ fontWeight:700 }}>{fmt(displayCashGiven)}</span>
                 </div>
                 <div className="receipt__totals-row"
                   style={{ display:"flex", justifyContent:"space-between", padding:"3px 0", fontSize:"1.3rem" }}>
                   <span style={{ color:"var(--muted)" }}>Tiền thối</span>
-                  <span className="receipt__change" style={{ fontWeight:800, color:"var(--blue,#3182ce)" }}>{fmt(Math.max(0, effectivePaid - total))}</span>
+                  <span className="receipt__change" style={{ fontWeight:800, color:"var(--blue,#3182ce)" }}>{fmt(Math.max(0, displayCashGiven - total))}</span>
                 </div>
                 {effectiveDebt > 0 && (
                   <div className="receipt__totals-row"
