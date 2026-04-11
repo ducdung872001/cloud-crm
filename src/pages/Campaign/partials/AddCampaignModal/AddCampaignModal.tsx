@@ -359,7 +359,7 @@ export default function AddCampaignModal(props: IAddCampaignModalProps) {
   const validations: IValidation[] = [
     {
       name: "name",
-      rules: "required",
+      rules: "required|max:100",
     },
   ];
 
@@ -1311,6 +1311,7 @@ export default function AddCampaignModal(props: IAddCampaignModalProps) {
           type: "text",
           fill: true,
           required: true,
+          maxLength: 100,
         },
         {
           label: "Mã chiến dịch",
@@ -1859,7 +1860,7 @@ export default function AddCampaignModal(props: IAddCampaignModalProps) {
       // setValueBranch([]);
       // setDataDepartment([])
     } else {
-      showToast(response.message ?? "Có lỗi xảy ra. Vui lòng thử lại sau", "error");
+      showToast(response.message ?? response.error ?? "Có lỗi xảy ra. Vui lòng thử lại sau", "error");
     }
 
     setIsSubmit(false);
@@ -1877,7 +1878,7 @@ export default function AddCampaignModal(props: IAddCampaignModalProps) {
     if (response.code == 0) {
       setListApproach(response.result);
     } else {
-      showToast(response.message ?? "Có lỗi xảy ra. Vui lòng thử lại sau", "error");
+      showToast(response.message ?? response.error ?? "Có lỗi xảy ra. Vui lòng thử lại sau", "error");
     }
   };
 
@@ -1898,7 +1899,7 @@ export default function AddCampaignModal(props: IAddCampaignModalProps) {
       //Lấy lại danh sách
       loadCampaignApproaches(campaignId);
     } else {
-      showToast(response.message ?? "Có lỗi xảy ra. Vui lòng thử lại sau", "error");
+      showToast(response.message ?? response.error ?? "Có lỗi xảy ra. Vui lòng thử lại sau", "error");
     }
   };
 
@@ -1911,7 +1912,7 @@ export default function AddCampaignModal(props: IAddCampaignModalProps) {
     if (response.code == 0) {
       loadCampaignApproaches(campaignId);
     } else {
-      showToast(response.message ?? "Có lỗi xảy ra. Vui lòng thử lại sau", "error");
+      showToast(response.message ?? response.error ?? "Có lỗi xảy ra. Vui lòng thử lại sau", "error");
     }
   };
 
@@ -1943,7 +1944,7 @@ export default function AddCampaignModal(props: IAddCampaignModalProps) {
     setListSales([]);
     setLstIdSale([]);
 
-    // showToast(response.message ?? "Có lỗi xảy ra. Vui lòng thử lại sau", "error");
+    // showToast(response.message ?? response.error ?? "Có lỗi xảy ra. Vui lòng thử lại sau", "error");
     // setIsSubmit(false);
   };
 

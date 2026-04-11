@@ -186,7 +186,12 @@ export default function AddProductModal(props: AddProductProps) {
   const validations: IValidation[] = [
     {
       name: "name",
-      rules: "required",
+      rules: "required|max:100",
+    },
+
+    {
+      name: "code",
+      rules: "nullable|max:50",
     },
 
     {
@@ -204,7 +209,7 @@ export default function AddProductModal(props: AddProductProps) {
     },
     {
       name: "price",
-      rules: "required|min:0",
+      rules: "required|min_equal:0",
     },
   ];
 
@@ -298,6 +303,7 @@ export default function AddProductModal(props: AddProductProps) {
                     label="Tên sản phẩm"
                     fill={true}
                     required={true}
+                    maxLength={100}
                     value={formData?.values?.name}
                     placeholder="Nhập tên sản phẩm"
                     onChange={(e) => setFormData({ ...formData, values: { ...formData.values, name: e.target.value } })}
@@ -308,6 +314,7 @@ export default function AddProductModal(props: AddProductProps) {
                     name="code"
                     label="Mã sản phẩm"
                     fill={true}
+                    maxLength={50}
                     value={formData?.values?.code}
                     placeholder="Nhập mã sản phẩm"
                     onChange={(e) => setFormData({ ...formData, values: { ...formData.values, code: e.target.value } })}
@@ -412,6 +419,7 @@ export default function AddProductModal(props: AddProductProps) {
           type: "number",
           fill: true,
           required: true,
+          minValue: 0,
         },
       ] as IFieldCustomize[],
     [listUnit, isLoadingUnit]
@@ -646,7 +654,7 @@ export default function AddProductModal(props: AddProductProps) {
       showToast(`${detailProduct ? "Cập nhật" : "Thêm mới"} sản phẩm thành công`, "success");
       handleClear(true);
     } else {
-      showToast(response.message ?? "Có lỗi xảy ra. Vui lòng thử lại sau", "error");
+      showToast(response.error ?? response.message ?? "Có lỗi xảy ra. Vui lòng thử lại sau", "error");
       setIsSubmit(false);
     }
   };

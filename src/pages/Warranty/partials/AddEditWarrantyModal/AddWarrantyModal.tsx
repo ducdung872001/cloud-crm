@@ -171,6 +171,14 @@ export default function AddWarrantyModal(props: IAddWarrantyModelProps) {
       name: "serviceId",
       rules: "required",
     },
+    {
+      name: "solution",
+      rules: "nullable|max:500",
+    },
+    {
+      name: "note",
+      rules: "nullable|max:500",
+    },
   ];
 
   const [formData, setFormData] = useState<IFormData>({
@@ -340,12 +348,14 @@ export default function AddWarrantyModal(props: IAddWarrantyModelProps) {
           name: "solution",
           type: "textarea",
           fill: true,
+          maxLength: 500,
         },
         {
           label: "Ghi chú",
           name: "note",
           type: "textarea",
           fill: true,
+          maxLength: 500,
         },
       ] as IFieldCustomize[],
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -394,7 +404,7 @@ export default function AddWarrantyModal(props: IAddWarrantyModelProps) {
       onHide(true);
       setChangeValueExecutor(null);
     } else {
-      showToast(response.message ?? "Có lỗi xảy ra. Vui lòng thử lại sau", "error");
+      showToast(response.message ?? response.error ?? "Có lỗi xảy ra. Vui lòng thử lại sau", "error");
       setIsSubmit(false);
     }
   };

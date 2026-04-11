@@ -74,8 +74,8 @@ export default function AddPromotionalModal({ onShow, data, onHide }: Props) {
   // Không dùng "required" cho date field vì fieldCustomize type="date"
   // trả về moment object – validate thủ công trong onSubmit
   const validations: IValidation[] = [
-    { name: "name",          rules: "required" },
-    { name: "discount",      rules: "required|number" },
+    { name: "name",          rules: "required|max:100" },
+    { name: "discount",      rules: "required|number|min_equal:0" },
   ];
 
   // Load danh sách SP khi mở modal edit CT đồng giá
@@ -102,8 +102,8 @@ export default function AddPromotionalModal({ onShow, data, onHide }: Props) {
 
   const effectiveValidations: IValidation[] = isFixedPrice
     ? [
-        { name: "name",       rules: "required" },
-        { name: "fixedPrice", rules: "required|number" },
+        { name: "name",       rules: "required|max:100" },
+        { name: "fixedPrice", rules: "required|number|min_equal:0" },
       ]
     : validations;
 
@@ -115,11 +115,12 @@ export default function AddPromotionalModal({ onShow, data, onHide }: Props) {
 
   const listField: IFieldCustomize[] = [
     {
-      label:    "Tên chương trình khuyến mãi",
-      name:     "name",
-      type:     "text",
-      fill:     true,
-      required: true,
+      label:     "Tên chương trình khuyến mãi",
+      name:      "name",
+      type:      "text",
+      fill:      true,
+      required:  true,
+      maxLength: 100,
     },
     {
       label:    "Loại chương trình",
@@ -267,7 +268,7 @@ export default function AddPromotionalModal({ onShow, data, onHide }: Props) {
       );
       onHide(true);
     } else {
-      showToast(res?.message ?? "Có lỗi xảy ra. Vui lòng thử lại", "error");
+      showToast(res?.message ?? res?.error ?? "Có lỗi xảy ra. Vui lòng thử lại", "error");
       setIsSubmit(false);
     }
   };

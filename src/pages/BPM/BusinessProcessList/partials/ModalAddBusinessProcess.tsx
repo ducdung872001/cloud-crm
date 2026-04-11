@@ -70,7 +70,7 @@ export default function ModalAddBusinessProcess(props: Record<string, unknown>) 
       const result = response.result;
       setListStepProcess(result.items);
     } else {
-      showToast(response.message ?? "Có lỗi xảy ra. Vui lòng thử lại sau", "error");
+      showToast(response.message ?? response.error ?? "Có lỗi xảy ra. Vui lòng thử lại sau", "error");
     }
   };
 
@@ -119,7 +119,7 @@ export default function ModalAddBusinessProcess(props: Record<string, unknown>) 
   const validations: IValidation[] = [
     {
       name: "name",
-      rules: "required",
+      rules: "required|max:100",
     },
   ];
 
@@ -205,6 +205,7 @@ export default function ModalAddBusinessProcess(props: Record<string, unknown>) 
           type: "text",
           fill: true,
           required: true,
+          maxLength: 100,
         },
         {
           label: "Mã quy trình",
@@ -212,6 +213,7 @@ export default function ModalAddBusinessProcess(props: Record<string, unknown>) 
           type: "text",
           fill: true,
           required: true,
+          maxLength: 50,
         },
         {
           label: "Mô tả quy trình",
@@ -219,6 +221,7 @@ export default function ModalAddBusinessProcess(props: Record<string, unknown>) 
           type: "textarea",
           fill: true,
           required: false,
+          maxLength: 500,
         },
         {
           name: "employeeId",
@@ -272,6 +275,11 @@ export default function ModalAddBusinessProcess(props: Record<string, unknown>) 
       return;
     }
 
+    if (String(formData?.values.name).length > 100) {
+      showToast("Tên quy trình tối đa 100 ký tự", "error");
+      return;
+    }
+
     if (!formData?.values.employeeId) {
       showToast("Người phụ trách không được để trống", "error");
       return;
@@ -293,7 +301,7 @@ export default function ModalAddBusinessProcess(props: Record<string, unknown>) 
       setIsSubmit(false);
       setTabStep(2);
     } else {
-      showToast(response.message ?? "Có lỗi xảy ra. Vui lòng thử lại sau", "error");
+      showToast(response.message ?? response.error ?? "Có lỗi xảy ra. Vui lòng thử lại sau", "error");
       setIsSubmit(false);
     }
   };
@@ -313,7 +321,7 @@ export default function ModalAddBusinessProcess(props: Record<string, unknown>) 
       clearForm(true, true);
       setIsSubmit(true);
     } else {
-      showToast(response.message ?? "Có lỗi xảy ra. Vui lòng thử lại sau", "error");
+      showToast(response.message ?? response.error ?? "Có lỗi xảy ra. Vui lòng thử lại sau", "error");
       setIsSubmit(false);
     }
   };
@@ -332,7 +340,7 @@ export default function ModalAddBusinessProcess(props: Record<string, unknown>) 
       showToast(`Cài đặt SLA thành công`, "success");
       clearForm(true, true);
     } else {
-      showToast(response.message ?? "Có lỗi xảy ra. Vui lòng thử lại sau", "error");
+      showToast(response.message ?? response.error ?? "Có lỗi xảy ra. Vui lòng thử lại sau", "error");
       setIsSubmit(false);
     }
   };
@@ -491,7 +499,7 @@ export default function ModalAddBusinessProcess(props: Record<string, unknown>) 
       getListStepProcess(processId);
       // showToast("Thêm quy trình thành công", "success");
     } else {
-      showToast(response.message ?? "Có lỗi xảy ra. Vui lòng thử lại sau", "error");
+      showToast(response.message ?? response.error ?? "Có lỗi xảy ra. Vui lòng thử lại sau", "error");
     }
   };
 
@@ -529,7 +537,7 @@ export default function ModalAddBusinessProcess(props: Record<string, unknown>) 
       getListStepProcess(processId);
       showToast("Cập bước quy trình thành công", "success");
     } else {
-      showToast(response.message ?? "Có lỗi xảy ra. Vui lòng thử lại sau", "error");
+      showToast(response.message ?? response.error ?? "Có lỗi xảy ra. Vui lòng thử lại sau", "error");
     }
   };
 
@@ -917,7 +925,7 @@ export default function ModalAddBusinessProcess(props: Record<string, unknown>) 
         getObjectAttributes(result.groupId);
       }
     } else {
-      showToast(response.message ?? "Có lỗi xảy ra. Vui lòng thử lại sau", "error");
+      showToast(response.message ?? response.error ?? "Có lỗi xảy ra. Vui lòng thử lại sau", "error");
     }
   };
 

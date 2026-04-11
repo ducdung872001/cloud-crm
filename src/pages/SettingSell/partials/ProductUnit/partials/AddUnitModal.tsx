@@ -35,7 +35,7 @@ export default function AddUnitModal(props: AddUnitModalProps) {
   const validations: IValidation[] = [
     {
       name: "name",
-      rules: "required",
+      rules: "required|max:100",
     },
     {
       name: "position",
@@ -53,6 +53,7 @@ export default function AddUnitModal(props: AddUnitModalProps) {
       type: "text",
       fill: true,
       required: true,
+      maxLength: 100,
     },
     {
       label: "Thứ tự hiển thị",

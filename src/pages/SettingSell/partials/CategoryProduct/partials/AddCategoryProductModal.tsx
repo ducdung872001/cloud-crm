@@ -57,7 +57,7 @@ export default function AddCategoryProductModal(props: IAddCategoryServiceModelP
   const validations: IValidation[] = [
     {
       name: "name",
-      rules: "required",
+      rules: "required|max:100",
     },
     {
       name: "position",
@@ -73,7 +73,7 @@ export default function AddCategoryProductModal(props: IAddCategoryServiceModelP
       fill: true,
       required: true,
       placeholder: "Nhập tên mẫu báo giá",
-      maxLength: 300,
+      maxLength: 100,
     },
     {
       label: "Thứ tự hiển thị",

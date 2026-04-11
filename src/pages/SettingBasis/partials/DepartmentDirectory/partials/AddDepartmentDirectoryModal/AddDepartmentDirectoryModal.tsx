@@ -185,7 +185,7 @@ export default function AddDepartmentDirectoryModal(props: AddDepartmentModalPro
     },
     {
       name: "name",
-      rules: "required",
+      rules: "required|max:100",
     },
     {
       name: "status",
@@ -222,6 +222,7 @@ export default function AddDepartmentDirectoryModal(props: AddDepartmentModalPro
           type: "text",
           fill: true,
           required: true,
+          maxLength: 100,
         },
 
         {
@@ -272,6 +273,7 @@ export default function AddDepartmentDirectoryModal(props: AddDepartmentModalPro
       name: "note",
       type: "textarea",
       fill: true,
+      maxLength: 500,
     },
   ];
 

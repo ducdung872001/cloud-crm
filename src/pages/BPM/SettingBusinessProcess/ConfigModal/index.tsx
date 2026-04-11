@@ -229,7 +229,7 @@ export default function ConfigModal(props: Record<string, unknown>) {
         setListComponent(newList);
       }
     } else {
-      showToast(response.message ?? "Có lỗi xảy ra. Vui lòng thử lại sau", "error");
+      showToast(response.message ?? response.error ?? "Có lỗi xảy ra. Vui lòng thử lại sau", "error");
     }
   };
 
@@ -258,7 +258,7 @@ export default function ConfigModal(props: Record<string, unknown>) {
       }
      
     } else {
-      showToast(response.message ?? "Có lỗi xảy ra. Vui lòng thử lại sau", "error");
+      showToast(response.message ?? response.error ?? "Có lỗi xảy ra. Vui lòng thử lại sau", "error");
     }
   };
 
@@ -726,7 +726,7 @@ export default function ConfigModal(props: Record<string, unknown>) {
               setConfigs(newConfigs);
             }
           } else {
-            showToast(response.message ?? "Có lỗi xảy ra. Vui lòng thử lại sau", "error");
+            showToast(response.message ?? response.error ?? "Có lỗi xảy ra. Vui lòng thử lại sau", "error");
           }
         }
       }
@@ -772,7 +772,7 @@ export default function ConfigModal(props: Record<string, unknown>) {
       // showToast("Xóa quy trình thành công", "success");
       handleLstTabBpm(+dataNode.id);
     } else {
-      showToast(response.message ?? "Có lỗi xảy ra. Vui lòng thử lại sau", "error");
+      showToast(response.message ?? response.error ?? "Có lỗi xảy ra. Vui lòng thử lại sau", "error");
     }
   };
 
@@ -828,7 +828,7 @@ export default function ConfigModal(props: Record<string, unknown>) {
         })
       );
     } else {
-      showToast(response.message ?? "Có lỗi xảy ra. Vui lòng thử lại sau", "error");
+      showToast(response.message ?? response.error ?? "Có lỗi xảy ra. Vui lòng thử lại sau", "error");
     }
   };
 
@@ -1026,7 +1026,7 @@ export default function ConfigModal(props: Record<string, unknown>) {
         }
       }
     } else {
-      showToast(response.message ?? "Có lỗi xảy ra. Vui lòng thử lại sau", "error");
+      showToast(response.message ?? response.error ?? "Có lỗi xảy ra. Vui lòng thử lại sau", "error");
     }
   };
 
@@ -1059,7 +1059,7 @@ export default function ConfigModal(props: Record<string, unknown>) {
         const response = await BpmFormArtifactService.updatePosition(body);
         if (response.code === 0) {
         } else {
-          showToast(response.message ?? "Có lỗi xảy ra. Vui lòng thử lại sau", "error");
+          showToast(response.message ?? response.error ?? "Có lỗi xảy ra. Vui lòng thử lại sau", "error");
         }
       });
     }
@@ -1116,7 +1116,7 @@ export default function ConfigModal(props: Record<string, unknown>) {
       setEditName(true);
       setNodePoint(null);
     } else {
-      showToast(response.message ?? "Có lỗi xảy ra. Vui lòng thử lại sau", "error");
+      showToast(response.message ?? response.error ?? "Có lỗi xảy ra. Vui lòng thử lại sau", "error");
       setIsSubmit(false);
     }
   };
@@ -1189,7 +1189,7 @@ export default function ConfigModal(props: Record<string, unknown>) {
       setEditName(true);
       setDataNode({ ...dataNode, name: nodeName });
     } else {
-      showToast(response.message ?? "Có lỗi xảy ra. Vui lòng thử lại sau", "error");
+      showToast(response.message ?? response.error ?? "Có lỗi xảy ra. Vui lòng thử lại sau", "error");
       setIsSubmit(false);
     }
   };
@@ -1327,13 +1327,13 @@ export default function ConfigModal(props: Record<string, unknown>) {
       //       setListStep(oldArray => [...oldArray, newData]);
       
       //     } else {
-      //       showToast(response.message ?? "Có lỗi xảy ra. Vui lòng thử lại sau", "error");
+      //       showToast(response.message ?? response.error ?? "Có lỗi xảy ra. Vui lòng thử lại sau", "error");
       //     }
       //   })
       // }
 
     } else {
-      showToast(response.message ?? "Có lỗi xảy ra. Vui lòng thử lại sau", "error");
+      showToast(response.message ?? response.error ?? "Có lỗi xảy ra. Vui lòng thử lại sau", "error");
     }
   }
 
@@ -1356,7 +1356,7 @@ export default function ConfigModal(props: Record<string, unknown>) {
     if (response.code === 0) {
       getListStep(idTabConfig);
     } else {
-      showToast(response.message ?? "Có lỗi xảy ra. Vui lòng thử lại sau", "error");
+      showToast(response.message ?? response.error ?? "Có lỗi xảy ra. Vui lòng thử lại sau", "error");
     }
   }
 
@@ -1369,7 +1369,7 @@ export default function ConfigModal(props: Record<string, unknown>) {
       // }
       getListStep(idTabConfig);
     } else {
-      showToast(response.message ?? "Có lỗi xảy ra. Vui lòng thử lại sau", "error");
+      showToast(response.message ?? response.error ?? "Có lỗi xảy ra. Vui lòng thử lại sau", "error");
     }
   }
 
@@ -1384,7 +1384,7 @@ export default function ConfigModal(props: Record<string, unknown>) {
     if (response.code === 0) {
       getListStep(idTabConfig);
     } else {
-      showToast(response.message ?? "Có lỗi xảy ra. Vui lòng thử lại sau", "error");
+      showToast(response.message ?? response.error ?? "Có lỗi xảy ra. Vui lòng thử lại sau", "error");
     }
   }
 
@@ -1394,7 +1394,7 @@ export default function ConfigModal(props: Record<string, unknown>) {
       // setListStep([]);
       getListStep(idTabConfig);
     } else {
-      showToast(response.message ?? "Có lỗi xảy ra. Vui lòng thử lại sau", "error");
+      showToast(response.message ?? response.error ?? "Có lỗi xảy ra. Vui lòng thử lại sau", "error");
     }
   }
   return (
@@ -1733,7 +1733,7 @@ export default function ConfigModal(props: Record<string, unknown>) {
                 if (response.code === 0) {
                   getDataBpmFormArtifact(+dataNode.id, idTabConfig);
                 } else {
-                  showToast(response.message ?? "Có lỗi xảy ra. Vui lòng thử lại sau", "error");
+                  showToast(response.message ?? response.error ?? "Có lỗi xảy ra. Vui lòng thử lại sau", "error");
                 }
               }
               // setConfigs((prev) =>

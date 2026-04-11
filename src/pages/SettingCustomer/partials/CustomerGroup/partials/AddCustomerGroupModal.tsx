@@ -35,11 +35,11 @@ export default function AddCustomerGroupModal(props: AddCustomerGroupModalProps)
   const validations: IValidation[] = [
     {
       name: "code",
-      rules: "required",
+      rules: "required|max:50",
     },
     {
       name: "name",
-      rules: "required",
+      rules: "required|max:100",
     },
   ];
 
@@ -50,6 +50,7 @@ export default function AddCustomerGroupModal(props: AddCustomerGroupModalProps)
       type: "text",
       fill: true,
       required: true,
+      maxLength: 100,
     },
     {
       label: "Mã nhóm",
@@ -57,6 +58,7 @@ export default function AddCustomerGroupModal(props: AddCustomerGroupModalProps)
       type: "text",
       fill: true,
       required: true,
+      maxLength: 50,
     },
     {
       label: "Thứ tự hiển thị",

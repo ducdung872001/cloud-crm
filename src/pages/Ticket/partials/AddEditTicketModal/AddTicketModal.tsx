@@ -111,16 +111,20 @@ export default function AddTicketModal(props: IAddTicketModalProps) {
       rules: "required",
     },
     {
+      name: "customerName",
+      rules: "required|max:100",
+    },
+    {
       name: "customerPhone",
       rules: "required",
     },
     {
       name: "customerEmail",
-      rules: "regex",
+      rules: "nullable|regex",
     },
     {
       name: "content",
-      rules: "required",
+      rules: "required|max:500",
     },
   ];
 
@@ -314,6 +318,7 @@ export default function AddTicketModal(props: IAddTicketModalProps) {
       type: "text",
       fill: true,
       required: true,
+      maxLength: 100,
       disabled: idCustomer ? true : false,
     },
     {
@@ -386,6 +391,7 @@ export default function AddTicketModal(props: IAddTicketModalProps) {
       type: "textarea",
       fill: true,
       required: true,
+      maxLength: 500,
     },
   ], [listSupport, isLoadingSupport, detailCustomer, idCustomer, isLoadingCustomer, data?.customerId, formData?.values?.customerId, isShowPhone, loadingPhone, idCustomer, data?.customerId]);
 

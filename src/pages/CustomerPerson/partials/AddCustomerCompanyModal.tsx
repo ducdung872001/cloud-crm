@@ -464,7 +464,7 @@ export default function AddCustomerCompanyModal(props: AddCustomerModalProps) {
       : []),
     {
       name: "name",
-      rules: "required",
+      rules: "required|max:100",
     },
     // {
     //   name: "taxCode",
@@ -476,11 +476,15 @@ export default function AddCustomerCompanyModal(props: AddCustomerModalProps) {
     },
     {
       name: "email",
-      rules: "regex",
+      rules: "nullable|regex",
     },
     {
       name: "recommenderPhone",
-      rules: "regex",
+      rules: "nullable|regex",
+    },
+    {
+      name: "address",
+      rules: "nullable|max:255",
     },
   ];
 
@@ -556,6 +560,7 @@ export default function AddCustomerCompanyModal(props: AddCustomerModalProps) {
           type: "text",
           fill: true,
           required: true,
+          maxLength: 100,
         },
         {
           label: "Thương hiệu",
@@ -793,6 +798,7 @@ export default function AddCustomerCompanyModal(props: AddCustomerModalProps) {
           name: "address",
           type: "text",
           fill: true,
+          maxLength: 255,
         },
       ] as IFieldCustomize[],
     [isShowPhone, isShowEmail, data, listContact, isLoadingContact, countCheck, dataContact, formData, sourceDomain]

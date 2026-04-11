@@ -1,7 +1,13 @@
 {
   "permissions": {
     "allow": [
-      "Bash(node -e ':*)"
+      "Bash(node -e ':*)",
+      "Bash(grep -l \"handleSubmit\\\\|onSubmit\" /d/Git/reborn/reborn-cloud/cloud-ver2/cloud-crm/src/pages/**/*.tsx)",
+      "Bash(grep -l \"const validations.*IValidation\\\\[\\\\]\" /d/Git/reborn/reborn-cloud/cloud-ver2/cloud-crm/src/pages/**/*.tsx)",
+      "Bash(grep -r \"const validations.*=\" /d/Git/reborn/reborn-cloud/cloud-ver2/cloud-crm/src/pages/**/*.tsx)"
+    ],
+    "additionalDirectories": [
+      "\\tmp"
     ]
   }
 }

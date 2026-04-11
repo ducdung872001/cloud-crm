@@ -52,11 +52,11 @@ export default function AddRoleDirectoryModal(props: Record<string, unknown>) {
   const validations: IValidation[] = [
     {
       name: "name",
-      rules: "required",
+      rules: "required|max:100",
     },
     {
       name: "code",
-      rules: "required",
+      rules: "required|max:50",
     },
   ];
 
@@ -69,6 +69,7 @@ export default function AddRoleDirectoryModal(props: Record<string, unknown>) {
           type: "text",
           fill: true,
           required: true,
+          maxLength: 100,
         },
         {
           label: "Mã nhóm quyền",
@@ -76,6 +77,7 @@ export default function AddRoleDirectoryModal(props: Record<string, unknown>) {
           type: "text",
           fill: true,
           required: true,
+          maxLength: 50,
         },
         {
           label: "Vị trí hiển thị",

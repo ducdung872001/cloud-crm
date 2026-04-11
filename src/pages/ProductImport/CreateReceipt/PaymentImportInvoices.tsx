@@ -99,7 +99,7 @@ export default function PaymentImportInvoices(props: PaymentImportInvoicesProps)
         }))
       );
     } else {
-      showToast(response.message ?? "Không lấy được danh sách kho", "error");
+      showToast(response.error ?? response.message ?? "Không lấy được danh sách kho", "error");
     }
 
     setIsLoadingInventory(false);
@@ -154,7 +154,7 @@ export default function PaymentImportInvoices(props: PaymentImportInvoicesProps)
       } else {
         setFormData((prev) => ({ ...prev, inventoryId: previousInventoryId }));
         onInventoryChanged?.(previousInventoryId);
-        showToast(response.message ?? "Cập nhật kho hàng thất bại", "error");
+        showToast(response.error ?? response.message ?? "Cập nhật kho hàng thất bại", "error");
       }
 
       setIsUpdatingInventory(false);
@@ -198,7 +198,7 @@ export default function PaymentImportInvoices(props: PaymentImportInvoicesProps)
       showToast(formData?.id ? "Cập nhật phiếu nhập thành công" : "Tạo phiếu nhập thành công", "success");
       onInvoiceCreated?.(invoice);
     } else {
-      showToast(response.message ?? "Có lỗi xảy ra. Vui lòng thử lại sau", "error");
+      showToast(response.error ?? response.message ?? "Có lỗi xảy ra. Vui lòng thử lại sau", "error");
     }
 
     setIsSubmit(false);
@@ -222,7 +222,7 @@ export default function PaymentImportInvoices(props: PaymentImportInvoicesProps)
       showToast("Duyệt phiếu nhập thành công", "success");
       onInvoiceApproved?.({ ...(data as IInvoiceCreateResponse), status: 1 });
     } else {
-      showToast(response.message ?? "Duyệt phiếu nhập thất bại", "error");
+      showToast(response.error ?? response.message ?? "Duyệt phiếu nhập thất bại", "error");
     }
 
     setIsSubmit(false);

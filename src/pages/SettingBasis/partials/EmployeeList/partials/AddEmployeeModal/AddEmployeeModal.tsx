@@ -228,10 +228,14 @@ export default function AddEmployeeModal(props: AddEmployeeModalProps) {
   const validations: IValidation[] = [
     {
       name: "name",
-      rules: "required",
+      rules: "required|max:100",
     },
     {
       name: "phone",
+      rules: "nullable|regex",
+    },
+    {
+      name: "email",
       rules: "nullable|regex",
     },
     {

@@ -856,6 +856,10 @@ export default function AddProductPage({ idProduct, data, onBack, preFillBarcode
       showToast("Vui lòng nhập tên sản phẩm", "error");
       return;
     }
+    if (formData.name.length > 100) {
+      showToast("Tên sản phẩm không được vượt quá 100 ký tự", "error");
+      return;
+    }
     if (combinations.length === 0) {
       showToast("Vui lòng thêm ít nhất 1 biến thể sản phẩm", "error");
       setActiveTab("variants");

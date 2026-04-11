@@ -102,15 +102,15 @@ export default function ModalAddWarehouse(props: AddInventoryModalProps) {
     },
     {
       name: "name",
-      rules: "required",
+      rules: "required|max:100",
+    },
+    {
+      name: "code",
+      rules: "nullable|max:50",
     },
     {
       name: "address",
-      rules: "required",
-    },
-    {
-      name: "position",
-      rules: "required",
+      rules: "required|max:255",
     },
   ];
 
@@ -135,6 +135,7 @@ export default function ModalAddWarehouse(props: AddInventoryModalProps) {
       type: "text",
       fill: true,
       required: true,
+      maxLength: 100,
       className: "input-name",
     },
     {
@@ -142,6 +143,8 @@ export default function ModalAddWarehouse(props: AddInventoryModalProps) {
       name: "code",
       type: "text",
       fill: true,
+      maxLength: 50,
+      placeholder: "Nhập mã kho (không trùng)",
       className: "input-code",
     },
     {
@@ -150,6 +153,7 @@ export default function ModalAddWarehouse(props: AddInventoryModalProps) {
       type: "textarea",
       fill: true,
       required: true,
+      maxLength: 255,
       className: "input-address",
     },
     {
@@ -165,7 +169,8 @@ export default function ModalAddWarehouse(props: AddInventoryModalProps) {
       name: "position",
       type: "number",
       fill: true,
-      required: false,
+      minValue: 0,
+      maxValue: 999,
       className: "input-position",
     },
     {

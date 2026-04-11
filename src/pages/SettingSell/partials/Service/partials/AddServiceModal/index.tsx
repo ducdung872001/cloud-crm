@@ -174,7 +174,11 @@ export default function AddServiceModal(props: IAddServiceModalProps) {
   const validations: IValidation[] = [
     {
       name: "name",
-      rules: "required",
+      rules: "required|max:100",
+    },
+    {
+      name: "code",
+      rules: "nullable|max:50",
     },
     {
       name: "avatar",
@@ -198,7 +202,7 @@ export default function AddServiceModal(props: IAddServiceModalProps) {
     },
     {
       name: "price",
-      rules: "required|min:0",
+      rules: "required|min_equal:0",
     },
   ];
 
@@ -289,12 +293,14 @@ export default function AddServiceModal(props: IAddServiceModalProps) {
           type: "text",
           fill: true,
           required: true,
+          maxLength: 100,
         },
         {
           label: "Mã dịch vụ",
           name: "code",
           type: "text",
           fill: true,
+          maxLength: 50,
         },
       ] as IFieldCustomize[],
     [listCategoryService, isLoading, validateFieldCategory, detailCategory]
@@ -347,6 +353,7 @@ export default function AddServiceModal(props: IAddServiceModalProps) {
           type: "number",
           fill: true,
           required: true,
+          minValue: 0,
         },
         {
           label: "Giá ưu đãi",
@@ -552,7 +559,7 @@ export default function AddServiceModal(props: IAddServiceModalProps) {
       showToast(`${data ? "Cập nhật" : "Thêm mới"} dịch vụ thành công`, "success");
       handleClear(true);
     } else {
-      showToast(response.message ?? "Có lỗi xảy ra. Vui lòng thử lại sau", "error");
+      showToast(response.error ?? response.message ?? "Có lỗi xảy ra. Vui lòng thử lại sau", "error");
       setIsSubmit(false);
     }
   };

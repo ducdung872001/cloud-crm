@@ -44,15 +44,16 @@ export default function AddPromoCodeModal({ onShow, data, onHide }: Props) {
   }), [data, onShow]);
 
   const validations: IValidation[] = [
-    { name: "code",          rules: "required" },
-    { name: "discountValue", rules: "required|number" },
+    { name: "code",          rules: "required|max:50" },
+    { name: "discountValue", rules: "required|number|min_equal:0" },
     { name: "maxUses",       rules: "required|number" },
+    { name: "description",   rules: "nullable|max:500" },
   ];
 
   const listField: IFieldCustomize[] = [
     {
       label: "Mã giảm giá", name: "code", type: "text", fill: true, required: true,
-      placeholder: "VD: REBORN20, FREESHIP...",
+      maxLength: 50, placeholder: "VD: REBORN20, FREESHIP...",
     },
     {
       label: "Loại giảm giá", name: "discountType", type: "select", fill: true, required: true,
@@ -79,7 +80,7 @@ export default function AddPromoCodeModal({ onShow, data, onHide }: Props) {
     },
     {
       label: "Mô tả", name: "description", type: "textarea", fill: true,
-      placeholder: "Mô tả ngắn về mã giảm giá (không bắt buộc)",
+      maxLength: 500, placeholder: "Mô tả ngắn về mã giảm giá (không bắt buộc)",
     },
   ];
 
@@ -124,7 +125,7 @@ export default function AddPromoCodeModal({ onShow, data, onHide }: Props) {
       showToast(`${data ? "Cập nhật" : "Tạo"} mã giảm giá thành công`, "success");
       onHide(true);
     } else {
-      showToast(res?.message ?? "Có lỗi xảy ra", "error");
+      showToast(res?.message ?? res?.error ?? "Có lỗi xảy ra", "error");
       setIsSubmit(false);
     }
   };

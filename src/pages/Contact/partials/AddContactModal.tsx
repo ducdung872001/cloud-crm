@@ -144,7 +144,7 @@ export default function AddContactModal(props: AddContactModalProps) {
         setLstCoordinator(newLstCoordinator || []);
       }
     } else {
-      showToast(response.message ?? "Có lỗi xảy ra. Vui lòng thử lại sau", "error");
+      showToast(response.message ?? response.error ?? "Có lỗi xảy ra. Vui lòng thử lại sau", "error");
     }
   };
 
@@ -501,7 +501,7 @@ export default function AddContactModal(props: AddContactModalProps) {
   const validations: IValidation[] = [
     {
       name: "name",
-      rules: "required",
+      rules: "required|max:100",
     },
     {
       name: "phone",
@@ -526,6 +526,7 @@ export default function AddContactModal(props: AddContactModalProps) {
           type: "text",
           fill: true,
           required: true,
+          maxLength: 100,
         },
         {
           label: "Số điện thoại",
@@ -728,7 +729,7 @@ export default function AddContactModal(props: AddContactModalProps) {
         }
         showToast(response.error, "error");
       } else {
-        showToast(response.message ?? "Có lỗi xảy ra. Vui lòng thử lại sau", "error");
+        showToast(response.message ?? response.error ?? "Có lỗi xảy ra. Vui lòng thử lại sau", "error");
       }
       setIsSubmit(false);
     }
