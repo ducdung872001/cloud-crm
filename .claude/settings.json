@@ -4,7 +4,9 @@
       "Bash(node -e ':*)",
       "Bash(grep -l \"handleSubmit\\\\|onSubmit\" /d/Git/reborn/reborn-cloud/cloud-ver2/cloud-crm/src/pages/**/*.tsx)",
       "Bash(grep -l \"const validations.*IValidation\\\\[\\\\]\" /d/Git/reborn/reborn-cloud/cloud-ver2/cloud-crm/src/pages/**/*.tsx)",
-      "Bash(grep -r \"const validations.*=\" /d/Git/reborn/reborn-cloud/cloud-ver2/cloud-crm/src/pages/**/*.tsx)"
+      "Bash(grep -r \"const validations.*=\" /d/Git/reborn/reborn-cloud/cloud-ver2/cloud-crm/src/pages/**/*.tsx)",
+      "Bash(curl -m 3 -s -o /dev/null -w \"CRM: %{http_code}\" http://localhost:4000)",
+      "Bash(node tests/test-crud-all.mjs)"
     ],
     "additionalDirectories": [
       "\\tmp"
