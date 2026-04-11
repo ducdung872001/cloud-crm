@@ -648,10 +648,29 @@ export default function AddShippingOrder() {
         showToast("Cập nhật đơn vận chuyển thành công", "success");
         navigate("/shipping");
       } else {
-        showToast(response.message ?? "Cập nhật đơn thất bại", "error");
+        let errorMsg = response.message ?? response.error ?? "Cập nhật đơn thất bại";
+        // Parse nested JSON error từ hãng vận chuyển
+        if (typeof errorMsg === "string") {
+          try {
+            const nested = JSON.parse(errorMsg.replace(/^.*?(\{.*)$/, "$1"));
+            if (nested?.message) errorMsg = nested.message;
+            else if (nested?.error) errorMsg = nested.error;
+          } catch {
+            // Nếu error chứa message dạng "Integration API error 500: {\"error\":\"...\"}",
+            // thử extract message bên trong
+            const match = errorMsg.match(/"message"\s*:\s*"([^"]+)"/);
+            if (match) errorMsg = match[1];
+            else {
+              const errMatch = errorMsg.match(/"error"\s*:\s*"([^"]+)"/);
+              if (errMatch) errorMsg = errMatch[1];
+            }
+          }
+        }
+        showToast(errorMsg, "error");
       }
     } catch (err) {
-      showToast("Có lỗi xảy ra, vui lòng thử lại", "error");
+      const errMsg = (err as Record<string, unknown>)?.message ?? (err as Record<string, unknown>)?.error ?? "Có lỗi xảy ra, vui lòng thử lại";
+      showToast(String(errMsg), "error");
     } finally {
       setIsLoading(false);
     }
@@ -1249,9 +1268,12 @@ export default function AddShippingOrder() {
                   label="Số tiền thu hộ"
                   fill
                   disabled={isEdit}
-                  type="number"
-                  value={form.codAmount ?? ""}
-                  onChange={setField("codAmount")}
+                  value={form.codAmount ? Number(form.codAmount).toLocaleString("vi") : ""}
+                  onChange={(e) => {
+                    const raw = e.target.value.replace(/[^0-9]/g, "");
+                    setForm((prev) => ({ ...prev, codAmount: raw ? +raw : null }));
+                    setErrors((prev) => ({ ...prev, codAmount: "" }));
+                  }}
                   placeholder="0"
                 />
                 {form.codAmount > 0 && (
