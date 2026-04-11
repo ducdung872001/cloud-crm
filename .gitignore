@@ -19,3 +19,4 @@ yarn-error.log
 # test outputs
 tests/screenshots/
 tests/reports/
+tests/.auth-cookies.json

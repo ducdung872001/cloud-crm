@@ -1,4 +1,4 @@
-import { apiGet } from "services/apiHelper";
+import { apiGet, apiPost, apiDelete } from "services/apiHelper";
 import { urlsApi } from "configs/urls";
 
 import { IWarehouseFilterRequest, IListWarehouseProductFilterRequest, IInfoExpiryDateProductionDate } from "model/warehouse/WarehouseRequestModel";
@@ -6,6 +6,19 @@ import { IWarehouseFilterRequest, IListWarehouseProductFilterRequest, IInfoExpir
 export default {
   list: (params?: IWarehouseFilterRequest, signal?: AbortSignal) => {
     return apiGet(urlsApi.warehouse.list, params, signal);
+  },
+  create: (body: { name: string; address?: string; code?: string }) => {
+    return apiPost(urlsApi.warehouse.create, body);
+  },
+  update: (body: { id: number; name?: string; address?: string; code?: string; status?: number }) => {
+    return apiPost(urlsApi.warehouse.update, body);
+  },
+  delete: (id: number) => {
+    return apiDelete(urlsApi.warehouse.delete + "/" + id);
+  },
+  /** Chuyen kho sang trang thai "Ngung su dung" (status = 0) */
+  deactivate: (id: number) => {
+    return apiPost(urlsApi.warehouse.update, { id, status: 0 });
   },
   listInternal: (params?: IWarehouseFilterRequest, signal?: AbortSignal) => {
     return apiGet(urlsApi.adjustmentSlip.productList, params, signal);

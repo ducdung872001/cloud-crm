@@ -98,59 +98,72 @@ export async function createTestRunner(moduleCode, moduleName) {
     // Click "Bo qua" to dismiss tour
     await page.click('.tour-tooltip__skip, button:has-text("Bỏ qua")').catch(() => {});
     await page.waitForTimeout(300);
-    // Force-remove tour overlay that blocks all clicks
+    // Force-remove tour overlay + role modal backdrop that blocks clicks
     await page.evaluate(() => {
       document.querySelectorAll('.tour-overlay, .tour-overlay__mask, [class*="tour-overlay"]').forEach(el => el.remove());
       document.querySelectorAll('.tour-tooltip, [class*="tour-tooltip"]').forEach(el => el.remove());
+      // Remove stale role modal backdrop
+      document.querySelectorAll('.modal-backdrop').forEach(el => el.remove());
+      const roleModal = document.querySelector('.modal.page__choose--role');
+      if (roleModal) roleModal.remove();
     }).catch(() => {});
     await page.waitForTimeout(300);
   }
 
   async function login() {
-    log("\uD83D\uDD10", `Dang nhap (${CONFIG.USERNAME})...`);
+    log("\uD83D\uDD10", "Dang nhap...");
 
-    // Navigate to CRM login — will redirect to SSO
-    await page.goto(`${CONFIG.BASE_URL}/login`, {
-      waitUntil: "load",
-      timeout: 30000,
-    }).catch(() => {});
+    // Try loading saved cookies first
+    const cookieFile = path.join(__dirname, ".auth-cookies.json");
+    if (fs.existsSync(cookieFile)) {
+      try {
+        const cookies = JSON.parse(fs.readFileSync(cookieFile, "utf8"));
+        const tokenCookie = cookies.find((c) => c.name === "token");
 
-    // Wait for SSO redirect
-    await page.waitForTimeout(5000);
-    const ssoUrl = page.url();
-    log("\uD83C\uDF10", `SSO URL: ${ssoUrl.split("?")[0]}`);
+        // Check if token still valid (not expired)
+        if (tokenCookie && tokenCookie.expires * 1000 > Date.now()) {
+          log("\uD83C\uDF6A", "Dung token da luu (con hieu luc)");
+          await context.addCookies(cookies);
 
-    // Fill SSO login form
-    await page.fill('input[type="text"]', CONFIG.USERNAME).catch(() => {});
-    await page.fill('input[type="password"]', CONFIG.PASSWORD).catch(() => {});
-    await page.click('button.btn-submit-form, button[type="submit"]').catch(() => {});
+          // Navigate to CRM
+          await page.goto(`${CONFIG.BASE_URL}/login`, { waitUntil: "load", timeout: 20000 }).catch(() => {});
+          await page.waitForTimeout(5000);
+          await dismissTour();
 
-    // Wait for SSO to process and redirect back to CRM
-    log("\u23F3", "Cho SSO xu ly va redirect...");
-    await page.waitForTimeout(8000);
+          // Handle role modal — chon role + luu SelectedRole de khong hoi lai
+          try {
+            await page.waitForSelector('text=Chọn vai trò', { timeout: 3000 });
+            log("\uD83D\uDC64", "Chon vai tro → Xac nhan + luu role");
+            await page.click('button:has-text("Xác nhận")').catch(() => {});
+            await page.waitForTimeout(3000);
+            // Luu SelectedRole vao localStorage de lan sau khong bi hoi lai
+            await page.evaluate(() => {
+              const role = localStorage.getItem("SelectedRole");
+              if (!role) localStorage.setItem("SelectedRole", "1");
+            }).catch(() => {});
+          } catch {}
 
-    // Handle "Chon vai tro" modal
-    const currentUrl = page.url();
-    log("\uD83C\uDF10", `After SSO URL: ${currentUrl}`);
+          // Remove modal backdrop if stuck
+          await dismissTour();
 
-    try {
-      // Wait for role selection modal ("Chon vai tro")
-      await page.waitForSelector('text=Chọn vai trò', { timeout: 8000 });
-      log("\uD83D\uDC64", "Modal 'Chon vai tro' — chon role dau tien + Xac nhan...");
-
-      // Click first role card (already selected by default)
-      // Then click "Xac nhan" button
-      await page.click('button:has-text("Xác nhận"), button:has-text("Xac nhan")').catch(() => {});
-      await page.waitForTimeout(5000);
-    } catch {
-      // No role modal — might go directly to dashboard
-      await page.waitForTimeout(3000);
+          const loggedIn = page.url().includes("/crm/") && !page.url().includes("8080");
+          if (loggedIn) {
+            assert("LOGIN", true, "Dang nhap bang token da luu");
+            return true;
+          }
+          log("\u26A0\uFE0F", "Token het han — can login lai");
+        } else {
+          log("\u26A0\uFE0F", "Token da het han");
+        }
+      } catch {
+        log("\u26A0\uFE0F", "File cookies loi — can login lai");
+      }
     }
 
-    log("\uD83C\uDF10", `Final URL: ${page.url()}`);
-    const loggedIn = page.url().includes("/crm/") || (await page.$('[class*="sidebar"], [class*="header"], [class*="menu"]')) !== null;
-    assert("LOGIN", loggedIn, loggedIn ? "Dang nhap thanh cong" : `URL: ${page.url()}`);
-    return loggedIn;
+    // No saved token — need SSO login
+    log("\u274C", "Khong co token hop le. Chay truoc: node tests/login-save.mjs");
+    assert("LOGIN", false, "Can chay 'node tests/login-save.mjs' truoc de luu token");
+    return false;
   }
 
   // ── Click helpers ──

@@ -62,6 +62,12 @@ async function main() {
     await page.waitForTimeout(2000);
   }
 
+  // Luu SelectedRole vao localStorage de khong bi hoi lai role
+  await page.evaluate(() => {
+    const role = localStorage.getItem("SelectedRole");
+    if (!role) localStorage.setItem("SelectedRole", "1");
+  }).catch(() => {});
+
   // Save cookies
   const cookies = await context.cookies();
   const tokenCookie = cookies.find((c) => c.name === "token");

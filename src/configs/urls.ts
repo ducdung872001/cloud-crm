@@ -765,6 +765,9 @@ export const urlsApi = {
   //khu vực trải nghiệm khách hàng
   warehouse: {
     list: prefixInventory + "/warehouse/list",
+    create: prefixInventory + "/warehouse/create",
+    update: prefixInventory + "/warehouse/update",
+    delete: prefixInventory + "/warehouse/delete",
     //API lấy ra danh sách sản phẩm trong kho
     productList: prefixInventory + "/warehouse/product/list",
     //API lấy ra thông tin ngày hết hạn / sản xuất dựa trên số lô của sản phẩm
