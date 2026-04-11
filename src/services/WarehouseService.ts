@@ -20,6 +20,10 @@ export default {
   deactivate: (id: number) => {
     return apiPost(urlsApi.warehouse.update, { id, status: 0 });
   },
+  /** Kiem tra kho co ton kho hay khong */
+  hasStock: (warehouseId: number) => {
+    return apiGet(urlsApi.inventoryBalance.stockProductList, { warehouseId, page: 1, size: 1 });
+  },
   listInternal: (params?: IWarehouseFilterRequest, signal?: AbortSignal) => {
     return apiGet(urlsApi.adjustmentSlip.productList, params, signal);
   },
