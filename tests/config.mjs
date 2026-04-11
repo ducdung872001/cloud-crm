@@ -7,7 +7,7 @@
 
 export const CONFIG = {
   // ── Server ──
-  BASE_URL: process.env.BASE_URL || "http://localhost:4000",
+  BASE_URL: process.env.BASE_URL || "http://localhost:4000/crm",
 
   // ── Credentials ──
   USERNAME: process.env.TEST_USER || "admin",
