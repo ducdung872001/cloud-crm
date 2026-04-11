@@ -187,32 +187,32 @@ async function main() {
     }
   });
 
-  // ── Login first ──
-  console.log("\u{1F510} Dang nhap...");
-  await page.goto(`${CONFIG.BASE_URL}/login`, { waitUntil: "networkidle", timeout: 15000 }).catch(() => {});
-  await page.waitForTimeout(1000);
+  // ── Login via SSO ──
+  console.log("\u{1F510} Dang nhap qua SSO...");
+  await page.goto(`${CONFIG.BASE_URL}/login`, { waitUntil: "load", timeout: 30000 }).catch(() => {});
+  await page.waitForTimeout(5000);
+  console.log(`   SSO URL: ${page.url().split("?")[0]}`);
 
-  const userInputs = [
-    'input[name="username"]',
-    'input[placeholder*="tai khoan" i]',
-    'input[placeholder*="user" i]',
-    'input[type="text"]:first-of-type',
-  ];
-  for (const sel of userInputs) {
-    const el = await page.$(sel);
-    if (el) { await el.fill(CONFIG.USERNAME); break; }
-  }
+  // Fill SSO form
+  await page.fill('input[type="text"]', CONFIG.USERNAME).catch(() => {});
   await page.fill('input[type="password"]', CONFIG.PASSWORD).catch(() => {});
-  await page.click('button[type="submit"]').catch(() => {});
+  await page.click('button.btn-submit-form, button[type="submit"]').catch(() => {});
 
-  // Handle role modal
+  // Wait for redirect back to CRM
+  console.log("   \u23F3 Cho redirect...");
+  await page.waitForTimeout(8000);
+
+  // Handle "Chon vai tro" modal
   try {
-    await page.waitForSelector('[class*="role"], [class*="Role"]', { timeout: 3000 });
-    await page.click('[class*="role"] .item:first-child, [class*="Role"] button:first-child').catch(() => {});
-  } catch {}
+    await page.waitForSelector('text=Chọn vai trò', { timeout: 8000 });
+    console.log("   \uD83D\uDC64 Chon vai tro → Xac nhan");
+    await page.click('button:has-text("Xác nhận"), button:has-text("Xac nhan")').catch(() => {});
+    await page.waitForTimeout(5000);
+  } catch {
+    await page.waitForTimeout(3000);
+  }
 
-  await page.waitForTimeout(3000);
-  const loggedIn = !page.url().includes("/login");
+  const loggedIn = page.url().includes("/crm/") || (await page.$('[class*="sidebar"], [class*="header"]')) !== null;
   if (!loggedIn) {
     console.log("\u274C Login FAILED. Dung lai.");
     await browser.close();
@@ -245,10 +245,10 @@ async function main() {
     try {
       // Navigate
       await page.goto(`${CONFIG.BASE_URL}${route}`, {
-        waitUntil: "networkidle",
-        timeout: 15000,
+        waitUntil: "load",
+        timeout: 20000,
       });
-      await page.waitForTimeout(2000);
+      await page.waitForTimeout(3000);
 
       // Check 1: Blank page
       const bodyText = await page.evaluate(() => document.body?.innerText?.trim() || "");

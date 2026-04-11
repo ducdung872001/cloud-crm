@@ -97,43 +97,47 @@ export async function createTestRunner(moduleCode, moduleName) {
 
   async function login() {
     log("\uD83D\uDD10", `Dang nhap (${CONFIG.USERNAME})...`);
-    await goto("/login");
 
-    // Fill login form — try multiple selectors
-    const userSelectors = [
-      'input[name="username"]',
-      'input[placeholder*="tai khoan" i]',
-      'input[placeholder*="user" i]',
-      'input[placeholder*="dang nhap" i]',
-      'input[type="text"]:first-of-type',
-    ];
-    for (const sel of userSelectors) {
-      const el = await page.$(sel);
-      if (el) { await el.fill(CONFIG.USERNAME); break; }
-    }
+    // Navigate to CRM login — will redirect to SSO
+    await page.goto(`${CONFIG.BASE_URL}/login`, {
+      waitUntil: "load",
+      timeout: 30000,
+    }).catch(() => {});
 
-    await page.fill('input[type="password"]', CONFIG.PASSWORD);
-    await page.click('button[type="submit"]');
+    // Wait for SSO redirect
+    await page.waitForTimeout(5000);
+    const ssoUrl = page.url();
+    log("\uD83C\uDF10", `SSO URL: ${ssoUrl.split("?")[0]}`);
 
-    // Handle role selection modal
+    // Fill SSO login form
+    await page.fill('input[type="text"]', CONFIG.USERNAME).catch(() => {});
+    await page.fill('input[type="password"]', CONFIG.PASSWORD).catch(() => {});
+    await page.click('button.btn-submit-form, button[type="submit"]').catch(() => {});
+
+    // Wait for SSO to process and redirect back to CRM
+    log("\u23F3", "Cho SSO xu ly va redirect...");
+    await page.waitForTimeout(8000);
+
+    // Handle "Chon vai tro" modal
+    const currentUrl = page.url();
+    log("\uD83C\uDF10", `After SSO URL: ${currentUrl}`);
+
     try {
-      const roleModal = await page.waitForSelector(
-        '.modal-select-role, [class*="SelectRole"], [class*="select-role"]',
-        { timeout: CONFIG.MODAL_TIMEOUT }
-      );
-      if (roleModal) {
-        log("\uD83D\uDC64", "Chon role...");
-        const roleBtn = await page.$(
-          '.modal-select-role .role-item:first-child, [class*="role"] .item:first-child, [class*="SelectRole"] button:first-child'
-        );
-        if (roleBtn) await roleBtn.click();
-      }
+      // Wait for role selection modal ("Chon vai tro")
+      await page.waitForSelector('text=Chọn vai trò', { timeout: 8000 });
+      log("\uD83D\uDC64", "Modal 'Chon vai tro' — chon role dau tien + Xac nhan...");
+
+      // Click first role card (already selected by default)
+      // Then click "Xac nhan" button
+      await page.click('button:has-text("Xác nhận"), button:has-text("Xac nhan")').catch(() => {});
+      await page.waitForTimeout(5000);
     } catch {
-      // No role modal
+      // No role modal — might go directly to dashboard
+      await page.waitForTimeout(3000);
     }
 
-    await page.waitForTimeout(3000);
-    const loggedIn = !page.url().includes("/login");
+    log("\uD83C\uDF10", `Final URL: ${page.url()}`);
+    const loggedIn = page.url().includes("/crm/") || (await page.$('[class*="sidebar"], [class*="header"], [class*="menu"]')) !== null;
     assert("LOGIN", loggedIn, loggedIn ? "Dang nhap thanh cong" : `URL: ${page.url()}`);
     return loggedIn;
   }

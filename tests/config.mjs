@@ -10,8 +10,8 @@ export const CONFIG = {
   BASE_URL: process.env.BASE_URL || "http://localhost:4000/crm",
 
   // ── Credentials ──
-  USERNAME: process.env.TEST_USER || "admin",
-  PASSWORD: process.env.TEST_PASS || "admin123",
+  USERNAME: process.env.TEST_USER || "0971234599",
+  PASSWORD: process.env.TEST_PASS || "Reborn@12345",
 
   // ── Timeouts (ms) ──
   NAVIGATION_TIMEOUT: 15000,
