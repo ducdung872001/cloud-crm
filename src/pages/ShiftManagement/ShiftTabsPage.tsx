@@ -38,8 +38,8 @@ export default function ShiftTabsPage() {
 
   return (
     <div className="page-content page-shift-tabs">
-      {/* ── Tour hướng dẫn ca ── */}
-      <TourOverlay
+      {/* ── Tour hướng dẫn ca — tạm tắt để test ── */}
+      {/* <TourOverlay
         active={shiftTour.active}
         step={shiftTour.currentStep}
         stepIdx={shiftTour.stepIdx}
@@ -50,7 +50,7 @@ export default function ShiftTabsPage() {
         onNext={shiftTour.next}
         onPrev={shiftTour.prev}
         onSkip={shiftTour.skip}
-      />
+      /> */}
       <TitleAction
         title="Quản lý ca"
         actions={[{

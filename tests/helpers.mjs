@@ -130,21 +130,26 @@ export async function createTestRunner(moduleCode, moduleName) {
           await page.waitForTimeout(5000);
           await dismissTour();
 
-          // Handle role modal — chon role + luu SelectedRole de khong hoi lai
-          try {
-            await page.waitForSelector('text=Chọn vai trò', { timeout: 3000 });
-            log("\uD83D\uDC64", "Chon vai tro → Xac nhan + luu role");
+          // Handle role modal — chon role + dismiss
+          for (let attempt = 0; attempt < 3; attempt++) {
+            const hasRoleModal = await page.evaluate(() =>
+              !!(document.querySelector('.page__choose--role') ||
+                 document.querySelector('.modal.show') ||
+                 document.body?.innerText?.includes('Chọn vai trò'))
+            );
+            if (!hasRoleModal) break;
+            log("\uD83D\uDC64", `Chon vai tro → Xac nhan (lan ${attempt + 1})`);
             await page.click('button:has-text("Xác nhận")').catch(() => {});
             await page.waitForTimeout(3000);
-            // Luu SelectedRole vao localStorage de lan sau khong bi hoi lai
-            await page.evaluate(() => {
-              const role = localStorage.getItem("SelectedRole");
-              if (!role) localStorage.setItem("SelectedRole", "1");
-            }).catch(() => {});
-          } catch {}
+            await dismissTour();
+          }
+          // Luon set SelectedRole = role dau tien de skip modal chon role
+          await page.evaluate(() => {
+            localStorage.setItem("SelectedRole", localStorage.getItem("SelectedRole") || "1");
+          }).catch(() => {});
 
-          // Remove modal backdrop if stuck
-          await dismissTour();
+          // Doi trang load noi dung (sau role selection)
+          await page.waitForTimeout(3000);
 
           const loggedIn = page.url().includes("/crm/") && !page.url().includes("8080");
           if (loggedIn) {

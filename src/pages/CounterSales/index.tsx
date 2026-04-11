@@ -440,8 +440,8 @@ const CounterSales: React.FC = () => {
 
   return (
     <div className="counter-sales">
-      {/* ── Tour hướng dẫn POS ── */}
-      <TourOverlay
+      {/* ── Tour hướng dẫn POS — tạm tắt để test ── */}
+      {/* <TourOverlay
         active={posTour.active}
         step={posTour.currentStep}
         stepIdx={posTour.stepIdx}
@@ -452,7 +452,7 @@ const CounterSales: React.FC = () => {
         onNext={posTour.next}
         onPrev={posTour.prev}
         onSkip={posTour.skip}
-      />
+      /> */}
 
       <Sidebar />
 

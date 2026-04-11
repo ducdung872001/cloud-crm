@@ -2301,8 +2301,8 @@ export default function AddProductPage({ idProduct, data, onBack, preFillBarcode
         </div>
       )}
 
-      {/* Tour hướng dẫn in mã vạch */}
-      <TourOverlay
+      {/* Tour hướng dẫn in mã vạch — tạm tắt để test */}
+      {/* <TourOverlay
         active={barcodeTour.active}
         step={barcodeTour.currentStep}
         stepIdx={barcodeTour.stepIdx}
@@ -2313,7 +2313,7 @@ export default function AddProductPage({ idProduct, data, onBack, preFillBarcode
         onNext={barcodeTour.next}
         onPrev={barcodeTour.prev}
         onSkip={barcodeTour.skip}
-      />
+      /> */}
 
       {/* Confirm xóa biến thể */}
       {confirmDeleteVariant && (

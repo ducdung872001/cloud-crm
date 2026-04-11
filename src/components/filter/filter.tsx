@@ -36,6 +36,16 @@ function Filter(props: FilterProps) {
   const [disabledBtnNext, setDisableBtnNext] = useState<boolean>(false);
 
   const changeValueFilter = useCallback((filterItem: IFilterItem) => {
+    // is_featured filter: update truc tiep trong listFilterItem (qua onChangeFilter)
+    // KHONG them vao listFilterItemState de tranh bi render trung
+    if (filterItem.is_featured) {
+      // Update listFilterItem truc tiep — onChangeFilter se truyen value len parent
+      const idx = listFilterItem.findIndex((f) => f.key === filterItem.key);
+      if (idx > -1) {
+        listFilterItem[idx] = filterItem;
+      }
+      return;
+    }
     setListFilterItemState((prev) => {
       const index = prev.findIndex((filter) => filter.key === filterItem.key);
       if (prev.length > 0 && index > -1) {
@@ -46,7 +56,7 @@ function Filter(props: FilterProps) {
         return [...prev, filterItem];
       }
     });
-  }, []);
+  }, [listFilterItem]);
 
   const refFilter = useRef();
   const refFilterContainer = useRef();
@@ -68,7 +78,9 @@ function Filter(props: FilterProps) {
   }, []);
 
   useEffect(() => {
-    const listFilterCurrent = listFilterItem.filter((filterItem) => (filterItem.value && filterItem.value !== "") || filterItem.value === 0);
+    const listFilterCurrent = listFilterItem.filter(
+      (filterItem) => !filterItem.is_featured && ((filterItem.value && filterItem.value !== "") || filterItem.value === 0)
+    );
     setListFilterItemState(listFilterCurrent);
   }, [listFilterItem]);
 
@@ -79,7 +91,8 @@ function Filter(props: FilterProps) {
       return {
         ...filter,
         list: filterItemState?.list ?? filter.list,
-        value: filterItemState ? filterItemState?.value : "",
+        // Giu nguyen value cua filter is_featured (da duoc mutate truc tiep)
+        value: filterItemState ? filterItemState.value : (filter.is_featured ? filter.value : ""),
         ...(filterItemState && filterItemState.value_extra ? { value_extra: filterItemState.value_extra } : {}),
       };
     });
@@ -250,32 +263,16 @@ function Filter(props: FilterProps) {
         </div>
       ) : (
         width >= 768 &&
-        cloneDeep(listFilterItem)
+        listFilterItem
           .filter((filter) => filter.is_featured === true)
           .map((filter, index) => {
-            const filterItemState = listFilterItemState.find((filterItem) => filterItem.key === filter.key);
-            if (filterItemState) {
-              filter = filterItemState;
-            } else {
-              filter.value = "";
-              if (filter.type === "date-two") {
-                filter.value_extra = "";
-              }
-            }
-            return listFilterItem.length > 4 ? (
+            return (
               <FilterFeatured
-                key={filter.value}
+                key={filter.key}
                 handleChangeFilter={(filterItem) => changeValueFilter(filterItem)}
                 filterItem={filter}
                 onChangeFilter={() => submitFilter()}
-              ></FilterFeatured>
-            ) : (
-              <FilterFeatured
-                key={filter.value}
-                handleChangeFilter={(filterItem) => changeValueFilter(filterItem)}
-                filterItem={filter}
-                onChangeFilter={() => submitFilter()}
-              ></FilterFeatured>
+              />
             );
           })
       )}
@@ -299,6 +296,10 @@ function FilterFeatured(props: FilterItemFeatureProps) {
   useOnClickOutside(refFilterFeatured, () => setShowPopoverFilterFeature(false), [
     `filter-dropdown-${filterItem.key}-featured`,
     ...(["date", "date-two"].indexOf(filterItem.type) > -1 ? ["react-datepicker-popper"] : []),
+    // react-select renders menu/option outside popover ref — ignore clicks on them
+    "-menu",
+    "-option",
+    "select-custom",
   ]);
 
   const componentFilter = (type) => {
@@ -363,37 +364,42 @@ function FilterFeatured(props: FilterItemFeatureProps) {
         );
       default:
         return (
-          <Fragment>
-            <FilterSelect filterItem={filterItem} handleChangeFilter={handleChangeFilter} />
-            <Button
-              type="button"
-              color="secondary"
-              size="slim"
-              className="btn-filter-submit"
-              disabled={
-                (!filterItem.value &&
-                  filterItem.list &&
-                  filterItem.list.length > 0 &&
-                  filterItem.list.filter((item) => item.value === "").length === 0) ||
-                !filterItem.list ||
-                filterItem.list.length === 0
+          <FilterSelect
+            filterItem={filterItem}
+            handleChangeFilter={handleChangeFilter}
+            onValueSelected={(selectedValue) => {
+              // Hien ten kho da chon ngay tren nut
+              if (filterItem.list?.length) {
+                const found = filterItem.list.find(i => String(i.value) === String(selectedValue));
+                if (found) setCachedLabel(found.label ?? found.name ?? "");
               }
-              onClick={() => {
-                setShowPopoverFilterFeature(!showPopoverFilterFeature);
-                onChangeFilter();
-              }}
-            >
-              Lọc
-            </Button>
-          </Fragment>
+              setShowPopoverFilterFeature(false);
+              setTimeout(() => onChangeFilter(), 0);
+            }}
+          />
         );
     }
   };
 
+  // Luu label da chon vao state de khong mat khi list bi reset
+  const [cachedLabel, setCachedLabel] = useState("");
+
+  useEffect(() => {
+    if (filterItem.value && filterItem.list?.length) {
+      const found = filterItem.list.find(
+        (item) => String(item.value) === String(filterItem.value)
+      );
+      if (found) setCachedLabel(found.label ?? found.name ?? "");
+    }
+    if (!filterItem.value) setCachedLabel("");
+  }, [filterItem.value, filterItem.list]);
+
   return (
     <div className={`filter-block filter-dropdown filter-dropdown-${filterItem.key}-featured`} ref={refFilterFeaturedContainer}>
       <Button type="button" color="secondary" onClick={() => setShowPopoverFilterFeature(!showPopoverFilterFeature)} hasIcon={true}>
-        <span className="d-none d-md-block">{filterItem.name}</span>
+        <span className="d-none d-md-block">
+          {cachedLabel || filterItem.name}
+        </span>
         <Icon name="CaretDown" />
       </Button>
       {showPopoverFilterFeature && (
@@ -531,8 +537,8 @@ function FilterDate(props: FilterItemProps) {
   );
 }
 
-function FilterSelect(props: FilterItemProps) {
-  const { handleChangeFilter, filterItem } = props;
+function FilterSelect(props: FilterItemProps & { onValueSelected?: (value: string | number) => void }) {
+  const { handleChangeFilter, filterItem, onValueSelected } = props;
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
   const onSelectOpen = async () => {
@@ -621,7 +627,10 @@ function FilterSelect(props: FilterItemProps) {
         name={handleize(filterItem.name)}
         placeholder={`Chọn ${filterItem.name.toLowerCase()}`}
         isSearchable={true}
-        onChange={(e) => handleChangeFilter({ ...filterItem, value: e.value })}
+        onChange={(e) => {
+          handleChangeFilter({ ...filterItem, value: e.value });
+          if (onValueSelected) onValueSelected(e.value);
+        }}
         isLoading={isLoading}
         fill={true}
         onMenuOpen={onSelectOpen}
@@ -659,9 +668,8 @@ export function ListFilterChoose(props: ListFilterChooseProps) {
 
   const listStringFields = ["Trangthaikhoanvaycashloan", "Trangthaikhoanvaycreditline", "TrangThaiKhoanVayTBoss"];
 
-  // Lọc ra các phần tử có key KHÔNG nằm trong listStringFields
-  // const filteredList = listFilterItem.filter((item) => !listStringFields.includes(item.key));
-  const filteredList = [...listFilterItem];
+  // Khong hien tag cho filter is_featured — vi da hien tren nut filter roi
+  const filteredList = listFilterItem.filter((item) => !item.is_featured);
 
   const removeValueFilter = (key) => {
     const listFilterItemNew = cloneDeep(listFilterItem);

@@ -98,7 +98,11 @@ export default function App() {
         });
 
         setLstRole(changeResult);
-        !takeSelectedRole && setChooseRoleInit(true);
+        // TODO: Tạm tắt modal chọn role — auto chọn role đầu tiên (Ban giám đốc)
+        if (!takeSelectedRole && changeResult.length > 0) {
+          localStorage.setItem("SelectedRole", changeResult[0].role);
+          // setChooseRoleInit(true);  // bật lại khi deploy production
+        }
       }
     }
   };

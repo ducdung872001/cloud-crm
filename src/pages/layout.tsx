@@ -277,7 +277,8 @@ export default function Layout() {
   return (
     <div id="container">
       {/* ── Onboarding Tour Overlay ── */}
-      <TourOverlay
+      {/* TODO: Tạm tắt tour để test — bật lại khi deploy production */}
+      {/* <TourOverlay
         active={loginTour.active}
         step={loginTour.currentStep}
         stepIdx={loginTour.stepIdx}
@@ -288,7 +289,7 @@ export default function Layout() {
         onNext={loginTour.next}
         onPrev={loginTour.prev}
         onSkip={loginTour.skip}
-      />
+      /> */}
 
       <div className={`page-wrapper${isCollapsedSidebar ? " page-wrapper--collapsed-sidebar" : ""} d-flex align-items-start justify-content-between`}>
         {checkPathUrl !== "/crm/link_survey" && <Sidebar />}
