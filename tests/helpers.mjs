@@ -310,5 +310,36 @@ export async function createTestRunner(moduleCode, moduleName) {
     done,
     dismissTour,
     RUN_ID,
+    /** Click nut Edit (but chi) tren dong co chua text */
+    clickEditOnRow: async (text) => {
+      const idx = await page.evaluate((t) => {
+        return [...document.querySelectorAll("table tbody tr")].findIndex(tr => tr.innerText?.includes(t));
+      }, text);
+      if (idx < 0) return false;
+      const btn = await page.$(`table tbody tr:nth-child(${idx + 1}) button[data-tip="Sửa"]`);
+      if (!btn) return false;
+      await btn.click({ force: true });
+      await page.waitForTimeout(1500);
+      return true;
+    },
+    /** Click nut Delete (thung rac) tren dong co chua text */
+    clickDeleteOnRow: async (text) => {
+      const idx = await page.evaluate((t) => {
+        return [...document.querySelectorAll("table tbody tr")].findIndex(tr => tr.innerText?.includes(t));
+      }, text);
+      if (idx < 0) return false;
+      const btn = await page.$(`table tbody tr:nth-child(${idx + 1}) button[data-tip="Xóa"]`);
+      if (!btn) return false;
+      await btn.click({ force: true });
+      // Doi dialog hoac modal hien (co the async check)
+      for (let i = 0; i < 10; i++) {
+        await page.waitForTimeout(800);
+        const has = await page.evaluate(() =>
+          !!document.querySelector('.dialog:not([style*="display: none"]), .modal.show')
+        );
+        if (has) return true;
+      }
+      return false;
+    },
   };
 }

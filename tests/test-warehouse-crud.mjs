@@ -199,8 +199,8 @@ async function main() {
       }, TEST_NAME);
 
       if (rowIndex >= 0) {
-        // Click nut edit (nut dau tien trong div.actions-XX)
-        const editBtn = await t.page.$(`table tbody tr:nth-child(${rowIndex + 1}) td:last-child [class*="actions"] button:first-child, table tbody tr:nth-child(${rowIndex + 1}) td:last-child button.base-button:first-of-type`);
+        // Click nut edit (data-tip="Sửa")
+        const editBtn = await t.page.$(`table tbody tr:nth-child(${rowIndex + 1}) button[data-tip="Sửa"]`);
         if (editBtn) {
           await editBtn.click({ force: true });
           await t.page.waitForTimeout(1500);
@@ -264,50 +264,23 @@ async function main() {
     console.log("  DELETE — XOA KHO");
     console.log("═".repeat(60));
 
-    // searchName dung cho ca DELETE
     let searchName = UPDATED_NAME;
 
-    t.log("\u25B6", "D-001: Click nut Delete (thung rac) tren kho test");
+    t.log("\u25B6", "D-001: Click nut Delete tren kho test");
     await t.goto("/warehouse");
-    await t.dismissTour();
     {
-      // Tim theo UPDATED_NAME truoc, fallback TEST_NAME
-      let rowIndex = await t.page.evaluate((name) => {
-        const rows = [...document.querySelectorAll("table tbody tr")];
-        return rows.findIndex(tr => tr.innerText?.includes(name));
-      }, UPDATED_NAME);
-      if (rowIndex < 0) {
-        searchName = TEST_NAME;
-        rowIndex = await t.page.evaluate((name) => {
-          const rows = [...document.querySelectorAll("table tbody tr")];
-          return rows.findIndex(tr => tr.innerText?.includes(name));
-        }, TEST_NAME);
-      }
+      if (!(await t.hasText(UPDATED_NAME))) searchName = TEST_NAME;
 
-      if (rowIndex >= 0) {
-        // Nut delete la nut thu 2 (sau edit) trong action cell
-        const deleteBtn = await t.page.$(`table tbody tr:nth-child(${rowIndex + 1}) td:last-child [class*="actions"] button:last-child, table tbody tr:nth-child(${rowIndex + 1}) td:last-child button.base-button:last-of-type`);
-        if (deleteBtn) {
-          await deleteBtn.click({ force: true });
-          await t.page.waitForTimeout(1500);
-
-          // Dialog xac nhan phai hien
-          const hasDialog = await t.exists('.modal.show, [class*="dialog"].show, [class*="Dialog"]');
-          t.assert("D-001", hasDialog, hasDialog ? "Dialog xac nhan xoa hien" : "Khong thay dialog");
-          await t.screenshot("d-001-dialog");
-        } else {
-          t.assert("D-001", false, "Khong tim thay nut Delete");
-        }
-      } else {
-        t.assert("D-001", false, `Khong tim thay dong "${UPDATED_NAME}"`);
-      }
+      const dialogShown = await t.clickDeleteOnRow(searchName);
+      await t.screenshot("d-001-dialog");
+      t.assert("D-001", dialogShown, dialogShown ? "Dialog xac nhan hien" : "Dialog khong hien");
     }
 
     t.log("\u25B6", "D-002: Kiem tra noi dung dialog");
     {
       const dialogText = await t.page.evaluate(() => {
-        const modal = document.querySelector('.modal.show');
-        return modal ? modal.innerText : "";
+        const d = document.querySelector('.dialog') || document.querySelector('.modal.show');
+        return d ? d.innerText : "";
       });
       // Dialog phai hien ten kho hoac text xac nhan
       const hasName = dialogText.includes(UPDATED_NAME) || dialogText.includes("xóa") || dialogText.includes("Xóa") || dialogText.includes("Ngừng");
@@ -316,41 +289,35 @@ async function main() {
 
     t.log("\u25B6", "D-003: Click Huy — khong xoa");
     {
-      const cancelBtn = await t.page.$('.modal.show button:has-text("Hủy"), .modal.show button:has-text("Quay lại")');
+      const cancelBtn = await t.page.$('.dialog button:has-text("Hủy")');
       if (cancelBtn) {
         await cancelBtn.click({ force: true });
         await t.page.waitForTimeout(1000);
         const stillExists = await t.hasText(searchName);
-        t.assert("D-003", stillExists, stillExists ? "Huy OK — kho van con" : "Kho bi mat sau khi huy!?");
+        t.assert("D-003", stillExists, stillExists ? "Huy OK — kho van con" : "Kho mat sau khi huy!?");
+      } else {
+        t.assert("D-003", false, "Khong tim thay nut Huy");
       }
       await t.screenshot("d-003-cancel");
     }
 
     t.log("\u25B6", "D-004: Click Delete lai → Xac nhan xoa");
-    await t.dismissTour();
     {
-      let rowIndex = await t.page.evaluate((name) => {
-        const rows = [...document.querySelectorAll("table tbody tr")];
-        return rows.findIndex(tr => tr.innerText?.includes(name));
-      }, searchName);
-
-      if (rowIndex >= 0) {
-        const deleteBtn = await t.page.$(`table tbody tr:nth-child(${rowIndex + 1}) td:last-child [class*="actions"] button:last-child, table tbody tr:nth-child(${rowIndex + 1}) td:last-child button.base-button:last-of-type`);
-        if (deleteBtn) {
-          await deleteBtn.click({ force: true });
-          await t.page.waitForTimeout(1500);
-
-          // Click Xoa / Xac nhan / Ngung su dung
-          t.clearApiLogs();
-          const confirmBtn = await t.page.$('.modal.show button:has-text("Xóa"), .modal.show button:has-text("Xác nhận"), .modal.show button:has-text("Ngừng sử dụng"), .modal.show button:has-text("Đồng ý")');
-          if (confirmBtn) {
-            const btnText = await confirmBtn.innerText();
-            await confirmBtn.click({ force: true });
-            await t.page.waitForTimeout(3000);
-            const api = t.findApi("DELETE", "warehouse") || t.findApi("POST", "warehouse");
-            t.assert("D-004", true, `Click "${btnText.trim()}" — ${api ? "API " + api.method + " " + api.status : "da xu ly"}`);
-          }
+      const dialogShown = await t.clickDeleteOnRow(searchName);
+      if (dialogShown) {
+        t.clearApiLogs();
+        const confirmBtn = await t.page.$('.dialog button:has-text("Xóa vĩnh viễn"), .dialog button:has-text("Ngừng sử dụng"), .dialog button:has-text("Xóa")');
+        if (confirmBtn) {
+          const btnText = await confirmBtn.innerText();
+          await confirmBtn.click({ force: true });
+          await t.page.waitForTimeout(3000);
+          const api = t.findApi("DELETE", "warehouse") || t.findApi("POST", "warehouse");
+          t.assert("D-004", true, `Click "${btnText.trim()}" — ${api ? "API " + api.method + " " + api.status : "da xu ly"}`);
+        } else {
+          t.assert("D-004", false, "Khong tim thay nut xac nhan trong dialog");
         }
+      } else {
+        t.assert("D-004", false, "Dialog khong hien");
       }
       await t.screenshot("d-004-deleted");
     }
