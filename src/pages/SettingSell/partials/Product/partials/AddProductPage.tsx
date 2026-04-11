@@ -627,7 +627,7 @@ export default function AddProductPage({ idProduct, data, onBack, preFillBarcode
                   unitName: u.unitName ?? u.unit_name ?? "",
                   price: u.price ?? u.priceRetail ?? "",
                   priceWholesale: u.priceWholesale ?? u.price_wholesale ?? "",
-                  barcode: u.barcode ?? u.barcodeCode ?? "",
+                  barcode: u.barcode ?? u.barcodeCode ?? v.barcode ?? v.code ?? v.barcodeCode ?? "",
                 }))
               : [
                   {
