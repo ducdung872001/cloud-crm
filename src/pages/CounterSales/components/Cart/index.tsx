@@ -73,6 +73,7 @@ const Cart: React.FC<CartProps> = ({
   };
 
   const subtotal  = items.reduce((sum, i) => sum + i.price * i.qty, 0);
+  const taxAmount = items.reduce((sum, i) => sum + (i.taxRate ? Math.round(i.price * i.qty * i.taxRate / 100) : 0), 0);
   const itemCount = items.length;
   const formatVND = (n: number) => n ? n.toLocaleString("vi") + " ₫" : "0 ₫";
 
@@ -89,6 +90,7 @@ const Cart: React.FC<CartProps> = ({
   const finalTotal = Math.max(
     0,
     subtotal
+    + taxAmount
     - moneyFromPoints
     - promoDiscount
     - couponDiscount
@@ -488,6 +490,13 @@ const Cart: React.FC<CartProps> = ({
             <span className="sr__k">{t("pageCounterSales.subtotal")} ({itemCount} {t("common.product")})</span>
             <span className="sr__v">{formatVND(subtotal)}</span>
           </div>
+
+          {taxAmount > 0 && (
+            <div className="sr">
+              <span className="sr__k">Thuế suất</span>
+              <span className="sr__v" style={{ color: "#d97706" }}>+{formatVND(taxAmount)}</span>
+            </div>
+          )}
 
           <div className="sr">
             <span className="sr__k">{t("pageCounterSales.voucherDiscount")}</span>

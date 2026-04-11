@@ -98,8 +98,9 @@ export default function ReceiptModal({
 
   // ── Tính tiền ───────────────────────────────────────────────────────────────
   const subtotal      = cartItems.reduce((s, c) => s + c.price * c.qty, 0);
+  const taxAmount     = cartItems.reduce((s, c) => s + (c.taxRate ? Math.round(c.price * c.qty * c.taxRate / 100) : 0), 0);
   const totalDiscount = couponDiscount + promoDiscount;
-  const total         = subtotal - totalDiscount + shippingFee;
+  const total         = subtotal + taxAmount - totalDiscount + shippingFee;
   const fmt           = (n: number) => n.toLocaleString("vi") + " đ";
 
   // Tiền thực thu và nợ — dùng giá trị từ PayModal nếu có, fallback total/0
@@ -136,7 +137,7 @@ export default function ReceiptModal({
         debt:         effectiveDebt,   // còn nợ (từ PayModal)
         amount:       total,           // tổng trước giảm giá (dùng subtotal nếu cần)
         discount:     totalDiscount,
-        vatAmount:    0,
+        vatAmount:    taxAmount,
         amountCard:   0,
         paymentType:  1,               // 1 = tiền mặt/mặc định
 
@@ -459,6 +460,13 @@ ${html}
               <span style={{ color:"var(--muted)" }}>Giảm giá</span>
               <span className="receipt__discount" style={{ fontWeight:700, color:"var(--red,#e53e3e)" }}>{totalDiscount > 0 ? `−${fmt(totalDiscount)}` : "−0 đ"}</span>
             </div>
+            {taxAmount > 0 && (
+              <div className="receipt__totals-row"
+                style={{ display:"flex", justifyContent:"space-between", padding:"3px 0", fontSize:"1.3rem" }}>
+                <span style={{ color:"var(--muted)" }}>Thuế suất</span>
+                <span style={{ fontWeight:700, color:"#d97706" }}>+{fmt(taxAmount)}</span>
+              </div>
+            )}
             {shippingFee > 0 && (
               <div className="receipt__totals-row"
                 style={{ display:"flex", justifyContent:"space-between", padding:"3px 0", fontSize:"1.3rem" }}>

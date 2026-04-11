@@ -161,6 +161,7 @@ export default function VariantModal({ open, productData, onClose, onAddToCart }
       price: matchedPrice,
       unit: product.unit,
       qty,
+      taxRate: matchedVariant.taxRate,
     });
     // Reset qty về 1 sau khi thêm vào giỏ
     setQty(1);

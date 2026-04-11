@@ -15,6 +15,8 @@ export interface CartItem {
   fixedPrice?: number;
   /** Tên CT đồng giá để hiển thị tooltip */
   promoName?: string;
+  /** Thuế suất % theo đơn giá (vd: 10 = 10%) */
+  taxRate?: number;
 }
 
 export interface Product {

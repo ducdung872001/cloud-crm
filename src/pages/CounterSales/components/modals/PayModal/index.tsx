@@ -108,9 +108,10 @@ export default function PayModal({
   useEffect(() => { onConfigChange?.(activeConfig); }, [activeConfig]);
 
   const subtotal   = cartItems.reduce((s, c) => s + c.price * c.qty, 0);
+  const taxAmount  = cartItems.reduce((s, c) => s + (c.taxRate ? Math.round(c.price * c.qty * c.taxRate / 100) : 0), 0);
   const discount   = couponDiscount + promoDiscount;
   const shipCharge = shippingFeeBearer === "RECEIVER" ? shippingFee : 0;
-  const total      = Math.max(0, subtotal - discount - loyaltyDiscount + shipCharge);
+  const total      = Math.max(0, subtotal + taxAmount - discount - loyaltyDiscount + shipCharge);
   const fmt        = (n: number) => n.toLocaleString("vi") + " ₫";
 
   // ── Tính tiền thối / nợ theo method ─────────────────────────────────────
@@ -380,6 +381,13 @@ export default function PayModal({
             <span>Tổng tiền hàng</span>
             <span>{fmt(subtotal)}</span>
           </div>
+
+          {taxAmount > 0 && (
+            <div className="pay-modal__summary-row">
+              <span>Thuế suất</span>
+              <span style={{ color: "#d97706", fontWeight: 600 }}>+{fmt(taxAmount)}</span>
+            </div>
+          )}
 
           {discount > 0 && (
             <div className="pay-modal__summary-row">
