@@ -16,3 +16,7 @@ dist/
 package-lock.json
 yarn.lock
 yarn-error.log
+
+# test outputs
+tests/screenshots/
+tests/reports/
