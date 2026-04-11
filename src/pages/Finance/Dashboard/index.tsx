@@ -82,6 +82,7 @@ export default function FinanceDashboard() {
     // KPI + giao dịch gần nhất
     FinanceDashboardService.full(params, ctrl.signal)
       .then(data => {
+        if (!data) return;
         setDashboard({
           totalFundBalance: data.totalFundBalance ?? 0,
           totalIncome:      data.totalIncome      ?? 0,
@@ -95,6 +96,7 @@ export default function FinanceDashboard() {
     // Biểu đồ thu/chi — không block UI chính
     FinanceDashboardService.chart(params, ctrl.signal)
       .then(data => {
+        if (!data) return;
         setIncomeChart(data.incomeChart   ?? []);
         setExpenseChart(data.expenseChart ?? []);
       })

@@ -85,14 +85,25 @@ export async function createTestRunner(moduleCode, moduleName) {
   async function goto(route, opts = {}) {
     const url = `${CONFIG.BASE_URL}${route}`;
     await page.goto(url, {
-      waitUntil: "networkidle",
+      waitUntil: "load",
       timeout: CONFIG.NAVIGATION_TIMEOUT,
       ...opts,
-    }).catch(() => {
-      // fallback: just wait for load
-      return page.goto(url, { waitUntil: "load", timeout: CONFIG.NAVIGATION_TIMEOUT });
-    });
-    await page.waitForTimeout(1500);
+    }).catch(() => {});
+    await page.waitForTimeout(3000);
+    // Auto-dismiss tour tooltip + remove overlay mask
+    await dismissTour();
+  }
+
+  async function dismissTour() {
+    // Click "Bo qua" to dismiss tour
+    await page.click('.tour-tooltip__skip, button:has-text("Bỏ qua")').catch(() => {});
+    await page.waitForTimeout(300);
+    // Force-remove tour overlay that blocks all clicks
+    await page.evaluate(() => {
+      document.querySelectorAll('.tour-overlay, .tour-overlay__mask, [class*="tour-overlay"]').forEach(el => el.remove());
+      document.querySelectorAll('.tour-tooltip, [class*="tour-tooltip"]').forEach(el => el.remove());
+    }).catch(() => {});
+    await page.waitForTimeout(300);
   }
 
   async function login() {
@@ -279,6 +290,7 @@ export async function createTestRunner(moduleCode, moduleName) {
     clearApiLogs,
     log,
     done,
+    dismissTour,
     RUN_ID,
   };
 }

@@ -202,17 +202,24 @@ async function main() {
   console.log("   \u23F3 Cho redirect...");
   await page.waitForTimeout(8000);
 
-  // Handle "Chon vai tro" modal
+  // Handle "Chon vai tro" modal — try multiple patterns
   try {
-    await page.waitForSelector('text=Chọn vai trò', { timeout: 8000 });
-    console.log("   \uD83D\uDC64 Chon vai tro → Xac nhan");
-    await page.click('button:has-text("Xác nhận"), button:has-text("Xac nhan")').catch(() => {});
-    await page.waitForTimeout(5000);
+    const hasRoleModal = await page.waitForSelector(
+      'text=Chọn vai trò, text=chọn vai trò, button:has-text("Xác nhận")',
+      { timeout: 10000 }
+    ).catch(() => null);
+    if (hasRoleModal) {
+      console.log("   \uD83D\uDC64 Chon vai tro → Xac nhan");
+      await page.click('button:has-text("Xác nhận")').catch(() => {});
+      await page.waitForTimeout(5000);
+    }
   } catch {
     await page.waitForTimeout(3000);
   }
 
-  const loggedIn = page.url().includes("/crm/") || (await page.$('[class*="sidebar"], [class*="header"]')) !== null;
+  // Extra wait for CRM to fully load after role selection
+  await page.waitForTimeout(3000);
+  const loggedIn = page.url().includes("/crm/") || (await page.$('[class*="sidebar"], [class*="header"], [class*="menu"]')) !== null;
   if (!loggedIn) {
     console.log("\u274C Login FAILED. Dung lai.");
     await browser.close();
