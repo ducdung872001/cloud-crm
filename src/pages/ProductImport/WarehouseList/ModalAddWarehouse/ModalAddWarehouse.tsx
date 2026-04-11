@@ -234,13 +234,18 @@ export default function ModalAddWarehouse(props: AddInventoryModalProps) {
       isSelling: formData?.values?.isSelling === "1" ? 1 : 0,
     };
 
-    const response = await InventoryService.update(body);
+    try {
+      const response = await InventoryService.update(body);
 
-    if (response.code === 0) {
-      showToast(`${data ? "Cập nhật" : "Thêm mới"} kho hàng thành công`, "success");
-      onHide(true);
-    } else {
-      showToast(response.message ?? "Có lỗi xảy ra. Vui lòng thử lại sau", "error");
+      if (response.code === 0) {
+        showToast(`${data ? "Cập nhật" : "Thêm mới"} kho hàng thành công`, "success");
+        onHide(true);
+      } else {
+        showToast(response.message ?? response.error ?? "Có lỗi xảy ra. Vui lòng thử lại sau", "error");
+        setIsSubmit(false);
+      }
+    } catch (err) {
+      showToast("Có lỗi xảy ra. Vui lòng thử lại sau", "error");
       setIsSubmit(false);
     }
   };

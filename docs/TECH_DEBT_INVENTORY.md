@@ -113,6 +113,18 @@
 
 ---
 
+### TD-INV-007: API error response dung `error` thay vi `message`
+
+**Mo ta:** Backend tra ve `{ error: "ma kho da ton tai" }` thay vi `{ code: 1, message: "..." }`. Frontend check `response.message` → undefined → hien toast chung chung "Co loi xay ra" thay vi message cu the tu backend.
+
+**Da fix:** `ModalAddWarehouse.tsx` — doc ca `response.message` va `response.error`
+
+**Van de goc (toan he thong):** `apiPost` khong check HTTP status. Khi 400/500, van parse JSON nhung response format khac (`error` thay vi `message`). Moi component phai tu handle. Can thong nhat response format giua FE va BE.
+
+**Muc do:** MEDIUM — anh huong UX (user khong biet loi gi)
+
+---
+
 ## DA FIX
 
 | # | Loi | File | Fix |
