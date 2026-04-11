@@ -59,6 +59,21 @@
 
 ---
 
+## NGUYEN TAC BAT BUOC KHI TEST CRUD
+
+> **Moi thao tac Create/Update PHAI kiem tra DATA ROUND-TRIP:**
+>
+> 1. **Luu form** — ghi nhan TAT CA gia tri da nhap (ten, ma, dia chi, trang thai, gia, so luong...)
+> 2. **Kiem tra DANH SACH** — moi truong da nhap phai hien dung tren bang list (khong bi "—", rong, hoac sai)
+> 3. **Mo lai EDIT** — moi input phai hien dung gia tri da luu (khong bi mat, khong bi reset)
+> 4. **Doi chieu API** — capture API response (GET/list) va verify tung field khop voi input
+>
+> Neu bat ky truong nao khong hien dung → **FAIL** — bao loi backend.
+>
+> *Ly do:* Backend co the tra "thanh cong" nhung khong luu du truong. Chi check "toast thanh cong" la KHONG DU.
+
+---
+
 ## QUY UOC TRANG THAI
 
 | Ky hieu | Y nghia |

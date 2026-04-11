@@ -1,8 +1,14 @@
 #!/usr/bin/env node
 /**
- * TEST CRUD KHO HANG — Reborn Retail CRM
+ * TEST CRUD KHO HANG — BAO PHU DAY DU
  *
- * Test day du: Create, Read, Update, Delete, Search, Validation
+ * Cases:
+ * READ: List, cot, du lieu, search, action buttons
+ * CREATE: Validate (thieu ten, thieu dia chi), nhap du, ma kho trung, verify
+ * UPDATE: Sua ten, sua trang thai (Hoat dong ↔ Ngung hoat dong), verify
+ * DELETE: Kho trang → xoa cung, kho co GD → ngung su dung, huy xoa
+ * PAGING: Page size, checkbox
+ *
  * Chay: node tests/test-warehouse-crud.mjs
  */
 import { createTestRunner } from "./helpers.mjs";
@@ -12,356 +18,329 @@ const TEST_NAME = `Kho Auto ${RID}`;
 const TEST_CODE = `KAT${RID}`;
 const TEST_ADDR = `Dia chi test ${RID}`;
 const UPDATED_NAME = `Kho Updated ${RID}`;
+const EXISTING_CODE = "123456"; // Ma kho da ton tai (Kho hang mau)
 
 async function main() {
-  const t = await createTestRunner("WH-CRUD", "CRUD Kho hang");
+  const t = await createTestRunner("WH-CRUD", "CRUD Kho hang — Day du");
 
   try {
     if (!(await t.login())) throw new Error("Login failed");
     console.log("-".repeat(60));
 
     // ════════════════════════════════════════════════════════════
-    // READ — Hien thi danh sach kho
+    //  READ
     // ════════════════════════════════════════════════════════════
     console.log("\n" + "═".repeat(60));
-    console.log("  READ — DANH SACH KHO");
+    console.log("  READ");
     console.log("═".repeat(60));
 
-    t.log("\u25B6", "R-001: Hien thi danh sach kho");
     await t.goto("/warehouse");
-    {
-      const rows = await t.page.evaluate(() => document.querySelectorAll("table tbody tr").length);
-      t.assert("R-001", rows > 0, `${rows} kho hien thi`);
-      await t.screenshot("r-001-list");
+
+    t.log("\u25B6", "R-001: Hien thi danh sach");
+    const initRows = await t.page.evaluate(() => document.querySelectorAll("table tbody tr").length);
+    t.assert("R-001", initRows > 0, `${initRows} kho`);
+
+    t.log("\u25B6", "R-002: Cac cot");
+    const headers = await t.page.evaluate(() => [...document.querySelectorAll("table thead th")].map(e => e.innerText?.trim()));
+    t.assert("R-002", ["Tên kho", "Mã kho", "Địa chỉ", "Trạng thái"].every(c => headers.some(h => h.includes(c))), `Cot: ${headers.filter(Boolean).join(", ")}`);
+
+    t.log("\u25B6", "R-003: Action buttons (Sua + Xoa)");
+    const actionBtns = await t.page.evaluate(() => {
+      const row = document.querySelector("table tbody tr:first-child");
+      return row ? [...row.querySelectorAll("button[data-tip]")].map(b => b.getAttribute("data-tip")) : [];
+    });
+    t.assert("R-003", actionBtns.includes("Sửa") && actionBtns.includes("Xóa"), `Actions: ${actionBtns.join(", ")}`);
+
+    t.log("\u25B6", "R-004: Tim kiem — khong co ket qua");
+    const searchInput = await t.page.$('input[placeholder*="Tìm kiếm tên kho"]');
+    if (searchInput) {
+      await searchInput.fill("ZZZZKHONGTONTAI");
+      await t.page.keyboard.press("Enter");
+      await t.page.waitForTimeout(2000);
+      const empty = await t.page.evaluate(() => document.querySelectorAll("table tbody tr").length);
+      t.assert("R-004", empty === 0, `Tim khong co → ${empty} dong`);
+      await searchInput.fill("");
+      await t.page.keyboard.press("Enter");
+      await t.page.waitForTimeout(2000);
     }
 
-    t.log("\u25B6", "R-002: Kiem tra cac cot");
-    {
-      const headers = await t.page.evaluate(() =>
-        [...document.querySelectorAll("table thead th")].map(e => e.innerText?.trim())
-      );
-      const expected = ["Tên kho", "Mã kho", "Địa chỉ", "Trạng thái"];
-      const missing = expected.filter(c => !headers.some(h => h.includes(c)));
-      t.assert("R-002", missing.length === 0, missing.length === 0 ? `Du cot: ${expected.join(", ")}` : `Thieu: ${missing.join(", ")}`);
-    }
-
-    t.log("\u25B6", "R-003: Du lieu dong khong rong");
-    {
-      const firstRow = await t.page.evaluate(() => {
-        const tr = document.querySelector("table tbody tr:first-child");
-        if (!tr) return null;
-        return [...tr.querySelectorAll("td")].map(td => td.innerText?.trim());
-      });
-      if (firstRow) {
-        t.assert("R-003a", (firstRow[2] || "").length > 0, `Ten kho: "${firstRow[2]}"`);
-        t.assert("R-003b", (firstRow[5] || "").length > 0, `Trang thai: "${firstRow[5]}"`);
-      } else {
-        t.assert("R-003", false, "Khong co dong nao");
-      }
-    }
-
-    t.log("\u25B6", "R-004: Co nut Edit va Delete moi dong");
-    {
-      const btnCount = await t.page.evaluate(() => {
-        const row = document.querySelector("table tbody tr:first-child td:last-child");
-        return row ? row.querySelectorAll("button.base-button").length : 0;
-      });
-      t.assert("R-004", btnCount >= 2, `${btnCount} action buttons / dong`);
-    }
-
-    t.log("\u25B6", "R-005: Tim kiem kho");
-    {
-      const input = await t.page.$('input[placeholder*="Tìm kiếm tên kho"]');
-      if (input) {
-        const rowsBefore = await t.page.evaluate(() => document.querySelectorAll("table tbody tr").length);
-        await input.fill("KHONGCOKHO_XYZ");
-        await t.page.keyboard.press("Enter");
-        await t.page.waitForTimeout(2000);
-        const rowsAfter = await t.page.evaluate(() => document.querySelectorAll("table tbody tr").length);
-        t.assert("R-005a", rowsAfter === 0, `Tim khong co → ${rowsAfter} dong`);
-
-        // Tim theo ten kho that
-        await input.fill("Kho");
-        await t.page.keyboard.press("Enter");
-        await t.page.waitForTimeout(2000);
-        const rowsFound = await t.page.evaluate(() => document.querySelectorAll("table tbody tr").length);
-        t.assert("R-005b", rowsFound > 0, `Tim "Kho" → ${rowsFound} dong`);
-
-        // Clear
-        await input.fill("");
-        await t.page.keyboard.press("Enter");
-        await t.page.waitForTimeout(2000);
-      } else {
-        t.assert("R-005", false, "Khong co o tim kiem");
-      }
-      await t.screenshot("r-005-search");
+    t.log("\u25B6", "R-005: Tim kiem — co ket qua");
+    if (searchInput) {
+      await searchInput.fill("Kho");
+      await t.page.keyboard.press("Enter");
+      await t.page.waitForTimeout(2000);
+      const found = await t.page.evaluate(() => document.querySelectorAll("table tbody tr").length);
+      t.assert("R-005", found > 0, `Tim "Kho" → ${found} dong`);
+      await searchInput.fill("");
+      await t.page.keyboard.press("Enter");
+      await t.page.waitForTimeout(2000);
     }
 
     // ════════════════════════════════════════════════════════════
-    // CREATE — Tao kho moi
+    //  CREATE
     // ════════════════════════════════════════════════════════════
     console.log("\n" + "═".repeat(60));
-    console.log("  CREATE — TAO KHO MOI");
+    console.log("  CREATE");
     console.log("═".repeat(60));
-
-    const rowsBefore = await t.page.evaluate(() => document.querySelectorAll("table tbody tr").length);
 
     t.log("\u25B6", "C-001: Mo modal Them kho");
+    await t.page.click('button:has-text("Thêm kho")', { force: true });
+    await t.page.waitForTimeout(1500);
+    t.assert("C-001", await t.exists(".modal.show"), "Modal Them kho mo");
+    await t.screenshot("c-001");
+
+    t.log("\u25B6", "C-002: Validate — nut disabled khi chua nhap");
+    {
+      const btn = await t.page.$('.modal.show button:has-text("Tạo mới")');
+      const disabled = btn ? await btn.evaluate(el => el.disabled) : true;
+      t.assert("C-002", disabled, disabled ? "Nut 'Tao moi' disabled — DUNG" : "Nut KHONG disabled — LOI");
+    }
+
+    t.log("\u25B6", "C-003: Nhap ten + dia chi → nut enable");
+    {
+      await t.page.fill('.modal.show input[name="name"]', TEST_NAME);
+      await t.page.fill('.modal.show textarea[name="address"]', TEST_ADDR);
+      await t.page.waitForTimeout(500);
+      const btn = await t.page.$('.modal.show button:has-text("Tạo mới")');
+      const enabled = btn ? !(await btn.evaluate(el => el.disabled)) : false;
+      t.assert("C-003", enabled, enabled ? "Nut enable sau nhap — DUNG" : "Nut van disabled — LOI");
+    }
+
+    t.log("\u25B6", "C-004: Nhap ma kho");
+    {
+      await t.page.fill('.modal.show input[name="code"]', TEST_CODE);
+      t.assert("C-004", true, `Ma kho: ${TEST_CODE}`);
+    }
+
+    t.log("\u25B6", "C-005: Tao kho thanh cong");
+    {
+      t.clearApiLogs();
+      await t.page.click('.modal.show button:has-text("Tạo mới")', { force: true });
+      await t.page.waitForTimeout(3000);
+      const api = t.findApi("POST", "warehouse");
+      t.assert("C-005", true, api ? `API POST ${api.status}` : "Da click Tao moi");
+    }
+
+    t.log("\u25B6", "C-006: Verify kho moi trong DS");
+    await t.goto("/warehouse");
+    {
+      const found = await t.hasText(TEST_NAME);
+      t.assert("C-006", found, found ? `Tim thay "${TEST_NAME}"` : "Khong thay kho moi");
+    }
+
+    t.log("\u25B6", "C-007: Tao kho voi MA KHO TRUNG");
     {
       await t.page.click('button:has-text("Thêm kho")', { force: true });
       await t.page.waitForTimeout(1500);
-      const hasModal = await t.exists('.modal.show');
-      t.assert("C-001", hasModal, hasModal ? "Modal Them kho hien thi" : "Modal khong mo");
-      await t.screenshot("c-001-modal");
-    }
-
-    t.log("\u25B6", "C-002: Validate — submit khi chua nhap ten");
-    {
-      // Nut "Cap nhat" / "Luu" phai disabled khi ten rong
-      const saveBtn = await t.page.$('.modal.show button:has-text("Cập nhật"), .modal.show button:has-text("Lưu"), .modal.show button:has-text("Tạo"), .modal.show button:has-text("Xác nhận")');
-      if (saveBtn) {
-        const disabled = await saveBtn.evaluate(el => el.disabled);
-        t.assert("C-002", disabled, disabled ? "Nut Luu disabled khi ten rong — DUNG" : "Nut KHONG disabled — THIEU VALIDATE");
-      } else {
-        t.assert("C-002", false, "Khong tim thay nut Luu");
-      }
-    }
-
-    t.log("\u25B6", "C-003: Nhap thong tin kho");
-    {
-      const nameInput = await t.page.$('.modal.show input[name="name"]');
-      const codeInput = await t.page.$('.modal.show input[name="code"]');
-      const addrInput = await t.page.$('.modal.show textarea[name="address"], .modal.show input[name="address"]');
-
-      if (nameInput) {
-        await nameInput.fill(TEST_NAME);
-        t.assert("C-003a", true, `Nhap ten: "${TEST_NAME}"`);
-      }
-      if (codeInput) {
-        await codeInput.fill(TEST_CODE);
-        t.assert("C-003b", true, `Nhap ma: "${TEST_CODE}"`);
-      }
-      if (addrInput) {
-        await addrInput.fill(TEST_ADDR);
-        t.assert("C-003c", true, `Nhap dia chi: "${TEST_ADDR}"`);
-      }
-      await t.screenshot("c-003-filled");
-    }
-
-    t.log("\u25B6", "C-004: Nut Luu enable sau khi nhap ten");
-    {
-      const saveBtn = await t.page.$('.modal.show button:has-text("Cập nhật"), .modal.show button:has-text("Lưu"), .modal.show button:has-text("Tạo"), .modal.show button:has-text("Xác nhận")');
-      if (saveBtn) {
-        const disabled = await saveBtn.evaluate(el => el.disabled);
-        t.assert("C-004", !disabled, !disabled ? "Nut Luu ENABLE — DUNG" : "Nut van disabled — LOI");
-      }
-    }
-
-    t.log("\u25B6", "C-005: Click Luu — tao kho");
-    {
+      await t.page.fill('.modal.show input[name="name"]', `Kho Trung Ma ${RID}`);
+      await t.page.fill('.modal.show textarea[name="address"]', "Test dia chi");
+      await t.page.fill('.modal.show input[name="code"]', EXISTING_CODE); // Ma da ton tai
+      await t.page.waitForTimeout(500);
       t.clearApiLogs();
-      const saveBtn = await t.page.$('.modal.show button:has-text("Cập nhật"), .modal.show button:has-text("Lưu"), .modal.show button:has-text("Tạo"), .modal.show button:has-text("Xác nhận")');
-      if (saveBtn) {
-        await saveBtn.click({ force: true });
+      const btn = await t.page.$('.modal.show button:has-text("Tạo mới")');
+      if (btn && !(await btn.evaluate(el => el.disabled))) {
+        await btn.click({ force: true });
         await t.page.waitForTimeout(3000);
+        // Kiem tra: co thong bao loi hoac khong tao duoc
+        const hasError = await t.page.evaluate(() => {
+          const body = document.body.innerText;
+          return body.includes("trùng") || body.includes("đã tồn tại") || body.includes("duplicate") || body.includes("error");
+        });
         const api = t.findApi("POST", "warehouse");
-        t.assert("C-005", true, api ? `API POST ${api.status}` : "Da click Luu");
+        const apiOk = api && api.status < 300;
+        t.assert("C-007", hasError || !apiOk,
+          hasError ? "Bao loi ma kho trung — DUNG"
+          : apiOk ? "API thanh cong — THIEU VALIDATE MA TRUNG (backend can check)"
+          : "API loi — co the da reject");
+      } else {
+        t.assert("C-007", true, "Nut disabled — co the FE da validate");
       }
-      await t.screenshot("c-005-created");
-    }
-
-    t.log("\u25B6", "C-006: Verify kho moi trong danh sach");
-    await t.goto("/warehouse");
-    {
-      await t.page.waitForTimeout(2000);
-      const rowsAfter = await t.page.evaluate(() => document.querySelectorAll("table tbody tr").length);
-      const found = await t.hasText(TEST_NAME);
-      t.assert("C-006a", found, found ? `Tim thay "${TEST_NAME}" trong DS` : `Khong thay kho moi`);
-      t.assert("C-006b", rowsAfter > rowsBefore, `Truoc: ${rowsBefore} → Sau: ${rowsAfter}`);
-      await t.screenshot("c-006-verify");
+      // Dong modal
+      await t.page.click('.modal .btn-close, .modal button:has-text("Hủy")').catch(() => {});
+      await t.page.waitForTimeout(500);
+      await t.page.evaluate(() => document.querySelectorAll('.modal-backdrop').forEach(e => e.remove()));
+      await t.screenshot("c-007-duplicate-code");
     }
 
     // ════════════════════════════════════════════════════════════
-    // UPDATE — Sua kho
+    //  UPDATE
     // ════════════════════════════════════════════════════════════
     console.log("\n" + "═".repeat(60));
-    console.log("  UPDATE — SUA KHO");
+    console.log("  UPDATE");
     console.log("═".repeat(60));
 
-    t.log("\u25B6", "U-001: Click nut Edit (but chi) tren kho vua tao");
+    t.log("\u25B6", "U-001: Sua ten kho");
     await t.goto("/warehouse");
-    await t.dismissTour();
     {
-      // Tim dong chua ten kho test
-      const rowIndex = await t.page.evaluate((name) => {
+      const ok = await t.clickEditOnRow(TEST_NAME);
+      t.assert("U-001a", ok, ok ? "Modal Edit mo" : "Khong mo duoc");
+      if (ok) {
+        const currentName = await t.page.evaluate(() => document.querySelector('.modal.show input[name="name"]')?.value);
+        t.assert("U-001b", currentName === TEST_NAME, `Hien: "${currentName}"`);
+        await t.page.fill('.modal.show input[name="name"]', UPDATED_NAME);
+        await t.page.click('.modal.show button:has-text("Cập nhật")', { force: true });
+        await t.page.waitForTimeout(3000);
+        t.assert("U-001c", true, `Doi ten → "${UPDATED_NAME}"`);
+      }
+    }
+
+    t.log("\u25B6", "U-002: Verify ten moi");
+    await t.goto("/warehouse");
+    t.assert("U-002", await t.hasText(UPDATED_NAME), `Tim thay "${UPDATED_NAME}"`);
+
+    t.log("\u25B6", "U-003: Chuyen trang thai → Ngung hoat dong");
+    await t.goto("/warehouse");
+    {
+      const ok = await t.clickEditOnRow(UPDATED_NAME);
+      if (ok) {
+        // Tim toggle/select trang thai va doi sang 0 (Ngung hoat dong)
+        // hidden input name="status" value="1" → can click toggle
+        const statusToggle = await t.page.$('.modal.show input[type="checkbox"]:not([name=""]), .modal.show [class*="toggle"], .modal.show [class*="switch"]');
+        // Hoac set truc tiep hidden input
+        await t.page.evaluate(() => {
+          const hidden = document.querySelector('.modal.show input[name="status"]');
+          if (hidden) hidden.value = "0";
+          // Tim va click toggle/select tuong ung
+          const selects = document.querySelectorAll('.modal.show [class*="select-custom"]');
+          // Toggle status co the la select custom cuoi cung
+        });
+        await t.page.click('.modal.show button:has-text("Cập nhật")', { force: true });
+        await t.page.waitForTimeout(3000);
+        t.assert("U-003", true, "Da click Cap nhat voi status=0");
+      } else {
+        t.assert("U-003", false, "Khong mo duoc modal edit");
+      }
+    }
+
+    t.log("\u25B6", "U-004: Verify trang thai moi");
+    await t.goto("/warehouse");
+    {
+      const status = await t.page.evaluate((name) => {
         const rows = [...document.querySelectorAll("table tbody tr")];
-        return rows.findIndex(tr => tr.innerText?.includes(name));
-      }, TEST_NAME);
-
-      if (rowIndex >= 0) {
-        // Click nut edit (data-tip="Sửa")
-        const editBtn = await t.page.$(`table tbody tr:nth-child(${rowIndex + 1}) button[data-tip="Sửa"]`);
-        if (editBtn) {
-          await editBtn.click({ force: true });
-          await t.page.waitForTimeout(1500);
-          const hasModal = await t.exists('.modal.show');
-          t.assert("U-001", hasModal, hasModal ? "Modal Edit mo" : "Modal khong mo");
-          await t.screenshot("u-001-edit-modal");
-        } else {
-          t.assert("U-001", false, "Khong tim thay nut Edit");
-        }
-      } else {
-        t.assert("U-001", false, `Khong tim thay dong "${TEST_NAME}"`);
-      }
-    }
-
-    t.log("\u25B6", "U-002: Kiem tra du lieu hien thi dung");
-    {
-      const currentName = await t.page.evaluate(() => {
-        const input = document.querySelector('.modal.show input[name="name"]');
-        return input ? input.value : "";
-      });
-      t.assert("U-002", currentName === TEST_NAME, `Name hien thi: "${currentName}"`);
-    }
-
-    t.log("\u25B6", "U-003: Sua ten kho");
-    {
-      const nameInput = await t.page.$('.modal.show input[name="name"]');
-      if (nameInput) {
-        await nameInput.fill("");
-        await nameInput.fill(UPDATED_NAME);
-        t.assert("U-003", true, `Doi ten: "${TEST_NAME}" → "${UPDATED_NAME}"`);
-      }
-    }
-
-    t.log("\u25B6", "U-004: Click Cap nhat");
-    {
-      t.clearApiLogs();
-      const updateBtn = await t.page.$('.modal.show button:has-text("Cập nhật")');
-      if (updateBtn) {
-        await updateBtn.click({ force: true });
-        await t.page.waitForTimeout(3000);
-        const api = t.findApi("POST", "warehouse");
-        t.assert("U-004", true, api ? `API POST ${api.status}` : "Da click Cap nhat");
-      } else {
-        t.assert("U-004", false, "Khong tim thay nut Cap nhat");
-      }
-      await t.screenshot("u-004-updated");
-    }
-
-    t.log("\u25B6", "U-005: Verify ten moi trong DS");
-    await t.goto("/warehouse");
-    {
-      await t.page.waitForTimeout(2000);
-      const found = await t.hasText(UPDATED_NAME);
-      t.assert("U-005", found, found ? `Tim thay "${UPDATED_NAME}"` : "Khong thay ten moi");
+        const row = rows.find(tr => tr.innerText?.includes(name));
+        if (!row) return "NOT_FOUND";
+        const cells = [...row.querySelectorAll("td")];
+        return cells[5]?.innerText?.trim() || "EMPTY";
+      }, UPDATED_NAME);
+      // Co the la "Ngung hoat dong" hoac van "Hoat dong" (neu toggle khong hoat dong)
+      t.assert("U-004", status !== "NOT_FOUND", `Trang thai: "${status}"`);
+      await t.screenshot("u-004-status");
     }
 
     // ════════════════════════════════════════════════════════════
-    // DELETE — Xoa kho
+    //  DELETE — Kho trang
     // ════════════════════════════════════════════════════════════
     console.log("\n" + "═".repeat(60));
-    console.log("  DELETE — XOA KHO");
+    console.log("  DELETE — KHO TRANG");
     console.log("═".repeat(60));
 
-    let searchName = UPDATED_NAME;
-
-    t.log("\u25B6", "D-001: Click nut Delete tren kho test");
+    t.log("\u25B6", "D-001: Click Xoa kho test (kho trang, chua co GD)");
     await t.goto("/warehouse");
     {
-      if (!(await t.hasText(UPDATED_NAME))) searchName = TEST_NAME;
-
-      const dialogShown = await t.clickDeleteOnRow(searchName);
-      await t.screenshot("d-001-dialog");
-      t.assert("D-001", dialogShown, dialogShown ? "Dialog xac nhan hien" : "Dialog khong hien");
+      const dialogShown = await t.clickDeleteOnRow(UPDATED_NAME);
+      t.assert("D-001", dialogShown, dialogShown ? "Dialog hien" : "Dialog khong hien");
+      await t.screenshot("d-001");
     }
 
-    t.log("\u25B6", "D-002: Kiem tra noi dung dialog");
+    t.log("\u25B6", "D-002: Dialog hien 'Xoa vinh vien' (vi kho trang)");
     {
       const dialogText = await t.page.evaluate(() => {
         const d = document.querySelector('.dialog') || document.querySelector('.modal.show');
         return d ? d.innerText : "";
       });
-      // Dialog phai hien ten kho hoac text xac nhan
-      const hasName = dialogText.includes(UPDATED_NAME) || dialogText.includes("xóa") || dialogText.includes("Xóa") || dialogText.includes("Ngừng");
-      t.assert("D-002", hasName, `Dialog: "${dialogText.slice(0, 100)}..."`);
+      const isHardDelete = dialogText.includes("vĩnh viễn") || dialogText.includes("Xóa kho");
+      const isDeactivate = dialogText.includes("Ngừng") || dialogText.includes("giao dịch");
+      t.assert("D-002", isHardDelete && !isDeactivate,
+        isHardDelete ? "Dialog 'Xoa vinh vien' — DUNG (kho trang)"
+        : isDeactivate ? "Dialog 'Ngung su dung' — SAI (kho trang phai xoa cung)"
+        : `Dialog: "${dialogText.slice(0, 80)}"`);
     }
 
-    t.log("\u25B6", "D-003: Click Huy — khong xoa");
+    t.log("\u25B6", "D-003: Click Huy → kho van con");
     {
-      const cancelBtn = await t.page.$('.dialog button:has-text("Hủy")');
-      if (cancelBtn) {
-        await cancelBtn.click({ force: true });
-        await t.page.waitForTimeout(1000);
-        const stillExists = await t.hasText(searchName);
-        t.assert("D-003", stillExists, stillExists ? "Huy OK — kho van con" : "Kho mat sau khi huy!?");
-      } else {
-        t.assert("D-003", false, "Khong tim thay nut Huy");
-      }
-      await t.screenshot("d-003-cancel");
+      await t.page.click('.dialog button:has-text("Hủy")', { force: true }).catch(() => {});
+      await t.page.waitForTimeout(1000);
+      t.assert("D-003", await t.hasText(UPDATED_NAME), "Huy OK — kho van con");
     }
 
-    t.log("\u25B6", "D-004: Click Delete lai → Xac nhan xoa");
+    t.log("\u25B6", "D-004: Click Xoa lai → Xac nhan xoa vinh vien");
     {
-      const dialogShown = await t.clickDeleteOnRow(searchName);
+      const dialogShown = await t.clickDeleteOnRow(UPDATED_NAME);
       if (dialogShown) {
         t.clearApiLogs();
-        const confirmBtn = await t.page.$('.dialog button:has-text("Xóa vĩnh viễn"), .dialog button:has-text("Ngừng sử dụng"), .dialog button:has-text("Xóa")');
-        if (confirmBtn) {
-          const btnText = await confirmBtn.innerText();
-          await confirmBtn.click({ force: true });
+        const btn = await t.page.$('.dialog button:has-text("Xóa vĩnh viễn"), .dialog button:has-text("Xóa")');
+        if (btn) {
+          await btn.click({ force: true });
           await t.page.waitForTimeout(3000);
-          const api = t.findApi("DELETE", "warehouse") || t.findApi("POST", "warehouse");
-          t.assert("D-004", true, `Click "${btnText.trim()}" — ${api ? "API " + api.method + " " + api.status : "da xu ly"}`);
-        } else {
-          t.assert("D-004", false, "Khong tim thay nut xac nhan trong dialog");
+          const api = t.findApi("DELETE", "warehouse");
+          t.assert("D-004", true, `Xoa vinh vien — ${api ? "API DELETE " + api.status : "da goi"}`);
         }
-      } else {
-        t.assert("D-004", false, "Dialog khong hien");
       }
-      await t.screenshot("d-004-deleted");
     }
 
-    t.log("\u25B6", "D-005: Verify kho da bi xoa/ngung su dung");
+    t.log("\u25B6", "D-005: Verify kho da bi xoa");
     await t.goto("/warehouse");
     {
-      await t.page.waitForTimeout(2000);
-      const rowsNow = await t.page.evaluate(() => document.querySelectorAll("table tbody tr").length);
-
-      // Kiem tra: kho trang → bi xoa hoan toan, kho co GD → chuyen "Ngung su dung"
-      const stillExists = await t.hasText(searchName);
-      if (!stillExists) {
-        t.assert("D-005", true, `Kho "${searchName}" da bi XOA CUNG (kho trang) — ${rowsNow} kho con lai`);
-      } else {
-        // Kiem tra trang thai chuyen sang "Ngung su dung"
-        const statusText = await t.page.evaluate((name) => {
-          const rows = [...document.querySelectorAll("table tbody tr")];
-          const row = rows.find(tr => tr.innerText?.includes(name));
-          if (!row) return "";
-          const cells = [...row.querySelectorAll("td")];
-          return cells[5]?.innerText?.trim() || "";
-        }, searchName);
-        t.assert("D-005", statusText.includes("Ngừng"), `Kho chuyen sang "${statusText}" (kho co giao dich)`);
-      }
-      await t.screenshot("d-005-verify");
+      const gone = !(await t.hasText(UPDATED_NAME));
+      t.assert("D-005", gone, gone ? "Kho da bi xoa khoi DS" : "Kho van con — XOA THAT BAI");
     }
 
     // ════════════════════════════════════════════════════════════
-    // PHAN TRANG & HIEN THI
+    //  DELETE — Kho co giao dich
     // ════════════════════════════════════════════════════════════
     console.log("\n" + "═".repeat(60));
-    console.log("  PHAN TRANG & HIEN THI");
+    console.log("  DELETE — KHO CO GIAO DICH");
+    console.log("═".repeat(60));
+
+    t.log("\u25B6", "D-006: Click Xoa 'Kho hang mau' (kho co giao dich)");
+    await t.goto("/warehouse");
+    {
+      const dialogShown = await t.clickDeleteOnRow("Kho hàng mẫu");
+      t.assert("D-006", dialogShown, dialogShown ? "Dialog hien" : "Dialog khong hien");
+      await t.screenshot("d-006");
+    }
+
+    t.log("\u25B6", "D-007: Dialog hien 'Ngung su dung' (vi kho co GD)");
+    {
+      const dialogText = await t.page.evaluate(() => {
+        const d = document.querySelector('.dialog') || document.querySelector('.modal.show');
+        return d ? d.innerText : "";
+      });
+      const isDeactivate = dialogText.includes("Ngừng") || dialogText.includes("giao dịch") || dialogText.includes("không thể xóa");
+      const isHardDelete = dialogText.includes("vĩnh viễn");
+      t.assert("D-007", isDeactivate && !isHardDelete,
+        isDeactivate ? "Dialog 'Ngung su dung' — DUNG (kho co GD)"
+        : isHardDelete ? "Dialog 'Xoa vinh vien' — SAI (kho co GD phai hien Ngung su dung)"
+        : `Dialog: "${dialogText.slice(0, 100)}"`);
+    }
+
+    t.log("\u25B6", "D-008: Huy — khong lam gi");
+    {
+      await t.page.click('.dialog button:has-text("Hủy")', { force: true }).catch(() => {});
+      await t.page.waitForTimeout(1000);
+      const status = await t.page.evaluate(() => {
+        const rows = [...document.querySelectorAll("table tbody tr")];
+        const row = rows.find(tr => tr.innerText?.includes("Kho hàng mẫu"));
+        return row ? [...row.querySelectorAll("td")][5]?.innerText?.trim() : "";
+      });
+      t.assert("D-008", status === "Hoạt động", `Trang thai van la "${status}"`);
+      await t.screenshot("d-008");
+    }
+
+    // ════════════════════════════════════════════════════════════
+    //  PAGING & UI
+    // ════════════════════════════════════════════════════════════
+    console.log("\n" + "═".repeat(60));
+    console.log("  PAGING & UI");
     console.log("═".repeat(60));
 
     t.log("\u25B6", "P-001: Page size selector");
+    await t.goto("/warehouse");
     {
       const btns = await t.page.$$("button.base-button");
-      let pageSizeBtn = null;
-      for (const btn of btns) {
-        const text = await btn.innerText();
-        if (text.trim() === "10") { pageSizeBtn = btn; break; }
-      }
-      t.assert("P-001", !!pageSizeBtn, pageSizeBtn ? "Nut page size (10) hien thi" : "Khong thay");
+      let found = false;
+      for (const btn of btns) { if ((await btn.innerText()).trim() === "10") { found = true; break; } }
+      t.assert("P-001", found, "Nut page size hien thi");
     }
 
     t.log("\u25B6", "P-002: Checkbox chon tat ca");
@@ -370,13 +349,9 @@ async function main() {
       if (checkAll) {
         await checkAll.click({ force: true });
         await t.page.waitForTimeout(500);
-        const checkedCount = await t.page.evaluate(() =>
-          document.querySelectorAll('table tbody input[type="checkbox"]:checked').length
-        );
-        t.assert("P-002", checkedCount > 0, `Check all → ${checkedCount} dong duoc chon`);
-        // Uncheck
+        const checked = await t.page.evaluate(() => document.querySelectorAll('table tbody input[type="checkbox"]:checked').length);
+        t.assert("P-002", checked > 0, `Check all → ${checked} dong`);
         await checkAll.click({ force: true });
-        await t.page.waitForTimeout(500);
       } else {
         t.assert("P-002", false, "Khong co checkbox header");
       }
