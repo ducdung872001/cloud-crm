@@ -17,6 +17,7 @@ import ShippingService from "services/ShippingService";
 import EmployeeService from "services/EmployeeService";
 import { IEmployeeResponse } from "model/employee/EmployeeResponseModel";
 import { IEmployeeFilterRequest } from "model/employee/EmployeeRequestModel";
+import { fetchCustomerMap } from "@/hooks/useCustomerEnrich";
 import "./AddShippingOrder.scss";
 
 function useAddressOptions() {
@@ -274,15 +275,25 @@ export default function AddShippingOrder() {
     const response = await InvoiceService.list(filterParams);
     if (response.code === 0) {
       const rawItems: Record<string, unknown>[] = response.result?.pagedLst?.items ?? [];
+
+      // Enrich customer names từ customerId nếu API không trả customerName
+      const customerIds = rawItems
+        .map((item) => (item.invoice ?? item)?.customerId)
+        .filter((id): id is number => !!id && Number(id) > 0);
+      const customerMap = customerIds.length > 0 ? await fetchCustomerMap(customerIds) : {};
+
       const options = rawItems
         .map((item) => {
           const inv: IInvoiceResponse = item.invoice ?? item;
           const id = item.invoiceId ?? inv.id;
           if (!id) return null;
+          const enriched = inv.customerId ? customerMap[Number(inv.customerId)] : null;
+          const name = inv.customerName || enriched?.name || "";
+          const phone = inv.customerPhone || enriched?.phone || "";
           return {
             value: id,
-            label: `${inv.invoiceCode ?? ""}${inv.customerName ? " — " + inv.customerName : ""}${inv.customerPhone ? " — " + inv.customerPhone : ""}`,
-            origin: { ...inv, id },
+            label: `${inv.invoiceCode ?? ""}${name ? " — " + name : ""}${phone ? " — " + phone : ""}`,
+            origin: { ...inv, id, customerName: name, customerPhone: phone },
           };
         })
         .filter(Boolean);
@@ -373,13 +384,30 @@ export default function AddShippingOrder() {
         productNames.slice(0, 4).join(", ") + (productNames.length > 4 ? ` +${productNames.length - 4} khác` : "");
       const invFromApi: IInvoiceResponse = detail.invoice ?? null;
       const resolvedId: number = detail.invoiceId ?? invoiceId;
+      let customerName = invFromApi?.customerName ?? invoiceBasic?.customerName ?? "";
+      let customerPhone = invFromApi?.customerPhone ?? invoiceBasic?.customerPhone ?? "";
+      const customerAddress = invFromApi?.customerAddress ?? invoiceBasic?.customerAddress ?? "";
+
+      // Nếu API không trả customerName, enrich từ customerId
+      const customerId = invFromApi?.customerId ?? invoiceBasic?.customerId;
+      if (!customerName && customerId && Number(customerId) > 0) {
+        try {
+          const map = await fetchCustomerMap([Number(customerId)]);
+          const info = map[Number(customerId)];
+          if (info) {
+            customerName = info.name || customerName;
+            customerPhone = customerPhone || info.phone || "";
+          }
+        } catch { /* ignore */ }
+      }
+
       const inv = {
         ...(invoiceBasic ?? {}),
         ...(invFromApi ?? {}),
         id: resolvedId,
-        customerName: invFromApi?.customerName ?? invoiceBasic?.customerName ?? "",
-        customerPhone: invFromApi?.customerPhone ?? invoiceBasic?.customerPhone ?? "",
-        customerAddress: invFromApi?.customerAddress ?? invoiceBasic?.customerAddress ?? "",
+        customerName,
+        customerPhone,
+        customerAddress,
         amount: invFromApi?.amount ?? invoiceBasic?.amount ?? 0,
         amountCard: invFromApi?.amountCard ?? invoiceBasic?.amountCard ?? 0,
         invoiceCode: invFromApi?.invoiceCode ?? invoiceBasic?.invoiceCode ?? "",

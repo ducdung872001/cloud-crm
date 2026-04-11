@@ -201,6 +201,9 @@ export default function App() {
       }
     } catch (error) {
       console.error("Error fetching employee info:", error);
+      if (error instanceof DOMException && error.name === "AbortError") {
+        showToast("Kết nối tới máy chủ quá lâu. Vui lòng tải lại trang.", "error");
+      }
       setIsChecking(false);
       return false;
     }

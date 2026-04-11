@@ -135,6 +135,17 @@
     font-weight: 600;
   }
 
+  &__qty-warning {
+    margin-top: 0.6rem;
+    padding: 0.6rem 1.2rem;
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: #856404;
+    background-color: #fff3cd;
+    border: 1px solid #ffc107;
+    border-radius: 0.4rem;
+  }
+
   // ── Total ──────────────────────────────────────
   &__total {
     display: flex;

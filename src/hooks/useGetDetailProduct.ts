@@ -22,6 +22,7 @@ export interface ProductVariant {
   stock: number;
   unitId?: number;
   unitName?: string;
+  taxRate?: number;
   // map groupId → optionId
   combination: Record<string, string>;
   images?: string[]; // giả sử API mới có thêm trường images là array để chứa nhiều ảnh của biến thể
@@ -558,6 +559,7 @@ function mapToVariantProduct(detail): VariantProduct {
           stock: toSafeNumber(v?.quantity, 0),
           unitId: v?.unitId != null ? toSafeNumber(v.unitId) : undefined,
           unitName: v?.unitName ?? detail.unitName ?? detail.unit ?? "",
+          taxRate: v?.taxRate != null ? toSafeNumber(v.taxRate) : (detail?.taxRate != null ? toSafeNumber(detail.taxRate) : undefined),
           combination: v.selectedOptions
             ? v.selectedOptions.reduce((acc, opt) => {
                 acc[String(opt.groupId)] = String(opt.optionValueId);

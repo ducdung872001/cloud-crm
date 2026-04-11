@@ -56,9 +56,11 @@ const CounterSales: React.FC = () => {
   const [invoiceId, setInvoiceId] = useState<number | null>(null);
   const [invoiceDraftToPaid, setInvoiceDraftToPaid] = useState<Record<string, unknown>>(null);
   const [activeDraftId, setActiveDraftId] = useState<string | null>(null);
-  /** Lưu paid/debt từ PayModal để truyền vào ReceiptModal → POST /invoice/create */
+  /** Lưu paid/debt/cashGiven từ PayModal để truyền vào ReceiptModal */
   const [paidAmount, setPaidAmount] = useState<number>(0);
   const [debtAmount, setDebtAmount] = useState<number>(0);
+  const [cashGivenAmount, setCashGivenAmount] = useState<number>(0);
+  const cashGivenRef = React.useRef<number>(0);
   /** Ref đánh dấu đang chuyển từ PayModal sang ReceiptModal — tránh reset invoiceId sớm */
   const transitioningToReceiptRef = React.useRef(false);
   const [method, setMethod] = useState<PayMethod>("cash");
@@ -327,11 +329,14 @@ const CounterSales: React.FC = () => {
   // ── Payment flow ─────────────────────────────────────────────────────────
   // paid  = số tiền khách thực trả (do PayModal tính và truyền lên)
   // debt  = số tiền còn nợ = total - paid (0 nếu thanh toán đủ)
-  const handlePayConfirm = async (invoiceId: number | null, paid: number, debt: number) => {
+  const handlePayConfirm = async (invoiceId: number | null, paid: number, debt: number, cashGiven?: number) => {
     if (!invoiceId) return;
-    // Lưu lại paid/debt để ReceiptModal truyền vào POST /invoice/create
+    // Lưu lại paid/debt/cashGiven để ReceiptModal truyền vào POST /invoice/create
     setPaidAmount(paid);
     setDebtAmount(debt);
+    const givenVal = cashGiven ?? paid;
+    setCashGivenAmount(givenVal);
+    cashGivenRef.current = givenVal;
     // Đánh dấu đang chuyển sang ReceiptModal — không để onClose reset invoiceId
     transitioningToReceiptRef.current = true;
     try {
@@ -575,7 +580,7 @@ const CounterSales: React.FC = () => {
           }
           transitioningToReceiptRef.current = false;
         }}
-        onConfirm={(id, paid, debt) => handlePayConfirm(id, paid, debt)}
+        onConfirm={(id, paid, debt, cashGiven) => handlePayConfirm(id, paid, debt, cashGiven)}
         onConfigChange={setActivePayConfig}
         customerId={customer?.id}
         onRequestSelectCustomer={() => {
@@ -595,8 +600,10 @@ const CounterSales: React.FC = () => {
         note={orderNote}
         paidAmount={paidAmount}
         debtAmount={debtAmount}
+        cashGivenAmount={cashGivenAmount || cashGivenRef.current}
         customerName={customer?.name ?? ""}
         warehouseId={warehouseId}
+        shippingFee={shippingInfo.shippingFeeBearer === "RECEIVER" ? shippingInfo.shippingFee : 0}
         onPaymentSuccess={() => {
           setCouponDiscount(0);
           setPromoDiscount(0);

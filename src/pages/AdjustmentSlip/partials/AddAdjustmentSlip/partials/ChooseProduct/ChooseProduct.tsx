@@ -75,7 +75,7 @@ export default function ChooseProduct(props) {
 
       const checkDuplicates = [...result.items].filter((item) => {
         return !lstBatchNoProduct.some((element) => {
-          return element === item.batchNo;
+          return element === item.id;
         });
       });
 
@@ -119,9 +119,9 @@ export default function ChooseProduct(props) {
     }
   }, [params, onShow]);
 
-  const titles = ["STT", "Ảnh sản phẩm", "Tên sản phẩm", "Số lô", "Đơn vị tính"];
+  const titles = ["STT", "Ảnh sản phẩm", "Tên sản phẩm", "Danh mục"];
 
-  const dataFormat = ["text-center", "text-center", "", "text-center", "text-center"];
+  const dataFormat = ["text-center", "text-center", "", ""];
 
   //! đoạn này xử lý vấn đề lấy hết những sản phẩm đc chọn
   const checkAll = (isChecked: boolean, lstData: IWarehouseProResponse[]) => {
@@ -249,12 +249,11 @@ export default function ChooseProduct(props) {
                               <td className="text-center">{index + 1}</td>
                               <td>
                                 <div key={item.id} className="avatar">
-                                  <Image src={item.productAvatar} alt={item.productName} />
+                                  <Image src={item.avatar} alt={item.name} />
                                 </div>
                               </td>
-                              <td>{item.productName}</td>
-                              <td className="text-center">{item.batchNo}</td>
-                              <td className="text-center">{item.unitName}</td>
+                              <td>{item.name}</td>
+                              <td>{item.categoryName}</td>
                             </tr>
                           </Fragment>
                         );
