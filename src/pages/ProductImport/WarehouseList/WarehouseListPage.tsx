@@ -93,11 +93,16 @@ export default function WarehouseListPage() {
   const checkWarehouseHasTransaction = async (warehouseId: number): Promise<boolean> => {
     try {
       const response = await WarehouseService.productList({ inventoryId: warehouseId, page: 1, size: 1 });
+      if (response?.code !== 0 && !response?.result && !response?.items) {
+        // API tra loi khong hop le (chua co endpoint) → coi nhu kho trang
+        return false;
+      }
       const items = response?.result?.items ?? response?.items ?? [];
       return items.length > 0;
     } catch {
-      // Loi API → coi nhu co giao dich de an toan
-      return true;
+      // API loi (404, 500, network) → coi nhu kho trang de cho phep xoa
+      // Backend se kiem tra lai truoc khi xoa thuc su (defense in depth)
+      return false;
     }
   };
 

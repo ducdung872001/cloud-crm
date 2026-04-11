@@ -14,7 +14,7 @@ export default {
     return apiPost(urlsApi.warehouse.update, body);
   },
   delete: (id: number) => {
-    return apiDelete(urlsApi.warehouse.delete + "/" + id);
+    return apiDelete(urlsApi.warehouse.delete, { id });
   },
   /** Chuyen kho sang trang thai "Ngung su dung" (status = 0) */
   deactivate: (id: number) => {
