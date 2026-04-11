@@ -50,7 +50,9 @@ export default function PushCampaignModal(props: Record<string, unknown>) {
     [onShow, data]
   );
 
-  const validations: IValidation[] = [];
+  const validations: IValidation[] = [
+    { name: "campaignId", rules: "required" },
+  ];
 
   const [formData, setFormData] = useState<IFormData>({ values: values });
 

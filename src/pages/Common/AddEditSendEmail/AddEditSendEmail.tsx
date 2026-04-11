@@ -342,7 +342,9 @@ export default function AddEditSendEmail(props: ISendEmail) {
     [listIdCustomerProps, onShow, data, idSendEmail, customerIdList]
   );
 
-  const validations: IValidation[] = [];
+  const validations: IValidation[] = [
+    { name: "title", rules: "required|max:100" },
+  ];
 
   const [formData, setFormData] = useState<IFormData>({ values: values });
 

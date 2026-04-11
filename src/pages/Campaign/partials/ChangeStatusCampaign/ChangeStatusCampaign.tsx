@@ -31,7 +31,9 @@ export default function ChangeStatusCampaign(props: Record<string, unknown>) {
 
   const [formData, setFormData] = useState<IFormData>({ values: values });
 
-  const validations: IValidation[] = [];
+  const validations: IValidation[] = [
+    { name: "status", rules: "required" },
+  ];
 
   const listFieldBasic = useMemo(
     () =>

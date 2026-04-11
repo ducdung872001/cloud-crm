@@ -53,7 +53,9 @@ export default function InfoPerson(props: IInfoPersonProps) {
     [data]
   );
 
-  const validations: IValidation[] = [];
+  const validations: IValidation[] = [
+    { name: "relationshipId", rules: "nullable" },
+  ];
 
   const listField = useMemo(
     () =>

@@ -35,7 +35,9 @@ export default function UpdateLevelWorkModal(props: IUpdateLevelWorkModalProps) 
     [onShow, data]
   );
 
-  const validations: IValidation[] = [];
+  const validations: IValidation[] = [
+    { name: "priorityLevel", rules: "required" },
+  ];
 
   const listField: IFieldCustomize[] = [
     {

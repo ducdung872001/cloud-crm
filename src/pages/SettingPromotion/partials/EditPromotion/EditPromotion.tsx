@@ -174,7 +174,9 @@ export default function EditPromotion(props: Record<string, unknown>) {
   // Lấy ra danh sách id người dùng từ props chuyền sang
   const [listIdCustomer, setListIdCustomer] = useState([]);
 
-  const validations: IValidation[] = [];
+  const validations: IValidation[] = [
+    { name: "name", rules: "required|max:100" },
+  ];
 
   const listIdCustomerProps = [];
 

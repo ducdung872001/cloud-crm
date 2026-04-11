@@ -140,7 +140,9 @@ export default function ModalGiveGoal(props: Record<string, unknown>) {
     [onShow, data, idCampaign]
   );
 
-  const validations: IValidation[] = [];
+  const validations: IValidation[] = [
+    { name: "budget", rules: "required|min_equal:0" },
+  ];
 
   const [formData, setFormData] = useState<IFormData>({ values: values });
 
@@ -330,12 +332,12 @@ export default function ModalGiveGoal(props: Record<string, unknown>) {
   const onSubmit = async (e) => {
     e && e.preventDefault();
 
-    // const errors = Validate(validations, formData);
+    const errors = Validate(validations, formData);
 
-    // if (Object.keys(errors).length > 0) {
-    //   setFormData((prevState) => ({ ...prevState, errors: errors }));
-    //   return;
-    // }
+    if (Object.keys(errors).length > 0) {
+      setFormData((prevState) => ({ ...prevState, errors: errors }));
+      return;
+    }
 
     if (!formData.values.employeeId) {
       showToast("Vui lòng chọn người phụ trách", "error");

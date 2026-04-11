@@ -58,7 +58,10 @@ export default function CallApiModal(props: Record<string, unknown>) {
     [onShow, data]
   );
 
-  const validations: IValidation[] = [];
+  const validations: IValidation[] = [
+    { name: "partnerCode", rules: "nullable|max:50" },
+    { name: "linkApi", rules: "nullable|max:255" },
+  ];
 
   const [formData, setFormData] = useState<IFormData>({ values: values });
 

@@ -34,7 +34,10 @@ export default function AddWorkInprogressModal(props: IAddWorkInprogressModalPro
     [onShow, idWork]
   );
 
-  const validations: IValidation[] = [];
+  const validations: IValidation[] = [
+    { name: "percent", rules: "required|min_equal:0" },
+    { name: "note", rules: "nullable|max:500" },
+  ];
 
   const listField = useMemo(
     () =>

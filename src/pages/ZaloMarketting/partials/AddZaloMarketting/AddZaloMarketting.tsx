@@ -1313,7 +1313,9 @@ export default function AddZaloMarketting(props: IAddZaloMarkettingProps) {
     [isSubmit]
   );
 
-  const validations: IValidation[] = [];
+  const validations: IValidation[] = [
+    { name: "title", rules: "required|max:100" },
+  ];
 
   const handleRepeatTime = (data) => {
     //

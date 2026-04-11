@@ -79,7 +79,9 @@ export default function ModalAddMA(props: ModalAddMAProps) {
     [onShow, data]
   );
 
-  const validations: IValidation[] = [];
+  const validations: IValidation[] = [
+    { name: "maId", rules: "required" },
+  ];
 
   const [formData, setFormData] = useState<IFormData>({ values: values });
 

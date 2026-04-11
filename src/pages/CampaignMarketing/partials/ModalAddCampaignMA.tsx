@@ -146,7 +146,11 @@ export default function ModalAddCampaignMA(props: Record<string, unknown>) {
     [onShow, data]
   );
 
-  const validations: IValidation[] = [];
+  const validations: IValidation[] = [
+    { name: "name", rules: "required|max:100" },
+    { name: "code", rules: "required|max:50" },
+    { name: "totalBudget", rules: "required|min_equal:0" },
+  ];
 
   const [formData, setFormData] = useState<IFormData>({ values: values });
 
@@ -364,12 +368,12 @@ export default function ModalAddCampaignMA(props: Record<string, unknown>) {
       return;
     }
 
-    // const errors = Validate(validations, formData);
+    const errors = Validate(validations, formData);
 
-    // if (Object.keys(errors).length > 0) {
-    //   setFormData((prevState) => ({ ...prevState, errors: errors }));
-    //   return;
-    // }
+    if (Object.keys(errors).length > 0) {
+      setFormData((prevState) => ({ ...prevState, errors: errors }));
+      return;
+    }
 
     setIsSubmit(true);
 

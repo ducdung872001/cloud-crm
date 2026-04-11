@@ -290,7 +290,12 @@ export default function UpdateCommon(props: UpdateCommonModalProps) {
     };
   }, [values]);
 
-  const validations: IValidation[] = [];
+  const validations: IValidation[] = [
+    ...(isActiveCustomerGroup ? [{ name: "cgpId", rules: "required" }] : []),
+    ...(isActiveCustomerSource ? [{ name: "sourceId", rules: "required" }] : []),
+    ...(isActiveCustomerEmployee ? [{ name: "employeeId", rules: "required" }] : []),
+    ...(isActiveCustomeRelationship ? [{ name: "relationshipId", rules: "required" }] : []),
+  ];
 
   const listField = useMemo(
     () =>

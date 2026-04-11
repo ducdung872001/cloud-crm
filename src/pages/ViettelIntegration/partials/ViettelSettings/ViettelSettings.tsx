@@ -51,7 +51,16 @@ export default function ViettelSettings({ onNavigate }: Props) {
     []
   );
 
-  const validations: IValidation[] = [];
+  const validations: IValidation[] = [
+    { name: "syncFrequency", rules: "required" },
+    { name: "syncErrorAction", rules: "required" },
+    { name: "invoiceTemplate", rules: "required" },
+    { name: "invoiceThreshold", rules: "nullable|max:50" },
+    { name: "tendooApiKey", rules: "nullable|max:255" },
+    { name: "tendooShopId", rules: "nullable|max:50" },
+    { name: "hostDomain", rules: "nullable|max:255" },
+    { name: "bhdTaxCode", rules: "nullable|max:50" },
+  ];
 
   const [formData, setFormData] = useState<IFormData>({ values: values, errors: {} });
 
