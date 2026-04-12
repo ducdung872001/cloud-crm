@@ -29,7 +29,9 @@
       "Bash(node tests/test-multi-warehouse-stock.mjs)",
       "Bash(find \"d:/Git/reborn/reborn-cloud/cloud-ver2/cloud-crm/src/configs\" -name \"urls.ts\" -exec cat {} \\\\;)",
       "Bash(grep -n \"InventoryService\\\\|variantStockList\" \"d:/Git/reborn/reborn-cloud/cloud-ver2/cloud-crm/src/services\"/*.ts)",
-      "Bash(node tests/test-e2e-return-exchange.mjs)"
+      "Bash(node tests/test-e2e-return-exchange.mjs)",
+      "Bash(node tests/test-e2e-financial-flow.mjs)",
+      "Bash(node tests/test-fin-probe.mjs)"
     ],
     "additionalDirectories": [
       "\\tmp"
