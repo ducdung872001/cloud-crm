@@ -6,7 +6,12 @@
       "Bash(grep -l \"const validations.*IValidation\\\\[\\\\]\" /d/Git/reborn/reborn-cloud/cloud-ver2/cloud-crm/src/pages/**/*.tsx)",
       "Bash(grep -r \"const validations.*=\" /d/Git/reborn/reborn-cloud/cloud-ver2/cloud-crm/src/pages/**/*.tsx)",
       "Bash(curl -m 3 -s -o /dev/null -w \"CRM: %{http_code}\" http://localhost:4000)",
-      "Bash(node tests/test-crud-all.mjs)"
+      "Bash(node tests/test-crud-all.mjs)",
+      "Bash(curl -m 3 -s -o /dev/null -w \"CRM:%{http_code} \" http://localhost:4000)",
+      "Bash(curl -m 3 -s -o /dev/null -w \"SSO:%{http_code}\" http://localhost:8080)",
+      "Bash(node -e \"const fs=require\\('fs'\\);const c=JSON.parse\\(fs.readFileSync\\('tests/.auth-cookies.json','utf8'\\)\\);const t=c.find\\(x=>x.name==='token'\\);console.log\\('Token:',new Date\\(t.expires*1000\\)>new Date\\(\\)?'VALID':'EXPIRED'\\)\")",
+      "Bash(node tests/test-crud-all.mjs --module=product)",
+      "Bash(node tests/test-crud-advanced.mjs --module=warehouse)"
     ],
     "additionalDirectories": [
       "\\tmp"

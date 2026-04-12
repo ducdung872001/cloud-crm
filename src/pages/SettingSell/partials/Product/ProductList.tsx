@@ -394,42 +394,104 @@ export default function ProductList(props: IProductListProps) {
     showToast(response.message ?? "Có lỗi xảy ra. Vui lòng thử lại sau", "error");
   };
 
-  const onDelete = async (id: number) => {
-    const response = await ProductService.wDelete(id);
-    if (response.code === 0) {
-      showToast("Xóa sản phẩm thành công", "success");
-      getListProduct(params);
-      fetchSummary();
-    } else {
-      showToast(response.message ?? "Có lỗi xảy ra. Vui lòng thử lại sau", "error");
+  /**
+   * Xoa san pham:
+   * - SP moi (chua co bien the/giao dich) → xoa cung
+   * - SP co bien the nhung chua co GD → xoa cung (backend se kiem tra lai)
+   * - SP co giao dich → backend reject, FE hoi chuyen sang "Ngung hoat dong"
+   */
+  const onHardDelete = async (id: number, name: string) => {
+    try {
+      const response = await ProductService.wDelete(id);
+      if (response.code === 0) {
+        showToast("Xóa sản phẩm thành công", "success");
+        getListProduct(params);
+        fetchSummary();
+      } else {
+        // Backend reject — hoi user ngung hoat dong
+        showToast(response.message ?? response.error ?? "Không thể xóa", "warning");
+        showDialogDeactivateProduct(id, name, response.message ?? response.error ?? "");
+        return;
+      }
+    } catch {
+      showToast("Không thể xóa sản phẩm", "error");
     }
     setShowDialog(false);
     setContentDialog(null);
   };
 
-  const onDeleteAll = () => {
+  const onDeactivateProduct = async (id: number) => {
+    try {
+      const response = await ProductService.wUpdateStatus({ id, status: 0 });
+      if (response.code === 0) {
+        showToast("Đã chuyển sản phẩm sang Ngừng hoạt động", "success");
+        getListProduct(params);
+        fetchSummary();
+      } else {
+        showToast(response.message ?? response.error ?? "Có lỗi xảy ra", "error");
+      }
+    } catch {
+      showToast("Không thể cập nhật trạng thái", "error");
+    } finally {
+      setShowDialog(false);
+      setContentDialog(null);
+    }
+  };
+
+  const showDialogDeactivateProduct = (id: number, name: string, reason: string) => {
+    const dialog: IContentDialog = {
+      color: "warning",
+      className: "dialog-delete",
+      isCentered: true,
+      isLoading: true,
+      title: <Fragment>Không thể xóa sản phẩm</Fragment>,
+      message: (
+        <Fragment>
+          {reason && <p>{reason}</p>}
+          <br />
+          Bạn có muốn chuyển sản phẩm <strong>{name}</strong> sang trạng thái <strong>Ngừng hoạt động</strong>?
+          <br /><small>Dữ liệu lịch sử sẽ được giữ nguyên.</small>
+        </Fragment>
+      ),
+      cancelText: "Hủy",
+      cancelAction: () => { setShowDialog(false); setContentDialog(null); },
+      defaultText: "Ngừng hoạt động",
+      defaultAction: () => onDeactivateProduct(id),
+    };
+    setContentDialog(dialog);
+    setShowDialog(true);
+  };
+
+  const onDeleteAll = async () => {
     const selectedIds = listIdChecked || [];
     if (!selectedIds.length) return;
-    const arrPromises = selectedIds.map((selectedId) => {
+
+    let deleted = 0;
+    let deactivated = 0;
+
+    for (const selectedId of selectedIds) {
       const found = listProduct.find((item) => item.id === selectedId);
-      return found?.id ? ProductService.delete(found.id) : Promise.resolve(null);
-    });
-    Promise.all(arrPromises)
-      .then((results) => {
-        const count = results.filter(Boolean)?.length || 0;
-        if (count > 0) {
-          showToast(`Xóa thành công ${count} sản phẩm`, "success");
-          getListProduct(params);
-          fetchSummary();
-          setListIdChecked([]);
-        } else {
-          showToast("Không có sản phẩm nào được xóa", "error");
-        }
-      })
-      .finally(() => {
-        setShowDialog(false);
-        setContentDialog(null);
-      });
+      if (!found) continue;
+      const res = await ProductService.wDelete(found.id).catch(() => ({ code: -1 }));
+      if (res.code === 0) {
+        deleted++;
+      } else {
+        // Khong xoa duoc → chuyen ngung hoat dong
+        await ProductService.wUpdateStatus({ id: found.id, status: 0 }).catch(() => {});
+        deactivated++;
+      }
+    }
+
+    const msgs: string[] = [];
+    if (deleted > 0) msgs.push(`Đã xóa ${deleted} sản phẩm`);
+    if (deactivated > 0) msgs.push(`Đã ngừng hoạt động ${deactivated} sản phẩm có giao dịch`);
+    showToast(msgs.join(". ") || "Không có sản phẩm nào được xử lý", deleted > 0 ? "success" : "warning");
+
+    getListProduct(params);
+    fetchSummary();
+    setListIdChecked([]);
+    setShowDialog(false);
+    setContentDialog(null);
   };
 
   // ── Barcode Print handler ──
@@ -617,36 +679,52 @@ export default function ProductList(props: IProductListProps) {
   };
 
   const showDialogConfirmDelete = (item?: IProductResponse) => {
-    const contentDialog: IContentDialog = {
+    // Xoa hang loat
+    if (!item) {
+      const dialog: IContentDialog = {
+        color: "error",
+        className: "dialog-delete",
+        isCentered: true,
+        isLoading: true,
+        title: <Fragment>Xóa sản phẩm</Fragment>,
+        message: (
+          <Fragment>
+            Bạn có chắc chắn muốn xử lý <strong>{listIdChecked.length} sản phẩm</strong> đã chọn?
+            <br /><br />
+            <small>• Sản phẩm chưa có giao dịch sẽ bị xóa vĩnh viễn<br />• Sản phẩm đã có giao dịch sẽ chuyển sang Ngừng hoạt động</small>
+          </Fragment>
+        ),
+        cancelText: "Hủy",
+        cancelAction: () => { setShowDialog(false); setContentDialog(null); },
+        defaultText: "Xác nhận",
+        defaultAction: onDeleteAll,
+      };
+      setContentDialog(dialog);
+      setShowDialog(true);
+      return;
+    }
+
+    // Xoa 1 SP — goi API, backend se kiem tra
+    const dialog: IContentDialog = {
       color: "error",
       className: "dialog-delete",
       isCentered: true,
       isLoading: true,
-      title: <Fragment>Xóa...</Fragment>,
+      title: <Fragment>Xóa sản phẩm</Fragment>,
       message: (
         <Fragment>
-          Bạn có chắc chắn muốn xóa {item ? "sản phẩm " : `${listIdChecked.length} sản phẩm đã chọn`}
-          {item ? <strong>{item.name}</strong> : ""}? Thao tác này không thể khôi phục.
+          Bạn có chắc chắn muốn xóa sản phẩm <strong>{item.name}</strong>?
+          {(item.variantCount ?? 0) > 0 && (
+            <><br /><small>Sản phẩm có {item.variantCount} biến thể.</small></>
+          )}
         </Fragment>
       ),
       cancelText: "Hủy",
-      cancelAction: () => {
-        setShowDialog(false);
-        setContentDialog(null);
-      },
+      cancelAction: () => { setShowDialog(false); setContentDialog(null); },
       defaultText: "Xóa",
-      defaultAction: () => {
-        if (item?.id) {
-          onDelete(item.id);
-          return;
-        }
-        if (listIdChecked.length > 0) {
-          onDeleteAll();
-          return;
-        }
-      },
+      defaultAction: () => onHardDelete(item.id, item.name),
     };
-    setContentDialog(contentDialog);
+    setContentDialog(dialog);
     setShowDialog(true);
   };
 
