@@ -549,12 +549,6 @@ export default {
     }).then((res) => res);
   },
 
-  export: (params?: { unitCode: string; month: number; year: number }) => {
-    return fetch(`${urlsApi.payroll.export}${convertParamsToString(params)}`, {
-      method: "GET",
-    }).then((res) => res);
-  },
-
   //create call TNEX-Athena
   loginAccountAthena: (body: any) => {
     return fetch(urlsApi.customer.loginAccountAthena, {
@@ -577,6 +571,14 @@ export default {
   //Chạy lại dữ liệu
   reloadData: (body: any) => {
     return fetch(urlsApi.customer.reloadData, {
+      method: "POST",
+      body: JSON.stringify(body),
+    }).then((res) => res.json());
+  },
+
+  //reset trạng thái cuộc gọi khách hàng Tnex
+  resetDataCustomer: (body: any) => {
+    return fetch(urlsApi.customer.resetDataCustomer, {
       method: "POST",
       body: JSON.stringify(body),
     }).then((res) => res.json());

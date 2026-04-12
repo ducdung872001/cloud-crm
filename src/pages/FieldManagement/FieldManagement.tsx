@@ -172,8 +172,8 @@ export default function FieldMannagement() {
   // IPackageResponseModel
   const dataMappingArray = (item: any, index: number) => [
     getPageOffset(params) + index + 1,
-    item.code,
     item.name,
+    item.code,
     item.rate,
     item.position
     // <Badge key={index} text={item.status == 1 ? "Đang hiệu lực" : "Tạm dừng"} variant={item.status == 1 ? "success" : "warning"} />,
