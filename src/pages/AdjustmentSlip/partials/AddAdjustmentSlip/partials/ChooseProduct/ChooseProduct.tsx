@@ -1,9 +1,6 @@
-import React, { Fragment, useState, useEffect, useRef } from "react";
-import cloneDeep from "lodash/cloneDeep";
+import React, { Fragment, useState, useEffect } from "react";
 
 import { ISaveSearch } from "model/OtherModel";
-import { IChooseProductModalProps } from "model/adjustmentSlip/PropsModel";
-import { IAddUpdateProRequest } from "model/adjustmentSlip/AdjustmentSlipRequestModel";
 import { IWarehouseProResponse } from "model/adjustmentSlip/AdjustmentSlipResponseModel";
 import { IWarehouseProFilterRequest } from "model/adjustmentSlip/AdjustmentSlipRequestModel";
 import Icon from "components/icon";
@@ -22,28 +19,24 @@ import "./ChooseProduct.scss";
 export default function ChooseProduct(props) {
   const { onShow, onHide, lstBatchNoProduct, satId, inventory, takeData} = props;
 
-  const isMounted = useRef(false);
-
-  const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
   const [isNoItem, setIsNoItem] = useState<boolean>(false);
   const [lstProducts, setLstProducts] = useState<IWarehouseProResponse[]>([]);
   const [listIdChecked, setListIdChecked] = useState<number[]>([]);
   const [dataProduct, setDataProduct] = useState([]);
   const [isSubmit, setIsSubmit] = useState<boolean>(false);
 
-  useEffect(() => {
-    if (onShow && lstBatchNoProduct.length === 0) {
-      setDataProduct([]);
-    }
-  }, [onShow, lstBatchNoProduct]);
+  const [params, setParams] = useState<IWarehouseProFilterRequest>({ keyword: "", limit: 10, page: 1 });
 
-  const [params, setParams] = useState<IWarehouseProFilterRequest>({ keyword: "", limit: 0 });
-
+  // Reset state + seed inventoryId mỗi lần modal mở. Tránh stale params giữa các lần mở.
   useEffect(() => {
-    if (onShow && inventory) {
-      setParams({ ...params, inventoryId: inventory?.value, limit: 10 });
-    }
-  }, [onShow, inventory]);
+    if (!onShow) return;
+    setListIdChecked([]);
+    setDataProduct([]);
+    setIsNoItem(false);
+    setLstProducts([]);
+    setParams({ keyword: "", limit: 10, page: 1, inventoryId: inventory?.value });
+  }, [onShow, inventory?.value]);
 
   const [listSaveSearch] = useState<ISaveSearch[]>([
     {
@@ -98,25 +91,9 @@ export default function ChooseProduct(props) {
   };
 
   useEffect(() => {
-    if (!isMounted.current) {
-      isMounted.current = true;
-      return;
-    }
-
-    //! đoạn này ép đk call api
-    if (isMounted.current === true && onShow && params.limit > 0) {
-      getLstProduct(params);
-
-      const paramsTemp = cloneDeep(params);
-
-      if (paramsTemp.limit === 10) {
-        delete paramsTemp["limit"];
-      }
-
-      Object.keys(paramsTemp).map((key) => {
-        paramsTemp[key] === "" ? delete paramsTemp[key] : null;
-      });
-    }
+    if (!onShow) return;
+    if (!params.inventoryId || (params.limit ?? 0) <= 0) return;
+    getLstProduct(params);
   }, [params, onShow]);
 
   const titles = ["STT", "Ảnh sản phẩm", "Tên sản phẩm", "Danh mục"];

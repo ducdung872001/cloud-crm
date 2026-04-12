@@ -26,6 +26,8 @@ interface ReceiptData {
   customerName: string;
   customerPhone: string;
   customerEmail: string;
+  loyaltyPoint?: number;
+  membershipTier?: string;
   products: { name: string; qty: number; price: number }[];
   services: { name: string; qty: number; price: number }[];
   amount: number;   // tạm tính
@@ -36,6 +38,21 @@ interface ReceiptData {
   storeAddress?: string;
   storePhone?: string;
 }
+
+// BE trả về tier dạng enum chuỗi (SILVER/GOLD/...). Map sang nhãn tiếng Việt.
+const TIER_LABEL: Record<string, string> = {
+  BRONZE:   "Đồng",
+  SILVER:   "Bạc",
+  GOLD:     "Vàng",
+  PLATINUM: "Bạch kim",
+  DIAMOND:  "Kim cương",
+  VIP:      "VIP",
+};
+const formatTier = (raw?: string): string => {
+  if (!raw) return "";
+  const key = raw.trim().toUpperCase();
+  return TIER_LABEL[key] ?? raw;
+};
 
 interface Props {
   open: boolean;
@@ -156,6 +173,8 @@ export default function InvoiceReceiptModal({ open, invoiceId, onClose }: Props)
         customerName: inv.customerName ?? "Khách vãng lai",
         customerPhone: inv.customerPhone ?? "",
         customerEmail,
+        loyaltyPoint: typeof inv.loyaltyPoint === "number" ? inv.loyaltyPoint : undefined,
+        membershipTier: inv.membershipTier ?? undefined,
         products,
         services,
         amount: inv.amount ?? 0,
@@ -419,9 +438,19 @@ ${html}
               {/* Customer */}
               {(receipt.customerName !== "Khách vãng lai" || receipt.customerPhone) && (
                 <div className="rcpt-customer">
-                  <div className="rcpt-customer__name">{receipt.customerName}</div>
+                  <div className="rcpt-customer__name">
+                    {receipt.customerName}
+                    {receipt.membershipTier && (
+                      <span className="rcpt-customer__tier">{formatTier(receipt.membershipTier)}</span>
+                    )}
+                  </div>
                   {receipt.customerPhone && (
                     <div className="rcpt-customer__phone">{receipt.customerPhone}</div>
+                  )}
+                  {typeof receipt.loyaltyPoint === "number" && receipt.loyaltyPoint > 0 && (
+                    <div className="rcpt-customer__loyalty">
+                      Điểm tích luỹ: <strong>{receipt.loyaltyPoint.toLocaleString("vi")}</strong>
+                    </div>
                   )}
                 </div>
               )}

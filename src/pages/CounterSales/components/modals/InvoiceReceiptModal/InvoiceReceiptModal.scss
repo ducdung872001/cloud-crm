@@ -104,12 +104,39 @@
   &__name {
     font-weight: 800;
     font-size: 1.4rem;
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    flex-wrap: wrap;
+  }
+
+  &__tier {
+    display: inline-block;
+    font-size: 1rem;
+    font-weight: 700;
+    padding: 0.15rem 0.7rem;
+    border-radius: 999px;
+    background: var(--primary-color-10, rgba(255, 165, 0, 0.12));
+    color: var(--primary-color);
+    text-transform: none;
+    letter-spacing: 0.2px;
   }
 
   &__phone {
     font-size: 1.2rem;
     color: var(--muted);
     margin-top: 2px;
+  }
+
+  &__loyalty {
+    font-size: 1.1rem;
+    color: var(--muted);
+    margin-top: 2px;
+
+    strong {
+      color: var(--primary-color);
+      font-weight: 700;
+    }
   }
 }
 

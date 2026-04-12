@@ -21,6 +21,7 @@ import TourOverlay from "components/tourOverlay/TourOverlay";
 import RebornEditor from "components/editor/reborn";
 import { serialize } from "utils/editor";
 import ProductUnitService, { IProductUnit } from "services/ProductUnitService";
+import BarcodeScanner from "@/components/barcodeScanner/BarcodeScanner";
 
 type PageTab = "info" | "variants";
 
@@ -195,120 +196,7 @@ const buildCombinations = (attrs: VariantAttribute[]): VariantCombination[] => {
   }));
 };
 
-// ── Barcode Scanner Modal — dùng ZXing UMD (hỗ trợ mọi trình duyệt) ──
-// ZXing được load qua <script> tag động, không cần cài npm
-const ZXING_CDN = "https://cdn.jsdelivr.net/npm/@zxing/browser@0.1.5/umd/index.min.js";
-
-function loadZXingScript(): Promise<void> {
-  return new Promise((resolve, reject) => {
-    if ((window as Record<string, unknown>).ZXingBrowser) { resolve(); return; }
-    const existing = document.querySelector(`script[src="${ZXING_CDN}"]`);
-    if (existing) {
-      existing.addEventListener("load", () => resolve());
-      existing.addEventListener("error", reject);
-      return;
-    }
-    const script = document.createElement("script");
-    script.src = ZXING_CDN;
-    script.async = true;
-    script.onload = () => resolve();
-    script.onerror = () => reject(new Error("Không tải được thư viện quét mã vạch. Vui lòng kiểm tra kết nối mạng."));
-    document.head.appendChild(script);
-  });
-}
-
-function BarcodeScannerModal({ onScan, onClose }: { onScan: (barcode: string) => void; onClose: () => void }) {
-  const videoRef = useRef<HTMLVideoElement>(null);
-  const readerRef = useRef<Record<string, unknown>>(null);
-  const [error, setError] = useState<string>("");
-  const [status, setStatus] = useState<"loading" | "ready" | "error">("loading");
-
-  useEffect(() => {
-    let cancelled = false;
-
-    const start = async () => {
-      try {
-        setStatus("loading");
-        await loadZXingScript();
-        if (cancelled) return;
-
-        const ZXing = (window as Record<string, unknown>).ZXingBrowser;
-        if (!ZXing?.BrowserMultiFormatReader) {
-          throw new Error("Thư viện ZXing chưa sẵn sàng, vui lòng thử lại.");
-        }
-
-        const reader = new ZXing.BrowserMultiFormatReader();
-        readerRef.current = reader;
-        if (cancelled) return;
-
-        setStatus("ready");
-        await reader.decodeFromVideoDevice(
-          undefined,
-          videoRef.current,
-          (result: Record<string, unknown>, err: Record<string, unknown>) => {
-            if (cancelled || !result) return;
-            reader.reset();
-            onScan(result.getText());
-          }
-        );
-      } catch (err: unknown) {
-        if (cancelled) return;
-        const msg = err?.message || String(err);
-        if (msg.includes("NotAllowed") || msg.includes("Permission")) {
-          setError("Bạn chưa cấp quyền camera. Vui lòng cho phép trong cài đặt trình duyệt rồi thử lại.");
-        } else if (msg.includes("NotFound") || msg.includes("No camera")) {
-          setError("Không tìm thấy camera. Vui lòng kết nối camera và thử lại.");
-        } else {
-          setError(msg);
-        }
-        setStatus("error");
-      }
-    };
-
-    start();
-    return () => {
-      cancelled = true;
-      try { readerRef.current?.reset(); } catch (_) {}
-    };
-  }, []);
-
-  return (
-    <div className="bs-overlay" onClick={onClose}>
-      <div className="bs-modal" onClick={(e) => e.stopPropagation()}>
-        <div className="bs-modal__header">
-          <span className="bs-modal__title">Quét mã vạch</span>
-          <button type="button" className="bs-modal__close" onClick={onClose}>✕</button>
-        </div>
-        <div className="bs-modal__body">
-          {status === "error" ? (
-            <div className="bs-modal__error">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <circle cx="12" cy="12" r="10" />
-                <line x1="12" y1="8" x2="12" y2="12" />
-                <line x1="12" y1="16" x2="12.01" y2="16" />
-              </svg>
-              <p>{error}</p>
-            </div>
-          ) : (
-            <div className="bs-modal__video-wrap">
-              <video ref={videoRef} className="bs-modal__video" playsInline muted />
-              <div className="bs-modal__reticle">
-                <span className="bs-modal__reticle-corner bs-modal__reticle-corner--tl" />
-                <span className="bs-modal__reticle-corner bs-modal__reticle-corner--tr" />
-                <span className="bs-modal__reticle-corner bs-modal__reticle-corner--bl" />
-                <span className="bs-modal__reticle-corner bs-modal__reticle-corner--br" />
-                <div className="bs-modal__scan-line" />
-              </div>
-              <p className="bs-modal__hint">
-                {status === "loading" ? "Đang tải thư viện quét..." : "Đưa mã vạch vào khung để quét tự động"}
-              </p>
-            </div>
-          )}
-        </div>
-      </div>
-    </div>
-  );
-}
+// BarcodeScannerModal đã extract sang @/components/barcodeScanner/BarcodeScanner.tsx
 
 // ── Multi-image picker cho variant (upload lên CDN, reorder bằng nút ◀▶) ──
 const MAX_VARIANT_IMAGES = 7;
@@ -920,11 +808,15 @@ export default function AddProductPage({ idProduct, data, onBack, preFillBarcode
         })
         .filter((id): id is number => id != null);
 
+      // Sync barcode về variant-level từ unit cơ bản đầu tiên.
+      // Lý do: UI chỉ cho gõ/sinh barcode ở unit-level (variantPrices[i].barcode).
+      // Nếu BE không persist unit-level barcode → variant.barcode rỗng → reload mất.
+      const fallbackBarcode = c.variantPrices?.find((u) => u.barcode)?.barcode || "";
       return {
         ...(c.id ? { id: c.id } : {}),
         label: c.label,
         sku: variantSku,
-        barcode: c.barcode || "",
+        barcode: c.barcode || fallbackBarcode,
         unitId: c.unitId ?? null,
         price: +(c.price ?? 0) || 0,
         taxRate: c.taxRate ?? 0,
@@ -2160,7 +2052,7 @@ export default function AddProductPage({ idProduct, data, onBack, preFillBarcode
 
       {/* Barcode Scanner Modal — cho barcode theo từng đơn vị bán */}
       {scanningUnitKey && (
-        <BarcodeScannerModal
+        <BarcodeScanner
           onScan={(barcode) => {
             updateUnitPrice(scanningUnitKey.comboKey, scanningUnitKey.tempId, "barcode", barcode);
             setScanningUnitKey(null);

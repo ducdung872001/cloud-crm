@@ -34,6 +34,7 @@ import TitleAction, { ITitleActions } from "components/titleAction/titleAction";
 import ShareLinkModal from "./partials/ShareLinkModal";
 import BarcodePrintModal from "./partials/BarcodePrintModal";
 import CategoryServiceService from "services/CategoryServiceService";
+import BarcodeScanner from "@/components/barcodeScanner/BarcodeScanner";
 
 // ---- Tab filter type ----
 type StatusTab = "all" | "active" | "paused" | "category" | "label" | "low_stock" | "on_web";
@@ -60,6 +61,7 @@ export default function ProductList(props: IProductListProps) {
   const [showModalConfig, setShowModalConfig] = useState<boolean>(false);
   // Scan QR modal
   const [showScanModal, setShowScanModal]         = useState(false);
+  const [showCameraScanner, setShowCameraScanner] = useState(false);
   const [scanInput, setScanInput]                 = useState("");
   const [scanSearching, setScanSearching]         = useState(false);
   const [scanFound, setScanFound]                 = useState<Record<string, unknown>>(null);
@@ -1355,6 +1357,15 @@ export default function ProductList(props: IProductListProps) {
                 disabled={scanSearching}
               />
               <button
+                type="button"
+                className="btn btn--outline btn--sm"
+                title="Quét bằng camera"
+                onClick={() => setShowCameraScanner(true)}
+                disabled={scanSearching}
+              >
+                📷
+              </button>
+              <button
                 className="btn btn--primary btn--sm"
                 onClick={() => handleScanSearch()}
                 disabled={scanSearching || !scanInput.trim()}
@@ -1403,6 +1414,19 @@ export default function ProductList(props: IProductListProps) {
             )}
           </div>
         </div>
+      )}
+
+      {/* ── Camera barcode scanner — mở từ scan modal ── */}
+      {showCameraScanner && (
+        <BarcodeScanner
+          title="Quét mã sản phẩm"
+          onScan={(code) => {
+            setShowCameraScanner(false);
+            setScanInput(code);
+            handleScanSearch(code);
+          }}
+          onClose={() => setShowCameraScanner(false)}
+        />
       )}
     </div>
   );

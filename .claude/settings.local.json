@@ -70,7 +70,10 @@
       "Bash(lsof -ti:4000)",
       "Bash(xargs kill:*)",
       "Bash(npx vite:*)",
-      "Bash(curl -s \"http://localhost:4000/src/firebase-config.ts\")"
+      "Bash(curl -s \"http://localhost:4000/src/firebase-config.ts\")",
+      "Bash(grep -r \"error\\\\|Error\" /d/Git/reborn/reborn-cloud/cloud-ver2/cloud-crm/src/services/shipping* --include=\"*.ts\" -n -A 3)",
+      "Bash(cd /d \"d:\\\\Git\\\\reborn\\\\reborn-cloud\\\\cloud-ver2\\\\cloud-crm\")",
+      "Bash(npm uninstall:*)"
     ]
   }
 }

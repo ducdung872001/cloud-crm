@@ -344,18 +344,18 @@ export default function ModalAddWarehouse(props: AddInventoryModalProps) {
           <ModalHeader title={`${data ? "Chỉnh sửa" : "Thêm mới"} kho hàng`} toggle={() => !isSubmit && onHide(false)} />
           <ModalBody>
             <div className="list-form-group">
-              {listFieldBeautyBranch.map((field, index) => (
+              {listFieldBeautyBranch.map((field) => (
                 <FieldCustomize
                   field={field}
-                  key={index}
+                  key={field.name ?? field.label}
                   handleUpdate={(value) => handleChangeValidate(value, field, formData, validations, listFieldBeautyBranch, setFormData)}
                   formData={formData}
                 />
               ))}
 
-              {listField.map((field, index) => (
+              {listField.map((field) => (
                 <FieldCustomize
-                  key={index}
+                  key={field.name ?? field.label}
                   field={field}
                   handleUpdate={(value) => handleChangeValidate(value, field, formData, validations, listField, setFormData)}
                   formData={formData}
