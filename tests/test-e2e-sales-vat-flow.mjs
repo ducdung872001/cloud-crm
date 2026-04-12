@@ -65,6 +65,106 @@ async function selectFirstCustomer(t) {
   return false;
 }
 
+/** Chon khach hang THAT (khong phai vang lai) trong CustomerModal */
+async function selectRealCustomer(t) {
+  const custBox = await t.page.$('.cust-box, .cust-placeholder');
+  if (!custBox) { logUiBug("HELPER", "HIGH", "Khong tim thay .cust-box"); return null; }
+  await custBox.click({ force: true });
+  await t.page.waitForTimeout(2500);
+  // Wait for customer list to load
+  await t.page.waitForSelector('.customer-modal .cust-item', { timeout: 5000 }).catch(() => {});
+  await t.page.waitForTimeout(1500); // wait for wallet enrich
+  const picked = await t.page.evaluate(() => {
+    const items = [...document.querySelectorAll('.customer-modal .cust-item')]
+      .filter(r => r.offsetHeight > 0);
+    // Skip walk-in row (first one with text "Khách vãng lai")
+    for (const item of items) {
+      const nameEl = item.querySelector('.cust-item__name');
+      const name = nameEl?.innerText?.trim() || "";
+      if (!name || name.toLowerCase().includes("vãng lai")) continue;
+      const subEl = item.querySelector('.cust-item__sub');
+      const sub = subEl?.innerText?.trim() || "";
+      item.click();
+      return { name, sub };
+    }
+    return null;
+  });
+  await t.page.waitForTimeout(1500);
+  if (picked) {
+    console.log(`    [HELPER] Chon KH that: "${picked.name}" (${picked.sub})`);
+    return picked.name;
+  }
+  logUiBug("HELPER", "MEDIUM", "Danh sach KH rong — co the can tao KH truoc");
+  await t.page.keyboard.press("Escape").catch(() => {});
+  return null;
+}
+
+/** Dang ky hoi vien nhanh — search 1 SDT khong ton tai → click 'Dang ky' → fill form → submit */
+async function quickRegisterCustomer(t) {
+  const custBox = await t.page.$('.cust-box, .cust-placeholder');
+  if (!custBox) { logUiBug("HELPER", "HIGH", "Khong tim thay .cust-box"); return null; }
+  await custBox.click({ force: true });
+  await t.page.waitForTimeout(2500);
+
+  const phone = "09" + String(Date.now()).slice(-8);
+  const name  = `KH Test ${RID}`;
+
+  const searchInput = await t.page.$('.customer-modal__search input');
+  if (!searchInput) { logUiBug("HELPER", "HIGH", "Khong tim thay search input trong CustomerModal"); return null; }
+  await searchInput.fill(phone);
+  await t.page.waitForTimeout(2500);
+
+  const emptyShown = await t.page.evaluate(() =>
+    !!document.querySelector('.customer-modal__empty')
+  );
+  if (!emptyShown) {
+    logUiBug("HELPER", "MEDIUM", `Search "${phone}" — empty state khong hien (co the trung KH cu)`);
+    await t.page.keyboard.press("Escape").catch(() => {});
+    return null;
+  }
+
+  const clickedRegBtn = await t.page.evaluate(() => {
+    const btns = [...document.querySelectorAll('.customer-modal button')];
+    const b = btns.find(x => x.innerText?.includes("Đăng ký hội viên cho khách này"));
+    if (b) { b.click(); return true; }
+    return false;
+  });
+  if (!clickedRegBtn) {
+    logUiBug("HELPER", "HIGH", "Khong tim thay nut 'Dang ky hoi vien cho khach nay'");
+    return null;
+  }
+  await t.page.waitForTimeout(800);
+
+  const filled = await t.page.evaluate((nm) => {
+    const inputs = [...document.querySelectorAll('.customer-modal input')];
+    const nameInput = inputs.find(i => i.placeholder?.includes("Họ và tên"));
+    if (!nameInput) return false;
+    const setter = Object.getOwnPropertyDescriptor(window.HTMLInputElement.prototype, 'value').set;
+    setter.call(nameInput, nm);
+    nameInput.dispatchEvent(new Event('input', { bubbles: true }));
+    return true;
+  }, name);
+  if (!filled) {
+    logUiBug("HELPER", "HIGH", "Khong fill duoc input 'Họ và tên'");
+    return null;
+  }
+  await t.page.waitForTimeout(500);
+
+  const clickedSubmit = await t.page.evaluate(() => {
+    const btns = [...document.querySelectorAll('.customer-modal button')];
+    const b = btns.find(x => x.innerText?.includes("Đăng ký & Chọn") && !x.disabled);
+    if (b) { b.click(); return true; }
+    return false;
+  });
+  if (!clickedSubmit) {
+    logUiBug("HELPER", "HIGH", "Nut 'Dang ky & Chon' disabled hoac khong tim thay");
+    return null;
+  }
+  await t.page.waitForTimeout(4000);
+  console.log(`    [HELPER] Dang ky hoi vien nhanh: "${name}" / ${phone}`);
+  return { name, phone };
+}
+
 async function addFirstProductToCart(t, searchQuery = "") {
   // Search product
   const posSearch = await t.page.$('input[placeholder*="Tìm sản phẩm"], input[placeholder*="tìm sản phẩm"], input[placeholder*="SKU"]');
@@ -72,10 +172,17 @@ async function addFirstProductToCart(t, searchQuery = "") {
   await posSearch.fill(searchQuery || "");
   await t.page.waitForTimeout(3000);
 
-  // Click first card
+  // Click first card co stock > 0
   const cardClicked = await t.page.evaluate(() => {
     const cards = [...document.querySelectorAll('.pg-card')].filter(c => c.offsetHeight > 0);
-    const available = cards.find(c => !c.classList.contains("pg-card--out") && !c.innerText?.includes("Hết hàng"));
+    const available = cards.find(c => {
+      if (c.classList.contains("pg-card--out")) return false;
+      const txt = c.innerText || "";
+      if (txt.includes("Hết hàng")) return false;
+      const m = txt.match(/T[ồo]n:\s*(\d+)/i);
+      if (m && Number(m[1]) <= 0) return false;
+      return true;
+    });
     if (available) { available.click(); return available.innerText?.replace(/\s+/g, " ").trim().slice(0, 60); }
     return null;
   });
@@ -703,6 +810,240 @@ async function main() {
     } else {
       logUiBug("S4", "HIGH", "Khong tim thay nut 'Gui HD dien tu' tren bat ky don hoan thanh nao");
       t.assert("S4-02", false, "Khong tim thay don hoan thanh co nut HD VAT");
+    }
+
+    // ════════════════════════════════════════════════════════════════════════
+    // SCENARIO 5 — Ban voi KHACH HANG THAT (khong vang lai) + xuat HD VAT
+    //             Verify thong tin KH duoc prefill dung tren trang invoiceVAT
+    // ════════════════════════════════════════════════════════════════════════
+    console.log("\n" + "═".repeat(70));
+    console.log("  SCENARIO 5 — KHACH HANG THAT + HD VAT (verify prefill)");
+    console.log("═".repeat(70));
+
+    let realCustName = null;
+    let invoiceCodeS5 = null;
+
+    await t.goto("/create_sale_add");
+    await t.page.waitForTimeout(4000);
+    await clickPOSTab(t);
+    await t.screenshot("s5-pos-load");
+
+    realCustName = await selectRealCustomer(t);
+    t.assert("S5-01", !!realCustName, realCustName
+      ? `Chon KH that: "${realCustName}"`
+      : "Khong chon duoc KH that — co the danh sach KH rong");
+
+    if (!realCustName) {
+      note("S5", "Bo qua S5: khong co KH that de test");
+    } else {
+      const custDisplay = await t.page.evaluate(() => {
+        const cn = document.querySelector('.cust-name')?.innerText?.trim();
+        const cp = document.querySelector('.cust-pts')?.innerText?.trim();
+        return { name: cn, sub: cp };
+      });
+      t.assert("S5-02", custDisplay.name && !custDisplay.name.toLowerCase().includes("vãng lai"),
+        `Cart hien thi KH: "${custDisplay.name}" / "${custDisplay.sub}"`);
+
+      const cartOk5 = await addFirstProductToCart(t, "");
+      t.assert("S5-03", cartOk5, "Them SP vao gio voi KH that");
+      if (!cartOk5) throw new Error("S5 blocked: empty cart");
+
+      const postsS5 = await captureAllPOSTs(t);
+      const payBtn5 = await t.page.$('.pay-btn:not([disabled])');
+      if (!payBtn5) {
+        logUiBug("S5", "CRITICAL", "Khong tim thay .pay-btn");
+      } else {
+        await payBtn5.click({ force: true });
+        await t.page.waitForTimeout(3000);
+        const thBtn5 = await t.page.$('button:has-text("Tạo hoá đơn"):not([disabled]), button:has-text("Tạo hóa đơn"):not([disabled])');
+        if (thBtn5) {
+          await thBtn5.click({ force: true });
+          await t.page.waitForTimeout(3500);
+        }
+        const xn5 = await t.page.evaluate(() => {
+          const b = [...document.querySelectorAll('.modal.show button, .receipt-modal button')]
+            .find(x => x.innerText?.includes("Xác nhận thanh toán") && !x.disabled);
+          if (b) { b.click(); return true; }
+          return false;
+        });
+        await t.page.waitForTimeout(5000);
+        postsS5.stop();
+
+        const createInv5 = postsS5.captured.find(r => /invoice\/create/i.test(r.url));
+        if (createInv5?.body?.code === 0) {
+          invoiceCodeS5 = createInv5.body?.result?.invoiceCode;
+          const invIdS5 = createInv5.body?.result?.id;
+          const respCustId = createInv5.body?.result?.customerId;
+          note("S5", `Don KH that hoan thanh: ${invoiceCodeS5} (id=${invIdS5}, customerId=${respCustId})`);
+          t.assert("S5-04", !!invoiceCodeS5 && xn5, `Tao thanh cong don voi KH that: ${invoiceCodeS5}`);
+          // Note: BE chua echo customerName trong response (BACKEND-TASK-invoice-customer-info.md)
+          t.assert("S5-05",
+            respCustId && Number(respCustId) > 0,
+            `customerId trong response = ${respCustId} (KH that, ≠ vang lai -1)`);
+        } else {
+          logUiBug("S5", "HIGH", "invoice/create that bai voi KH that",
+            JSON.stringify(createInv5?.body || {}).slice(0, 200));
+        }
+
+        await t.screenshot("s5-paid");
+        await t.page.evaluate(() => {
+          const b = [...document.querySelectorAll('.modal.show button')]
+            .find(x => x.innerText?.includes("Đóng") || x.innerText?.includes("Hoàn tất") || x.innerText?.includes("mới"));
+          if (b) b.click();
+        }).catch(() => {});
+        await t.page.waitForTimeout(1000);
+        await t.page.keyboard.press("Escape").catch(() => {});
+      }
+
+      if (invoiceCodeS5) {
+        await clickOrdersTab(t);
+        await t.page.waitForTimeout(3000);
+        await t.screenshot("s5-orders");
+
+        const vatClicked5 = await t.page.evaluate((targetCode) => {
+          const cards = [...document.querySelectorAll('.order-card')];
+          for (const card of cards) {
+            const code = card.querySelector('.oc-id')?.innerText?.trim();
+            if (!code?.includes(targetCode)) continue;
+            const status = card.querySelector('[class*="badge"]')?.innerText?.trim();
+            const vatBtn = [...card.querySelectorAll('button')]
+              .find(b => b.innerText?.includes("HĐ") || b.innerText?.includes("điện tử") || b.innerText?.includes("VAT") || b.innerText?.includes("Gửi"));
+            if (vatBtn) { vatBtn.click(); return { code, status, btnText: vatBtn.innerText?.trim() }; }
+          }
+          return null;
+        }, invoiceCodeS5);
+
+        if (vatClicked5) {
+          note("S5", `Click "${vatClicked5.btnText}" tren ${vatClicked5.code} (${vatClicked5.status})`);
+          await t.page.waitForTimeout(4500);
+          await t.screenshot("s5-vat-page");
+
+          const vatUrl5 = t.page.url();
+          t.assert("S5-06", vatUrl5.includes("invoiceVAT"),
+            `Dieu huong invoiceVAT: ${vatUrl5}`);
+
+          const vatPrefill = await t.page.evaluate(() => {
+            const allInputs = [...document.querySelectorAll('input, textarea')]
+              .filter(x => x.offsetHeight > 0)
+              .map(x => ({
+                ph: x.getAttribute('placeholder') || '',
+                name: x.getAttribute('name') || '',
+                value: x.value || '',
+              }));
+            const findField = (kw) => allInputs.find(i =>
+              (i.ph + " " + i.name).toLowerCase().includes(kw));
+            return {
+              custName:    findField("tên")?.value || findField("name")?.value || "",
+              custPhone:   findField("điện thoại")?.value || findField("phone")?.value || findField("sđt")?.value || "",
+              custAddress: findField("địa chỉ")?.value || findField("address")?.value || "",
+              custTaxCode: findField("mã số thuế")?.value || findField("mst")?.value || findField("tax")?.value || "",
+              all: allInputs.slice(0, 12),
+            };
+          });
+          console.log(`  [DBG] VAT prefill: name="${vatPrefill.custName}" phone="${vatPrefill.custPhone}" addr="${vatPrefill.custAddress}" mst="${vatPrefill.custTaxCode}"`);
+          console.log(`  [DBG] All inputs (12 first): ${JSON.stringify(vatPrefill.all)}`);
+
+          const bodyContainsCust = await t.page.evaluate((custName) => {
+            const txt = document.body.innerText || "";
+            const tokens = custName.split(/\s+/).filter(t => t.length > 1);
+            return tokens.some(tk => txt.includes(tk));
+          }, realCustName);
+
+          // Check chinh: input "Ten nguoi mua" co duoc prefill khong?
+          const buyerNameInput = vatPrefill.all.find(i => i.ph?.includes("Nhập tên người mua"));
+          const buyerPhoneInput = vatPrefill.all.find(i => i.ph?.includes("0311234567") || i.ph?.toLowerCase().includes("điện thoại"));
+          const inputPrefilled = !!(buyerNameInput?.value?.trim());
+
+          if (inputPrefilled) {
+            t.assert("S5-07", true,
+              `Form VAT prefill OK: buyerName="${buyerNameInput.value}", buyerPhone="${buyerPhoneInput?.value || ''}"`);
+          } else {
+            logBeBug("S5", "MEDIUM",
+              `Trang invoiceVAT khong prefill 'Ten nguoi mua' tu don ${invoiceCodeS5} (KH "${realCustName}")`,
+              `Field rong: "${buyerNameInput?.ph || 'N/A'}"="" — xem BACKEND-TASK-invoice-customer-info.md`);
+            t.assert("S5-07", bodyContainsCust,
+              `[soft] Page co text lien quan KH "${realCustName}" (input rong, can BE fix)`);
+          }
+
+          if (inputPrefilled) {
+            const v = buyerNameInput.value.toLowerCase();
+            const isNotVangLai = !v.includes("vãng lai") && !v.includes("khách lẻ");
+            t.assert("S5-08", isNotVangLai,
+              `Buyer name = "${buyerNameInput.value}" (≠ vang lai)`);
+          } else {
+            note("S5", "S5-08 SKIP: BE chua prefill input → khong the verify content");
+          }
+        } else {
+          logUiBug("S5", "HIGH", `Khong tim thay nut HD VAT cho don ${invoiceCodeS5}`);
+        }
+      }
+    }
+
+    // ════════════════════════════════════════════════════════════════════════
+    // SCENARIO 6 — Khach hang MOI: dang ky hoi vien nhanh khi tim SDT khong ra
+    //             → ban hang → kiem tra customerId moi + don hoan thanh
+    // ════════════════════════════════════════════════════════════════════════
+    console.log("\n" + "═".repeat(70));
+    console.log("  SCENARIO 6 — KH MOI dang ky hoi vien nhanh");
+    console.log("═".repeat(70));
+
+    await t.goto("/create_sale_add");
+    await t.page.waitForTimeout(4000);
+    await clickPOSTab(t);
+    await t.screenshot("s6-pos-load");
+
+    const newCust = await quickRegisterCustomer(t);
+    t.assert("S6-01", !!newCust, newCust
+      ? `Dang ky hoi vien nhanh: "${newCust.name}" / ${newCust.phone}`
+      : "Khong dang ky duoc hoi vien nhanh");
+
+    if (newCust) {
+      const custDisplayS6 = await t.page.evaluate(() => {
+        const cn = document.querySelector('.cust-name')?.innerText?.trim();
+        const cp = document.querySelector('.cust-pts')?.innerText?.trim();
+        return { name: cn, sub: cp };
+      });
+      t.assert("S6-02",
+        custDisplayS6.name && custDisplayS6.name.includes("KH Test"),
+        `Cart hien KH moi: "${custDisplayS6.name}" / "${custDisplayS6.sub}"`);
+
+      const cartOk6 = await addFirstProductToCart(t, "");
+      t.assert("S6-03", cartOk6, "Them SP vao gio voi KH moi");
+
+      if (cartOk6) {
+        const postsS6 = await captureAllPOSTs(t);
+        const payBtn6 = await t.page.$('.pay-btn:not([disabled])');
+        if (payBtn6) {
+          await payBtn6.click({ force: true });
+          await t.page.waitForTimeout(3000);
+          const thBtn6 = await t.page.$('button:has-text("Tạo hoá đơn"):not([disabled]), button:has-text("Tạo hóa đơn"):not([disabled])');
+          if (thBtn6) { await thBtn6.click({ force: true }); await t.page.waitForTimeout(3500); }
+          const xn6 = await t.page.evaluate(() => {
+            const b = [...document.querySelectorAll('.modal.show button, .receipt-modal button')]
+              .find(x => x.innerText?.includes("Xác nhận thanh toán") && !x.disabled);
+            if (b) { b.click(); return true; }
+            return false;
+          });
+          await t.page.waitForTimeout(5000);
+          postsS6.stop();
+
+          const createInv6 = postsS6.captured.find(r => /invoice\/create/i.test(r.url));
+          if (createInv6?.body?.code === 0) {
+            const respCustId   = createInv6.body?.result?.customerId;
+            const invCodeS6    = createInv6.body?.result?.invoiceCode;
+            note("S6", `Don KH moi: ${invCodeS6}, customerId=${respCustId} (KH vua dang ky)`);
+            t.assert("S6-04", xn6 && respCustId && respCustId > 0,
+              `Don tao thanh cong voi customerId=${respCustId} (KH moi tu hoi vien nhanh, khong phai vang lai)`);
+            t.assert("S6-05",
+              respCustId && Number(respCustId) > 100000,
+              `customerId moi (auto increment) = ${respCustId}`);
+          } else {
+            logUiBug("S6", "HIGH", "invoice/create that bai voi KH moi",
+              JSON.stringify(createInv6?.body || {}).slice(0, 200));
+          }
+          await t.screenshot("s6-paid");
+        }
+      }
     }
 
   } catch (e) {
