@@ -256,12 +256,6 @@ async function main() {
     const base = await getFinanceSnapshot(t, "baseline");
     printSnapshot("BASELINE", base);
 
-    // Nếu response shape khác mong đợi → dump raw
-    if (base.totalIncome === 0 && base.cashbookIncomeCount === 0) {
-      console.log(`\n  [DBG] Finance dashboard raw: ${JSON.stringify(base._fdRaw).slice(0, 400)}`);
-      console.log(`  [DBG] Cashbook in latest: ${JSON.stringify(base._cbInLatest).slice(0, 400)}`);
-    }
-
     // ════════════════════════════════════════════════════════════════════
     // SCENARIO A — BÁN 1 ĐƠN
     // ════════════════════════════════════════════════════════════════════

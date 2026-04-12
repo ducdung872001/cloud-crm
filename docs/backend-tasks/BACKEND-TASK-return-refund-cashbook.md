@@ -1,6 +1,7 @@
 # BACKEND TASK — `return/confirm` không tạo cashbook entry chi (hoàn tiền)
 
 **Discovered:** 2026-04-12 — E2E test `test-e2e-financial-flow.mjs`
+**Status:** ✅ **RESOLVED 2026-04-13** — BE đã fix, re-test 21/21 PASS
 **Severity:** 🔴 **HIGH / CRITICAL** — sai số liệu tài chính & kế toán
 **Module:** `cloud-sales-master` + `cloud-billing-master`
 **Endpoint:** `POST /sales/invoice/return/confirm?id={returnInvoiceId}`
@@ -135,13 +136,48 @@ Logic expected khi `POST /sales/invoice/return/confirm?id=X`:
 3. **Refund method** (tiền mặt vs chuyển khoản): chọn đúng `fundId` theo payment method
 4. **Idempotency**: nếu confirm gọi 2 lần, chỉ tạo 1 cashbook entry
 
-## Re-test
+## Re-test sau BE fix (2026-04-13) — ✅ 21/21 PASS
 
 ```bash
 node tests/test-e2e-financial-flow.mjs
-# Hiện tại: 14/21 PASS
-# Sau khi BE fix: B-04, B-05, B-06, B-07, C-01, C-02 sẽ PASS → 21/21
+# Trước fix: 14/21 (6 fails: B-04, B-05, B-06, B-07, C-01, C-02)
+# Sau fix:   21/21 — toàn bộ PASS strict
 ```
+
+### Evidence sau fix
+
+**Sau bán HD003947 (200,000đ):**
+```
+Finance dashboard: income=200000, expense=0, fundBalance=2746836904
+Cashbook thu: count=1, sum=200000 — entry invoiceId=3947 ✓
+```
+
+**Sau trả toàn bộ (return invoice id=3949, referId=3947):**
+```
+Finance dashboard: income=200000, expense=200000, fundBalance=2746636904
+Cashbook thu: count=1, sum=200000 (giữ nguyên)
+Cashbook chi: count=1, sum=200000 — entry MỚI với invoiceId link return ✓
+```
+
+**Net chu kỳ bán+trả khép kín:**
+```
+Fund balance: 2,746,836,904 → 2,746,636,904 = ĐÚNG -200,000 (khớp amount refund)
+Income:       +200,000
+Expense:      +200,000
+(Income - Expense) = 0  ✓  (P/L cân đối)
+```
+
+### Assertions chuyển từ FAIL → PASS
+
+| # | Trước fix | Sau fix |
+|---|---|---|
+| B-04: Cashbook chi +1 entry | ❌ delta=0 | ✅ +1 |
+| B-05: Cashbook chi sum +200k | ❌ delta=0 | ✅ +200,000 |
+| B-06: Finance dashboard expense +200k | ❌ delta=0 | ✅ +200,000 |
+| B-07: Fund balance -200k | ❌ delta=0 | ✅ -200,000 |
+| C-01: Fund balance net chu kỳ = 0 | ❌ net=+200k ảo | ✅ net=0 |
+| C-02: Income - Expense net = 0 | ❌ net=+200k | ✅ net=0 |
+| C-04: Dashboard expense = Cashbook chi | ✅ (cả 2 = 0) | ✅ (cả 2 = 200k) |
 
 Verify chi tiết:
 ```bash
