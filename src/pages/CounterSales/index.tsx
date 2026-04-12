@@ -525,7 +525,18 @@ const CounterSales: React.FC = () => {
                     setCartItems(cartItemsFromDraft);
                     setActiveDraftId(draftId ?? null);
                     // Khôi phục thông tin khách hàng từ đơn tạm
-                    if (custInfo && custInfo.customerId && custInfo.customerId !== -1) {
+                    if (custInfo && custInfo.customerId === -1) {
+                      // Khách vãng lai — khôi phục để không bị chặn ở bước tạo hóa đơn
+                      setCustomer({
+                        id: "-1",
+                        name: "Khách vãng lai",
+                        initial: "👤",
+                        phone: "",
+                        points: 0,
+                        tier: "—",
+                        color: "#9ca3af",
+                      });
+                    } else if (custInfo && custInfo.customerId && custInfo.customerId > 0) {
                       const restoredCustomer: Customer = {
                         id: String(custInfo.customerId),
                         name: custInfo.customerName || `KH #${custInfo.customerId}`,

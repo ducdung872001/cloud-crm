@@ -23,7 +23,8 @@
       "Bash(node tests/debug-product-inventory-api.mjs)",
       "Bash(grep -n \"actions\\\\s*=\\\\|\\\\\\\\baction\\\\b\\\\|onClick.*onAddToCart\\\\|onAddToCart\" \"d:/Git/reborn/reborn-cloud/cloud-ver2/cloud-crm/src/pages/CounterSales/components/modals/VariantModal/index.tsx\")",
       "Bash(node tests/test-e2e-product-import-pos.mjs)",
-      "Bash(ls tests/*.json)"
+      "Bash(ls tests/*.json)",
+      "Bash(node tests/test-e2e-sales-vat-flow.mjs)"
     ],
     "additionalDirectories": [
       "\\tmp"
