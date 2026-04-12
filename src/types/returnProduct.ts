@@ -18,6 +18,8 @@ export interface ReturnProduct {
   staffName: string;
   paymentMethod: string;
   note?: string;
+  /** Danh sách sản phẩm trả hàng — dùng để hiển thị chi tiết thay vì parse productSummary */
+  items?: ReturnProductItem[];
 }
 
 export interface ReturnProductItem {

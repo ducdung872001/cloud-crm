@@ -65,7 +65,9 @@ export default function MultiChannelOrders() {
 
   const [listOrder, setListOrder] = useState([]);
 
-  const [params, setParams] = useState({
+  const [activeTabId, setActiveTabId] = useState<number>(1);
+
+  const [params, setParams] = useState<Record<string, unknown>>({
     name: "",
     limit: 10,
     page: 1,
@@ -380,35 +382,52 @@ export default function MultiChannelOrders() {
     ];
   };
 
+  const TAB_STATUS_MAP: Record<number, string | undefined> = {
+    1: undefined,          // Tất cả — không filter
+    2: "PENDING",
+    3: "PROCESSING",
+    4: "COMPLETED",
+    5: "REFUNDED",
+  };
+
+  const handleTabChange = (tabId: number) => {
+    setActiveTabId(tabId);
+    const status = TAB_STATUS_MAP[tabId];
+    setParams((prev) => {
+      const next = { ...prev, page: 1 };
+      if (status) {
+        next.status = status;
+      } else {
+        delete next.status;
+      }
+      return next;
+    });
+  };
+
   const listTabStatus = [
     {
       id: 1,
       lable: "Tất cả",
-      value: 184,
       color: "orange",
     },
     {
       id: 2,
       lable: "Chờ xử lý",
-      value: 23,
       color: "blue",
     },
     {
       id: 3,
       lable: "Đang giao",
-      value: 47,
       color: "orange",
     },
     {
       id: 4,
       lable: "Hoàn thành",
-      value: 98,
       color: "green",
     },
     {
       id: 5,
       lable: "Huỷ",
-      value: 16,
       color: "red",
     },
   ];
@@ -438,11 +457,13 @@ export default function MultiChannelOrders() {
 
       <div className="list-tab-status">
         {listTabStatus.map((item) => (
-          <div key={item.id} className="item-tab-status" style={item.id === 1 ? { backgroundColor: "var(--primary-bg-color)" } : {}}>
-            <span style={{ fontSize: 14, fontWeight: "600", color: item.id === 1 ? "white" : "" }}>{item.lable}</span>
-            <div className="item-number" style={{ backgroundColor: item.color }}>
-              <span style={{ fontSize: 12, fontWeight: "500", color: "white" }}>{item.value}</span>
-            </div>
+          <div
+            key={item.id}
+            className="item-tab-status"
+            style={item.id === activeTabId ? { backgroundColor: "var(--primary-bg-color)", cursor: "pointer" } : { cursor: "pointer" }}
+            onClick={() => handleTabChange(item.id)}
+          >
+            <span style={{ fontSize: 14, fontWeight: "600", color: item.id === activeTabId ? "white" : "" }}>{item.lable}</span>
           </div>
         ))}
       </div>

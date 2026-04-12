@@ -185,6 +185,8 @@ const Cart: React.FC<CartProps> = ({
     try {
       const invoice = await InvoiceService.createInvoice({
         customerId: customer?.id ?? -1,
+        customerName: customer?.name ?? "",
+        customerPhone: customer?.phone ?? "",
         ...(note?.trim() ? { note: note.trim() } : {}),
       });
       if (invoice.code === 0 && invoice?.result?.invoiceId) {
@@ -204,6 +206,8 @@ const Cart: React.FC<CartProps> = ({
     try {
       const draftRes = await InvoiceService.createInvoice({
         customerId: Number(customer?.id ?? -1),
+        customerName: customer?.name ?? "",
+        customerPhone: customer?.phone ?? "",
         ...(note?.trim() ? { note: note.trim() } : {}),
       });
       if (draftRes.code !== 0 || !draftRes?.result?.invoiceId) {
@@ -303,19 +307,19 @@ const Cart: React.FC<CartProps> = ({
             <div className="ci__qty">
               <button className="qb" onClick={() => onChangeQty(item.id, -1)}>−</button>
               <input
-                type="number"
+                type="text"
+                inputMode="numeric"
                 className="qi"
                 value={qtyDraft[item.id] !== undefined ? qtyDraft[item.id] : item.qty}
-                min={1}
                 onFocus={() => setQtyDraft(prev => ({ ...prev, [item.id]: String(item.qty) }))}
                 onChange={(e) => {
-                  const raw = e.target.value;
+                  const raw = e.target.value.replace(/[^0-9]/g, "");
                   setQtyDraft(prev => ({ ...prev, [item.id]: raw }));
+                  // Chỉ cập nhật qty khi giá trị hợp lệ >= 1; cho phép trống khi đang gõ
                   const v = Number(raw);
                   if (raw !== "" && v >= 1) {
                     onChangeQty(item.id, v - item.qty);
                   }
-                  // nếu trống hoặc 0: chỉ cập nhật draft, không gọi onChangeQty
                 }}
                 onBlur={() => {
                   const raw = qtyDraft[item.id];
@@ -323,6 +327,10 @@ const Cart: React.FC<CartProps> = ({
                   if (!raw || v < 1) {
                     // reset về 1 nếu bỏ trống hoặc nhập 0
                     onChangeQty(item.id, 1 - item.qty);
+                  } else if (item.maxStock && v > item.maxStock) {
+                    // Vượt tồn kho → cap tại maxStock + cảnh báo
+                    onChangeQty(item.id, item.maxStock - item.qty);
+                    showToast(t("pageCounterSales.qtyExceedStock") || `Số lượng tối đa: ${item.maxStock}`, "warning");
                   }
                   setQtyDraft(prev => { const n = { ...prev }; delete n[item.id]; return n; });
                 }}

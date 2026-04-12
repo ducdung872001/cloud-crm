@@ -11,7 +11,7 @@ type Props = {
    * Truyền cartItems + label đơn tạm lên để CounterSales load vào giỏ.
    * Không dùng navigate() vì đang ở cùng route với CounterSales.
    */
-  onContinue?: (cartItems: CartItemForDraft[], draftLabel: string, draftId: string, customerInfo?: { customerId: number; customerName: string }) => void;
+  onContinue?: (cartItems: CartItemForDraft[], draftLabel: string, draftId: string, customerInfo?: { customerId: number; customerName: string; customerPhone?: string }) => void;
   deleting?:  string | null;
 };
 
@@ -40,6 +40,7 @@ const DraftDetailPanel: React.FC<Props> = ({ order, onDelete, onContinue, deleti
     onContinue?.(cartItems, order.tenDon, order.id, {
       customerId: order.customerId,
       customerName: order.khachHang,
+      customerPhone: order.customerPhone,
     });
   };
 

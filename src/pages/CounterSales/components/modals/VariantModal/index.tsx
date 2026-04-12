@@ -5,6 +5,7 @@ import { IActionModal } from "model/OtherModel";
 import { CartItem } from "../../../types";
 import "./index.scss";
 import { ProductVariant, useGetDetailProduct, VariantProduct } from "@/hooks/useGetDetailProduct";
+import { showToast } from "utils/common";
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 
@@ -286,14 +287,13 @@ export default function VariantModal({ open, productData, onClose, onAddToCart }
                   −
                 </button>
                 <input
-                  type="number"
+                  type="text"
+                  inputMode="numeric"
                   className="vqi"
                   value={qtyInput}
-                  min={1}
-                  max={matchedVariant?.stock ?? 1}
                   disabled={!isAllSelected}
                   onChange={(e) => {
-                    const raw = e.target.value;
+                    const raw = e.target.value.replace(/[^0-9]/g, "");
                     setQtyInput(raw);
                     const num = Number(raw);
                     if (raw !== "" && num >= 1) {
@@ -302,9 +302,14 @@ export default function VariantModal({ open, productData, onClose, onAddToCart }
                   }}
                   onBlur={() => {
                     const num = Number(qtyInput);
+                    const maxStock = matchedVariant?.stock ?? 1;
                     if (!qtyInput || num < 1) {
                       setQty(1);
                       setQtyInput("1");
+                    } else if (num > maxStock) {
+                      setQty(maxStock);
+                      setQtyInput(String(maxStock));
+                      showToast(t("pageCounterSales.qtyExceedStock") || `Số lượng tối đa: ${maxStock}`, "warning");
                     } else {
                       setQty(num);
                       setQtyInput(String(num));

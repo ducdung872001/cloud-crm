@@ -291,7 +291,6 @@ export default function ProductList(props: IProductListProps) {
     getListPartner();
   }, []);
 
-  // TODO: Implement QR scan handler
   const handleScanQR = () => {
     setScanInput(""); setScanFound(null); setScanNotFound(false); setScanCode("");
     setShowScanModal(true);
@@ -306,6 +305,8 @@ export default function ProductList(props: IProductListProps) {
       if (res.code === 0 && res.result?.id) {
         setScanFound(res.result);
       } else {
+        // Fallback: tìm trong danh sách sản phẩm theo keyword
+        setParams((prev) => ({ ...prev, name: q, page: 1 }));
         setScanNotFound(true);
       }
     } catch {
@@ -1375,7 +1376,7 @@ export default function ProductList(props: IProductListProps) {
                 <button
                   className="btn btn--primary btn--sm"
                   onClick={() => {
-                    setIdProduct(scanFound.id);
+                    setIdProduct(scanFound.productId ?? scanFound.id);
                     setShowScanModal(false);
                     setShowProductPage(true);
                   }}

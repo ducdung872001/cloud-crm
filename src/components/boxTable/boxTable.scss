@@ -11,6 +11,7 @@
     font-size: var(--text-base);   // ✅ 14px
     line-height: var(--lh-snug);
     letter-spacing: var(--ls-base);
+    table-layout: fixed; // Giu do rong cot co dinh — text dai tu dong xuong dong
 
     &-striped {
       tbody tr:nth-child(even) {
@@ -35,6 +36,7 @@
           &.checkbox {
             width: 5.6rem;
             max-width: 5.6rem;
+            min-width: 5.6rem;
             padding: 1.6rem 0.8rem 1.6rem 2.4rem;
 
             .base-checkbox {
@@ -46,11 +48,13 @@
           &.image {
             max-width: 13.4rem;
             width: 7.4rem;
+            min-width: 7.4rem;
           }
 
           &.actions {
             // Cố định width — không bị kéo giãn theo bảng
-            width: 1px;
+            width: 8rem;
+            min-width: 8rem;
             white-space: nowrap;
             padding-left: 0.8rem;
             padding-right: 1.6rem;
@@ -73,16 +77,20 @@
           padding: 1.6rem;
           transition: background-color 0.15s ease-in-out;
           vertical-align: middle;
+          word-break: break-word;    // Text dai tu dong xuong dong
+          overflow-wrap: break-word; // Fallback cho cac browser cu
 
           &.checkbox {
             width: 5.6rem;
             max-width: 5.6rem;
+            min-width: 5.6rem;
             padding: 1.6rem 0.8rem 1.6rem 2.4rem;
           }
 
           &.image {
             max-width: 13.4rem;
             width: 7.4rem;
+            min-width: 7.4rem;
             margin: 0 auto;
             text-align: center;
           }

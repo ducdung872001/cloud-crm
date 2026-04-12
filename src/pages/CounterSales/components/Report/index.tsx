@@ -217,7 +217,13 @@ const Report: React.FC = () => {
     };
     const isoFrom = toIso(fromDate);
     const isoTo = toIso(toDate);
-    return series.filter(d => d.time && d.time >= isoFrom && d.time <= isoTo);
+    // Lọc bỏ phần tử có time null/undefined/rỗng và nằm ngoài khoảng ngày
+    return series.filter(d =>
+      d.time != null &&
+      d.time.trim() !== "" &&
+      d.time >= isoFrom &&
+      d.time <= isoTo
+    );
   }, [data?.dailySeries, fromDate, toDate]);
   const chartValues = chartData.map(d => chartMode === "revenue" ? d.revenue : d.orderCount);
   const chartMax    = Math.max(...chartValues, 1);

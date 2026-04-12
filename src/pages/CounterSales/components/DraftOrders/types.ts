@@ -16,6 +16,7 @@ export type DraftOrder = {
   nhanVien: string;
   khachHang: string;
   customerId: number;
+  customerPhone: string;
   sanPhams: DraftProduct[];
   // CartItem shape để preload lại vào giỏ hàng khi "Tiếp tục xử lý"
   cartItems?: CartItemForDraft[];
@@ -119,6 +120,7 @@ export function mapRawToDraftOrder(raw: RawInvoiceDetail): DraftOrder {
     nhanVien:   inv.employeeName ?? "—",
     khachHang:  inv.customerName ?? "Khách lẻ",
     customerId: inv.customerId ?? -1,
+    customerPhone: inv.customerPhone ?? "",
     sanPhams,
     cartItems,
   };

@@ -526,15 +526,19 @@ const CounterSales: React.FC = () => {
                     setActiveDraftId(draftId ?? null);
                     // Khôi phục thông tin khách hàng từ đơn tạm
                     if (custInfo && custInfo.customerId && custInfo.customerId !== -1) {
-                      setCustomer({
+                      const restoredCustomer: Customer = {
                         id: String(custInfo.customerId),
                         name: custInfo.customerName || `KH #${custInfo.customerId}`,
                         initial: (custInfo.customerName || "K")[0].toUpperCase(),
-                        phone: "",
+                        phone: custInfo.customerPhone || "",
                         points: 0,
                         tier: "—",
                         color: "#6366f1",
-                      });
+                      };
+                      setCustomer(restoredCustomer);
+                      fetchLoyaltyWallet(restoredCustomer.id);
+                    } else {
+                      setCustomer(null);
                     }
                     showToast(`Đã tải ${cartItemsFromDraft.length} sản phẩm từ ${draftLabel}`, "success");
                   }

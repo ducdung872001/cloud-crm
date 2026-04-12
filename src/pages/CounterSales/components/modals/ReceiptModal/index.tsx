@@ -96,18 +96,35 @@ export default function ReceiptModal({
   const [isRevealingEmail, setIsRevealingEmail]       = useState(false);
   const [isSending, setIsSending]                     = useState(false);
 
+  // Snapshot phí ship khi mở modal — tránh bị reset bởi onPaymentSuccess ở parent
+  const snapshotShippingFeeRef = useRef(0);
+  useEffect(() => {
+    if (open) snapshotShippingFeeRef.current = shippingFee;
+  }, [open]);
+  const lockedShippingFee = open ? snapshotShippingFeeRef.current : shippingFee;
+
+  // Snapshot cashGivenAmount khi mở modal — tránh bị mất giá trị khi parent re-render
+  const snapshotCashGivenRef = useRef(0);
+  useEffect(() => {
+    if (open && cashGivenAmount && cashGivenAmount > 0) {
+      snapshotCashGivenRef.current = cashGivenAmount;
+    }
+  }, [open, cashGivenAmount]);
+
   // ── Tính tiền ───────────────────────────────────────────────────────────────
   const subtotal      = cartItems.reduce((s, c) => s + c.price * c.qty, 0);
   const taxAmount     = cartItems.reduce((s, c) => s + (c.taxRate ? Math.round(c.price * c.qty * c.taxRate / 100) : 0), 0);
   const totalDiscount = couponDiscount + promoDiscount;
-  const total         = subtotal + taxAmount - totalDiscount + shippingFee;
+  const total         = subtotal + taxAmount - totalDiscount + lockedShippingFee;
   const fmt           = (n: number) => n.toLocaleString("vi") + " đ";
 
   // Tiền thực thu và nợ — dùng giá trị từ PayModal nếu có, fallback total/0
-  const effectivePaid = paidAmount !== undefined ? paidAmount : total;
+  const effectivePaid = (paidAmount != null && paidAmount > 0) ? paidAmount : total;
   const effectiveDebt = debtAmount ?? 0;
-  // Tiền khách đưa thực tế (hiển thị trên biên lai), fallback effectivePaid
-  const displayCashGiven = (cashGivenAmount && cashGivenAmount > 0) ? cashGivenAmount : effectivePaid;
+  // Tiền khách đưa thực tế (hiển thị trên biên lai)
+  // Ưu tiên cashGivenAmount snapshot (số tiền khách thực đưa) > effectivePaid > total
+  const resolvedCashGiven = (cashGivenAmount != null && cashGivenAmount > 0) ? cashGivenAmount : snapshotCashGivenRef.current;
+  const displayCashGiven = resolvedCashGiven > 0 ? resolvedCashGiven : effectivePaid;
 
   const now     = new Date();
   const dateStr = `${now.getDate().toString().padStart(2,"0")}/${(now.getMonth()+1).toString().padStart(2,"0")}/${now.getFullYear()}`;
@@ -467,11 +484,11 @@ ${html}
                 <span style={{ fontWeight:700, color:"#d97706" }}>+{fmt(taxAmount)}</span>
               </div>
             )}
-            {shippingFee > 0 && (
+            {lockedShippingFee > 0 && (
               <div className="receipt__totals-row"
                 style={{ display:"flex", justifyContent:"space-between", padding:"3px 0", fontSize:"1.3rem" }}>
                 <span style={{ color:"var(--muted)" }}>Phí ship</span>
-                <span style={{ fontWeight:700, color:"var(--blue,#0369a1)" }}>+{fmt(shippingFee)}</span>
+                <span style={{ fontWeight:700, color:"var(--blue,#0369a1)" }}>+{fmt(lockedShippingFee)}</span>
               </div>
             )}
             <div className="receipt__totals-row receipt__totals-row--grand"

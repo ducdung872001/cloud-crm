@@ -17,6 +17,8 @@ export interface CartItem {
   promoName?: string;
   /** Thuế suất % theo đơn giá (vd: 10 = 10%) */
   taxRate?: number;
+  /** Tồn kho tối đa — dùng để validate số lượng trong giỏ hàng */
+  maxStock?: number;
 }
 
 export interface Product {
