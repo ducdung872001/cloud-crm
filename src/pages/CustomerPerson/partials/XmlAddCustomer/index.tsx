@@ -86,7 +86,7 @@ export default function XmlAddCustomer(props: Record<string, unknown>) {
   };
 
   const toApiDate = (value: Record<string, unknown>) => {
-    return value ? formatDateCustom(value, ["MM-DD-YYYY", moment.ISO_8601], "yyyy-MM-EEEEEETHH:mm:ss") : "";
+    return value ? formatDateCustom(value, ["MM-DD-YYYY", moment.ISO_8601], "yyyy-MM-dd'T'HH:mm:ss") : "";
   };
 
   const normalizeMultiSelectToString = (input: Record<string, unknown>) => {

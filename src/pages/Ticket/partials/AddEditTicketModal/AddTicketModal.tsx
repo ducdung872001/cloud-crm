@@ -479,8 +479,8 @@ export default function AddTicketModal(props: IAddTicketModalProps) {
       ...(formData.values as ITicketRequestModel),
       ...(saleflowId ? { saleflowId: saleflowId } : {}),
       ...(sieId ? { sieId: sieId } : {}),
-      startDate: formatDateCustom(formData.values.startDate, "yyyy-MM-EEEEEETHH:mm:ss"),
-      endDate: formatDateCustom(formData.values.endDate, "yyyy-MM-EEEEEETHH:mm:ss"),
+      startDate: formatDateCustom(formData.values.startDate, "yyyy-MM-dd'T'HH:mm:ss"),
+      endDate: formatDateCustom(formData.values.endDate, "yyyy-MM-dd'T'HH:mm:ss"),
     };
 
     const response = await TicketService.update(body);

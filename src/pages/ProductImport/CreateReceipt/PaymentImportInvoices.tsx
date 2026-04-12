@@ -188,7 +188,7 @@ export default function PaymentImportInvoices(props: PaymentImportInvoicesProps)
       ...(formData?.id ? { id: formData.id } : {}),
       invoiceType: "IV4",
       inventoryId: formData.inventoryId,
-      receiptDate: formatDateCustom(formData.receiptDate, "yyyy-MM-EEEEEETHH:mm:ss"),
+      receiptDate: formatDateCustom(formData.receiptDate, "yyyy-MM-dd'T'HH:mm:ss"),
     };
 
     const response = await InvoiceService.importUpdate(body);

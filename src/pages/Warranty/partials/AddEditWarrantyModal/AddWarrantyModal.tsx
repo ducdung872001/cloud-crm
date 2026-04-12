@@ -393,8 +393,8 @@ export default function AddWarrantyModal(props: IAddWarrantyModelProps) {
       ...(formData.values as IWarrantyRequestModel),
       ...(saleflowId ? { saleflowId: saleflowId } : {}),
       ...(sieId ? { sieId: sieId } : {}),
-      startDate: formatDateCustom(formData.values.startDate, "yyyy-MM-EEEEEETHH:mm:ss"),
-      endDate: formatDateCustom(formData.values.endDate, "yyyy-MM-EEEEEETHH:mm:ss"),
+      startDate: formatDateCustom(formData.values.startDate, "yyyy-MM-dd'T'HH:mm:ss"),
+      endDate: formatDateCustom(formData.values.endDate, "yyyy-MM-dd'T'HH:mm:ss"),
     };
 
     const response = await WarrantyService.update(body);

@@ -483,10 +483,10 @@ export default function AddProgramLoyaltyModal(props: AddProgramRoyaltyModalProp
       processCode: (processData as Record<string, unknown>)?.code || formData.values.processCode || "",
       branchIds: JSON.stringify(formData.values.branchIds || []),
       startDate: formData.values.startDate && isValidDate(formData.values.startDate)
-        ? formatDateCustom(formData.values.startDate, "yyyy-MM-EEEEEETHH:mm:ss")
+        ? formatDateCustom(formData.values.startDate, "yyyy-MM-dd'T'HH:mm:ss")
         : "",
       endDate: formData.values.endDate && isValidDate(formData.values.endDate)
-        ? formatDateCustom(formData.values.endDate, "yyyy-MM-EEEEEETHH:mm:ss")
+        ? formatDateCustom(formData.values.endDate, "yyyy-MM-dd'T'HH:mm:ss")
         : "",
     };
 
