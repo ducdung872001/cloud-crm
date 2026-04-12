@@ -177,6 +177,10 @@ const Cart: React.FC<CartProps> = ({
 
   // ── Tạo đơn ──────────────────────────────────────────────────────────────
   const onCreateInvoice = async () => {
+    if (!customer) {
+      showToast("Vui lòng chọn khách hàng trước khi tạo hóa đơn", "warning");
+      return;
+    }
     if (isShipOrder) {
       if (!shippingInfo.receiverName?.trim()) { showToast(t("pageCounterSales.requireReceiverName"), "warning"); return; }
       if (!shippingInfo.receiverPhone?.trim()) { showToast(t("pageCounterSales.requireReceiverPhone"), "warning"); return; }

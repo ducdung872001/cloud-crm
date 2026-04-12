@@ -1,7 +1,7 @@
-# BACKEND TASK — Cai thien error response cua endpoint phieu nhap kho
+# BACKEND TASK — Phieu nhap kho: error response + stock ledger khong duoc tao
 
 **Discovered:** 2026-04-12 — chay E2E test `tests/test-e2e-product-import-pos.mjs`
-**Severity:** 🟡 MEDIUM (khong block flow nua sau khi FE da fix)
+**Severity:** 🔴 **CRITICAL** — issue #3 block toan bo flow ban hang
 **Reproducer:** Playwright E2E
 
 ---
@@ -68,7 +68,55 @@ type ApiResponse<T> = {
 
 Hien tai van de nay da ghi nhan o **TD-INV-007** trong [TECH_DEBT_INVENTORY.md](../TECH_DEBT_INVENTORY.md#td-inv-007). File nay duplicate de nhan manh impact tu E2E test.
 
-### 3. (Optional) Validate schema input voi `@Valid` / `@RequestBody` annotation
+### 3. 🔴 CRITICAL — Approve phieu nhap KHONG cap nhat ton kho
+
+Endpoint `POST /inventory/invoice/import/approve?invoiceId=X` tra ve **HTTP 200, code:0, result:1** (success), nhung **KHONG tao stock ledger entry** va **KHONG tang ton kho**.
+
+**Hard evidence (E2E test 2026-04-12):**
+1. Tao SP moi (invoice id 3417) → Tao phieu nhap → Them SP qty=10 → Approve.
+2. API approve tra:
+   ```
+   POST https://biz.reborn.vn/inventory/invoice/import/approve?invoiceId=3417
+   HTTP 200
+   Body: {"code":0,"message":"OK","result":1}
+   ```
+3. Phieu hien thi trong `/inventory_checking?tab=import` → tab "Hoan thanh" ✓
+4. **Nhung trong `/inventory` (So kho) → tab "Nhap kho" → KHONG co ledger entry moi.** Top 5 ledger rows:
+   ```
+   1. #3408 | 09/04/2026 10:50 | +100 | Quan au cong so cap...     ← 3 ngay truoc, KHONG phai cua minh
+   2. #3407 | 07/04/2026 16:41 | +500 | Bat an com...
+   3. #3385 | 07/04/2026 16:35 | +400 | Bat an com...
+   ```
+   Khong co entry nao tu hom nay (12/04/2026) cho SP "E2E SP ia0q5".
+5. **`/product_inventory` (Ton kho)** cung khong co SP nay (rows hien thi N/A name, khong khop SP test).
+6. **POS `/create_sale_add`** khong tim thay SP (grid empty cho query SP nay).
+
+**Hau qua:** Nguoi dung tao phieu nhap thanh cong, system bao "Da hoan thanh" nhung **ton kho khong tang**, **khong ban duoc** SP do tai POS. Toan bo flow nhap-ban kho doan duoi gay loi am tham.
+
+**Action BE:**
+1. Trace flow `POST /invoice/import/approve` trong `cloud-inventory-master` (hoac `cloud-sales-master` neu approve handler o do).
+2. Verify rang sau khi approve, BE PHAI:
+   - Insert ban ghi `inventory_transaction` voi type=STOCK_IN, refType=IMPORT, refId=invoiceId
+   - Update `inventory_balance.quantity += imported_qty` cho (variantId, warehouseId)
+   - Publish event `STOCK_CHANGED` neu co Kafka downstream
+3. Verify `warehouseId` (= `inventoryId` cua phieu) duoc truyen dung. Pattern bug "warehouseId is null" da gap o module truoc.
+4. Kiem tra co exception bi swallow trong service layer khong (try-catch tra success that 0 du processing fail).
+5. Co the lien quan: variant moi tao co `unitId` null/missing → BE STOCK_IN insert fail validation foreign key → catch silently → tra code:0 nhung khong commit transaction.
+
+**Reproducer SQL** (sau khi BE chay):
+```sql
+-- Sau approve invoice 3417, check ledger:
+SELECT * FROM inventory_transaction WHERE ref_type='IMPORT' AND ref_id=3417;
+-- Expected: 1 row, type=STOCK_IN, qty=10
+-- Actual: 0 rows (bug)
+
+-- Va inventory_balance:
+SELECT * FROM inventory_balance WHERE variant_id=<variant_of_E2E_SP> AND warehouse_id=<Kho_hang_mau_id>;
+-- Expected: quantity=10
+-- Actual: row khong ton tai hoac quantity=0
+```
+
+### 4. (Optional) Validate schema input voi `@Valid` / `@RequestBody` annotation
 
 Neu BE dung Spring/Vert.x, them annotation validate dau vao se tu sinh structured error response thay vi catch generic "Input wrong":
 - Spring: `@Valid` + `@NotNull` / `@Pattern` annotations + `@ExceptionHandler(MethodArgumentNotValidException)`
@@ -99,3 +147,22 @@ curl -X POST https://biz.reborn.vn/inventory/invoice/import/update \
 
 - FE bug `"yyyy-MM-EEEEEETHH:mm:ss"` da fix toan bo 13 file (2026-04-12). Pattern bug nay lan rong khap codebase, anh huong: nhap kho, AddProductImport, Warranty, Ticket, Setting, Loyalty program, Customer revenue (NetDeposit/Loan/ServiceCharge), XmlAddCustomer. Mot so flow co the da silent-fail tu lau ma user chua phat hien.
 - Endpoint URL `https://biz.reborn.vn/inventory/invoice/import/update` (production host) — moi truong dev pass through.
+
+## UI observation co the lien quan (chua confirm)
+
+Khi mo modal "Them san pham" trong /create_inventory va chon variant cua SP moi tao, **field "Don vi tinh" tren UI khong hien thi noi dung gi** (label co the visible nhung dropdown trong rong / khong show value). Field nay duoc dinh nghia trong [AddProductImportModal.tsx:359-380](src/pages/ProductImport/CreateReceipt/partials/AddProductImportModal/AddProductImportModal.tsx#L359-L380):
+```jsx
+options={
+  selectedVariant
+    ? [{ value: selectedVariant.unitId, label: selectedVariant.unitName }]
+    : []
+}
+value={formData?.values?.unitId ?? null}
+```
+Render `disabled=true` voi value tu `selectedVariant.unitId`.
+
+**Hypothesis:** BE endpoint `GET /inventory/variant/list?productId=X` (hoac tuong tu) tra ve variant ma `baseUnit=null` va `unitId=null` cho variant cua SP moi tao → FE fallback `v.baseUnit ?? v.unitId ?? 0` → unitId = 0 → SelectCustom render empty → ma sau do approve invoice se fail tao stock_in transaction vi `variant.unit_id` null trong DB.
+
+**Action BE de confirm:**
+1. Truy van DB: `SELECT id, unit_id, base_unit FROM product_variant WHERE product_id = <id_SP_moi_tao>`. Co null khong?
+2. Neu co: BE save product (`POST /inventory/product/update`) phai persist `variants[].unitId` (FE da gui dung field nay theo `body.variants[].unitId` trong [AddProductPage.tsx:927](src/pages/SettingSell/partials/Product/partials/AddProductPage.tsx#L927) — em da xac nhan FE gui).

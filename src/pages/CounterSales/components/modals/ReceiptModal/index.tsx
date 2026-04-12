@@ -9,6 +9,7 @@ import { showToast } from "@/utils/common";
 import { PAY_METHODS } from "../PayModal";
 import { QRCodeCanvas } from "qrcode.react";
 import { getActiveShiftId } from "utils/ShiftStorage";
+import { formatDateCustom } from "utils/dateUtils";
 
 // ── Paper size config (dùng chung với InvoiceReceiptModal) ───────────────────
 
@@ -172,7 +173,7 @@ export default function ReceiptModal({
         ...(warehouseId ? { inventoryId: warehouseId } : {}),
 
         // ── Thời gian ────────────────────────────────────────────────────────
-        receiptDate:  new Date().toISOString(),
+        receiptDate:  formatDateCustom(new Date(), "yyyy-MM-dd'T'HH:mm:ss"),
 
         // ── Khác ─────────────────────────────────────────────────────────────
         account:      "[]",

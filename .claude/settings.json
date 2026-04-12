@@ -19,7 +19,11 @@
       "Bash(grep --line-buffered -E \"^═|^  [A-Z]+$|PASS|FAIL|KET QUA|FATAL|Login|SAN PHAM|KHO HANG|NCC|DVT|PHONG\")",
       "Bash(node tests/test-crud-all.mjs --module=customerGroup)",
       "Bash(node tests/test-crud-all.mjs --module=productUnit)",
-      "Read(//c/Users/HP/AppData/Local/Temp/**)"
+      "Read(//c/Users/HP/AppData/Local/Temp/**)",
+      "Bash(node tests/debug-product-inventory-api.mjs)",
+      "Bash(grep -n \"actions\\\\s*=\\\\|\\\\\\\\baction\\\\b\\\\|onClick.*onAddToCart\\\\|onAddToCart\" \"d:/Git/reborn/reborn-cloud/cloud-ver2/cloud-crm/src/pages/CounterSales/components/modals/VariantModal/index.tsx\")",
+      "Bash(node tests/test-e2e-product-import-pos.mjs)",
+      "Bash(ls tests/*.json)"
     ],
     "additionalDirectories": [
       "\\tmp"
