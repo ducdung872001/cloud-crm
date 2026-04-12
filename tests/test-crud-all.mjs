@@ -41,43 +41,53 @@ const MODULES = {
   },
   customerGroup: {
     name: "Nhom KH", route: "/setting_customer",
-    cardClick: '.item-body >> text=Danh sách nhóm khách hàng',
-    createBtn: '[class*="titleAction"] button:has-text("Thêm")',
-    saveBtn: '.modal.show button:has-text("Lưu"), .modal.show button:has-text("Tạo")',
+    cardClick: 'text=Danh sách nhóm khách hàng',
+    createBtn: '.title-action button:has-text("Thêm")',
+    saveBtn: '.modal.show button:has-text("Lưu"), .modal.show button:has-text("Tạo"), .modal.show button:has-text("Thêm")',
     updateBtn: '.modal.show button:has-text("Cập nhật")',
     fields: {
       name: { sel: '.modal.show input[name="name"]', val: `NKH ${RID}`, req: true, label: "Ten nhom" },
+      code: { sel: '.modal.show input[name="code"]', val: `NK${RID}`, req: true, label: "Ma nhom" },
     },
     listCols: {},
   },
   productUnit: {
     name: "DVT", route: "/setting_sell",
     cardClick: 'text=Danh mục đơn vị sản phẩm',
-    createBtn: '[class*="titleAction"] button:has-text("Thêm")',
-    saveBtn: '.modal.show button:has-text("Lưu"), .modal.show button:has-text("Tạo")',
+    createBtn: '.title-action button:has-text("Thêm")',
+    saveBtn: '.modal.show button:has-text("Lưu"), .modal.show button:has-text("Tạo"), .modal.show button:has-text("Thêm")',
     updateBtn: '.modal.show button:has-text("Cập nhật")',
     fields: {
-      name: { sel: '.modal.show input[name="name"]', val: `DVT ${RID}`, req: true, label: "Ten DVT" },
+      name:     { sel: '.modal.show input[name="name"]',     val: `DVT ${RID}`, req: true, label: "Ten DVT" },
+      position: { sel: '.modal.show input[name="position"]', val: "1",          req: true, label: "Thu tu" },
     },
     listCols: {},
   },
   department: {
     name: "Phong ban", route: "/setting_org",
-    cardClick: '.item-body >> text=Phòng ban',
-    createBtn: '[class*="titleAction"] button:has-text("Thêm")',
-    saveBtn: '.modal.show button:has-text("Lưu"), .modal.show button:has-text("Tạo")',
+    cardClick: 'text="Phòng ban"',
+    createBtn: '.btn__add--department',
+    saveBtn: '.modal.show button:has-text("Lưu"), .modal.show button:has-text("Tạo"), .modal.show button:has-text("Thêm")',
     updateBtn: '.modal.show button:has-text("Cập nhật")',
     fields: {
-      name: { sel: '.modal.show input[name="name"]', val: `PB ${RID}`, req: true, label: "Ten PB" },
+      name:     { sel: '.modal.show input[name="name"]',                      val: `PB ${RID}`, req: true, label: "Ten PB" },
+      jobTitle: { sel: '.modal.show input[placeholder*="tên chức danh"]',     val: "Truong phong",  req: true, label: "Chuc danh" },
+      jobRank:  { sel: '.modal.show input[placeholder*="cấp bậc chức danh"]', val: "1",             req: true, label: "Cap bac" },
     },
     listCols: {},
   },
 };
 
 async function goToModule(t, cfg) {
+  // Setting pages: state is React-only (khong co URL param), navigate lai → reset ve landing cards.
+  // Toi uu: neu da o trang dich + da o trong tab (input search hien → da render list), bo qua navigate.
+  if (cfg.cardClick) {
+    const onTarget = t.page.url().includes(cfg.route);
+    const inTabAlready = onTarget && (await t.page.$('.title-action button:has-text("Thêm")').then(b => !!b).catch(() => false));
+    if (inTabAlready) return;
+  }
   await t.goto(cfg.route);
   if (cfg.cardClick) {
-    // Setting pages: click card de vao module
     const sels = cfg.cardClick.split(", ");
     for (const sel of sels) {
       if (await t.page.click(sel, { force: true, timeout: 5000 }).then(() => true).catch(() => false)) break;
@@ -130,6 +140,18 @@ async function testModule(t, key, cfg) {
   if (saveBtn && !(await saveBtn.evaluate(el => el.disabled))) {
     await saveBtn.click({ force: true });
     await t.page.waitForTimeout(3000);
+    // Verify modal closed = save success. Modal still open = client validation fail.
+    const stillOpen = await t.exists(".modal.show");
+    if (stillOpen) {
+      // Tim error message hien thi tren UI de bao
+      const errMsg = await t.page.evaluate(() => {
+        const errs = [...document.querySelectorAll(".modal.show .error, .modal.show .text-danger, .modal.show [class*='error-message']")];
+        return errs.map(e => e.innerText?.trim()).filter(Boolean).join(" | ");
+      });
+      record(mod, "C03", false, `Luu fail — modal van mo${errMsg ? ": " + errMsg : " (validate fail hoac BE reject)"}`);
+      await t.screenshot(`${key}-save-fail`);
+      return;
+    }
     record(mod, "C03", true, "Da luu");
   } else {
     record(mod, "C03", false, "Nut Luu disabled hoac khong co");

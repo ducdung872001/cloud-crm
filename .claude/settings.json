@@ -11,7 +11,15 @@
       "Bash(curl -m 3 -s -o /dev/null -w \"SSO:%{http_code}\" http://localhost:8080)",
       "Bash(node -e \"const fs=require\\('fs'\\);const c=JSON.parse\\(fs.readFileSync\\('tests/.auth-cookies.json','utf8'\\)\\);const t=c.find\\(x=>x.name==='token'\\);console.log\\('Token:',new Date\\(t.expires*1000\\)>new Date\\(\\)?'VALID':'EXPIRED'\\)\")",
       "Bash(node tests/test-crud-all.mjs --module=product)",
-      "Bash(node tests/test-crud-advanced.mjs --module=warehouse)"
+      "Bash(node tests/test-crud-advanced.mjs --module=warehouse)",
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\" http://localhost:4000/crm)",
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\" http://localhost:4000/)",
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\" http://localhost:4000/crm/)",
+      "Bash(tee tests/reports/last-crud-run.log)",
+      "Bash(grep --line-buffered -E \"^═|^  [A-Z]+$|PASS|FAIL|KET QUA|FATAL|Login|SAN PHAM|KHO HANG|NCC|DVT|PHONG\")",
+      "Bash(node tests/test-crud-all.mjs --module=customerGroup)",
+      "Bash(node tests/test-crud-all.mjs --module=productUnit)",
+      "Read(//c/Users/HP/AppData/Local/Temp/**)"
     ],
     "additionalDirectories": [
       "\\tmp"
