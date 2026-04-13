@@ -124,7 +124,6 @@ export default function SocialCrmZalo() {
   });
 
 //   useEffect(() => {
-    let isMounted = true;
 //     if (accountSelected) {
 //         setParamZaloFollowerList({ ...paramsZaloFollowerList, oaId: accountSelected?.oaId });
 //     }
