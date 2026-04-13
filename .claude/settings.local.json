@@ -76,7 +76,9 @@
       "Bash(npm uninstall:*)",
       "Bash(node tests/test-e2e-shift-flow.mjs)",
       "Bash(clip.exe)",
-      "Bash(rm -f tests/test-ship-dbg.mjs tests/reports/dbg-out.txt)"
+      "Bash(rm -f tests/test-ship-dbg.mjs tests/reports/dbg-out.txt)",
+      "Bash(grep -n \"promotional_program\\\\|promo_code\" /d/Git/reborn/reborn-cloud/cloud-ver2/cloud-crm/src/configs/*.ts)",
+      "Bash(grep -n \"promotion/update\\\\|PromotionService.update\\\\|IPromotionRequest\\\\|interface.*Promotion.*Request\" /d/Git/reborn/reborn-cloud/cloud-ver2/cloud-crm/src/model/promotion/*.ts /d/Git/reborn/reborn-cloud/cloud-ver2/cloud-crm/src/services/PromotionService.ts)"
     ]
   }
 }

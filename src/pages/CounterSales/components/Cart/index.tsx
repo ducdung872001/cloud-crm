@@ -35,6 +35,8 @@ interface CartProps {
   onViewPromos?: () => void;
   onRemovePromo?: () => void;
   onCouponDiscountChange?: (discount: number) => void;
+  /** Bubble voucher code lên parent để invoice/create gửi kèm couponCode (sau BE fix tracking) */
+  onCouponCodeChange?: (code: string | null) => void;
   onManualDiscountChange?: (discount: number) => void;
   onResetVoucher?: () => void;
   // ── Ghi chú ──────────────────────────────────────────────────────────────
@@ -49,7 +51,7 @@ const Cart: React.FC<CartProps> = ({
   orderType, onOrderTypeChange, shippingInfo, onShippingInfoChange,
   loyaltyWallet, exchangeRate = 1000, pointsToUse = 0, onPointsChange,
   eligiblePromoCount = 0, appliedPromo, promoDiscount = 0,
-  onViewPromos, onRemovePromo, onCouponDiscountChange, onManualDiscountChange, onResetVoucher,
+  onViewPromos, onRemovePromo, onCouponDiscountChange, onCouponCodeChange, onManualDiscountChange, onResetVoucher,
   note = "", onNoteChange,
 }) => {
   const { t } = useTranslation();
@@ -135,6 +137,7 @@ const Cart: React.FC<CartProps> = ({
   useEffect(() => {
     const handleReset = () => {
       setVoucher(""); setCouponDiscount(0); setCouponMessage(""); setCouponError("");
+      onCouponCodeChange?.(null);
     };
     if (onResetVoucher) handleReset();
   }, [onResetVoucher]);
@@ -160,15 +163,19 @@ const Cart: React.FC<CartProps> = ({
         setCouponError(payload?.message ?? t("pageCounterSales.voucherInvalid"));
       } else if (payload?.code || (res as Record<string, unknown>)?.success === true) {
         handleCouponDiscountChange(calcDiscount);
+        // Bubble code lên parent để invoice/create gắn couponCode (audit trail)
+        onCouponCodeChange?.(calcDiscount > 0 ? code : null);
         setCouponMessage(calcDiscount > 0
           ? (payload?.message ?? `${t("pageCounterSales.voucherSuccess")} − ${calcDiscount.toLocaleString("vi")} đ`)
           : (payload?.message ?? `${t("pageCounterSales.voucherSuccess")} ✓`));
       } else {
         handleCouponDiscountChange(0);
+        onCouponCodeChange?.(null);
         setCouponError(t("pageCounterSales.voucherInvalid"));
       }
     } catch {
       handleCouponDiscountChange(0);
+      onCouponCodeChange?.(null);
       setCouponError(t("pageCounterSales.voucherConnectionError"));
     } finally {
       setIsApplyingCoupon(false);

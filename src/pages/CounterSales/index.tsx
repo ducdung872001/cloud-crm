@@ -156,6 +156,8 @@ const CounterSales: React.FC = () => {
   // ── Fixed price lookup map ────────────────────────────────────────────────
   const [fixedPriceMap, setFixedPriceMap] = useState<Map<string, IFixedPriceEntry>>(new Map());
   const [couponDiscount, setCouponDiscount] = useState(0);
+  // Lưu code voucher để gửi kèm invoice/create cho audit trail (BE pending)
+  const [appliedCouponCode, setAppliedCouponCode] = useState<string | null>(null);
   const [manualDiscount, setManualDiscount] = useState(0);
   const [orderNote, setOrderNote] = useState("");
   const [promoDiscount, setPromoDiscount] = useState(0);
@@ -362,6 +364,12 @@ const CounterSales: React.FC = () => {
         debt,    // ← tiền còn nợ (0 nếu thanh toán đủ)
         // fundId từ PTTT KH đã chọn → billing ghi cashbook vào đúng quỹ
         ...(activePayConfig?.fundId ? { fundId: activePayConfig.fundId } : {}),
+        // ── AUDIT TRAIL — pending BE: BACKEND-TASK-voucher-design-flaw.md ──
+        // FE đã gửi sẵn các field này, BE bỏ qua nếu chưa support → no-op
+        ...(appliedCouponCode ? { couponCode: appliedCouponCode } : {}),
+        ...(couponDiscount > 0 ? { couponDiscount } : {}),
+        ...(appliedPromo?.id ? { promotionId: Number(appliedPromo.id) } : {}),
+        ...(promoDiscount > 0 ? { promoDiscount } : {}),
       });
 
       if (paidInvoice.code == 0) {
@@ -533,6 +541,7 @@ const CounterSales: React.FC = () => {
                 onViewPromos={() => setPromoModalOpen(true)}
                 onRemovePromo={() => { setAppliedPromo(null); setPromoDiscount(0); }}
                 onCouponDiscountChange={setCouponDiscount}
+                onCouponCodeChange={setAppliedCouponCode}
                 onManualDiscountChange={setManualDiscount}
                 note={orderNote}
                 onNoteChange={setOrderNote}
@@ -652,6 +661,7 @@ const CounterSales: React.FC = () => {
         shippingFee={shippingInfo.shippingFeeBearer === "RECEIVER" ? shippingInfo.shippingFee : 0}
         onPaymentSuccess={() => {
           setCouponDiscount(0);
+          setAppliedCouponCode(null);
           setPromoDiscount(0);
           setAppliedPromo(null);
           setManualDiscount(0);
