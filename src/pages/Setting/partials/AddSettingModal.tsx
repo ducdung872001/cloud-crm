@@ -153,8 +153,8 @@ export default function AddSettingModal(props: AddSettingProps) {
     const body: ISettingRequest = {
       ...(formData.values as ISettingRequest),
       ...(data ? { id: data.id } : {}),
-      startDate: formatDateCustom(formData.values.startDate, "yyyy-MM-EEEEEETHH:mm:ss"),
-      endDate: formatDateCustom(formData.values.endDate, "yyyy-MM-EEEEEETHH:mm:ss"),
+      startDate: formatDateCustom(formData.values.startDate, "yyyy-MM-dd'T'HH:mm:ss"),
+      endDate: formatDateCustom(formData.values.endDate, "yyyy-MM-dd'T'HH:mm:ss"),
     };
 
     const response = await SettingService.update(body);

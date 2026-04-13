@@ -466,9 +466,9 @@ export default function AddProductImportModal(props: AddProductImportModalProps)
       unitId: selectedVariant.unitId,
       discount: discountVal,
       mfgDate: formData.values.mfgDate
-        ? formatDateCustom(formData.values.mfgDate, "yyyy-MM-EEEEEETHH:mm:ss")
+        ? formatDateCustom(formData.values.mfgDate, "yyyy-MM-dd'T'HH:mm:ss")
         : null,
-      expiryDate: formatDateCustom(formData.values.expiryDate, "yyyy-MM-EEEEEETHH:mm:ss"),
+      expiryDate: formatDateCustom(formData.values.expiryDate, "yyyy-MM-dd'T'HH:mm:ss"),
     };
 
     const response = await ProductImportService.update(body);

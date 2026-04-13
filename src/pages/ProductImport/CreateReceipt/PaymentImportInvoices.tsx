@@ -82,7 +82,7 @@ export default function PaymentImportInvoices(props: PaymentImportInvoicesProps)
     if (listInventory.length > 0) return;
 
     setIsLoadingInventory(true);
-    const response = await InventoryService.list();
+    const response = await InventoryService.list({ page: 1, limit: 200 });
 
     if (response.code === 0) {
       const dataOption = Array.isArray(response.result)
@@ -188,7 +188,7 @@ export default function PaymentImportInvoices(props: PaymentImportInvoicesProps)
       ...(formData?.id ? { id: formData.id } : {}),
       invoiceType: "IV4",
       inventoryId: formData.inventoryId,
-      receiptDate: formatDateCustom(formData.receiptDate, "yyyy-MM-EEEEEETHH:mm:ss"),
+      receiptDate: formatDateCustom(formData.receiptDate, "yyyy-MM-dd'T'HH:mm:ss"),
     };
 
     const response = await InvoiceService.importUpdate(body);

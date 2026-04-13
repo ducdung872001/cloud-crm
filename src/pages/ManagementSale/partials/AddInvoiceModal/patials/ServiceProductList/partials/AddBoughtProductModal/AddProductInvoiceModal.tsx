@@ -48,7 +48,7 @@ export default function AddBoughtProductModal(props: AddBoughtProductModalProps)
     if (!listInventory || listInventory.length == 0) {
       setIsLoadingInventory(true);
 
-      const response = await InventoryService.list();
+      const response = await InventoryService.list({ page: 1, limit: 200 });
 
       if (response.code === 0) {
         const dataOption = response.result || [];
