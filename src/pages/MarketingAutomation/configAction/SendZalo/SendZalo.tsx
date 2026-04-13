@@ -122,7 +122,6 @@ export default function SendZalo(props: Record<string, unknown>) {
   );
 
 //   useEffect(() => {
-    let isMounted = true;
 //     setBody({ ...body, templateId: idCategorySMS, customerId: idCustomer });
 //   }, [idCustomer, idCategorySMS]);
 
