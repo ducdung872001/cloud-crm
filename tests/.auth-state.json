@@ -78,6 +78,38 @@
         {
           "name": "user.root",
           "value": "1"
+        },
+        {
+          "name": "reborn_onboarding_1_login",
+          "value": "2026-04-13T15:05:35.260Z"
+        },
+        {
+          "name": "reborn_onboarding_0_login",
+          "value": "2026-04-13T15:05:35.260Z"
+        },
+        {
+          "name": "reborn_onboarding_1_shift",
+          "value": "2026-04-13T15:05:35.260Z"
+        },
+        {
+          "name": "reborn_onboarding_0_shift",
+          "value": "2026-04-13T15:05:35.260Z"
+        },
+        {
+          "name": "reborn_onboarding_1_pos",
+          "value": "2026-04-13T15:05:35.260Z"
+        },
+        {
+          "name": "reborn_onboarding_0_pos",
+          "value": "2026-04-13T15:05:35.260Z"
+        },
+        {
+          "name": "reborn_onboarding_1_barcode_print",
+          "value": "2026-04-13T15:05:35.260Z"
+        },
+        {
+          "name": "reborn_onboarding_0_barcode_print",
+          "value": "2026-04-13T15:05:35.260Z"
         }
       ]
     },

@@ -53,6 +53,20 @@ try {
     console.warn("[login] ⚠ Chưa có SelectedRole. Nếu user chỉ có 1 role, bỏ qua. Nếu > 1 role, kiểm tra auto-pick.");
   }
 
+  // Mark all onboarding tours as done để tránh welcome tour chặn UI test
+  const markedTours = await page.evaluate(() => {
+    const uid = JSON.parse(localStorage.getItem("user.root") || "0") || 0;
+    const tours = ["login", "shift", "pos", "barcode_print"];
+    const now = new Date().toISOString();
+    tours.forEach((t) => {
+      localStorage.setItem(`reborn_onboarding_${uid}_${t}`, now);
+      // cũng set cho uid=0 phòng khi user.root trống
+      localStorage.setItem(`reborn_onboarding_0_${t}`, now);
+    });
+    return { uid, tours };
+  });
+  console.log(`[login] Đã mark onboarding tours done (uid=${markedTours.uid}):`, markedTours.tours.join(", "));
+
   // save storage state
   await context.storageState({ path: STATE_PATH });
   console.log(`[login] ✅ Đã lưu storageState → ${STATE_PATH}`);
