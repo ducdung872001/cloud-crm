@@ -75,7 +75,8 @@
       "Bash(cd /d \"d:\\\\Git\\\\reborn\\\\reborn-cloud\\\\cloud-ver2\\\\cloud-crm\")",
       "Bash(npm uninstall:*)",
       "Bash(node tests/test-e2e-shift-flow.mjs)",
-      "Bash(clip.exe)"
+      "Bash(clip.exe)",
+      "Bash(rm -f tests/test-ship-dbg.mjs tests/reports/dbg-out.txt)"
     ]
   }
 }

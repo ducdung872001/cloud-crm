@@ -383,7 +383,7 @@ const CounterSales: React.FC = () => {
               headers: { "Content-Type": "application/json" },
               body: JSON.stringify({
                 internalOrderId: invoiceCodeForShip,
-                carrierCode: "GHN",
+                carrierCode: "GHTK",
                 sender: {
                   name: "", phone: "", email: "",
                   address: "", ward: "", district: "", province: "",
