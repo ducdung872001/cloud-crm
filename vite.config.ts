@@ -90,7 +90,7 @@ export default defineConfig(({ mode }) => {
       "process.env.OUTLOOK_EMAIL_REDIRECT": JSON.stringify(env.OUTLOOK_EMAIL_REDIRECT),
     },
 
-    base: "/crm/",
+    base: "/",
 
     server: {
       port: 4000,
@@ -98,18 +98,18 @@ export default defineConfig(({ mode }) => {
     },
 
     build: {
-      outDir: "bundle/crm",
+      outDir: "bundle",
       emptyOutDir: true,
       sourcemap: false,
       rollupOptions: {
         output: {
-          entryFileNames: "js/[name].[hash].js",
-          chunkFileNames: "js/[name].[hash].js",
+          entryFileNames: "crm/js/[name].[hash].js",
+          chunkFileNames: "crm/js/[name].[hash].js",
           assetFileNames: (assetInfo) => {
             const name = assetInfo.name || "";
-            if (/\.css$/.test(name)) return "css/[name].[hash][extname]";
-            if (/\.(wav|mp3)$/.test(name)) return "assets/sounds/[name][extname]";
-            return "assets/[name].[hash][extname]";
+            if (/\.css$/.test(name)) return "crm/css/[name].[hash][extname]";
+            if (/\.(wav|mp3)$/.test(name)) return "crm/assets/sounds/[name][extname]";
+            return "crm/assets/[name].[hash][extname]";
           },
         },
       },
