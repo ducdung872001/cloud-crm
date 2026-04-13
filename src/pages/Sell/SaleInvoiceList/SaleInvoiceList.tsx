@@ -10,6 +10,7 @@ import { urlsApi } from "configs/urls";
 import "./SaleInvoiceList.scss";
 import OrderList, { StatusCounts } from "@/pages/CounterSales/components/OrderList";
 import { Order } from "@/pages/CounterSales/types";
+import { cancelInvoiceByReturn } from "@/utils/cancelInvoiceFlow";
 import Button from "@/components/button/button";
 import OrderDetailModal from "@/pages/CounterSales/components/modals/OrderDetailModal";
 import InvoiceReceiptModal from "@/pages/CounterSales/components/modals/InvoiceReceiptModal/InvoiceReceiptModal";
@@ -464,6 +465,31 @@ export default function SaleInvoiceList() {
     setQuickPayDebt({ invoiceId: Number(order.id), amount: order.debt, name: order.customer.name });
   }, []);
 
+  // ── Hủy đơn (tạo phiếu trả toàn bộ + confirm) ────────────────────────────
+  const handleCancelOrder = useCallback(async (order: Order) => {
+    const invoiceId = Number(order.id);
+    if (!invoiceId) return;
+    const ok = window.confirm(
+      `Bạn có chắc muốn HỦY đơn ${order.code}?\n\n` +
+      `• Tồn kho sẽ được hoàn lại\n` +
+      `• Tiền sẽ được hoàn cho khách\n` +
+      `• Thao tác này không thể khôi phục`
+    );
+    if (!ok) return;
+    const res = await cancelInvoiceByReturn(invoiceId, "Hủy đơn từ danh sách đơn hàng");
+    if (res.ok) {
+      showToast(
+        `Đã hủy đơn ${order.code} — hoàn ${res.refundAmount?.toLocaleString("vi")}đ (phiếu trả #${res.returnInvoiceId})`,
+        "success"
+      );
+      // Refresh list
+      applyFilters(activeFilter, searchText, fromDate, toDate, 1);
+    } else {
+      showToast(res.message || "Hủy đơn thất bại", "error");
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [activeFilter, searchText, fromDate, toDate]);
+
   // ── Render ─────────────────────────────────────────────────────────────────
   return (
     <div className="sale-invoice-list">
@@ -486,6 +512,7 @@ export default function SaleInvoiceList() {
         onViewReceipt={handleViewReceipt}
         onConfirm={handleConfirmOrder}
         onCollectDebt={handleCollectDebt}
+        onCancelOrder={handleCancelOrder}
       />
 
       {isLoading && (

@@ -31,6 +31,7 @@ interface OrderListProps {
   onCollectDebt?: (order: Order) => void;
   onViewReceipt: (invoiceId: number | null) => void;
   onConfirm: (invoiceId: number | null) => void;
+  onCancelOrder?: (order: Order) => void;
   listOrder?: Order[];
   // Filter props (controlled from parent SaleInvoiceList)
   activeFilter?: StatusFilter;
@@ -61,7 +62,7 @@ const STATUS_BADGE_CLASS: Record<string, string> = {
 
 const OrderList: React.FC<OrderListProps> = ({
   onViewDetail,
-  onCollectDebt, onViewReceipt, onConfirm,
+  onCollectDebt, onViewReceipt, onConfirm, onCancelOrder,
   listOrder = ORDERS,
   // Filter props with fallback to local state if not controlled
   activeFilter: activeFilterProp,
@@ -324,6 +325,13 @@ const OrderList: React.FC<OrderListProps> = ({
                   <button className="btn btn--xs btn--outline"
                     onClick={e => { e.stopPropagation(); navigate(`/invoiceVAT?tab=issue&code=${encodeURIComponent(order.code)}`); }}>
                     📩 Gửi HĐ điện tử
+                  </button>
+                )}
+                {order.status === "success" && onCancelOrder && (
+                  <button className="btn btn--xs btn--outline"
+                    style={{ color: "#dc2626", borderColor: "#dc2626" }}
+                    onClick={e => { e.stopPropagation(); onCancelOrder(order); }}>
+                    ❌ Hủy đơn
                   </button>
                 )}
                 {order.status === "cancelled" && (
