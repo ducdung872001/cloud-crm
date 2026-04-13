@@ -115,7 +115,7 @@ export default function ModalAddData({ onShow, onHide, dataProps, customerId }) 
       ...(data ? { id: data?.id } : {}),
       ...(formData.values as Record<string, unknown>),
       customerId,
-      transactionDate: formatDateCustom(formData.values.transactionDate, "yyyy-MM-dd'T'HH:mm:ss"),
+      transactionDate: formatDateCustom(formData.values.transactionDate, "yyyy-MM-EEEEEETHH:mm:ss"),
     };
 
     const response = null;
