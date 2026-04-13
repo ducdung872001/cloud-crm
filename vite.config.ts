@@ -98,17 +98,18 @@ export default defineConfig(({ mode }) => {
     },
 
     build: {
-      outDir: "bundle",
+      outDir: "bundle/crm",
+      emptyOutDir: true,
       sourcemap: false,
       rollupOptions: {
         output: {
-          entryFileNames: "crm/js/[name].[hash].js",
-          chunkFileNames: "crm/js/[name].[hash].js",
+          entryFileNames: "js/[name].[hash].js",
+          chunkFileNames: "js/[name].[hash].js",
           assetFileNames: (assetInfo) => {
             const name = assetInfo.name || "";
-            if (/\.css$/.test(name)) return "crm/css/[name].[hash][extname]";
-            if (/\.(wav|mp3)$/.test(name)) return "crm/assets/sounds/[name][extname]";
-            return "crm/assets/[name].[hash][extname]";
+            if (/\.css$/.test(name)) return "css/[name].[hash][extname]";
+            if (/\.(wav|mp3)$/.test(name)) return "assets/sounds/[name][extname]";
+            return "assets/[name].[hash][extname]";
           },
         },
       },
