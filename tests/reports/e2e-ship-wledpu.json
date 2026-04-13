@@ -1,0 +1,87 @@
+{
+  "module": "E2E-SHIP",
+  "name": "Ban hang + Van chuyen [ledpr]",
+  "runId": "wledpu",
+  "timestamp": "2026-04-13T02:48:43.955Z",
+  "durationMs": 59585,
+  "baseUrl": "http://localhost:4000/crm",
+  "total": 12,
+  "passed": 9,
+  "failed": 3,
+  "passRate": "75%",
+  "results": [
+    {
+      "testId": "LOGIN",
+      "status": "PASS",
+      "detail": "Dang nhap bang token da luu",
+      "ts": "2026-04-13T02:48:09.799Z"
+    },
+    {
+      "testId": "S1-01",
+      "status": "PASS",
+      "detail": "/fee-config/suggest hoạt động: code=0",
+      "ts": "2026-04-13T02:48:27.856Z"
+    },
+    {
+      "testId": "S1-02",
+      "status": "PASS",
+      "detail": "Phí ship > 0: 15000đ",
+      "ts": "2026-04-13T02:48:27.856Z"
+    },
+    {
+      "testId": "S1-03",
+      "status": "PASS",
+      "detail": "Tao invoice HD003965, total=215000 (SP 200000 + ship 15000)",
+      "ts": "2026-04-13T02:48:32.184Z"
+    },
+    {
+      "testId": "S1-04",
+      "status": "PASS",
+      "detail": "Stock giam 2 sau ban: 13 → 11",
+      "ts": "2026-04-13T02:48:35.509Z"
+    },
+    {
+      "testId": "S1-05",
+      "status": "PASS",
+      "detail": "Finance income tang 215000 (bao gom ship): delta=215000",
+      "ts": "2026-04-13T02:48:35.675Z"
+    },
+    {
+      "testId": "S1-06",
+      "status": "PASS",
+      "detail": "Fund balance tang 215000: delta=215000",
+      "ts": "2026-04-13T02:48:35.675Z"
+    },
+    {
+      "testId": "S2-01",
+      "status": "FAIL",
+      "detail": "POST /shipment/create: code=undefined",
+      "ts": "2026-04-13T02:48:35.775Z"
+    },
+    {
+      "testId": "S3-01",
+      "status": "PASS",
+      "detail": "Tao invoice HD003967",
+      "ts": "2026-04-13T02:48:37.996Z"
+    },
+    {
+      "testId": "S3-02",
+      "status": "FAIL",
+      "detail": "Tao shipment 2: code=undefined",
+      "ts": "2026-04-13T02:48:38.094Z"
+    },
+    {
+      "testId": "S4-01",
+      "status": "PASS",
+      "detail": "Tao invoice HD003969",
+      "ts": "2026-04-13T02:48:41.304Z"
+    },
+    {
+      "testId": "S4-02",
+      "status": "FAIL",
+      "detail": "Tao shipment 3: code=undefined",
+      "ts": "2026-04-13T02:48:41.702Z"
+    }
+  ],
+  "apiCalls": 23
+}

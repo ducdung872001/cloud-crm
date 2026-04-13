@@ -1,0 +1,135 @@
+{
+  "module": "E2E-FIN",
+  "name": "Financial flow [xpj6u]",
+  "runId": "vxpj6x",
+  "timestamp": "2026-04-12T15:45:27.691Z",
+  "durationMs": 53794,
+  "baseUrl": "http://localhost:4000/crm",
+  "total": 20,
+  "passed": 8,
+  "failed": 12,
+  "passRate": "40%",
+  "results": [
+    {
+      "testId": "LOGIN",
+      "status": "PASS",
+      "detail": "Dang nhap bang token da luu",
+      "ts": "2026-04-12T15:45:03.304Z"
+    },
+    {
+      "testId": "A-01",
+      "status": "PASS",
+      "detail": "Tao don HD003927 amount=200000",
+      "ts": "2026-04-12T15:45:18.593Z"
+    },
+    {
+      "testId": "A-02",
+      "status": "FAIL",
+      "detail": "Invoice IV1 +1: 0",
+      "ts": "2026-04-12T15:45:22.926Z"
+    },
+    {
+      "testId": "A-03",
+      "status": "FAIL",
+      "detail": "Invoice IV1 total +200000: 0",
+      "ts": "2026-04-12T15:45:22.926Z"
+    },
+    {
+      "testId": "A-04",
+      "status": "PASS",
+      "detail": "Finance dashboard income +200000 ✓",
+      "ts": "2026-04-12T15:45:22.927Z"
+    },
+    {
+      "testId": "A-05",
+      "status": "FAIL",
+      "detail": "Cashbook thu count sai: 0",
+      "ts": "2026-04-12T15:45:22.929Z"
+    },
+    {
+      "testId": "A-06",
+      "status": "FAIL",
+      "detail": "Cashbook sum sai: 0",
+      "ts": "2026-04-12T15:45:22.929Z"
+    },
+    {
+      "testId": "A-08",
+      "status": "PASS",
+      "detail": "Bán khong tao cashbook chi: delta=0",
+      "ts": "2026-04-12T15:45:22.929Z"
+    },
+    {
+      "testId": "B-01",
+      "status": "PASS",
+      "detail": "create/return: code=0",
+      "ts": "2026-04-12T15:45:23.136Z"
+    },
+    {
+      "testId": "B-02",
+      "status": "PASS",
+      "detail": "return/confirm: code=0",
+      "ts": "2026-04-12T15:45:23.211Z"
+    },
+    {
+      "testId": "B-03",
+      "status": "FAIL",
+      "detail": "Invoice IV2 +1: 0",
+      "ts": "2026-04-12T15:45:27.686Z"
+    },
+    {
+      "testId": "B-04",
+      "status": "FAIL",
+      "detail": "Cashbook chi count sai: 0",
+      "ts": "2026-04-12T15:45:27.686Z"
+    },
+    {
+      "testId": "B-05",
+      "status": "FAIL",
+      "detail": "Cashbook chi sum sai: 0",
+      "ts": "2026-04-12T15:45:27.686Z"
+    },
+    {
+      "testId": "B-06",
+      "status": "FAIL",
+      "detail": "Expense delta sai: 0",
+      "ts": "2026-04-12T15:45:27.686Z"
+    },
+    {
+      "testId": "B-07",
+      "status": "FAIL",
+      "detail": "Fund balance delta sai: 0",
+      "ts": "2026-04-12T15:45:27.688Z"
+    },
+    {
+      "testId": "B-08",
+      "status": "PASS",
+      "detail": "Tra hang khong tao cashbook thu: delta=0",
+      "ts": "2026-04-12T15:45:27.688Z"
+    },
+    {
+      "testId": "C-01",
+      "status": "FAIL",
+      "detail": "BUG: fund balance net = 200000 (expected 0)",
+      "ts": "2026-04-12T15:45:27.688Z"
+    },
+    {
+      "testId": "C-02",
+      "status": "FAIL",
+      "detail": "BUG: net income-expense = 200000",
+      "ts": "2026-04-12T15:45:27.689Z"
+    },
+    {
+      "testId": "C-03",
+      "status": "FAIL",
+      "detail": "Inconsistent: dashboard=200000, cashbook=0",
+      "ts": "2026-04-12T15:45:27.689Z"
+    },
+    {
+      "testId": "C-04",
+      "status": "PASS",
+      "detail": "✅ Dashboard expense delta (0) = Cashbook sum delta (0)",
+      "ts": "2026-04-12T15:45:27.689Z"
+    }
+  ],
+  "apiCalls": 25
+}

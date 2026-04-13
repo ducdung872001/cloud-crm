@@ -1,0 +1,87 @@
+{
+  "runId": "brf9y",
+  "timestamp": "2026-04-13T15:08:13.373Z",
+  "config": {
+    "SP_NAME": "E2E SP brf9y",
+    "SP_PRICE": 100000,
+    "IMPORT_QTY": 10,
+    "IMPORT_PRICE": 80000,
+    "SELL_QTY": 1
+  },
+  "state": {
+    "stockBeforeImport": null,
+    "stockAfterImport": null,
+    "stockAfterSale": null
+  },
+  "uiBugs": [
+    {
+      "step": "STEP1",
+      "severity": "HIGH",
+      "desc": "Dropdown don vi khong co option",
+      "evidence": ""
+    },
+    {
+      "step": "STEP1",
+      "severity": "CRITICAL",
+      "desc": "SP khong xuat hien trong DS sau khi save",
+      "evidence": ""
+    },
+    {
+      "step": "STEP2",
+      "severity": "HIGH",
+      "desc": "Bien the chua auto-apply (placeholder: \"Chọn sản phẩm trước\")",
+      "evidence": ""
+    },
+    {
+      "step": "STEP2",
+      "severity": "HIGH",
+      "desc": "Button 'Duyet' DISABLED — co the line item chua add vao phieu",
+      "evidence": "Table rows in product card: 0"
+    },
+    {
+      "step": "STEP3",
+      "severity": "HIGH",
+      "desc": "Khong tim thay ledger row cho E2E SP brf9y trong So kho",
+      "evidence": "Top rows: [[\"1\",\"#3434\",\"Nhập kho\",\"12/04/2026 22:03\",\"E2E SP modqe E2ES-M-PK74PK\",\"Nhà cung cấp\",\"Kho hàng mẫu\",\"+10\",\"10\",\"20\",\"—\",\"—\",\"—\",\"—\"],[\"2\",\"#3433\",\"Nhập kho\",\"12/04/2026 22:02\",\"E2E SP modqe E2ES-M-PK74PK\",\"Nhà cung cấp\",\"Upd 3dn5 Kho ha\",\"+10\",\"20\",\"30\",\"—\",\"—\",\"—\",\"—\"]]"
+    },
+    {
+      "step": "STEP3",
+      "severity": "MEDIUM",
+      "desc": "Khong tim thay E2E SP brf9y trong /product_inventory",
+      "evidence": "First rows: [\"1 1 26/03/2031 Cái 45 Kho hàng mẫu\",\"2 26032026 26/03/2031 Cái 230 Kho hàng mẫu\",\"3 1 07/04/2031 Lọ 400 Kho hàng tổng trực tuyến\"]"
+    },
+    {
+      "step": "STEP3",
+      "severity": "HIGH",
+      "desc": "SP \"E2E SP brf9y\" KHONG hien trong POS grid sau khi nhap+duyet",
+      "evidence": "First cards: []"
+    },
+    {
+      "step": "STEP4",
+      "severity": "HIGH",
+      "desc": "Khong tim thay card SP \"E2E SP brf9y\" trong POS grid de click",
+      "evidence": ""
+    },
+    {
+      "step": "FATAL",
+      "severity": "BLOCKER",
+      "desc": "STEP4 blocked",
+      "evidence": ""
+    }
+  ],
+  "beBugs": [
+    {
+      "step": "STEP2",
+      "severity": "MEDIUM",
+      "desc": "Khong detect duoc POST import/update",
+      "evidence": ""
+    },
+    {
+      "step": "STEP2",
+      "severity": "HIGH",
+      "desc": "Search SP \"E2E SP brf9y\" trong dropdown khong tra ket qua",
+      "evidence": "Co the BE chua kip index SP moi tao"
+    }
+  ],
+  "checkpoints": []
+}

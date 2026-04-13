@@ -1,0 +1,44 @@
+{
+  "runId": "99bjp",
+  "timestamp": "2026-04-13T13:56:55.019Z",
+  "config": {
+    "SP_NAME": "E2E SP 99bjp",
+    "SP_PRICE": 100000,
+    "IMPORT_QTY": 10,
+    "IMPORT_PRICE": 80000,
+    "SELL_QTY": 1
+  },
+  "state": {
+    "stockBeforeImport": null,
+    "stockAfterImport": null,
+    "stockAfterSale": null
+  },
+  "uiBugs": [
+    {
+      "step": "STEP1",
+      "severity": "HIGH",
+      "desc": "Dropdown don vi khong co option",
+      "evidence": ""
+    },
+    {
+      "step": "STEP1",
+      "severity": "CRITICAL",
+      "desc": "SP khong xuat hien trong DS sau khi save",
+      "evidence": ""
+    },
+    {
+      "step": "STEP2",
+      "severity": "CRITICAL",
+      "desc": "Dropdown khong co option \"Kho hàng mẫu\"",
+      "evidence": "Options: !@#$%^&*()_+=[]{}|\\:\";'<>?,./~ | SQLI p9gn | <script>alert(\"XSS\")</script> | Min p9gn | Updfnol | Upde0ax | Upd 3dn5 Kho ha | Kho Trung Ma vi855 | Kho Updated a9xo | Kho Updated 5mxv"
+    },
+    {
+      "step": "FATAL",
+      "severity": "BLOCKER",
+      "desc": "STEP2 blocked",
+      "evidence": ""
+    }
+  ],
+  "beBugs": [],
+  "checkpoints": []
+}

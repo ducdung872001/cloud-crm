@@ -1,0 +1,117 @@
+🚀  [CRUD-ALL] CRUD toan bo — Run xe2dzo
+------------------------------------------------------------
+🔐  Khoi phuc phien dang nhap tu .auth-state.json
+✅  [LOGIN] PASS — Dung lai storageState da luu
+
+════════════════════════════════════════════════════════════
+  SAN PHAM
+════════════════════════════════════════════════════════════
+▶  SP-C01: Mo form
+▶  SP-C02b: Chon danh muc
+▶  SP-C03: Bien the + gia
+▶  SP-C04: Luu
+▶  SP-V01: Verify
+
+════════════════════════════════════════════════════════════
+  KHO HANG
+════════════════════════════════════════════════════════════
+▶  warehouse-C01: Mo form
+▶  warehouse-C03: Luu
+▶  warehouse-V01: Verify list
+▶  warehouse-V02: Verify edit
+▶  warehouse-U01: Sua ten
+▶  warehouse-D01: Xoa
+
+════════════════════════════════════════════════════════════
+  NCC
+════════════════════════════════════════════════════════════
+▶  supplier-C01: Mo form
+▶  supplier-C03: Luu
+▶  supplier-V01: Verify list
+▶  supplier-V02: Verify edit
+▶  supplier-U01: Sua ten
+▶  supplier-D01: Xoa
+
+════════════════════════════════════════════════════════════
+  NHOM KH
+════════════════════════════════════════════════════════════
+▶  customerGroup-C01: Mo form
+
+════════════════════════════════════════════════════════════
+  DVT
+════════════════════════════════════════════════════════════
+▶  productUnit-C01: Mo form
+
+════════════════════════════════════════════════════════════
+  PHONG BAN
+════════════════════════════════════════════════════════════
+▶  department-C01: Mo form
+▶  department-C03: Luu
+▶  department-V01: Verify list
+▶  department-V02: Verify edit
+▶  department-U01: Sua ten
+▶  department-D01: Xoa
+
+════════════════════════════════════════════════════════════
+  KET QUA CRUD
+════════════════════════════════════════════════════════════
+  ✅ [San pham] C01: Form hien
+  ✅ [San pham] C02-name: Ten: SP 2dzn
+  ✅ [San pham] C02-desc: Mo ta: da nhap
+  ✅ [San pham] C02b: Chon danh muc SP
+  ✅ [San pham] C03: Them Size=M, gia=100000
+  ✅ [San pham] C04: Da luu
+  ❌ [San pham] V01: Khong thay SP
+  ✅ [Kho hang] C01: Modal mo
+  ✅ [Kho hang] C02-name: Ten kho: "Kho Test 2dzn"
+  ✅ [Kho hang] C02-code: Ma kho: "KT2dzn"
+  ✅ [Kho hang] C02-address: Dia chi: "Addr 2dzn"
+  ✅ [Kho hang] C03: Da luu
+  ✅ [Kho hang] V01: "Kho Test 2dzn" co trong DS
+  ✅ [Kho hang] V01-name: Cot name: dung
+  ✅ [Kho hang] V01-code: Cot code: dung
+  ✅ [Kho hang] V01-address: Cot address: dung
+  ✅ [Kho hang] V02-open: Modal Edit mo
+  ✅ [Kho hang] V02-name: Edit Ten kho: dung
+  ✅ [Kho hang] V02-code: Edit Ma kho: dung
+  ✅ [Kho hang] V02-address: Edit Dia chi: dung
+  ✅ [Kho hang] U01: Doi ten → "Upd2dzn"
+  ✅ [Kho hang] U02: "Upd2dzn" co
+  ✅ [Kho hang] D01: Dialog hien
+  ❌ [Kho hang] D02: Van con (co the ngung SD)
+  ✅ [NCC] C01: Modal mo
+  ✅ [NCC] C02-name: Ten: "NCC 2dzn"
+  ✅ [NCC] C02-code: Ma: "NC2dzn"
+  ✅ [NCC] C03: Da luu
+  ✅ [NCC] V01: "NCC 2dzn" co trong DS
+  ✅ [NCC] V01-name: Cot name: dung
+  ✅ [NCC] V02-open: Modal Edit mo
+  ✅ [NCC] V02-name: Edit Ten: dung
+  ✅ [NCC] V02-code: Edit Ma: dung
+  ✅ [NCC] U01: Doi ten → "Upd2dzn"
+  ❌ [NCC] U02: "Upd2dzn" KHONG co
+  ❌ [NCC] D01: Dialog khong hien
+  ✅ [Nhom KH] C01: SKIP — khong co nut Them (thieu quyen hoac trang chua load)
+  ✅ [DVT] C01: SKIP — khong co nut Them (thieu quyen hoac trang chua load)
+  ✅ [Phong ban] C01: Modal mo
+  ✅ [Phong ban] C02-name: Ten PB: "PB 2dzn"
+  ✅ [Phong ban] C02-jobTitle: Chuc danh: "Truong phong"
+  ✅ [Phong ban] C02-jobRank: Cap bac: "1"
+  ✅ [Phong ban] C03: Da luu
+  ✅ [Phong ban] V01: "PB 2dzn" co trong DS
+  ✅ [Phong ban] V02-open: Modal Edit mo
+  ✅ [Phong ban] V02-name: Edit Ten PB: dung
+  ✅ [Phong ban] V02-jobTitle: Edit Chuc danh: dung
+  ✅ [Phong ban] V02-jobRank: Edit Cap bac: dung
+  ✅ [Phong ban] U01: Doi ten → "Upd2dzn"
+  ✅ [Phong ban] U02: "Upd2dzn" co
+  ✅ [Phong ban] D01: Dialog hien
+  ✅ [Phong ban] D02: Da xoa
+
+  PASS: 48 | FAIL: 4
+
+============================================================
+✅  [CRUD-ALL] CRUD toan bo: 1/1 passed (100%), 0 failed
+📊  Report: tests/reports/crud-all-xe2dzo.json
+⏱️  Duration: 199.7s
+============================================================

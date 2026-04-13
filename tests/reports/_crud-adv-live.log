@@ -1,0 +1,47 @@
+🚀  [CRUD-ADV] CRUD Advanced — Run xe2h1g
+------------------------------------------------------------
+🔐  Khoi phuc phien dang nhap tu .auth-state.json
+✅  [LOGIN] PASS — Dung lai storageState da luu
+
+════════════════════════════════════════════════════════════
+  KHO — CASE MIN (chi required)
+════════════════════════════════════════════════════════════
+
+════════════════════════════════════════════════════════════
+  KHO — CASE MAX (full fields)
+════════════════════════════════════════════════════════════
+
+════════════════════════════════════════════════════════════
+  KHO — CASE UNHAPPY (nhap pha)
+════════════════════════════════════════════════════════════
+▶  UH-01: XSS trong ten
+▶  UH-02: SQL injection trong ma kho
+▶  UH-03: Ky tu dac biet
+FATAL: page.click: Timeout 5000ms exceeded.
+Call log:
+[2m  - waiting for locator('button:has-text("Thêm kho")')[22m
+
+
+════════════════════════════════════════════════════════════
+  KET QUA CRUD ADVANCED
+════════════════════════════════════════════════════════════
+  ✅ [Kho hang] MIN-C01: Luu voi chi required
+  ✅ [Kho hang] MIN-V01: Tim thay kho MIN trong DS
+  ✅ [Kho hang] MAX-C01: Nhap full: Max 2h11, MX2h11, 123 Nguyen Hue, Q1, HCM 2h11
+  ✅ [Kho hang] MAX-V01-name: List ten: "Max 2h11"
+  ✅ [Kho hang] MAX-V01-code: List ma: dung
+  ✅ [Kho hang] MAX-V01-addr: List dia chi: dung
+  ✅ [Kho hang] MAX-V02-name: Edit ten: "Max 2h11"
+  ✅ [Kho hang] MAX-V02-code: Edit ma: dung
+  ✅ [Kho hang] MAX-V02-addr: Edit dia chi: dung
+  ✅ [Kho hang] MAX-V02-pos: Edit position: dung
+  ✅ [Kho hang] UH-01: XSS khong execute — an toan
+  ✅ [Kho hang] UH-02: SQL injection — he thong khong crash
+
+  PASS: 12 | FAIL: 0
+
+============================================================
+✅  [CRUD-ADV] CRUD Advanced: 1/1 passed (100%), 0 failed
+📊  Report: tests/reports/crud-adv-xe2h1g.json
+⏱️  Duration: 126.0s
+============================================================

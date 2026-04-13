@@ -1,0 +1,21 @@
+{
+  "module": "CLEAN-WH",
+  "name": "Cleanup warehouses via API",
+  "runId": "xajugc",
+  "timestamp": "2026-04-13T14:32:17.150Z",
+  "durationMs": 27410,
+  "baseUrl": "http://localhost:4000/crm",
+  "total": 1,
+  "passed": 1,
+  "failed": 0,
+  "passRate": "100%",
+  "results": [
+    {
+      "testId": "LOGIN",
+      "status": "PASS",
+      "detail": "Dung lai storageState da luu",
+      "ts": "2026-04-13T14:32:00.845Z"
+    }
+  ],
+  "apiCalls": 17
+}

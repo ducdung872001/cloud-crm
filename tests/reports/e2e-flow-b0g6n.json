@@ -1,0 +1,51 @@
+{
+  "runId": "b0g6n",
+  "timestamp": "2026-04-13T14:45:58.705Z",
+  "config": {
+    "SP_NAME": "E2E SP b0g6n",
+    "SP_PRICE": 100000,
+    "IMPORT_QTY": 10,
+    "IMPORT_PRICE": 80000,
+    "SELL_QTY": 1
+  },
+  "state": {
+    "stockBeforeImport": null,
+    "stockAfterImport": null,
+    "stockAfterSale": null
+  },
+  "uiBugs": [
+    {
+      "step": "STEP1",
+      "severity": "HIGH",
+      "desc": "Dropdown don vi khong co option",
+      "evidence": ""
+    },
+    {
+      "step": "STEP1",
+      "severity": "CRITICAL",
+      "desc": "SP khong xuat hien trong DS sau khi save",
+      "evidence": ""
+    },
+    {
+      "step": "STEP2",
+      "severity": "HIGH",
+      "desc": "Sau 'Tao phieu nhap', button 'Them san pham' van disabled",
+      "evidence": "invoiceBar: (empty)"
+    },
+    {
+      "step": "FATAL",
+      "severity": "BLOCKER",
+      "desc": "STEP2 blocked — invoice not created or button still disabled",
+      "evidence": ""
+    }
+  ],
+  "beBugs": [
+    {
+      "step": "STEP2",
+      "severity": "MEDIUM",
+      "desc": "Khong detect duoc POST import/update",
+      "evidence": ""
+    }
+  ],
+  "checkpoints": []
+}

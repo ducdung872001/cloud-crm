@@ -1,0 +1,23 @@
+🚀  [X] x — Run x0k0tc
+------------------------------------------------------------
+🔐  Dang nhap...
+🍪  Dung token da luu (con hieu luc)
+✅  [LOGIN] PASS — Dang nhap bang token da luu
+node:internal/modules/run_main:123
+    triggerUncaughtException(
+    ^
+
+apiRequestContext.get: Timeout 30000ms exceeded.
+Call log:
+[2m  - → GET https://biz.reborn.vn/inventory/product/list?page=1&limit=100[22m
+[2m    - user-agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/147.0.0.0 Safari/537.36[22m
+[2m    - accept: application/json[22m
+[2m    - accept-encoding: gzip,deflate,br[22m
+[2m    - Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJleHAiOjE3OTE1NTc4MjQsInVzZXIiOiJ7XCJpZFwiOjE0NTksXCJ1c2VybmFtZVwiOlwiMDk3MTIzNDU5OVwiLFwibmFtZVwiOlwiSMOyYSBQaOG6oW1cIixcInJvbGVzXCI6W1wibW9kXCJdLFwibWFwQmVhdXR5U2Fsb25cIjp7XCJub25hbWUucmVib3JuLnZuXCI6NDMsXCJrY24ucmVib3JuLnZuXCI6NixcImhhbHVoYWx1LnJlYm9ybi52blwiOjIzMSxcImJlb3NwYS5yZWJvcm4udm5cIjoyMjEsXCJoYWlyc2Fsb24ucmVib3JuLnZuXCI6MTIzLFwicmVib3JudGVzdC5yZWJvcm4udm5cIjo0MixcImFkaGEucmVib3JuLnZuXCI6MjIyLFwiZW50ZXJwcmlzZS1uZXcucmVib3JuLnZuXCI6MjM2LFwibG9jYWxob3N0MTEyLnJlYm9ybi52blwiOjIyOSxcImhyaHIucmVib3JuLnZuXCI6MjI3LFwiYmVzcGEucmVib3JuLnZuXCI6MjAwLFwiaGVoZWhlLnJlYm9ybi52blwiOjIyNn19In0.T-mMHXUz6XVTObIriUlTDhkfRrMz4k6WaKJDohGDgPA[22m
+[2m    - Hostname: kcn.reborn.vn[22m
+
+    at D:\Git\reborn\reborn-cloud\cloud-ver2\cloud-crm\tests\test-prod-probe.mjs:7:35 {
+  name: 'TimeoutError'
+}
+
+Node.js v20.19.5

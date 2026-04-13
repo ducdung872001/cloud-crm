@@ -1,0 +1,95 @@
+🚀  [VOUCHER-EDGE] Voucher edge cases [0rrsq] — Run x0rrsr
+------------------------------------------------------------
+🔐  Dang nhap...
+🍪  Dung token da luu (con hieu luc)
+✅  [LOGIN] PASS — Dang nhap bang token da luu
+Sample: [342] E2E SP modqe stock=7
+
+══════════════════════════════════════════════════════════════════════
+P1 — Sale KHONG voucher: voucher khac co bi tang usedCount?
+══════════════════════════════════════════════════════════════════════
+Tao voucher 1: id=7, value=50k
+v1 usedCount baseline: 0
+Sale HD004077: discount=0 (NO voucher used)
+v1 usedCount after sale: 0
+  📋 P1: ✅ DUNG: Sale khong voucher → voucher khac KHONG tang usedCount
+
+══════════════════════════════════════════════════════════════════════
+P2 — 2 voucher cung discountValue → BE phan biet duoc khong?
+══════════════════════════════════════════════════════════════════════
+Tao voucher 2: id=8, value=50k (cùng value với v1)
+Pre: v1=0, v2=0
+Sale HD004079: discount=50000 (FE không gửi couponCode)
+Post: v1=0 (delta=0), v2=0 (delta=0)
+  📋 P2: Cả 2 voucher đều KHÔNG tăng → BE không track qua discount value (cần điều tra cách BE link)
+
+══════════════════════════════════════════════════════════════════════
+P3 — Apply voucher nhung KHONG complete sale
+══════════════════════════════════════════════════════════════════════
+Apply 1: discount=30000
+Apply 2: discount=30000
+Apply 3: discount=30000
+v3 usedCount: 0 → 3
+  🔴 [MEDIUM] P3: Apply alone đã tăng usedCount: 0 → 3. User chỉ thử voucher mà bị trừ quota → có thể abuse để DDOS quota
+
+══════════════════════════════════════════════════════════════════════
+P4 — Race condition: 5 apply song song, quota=3
+══════════════════════════════════════════════════════════════════════
+5 parallel apply: 3 success / 2 reject
+  1: code=0, discount=20000
+  2: code=0, discount=20000
+  3: code=undefined, discount=undefined
+  4: code=0, discount=20000
+  5: code=undefined, discount=undefined
+  📋 P4: Apply trừ quota ngay → chính xác 3, race condition handled
+
+══════════════════════════════════════════════════════════════════════
+P5 — discount > orderAmount → BE handle the nao
+══════════════════════════════════════════════════════════════════════
+Apply EDG50RRSQ với order=200k: discount=200000, final=0
+  📋 P5: ✅ BE cap discount tại orderAmount (final = 0)
+
+══════════════════════════════════════════════════════════════════════
+P6 — Apply voi orderAmount = 0
+══════════════════════════════════════════════════════════════════════
+Apply order=0: code=undefined, body={"error":"Đơn tối thiểu 100000"}
+  📋 P6: BE reject orderAmount=0 (đúng nghiệp vụ)
+
+══════════════════════════════════════════════════════════════════════
+P7 — Apply voi orderAmount AM
+══════════════════════════════════════════════════════════════════════
+Apply order=-100k: code=undefined, body={"error":"Đơn tối thiểu 100000"}
+  📋 P7: BE reject orderAmount âm
+
+══════════════════════════════════════════════════════════════════════
+P8 — Voucher EXPIRED (expiryDate qua khu)
+══════════════════════════════════════════════════════════════════════
+Apply expired voucher: code=undefined, body={"error":"Voucher đã hết hạn"}
+  📋 P8: ✅ BE reject voucher expired
+
+══════════════════════════════════════════════════════════════════════
+CLEANUP
+══════════════════════════════════════════════════════════════════════
+Disabled 6 test vouchers
+
+══════════════════════════════════════════════════════════════════════
+SUMMARY — 1 bugs, 7 findings
+══════════════════════════════════════════════════════════════════════
+
+🔴 BUGS PHAT HIEN (1):
+  1. [MEDIUM] P3: Apply alone đã tăng usedCount: 0 → 3. User chỉ thử voucher mà bị trừ quota → có thể abuse để DDOS quota
+
+📋 FINDINGS:
+  1. P1: ✅ DUNG: Sale khong voucher → voucher khac KHONG tang usedCount
+  2. P2: Cả 2 voucher đều KHÔNG tăng → BE không track qua discount value (cần điều tra cách BE link)
+  3. P4: Apply trừ quota ngay → chính xác 3, race condition handled
+  4. P5: ✅ BE cap discount tại orderAmount (final = 0)
+  5. P6: BE reject orderAmount=0 (đúng nghiệp vụ)
+  6. P7: BE reject orderAmount âm
+  7. P8: ✅ BE reject voucher expired
+
+============================================================
+✅  [VOUCHER-EDGE] Voucher edge cases [0rrsq]: 1/1 passed (100%), 0 failed
+📊  Report: tests/reports/voucher-edge-x0rrsr.json
+⏱️  Duration: 51.6s
+============================================================

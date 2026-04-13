@@ -1,0 +1,39 @@
+{
+  "module": "SMOKE",
+  "name": "Smoke Login",
+  "runId": "x602wj",
+  "timestamp": "2026-04-13T12:24:37.486Z",
+  "durationMs": 8379,
+  "baseUrl": "http://localhost:4000/crm",
+  "total": 4,
+  "passed": 4,
+  "failed": 0,
+  "passRate": "100%",
+  "results": [
+    {
+      "testId": "LOGIN",
+      "status": "PASS",
+      "detail": "Dung lai storageState da luu",
+      "ts": "2026-04-13T12:24:37.384Z"
+    },
+    {
+      "testId": "SMOKE-001",
+      "status": "PASS",
+      "detail": "SelectedRole=10_43",
+      "ts": "2026-04-13T12:24:37.387Z"
+    },
+    {
+      "testId": "SMOKE-002",
+      "status": "PASS",
+      "detail": "localStorage.permissions tồn tại",
+      "ts": "2026-04-13T12:24:37.387Z"
+    },
+    {
+      "testId": "SMOKE-003",
+      "status": "PASS",
+      "detail": "URL=http://localhost:4000/crm/dashboard",
+      "ts": "2026-04-13T12:24:37.387Z"
+    }
+  ],
+  "apiCalls": 7
+}

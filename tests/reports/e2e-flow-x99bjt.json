@@ -1,0 +1,63 @@
+{
+  "module": "E2E-FLOW",
+  "name": "Tao SP → Nhap kho → POS",
+  "runId": "x99bjt",
+  "timestamp": "2026-04-13T13:56:55.023Z",
+  "durationMs": 75958,
+  "baseUrl": "http://localhost:4000/crm",
+  "total": 8,
+  "passed": 7,
+  "failed": 1,
+  "passRate": "88%",
+  "results": [
+    {
+      "testId": "LOGIN",
+      "status": "PASS",
+      "detail": "Dung lai storageState da luu",
+      "ts": "2026-04-13T13:55:48.711Z"
+    },
+    {
+      "testId": "S1-01",
+      "status": "PASS",
+      "detail": "Trang danh sach SP load OK",
+      "ts": "2026-04-13T13:56:10.583Z"
+    },
+    {
+      "testId": "S1-02",
+      "status": "PASS",
+      "detail": "Da nhap ten: E2E SP 99bjp",
+      "ts": "2026-04-13T13:56:14.061Z"
+    },
+    {
+      "testId": "S1-03",
+      "status": "PASS",
+      "detail": "Chon danh muc SP",
+      "ts": "2026-04-13T13:56:15.227Z"
+    },
+    {
+      "testId": "S1-04",
+      "status": "PASS",
+      "detail": "Them thuoc tinh Size=M",
+      "ts": "2026-04-13T13:56:19.931Z"
+    },
+    {
+      "testId": "S1-05",
+      "status": "PASS",
+      "detail": "Gia 100,000",
+      "ts": "2026-04-13T13:56:21.475Z"
+    },
+    {
+      "testId": "S1-06",
+      "status": "PASS",
+      "detail": "Sinh barcode auto",
+      "ts": "2026-04-13T13:56:22.001Z"
+    },
+    {
+      "testId": "S1-08",
+      "status": "FAIL",
+      "detail": "E2E SP 99bjp KHONG co",
+      "ts": "2026-04-13T13:56:41.871Z"
+    }
+  ],
+  "apiCalls": 16
+}

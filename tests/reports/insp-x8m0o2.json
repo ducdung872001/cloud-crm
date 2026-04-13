@@ -1,0 +1,21 @@
+{
+  "module": "INSP",
+  "name": "Inspect setting_customer + setting_sell cards",
+  "runId": "x8m0o2",
+  "timestamp": "2026-04-13T13:38:04.040Z",
+  "durationMs": 32166,
+  "baseUrl": "http://localhost:4000/crm",
+  "total": 1,
+  "passed": 1,
+  "failed": 0,
+  "passRate": "100%",
+  "results": [
+    {
+      "testId": "LOGIN",
+      "status": "PASS",
+      "detail": "Dung lai storageState da luu",
+      "ts": "2026-04-13T13:37:39.265Z"
+    }
+  ],
+  "apiCalls": 21
+}

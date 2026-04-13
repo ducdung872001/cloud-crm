@@ -1,0 +1,111 @@
+{
+  "module": "E2E-CANCEL",
+  "name": "Huy don flow [uefof]",
+  "runId": "wuefoj",
+  "timestamp": "2026-04-13T07:00:50.739Z",
+  "durationMs": 67280,
+  "baseUrl": "http://localhost:4000/crm",
+  "total": 16,
+  "passed": 14,
+  "failed": 2,
+  "passRate": "88%",
+  "results": [
+    {
+      "testId": "LOGIN",
+      "status": "PASS",
+      "detail": "Dang nhap bang token da luu",
+      "ts": "2026-04-13T07:00:09.673Z"
+    },
+    {
+      "testId": "S1-01",
+      "status": "PASS",
+      "detail": "Tao don HD004037 total=200000",
+      "ts": "2026-04-13T07:00:25.737Z"
+    },
+    {
+      "testId": "S1-02",
+      "status": "PASS",
+      "detail": "Sau ban: stock 8 → 6 (-2)",
+      "ts": "2026-04-13T07:00:29.115Z"
+    },
+    {
+      "testId": "S1-03",
+      "status": "PASS",
+      "detail": "Sau ban: fund +200000, delta=200000",
+      "ts": "2026-04-13T07:00:29.115Z"
+    },
+    {
+      "testId": "S1-04",
+      "status": "PASS",
+      "detail": "Helper OK: returnInvoiceId=4039, refund=200000",
+      "ts": "2026-04-13T07:00:29.480Z"
+    },
+    {
+      "testId": "S1-05",
+      "status": "PASS",
+      "detail": "Stock hoan ve baseline: 6 → 8 (expected 8)",
+      "ts": "2026-04-13T07:00:33.456Z"
+    },
+    {
+      "testId": "S1-06",
+      "status": "PASS",
+      "detail": "Fund ve baseline (P/L net = 0): delta=0",
+      "ts": "2026-04-13T07:00:33.636Z"
+    },
+    {
+      "testId": "S1-07",
+      "status": "PASS",
+      "detail": "Expense tang 200000: delta=200000",
+      "ts": "2026-04-13T07:00:33.636Z"
+    },
+    {
+      "testId": "S2-01",
+      "status": "PASS",
+      "detail": "Tao don HD004041",
+      "ts": "2026-04-13T07:00:34.466Z"
+    },
+    {
+      "testId": "S2-02",
+      "status": "PASS",
+      "detail": "Tao shipment: code=0",
+      "ts": "2026-04-13T07:00:40.079Z"
+    },
+    {
+      "testId": "S2-03",
+      "status": "PASS",
+      "detail": "Stock giam sau ban: 8 → 6",
+      "ts": "2026-04-13T07:00:43.852Z"
+    },
+    {
+      "testId": "S2-04",
+      "status": "FAIL",
+      "detail": "Cancel shipment: status=405, code=undefined",
+      "ts": "2026-04-13T07:00:43.924Z"
+    },
+    {
+      "testId": "S2-05",
+      "status": "PASS",
+      "detail": "Auto-return OK: refund=200000",
+      "ts": "2026-04-13T07:00:46.391Z"
+    },
+    {
+      "testId": "S2-06",
+      "status": "PASS",
+      "detail": "Stock hoan sau cancel ship: 6 → 8",
+      "ts": "2026-04-13T07:00:50.170Z"
+    },
+    {
+      "testId": "S2-07",
+      "status": "PASS",
+      "detail": "Fund net = 0 sau cancel ship + auto-return: delta=0",
+      "ts": "2026-04-13T07:00:50.309Z"
+    },
+    {
+      "testId": "S2-08",
+      "status": "FAIL",
+      "detail": "Shipment status: \"SUBMITTED\"",
+      "ts": "2026-04-13T07:00:50.488Z"
+    }
+  ],
+  "apiCalls": 25
+}

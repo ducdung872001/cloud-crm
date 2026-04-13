@@ -1,0 +1,39 @@
+{
+  "module": "SEED-WH",
+  "name": "Seed Kho hàng mẫu + dọn artifacts",
+  "runId": "x9nkc2",
+  "timestamp": "2026-04-13T14:08:17.507Z",
+  "durationMs": 93874,
+  "baseUrl": "http://localhost:4000/crm",
+  "total": 4,
+  "passed": 3,
+  "failed": 1,
+  "passRate": "75%",
+  "results": [
+    {
+      "testId": "LOGIN",
+      "status": "PASS",
+      "detail": "Dung lai storageState da luu",
+      "ts": "2026-04-13T14:06:55.688Z"
+    },
+    {
+      "testId": "SEED-CHECK",
+      "status": "PASS",
+      "detail": "\"Kho hàng mẫu\" đã tồn tại, sẽ verify isSelling",
+      "ts": "2026-04-13T14:07:58.368Z"
+    },
+    {
+      "testId": "SEED-EDIT-TICK",
+      "status": "PASS",
+      "detail": "Đã tick isSelling trong edit modal",
+      "ts": "2026-04-13T14:08:01.700Z"
+    },
+    {
+      "testId": "SEED-EDIT-VERIFY",
+      "status": "FAIL",
+      "detail": "Không thấy '(Kho chính)' sau edit",
+      "ts": "2026-04-13T14:08:17.480Z"
+    }
+  ],
+  "apiCalls": 58
+}

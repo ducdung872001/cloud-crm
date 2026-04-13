@@ -1,0 +1,39 @@
+{
+  "module": "E2E-PROMO",
+  "name": "Promotion CTKM [28thw]",
+  "runId": "x28thz",
+  "timestamp": "2026-04-13T10:40:05.563Z",
+  "durationMs": 47204,
+  "baseUrl": "http://localhost:4000/crm",
+  "total": 4,
+  "passed": 1,
+  "failed": 3,
+  "passRate": "25%",
+  "results": [
+    {
+      "testId": "LOGIN",
+      "status": "PASS",
+      "detail": "Dang nhap bang token da luu",
+      "ts": "2026-04-13T10:39:43.590Z"
+    },
+    {
+      "testId": "S1-01",
+      "status": "FAIL",
+      "detail": "P1 created: code=undefined",
+      "ts": "2026-04-13T10:40:05.424Z"
+    },
+    {
+      "testId": "S1-02",
+      "status": "FAIL",
+      "detail": "P2 created: code=undefined",
+      "ts": "2026-04-13T10:40:05.491Z"
+    },
+    {
+      "testId": "S1-03",
+      "status": "FAIL",
+      "detail": "P3 created: code=undefined",
+      "ts": "2026-04-13T10:40:05.558Z"
+    }
+  ],
+  "apiCalls": 16
+}

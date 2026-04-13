@@ -1,0 +1,21 @@
+{
+  "module": "FIND-SW",
+  "name": "Find selling warehouse",
+  "runId": "xa76lq",
+  "timestamp": "2026-04-13T14:22:27.187Z",
+  "durationMs": 28229,
+  "baseUrl": "http://localhost:4000/crm",
+  "total": 1,
+  "passed": 1,
+  "failed": 0,
+  "passRate": "100%",
+  "results": [
+    {
+      "testId": "LOGIN",
+      "status": "PASS",
+      "detail": "Dung lai storageState da luu",
+      "ts": "2026-04-13T14:22:08.583Z"
+    }
+  ],
+  "apiCalls": 17
+}

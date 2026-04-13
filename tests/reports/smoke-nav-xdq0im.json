@@ -1,0 +1,279 @@
+{
+  "module": "SMOKE-NAV",
+  "name": "Smoke Navigation (all sidebar routes)",
+  "runId": "xdq0im",
+  "timestamp": "2026-04-13T16:09:07.336Z",
+  "durationMs": 510954,
+  "baseUrl": "http://localhost:4000/crm",
+  "total": 44,
+  "passed": 22,
+  "failed": 22,
+  "passRate": "50%",
+  "results": [
+    {
+      "testId": "LOGIN",
+      "status": "PASS",
+      "detail": "Dung lai storageState da luu",
+      "ts": "2026-04-13T16:00:44.284Z"
+    },
+    {
+      "testId": "SMK-DASH",
+      "status": "PASS",
+      "detail": "Dashboard",
+      "ts": "2026-04-13T16:00:50.865Z"
+    },
+    {
+      "testId": "SMK-POS",
+      "status": "PASS",
+      "detail": "Bán hàng tại quầy",
+      "ts": "2026-04-13T16:00:57.927Z"
+    },
+    {
+      "testId": "SMK-CHECKIN",
+      "status": "PASS",
+      "detail": "Check-in / Cửa vào",
+      "ts": "2026-04-13T16:01:06.899Z"
+    },
+    {
+      "testId": "SMK-SERVICES",
+      "status": "PASS",
+      "detail": "Trừ quota dịch vụ",
+      "ts": "2026-04-13T16:01:23.391Z"
+    },
+    {
+      "testId": "SMK-SHIFT",
+      "status": "PASS",
+      "detail": "Quản lý ca làm việc",
+      "ts": "2026-04-13T16:01:36.109Z"
+    },
+    {
+      "testId": "SMK-CUSTOMER",
+      "status": "PASS",
+      "detail": "Danh sách thành viên",
+      "ts": "2026-04-13T16:01:57.263Z"
+    },
+    {
+      "testId": "SMK-SETTING-CUSTOMER",
+      "status": "PASS",
+      "detail": "Cài đặt thành viên",
+      "ts": "2026-04-13T16:02:06.195Z"
+    },
+    {
+      "testId": "SMK-INVOICE",
+      "status": "PASS",
+      "detail": "Danh sách đơn",
+      "ts": "2026-04-13T16:02:13.056Z"
+    },
+    {
+      "testId": "SMK-INVOICE-VAT",
+      "status": "FAIL",
+      "detail": "Hoá đơn VAT — 1 console error: Failed to load resource: the server responded with a status of 500 (Internal Server Error)",
+      "ts": "2026-04-13T16:02:20.086Z"
+    },
+    {
+      "testId": "SMK-ACCOM",
+      "status": "PASS",
+      "detail": "Lưu trú",
+      "ts": "2026-04-13T16:02:28.995Z"
+    },
+    {
+      "testId": "SMK-FIN-DASH",
+      "status": "FAIL",
+      "detail": "Tổng quan tài chính — 1 console error: Failed to load resource: the server responded with a status of 500 (Internal Server Error)",
+      "ts": "2026-04-13T16:02:39.725Z"
+    },
+    {
+      "testId": "SMK-FIN-CASH",
+      "status": "PASS",
+      "detail": "Sổ thu chi",
+      "ts": "2026-04-13T16:02:50.546Z"
+    },
+    {
+      "testId": "SMK-FIN-FUND",
+      "status": "PASS",
+      "detail": "Quản lý quỹ",
+      "ts": "2026-04-13T16:03:01.448Z"
+    },
+    {
+      "testId": "SMK-FIN-CAT",
+      "status": "PASS",
+      "detail": "Khoản mục",
+      "ts": "2026-04-13T16:03:12.750Z"
+    },
+    {
+      "testId": "SMK-FIN-DEBT",
+      "status": "PASS",
+      "detail": "Công nợ",
+      "ts": "2026-04-13T16:03:22.962Z"
+    },
+    {
+      "testId": "SMK-PAY-CTRL",
+      "status": "PASS",
+      "detail": "Đối soát thanh toán",
+      "ts": "2026-04-13T16:03:31.400Z"
+    },
+    {
+      "testId": "SMK-PARTNER",
+      "status": "PASS",
+      "detail": "Đối tác",
+      "ts": "2026-04-13T16:03:40.591Z"
+    },
+    {
+      "testId": "SMK-FEEDBACK",
+      "status": "PASS",
+      "detail": "Phản hồi",
+      "ts": "2026-04-13T16:03:51.177Z"
+    },
+    {
+      "testId": "SMK-REP-REV",
+      "status": "FAIL",
+      "detail": "Báo cáo doanh thu — 1 console error: Error fetching employee info: TypeError: Failed to fetch\n    at http://localhost:4000/node_modules/.vite/deps/fetch-intercept.js?v=85c3340e:78:20\n    at async getDetailEmployeeInfo (http://localhost:4000/src/App.tsx?t=1776093834124:152:24)\n    at async checkEmployeeStatus (http://localhost:4000/src/",
+      "ts": "2026-04-13T16:04:04.769Z"
+    },
+    {
+      "testId": "SMK-REP-MEM",
+      "status": "FAIL",
+      "detail": "Báo cáo thành viên — 1 console error: Error fetching employee info: TypeError: Failed to fetch\n    at http://localhost:4000/node_modules/.vite/deps/fetch-intercept.js?v=85c3340e:78:20\n    at async getDetailEmployeeInfo (http://localhost:4000/src/App.tsx?t=1776093834124:152:24)\n    at async checkEmployeeStatus (http://localhost:4000/src/",
+      "ts": "2026-04-13T16:04:14.190Z"
+    },
+    {
+      "testId": "SMK-REP-CHK",
+      "status": "FAIL",
+      "detail": "Báo cáo check-in — 1 console error: Error fetching employee info: TypeError: Failed to fetch\n    at http://localhost:4000/node_modules/.vite/deps/fetch-intercept.js?v=85c3340e:78:20\n    at async getDetailEmployeeInfo (http://localhost:4000/src/App.tsx?t=1776093834124:152:24)\n    at async checkEmployeeStatus (http://localhost:4000/src/",
+      "ts": "2026-04-13T16:04:24.121Z"
+    },
+    {
+      "testId": "SMK-REP-SVC",
+      "status": "FAIL",
+      "detail": "Báo cáo dịch vụ — 1 console error: Error fetching employee info: TypeError: Failed to fetch\n    at http://localhost:4000/node_modules/.vite/deps/fetch-intercept.js?v=85c3340e:78:20\n    at async getDetailEmployeeInfo (http://localhost:4000/src/App.tsx?t=1776093834124:152:24)\n    at async checkEmployeeStatus (http://localhost:4000/src/",
+      "ts": "2026-04-13T16:04:34.134Z"
+    },
+    {
+      "testId": "SMK-REP-PTN",
+      "status": "FAIL",
+      "detail": "Báo cáo đối tác — 1 console error: Error fetching employee info: TypeError: Failed to fetch\n    at http://localhost:4000/node_modules/.vite/deps/fetch-intercept.js?v=85c3340e:78:20\n    at async getDetailEmployeeInfo (http://localhost:4000/src/App.tsx?t=1776093834124:152:24)\n    at async checkEmployeeStatus (http://localhost:4000/src/",
+      "ts": "2026-04-13T16:04:44.416Z"
+    },
+    {
+      "testId": "SMK-REP-FIN",
+      "status": "FAIL",
+      "detail": "Báo cáo tài chính — 1 console error: Error fetching employee info: TypeError: Failed to fetch\n    at http://localhost:4000/node_modules/.vite/deps/fetch-intercept.js?v=85c3340e:78:20\n    at async getDetailEmployeeInfo (http://localhost:4000/src/App.tsx?t=1776093834124:152:24)\n    at async checkEmployeeStatus (http://localhost:4000/src/",
+      "ts": "2026-04-13T16:04:54.374Z"
+    },
+    {
+      "testId": "SMK-PROMO",
+      "status": "FAIL",
+      "detail": "Khuyến mãi & Voucher — 1 console error: Error fetching employee info: TypeError: Failed to fetch\n    at http://localhost:4000/node_modules/.vite/deps/fetch-intercept.js?v=85c3340e:78:20\n    at async getDetailEmployeeInfo (http://localhost:4000/src/App.tsx?t=1776093834124:152:24)\n    at async checkEmployeeStatus (http://localhost:4000/src/",
+      "ts": "2026-04-13T16:05:04.772Z"
+    },
+    {
+      "testId": "SMK-LOYALTY",
+      "status": "FAIL",
+      "detail": "Tích điểm hội viên — 1 console error: Error fetching employee info: TypeError: Failed to fetch\n    at http://localhost:4000/node_modules/.vite/deps/fetch-intercept.js?v=85c3340e:78:20\n    at async getDetailEmployeeInfo (http://localhost:4000/src/App.tsx?t=1776093834124:152:24)\n    at async checkEmployeeStatus (http://localhost:4000/src/",
+      "ts": "2026-04-13T16:05:15.433Z"
+    },
+    {
+      "testId": "SMK-MKT",
+      "status": "FAIL",
+      "detail": "Chiến dịch marketing — 1 console error: Error fetching employee info: TypeError: Failed to fetch\n    at http://localhost:4000/node_modules/.vite/deps/fetch-intercept.js?v=85c3340e:78:20\n    at async getDetailEmployeeInfo (http://localhost:4000/src/App.tsx?t=1776093834124:152:24)\n    at async checkEmployeeStatus (http://localhost:4000/src/",
+      "ts": "2026-04-13T16:05:26.699Z"
+    },
+    {
+      "testId": "SMK-CARE",
+      "status": "FAIL",
+      "detail": "Chăm sóc thành viên — 1 console error: Error fetching employee info: TypeError: Failed to fetch\n    at http://localhost:4000/node_modules/.vite/deps/fetch-intercept.js?v=85c3340e:78:20\n    at async getDetailEmployeeInfo (http://localhost:4000/src/App.tsx?t=1776093834124:152:24)\n    at async checkEmployeeStatus (http://localhost:4000/src/",
+      "ts": "2026-04-13T16:05:40.393Z"
+    },
+    {
+      "testId": "SMK-MATERIAL",
+      "status": "FAIL",
+      "detail": "Nguyên vật liệu — 1 console error: Error fetching employee info: TypeError: Failed to fetch\n    at http://localhost:4000/node_modules/.vite/deps/fetch-intercept.js?v=85c3340e:78:20\n    at async getDetailEmployeeInfo (http://localhost:4000/src/App.tsx?t=1776093834124:152:24)\n    at async checkEmployeeStatus (http://localhost:4000/src/",
+      "ts": "2026-04-13T16:05:58.026Z"
+    },
+    {
+      "testId": "SMK-SUPPLIER",
+      "status": "FAIL",
+      "detail": "Nhà cung cấp — 1 console error: Error fetching employee info: TypeError: Failed to fetch\n    at http://localhost:4000/node_modules/.vite/deps/fetch-intercept.js?v=85c3340e:78:20\n    at async getDetailEmployeeInfo (http://localhost:4000/src/App.tsx?t=1776093834124:152:24)\n    at async checkEmployeeStatus (http://localhost:4000/src/",
+      "ts": "2026-04-13T16:06:14.197Z"
+    },
+    {
+      "testId": "SMK-WAREHOUSE",
+      "status": "FAIL",
+      "detail": "Danh sách kho — 1 console error: Error fetching employee info: TypeError: Failed to fetch\n    at http://localhost:4000/node_modules/.vite/deps/fetch-intercept.js?v=85c3340e:78:20\n    at async getDetailEmployeeInfo (http://localhost:4000/src/App.tsx?t=1776093834124:152:24)\n    at async checkEmployeeStatus (http://localhost:4000/src/",
+      "ts": "2026-04-13T16:06:28.699Z"
+    },
+    {
+      "testId": "SMK-INVENTORY",
+      "status": "FAIL",
+      "detail": "Sổ kho — 1 console error: Error fetching employee info: TypeError: Failed to fetch\n    at http://localhost:4000/node_modules/.vite/deps/fetch-intercept.js?v=85c3340e:78:20\n    at async getDetailEmployeeInfo (http://localhost:4000/src/App.tsx?t=1776093834124:152:24)\n    at async checkEmployeeStatus (http://localhost:4000/src/",
+      "ts": "2026-04-13T16:06:44.894Z"
+    },
+    {
+      "testId": "SMK-INV-CHK",
+      "status": "FAIL",
+      "detail": "Quản lý kho (kiểm kê) — 1 console error: Error fetching employee info: TypeError: Failed to fetch\n    at http://localhost:4000/node_modules/.vite/deps/fetch-intercept.js?v=85c3340e:78:20\n    at async getDetailEmployeeInfo (http://localhost:4000/src/App.tsx?t=1776093834124:152:24)\n    at async checkEmployeeStatus (http://localhost:4000/src/",
+      "ts": "2026-04-13T16:07:02.202Z"
+    },
+    {
+      "testId": "SMK-WH-REPORT",
+      "status": "FAIL",
+      "detail": "Báo cáo kho — 1 console error: Error fetching employee info: TypeError: Failed to fetch\n    at http://localhost:4000/node_modules/.vite/deps/fetch-intercept.js?v=85c3340e:78:20\n    at async getDetailEmployeeInfo (http://localhost:4000/src/App.tsx?t=1776093834124:152:24)\n    at async checkEmployeeStatus (http://localhost:4000/src/",
+      "ts": "2026-04-13T16:07:21.492Z"
+    },
+    {
+      "testId": "SMK-TENANT",
+      "status": "FAIL",
+      "detail": "Cấu hình toàn cục — 1 console error: Error fetching employee info: TypeError: Failed to fetch\n    at http://localhost:4000/node_modules/.vite/deps/fetch-intercept.js?v=85c3340e:78:20\n    at async getDetailEmployeeInfo (http://localhost:4000/src/App.tsx?t=1776093834124:152:24)\n    at async checkEmployeeStatus (http://localhost:4000/src/",
+      "ts": "2026-04-13T16:07:39.066Z"
+    },
+    {
+      "testId": "SMK-SET-SELL",
+      "status": "FAIL",
+      "detail": "Danh mục dịch vụ — 1 console error: Error fetching employee info: TypeError: Failed to fetch\n    at http://localhost:4000/node_modules/.vite/deps/fetch-intercept.js?v=85c3340e:78:20\n    at async getDetailEmployeeInfo (http://localhost:4000/src/App.tsx?t=1776093834124:152:24)\n    at async checkEmployeeStatus (http://localhost:4000/src/",
+      "ts": "2026-04-13T16:07:55.794Z"
+    },
+    {
+      "testId": "SMK-MEMB-PLAN",
+      "status": "FAIL",
+      "detail": "Gói thành viên — 1 console error: Error fetching employee info: TypeError: Failed to fetch\n    at http://localhost:4000/node_modules/.vite/deps/fetch-intercept.js?v=85c3340e:78:20\n    at async getDetailEmployeeInfo (http://localhost:4000/src/App.tsx?t=1776093834124:152:24)\n    at async checkEmployeeStatus (http://localhost:4000/src/",
+      "ts": "2026-04-13T16:08:18.451Z"
+    },
+    {
+      "testId": "SMK-SET-BASIS",
+      "status": "FAIL",
+      "detail": "Vận hành cơ sở — navigate error: page.goto: Timeout 20000ms exceeded.\nCall log:\n\u001b[2m  - navigating to \"http://localhost:4000/crm/setting_basis\", waiting ",
+      "ts": "2026-04-13T16:08:38.590Z"
+    },
+    {
+      "testId": "SMK-SET-ORG",
+      "status": "PASS",
+      "detail": "Tổ chức & phân quyền",
+      "ts": "2026-04-13T16:08:48.290Z"
+    },
+    {
+      "testId": "SMK-SET-CHAN",
+      "status": "PASS",
+      "detail": "Kênh liên lạc",
+      "ts": "2026-04-13T16:08:52.612Z"
+    },
+    {
+      "testId": "SMK-SET-INTG",
+      "status": "PASS",
+      "detail": "Tích hợp",
+      "ts": "2026-04-13T16:08:57.535Z"
+    },
+    {
+      "testId": "SMK-SET-ACC",
+      "status": "PASS",
+      "detail": "Tài khoản & bảo mật",
+      "ts": "2026-04-13T16:09:02.303Z"
+    },
+    {
+      "testId": "SMK-SET-TICKET",
+      "status": "PASS",
+      "detail": "Hỗ trợ thành viên",
+      "ts": "2026-04-13T16:09:07.335Z"
+    }
+  ],
+  "apiCalls": 180
+}

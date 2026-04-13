@@ -1,0 +1,112 @@
+🚀  [SMOKE-NAV] Smoke Navigation (all sidebar routes) — Run xdq0im
+------------------------------------------------------------
+🔐  Khoi phuc phien dang nhap tu .auth-state.json
+✅  [LOGIN] PASS — Dung lai storageState da luu
+✅  [SMK-DASH] PASS — Dashboard
+✅  [SMK-POS] PASS — Bán hàng tại quầy
+✅  [SMK-CHECKIN] PASS — Check-in / Cửa vào
+✅  [SMK-SERVICES] PASS — Trừ quota dịch vụ
+✅  [SMK-SHIFT] PASS — Quản lý ca làm việc
+✅  [SMK-CUSTOMER] PASS — Danh sách thành viên
+✅  [SMK-SETTING-CUSTOMER] PASS — Cài đặt thành viên
+✅  [SMK-INVOICE] PASS — Danh sách đơn
+❌  [SMK-INVOICE-VAT] FAIL — Hoá đơn VAT — 1 console error: Failed to load resource: the server responded with a status of 500 (Internal Server Error)
+✅  [SMK-ACCOM] PASS — Lưu trú
+❌  [SMK-FIN-DASH] FAIL — Tổng quan tài chính — 1 console error: Failed to load resource: the server responded with a status of 500 (Internal Server Error)
+✅  [SMK-FIN-CASH] PASS — Sổ thu chi
+✅  [SMK-FIN-FUND] PASS — Quản lý quỹ
+✅  [SMK-FIN-CAT] PASS — Khoản mục
+✅  [SMK-FIN-DEBT] PASS — Công nợ
+✅  [SMK-PAY-CTRL] PASS — Đối soát thanh toán
+✅  [SMK-PARTNER] PASS — Đối tác
+✅  [SMK-FEEDBACK] PASS — Phản hồi
+❌  [SMK-REP-REV] FAIL — Báo cáo doanh thu — 1 console error: Error fetching employee info: TypeError: Failed to fetch
+    at http://localhost:4000/node_modules/.vite/deps/fetch-intercept.js?v=85c3340e:78:20
+    at async getDetailEmployeeInfo (http://localhost:4000/src/App.tsx?t=1776093834124:152:24)
+    at async checkEmployeeStatus (http://localhost:4000/src/
+❌  [SMK-REP-MEM] FAIL — Báo cáo thành viên — 1 console error: Error fetching employee info: TypeError: Failed to fetch
+    at http://localhost:4000/node_modules/.vite/deps/fetch-intercept.js?v=85c3340e:78:20
+    at async getDetailEmployeeInfo (http://localhost:4000/src/App.tsx?t=1776093834124:152:24)
+    at async checkEmployeeStatus (http://localhost:4000/src/
+❌  [SMK-REP-CHK] FAIL — Báo cáo check-in — 1 console error: Error fetching employee info: TypeError: Failed to fetch
+    at http://localhost:4000/node_modules/.vite/deps/fetch-intercept.js?v=85c3340e:78:20
+    at async getDetailEmployeeInfo (http://localhost:4000/src/App.tsx?t=1776093834124:152:24)
+    at async checkEmployeeStatus (http://localhost:4000/src/
+❌  [SMK-REP-SVC] FAIL — Báo cáo dịch vụ — 1 console error: Error fetching employee info: TypeError: Failed to fetch
+    at http://localhost:4000/node_modules/.vite/deps/fetch-intercept.js?v=85c3340e:78:20
+    at async getDetailEmployeeInfo (http://localhost:4000/src/App.tsx?t=1776093834124:152:24)
+    at async checkEmployeeStatus (http://localhost:4000/src/
+❌  [SMK-REP-PTN] FAIL — Báo cáo đối tác — 1 console error: Error fetching employee info: TypeError: Failed to fetch
+    at http://localhost:4000/node_modules/.vite/deps/fetch-intercept.js?v=85c3340e:78:20
+    at async getDetailEmployeeInfo (http://localhost:4000/src/App.tsx?t=1776093834124:152:24)
+    at async checkEmployeeStatus (http://localhost:4000/src/
+❌  [SMK-REP-FIN] FAIL — Báo cáo tài chính — 1 console error: Error fetching employee info: TypeError: Failed to fetch
+    at http://localhost:4000/node_modules/.vite/deps/fetch-intercept.js?v=85c3340e:78:20
+    at async getDetailEmployeeInfo (http://localhost:4000/src/App.tsx?t=1776093834124:152:24)
+    at async checkEmployeeStatus (http://localhost:4000/src/
+❌  [SMK-PROMO] FAIL — Khuyến mãi & Voucher — 1 console error: Error fetching employee info: TypeError: Failed to fetch
+    at http://localhost:4000/node_modules/.vite/deps/fetch-intercept.js?v=85c3340e:78:20
+    at async getDetailEmployeeInfo (http://localhost:4000/src/App.tsx?t=1776093834124:152:24)
+    at async checkEmployeeStatus (http://localhost:4000/src/
+❌  [SMK-LOYALTY] FAIL — Tích điểm hội viên — 1 console error: Error fetching employee info: TypeError: Failed to fetch
+    at http://localhost:4000/node_modules/.vite/deps/fetch-intercept.js?v=85c3340e:78:20
+    at async getDetailEmployeeInfo (http://localhost:4000/src/App.tsx?t=1776093834124:152:24)
+    at async checkEmployeeStatus (http://localhost:4000/src/
+❌  [SMK-MKT] FAIL — Chiến dịch marketing — 1 console error: Error fetching employee info: TypeError: Failed to fetch
+    at http://localhost:4000/node_modules/.vite/deps/fetch-intercept.js?v=85c3340e:78:20
+    at async getDetailEmployeeInfo (http://localhost:4000/src/App.tsx?t=1776093834124:152:24)
+    at async checkEmployeeStatus (http://localhost:4000/src/
+❌  [SMK-CARE] FAIL — Chăm sóc thành viên — 1 console error: Error fetching employee info: TypeError: Failed to fetch
+    at http://localhost:4000/node_modules/.vite/deps/fetch-intercept.js?v=85c3340e:78:20
+    at async getDetailEmployeeInfo (http://localhost:4000/src/App.tsx?t=1776093834124:152:24)
+    at async checkEmployeeStatus (http://localhost:4000/src/
+❌  [SMK-MATERIAL] FAIL — Nguyên vật liệu — 1 console error: Error fetching employee info: TypeError: Failed to fetch
+    at http://localhost:4000/node_modules/.vite/deps/fetch-intercept.js?v=85c3340e:78:20
+    at async getDetailEmployeeInfo (http://localhost:4000/src/App.tsx?t=1776093834124:152:24)
+    at async checkEmployeeStatus (http://localhost:4000/src/
+❌  [SMK-SUPPLIER] FAIL — Nhà cung cấp — 1 console error: Error fetching employee info: TypeError: Failed to fetch
+    at http://localhost:4000/node_modules/.vite/deps/fetch-intercept.js?v=85c3340e:78:20
+    at async getDetailEmployeeInfo (http://localhost:4000/src/App.tsx?t=1776093834124:152:24)
+    at async checkEmployeeStatus (http://localhost:4000/src/
+❌  [SMK-WAREHOUSE] FAIL — Danh sách kho — 1 console error: Error fetching employee info: TypeError: Failed to fetch
+    at http://localhost:4000/node_modules/.vite/deps/fetch-intercept.js?v=85c3340e:78:20
+    at async getDetailEmployeeInfo (http://localhost:4000/src/App.tsx?t=1776093834124:152:24)
+    at async checkEmployeeStatus (http://localhost:4000/src/
+❌  [SMK-INVENTORY] FAIL — Sổ kho — 1 console error: Error fetching employee info: TypeError: Failed to fetch
+    at http://localhost:4000/node_modules/.vite/deps/fetch-intercept.js?v=85c3340e:78:20
+    at async getDetailEmployeeInfo (http://localhost:4000/src/App.tsx?t=1776093834124:152:24)
+    at async checkEmployeeStatus (http://localhost:4000/src/
+❌  [SMK-INV-CHK] FAIL — Quản lý kho (kiểm kê) — 1 console error: Error fetching employee info: TypeError: Failed to fetch
+    at http://localhost:4000/node_modules/.vite/deps/fetch-intercept.js?v=85c3340e:78:20
+    at async getDetailEmployeeInfo (http://localhost:4000/src/App.tsx?t=1776093834124:152:24)
+    at async checkEmployeeStatus (http://localhost:4000/src/
+❌  [SMK-WH-REPORT] FAIL — Báo cáo kho — 1 console error: Error fetching employee info: TypeError: Failed to fetch
+    at http://localhost:4000/node_modules/.vite/deps/fetch-intercept.js?v=85c3340e:78:20
+    at async getDetailEmployeeInfo (http://localhost:4000/src/App.tsx?t=1776093834124:152:24)
+    at async checkEmployeeStatus (http://localhost:4000/src/
+❌  [SMK-TENANT] FAIL — Cấu hình toàn cục — 1 console error: Error fetching employee info: TypeError: Failed to fetch
+    at http://localhost:4000/node_modules/.vite/deps/fetch-intercept.js?v=85c3340e:78:20
+    at async getDetailEmployeeInfo (http://localhost:4000/src/App.tsx?t=1776093834124:152:24)
+    at async checkEmployeeStatus (http://localhost:4000/src/
+❌  [SMK-SET-SELL] FAIL — Danh mục dịch vụ — 1 console error: Error fetching employee info: TypeError: Failed to fetch
+    at http://localhost:4000/node_modules/.vite/deps/fetch-intercept.js?v=85c3340e:78:20
+    at async getDetailEmployeeInfo (http://localhost:4000/src/App.tsx?t=1776093834124:152:24)
+    at async checkEmployeeStatus (http://localhost:4000/src/
+❌  [SMK-MEMB-PLAN] FAIL — Gói thành viên — 1 console error: Error fetching employee info: TypeError: Failed to fetch
+    at http://localhost:4000/node_modules/.vite/deps/fetch-intercept.js?v=85c3340e:78:20
+    at async getDetailEmployeeInfo (http://localhost:4000/src/App.tsx?t=1776093834124:152:24)
+    at async checkEmployeeStatus (http://localhost:4000/src/
+❌  [SMK-SET-BASIS] FAIL — Vận hành cơ sở — navigate error: page.goto: Timeout 20000ms exceeded.
+Call log:
+[2m  - navigating to "http://localhost:4000/crm/setting_basis", waiting 
+✅  [SMK-SET-ORG] PASS — Tổ chức & phân quyền
+✅  [SMK-SET-CHAN] PASS — Kênh liên lạc
+✅  [SMK-SET-INTG] PASS — Tích hợp
+✅  [SMK-SET-ACC] PASS — Tài khoản & bảo mật
+✅  [SMK-SET-TICKET] PASS — Hỗ trợ thành viên
+
+============================================================
+❌  [SMOKE-NAV] Smoke Navigation (all sidebar routes): 22/44 passed (50%), 22 failed
+📊  Report: tests/reports/smoke-nav-xdq0im.json
+⏱️  Duration: 511.0s
+============================================================

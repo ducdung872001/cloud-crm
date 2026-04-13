@@ -1,0 +1,32 @@
+🚀  [X] x — Run wrrfj0
+------------------------------------------------------------
+🔐  Dang nhap...
+🍪  Dung token da luu (con hieu luc)
+✅  [LOGIN] PASS — Dang nhap bang token da luu
+/logistics/carrier/list → status=200, code=0
+  shape: result keys = 0,1,2,3,4,5
+  items len: 6
+  sample: {"id":1,"code":"GHN","name":"Giao Hàng Nhanh","shortName":"GHN","avatar":null,"baseFeeLabel":"20.000 - 25.000đ","avgTimeLabel":"1-2 ngày","rating":4.7,"isActive":1,"todayNewOrders":null,"todayDelivere
+/logistics/carrier/list?page=1&limit=20 → status=200, code=0
+  shape: result keys = 0,1,2,3,4,5
+  items len: 6
+  sample: {"id":1,"code":"GHN","name":"Giao Hàng Nhanh","shortName":"GHN","avatar":null,"baseFeeLabel":"20.000 - 25.000đ","avgTimeLabel":"1-2 ngày","rating":4.7,"isActive":1,"todayNewOrders":null,"todayDelivere
+/logistics/carrier/list?isActive=1 → status=200, code=0
+  shape: result keys = 0,1,2,3,4,5
+  items len: 6
+  sample: {"id":1,"code":"GHN","name":"Giao Hàng Nhanh","shortName":"GHN","avatar":null,"baseFeeLabel":"20.000 - 25.000đ","avgTimeLabel":"1-2 ngày","rating":4.7,"isActive":1,"todayNewOrders":null,"todayDelivere
+/logistics/partner/list → status=404, code=undefined
+/logistics/carrier → status=404, code=undefined
+
+Recent shipments: 5
+  8FIJlVQ8EoF carrierCode=GHN statusCode=SUBMITTED orderCode=null internalOrderId=undefined
+  9csQQ0dkQ8k carrierCode=GHN statusCode=CANCELLED orderCode=null internalOrderId=undefined
+  8wkpAF1kE59 carrierCode=GHN statusCode=DELIVERED orderCode=null internalOrderId=undefined
+  9p0YkAIxsoV carrierCode=GHN statusCode=SUBMITTED orderCode=null internalOrderId=undefined
+  8MJ1Z4gVVFY carrierCode=GHN statusCode=SUBMITTED orderCode=null internalOrderId=undefined
+
+============================================================
+✅  [X] x: 1/1 passed (100%), 0 failed
+📊  Report: tests/reports/x-wrrfj0.json
+⏱️  Duration: 38.3s
+============================================================

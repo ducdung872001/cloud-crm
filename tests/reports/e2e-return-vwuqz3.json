@@ -1,0 +1,81 @@
+{
+  "module": "E2E-RETURN",
+  "name": "Doi Tra hang [wuqz1]",
+  "runId": "vwuqz3",
+  "timestamp": "2026-04-12T15:21:23.130Z",
+  "durationMs": 45483,
+  "baseUrl": "http://localhost:4000/crm",
+  "total": 11,
+  "passed": 11,
+  "failed": 0,
+  "passRate": "100%",
+  "results": [
+    {
+      "testId": "LOGIN",
+      "status": "PASS",
+      "detail": "Dang nhap bang token da luu",
+      "ts": "2026-04-12T15:21:03.206Z"
+    },
+    {
+      "testId": "S1-01",
+      "status": "PASS",
+      "detail": "Ban 3x \"E2E SP modqe\" → HD003903",
+      "ts": "2026-04-12T15:21:04.924Z"
+    },
+    {
+      "testId": "S1-02",
+      "status": "PASS",
+      "detail": "Stock giam 3 sau ban: 20 → 17",
+      "ts": "2026-04-12T15:21:07.672Z"
+    },
+    {
+      "testId": "S1-03",
+      "status": "PASS",
+      "detail": "Tra hang thanh cong: phieu 3905",
+      "ts": "2026-04-12T15:21:08.197Z"
+    },
+    {
+      "testId": "S1-04",
+      "status": "PASS",
+      "detail": "✅ Stock TANG +1 sau tra hang: 17 → 18",
+      "ts": "2026-04-12T15:21:11.583Z"
+    },
+    {
+      "testId": "S2-01",
+      "status": "PASS",
+      "detail": "Ban 2x \"E2E SP modqe\" → HD003907",
+      "ts": "2026-04-12T15:21:12.438Z"
+    },
+    {
+      "testId": "S2-02",
+      "status": "PASS",
+      "detail": "Stock giam 2: 18 → 16",
+      "ts": "2026-04-12T15:21:14.858Z"
+    },
+    {
+      "testId": "S2-03",
+      "status": "PASS",
+      "detail": "Huy don (tra toan bo) thanh cong: phieu 3909",
+      "ts": "2026-04-12T15:21:15.468Z"
+    },
+    {
+      "testId": "S2-04",
+      "status": "PASS",
+      "detail": "✅ Stock QUAY VE baseline sau huy don: 18 (full restored)",
+      "ts": "2026-04-12T15:21:18.821Z"
+    },
+    {
+      "testId": "S3-01",
+      "status": "PASS",
+      "detail": "Ban 1x \"E2E SP modqe\" → HD003911",
+      "ts": "2026-04-12T15:21:19.841Z"
+    },
+    {
+      "testId": "S3-02",
+      "status": "PASS",
+      "detail": "Stock A giam 1: 18 → 17",
+      "ts": "2026-04-12T15:21:22.641Z"
+    }
+  ],
+  "apiCalls": 16
+}

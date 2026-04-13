@@ -1,0 +1,44 @@
+{
+  "module": "CUSTOMER",
+  "name": "Thành viên (API)",
+  "runId": "x7drpk",
+  "timestamp": "2026-04-13T13:03:11.360Z",
+  "durationMs": 3959,
+  "total": 5,
+  "passed": 3,
+  "failed": 2,
+  "passRate": "60%",
+  "results": [
+    {
+      "testId": "TC-CUSTOMER-001",
+      "status": "PASS",
+      "detail": "GET list_paid → status=200, code=0, items=?",
+      "ts": "2026-04-13T13:03:07.831Z"
+    },
+    {
+      "testId": "TC-CUSTOMER-002",
+      "status": "FAIL",
+      "detail": "POST update (create) → status=400, code=undefined, newId=null",
+      "ts": "2026-04-13T13:03:10.195Z"
+    },
+    {
+      "testId": "TC-CUSTOMER-002B",
+      "status": "FAIL",
+      "detail": "Round-trip tìm theo SĐT \"0985387850\" → không tìm thấy",
+      "ts": "2026-04-13T13:03:11.179Z"
+    },
+    {
+      "testId": "TC-CUSTOMER-005",
+      "status": "PASS",
+      "detail": "POST update trùng SĐT → code=undefined, msg=\"\" (kỳ vọng: backend chặn)",
+      "ts": "2026-04-13T13:03:11.207Z"
+    },
+    {
+      "testId": "TC-CUSTOMER-008",
+      "status": "PASS",
+      "detail": "GET list_paid?keyword=QA API → status=200",
+      "ts": "2026-04-13T13:03:11.358Z"
+    }
+  ],
+  "apiCalls": 5
+}

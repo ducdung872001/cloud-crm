@@ -1,0 +1,51 @@
+{
+  "module": "CUSTOMER",
+  "name": "Thành viên (CRUD)",
+  "runId": "x6pizs",
+  "timestamp": "2026-04-13T12:44:43.406Z",
+  "durationMs": 27046,
+  "baseUrl": "http://localhost:4000/crm",
+  "total": 6,
+  "passed": 2,
+  "failed": 4,
+  "passRate": "33%",
+  "results": [
+    {
+      "testId": "LOGIN",
+      "status": "PASS",
+      "detail": "Dung lai storageState da luu",
+      "ts": "2026-04-13T12:44:23.656Z"
+    },
+    {
+      "testId": "TC-CUSTOMER-001",
+      "status": "FAIL",
+      "detail": "Mở list (table=false, api=200)",
+      "ts": "2026-04-13T12:44:35.506Z"
+    },
+    {
+      "testId": "TC-CUSTOMER-008",
+      "status": "FAIL",
+      "detail": "API search hoạt động (status=undefined)",
+      "ts": "2026-04-13T12:44:37.237Z"
+    },
+    {
+      "testId": "TC-CUSTOMER-002",
+      "status": "FAIL",
+      "detail": "Modal Thêm mới không mở (addClicked=true)",
+      "ts": "2026-04-13T12:44:40.724Z"
+    },
+    {
+      "testId": "TC-CUSTOMER-003",
+      "status": "FAIL",
+      "detail": "Không mở lại được modal thêm mới",
+      "ts": "2026-04-13T12:44:43.406Z"
+    },
+    {
+      "testId": "TC-CUSTOMER-API-HEALTH",
+      "status": "PASS",
+      "detail": "Không có API lỗi",
+      "ts": "2026-04-13T12:44:43.406Z"
+    }
+  ],
+  "apiCalls": 0
+}

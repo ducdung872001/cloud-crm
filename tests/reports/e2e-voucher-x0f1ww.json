@@ -1,0 +1,21 @@
+{
+  "module": "E2E-VOUCHER",
+  "name": "Voucher flow [0f1wu]",
+  "runId": "x0f1ww",
+  "timestamp": "2026-04-13T09:49:13.648Z",
+  "durationMs": 63680,
+  "baseUrl": "http://localhost:4000/crm",
+  "total": 1,
+  "passed": 1,
+  "failed": 0,
+  "passRate": "100%",
+  "results": [
+    {
+      "testId": "LOGIN",
+      "status": "PASS",
+      "detail": "Dang nhap bang token da luu",
+      "ts": "2026-04-13T09:48:30.500Z"
+    }
+  ],
+  "apiCalls": 18
+}

@@ -1,0 +1,21 @@
+{
+  "module": "INSP",
+  "name": "Inspect setting pages structure",
+  "runId": "x8nsv9",
+  "timestamp": "2026-04-13T13:39:28.162Z",
+  "durationMs": 33085,
+  "baseUrl": "http://localhost:4000/crm",
+  "total": 1,
+  "passed": 1,
+  "failed": 0,
+  "passRate": "100%",
+  "results": [
+    {
+      "testId": "LOGIN",
+      "status": "PASS",
+      "detail": "Dung lai storageState da luu",
+      "ts": "2026-04-13T13:39:02.117Z"
+    }
+  ],
+  "apiCalls": 21
+}

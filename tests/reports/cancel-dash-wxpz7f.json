@@ -1,0 +1,21 @@
+{
+  "module": "CANCEL-DASH",
+  "name": "Cancel dashboard check [xpz7c]",
+  "runId": "wxpz7f",
+  "timestamp": "2026-04-13T08:33:22.952Z",
+  "durationMs": 42125,
+  "baseUrl": "http://localhost:4000/crm",
+  "total": 1,
+  "passed": 1,
+  "failed": 0,
+  "passRate": "100%",
+  "results": [
+    {
+      "testId": "LOGIN",
+      "status": "PASS",
+      "detail": "Dang nhap bang token da luu",
+      "ts": "2026-04-13T08:33:00.290Z"
+    }
+  ],
+  "apiCalls": 25
+}

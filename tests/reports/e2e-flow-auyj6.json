@@ -1,0 +1,32 @@
+{
+  "runId": "auyj6",
+  "timestamp": "2026-04-13T14:42:07.150Z",
+  "config": {
+    "SP_NAME": "E2E SP auyj6",
+    "SP_PRICE": 100000,
+    "IMPORT_QTY": 10,
+    "IMPORT_PRICE": 80000,
+    "SELL_QTY": 1
+  },
+  "state": {
+    "stockBeforeImport": null,
+    "stockAfterImport": null,
+    "stockAfterSale": null
+  },
+  "uiBugs": [
+    {
+      "step": "STEP1",
+      "severity": "HIGH",
+      "desc": "Khong tim thay nut 'Them san pham' (cardClicked=true)",
+      "evidence": "✕ | Bỏ qua | Tiếp theo → | Tiếng Việt | Hòa Phạm"
+    },
+    {
+      "step": "FATAL",
+      "severity": "BLOCKER",
+      "desc": "STEP1 blocked",
+      "evidence": ""
+    }
+  ],
+  "beBugs": [],
+  "checkpoints": []
+}

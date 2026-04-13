@@ -1,0 +1,21 @@
+{
+  "module": "CRUD-ALL",
+  "name": "CRUD toan bo",
+  "runId": "x8e0ay",
+  "timestamp": "2026-04-13T13:32:25.539Z",
+  "durationMs": 67385,
+  "baseUrl": "http://localhost:4000/crm",
+  "total": 1,
+  "passed": 1,
+  "failed": 0,
+  "passRate": "100%",
+  "results": [
+    {
+      "testId": "LOGIN",
+      "status": "PASS",
+      "detail": "Dung lai storageState da luu",
+      "ts": "2026-04-13T13:31:28.168Z"
+    }
+  ],
+  "apiCalls": 34
+}

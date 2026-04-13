@@ -1,0 +1,99 @@
+🚀  [E2E-VOUCHER] Voucher flow [0ltkc] — Run x0ltkf
+------------------------------------------------------------
+🔐  Dang nhap...
+🍪  Dung token da luu (con hieu luc)
+✅  [LOGIN] PASS — Dang nhap bang token da luu
+
+══════════════════════════════════════════════════════════════════════
+  SETUP
+══════════════════════════════════════════════════════════════════════
+  Sample: [337] E2E SP k77h9 price=100000 stock=8
+
+══════════════════════════════════════════════════════════════════════
+  S1 — CREATE voucher
+══════════════════════════════════════════════════════════════════════
+  Create body: {"id":0,"code":"E2E0LTKC","discountType":2,"discountValue":50000,"minOrder":200000,"maxUses":3,"expiryDate":"2026-04-20","description":"E2E test voucher 0ltkc","status":1}
+  Response: status=200, code=0
+  Body: {"code":0,"message":"OK","result":{"id":6,"code":"E2E0LTKC","discountType":2,"discountValue":50000,"minOrder":200000,"maxUses":3,"usedCount":0,"expiryDate":"2026-04-20","status":1,"description":"E2E test voucher 0ltkc","employeeId":54,"branchId":23,"bsnId":6,"createdTime":"2026-04-13T16:54:03","updatedTime":null}}
+✅  [S1-01] PASS — coupon/update create: code=0
+✅  [S1-02] PASS — Voucher id=6
+
+══════════════════════════════════════════════════════════════════════
+  S2 — GET voucher detail (verify initial usedCount=0)
+══════════════════════════════════════════════════════════════════════
+  Body: {"code":0,"message":"OK","result":{"id":6,"code":"E2E0LTKC","discountType":2,"discountValue":50000,"minOrder":200000,"maxUses":3,"usedCount":0,"expiryDate":"2026-04-20","status":1,"description":"E2E test voucher 0ltkc","employeeId":54,"branchId":23,"bsnId":6,"createdTime":"2026-04-13T16:54:03","updatedTime":null}}
+✅  [S2-01] PASS — code=E2E0LTKC
+✅  [S2-02] PASS — discountValue=50000
+✅  [S2-03] PASS — minOrder=200000
+✅  [S2-04] PASS — maxUses=3
+✅  [S2-05] PASS — Initial usedCount=0
+
+══════════════════════════════════════════════════════════════════════
+  S3 — Apply voucher voi order < minOrder (199999) → reject
+══════════════════════════════════════════════════════════════════════
+  Apply low: code=undefined, body={"error":"Đơn tối thiểu 200000"}
+✅  [S3-01] PASS — Apply 199999đ < minOrder 200000đ phải reject hoặc discount=0: code=undefined, discount=undefined
+
+══════════════════════════════════════════════════════════════════════
+  S4 — Apply voi order >= minOrder (200000) → success
+══════════════════════════════════════════════════════════════════════
+  Apply OK: code=0, body={"code":0,"message":"OK","result":{"code":"E2E0LTKC","discountType":2,"discountValue":50000,"orderAmount":200000,"discountAmount":50000,"finalAmount":150000,"message":"Áp dụng thành công"}}
+✅  [S4-01] PASS — coupon/apply success: code=0
+✅  [S4-02] PASS — discountAmount=50000 (expected 50000)
+✅  [S4-03] PASS — finalAmount=150000 (expected 150000)
+
+══════════════════════════════════════════════════════════════════════
+  S5 — Tao don POS voi coupon → verify usedCount +1
+══════════════════════════════════════════════════════════════════════
+✅  [S5-01] PASS — Tao HD004071: subtotal=200000, discount=50000, final=150000
+  usedCount after sale 1: 0 → 1
+✅  [S5-02] PASS — usedCount tang +1: 0 → 1
+  📋 [NOTE] S5: BE auto increment usedCount sau khi sale
+
+══════════════════════════════════════════════════════════════════════
+  S6 — Loop sales for full quota (3 lan)
+══════════════════════════════════════════════════════════════════════
+  Apply 2: code=0, discount=50000
+  Apply 3: code=0, discount=50000
+  usedCount after 3 sales: 3
+✅  [S6-01] PASS — Tao duoc 3/3 sales
+✅  [S6-02] PASS — usedCount = MAX_USES (3)
+
+══════════════════════════════════════════════════════════════════════
+  S7 — Apply lan 4 → expect reject (quota exhausted)
+══════════════════════════════════════════════════════════════════════
+  Apply over: code=undefined, message="undefined"
+✅  [S7-01] PASS — Quota exhausted reject: code=undefined, msg="undefined"
+
+══════════════════════════════════════════════════════════════════════
+  S8 — Verify voucher stats
+══════════════════════════════════════════════════════════════════════
+  count-by-status?status=1 (active): {"code":0,"message":"OK","result":3}
+✅  [S8-01] PASS — count-by-status active: code=0
+  sum-used: {"code":0,"message":"OK","result":3}
+✅  [S8-02] PASS — sum-used: code=0
+  Voucher in list: usedCount=3, maxUses=3
+✅  [S8-03] PASS — Voucher list: usedCount=3 == maxUses=3 (đã hết)
+
+══════════════════════════════════════════════════════════════════════
+  S9 — Cleanup
+══════════════════════════════════════════════════════════════════════
+  delete?id=6: code=undefined
+  Disable: code=0
+
+══════════════════════════════════════════════════════════════════════
+  BUG REPORT
+══════════════════════════════════════════════════════════════════════
+
+🐛 UI BUGS (0):
+
+🔧 BE BUGS (0):
+
+📋 FINDINGS:
+  1. [S5] BE auto increment usedCount sau khi sale
+
+============================================================
+✅  [E2E-VOUCHER] Voucher flow [0ltkc]: 20/20 passed (100%), 0 failed
+📊  Report: tests/reports/e2e-voucher-x0ltkf.json
+⏱️  Duration: 48.1s
+============================================================

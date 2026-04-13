@@ -1,0 +1,129 @@
+{
+  "module": "E2E-FLOW",
+  "name": "Tao SP → Nhap kho → POS",
+  "runId": "xbrfa2",
+  "timestamp": "2026-04-13T15:08:13.383Z",
+  "durationMs": 150445,
+  "baseUrl": "http://localhost:4000/crm",
+  "total": 19,
+  "passed": 18,
+  "failed": 1,
+  "passRate": "95%",
+  "results": [
+    {
+      "testId": "LOGIN",
+      "status": "PASS",
+      "detail": "Dung lai storageState da luu",
+      "ts": "2026-04-13T15:05:57.647Z"
+    },
+    {
+      "testId": "S1-01",
+      "status": "PASS",
+      "detail": "Trang danh sach SP load OK",
+      "ts": "2026-04-13T15:06:15.754Z"
+    },
+    {
+      "testId": "S1-02",
+      "status": "PASS",
+      "detail": "Da nhap ten: E2E SP brf9y",
+      "ts": "2026-04-13T15:06:19.308Z"
+    },
+    {
+      "testId": "S1-03",
+      "status": "PASS",
+      "detail": "Chon danh muc SP",
+      "ts": "2026-04-13T15:06:20.409Z"
+    },
+    {
+      "testId": "S1-04",
+      "status": "PASS",
+      "detail": "Them thuoc tinh Size=M",
+      "ts": "2026-04-13T15:06:25.167Z"
+    },
+    {
+      "testId": "S1-05",
+      "status": "PASS",
+      "detail": "Gia 100,000",
+      "ts": "2026-04-13T15:06:26.717Z"
+    },
+    {
+      "testId": "S1-06",
+      "status": "PASS",
+      "detail": "Sinh barcode auto",
+      "ts": "2026-04-13T15:06:27.240Z"
+    },
+    {
+      "testId": "S1-08",
+      "status": "FAIL",
+      "detail": "E2E SP brf9y KHONG co",
+      "ts": "2026-04-13T15:06:40.753Z"
+    },
+    {
+      "testId": "S2-01",
+      "status": "PASS",
+      "detail": "Chon kho: Kho hàng mẫu",
+      "ts": "2026-04-13T15:06:51.862Z"
+    },
+    {
+      "testId": "S2-02",
+      "status": "PASS",
+      "detail": "Chon today",
+      "ts": "2026-04-13T15:06:54.843Z"
+    },
+    {
+      "testId": "S2-04",
+      "status": "PASS",
+      "detail": "Phieu nhap tao thanh cong, button 'Them SP' enabled",
+      "ts": "2026-04-13T15:07:01.037Z"
+    },
+    {
+      "testId": "S2-05",
+      "status": "PASS",
+      "detail": "Modal them SP mo",
+      "ts": "2026-04-13T15:07:03.685Z"
+    },
+    {
+      "testId": "S2-06c",
+      "status": "PASS",
+      "detail": "So lo: LOT-brf9y",
+      "ts": "2026-04-13T15:07:10.812Z"
+    },
+    {
+      "testId": "S2-06d",
+      "status": "PASS",
+      "detail": "Ngay het han: 15 (thang sau)",
+      "ts": "2026-04-13T15:07:13.044Z"
+    },
+    {
+      "testId": "S2-07",
+      "status": "PASS",
+      "detail": "Qty: 10",
+      "ts": "2026-04-13T15:07:13.584Z"
+    },
+    {
+      "testId": "S2-08",
+      "status": "PASS",
+      "detail": "Gia nhap: 80,000",
+      "ts": "2026-04-13T15:07:13.619Z"
+    },
+    {
+      "testId": "S2-09",
+      "status": "PASS",
+      "detail": "Submit SP vao phieu",
+      "ts": "2026-04-13T15:07:16.707Z"
+    },
+    {
+      "testId": "S3-01a",
+      "status": "PASS",
+      "detail": "Tab 'Hoan thanh' co phieu (sau khi duyet)",
+      "ts": "2026-04-13T15:07:29.621Z"
+    },
+    {
+      "testId": "S4-00a",
+      "status": "PASS",
+      "detail": "Chon khach hang (search fallback)",
+      "ts": "2026-04-13T15:08:07.206Z"
+    }
+  ],
+  "apiCalls": 38
+}

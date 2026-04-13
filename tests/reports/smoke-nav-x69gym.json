@@ -1,0 +1,279 @@
+{
+  "module": "SMOKE-NAV",
+  "name": "Smoke Navigation (all sidebar routes)",
+  "runId": "x69gym",
+  "timestamp": "2026-04-13T12:39:14.028Z",
+  "durationMs": 446798,
+  "baseUrl": "http://localhost:4000/crm",
+  "total": 44,
+  "passed": 41,
+  "failed": 3,
+  "passRate": "93%",
+  "results": [
+    {
+      "testId": "LOGIN",
+      "status": "PASS",
+      "detail": "Dung lai storageState da luu",
+      "ts": "2026-04-13T12:31:55.627Z"
+    },
+    {
+      "testId": "SMK-DASH",
+      "status": "PASS",
+      "detail": "Dashboard",
+      "ts": "2026-04-13T12:32:07.078Z"
+    },
+    {
+      "testId": "SMK-POS",
+      "status": "PASS",
+      "detail": "Bán hàng tại quầy",
+      "ts": "2026-04-13T12:32:11.370Z"
+    },
+    {
+      "testId": "SMK-CHECKIN",
+      "status": "PASS",
+      "detail": "Check-in / Cửa vào",
+      "ts": "2026-04-13T12:32:20.633Z"
+    },
+    {
+      "testId": "SMK-SERVICES",
+      "status": "PASS",
+      "detail": "Trừ quota dịch vụ",
+      "ts": "2026-04-13T12:32:29.918Z"
+    },
+    {
+      "testId": "SMK-SHIFT",
+      "status": "PASS",
+      "detail": "Quản lý ca làm việc",
+      "ts": "2026-04-13T12:32:39.238Z"
+    },
+    {
+      "testId": "SMK-CUSTOMER",
+      "status": "PASS",
+      "detail": "Danh sách thành viên",
+      "ts": "2026-04-13T12:32:57.785Z"
+    },
+    {
+      "testId": "SMK-SETTING-CUSTOMER",
+      "status": "FAIL",
+      "detail": "Cài đặt thành viên — navigate error: page.goto: Navigation to \"http://localhost:4000/crm/setting_customer\" is interrupted by another navigation to \"http://lo",
+      "ts": "2026-04-13T12:32:57.947Z"
+    },
+    {
+      "testId": "SMK-INVOICE",
+      "status": "PASS",
+      "detail": "Danh sách đơn",
+      "ts": "2026-04-13T12:33:13.912Z"
+    },
+    {
+      "testId": "SMK-INVOICE-VAT",
+      "status": "FAIL",
+      "detail": "Hoá đơn VAT — 1 console error: Failed to load resource: the server responded with a status of 500 (Internal Server Error)",
+      "ts": "2026-04-13T12:33:23.143Z"
+    },
+    {
+      "testId": "SMK-ACCOM",
+      "status": "PASS",
+      "detail": "Lưu trú",
+      "ts": "2026-04-13T12:33:32.603Z"
+    },
+    {
+      "testId": "SMK-FIN-DASH",
+      "status": "FAIL",
+      "detail": "Tổng quan tài chính — 2 console error: Failed to load resource: the server responded with a status of 500 (Internal Server Error)",
+      "ts": "2026-04-13T12:33:41.920Z"
+    },
+    {
+      "testId": "SMK-FIN-CASH",
+      "status": "PASS",
+      "detail": "Sổ thu chi",
+      "ts": "2026-04-13T12:33:51.335Z"
+    },
+    {
+      "testId": "SMK-FIN-FUND",
+      "status": "PASS",
+      "detail": "Quản lý quỹ",
+      "ts": "2026-04-13T12:34:00.634Z"
+    },
+    {
+      "testId": "SMK-FIN-CAT",
+      "status": "PASS",
+      "detail": "Khoản mục",
+      "ts": "2026-04-13T12:34:09.905Z"
+    },
+    {
+      "testId": "SMK-FIN-DEBT",
+      "status": "PASS",
+      "detail": "Công nợ",
+      "ts": "2026-04-13T12:34:19.184Z"
+    },
+    {
+      "testId": "SMK-PAY-CTRL",
+      "status": "PASS",
+      "detail": "Đối soát thanh toán",
+      "ts": "2026-04-13T12:34:28.516Z"
+    },
+    {
+      "testId": "SMK-PARTNER",
+      "status": "PASS",
+      "detail": "Đối tác",
+      "ts": "2026-04-13T12:34:37.807Z"
+    },
+    {
+      "testId": "SMK-FEEDBACK",
+      "status": "PASS",
+      "detail": "Phản hồi",
+      "ts": "2026-04-13T12:34:46.866Z"
+    },
+    {
+      "testId": "SMK-REP-REV",
+      "status": "PASS",
+      "detail": "Báo cáo doanh thu",
+      "ts": "2026-04-13T12:34:56.188Z"
+    },
+    {
+      "testId": "SMK-REP-MEM",
+      "status": "PASS",
+      "detail": "Báo cáo thành viên",
+      "ts": "2026-04-13T12:35:05.349Z"
+    },
+    {
+      "testId": "SMK-REP-CHK",
+      "status": "PASS",
+      "detail": "Báo cáo check-in",
+      "ts": "2026-04-13T12:35:14.538Z"
+    },
+    {
+      "testId": "SMK-REP-SVC",
+      "status": "PASS",
+      "detail": "Báo cáo dịch vụ",
+      "ts": "2026-04-13T12:35:23.906Z"
+    },
+    {
+      "testId": "SMK-REP-PTN",
+      "status": "PASS",
+      "detail": "Báo cáo đối tác",
+      "ts": "2026-04-13T12:35:33.168Z"
+    },
+    {
+      "testId": "SMK-REP-FIN",
+      "status": "PASS",
+      "detail": "Báo cáo tài chính",
+      "ts": "2026-04-13T12:35:42.497Z"
+    },
+    {
+      "testId": "SMK-PROMO",
+      "status": "PASS",
+      "detail": "Khuyến mãi & Voucher",
+      "ts": "2026-04-13T12:35:51.829Z"
+    },
+    {
+      "testId": "SMK-LOYALTY",
+      "status": "PASS",
+      "detail": "Tích điểm hội viên",
+      "ts": "2026-04-13T12:36:01.057Z"
+    },
+    {
+      "testId": "SMK-MKT",
+      "status": "PASS",
+      "detail": "Chiến dịch marketing",
+      "ts": "2026-04-13T12:36:10.562Z"
+    },
+    {
+      "testId": "SMK-CARE",
+      "status": "PASS",
+      "detail": "Chăm sóc thành viên",
+      "ts": "2026-04-13T12:36:25.815Z"
+    },
+    {
+      "testId": "SMK-MATERIAL",
+      "status": "PASS",
+      "detail": "Nguyên vật liệu",
+      "ts": "2026-04-13T12:36:46.204Z"
+    },
+    {
+      "testId": "SMK-SUPPLIER",
+      "status": "PASS",
+      "detail": "Nhà cung cấp",
+      "ts": "2026-04-13T12:36:57.465Z"
+    },
+    {
+      "testId": "SMK-WAREHOUSE",
+      "status": "PASS",
+      "detail": "Danh sách kho",
+      "ts": "2026-04-13T12:37:06.648Z"
+    },
+    {
+      "testId": "SMK-INVENTORY",
+      "status": "PASS",
+      "detail": "Sổ kho",
+      "ts": "2026-04-13T12:37:16.448Z"
+    },
+    {
+      "testId": "SMK-INV-CHK",
+      "status": "PASS",
+      "detail": "Quản lý kho (kiểm kê)",
+      "ts": "2026-04-13T12:37:25.818Z"
+    },
+    {
+      "testId": "SMK-WH-REPORT",
+      "status": "PASS",
+      "detail": "Báo cáo kho",
+      "ts": "2026-04-13T12:37:35.163Z"
+    },
+    {
+      "testId": "SMK-TENANT",
+      "status": "PASS",
+      "detail": "Cấu hình toàn cục",
+      "ts": "2026-04-13T12:37:54.955Z"
+    },
+    {
+      "testId": "SMK-SET-SELL",
+      "status": "PASS",
+      "detail": "Danh mục dịch vụ",
+      "ts": "2026-04-13T12:38:05.061Z"
+    },
+    {
+      "testId": "SMK-MEMB-PLAN",
+      "status": "PASS",
+      "detail": "Gói thành viên",
+      "ts": "2026-04-13T12:38:14.512Z"
+    },
+    {
+      "testId": "SMK-SET-BASIS",
+      "status": "PASS",
+      "detail": "Vận hành cơ sở",
+      "ts": "2026-04-13T12:38:24.248Z"
+    },
+    {
+      "testId": "SMK-SET-ORG",
+      "status": "PASS",
+      "detail": "Tổ chức & phân quyền",
+      "ts": "2026-04-13T12:38:37.110Z"
+    },
+    {
+      "testId": "SMK-SET-CHAN",
+      "status": "PASS",
+      "detail": "Kênh liên lạc",
+      "ts": "2026-04-13T12:38:46.308Z"
+    },
+    {
+      "testId": "SMK-SET-INTG",
+      "status": "PASS",
+      "detail": "Tích hợp",
+      "ts": "2026-04-13T12:38:55.608Z"
+    },
+    {
+      "testId": "SMK-SET-ACC",
+      "status": "PASS",
+      "detail": "Tài khoản & bảo mật",
+      "ts": "2026-04-13T12:39:04.734Z"
+    },
+    {
+      "testId": "SMK-SET-TICKET",
+      "status": "PASS",
+      "detail": "Hỗ trợ thành viên",
+      "ts": "2026-04-13T12:39:14.027Z"
+    }
+  ],
+  "apiCalls": 309
+}

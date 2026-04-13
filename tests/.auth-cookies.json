@@ -1,0 +1,62 @@
+[
+  {
+    "name": "runEnv",
+    "value": "prod",
+    "domain": "localhost",
+    "path": "/",
+    "expires": -1,
+    "httpOnly": false,
+    "secure": false,
+    "sameSite": "Lax"
+  },
+  {
+    "name": "domain",
+    "value": "localhost",
+    "domain": "localhost",
+    "path": "/",
+    "expires": -1,
+    "httpOnly": false,
+    "secure": false,
+    "sameSite": "Lax"
+  },
+  {
+    "name": "G_ENABLED_IDPS",
+    "value": "google",
+    "domain": "localhost",
+    "path": "/",
+    "expires": 1810565819.330022,
+    "httpOnly": false,
+    "secure": false,
+    "sameSite": "Lax"
+  },
+  {
+    "name": "NID",
+    "value": "530=ZHELDnB9llUZSPcCQ6plB0_4FICV88F2nE1rCnXQ3wzF8n2_gTNG6b8lH50rG6VKsP6AaEHHoELPF8NoKsLhd1BXdSTs3mkC8vfPzJ6AJp3xxkRvMjilguflKcpZrpouC4d-nUMr4Wlp3K32E8DefIiz_Zifp-McxI0oM4QFLhUlDOEiGxn19KlkYKPSd59-qVi7cHI6BiUqwqEP",
+    "domain": ".google.com",
+    "path": "/",
+    "expires": 1791817019.779409,
+    "httpOnly": true,
+    "secure": true,
+    "sameSite": "None"
+  },
+  {
+    "name": "token",
+    "value": "eyJhbGciOiJIUzI1NiJ9.eyJleHAiOjE3OTE1NTc4MjQsInVzZXIiOiJ7XCJpZFwiOjE0NTksXCJ1c2VybmFtZVwiOlwiMDk3MTIzNDU5OVwiLFwibmFtZVwiOlwiSMOyYSBQaOG6oW1cIixcInJvbGVzXCI6W1wibW9kXCJdLFwibWFwQmVhdXR5U2Fsb25cIjp7XCJub25hbWUucmVib3JuLnZuXCI6NDMsXCJrY24ucmVib3JuLnZuXCI6NixcImhhbHVoYWx1LnJlYm9ybi52blwiOjIzMSxcImJlb3NwYS5yZWJvcm4udm5cIjoyMjEsXCJoYWlyc2Fsb24ucmVib3JuLnZuXCI6MTIzLFwicmVib3JudGVzdC5yZWJvcm4udm5cIjo0MixcImFkaGEucmVib3JuLnZuXCI6MjIyLFwiZW50ZXJwcmlzZS1uZXcucmVib3JuLnZuXCI6MjM2LFwibG9jYWxob3N0MTEyLnJlYm9ybi52blwiOjIyOSxcImhyaHIucmVib3JuLnZuXCI6MjI3LFwiYmVzcGEucmVib3JuLnZuXCI6MjAwLFwiaGVoZWhlLnJlYm9ybi52blwiOjIyNn19In0.T-mMHXUz6XVTObIriUlTDhkfRrMz4k6WaKJDohGDgPA",
+    "domain": "localhost",
+    "path": "/",
+    "expires": 1776185824,
+    "httpOnly": false,
+    "secure": false,
+    "sameSite": "Lax"
+  },
+  {
+    "name": "user",
+    "value": "%7B%22id%22%3A1459%2C%22name%22%3A%22H%C3%B2a%20Ph%E1%BA%A1m%22%2C%22phone%22%3A%220971234599%22%2C%22avatar%22%3A%22https%3A%2F%2Fcloud-cdn.reborn.vn%2Freborn%2F2024%2F10%2F12%2Fb5d0af72-7e34-4fdf-8d10-db8d2fa391a2-1728738840.png%22%2C%22gender%22%3A0%2C%22role%22%3A%22mod%22%7D",
+    "domain": "localhost",
+    "path": "/",
+    "expires": 1776185827,
+    "httpOnly": false,
+    "secure": false,
+    "sameSite": "Lax"
+  }
+]
