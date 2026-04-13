@@ -15,3 +15,8 @@ dist/
 package-lock.json
 yarn.lock
 yarn-error.log
+
+# test artifacts
+tests/reports/
+tests/screenshots/
+tests/.auth-cookies.json

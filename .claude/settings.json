@@ -1,0 +1,21 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(git ls-tree:*)",
+      "Bash(ls *.md)",
+      "Bash(ls *.mjs *.cjs)",
+      "Bash(git show:*)",
+      "Bash(ls tests/*.tmp)",
+      "Bash(mkdir -p docs tests/cases)",
+      "Bash(mv tests/helpers.mjs.tmp tests/helpers.mjs)",
+      "Bash(mv tests/cleanup.mjs.tmp tests/cleanup.mjs)",
+      "Bash(mv tests/config.mjs.tmp tests/config.mjs)",
+      "Bash(mv tests/README.md.tmp tests/README.md)",
+      "Bash(git mv:*)",
+      "Bash(git rm:*)"
+    ],
+    "additionalDirectories": [
+      "\\tmp"
+    ]
+  }
+}
