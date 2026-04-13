@@ -31,7 +31,15 @@
       "Bash(grep -n \"InventoryService\\\\|variantStockList\" \"d:/Git/reborn/reborn-cloud/cloud-ver2/cloud-crm/src/services\"/*.ts)",
       "Bash(node tests/test-e2e-return-exchange.mjs)",
       "Bash(node tests/test-e2e-financial-flow.mjs)",
-      "Bash(node tests/test-fin-probe.mjs)"
+      "Bash(node tests/test-fin-probe.mjs)",
+      "Bash(git add:*)",
+      "Bash(git commit -m ':*)",
+      "Bash(git push:*)",
+      "Bash(find /d/Git/reborn/reborn-cloud/cloud-ver2/cloud-crm/src/pages/CounterSales -name \"*.ts\" -exec grep -l \"ShippingInfo\\\\|OrderType\" {} \\\\;)",
+      "Bash(node tests/test-e2e-shipping-flow.mjs)",
+      "Bash(grep -n \"IShippingOrderCreateRequest\" /d/Git/reborn/reborn-cloud/cloud-ver2/cloud-crm/src/model/shipping/*.ts)",
+      "Bash(node tests/test-ship-probe.mjs)",
+      "Bash(node tests/test-ship-probe2.mjs)"
     ],
     "additionalDirectories": [
       "\\tmp"

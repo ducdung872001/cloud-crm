@@ -366,22 +366,53 @@ const CounterSales: React.FC = () => {
 
       if (paidInvoice.code == 0) {
         // ── Nếu là đơn ship → tạo shipment ────────────────────────────────
+        // Body shape NESTED theo BE spec (sender/receiver/parcel).
+        // Link về invoice gốc qua internalOrderId (BE sẽ map sang orderCode/orderId).
         if (orderType === "ship" && shippingInfo.receiverName) {
           try {
+            const invoiceCodeForShip =
+              (invoiceDraftToPaid as Record<string, unknown>)?.invoiceCode as string | undefined
+              ?? String(invoiceId);
+            const cartSubtotal = cartItems.reduce((s, c) => s + c.price * c.qty, 0);
+            const cartTotalWeightGram = cartItems.reduce(
+              (s, c) => s + (Number((c as Record<string, unknown>).weightGram ?? 0) || 0) * c.qty,
+              0
+            );
             await fetch(urlsApi.shipping.create, {
               method: "POST",
               headers: { "Content-Type": "application/json" },
               body: JSON.stringify({
-                orderId: invoiceId,
-                orderCode: String(invoiceId),
-                receiverName: shippingInfo.receiverName,
-                receiverPhone: shippingInfo.receiverPhone,
-                receiverAddress: shippingInfo.receiverAddress,
-                shippingFee: shippingInfo.shippingFeeBearer === "RECEIVER" ? shippingInfo.shippingFee : 0,
+                internalOrderId: invoiceCodeForShip,
+                carrierCode: "GHN",
+                sender: {
+                  name: "", phone: "", email: "",
+                  address: "", ward: "", district: "", province: "",
+                },
+                receiver: {
+                  name:     shippingInfo.receiverName,
+                  phone:    shippingInfo.receiverPhone,
+                  email:    "",
+                  address:  shippingInfo.receiverAddress,
+                  ward:     "",
+                  district: "",
+                  province: shippingInfo.receiverProvince ?? "",
+                },
+                parcel: {
+                  weightGram: cartTotalWeightGram > 0 ? cartTotalWeightGram : 500,
+                  lengthCm: 10, widthCm: 10, heightCm: 10,
+                },
                 codAmount: shippingInfo.codAmount,
-                noteForShipper: shippingInfo.noteForShipper ?? "",
+                declaredValue: cartSubtotal,
+                shippingFee: shippingInfo.shippingFeeBearer === "RECEIVER" ? shippingInfo.shippingFee : 0,
                 shippingFeeBearer: shippingInfo.shippingFeeBearer,
-                totalAmount: cartItems.reduce((s, c) => s + c.price * c.qty, 0),
+                items: cartItems.map((c) => ({
+                  name: c.name,
+                  quantity: c.qty,
+                  weightGram: Number((c as Record<string, unknown>).weightGram ?? 500) || 500,
+                  price: c.price,
+                })),
+                note: shippingInfo.noteForShipper ?? "",
+                status: "SUBMITTED",
               }),
             });
           } catch { /* shipment tạo sau cũng được */ }
