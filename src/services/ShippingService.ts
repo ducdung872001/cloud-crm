@@ -1,4 +1,4 @@
-import { apiDelete, apiGet, apiPost } from "services/apiHelper";
+import { apiGet, apiPost } from "services/apiHelper";
 import { urlsApi } from "configs/urls";
 
 import {
@@ -32,9 +32,9 @@ export default {
     }).then((res) => res.json());
   },
 
-  // Hủy đơn vận chuyển
+  // Hủy đơn vận chuyển — BE chỉ accept POST (DELETE → 405)
   cancel: (id: string) => {
-    return apiDelete(`${urlsApi.shipping.shipment}/${id}/cancel`);
+    return apiPost(`${urlsApi.shipping.shipment}/${id}/cancel`);
   },
 
   // Đẩy đơn sang hãng vận chuyển
