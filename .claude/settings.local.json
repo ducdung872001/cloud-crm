@@ -68,7 +68,13 @@
       "Bash(sed -i 's|\"https://reborn.vn/log-capture/|prefixRebornVn.replace\\(\"/api\", \"\"\\) + \"/log-capture/|g' src/configs/urls.ts)",
       "Bash(npx vite:*)",
       "Bash(mv src/pages/DashboardRetail/index.tsx src/pages/DashboardRetail/index.tsx.reborn-retail.bak)",
-      "Bash(mv src/pages/DashboardRetail/index.scss src/pages/DashboardRetail/index.scss.reborn-retail.bak)"
+      "Bash(mv src/pages/DashboardRetail/index.scss src/pages/DashboardRetail/index.scss.reborn-retail.bak)",
+      "Bash(HEADLESS=true node tests/test-smoke-nav.mjs)",
+      "Bash(HEADLESS=true node tests/.diag-failures.mjs)",
+      "Bash(HEADLESS=true node tests/test-customer-crud.mjs)",
+      "Bash(HEADLESS=true node tests/.inspect-customer.mjs)",
+      "Bash(node tests/test-customer-api.mjs)",
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\" https://cloud.reborn.vn/adminapi/customer/list_paid?page=1 -H \"Hostname: kcn.reborn.vn\")"
     ]
   }
 }

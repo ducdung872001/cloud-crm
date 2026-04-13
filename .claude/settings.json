@@ -12,7 +12,15 @@
       "Bash(mv tests/config.mjs.tmp tests/config.mjs)",
       "Bash(mv tests/README.md.tmp tests/README.md)",
       "Bash(git mv:*)",
-      "Bash(git rm:*)"
+      "Bash(git rm:*)",
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\" http://localhost:4000/crm)",
+      "Bash(node -e \"const {chromium}=require\\('playwright'\\);console.log\\('OK', chromium.name\\(\\)\\)\")",
+      "Bash(curl -sI http://localhost:8080)",
+      "Bash(curl -sL \"http://localhost:8080\")",
+      "Bash(HEADLESS=true node tests/login-save.mjs)",
+      "Bash(node -e \"const s=require\\('./tests/.auth-state.json'\\);console.log\\('cookies:',s.cookies.map\\(c=>c.name\\).join\\(','\\)\\);console.log\\('origins:',s.origins.map\\(o=>\\({origin:o.origin,ls:o.localStorage.map\\(l=>l.name\\)}\\)\\)\\)\")",
+      "Bash(HEADLESS=true node tests/test-smoke-login.mjs)",
+      "Bash(grep -n \"useReconciliationList\" src/hooks/useReconciliationList.ts*)"
     ],
     "additionalDirectories": [
       "\\tmp"

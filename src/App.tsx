@@ -97,7 +97,20 @@ export default function App() {
         });
 
         setLstRole(changeResult);
-        !takeSelectedRole && setChooseRoleInit(true);
+        // TEST-MODE: auto-pick role "Ban giám đốc" để tránh modal chọn role spam suốt quá trình chạy test suite.
+        // Revert bằng cách khôi phục dòng `!takeSelectedRole && setChooseRoleInit(true);` bên dưới.
+        if (!takeSelectedRole) {
+          const preferred =
+            changeResult.find((r) => r.name === "Ban giám đốc") ||
+            changeResult.find((r) => (r.name || "").toLowerCase().includes("giám đốc")) ||
+            changeResult[0];
+          if (preferred) {
+            localStorage.setItem("SelectedRole", preferred.role);
+          } else {
+            setChooseRoleInit(true);
+          }
+        }
+        // !takeSelectedRole && setChooseRoleInit(true);
       }
     }
   };

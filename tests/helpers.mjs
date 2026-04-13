@@ -38,7 +38,12 @@ export async function createTestRunner(moduleCode, moduleName) {
     headless: CONFIG.HEADLESS,
     slowMo: CONFIG.SLOW_MO,
   });
-  const context = await browser.newContext({ viewport: CONFIG.VIEWPORT });
+  const statePath = path.join(__dirname, ".auth-state.json");
+  const hasSavedState = fs.existsSync(statePath);
+  const context = await browser.newContext({
+    viewport: CONFIG.VIEWPORT,
+    ...(hasSavedState ? { storageState: statePath } : {}),
+  });
   const page = await context.newPage();
   page.setDefaultTimeout(CONFIG.ACTION_TIMEOUT);
 
@@ -111,64 +116,27 @@ export async function createTestRunner(moduleCode, moduleName) {
   }
 
   async function login() {
-    log("\uD83D\uDD10", "Dang nhap...");
-
-    // Try loading saved cookies first
-    const cookieFile = path.join(__dirname, ".auth-cookies.json");
-    if (fs.existsSync(cookieFile)) {
-      try {
-        const cookies = JSON.parse(fs.readFileSync(cookieFile, "utf8"));
-        const tokenCookie = cookies.find((c) => c.name === "token");
-
-        // Check if token still valid (not expired)
-        if (tokenCookie && tokenCookie.expires * 1000 > Date.now()) {
-          log("\uD83C\uDF6A", "Dung token da luu (con hieu luc)");
-          await context.addCookies(cookies);
-
-          // Navigate to CRM
-          await page.goto(`${CONFIG.BASE_URL}/login`, { waitUntil: "load", timeout: 20000 }).catch(() => {});
-          await page.waitForTimeout(5000);
-          await dismissTour();
-
-          // Handle role modal — chon role + dismiss
-          for (let attempt = 0; attempt < 3; attempt++) {
-            const hasRoleModal = await page.evaluate(() =>
-              !!(document.querySelector('.page__choose--role') ||
-                 document.querySelector('.modal.show') ||
-                 document.body?.innerText?.includes('Chọn vai trò'))
-            );
-            if (!hasRoleModal) break;
-            log("\uD83D\uDC64", `Chon vai tro → Xac nhan (lan ${attempt + 1})`);
-            await page.click('button:has-text("Xác nhận")').catch(() => {});
-            await page.waitForTimeout(3000);
-            await dismissTour();
-          }
-          // Luon set SelectedRole = role dau tien de skip modal chon role
-          await page.evaluate(() => {
-            localStorage.setItem("SelectedRole", localStorage.getItem("SelectedRole") || "1");
-          }).catch(() => {});
-
-          // Doi trang load noi dung (sau role selection)
-          await page.waitForTimeout(3000);
-
-          const loggedIn = page.url().includes("/crm/") && !page.url().includes("8080");
-          if (loggedIn) {
-            assert("LOGIN", true, "Dang nhap bang token da luu");
-            return true;
-          }
-          log("\u26A0\uFE0F", "Token het han — can login lai");
-        } else {
-          log("\u26A0\uFE0F", "Token da het han");
-        }
-      } catch {
-        log("\u26A0\uFE0F", "File cookies loi — can login lai");
-      }
+    log("\uD83D\uDD10", "Khoi phuc phien dang nhap tu .auth-state.json");
+    if (!hasSavedState) {
+      log("\u274C", "Khong tim thay .auth-state.json. Chay truoc: node tests/login-save.mjs");
+      assert("LOGIN", false, "Thieu .auth-state.json — chay 'node tests/login-save.mjs'");
+      return false;
     }
+    // storageState da duoc nap khi tao context — chi can navigate va dismiss tour.
+    await page.goto(`${CONFIG.BASE_URL}/dashboard`, {
+      waitUntil: "load",
+      timeout: CONFIG.NAVIGATION_TIMEOUT,
+    }).catch(() => {});
+    await page.waitForTimeout(2500);
+    await dismissTour();
 
-    // No saved token — need SSO login
-    log("\u274C", "Khong co token hop le. Chay truoc: node tests/login-save.mjs");
-    assert("LOGIN", false, "Can chay 'node tests/login-save.mjs' truoc de luu token");
-    return false;
+    const onApp = page.url().includes("/crm/") && !page.url().includes("8080");
+    if (!onApp) {
+      assert("LOGIN", false, `Phien het han hoac redirect SSO: ${page.url()}. Chay lai login-save.mjs.`);
+      return false;
+    }
+    assert("LOGIN", true, "Dung lai storageState da luu");
+    return true;
   }
 
   // ── Click helpers ──
