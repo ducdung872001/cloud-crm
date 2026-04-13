@@ -1,0 +1,21 @@
+{
+  "module": "VAT-DBG",
+  "name": "VAT prefill verify",
+  "runId": "vw128m",
+  "timestamp": "2026-04-12T14:58:08.519Z",
+  "durationMs": 35953,
+  "baseUrl": "http://localhost:4000/crm",
+  "total": 1,
+  "passed": 1,
+  "failed": 0,
+  "passRate": "100%",
+  "results": [
+    {
+      "testId": "LOGIN",
+      "status": "PASS",
+      "detail": "Dang nhap bang token da luu",
+      "ts": "2026-04-12T14:57:55.315Z"
+    }
+  ],
+  "apiCalls": 25
+}

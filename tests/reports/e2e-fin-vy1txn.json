@@ -1,0 +1,141 @@
+{
+  "module": "E2E-FIN",
+  "name": "Financial flow [y1txl]",
+  "runId": "vy1txn",
+  "timestamp": "2026-04-12T15:54:55.592Z",
+  "durationMs": 47901,
+  "baseUrl": "http://localhost:4000/crm",
+  "total": 21,
+  "passed": 14,
+  "failed": 7,
+  "passRate": "67%",
+  "results": [
+    {
+      "testId": "LOGIN",
+      "status": "PASS",
+      "detail": "Dang nhap bang token da luu",
+      "ts": "2026-04-12T15:54:30.975Z"
+    },
+    {
+      "testId": "A-01",
+      "status": "PASS",
+      "detail": "Tao don HD003935 amount=200000",
+      "ts": "2026-04-12T15:54:46.707Z"
+    },
+    {
+      "testId": "A-02",
+      "status": "PASS",
+      "detail": "Invoice IV1 +1: 1",
+      "ts": "2026-04-12T15:54:50.977Z"
+    },
+    {
+      "testId": "A-03",
+      "status": "PASS",
+      "detail": "Invoice IV1 total +200000: 200000",
+      "ts": "2026-04-12T15:54:50.977Z"
+    },
+    {
+      "testId": "A-04",
+      "status": "PASS",
+      "detail": "Finance dashboard income +200000 ✓",
+      "ts": "2026-04-12T15:54:50.977Z"
+    },
+    {
+      "testId": "A-05",
+      "status": "PASS",
+      "detail": "Cashbook entry thu +1 ✓",
+      "ts": "2026-04-12T15:54:50.977Z"
+    },
+    {
+      "testId": "A-06",
+      "status": "PASS",
+      "detail": "Cashbook thu sum +200000 ✓",
+      "ts": "2026-04-12T15:54:50.978Z"
+    },
+    {
+      "testId": "A-07",
+      "status": "FAIL",
+      "detail": "Cashbook invoiceId=3849 ≠ sale=3935",
+      "ts": "2026-04-12T15:54:50.978Z"
+    },
+    {
+      "testId": "A-08",
+      "status": "PASS",
+      "detail": "Bán khong tao cashbook chi: delta=0",
+      "ts": "2026-04-12T15:54:50.979Z"
+    },
+    {
+      "testId": "B-01",
+      "status": "PASS",
+      "detail": "create/return: code=0",
+      "ts": "2026-04-12T15:54:51.163Z"
+    },
+    {
+      "testId": "B-02",
+      "status": "PASS",
+      "detail": "return/confirm: code=0",
+      "ts": "2026-04-12T15:54:51.246Z"
+    },
+    {
+      "testId": "B-03",
+      "status": "PASS",
+      "detail": "Return invoice IV2 tao dung: id=3937, type=IV2, fee=200000",
+      "ts": "2026-04-12T15:54:55.324Z"
+    },
+    {
+      "testId": "B-04",
+      "status": "FAIL",
+      "detail": "Cashbook chi count sai: 0",
+      "ts": "2026-04-12T15:54:55.587Z"
+    },
+    {
+      "testId": "B-05",
+      "status": "FAIL",
+      "detail": "Cashbook chi sum sai: 0",
+      "ts": "2026-04-12T15:54:55.587Z"
+    },
+    {
+      "testId": "B-06",
+      "status": "FAIL",
+      "detail": "Expense delta sai: 0",
+      "ts": "2026-04-12T15:54:55.588Z"
+    },
+    {
+      "testId": "B-07",
+      "status": "FAIL",
+      "detail": "Fund balance delta sai: 0",
+      "ts": "2026-04-12T15:54:55.589Z"
+    },
+    {
+      "testId": "B-08",
+      "status": "PASS",
+      "detail": "Tra hang khong tao cashbook thu: delta=0",
+      "ts": "2026-04-12T15:54:55.589Z"
+    },
+    {
+      "testId": "C-01",
+      "status": "FAIL",
+      "detail": "BUG: fund balance net = 200000 (expected 0)",
+      "ts": "2026-04-12T15:54:55.590Z"
+    },
+    {
+      "testId": "C-02",
+      "status": "FAIL",
+      "detail": "BUG: net income-expense = 200000",
+      "ts": "2026-04-12T15:54:55.590Z"
+    },
+    {
+      "testId": "C-03",
+      "status": "PASS",
+      "detail": "✅ Dashboard income delta (200000) = Cashbook sum delta (200000)",
+      "ts": "2026-04-12T15:54:55.590Z"
+    },
+    {
+      "testId": "C-04",
+      "status": "PASS",
+      "detail": "✅ Dashboard expense delta (0) = Cashbook sum delta (0)",
+      "ts": "2026-04-12T15:54:55.590Z"
+    }
+  ],
+  "apiCalls": 25
+}

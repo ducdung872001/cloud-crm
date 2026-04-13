@@ -1,0 +1,123 @@
+{
+  "module": "E2E-PROMO",
+  "name": "Promotion CTKM [2c4yw]",
+  "runId": "x2c4yz",
+  "timestamp": "2026-04-13T10:42:37.101Z",
+  "durationMs": 43906,
+  "baseUrl": "http://localhost:4000/crm",
+  "total": 18,
+  "passed": 10,
+  "failed": 8,
+  "passRate": "56%",
+  "results": [
+    {
+      "testId": "LOGIN",
+      "status": "PASS",
+      "detail": "Dang nhap bang token da luu",
+      "ts": "2026-04-13T10:42:19.922Z"
+    },
+    {
+      "testId": "S1-01",
+      "status": "PASS",
+      "detail": "P1 created: code=0",
+      "ts": "2026-04-13T10:42:34.817Z"
+    },
+    {
+      "testId": "S1-02",
+      "status": "PASS",
+      "detail": "P2 created: code=0",
+      "ts": "2026-04-13T10:42:34.966Z"
+    },
+    {
+      "testId": "S1-03",
+      "status": "PASS",
+      "detail": "P3 created: code=0",
+      "ts": "2026-04-13T10:42:35.123Z"
+    },
+    {
+      "testId": "S2-01",
+      "status": "FAIL",
+      "detail": "Cart 200k → 2 eligible promo: 0 ()",
+      "ts": "2026-04-13T10:42:35.196Z"
+    },
+    {
+      "testId": "S2-02",
+      "status": "FAIL",
+      "detail": "P1 (10%) trong eligible",
+      "ts": "2026-04-13T10:42:35.196Z"
+    },
+    {
+      "testId": "S2-03",
+      "status": "FAIL",
+      "detail": "P2 (50k) trong eligible",
+      "ts": "2026-04-13T10:42:35.196Z"
+    },
+    {
+      "testId": "S2-04",
+      "status": "PASS",
+      "detail": "P3 KHONG trong eligible (cart 200k < minAmount 500k)",
+      "ts": "2026-04-13T10:42:35.196Z"
+    },
+    {
+      "testId": "S2-05",
+      "status": "FAIL",
+      "detail": "P3 missing from ineligible",
+      "ts": "2026-04-13T10:42:35.197Z"
+    },
+    {
+      "testId": "S3-01",
+      "status": "FAIL",
+      "detail": "Cart 500k → 3 promos eligible: 0",
+      "ts": "2026-04-13T10:42:35.277Z"
+    },
+    {
+      "testId": "S5-01",
+      "status": "FAIL",
+      "detail": "Cart 100k → chỉ P1 eligible: 0",
+      "ts": "2026-04-13T10:42:35.360Z"
+    },
+    {
+      "testId": "S5-02",
+      "status": "FAIL",
+      "detail": "P2 + P3 trong ineligible: 0",
+      "ts": "2026-04-13T10:42:35.361Z"
+    },
+    {
+      "testId": "S6-01",
+      "status": "PASS",
+      "detail": "Expired promo KHONG trong eligible (in any list: false)",
+      "ts": "2026-04-13T10:42:35.591Z"
+    },
+    {
+      "testId": "S7-01",
+      "status": "PASS",
+      "detail": "Promo chua start KHONG trong eligible",
+      "ts": "2026-04-13T10:42:35.781Z"
+    },
+    {
+      "testId": "S8-01",
+      "status": "PASS",
+      "detail": "orderAmount âm KHONG return promo eligible: 0",
+      "ts": "2026-04-13T10:42:35.940Z"
+    },
+    {
+      "testId": "S8-02",
+      "status": "PASS",
+      "detail": "Cart rỗng KHONG return promo: 0",
+      "ts": "2026-04-13T10:42:36.095Z"
+    },
+    {
+      "testId": "S9-01",
+      "status": "PASS",
+      "detail": "count-by-status active OK: code=0",
+      "ts": "2026-04-13T10:42:36.210Z"
+    },
+    {
+      "testId": "S9-02",
+      "status": "FAIL",
+      "detail": "list-active có 3 promo của test (P1, P2, P3): 0",
+      "ts": "2026-04-13T10:42:36.459Z"
+    }
+  ],
+  "apiCalls": 25
+}

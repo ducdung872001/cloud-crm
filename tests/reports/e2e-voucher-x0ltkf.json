@@ -1,0 +1,135 @@
+{
+  "module": "E2E-VOUCHER",
+  "name": "Voucher flow [0ltkc]",
+  "runId": "x0ltkf",
+  "timestamp": "2026-04-13T09:54:13.872Z",
+  "durationMs": 48129,
+  "baseUrl": "http://localhost:4000/crm",
+  "total": 20,
+  "passed": 20,
+  "failed": 0,
+  "passRate": "100%",
+  "results": [
+    {
+      "testId": "LOGIN",
+      "status": "PASS",
+      "detail": "Dang nhap bang token da luu",
+      "ts": "2026-04-13T09:53:48.287Z"
+    },
+    {
+      "testId": "S1-01",
+      "status": "PASS",
+      "detail": "coupon/update create: code=0",
+      "ts": "2026-04-13T09:54:03.099Z"
+    },
+    {
+      "testId": "S1-02",
+      "status": "PASS",
+      "detail": "Voucher id=6",
+      "ts": "2026-04-13T09:54:03.099Z"
+    },
+    {
+      "testId": "S2-01",
+      "status": "PASS",
+      "detail": "code=E2E0LTKC",
+      "ts": "2026-04-13T09:54:03.154Z"
+    },
+    {
+      "testId": "S2-02",
+      "status": "PASS",
+      "detail": "discountValue=50000",
+      "ts": "2026-04-13T09:54:03.154Z"
+    },
+    {
+      "testId": "S2-03",
+      "status": "PASS",
+      "detail": "minOrder=200000",
+      "ts": "2026-04-13T09:54:03.154Z"
+    },
+    {
+      "testId": "S2-04",
+      "status": "PASS",
+      "detail": "maxUses=3",
+      "ts": "2026-04-13T09:54:03.154Z"
+    },
+    {
+      "testId": "S2-05",
+      "status": "PASS",
+      "detail": "Initial usedCount=0",
+      "ts": "2026-04-13T09:54:03.154Z"
+    },
+    {
+      "testId": "S3-01",
+      "status": "PASS",
+      "detail": "Apply 199999đ < minOrder 200000đ phải reject hoặc discount=0: code=undefined, discount=undefined",
+      "ts": "2026-04-13T09:54:03.208Z"
+    },
+    {
+      "testId": "S4-01",
+      "status": "PASS",
+      "detail": "coupon/apply success: code=0",
+      "ts": "2026-04-13T09:54:03.280Z"
+    },
+    {
+      "testId": "S4-02",
+      "status": "PASS",
+      "detail": "discountAmount=50000 (expected 50000)",
+      "ts": "2026-04-13T09:54:03.280Z"
+    },
+    {
+      "testId": "S4-03",
+      "status": "PASS",
+      "detail": "finalAmount=150000 (expected 150000)",
+      "ts": "2026-04-13T09:54:03.280Z"
+    },
+    {
+      "testId": "S5-01",
+      "status": "PASS",
+      "detail": "Tao HD004071: subtotal=200000, discount=50000, final=150000",
+      "ts": "2026-04-13T09:54:03.616Z"
+    },
+    {
+      "testId": "S5-02",
+      "status": "PASS",
+      "detail": "usedCount tang +1: 0 → 1",
+      "ts": "2026-04-13T09:54:06.716Z"
+    },
+    {
+      "testId": "S6-01",
+      "status": "PASS",
+      "detail": "Tao duoc 3/3 sales",
+      "ts": "2026-04-13T09:54:13.488Z"
+    },
+    {
+      "testId": "S6-02",
+      "status": "PASS",
+      "detail": "usedCount = MAX_USES (3)",
+      "ts": "2026-04-13T09:54:13.488Z"
+    },
+    {
+      "testId": "S7-01",
+      "status": "PASS",
+      "detail": "Quota exhausted reject: code=undefined, msg=\"undefined\"",
+      "ts": "2026-04-13T09:54:13.564Z"
+    },
+    {
+      "testId": "S8-01",
+      "status": "PASS",
+      "detail": "count-by-status active: code=0",
+      "ts": "2026-04-13T09:54:13.620Z"
+    },
+    {
+      "testId": "S8-02",
+      "status": "PASS",
+      "detail": "sum-used: code=0",
+      "ts": "2026-04-13T09:54:13.682Z"
+    },
+    {
+      "testId": "S8-03",
+      "status": "PASS",
+      "detail": "Voucher list: usedCount=3 == maxUses=3 (đã hết)",
+      "ts": "2026-04-13T09:54:13.749Z"
+    }
+  ],
+  "apiCalls": 23
+}

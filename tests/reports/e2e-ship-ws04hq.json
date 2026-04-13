@@ -1,0 +1,213 @@
+{
+  "module": "E2E-SHIP",
+  "name": "Ban hang + Van chuyen [s04hn]",
+  "runId": "ws04hq",
+  "timestamp": "2026-04-13T05:53:52.238Z",
+  "durationMs": 75696,
+  "baseUrl": "http://localhost:4000/crm",
+  "total": 33,
+  "passed": 31,
+  "failed": 2,
+  "passRate": "94%",
+  "results": [
+    {
+      "testId": "LOGIN",
+      "status": "PASS",
+      "detail": "Dang nhap bang token da luu",
+      "ts": "2026-04-13T05:52:58.461Z"
+    },
+    {
+      "testId": "S1-01",
+      "status": "PASS",
+      "detail": "/fee-config/suggest hoạt động: code=0",
+      "ts": "2026-04-13T05:53:12.433Z"
+    },
+    {
+      "testId": "S1-02",
+      "status": "PASS",
+      "detail": "Phí ship > 0: 15000đ",
+      "ts": "2026-04-13T05:53:12.433Z"
+    },
+    {
+      "testId": "S1-03",
+      "status": "PASS",
+      "detail": "Tao invoice HD004017, total=215000 (SP 200000 + ship 15000)",
+      "ts": "2026-04-13T05:53:13.201Z"
+    },
+    {
+      "testId": "S1-04",
+      "status": "PASS",
+      "detail": "Stock giam 2 sau ban: 10 → 8",
+      "ts": "2026-04-13T05:53:16.586Z"
+    },
+    {
+      "testId": "S1-05",
+      "status": "PASS",
+      "detail": "Finance income tang 215000 (bao gom ship): delta=215000",
+      "ts": "2026-04-13T05:53:16.659Z"
+    },
+    {
+      "testId": "S1-06",
+      "status": "PASS",
+      "detail": "Fund balance tang 215000: delta=215000",
+      "ts": "2026-04-13T05:53:16.660Z"
+    },
+    {
+      "testId": "S2-01",
+      "status": "PASS",
+      "detail": "POST /shipment/create: code=0",
+      "ts": "2026-04-13T05:53:21.065Z"
+    },
+    {
+      "testId": "S2-02",
+      "status": "PASS",
+      "detail": "Shipment lien ket invoice HD004017: shipmentOrder=80Ug5NYQwIp",
+      "ts": "2026-04-13T05:53:21.065Z"
+    },
+    {
+      "testId": "S2-03",
+      "status": "PASS",
+      "detail": "receiverName luu dung: \"KH Test Ship s04hn\"",
+      "ts": "2026-04-13T05:53:21.065Z"
+    },
+    {
+      "testId": "S2-04",
+      "status": "PASS",
+      "detail": "receiverPhone luu dung: \"0912345678\"",
+      "ts": "2026-04-13T05:53:21.065Z"
+    },
+    {
+      "testId": "S2-05",
+      "status": "FAIL",
+      "detail": "shippingFee luu dung: 10000 (expected 15000)",
+      "ts": "2026-04-13T05:53:21.065Z"
+    },
+    {
+      "testId": "S2-06",
+      "status": "PASS",
+      "detail": "Status ban dau hop le: \"SUBMITTED\"",
+      "ts": "2026-04-13T05:53:21.065Z"
+    },
+    {
+      "testId": "S3-01",
+      "status": "PASS",
+      "detail": "Tao invoice HD004019",
+      "ts": "2026-04-13T05:53:22.672Z"
+    },
+    {
+      "testId": "S3-02",
+      "status": "PASS",
+      "detail": "Tao shipment 2: code=0",
+      "ts": "2026-04-13T05:53:25.473Z"
+    },
+    {
+      "testId": "S3-03",
+      "status": "PASS",
+      "detail": "Update shipment → DELIVERED: code=0",
+      "ts": "2026-04-13T05:53:28.341Z"
+    },
+    {
+      "testId": "S3-04",
+      "status": "PASS",
+      "detail": "Shipment status sau update: \"DELIVERED\"",
+      "ts": "2026-04-13T05:53:30.460Z"
+    },
+    {
+      "testId": "S3-05",
+      "status": "PASS",
+      "detail": "Stock GIU NGUYEN sau DELIVERED: 6 → 6 (khong hoan kho)",
+      "ts": "2026-04-13T05:53:30.798Z"
+    },
+    {
+      "testId": "S3-06",
+      "status": "PASS",
+      "detail": "Fund GIU NGUYEN sau DELIVERED: 2751015904 → 2751015904 (khong hoan tien)",
+      "ts": "2026-04-13T05:53:30.868Z"
+    },
+    {
+      "testId": "S4-01",
+      "status": "PASS",
+      "detail": "Tao invoice HD004021",
+      "ts": "2026-04-13T05:53:31.124Z"
+    },
+    {
+      "testId": "S4-02",
+      "status": "PASS",
+      "detail": "Tao shipment 3: code=0",
+      "ts": "2026-04-13T05:53:35.916Z"
+    },
+    {
+      "testId": "S4-03",
+      "status": "PASS",
+      "detail": "Update shipment → CANCELLED: code=0",
+      "ts": "2026-04-13T05:53:38.446Z"
+    },
+    {
+      "testId": "S4-04",
+      "status": "PASS",
+      "detail": "Shipment status sau update: \"CANCELLED\"",
+      "ts": "2026-04-13T05:53:40.527Z"
+    },
+    {
+      "testId": "S4-05",
+      "status": "PASS",
+      "detail": "Xac nhan BE khong auto-reverse (expected)",
+      "ts": "2026-04-13T05:53:40.827Z"
+    },
+    {
+      "testId": "S4-06",
+      "status": "PASS",
+      "detail": "create/return: code=0",
+      "ts": "2026-04-13T05:53:41.013Z"
+    },
+    {
+      "testId": "S4-07",
+      "status": "PASS",
+      "detail": "return/confirm: code=0",
+      "ts": "2026-04-13T05:53:41.092Z"
+    },
+    {
+      "testId": "S4-08",
+      "status": "PASS",
+      "detail": "Stock hoan 2 sau return: 4 → 6",
+      "ts": "2026-04-13T05:53:44.333Z"
+    },
+    {
+      "testId": "S4-09",
+      "status": "PASS",
+      "detail": "Expense tang >= 200000: 215000",
+      "ts": "2026-04-13T05:53:44.407Z"
+    },
+    {
+      "testId": "S5-01",
+      "status": "PASS",
+      "detail": "Tao invoice HD004025",
+      "ts": "2026-04-13T05:53:45.703Z"
+    },
+    {
+      "testId": "S5-02",
+      "status": "PASS",
+      "detail": "Invoice total = productTotal (100000) khi SENDER chiu phi",
+      "ts": "2026-04-13T05:53:45.703Z"
+    },
+    {
+      "testId": "S5-03",
+      "status": "PASS",
+      "detail": "Tao shipment SENDER: code=0",
+      "ts": "2026-04-13T05:53:49.794Z"
+    },
+    {
+      "testId": "S5-04",
+      "status": "FAIL",
+      "detail": "Shipment SENDER fee=0: fee=10000",
+      "ts": "2026-04-13T05:53:49.794Z"
+    },
+    {
+      "testId": "S5-05",
+      "status": "PASS",
+      "detail": "Income chi tang = productTotal (100000): delta=100000",
+      "ts": "2026-04-13T05:53:52.237Z"
+    }
+  ],
+  "apiCalls": 25
+}

@@ -1,0 +1,66 @@
+🚀  [E2E-CANCEL] Huy don flow [xgcz5] — Run wxgcz6
+------------------------------------------------------------
+🔐  Dang nhap...
+🍪  Dung token da luu (con hieu luc)
+✅  [LOGIN] PASS — Dang nhap bang token da luu
+
+══════════════════════════════════════════════════════════════════════
+  SETUP
+══════════════════════════════════════════════════════════════════════
+  Sample: [341] "E2E SP lkx4t" price=100000 stock=8
+
+══════════════════════════════════════════════════════════════════════
+  S1 — POS cancel order via return flow
+══════════════════════════════════════════════════════════════════════
+  Baseline: stock=8, income=6354000, expense=1345000, fund=2751645904
+✅  [S1-01] PASS — Tao don HD004045 total=200000
+✅  [S1-02] PASS — Sau ban: stock 8 → 6 (-2)
+✅  [S1-03] PASS — Sau ban: fund +200000, delta=200000
+
+  → Goi cancelInvoiceByReturn(4045)
+✅  [S1-04] PASS — Helper OK: returnInvoiceId=4047, refund=200000
+✅  [S1-05] PASS — Stock hoan ve baseline: 6 → 8 (expected 8)
+✅  [S1-06] PASS — Fund ve baseline (P/L net = 0): delta=0
+✅  [S1-07] PASS — Expense tang 200000: delta=200000
+  📋 [NOTE] S1: ✅ Cancel flow hoan chinh: stock/finance round-trip 0
+
+══════════════════════════════════════════════════════════════════════
+  S2 — Huy shipment → tu dong tra don hang goc
+══════════════════════════════════════════════════════════════════════
+✅  [S2-01] PASS — Tao don HD004049
+✅  [S2-02] PASS — Tao shipment: code=0
+  Shipment: 8hBQ0JUkYU1, orderCode=HD004049, orderId=null
+✅  [S2-03] PASS — Stock giam sau ban: 8 → 6
+
+  → Step 1: Cancel shipment 8hBQ0JUkYU1
+  DELETE returned 405, falling back to POST
+✅  [S2-04] PASS — Cancel shipment: status=200, code=0
+
+  → Step 2: Auto-return invoice 4049
+✅  [S2-05] PASS — Auto-return OK: refund=200000
+✅  [S2-06] PASS — Stock hoan sau cancel ship: 6 → 8
+✅  [S2-07] PASS — Fund net = 0 sau cancel ship + auto-return: delta=0
+✅  [S2-08] PASS — Shipment status: "CANCELLED"
+
+══════════════════════════════════════════════════════════════════════
+  S3 — Edge: shipment khong link invoice
+══════════════════════════════════════════════════════════════════════
+  📋 [NOTE] S3: Khong tao duoc orphan shipment ({"error":"Lỗi dịch vụ tích hợp 500: {\"error\":\"500 Internal Server Error: \\\"<!DOCTYPE html><EOL><html lang=\\\"en\\\"><EOL>    <head><EOL>        )
+
+══════════════════════════════════════════════════════════════════════
+  BUG REPORT
+══════════════════════════════════════════════════════════════════════
+
+🐛 UI BUGS (0):
+
+🔧 BE BUGS (0):
+
+📋 FINDINGS:
+  1. [S1] ✅ Cancel flow hoan chinh: stock/finance round-trip 0
+  2. [S3] Khong tao duoc orphan shipment ({"error":"Lỗi dịch vụ tích hợp 500: {\"error\":\"500 Internal Server Error: \\\"<!DOCTYPE html><EOL><html lang=\\\"en\\\"><EOL>    <head><EOL>        )
+
+============================================================
+✅  [E2E-CANCEL] Huy don flow [xgcz5]: 16/16 passed (100%), 0 failed
+📊  Report: tests/reports/e2e-cancel-wxgcz6.json
+⏱️  Duration: 54.7s
+============================================================

@@ -1,0 +1,64 @@
+🚀  [CANCEL-DASH] Cancel dashboard check [00607] — Run x00608
+------------------------------------------------------------
+🔐  Dang nhap...
+🍪  Dung token da luu (con hieu luc)
+✅  [LOGIN] PASS — Dang nhap bang token da luu
+branchId=23
+Sample: [341] E2E SP lkx4t stock=8
+
+══════════════════════════════════════════════════════════════════════
+BASELINE (truoc khi tao + huy)
+══════════════════════════════════════════════════════════════════════
+
+  📸 BASELINE:
+     tab-counts: {"draftCount":232,"orderCount":34,"cancelledCount":12}
+     dashboard: {"totalRevenue":7183457202,"totalOrder":526,"totalCancelOrder":33,"todayRevenue":5309000,"todayOrder":34,"orderByHour":[{"hour":0,"totalOrder":2},{"hour":1,"totalOrder":0},{"hour":2,"totalOrder":0},{"hour":3,"totalOrder":0},{"hour":4,"totalOrder":0},{"hour":5,"totalOrder":0},{"hour":6,"totalOrder":0},{"hour":7,"totalOrder":0},{"hour":8,"totalOrder":0},{"hour":9,"totalOrder":14},{"hour":10,"totalOr
+     cancelled list (status=3 today): count=12, total=2345000
+     all by status today: {"1":46}
+     latest cancelled: {"code":"HD004061","status":1,"fee":200000,"type":"IV1"}
+
+══════════════════════════════════════════════════════════════════════
+TAO 1 DON IV1 + huy
+══════════════════════════════════════════════════════════════════════
+Tao HD004065 (id=4065, total=200000)
+
+  📸 SAU KHI TAO:
+     tab-counts: {"draftCount":232,"orderCount":35,"cancelledCount":12}
+     dashboard: {"totalRevenue":7183857202,"totalOrder":528,"totalCancelOrder":33,"todayRevenue":5509000,"todayOrder":35,"orderByHour":[{"hour":0,"totalOrder":2},{"hour":1,"totalOrder":0},{"hour":2,"totalOrder":0},{"hour":3,"totalOrder":0},{"hour":4,"totalOrder":0},{"hour":5,"totalOrder":0},{"hour":6,"totalOrder":0},{"hour":7,"totalOrder":0},{"hour":8,"totalOrder":0},{"hour":9,"totalOrder":14},{"hour":10,"totalOr
+     cancelled list (status=3 today): count=12, total=2345000
+     all by status today: {"1":47}
+     latest cancelled: {"code":"HD004061","status":1,"fee":200000,"type":"IV1"}
+
+→ Cancel 4065
+Cancel OK: returnInvoiceId=4067, refund=200000
+
+  📸 SAU KHI HUY:
+     tab-counts: {"draftCount":232,"orderCount":34,"cancelledCount":13}
+     dashboard: {"totalRevenue":7183857202,"totalOrder":528,"totalCancelOrder":34,"todayRevenue":5309000,"todayOrder":34,"orderByHour":[{"hour":0,"totalOrder":2},{"hour":1,"totalOrder":0},{"hour":2,"totalOrder":0},{"hour":3,"totalOrder":0},{"hour":4,"totalOrder":0},{"hour":5,"totalOrder":0},{"hour":6,"totalOrder":0},{"hour":7,"totalOrder":0},{"hour":8,"totalOrder":0},{"hour":9,"totalOrder":14},{"hour":10,"totalOr
+     cancelled list (status=3 today): count=13, total=2545000
+     all by status today: {"1":47}
+     latest cancelled: {"code":"HD004065","status":1,"fee":200000,"type":"IV1"}
+
+══════════════════════════════════════════════════════════════════════
+VERDICT
+══════════════════════════════════════════════════════════════════════
+✅ T1-tab-counts-cancelled+1 — tab-counts.cancelled: 12 → 13 (delta=1, expected +1)
+✅ T2-dashboard-totalCancelOrder+1 — dashboard.totalCancelOrder: 33 → 34 (delta=1, expected +1)
+✅ T3-cancelled-list-count+1 — list filter status=3: 12 → 13 (delta=1)
+✅ T4-cancelled-list-total — list total: delta=200000 (expected +200000)
+✅ T5-latest-is-our-invoice — latest cancelled = HD004065 (expected HD004065)
+
+  Dashboard có các field cancelled/refund: totalCancelOrder
+    totalCancelOrder: 33 → 34 (delta=1)
+
+  Return count delta: 0 → 0 (delta=0)
+
+══════════════════════════════════════════════════════════════════════
+SUMMARY: 5/5 passed
+══════════════════════════════════════════════════════════════════════
+
+============================================================
+✅  [CANCEL-DASH] Cancel dashboard check [00607]: 1/1 passed (100%), 0 failed
+📊  Report: tests/reports/cancel-dash-x00608.json
+⏱️  Duration: 50.6s
+============================================================

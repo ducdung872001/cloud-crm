@@ -1,0 +1,85 @@
+🚀  [PROMO-PROBE] Promo tracking probe [2qlvv] — Run x2qlvv
+------------------------------------------------------------
+🔐  Dang nhap...
+🍪  Dung token da luu (con hieu luc)
+✅  [LOGIN] PASS — Dang nhap bang token da luu
+Sample: [274] Laptop DELL Precision stock=1182
+
+══════════════════════════════════════════════════════════════════════
+STEP 1: Tạo promo + activate
+══════════════════════════════════════════════════════════════════════
+Promo created id=137
+Promo BEFORE sale: {"id":137,"name":"PROBE-100k-2qlvv","startTime":"2026-04-12T10:53:45","endTime":"2026-04-20T10:53:45","applyType":1,"minAmount":200000,"perAmount":null,"promotionType":1,"discount":100000,"discountType":2,"status":1,"employeeId":54,"branchId":23,"bsnId":6,"mode":1,"budget":0,"usedCount":0,"input":null,"output":null,"businessRuleId":0,"slug":"probe-100k-2qlvv-137","fixedPrice":null}
+
+══════════════════════════════════════════════════════════════════════
+STEP 2: Verify check-eligible
+══════════════════════════════════════════════════════════════════════
+Eligible found: discount=100000
+
+══════════════════════════════════════════════════════════════════════
+STEP 3: Tao sale 300k, applied promo (discount=100k)
+══════════════════════════════════════════════════════════════════════
+insertBatch: code=0
+Sale created: HD004083 (id=4083), final=200000
+
+══════════════════════════════════════════════════════════════════════
+STEP 4: GET invoice detail — check promotionId field
+══════════════════════════════════════════════════════════════════════
+Invoice detail keys: id, invoiceCode, invoiceType, amountCard, amount, discount, vatAmount, fee, paid, debt, paymentType, status, receiptDate, createdTime, updatedTime, employeeId, customerId, branchId, bsnId, paymentFundId
+Invoice fields liên quan promo:
+  discount: 100000
+
+→ Invoice CÓ field promotionId/promoId? false
+
+══════════════════════════════════════════════════════════════════════
+STEP 5: GET promo sau sale — usedCount/usedAmount?
+══════════════════════════════════════════════════════════════════════
+Promo AFTER sale: {"id":137,"name":"PROBE-100k-2qlvv","startTime":"2026-04-12T10:53:45","endTime":"2026-04-20T10:53:45","applyType":1,"minAmount":200000,"perAmount":null,"promotionType":1,"discount":100000,"discountType":2,"status":1,"employeeId":54,"branchId":23,"bsnId":6,"mode":1,"budget":0,"usedCount":0,"input":null,"output":null,"businessRuleId":0,"slug":"probe-100k-2qlvv-137","fixedPrice":null}
+
+Tracking fields (used/count/amount/revenue): minAmount, perAmount, discount, discountType, usedCount
+  minAmount: 200000 → 200000 (delta=0)
+  perAmount: null → null (delta=0)
+  discount: 100000 → 100000 (delta=0)
+  discountType: 2 → 2 (delta=0)
+  usedCount: 0 → 0 (delta=0)
+
+══════════════════════════════════════════════════════════════════════
+STEP 6: Try various promo report endpoints
+══════════════════════════════════════════════════════════════════════
+  /market/promotion/report → 404 NOT FOUND
+  /market/promotion/statistics → 404 NOT FOUND
+  /market/promotion/usage?id=137 → 404 NOT FOUND
+  /market/promotion/usage-by-invoice?invoiceId=4083 → 404 NOT FOUND
+  /market/promotion/get-revenue?id=137 → 404 NOT FOUND
+  /market/promotion/dashboard → 404 NOT FOUND
+  /market/promotion/by-invoice?invoiceId=4083 → 404 NOT FOUND
+  /market/promotion-usage/list → 404 NOT FOUND
+  /market/promotion-usage/get?promotionId=137 → 404 NOT FOUND
+
+══════════════════════════════════════════════════════════════════════
+STEP 7: Tao sale 300k discount=100k MAC DU KHONG goi check-eligible
+══════════════════════════════════════════════════════════════════════
+Created sale 2 (no check-eligible called)
+promo.usedCount: 0 → 0
+✅ BE không tự increment khi sale không gọi check-eligible
+
+══════════════════════════════════════════════════════════════════════
+STEP 8: List promo full fields
+══════════════════════════════════════════════════════════════════════
+Item 0 keys: id, name, startTime, endTime, applyType, minAmount, perAmount, promotionType, discount, discountType, status, employeeId, branchId, bsnId, mode, budget, usedCount, input, output, businessRuleId, slug, fixedPrice
+Stats fields: minAmount, perAmount, discount, discountType, usedCount
+  minAmount: 200000
+  perAmount: null
+  discount: 100000
+  discountType: 2
+  usedCount: 0
+
+══════════════════════════════════════════════════════════════════════
+CLEANUP
+══════════════════════════════════════════════════════════════════════
+
+============================================================
+✅  [PROMO-PROBE] Promo tracking probe [2qlvv]: 1/1 passed (100%), 0 failed
+📊  Report: tests/reports/promo-probe-x2qlvv.json
+⏱️  Duration: 55.2s
+============================================================

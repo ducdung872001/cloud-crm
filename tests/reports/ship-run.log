@@ -1,0 +1,101 @@
+🚀  [E2E-SHIP] Ban hang + Van chuyen [slnf9] — Run wslnfc
+------------------------------------------------------------
+🔐  Dang nhap...
+🍪  Dung token da luu (con hieu luc)
+✅  [LOGIN] PASS — Dang nhap bang token da luu
+
+══════════════════════════════════════════════════════════════════════
+  SETUP
+══════════════════════════════════════════════════════════════════════
+  Sample: [339] "E2E SP kteo8" price=100000 stock=9
+  Variant: id=436, unitId=78
+
+══════════════════════════════════════════════════════════════════════
+  S1 — SUGGEST phi ship + tao don ship
+══════════════════════════════════════════════════════════════════════
+  /fee-config/suggest: code=0, result=15000
+✅  [S1-01] PASS — /fee-config/suggest hoạt động: code=0
+  Suggested fee = 15000đ
+✅  [S1-02] PASS — Phí ship > 0: 15000đ
+  Baseline: stock=9, income=5209000, expense=730000, fund=2751115904, shipCount=50
+✅  [S1-03] PASS — Tao invoice HD004027, total=215000 (SP 200000 + ship 15000)
+✅  [S1-04] PASS — Stock giam 2 sau ban: 9 → 7
+✅  [S1-05] PASS — Finance income tang 215000 (bao gom ship): delta=215000
+✅  [S1-06] PASS — Fund balance tang 215000: delta=215000
+
+══════════════════════════════════════════════════════════════════════
+  S2 — CREATE shipment lien ket invoice
+══════════════════════════════════════════════════════════════════════
+  shipment/create: status=200, code=0
+  shipment body: {"code":0,"message":"OK","result":{"id":1032,"shipmentOrder":"9JFFIk9U9EM","bsnId":6,"orderId":null,"orderCode":"HD004027","carrierCode":"GHTK","carrierName":"Giao Hàng Tiết Kiệm","carrierTrackingCode":"S23099330.BO.HN3-I2.1200034958","carrierServiceCode":null,"senderName":"Reborn Store","senderPhone":"0901111111","senderEmail":"store@reborn.vn","senderAddress":"So 1 Le Loi","receiverName":"KH Tes
+✅  [S2-01] PASS — POST /shipment/create: code=0
+  Created shipment: id=1032, shipmentOrder=9JFFIk9U9EM
+  Link fields: orderId=null, orderCode=HD004027, internalOrderId=undefined
+✅  [S2-02] PASS — Shipment lien ket invoice HD004027: shipmentOrder=9JFFIk9U9EM
+✅  [S2-03] PASS — receiverName luu dung: "KH Test Ship slnf9"
+✅  [S2-04] PASS — receiverPhone luu dung: "0912345678"
+✅  [S2-05] PASS — shippingFee tu carrier that: 10000 (FE suggest 15000, lech 33%)
+✅  [S2-06] PASS — Status ban dau hop le: "SUBMITTED"
+
+══════════════════════════════════════════════════════════════════════
+  S3 — DELIVERED happy path
+══════════════════════════════════════════════════════════════════════
+✅  [S3-01] PASS — Tao invoice HD004029
+✅  [S3-02] PASS — Tao shipment 2: code=0
+  shipment2.shipmentOrder=8Ykscwsd5NZ, initial status=SUBMITTED
+  shipment/update status=DELIVERED: code=0, status=200
+  response: {"code":0,"message":"OK","result":{"id":1033,"shipmentOrder":"8Ykscwsd5NZ","bsnId":6,"orderId":null,"orderCode":"HD004029","carrierCode":"GHTK","carrierName":"Giao Hàng Tiết Kiệm","carrierTrackingCode":"S23099330.BO.HN1.CBCTTT2.1050035945","carrierServiceCode":null,"senderName":"Reborn Store","sende
+✅  [S3-03] PASS — Update shipment → DELIVERED: code=0
+✅  [S3-04] PASS — Shipment status sau update: "DELIVERED"
+✅  [S3-05] PASS — Stock GIU NGUYEN sau DELIVERED: 5 → 5 (khong hoan kho)
+✅  [S3-06] PASS — Fund GIU NGUYEN sau DELIVERED: 2751545904 → 2751545904 (khong hoan tien)
+
+══════════════════════════════════════════════════════════════════════
+  S4 — FAILED delivery + manual refund flow
+══════════════════════════════════════════════════════════════════════
+✅  [S4-01] PASS — Tao invoice HD004031
+✅  [S4-02] PASS — Tao shipment 3: code=0
+  Pre-fail: stock=3, fund=2751760904
+  shipment/update status=FAILED_DELIVERY: code=undefined
+  Fallback: shipment/update status=CANCELLED: code=0
+✅  [S4-03] PASS — Update shipment → CANCELLED: code=0
+✅  [S4-04] PASS — Shipment status sau update: "CANCELLED"
+
+  📋 Verify BE KHONG auto-reverse sau fail:
+     stock 3 → 3 (expected: khong doi — BE chua auto reverse)
+     fund 2751760904 → 2751760904
+  📋 [NOTE] S4: BE KHONG auto-reverse → tester phai tao return invoice thu cong
+✅  [S4-05] PASS — Xac nhan BE khong auto-reverse (expected)
+
+  → Tao return invoice thu cong cho hoa don HD004031
+✅  [S4-06] PASS — create/return: code=0
+✅  [S4-07] PASS — return/confirm: code=0
+✅  [S4-08] PASS — Stock hoan 2 sau return: 3 → 5
+  Finance after refund: expense delta=215000, fund delta=-215000
+✅  [S4-09] PASS — Expense tang >= 200000: 215000
+
+══════════════════════════════════════════════════════════════════════
+  S5 — SENDER chiu phi ship (khong cong vao invoice)
+══════════════════════════════════════════════════════════════════════
+✅  [S5-01] PASS — Tao invoice HD004035
+✅  [S5-02] PASS — Invoice total = productTotal (100000) khi SENDER chiu phi
+✅  [S5-03] PASS — Tao shipment SENDER: code=0
+✅  [S5-04] PASS — Shipment SENDER record carrier fee=10000 bearer="(no bearer field)"
+✅  [S5-05] PASS — Income chi tang = productTotal (100000): delta=100000
+
+══════════════════════════════════════════════════════════════════════
+  BUG REPORT
+══════════════════════════════════════════════════════════════════════
+
+🐛 UI BUGS (0):
+
+🔧 BE BUGS (0):
+
+📋 KEY FINDINGS:
+  1. [S4] BE KHONG auto-reverse → tester phai tao return invoice thu cong
+
+============================================================
+✅  [E2E-SHIP] Ban hang + Van chuyen [slnf9]: 33/33 passed (100%), 0 failed
+📊  Report: tests/reports/e2e-ship-wslnfc.json
+⏱️  Duration: 84.7s
+============================================================

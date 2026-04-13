@@ -1,0 +1,93 @@
+{
+  "module": "E2E-SHIP",
+  "name": "Ban hang + Van chuyen [lp6qw]",
+  "runId": "wlp6qy",
+  "timestamp": "2026-04-13T02:57:08.188Z",
+  "durationMs": 59634,
+  "baseUrl": "http://localhost:4000/crm",
+  "total": 13,
+  "passed": 12,
+  "failed": 1,
+  "passRate": "92%",
+  "results": [
+    {
+      "testId": "LOGIN",
+      "status": "PASS",
+      "detail": "Dang nhap bang token da luu",
+      "ts": "2026-04-13T02:56:33.578Z"
+    },
+    {
+      "testId": "S1-01",
+      "status": "PASS",
+      "detail": "/fee-config/suggest hoạt động: code=0",
+      "ts": "2026-04-13T02:56:49.913Z"
+    },
+    {
+      "testId": "S1-02",
+      "status": "PASS",
+      "detail": "Phí ship > 0: 15000đ",
+      "ts": "2026-04-13T02:56:49.913Z"
+    },
+    {
+      "testId": "S1-03",
+      "status": "PASS",
+      "detail": "Tao invoice HD003977, total=215000 (SP 200000 + ship 15000)",
+      "ts": "2026-04-13T02:56:54.167Z"
+    },
+    {
+      "testId": "S1-04",
+      "status": "PASS",
+      "detail": "Stock giam 2 sau ban: 10 → 8",
+      "ts": "2026-04-13T02:56:57.543Z"
+    },
+    {
+      "testId": "S1-05",
+      "status": "PASS",
+      "detail": "Finance income tang 215000 (bao gom ship): delta=215000",
+      "ts": "2026-04-13T02:56:57.665Z"
+    },
+    {
+      "testId": "S1-06",
+      "status": "PASS",
+      "detail": "Fund balance tang 215000: delta=215000",
+      "ts": "2026-04-13T02:56:57.665Z"
+    },
+    {
+      "testId": "S2-01",
+      "status": "PASS",
+      "detail": "POST /shipment/create: code=0",
+      "ts": "2026-04-13T02:56:58.857Z"
+    },
+    {
+      "testId": "S2-02",
+      "status": "FAIL",
+      "detail": "KHONG tim thay shipment",
+      "ts": "2026-04-13T02:57:01.308Z"
+    },
+    {
+      "testId": "S3-01",
+      "status": "PASS",
+      "detail": "Tao invoice HD003979",
+      "ts": "2026-04-13T02:57:02.058Z"
+    },
+    {
+      "testId": "S3-02",
+      "status": "PASS",
+      "detail": "Tao shipment 2: code=0",
+      "ts": "2026-04-13T02:57:02.640Z"
+    },
+    {
+      "testId": "S4-01",
+      "status": "PASS",
+      "detail": "Tao invoice HD003981",
+      "ts": "2026-04-13T02:57:05.292Z"
+    },
+    {
+      "testId": "S4-02",
+      "status": "PASS",
+      "detail": "Tao shipment 3: code=0",
+      "ts": "2026-04-13T02:57:05.983Z"
+    }
+  ],
+  "apiCalls": 15
+}
