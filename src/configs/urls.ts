@@ -212,13 +212,11 @@ export const urlsApi = {
     getAccountCall: prefixAdmin + "/employeeAgent/employeeId",
     reloadData: prefixAdmin + "/customer/moveToEs",
 
+    //reset trạng thái cuộc gọi khách hàng Tnex
+    resetDataCustomer: prefixAdmin + "/customer/reset_to_new",
+
     // chia data khách hàng Tnex
     customerAssign: prefixAdmin + "/customer/assign",
-  },
-
-  // GHD api chống chế =))))))))))))
-  payroll: {
-    export: prefixAdmin + "/payroll/export",
   },
 
   partner: {
