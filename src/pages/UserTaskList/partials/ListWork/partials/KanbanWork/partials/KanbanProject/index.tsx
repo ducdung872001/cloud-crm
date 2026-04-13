@@ -1,7 +1,8 @@
 import React, { Fragment, useEffect, useState } from "react";
 import Tippy from "@tippyjs/react";
 import { getSearchParameters, trimContent } from "reborn-util";
-import SwiperCore, { Grid, Navigation } from "swiper";
+import type { Swiper as SwiperCore } from "swiper";
+import { Grid, Navigation } from "swiper/modules";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { DragDropContext, Droppable } from "react-beautiful-dnd";
 import WorkProjectService from "services/WorkProjectService";
@@ -16,8 +17,6 @@ import TaskItem from "../TaskItem";
 import ExchangeFast from "../ExchangeFast";
 import { useWindowDimensions } from "utils/hookCustom";
 import "./index.scss";
-
-SwiperCore.use([Navigation]);
 
 interface IKanbanProjectProps {
   isShow: boolean;

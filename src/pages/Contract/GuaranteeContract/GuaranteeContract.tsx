@@ -20,7 +20,8 @@ import ContractService from "services/ContractService";
 import "./GuaranteeContract.scss";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { useOnClickOutside, useWindowDimensions } from "utils/hookCustom";
-import SwiperCore, { Navigation, Grid } from "swiper";
+import type { Swiper as SwiperCore } from "swiper";
+import { Navigation, Grid } from "swiper/modules";
 //Tham chiếu bên Khách hàng
 
 //Tham chiếu bên tổng đài

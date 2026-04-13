@@ -1,6 +1,7 @@
 import React, { Fragment, useEffect, useMemo, useState } from "react";
 import Tippy from "@tippyjs/react";
-import SwiperCore, { Navigation } from "swiper";
+import type { Swiper as SwiperCore } from "swiper";
+import { Navigation } from "swiper/modules";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { formatCurrency } from "reborn-util";
 import Icon from "components/icon";
@@ -14,8 +15,6 @@ import { IActionModal } from "model/OtherModel";
 import "swiper/css";
 import "swiper/css/navigation";
 import "./ShowModalPackage.scss";
-
-SwiperCore.use([Navigation]);
 
 interface IShowModalPackageProps {
   onShow: boolean;
@@ -253,6 +252,7 @@ export default function ShowModalPackage(props: IShowModalPackageProps) {
                         nextEl: ".swiper-button-next",
                         prevEl: ".swiper-button-prev",
                       }}
+                      modules={[Navigation]}
                     >
                       <div className="swiper-button-next"></div>
                       <div className="swiper-button-prev"></div>

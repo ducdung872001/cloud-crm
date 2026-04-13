@@ -1,5 +1,6 @@
 import React, { Fragment, useContext, useEffect, useState } from "react";
-import SwiperCore, { Navigation } from "swiper";
+import type { Swiper as SwiperCore } from "swiper";
+import { Navigation } from "swiper/modules";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { getSearchParameters, formatCurrency } from "reborn-util";
 import { IMenuTab } from "model/OtherModel";
@@ -29,8 +30,6 @@ import ImageError from "assets/images/error.png";
 
 import "./CreateOrderSales.scss";
 import { ICardResponse } from "model/card/CardResponseModel";
-
-SwiperCore.use([Navigation]);
 
 interface IDataOptionCustomer {
   value: number;
@@ -370,6 +369,7 @@ export default function CreateOrderSales() {
                     nextEl: ".swiper-button-next",
                     prevEl: ".swiper-button-prev",
                   }}
+                  modules={[Navigation]}
                 >
                   <div className="swiper-button-next"></div>
                   <div className="swiper-button-prev"></div>

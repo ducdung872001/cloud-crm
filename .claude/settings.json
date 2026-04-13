@@ -1,0 +1,8 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(ls d:/Git/reborn/reborn-cloud/cloud-ver2/cloud-crm/vite.config.*)",
+      "Bash(yarn build:*)"
+    ]
+  }
+}

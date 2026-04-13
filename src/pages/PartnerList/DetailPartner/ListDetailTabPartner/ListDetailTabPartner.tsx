@@ -5,7 +5,8 @@ import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
 import { IListTabDetailProps } from "model/customer/PropsModel";
 import "./ListDetailTabPartner.scss";
 import { Swiper, SwiperSlide } from "swiper/react";
-import SwiperCore, { Navigation, Grid } from "swiper";
+import type { Swiper as SwiperCore } from "swiper";
+import { Navigation, Grid } from "swiper/modules";
 import ExchangePartnerList from "./ExchangePartnerList/ExchangePartnerList";
 import OrderPartnerList from "./OrderPartnerList/OrderPartnerList";
 

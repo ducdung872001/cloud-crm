@@ -3,7 +3,8 @@ import moment from "moment";
 import Tippy from "@tippyjs/react";
 import parser from "html-react-parser";
 import { useNavigate } from "react-router-dom";
-import SwiperCore, { Navigation } from "swiper";
+import type { Swiper as SwiperCore } from "swiper";
+import { Navigation } from "swiper/modules";
 import { Swiper, SwiperSlide } from "swiper/react";
 import Icon from "components/icon";
 import Dialog, { IContentDialog } from "components/dialog/dialog";
@@ -19,8 +20,6 @@ import "tippy.js/animations/scale-extreme.css";
 import "./ViewDetailPartner.scss";
 import _ from "lodash";
 import PartnerService from "services/PartnerService";
-
-SwiperCore.use([Navigation]);
 
 export default function ViewDetailPartner(props: any) {
 

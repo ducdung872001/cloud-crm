@@ -26,7 +26,8 @@ import TransactionInformation from "./partials/TransactionInformation";
 import CustomerRevenue from "./partials/CustomerRevenue";
 import ProductNeeds from "./partials/ProductNeeds";
 import { Swiper, SwiperSlide } from "swiper/react";
-import SwiperCore, { Navigation, Grid } from "swiper";
+import type { Swiper as SwiperCore } from "swiper";
+import { Navigation, Grid } from "swiper/modules";
 
 type TabChild = {
   title: string;

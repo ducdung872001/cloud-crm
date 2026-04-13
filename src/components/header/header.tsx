@@ -4,7 +4,8 @@ import moment from "moment";
 import { useCookies } from "react-cookie";
 import { useNavigate } from "react-router-dom";
 import { Swiper, SwiperSlide } from "swiper/react";
-import SwiperCore, { Autoplay } from "swiper";
+import type { Swiper as SwiperCore } from "swiper";
+import { Autoplay } from "swiper/modules";
 import Button from "components/button/button";
 import Icon from "components/icon";
 import Popover from "components/popover/popover";
@@ -19,8 +20,6 @@ import Input from "components/input/input";
 import ShowModalChangeRole from "pages/Common/ShowModalChangeRole";
 import "./header.scss";
 import Tippy from "@tippyjs/react";
-
-SwiperCore.use([Autoplay]);
 
 export default function Header(props: any) {
   const [cookies, setCookie, removeCookie] = useCookies();
@@ -314,6 +313,7 @@ export default function Header(props: any) {
           // loop={true}
           direction="vertical"
           simulateTouch={false}
+          modules={[Autoplay]}
         >
           <SwiperSlide className="swiper__item">
             <div className="info__common">

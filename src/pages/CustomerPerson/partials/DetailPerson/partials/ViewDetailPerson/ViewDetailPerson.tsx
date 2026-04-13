@@ -3,7 +3,8 @@ import moment from "moment";
 import Tippy from "@tippyjs/react";
 import parser from "html-react-parser";
 import { useNavigate } from "react-router-dom";
-import SwiperCore, { Navigation } from "swiper";
+import type { Swiper as SwiperCore } from "swiper";
+import { Navigation } from "swiper/modules";
 import { Swiper, SwiperSlide } from "swiper/react";
 import Icon from "components/icon";
 import Dialog, { IContentDialog } from "components/dialog/dialog";
@@ -24,8 +25,6 @@ import SelectCustom from "components/selectCustom/selectCustom";
 import Button from "components/button/button";
 import TextArea from "components/textarea/textarea";
 import _ from "lodash";
-
-SwiperCore.use([Navigation]);
 
 export default function ViewDetailPerson(props: IViewDetailPersonProps) {
   const sourceDomain = getDomain(decodeURIComponent(document.location.href));
@@ -726,6 +725,7 @@ export default function ViewDetailPerson(props: IViewDetailPersonProps) {
                   nextEl: ".swiper-button-next",
                   prevEl: ".swiper-button-prev",
                 }}
+                modules={[Navigation]}
               >
                 <div className="swiper-button-next"></div>
                 <div className="swiper-button-prev"></div>
