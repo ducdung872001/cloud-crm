@@ -809,28 +809,102 @@ export default function AddProductPage({ idProduct, data, onBack, preFillBarcode
   };
 
   const handleSubmit = async () => {
-    if (!formData.name.trim()) {
+    // ── UI validation trước submit (theo chuẩn reborn-retail VALIDATION_AUDIT) ──
+    // Rules: required, max:N, min:0, regex
+    // Nguồn tham khảo: docs/VALIDATION_AUDIT.md ở nhánh reborn-retail
+
+    // 1. Tên SP: required + max 255
+    const nameTrim = formData.name.trim();
+    if (!nameTrim) {
       showToast("Vui lòng nhập tên sản phẩm", "error");
+      setActiveTab("basic");
       return;
     }
+    if (nameTrim.length > 255) {
+      showToast("Tên sản phẩm không được vượt quá 255 ký tự", "error");
+      setActiveTab("basic");
+      return;
+    }
+
+    // 2. Mô tả: nullable + max 2000 (nếu có)
+    if (formData.description && formData.description.length > 2000) {
+      showToast("Mô tả sản phẩm không được vượt quá 2000 ký tự", "error");
+      setActiveTab("basic");
+      return;
+    }
+
+    // 3. Tồn kho: nullable + min 0 (không âm)
+    const stockNum = +(formData.stock ?? 0);
+    const minStockNum = +(formData.minStock ?? 0);
+    const maxStockNum = +(formData.maxStock ?? 0);
+    if (isNaN(stockNum) || stockNum < 0) {
+      showToast("Tồn kho ban đầu phải là số không âm", "error");
+      setActiveTab("basic");
+      return;
+    }
+    if (isNaN(minStockNum) || minStockNum < 0) {
+      showToast("Tồn kho tối thiểu phải là số không âm", "error");
+      setActiveTab("basic");
+      return;
+    }
+    if (isNaN(maxStockNum) || maxStockNum < 0) {
+      showToast("Tồn kho tối đa phải là số không âm", "error");
+      setActiveTab("basic");
+      return;
+    }
+    // min ≤ max (chỉ kiểm nếu cả 2 đều > 0)
+    if (minStockNum > 0 && maxStockNum > 0 && minStockNum > maxStockNum) {
+      showToast("Tồn kho tối thiểu không được lớn hơn tồn kho tối đa", "error");
+      setActiveTab("basic");
+      return;
+    }
+
+    // 4. Biến thể: ít nhất 1 combination
     if (combinations.length === 0) {
       showToast("Vui lòng thêm ít nhất 1 biến thể sản phẩm", "error");
       setActiveTab("variants");
       return;
     }
+
+    // 5. SKU biến thể: nullable + max 20 + regex (chỉ a-zA-Z0-9-_)
     const longSku = combinations.find((c) => c.sku && c.sku.length > 20);
     if (longSku) {
       showToast(`SKU biến thể "${longSku.label}" vượt quá 20 ký tự`, "error");
       setActiveTab("variants");
       return;
     }
+    const invalidSku = combinations.find((c) => c.sku && !/^[A-Za-z0-9_\-]+$/.test(c.sku));
+    if (invalidSku) {
+      showToast(`SKU biến thể "${invalidSku.label}" chỉ được chứa chữ, số, "-" và "_"`, "error");
+      setActiveTab("variants");
+      return;
+    }
+
+    // 6. Giá biến thể: required + min 0 (phải có ít nhất 1 variantPrice > 0)
     const missingPrice = combinations.find((c) => {
-      // Giá nằm trong variantPrices list (theo từng đơn vị)
       const hasPrice = c.variantPrices.some((vp) => vp.price && +vp.price > 0);
       return !hasPrice;
     });
     if (missingPrice) {
       showToast(`Biến thể "${missingPrice.label}" chưa có giá bán`, "error");
+      setActiveTab("variants");
+      return;
+    }
+    // Giá phải không âm (kể cả giá khuyến mãi, giá sỉ, giá vốn)
+    const negativePrice = combinations.find((c) => {
+      if ((c.costPrice != null && +c.costPrice < 0) || (c.priceWholesale != null && +c.priceWholesale < 0) || (c.pricePromo != null && +c.pricePromo < 0)) return true;
+      return c.variantPrices.some((vp) => vp.price != null && +vp.price < 0);
+    });
+    if (negativePrice) {
+      showToast(`Biến thể "${negativePrice.label}" có giá âm — giá phải >= 0`, "error");
+      setActiveTab("variants");
+      return;
+    }
+
+    // 7. Đơn vị biến thể: required
+    const missingUnit = combinations.find((c) => !c.unitId);
+    if (missingUnit) {
+      showToast(`Biến thể "${missingUnit.label}" chưa chọn đơn vị tính`, "error");
       setActiveTab("variants");
       return;
     }
@@ -1405,7 +1479,7 @@ export default function AddProductPage({ idProduct, data, onBack, preFillBarcode
                   <label>
                     Tên sản phẩm <span className="required">*</span>
                   </label>
-                  <input type="text" value={formData.name} onChange={(e) => setField("name", e.target.value)} placeholder="Nhập tên sản phẩm..." />
+                  <input type="text" value={formData.name} onChange={(e) => setField("name", e.target.value)} placeholder="Nhập tên sản phẩm..." maxLength={255} />
                 </div>
                 <div className="add-prod-field add-prod-field--full" style={{ marginTop: 12 }}>
                   <label>Danh mục sản phẩm</label>
