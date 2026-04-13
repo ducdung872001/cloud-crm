@@ -3714,7 +3714,410 @@
 *3. Bo sung cac module con thieu (RT.08-RT.40)*
 *4. Ra soat lan 2: bo sung RT.31-RT.40 (Bao hanh, Marketing, Social CRM, Bao gia, Chien dich, Phan tich KH, Hoa don thuong, POS nang cao, Lich hen, To chuc)*
 *5. Ra soat lan 3: kiem tra routes.tsx — bo sung RT.41-RT.43 (BPM, Marketing Automation, Sale Flow) — cac module CO TRONG MENU nhung chua test. Xac nhan 13 module KHONG thuoc retail (khong co route/menu)*
+*6. Ra soat lan 4 (2026-04-13): bo sung RT.44-RT.47 — CRUD validation, destructive input, cross-module flow, E2E automated coverage matrix*
 
-*Tong cong: 43 kich ban, ~860+ buoc kiem thu*
+*Tong cong: 47 kich ban, ~1100+ buoc kiem thu*
 
-*— Reborn Team, 11/04/2026*
+*— Reborn Team, 11/04/2026 (update 2026-04-13)*
+
+---
+
+# PHAN BO SUNG (2026-04-13) — Cac nhom test case con thieu
+
+> Muc dich: bo sung cac nhom kiem thu chua co trong ban goc, tap trung vao:
+> 1. **CRUD cho moi form chinh** — Create / Read / Update / Delete + validation bat buoc
+> 2. **Destructive input testing** — phá form bằng du lieu xau (boundary, injection, special chars)
+> 3. **Cross-module integration flow** — check so lieu xuyen suot nhieu phan he
+> 4. **Coverage matrix** — lien ket voi cac E2E test da co trong `tests/test-e2e-*.mjs`
+
+---
+
+## RT.44 — CRUD Validation Cho Moi Form Chinh
+
+> Quy uoc: moi form phai test day du 5 nhom:
+> - **C** (Create): tao moi voi data hop le → assert list/detail reflect
+> - **R** (Read): list filter/search + detail view
+> - **U** (Update): sua field → assert persistence
+> - **D** (Delete): xoa single / bulk → assert removed + cascade safe
+> - **V** (Validation): required field, format, length, uniqueness
+
+### RT.44.1 — Khach hang (Customer)
+
+**Route:** `/customer_person` (retail) hoac `/customer`
+**Form fields quan trong:** name (required), phone (required + format), email (format), address, taxCode, custType, branchId
+
+| # | Test case | Input | Expected |
+|---|---|---|---|
+| 1 | Create — full valid | name="KH A", phone="0912345678", email="a@test.vn" | ✅ Create OK, appear in list |
+| 2 | Create — thieu name | name="", phone="0912345678" | ❌ Toast "Ten bat buoc" |
+| 3 | Create — thieu phone | name="KH B", phone="" | ❌ Toast "SDT bat buoc" |
+| 4 | Create — phone sai format | phone="abc123" | ❌ Toast "SDT khong hop le" |
+| 5 | Create — email sai format | email="notanemail" | ❌ Toast hoac block submit |
+| 6 | Create — trung SDT | phone trung voi KH cu | ❌ BE bao "Phone da ton tai" (hoac warning duplicate) |
+| 7 | Create — trung name | name trung nhung khac phone | ✅ Allow (name not unique) |
+| 8 | Create — Khach vang lai quick register (tu POS) | phone + name tu CustomerModal | ✅ Customer moi co id > 0 |
+| 9 | Read — list filter theo ten | keyword = ten | List loc dung |
+| 10 | Read — list filter theo SDT | keyword = phone hoac partial | List loc dung (verify C.E.1.1 da fix) |
+| 11 | Read — detail hien day du info | Click 1 KH | Name, phone, email, address, diem tich luy |
+| 12 | Update — sua name | Change name → save | ✅ List refresh voi ten moi |
+| 13 | Update — sua phone sang trung voi KH khac | | ❌ Toast duplicate |
+| 14 | Delete — xoa KH chua co don | | ✅ Remove khoi list |
+| 15 | Delete — xoa KH co don lich su | | ❌ hoac soft delete (xem BE rule) |
+
+### RT.44.2 — San pham (Product)
+
+**Route:** `/product` / `/product_list`
+**Fields:** name (required), sku (unique), category (required), price, unit (required), variants, images, barcode
+
+| # | Test case | Expected |
+|---|---|---|
+| 1 | Create SP khong bien the | ✅ Create + appear in POS grid |
+| 2 | Create SP co nhieu bien the | Moi variant co sku, qty, price rieng |
+| 3 | Create — thieu name | ❌ Required |
+| 4 | Create — thieu category | ❌ Required |
+| 5 | Create — trung sku | ❌ Toast unique |
+| 6 | Create — price am | ❌ Validate >= 0 |
+| 7 | Create — thieu unit | ❌ Required (block insertBatch sau nay) |
+| 8 | Update — doi name | ✅ Reflect o POS grid |
+| 9 | Update — doi price | ✅ Apply cho don moi, don cu giu gia cu |
+| 10 | Update — them variant moi | ✅ Variant xuat hien trong VariantModal |
+| 11 | Delete — SP chua co ton kho | ✅ Remove |
+| 12 | Delete — SP con ton kho / don hang | ❌ Block hoac soft delete (see BACKEND-TASK-product-delete-safety.md) |
+| 13 | Nhan ban SP — check co giu bien the khong | ✅ Variant clone dung |
+| 14 | Upload anh SP | ✅ Avatar URL saved |
+| 15 | Barcode scan — scan EAN-13 | ✅ Auto fill ma vach |
+
+### RT.44.3 — Nha cung cap (Supplier)
+
+**Route:** `/supplier`
+Tuong tu customer, chu y unique tax code, contact person.
+
+| # | Test case | Expected |
+|---|---|---|
+| 1-15 | CRUD full theo pattern RT.44.1 | Giong customer |
+| 16 | Filter ma so thue | ✅ Search hoat dong |
+| 17 | Lien ket phieu nhap | Supplier co so phieu nhap hien thi |
+
+### RT.44.4 — Don vi tinh (Unit)
+
+**Route:** `/unit` / `/setting_unit`
+**Fields:** name (required), code, description
+
+| # | Test case | Expected |
+|---|---|---|
+| 1 | Create don vi "Cai" | ✅ OK |
+| 2 | Create trung ten | ❌ Unique |
+| 3 | Delete don vi chua dung | ✅ OK |
+| 4 | Delete don vi dang dung boi SP | ❌ Block (BACKEND-TASK-unit-delete-safety.md) |
+| 5 | Update ten | ✅ Reflect o ca SP dang dung |
+
+### RT.44.5 — Danh muc SP (Category)
+
+**Route:** `/product_category` / `/category`
+
+| # | Test case | Expected |
+|---|---|---|
+| 1 | Create category cha | ✅ |
+| 2 | Create category con (parent != null) | ✅ Cay tree hien dung |
+| 3 | Delete category co SP | ❌ Block hoac canh bao move SP |
+| 4 | Move SP sang category khac | ✅ SP reflect category moi |
+| 5 | Filter SP theo category | ✅ POS grid chi hien dung category |
+
+### RT.44.6 — Kho hang (Warehouse)
+
+**Route:** `/inventory/warehouse_list` hoac `/warehouse`
+**Fields:** name, branchId, address, isSelling (0/1), isDefault
+
+| # | Test case | Expected |
+|---|---|---|
+| 1 | Create kho "Kho ban chinh" isSelling=1 | ✅ POS dropdown hien |
+| 2 | Create kho "Kho du tru" isSelling=0 | ✅ KHONG cong vao POS stock unfiltered (verify multi-wh test) |
+| 3 | Update kho isSelling=0 → 1 | ✅ Stock kho do cong vao POS total |
+| 4 | Delete kho co stock | ❌ Block |
+| 5 | 1 branch co >= 2 kho selling | ✅ Stock tong = sum cac kho selling |
+
+### RT.44.7 — Khuyen mai & Voucher (Promotion / Coupon)
+
+**Route:** `/promotion` / `/voucher`
+
+| # | Test case | Expected |
+|---|---|---|
+| 1 | Create voucher fix amount 50k | ✅ |
+| 2 | Create voucher % discount | ✅ |
+| 3 | Apply voucher vao POS cart | ✅ Total giam dung |
+| 4 | Apply voucher het han | ❌ Toast "het han" |
+| 5 | Apply voucher min order khong du | ❌ Toast "chua du dieu kien" |
+| 6 | Apply 2 voucher cung luc | Theo rule: allowed? |
+| 7 | Update voucher → POS cart refresh | ✅ |
+| 8 | Delete voucher | ✅ Clear khoi list (don cu giu voucher snapshot) |
+
+### RT.44.8 — Shift Config (Cai dat ca)
+
+**Route:** `/shift_config`
+**Fields:** name, startTime, endTime, posDeviceId, assignedStaff[], defaultOpeningCash
+
+| # | Test case | Expected |
+|---|---|---|
+| 1 | Create Ca 1 08:00-12:00 | ✅ Hien trong dropdown open shift |
+| 2 | Create overlap time voi ca khac | ❌ Warning hoac block |
+| 3 | Delete ca dang dung (co active shift) | ❌ Block |
+| 4 | Delete ca chua dung | ✅ |
+| 5 | Update startTime sau khi ca da open | Khong doi shift hien tai, chi apply ca moi |
+
+### RT.44.9 — Fund / Category Cashbook
+
+**Route:** `/billing/fund` / `/cashbook/category`
+
+| # | Test case | Expected |
+|---|---|---|
+| 1 | Create fund "Tien mat" | ✅ |
+| 2 | Create category "Thu ban hang", type=1 | ✅ |
+| 3 | Create category "Chi hoan tien", type=2 | ✅ Dung cho refund tu dong (see RT.46.2) |
+| 4 | Delete category dang dung | ❌ Block |
+| 5 | Update fund balance thu cong | ✅ Tao entry dieu chinh |
+
+### RT.44.10 — User / Employee / Role
+
+**Route:** `/user` / `/setting_account` / `/role`
+
+| # | Test case | Expected |
+|---|---|---|
+| 1 | Create user + assign role | ✅ |
+| 2 | Create trung username | ❌ |
+| 3 | Update role permissions | ✅ Reflect sau login lai |
+| 4 | Delete user dang co active shift | ❌ Block |
+| 5 | Disable user | Login fail |
+
+---
+
+## RT.45 — Destructive Input Testing (Phá Form)
+
+> Muc dich: phát hien crash / data corruption / injection / UX loi khi nhap du lieu bat thuong.
+> Apply cho TAT CA form co Create/Update, uu tien cac field: name, description, note, address, phone, email, price, qty.
+
+### RT.45.1 — Boundary values (gia tri bien)
+
+| # | Input | Field type | Expected |
+|---|---|---|---|
+| 1 | Empty string "" sau khi da co gia tri | text field required | ❌ Toast required |
+| 2 | Chuoi 1 ky tu "a" | text | ✅ OK hoac minLength warning |
+| 3 | Chuoi > 255 ky tu | name / title | ❌ Toast maxLength hoac BE reject |
+| 4 | Chuoi 10,000 ky tu | description / note | BE handle dung, khong crash |
+| 5 | Price = 0 | money | Depends: allow 0 cho hang tang? |
+| 6 | Price = -1 | money | ❌ Block negative |
+| 7 | Price = 999,999,999,999 | money | Verify bigint handle |
+| 8 | Qty = 0 | integer | ❌ Block (khong ban 0 SP) |
+| 9 | Qty = 999999 vuot ton kho | integer | ❌ Cap lai = maxStock + toast (C.1.1 da fix) |
+| 10 | Phone = "0" | phone | ❌ Invalid format |
+| 11 | Phone = "0912345678" (10 so) | phone | ✅ |
+| 12 | Phone = "091234567890123" (15 so) | phone | ❌ Too long |
+| 13 | Phone = "+84912345678" | phone | ✅ hoac normalize |
+| 14 | Email = "@" | email | ❌ |
+| 15 | Email = "a@b" | email | ❌ thieu TLD |
+| 16 | Date = 01/01/1900 | date | Depends, co the block |
+| 17 | Date = 31/12/2099 | date | ✅ (future date allowed for khuyen mai end) |
+
+### RT.45.2 — Special characters / Unicode / Emoji
+
+| # | Input | Field | Expected |
+|---|---|---|---|
+| 1 | Ten = "Nguyễn Ánh Tuấn" | customer name | ✅ Unicode OK |
+| 2 | Ten = "日本語 テスト" (Japanese) | name | ✅ Unicode OK |
+| 3 | Ten = "Test 🎉 Emoji 🚀" | name / note | ✅ hoac strip emoji |
+| 4 | Ten = "O'Brien" (dau nhay don) | name | ✅ OK, KHONG escape thanh SQL error |
+| 5 | Ten = `"<script>alert(1)</script>"` | name | ✅ Save as text, KHONG thuc thi script (XSS) |
+| 6 | Ten = `"' OR '1'='1"` | name / search keyword | ✅ Save as text, KHONG SQL inject |
+| 7 | Ten = `"../../../etc/passwd"` | name | ✅ Save as text (khong path traversal) |
+| 8 | Ten = null byte \u0000 | name | BE handle dung (thuong auto strip) |
+| 9 | Ten = whitespace only "   " | required text | ❌ Treat as empty |
+| 10 | Ten co \n \r \t | description | ✅ Multi-line OK |
+| 11 | Phone = "0912.345.678" | phone | ✅ Normalize hoac reject |
+| 12 | Address = 2000 ky tu random unicode | textarea | ✅ OK |
+| 13 | Number = "1e10" scientific | price | ❌ Block |
+| 14 | Number = "1,000,000" co dau phay | price | ✅ Parse hoac reject tuy design |
+
+### RT.45.3 — Concurrency / Race
+
+| # | Scenario | Expected |
+|---|---|---|
+| 1 | 2 tab cung edit 1 KH → save tab 1 truoc → tab 2 sau | Warning "da bi thay doi" hoac overwrite (tuy rule) |
+| 2 | Delete SP trong khi SP dang trong cart POS | Cart giu item snapshot, khong crash |
+| 3 | Bán 2 don song song cung 1 SP qty=1, stock chi 1 | 1 don success, 1 don fail (ton khong am) |
+| 4 | Open/Close ca dong thoi tu 2 device | Chi 1 thao tac win, kia toast "ca da closed" |
+
+### RT.45.4 — File upload
+
+| # | File | Field | Expected |
+|---|---|---|---|
+| 1 | JPG 500KB hop le | product avatar | ✅ |
+| 2 | PNG 10MB | avatar | ❌ Toast too large |
+| 3 | .exe rename .jpg | avatar | ❌ BE verify MIME |
+| 4 | SVG voi script embedded | avatar | ❌ Reject hoac sanitize |
+| 5 | File name path traversal | avatar | ✅ Sanitize filename |
+| 6 | File 0 byte | avatar | ❌ |
+
+---
+
+## RT.46 — Cross-Module Integration Flow (Kiem Tra Cheo So Lieu)
+
+> Muc dich: verify so lieu giua cac phan he CONSISTENT voi nhau (dashboard, cashbook, kho, bao cao, so ca...).
+> Moi flow phai ket thuc bang **cross-check >= 3 nguon du lieu khac nhau**.
+
+### RT.46.1 — Flow ban hang → kho + tai chinh + doanh thu
+
+**Preconditions:** Ca dang mo, SP A co stock 20 kho selling.
+
+| # | Buoc | Source check | Expected |
+|---|---|---|---|
+| 1 | Baseline: get stock SP A, get finance dashboard, get active shift revenue | 3 snapshot | Ghi lai |
+| 2 | POS ban 2 x SP A @ 100k = 200k tien mat | Complete payment | Invoice IV1 created |
+| 3 | Check stock SP A | `/inventory/product/list?productId=A` | -2 (20 → 18) |
+| 4 | Check finance dashboard | `/billing/finance/dashboard` | totalIncome +200k, totalFundBalance +200k |
+| 5 | Check cashbook | `/billing/cashbook/list?type=1` | New entry type=1, amount=200k, invoiceId linked |
+| 6 | Check active shift | `/sales/shift/active-dashboard` | totalRevenue +200k, totalOrders +1, totalCashSales +200k, currentCash +200k |
+| 7 | Check shift orders | `/sales/shift/orders?shiftId=X` | Don moi xuat hien trong list |
+| 8 | Check invoice list | `/sales/invoice/list` | IV1 moi, fee=200k |
+| 9 | **CROSS CHECK**: finance income delta == cashbook sum delta == shift revenue delta | 3 source | PHAI KHOP = 200k |
+| 10 | **CROSS CHECK**: stock delta khop voi so don | | -2 stock == -2 qty ban |
+
+Automated: `tests/test-e2e-financial-flow.mjs`, `tests/test-multi-warehouse-stock.mjs`, `tests/test-e2e-shift-flow.mjs`
+
+### RT.46.2 — Flow tra hang → kho + tai chinh + shift
+
+**Preconditions:** Co don IV1 vua ban (tu RT.46.1), ca van mo.
+
+| # | Buoc | Source | Expected |
+|---|---|---|---|
+| 1 | Baseline sau ban: stock, finance, cashbook, shift | | Ghi lai |
+| 2 | Tao phieu tra toan bo: POST /sales/invoice/create/return | | Return invoice IV2 |
+| 3 | Confirm: POST /sales/invoice/return/confirm?id=X | | status=done |
+| 4 | Check stock | | +2 quay lai (hoi phuc full) |
+| 5 | Check finance dashboard | | totalExpense +200k, totalFundBalance -200k |
+| 6 | Check cashbook | `cashbook/list?type=2` | Entry moi type=2, amount=200k, invoiceId=return |
+| 7 | Check shift dashboard | | totalRevenue co the giu nguyen (BE ghi o expense rieng) hoac -200k (tuy design) |
+| 8 | **CROSS CHECK**: Net sau ban+tra — fund balance == baseline | | Fund tro ve goc |
+| 9 | **CROSS CHECK**: Net P/L = income - expense == 0 | | Chu ky khep kin |
+| 10 | **CROSS CHECK**: Stock net delta == 0 | | Kho quay ve nguyen |
+
+Automated: `tests/test-e2e-return-exchange.mjs`, `tests/test-e2e-financial-flow.mjs`
+
+### RT.46.3 — Flow ca lam viec khep kin
+
+**Preconditions:** Chua co ca nao mo.
+
+| # | Buoc | Source | Expected |
+|---|---|---|---|
+| 1 | Open ca voi openingCash = 5,000,000 | POST /shift/open | shiftId returned |
+| 2 | Luu shiftId vao localStorage | | POS se gan shiftId vao invoice |
+| 3 | Ban 3 don (300k tien mat) + tra 1 don (100k) | Invoice create x3 + return | Net = 200k |
+| 4 | Get active-dashboard | | totalCashSales = 300k, currentCash = 5,300,000 |
+| 5 | Close ca voi closingCash = currentCash | POST /shift/close | expectedCash phai = openingCash + totalCashSales - totalCashRefunds |
+| 6 | **CROSS CHECK**: cashDifference phai = 0 (neu dem dung) | `/shift/close-report` | Hien BE bug BACKEND-TASK-shift-close-cash-diff.md |
+| 7 | Get close-report | | totalRevenue khop, cashDifference = 0 |
+| 8 | Get general-report | | Ca hien trong list, status=closed |
+| 9 | Get finance dashboard sau close | | Khop voi tong shift revenue |
+
+Automated: `tests/test-e2e-shift-flow.mjs`
+
+### RT.46.4 — Flow POS → VAT invoice → check du lieu prefill
+
+**Preconditions:** Co KH that trong he thong.
+
+| # | Buoc | Source | Expected |
+|---|---|---|---|
+| 1 | Tao don POS voi KH that (customerId > 0) | Invoice create | customerId saved |
+| 2 | Goto /invoiceVAT?tab=issue&code=HDxxxx | GET /invoice/get-for-vat | Response co customerName, taxCode, address, email |
+| 3 | Check form buyer name prefilled | UI input "Nhap ten nguoi mua" | Khong rong, = customerName |
+| 4 | Check form buyer phone prefilled | | = customerPhone |
+| 5 | Check form MST prefilled (neu KH co) | | = taxCode |
+| 6 | Check form items prefilled | | San pham cua don hang |
+| 7 | **CROSS CHECK**: name o VAT form == name o customer detail == name o invoice list | 3 source | Consistent |
+| 8 | Khach vang lai — check behavior | | Field rong, user nhap tay |
+
+Automated: `tests/test-e2e-sales-vat-flow.mjs`, `tests/test-vat-prefill-debug.mjs`
+
+### RT.46.5 — Flow nhap kho → POS display → ban → so kho ledger
+
+| # | Buoc | Source | Expected |
+|---|---|---|---|
+| 1 | Tao phieu nhap kho 10 SP A vao "Kho hang mau" | Invoice import update + approve | IV4 created |
+| 2 | Check POS grid | /product/list | Stock SP A +10 (POS chi cong kho selling) |
+| 3 | Tao phieu nhap 10 SP A vao "Kho du tru" (is_selling=0) | | IV4 non-selling |
+| 4 | Check POS grid | | Stock SP A KHONG tang (chi 10 thoi, khong phai 20) |
+| 5 | Ban 3 SP A tu POS | Invoice create | Stock -3 |
+| 6 | Check So kho ledger | /inventoryTransaction/ledger/list | Entry "Ban hang" -3 |
+| 7 | Check tab "Nhap kho" | | 2 entries +10 (kho ban + kho du tru) |
+| 8 | **CROSS CHECK**: stock POS display == sum(ledger voi kho is_selling=1) | | Khop |
+
+Automated: `tests/test-multi-warehouse-stock.mjs`, `tests/test-e2e-product-import-pos.mjs`
+
+### RT.46.6 — Flow don tam → tiep tuc xu ly → hoan thanh
+
+| # | Buoc | Expected |
+|---|---|---|
+| 1 | Tao don + Luu nhap | Don tam xuat hien trong tab "Don tam" |
+| 2 | Logout / refresh page | Don tam van con |
+| 3 | Click "Tiep tuc xu ly" | Cart load lai day du voi SP + KH + gia + **unitId** |
+| 4 | Click "Tao hoa don" | insertBatch OK, khong 500 error |
+| 5 | Hoan thanh thanh toan | Invoice tao thanh cong |
+| 6 | Check stock giam dung | |
+| 7 | Check cashbook tao entry thu | |
+
+Automated: `tests/test-e2e-sales-vat-flow.mjs` (S2 scenario)
+
+### RT.46.7 — Flow doi hang (exchange) — 2-way stock check
+
+| # | Buoc | Expected |
+|---|---|---|
+| 1 | Ban SP A qty=1 | Stock A -1 |
+| 2 | Tao phieu doi: tra A, doi B | Exchange invoice created |
+| 3 | Confirm | |
+| 4 | **CROSS CHECK**: Stock A +1 (hoi phuc) | |
+| 5 | **CROSS CHECK**: Stock B -1 (ban moi) | |
+| 6 | **CROSS CHECK**: Finance — so tien dung | Tuy chenh lech |
+| 7 | **CROSS CHECK**: Cashbook co entry | Thu/Chi tuy chenh lech |
+
+Automated: `tests/test-e2e-return-exchange.mjs` (S3 scenario)
+
+---
+
+## RT.47 — Coverage Matrix: Automated E2E Tests
+
+> Danh sach cac E2E test da co trong `tests/test-e2e-*.mjs` va scope cua chung.
+> Khi phat hien bug moi, update test tuong ung hoac them test moi.
+
+| Test file | Scope | Scenarios | Last status |
+|---|---|:---:|---|
+| `test-e2e-sales-vat-flow.mjs` | POS sales (walk-in, real cust, quick-register) + VAT invoice | 6 (S1-S6) | 36/36 PASS |
+| `test-e2e-product-import-pos.mjs` | Create SP → import kho → POS ban → verify stock ledger | 5 (STEP1-5) | Pass |
+| `test-e2e-return-exchange.mjs` | Tra 1 phan / tra toan bo / doi hang + stock verify | 3 (S1-S3) | 13/13 PASS |
+| `test-e2e-financial-flow.mjs` | Ban → tien tang, Tra → hoan tien + cross-check 3 source | 3 (A/B/C) | 21/21 PASS |
+| `test-multi-warehouse-stock.mjs` | POS chi tinh kho is_selling, import non-selling khong anh huong | 7 steps + 5A/5B | 8/8 PASS |
+| `test-e2e-shift-flow.mjs` | Open → sell → refund → close → shift report | 7 steps | 17/19 (S6-04 bug) |
+
+### Cac module chua co automated test (uu tien bo sung)
+
+| Priority | Module | Ly do |
+|:---:|---|---|
+| HIGH | Customer CRUD + search | Core cho POS flow, dang co bug search SDT |
+| HIGH | Product CRUD + variant | Block nhieu flow neu sai |
+| HIGH | Inventory ledger / stock transaction | Chua verify audit trail cua moi thao tac |
+| MEDIUM | Promotion / Voucher apply | Logic phuc tap |
+| MEDIUM | Debt management (thu no, khach no) | Flow tai chinh rieng |
+| MEDIUM | Shipping flow | C.5.3 con mo |
+| LOW | VAT invoice issue (real provider) | Can CTS server |
+| LOW | Loyalty wallet / points redeem | |
+
+### Huong dan viet test moi
+
+1. Copy template tu `test-e2e-return-exchange.mjs` (co helpers apiGet/apiPost Node-level)
+2. Setup: login, lay branchId, fetch sample product
+3. Get baseline snapshot (state truoc khi tac dong)
+4. Thuc hien action qua API truc tiep (tranh UI flakiness)
+5. Assert: state sau action == baseline + expected delta
+6. **Cross-check tu >= 2 endpoint khac nhau** (tranh false positive)
+7. Log UI/BE bugs vao `logUiBug` / `logBeBug` de aggregate report cuoi
+
+---
+
+*Cap nhat 2026-04-13: bo sung RT.44 (CRUD), RT.45 (destructive), RT.46 (cross-module), RT.47 (coverage matrix). Tong so kich ban: 47.*
