@@ -1,12 +1,15 @@
 """
-Markdown -> DOCX converter for HDSD Reborn CRM.
+Markdown -> DOCX converter for Reborn CRM documentation.
 
 Designed to produce a professional, customer-ready document similar in quality
 to what Claude.ai's web interface generates. Uses python-docx with carefully
 crafted styles (no Pandoc).
 
 Usage:
-    python md_to_docx.py <input.md> <output.docx>
+    python md_to_docx.py <input.md> <output.docx> [--title "Title"] [--subtitle "Sub"] [--header "Header"] [--cover-label "LABEL"]
+
+Defaults are tuned for the HDSD (User Guide). Pass --title/--subtitle/--header
+to customize for other documents (e.g. URD).
 """
 import os
 import re
@@ -235,14 +238,14 @@ def setup_document_styles(doc: Document):
 
 
 # ─── Cover page ────────────────────────────────────────────────────────────
-def add_cover(doc: Document, title: str, subtitle: str):
+def add_cover(doc: Document, title: str, subtitle: str, cover_label: str = "HƯỚNG DẪN SỬ DỤNG"):
     # Spacer
     for _ in range(6):
         doc.add_paragraph()
 
     p = doc.add_paragraph()
     p.alignment = WD_ALIGN_PARAGRAPH.CENTER
-    r = p.add_run("HƯỚNG DẪN SỬ DỤNG")
+    r = p.add_run(cover_label)
     r.font.size = Pt(14)
     r.font.color.rgb = TEAL
     r.font.bold = True
@@ -674,7 +677,12 @@ def setup_header_footer(doc, doc_title):
 
 
 # ─── Main ──────────────────────────────────────────────────────────────────
-def convert(md_path, docx_path):
+def convert(md_path, docx_path,
+            title="Reborn CRM",
+            subtitle="Tài liệu hướng dẫn sử dụng — Cửa hàng & Spa",
+            header_text="Hướng dẫn sử dụng Reborn CRM",
+            cover_label="HƯỚNG DẪN SỬ DỤNG",
+            start_markers=("Part 01", "Bắt đầu sử dụng", "Part 00")):
     base_dir = os.path.dirname(os.path.abspath(md_path))
     with open(md_path, "r", encoding="utf-8") as f:
         md_text = f.read()
@@ -684,21 +692,17 @@ def convert(md_path, docx_path):
 
     doc = Document()
     setup_document_styles(doc)
-    setup_header_footer(doc, "Hướng dẫn sử dụng Reborn CRM")
+    setup_header_footer(doc, header_text)
 
-    add_cover(doc,
-              title="Reborn CRM",
-              subtitle="Tài liệu hướng dẫn sử dụng — Cửa hàng & Spa")
+    add_cover(doc, title=title, subtitle=subtitle, cover_label=cover_label)
 
-    # Skip the first H1 (the cover title) and the header content before "Toàn bộ nội dung HDSD"
-    # Find the marker and skip everything before
+    # Find first H1 that matches one of the start markers (skip cover content above)
     start_idx = 0
     for idx, t in enumerate(tokens):
         if t.type == "heading_open" and t.tag == "h1":
-            # Look at the next inline token
             inline = tokens[idx + 1]
             text = "".join([c.content for c in inline.children if c.type == "text"]).strip()
-            if "Part 01" in text or "Bắt đầu sử dụng" in text:
+            if any(m in text for m in start_markers):
                 start_idx = idx
                 break
 
@@ -709,8 +713,23 @@ def convert(md_path, docx_path):
 
 
 if __name__ == "__main__":
-    if len(sys.argv) < 3:
-        print("Usage: md_to_docx.py <input.md> <output.docx>")
-        sys.exit(1)
-    out = convert(sys.argv[1], sys.argv[2])
+    import argparse
+    ap = argparse.ArgumentParser()
+    ap.add_argument("input")
+    ap.add_argument("output")
+    ap.add_argument("--title", default="Reborn CRM")
+    ap.add_argument("--subtitle", default="Tài liệu hướng dẫn sử dụng — Cửa hàng & Spa")
+    ap.add_argument("--header", default="Hướng dẫn sử dụng Reborn CRM")
+    ap.add_argument("--cover-label", default="HƯỚNG DẪN SỬ DỤNG")
+    ap.add_argument("--start-marker", default=None,
+                    help="Heading text fragment that marks the first 'real' content H1 (skip cover/index above)")
+    args = ap.parse_args()
+
+    markers = (args.start_marker,) if args.start_marker else ("Part 01", "Bắt đầu sử dụng", "Part 00")
+    out = convert(args.input, args.output,
+                  title=args.title,
+                  subtitle=args.subtitle,
+                  header_text=args.header,
+                  cover_label=args.cover_label,
+                  start_markers=markers)
     print(f"Done: {out}")

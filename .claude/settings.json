@@ -42,7 +42,8 @@
       "Bash(python -c \"from PIL import Image; print\\('Pillow ok'\\)\")",
       "Bash(grep -c '^```' HDSD-full-final.md)",
       "Bash(python tooling/md_to_docx.py HDSD-full-final.md HDSD-Reborn-CRM.docx)",
-      "Bash(python -c ':*)"
+      "Bash(python -c ':*)",
+      "Bash(python ../userguides/tooling/md_to_docx.py URD-full.md URD-Reborn-CRM.docx)"
     ]
   }
 }
