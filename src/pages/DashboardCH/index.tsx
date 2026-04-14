@@ -1,4 +1,4 @@
-// [CH] Community Hub - Dashboard
+// [FitPro] Dashboard trạm — Tổng quan hoạt động chuỗi 6-9h sáng
 import React, { useState, useContext } from "react";
 import "./index.scss";
 import { useNavigate } from "react-router-dom";
@@ -9,8 +9,8 @@ import Icon from "@/components/icon";
 import { MOCK_DASHBOARD } from "@/mocks/community-hub/dashboard";
 
 export default function DashboardCH() {
-  // [CH] Community Hub - Tổng quan
-  document.title = "Community Hub - Tổng quan";
+  // [FitPro] Tổng quan trạm
+  document.title = "FitPro - Tổng quan trạm";
   const navigate = useNavigate();
   const { dataBranch } = useContext(UserContext) as ContextType;
 
@@ -28,25 +28,25 @@ export default function DashboardCH() {
       <div className="stat-cards-row">
         {[
           {
-            label: "Thành viên",
+            label: "Thành viên tập luyện",
             icon: <Icon name="Customer" />,
-            value: `Active: ${data.members.active}/${data.members.total_slots}`,
+            value: `Đang tập: ${data.members.active}/${data.members.total_slots}`,
             color: "primary",
           },
           {
-            label: "Check-in hôm nay",
+            label: "Buổi tập hôm nay (6-9h)",
             icon: <Icon name="Barchart" />,
-            value: `${data.checkins_today} lượt`,
+            value: `${data.checkins_today} buổi`,
             color: "accent",
           },
           {
-            label: "Hết hạn 7 ngày",
+            label: "Cần gia hạn (≤15 ngày)",
             icon: <Icon name="WarningCircle" />,
             value: `${data.members.expiring_soon} thành viên`,
             color: "warning",
           },
           {
-            label: "MRR (tháng này)",
+            label: "Doanh thu trạm tháng này",
             icon: <Icon name="MoneyFill" />,
             value: masked ? "••••••••••" : `~${formatCurrency(data.mrr_vnd, ".", "")}đ`,
             color: "success",
@@ -72,11 +72,11 @@ export default function DashboardCH() {
 
       {/* MIDDLE ROW */}
       <div className="middle-row">
-        {/* [CH] Building Map Widget */}
+        {/* [FitPro] Station Layout Widget */}
         <div className="ch-widget ch-building-map">
           <div className="ch-widget__title">
             <Icon name="Buildings" />
-            <span>Bản đồ tòa nhà</span>
+            <span>Trạng thái thảm tập theo khu vực</span>
           </div>
           <div className="building-areas">
             {data.building_map.map((area) => {
@@ -99,11 +99,11 @@ export default function DashboardCH() {
           </div>
         </div>
 
-        {/* [CH] Quota Alert Feed */}
+        {/* [FitPro] Quota Alert — buổi tập còn lại */}
         <div className="ch-widget ch-quota-alerts">
           <div className="ch-widget__title">
             <Icon name="WarningCircle" />
-            <span>Cảnh báo Quota</span>
+            <span>Cảnh báo buổi tập còn lại</span>
           </div>
           <div className="alert-list">
             {data.quota_alerts.map((alert) => (
@@ -123,11 +123,11 @@ export default function DashboardCH() {
 
       {/* BOTTOM ROW */}
       <div className="bottom-row">
-        {/* [CH] Upcoming Events */}
+        {/* [FitPro] Upcoming events — buổi tập/workshop */}
         <div className="ch-widget ch-events">
           <div className="ch-widget__title">
             <Icon name="CalendarFill" />
-            <span>Sự kiện sắp tới</span>
+            <span>Buổi tập / sự kiện sắp tới</span>
           </div>
           <div className="event-list">
             {data.upcoming_events.map((event) => (
@@ -153,12 +153,12 @@ export default function DashboardCH() {
           </div>
           <div className="quick-access-grid">
             {[
-              { label: "Check-in", icon: <Icon name="Barchart" />, path: "/ch_checkin" },
+              { label: "Check-in trạm", icon: <Icon name="Barchart" />, path: "/ch_checkin" },
               { label: "Thành viên", icon: <Icon name="Customer" />, path: urls.customer_list },
-              { label: "Dịch vụ", icon: <Icon name="Beauty" />, path: "/ch_services" },
-              { label: "Lưu trú", icon: <Icon name="Buildings" />, path: "/ch_accommodation" },
-              { label: "Khóa học", icon: <Icon name="ManageWork" />, path: "/ch_courses" },
-              { label: "Đối tác", icon: <Icon name="Partner" />, path: "/ch_partners" },
+              { label: "Đặt buổi tập", icon: <Icon name="Beauty" />, path: "/ch_services" },
+              { label: "Sơ đồ thảm", icon: <Icon name="Buildings" />, path: "/ch_accommodation" },
+              { label: "Giáo trình", icon: <Icon name="ManageWork" />, path: "/ch_courses" },
+              { label: "Business Owner", icon: <Icon name="Partner" />, path: "/ch_partners" },
             ].map((item) => (
               <div key={item.label} className="quick-item" onClick={() => navTo(item.path)}>
                 <div className="quick-item__icon">{item.icon}</div>
