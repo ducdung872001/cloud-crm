@@ -7,7 +7,12 @@
       "Bash(jobs -l)",
       "Bash(tasklist //FI \"IMAGENAME eq node.exe\")",
       "Bash(wc -l src/pages/PartnerTNPM/*.tsx src/pages/DebtManagement/*.tsx src/pages/SettingTNPM/SettingPaymentMethods.tsx)",
-      "Bash(head -3 src/services/tnpm/*.ts)"
+      "Bash(head -3 src/services/tnpm/*.ts)",
+      "Bash(ls tests:*)",
+      "Bash(yarn add:*)",
+      "Bash(npx vitest:*)",
+      "Bash(mv vitest.config.ts vitest.config.mts)",
+      "Bash(ls vitest.config.*)"
     ]
   }
 }
