@@ -127,10 +127,6 @@ export default function SearchBox(props: SearchBoxProps) {
       searchParams["datatype"] ||
       searchParams["supportId"] ||
       searchParams["supportProcessId"] ||
-      searchParams["vehicleId"] ||
-      searchParams["steId"] ||
-      searchParams["buildingId"] ||
-      searchParams["scrId"] ||
       searchParams["packageId"]
     ) {
       const filterItemsFinal = [];
@@ -158,7 +154,6 @@ export default function SearchBox(props: SearchBoxProps) {
               "tcyId",
               "templateId",
               "projectId",
-              "operationProjectId",
               "relationshipId",
               "serviceId",
               "campaignId",
@@ -171,10 +166,6 @@ export default function SearchBox(props: SearchBoxProps) {
               "datatype",
               "supportId",
               "supportProcessId",
-              "vehicleId",
-              "steId",
-              "scrId",
-              "buildingId",
               "packageId",
             ].includes(filterItem.key)
           ) {

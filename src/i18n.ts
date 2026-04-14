@@ -38,7 +38,6 @@ i18n.use(initReactI18next).init({
           teacherProfile: "Teacher profile",
           contactProfile: "Contact Profile",
           parentProfile: "Parent profile",
-          // Removed (non-tech domain) - treatmentHistory
           customerSegments: "Customer Segmentation",
 
           quote: "Quote",
@@ -122,11 +121,6 @@ i18n.use(initReactI18next).init({
 
           // Thông tin khảo sát
           survey: "Customer survey",
-          // Removed (non-tech domain) - cxmSurvey
-
-          // Removed (non-tech domain) - BDS/Operation management menu items
-          // (operate, electricityIndex, waterIndex, spaceCustomer, managementFee,
-          // vehicleRegistration, vehicle, ortherFee)
 
           report: "Report",
           // đoạn này là children của report
@@ -138,7 +132,6 @@ i18n.use(initReactI18next).init({
           // đoạn này là children của settings
           // pricePackageManagement: "Price package management",
           settingBasis: "Setting basis",
-          settingOperate: "Setting operate",
           settingPersonal: "Setting personal",
           settingKPI: "Setting kpi",
           settingCustomer: "Setting customer",
@@ -197,9 +190,7 @@ i18n.use(initReactI18next).init({
           listRole: "List Role",
           listTeam: "List team",
           listEmployee: "List employee",
-          // Removed (non-tech domain) - listTreatmentRooms
         },
-        // Removed (non-tech domain) - pageSettingOperate section
 
         pageSettingPersonal: {
           title: "Setting personal",
@@ -247,7 +238,6 @@ i18n.use(initReactI18next).init({
           teacherProfile: "Hồ sơ giáo viên",
           contactProfile: "Hồ sơ người liên hệ",
           parentProfile: "Hồ sơ phụ huynh",
-          // Removed (non-tech domain) - treatmentHistory
           customerSegments: "Phân khúc khách hàng",
 
           quote: "Báo giá",
@@ -339,11 +329,6 @@ i18n.use(initReactI18next).init({
           processSimulation: "Mô phỏng quy trình",
           objectManage: "Quản lý hồ sơ",
           manage_data_sharing: "Chia sẻ dữ liệu",
-          // Removed (non-tech domain) - cxmSurvey
-
-          // Removed (non-tech domain) - BDS/Operation management menu items
-          // (operate, electricityIndex, waterIndex, spaceCustomer, managementFee,
-          // vehicleRegistration, vehicle, ortherFee)
 
           report: "Báo cáo",
           // đoạn này là children của báo cáo
@@ -355,7 +340,6 @@ i18n.use(initReactI18next).init({
           // đoạn này là children của cài đặt
           // pricePackageManagement: "Quản lý gói giá",
           settingBasis: "Cài đặt cơ sở",
-          settingOperate: "Cài đặt vận hành",
           settingPersonal: "Cài đặt cá nhân",
           settingKPI: "Cài đặt KPI",
           settingCustomer: "Cài đặt khách hàng",
@@ -415,9 +399,7 @@ i18n.use(initReactI18next).init({
           listRole: "Danh sách nhóm quyền",
           listEmployee: "Danh sách nhân viên",
           listTeam: "Danh sách nhóm nhân viên",
-          // Removed (non-tech domain) - listTreatmentRooms
         },
-        // Removed (non-tech domain) - pageSettingOperate section
 
         pageSettingPersonal: {
           title: "Cài đặt cá nhân",

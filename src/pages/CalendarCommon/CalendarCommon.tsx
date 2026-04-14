@@ -13,7 +13,6 @@ import EmployeeService from "services/EmployeeService";
 import ScheduleCommonService from "services/ScheduleCommonService";
 import FilterCalendarModal from "./partials/FilterCalendarModal/FilterCalendarModal";
 import AddWorkModal from "pages/MiddleWork/partials/ListWork/partials/AddWorkModal/AddWorkModal";
-// Removed (non-tech domain) - AddTreatmentScheduleModal, AddConsultationScheduleModal
 import "tippy.js/animations/scale.css";
 import "react-big-calendar/lib/css/react-big-calendar.css";
 import "react-big-calendar/lib/addons/dragAndDrop/styles.css";
@@ -42,7 +41,6 @@ export default function CalendarCommon() {
   const isBeauty = localStorage.getItem("isBeauty");
   const { dataBranch } = useContext(UserContext) as ContextType;
 
-  // Removed (non-tech domain) - consultation/treatment schedule options
   const listOptionNewAdd = [
     {
       value: "1",
@@ -227,7 +225,6 @@ export default function CalendarCommon() {
   });
 
   const [isLoading, setIsLoading] = useState<boolean>(false);
-  // Removed (non-tech domain) - showModalAddConsultationScheduleModal, showModalAddTreatmentSchedule states
   const [showModalSearch, setShowModalSearch] = useState<boolean>(false);
   const [startDate, setStartDate] = useState<string>("");
   const [endDate, setEndDate] = useState<string>("");
@@ -350,7 +347,6 @@ export default function CalendarCommon() {
         setStartDate(start);
         setEndDate(end);
 
-        // Removed (non-tech domain) - consultation/treatment schedule branches
         setShowModalAddWork(true);
       }
     },
@@ -362,7 +358,6 @@ export default function CalendarCommon() {
     if (event) {
       setIdItemCalendar(event.id);
 
-      // Removed (non-tech domain) - consultation (type 2) and treatment (type 3) branches
       setShowModalAddWork(true);
       setStartDate(event.start);
       setEndDate(event.end);
@@ -427,7 +422,6 @@ export default function CalendarCommon() {
           setShowModalAddWork(false);
         }}
       />
-      {/* Removed (non-tech domain) - AddTreatmentScheduleModal, AddConsultationScheduleModal JSX */}
     </div>
   );
 }

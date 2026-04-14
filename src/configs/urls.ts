@@ -8,8 +8,6 @@ const prefixCs = "/cs";
 const prefixApplication = "/application";
 const prefixHr = "/hr";
 const prefixRebornVn = "https://reborn.vn/api";
-// Removed (non-tech domain) - prefixOperation no longer used
-// const prefixOperation = "https://reborn.vn/operation";
 const prefixNotification = "/notification";
 const prefixFinance = "https://reborn.vn/finance";
 const prefixWarehouse = "https://reborn.vn/warehouse";
@@ -264,11 +262,6 @@ export const urlsApi = {
     report: prefixAdmin + "/cashbook/report",
   },
 
-  // Removed (non-tech domain) - All BDS/Operation management API endpoints
-  // (space, spaceType, spaceCustomer, ortherFee, utilityReading, managementFee,
-  // vehicleRegistration, vehicle, building, buildingFloor, operationProject,
-  // electricityMeter, electricityRate, waterRate, managementFeeRate, parkingFee)
-
   historySend: {
     historySendSMS: prefixAdmin + "/customerSms/list",
     historySendEmail: prefixAdmin + "/customerEmail/list",
@@ -453,14 +446,11 @@ export const urlsApi = {
     deleteEmployee: prefixAdmin + "/groupEmployee/delete",
   },
 
-  // Removed (non-tech domain) - treatment, treatmentHistory, diarySurgery,
-  // scheduleConsultant, scheduleTreatment API endpoints
   // lịch chung (điều trị, tư vấn, công việc)
   scheduleCommon: {
     list: prefixAdmin + "/schedule/list",
     listRelatedToCustomer: prefixAdmin + "/schedule/list/by_customer",
   },
-  // Removed (non-tech domain) - treatmentRoom API endpoints
   crmCareHistory: {
     list: prefixAdmin + "/crmCareHistory/list",
     update: prefixAdmin + "/crmCareHistory/update",
@@ -487,8 +477,6 @@ export const urlsApi = {
     export: prefixAdmin + "/order-request/export",
     detail: prefixAdmin + "/order-request/get",
   },
-  // Removed (non-tech domain) - cxmSurvey, cxmResponse, cxmResponseDetail,
-  // cxmQuestion, cxmOption, cxmQuestionCondition API endpoints
   warehouse: {
     list: prefixWarehouse + "/warehouse/list",
     //API lấy ra danh sách sản phẩm trong kho
@@ -496,7 +484,6 @@ export const urlsApi = {
     //API lấy ra thông tin ngày hết hạn / sản xuất dựa trên số lô của sản phẩm
     infoExpiryDateProductionDate: prefixWarehouse + "/warehouse/get_mfg_expired_date",
   },
-  // Removed (non-tech domain) - earnings API endpoint
   paymentHistory: {
     filter: prefixAdmin + "/paymentHistory/list",
     update: prefixAdmin + "/paymentHistory/update",
@@ -928,7 +915,6 @@ export const urlsApi = {
     detail: prefixAdmin + "/contractStage/get",
     delete: prefixAdmin + "/contractStage/delete",
   },
-  // Removed (non-tech domain) - rentalType API endpoint
   contact: {
     list: prefixAdmin + "/contact/list",
     update: prefixAdmin + "/contact/update",
@@ -2488,7 +2474,6 @@ export const urlsApi = {
     //gửi câu trả lời làm rõ
     insertRepsonse: prefixApplication + "/clarificationResponse/insert",
   },
-  // Removed (non-tech domain) - tenderPackage API endpoints
   grid: {
     list: prefixAdmin + "/artifactGridHeader/list",
 
@@ -2857,11 +2842,9 @@ export const urls = {
   partner: "/partner",
   detail_partner: "/detail_partner/partnerId/:id?",
 
-  // Removed (non-tech domain) - schedule_next route path
   schedule: "/schedule",
   timekeeping: "/timekeeping",
   cashbook: "/cashbook",
-  // Removed (non-tech domain) - cxmSurvey route path
   // Đường dẫn đặt hàng
   order: "/order",
   // Đường dẫn quản lý đặt hàng
@@ -2912,7 +2895,6 @@ export const urls = {
   //tạo báo giá
   create_offer_add: "/create_offer_add",
   report: "/report",
-  // Removed (non-tech domain) - earnings route path
   payment_history: "/payment_history",
   customer_care: "/customer_care",
   crm_campaign: "/crm_campaign",
@@ -2950,7 +2932,6 @@ export const urls = {
   setting_common: "/setting_common",
   setting_rose: "/setting_rose",
   setting_basis: "/setting_basis",
-  // Removed (non-tech domain) - setting_operate route path
   setting_timekeeping: "/setting_timekeeping",
   setting_customer: "/setting_customer",
   setting_partner: "/setting_partner",
@@ -2986,7 +2967,6 @@ export const urls = {
   public_connect_zalo: "/public_connect_zalo",
   // đường dẫn quản trị tài nguyên
   resource_management: "/resource_management",
-  // Removed (non-tech domain) - treatment_history, diary_surgery route paths
   // lịch
   calendar_common: "/calendar_common",
   // quy trình bán hàng
@@ -3074,10 +3054,6 @@ export const urls = {
   create_outbound_delivery: "/create_outbound_delivery",
   outbound_invoice: "/outbound_invoice",
   inventory_transfer_document: "/inventory_transfer_document",
-
-  // Removed (non-tech domain) - BDS/Operation route paths
-  // (ortherFee, electricityIndex, waterIndex, spaceCustomer, managementFee,
-  // vehicleRegistration, vehicle, building, buildingFloor)
 
   //upload tài liệu bpm
   // Link cho phép tải tài liệu lên

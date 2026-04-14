@@ -17,7 +17,6 @@ import { showToast } from "utils/common";
 import CustomerService from "services/CustomerService";
 import AddPhoneModal from "../AddPhoneModal";
 import AddManagementOpportunityModal from "pages/ManagementOpportunity/partials/AddManagementOpportunityModal";
-// Removed (non-tech domain) - AddTreatmentScheduleModal, AddConsultationScheduleModal
 import { ContextType, UserContext } from "contexts/userContext";
 import EmployeeAgentService from "services/EmployeeAgentService";
 import JsSIP from "jssip";
@@ -55,7 +54,6 @@ export default function CustomerList(props: ICustomerListProps) {
   const [dataCustomer, setDataCustomer] = useState<ICustomerResponse>(null);
   const [showModalAddManagementOpportunity, setShowModalAddManagementOpportunity] = useState<boolean>(false);
   const [idCustomer, setIdCustomer] = useState<number>(null);
-  // Removed (non-tech domain) - showModalAddConsultationScheduleModal state
 
   const [params, setParams] = useState<IParamsCustomerInCallCenter>({
     keyword: "",
@@ -217,7 +215,6 @@ export default function CustomerList(props: ICustomerListProps) {
     item.emailMasked,
     item.address,
     item.employeeName,
-    // Removed (non-tech domain) - consultation schedule create link
     null,
     <span
       key={item.id}
@@ -542,8 +539,6 @@ export default function CustomerList(props: ICustomerListProps) {
         idCustomer={idCustomer}
         onHide={() => setShowModalAddManagementOpportunity(false)}
       />
-
-      {/* Removed (non-tech domain) - AddConsultationScheduleModal JSX */}
     </Fragment>
   );
 }

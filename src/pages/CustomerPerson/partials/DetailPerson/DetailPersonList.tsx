@@ -14,7 +14,6 @@ import AddCustomPlaceholderEmailModal from "./partials/ListDetailTab/partials/Cu
 import AddWorkModal from "pages/MiddleWork/partials/ListWork/partials/AddWorkModal/AddWorkModal";
 import AddCustomerSMSModal from "./partials/ListDetailTab/partials/CustomerSMSList/partials/AddCustomerSMSModal";
 import AddCustomPlaceholderSMSModal from "./partials/ListDetailTab/partials/CustomerSMSList/partials/CustomPlaceholder/AddCustomPlaceholderModal";
-// Removed (non-tech domain) - AddConsultationScheduleModal
 import AddPhoneModal from "pages/CallCenter/partials/AddPhoneModal";
 import * as SIP from 'sip.js';
 
@@ -551,7 +550,6 @@ export default function DetailPersonList() {
           customerName={detailPerson?.name}
         />
       ) : showTypeModal == "calendar" ? (
-        // Removed (non-tech domain) - AddConsultationScheduleModal JSX
         null
       ) : showTypeModal == "sms" ? (
         <Fragment>

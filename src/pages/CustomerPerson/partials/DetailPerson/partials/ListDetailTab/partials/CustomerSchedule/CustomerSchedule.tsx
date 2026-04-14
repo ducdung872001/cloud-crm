@@ -13,7 +13,6 @@ import { SystemNotification } from "components/systemNotification/systemNotifica
 import BoxTable from "components/boxTable/boxTable";
 import { ContextType, UserContext } from "contexts/userContext";
 import ScheduleCommonService from "services/ScheduleCommonService";
-// Removed (non-tech domain) - AddConsultationScheduleModal
 
 import "./CustomerSchedule.scss";
 
@@ -186,7 +185,6 @@ export default function CustomerSchedule({ idCustomer }) {
           </Fragment>
         )}
       </div>
-      {/* Removed (non-tech domain) - AddConsultationScheduleModal JSX */}
     </div>
   );
 }

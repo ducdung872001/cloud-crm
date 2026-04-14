@@ -37,7 +37,6 @@ import ContactPipelineService from "services/ContactPipelineService";
 import TicketProcService from "services/TicketProcService";
 import TicketCategoryService from "services/TicketCategoryService";
 import ProjectService from "services/ProjectService";
-// Removed (non-tech domain) - OperationProjectService, VehicleService, SpaceTypeService, SpaceCustomerService, BuildingService
 import CustomerMarketingLeadService from "services/CustomerMarketingLeadService";
 import RoleService from "services/RoleService";
 import CampaignMarketingService from "services/CampaignMarketingService";
@@ -226,7 +225,6 @@ export async function SelectOptionData(key: string, params?: any) {
     case "projectId":
       response = await WorkProjectService.list({ ...params, parentId: -1 });
       break;
-    // Removed (non-tech domain) - operationProjectId case
     case "wteId":
       response = await WorkTypeService.list(params);
       break;
@@ -288,7 +286,6 @@ export async function SelectOptionData(key: string, params?: any) {
     case "supportId":
       response = await TicketCategoryService.list(params);
       break;
-    // Removed (non-tech domain) - vehicleId, steId, scrId, buildingId cases
     case "rolePermission":
       response = await RoleService.list(params);
       break;
@@ -347,7 +344,6 @@ export async function SelectOptionData(key: string, params?: any) {
         if (key === "promotionId") {
           return { value: item.id, label: `${item.name}` };
         }
-        // Removed (non-tech domain) - scrId formatter
         if (key === "marketingSendLeadSource") {
           return { value: item.name, label: `${item.name}` };
         }
