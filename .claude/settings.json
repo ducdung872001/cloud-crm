@@ -40,7 +40,9 @@
       "Bash(python -c \"import docx; print\\('python-docx', docx.__version__\\)\")",
       "Bash(python -c \"import markdown_it; print\\('markdown-it ok'\\)\")",
       "Bash(python -c \"from PIL import Image; print\\('Pillow ok'\\)\")",
-      "Bash(grep -c '^```' HDSD-full-final.md)"
+      "Bash(grep -c '^```' HDSD-full-final.md)",
+      "Bash(python tooling/md_to_docx.py HDSD-full-final.md HDSD-Reborn-CRM.docx)",
+      "Bash(python -c ':*)"
     ]
   }
 }
