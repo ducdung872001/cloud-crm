@@ -20,7 +20,20 @@
       "Bash(curl -s -o /dev/null -w \"4000: %{http_code}\\\\n8080: \" --max-time 5 http://localhost:4000/crm/)",
       "Bash(curl -s -o /dev/null -w \"%{http_code}\\\\n\" --max-time 5 http://localhost:8080/)",
       "Bash(node capture-part-01-usermenu.js)",
-      "Bash(node capture-part-02.js)"
+      "Bash(node capture-part-02.js)",
+      "Bash(node capture-part-02-retry.js)",
+      "Bash(curl -s -o /dev/null -w \"4000: %{http_code}\\\\n8080: \" --max-time 5 http://localhost:4000/crm/shift_management)",
+      "Bash(node capture-part-02-shift.js)",
+      "Bash(node capture-part-02-shift2.js)",
+      "Bash(wc -l d:/Git/reborn/reborn-cloud/cloud-ver2/cloud-crm/src/pages/CounterSales/components/modals/QuickAddModal/*)",
+      "Bash(node capture-part-02-sale.js)",
+      "Bash(grep -n \"PHONE_REGEX\\\\|EMAIL_REGEX\" src/utils/constant.ts src/utils/validation*.ts src/configs/*.ts)",
+      "Bash(node capture-part-03.js)",
+      "Bash(node capture-part-03-retry.js)",
+      "Bash(node capture-part-03-addmodal.js)",
+      "Bash(node capture-part-03-detail.js)",
+      "Bash(node capture-part-03-detail2.js)",
+      "Bash(node -e ':*)"
     ]
   }
 }
