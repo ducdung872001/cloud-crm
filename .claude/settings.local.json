@@ -1,0 +1,13 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(PYTHONIOENCODING=utf-8 python)",
+      "Bash(grep -E \"\\\\.\\(tsx?|jsx?\\)$\")",
+      "Bash(awk '{print $NF}')",
+      "Bash(jobs -l)",
+      "Bash(tasklist //FI \"IMAGENAME eq node.exe\")",
+      "Bash(wc -l src/pages/PartnerTNPM/*.tsx src/pages/DebtManagement/*.tsx src/pages/SettingTNPM/SettingPaymentMethods.tsx)",
+      "Bash(head -3 src/services/tnpm/*.ts)"
+    ]
+  }
+}

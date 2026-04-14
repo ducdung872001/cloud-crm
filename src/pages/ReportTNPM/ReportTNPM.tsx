@@ -142,7 +142,7 @@ export default function ReportTNPM() {
                   <td colSpan={3} style={{ padding: "12px 14px" }}>TỔNG CỘNG</td>
                   <td style={{ padding: "12px 14px" }} className="amount-text">{fmtMoney(MOCK_INVOICES.reduce((a, i) => a + i.totalAmount, 0))}</td>
                   <td style={{ padding: "12px 14px" }} className="amount-text">{fmtMoney(totalRevenue)}</td>
-                  <td style={{ padding: "12px 14px" }} className="amount-text" style={{ color: "#ff4d4f" }}>{fmtMoney(totalOutstanding)}</td>
+                  <td style={{ padding: "12px 14px", color: "#ff4d4f" }} className="amount-text">{fmtMoney(totalOutstanding)}</td>
                   <td></td>
                 </tr>
               </tfoot>

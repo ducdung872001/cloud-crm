@@ -21,6 +21,15 @@ import SettingTNPM from "pages/Setting/SettingTNPM";
 import SettingFeeTypes from "pages/SettingTNPM/SettingFeeTypes";
 import SettingComingSoon from "pages/SettingTNPM/SettingComingSoon";
 import SettingBillingRates from "pages/SettingTNPM/SettingBillingRates";
+import SettingPaymentMethods from "pages/SettingTNPM/SettingPaymentMethods";
+import SettingCAMCharges from "pages/SettingTNPM/SettingCAMCharges";
+import DebtManagementList from "pages/DebtManagement/DebtManagementList";
+import DebtTransactionList from "pages/DebtManagement/DebtTransactionList";
+import PartnerTNPMList from "pages/PartnerTNPM/PartnerList";
+import PartnerContractList from "pages/PartnerTNPM/PartnerContractList";
+import PortfolioDashboardList from "pages/PortfolioDashboard/PortfolioDashboardList";
+import B2GComplianceList from "pages/B2GCompliance/B2GComplianceList";
+import FeeNotificationList from "pages/FeeNotification/FeeNotificationList";
 import ServiceRequestList from "pages/ServiceRequest/ServiceRequestList";
 import MaintenancePlanList from "pages/MaintenancePlan/MaintenancePlanList";
 import ReportTNPM from "pages/ReportTNPM/ReportTNPM";
@@ -302,9 +311,27 @@ export const menu: IMenuItem[] = [
         code: "",
       },
       {
+        title: "Công nợ",
+        path: "/debt-management",
+        icon: <Icon name="CashbookMenu" />,
+        code: "",
+      },
+      {
+        title: "Giao dịch công nợ",
+        path: "/debt-transaction",
+        icon: <Icon name="AuditMenu" />,
+        code: "",
+      },
+      {
         title: "Lịch sử thanh toán",
         path: "/payment_history",
         icon: <Icon name="CashbookMenu" />,
+        code: "",
+      },
+      {
+        title: "Thông báo phí & Nhắc nợ",
+        path: "/fee-notification",
+        icon: <Icon name="SupportMenu" />,
         code: "",
       },
     ],
@@ -332,6 +359,43 @@ export const menu: IMenuItem[] = [
         title: "Hóa đơn NCC",
         path: "/vendor-invoices",
         icon: <Icon name="CashbookMenu" />,
+        code: "",
+      },
+    ],
+  },
+
+  // ── 5c. PORTFOLIO (Dashboard tổng TNPM) ──────────────────────────────────
+  {
+    title: "Portfolio",
+    path: "/portfolio",
+    icon: <Icon name="OverviewMenu" />,
+    code: "",
+  },
+
+  // ── 5d. B2G COMPLIANCE (Dự án HC) ────────────────────────────────────────
+  {
+    title: "B2G — Dự án HC",
+    path: "/b2g-compliance",
+    icon: <Icon name="AuditMenu" />,
+    code: "",
+  },
+
+  // ── 6b. ĐỐI TÁC ──────────────────────────────────────────────────────────
+  {
+    title: "Đối tác",
+    icon: <Icon name="PartnerMenu" />,
+    code: "",
+    children: [
+      {
+        title: "Danh sách đối tác",
+        path: "/partners",
+        icon: <Icon name="PartnerMenu" />,
+        code: "",
+      },
+      {
+        title: "Hợp đồng đối tác",
+        path: "/partner-contracts",
+        icon: <Icon name="AuditMenu" />,
         code: "",
       },
     ],
@@ -414,18 +478,27 @@ export const routes: IRouter[] = [
   { path: "/billing", component: <BillingEngineList /> },
   { path: "/meter-readings", component: <MeterReadingList /> },
   { path: "/turnover-rent", component: <TurnoverRentList /> },
+  { path: "/debt-management", component: <DebtManagementList /> },
+  { path: "/debt-transaction", component: <DebtTransactionList /> },
 
   // ─── TNPM: Vendor ───────────────────────────────────────────────────────
   { path: "/vendors", component: <VendorManagementList /> },
   { path: "/vendor-contracts", component: <VendorContractList /> },
   { path: "/vendor-invoices", component: <VendorInvoiceList /> },
 
+  // ─── TNPM: Đối tác ──────────────────────────────────────────────────────
+  { path: "/partners", component: <PartnerTNPMList /> },
+  { path: "/partner-contracts", component: <PartnerContractList /> },
+
   // ─── TNPM: Vận hành ─────────────────────────────────────────────────────
   { path: "/service-requests", component: <ServiceRequestList /> },
   { path: "/maintenance-plans", component: <MaintenancePlanList /> },
 
-  // ─── TNPM: Báo cáo ──────────────────────────────────────────────────────
+  // ─── TNPM: Báo cáo & Portfolio ─────────────────────────────────────────
   { path: "/reports", component: <ReportTNPM /> },
+  { path: "/portfolio", component: <PortfolioDashboardList /> },
+  { path: "/b2g-compliance", component: <B2GComplianceList /> },
+  { path: "/fee-notification", component: <FeeNotificationList /> },
 
   // ─── Ticket & Support ────────────────────────────────────────────────────
   { path: "/ticket", component: <TicketList /> },
@@ -457,7 +530,8 @@ export const routes: IRouter[] = [
   { path: "/setting", component: <SettingTNPM /> },
   { path: "/setting/fee-types", component: <SettingFeeTypes /> },
   { path: "/setting/billing-rates", component: <SettingBillingRates /> },
-  { path: "/setting/payment-methods", component: <SettingComingSoon /> },
+  { path: "/setting/payment-methods", component: <SettingPaymentMethods /> },
+  { path: "/setting/cam-charges", component: <SettingCAMCharges /> },
   { path: "/setting/billing-config", component: <SettingComingSoon /> },
   { path: "/setting/vendor-services", component: <SettingComingSoon /> },
   { path: "/setting/sr-categories", component: <SettingComingSoon /> },

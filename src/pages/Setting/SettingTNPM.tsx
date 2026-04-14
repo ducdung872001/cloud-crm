@@ -28,6 +28,7 @@ const SETTING_GROUPS: ISettingGroup[] = [
       { label: "Phương thức thanh toán", desc: "MSB Pay, chuyển khoản, Timi App", path: "/setting/payment-methods" },
       { label: "Cấu hình billing", desc: "Chu kỳ hóa đơn, ngày hạn TT, nhắc nợ", path: "/setting/billing-config" },
       { label: "Biểu giá & Công thức tính phí", desc: "Đơn giá điện, nước, phí QL theo từng dự án", path: "/setting/billing-rates" },
+      { label: "CAM Charges (TTTM/VP/KCN)", desc: "Phí khu vực chung, phân bổ theo m²/doanh thu", path: "/setting/cam-charges" },
       { label: "Mẫu hóa đơn", desc: "Template xuất PDF hóa đơn cho KH", path: "/setting_basis", badge: "Soon" },
     ],
   },
