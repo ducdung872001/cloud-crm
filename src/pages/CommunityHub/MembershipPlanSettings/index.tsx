@@ -1,4 +1,4 @@
-// [CH] Community Hub - Quản lý gói thành viên (Cài đặt)
+// [FitPro] Quản lý gói FitPro 90 ngày (Cơ bản → Super VIP)
 import React, { useState } from "react";
 import { MOCK_MEMBERSHIP_PLANS } from "@/mocks/community-hub/membership-plans";
 import { MOCK_SERVICE_CATALOG } from "@/mocks/community-hub/service-catalog";
@@ -35,10 +35,10 @@ const EMPTY_PLAN: PlanForm = {
   includes: [{ service: "", quota: null, unit: "" }],
 };
 
-const COLORS = ["#2D6A5A", "#D4A574", "#6B8078", "#3D9E6A", "#E8922A", "#D64B3A"];
+const COLORS = ["#8E9BAE", "#4DE4C4", "#00C9A7", "#FF8C42", "#E8473B", "#722ed1"];
 
 export default function MembershipPlanSettings() {
-  document.title = "Quản lý gói thành viên";
+  document.title = "Gói FitPro 90 ngày";
 
   const [plans, setPlans] = useState(MOCK_MEMBERSHIP_PLANS);
   const [showForm, setShowForm] = useState(false);
@@ -129,8 +129,8 @@ export default function MembershipPlanSettings() {
       {/* ── Header ── */}
       <div className="ch-plan-settings__header">
         <div>
-          <h2>Quản lý gói thành viên</h2>
-          <p className="subtitle">Định nghĩa các gói thẻ thành viên, giá, thời hạn và dịch vụ bao gồm</p>
+          <h2>Gói FitPro 90 ngày</h2>
+          <p className="subtitle">5 gói trải nghiệm: Cơ bản → Plus → Pro → VIP → Super VIP. Giá theo trần quy định của hãng (slide 9)</p>
         </div>
         <button className="btn-add" onClick={handleAdd}>
           <Icon name="PlusCircleFill" />
