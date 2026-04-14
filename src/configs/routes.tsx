@@ -24,6 +24,7 @@ import SettingBillingRates from "pages/SettingTNPM/SettingBillingRates";
 import SettingPaymentMethods from "pages/SettingTNPM/SettingPaymentMethods";
 import SettingCAMCharges from "pages/SettingTNPM/SettingCAMCharges";
 import DebtManagementList from "pages/DebtManagement/DebtManagementList";
+import DebtManagementListV2 from "pages/DebtManagement/DebtManagementListV2";
 import DebtTransactionList from "pages/DebtManagement/DebtTransactionList";
 import PartnerTNPMList from "pages/PartnerTNPM/PartnerList";
 import PartnerContractList from "pages/PartnerTNPM/PartnerContractList";
@@ -34,6 +35,8 @@ import VendorKPIDashboard from "pages/VendorManagement/VendorKPIDashboard";
 import AuditLogList from "pages/AuditLog/AuditLogList";
 import VendorPortalPreview from "pages/VendorPortal/VendorPortalPreview";
 import OwnerDashboard from "pages/OwnerDashboard/OwnerDashboard";
+import ComplaintTicketList from "pages/ComplaintTicket/ComplaintTicketList";
+import StaffScheduleList from "pages/StaffSchedule/StaffScheduleList";
 import ServiceRequestList from "pages/ServiceRequest/ServiceRequestList";
 import MaintenancePlanList from "pages/MaintenancePlan/MaintenancePlanList";
 import ReportTNPM from "pages/ReportTNPM/ReportTNPM";
@@ -429,6 +432,18 @@ export const menu: IMenuItem[] = [
         icon: <Icon name="DefaultProcessMenu" />,
         code: "",
       },
+      {
+        title: "Khiếu nại cư dân",
+        path: "/complaint-tickets",
+        icon: <Icon name="SupportMenu" />,
+        code: "",
+      },
+      {
+        title: "Lịch làm việc NV",
+        path: "/staff-schedule",
+        icon: <Icon name="AuditMenu" />,
+        code: "",
+      },
     ],
   },
 
@@ -511,6 +526,7 @@ export const routes: IRouter[] = [
   { path: "/meter-readings", component: <MeterReadingList /> },
   { path: "/turnover-rent", component: <TurnoverRentList /> },
   { path: "/debt-management", component: <DebtManagementList /> },
+  { path: "/debt-management-v2", component: <DebtManagementListV2 /> },
   { path: "/debt-transaction", component: <DebtTransactionList /> },
 
   // ─── TNPM: Vendor ───────────────────────────────────────────────────────
@@ -535,6 +551,8 @@ export const routes: IRouter[] = [
   { path: "/audit-log", component: <AuditLogList /> },
   { path: "/vendor-portal-preview", component: <VendorPortalPreview /> },
   { path: "/owner-dashboard", component: <OwnerDashboard /> },
+  { path: "/complaint-tickets", component: <ComplaintTicketList /> },
+  { path: "/staff-schedule", component: <StaffScheduleList /> },
 
   // ─── Ticket & Support ────────────────────────────────────────────────────
   { path: "/ticket", component: <TicketList /> },
