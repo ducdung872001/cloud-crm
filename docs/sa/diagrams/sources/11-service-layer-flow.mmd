@@ -1,0 +1,40 @@
+%%{init: {'theme':'base','themeVariables':{'fontFamily':'Calibri','fontSize':'18px'}}}%%
+flowchart TB
+    PAGE["Page Component"]
+    SVC["Service<br/>(CustomerService.filter)"]
+    URLS["urlsApi.customer.filter<br/>= /api/customer/filter"]
+    HELPER["apiHelper<br/>(apiGet)"]
+    FETCH["fetch(url, config)"]
+    INT_REQ["fetch-intercept<br/>REQUEST handler<br/>+ Authorization<br/>+ Selectedrole<br/>+ Hostname<br/>+ URL rewrite"]
+    NET[("Network HTTPS")]
+    GW["API Gateway<br/>(routing)"]
+    SVC_BE["Backend Microservice<br/>(Sales / Customer / ...)"]
+    DB[("Database")]
+    INT_RES["fetch-intercept<br/>RESPONSE handler<br/>+ check 401 → logout"]
+
+    PAGE --> SVC
+    SVC --> URLS
+    SVC --> HELPER
+    HELPER --> FETCH
+    FETCH --> INT_REQ
+    INT_REQ --> NET
+    NET --> GW
+    GW --> SVC_BE
+    SVC_BE --> DB
+    DB --> SVC_BE
+    SVC_BE --> GW
+    GW --> NET
+    NET --> INT_RES
+    INT_RES --> HELPER
+    HELPER --> SVC
+    SVC --> PAGE
+
+    classDef fe fill:#1F3A68,stroke:#1F3A68,color:#fff
+    classDef http fill:#D97706,stroke:#7C2D12,color:#fff
+    classDef be fill:#2C7A7B,stroke:#0F4C44,color:#fff
+    classDef data fill:#FAEEDA,stroke:#D97706,color:#7C2D12
+
+    class PAGE,SVC,URLS,HELPER,FETCH fe
+    class INT_REQ,INT_RES,NET,GW http
+    class SVC_BE be
+    class DB data

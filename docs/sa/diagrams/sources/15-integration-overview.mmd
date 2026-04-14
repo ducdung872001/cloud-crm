@@ -1,0 +1,65 @@
+%%{init: {'theme':'base','themeVariables':{'fontFamily':'Calibri','fontSize':'18px'}}}%%
+flowchart LR
+    subgraph CRM["REBORN CRM"]
+      direction TB
+      AUTH[Auth Service]
+      SALES[Sales Service]
+      BILL[Billing Service]
+      LOG[Logistics Service]
+      MKT[Marketing Service]
+      INTEG[Integration Service]
+      NOTIF[Notification Service]
+      CARE[Care Service]
+    end
+
+    subgraph EXT["External Services"]
+      direction TB
+      SSO[SSO Reborn]
+      VNPAY[VNPay]
+      MOMO[MoMo]
+      ZALOPAY[ZaloPay]
+      VAT[Viettel/VNPT/Misa<br/>E-invoice]
+      GHN[GHN]
+      GHTK[GHTK]
+      JT[J&T]
+      VTPOST[Viettel Post]
+      SMS[SMS Gateway]
+      EMAIL[SMTP/SendGrid]
+      ZALO[Zalo OA]
+      FB[Facebook]
+      MS[Microsoft Outlook]
+      FCM[Firebase FCM]
+      BPM[Camunda BPM]
+      SIP[SIP Gateway]
+    end
+
+    subgraph TENANT["Tenant systems"]
+      WH[Tenant webhook<br/>endpoint]
+    end
+
+    AUTH <-->|OAuth/OIDC| SSO
+    SALES <-->|REST + IPN| VNPAY
+    SALES <-->|REST + IPN| MOMO
+    SALES <-->|REST + IPN| ZALOPAY
+    BILL -->|API + signature| VAT
+    LOG <-->|REST + webhook| GHN
+    LOG <-->|REST + webhook| GHTK
+    LOG <-->|REST + webhook| JT
+    LOG <-->|REST + webhook| VTPOST
+    MKT -->|API| SMS
+    MKT -->|SMTP| EMAIL
+    MKT <-->|API + webhook| ZALO
+    MKT <-->|Graph API| FB
+    CARE <-->|MSAL| MS
+    NOTIF -->|FCM API| FCM
+    INTEG <-->|REST| BPM
+    CRM <-->|SIP signaling| SIP
+    INTEG -.HTTP POST + HMAC.-> WH
+
+    classDef crm fill:#1F3A68,stroke:#1F3A68,color:#fff
+    classDef ext fill:#FEF3C7,stroke:#F59E0B,color:#78350F
+    classDef tenant fill:#7C3AED,stroke:#5B21B6,color:#fff
+
+    class AUTH,SALES,BILL,LOG,MKT,INTEG,NOTIF,CARE crm
+    class SSO,VNPAY,MOMO,ZALOPAY,VAT,GHN,GHTK,JT,VTPOST,SMS,EMAIL,ZALO,FB,MS,FCM,BPM,SIP ext
+    class WH tenant

@@ -1,0 +1,62 @@
+%%{init: {'theme':'base','themeVariables':{'fontFamily':'Calibri','fontSize':'18px'}}}%%
+flowchart TB
+    FE["Frontend SPA"]
+    GW["API Gateway<br/>(URL prefix routing)"]
+
+    subgraph CORE["Core Services"]
+      AUTH["Auth<br/>/authenticator"]
+      MAIN["Main API<br/>/api"]
+    end
+
+    subgraph BIZ["Business Services /bizapi"]
+      SALES[Sales]
+      FIN[Finance]
+      INV[Inventory]
+      WH[Warehouse]
+      CARE[Care]
+      BILLING[Billing]
+      LOG[Logistics]
+      INTEG[Integration]
+      MKT[Market]
+      NOTIF[Notification]
+    end
+
+    subgraph OTHERS["Other Services"]
+      CS["CS /cs"]
+      HR["HR /hr"]
+      SYS["System /system"]
+      APP["App /application"]
+      BPM["BPM Engine /bpmapi (external)"]
+    end
+
+    subgraph DATA["Shared Infrastructure"]
+      DB[(PostgreSQL<br/>cluster)]
+      REDIS[(Redis<br/>cache + queue)]
+      S3[(S3 storage)]
+      MQ[(Message Queue<br/>RabbitMQ/Kafka)]
+    end
+
+    FE --> GW
+    GW --> CORE
+    GW --> BIZ
+    GW --> OTHERS
+    CORE --> DB
+    BIZ --> DB
+    OTHERS --> DB
+    CORE --> REDIS
+    BIZ --> REDIS
+    BIZ --> S3
+    BIZ -.async events.-> MQ
+    MQ -.subscribe.-> BIZ
+
+    classDef fe fill:#1F3A68,stroke:#1F3A68,color:#fff
+    classDef core fill:#7C3AED,stroke:#5B21B6,color:#fff
+    classDef biz fill:#2C7A7B,stroke:#0F4C44,color:#fff
+    classDef other fill:#D97706,stroke:#7C2D12,color:#fff
+    classDef data fill:#FAEEDA,stroke:#D97706,color:#7C2D12
+
+    class FE,GW fe
+    class AUTH,MAIN core
+    class SALES,FIN,INV,WH,CARE,BILLING,LOG,INTEG,MKT,NOTIF biz
+    class CS,HR,SYS,APP,BPM other
+    class DB,REDIS,S3,MQ data

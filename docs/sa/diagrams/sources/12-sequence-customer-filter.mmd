@@ -1,0 +1,32 @@
+%%{init: {'theme':'base','themeVariables':{'fontFamily':'Calibri','fontSize':'18px'}}}%%
+sequenceDiagram
+    autonumber
+    participant Page as Page CustomerList
+    participant Hook as useCustomerList
+    participant Svc as CustomerService
+    participant Helper as apiHelper
+    participant Int as fetch-intercept
+    participant API as Backend API
+    participant DB as PostgreSQL
+
+    Page->>Hook: useCustomerList(filter)
+    Hook->>Svc: filter({page:1, limit:10, branchId:23})
+    Svc->>Helper: apiGet('/api/customer/filter', params)
+    Helper->>Int: fetch('/api/customer/filter?page=1&limit=10&branchId=23')
+    Int->>Int: + Authorization Bearer
+    Int->>Int: + Selectedrole admin_branch
+    Int->>Int: + Hostname kcn.reborn.vn
+    Int->>Int: rewrite URL → https://cloud.reborn.vn/api/customer/filter?...
+    Int->>API: HTTPS request
+    API->>API: Validate token + permission
+    API->>DB: SELECT * FROM customer<br/>WHERE tenant_id=X AND branch_id=23<br/>ORDER BY ... LIMIT 10
+    DB-->>API: rows
+    API-->>Int: { code:0, result: { items: [...], total: 250 } }
+    Int->>Int: Check status — không phải 401, pass through
+    Int-->>Helper: response
+    Helper->>Helper: res.json()
+    Helper-->>Svc: parsed JSON
+    Svc-->>Hook: { code, result }
+    Hook->>Hook: setData(result.items), setLoading(false)
+    Hook-->>Page: { data, loading, refetch }
+    Page->>Page: Render bảng
