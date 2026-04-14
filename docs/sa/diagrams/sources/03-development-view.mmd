@@ -1,0 +1,35 @@
+%%{init: {'theme':'base','themeVariables':{'fontFamily':'Calibri','fontSize':'18px'}}}%%
+flowchart TB
+    REPO[("cloud-crm/<br/>Git repository")]
+    REPO --> DOCS["docs/<br/>HDSD + URD + SAD"]
+    REPO --> SRC["src/<br/>Frontend source"]
+    REPO --> CFG["vite.config.ts<br/>tsconfig.json<br/>package.json"]
+
+    SRC --> APP_TSX["App.tsx<br/>main.tsx<br/>Root setup"]
+    SRC --> CONFIGS["configs/<br/>routes urls fetch i18n auth firebase"]
+    SRC --> CONTEXTS["contexts/ (5)<br/>auth user ui call common"]
+    SRC --> HOOKS["hooks/ (~30)<br/>useCustomerList useDebounce ..."]
+    SRC --> COMPONENTS["components/ (78)<br/>Reusable UI"]
+    SRC --> PAGES["pages/ (167)<br/>Business modules"]
+    SRC --> SERVICES["services/ (240)<br/>API call layer"]
+    SRC --> MODEL["model/<br/>TypeScript interfaces"]
+    SRC --> UTILS["utils/<br/>Helper functions"]
+    SRC --> ASSETS["assets/<br/>Images fonts sounds"]
+    SRC --> STYLES["styles/<br/>Global SCSS"]
+    SRC --> LOCALES["locales/<br/>i18n JSON"]
+
+    PAGES -.uses.-> COMPONENTS
+    PAGES -.uses.-> HOOKS
+    PAGES -.uses.-> CONTEXTS
+    PAGES -.uses.-> SERVICES
+    HOOKS -.uses.-> SERVICES
+    COMPONENTS -.uses.-> UTILS
+    SERVICES -.uses.-> CONFIGS
+
+    classDef root fill:#1F3A68,stroke:#1F3A68,color:#fff
+    classDef cat fill:#2C7A7B,stroke:#0F4C44,color:#fff
+    classDef leaf fill:#E1F5EE,stroke:#2C7A7B,color:#0F4C44
+
+    class REPO root
+    class SRC,DOCS,CFG cat
+    class APP_TSX,CONFIGS,CONTEXTS,HOOKS,COMPONENTS,PAGES,SERVICES,MODEL,UTILS,ASSETS,STYLES,LOCALES leaf

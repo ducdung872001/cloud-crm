@@ -1,0 +1,56 @@
+%%{init: {'theme':'base','themeVariables':{'fontFamily':'Calibri','fontSize':'18px'}}}%%
+flowchart TB
+    subgraph CRM["REBORN CRM"]
+      direction TB
+      subgraph CORE["Core Bounded Contexts"]
+        IDENTITY[Identity & Access]
+        CUSTOMER[Customer CRM]
+        SALES[Sales / POS]
+        MEMBER[Membership / Loyalty]
+      end
+      subgraph OPS["Operational Contexts"]
+        INVENTORY[Inventory & Warehouse]
+        FINANCE[Finance & Accounting]
+        CARE[Customer Care]
+        TICKET[Ticket / Feedback]
+      end
+      subgraph GROWTH["Growth Contexts"]
+        MARKETING[Marketing]
+        REPORTING[Reporting]
+        WORKFLOW[Workflow / BPM]
+      end
+      subgraph PLATFORM["Platform Contexts"]
+        INTEGRATION[Integration]
+        SETTINGS[Settings & Config]
+        NOTIFICATION[Notification]
+        HR[HR & Org]
+        APPMARKET[App Marketplace]
+      end
+    end
+
+    CUSTOMER --> SALES
+    SALES --> INVENTORY
+    SALES --> FINANCE
+    SALES --> MEMBER
+    CARE --> CUSTOMER
+    MARKETING --> CUSTOMER
+    TICKET --> CUSTOMER
+    REPORTING --> SALES
+    REPORTING --> FINANCE
+    REPORTING --> CUSTOMER
+    WORKFLOW --> SALES
+    WORKFLOW --> CARE
+    INTEGRATION --> SALES
+    INTEGRATION --> FINANCE
+    NOTIFICATION --> CUSTOMER
+    SETTINGS -.config.-> CRM
+
+    classDef core fill:#1F3A68,stroke:#1F3A68,color:#fff
+    classDef ops fill:#2C7A7B,stroke:#0F4C44,color:#fff
+    classDef growth fill:#7C3AED,stroke:#5B21B6,color:#fff
+    classDef platform fill:#D97706,stroke:#7C2D12,color:#fff
+
+    class IDENTITY,CUSTOMER,SALES,MEMBER core
+    class INVENTORY,FINANCE,CARE,TICKET ops
+    class MARKETING,REPORTING,WORKFLOW growth
+    class INTEGRATION,SETTINGS,NOTIFICATION,HR,APPMARKET platform

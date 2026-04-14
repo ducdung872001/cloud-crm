@@ -1,0 +1,17 @@
+%%{init: {'theme':'base','themeVariables':{'fontFamily':'Calibri','fontSize':'18px'}}}%%
+flowchart TB
+    ROOT["src/components/ — 78 components"]
+    ROOT --> FORM["Form Controls (~15)<br/>input, select, datePicker,<br/>numericInput, radio, checkbox..."]
+    ROOT --> LAYOUT["Layout & Navigation (~10)<br/>sidebar, header, breadcrumb,<br/>titleAction, tabs, slidePanel"]
+    ROOT --> DATA["Data Display (~12)<br/>table, agGridTable, pagination,<br/>card, list, kanban, treeView"]
+    ROOT --> FB["Feedback (~10)<br/>modal, confirm, loading,<br/>spinner, toast, tooltip"]
+    ROOT --> MEDIA["Media & Viz (~8)<br/>chart, image, videoPlayer,<br/>qrcode, barcode, signature"]
+    ROOT --> SPEC["Specialized (~15)<br/>tourOverlay, richTextEditor,<br/>bpmnViewer, formBuilder,<br/>phoneCall, chat"]
+    ROOT --> ICON["Icon set (~3)<br/>icon component"]
+    ROOT --> UTIL["Utility wrappers (~5)<br/>errorBoundary, lazyLoad,<br/>printArea, permissionGuard"]
+
+    classDef root fill:#1F3A68,stroke:#1F3A68,color:#fff
+    classDef cat fill:#E1F5EE,stroke:#2C7A7B,color:#0F4C44
+
+    class ROOT root
+    class FORM,LAYOUT,DATA,FB,MEDIA,SPEC,ICON,UTIL cat

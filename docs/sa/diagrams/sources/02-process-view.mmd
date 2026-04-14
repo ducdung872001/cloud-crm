@@ -1,0 +1,59 @@
+%%{init: {'theme':'base','themeVariables':{'fontFamily':'Calibri','fontSize':'18px'}}}%%
+flowchart LR
+    USER((User Browser))
+    subgraph FE["Frontend SPA process"]
+      MAIN[Main React thread]
+      SW[Service Worker — FCM Push]
+      WW[Web Worker — heavy parsing]
+    end
+    subgraph EDGE["Edge tier"]
+      CDN[CDN]
+      WAF[WAF + Rate limit]
+      LB[Load Balancer]
+    end
+    subgraph APP["App tier"]
+      API1[API Server 1]
+      API2[API Server 2]
+      API3[API Server 3]
+      WORKER[Background Worker]
+      CRON[Cron Scheduler]
+      WHRX[Webhook Receiver]
+      WHTX[Webhook Dispatcher]
+    end
+    subgraph DATA["Data tier"]
+      DB[(PostgreSQL)]
+      REDIS[(Redis)]
+      S3[(S3 Object Storage)]
+    end
+    EXT[External Services]
+
+    USER --> MAIN
+    MAIN --> SW
+    MAIN -.spawn.-> WW
+    MAIN -->|HTTPS REST| CDN
+    CDN --> WAF
+    WAF --> LB
+    LB --> API1
+    LB --> API2
+    LB --> API3
+    API1 --> DB
+    API1 --> REDIS
+    API1 --> S3
+    API1 -->|emit job| REDIS
+    REDIS -.subscribe.-> WORKER
+    CRON -.trigger.-> WORKER
+    WORKER --> DB
+    WORKER -->|push event| WHTX
+    WHTX -->|HTTP POST| EXT
+    EXT -->|webhook IPN| WHRX
+    WHRX --> DB
+
+    classDef ext fill:#FEF3C7,stroke:#F59E0B,color:#78350F
+    classDef edge fill:#E1F5EE,stroke:#2C7A7B,color:#0F4C44
+    classDef app fill:#1F3A68,stroke:#1F3A68,color:#fff
+    classDef data fill:#FAEEDA,stroke:#D97706,color:#7C2D12
+
+    class USER,EXT ext
+    class CDN,WAF,LB edge
+    class API1,API2,API3,WORKER,CRON,WHRX,WHTX,MAIN,SW,WW app
+    class DB,REDIS,S3 data
