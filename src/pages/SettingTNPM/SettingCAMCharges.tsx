@@ -3,9 +3,7 @@ import { useNavigate } from "react-router-dom";
 import {
   MOCK_CAM_CHARGES, MOCK_PROJECTS, MOCK_LEASE_CONTRACTS,
 } from "assets/mock/TNPMData";
-
-const fmtMoney = (n: number) =>
-  n >= 1e9 ? `${(n / 1e9).toFixed(2)} tỷ` : n >= 1e6 ? `${(n / 1e6).toFixed(1)} tr đ` : `${(n || 0).toLocaleString("vi-VN")} đ`;
+import { PageHeader, KpiRow, ModalShell, StatusBadge, fmtMoney } from "components/tnpm";
 
 const DISTRIBUTION_METHODS = [
   { value: "area_based", label: "Theo diện tích thuê (m²)", icon: "📐" },
@@ -58,14 +56,16 @@ function EditCAMModal({ cam, onClose, onSave }: any) {
   };
 
   return (
-    <div className="modal-overlay" onClick={onClose}>
-      <div className="modal-box modal-box--wide" onClick={(e) => e.stopPropagation()}>
-        <div className="modal-header">
-          <h2 className="modal-title">{isEdit ? "✏️ Sửa cấu hình CAM" : "🏢 Thêm cấu hình CAM cho dự án"}</h2>
-          <button className="modal-close" onClick={onClose}>×</button>
-        </div>
-        <div className="modal-body">
-          <div style={{ fontWeight: 600, marginBottom: 10, color: "#1890ff" }}>📋 Thông tin dự án</div>
+    <ModalShell
+      title={isEdit ? "✏️ Sửa cấu hình CAM" : "🏢 Thêm cấu hình CAM cho dự án"}
+      onClose={onClose}
+      wide
+      footer={<>
+        <button className="btn btn-outline" onClick={onClose}>Hủy</button>
+        <button className="btn btn-primary" onClick={handleSave}>💾 Lưu cấu hình CAM</button>
+      </>}
+    >
+      <div style={{ fontWeight: 600, marginBottom: 10, color: "#1890ff" }}>📋 Thông tin dự án</div>
           <div className="form-grid">
             <div className="form-group" style={{ gridColumn: "1 / -1" }}>
               <label>Dự án áp dụng *</label>
@@ -138,13 +138,7 @@ function EditCAMModal({ cam, onClose, onSave }: any) {
             <label>Ghi chú</label>
             <textarea className="form-control" rows={2} value={form.note} onChange={(e) => set("note", e.target.value)} />
           </div>
-        </div>
-        <div className="modal-footer">
-          <button className="btn btn-outline" onClick={onClose}>Hủy</button>
-          <button className="btn btn-primary" onClick={handleSave}>💾 Lưu cấu hình CAM</button>
-        </div>
-      </div>
-    </div>
+    </ModalShell>
   );
 }
 
@@ -166,13 +160,12 @@ function AllocationPreviewModal({ cam, onClose }: any) {
   const totalCam = rows.reduce((a: number, r: any) => a + r.camAmount, 0);
 
   return (
-    <div className="modal-overlay" onClick={onClose}>
-      <div className="modal-box modal-box--wide" onClick={(e) => e.stopPropagation()}>
-        <div className="modal-header">
-          <h2 className="modal-title">🧮 Preview phân bổ CAM — {cam.projectName}</h2>
-          <button className="modal-close" onClick={onClose}>×</button>
-        </div>
-        <div className="modal-body">
+    <ModalShell
+      title={`🧮 Preview phân bổ CAM — ${cam.projectName}`}
+      onClose={onClose}
+      wide
+      footer={<button className="btn btn-primary" onClick={onClose}>Đóng</button>}
+    >
           <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 10, marginBottom: 16 }}>
             {[
               { label: "Tổng chi phí CAM/tháng", value: fmtMoney(cam.totalMonthlyCostVND), color: "#ff4d4f" },
@@ -230,12 +223,7 @@ function AllocationPreviewModal({ cam, onClose }: any) {
           <div style={{ marginTop: 14, fontSize: 11, color: "#8c8c8c", fontStyle: "italic" }}>
             💡 CAM sẽ được tự động thêm vào hóa đơn định kỳ của từng tenant khi tạo billing tháng. Có thể override thủ công trong hợp đồng thuê.
           </div>
-        </div>
-        <div className="modal-footer">
-          <button className="btn btn-primary" onClick={onClose}>Đóng</button>
-        </div>
-      </div>
-    </div>
+    </ModalShell>
   );
 }
 
@@ -264,29 +252,18 @@ export default function SettingCAMCharges() {
 
   return (
     <div className="tnpm-list-page">
-      <div className="page-header">
-        <div>
-          <button className="btn btn-outline" style={{ marginBottom: 8 }} onClick={() => navigate("/setting")}>← Cài đặt</button>
-          <h1 className="page-title">🏢 CAM Charges (Common Area Maintenance)</h1>
-          <p className="page-sub">Cấu hình phí khu vực chung cho TTTM, Văn phòng, KCN — phân bổ theo diện tích / doanh thu</p>
-        </div>
-        <button className="btn btn-primary" onClick={() => { setEditTarget(null); setShowModal(true); }}>+ Thêm cấu hình CAM</button>
-      </div>
+      <PageHeader
+        title="🏢 CAM Charges (Common Area Maintenance)"
+        subtitle="Cấu hình phí khu vực chung cho TTTM, Văn phòng, KCN — phân bổ theo diện tích / doanh thu"
+        backLink={{ label: "Cài đặt", onClick: () => navigate("/setting") }}
+        actions={<button className="btn btn-primary" onClick={() => { setEditTarget(null); setShowModal(true); }}>+ Thêm cấu hình CAM</button>}
+      />
 
-      {/* KPI */}
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 14, marginBottom: 20 }}>
-        {[
-          { label: "Dự án áp dụng CAM", value: `${totalCamProjects}/${cams.length}`, color: "#1890ff", icon: "🏢" },
-          { label: "Tổng CAM/tháng (active)", value: fmtMoney(totalMonthly), color: "#ff4d4f", icon: "💸" },
-          { label: "Dự án có cấu hình", value: `${cams.length} config`, color: "#722ed1", icon: "⚙️" },
-        ].map((s, i) => (
-          <div key={i} style={{ background: "#fff", borderRadius: 10, padding: "16px 18px", boxShadow: "0 2px 8px rgba(0,0,0,.06)", borderLeft: `4px solid ${s.color}` }}>
-            <div style={{ fontSize: 20 }}>{s.icon}</div>
-            <div style={{ fontSize: 22, fontWeight: 700, color: s.color, marginTop: 4 }}>{s.value}</div>
-            <div style={{ fontSize: 12, color: "#8c8c8c", marginTop: 4 }}>{s.label}</div>
-          </div>
-        ))}
-      </div>
+      <KpiRow columns={3} items={[
+        { label: "Dự án áp dụng CAM", value: `${totalCamProjects}/${cams.length}`, color: "#1890ff", icon: "🏢" },
+        { label: "Tổng CAM/tháng (active)", value: fmtMoney(totalMonthly), color: "#ff4d4f", icon: "💸" },
+        { label: "Dự án có cấu hình", value: `${cams.length} config`, color: "#722ed1", icon: "⚙️" },
+      ]} />
 
       {/* CAM cards */}
       <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(460px, 1fr))", gap: 16 }}>
@@ -306,12 +283,10 @@ export default function SettingCAMCharges() {
                     {c.effectiveTo && ` → ${c.effectiveTo}`}
                   </div>
                 </div>
-                <span className="status-badge" style={{
-                  background: c.status === "active" ? "#f6ffed" : c.status === "draft" ? "#fff7e6" : "#fafafa",
-                  color: c.status === "active" ? "#52c41a" : c.status === "draft" ? "#faad14" : "#8c8c8c",
-                }}>
-                  {c.status === "active" ? "Đang áp dụng" : c.status === "draft" ? "Nháp" : "Tạm dừng"}
-                </span>
+                <StatusBadge
+                  label={c.status === "active" ? "Đang áp dụng" : c.status === "draft" ? "Nháp" : "Tạm dừng"}
+                  color={c.status === "active" ? "#52c41a" : c.status === "draft" ? "#faad14" : "#8c8c8c"}
+                />
               </div>
 
               <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10, marginBottom: 12 }}>

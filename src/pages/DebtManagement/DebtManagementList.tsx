@@ -7,9 +7,7 @@ import {
   MOCK_PROJECTS,
   STATUS_COLORS,
 } from "assets/mock/TNPMData";
-
-const fmtMoney = (n: number) =>
-  n >= 1e9 ? `${(n / 1e9).toFixed(2)} tỷ` : n >= 1e6 ? `${(n / 1e6).toFixed(1)} tr đ` : `${(n || 0).toLocaleString("vi-VN")} đ`;
+import { PageHeader, KpiRow, TabBar, ModalShell, StatusBadge, fmtMoney } from "components/tnpm";
 
 const DEBT_STATUS_LABELS: Record<string, string> = {
   overdue: "Quá hạn",
@@ -51,13 +49,15 @@ function PayModal({ debt, onClose, onPay }: any) {
   const isReceivable = debt.kind === "receivable";
 
   return (
-    <div className="modal-overlay" onClick={onClose}>
-      <div className="modal-box" onClick={(e) => e.stopPropagation()} style={{ maxWidth: 560 }}>
-        <div className="modal-header">
-          <h2 className="modal-title">{isReceivable ? "💰 Thu nợ khách hàng" : "💸 Thanh toán cho NCC"}</h2>
-          <button className="modal-close" onClick={onClose}>×</button>
-        </div>
-        <div className="modal-body">
+    <ModalShell
+      title={isReceivable ? "💰 Thu nợ khách hàng" : "💸 Thanh toán cho NCC"}
+      onClose={onClose}
+      maxWidth={560}
+      footer={<>
+        <button className="btn btn-outline" onClick={onClose}>Hủy</button>
+        <button className="btn btn-primary" onClick={handlePay}>✓ Xác nhận {isReceivable ? "thu tiền" : "thanh toán"}</button>
+      </>}
+    >
           {/* Debt summary */}
           <div style={{ background: "#f5f7fa", borderRadius: 8, padding: 14, marginBottom: 16 }}>
             <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 6 }}>
@@ -125,13 +125,7 @@ function PayModal({ debt, onClose, onPay }: any) {
             {isPartial && <span style={{ color: "#faad14" }}>⚠ Thu một phần — còn lại {fmtMoney(debt.amount - amount)}.</span>}
             {amount <= 0 && <span style={{ color: "#ff4d4f" }}>✗ Chưa nhập số tiền hợp lệ.</span>}
           </div>
-        </div>
-        <div className="modal-footer">
-          <button className="btn btn-outline" onClick={onClose}>Hủy</button>
-          <button className="btn btn-primary" onClick={handlePay}>✓ Xác nhận {isReceivable ? "thu tiền" : "thanh toán"}</button>
-        </div>
-      </div>
-    </div>
+    </ModalShell>
   );
 }
 
@@ -141,13 +135,15 @@ function EditScheduleModal({ debt, onClose, onSave }: any) {
   const [reminderDate, setReminderDate] = useState(debt.reminderDate);
 
   return (
-    <div className="modal-overlay" onClick={onClose}>
-      <div className="modal-box" onClick={(e) => e.stopPropagation()} style={{ maxWidth: 480 }}>
-        <div className="modal-header">
-          <h2 className="modal-title">📅 Sửa hạn & nhắc nhở</h2>
-          <button className="modal-close" onClick={onClose}>×</button>
-        </div>
-        <div className="modal-body">
+    <ModalShell
+      title="📅 Sửa hạn & nhắc nhở"
+      onClose={onClose}
+      maxWidth={480}
+      footer={<>
+        <button className="btn btn-outline" onClick={onClose}>Hủy</button>
+        <button className="btn btn-primary" onClick={() => onSave({ dueDate, reminderDate })}>💾 Lưu thay đổi</button>
+      </>}
+    >
           <div style={{ background: "#f5f7fa", borderRadius: 8, padding: 14, marginBottom: 16 }}>
             <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 6 }}>
               <span style={{ color: "#8c8c8c", fontSize: 13 }}>Đối tượng</span>
@@ -167,13 +163,7 @@ function EditScheduleModal({ debt, onClose, onSave }: any) {
             <input className="form-control" type="date" value={reminderDate} max={dueDate} onChange={(e) => setReminderDate(e.target.value)} />
             <div style={{ fontSize: 12, color: "#8c8c8c", marginTop: 4 }}>📱 Hệ thống sẽ gửi thông báo FCM + email lúc 08:00 ngày nhắc nhở</div>
           </div>
-        </div>
-        <div className="modal-footer">
-          <button className="btn btn-outline" onClick={onClose}>Hủy</button>
-          <button className="btn btn-primary" onClick={() => onSave({ dueDate, reminderDate })}>💾 Lưu thay đổi</button>
-        </div>
-      </div>
-    </div>
+    </ModalShell>
   );
 }
 
@@ -181,13 +171,11 @@ function EditScheduleModal({ debt, onClose, onSave }: any) {
 function HistoryModal({ debt, onClose }: any) {
   const history = MOCK_DEBT_TRANSACTIONS.filter((tx: any) => tx.debtId === debt.id);
   return (
-    <div className="modal-overlay" onClick={onClose}>
-      <div className="modal-box" onClick={(e) => e.stopPropagation()} style={{ maxWidth: 720 }}>
-        <div className="modal-header">
-          <h2 className="modal-title">📜 Lịch sử giao dịch — {debt.counterpartyName}</h2>
-          <button className="modal-close" onClick={onClose}>×</button>
-        </div>
-        <div className="modal-body">
+    <ModalShell
+      title={`📜 Lịch sử giao dịch — ${debt.counterpartyName}`}
+      onClose={onClose}
+      maxWidth={720}
+    >
           {history.length === 0 ? (
             <div style={{ textAlign: "center", padding: 30, color: "#8c8c8c" }}>Chưa có giao dịch nào được ghi nhận cho công nợ này.</div>
           ) : (
@@ -216,9 +204,7 @@ function HistoryModal({ debt, onClose }: any) {
               </tbody>
             </table>
           )}
-        </div>
-      </div>
-    </div>
+    </ModalShell>
   );
 }
 
@@ -279,54 +265,33 @@ export default function DebtManagementList() {
 
   return (
     <div className="tnpm-list-page">
-      <div className="page-header">
-        <div>
-          <h1 className="page-title">💼 Quản lý Công nợ</h1>
-          <p className="page-sub">Theo dõi công nợ phải thu từ khách hàng và phải trả nhà cung cấp</p>
-        </div>
-        <div style={{ display: "flex", gap: 10 }}>
+      <PageHeader
+        title="💼 Quản lý Công nợ"
+        subtitle="Theo dõi công nợ phải thu từ khách hàng và phải trả nhà cung cấp"
+        actions={<>
           <button className="btn btn-outline">📊 Xuất Excel</button>
           <button className="btn btn-primary" onClick={() => alert("Chức năng: mở form tạo giao dịch công nợ (xem trang Giao dịch công nợ)")}>
             + Tạo giao dịch
           </button>
-        </div>
-      </div>
+        </>}
+      />
 
-      {/* KPI cards */}
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 14, marginBottom: 20 }}>
-        {[
-          { label: "Tổng phải thu", value: fmtMoney(totalReceivable), color: "#52c41a", icon: "📥" },
-          { label: "Tổng phải trả", value: fmtMoney(totalPayable), color: "#ff4d4f", icon: "📤" },
-          { label: "Công nợ quá hạn", value: `${overdueCount} khoản`, color: "#faad14", icon: "⚠️" },
-          { label: "Số đối tượng", value: `${counterpartyCount}`, color: "#1890ff", icon: "👥" },
-        ].map((s, i) => (
-          <div key={i} style={{ background: "#fff", borderRadius: 10, padding: "16px 18px", boxShadow: "0 2px 8px rgba(0,0,0,.06)", borderLeft: `4px solid ${s.color}` }}>
-            <div style={{ fontSize: 20 }}>{s.icon}</div>
-            <div style={{ fontSize: 20, fontWeight: 700, color: s.color, marginTop: 4 }}>{s.value}</div>
-            <div style={{ fontSize: 12, color: "#8c8c8c", marginTop: 4 }}>{s.label}</div>
-          </div>
-        ))}
-      </div>
+      <KpiRow columns={4} items={[
+        { label: "Tổng phải thu", value: fmtMoney(totalReceivable), color: "#52c41a", icon: "📥" },
+        { label: "Tổng phải trả", value: fmtMoney(totalPayable), color: "#ff4d4f", icon: "📤" },
+        { label: "Công nợ quá hạn", value: `${overdueCount} khoản`, color: "#faad14", icon: "⚠️" },
+        { label: "Số đối tượng", value: `${counterpartyCount}`, color: "#1890ff", icon: "👥" },
+      ]} />
 
-      {/* Tabs */}
-      <div style={{ display: "flex", gap: 0, borderBottom: "1px solid #f0f0f0", background: "#fff", borderRadius: "12px 12px 0 0", padding: "0 16px" }}>
-        {[
-          { key: "all", label: `Tất cả (${debts.filter((d: any) => d.status !== "paid").length})` },
-          { key: "receivable", label: `Phải thu (${debts.filter((d: any) => d.kind === "receivable" && d.status !== "paid").length})` },
-          { key: "payable", label: `Phải trả (${debts.filter((d: any) => d.kind === "payable" && d.status !== "paid").length})` },
-        ].map((t) => (
-          <button
-            key={t.key}
-            onClick={() => setFilterKind(t.key as any)}
-            style={{
-              padding: "12px 20px", border: "none", background: "transparent", cursor: "pointer",
-              fontSize: 13, fontWeight: filterKind === t.key ? 600 : 400,
-              color: filterKind === t.key ? "#1890ff" : "#8c8c8c",
-              borderBottom: filterKind === t.key ? "2px solid #1890ff" : "2px solid transparent",
-            }}
-          >{t.label}</button>
-        ))}
-        <div style={{ marginLeft: "auto", display: "flex", gap: 10, alignItems: "center", padding: "8px 0" }}>
+      <TabBar
+        tabs={[
+          { key: "all", label: "Tất cả", count: debts.filter((d: any) => d.status !== "paid").length },
+          { key: "receivable", label: "Phải thu", count: debts.filter((d: any) => d.kind === "receivable" && d.status !== "paid").length },
+          { key: "payable", label: "Phải trả", count: debts.filter((d: any) => d.kind === "payable" && d.status !== "paid").length },
+        ]}
+        active={filterKind}
+        onChange={(k) => setFilterKind(k as any)}
+        rightSlot={<>
           <input className="search-input" style={{ width: 220 }} placeholder="🔍 Tìm tên, mã HĐ..." value={search} onChange={(e) => setSearch(e.target.value)} />
           <select className="filter-select" value={filterStatus} onChange={(e) => setFilterStatus(e.target.value as any)}>
             <option value="all">Tất cả trạng thái</option>
@@ -338,8 +303,8 @@ export default function DebtManagementList() {
             <option value="">Tất cả dự án</option>
             {MOCK_PROJECTS.map((p: any) => <option key={p.id} value={p.id}>{p.name}</option>)}
           </select>
-        </div>
-      </div>
+        </>}
+      />
 
       <div style={{ background: "#fff", borderRadius: "0 0 12px 12px", boxShadow: "0 2px 8px rgba(0,0,0,.06)", overflow: "hidden" }}>
         <table className="data-table">
@@ -371,9 +336,7 @@ export default function DebtManagementList() {
                     <div style={{ fontSize: 11, color: "#8c8c8c" }}>{d.counterpartyType === "customer" ? "Khách hàng" : "Nhà cung cấp"}</div>
                   </td>
                   <td>
-                    <span className="status-badge" style={{ background: isReceivable ? "#e6f7ff" : "#fff1f0", color: isReceivable ? "#1890ff" : "#ff4d4f" }}>
-                      {isReceivable ? "Phải thu" : "Phải trả"}
-                    </span>
+                    <StatusBadge label={isReceivable ? "Phải thu" : "Phải trả"} color={isReceivable ? "#1890ff" : "#ff4d4f"} />
                   </td>
                   <td style={{ fontSize: 12, color: "#595959" }}>{d.projectName}</td>
                   <td><span className="code-text">{d.refCode}</span></td>
@@ -382,9 +345,7 @@ export default function DebtManagementList() {
                   <td style={{ fontSize: 12 }}>{d.dueDate}</td>
                   <td style={{ fontSize: 12, color: days.color, fontWeight: 500 }}>{days.text}</td>
                   <td>
-                    <span className="status-badge" style={{ background: `${DEBT_STATUS_COLORS[d.status]}22`, color: DEBT_STATUS_COLORS[d.status] }}>
-                      {DEBT_STATUS_LABELS[d.status]}
-                    </span>
+                    <StatusBadge label={DEBT_STATUS_LABELS[d.status]} color={DEBT_STATUS_COLORS[d.status]} />
                   </td>
                   <td>
                     <div style={{ display: "flex", gap: 5 }}>

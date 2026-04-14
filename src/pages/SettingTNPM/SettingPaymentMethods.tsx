@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { MOCK_PAYMENT_METHODS, MOCK_PAYMENT_GATEWAYS } from "assets/mock/TNPMData";
+import { PageHeader, TabBar, ModalShell, StatusBadge } from "components/tnpm";
 
 const fmtDate = (s: string | null) => (s ? s : "Chưa đồng bộ");
 
@@ -10,14 +11,16 @@ function EditMethodModal({ method, onClose, onSave }: any) {
   const set = (k: string, v: any) => setForm((f: any) => ({ ...f, [k]: v }));
 
   return (
-    <div className="modal-overlay" onClick={onClose}>
-      <div className="modal-box" onClick={(e) => e.stopPropagation()} style={{ maxWidth: 560 }}>
-        <div className="modal-header">
-          <h2 className="modal-title">✏️ Cấu hình phương thức — {method.name}</h2>
-          <button className="modal-close" onClick={onClose}>×</button>
-        </div>
-        <div className="modal-body">
-          <div className="form-grid">
+    <ModalShell
+      title={`✏️ Cấu hình phương thức — ${method.name}`}
+      onClose={onClose}
+      maxWidth={560}
+      footer={<>
+        <button className="btn btn-outline" onClick={onClose}>Hủy</button>
+        <button className="btn btn-primary" onClick={() => onSave(form)}>💾 Lưu</button>
+      </>}
+    >
+      <div className="form-grid">
             <div className="form-group">
               <label>Tên hiển thị</label>
               <input className="form-control" value={form.name} onChange={(e) => set("name", e.target.value)} />
@@ -65,13 +68,7 @@ function EditMethodModal({ method, onClose, onSave }: any) {
               </label>
             </div>
           </div>
-        </div>
-        <div className="modal-footer">
-          <button className="btn btn-outline" onClick={onClose}>Hủy</button>
-          <button className="btn btn-primary" onClick={() => onSave(form)}>💾 Lưu</button>
-        </div>
-      </div>
-    </div>
+    </ModalShell>
   );
 }
 
@@ -92,14 +89,16 @@ function EditGatewayModal({ gateway, onClose, onSave }: any) {
   };
 
   return (
-    <div className="modal-overlay" onClick={onClose}>
-      <div className="modal-box modal-box--wide" onClick={(e) => e.stopPropagation()}>
-        <div className="modal-header">
-          <h2 className="modal-title">🔌 Tích hợp cổng thanh toán — {gateway.name}</h2>
-          <button className="modal-close" onClick={onClose}>×</button>
-        </div>
-        <div className="modal-body">
-          <div className="form-grid">
+    <ModalShell
+      title={`🔌 Tích hợp cổng thanh toán — ${gateway.name}`}
+      onClose={onClose}
+      wide
+      footer={<>
+        <button className="btn btn-outline" onClick={onClose}>Hủy</button>
+        <button className="btn btn-primary" onClick={() => onSave(form)}>💾 Lưu cấu hình</button>
+      </>}
+    >
+      <div className="form-grid">
             <div className="form-group">
               <label>Môi trường</label>
               <select className="form-control" value={form.environment} onChange={(e) => set("environment", e.target.value)}>
@@ -163,13 +162,7 @@ function EditGatewayModal({ gateway, onClose, onSave }: any) {
             {testResult === "success" && <div style={{ marginTop: 10, color: "#52c41a" }}>✓ Kết nối thành công! Merchant {form.merchantId} đã xác thực.</div>}
             {testResult === "error" && <div style={{ marginTop: 10, color: "#ff4d4f" }}>✗ Thiếu API Key hoặc Merchant ID — chưa thể test.</div>}
           </div>
-        </div>
-        <div className="modal-footer">
-          <button className="btn btn-outline" onClick={onClose}>Hủy</button>
-          <button className="btn btn-primary" onClick={() => onSave(form)}>💾 Lưu cấu hình</button>
-        </div>
-      </div>
-    </div>
+    </ModalShell>
   );
 }
 
@@ -208,31 +201,21 @@ export default function SettingPaymentMethods() {
 
   return (
     <div className="tnpm-list-page">
-      <div className="page-header">
-        <div>
-          <button className="btn btn-outline" style={{ marginBottom: 8 }} onClick={() => navigate("/setting")}>← Cài đặt</button>
-          <h1 className="page-title">💳 Phương thức & Cổng thanh toán</h1>
-          <p className="page-sub">Cấu hình các phương thức thu phí và tích hợp cổng thanh toán (MSB Pay, App Timi, VNPay…)</p>
-        </div>
-      </div>
+      <PageHeader
+        title="💳 Phương thức & Cổng thanh toán"
+        subtitle="Cấu hình các phương thức thu phí và tích hợp cổng thanh toán (MSB Pay, App Timi, VNPay…)"
+        backLink={{ label: "Cài đặt", onClick: () => navigate("/setting") }}
+      />
 
-      {/* Tabs */}
-      <div style={{ display: "flex", gap: 0, borderBottom: "1px solid #f0f0f0", background: "#fff", borderRadius: "12px 12px 0 0", padding: "0 16px", marginTop: 20 }}>
-        {[
-          { key: "methods", label: `Phương thức (${methods.length})` },
-          { key: "gateways", label: `Cổng tích hợp (${gateways.length})` },
-        ].map((t) => (
-          <button
-            key={t.key}
-            onClick={() => setActiveTab(t.key as any)}
-            style={{
-              padding: "14px 22px", border: "none", background: "transparent", cursor: "pointer",
-              fontSize: 14, fontWeight: activeTab === t.key ? 600 : 400,
-              color: activeTab === t.key ? "#1890ff" : "#8c8c8c",
-              borderBottom: activeTab === t.key ? "2px solid #1890ff" : "2px solid transparent",
-            }}
-          >{t.label}</button>
-        ))}
+      <div style={{ marginTop: 20 }}>
+        <TabBar
+          tabs={[
+            { key: "methods", label: "Phương thức", count: methods.length },
+            { key: "gateways", label: "Cổng tích hợp", count: gateways.length },
+          ]}
+          active={activeTab}
+          onChange={(k) => setActiveTab(k as any)}
+        />
       </div>
 
       {/* Methods tab */}
@@ -294,9 +277,10 @@ export default function SettingPaymentMethods() {
                     <div style={{ fontWeight: 700, fontSize: 16 }}>{g.name}</div>
                     <div style={{ fontSize: 12, color: "#8c8c8c" }}>{g.provider} · {g.environment === "production" ? "🟢 LIVE" : "🟡 SANDBOX"}</div>
                   </div>
-                  <span className="status-badge" style={{ background: g.status === "active" ? "#f6ffed" : "#fff1f0", color: g.status === "active" ? "#52c41a" : "#8c8c8c" }}>
-                    {g.status === "active" ? "Đang hoạt động" : "Tạm dừng"}
-                  </span>
+                  <StatusBadge
+                    label={g.status === "active" ? "Đang hoạt động" : "Tạm dừng"}
+                    color={g.status === "active" ? "#52c41a" : "#8c8c8c"}
+                  />
                 </div>
 
                 <div style={{ marginTop: 12, padding: 12, background: "#f5f7fa", borderRadius: 6, fontSize: 12 }}>

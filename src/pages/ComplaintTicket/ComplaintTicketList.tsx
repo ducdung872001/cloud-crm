@@ -2,6 +2,7 @@ import React, { useState, useMemo } from "react";
 import {
   MOCK_COMPLAINT_TICKETS, MOCK_PROJECTS, MOCK_CUSTOMERS,
 } from "assets/mock/TNPMData";
+import { PageHeader, KpiRow, TabBar, ModalShell, StatusBadge } from "components/tnpm";
 
 const CATEGORY_META: Record<string, { label: string; color: string; icon: string }> = {
   noise: { label: "Tiếng ồn", color: "#fa8c16", icon: "🔊" },
@@ -66,14 +67,16 @@ function TicketModal({ ticket, onClose, onSave }: any) {
   };
 
   return (
-    <div className="modal-overlay" onClick={onClose}>
-      <div className="modal-box modal-box--wide" onClick={(e) => e.stopPropagation()}>
-        <div className="modal-header">
-          <h2 className="modal-title">{isEdit ? "✏️ Sửa phiếu khiếu nại" : "📝 Tạo phiếu khiếu nại mới"}</h2>
-          <button className="modal-close" onClick={onClose}>×</button>
-        </div>
-        <div className="modal-body">
-          <div className="form-grid">
+    <ModalShell
+      title={isEdit ? "✏️ Sửa phiếu khiếu nại" : "📝 Tạo phiếu khiếu nại mới"}
+      onClose={onClose}
+      wide
+      footer={<>
+        <button className="btn btn-outline" onClick={onClose}>Hủy</button>
+        <button className="btn btn-primary" onClick={handleSave}>💾 Lưu phiếu</button>
+      </>}
+    >
+      <div className="form-grid">
             <div className="form-group">
               <label>Dự án *</label>
               <select className="form-control" value={form.projectId} onChange={(e) => set("projectId", e.target.value)}>
@@ -125,13 +128,7 @@ function TicketModal({ ticket, onClose, onSave }: any) {
               <textarea className="form-control" rows={4} value={form.description} onChange={(e) => set("description", e.target.value)} />
             </div>
           </div>
-        </div>
-        <div className="modal-footer">
-          <button className="btn btn-outline" onClick={onClose}>Hủy</button>
-          <button className="btn btn-primary" onClick={handleSave}>💾 Lưu phiếu</button>
-        </div>
-      </div>
-    </div>
+    </ModalShell>
   );
 }
 
@@ -141,13 +138,18 @@ function ResolveModal({ ticket, onClose, onResolve }: any) {
   const [rating, setRating] = useState<number | null>(null);
 
   return (
-    <div className="modal-overlay" onClick={onClose}>
-      <div className="modal-box" onClick={(e) => e.stopPropagation()} style={{ maxWidth: 560 }}>
-        <div className="modal-header">
-          <h2 className="modal-title">✅ Xử lý phiếu {ticket.code}</h2>
-          <button className="modal-close" onClick={onClose}>×</button>
-        </div>
-        <div className="modal-body">
+    <ModalShell
+      title={`✅ Xử lý phiếu ${ticket.code}`}
+      onClose={onClose}
+      maxWidth={560}
+      footer={<>
+        <button className="btn btn-outline" onClick={onClose}>Hủy</button>
+        <button className="btn btn-primary" onClick={() => {
+          if (!resolution.trim()) return alert("Vui lòng nhập biện pháp xử lý");
+          onResolve({ resolution, rating });
+        }}>✓ Xác nhận đã xử lý</button>
+      </>}
+    >
           <div style={{ padding: 12, background: "#f5f7fa", borderRadius: 6, marginBottom: 14 }}>
             <div style={{ fontWeight: 600 }}>{ticket.title}</div>
             <div style={{ fontSize: 12, color: "#8c8c8c", marginTop: 2 }}>
@@ -175,16 +177,7 @@ function ResolveModal({ ticket, onClose, onResolve }: any) {
               {rating !== null && <button type="button" onClick={() => setRating(null)} style={{ marginLeft: 8, fontSize: 11 }}>Xóa</button>}
             </div>
           </div>
-        </div>
-        <div className="modal-footer">
-          <button className="btn btn-outline" onClick={onClose}>Hủy</button>
-          <button className="btn btn-primary" onClick={() => {
-            if (!resolution.trim()) return alert("Vui lòng nhập biện pháp xử lý");
-            onResolve({ resolution, rating });
-          }}>✓ Xác nhận đã xử lý</button>
-        </div>
-      </div>
-    </div>
+    </ModalShell>
   );
 }
 
@@ -255,55 +248,34 @@ export default function ComplaintTicketList() {
 
   return (
     <div className="tnpm-list-page">
-      <div className="page-header">
-        <div>
-          <h1 className="page-title">📝 Phiếu khiếu nại cư dân</h1>
-          <p className="page-sub">Tiếp nhận, phân loại và xử lý phản ánh/khiếu nại từ cư dân, tenant — tách biệt với SR kỹ thuật</p>
-        </div>
-        <div style={{ display: "flex", gap: 10 }}>
+      <PageHeader
+        title="📝 Phiếu khiếu nại cư dân"
+        subtitle="Tiếp nhận, phân loại và xử lý phản ánh/khiếu nại từ cư dân, tenant — tách biệt với SR kỹ thuật"
+        actions={<>
           <button className="btn btn-outline">📊 Xuất báo cáo</button>
           <button className="btn btn-primary" onClick={() => { setEditTarget(null); setShowModal(true); }}>+ Tạo phiếu</button>
-        </div>
-      </div>
+        </>}
+      />
 
-      {/* KPI */}
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(6, 1fr)", gap: 12, marginBottom: 20 }}>
-        {[
-          { label: "Tổng phiếu", value: `${kpi.total}`, color: "#1890ff", icon: "📋" },
-          { label: "Chờ xử lý", value: `${kpi.pending}`, color: "#faad14", icon: "⏳" },
-          { label: "Đang xử lý", value: `${kpi.inProgress}`, color: "#722ed1", icon: "⚙️" },
-          { label: "Đã xử lý", value: `${kpi.resolved}`, color: "#52c41a", icon: "✅" },
-          { label: "Nghiêm trọng đang mở", value: `${kpi.critical}`, color: "#ff4d4f", icon: "🚨" },
-          { label: "Rating TB", value: kpi.avgRating > 0 ? `${kpi.avgRating.toFixed(1)} ⭐` : "—", color: "#fa8c16", icon: "⭐" },
-        ].map((s, i) => (
-          <div key={i} style={{ background: "#fff", borderRadius: 10, padding: "14px 14px", boxShadow: "0 2px 8px rgba(0,0,0,.06)", borderLeft: `4px solid ${s.color}` }}>
-            <div style={{ fontSize: 16 }}>{s.icon}</div>
-            <div style={{ fontSize: 18, fontWeight: 700, color: s.color, marginTop: 4 }}>{s.value}</div>
-            <div style={{ fontSize: 11, color: "#1a1a2e", fontWeight: 500, marginTop: 2 }}>{s.label}</div>
-          </div>
-        ))}
-      </div>
+      <KpiRow columns={6} items={[
+        { label: "Tổng phiếu", value: `${kpi.total}`, color: "#1890ff", icon: "📋" },
+        { label: "Chờ xử lý", value: `${kpi.pending}`, color: "#faad14", icon: "⏳" },
+        { label: "Đang xử lý", value: `${kpi.inProgress}`, color: "#722ed1", icon: "⚙️" },
+        { label: "Đã xử lý", value: `${kpi.resolved}`, color: "#52c41a", icon: "✅" },
+        { label: "Nghiêm trọng đang mở", value: `${kpi.critical}`, color: "#ff4d4f", icon: "🚨" },
+        { label: "Rating TB", value: kpi.avgRating > 0 ? `${kpi.avgRating.toFixed(1)} ⭐` : "—", color: "#fa8c16", icon: "⭐" },
+      ]} />
 
-      {/* Status tabs */}
-      <div style={{ display: "flex", gap: 0, borderBottom: "1px solid #f0f0f0", background: "#fff", borderRadius: "12px 12px 0 0", padding: "0 16px" }}>
-        {[
-          { key: "all", label: `Tất cả (${tickets.length})` },
-          { key: "pending", label: `⏳ Chờ xử lý (${kpi.pending})` },
-          { key: "in_progress", label: `⚙️ Đang xử lý (${kpi.inProgress})` },
-          { key: "resolved", label: `✅ Đã xử lý (${kpi.resolved})` },
-        ].map((t) => (
-          <button
-            key={t.key}
-            onClick={() => setFilterStatus(t.key)}
-            style={{
-              padding: "12px 20px", border: "none", background: "transparent", cursor: "pointer",
-              fontSize: 13, fontWeight: filterStatus === t.key ? 600 : 400,
-              color: filterStatus === t.key ? "#1890ff" : "#8c8c8c",
-              borderBottom: filterStatus === t.key ? "2px solid #1890ff" : "2px solid transparent",
-            }}
-          >{t.label}</button>
-        ))}
-        <div style={{ marginLeft: "auto", display: "flex", gap: 10, alignItems: "center", padding: "8px 0" }}>
+      <TabBar
+        tabs={[
+          { key: "all", label: "Tất cả", count: tickets.length },
+          { key: "pending", label: "⏳ Chờ xử lý", count: kpi.pending },
+          { key: "in_progress", label: "⚙️ Đang xử lý", count: kpi.inProgress },
+          { key: "resolved", label: "✅ Đã xử lý", count: kpi.resolved },
+        ]}
+        active={filterStatus}
+        onChange={setFilterStatus}
+        rightSlot={<>
           <input className="search-input" style={{ width: 220 }} placeholder="🔍 Tìm mã, tiêu đề, KH..." value={search} onChange={(e) => setSearch(e.target.value)} />
           <select className="filter-select" value={filterCategory} onChange={(e) => setFilterCategory(e.target.value)}>
             <option value="">Tất cả danh mục</option>
@@ -317,8 +289,8 @@ export default function ComplaintTicketList() {
             <option value="">Tất cả dự án</option>
             {MOCK_PROJECTS.map((p: any) => <option key={p.id} value={p.id}>{p.name}</option>)}
           </select>
-        </div>
-      </div>
+        </>}
+      />
 
       <div style={{ background: "#fff", borderRadius: "0 0 12px 12px", boxShadow: "0 2px 8px rgba(0,0,0,.06)", overflow: "hidden" }}>
         <table className="data-table">
@@ -353,14 +325,10 @@ export default function ComplaintTicketList() {
                     <div style={{ fontSize: 11, color: "#8c8c8c" }}>{t.customerName}</div>
                   </td>
                   <td>
-                    <span className="status-badge" style={{ background: `${catMeta?.color}22`, color: catMeta?.color }}>
-                      {catMeta?.icon} {catMeta?.label}
-                    </span>
+                    <StatusBadge label={catMeta?.label} color={catMeta?.color} icon={catMeta?.icon} />
                   </td>
                   <td>
-                    <span className="status-badge" style={{ background: `${sevMeta?.color}22`, color: sevMeta?.color }}>
-                      {sevMeta?.label}
-                    </span>
+                    <StatusBadge label={sevMeta?.label} color={sevMeta?.color} />
                   </td>
                   <td style={{ fontSize: 11 }}>
                     <div>{t.projectName}</div>
@@ -373,9 +341,7 @@ export default function ComplaintTicketList() {
                   <td style={{ fontSize: 11 }}>{t.createdAt}</td>
                   <td style={{ fontSize: 11, color: t.status === "pending" || t.status === "in_progress" ? "#ff4d4f" : "#8c8c8c" }}>{t.dueAt}</td>
                   <td>
-                    <span className="status-badge" style={{ background: `${statusMeta?.color}22`, color: statusMeta?.color }}>
-                      {statusMeta?.label}
-                    </span>
+                    <StatusBadge label={statusMeta?.label} color={statusMeta?.color} />
                   </td>
                   <td style={{ textAlign: "center" }}>
                     {t.feedbackRating ? (

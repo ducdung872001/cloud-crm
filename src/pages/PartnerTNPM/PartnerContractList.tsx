@@ -1,8 +1,6 @@
 import React, { useState, useMemo } from "react";
 import { MOCK_PARTNERS, MOCK_PARTNER_CONTRACTS } from "assets/mock/TNPMData";
-
-const fmtMoney = (n: number) =>
-  n >= 1e9 ? `${(n / 1e9).toFixed(2)} tỷ` : n >= 1e6 ? `${(n / 1e6).toFixed(1)} tr đ` : `${(n || 0).toLocaleString("vi-VN")} đ`;
+import { PageHeader, KpiRow, TabBar, ModalShell, ConfirmDialog, StatusBadge, fmtMoney, daysUntil } from "components/tnpm";
 
 const CONTRACT_TYPES = [
   { value: "strategic_cooperation", label: "Hợp tác chiến lược", color: "#722ed1", icon: "🏆" },
@@ -23,14 +21,6 @@ const PAYMENT_TERMS = [
   { value: "per_deal", label: "Theo giao dịch" },
   { value: "per_po", label: "Theo đơn hàng" },
 ];
-
-// Days until expiry
-const daysUntil = (dateStr: string) => {
-  const today = new Date();
-  today.setHours(0, 0, 0, 0);
-  const d = new Date(dateStr);
-  return Math.floor((d.getTime() - today.getTime()) / 86400000);
-};
 
 // ─── Add/Edit Contract Modal ─────────────────────────────────────────────
 function AddEditContractModal({ contract, onClose, onSave }: any) {
@@ -70,14 +60,16 @@ function AddEditContractModal({ contract, onClose, onSave }: any) {
   };
 
   return (
-    <div className="modal-overlay" onClick={onClose}>
-      <div className="modal-box modal-box--wide" onClick={(e) => e.stopPropagation()}>
-        <div className="modal-header">
-          <h2 className="modal-title">{isEdit ? "✏️ Sửa hợp đồng đối tác" : "📄 Tạo hợp đồng đối tác"}</h2>
-          <button className="modal-close" onClick={onClose}>×</button>
-        </div>
-        <div className="modal-body">
-          <div style={{ fontWeight: 600, marginBottom: 10, color: "#1890ff" }}>📋 Thông tin chung</div>
+    <ModalShell
+      title={isEdit ? "✏️ Sửa hợp đồng đối tác" : "📄 Tạo hợp đồng đối tác"}
+      onClose={onClose}
+      wide
+      footer={<>
+        <button className="btn btn-outline" onClick={onClose}>Hủy</button>
+        <button className="btn btn-primary" onClick={handleSave}>💾 Lưu hợp đồng</button>
+      </>}
+    >
+      <div style={{ fontWeight: 600, marginBottom: 10, color: "#1890ff" }}>📋 Thông tin chung</div>
           <div className="form-grid">
             <div className="form-group">
               <label>Mã HĐ</label>
@@ -173,28 +165,25 @@ function AddEditContractModal({ contract, onClose, onSave }: any) {
               <textarea className="form-control" rows={2} value={form.note} onChange={(e) => set("note", e.target.value)} />
             </div>
           </div>
-        </div>
-        <div className="modal-footer">
-          <button className="btn btn-outline" onClick={onClose}>Hủy</button>
-          <button className="btn btn-primary" onClick={handleSave}>💾 Lưu hợp đồng</button>
-        </div>
-      </div>
-    </div>
+    </ModalShell>
   );
 }
 
 // ─── Detail Modal ────────────────────────────────────────────────────────
 function ContractDetailModal({ contract, onClose, onEdit }: any) {
   const meta = getTypeMeta(contract.contractType);
-  const days = daysUntil(contract.endDate);
+  const days = daysUntil(contract.endDate) ?? 0;
   return (
-    <div className="modal-overlay" onClick={onClose}>
-      <div className="modal-box modal-box--wide" onClick={(e) => e.stopPropagation()} style={{ maxWidth: 780 }}>
-        <div className="modal-header">
-          <h2 className="modal-title">{meta.icon} {contract.code}</h2>
-          <button className="modal-close" onClick={onClose}>×</button>
-        </div>
-        <div className="modal-body">
+    <ModalShell
+      title={`${meta.icon} ${contract.code}`}
+      onClose={onClose}
+      wide
+      maxWidth={780}
+      footer={<>
+        <button className="btn btn-outline" onClick={onClose}>Đóng</button>
+        <button className="btn btn-primary" onClick={onEdit}>✏️ Sửa HĐ</button>
+      </>}
+    >
           <div style={{ background: `${meta.color}11`, borderLeft: `4px solid ${meta.color}`, padding: 14, borderRadius: 6, marginBottom: 16 }}>
             <div style={{ fontSize: 11, color: "#8c8c8c", textTransform: "uppercase", fontWeight: 600 }}>{contract.contractTypeLabel}</div>
             <div style={{ fontWeight: 700, fontSize: 16, marginTop: 4 }}>{contract.title}</div>
@@ -242,13 +231,7 @@ function ContractDetailModal({ contract, onClose, onEdit }: any) {
           <div style={{ marginTop: 16, padding: 12, border: "1px dashed #d9d9d9", borderRadius: 6, color: "#8c8c8c", fontSize: 12, textAlign: "center" }}>
             📎 {contract.attachments || 0} file đính kèm (prototype — upload chưa hoạt động)
           </div>
-        </div>
-        <div className="modal-footer">
-          <button className="btn btn-outline" onClick={onClose}>Đóng</button>
-          <button className="btn btn-primary" onClick={onEdit}>✏️ Sửa HĐ</button>
-        </div>
-      </div>
-    </div>
+    </ModalShell>
   );
 }
 
@@ -281,10 +264,10 @@ export default function PartnerContractList() {
   const totalValue = contracts.reduce((a: number, c: any) => a + c.value, 0);
   const activeValue = contracts.filter((c: any) => c.status === "active").reduce((a: number, c: any) => a + c.value, 0);
   const expiringSoon = contracts.filter((c: any) => {
-    const d = daysUntil(c.endDate);
+    const d = daysUntil(c.endDate) ?? -1;
     return c.status === "active" && d >= 0 && d <= 60;
   }).length;
-  const expiredCount = contracts.filter((c: any) => c.status === "expired" || daysUntil(c.endDate) < 0).length;
+  const expiredCount = contracts.filter((c: any) => c.status === "expired" || (daysUntil(c.endDate) ?? 0) < 0).length;
 
   const handleSave = (data: any) => {
     if (contracts.find((c: any) => c.id === data.id)) {
@@ -303,32 +286,21 @@ export default function PartnerContractList() {
 
   return (
     <div className="tnpm-list-page">
-      <div className="page-header">
-        <div>
-          <h1 className="page-title">📄 Hợp đồng Đối tác</h1>
-          <p className="page-sub">Quản lý tất cả hợp đồng hợp tác, hoa hồng, tư vấn và phân phối với đối tác</p>
-        </div>
-        <div style={{ display: "flex", gap: 10 }}>
+      <PageHeader
+        title="📄 Hợp đồng Đối tác"
+        subtitle="Quản lý tất cả hợp đồng hợp tác, hoa hồng, tư vấn và phân phối với đối tác"
+        actions={<>
           <button className="btn btn-outline">📊 Xuất Excel</button>
           <button className="btn btn-primary" onClick={() => { setEditTarget(null); setShowModal(true); }}>+ Tạo hợp đồng</button>
-        </div>
-      </div>
+        </>}
+      />
 
-      {/* KPI */}
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 14, marginBottom: 20 }}>
-        {[
-          { label: "Tổng giá trị HĐ", value: fmtMoney(totalValue), color: "#722ed1", icon: "💰" },
-          { label: "HĐ đang hiệu lực", value: fmtMoney(activeValue), color: "#52c41a", icon: "✅" },
-          { label: "Sắp hết hạn (≤60 ngày)", value: `${expiringSoon} HĐ`, color: "#faad14", icon: "⚠️" },
-          { label: "Đã hết hạn", value: `${expiredCount} HĐ`, color: "#ff4d4f", icon: "⏱️" },
-        ].map((s, i) => (
-          <div key={i} style={{ background: "#fff", borderRadius: 10, padding: "16px 18px", boxShadow: "0 2px 8px rgba(0,0,0,.06)", borderLeft: `4px solid ${s.color}` }}>
-            <div style={{ fontSize: 20 }}>{s.icon}</div>
-            <div style={{ fontSize: 20, fontWeight: 700, color: s.color, marginTop: 4 }}>{s.value}</div>
-            <div style={{ fontSize: 12, color: "#8c8c8c", marginTop: 4 }}>{s.label}</div>
-          </div>
-        ))}
-      </div>
+      <KpiRow columns={4} items={[
+        { label: "Tổng giá trị HĐ", value: fmtMoney(totalValue), color: "#722ed1", icon: "💰" },
+        { label: "HĐ đang hiệu lực", value: fmtMoney(activeValue), color: "#52c41a", icon: "✅" },
+        { label: "Sắp hết hạn (≤60 ngày)", value: `${expiringSoon} HĐ`, color: "#faad14", icon: "⚠️" },
+        { label: "Đã hết hạn", value: `${expiredCount} HĐ`, color: "#ff4d4f", icon: "⏱️" },
+      ]} />
 
       {/* Filter bar */}
       <div style={{ display: "flex", gap: 0, borderBottom: "1px solid #f0f0f0", background: "#fff", borderRadius: "12px 12px 0 0", padding: "0 16px", flexWrap: "wrap" }}>
@@ -383,7 +355,7 @@ export default function PartnerContractList() {
             )}
             {filtered.map((c: any) => {
               const meta = getTypeMeta(c.contractType);
-              const days = daysUntil(c.endDate);
+              const days = daysUntil(c.endDate) ?? 0;
               const dayLabel = days < 0 ? `Quá ${Math.abs(days)} ngày` : days === 0 ? "Hôm nay" : `${days} ngày`;
               const dayColor = days < 0 ? "#ff4d4f" : days <= 30 ? "#faad14" : days <= 60 ? "#fa8c16" : "#52c41a";
               return (
@@ -394,9 +366,7 @@ export default function PartnerContractList() {
                     <div style={{ fontSize: 11, color: "#8c8c8c", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{c.description}</div>
                   </td>
                   <td>
-                    <span className="status-badge" style={{ background: `${meta.color}22`, color: meta.color }}>
-                      {meta.icon} {meta.label}
-                    </span>
+                    <StatusBadge label={meta.label} color={meta.color} icon={meta.icon} />
                   </td>
                   <td style={{ fontSize: 13, maxWidth: 140, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{c.partnerName}</td>
                   <td className="amount-text" style={{ fontWeight: 600 }}>{fmtMoney(c.value)}</td>
@@ -410,12 +380,10 @@ export default function PartnerContractList() {
                     {c.autoRenew && <div style={{ fontSize: 10, color: "#1890ff" }}>🔄 Auto-renew</div>}
                   </td>
                   <td>
-                    <span className="status-badge" style={{
-                      background: c.status === "active" ? "#f6ffed" : c.status === "expired" ? "#fff1f0" : c.status === "draft" ? "#e6f7ff" : "#fafafa",
-                      color: c.status === "active" ? "#52c41a" : c.status === "expired" ? "#ff4d4f" : c.status === "draft" ? "#1890ff" : "#8c8c8c",
-                    }}>
-                      {c.status === "active" ? "Có hiệu lực" : c.status === "expired" ? "Hết hạn" : c.status === "draft" ? "Nháp" : "Chấm dứt"}
-                    </span>
+                    <StatusBadge
+                      label={c.status === "active" ? "Có hiệu lực" : c.status === "expired" ? "Hết hạn" : c.status === "draft" ? "Nháp" : "Chấm dứt"}
+                      color={c.status === "active" ? "#52c41a" : c.status === "expired" ? "#ff4d4f" : c.status === "draft" ? "#1890ff" : "#8c8c8c"}
+                    />
                   </td>
                   <td>
                     <div style={{ display: "flex", gap: 5 }}>
@@ -440,16 +408,14 @@ export default function PartnerContractList() {
         />
       )}
       {deleteId && (
-        <div className="modal-overlay" onClick={() => setDeleteId(null)}>
-          <div className="confirm-dialog" onClick={(e) => e.stopPropagation()}>
-            <h3>⚠️ Xóa hợp đồng</h3>
-            <p>Bạn có chắc muốn xóa hợp đồng này?</p>
-            <div className="confirm-dialog__actions">
-              <button className="btn btn-outline" onClick={() => setDeleteId(null)}>Hủy</button>
-              <button className="btn btn-danger" onClick={() => handleDelete(deleteId)}>Xóa</button>
-            </div>
-          </div>
-        </div>
+        <ConfirmDialog
+          title="Xóa hợp đồng"
+          message="Bạn có chắc muốn xóa hợp đồng này?"
+          confirmLabel="Xóa"
+          danger
+          onCancel={() => setDeleteId(null)}
+          onConfirm={() => handleDelete(deleteId)}
+        />
       )}
     </div>
   );

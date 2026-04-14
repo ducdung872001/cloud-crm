@@ -5,9 +5,7 @@ import {
   MOCK_PAYMENT_METHODS,
   MOCK_FUNDS,
 } from "assets/mock/TNPMData";
-
-const fmtMoney = (n: number) =>
-  n >= 1e9 ? `${(n / 1e9).toFixed(2)} tỷ` : n >= 1e6 ? `${(n / 1e6).toFixed(1)} tr đ` : `${(n || 0).toLocaleString("vi-VN")} đ`;
+import { PageHeader, KpiRow, TabBar, ModalShell, StatusBadge, fmtMoney } from "components/tnpm";
 
 const TXN_TYPE_LABELS: Record<string, string> = {
   collect_debt: "Thu nợ KH",
@@ -72,13 +70,15 @@ function CreateTransactionModal({ onClose, onSave }: any) {
   };
 
   return (
-    <div className="modal-overlay" onClick={onClose}>
-      <div className="modal-box modal-box--wide" onClick={(e) => e.stopPropagation()}>
-        <div className="modal-header">
-          <h2 className="modal-title">+ Tạo giao dịch công nợ</h2>
-          <button className="modal-close" onClick={onClose}>×</button>
-        </div>
-        <div className="modal-body">
+    <ModalShell
+      title="+ Tạo giao dịch công nợ"
+      onClose={onClose}
+      wide
+      footer={<>
+        <button className="btn btn-outline" onClick={onClose}>Hủy</button>
+        <button className="btn btn-primary" onClick={handleSave}>💾 Lưu giao dịch</button>
+      </>}
+    >
           {/* Type tabs */}
           <div style={{ display: "flex", gap: 8, marginBottom: 20 }}>
             {[
@@ -168,13 +168,7 @@ function CreateTransactionModal({ onClose, onSave }: any) {
               <textarea className="form-control" rows={3} value={note} onChange={(e) => setNote(e.target.value)} placeholder="Mô tả nội dung giao dịch..." />
             </div>
           </div>
-        </div>
-        <div className="modal-footer">
-          <button className="btn btn-outline" onClick={onClose}>Hủy</button>
-          <button className="btn btn-primary" onClick={handleSave}>💾 Lưu giao dịch</button>
-        </div>
-      </div>
-    </div>
+    </ModalShell>
   );
 }
 
@@ -207,56 +201,33 @@ export default function DebtTransactionList() {
 
   return (
     <div className="tnpm-list-page">
-      <div className="page-header">
-        <div>
-          <h1 className="page-title">📋 Giao dịch Công nợ</h1>
-          <p className="page-sub">Lịch sử ghi nhận công nợ và thu/chi nợ trên toàn bộ portfolio</p>
-        </div>
-        <div style={{ display: "flex", gap: 10 }}>
+      <PageHeader
+        title="📋 Giao dịch Công nợ"
+        subtitle="Lịch sử ghi nhận công nợ và thu/chi nợ trên toàn bộ portfolio"
+        actions={<>
           <button className="btn btn-outline">📊 Xuất Excel</button>
           <button className="btn btn-primary" onClick={() => setShowModal(true)}>+ Tạo giao dịch</button>
-        </div>
-      </div>
+        </>}
+      />
 
-      {/* KPI */}
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 14, marginBottom: 20 }}>
-        {[
-          { label: "Đã thu trong kỳ", value: fmtMoney(totalCollected), color: "#52c41a", icon: "📥" },
-          { label: "Đã chi trong kỳ", value: fmtMoney(totalPaid), color: "#ff4d4f", icon: "📤" },
-          { label: "Nợ ghi nhận mới", value: fmtMoney(totalCreated), color: "#1890ff", icon: "📝" },
-          { label: "Tổng giao dịch", value: `${transactions.length}`, color: "#722ed1", icon: "🔢" },
-        ].map((s, i) => (
-          <div key={i} style={{ background: "#fff", borderRadius: 10, padding: "16px 18px", boxShadow: "0 2px 8px rgba(0,0,0,.06)", borderLeft: `4px solid ${s.color}` }}>
-            <div style={{ fontSize: 20 }}>{s.icon}</div>
-            <div style={{ fontSize: 20, fontWeight: 700, color: s.color, marginTop: 4 }}>{s.value}</div>
-            <div style={{ fontSize: 12, color: "#8c8c8c", marginTop: 4 }}>{s.label}</div>
-          </div>
-        ))}
-      </div>
+      <KpiRow columns={4} items={[
+        { label: "Đã thu trong kỳ", value: fmtMoney(totalCollected), color: "#52c41a", icon: "📥" },
+        { label: "Đã chi trong kỳ", value: fmtMoney(totalPaid), color: "#ff4d4f", icon: "📤" },
+        { label: "Nợ ghi nhận mới", value: fmtMoney(totalCreated), color: "#1890ff", icon: "📝" },
+        { label: "Tổng giao dịch", value: `${transactions.length}`, color: "#722ed1", icon: "🔢" },
+      ]} />
 
-      {/* Tabs + filter */}
-      <div style={{ display: "flex", gap: 0, borderBottom: "1px solid #f0f0f0", background: "#fff", borderRadius: "12px 12px 0 0", padding: "0 16px" }}>
-        {[
-          { key: "all", label: `Tất cả (${transactions.length})` },
-          { key: "collect_debt", label: `Thu nợ (${transactions.filter((tx: any) => tx.type === "collect_debt").length})` },
-          { key: "pay_debt", label: `Trả nợ (${transactions.filter((tx: any) => tx.type === "pay_debt").length})` },
-          { key: "create_receivable", label: `Ghi nhận phải thu (${transactions.filter((tx: any) => tx.type === "create_receivable").length})` },
-        ].map((t) => (
-          <button
-            key={t.key}
-            onClick={() => setFilterType(t.key)}
-            style={{
-              padding: "12px 20px", border: "none", background: "transparent", cursor: "pointer",
-              fontSize: 13, fontWeight: filterType === t.key ? 600 : 400,
-              color: filterType === t.key ? "#1890ff" : "#8c8c8c",
-              borderBottom: filterType === t.key ? "2px solid #1890ff" : "2px solid transparent",
-            }}
-          >{t.label}</button>
-        ))}
-        <div style={{ marginLeft: "auto", display: "flex", gap: 10, alignItems: "center", padding: "8px 0" }}>
-          <input className="search-input" style={{ width: 240 }} placeholder="🔍 Tìm mã GD, đối tượng..." value={search} onChange={(e) => setSearch(e.target.value)} />
-        </div>
-      </div>
+      <TabBar
+        tabs={[
+          { key: "all", label: "Tất cả", count: transactions.length },
+          { key: "collect_debt", label: "Thu nợ", count: transactions.filter((tx: any) => tx.type === "collect_debt").length },
+          { key: "pay_debt", label: "Trả nợ", count: transactions.filter((tx: any) => tx.type === "pay_debt").length },
+          { key: "create_receivable", label: "Ghi nhận phải thu", count: transactions.filter((tx: any) => tx.type === "create_receivable").length },
+        ]}
+        active={filterType}
+        onChange={setFilterType}
+        rightSlot={<input className="search-input" style={{ width: 240 }} placeholder="🔍 Tìm mã GD, đối tượng..." value={search} onChange={(e) => setSearch(e.target.value)} />}
+      />
 
       <div style={{ background: "#fff", borderRadius: "0 0 12px 12px", boxShadow: "0 2px 8px rgba(0,0,0,.06)", overflow: "hidden" }}>
         <table className="data-table">
@@ -285,9 +256,7 @@ export default function DebtTransactionList() {
                   <td><span className="code-text">{tx.code}</span></td>
                   <td style={{ fontSize: 12 }}>{tx.transDate}</td>
                   <td>
-                    <span className="status-badge" style={{ background: `${TXN_TYPE_COLORS[tx.type]}22`, color: TXN_TYPE_COLORS[tx.type] }}>
-                      {TXN_TYPE_LABELS[tx.type]}
-                    </span>
+                    <StatusBadge label={TXN_TYPE_LABELS[tx.type]} color={TXN_TYPE_COLORS[tx.type]} />
                   </td>
                   <td style={{ fontWeight: 500 }}>
                     <div>{tx.counterpartyName}</div>

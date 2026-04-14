@@ -4,9 +4,7 @@ import {
   MOCK_SERVICE_REQUESTS, MOCK_MAINTENANCE_PLANS, MOCK_DEBTS,
   STATUS_LABELS, STATUS_COLORS,
 } from "assets/mock/TNPMData";
-
-const fmtMoney = (n: number) =>
-  n >= 1e9 ? `${(n / 1e9).toFixed(2)} tỷ` : n >= 1e6 ? `${(n / 1e6).toFixed(1)} tr đ` : `${(n || 0).toLocaleString("vi-VN")} đ`;
+import { ModalShell, StatusBadge, fmtMoney } from "components/tnpm";
 
 // ─── Submit Invoice Modal (NCC upload invoice) ───────────────────────────
 function SubmitInvoiceModal({ vendor, onClose, onSubmit }: any) {
@@ -28,13 +26,15 @@ function SubmitInvoiceModal({ vendor, onClose, onSubmit }: any) {
   };
 
   return (
-    <div className="modal-overlay" onClick={onClose}>
-      <div className="modal-box" onClick={(e) => e.stopPropagation()} style={{ maxWidth: 620 }}>
-        <div className="modal-header">
-          <h2 className="modal-title">📤 Gửi hóa đơn tới TNPM</h2>
-          <button className="modal-close" onClick={onClose}>×</button>
-        </div>
-        <div className="modal-body">
+    <ModalShell
+      title="📤 Gửi hóa đơn tới TNPM"
+      onClose={onClose}
+      maxWidth={620}
+      footer={<>
+        <button className="btn btn-outline" onClick={onClose}>Hủy</button>
+        <button className="btn btn-primary" onClick={handleSubmit}>📤 Gửi hóa đơn</button>
+      </>}
+    >
           <div style={{ background: "#e6f7ff", padding: 12, borderRadius: 6, marginBottom: 14, fontSize: 12 }}>
             ℹ️ Hóa đơn sẽ được kiểm tra theo luồng <strong>3-way match</strong>: PO → Biên bản nghiệm thu → Invoice. Sau khi submit, kế toán TNPM sẽ review và phê duyệt thanh toán.
           </div>
@@ -79,13 +79,7 @@ function SubmitInvoiceModal({ vendor, onClose, onSubmit }: any) {
               </div>
             </div>
           </div>
-        </div>
-        <div className="modal-footer">
-          <button className="btn btn-outline" onClick={onClose}>Hủy</button>
-          <button className="btn btn-primary" onClick={handleSubmit}>📤 Gửi hóa đơn</button>
-        </div>
-      </div>
-    </div>
+    </ModalShell>
   );
 }
 
@@ -95,13 +89,14 @@ function SRDetailModal({ sr, onClose, onUpdate }: any) {
   const [progressNote, setProgressNote] = useState("");
 
   return (
-    <div className="modal-overlay" onClick={onClose}>
-      <div className="modal-box" onClick={(e) => e.stopPropagation()}>
-        <div className="modal-header">
-          <h2 className="modal-title">🔧 {sr.code} — {sr.title}</h2>
-          <button className="modal-close" onClick={onClose}>×</button>
-        </div>
-        <div className="modal-body">
+    <ModalShell
+      title={`🔧 ${sr.code} — ${sr.title}`}
+      onClose={onClose}
+      footer={<>
+        <button className="btn btn-outline" onClick={onClose}>Hủy</button>
+        <button className="btn btn-primary" onClick={() => { onUpdate(sr.id, newStatus, progressNote); onClose(); }}>💾 Lưu cập nhật</button>
+      </>}
+    >
           <div style={{ background: "#f5f7fa", padding: 14, borderRadius: 8, marginBottom: 14 }}>
             <div style={{ fontSize: 13, fontWeight: 600 }}>{sr.projectName} — Unit {sr.unitCode}</div>
             <div style={{ fontSize: 12, color: "#8c8c8c", marginTop: 4 }}>Khách: {sr.customerName}</div>
@@ -136,13 +131,7 @@ function SRDetailModal({ sr, onClose, onUpdate }: any) {
           <div style={{ padding: 12, background: "#fffbe6", borderRadius: 6, fontSize: 12 }}>
             💡 Sau khi đánh dấu "Đã hoàn thành", BQL sẽ nghiệm thu và tạo Biên bản. Bạn có thể gửi hóa đơn sau khi có BB.
           </div>
-        </div>
-        <div className="modal-footer">
-          <button className="btn btn-outline" onClick={onClose}>Hủy</button>
-          <button className="btn btn-primary" onClick={() => { onUpdate(sr.id, newStatus, progressNote); onClose(); }}>💾 Lưu cập nhật</button>
-        </div>
-      </div>
-    </div>
+    </ModalShell>
   );
 }
 
@@ -328,18 +317,14 @@ export default function VendorPortalPreview() {
                     <td style={{ fontSize: 12 }}>{sr.projectName}<br /><span style={{ color: "#8c8c8c" }}>{sr.unitCode}</span></td>
                     <td style={{ fontSize: 12 }}>{sr.category}</td>
                     <td>
-                      <span className="status-badge" style={{
-                        background: sr.priority === "urgent" ? "#fff1f0" : sr.priority === "high" ? "#fff7e6" : "#f5f5f5",
-                        color: sr.priority === "urgent" ? "#ff4d4f" : sr.priority === "high" ? "#fa8c16" : "#8c8c8c",
-                      }}>
-                        {sr.priority === "urgent" ? "Khẩn" : sr.priority === "high" ? "Cao" : sr.priority === "medium" ? "TB" : "Thấp"}
-                      </span>
+                      <StatusBadge
+                        label={sr.priority === "urgent" ? "Khẩn" : sr.priority === "high" ? "Cao" : sr.priority === "medium" ? "TB" : "Thấp"}
+                        color={sr.priority === "urgent" ? "#ff4d4f" : sr.priority === "high" ? "#fa8c16" : "#8c8c8c"}
+                      />
                     </td>
                     <td style={{ fontSize: 11 }}>{sr.dueAt}</td>
                     <td>
-                      <span className="status-badge" style={{ background: `${STATUS_COLORS[sr.status]}22`, color: STATUS_COLORS[sr.status] }}>
-                        {STATUS_LABELS[sr.status]}
-                      </span>
+                      <StatusBadge label={STATUS_LABELS[sr.status]} color={STATUS_COLORS[sr.status]} />
                     </td>
                     <td>
                       <button className="btn btn-outline" style={{ padding: "4px 10px", fontSize: 11 }} onClick={() => setSrDetail(sr)}>Cập nhật</button>
@@ -374,9 +359,7 @@ export default function VendorPortalPreview() {
                     <td style={{ fontSize: 12 }}>{c.startDate} → {c.endDate}</td>
                     <td style={{ fontSize: 12 }}>{c.paymentTerms === "monthly" ? "Hàng tháng" : c.paymentTerms === "quarterly" ? "Hàng quý" : c.paymentTerms}</td>
                     <td>
-                      <span className="status-badge" style={{ background: `${STATUS_COLORS[c.status]}22`, color: STATUS_COLORS[c.status] }}>
-                        {STATUS_LABELS[c.status]}
-                      </span>
+                      <StatusBadge label={STATUS_LABELS[c.status]} color={STATUS_COLORS[c.status]} />
                     </td>
                   </tr>
                 ))}
@@ -413,12 +396,10 @@ export default function VendorPortalPreview() {
                         {i.matchPO && i.matchAcceptance ? <span style={{ color: "#52c41a" }}>✅ Đạt</span> : <span style={{ color: "#faad14" }}>⏳ Đang KT</span>}
                       </td>
                       <td>
-                        <span className="status-badge" style={{
-                          background: i.approvalStatus === "approved" ? "#f6ffed" : i.approvalStatus === "pending" ? "#fff7e6" : "#fff1f0",
-                          color: i.approvalStatus === "approved" ? "#52c41a" : i.approvalStatus === "pending" ? "#faad14" : "#ff4d4f",
-                        }}>
-                          {i.approvalStatus === "approved" ? "Đã duyệt" : i.approvalStatus === "pending" ? "Chờ duyệt" : "Từ chối"}
-                        </span>
+                        <StatusBadge
+                          label={i.approvalStatus === "approved" ? "Đã duyệt" : i.approvalStatus === "pending" ? "Chờ duyệt" : "Từ chối"}
+                          color={i.approvalStatus === "approved" ? "#52c41a" : i.approvalStatus === "pending" ? "#faad14" : "#ff4d4f"}
+                        />
                       </td>
                       <td style={{ fontSize: 12, color: i.paidAt ? "#52c41a" : "#8c8c8c" }}>{i.paidAt || "—"}</td>
                     </tr>
@@ -457,12 +438,10 @@ export default function VendorPortalPreview() {
                         <td className="amount-text" style={{ color: "#ff4d4f", fontWeight: 600 }}>{fmtMoney(d.amount)}</td>
                         <td style={{ fontSize: 12 }}>{d.dueDate}</td>
                         <td>
-                          <span className="status-badge" style={{
-                            background: d.status === "overdue" ? "#fff1f0" : "#fff7e6",
-                            color: d.status === "overdue" ? "#ff4d4f" : "#faad14",
-                          }}>
-                            {d.status === "overdue" ? `Quá hạn ${Math.abs(d.daysRemaining)}d` : d.status === "upcoming" ? `Còn ${d.daysRemaining}d` : "Đang xử lý"}
-                          </span>
+                          <StatusBadge
+                            label={d.status === "overdue" ? `Quá hạn ${Math.abs(d.daysRemaining)}d` : d.status === "upcoming" ? `Còn ${d.daysRemaining}d` : "Đang xử lý"}
+                            color={d.status === "overdue" ? "#ff4d4f" : "#faad14"}
+                          />
                         </td>
                       </tr>
                     ))}

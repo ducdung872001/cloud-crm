@@ -1,5 +1,6 @@
 import React, { useState, useMemo } from "react";
 import { MOCK_AUDIT_LOGS } from "assets/mock/TNPMData";
+import { PageHeader, KpiRow, ModalShell, StatusBadge } from "components/tnpm";
 
 const CATEGORY_META: Record<string, { label: string; color: string; icon: string }> = {
   auth: { label: "Xác thực", color: "#1890ff", icon: "🔐" },
@@ -22,13 +23,7 @@ const SEVERITY_META: Record<string, { label: string; color: string }> = {
 function LogDetailModal({ log, onClose }: any) {
   const catMeta = CATEGORY_META[log.category];
   return (
-    <div className="modal-overlay" onClick={onClose}>
-      <div className="modal-box modal-box--wide" onClick={(e) => e.stopPropagation()}>
-        <div className="modal-header">
-          <h2 className="modal-title">📋 Chi tiết log #{log.id}</h2>
-          <button className="modal-close" onClick={onClose}>×</button>
-        </div>
-        <div className="modal-body">
+    <ModalShell title={`📋 Chi tiết log #${log.id}`} onClose={onClose} wide>
           <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 14, marginBottom: 14 }}>
             <div style={{ background: "#f5f7fa", padding: 14, borderRadius: 8 }}>
               <div style={{ fontSize: 11, color: "#8c8c8c" }}>Thời điểm</div>
@@ -39,17 +34,9 @@ function LogDetailModal({ log, onClose }: any) {
             </div>
             <div style={{ background: "#f5f7fa", padding: 14, borderRadius: 8 }}>
               <div style={{ fontSize: 11, color: "#8c8c8c" }}>Danh mục</div>
-              <div>
-                <span className="status-badge" style={{ background: `${catMeta?.color}22`, color: catMeta?.color }}>
-                  {catMeta?.icon} {catMeta?.label}
-                </span>
-              </div>
+              <div><StatusBadge label={catMeta?.label} color={catMeta?.color} icon={catMeta?.icon} /></div>
               <div style={{ fontSize: 11, color: "#8c8c8c", marginTop: 10 }}>Mức độ</div>
-              <div>
-                <span className="status-badge" style={{ background: `${SEVERITY_META[log.severity]?.color}22`, color: SEVERITY_META[log.severity]?.color }}>
-                  {SEVERITY_META[log.severity]?.label}
-                </span>
-              </div>
+              <div><StatusBadge label={SEVERITY_META[log.severity]?.label} color={SEVERITY_META[log.severity]?.color} /></div>
             </div>
           </div>
 
@@ -88,9 +75,7 @@ function LogDetailModal({ log, onClose }: any) {
               </div>
             ))}
           </div>
-        </div>
-      </div>
-    </div>
+    </ModalShell>
   );
 }
 
@@ -127,34 +112,22 @@ export default function AuditLogList() {
 
   return (
     <div className="tnpm-list-page">
-      <div className="page-header">
-        <div>
-          <h1 className="page-title">🛡️ Audit Log</h1>
-          <p className="page-sub">Lịch sử thao tác hệ thống — truy vết toàn bộ hoạt động cho compliance & security</p>
-        </div>
-        <div style={{ display: "flex", gap: 10 }}>
+      <PageHeader
+        title="🛡️ Audit Log"
+        subtitle="Lịch sử thao tác hệ thống — truy vết toàn bộ hoạt động cho compliance & security"
+        actions={<>
           <button className="btn btn-outline">📊 Xuất CSV</button>
           <button className="btn btn-outline">🔍 Tìm kiếm nâng cao</button>
-        </div>
-      </div>
+        </>}
+      />
 
-      {/* KPI */}
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(5, 1fr)", gap: 12, marginBottom: 20 }}>
-        {[
-          { label: "Tổng log", value: `${MOCK_AUDIT_LOGS.length}`, sub: "7 ngày gần nhất", color: "#1890ff", icon: "📋" },
-          { label: "Log hôm nay", value: `${todayCount}`, sub: "2024-04-14", color: "#722ed1", icon: "📅" },
-          { label: "Cảnh báo", value: `${warningCount}`, sub: "severity: warning", color: "#faad14", icon: "⚠️" },
-          { label: "Nghiêm trọng", value: `${criticalCount}`, sub: "Cần review", color: "#ff4d4f", icon: "🚨" },
-          { label: "Cô lập tenant", value: "✓ OK", sub: "0 violations", color: "#52c41a", icon: "🛡️" },
-        ].map((s, i) => (
-          <div key={i} style={{ background: "#fff", borderRadius: 10, padding: "14px 14px", boxShadow: "0 2px 8px rgba(0,0,0,.06)", borderLeft: `4px solid ${s.color}` }}>
-            <div style={{ fontSize: 16 }}>{s.icon}</div>
-            <div style={{ fontSize: 18, fontWeight: 700, color: s.color, marginTop: 4 }}>{s.value}</div>
-            <div style={{ fontSize: 11, color: "#1a1a2e", fontWeight: 500, marginTop: 2 }}>{s.label}</div>
-            <div style={{ fontSize: 10, color: "#8c8c8c", marginTop: 2 }}>{s.sub}</div>
-          </div>
-        ))}
-      </div>
+      <KpiRow items={[
+        { label: "Tổng log", value: `${MOCK_AUDIT_LOGS.length}`, sub: "7 ngày gần nhất", color: "#1890ff", icon: "📋" },
+        { label: "Log hôm nay", value: `${todayCount}`, sub: "2024-04-14", color: "#722ed1", icon: "📅" },
+        { label: "Cảnh báo", value: `${warningCount}`, sub: "severity: warning", color: "#faad14", icon: "⚠️" },
+        { label: "Nghiêm trọng", value: `${criticalCount}`, sub: "Cần review", color: "#ff4d4f", icon: "🚨" },
+        { label: "Cô lập tenant", value: "✓ OK", sub: "0 violations", color: "#52c41a", icon: "🛡️" },
+      ]} />
 
       {/* Category pills */}
       <div style={{ display: "flex", gap: 8, marginBottom: 14, flexWrap: "wrap" }}>
@@ -238,14 +211,10 @@ export default function AuditLogList() {
                     {l.entityRef && <div style={{ color: "#8c8c8c" }}>{l.entityRef}</div>}
                   </td>
                   <td>
-                    <span className="status-badge" style={{ background: `${catMeta?.color}22`, color: catMeta?.color }}>
-                      {catMeta?.icon} {catMeta?.label}
-                    </span>
+                    <StatusBadge label={catMeta?.label} color={catMeta?.color} icon={catMeta?.icon} />
                   </td>
                   <td>
-                    <span className="status-badge" style={{ background: `${sevMeta?.color}22`, color: sevMeta?.color }}>
-                      {sevMeta?.label}
-                    </span>
+                    <StatusBadge label={sevMeta?.label} color={sevMeta?.color} />
                   </td>
                   <td style={{ fontSize: 11, color: "#595959" }}>{l.projectName || "—"}</td>
                   <td style={{ fontSize: 10, fontFamily: "monospace", color: "#8c8c8c" }}>{l.ipAddress}</td>

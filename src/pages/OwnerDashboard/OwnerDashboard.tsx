@@ -4,13 +4,7 @@ import {
   MOCK_VENDOR_CONTRACTS, MOCK_SERVICE_REQUESTS, MOCK_INVOICES,
   MOCK_DEBTS, MOCK_PROJECTS,
 } from "assets/mock/TNPMData";
-
-const fmtMoney = (n: number) => {
-  const neg = n < 0;
-  const abs = Math.abs(n);
-  const s = abs >= 1e9 ? `${(abs / 1e9).toFixed(2)} tỷ` : abs >= 1e6 ? `${(abs / 1e6).toFixed(1)} tr đ` : `${abs.toLocaleString("vi-VN")} đ`;
-  return neg ? `−${s}` : s;
-};
+import { StatusBadge, fmtMoney } from "components/tnpm";
 
 // Map each owner to the projects they own
 const OWNER_LIST = [
@@ -180,12 +174,10 @@ export default function OwnerDashboard() {
                           {p.outstandingReceivable > 0 ? fmtMoney(p.outstandingReceivable) : "—"}
                         </td>
                         <td>
-                          <span className="status-badge" style={{
-                            background: p.status === "healthy" ? "#f6ffed" : p.status === "warning" ? "#fff7e6" : "#fff1f0",
-                            color: p.status === "healthy" ? "#52c41a" : p.status === "warning" ? "#faad14" : "#ff4d4f",
-                          }}>
-                            {p.status === "healthy" ? "✅ Tốt" : p.status === "warning" ? "⚠️ Cần lưu ý" : "🔴 Nguy cơ"}
-                          </span>
+                          <StatusBadge
+                            label={p.status === "healthy" ? "✅ Tốt" : p.status === "warning" ? "⚠️ Cần lưu ý" : "🔴 Nguy cơ"}
+                            color={p.status === "healthy" ? "#52c41a" : p.status === "warning" ? "#faad14" : "#ff4d4f"}
+                          />
                         </td>
                       </tr>
                     );

@@ -1,8 +1,6 @@
 import React, { useState, useMemo } from "react";
 import { MOCK_B2G_BUDGETS, MOCK_B2G_PAYMENTS, MOCK_PROJECTS } from "assets/mock/TNPMData";
-
-const fmtMoney = (n: number) =>
-  n >= 1e9 ? `${(n / 1e9).toFixed(2)} tỷ` : n >= 1e6 ? `${(n / 1e6).toFixed(1)} tr đ` : `${(n || 0).toLocaleString("vi-VN")} đ`;
+import { PageHeader, KpiRow, TabBar, ModalShell, StatusBadge, fmtMoney } from "components/tnpm";
 
 const STATUS_META: Record<string, { label: string; color: string }> = {
   pending_qlda: { label: "Chờ QLDA duyệt", color: "#faad14" },
@@ -20,13 +18,12 @@ function PaymentDetailModal({ payment, onClose, onApprove, onReject }: any) {
   const nextStep = payment.workflow.find((w: any) => w.status === "pending");
 
   return (
-    <div className="modal-overlay" onClick={onClose}>
-      <div className="modal-box modal-box--wide" onClick={(e) => e.stopPropagation()} style={{ maxWidth: 860 }}>
-        <div className="modal-header">
-          <h2 className="modal-title">📄 {payment.code} — Đề nghị thanh toán</h2>
-          <button className="modal-close" onClick={onClose}>×</button>
-        </div>
-        <div className="modal-body">
+    <ModalShell
+      title={`📄 ${payment.code} — Đề nghị thanh toán`}
+      onClose={onClose}
+      wide
+      maxWidth={860}
+    >
           {/* Header info */}
           <div style={{ background: "#f5f7fa", padding: 16, borderRadius: 8, marginBottom: 16 }}>
             <div style={{ display: "grid", gridTemplateColumns: "repeat(2, 1fr)", gap: 12 }}>
@@ -141,9 +138,7 @@ function PaymentDetailModal({ payment, onClose, onApprove, onReject }: any) {
               </div>
             </div>
           )}
-        </div>
-      </div>
-    </div>
+    </ModalShell>
   );
 }
 
@@ -216,51 +211,29 @@ export default function B2GComplianceList() {
 
   return (
     <div className="tnpm-list-page">
-      <div className="page-header">
-        <div>
-          <h1 className="page-title">🏛️ B2G Compliance — Dự án Hành chính công</h1>
-          <p className="page-sub">Ngân sách, phê duyệt đa cấp và thanh toán qua Kho bạc Nhà nước cho các dự án khu liên cơ quan HC</p>
-        </div>
-        <button className="btn btn-primary" onClick={() => alert("Tạo đề nghị thanh toán mới — form đầy đủ (coming soon)")}>+ Tạo đề nghị TT</button>
-      </div>
+      <PageHeader
+        title="🏛️ B2G Compliance — Dự án Hành chính công"
+        subtitle="Ngân sách, phê duyệt đa cấp và thanh toán qua Kho bạc Nhà nước cho các dự án khu liên cơ quan HC"
+        actions={<button className="btn btn-primary" onClick={() => alert("Tạo đề nghị thanh toán mới — form đầy đủ (coming soon)")}>+ Tạo đề nghị TT</button>}
+      />
 
-      {/* KPI */}
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(5, 1fr)", gap: 12, marginBottom: 20 }}>
-        {[
-          { label: "Tổng ngân sách năm", value: fmtMoney(totalBudget), sub: `${budgets.length} dự án HC`, color: "#1890ff", icon: "💰" },
-          { label: "Đã sử dụng", value: fmtMoney(totalUsed), sub: `${usagePct.toFixed(1)}%`, color: "#fa8c16", icon: "📊" },
-          { label: "Còn lại", value: fmtMoney(totalRemaining), sub: `${(100 - usagePct).toFixed(1)}%`, color: "#52c41a", icon: "💵" },
-          { label: "Chờ phê duyệt", value: `${pendingPayments} đề nghị`, sub: fmtMoney(pendingAmount), color: "#faad14", icon: "⏳" },
-          { label: "Đã chi kho bạc", value: `${payments.filter((p: any) => p.status === "paid").length} GD`, sub: fmtMoney(payments.filter((p: any) => p.status === "paid").reduce((a: number, p: any) => a + p.amount, 0)), color: "#722ed1", icon: "✅" },
-        ].map((s, i) => (
-          <div key={i} style={{ background: "#fff", borderRadius: 10, padding: "14px 14px", boxShadow: "0 2px 8px rgba(0,0,0,.06)", borderLeft: `4px solid ${s.color}` }}>
-            <div style={{ fontSize: 16 }}>{s.icon}</div>
-            <div style={{ fontSize: 15, fontWeight: 700, color: s.color, marginTop: 4 }}>{s.value}</div>
-            <div style={{ fontSize: 11, color: "#1a1a2e", fontWeight: 500, marginTop: 2 }}>{s.label}</div>
-            <div style={{ fontSize: 10, color: "#8c8c8c", marginTop: 2 }}>{s.sub}</div>
-          </div>
-        ))}
-      </div>
+      <KpiRow items={[
+        { label: "Tổng ngân sách năm", value: fmtMoney(totalBudget), sub: `${budgets.length} dự án HC`, color: "#1890ff", icon: "💰" },
+        { label: "Đã sử dụng", value: fmtMoney(totalUsed), sub: `${usagePct.toFixed(1)}%`, color: "#fa8c16", icon: "📊" },
+        { label: "Còn lại", value: fmtMoney(totalRemaining), sub: `${(100 - usagePct).toFixed(1)}%`, color: "#52c41a", icon: "💵" },
+        { label: "Chờ phê duyệt", value: `${pendingPayments} đề nghị`, sub: fmtMoney(pendingAmount), color: "#faad14", icon: "⏳" },
+        { label: "Đã chi kho bạc", value: `${payments.filter((p: any) => p.status === "paid").length} GD`, sub: fmtMoney(payments.filter((p: any) => p.status === "paid").reduce((a: number, p: any) => a + p.amount, 0)), color: "#722ed1", icon: "✅" },
+      ]} />
 
-      {/* Tabs */}
-      <div style={{ display: "flex", gap: 0, borderBottom: "1px solid #f0f0f0", background: "#fff", borderRadius: "12px 12px 0 0", padding: "0 16px" }}>
-        {[
+      <TabBar
+        tabs={[
           { key: "dashboard", label: "📊 Tổng quan ngân sách" },
-          { key: "payments", label: `📋 Đề nghị thanh toán (${payments.length})` },
-          { key: "budgets", label: `💰 Ngân sách & phân bổ (${budgets.length})` },
-        ].map((t) => (
-          <button
-            key={t.key}
-            onClick={() => setActiveTab(t.key as any)}
-            style={{
-              padding: "14px 22px", border: "none", background: "transparent", cursor: "pointer",
-              fontSize: 14, fontWeight: activeTab === t.key ? 600 : 400,
-              color: activeTab === t.key ? "#1890ff" : "#8c8c8c",
-              borderBottom: activeTab === t.key ? "2px solid #1890ff" : "2px solid transparent",
-            }}
-          >{t.label}</button>
-        ))}
-      </div>
+          { key: "payments", label: "📋 Đề nghị thanh toán", count: payments.length },
+          { key: "budgets", label: "💰 Ngân sách & phân bổ", count: budgets.length },
+        ]}
+        active={activeTab}
+        onChange={(k) => setActiveTab(k as any)}
+      />
 
       {/* DASHBOARD tab */}
       {activeTab === "dashboard" && (
@@ -365,9 +338,7 @@ export default function B2GComplianceList() {
                     <td style={{ fontSize: 12 }}>{p.category}</td>
                     <td style={{ fontSize: 12 }}>{p.dueDate}</td>
                     <td>
-                      <span className="status-badge" style={{ background: `${statusMeta.color}22`, color: statusMeta.color }}>
-                        {statusMeta.label}
-                      </span>
+                      <StatusBadge label={statusMeta.label} color={statusMeta.color} />
                       {currentStep && (
                         <div style={{ fontSize: 10, color: "#8c8c8c", marginTop: 2 }}>
                           Bước {currentStep.step}/{p.workflow.length}
@@ -397,9 +368,7 @@ export default function B2GComplianceList() {
                   <div style={{ fontWeight: 700, fontSize: 16 }}>{b.projectName}</div>
                   <div style={{ fontSize: 12, color: "#8c8c8c" }}>Năm {b.year}</div>
                 </div>
-                <span className="status-badge" style={{ background: "#f6ffed", color: "#52c41a" }}>
-                  {b.status === "active" ? "Đang áp dụng" : b.status}
-                </span>
+                <StatusBadge label={b.status === "active" ? "Đang áp dụng" : b.status} color="#52c41a" />
               </div>
 
               <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 10, marginBottom: 14 }}>

@@ -4,6 +4,7 @@ import {
   MOCK_NOTIFICATION_CAMPAIGNS, MOCK_NOTIFICATION_RULES,
   MOCK_NOTIFICATION_HISTORY, MOCK_DEBTS, MOCK_PROJECTS,
 } from "assets/mock/TNPMData";
+import { PageHeader, KpiRow, TabBar, ModalShell, StatusBadge } from "components/tnpm";
 
 const CHANNEL_META: Record<string, { label: string; icon: string; color: string }> = {
   sms: { label: "SMS", icon: "📱", color: "#1890ff" },
@@ -43,14 +44,16 @@ function TemplateModal({ template, onClose, onSave }: any) {
     set("channels", form.channels.includes(ch) ? form.channels.filter((c: string) => c !== ch) : [...form.channels, ch]);
 
   return (
-    <div className="modal-overlay" onClick={onClose}>
-      <div className="modal-box modal-box--wide" onClick={(e) => e.stopPropagation()}>
-        <div className="modal-header">
-          <h2 className="modal-title">{isEdit ? "✏️ Sửa mẫu thông báo" : "📝 Thêm mẫu thông báo"}</h2>
-          <button className="modal-close" onClick={onClose}>×</button>
-        </div>
-        <div className="modal-body">
-          <div className="form-grid">
+    <ModalShell
+      title={isEdit ? "✏️ Sửa mẫu thông báo" : "📝 Thêm mẫu thông báo"}
+      onClose={onClose}
+      wide
+      footer={<>
+        <button className="btn btn-outline" onClick={onClose}>Hủy</button>
+        <button className="btn btn-primary" onClick={() => onSave({ ...form, id: form.id || Date.now() })}>💾 Lưu mẫu</button>
+      </>}
+    >
+      <div className="form-grid">
             <div className="form-group">
               <label>Mã mẫu</label>
               <input className="form-control" value={form.code} onChange={(e) => set("code", e.target.value)} placeholder="TPL-DEBT-XXX" />
@@ -106,13 +109,7 @@ function TemplateModal({ template, onClose, onSave }: any) {
           <div style={{ marginTop: 14, padding: 12, background: "#e6f7ff", borderRadius: 6, fontSize: 12 }}>
             💡 <strong>Biến có sẵn:</strong> <code>{"{customerName}"}</code>, <code>{"{amount}"}</code>, <code>{"{dueDate}"}</code>, <code>{"{invoiceCode}"}</code>, <code>{"{daysOverdue}"}</code>, <code>{"{projectName}"}</code>, <code>{"{period}"}</code>
           </div>
-        </div>
-        <div className="modal-footer">
-          <button className="btn btn-outline" onClick={onClose}>Hủy</button>
-          <button className="btn btn-primary" onClick={() => onSave({ ...form, id: form.id || Date.now() })}>💾 Lưu mẫu</button>
-        </div>
-      </div>
-    </div>
+    </ModalShell>
   );
 }
 
@@ -407,55 +404,33 @@ export default function FeeNotificationList() {
 
   return (
     <div className="tnpm-list-page">
-      <div className="page-header">
-        <div>
-          <h1 className="page-title">📨 Thông báo phí & Nhắc nợ</h1>
-          <p className="page-sub">Tạo chiến dịch thông báo phí, nhắc nợ, nhắc gia hạn — gửi tự động qua SMS/Email/Zalo/Push theo phân khúc khách hàng</p>
-        </div>
-        <div style={{ display: "flex", gap: 10 }}>
+      <PageHeader
+        title="📨 Thông báo phí & Nhắc nợ"
+        subtitle="Tạo chiến dịch thông báo phí, nhắc nợ, nhắc gia hạn — gửi tự động qua SMS/Email/Zalo/Push theo phân khúc khách hàng"
+        actions={<>
           <button className="btn btn-outline" onClick={() => { setEditTemplate(null); setShowTemplateModal(true); }}>📝 Thêm mẫu</button>
           <button className="btn btn-primary" onClick={() => { setEditCampaign(null); setShowCampaignModal(true); }}>+ Tạo chiến dịch</button>
-        </div>
-      </div>
+        </>}
+      />
 
-      {/* KPI */}
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(5, 1fr)", gap: 12, marginBottom: 20 }}>
-        {[
-          { label: "Đã gửi tháng này", value: `${totalSentThisMonth} msg`, sub: `${campaigns.filter((c: any) => c.status === "sent").length} chiến dịch`, color: "#52c41a", icon: "✅" },
-          { label: "Đang lên lịch", value: `${scheduledCount} CD`, sub: "Sẵn sàng chạy", color: "#1890ff", icon: "📅" },
-          { label: "Quy tắc tự động active", value: `${activeRules}/${rules.length}`, sub: `${rules.reduce((a: number, r: any) => a + r.totalSent, 0)} msg đã gửi`, color: "#722ed1", icon: "⚡" },
-          { label: "KH đang nợ", value: `${debtTargets} người`, sub: "Cần nhắc nợ", color: "#ff4d4f", icon: "⚠️" },
-          { label: "Mẫu thông báo", value: `${templates.filter((t: any) => t.enabled).length}/${templates.length}`, sub: "Active / tổng", color: "#faad14", icon: "📝" },
-        ].map((s, i) => (
-          <div key={i} style={{ background: "#fff", borderRadius: 10, padding: "14px 14px", boxShadow: "0 2px 8px rgba(0,0,0,.06)", borderLeft: `4px solid ${s.color}` }}>
-            <div style={{ fontSize: 16 }}>{s.icon}</div>
-            <div style={{ fontSize: 15, fontWeight: 700, color: s.color, marginTop: 4 }}>{s.value}</div>
-            <div style={{ fontSize: 11, color: "#1a1a2e", fontWeight: 500, marginTop: 2 }}>{s.label}</div>
-            <div style={{ fontSize: 10, color: "#8c8c8c", marginTop: 2 }}>{s.sub}</div>
-          </div>
-        ))}
-      </div>
+      <KpiRow items={[
+        { label: "Đã gửi tháng này", value: `${totalSentThisMonth} msg`, sub: `${campaigns.filter((c: any) => c.status === "sent").length} chiến dịch`, color: "#52c41a", icon: "✅" },
+        { label: "Đang lên lịch", value: `${scheduledCount} CD`, sub: "Sẵn sàng chạy", color: "#1890ff", icon: "📅" },
+        { label: "Quy tắc tự động active", value: `${activeRules}/${rules.length}`, sub: `${rules.reduce((a: number, r: any) => a + r.totalSent, 0)} msg đã gửi`, color: "#722ed1", icon: "⚡" },
+        { label: "KH đang nợ", value: `${debtTargets} người`, sub: "Cần nhắc nợ", color: "#ff4d4f", icon: "⚠️" },
+        { label: "Mẫu thông báo", value: `${templates.filter((t: any) => t.enabled).length}/${templates.length}`, sub: "Active / tổng", color: "#faad14", icon: "📝" },
+      ]} />
 
-      {/* Tabs */}
-      <div style={{ display: "flex", gap: 0, borderBottom: "1px solid #f0f0f0", background: "#fff", borderRadius: "12px 12px 0 0", padding: "0 16px" }}>
-        {[
-          { key: "campaigns", label: `📨 Chiến dịch (${campaigns.length})` },
-          { key: "templates", label: `📝 Mẫu thông báo (${templates.length})` },
-          { key: "rules", label: `⚡ Quy tắc tự động (${rules.length})` },
-          { key: "history", label: `📜 Lịch sử gửi (${MOCK_NOTIFICATION_HISTORY.length})` },
-        ].map((t) => (
-          <button
-            key={t.key}
-            onClick={() => setActiveTab(t.key as any)}
-            style={{
-              padding: "14px 22px", border: "none", background: "transparent", cursor: "pointer",
-              fontSize: 14, fontWeight: activeTab === t.key ? 600 : 400,
-              color: activeTab === t.key ? "#1890ff" : "#8c8c8c",
-              borderBottom: activeTab === t.key ? "2px solid #1890ff" : "2px solid transparent",
-            }}
-          >{t.label}</button>
-        ))}
-      </div>
+      <TabBar
+        tabs={[
+          { key: "campaigns", label: "📨 Chiến dịch", count: campaigns.length },
+          { key: "templates", label: "📝 Mẫu thông báo", count: templates.length },
+          { key: "rules", label: "⚡ Quy tắc tự động", count: rules.length },
+          { key: "history", label: "📜 Lịch sử gửi", count: MOCK_NOTIFICATION_HISTORY.length },
+        ]}
+        active={activeTab}
+        onChange={(k) => setActiveTab(k as any)}
+      />
 
       {/* CAMPAIGNS TAB */}
       {activeTab === "campaigns" && (
@@ -512,9 +487,7 @@ export default function FeeNotificationList() {
                       ) : <span style={{ fontSize: 11, color: "#8c8c8c" }}>—</span>}
                     </td>
                     <td>
-                      <span className="status-badge" style={{ background: `${statusMeta.color}22`, color: statusMeta.color }}>
-                        {statusMeta.label}
-                      </span>
+                      <StatusBadge label={statusMeta.label} color={statusMeta.color} />
                     </td>
                     <td>
                       <div style={{ display: "flex", gap: 5 }}>
@@ -670,12 +643,10 @@ export default function FeeNotificationList() {
                     <td style={{ fontSize: 12 }}>{h.templateName}</td>
                     <td style={{ fontSize: 11, color: "#595959", maxWidth: 280, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{h.content}</td>
                     <td>
-                      <span className="status-badge" style={{
-                        background: h.status === "delivered" ? "#f6ffed" : h.status === "failed" ? "#fff1f0" : "#fff7e6",
-                        color: h.status === "delivered" ? "#52c41a" : h.status === "failed" ? "#ff4d4f" : "#faad14",
-                      }}>
-                        {h.status === "delivered" ? "Đã gửi" : h.status === "failed" ? "Lỗi" : "Pending"}
-                      </span>
+                      <StatusBadge
+                        label={h.status === "delivered" ? "Đã gửi" : h.status === "failed" ? "Lỗi" : "Pending"}
+                        color={h.status === "delivered" ? "#52c41a" : h.status === "failed" ? "#ff4d4f" : "#faad14"}
+                      />
                     </td>
                     <td style={{ fontSize: 11 }}>{h.sentAt}</td>
                     <td style={{ fontSize: 11, color: h.openedAt ? "#52c41a" : "#8c8c8c" }}>{h.openedAt || "Chưa mở"}</td>

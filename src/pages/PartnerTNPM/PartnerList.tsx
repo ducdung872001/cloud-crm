@@ -1,8 +1,6 @@
 import React, { useState, useMemo } from "react";
 import { MOCK_PARTNERS, MOCK_PARTNER_CONTRACTS } from "assets/mock/TNPMData";
-
-const fmtMoney = (n: number) =>
-  n >= 1e9 ? `${(n / 1e9).toFixed(2)} tỷ` : n >= 1e6 ? `${(n / 1e6).toFixed(1)} tr đ` : `${(n || 0).toLocaleString("vi-VN")} đ`;
+import { PageHeader, KpiRow, TabBar, ModalShell, ConfirmDialog, StatusBadge, fmtMoney } from "components/tnpm";
 
 const PARTNER_TYPES = [
   { value: "strategic", label: "Đối tác chiến lược", color: "#722ed1", icon: "🏆" },
@@ -46,13 +44,15 @@ function AddEditPartnerModal({ partner, onClose, onSave }: any) {
   };
 
   return (
-    <div className="modal-overlay" onClick={onClose}>
-      <div className="modal-box modal-box--wide" onClick={(e) => e.stopPropagation()}>
-        <div className="modal-header">
-          <h2 className="modal-title">{isEdit ? "✏️ Sửa đối tác" : "🏢 Thêm đối tác mới"}</h2>
-          <button className="modal-close" onClick={onClose}>×</button>
-        </div>
-        <div className="modal-body">
+    <ModalShell
+      title={isEdit ? "✏️ Sửa đối tác" : "🏢 Thêm đối tác mới"}
+      onClose={onClose}
+      wide
+      footer={<>
+        <button className="btn btn-outline" onClick={onClose}>Hủy</button>
+        <button className="btn btn-primary" onClick={handleSave}>💾 Lưu đối tác</button>
+      </>}
+    >
           {/* Basic info */}
           <div style={{ fontWeight: 600, marginBottom: 10, color: "#1890ff" }}>📋 Thông tin cơ bản</div>
           <div className="form-grid">
@@ -146,13 +146,7 @@ function AddEditPartnerModal({ partner, onClose, onSave }: any) {
               <textarea className="form-control" rows={3} value={form.notes} onChange={(e) => set("notes", e.target.value)} placeholder="Ghi chú về lịch sử hợp tác, ưu đãi đặc biệt..." />
             </div>
           </div>
-        </div>
-        <div className="modal-footer">
-          <button className="btn btn-outline" onClick={onClose}>Hủy</button>
-          <button className="btn btn-primary" onClick={handleSave}>💾 Lưu đối tác</button>
-        </div>
-      </div>
-    </div>
+    </ModalShell>
   );
 }
 
@@ -161,15 +155,16 @@ function DetailDrawer({ partner, onClose, onEdit }: any) {
   const contracts = MOCK_PARTNER_CONTRACTS.filter((c: any) => c.partnerId === partner.id);
   const meta = getTypeMeta(partner.type);
   return (
-    <div className="modal-overlay" onClick={onClose}>
-      <div className="modal-box modal-box--wide" onClick={(e) => e.stopPropagation()} style={{ maxWidth: 900 }}>
-        <div className="modal-header">
-          <h2 className="modal-title">
-            {meta.icon} {partner.name}
-          </h2>
-          <button className="modal-close" onClick={onClose}>×</button>
-        </div>
-        <div className="modal-body">
+    <ModalShell
+      title={`${meta.icon} ${partner.name}`}
+      onClose={onClose}
+      wide
+      maxWidth={900}
+      footer={<>
+        <button className="btn btn-outline" onClick={onClose}>Đóng</button>
+        <button className="btn btn-primary" onClick={onEdit}>✏️ Sửa đối tác</button>
+      </>}
+    >
           {/* Header block */}
           <div style={{ display: "flex", gap: 14, marginBottom: 16 }}>
             <div style={{ flex: 2, background: "#f5f7fa", padding: 14, borderRadius: 8 }}>
@@ -254,25 +249,17 @@ function DetailDrawer({ partner, onClose, onEdit }: any) {
                     <td className="amount-text">{fmtMoney(c.value)}</td>
                     <td style={{ fontSize: 12 }}>{c.startDate} → {c.endDate}</td>
                     <td>
-                      <span className="status-badge" style={{
-                        background: c.status === "active" ? "#f6ffed" : c.status === "expired" ? "#fff1f0" : "#fafafa",
-                        color: c.status === "active" ? "#52c41a" : c.status === "expired" ? "#ff4d4f" : "#8c8c8c",
-                      }}>
-                        {c.status === "active" ? "Có hiệu lực" : c.status === "expired" ? "Hết hạn" : "Tạm dừng"}
-                      </span>
+                      <StatusBadge
+                        label={c.status === "active" ? "Có hiệu lực" : c.status === "expired" ? "Hết hạn" : "Tạm dừng"}
+                        color={c.status === "active" ? "#52c41a" : c.status === "expired" ? "#ff4d4f" : "#8c8c8c"}
+                      />
                     </td>
                   </tr>
                 ))}
               </tbody>
             </table>
           )}
-        </div>
-        <div className="modal-footer">
-          <button className="btn btn-outline" onClick={onClose}>Đóng</button>
-          <button className="btn btn-primary" onClick={onEdit}>✏️ Sửa đối tác</button>
-        </div>
-      </div>
-    </div>
+    </ModalShell>
   );
 }
 
@@ -322,32 +309,21 @@ export default function PartnerList() {
 
   return (
     <div className="tnpm-list-page">
-      <div className="page-header">
-        <div>
-          <h1 className="page-title">🤝 Quản lý Đối tác</h1>
-          <p className="page-sub">Quản lý đối tác chiến lược, môi giới, tư vấn và các bên hợp tác với TNPM</p>
-        </div>
-        <div style={{ display: "flex", gap: 10 }}>
+      <PageHeader
+        title="🤝 Quản lý Đối tác"
+        subtitle="Quản lý đối tác chiến lược, môi giới, tư vấn và các bên hợp tác với TNPM"
+        actions={<>
           <button className="btn btn-outline">📊 Xuất Excel</button>
           <button className="btn btn-primary" onClick={() => { setEditTarget(null); setShowModal(true); }}>+ Thêm đối tác</button>
-        </div>
-      </div>
+        </>}
+      />
 
-      {/* KPI cards */}
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 14, marginBottom: 20 }}>
-        {[
-          { label: "Tổng đối tác", value: `${totalPartners}`, color: "#1890ff", icon: "🏢" },
-          { label: "Đang hợp tác", value: `${activePartners}`, color: "#52c41a", icon: "✅" },
-          { label: "HĐ đang có hiệu lực", value: `${activeContracts}`, color: "#722ed1", icon: "📄" },
-          { label: "Tổng giá trị HĐ", value: fmtMoney(totalValue), color: "#faad14", icon: "💰" },
-        ].map((s, i) => (
-          <div key={i} style={{ background: "#fff", borderRadius: 10, padding: "16px 18px", boxShadow: "0 2px 8px rgba(0,0,0,.06)", borderLeft: `4px solid ${s.color}` }}>
-            <div style={{ fontSize: 20 }}>{s.icon}</div>
-            <div style={{ fontSize: 20, fontWeight: 700, color: s.color, marginTop: 4 }}>{s.value}</div>
-            <div style={{ fontSize: 12, color: "#8c8c8c", marginTop: 4 }}>{s.label}</div>
-          </div>
-        ))}
-      </div>
+      <KpiRow columns={4} items={[
+        { label: "Tổng đối tác", value: `${totalPartners}`, color: "#1890ff", icon: "🏢" },
+        { label: "Đang hợp tác", value: `${activePartners}`, color: "#52c41a", icon: "✅" },
+        { label: "HĐ đang có hiệu lực", value: `${activeContracts}`, color: "#722ed1", icon: "📄" },
+        { label: "Tổng giá trị HĐ", value: fmtMoney(totalValue), color: "#faad14", icon: "💰" },
+      ]} />
 
       {/* Filter bar */}
       <div style={{ display: "flex", gap: 0, borderBottom: "1px solid #f0f0f0", background: "#fff", borderRadius: "12px 12px 0 0", padding: "0 16px" }}>
@@ -406,9 +382,7 @@ export default function PartnerList() {
                     <div style={{ fontSize: 11, color: "#8c8c8c" }}>{p.businessField}</div>
                   </td>
                   <td>
-                    <span className="status-badge" style={{ background: `${meta.color}22`, color: meta.color }}>
-                      {meta.icon} {meta.label}
-                    </span>
+                    <StatusBadge label={meta.label} color={meta.color} icon={meta.icon} />
                   </td>
                   <td>
                     <div style={{ fontSize: 13 }}>{p.contactName}</div>
@@ -426,12 +400,10 @@ export default function PartnerList() {
                     <span style={{ fontSize: 11, color: "#8c8c8c" }}> /5</span>
                   </td>
                   <td>
-                    <span className="status-badge" style={{
-                      background: p.status === "active" ? "#f6ffed" : p.status === "inactive" ? "#fafafa" : "#fff1f0",
-                      color: p.status === "active" ? "#52c41a" : p.status === "inactive" ? "#8c8c8c" : "#ff4d4f",
-                    }}>
-                      {p.status === "active" ? "Đang hợp tác" : p.status === "inactive" ? "Tạm dừng" : "Blacklist"}
-                    </span>
+                    <StatusBadge
+                      label={p.status === "active" ? "Đang hợp tác" : p.status === "inactive" ? "Tạm dừng" : "Blacklist"}
+                      color={p.status === "active" ? "#52c41a" : p.status === "inactive" ? "#8c8c8c" : "#ff4d4f"}
+                    />
                   </td>
                   <td>
                     <div style={{ display: "flex", gap: 5 }}>
@@ -456,16 +428,14 @@ export default function PartnerList() {
         />
       )}
       {deleteId && (
-        <div className="modal-overlay" onClick={() => setDeleteId(null)}>
-          <div className="confirm-dialog" onClick={(e) => e.stopPropagation()}>
-            <h3>⚠️ Xóa đối tác</h3>
-            <p>Bạn có chắc muốn xóa đối tác này? Hành động không thể khôi phục.</p>
-            <div className="confirm-dialog__actions">
-              <button className="btn btn-outline" onClick={() => setDeleteId(null)}>Hủy</button>
-              <button className="btn btn-danger" onClick={() => handleDelete(deleteId)}>Xóa</button>
-            </div>
-          </div>
-        </div>
+        <ConfirmDialog
+          title="Xóa đối tác"
+          message="Bạn có chắc muốn xóa đối tác này? Hành động không thể khôi phục."
+          confirmLabel="Xóa"
+          danger
+          onCancel={() => setDeleteId(null)}
+          onConfirm={() => handleDelete(deleteId)}
+        />
       )}
     </div>
   );

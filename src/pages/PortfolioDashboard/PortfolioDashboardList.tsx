@@ -3,13 +3,7 @@ import {
   MOCK_PROJECT_FINANCIALS, MOCK_PORTFOLIO_REVENUE_CHART,
   MOCK_PROJECTS, PROJECT_TYPE_OPTIONS,
 } from "assets/mock/TNPMData";
-
-const fmtMoney = (n: number) => {
-  const neg = n < 0;
-  const abs = Math.abs(n);
-  const s = abs >= 1e9 ? `${(abs / 1e9).toFixed(2)} tỷ` : abs >= 1e6 ? `${(abs / 1e6).toFixed(1)} tr đ` : `${abs.toLocaleString("vi-VN")} đ`;
-  return neg ? `−${s}` : s;
-};
+import { PageHeader, KpiRow, ModalShell, StatusBadge, fmtMoney } from "components/tnpm";
 
 const STATUS_META: Record<string, { label: string; color: string; icon: string }> = {
   healthy: { label: "Lành mạnh", color: "#52c41a", icon: "✅" },
@@ -31,13 +25,15 @@ function ReportModal({ project, onClose }: any) {
   };
 
   return (
-    <div className="modal-overlay" onClick={onClose}>
-      <div className="modal-box" onClick={(e) => e.stopPropagation()} style={{ maxWidth: 560 }}>
-        <div className="modal-header">
-          <h2 className="modal-title">📨 Gửi báo cáo cho Chủ đầu tư</h2>
-          <button className="modal-close" onClick={onClose}>×</button>
-        </div>
-        <div className="modal-body">
+    <ModalShell
+      title="📨 Gửi báo cáo cho Chủ đầu tư"
+      onClose={onClose}
+      maxWidth={560}
+      footer={<>
+        <button className="btn btn-outline" onClick={onClose}>Hủy</button>
+        <button className="btn btn-primary" onClick={handleSend}>📨 Gửi báo cáo</button>
+      </>}
+    >
           <div style={{ background: "#f5f7fa", padding: 14, borderRadius: 8, marginBottom: 14 }}>
             <div style={{ fontWeight: 600, marginBottom: 4 }}>{project.projectName}</div>
             <div style={{ fontSize: 12, color: "#8c8c8c" }}>Chủ đầu tư: <strong>{project.owner}</strong></div>
@@ -79,13 +75,7 @@ function ReportModal({ project, onClose }: any) {
           <div style={{ marginTop: 14, padding: 12, background: "#e6f7ff", borderRadius: 6, fontSize: 12 }}>
             📎 Báo cáo sẽ bao gồm: P&L tháng, doanh thu chi tiết, công nợ, tỷ lệ lấp đầy, danh sách SR & maintenance đã thực hiện.
           </div>
-        </div>
-        <div className="modal-footer">
-          <button className="btn btn-outline" onClick={onClose}>Hủy</button>
-          <button className="btn btn-primary" onClick={handleSend}>📨 Gửi báo cáo</button>
-        </div>
-      </div>
-    </div>
+    </ModalShell>
   );
 }
 
@@ -136,35 +126,23 @@ export default function PortfolioDashboardList() {
 
   return (
     <div className="tnpm-list-page">
-      <div className="page-header">
-        <div>
-          <h1 className="page-title">🌐 Dashboard Portfolio</h1>
-          <p className="page-sub">Tổng quan tài chính & vận hành tất cả dự án — dành cho TNPM leadership và báo cáo Chủ đầu tư</p>
-        </div>
-        <div style={{ display: "flex", gap: 10 }}>
+      <PageHeader
+        title="🌐 Dashboard Portfolio"
+        subtitle="Tổng quan tài chính & vận hành tất cả dự án — dành cho TNPM leadership và báo cáo Chủ đầu tư"
+        actions={<>
           <button className="btn btn-outline">📊 Xuất báo cáo tổng</button>
           <button className="btn btn-primary" onClick={() => alert("Gửi email hàng loạt cho tất cả CĐT (coming soon)")}>📨 Gửi báo cáo hàng loạt</button>
-        </div>
-      </div>
+        </>}
+      />
 
-      {/* Top-level KPI */}
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(6, 1fr)", gap: 12, marginBottom: 20 }}>
-        {[
-          { label: "Dự án đang vận hành", value: `${filtered.length}`, sub: `${owners.length} chủ đầu tư`, color: "#1890ff", icon: "🏢" },
-          { label: "DT tháng 04/2024", value: fmtMoney(totalRevenue), sub: "Tổng portfolio", color: "#52c41a", icon: "💰" },
-          { label: "Chi phí tháng", value: fmtMoney(totalCost), sub: "Vendor + NV + utilities", color: "#faad14", icon: "💸" },
-          { label: "Lợi nhuận tháng", value: fmtMoney(totalProfit), sub: `Margin ${(totalProfit / totalRevenue * 100).toFixed(1)}%`, color: totalProfit > 0 ? "#722ed1" : "#ff4d4f", icon: "📈" },
-          { label: "Công nợ phải thu", value: fmtMoney(totalReceivable), sub: "Toàn portfolio", color: "#ff4d4f", icon: "⚠️" },
-          { label: "Tỷ lệ lấp đầy TB", value: `${avgOccupancy.toFixed(1)}%`, sub: `${occupiedUnits}/${totalUnits} unit`, color: "#13c2c2", icon: "🏠" },
-        ].map((s, i) => (
-          <div key={i} style={{ background: "#fff", borderRadius: 10, padding: "14px 14px", boxShadow: "0 2px 8px rgba(0,0,0,.06)", borderLeft: `4px solid ${s.color}` }}>
-            <div style={{ fontSize: 16 }}>{s.icon}</div>
-            <div style={{ fontSize: 16, fontWeight: 700, color: s.color, marginTop: 4 }}>{s.value}</div>
-            <div style={{ fontSize: 11, color: "#1a1a2e", fontWeight: 500, marginTop: 2 }}>{s.label}</div>
-            <div style={{ fontSize: 10, color: "#8c8c8c", marginTop: 2 }}>{s.sub}</div>
-          </div>
-        ))}
-      </div>
+      <KpiRow columns={6} items={[
+        { label: "Dự án đang vận hành", value: `${filtered.length}`, sub: `${owners.length} chủ đầu tư`, color: "#1890ff", icon: "🏢" },
+        { label: "DT tháng 04/2024", value: fmtMoney(totalRevenue), sub: "Tổng portfolio", color: "#52c41a", icon: "💰" },
+        { label: "Chi phí tháng", value: fmtMoney(totalCost), sub: "Vendor + NV + utilities", color: "#faad14", icon: "💸" },
+        { label: "Lợi nhuận tháng", value: fmtMoney(totalProfit), sub: `Margin ${(totalProfit / totalRevenue * 100).toFixed(1)}%`, color: totalProfit > 0 ? "#722ed1" : "#ff4d4f", icon: "📈" },
+        { label: "Công nợ phải thu", value: fmtMoney(totalReceivable), sub: "Toàn portfolio", color: "#ff4d4f", icon: "⚠️" },
+        { label: "Tỷ lệ lấp đầy TB", value: `${avgOccupancy.toFixed(1)}%`, sub: `${occupiedUnits}/${totalUnits} unit`, color: "#13c2c2", icon: "🏠" },
+      ]} />
 
       {/* Filter bar */}
       <div style={{ display: "flex", gap: 10, marginBottom: 14, flexWrap: "wrap" }}>
@@ -283,9 +261,7 @@ export default function PortfolioDashboardList() {
                     <div style={{ fontSize: 10, color: "#8c8c8c" }}>{p.occupiedUnits}/{p.totalUnits}</div>
                   </td>
                   <td>
-                    <span className="status-badge" style={{ background: `${statusMeta.color}22`, color: statusMeta.color }}>
-                      {statusMeta.icon} {statusMeta.label}
-                    </span>
+                    <StatusBadge label={statusMeta.label} color={statusMeta.color} icon={statusMeta.icon} />
                   </td>
                   <td>
                     <button className="btn btn-outline" style={{ padding: "4px 10px", fontSize: 11 }} onClick={() => setReportTarget(p)}>

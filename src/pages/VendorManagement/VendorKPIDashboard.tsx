@@ -4,9 +4,7 @@ import {
   MOCK_SERVICE_REQUESTS, MOCK_MAINTENANCE_PLANS, MOCK_DEBTS,
   VENDOR_SERVICE_TYPES,
 } from "assets/mock/TNPMData";
-
-const fmtMoney = (n: number) =>
-  n >= 1e9 ? `${(n / 1e9).toFixed(2)} tỷ` : n >= 1e6 ? `${(n / 1e6).toFixed(1)} tr đ` : `${(n || 0).toLocaleString("vi-VN")} đ`;
+import { PageHeader, KpiRow, fmtMoney } from "components/tnpm";
 
 // Compute per-vendor KPI from all related data
 function computeVendorKPI(vendor: any) {
@@ -93,12 +91,10 @@ export default function VendorKPIDashboard() {
 
   return (
     <div className="tnpm-list-page">
-      <div className="page-header">
-        <div>
-          <h1 className="page-title">🎯 Vendor KPI Dashboard</h1>
-          <p className="page-sub">Đánh giá hiệu suất Nhà cung cấp theo SLA, thời gian phê duyệt, rating — bám KPI HLD p.17</p>
-        </div>
-        <div style={{ display: "flex", gap: 10 }}>
+      <PageHeader
+        title="🎯 Vendor KPI Dashboard"
+        subtitle="Đánh giá hiệu suất Nhà cung cấp theo SLA, thời gian phê duyệt, rating — bám KPI HLD p.17"
+        actions={<>
           <select className="filter-select" value={filterService} onChange={(e) => setFilterService(e.target.value)}>
             <option value="">Tất cả loại DV</option>
             {VENDOR_SERVICE_TYPES.map((t: any) => <option key={t.value} value={t.value}>{t.label}</option>)}
@@ -109,68 +105,49 @@ export default function VendorKPIDashboard() {
             <option value="rating">Rating</option>
             <option value="debt">Công nợ cao nhất</option>
           </select>
-        </div>
-      </div>
+        </>}
+      />
 
-      {/* Portfolio KPI vs HLD targets */}
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(5, 1fr)", gap: 12, marginBottom: 20 }}>
-        {[
-          {
-            label: "SLA met trung bình",
-            value: `${avgSlaMet.toFixed(1)}%`,
-            target: `Target ≥ ${SLA_TARGET}%`,
-            color: avgSlaMet >= SLA_TARGET ? "#52c41a" : avgSlaMet >= 80 ? "#faad14" : "#ff4d4f",
-            icon: "⏱️",
-            status: avgSlaMet >= SLA_TARGET ? "ĐẠT" : "CHƯA ĐẠT",
-          },
-          {
-            label: "Thời gian duyệt TT TB",
-            value: `${avgApproveDays.toFixed(1)} ngày`,
-            target: `Target < ${APPROVE_TARGET} ngày`,
-            color: avgApproveDays <= APPROVE_TARGET ? "#52c41a" : "#ff4d4f",
-            icon: "✅",
-            status: avgApproveDays <= APPROVE_TARGET ? "ĐẠT" : "CHƯA ĐẠT",
-          },
-          {
-            label: "Rating NCC trung bình",
-            value: `${avgRating.toFixed(2)} ⭐`,
-            target: `Target ≥ ${RATING_TARGET}/5`,
-            color: avgRating >= RATING_TARGET ? "#52c41a" : "#faad14",
-            icon: "⭐",
-            status: avgRating >= RATING_TARGET ? "ĐẠT" : "CHƯA ĐẠT",
-          },
-          {
-            label: "Tổng giá trị HĐ active",
-            value: fmtMoney(totalContractValue),
-            target: `${filtered.length} NCC`,
-            color: "#1890ff",
-            icon: "💼",
-            status: "",
-          },
-          {
-            label: "Công nợ phải trả NCC",
-            value: fmtMoney(totalDebtAll),
-            target: `${filtered.reduce((a: number, v: any) => a + v.debtCount, 0)} khoản`,
-            color: totalDebtAll > 0 ? "#ff4d4f" : "#52c41a",
-            icon: "💸",
-            status: "",
-          },
-        ].map((s, i) => (
-          <div key={i} style={{ background: "#fff", borderRadius: 10, padding: "14px 14px", boxShadow: "0 2px 8px rgba(0,0,0,.06)", borderLeft: `4px solid ${s.color}` }}>
-            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "start" }}>
-              <div style={{ fontSize: 16 }}>{s.icon}</div>
-              {s.status && (
-                <span style={{ fontSize: 9, padding: "2px 6px", borderRadius: 8, background: `${s.color}22`, color: s.color, fontWeight: 700 }}>
-                  {s.status}
-                </span>
-              )}
-            </div>
-            <div style={{ fontSize: 15, fontWeight: 700, color: s.color, marginTop: 4 }}>{s.value}</div>
-            <div style={{ fontSize: 11, color: "#1a1a2e", fontWeight: 500, marginTop: 2 }}>{s.label}</div>
-            <div style={{ fontSize: 10, color: "#8c8c8c", marginTop: 2 }}>{s.target}</div>
-          </div>
-        ))}
-      </div>
+      <KpiRow items={[
+        {
+          label: "SLA met trung bình",
+          value: `${avgSlaMet.toFixed(1)}%`,
+          sub: `Target ≥ ${SLA_TARGET}%`,
+          color: avgSlaMet >= SLA_TARGET ? "#52c41a" : avgSlaMet >= 80 ? "#faad14" : "#ff4d4f",
+          icon: "⏱️",
+          status: avgSlaMet >= SLA_TARGET ? "ĐẠT" : "CHƯA ĐẠT",
+        },
+        {
+          label: "Thời gian duyệt TT TB",
+          value: `${avgApproveDays.toFixed(1)} ngày`,
+          sub: `Target < ${APPROVE_TARGET} ngày`,
+          color: avgApproveDays <= APPROVE_TARGET ? "#52c41a" : "#ff4d4f",
+          icon: "✅",
+          status: avgApproveDays <= APPROVE_TARGET ? "ĐẠT" : "CHƯA ĐẠT",
+        },
+        {
+          label: "Rating NCC trung bình",
+          value: `${avgRating.toFixed(2)} ⭐`,
+          sub: `Target ≥ ${RATING_TARGET}/5`,
+          color: avgRating >= RATING_TARGET ? "#52c41a" : "#faad14",
+          icon: "⭐",
+          status: avgRating >= RATING_TARGET ? "ĐẠT" : "CHƯA ĐẠT",
+        },
+        {
+          label: "Tổng giá trị HĐ active",
+          value: fmtMoney(totalContractValue),
+          sub: `${filtered.length} NCC`,
+          color: "#1890ff",
+          icon: "💼",
+        },
+        {
+          label: "Công nợ phải trả NCC",
+          value: fmtMoney(totalDebtAll),
+          sub: `${filtered.reduce((a: number, v: any) => a + v.debtCount, 0)} khoản`,
+          color: totalDebtAll > 0 ? "#ff4d4f" : "#52c41a",
+          icon: "💸",
+        },
+      ]} />
 
       {/* Vendor KPI ranking table */}
       <div style={{ background: "#fff", borderRadius: 12, boxShadow: "0 2px 8px rgba(0,0,0,.06)", overflow: "hidden" }}>
