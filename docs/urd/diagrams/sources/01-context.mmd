@@ -1,0 +1,57 @@
+%%{init: {'theme':'base', 'themeVariables': {'primaryColor':'#1F3A68','primaryTextColor':'#fff','primaryBorderColor':'#1F3A68','lineColor':'#2C7A7B','fontFamily':'Calibri'}}}%%
+flowchart TB
+    subgraph EXT["🌐 Hệ thống bên ngoài"]
+        SSO[("SSO Reborn<br/>(OAuth/OIDC)")]
+        VAT[("Hóa đơn điện tử<br/>Viettel/VNPT/Misa")]
+        PAY[("Cổng thanh toán<br/>VNPay/MoMo/ZaloPay")]
+        SHIP[("Vận chuyển<br/>GHN/GHTK/J&T")]
+        SMS[("SMS Gateway<br/>Viettel/VinaSMS")]
+        EMAIL[("Email SMTP<br/>Gmail/SendGrid")]
+        ZALO[("Zalo OA")]
+        FB[("Facebook<br/>Messenger")]
+    end
+
+    CRM{{"<b>REBORN CRM</b><br/>(Cửa hàng & Spa)"}}
+
+    subgraph USERS["👥 Người dùng nội bộ"]
+        ADMIN["Tenant Admin"]
+        BM["Branch Manager"]
+        REC["Receptionist"]
+        TECH["Technician"]
+        ACC["Accountant"]
+        MKT["Marketer"]
+    end
+
+    subgraph CUST["👤 Khách hàng"]
+        WALK["Khách lẻ<br/>walk-in"]
+        MEMBER["Hội viên<br/>(thẻ/QR)"]
+    end
+
+    ADMIN -.->|Cấu hình| CRM
+    BM -.->|Vận hành| CRM
+    REC -.->|Bán hàng/Check-in| CRM
+    TECH -.->|Trừ quota| CRM
+    ACC -.->|Thu/Chi/Đối soát| CRM
+    MKT -.->|Chiến dịch| CRM
+
+    MEMBER -->|Quét thẻ/QR| CRM
+    WALK -->|Mua tại quầy| CRM
+
+    CRM <-->|Auth| SSO
+    CRM -->|Phát hành| VAT
+    CRM <-->|Thanh toán| PAY
+    CRM -->|Tạo đơn giao| SHIP
+    CRM -->|Gửi tin| SMS
+    CRM -->|Gửi tin| EMAIL
+    CRM -->|Gửi tin| ZALO
+    CRM <-->|Inbox/Tin| FB
+
+    classDef ext fill:#FEF3C7,stroke:#F59E0B,stroke-width:2px,color:#78350F
+    classDef user fill:#E1F5EE,stroke:#2C7A7B,stroke-width:2px,color:#0F4C44
+    classDef cust fill:#FAEEDA,stroke:#D97706,stroke-width:2px,color:#7C2D12
+    classDef sys fill:#1F3A68,stroke:#1F3A68,stroke-width:3px,color:#fff
+
+    class SSO,VAT,PAY,SHIP,SMS,EMAIL,ZALO,FB ext
+    class ADMIN,BM,REC,TECH,ACC,MKT user
+    class WALK,MEMBER cust
+    class CRM sys
