@@ -210,8 +210,12 @@ const CHReportFinance = React.lazy(() => import("@/pages/CommunityHub/Reports/Re
 const CHMembershipPlanSettings = React.lazy(() => import("@/pages/CommunityHub/MembershipPlanSettings"));
 const CHServiceManagement = React.lazy(() => import("@/pages/CommunityHub/ServiceManagement"));
 const CHTenantConfig = React.lazy(() => import("@/pages/CommunityHub/TenantConfig"));
+// [FitPro] Phase 3 prototypes
+const FPNetworkTreePage = React.lazy(() => import("@/pages/CommunityHub/NetworkTree"));
+const FPJourneyTrackerPage = React.lazy(() => import("@/pages/CommunityHub/JourneyTracker"));
+const FPModulesPage = React.lazy(() => import("@/pages/CommunityHub/FitProModules"));
 
-// [CH] Community Hub - Menu chính
+// [FitPro] Menu chính (rebranded from Community Hub)
 // Sắp xếp: dùng nhiều nhất ở trên → ít dùng ở dưới
 export const menu: IMenuItem[] = [
   {
@@ -255,9 +259,29 @@ export const menu: IMenuItem[] = [
     ],
   },
   {
-    title: "chAccommodation", // Lưu trú
+    title: "chAccommodation", // Sơ đồ thảm tập
     path: "/ch_accommodation",
     icon: <Icon name="WarehouseListMenu" />,
+    code: "",
+  },
+
+  // ═══ [FitPro] MẠNG LƯỚI & HÀNH TRÌNH ═════════════════════════════════
+  {
+    title: "fpNetworkTree", // Mạng lưới 7×7×7
+    path: "/fp_network_tree",
+    icon: <Icon name="PartnerMenu" />,
+    code: "",
+  },
+  {
+    title: "fpJourney", // Hành trình 90 ngày
+    path: "/fp_journey",
+    icon: <Icon name="OverviewMenu" />,
+    code: "",
+  },
+  {
+    title: "fpModules", // FitPro modules hub (F2, F4-F11 prototypes)
+    path: "/fp_modules",
+    icon: <Icon name="SettingsMenu" />,
     code: "",
   },
 
@@ -464,6 +488,10 @@ export const routes: IRouter[] = [
     path: "/ch_tenant_config",
     component: <CHTenantConfig />,
   },
+  // [FitPro] Phase 3 routes
+  { path: "/fp_network_tree", component: <FPNetworkTreePage /> },
+  { path: "/fp_journey", component: <FPJourneyTrackerPage /> },
+  { path: "/fp_modules", component: <FPModulesPage /> },
   // Dashboard
   {
     path: "",

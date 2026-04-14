@@ -71,7 +71,7 @@ export default function Checkout() {
               </div>
 
               <div className="card-actions justify-content-end">
-                <Button color="primary" onClick={() => (method.isQR ? setShowQRModal(true) : )}>
+                <Button color="primary" onClick={() => (method.isQR ? setShowQRModal(true) : null)}>
                   Chọn
                 </Button>
               </div>
