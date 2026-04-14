@@ -30,6 +30,10 @@ import PartnerContractList from "pages/PartnerTNPM/PartnerContractList";
 import PortfolioDashboardList from "pages/PortfolioDashboard/PortfolioDashboardList";
 import B2GComplianceList from "pages/B2GCompliance/B2GComplianceList";
 import FeeNotificationList from "pages/FeeNotification/FeeNotificationList";
+import VendorKPIDashboard from "pages/VendorManagement/VendorKPIDashboard";
+import AuditLogList from "pages/AuditLog/AuditLogList";
+import VendorPortalPreview from "pages/VendorPortal/VendorPortalPreview";
+import OwnerDashboard from "pages/OwnerDashboard/OwnerDashboard";
 import ServiceRequestList from "pages/ServiceRequest/ServiceRequestList";
 import MaintenancePlanList from "pages/MaintenancePlan/MaintenancePlanList";
 import ReportTNPM from "pages/ReportTNPM/ReportTNPM";
@@ -361,6 +365,12 @@ export const menu: IMenuItem[] = [
         icon: <Icon name="CashbookMenu" />,
         code: "",
       },
+      {
+        title: "KPI Nhà cung cấp",
+        path: "/vendor-kpi",
+        icon: <Icon name="FinanceReportMenu" />,
+        code: "",
+      },
     ],
   },
 
@@ -446,6 +456,28 @@ export const menu: IMenuItem[] = [
     code: "",
   },
 
+  // ── 10b. AUDIT LOG ──────────────────────────────────────────────────────
+  {
+    title: "Audit Log",
+    path: "/audit-log",
+    icon: <Icon name="AuditMenu" />,
+    code: "",
+  },
+
+  // ── 10c. PREVIEW PORTALS (demo cho 2 vai trò ngoài TNPM) ────────────────
+  {
+    title: "Preview: Cổng NCC",
+    path: "/vendor-portal-preview",
+    icon: <Icon name="PartnerMenu" />,
+    code: "",
+  },
+  {
+    title: "Preview: Cổng Chủ ĐT",
+    path: "/owner-dashboard",
+    icon: <Icon name="OverviewMenu" />,
+    code: "",
+  },
+
   // ── 11. CÀI ĐẶT ──────────────────────────────────────────────────────────
   {
     title: "Cài đặt",
@@ -499,6 +531,10 @@ export const routes: IRouter[] = [
   { path: "/portfolio", component: <PortfolioDashboardList /> },
   { path: "/b2g-compliance", component: <B2GComplianceList /> },
   { path: "/fee-notification", component: <FeeNotificationList /> },
+  { path: "/vendor-kpi", component: <VendorKPIDashboard /> },
+  { path: "/audit-log", component: <AuditLogList /> },
+  { path: "/vendor-portal-preview", component: <VendorPortalPreview /> },
+  { path: "/owner-dashboard", component: <OwnerDashboard /> },
 
   // ─── Ticket & Support ────────────────────────────────────────────────────
   { path: "/ticket", component: <TicketList /> },
