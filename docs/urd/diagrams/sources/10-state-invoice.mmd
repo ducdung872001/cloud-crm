@@ -1,19 +1,19 @@
-%%{init: {'theme':'base', 'themeVariables': {'fontFamily':'Calibri'}}}%%
+%%{init: {'theme':'base', 'themeVariables': {'fontFamily':'Calibri','fontSize':'18px'}}}%%
 stateDiagram-v2
     [*] --> Draft: Lưu đơn tạm
-    [*] --> Pending: Tạo đơn ở POS
+    [*] --> Pending: Tạo đơn POS
 
-    Draft: Đơn tạm\n(không trừ kho)
-    Draft --> Pending: Tiếp tục\n+ Thanh toán
-    Draft --> [*]: Auto xóa\nsau N ngày
+    Draft: Đơn tạm — không trừ kho
+    Draft --> Pending: Tiếp tục + Thanh toán
+    Draft --> [*]: Auto xóa sau N ngày
 
-    Pending: Chờ xử lý\n(đã xác nhận, chưa thanh toán)
+    Pending: Chờ xử lý
     Pending --> Paid: Thanh toán đủ
-    Pending --> Debt: Thanh toán\n+ Ghi nợ
+    Pending --> Debt: Thanh toán + Ghi nợ
     Pending --> Cancelled: Hủy đơn
 
     Debt: Còn nợ
-    Debt --> Paid: Thu nợ\n(qua Tài chính)
+    Debt --> Paid: Thu nợ qua Tài chính
 
     Paid: Đã thanh toán
     Paid --> ReturnedPartial: Trả 1 phần
@@ -25,8 +25,8 @@ stateDiagram-v2
     Shipping --> ShipFailed: Thất bại
     ShipFailed --> Returning: Hoàn về
 
-    ReturnedPartial: Trả 1 phần
-    ReturnedFull: Trả toàn bộ
+    ReturnedPartial: Đã trả 1 phần
+    ReturnedFull: Đã trả toàn bộ
     Delivered: Hoàn thành
     Cancelled: Đã hủy
     Returning: Đang hoàn

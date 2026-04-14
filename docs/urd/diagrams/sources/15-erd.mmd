@@ -1,0 +1,102 @@
+%%{init: {'theme':'base', 'themeVariables': {'fontFamily':'Calibri'}}}%%
+erDiagram
+    TENANT ||--o{ BRANCH : "có nhiều"
+    TENANT ||--o{ DEPARTMENT : "có"
+    TENANT ||--o{ ROLE : "có"
+    TENANT ||--o{ USER : "có"
+    TENANT ||--o{ CUSTOMER : "có"
+    TENANT ||--o{ CATEGORY : "có"
+    TENANT ||--o{ MEMBERSHIP_PLAN : "có"
+    TENANT ||--o{ SUPPLIER : "có"
+    TENANT ||--o{ PROMOTION : "có"
+
+    BRANCH ||--o{ WAREHOUSE : "thuộc"
+    BRANCH ||--o{ SHIFT_CONFIG : "có"
+    BRANCH ||--o{ SHIFT : "có"
+    BRANCH ||--o{ INVOICE : "có"
+
+    USER }o--|| DEPARTMENT : "thuộc"
+    USER }o--o{ ROLE : "được gán"
+    USER }o--o{ BRANCH : "được phép"
+    ROLE ||--o{ PERMISSION : "có"
+
+    CUSTOMER ||--o{ CUSTOMER_EXTRA_INFO : "có"
+    CUSTOMER ||--o{ CARD : "giữ"
+    CUSTOMER ||--o| LOYALTY_WALLET : "có"
+    CUSTOMER ||--o{ CHECKIN_LOG : "có"
+    CUSTOMER ||--o{ INVOICE : "mua"
+
+    CATEGORY ||--o{ PRODUCT : "chứa"
+    PRODUCT ||--o{ PRODUCT_VARIANT : "có"
+    MEMBERSHIP_PLAN ||--o{ PLAN_SERVICE : "gồm"
+    PLAN_SERVICE }o--|| PRODUCT : "tham chiếu"
+
+    INVOICE ||--o{ INVOICE_ITEM : "gồm"
+    INVOICE_ITEM }o--|| PRODUCT : "ref"
+    INVOICE }o--|| SHIFT : "thuộc"
+    INVOICE }o--o| PROMOTION : "áp dụng"
+
+    SUPPLIER ||--o{ MATERIAL : "cung cấp"
+    SUPPLIER ||--o{ STOCK_RECEIPT : "nhập"
+    WAREHOUSE ||--o{ STOCK_RECEIPT : "nhận"
+    WAREHOUSE ||--o{ STOCK_ISSUE : "xuất"
+
+    CASHBOOK }o--|| FUND : "gắn quỹ"
+    CASHBOOK }o--|| FINANCE_CATEGORY : "phân loại"
+    CASHBOOK }o--o| INVOICE : "ref đơn"
+
+    TENANT {
+        bigint id PK
+        string name
+        string mst
+        string logo
+    }
+    BRANCH {
+        bigint id PK
+        bigint tenantId FK
+        string name
+        string address
+    }
+    USER {
+        bigint id PK
+        bigint tenantId FK
+        string phone UK
+        string email
+        string password_hash
+        string status
+    }
+    CUSTOMER {
+        bigint id PK
+        bigint tenantId FK
+        bigint branchId FK
+        string name
+        string phone
+        string email
+        int gender
+    }
+    INVOICE {
+        bigint id PK
+        bigint tenantId FK
+        bigint branchId FK
+        bigint customerId FK
+        bigint shiftId FK
+        decimal totalAmount
+        string status
+        timestamp createdAt
+    }
+    SHIFT {
+        bigint id PK
+        bigint branchId FK
+        bigint userId FK
+        decimal openingCash
+        decimal closingCash
+        timestamp openedAt
+        timestamp closedAt
+    }
+    PRODUCT {
+        bigint id PK
+        bigint categoryId FK
+        string name
+        decimal price
+        string type
+    }

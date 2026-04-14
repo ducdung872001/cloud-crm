@@ -1,20 +1,20 @@
-%%{init: {'theme':'base', 'themeVariables': {'fontFamily':'Calibri'}}}%%
+%%{init: {'theme':'base', 'themeVariables': {'fontFamily':'Calibri','fontSize':'18px'}}}%%
 stateDiagram-v2
     [*] --> Available: Phòng được tạo
 
-    Available: Trống\n(sẵn sàng đặt)
+    Available: Trống — sẵn sàng đặt
     Available --> Booked: Tạo booking
     Available --> Maintenance: Bảo trì
 
-    Booked: Đã đặt\n(chờ khách đến)
-    Booked --> Occupied: Check-in\n(upload CMND)
+    Booked: Đã đặt — chờ khách
+    Booked --> Occupied: Check-in (upload CMND)
     Booked --> Available: Khách hủy
 
-    Occupied: Có khách\n(đang lưu trú)
-    Occupied --> Cleaning: Check-out\n(thanh toán cuối)
+    Occupied: Có khách — đang lưu trú
+    Occupied --> Cleaning: Check-out (thanh toán cuối)
 
     Cleaning: Đang dọn
-    Cleaning --> Available: Housekeeping\nhoàn tất
+    Cleaning --> Available: Housekeeping hoàn tất
 
     Maintenance: Bảo trì
     Maintenance --> Available: Sửa xong

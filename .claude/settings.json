@@ -45,7 +45,8 @@
       "Bash(python -c ':*)",
       "Bash(python ../userguides/tooling/md_to_docx.py URD-full.md URD-Reborn-CRM.docx)",
       "Bash(python ../userguides/tooling/md_to_docx.py URD-full.md URD-Reborn-CRM.docx --title \"Reborn CRM\" --subtitle \"Tài liệu Yêu cầu Người dùng — Cửa hàng & Spa\" --header \"URD — Reborn CRM\" --cover-label \"USER REQUIREMENT DOCUMENT\" --start-marker \"Part 00\")",
-      "Bash(npx mmdc:*)"
+      "Bash(npx mmdc:*)",
+      "Bash(ls -la d:/Git/reborn/reborn-cloud/cloud-ver2/cloud-crm/docs/urd/diagrams/*.png)"
     ]
   }
 }
