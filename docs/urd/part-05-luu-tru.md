@@ -6,6 +6,14 @@ Phân hệ **Lưu trú** chỉ áp dụng cho tenant có loại hình kinh doanh
 
 **Actors chính:** Receptionist, Branch Manager, Housekeeping (vai trò nhân viên dọn phòng).
 
+### Vòng đời trạng thái Phòng
+
+![State Machine — Vòng đời phòng từ Trống → Có khách → Đang dọn](./diagrams/11-state-room.png)
+
+### Workflow Đặt phòng → Lưu trú → Trả phòng
+
+![Activity Diagram — Luồng nghiệp vụ lưu trú end-to-end](./diagrams/13-workflow-stay.png)
+
 ---
 
 ## UR-STAY-01 — Lịch phòng dạng ma trận

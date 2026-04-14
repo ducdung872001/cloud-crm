@@ -11,6 +11,18 @@ Phân hệ **Lễ tân** là hub vận hành hằng ngày tại quầy. Bao gồ
 - Để check-in → khách phải có gói thành viên còn hạn.
 - Để trừ quota → khách phải có quota còn dư trong gói.
 
+### Sơ đồ Use Case
+
+![Use Case Diagram — Phân hệ Lễ tân](./diagrams/03-usecase-reception.png)
+
+### Vòng đời Ca làm việc (State Machine)
+
+![State Machine — Ca làm việc từ Chưa vào ca → Đóng ca](./diagrams/09-state-shift.png)
+
+### Workflow một ngày làm việc
+
+![Activity Diagram — Luồng vận hành 1 ca làm việc đầy đủ](./diagrams/12-workflow-shift.png)
+
 ---
 
 ## A. Quản lý ca làm việc

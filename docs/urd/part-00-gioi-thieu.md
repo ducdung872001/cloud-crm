@@ -63,6 +63,12 @@ URD này KHÔNG bao phủ:
 | **Đội triển khai Reborn** | Setup tenant, đào tạo, hỗ trợ | Cài đặt linh hoạt, dễ tùy biến |
 | **Đội phát triển Reborn** | Bảo trì, nâng cấp | Kiến trúc rõ, dễ mở rộng |
 
+### 3.1. Sơ đồ ngữ cảnh hệ thống
+
+Sơ đồ dưới đây minh họa Reborn CRM ở vị trí trung tâm, kết nối với các nhóm người dùng nội bộ, khách hàng và các hệ thống bên ngoài.
+
+![Sơ đồ ngữ cảnh — Reborn CRM và các tác nhân liên quan](./diagrams/01-context.png)
+
 ### 3.2. Actors (vai trò trong hệ thống)
 
 URD dùng các Actor sau xuyên suốt:
@@ -83,15 +89,7 @@ URD dùng các Actor sau xuyên suốt:
 
 ### 3.3. Sơ đồ phân cấp Actor
 
-```
-Super Admin (Reborn)
-└── Tenant Admin (Khách hàng tenant)
-    └── Branch Manager (Quản lý cơ sở)
-        ├── Receptionist
-        ├── Technician
-        ├── Accountant
-        └── Marketer
-```
+![Phân cấp Actor — Super Admin → Tenant Admin → Branch Manager → Staff](./diagrams/02-actor-hierarchy.png)
 
 Mỗi cấp **kế thừa quyền** của cấp dưới (cấu hình ở Part 12).
 

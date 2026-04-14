@@ -6,6 +6,10 @@ Phân hệ **Kho & Nguyên vật liệu** quản lý vòng đời sản phẩm v
 
 **Actors chính:** Kho thủ (Warehouse Staff), Branch Manager, Accountant (đối chiếu), Tenant Admin.
 
+### Sơ đồ Use Case
+
+![Use Case Diagram — Phân hệ Kho & Nguyên vật liệu](./diagrams/08-usecase-inventory.png)
+
 ---
 
 ## A. Nguyên vật liệu (Material catalog)

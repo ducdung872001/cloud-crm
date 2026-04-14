@@ -128,7 +128,11 @@ Phần này mô tả các **yêu cầu tích hợp (Integration Requirements)** 
 | **Tên** | Các entity trung tâm |
 | **Mô tả** | Hệ thống phải quản lý các entity sau (mức cốt lõi): |
 
-**Cây entity chính:**
+**Sơ đồ ERD (Entity-Relationship Diagram):**
+
+![Entity-Relationship Diagram — Mô hình dữ liệu cốt lõi của Reborn CRM](./diagrams/15-erd.png)
+
+**Tóm tắt cây entity:**
 
 ```
 Tenant (1)
@@ -141,30 +145,20 @@ Tenant (1)
 ├── Role (n) — Nhóm quyền
 │   └── Permission (n) — Quyền cụ thể
 ├── User (n) — Nhân viên
-│   ├── role_user (link)
-│   └── branch_user (link)
 ├── Customer (n) — Khách hàng
 │   ├── CustomerExtraInfo (n) — Trường tùy chỉnh
 │   ├── Card (n) — Thẻ thành viên đang giữ
 │   ├── LoyaltyWallet (1) — Ví điểm
 │   └── CheckinLog (n) — Lịch sử check-in
-├── Category (n) — Danh mục SP/DV
-│   └── Product (n) — SP/DV
-│       └── ProductVariant (n) — Biến thể
-├── MembershipPlan (n) — Gói thành viên
-│   └── PlanService (n) — Dịch vụ trong gói + quota
-├── Supplier (n) — Nhà cung cấp
-│   └── Material (n) — NVL
-├── Partner (n) — Đối tác KOL/PO
-├── Promotion (n) — Khuyến mãi
-│   └── Voucher (n) — Mã voucher con
-├── Campaign (n) — Chiến dịch marketing
-│   └── CampaignDelivery (n) — Lịch sử gửi
-├── Cashbook (n) — Sổ thu chi
-│   ├── Fund (n) — Quỹ tài chính
-│   └── FinanceCategory (n) — Khoản mục
-├── Feedback (n) — Phản hồi khách
-└── Ticket (n) — Ticket hỗ trợ
+├── Category → Product → ProductVariant
+├── MembershipPlan → PlanService
+├── Supplier → Material
+├── Partner — Đối tác KOL/PO
+├── Promotion → Voucher
+├── Campaign → CampaignDelivery
+├── Cashbook → Fund + FinanceCategory
+├── Feedback — Phản hồi khách
+└── Ticket — Ticket hỗ trợ
 ```
 
 | **Mức ưu tiên** | **M** |
@@ -244,7 +238,24 @@ Tenant (1)
 
 ---
 
-## C. Yêu cầu API
+## C. Sơ đồ kiến trúc tổng quan
+
+Sơ đồ dưới đây mô tả kiến trúc triển khai mức cao của Reborn CRM, gồm 5 tier chính (Client, Edge, Application, Data, External Services) cùng hệ thống Observability.
+
+![Architecture Diagram — Kiến trúc 5-tier của Reborn CRM](./diagrams/16-architecture.png)
+
+**Các tier:**
+
+- **Client tier**: Browser SPA + POS terminal kèm các thiết bị ngoại vi.
+- **Edge / CDN**: CDN cho static assets + WAF với rate limit.
+- **Application tier**: Load balancer + nhiều API server stateless + background workers cho job/cron.
+- **Data tier**: PostgreSQL master + read replicas + Redis (cache + queue) + Object storage (S3) cho file.
+- **External Services**: SSO, E-invoice, Payment Gateway, SMS/Email/Zalo/FB, Shipping APIs.
+- **Observability**: ELK/Loki cho logs + Prometheus/Grafana cho metrics + Alertmanager.
+
+---
+
+## D. Yêu cầu API
 
 ### IR-10 — REST API cho client
 
@@ -276,7 +287,7 @@ Tenant (1)
 
 ---
 
-## D. Hỗ trợ thiết bị ngoại vi
+## E. Hỗ trợ thiết bị ngoại vi
 
 ### IR-13 — Máy in nhiệt POS
 

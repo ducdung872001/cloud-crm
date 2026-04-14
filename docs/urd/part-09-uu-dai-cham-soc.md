@@ -6,6 +6,10 @@ Phân hệ **Ưu đãi & Chăm sóc** là công cụ giữ chân khách và kéo
 
 **Actors chính:** Marketer (chính), Branch Manager (duyệt), Receptionist (thực hiện task chăm sóc), CSKH.
 
+### Sơ đồ Use Case
+
+![Use Case Diagram — Phân hệ Ưu đãi & Chăm sóc](./diagrams/07-usecase-marketing.png)
+
 ---
 
 ## A. Khuyến mãi & Voucher

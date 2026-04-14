@@ -6,6 +6,10 @@ Phân hệ **Tài chính & Thanh toán** quản lý dòng tiền của tenant: t
 
 **Actors chính:** Accountant (chính), Branch Manager, Tenant Admin (cấu hình quỹ).
 
+### Sơ đồ Use Case
+
+![Use Case Diagram — Phân hệ Tài chính & Thanh toán](./diagrams/06-usecase-finance.png)
+
 ---
 
 ## A. Tổng quan tài chính
