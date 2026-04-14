@@ -1,0 +1,9 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(find . -maxdepth 2 -name \"tests\" -type d)",
+      "Bash(ls *.mjs *.spec.*)",
+      "Bash(ls auth*.json .auth*)"
+    ]
+  }
+}
