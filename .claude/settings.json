@@ -33,7 +33,10 @@
       "Bash(node capture-part-03-addmodal.js)",
       "Bash(node capture-part-03-detail.js)",
       "Bash(node capture-part-03-detail2.js)",
-      "Bash(node -e ':*)"
+      "Bash(node -e ':*)",
+      "Bash(node capture-parts-04-12.js)",
+      "Bash(wc -l part-*.md README.md)",
+      "Bash(xargs -I {} sh -c 'echo \"{}: $\\(ls images/{} | wc -l\\) ảnh\"')"
     ]
   }
 }
