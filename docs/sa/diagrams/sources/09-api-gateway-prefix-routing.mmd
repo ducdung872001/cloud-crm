@@ -11,16 +11,15 @@ flowchart LR
     subgraph BE["Backend Microservices"]
       MAIN["Main API<br/>/api"]
       AUTH["Auth<br/>/authenticator"]
-      SALES["Sales<br/>/bizapi/sales"]
-      INV["Inventory<br/>/bizapi/inventory"]
-      WH["Warehouse<br/>/bizapi/warehouse"]
-      PUR["Purchase<br/>/bizapi/purchase"]
-      FIN["Finance<br/>/bizapi/finance"]
-      LOG["Logistics<br/>/bizapi/logistics"]
-      CARE["Care / Loyalty<br/>/bizapi/care"]
-      BILL["Billing VAT<br/>/bizapi/billing"]
-      MKT["Marketplace<br/>/bizapi/market"]
-      NOTIF["Notification<br/>/bizapi/notification"]
+      SALES["sales<br/>/bizapi/sales<br/>POS+order+cashbook+<br/>debt+fund+payment"]
+      INV["inventory<br/>/bizapi/inventory<br/>stock+warehouse+PO+NCC"]
+      FIN["finance ⚠ banking only<br/>/bizapi/finance<br/>(retail thường KHÔNG dùng)"]
+      LOG["logistics<br/>/bizapi/logistics"]
+      CARE["care<br/>/bizapi/care<br/>ticket+warranty+feedback"]
+      BILL["billing VAT<br/>/bizapi/billing"]
+      INTEG["integration<br/>/bizapi/integration<br/>marketplace+MSAL+payment+<br/>e-invoice+SMS adapters"]
+      MKT["market<br/>/bizapi/market<br/>campaign+voucher+loyalty"]
+      NOTIF["notification<br/>/bizapi/notification"]
       BPM["BPM Engine<br/>/bpmapi"]
       ADMIN["Admin API<br/>/adminapi"]
     end
@@ -32,13 +31,12 @@ flowchart LR
     GW -->|/adminapi/*| ADMIN
     GW -->|/authenticator/*| AUTH
     GW -->|/bizapi/sales/*| SALES
-    GW -->|/bizapi/inventory/*| INV
-    GW -->|/bizapi/warehouse/*| WH
-    GW -->|/bizapi/purchase/*| PUR
-    GW -->|/bizapi/finance/*| FIN
+    GW -->|/bizapi/inventory/*<br/>/bizapi/warehouse/* legacy| INV
+    GW -->|/bizapi/finance/* ⚠| FIN
     GW -->|/bizapi/logistics/*| LOG
     GW -->|/bizapi/care/*| CARE
     GW -->|/bizapi/billing/*| BILL
+    GW -->|/bizapi/integration/*| INTEG
     GW -->|/bizapi/market/*| MKT
     GW -->|/bizapi/notification/*| NOTIF
     GW -->|/bpmapi/*| BPM
@@ -50,5 +48,5 @@ flowchart LR
 
     class ROUTES,INTERCEPT fe
     class GW gw
-    class MAIN,ADMIN,AUTH,SALES,INV,WH,PUR,FIN,LOG,CARE,BILL,MKT,NOTIF,BPM be
+    class MAIN,ADMIN,AUTH,SALES,INV,FIN,LOG,CARE,BILL,INTEG,MKT,NOTIF,BPM be
     class BR ext

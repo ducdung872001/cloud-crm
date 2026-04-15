@@ -8,7 +8,6 @@ sequenceDiagram
     participant SS as Sales Service
     participant INV as Inventory Service
     participant DB as inventory_db
-    participant WH as Warehouse Service
 
     Note over C1,C2: Cùng lúc bán SKU-001 tồn còn 1
     C1->>P1: Thanh toán SKU-001 x1
@@ -23,7 +22,7 @@ sequenceDiagram
     DB-->>INV: stock = 1 (A)
     INV->>INV: Check stock >= 1 → OK
     INV->>DB: UPDATE stock = 0 WHERE sku='SKU-001'
-    INV->>WH: INSERT stock_issue (A)
+    INV->>DB: INSERT stock_issue (A) — warehouse op trong inventory
     INV->>DB: COMMIT → release lock
     INV-->>SS: OK (A)
     deactivate INV

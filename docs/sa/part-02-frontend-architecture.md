@@ -43,10 +43,10 @@ src/
 │   └── authConfig.ts       #  └─ MSAL config
 ├── pages/                  # 160+ page modules (mỗi module 1 domain)
 │   ├── Sell/               #  ├─ POS: CreateOrderSales, SaleInvoiceList
-│   ├── ProductImport/      #  ├─ NK, tồn, inventory, warehouse
-│   ├── Finance/            #  ├─ CashBook, Debt, Fund
+│   ├── ProductImport/      #  ├─ NK, tồn, inventory, warehouse (gọi /bizapi/inventory)
+│   ├── Finance/            #  ├─ CashBook, Debt, Fund (BE thuộc /bizapi/sales — KHÔNG /finance)
 │   ├── CustomerPerson/     #  ├─ KH cá nhân
-│   ├── Warranty/, Ticket/  #  ├─ CSKH
+│   ├── Warranty/, Ticket/  #  ├─ CSKH (gọi /bizapi/care)
 │   └── …
 ├── components/             # 78 shared components
 │   ├── boxTable/           #  ├─ Wrapper ag-grid
@@ -58,7 +58,7 @@ src/
 ├── services/               # 230+ API service classes
 │   ├── CustomerService.ts
 │   ├── OrderSalesService.ts
-│   ├── WarehouseService.ts
+│   ├── WarehouseService.ts # FE class, BE đích là /bizapi/inventory (warehouse là sub-domain)
 │   └── …
 ├── contexts/               # 5 React Context
 │   ├── authContext.ts      #  ├─ User, role, token
