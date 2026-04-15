@@ -10,6 +10,7 @@ import RevenueExpenseBook from "./RevenueExpenseBook";
 import DeclarationWizard from "./DeclarationWizard";
 import TaxCalendar from "./TaxCalendar";
 import TaxAdvisory from "./TaxAdvisory";
+import LicenseFeePage from "./LicenseFeePage";
 import { fitproAdapter } from "../adapters/fitproAdapter";
 import { communityHubAdapter } from "../adapters/communityHubAdapter";
 import { retailAdapter } from "../adapters/retailAdapter";
@@ -37,6 +38,7 @@ type TabKey =
   | "profile"
   | "book"
   | "declaration"
+  | "licensefee"
   | "calendar"
   | "advisory";
 
@@ -77,8 +79,16 @@ const TABS: {
     label: "Lập tờ khai",
     icon: "📝",
     path: "/tax/declaration",
-    title: "T3 — Lập tờ khai thuế 01/CNKD",
+    title: "T3 — Lập tờ khai thuế 01/CNKD · 03/CNKD",
     desc: "Wizard 5 bước: chọn kỳ → tổng hợp → preview → ký số → nộp eTax",
+  },
+  {
+    key: "licensefee",
+    label: "Môn bài",
+    icon: "🏷️",
+    path: "/tax/license-fee",
+    title: "Lệ phí môn bài — Mẫu 01/LPMB",
+    desc: "Tờ khai môn bài hằng năm theo NĐ 139/2016, hạn 30/01",
   },
   {
     key: "calendar",
@@ -199,6 +209,7 @@ export default function TaxModule() {
       {tab === "profile" && <TaxpayerProfilePage />}
       {tab === "book" && <RevenueExpenseBook />}
       {tab === "declaration" && <DeclarationWizard />}
+      {tab === "licensefee" && <LicenseFeePage />}
       {tab === "calendar" && <TaxCalendar />}
       {tab === "advisory" && <TaxAdvisory />}
     </div>

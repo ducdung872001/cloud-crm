@@ -1,8 +1,8 @@
 // T3 — Declaration Wizard: 5 bước lập tờ khai thuế 01/CNKD và nộp eTax.
 
-import React, { useMemo, useState } from "react";
-import { Link } from "react-router-dom";
-import { Card, Button, Alert, Badge, formatVND } from "./common";
+import React, { useMemo, useState, useEffect } from "react";
+import { Link, useSearchParams } from "react-router-dom";
+import { Card, Button, Alert, Badge, Field, inputStyle, formatVND } from "./common";
 import { taxTheme as T } from "./theme";
 import { taxEngine } from "../domain/engine";
 import { taxStorage } from "../services/taxStorage";
@@ -11,6 +11,7 @@ import { FORM_CODES, FORM_LABELS } from "../domain/constants";
 import { useTaxpayerProfile, usePeriodData, useTaxCalculation } from "./hooks";
 import type { TaxPeriodKind, TaxDeclaration } from "../domain/types";
 import DeclarationPreview from "./DeclarationPreview";
+import DeclarationPreview03 from "./DeclarationPreview03";
 
 const STEPS = [
   { key: 1, label: "Chọn kỳ" },
@@ -22,17 +23,44 @@ const STEPS = [
 
 export default function DeclarationWizard() {
   const [profile] = useTaxpayerProfile();
+  const [searchParams] = useSearchParams();
   const [step, setStep] = useState<1 | 2 | 3 | 4 | 5>(1);
   const [periodKind, setPeriodKind] = useState<TaxPeriodKind>(profile.periodKind);
 
+  // Q3 — Form selector: 01/CNKD (mặc định) vs 03/CNKD (quyết toán năm, chỉ khi
+  // phương pháp kê khai + kỳ năm)
+  const [selectedFormCode, setSelectedFormCode] = useState<string>(
+    FORM_CODES.MAIN_01_CNKD
+  );
+
+  // Q6 — Detect supplement mode via URL ?amend={declarationId}
+  const amendId = searchParams.get("amend");
+  const originalDeclaration = useMemo(
+    () => (amendId ? taxStorage.getDeclaration(amendId) : null),
+    [amendId]
+  );
+  const isAmending = !!originalDeclaration;
+  const nextSupplementNumber = originalDeclaration
+    ? (originalDeclaration.supplementNumber ?? 0) + 1
+    : 0;
+  const [supplementReason, setSupplementReason] = useState("");
+
+  // Khi amend, khoá period theo tờ khai gốc
+  useEffect(() => {
+    if (originalDeclaration) {
+      setPeriodKind(originalDeclaration.period.kind);
+    }
+  }, [originalDeclaration?.id]);
+
   const period = useMemo(() => {
+    if (originalDeclaration) return originalDeclaration.period;
     const helper = taxEngine.deadlineHelper;
     const d = new Date();
     if (periodKind === "month") return helper.buildMonthPeriod(d);
     if (periodKind === "quarter") return helper.buildQuarterPeriod(d);
     if (periodKind === "year") return helper.buildYearPeriod(d);
     return helper.buildOccurrencePeriod(d);
-  }, [periodKind]);
+  }, [periodKind, originalDeclaration?.id]);
 
   const { revenues, expenses, loading } = usePeriodData(period);
   const { calculation } = useTaxCalculation(profile, period, revenues, expenses);
@@ -43,10 +71,18 @@ export default function DeclarationWizard() {
 
   const buildDeclaration = () => {
     if (!calculation) return;
+    if (isAmending && !supplementReason.trim()) {
+      alert("Vui lòng nhập lý do bổ sung");
+      return;
+    }
     const decl = taxEngine.declarationBuilder.build({
       taxpayer: profile,
       period,
       calculation,
+      formCode: selectedFormCode,
+      supplementNumber: nextSupplementNumber || undefined,
+      originalDeclarationId: originalDeclaration?.id,
+      supplementReason: supplementReason || undefined,
     });
     const saved = taxStorage.saveDeclaration(decl);
     setDeclaration(saved);
@@ -174,6 +210,24 @@ export default function DeclarationWizard() {
         </Alert>
       )}
 
+      {isAmending && originalDeclaration && (
+        <Alert
+          tone="warning"
+          title={`📝 Lập tờ khai bổ sung lần thứ ${nextSupplementNumber}`}
+        >
+          Đang sửa sai cho tờ khai gốc <b>{originalDeclaration.formCode}</b> kỳ{" "}
+          <b>{originalDeclaration.period.label}</b>
+          {originalDeclaration.receiptCode && (
+            <>
+              {" "}
+              — mã tra cứu <code>{originalDeclaration.receiptCode}</code>
+            </>
+          )}
+          . Kỳ thuế đã được khoá theo tờ khai gốc. Cần nhập lý do bổ sung ở bước
+          2.
+        </Alert>
+      )}
+
       {/* Step 1 */}
       {step === 1 && (
         <Card
@@ -242,6 +296,81 @@ export default function DeclarationWizard() {
               <b>{period.dueDate}</b>
             </span>
           </div>
+
+          {/* Q3 — Form selector: 03/CNKD chỉ hiện khi method=declaration + kỳ=year */}
+          {profile.method === "declaration" && periodKind === "year" && (
+            <div style={{ marginTop: T.spacing.lg }}>
+              <div
+                style={{
+                  fontSize: T.font.small,
+                  fontWeight: 700,
+                  color: T.colors.primaryDark,
+                  marginBottom: 8,
+                }}
+              >
+                Chọn mẫu tờ khai
+              </div>
+              <div
+                style={{
+                  display: "grid",
+                  gridTemplateColumns: "1fr 1fr",
+                  gap: 10,
+                }}
+              >
+                {[
+                  {
+                    code: FORM_CODES.MAIN_01_CNKD,
+                    title: "📄 01/CNKD — Tạm tính",
+                    desc: "Tờ khai thuế thường dùng theo tháng/quý/năm",
+                  },
+                  {
+                    code: FORM_CODES.ACTUAL_03_CNKD,
+                    title: "📑 03/CNKD — Quyết toán",
+                    desc: "Quyết toán thực tế cuối năm, đối chiếu với tạm tính",
+                  },
+                ].map((f) => {
+                  const active = selectedFormCode === f.code;
+                  return (
+                    <button
+                      key={f.code}
+                      onClick={() => setSelectedFormCode(f.code)}
+                      style={{
+                        textAlign: "left",
+                        padding: 12,
+                        borderRadius: T.radius.md,
+                        border: active
+                          ? `2px solid ${T.colors.primary}`
+                          : `1px solid ${T.colors.border}`,
+                        background: active
+                          ? T.colors.primarySoft
+                          : T.colors.cardBg,
+                        cursor: "pointer",
+                      }}
+                    >
+                      <div
+                        style={{
+                          fontWeight: 700,
+                          color: T.colors.primaryDark,
+                          fontSize: T.font.body,
+                        }}
+                      >
+                        {f.title}
+                      </div>
+                      <div
+                        style={{
+                          fontSize: T.font.tiny,
+                          color: T.colors.textMuted,
+                          marginTop: 2,
+                        }}
+                      >
+                        {f.desc}
+                      </div>
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+          )}
           <div
             style={{
               display: "flex",
@@ -306,6 +435,19 @@ export default function DeclarationWizard() {
                 </Link>
                 .
               </Alert>
+
+              {isAmending && (
+                <div style={{ marginTop: T.spacing.md }}>
+                  <Field label="Lý do bổ sung (bắt buộc)" required>
+                    <textarea
+                      style={{ ...inputStyle, minHeight: 70, resize: "vertical" }}
+                      placeholder="VD: Bổ sung doanh thu 5tr tháng 3 do quên nhập..."
+                      value={supplementReason}
+                      onChange={(e) => setSupplementReason(e.target.value)}
+                    />
+                  </Field>
+                </div>
+              )}
               <div
                 style={{
                   display: "flex",
@@ -317,7 +459,7 @@ export default function DeclarationWizard() {
                   ← Quay lại
                 </Button>
                 <Button variant="primary" size="lg" onClick={buildDeclaration}>
-                  Lập tờ khai {FORM_CODES.MAIN_01_CNKD} →
+                  Lập tờ khai {selectedFormCode} →
                 </Button>
               </div>
             </>
@@ -338,11 +480,37 @@ export default function DeclarationWizard() {
             }
             style={{ marginBottom: T.spacing.lg }}
           >
-            <DeclarationPreview
-              taxpayer={profile}
-              period={period}
-              calculation={calculation}
-            />
+            {declaration.formCode === FORM_CODES.ACTUAL_03_CNKD ? (
+              <DeclarationPreview03
+                taxpayer={profile}
+                period={period}
+                calculation={calculation}
+                supplementNumber={declaration.supplementNumber}
+                provisionalPaid={taxStorage
+                  .listDeclarations()
+                  .filter(
+                    (d) =>
+                      d.id !== declaration.id &&
+                      d.formCode === FORM_CODES.MAIN_01_CNKD &&
+                      d.period.startDate.startsWith(
+                        period.startDate.slice(0, 4)
+                      ) &&
+                      (d.status === "submitted" || d.status === "accepted")
+                  )
+                  .reduce(
+                    (s, d) => s + (d.calculation?.totalTaxPayable ?? 0),
+                    0
+                  )}
+              />
+            ) : (
+              <DeclarationPreview
+                taxpayer={profile}
+                period={period}
+                calculation={calculation}
+                formCode={declaration.formCode}
+                supplementNumber={declaration.supplementNumber}
+              />
+            )}
           </Card>
 
           <Card>

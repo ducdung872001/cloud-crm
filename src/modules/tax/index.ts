@@ -33,5 +33,15 @@ export { eTaxGateway } from "./services/eTaxGateway";
 export { TAX_ROUTES, TAX_MENU_ITEM } from "./routes";
 export type { TaxRouteDef } from "./routes";
 
+// Permissions — host app wire vào hệ thống phân quyền
+export {
+  TAX_PERMISSIONS,
+  TAX_PERMISSION_LABELS,
+  setPermissionChecker,
+  can,
+  usePermission,
+} from "./permissions";
+export type { TaxPermissionCode } from "./permissions";
+
 // UI default export — để host app có thể mount trực tiếp nếu muốn
 export { default as TaxModule } from "./ui/TaxModule";

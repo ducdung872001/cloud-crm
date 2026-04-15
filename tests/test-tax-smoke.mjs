@@ -12,6 +12,7 @@ const TAX_ROUTES = [
   ["TAX-SMK-002", "/tax/profile", "Hồ sơ thuế", ["Hồ sơ thuế", "Khoán", "Kê khai"]],
   ["TAX-SMK-003", "/tax/book", "Sổ DT/CP", ["Sổ doanh thu", "Sổ chi phí"]],
   ["TAX-SMK-004", "/tax/declaration", "Declaration Wizard", ["Chọn kỳ", "Tổng hợp"]],
+  ["TAX-SMK-004b", "/tax/license-fee", "License Fee", ["Môn bài", "01/LPMB", "Bậc môn bài"]],
   ["TAX-SMK-005", "/tax/calendar", "Lịch thuế", ["Năm", "Hạn nộp"]],
   ["TAX-SMK-006", "/tax/advisory", "Tư vấn", ["Câu hỏi thường gặp", "FAQ", "Yêu cầu hỗ trợ"]],
 ];

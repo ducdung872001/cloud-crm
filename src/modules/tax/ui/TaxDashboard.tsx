@@ -5,8 +5,9 @@ import { Link } from "react-router-dom";
 import { Card, KpiTile, Alert, Badge, formatVNDFull, formatVND } from "./common";
 import { taxTheme as T } from "./theme";
 import { taxEngine } from "../domain/engine";
-import { INDUSTRY_GROUP_LABELS, TAX_METHOD_LABELS } from "../domain/constants";
+import { INDUSTRY_GROUP_LABELS, TAX_METHOD_LABELS, FORM_CODES } from "../domain/constants";
 import { useTaxpayerProfile, usePeriodData, useTaxCalculation } from "./hooks";
+import { taxStorage } from "../services/taxStorage";
 
 export default function TaxDashboard() {
   const [profile] = useTaxpayerProfile();
@@ -24,8 +25,84 @@ export default function TaxDashboard() {
   const daysLeft = taxEngine.deadlineHelper.daysUntilDue(period);
   const hasProfile = profile.taxCode && profile.fullName;
 
+  // Q10 — Nhắc nộp môn bài đầu năm.
+  // Hạn nộp 30/01 hằng năm. Hiển thị khi:
+  //   (1) profile đã có
+  //   (2) chưa có declaration 01/LPMB cho năm hiện tại
+  //   (3) doanh thu năm trước vượt 100tr (có nghĩa vụ nộp môn bài)
+  const licenseFeeReminder = (() => {
+    if (!hasProfile) return null;
+    const now = new Date();
+    const thisYear = now.getFullYear();
+    const declarations = taxStorage.listDeclarations();
+    const hasLicenseDecl = declarations.some(
+      (d) =>
+        d.formCode === FORM_CODES.LICENSE_01_LPMB &&
+        d.period.startDate.startsWith(`${thisYear}-`)
+    );
+    if (hasLicenseDecl) return null;
+
+    // Ước doanh thu năm trước từ declarations đã nộp năm trước, hoặc từ kỳ hiện tại
+    const lastYear = thisYear - 1;
+    const lastYearDeclarations = declarations.filter((d) =>
+      d.period.startDate.startsWith(`${lastYear}-`)
+    );
+    const lastYearRevenue = lastYearDeclarations.reduce(
+      (s, d) => s + (d.calculation?.totalRevenue ?? 0),
+      0
+    );
+    // Nếu không có data năm trước, dùng extrapolation từ kỳ hiện tại
+    const estimatedAnnualRevenue =
+      lastYearRevenue > 0
+        ? lastYearRevenue
+        : (calculation?.totalRevenue ?? 0) * 12; // thô: nhân 12 nếu kỳ tháng
+
+    const feeAmount = taxEngine.calculator.calcLicenseFee(estimatedAnnualRevenue);
+    if (feeAmount === 0) return null; // dưới ngưỡng miễn
+
+    const dueDate = new Date(thisYear, 0, 30); // 30/01
+    const daysLeft = Math.ceil(
+      (dueDate.getTime() - now.getTime()) / (1000 * 60 * 60 * 24)
+    );
+    return { feeAmount, estimatedAnnualRevenue, daysLeft, dueDate };
+  })();
+
   return (
     <div>
+      {licenseFeeReminder && (
+        <Alert
+          tone={licenseFeeReminder.daysLeft < 0 ? "danger" : "warning"}
+          title={
+            licenseFeeReminder.daysLeft < 0
+              ? `⚠ Quá hạn nộp lệ phí môn bài ${Math.abs(licenseFeeReminder.daysLeft)} ngày`
+              : licenseFeeReminder.daysLeft <= 15
+              ? `⏰ Sắp đến hạn nộp lệ phí môn bài (còn ${licenseFeeReminder.daysLeft} ngày)`
+              : "🏷️ Lệ phí môn bài năm nay chưa nộp"
+          }
+          action={
+            <Link
+              to="/tax/license-fee"
+              style={{
+                padding: "6px 14px",
+                background: T.colors.primary,
+                color: "#fff",
+                borderRadius: T.radius.md,
+                textDecoration: "none",
+                fontSize: T.font.small,
+                fontWeight: 700,
+              }}
+            >
+              Nộp ngay
+            </Link>
+          }
+        >
+          Số tiền dự kiến <b>{formatVNDFull(licenseFeeReminder.feeAmount)}</b>,
+          hạn nộp <b>30/01/{new Date().getFullYear()}</b>. Tính trên doanh thu
+          ước tính {formatVND(licenseFeeReminder.estimatedAnnualRevenue)} ₫/năm
+          (bậc {licenseFeeReminder.feeAmount / 1_000}k theo NĐ 139/2016).
+        </Alert>
+      )}
+
       {!hasProfile && (
         <Alert tone="info" title="Chưa có hồ sơ thuế">
           Hãy hoàn tất đăng ký hồ sơ thuế trong tab{" "}
