@@ -1,6 +1,8 @@
 import React, { Fragment } from "react";
 import Icon from "components/icon";
 const Dashboard = React.lazy(() => import("pages/Dashboard/index"));
+// [Tax] Phân hệ thuế HKD/CNKD — portable module dùng chung đa nhánh
+const TaxModulePage = React.lazy(() => import("@/modules/tax/ui/TaxModule"));
 import { IMenuItem, IRouter } from "model/OtherModel";
 import urls from "./urls";
 
@@ -864,6 +866,13 @@ export const menu: IMenuItem[] = [
 ];
 
 export const routes: IRouter[] = [
+  // [Tax] Phân hệ thuế HKD/CNKD — portable module
+  { path: "/tax", component: <TaxModulePage /> },
+  { path: "/tax/profile", component: <TaxModulePage /> },
+  { path: "/tax/book", component: <TaxModulePage /> },
+  { path: "/tax/declaration", component: <TaxModulePage /> },
+  { path: "/tax/calendar", component: <TaxModulePage /> },
+  { path: "/tax/advisory", component: <TaxModulePage /> },
   // Dashboard
   {
     path: "",
