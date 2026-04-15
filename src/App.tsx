@@ -39,6 +39,7 @@ import CollectTicket from "pages/Ticket/partials/CollectTicket";
 import CollectWarranty from "pages/Warranty/partials/CollectWarranty";
 import SharePromoPage from "pages/SharePromoPage";
 import ShareCouponPage from "pages/ShareCouponPage";
+import ShareEventPage from "pages/ShareEventPage";
 import GridFormNew from "pages/BPM/GridForm";
 import { onMessage } from "firebase/messaging";
 import NotificationService from "services/NotificationService";
@@ -433,6 +434,7 @@ export default function App() {
           {location.pathname == "/collect_warranty" && <Route path="/collect_warranty" element={<CollectWarranty />} />}
           {location.pathname == "/share_promo" && <Route path="/share_promo" element={<SharePromoPage />} />}
           {location.pathname == "/share_coupon" && <Route path="/share_coupon" element={<ShareCouponPage />} />}
+          {location.pathname == "/share_event" && <Route path="/share_event" element={<ShareEventPage />} />}
           <Route path="/login" element={<Login />} />
         </Routes>
         <ChooseRole onShow={chooseRoleInit} onHide={() => setChooseRoleInit(false)} lstRole={lstRole} />

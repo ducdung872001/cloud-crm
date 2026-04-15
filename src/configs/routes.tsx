@@ -199,6 +199,9 @@ const CHCheckinPage = React.lazy(() => import("@/pages/CommunityHub/Checkin"));
 const CHAccommodationPage = React.lazy(() => import("@/pages/CommunityHub/Accommodation"));
 const CHServiceBookingPage = React.lazy(() => import("@/pages/CommunityHub/ServiceBooking"));
 const CHCoursesPage = React.lazy(() => import("@/pages/CommunityHub/Courses"));
+const CHEventListPage = React.lazy(() => import("@/pages/CommunityHub/Events/EventListPage"));
+const CHEventFormPage = React.lazy(() => import("@/pages/CommunityHub/Events/EventFormPage"));
+const CHEventDetailPage = React.lazy(() => import("@/pages/CommunityHub/Events/EventDetailPage"));
 const CHPartnersPage = React.lazy(() => import("@/pages/CommunityHub/Partners"));
 const CHFeedbackPage = React.lazy(() => import("@/pages/CommunityHub/Feedback"));
 const CHReportRevenue = React.lazy(() => import("@/pages/CommunityHub/Reports/ReportRevenue"));
@@ -278,6 +281,12 @@ export const menu: IMenuItem[] = [
       { title: "debtManagement", path: urls.finance_management_debt_management, icon: <Icon name="DebtMenu" />, code: "" },
       { title: "paymentControl", path: urls.payment_control, icon: <Icon name="PaymentMethodMenu" />, code: "" },
     ],
+  },
+  {
+    title: "chEvents", // Sự kiện
+    path: "/ch_events",
+    icon: <Icon name="CampaignMenu" />,
+    code: "",
   },
   {
     title: "chPartners", // Đối tác
@@ -441,6 +450,11 @@ export const routes: IRouter[] = [
     path: "/ch_courses",
     component: <CHCoursesPage />,
   },
+  // [CH] Events — Quản lý sự kiện
+  { path: "/ch_events", component: <CHEventListPage /> },
+  { path: "/ch_events/create", component: <CHEventFormPage /> },
+  { path: "/ch_events/:id", component: <CHEventDetailPage /> },
+  { path: "/ch_events/:id/edit", component: <CHEventFormPage /> },
   {
     path: "/ch_partners",
     component: <CHPartnersPage />,

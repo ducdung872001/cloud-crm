@@ -73,6 +73,7 @@ const vi = {
     chServices: "Dịch vụ & Booking",
     chHealthBeauty: "Sức khỏe & Sắc đẹp",
     chCourses: "Khóa học & CLB",
+    chEvents: "Sự kiện",
     chPartners: "Đối tác (KOL/PO)",
     chFeedback: "Phản hồi",
     chReports: "Báo cáo",
