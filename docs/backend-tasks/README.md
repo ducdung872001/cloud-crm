@@ -12,13 +12,14 @@ POST https://biz.reborn.vn/inventory/warehouse/create
 → task vào docs/backend-tasks/inventory/
 ```
 
-## 📁 11 microservice
+## 📁 12 microservice
 
 | Prefix | Thư mục | Domain | Ghi chú |
 |--------|---------|--------|---------|
 | `/billing/…` | [billing/](./billing/) | Thanh toán, hoá đơn tài chính, settlement | |
-| `/care/…` | [care/](./care/) | Chăm sóc khách hàng, ticket, feedback, warranty | |
+| `/care/…` | [care/](./care/) | Ticket, feedback, warranty, chăm sóc **sau bán**. KHÔNG owns customer entity (thuộc `customer/`) |
 | `/contract/…` | [contract/](./contract/) | Hợp đồng | |
+| `/customer/…` | [customer/](./customer/) | Customer entity CRUD, lifecycle, telesale assignment, segment/source/relationship | **Legacy prefix `/adminapi/customer/*`** cũng thuộc domain này |
 | `/finance/…` | [finance/](./finance/) | Hồ sơ tài chính chi tiết của KH | **⚠️ CHỈ dùng riêng domain banking** — không áp dụng retail/spa/tech |
 | `/integration/…` | [integration/](./integration/) | Tích hợp bên thứ 3 (Viettel sInvoice, Zalo, Facebook, shipping partners, …) | |
 | `/inventory/…` | [inventory/](./inventory/) | Kho, sản phẩm, biến thể, đơn vị, nhập/xuất, stock ledger | |
@@ -32,6 +33,7 @@ POST https://biz.reborn.vn/inventory/warehouse/create
 
 - **`sales/` vs `billing/`**: `sales` owns invoice lifecycle (draft → confirm → cancel); `billing` owns payment collection + financial settlement. Nếu task là "thu tiền" → `billing/`, "quản lý trạng thái hoá đơn" → `sales/`.
 - **`billing/` vs `finance/`**: `billing` là thanh toán / công nợ chung cho mọi ngành; `finance` là hồ sơ tài chính cá nhân khách banking (thu nhập, khoản vay, tài sản, …) — **chỉ banking dùng**.
+- **`customer/` vs `care/`**: `customer` owns data entity + lifecycle (CRUD, assignment, segment, source, telesale pipeline); `care` owns post-sale support (ticket, feedback, warranty, complaint).
 - **`care/` vs `notification/`**: `care` chăm KH qua ticket / workflow có người xử lý; `notification` chỉ gửi thông báo một chiều (push/email/SMS/ZNS).
 
 ## ⚠️ Lưu ý trước khi fix
