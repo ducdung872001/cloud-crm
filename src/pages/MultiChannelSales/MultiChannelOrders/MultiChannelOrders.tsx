@@ -27,7 +27,7 @@ export default function MultiChannelOrders() {
 
   const [modalDetail, setModalDetail] = useState(false);
   const [dataOrder, setDataOrder] = useState(null);
-  
+
   const location = useLocation();
   const navigate = useNavigate();
   const orderIdFromNotification = location.state?.orderRequestModalId;
@@ -36,7 +36,7 @@ export default function MultiChannelOrders() {
     if (orderIdFromNotification) {
       const getDetailOrderRequest = async (id: number) => {
         try {
-           setIsLoading(true);
+          setIsLoading(true);
           const response = await OrderRequestService.detail(id);
           if (response.code === 0) {
             setDataOrder(response.result);
@@ -48,13 +48,13 @@ export default function MultiChannelOrders() {
         } catch (e) {
           showToast("Có lỗi xảy ra", "error");
         } finally {
-            setIsLoading(false);
+          setIsLoading(false);
         }
       };
-      
+
       getDetailOrderRequest(orderIdFromNotification);
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [orderIdFromNotification]);
 
   const isMounted = useRef(false);
@@ -75,7 +75,7 @@ export default function MultiChannelOrders() {
   useEffect(() => {
     const paramsTemp = cloneDeep(params);
     setParams((prevParams) => ({ ...prevParams, ...paramsTemp }));
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   //   const fetchData = async () => {
@@ -162,7 +162,7 @@ export default function MultiChannelOrders() {
     return () => {
       abortController.abort();
     };
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [params]);
 
   const [listIdChecked, setListIdChecked] = useState<number[]>([]);
@@ -227,54 +227,54 @@ export default function MultiChannelOrders() {
           title={
             item.orderInfo && JSON.parse(item.orderInfo)
               ? JSON.parse(item.orderInfo)
-                  .items.map((i: Record<string, unknown>) => i.name)
-                  .join(", ")
+                .items.map((i: Record<string, unknown>) => i.name)
+                .join(", ")
               : ""
           }
         >
           {item.orderInfo && JSON.parse(item.orderInfo)
             ? JSON.parse(item.orderInfo)
-                .items.map((i: Record<string, unknown>) => i.name)
-                .join(", ")
+              .items.map((i: Record<string, unknown>) => i.name)
+              .join(", ")
             : ""}
         </span>
       </div>
     </div>,
     item.orderInfo && JSON.parse(item.orderInfo)
       ? JSON.parse(item.orderInfo)
-          .items.reduce((total: number, i: Record<string, unknown>) => total + i.price * i.qty, 0)
-          .toLocaleString("vi-VN", { style: "currency", currency: "VND" })
+        .items.reduce((total: number, i: Record<string, unknown>) => total + i.price * i.qty, 0)
+        .toLocaleString("vi-VN", { style: "currency", currency: "VND" })
       : 0,
     <Badge
       key={item.id}
       text={
         item?.status === "PENDING"
           ? "Chờ xử lý"
-          : item?.status === "SHIPPING"
-          ? "Đang giao"
-          : item?.status === "COMPLETED"
-          ? "Hoàn thành"
-          : item?.status === "CONFIRMED"
-          ? "Đã xác nhận"
-          : item?.status === "CANCELED"
-          ? "Đã huỷ"
-          : ""
+          : item?.status === "DELIVERY"
+            ? "Đang giao"
+            : item?.status === "COMPLETED"
+              ? "Hoàn thành"
+              : item?.status === "CONFIRMED"
+                ? "Đã xác nhận"
+                : item?.status === "DELETED"
+                  ? "Đã hủy"
+                  : ""
       }
       variant={
-        item.status === "PENDING"
+        item?.status === "PENDING"
           ? "warning"
-          : item.status === "SHIPPING"
-          ? "primary"
-          : item.status === "COMPLETED"
-          ? "success"
-          : item.status === "CONFIRMED"
-          ? "success"
-          : "error"
+          : item?.status === "DELIVERY"
+            ? "primary"
+            : item?.status === "COMPLETED"
+              ? "success"
+              : item?.status === "CONFIRMED"
+                ? "success"
+                : "error"
       }
     />,
     <div key={`time-${item.id}`} style={{ width: "10rem" }}>{formatDateTime(item.orderDate)}</div>,
     <div key={`act-${item.id}`} style={{ width: "10rem" }}>
-      {item.status === "PENDING" ? (
+      {item?.status === "PENDING" ? (
         <div
           style={{
             backgroundColor: "#FF6633",
@@ -299,7 +299,7 @@ export default function MultiChannelOrders() {
         </div>
       ) : null}
 
-      {item.status === "SHIPPING" ? (
+      {item?.status === "DELIVERY" ? (
         <div
           style={{
             backgroundColor: "green",
@@ -319,7 +319,7 @@ export default function MultiChannelOrders() {
         </div>
       ) : null}
 
-      {item.status === "COMPLETED" ? (
+      {item?.status === "COMPLETED" ? (
         <div
           style={{
             backgroundColor: "green",
@@ -339,7 +339,7 @@ export default function MultiChannelOrders() {
         </div>
       ) : null}
 
-      {item.status === "CANCELED" ? (
+      {item?.status === "DELETED" ? (
         <div
           style={{
             backgroundColor: "var(--extra-color-20)",
@@ -385,9 +385,9 @@ export default function MultiChannelOrders() {
   const TAB_STATUS_MAP: Record<number, string | undefined> = {
     1: undefined,          // Tất cả — không filter
     2: "PENDING",
-    3: "SHIPPING",
-    4: "COMPLETED",
-    5: "CANCELED",
+    3: "DELIVERY",
+    4: "CONFIRMED",
+    5: "DELETED",
   };
 
   const handleTabChange = (tabId: number) => {
@@ -427,7 +427,7 @@ export default function MultiChannelOrders() {
     },
     {
       id: 5,
-      lable: "Huỷ",
+      lable: "Hủy đơn",
       color: "red",
     },
   ];
