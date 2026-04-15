@@ -2,7 +2,7 @@
 
 ## Executive Summary
 
-Tầng service gồm ~230 file `src/services/*Service.ts`, mỗi file là **class với static method** gọi API qua `fetch`. Toàn bộ request đi qua **fetch-intercept** cài ở `src/configs/fetchConfig.ts` — thêm header Authorization, Selectedrole, Hostname, rewrite URL theo prefix. Endpoint được tập trung trong `src/configs/urls.ts` (3600 dòng) với các prefix: `/api`, `/adminapi`, `/bizapi` (và các sub: `/sales`, `/inventory`, `/care`, `/billing`, `/logistics`, `/integration`, `/market`, `/notification`, `/finance` ⚠ banking only), `/bpmapi`, `/authenticator`. ⚠ Lưu ý: prefix `/warehouse` xuất hiện trong code là **legacy** — warehouse là sub-domain của `inventory`; cashbook/debt/fund thuộc `sales` (không phải `finance`); loyalty thuộc `market` (không phải service riêng). Error 401 → xoá cookie, reload, trigger SSO flow. Mock data dưới `src/mocks/`.
+Tầng service gồm ~230 file `src/services/*Service.ts`, mỗi file là **class với static method** gọi API qua `fetch`. Toàn bộ request đi qua **fetch-intercept** cài ở `src/configs/fetchConfig.ts` — thêm header Authorization, Selectedrole, Hostname, rewrite URL theo prefix. Endpoint được tập trung trong `src/configs/urls.ts` (3600 dòng) với các prefix: `/api`, `/adminapi`, `/bizapi` (và các sub: `/sales`, `/inventory`, `/care`, `/billing`, `/logistics`, `/integration`, `/market`, `/notification`, `/finance` ⚠ banking only), `/bpmapi`, `/authenticator`. ⚠ Lưu ý: prefix `/warehouse` xuất hiện trong code là **legacy** — warehouse là sub-domain của `inventory`; cashbook/debt/fund/payment thuộc `billing` (không phải `sales` hay `finance`); loyalty thuộc `market` (không phải service riêng). Error 401 → xoá cookie, reload, trigger SSO flow. Mock data dưới `src/mocks/`.
 
 ## 1. Fetch interceptor
 
@@ -81,13 +81,13 @@ const prefixBpm          = process.env.APP_BPM_URL + "/bpmapi";
 const prefixApi          = "/api";
 const prefixAuthenticator= "/authenticator";
 
-const prefixSales        = prefixBiz + "/sales";        // POS, order, shift, cashbook, debt, fund, payment
+const prefixSales        = prefixBiz + "/sales";        // POS, order, shift, invoice lifecycle
 const prefixNotification = prefixBiz + "/notification"; // SMS, email, push, Zalo OA, FB
 const prefixFinance      = prefixBiz + "/finance";      // ⚠ BANKING ONLY (Athena) — retail thường KHÔNG dùng
 const prefixInventory    = prefixBiz + "/inventory";    // Stock + warehouse ops + PO + NCC
 const prefixWarehouse    = prefixBiz + "/warehouse";    // ⚠ legacy — warehouse là sub-domain của inventory
 const prefixCare         = prefixBiz + "/care";         // Ticket, warranty, feedback, CSKH
-const prefixBilling      = prefixBiz + "/billing";      // VAT e-invoice TT78/NĐ123
+const prefixBilling      = prefixBiz + "/billing";      // cashbook, debt, fund, payment, VAT e-invoice TT78/NĐ123
 const prefixLogistics    = prefixBiz + "/logistics";    // Shipping, COD, tracking
 const prefixIntegration  = prefixBiz + "/integration";  // 3rd party connectors (marketplace, MSAL, payment, e-invoice, SMS/Email)
 const prefixMarket       = prefixBiz + "/market";       // Campaign, voucher, promotion, LOYALTY, marketing automation
@@ -106,11 +106,11 @@ const prefixAthena       = process.env.APP_ATHENA_URL  || "https://api-athenaspe
 |--------|---------|------------------|--------|
 | `/adminapi` | `APP_ADMIN_URL` | Admin API (super admin) | Quản trị, config |
 | `/api` | `APP_API_URL` | Main API | Dashboard, common |
-| `/bizapi/sales` | `APP_BIZ_URL` | sales | POS, invoice, order, shift, **cashbook, debt, fund, payment** |
+| `/bizapi/sales` | `APP_BIZ_URL` | sales | POS, order, shift, **invoice lifecycle (draft → confirm → cancel)** |
 | `/bizapi/inventory` | `APP_BIZ_URL` | inventory | Tồn kho, stock movement, **warehouse ops, purchase order, NCC** |
 | `/bizapi/warehouse` | `APP_BIZ_URL` | inventory (legacy prefix) | ⚠ Sub-domain của inventory — không phải service riêng |
 | `/bizapi/care` | `APP_BIZ_URL` | care | Ticket, warranty, feedback, CSKH |
-| `/bizapi/billing` | `APP_BIZ_URL` | billing | VAT, hoá đơn VN TT78/NĐ123 |
+| `/bizapi/billing` | `APP_BIZ_URL` | billing | **Cashbook, debt, fund, payment, settlement**, VAT hoá đơn VN TT78/NĐ123 |
 | `/bizapi/logistics` | `APP_BIZ_URL` | logistics | GHN/GHTK/VNPost, COD, tracking |
 | `/bizapi/integration` | `APP_BIZ_URL` | integration | 3rd party connectors: marketplace sync, MSAL, payment, e-invoice, SMS/Email, shipping |
 | `/bizapi/market` | `APP_BIZ_URL` | market | Campaign, voucher, promotion, **loyalty**, marketing automation |
@@ -179,10 +179,13 @@ Code `0` = success. Khác `0` → hiển thị toast theo `message`. 401 bị ch
 | `ImportInvoiceService.ts` | Phiếu NK — BE: `/bizapi/inventory` |
 | `TransferOrderService.ts` | Chuyển kho — BE: `/bizapi/inventory` |
 | `AdjustmentSlipService.ts` | Phiếu điều chỉnh — BE: `/bizapi/inventory` |
-| `CashBookService.ts` | Sổ quỹ — BE: `/bizapi/sales` (KHÔNG `/finance`) |
-| `FinanceService.ts` | ⚠ banking-only (Athena) — không phải tài chính nội bộ |
+| `CashBookService.ts` | Sổ quỹ — BE: `/bizapi/billing` (KHÔNG `/sales` hay `/finance`) |
+| `DebtService.ts` | Công nợ KH + NCC — BE: `/bizapi/billing` |
+| `FundService.ts` | Quỹ tiền — BE: `/bizapi/billing` |
+| `FinanceService.ts` | ⚠ legacy tên — thực tế gọi `/bizapi/billing` (cashbook wrapper), KHÔNG phải banking Athena |
+| `PaymentService.ts` | Thanh toán đa phương thức — BE: `/bizapi/billing` |
 | `LogisticsService.ts` | Vận chuyển — BE: `/bizapi/logistics` |
-| `BillingService.ts` | Hoá đơn điện tử — BE: `/bizapi/billing` |
+| `BillingService.ts` | Hoá đơn điện tử VAT — BE: `/bizapi/billing` |
 | `LoyaltyService.ts` | Loyalty point — BE: `/bizapi/market` (sub-domain của market) |
 | `CampaignService.ts` | Chiến dịch |
 | `MarketingAutomationService.ts` | Automation |

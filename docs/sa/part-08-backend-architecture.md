@@ -1,6 +1,6 @@
 # Part 08 — Backend Architecture (suy luận)
 
-> **Executive Summary**: Backend Reborn Retail CRM **không có trong repo** này — toàn bộ phần dưới đây là **suy luận ngược từ frontend** (URL prefix, service call, response shape). Kiến trúc quan sát được là mô hình **microservices theo bounded context**, sau một **API gateway** dạng prefix routing (`/bizapi/<domain>`). Bộ canonical gồm **11 microservices** nghiệp vụ; **Reborn Retail dùng 9/11**: `sales` (POS, order, shift, cashbook, debt, fund, payment), `inventory` (stock + warehouse + PO + NCC), `care`, `billing`, `logistics`, `integration`, `market` (campaign + loyalty), `notification`, và `finance` (⚠ banking-only — Athena, retail thường KHÔNG dùng). Hai service `contract` và `operation` chỉ thuộc TNPM, retail không bật. Platform: `/authenticator` (SSO) và `/bpmapi` (BPM engine). Cách giao tiếp service-to-service, mô hình dữ liệu (database-per-service vs shared DB), và công nghệ nền (Spring/Node/Go) **chưa xác minh được** — được gắn 🔴 và đưa vào danh sách câu hỏi cần BE xác nhận.
+> **Executive Summary**: Backend Reborn Retail CRM **không có trong repo** này — toàn bộ phần dưới đây là **suy luận ngược từ frontend** (URL prefix, service call, response shape). Kiến trúc quan sát được là mô hình **microservices theo bounded context**, sau một **API gateway** dạng prefix routing (`/bizapi/<domain>`). Bộ canonical gồm **11 microservices** nghiệp vụ; **Reborn Retail dùng 9/11**: `sales` (POS, order, shift, invoice lifecycle), `billing` (cashbook, debt, fund, payment, settlement, VAT e-invoice), `inventory` (stock + warehouse + PO + NCC), `care`, `logistics`, `integration`, `market` (campaign + loyalty), `notification`, và `finance` (⚠ banking-only — Athena, retail thường KHÔNG dùng). Hai service `contract` và `operation` chỉ thuộc TNPM, retail không bật. Platform: `/authenticator` (SSO) và `/bpmapi` (BPM engine). Cách giao tiếp service-to-service, mô hình dữ liệu (database-per-service vs shared DB), và công nghệ nền (Spring/Node/Go) **chưa xác minh được** — được gắn 🔴 và đưa vào danh sách câu hỏi cần BE xác nhận.
 
 ## 1. Bối cảnh & nguồn suy luận
 
@@ -63,23 +63,21 @@ Các gateway ngoại quan sát được (từ `urls.ts`):
 
 ### 3.1. Sales — `/bizapi/sales` ✅ CORE
 
-🟢 Xác nhận qua `OrderSalesService`, `InvoiceService`, `QuotationService`, `CashBookService`, `DebtService`, `FundService`.
+🟢 Xác nhận qua `OrderSalesService`, `InvoiceService`, `QuotationService`.
 
-- Aggregate: `Order`, `OrderLine`, `Invoice`, `Receipt`, `Quotation`, `Shift`, **`CashBookEntry`**, **`Payment`**, **`Fund`**, **`DebtNote`**.
-- Use case: tạo đơn POS, báo giá, công nợ phải thu, đơn hàng return, mở/đóng ca, sổ quỹ, thu chi, công nợ, quỹ tiền.
-- Outbound event (🔴): `order.created`, `order.paid`, `invoice.issued`, `cashbook.entry.created`, `payment.received`.
+- Aggregate: `Order`, `OrderLine`, `Invoice`, `Receipt`, `Quotation`, `Shift`, `Cart`.
+- Use case: tạo đơn POS, báo giá, mở/đóng ca, giỏ hàng, **invoice lifecycle (draft → confirm → cancel)**, dashboard sale, báo cáo POS.
+- Outbound event (🔴): `sales.order.created`, `sales.order.paid`, `sales.invoice.issued`, `sales.invoice.paid`, `sales.invoice.cancelled`, `sales.shift.closed`.
 
-#### 3.1.1. Cashbook / Debt / Fund (sub-domain của Sales)
-
-⚠️ **Quan trọng**: cashbook, công nợ (debt), quỹ tiền (fund) **thuộc `sales` service**, KHÔNG phải `finance`. FE class `CashBookService.ts`, `FinanceService.ts` (legacy tên), `DebtService.ts`, `FundService.ts` đều gọi xuống `/bizapi/sales/...`. Permission code chuẩn: `SALES_CASHBOOK_VIEW`, `SALES_DEBT_VIEW`, `SALES_FUND_VIEW` (không phải `FINANCE_*`).
+⚠️ **Sales KHÔNG owns cashbook/debt/fund/payment** — những thứ đó thuộc `billing` service (xem §3.5). Khi POS thanh toán, `sales` emit event `sales.invoice.paid` → `billing` consume → ghi cashbook entry.
 
 ### 3.2. Finance — `/bizapi/finance` ⚠ BANKING ONLY
 
 🟡 `FinanceService` (FE class — đây là legacy naming, không nên hiểu nhầm với cashbook).
 
 - **Phạm vi thực**: chỉ phục vụ **hồ sơ tài chính của khách hàng** (banking integration qua **Athena** — `APP_ATHENA_URL`). Sản phẩm này thuộc dòng dịch vụ tài chính/banking (KYC, hồ sơ vay, tài khoản).
-- ⚠️ **Reborn Retail thường KHÔNG dùng** service này. Nếu thấy `/bizapi/finance/*` xuất hiện trong code path retail → flag là bug, chuyển sang `/bizapi/sales/*`.
-- KHÔNG chứa cashbook/debt/fund — những thứ đó nằm ở `sales` (xem §3.1.1).
+- ⚠️ **Reborn Retail thường KHÔNG dùng** service này. Nếu thấy `/bizapi/finance/*` xuất hiện trong code path retail → flag là bug, chuyển sang `/bizapi/billing/*`.
+- KHÔNG chứa cashbook/debt/fund — những thứ đó nằm ở `billing` (xem §3.5).
 
 ### 3.3. Inventory — `/bizapi/inventory` ✅ CORE
 

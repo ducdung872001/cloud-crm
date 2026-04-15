@@ -26,7 +26,7 @@ SAD KHÔNG hướng dẫn người dùng cuối (đó là HDSD), KHÔNG mô tả
 - **Authentication flow**: SSO redirect, token cookie, role selection.
 - **Multi-tenant strategy** (góc nhìn frontend): sử dụng `Hostname` header, `branchId`, `tenantId`.
 - **Integration interfaces**: SSO, payment gateway, e-invoice (VNPay, VNPT, M-Invoice), SMS, email, Zalo, Facebook, vận chuyển (GHN, GHTK, VNPost), marketplace (Shopee/Lazada), webhook outbound.
-- **Suy luận về Backend**: các bounded context backend dựa trên URL prefix (`/sales`, `/inventory`, `/logistics`, `/care`, `/market`, `/billing`, `/integration`, `/notification`, ...). Lưu ý: `/finance` chỉ phục vụ banking (Athena) — cashbook/debt/fund nằm trong `sales`; warehouse là sub-domain của `inventory`.
+- **Suy luận về Backend**: các bounded context backend dựa trên URL prefix (`/sales`, `/inventory`, `/logistics`, `/care`, `/market`, `/billing`, `/integration`, `/notification`, ...). Lưu ý: `/finance` chỉ phục vụ banking (Athena) — cashbook/debt/fund nằm trong `billing`; warehouse là sub-domain của `inventory`.
 - **Kiến trúc deployment đề xuất** dựa trên best practice cho stack tương đương.
 - **Các quyết định kiến trúc** (ADR) quan sát được hoặc đề xuất.
 
@@ -112,10 +112,11 @@ Các yêu cầu phi chức năng chính (chi tiết ở [URD Part 13](../urd/par
 │  ├─ /api      → Main API                         │
 │  ├─ /adminapi → Admin API                        │
 │  ├─ /bizapi   → Business APIs                    │
-│  │   ├─ /sales (POS, cashbook, debt, fund)       │
+│  │   ├─ /sales (POS, order, shift, invoice)     │
+│  │   ├─ /billing (cashbook, debt, fund,         │
+│  │   │            payment, VAT e-invoice)       │
 │  │   ├─ /inventory (kho, warehouse, PO, NCC)     │
 │  │   ├─ /care (ticket, warranty, feedback)       │
-│  │   ├─ /billing (VAT e-invoice)                 │
 │  │   ├─ /logistics (shipping, COD)               │
 │  │   ├─ /integration (marketplace, MSAL, ...)    │
 │  │   ├─ /market (campaign, voucher, loyalty)     │
@@ -127,11 +128,11 @@ Các yêu cầu phi chức năng chính (chi tiết ở [URD Part 13](../urd/par
                      │
 ┌──────────────────────────────────────────────────┐
 │  MICROSERVICES (9/11 dùng cho retail)            │
-│  ├─ sales (POS, order, shift, cashbook,          │
-│  │         payment, debt, fund, invoice)         │
+│  ├─ sales (POS, order, shift, invoice)           │
+│  ├─ billing (cashbook, debt, fund, payment,      │
+│  │           VAT e-invoice TT78/NĐ123)           │
 │  ├─ inventory (stock, warehouse ops, PO, NCC)    │
 │  ├─ logistics (shipping, COD, tracking)          │
-│  ├─ billing (VAT e-invoice TT78/NĐ123)           │
 │  ├─ care (ticket, warranty, feedback, CSKH)      │
 │  ├─ market (campaign, voucher, loyalty,          │
 │  │           marketing automation)               │
@@ -166,7 +167,7 @@ Reborn có nhiều biến thể dùng chung codebase. So với biến thể **Co
 | **Tích hợp ngoại** | Zalo, SMS, loyalty | + Marketplace, Logistics, e-invoice |
 | **Khác biệt data** | `service_quota`, `checkin` | `stock_movement`, `po_line`, `shipment` |
 
-Cả 2 biến thể cùng core: auth SSO, tenant, customer, sales (cashbook/debt/fund), reporting. Khác biệt nằm ở **module active** (qua routes.tsx + permission code) và **default dashboard**.
+Cả 2 biến thể cùng core: auth SSO, tenant, customer, billing (cashbook/debt/fund), reporting. Khác biệt nằm ở **module active** (qua routes.tsx + permission code) và **default dashboard**.
 
 ## 8. Quy ước trong tài liệu
 
