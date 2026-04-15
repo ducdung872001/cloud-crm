@@ -156,6 +156,26 @@ export default function TaxCalendar() {
                   >
                     {existingDecl ? "Xem" : "Lập"}
                   </Link>
+                  {existingDecl &&
+                    (existingDecl.status === "submitted" ||
+                      existingDecl.status === "accepted") && (
+                      <Link
+                        to={`/tax/declaration?amend=${existingDecl.id}`}
+                        title="Lập tờ khai bổ sung (sửa sai)"
+                        style={{
+                          padding: "6px 12px",
+                          background: "#fff",
+                          color: T.colors.warning,
+                          border: `1px solid ${T.colors.warning}`,
+                          borderRadius: T.radius.md,
+                          textDecoration: "none",
+                          fontSize: T.font.small,
+                          fontWeight: 600,
+                        }}
+                      >
+                        📝 Bổ sung
+                      </Link>
+                    )}
                 </div>
               </div>
               {existingDecl?.receiptCode && (

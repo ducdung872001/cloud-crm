@@ -1,5 +1,17 @@
-// Preview mẫu 01/CNKD — render layout chuẩn giống tờ khai giấy để người dùng
-// xem trước trước khi ký và nộp. Có thể in trực tiếp bằng window.print().
+// Q3 — Preview mẫu 03/CNKD (Quyết toán kết quả kinh doanh).
+// Dùng cho HKD/CNKD phương pháp kê khai, nộp 1 lần/năm sau khi kết thúc năm.
+//
+// Bố cục chính:
+//  A. Doanh thu thực tế theo nhóm ngành
+//  B. Chi phí được trừ (bảng kê 01-2/BK-HDKD)
+//  C. Lãi/lỗ thực tế
+//  D. Thuế TNCN tính trên tỷ lệ % doanh thu (vẫn theo TT40)
+//  E. So sánh với tạm tính đã nộp trong năm (01/CNKD hàng tháng/quý)
+//  F. Thuế phải nộp thêm / hoàn lại
+//
+// Lưu ý: tài liệu không cung cấp file mẫu 03/CNKD nên layout dưới đây
+// dựa trên logic nghiệp vụ + cấu trúc của 01/CNKD. Khi có file mẫu
+// thật cần đối chiếu lại.
 
 import React from "react";
 import { taxTheme as T } from "./theme";
@@ -16,7 +28,6 @@ import type {
   IndustryGroup,
 } from "../domain/types";
 
-// Thứ tự 4 dòng trên mẫu 01/CNKD (không tính asset_lease — sheet riêng)
 const FORM_ROW_ORDER: IndustryGroup[] = [
   "distribution",
   "service_no_material",
@@ -32,23 +43,24 @@ const ROW_SHORT_LABELS: Record<IndustryGroup, string> = {
   asset_lease: "5. Cho thuê tài sản",
 };
 
-export default function DeclarationPreview({
+export default function DeclarationPreview03({
   taxpayer,
   period,
   calculation,
   supplementNumber = 0,
-  formCode = FORM_CODES.MAIN_01_CNKD,
+  provisionalPaid = 0, // số thuế đã tạm nộp từ các tờ khai 01/CNKD trong năm
 }: {
   taxpayer: TaxpayerProfile;
   period: TaxPeriod;
   calculation: TaxCalculationResult;
   supplementNumber?: number;
-  formCode?: string;
+  provisionalPaid?: number;
 }) {
   const byGroup = new Map(
     calculation.breakdowns.map((b) => [b.industryGroup, b])
   );
   const isSupplement = supplementNumber > 0;
+  const taxDiff = calculation.totalTaxPayable - provisionalPaid;
 
   return (
     <div
@@ -65,52 +77,29 @@ export default function DeclarationPreview({
         margin: "0 auto",
       }}
     >
-      {/* Header */}
       <div style={{ textAlign: "right", fontSize: 11, marginBottom: 8 }}>
-        Mẫu số: <b>{formCode}</b>
+        Mẫu số: <b>{FORM_CODES.ACTUAL_03_CNKD}</b>
         <br />
-        (Ban hành kèm theo TT số 40/2021/TT-BTC ngày 01/6/2021)
+        (Ban hành kèm theo TT số 40/2021/TT-BTC)
       </div>
-      <div
-        style={{
-          textAlign: "center",
-          marginBottom: 16,
-        }}
-      >
+      <div style={{ textAlign: "center", marginBottom: 16 }}>
         <div style={{ fontWeight: 700, fontSize: 15 }}>
           CỘNG HOÀ XÃ HỘI CHỦ NGHĨA VIỆT NAM
         </div>
         <div style={{ fontWeight: 700 }}>Độc lập - Tự do - Hạnh phúc</div>
         <div style={{ margin: "4px 0" }}>────────────────</div>
-        <h2 style={{ margin: "8px 0", fontSize: 17 }}>
-          TỜ KHAI THUẾ ĐỐI VỚI HỘ KINH DOANH, CÁ NHÂN KINH DOANH
+        <h2 style={{ margin: "8px 0", fontSize: 16 }}>
+          TỜ KHAI QUYẾT TOÁN KẾT QUẢ KINH DOANH
+          <br />
+          <span style={{ fontSize: 13, fontWeight: 600 }}>
+            (Dành cho hộ kinh doanh, cá nhân kinh doanh nộp thuế theo phương
+            pháp kê khai)
+          </span>
         </h2>
       </div>
 
-      {/* Checkboxes phương pháp */}
-      <div style={{ marginBottom: 12, fontSize: 12 }}>
-        <Check
-          checked={taxpayer.method === "presumptive"}
-          label="Hộ kinh doanh, cá nhân kinh doanh nộp thuế theo phương pháp khoán"
-        />
-        <Check
-          checked={taxpayer.method === "per_occurrence"}
-          label="Cá nhân kinh doanh nộp thuế theo từng lần phát sinh"
-        />
-        <Check
-          checked={taxpayer.method === "on_behalf"}
-          label="Tổ chức, cá nhân khai thay, nộp thay cho cá nhân"
-        />
-        <Check
-          checked={taxpayer.method === "declaration"}
-          label="Hộ kinh doanh, cá nhân kinh doanh nộp thuế theo phương pháp kê khai"
-        />
-      </div>
-
-      {/* Kỳ & NNT */}
       <div style={{ marginBottom: 10 }}>
-        <b>[01] Kỳ tính thuế:</b> {period.label} (Từ {period.startDate} đến{" "}
-        {period.endDate})
+        <b>[01] Kỳ quyết toán năm:</b> {period.label}
       </div>
       <div style={{ marginBottom: 10 }}>
         <b>[02] Lần đầu:</b> {isSupplement ? "☐" : "☒"} &nbsp;&nbsp;{" "}
@@ -132,34 +121,23 @@ export default function DeclarationPreview({
         )}
       </div>
 
-      <div
-        style={{
-          border: "1px solid #000",
-          padding: 10,
-          marginBottom: 14,
-          fontSize: 12,
-        }}
-      >
-        <Row
-          label="[03] Tên người nộp thuế"
-          value={taxpayer.fullName || taxpayer.businessName || "(chưa nhập)"}
-        />
-        <Row label="[04] Mã số thuế" value={taxpayer.taxCode || "(chưa có)"} />
+      <div style={{ border: "1px solid #000", padding: 10, marginBottom: 14, fontSize: 12 }}>
+        <Row label="[03] Tên người nộp thuế" value={taxpayer.fullName || "—"} />
+        <Row label="[04] Mã số thuế" value={taxpayer.taxCode || "—"} />
         <Row
           label="[05] Địa chỉ"
-          value={`${taxpayer.address || ""}, ${taxpayer.province || ""}`}
+          value={`${taxpayer.address}, ${taxpayer.province}`}
         />
-        <Row label="[06] Điện thoại" value={taxpayer.phone || "—"} />
-        <Row label="[07] CCCD/CMND" value={taxpayer.nationalId || "—"} />
+        <Row label="[06] Phương pháp" value={TAX_METHOD_LABELS[taxpayer.method]} />
       </div>
 
       <div style={{ fontStyle: "italic", marginBottom: 8 }}>
         Đơn vị tiền: Đồng Việt Nam
       </div>
 
-      {/* Phần A — Bảng 4 nhóm ngành */}
+      {/* Phần A — Doanh thu thực tế */}
       <div style={{ fontWeight: 700, marginBottom: 4 }}>
-        A. THUẾ GIÁ TRỊ GIA TĂNG VÀ THUẾ THU NHẬP CÁ NHÂN
+        A. DOANH THU THỰC TẾ CẢ NĂM
       </div>
       <table
         style={{
@@ -171,29 +149,11 @@ export default function DeclarationPreview({
       >
         <thead>
           <tr style={{ background: "#f0f0f0" }}>
-            <th style={cellTh} rowSpan={2}>
-              STT
-            </th>
-            <th style={cellTh} rowSpan={2}>
-              Nhóm ngành nghề
-            </th>
-            <th style={cellTh} rowSpan={2}>
-              Doanh thu
-              <br />
-              [26]
-            </th>
-            <th style={cellTh} colSpan={2}>
-              Thuế GTGT
-            </th>
-            <th style={cellTh} colSpan={2}>
-              Thuế TNCN
-            </th>
-          </tr>
-          <tr style={{ background: "#f0f0f0" }}>
-            <th style={cellTh}>Tỷ lệ</th>
-            <th style={cellTh}>Số thuế [29]</th>
-            <th style={cellTh}>Tỷ lệ</th>
-            <th style={cellTh}>Số thuế [31]</th>
+            <th style={cellTh}>STT</th>
+            <th style={cellTh}>Nhóm ngành nghề</th>
+            <th style={cellTh}>Doanh thu thực tế</th>
+            <th style={cellTh}>Tỷ lệ TNCN</th>
+            <th style={cellTh}>Thuế TNCN [20]</th>
           </tr>
         </thead>
         <tbody>
@@ -209,73 +169,141 @@ export default function DeclarationPreview({
                   {row ? formatVND(row.taxableRevenue) : ""}
                 </td>
                 <td style={cellTdNum}>
-                  {row ? (row.vatRate * 100).toFixed(1) + "%" : "—"}
-                </td>
-                <td style={cellTdNum}>
-                  {row ? formatVND(row.vatAmount) : ""}
-                </td>
-                <td style={cellTdNum}>
                   {row ? (row.pitRate * 100).toFixed(1) + "%" : "—"}
                 </td>
-                <td style={cellTdNum}>
-                  {row ? formatVND(row.pitAmount) : ""}
-                </td>
+                <td style={cellTdNum}>{row ? formatVND(row.pitAmount) : ""}</td>
               </tr>
             );
           })}
           <tr style={{ background: "#fafafa", fontWeight: 700 }}>
             <td style={cellTd} colSpan={2}>
-              Tổng cộng [32]
+              Tổng cộng [21]
             </td>
             <td style={cellTdNum}>{formatVND(calculation.totalRevenue)}</td>
-            <td style={cellTdNum}></td>
-            <td style={cellTdNum}>{formatVND(calculation.totalVat)}</td>
             <td style={cellTdNum}></td>
             <td style={cellTdNum}>{formatVND(calculation.totalPit)}</td>
           </tr>
         </tbody>
       </table>
 
-      {/* Phần B — TTĐB */}
+      {/* Phần B — Chi phí */}
       <div style={{ fontWeight: 700, marginBottom: 4 }}>
-        B. THUẾ TIÊU THỤ ĐẶC BIỆT
+        B. CHI PHÍ ĐƯỢC TRỪ TRONG NĂM
       </div>
-      <Row
-        label="[33] Số thuế TTĐB phải nộp"
-        value={formatVND(calculation.specialConsumptionTax) + " đ"}
-      />
-
-      {/* Phần C — Tài nguyên + BVMT */}
-      <div style={{ fontWeight: 700, marginTop: 10, marginBottom: 4 }}>
-        C. THUẾ TÀI NGUYÊN, PHÍ BẢO VỆ MÔI TRƯỜNG
-      </div>
-      <Row
-        label="[34] Thuế tài nguyên"
-        value={formatVND(calculation.resourceTax) + " đ"}
-      />
-      <Row
-        label="[35] Phí bảo vệ môi trường"
-        value={formatVND(calculation.environmentFee) + " đ"}
-      />
-
-      {/* Tổng */}
       <div
         style={{
-          marginTop: 14,
+          border: "1px solid #000",
           padding: 10,
-          border: "2px solid #000",
-          background: "#fafafa",
-          display: "flex",
-          justifyContent: "space-between",
-          fontWeight: 700,
-          fontSize: 14,
+          marginBottom: 14,
+          fontSize: 12,
         }}
       >
-        <span>TỔNG SỐ THUẾ PHẢI NỘP</span>
-        <span>{formatVND(calculation.totalTaxPayable)} đ</span>
+        <Row
+          label="[22] Tổng chi phí quản lý (bảng kê 01-2/BK-HDKD)"
+          value={formatVND(calculation.totalDeductibleExpense) + " đ"}
+        />
+        <div
+          style={{
+            marginTop: 6,
+            fontStyle: "italic",
+            fontSize: 11,
+            color: "#666",
+          }}
+        >
+          * Chi tiết: nhân công, điện, nước, viễn thông, thuê mặt bằng, quản lý,
+          khác — xem phụ lục 01-2/BK-HDKD.
+        </div>
       </div>
 
-      {/* Chân ký */}
+      {/* Phần C — Kết quả */}
+      <div style={{ fontWeight: 700, marginBottom: 4 }}>
+        C. KẾT QUẢ KINH DOANH
+      </div>
+      <div
+        style={{
+          border: "1px solid #000",
+          padding: 10,
+          marginBottom: 14,
+          fontSize: 12,
+        }}
+      >
+        <Row
+          label="[23] Doanh thu"
+          value={formatVND(calculation.totalRevenue) + " đ"}
+        />
+        <Row
+          label="[24] Chi phí"
+          value={formatVND(calculation.totalDeductibleExpense) + " đ"}
+        />
+        <Row
+          label="[25] Lợi nhuận trước thuế [23] - [24]"
+          value={
+            formatVND(
+              calculation.totalRevenue - calculation.totalDeductibleExpense
+            ) + " đ"
+          }
+        />
+      </div>
+
+      {/* Phần D — Thuế phải nộp + đối chiếu tạm tính */}
+      <div style={{ fontWeight: 700, marginBottom: 4 }}>
+        D. THUẾ PHẢI NỘP & ĐỐI CHIẾU TẠM TÍNH
+      </div>
+      <div
+        style={{
+          border: "1px solid #000",
+          padding: 10,
+          marginBottom: 14,
+          fontSize: 12,
+        }}
+      >
+        <Row
+          label="[26] Tổng thuế GTGT"
+          value={formatVND(calculation.totalVat) + " đ"}
+        />
+        <Row
+          label="[27] Tổng thuế TNCN"
+          value={formatVND(calculation.totalPit) + " đ"}
+        />
+        <Row
+          label="[28] Lệ phí môn bài"
+          value={formatVND(calculation.licenseFee) + " đ"}
+        />
+        <Row
+          label="[29] Tổng phải nộp cả năm [26]+[27]+[28]"
+          value={formatVND(calculation.totalTaxPayable) + " đ"}
+        />
+        <Row
+          label="[30] Đã tạm nộp trong năm (từ 01/CNKD)"
+          value={formatVND(provisionalPaid) + " đ"}
+        />
+        <div
+          style={{
+            marginTop: 8,
+            padding: 8,
+            background: taxDiff >= 0 ? "#FEF2F2" : "#F0FDF4",
+            borderRadius: 4,
+            fontWeight: 700,
+          }}
+        >
+          {taxDiff >= 0 ? (
+            <>
+              [31] CÒN PHẢI NỘP THÊM:{" "}
+              <span style={{ color: "#B91C1C" }}>
+                {formatVND(taxDiff)} đ
+              </span>
+            </>
+          ) : (
+            <>
+              [32] ĐƯỢC HOÀN / BÙ TRỪ:{" "}
+              <span style={{ color: "#15803D" }}>
+                {formatVND(Math.abs(taxDiff))} đ
+              </span>
+            </>
+          )}
+        </div>
+      </div>
+
       <div
         style={{
           marginTop: 20,
@@ -302,7 +330,7 @@ export default function DeclarationPreview({
 
       <div
         style={{
-          marginTop: 16,
+          marginTop: 14,
           fontSize: 10,
           color: "#666",
           fontStyle: "italic",
@@ -310,6 +338,9 @@ export default function DeclarationPreview({
       >
         Phương pháp: {TAX_METHOD_LABELS[taxpayer.method]} · Ngành chính:{" "}
         {INDUSTRY_GROUP_LABELS[taxpayer.primaryIndustryGroup]}
+        <br />
+        ⚠ Layout 03/CNKD dựa trên logic nghiệp vụ — cần đối chiếu file mẫu thật
+        của TCT khi có.
       </div>
     </div>
   );
@@ -335,30 +366,8 @@ const cellTdNum: React.CSSProperties = {
 function Row({ label, value }: { label: string; value: React.ReactNode }) {
   return (
     <div style={{ display: "flex", gap: 10, padding: "2px 0" }}>
-      <span style={{ minWidth: 180, fontWeight: 600 }}>{label}:</span>
+      <span style={{ minWidth: 260, fontWeight: 600 }}>{label}:</span>
       <span>{value}</span>
-    </div>
-  );
-}
-
-function Check({ checked, label }: { checked: boolean; label: string }) {
-  return (
-    <div style={{ padding: "2px 0" }}>
-      <span
-        style={{
-          display: "inline-block",
-          width: 14,
-          height: 14,
-          border: "1.5px solid #000",
-          textAlign: "center",
-          lineHeight: "12px",
-          marginRight: 8,
-          fontSize: 12,
-        }}
-      >
-        {checked ? "✕" : ""}
-      </span>
-      {label}
     </div>
   );
 }

@@ -155,6 +155,13 @@ export interface TaxDeclaration {
   xmlPayload?: string; // XML chuẩn TCT sau khi build
   createdAt: string;
   updatedAt: string;
+  // ═══ Tờ khai bổ sung (sửa sai) — Q6 ═══
+  /** Số lần bổ sung. 0/undefined = lần đầu. 1 = bổ sung lần 1, v.v. */
+  supplementNumber?: number;
+  /** ID tờ khai gốc (nếu đây là bổ sung) */
+  originalDeclarationId?: string;
+  /** Lý do bổ sung — user nhập khi sửa sai */
+  supplementReason?: string;
 }
 
 // Cảnh báo ngưỡng

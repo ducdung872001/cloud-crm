@@ -200,14 +200,22 @@ export class DeclarationBuilder {
     taxpayer: TaxpayerProfile;
     period: TaxPeriod;
     calculation: TaxCalculationResult;
+    /** Override form code (mặc định 01/CNKD). Dùng cho 03/CNKD hoặc 01/LPMB. */
+    formCode?: string;
+    /** Tờ khai bổ sung — nếu > 0 thì tick ô "Bổ sung lần thứ" */
+    supplementNumber?: number;
+    /** ID tờ khai gốc khi lập bổ sung */
+    originalDeclarationId?: string;
+    /** Lý do bổ sung */
+    supplementReason?: string;
   }): TaxDeclaration {
     const { taxpayer, period, calculation } = params;
-    const formCode =
-      taxpayer.method === "declaration"
-        ? FORM_CODES.MAIN_01_CNKD // vẫn dùng 01/CNKD + phụ lục
-        : FORM_CODES.MAIN_01_CNKD;
+    const formCode = params.formCode ?? FORM_CODES.MAIN_01_CNKD;
 
-    const id = `DCL-${period.id}-${Date.now()}`;
+    const suffix = params.supplementNumber
+      ? `-SUP${params.supplementNumber}`
+      : "";
+    const id = `DCL-${period.id}${suffix}-${Date.now()}`;
     const now = new Date().toISOString();
 
     return {
@@ -220,7 +228,13 @@ export class DeclarationBuilder {
       status: "draft",
       createdAt: now,
       updatedAt: now,
-      xmlPayload: this.buildXmlPayload(taxpayer, period, calculation),
+      xmlPayload: this.buildXmlPayload(taxpayer, period, calculation, {
+        formCode,
+        supplementNumber: params.supplementNumber,
+      }),
+      supplementNumber: params.supplementNumber,
+      originalDeclarationId: params.originalDeclarationId,
+      supplementReason: params.supplementReason,
     };
   }
 
@@ -232,8 +246,12 @@ export class DeclarationBuilder {
   buildXmlPayload(
     taxpayer: TaxpayerProfile,
     period: TaxPeriod,
-    calc: TaxCalculationResult
+    calc: TaxCalculationResult,
+    options?: { formCode?: string; supplementNumber?: number }
   ): string {
+    const formCode = options?.formCode ?? FORM_CODES.MAIN_01_CNKD;
+    const supplementNumber = options?.supplementNumber ?? 0;
+
     const checkboxMap = {
       presumptive: "HKDKhoan",
       declaration: "HKDKeKhai",
@@ -259,7 +277,9 @@ export class DeclarationBuilder {
   <HSoKhaiThue>
     <TTinChung>
       <TTinTKhaiThue>
-        <maTKhai>${FORM_CODES.MAIN_01_CNKD}</maTKhai>
+        <maTKhai>${formCode}</maTKhai>
+        <lanDau>${supplementNumber === 0 ? "1" : "0"}</lanDau>
+        <soLanBoSung>${supplementNumber}</soLanBoSung>
         <phuongPhapKhai>${checkboxMap[taxpayer.method]}</phuongPhapKhai>
         <kyKKhaiThue>
           <kieuKy>${period.kind}</kieuKy>
