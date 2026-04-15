@@ -183,19 +183,26 @@ export default function NetworkTreePage() {
               const node = tier1[i];
               if (!node) {
                 return (
-                  <div key={i} style={{
-                    background: "#F5F9F8",
-                    border: "2px dashed #d9e0de",
-                    borderRadius: 10,
-                    padding: 12,
-                    minWidth: 100,
-                    minHeight: 90,
-                    display: "flex",
-                    flexDirection: "column",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    color: "#8E9BAE",
-                  }}>
+                  <div key={i}
+                    onClick={() => { setInviteForm({ ...inviteForm, parent_id: "BO-MASTER" }); setShowInvite(true); }}
+                    style={{
+                      background: "#F5F9F8",
+                      border: "2px dashed #d9e0de",
+                      borderRadius: 10,
+                      padding: 12,
+                      minWidth: 100,
+                      minHeight: 90,
+                      display: "flex",
+                      flexDirection: "column",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      color: "#8E9BAE",
+                      cursor: "pointer",
+                      transition: "all .15s",
+                    }}
+                    onMouseEnter={(e) => { e.currentTarget.style.borderColor = "#00C9A7"; e.currentTarget.style.background = "#E4F7F3"; }}
+                    onMouseLeave={(e) => { e.currentTarget.style.borderColor = "#d9e0de"; e.currentTarget.style.background = "#F5F9F8"; }}
+                  >
                     <div style={{ fontSize: 18 }}>➕</div>
                     <div style={{ fontSize: 11, marginTop: 4 }}>Slot trống</div>
                   </div>
@@ -246,6 +253,170 @@ export default function NetworkTreePage() {
                 </div>
               </div>
             ))}
+          </div>
+        </div>
+      )}
+
+      {/* ── Modal Mời BO mới ── */}
+      {showInvite && (
+        <div
+          onClick={() => setShowInvite(false)}
+          style={{
+            position: "fixed", inset: 0, background: "rgba(11,46,42,.5)",
+            display: "flex", alignItems: "center", justifyContent: "center", zIndex: 1000,
+          }}
+        >
+          <div
+            onClick={(e) => e.stopPropagation()}
+            style={{
+              background: "#fff", borderRadius: 14, width: 520, maxWidth: "90vw",
+              boxShadow: "0 20px 60px rgba(11,46,42,.3)",
+            }}
+          >
+            <div style={{ padding: "18px 24px", borderBottom: "1px solid #E0E8E5", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+              <h3 style={{ margin: 0, color: "#0B2E2A" }}>🎯 Mời Business Owner mới</h3>
+              <button
+                onClick={() => setShowInvite(false)}
+                style={{ background: "transparent", border: "none", fontSize: 22, cursor: "pointer", color: "#6B8A85" }}
+              >
+                ✕
+              </button>
+            </div>
+            <div style={{ padding: 24 }}>
+              <div style={{ marginBottom: 14 }}>
+                <label style={{ fontSize: 12, color: "#6B8A85", marginBottom: 4, display: "block" }}>Họ và tên *</label>
+                <input
+                  autoFocus
+                  type="text"
+                  value={inviteForm.name}
+                  onChange={(e) => setInviteForm({ ...inviteForm, name: e.target.value })}
+                  placeholder="Nguyễn Văn BO..."
+                  style={{ width: "100%", padding: "10px 14px", borderRadius: 8, border: "1px solid #d9e0de", fontSize: 14 }}
+                />
+              </div>
+
+              <div style={{ marginBottom: 14 }}>
+                <label style={{ fontSize: 12, color: "#6B8A85", marginBottom: 4, display: "block" }}>Profile BO *</label>
+                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8 }}>
+                  {([
+                    { k: "office", l: "💼 Dân VP" },
+                    { k: "entrepreneur", l: "🚀 Chủ DN" },
+                    { k: "trainer", l: "🏋️ PT/Yoga" },
+                    { k: "ambassador", l: "💚 Đại sứ lối sống" },
+                  ] as const).map((o) => {
+                    const active = inviteForm.role === o.k;
+                    return (
+                      <button
+                        key={o.k}
+                        type="button"
+                        onClick={() => setInviteForm({ ...inviteForm, role: o.k })}
+                        style={{
+                          padding: "10px 12px",
+                          border: active ? "2px solid #00C9A7" : "1px solid #d9e0de",
+                          background: active ? "#E4F7F3" : "#fff",
+                          color: active ? "#0B2E2A" : "#6B8A85",
+                          borderRadius: 8,
+                          fontWeight: active ? 700 : 500,
+                          fontSize: 12,
+                          cursor: "pointer",
+                          textAlign: "left",
+                        }}
+                      >
+                        {o.l}
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+
+              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12, marginBottom: 14 }}>
+                <div>
+                  <label style={{ fontSize: 12, color: "#6B8A85", marginBottom: 4, display: "block" }}>Mã trạm *</label>
+                  <input
+                    type="text"
+                    value={inviteForm.station_code}
+                    onChange={(e) => setInviteForm({ ...inviteForm, station_code: e.target.value })}
+                    placeholder="FP-HN-XXX"
+                    style={{ width: "100%", padding: "10px 14px", borderRadius: 8, border: "1px solid #d9e0de", fontSize: 14 }}
+                  />
+                </div>
+                <div>
+                  <label style={{ fontSize: 12, color: "#6B8A85", marginBottom: 4, display: "block" }}>Thành phố</label>
+                  <input
+                    type="text"
+                    value={inviteForm.city}
+                    onChange={(e) => setInviteForm({ ...inviteForm, city: e.target.value })}
+                    style={{ width: "100%", padding: "10px 14px", borderRadius: 8, border: "1px solid #d9e0de", fontSize: 14 }}
+                  />
+                </div>
+              </div>
+
+              <div style={{ marginBottom: 14 }}>
+                <label style={{ fontSize: 12, color: "#6B8A85", marginBottom: 4, display: "block" }}>Upline (BO cha)</label>
+                <select
+                  value={inviteForm.parent_id}
+                  onChange={(e) => setInviteForm({ ...inviteForm, parent_id: e.target.value })}
+                  style={{ width: "100%", padding: "10px 14px", borderRadius: 8, border: "1px solid #d9e0de", fontSize: 14, background: "#fff" }}
+                >
+                  {nodes
+                    .filter((n) => n.tier < 3 && n.children_ids.length < 7)
+                    .map((n) => (
+                      <option key={n.id} value={n.id}>
+                        {n.name} (Tier {n.tier === 1 && n.parent_id === null ? 0 : n.tier}, {n.children_ids.length}/7 downline)
+                      </option>
+                    ))}
+                </select>
+                <div style={{ fontSize: 11, color: "#6B8A85", marginTop: 4 }}>
+                  BO mới sẽ trở thành downline của BO upline chọn. Tối đa 7 downline mỗi BO.
+                </div>
+              </div>
+
+              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
+                <div>
+                  <label style={{ fontSize: 12, color: "#6B8A85", marginBottom: 4, display: "block" }}>Số điện thoại</label>
+                  <input
+                    type="tel"
+                    value={inviteForm.phone}
+                    onChange={(e) => setInviteForm({ ...inviteForm, phone: e.target.value })}
+                    placeholder="090..."
+                    style={{ width: "100%", padding: "10px 14px", borderRadius: 8, border: "1px solid #d9e0de", fontSize: 14 }}
+                  />
+                </div>
+                <div>
+                  <label style={{ fontSize: 12, color: "#6B8A85", marginBottom: 4, display: "block" }}>Email</label>
+                  <input
+                    type="email"
+                    value={inviteForm.email}
+                    onChange={(e) => setInviteForm({ ...inviteForm, email: e.target.value })}
+                    placeholder="bo@fitpro.vn"
+                    style={{ width: "100%", padding: "10px 14px", borderRadius: 8, border: "1px solid #d9e0de", fontSize: 14 }}
+                  />
+                </div>
+              </div>
+            </div>
+            <div style={{ padding: "16px 24px", borderTop: "1px solid #E0E8E5", display: "flex", gap: 10, justifyContent: "flex-end" }}>
+              <button
+                onClick={() => setShowInvite(false)}
+                style={{
+                  padding: "10px 20px", borderRadius: 8, border: "1px solid #d9e0de", background: "#fff",
+                  color: "#6B8A85", fontWeight: 600, cursor: "pointer",
+                }}
+              >
+                Hủy
+              </button>
+              <button
+                onClick={handleInvite}
+                disabled={!inviteForm.name.trim() || !inviteForm.station_code.trim()}
+                style={{
+                  padding: "10px 20px", borderRadius: 8, border: "none",
+                  background: "linear-gradient(135deg, #00C9A7 0%, #FF8C42 100%)",
+                  color: "#fff", fontWeight: 700, cursor: "pointer",
+                  opacity: !inviteForm.name.trim() || !inviteForm.station_code.trim() ? 0.5 : 1,
+                }}
+              >
+                🎯 Gửi lời mời BO
+              </button>
+            </div>
           </div>
         </div>
       )}

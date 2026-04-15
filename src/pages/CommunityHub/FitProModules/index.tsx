@@ -22,6 +22,25 @@ const TABS: { key: TabKey; label: string; icon: string; priority: string }[] = [
 export default function FitProModulesPage() {
   document.title = "FitPro Modules";
   const [tab, setTab] = useState<TabKey>("f2-station-type");
+  const [createStationType, setCreateStationType] = useState<"home" | "coworking" | null>(null);
+  const [shareContent, setShareContent] = useState<{ title: string; type: string } | null>(null);
+  const [stationForm, setStationForm] = useState({
+    name: "",
+    code: "",
+    address: "",
+    city: "Hà Nội",
+    total_mats: 5,
+    owner_name: "",
+    opening_date: new Date().toISOString().split("T")[0],
+  });
+
+  const handleCreateStation = () => {
+    if (!stationForm.name.trim()) { alert("Vui lòng nhập tên trạm"); return; }
+    if (!stationForm.code.trim()) { alert("Vui lòng nhập mã trạm"); return; }
+    alert(`✓ Đã tạo ${createStationType === "home" ? "Home FitPro" : "Co-Working FitPro"}: ${stationForm.name} (${stationForm.code})\nSetup 72h sẽ bắt đầu.`);
+    setCreateStationType(null);
+    setStationForm({ name: "", code: "", address: "", city: "Hà Nội", total_mats: 5, owner_name: "", opening_date: new Date().toISOString().split("T")[0] });
+  };
 
   return (
     <div style={{ padding: 20, background: "#F5F9F8", minHeight: "calc(100vh - 60px)" }}>
@@ -92,7 +111,13 @@ export default function FitProModulesPage() {
                     <div>👥 Khách: <strong>{s.customers}</strong></div>
                     <div>💵 Setup cost: <strong>{s.setup_cost}</strong></div>
                   </div>
-                  <button style={{ marginTop: 12, width: "100%", padding: "8px 14px", background: s.color, color: "#fff", border: "none", borderRadius: 6, fontWeight: 600, cursor: "pointer" }}>
+                  <button
+                    onClick={() => {
+                      setCreateStationType(s.type as "home" | "coworking");
+                      setStationForm({ ...stationForm, total_mats: s.type === "home" ? 5 : 12 });
+                    }}
+                    style={{ marginTop: 12, width: "100%", padding: "8px 14px", background: s.color, color: "#fff", border: "none", borderRadius: 6, fontWeight: 600, cursor: "pointer" }}
+                  >
                     Tạo trạm loại này
                   </button>
                 </div>
@@ -412,7 +437,10 @@ export default function FitProModulesPage() {
                     <div style={{ fontSize: 13, fontWeight: 600, marginTop: 4 }}>{c.title}</div>
                     <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginTop: 8 }}>
                       <span style={{ fontSize: 11, color: "#6B8A85" }}>📤 {c.shares} lượt lan tỏa</span>
-                      <button style={{ padding: "4px 10px", background: "#00C9A7", color: "#fff", border: "none", borderRadius: 4, fontSize: 11, cursor: "pointer" }}>
+                      <button
+                        onClick={() => setShareContent({ title: c.title, type: c.type })}
+                        style={{ padding: "4px 10px", background: "#00C9A7", color: "#fff", border: "none", borderRadius: 4, fontSize: 11, cursor: "pointer" }}
+                      >
                         Chia sẻ
                       </button>
                     </div>
@@ -531,6 +559,245 @@ export default function FitProModulesPage() {
           </div>
         )}
       </div>
+
+      {/* ── Modal Chia sẻ content ── */}
+      {shareContent && (
+        <div
+          onClick={() => setShareContent(null)}
+          style={{
+            position: "fixed", inset: 0, background: "rgba(11,46,42,.5)",
+            display: "flex", alignItems: "center", justifyContent: "center", zIndex: 1000,
+          }}
+        >
+          <div
+            onClick={(e) => e.stopPropagation()}
+            style={{
+              background: "#fff", borderRadius: 14, width: 480, maxWidth: "90vw",
+              boxShadow: "0 20px 60px rgba(11,46,42,.3)",
+            }}
+          >
+            <div style={{ padding: "18px 24px", borderBottom: "1px solid #E0E8E5", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+              <h3 style={{ margin: 0, color: "#0B2E2A" }}>📤 Chia sẻ nội dung</h3>
+              <button
+                onClick={() => setShareContent(null)}
+                style={{ background: "transparent", border: "none", fontSize: 22, cursor: "pointer", color: "#6B8A85" }}
+              >
+                ✕
+              </button>
+            </div>
+            <div style={{ padding: 24 }}>
+              <div style={{ padding: 14, background: "#F5F9F8", borderRadius: 10, marginBottom: 16 }}>
+                <div style={{ fontSize: 11, color: "#6B8A85" }}>{shareContent.type}</div>
+                <div style={{ fontSize: 15, fontWeight: 700, color: "#0B2E2A", marginTop: 4 }}>{shareContent.title}</div>
+              </div>
+
+              <div style={{ fontSize: 12, color: "#6B8A85", marginBottom: 10 }}>Chọn kênh chia sẻ tới khách hàng tiềm năng:</div>
+              <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 10, marginBottom: 16 }}>
+                {[
+                  { key: "zalo", icon: "💬", label: "Zalo", color: "#0068ff" },
+                  { key: "fb", icon: "📘", label: "Facebook", color: "#1877f2" },
+                  { key: "messenger", icon: "📨", label: "Messenger", color: "#0084ff" },
+                  { key: "sms", icon: "📱", label: "SMS", color: "#00C9A7" },
+                  { key: "email", icon: "📧", label: "Email", color: "#722ed1" },
+                  { key: "qr", icon: "🔳", label: "QR Code", color: "#0B2E2A" },
+                  { key: "copy", icon: "🔗", label: "Copy link", color: "#6B8A85" },
+                  { key: "download", icon: "⬇️", label: "Tải về", color: "#FF8C42" },
+                ].map((ch) => (
+                  <button
+                    key={ch.key}
+                    onClick={() => {
+                      if (ch.key === "copy") {
+                        try {
+                          navigator.clipboard.writeText(`https://fitpro.vn/content/${shareContent.title.toLowerCase().replace(/\s+/g, "-")}`);
+                          alert("✓ Đã copy link vào clipboard");
+                        } catch {
+                          alert("Trình duyệt không hỗ trợ copy");
+                        }
+                      } else {
+                        alert(`✓ Đã gửi "${shareContent.title}" qua ${ch.label}`);
+                      }
+                      setShareContent(null);
+                    }}
+                    style={{
+                      padding: "14px 8px",
+                      border: `1px solid ${ch.color}44`,
+                      background: "#fff",
+                      borderRadius: 8,
+                      cursor: "pointer",
+                      display: "flex",
+                      flexDirection: "column",
+                      alignItems: "center",
+                      gap: 6,
+                      transition: "all .15s",
+                    }}
+                    onMouseEnter={(e) => { e.currentTarget.style.background = `${ch.color}11`; e.currentTarget.style.borderColor = ch.color; }}
+                    onMouseLeave={(e) => { e.currentTarget.style.background = "#fff"; e.currentTarget.style.borderColor = `${ch.color}44`; }}
+                  >
+                    <span style={{ fontSize: 22 }}>{ch.icon}</span>
+                    <span style={{ fontSize: 11, color: ch.color, fontWeight: 600 }}>{ch.label}</span>
+                  </button>
+                ))}
+              </div>
+
+              <div style={{ padding: 12, background: "#FFF7E6", borderRadius: 8, fontSize: 11, color: "#8B5A00" }}>
+                💡 Mỗi lượt chia sẻ được tracking để tính KPI lan tỏa của BO. Link chia sẻ có UTM gắn mã BO của bạn để tính hoa hồng khi khách chuyển đổi.
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ── Modal Tạo trạm mới ── */}
+      {createStationType && (
+        <div
+          onClick={() => setCreateStationType(null)}
+          style={{
+            position: "fixed", inset: 0, background: "rgba(11,46,42,.5)",
+            display: "flex", alignItems: "center", justifyContent: "center", zIndex: 1000,
+          }}
+        >
+          <div
+            onClick={(e) => e.stopPropagation()}
+            style={{
+              background: "#fff", borderRadius: 14, width: 560, maxWidth: "90vw",
+              boxShadow: "0 20px 60px rgba(11,46,42,.3)",
+            }}
+          >
+            <div style={{
+              padding: "18px 24px",
+              borderBottom: "1px solid #E0E8E5",
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "center",
+              background: createStationType === "home"
+                ? "linear-gradient(135deg, #E4F7F3 0%, #fff 100%)"
+                : "linear-gradient(135deg, #FFF0E3 0%, #fff 100%)",
+              borderRadius: "14px 14px 0 0",
+            }}>
+              <h3 style={{ margin: 0, color: "#0B2E2A" }}>
+                {createStationType === "home" ? "🏠 Tạo Home FitPro" : "🏢 Tạo Co-Working FitPro"}
+              </h3>
+              <button
+                onClick={() => setCreateStationType(null)}
+                style={{ background: "transparent", border: "none", fontSize: 22, cursor: "pointer", color: "#6B8A85" }}
+              >
+                ✕
+              </button>
+            </div>
+            <div style={{ padding: 24 }}>
+              <div style={{ padding: 12, background: "#F5F9F8", borderRadius: 8, marginBottom: 16, fontSize: 12, color: "#6B8A85" }}>
+                ⏰ Giờ vận hành: <strong>6:00 - 9:00</strong> sáng ·
+                🧘 Số thảm: <strong>{createStationType === "home" ? "3-7" : "5-20"}</strong> ·
+                ⚡ Sẵn sàng đón khách sau <strong>72 giờ</strong> setup
+              </div>
+
+              <div style={{ marginBottom: 14 }}>
+                <label style={{ fontSize: 12, color: "#6B8A85", marginBottom: 4, display: "block" }}>Tên trạm *</label>
+                <input
+                  autoFocus
+                  type="text"
+                  value={stationForm.name}
+                  onChange={(e) => setStationForm({ ...stationForm, name: e.target.value })}
+                  placeholder={createStationType === "home" ? "VD: Trạm Nguyễn Văn A (Hà Đông)" : "VD: Trạm Cầu Giấy Co-Work"}
+                  style={{ width: "100%", padding: "10px 14px", borderRadius: 8, border: "1px solid #d9e0de", fontSize: 14 }}
+                />
+              </div>
+
+              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12, marginBottom: 14 }}>
+                <div>
+                  <label style={{ fontSize: 12, color: "#6B8A85", marginBottom: 4, display: "block" }}>Mã trạm *</label>
+                  <input
+                    type="text"
+                    value={stationForm.code}
+                    onChange={(e) => setStationForm({ ...stationForm, code: e.target.value })}
+                    placeholder="FP-HN-XXX"
+                    style={{ width: "100%", padding: "10px 14px", borderRadius: 8, border: "1px solid #d9e0de", fontSize: 14 }}
+                  />
+                </div>
+                <div>
+                  <label style={{ fontSize: 12, color: "#6B8A85", marginBottom: 4, display: "block" }}>Thành phố</label>
+                  <input
+                    type="text"
+                    value={stationForm.city}
+                    onChange={(e) => setStationForm({ ...stationForm, city: e.target.value })}
+                    style={{ width: "100%", padding: "10px 14px", borderRadius: 8, border: "1px solid #d9e0de", fontSize: 14 }}
+                  />
+                </div>
+              </div>
+
+              <div style={{ marginBottom: 14 }}>
+                <label style={{ fontSize: 12, color: "#6B8A85", marginBottom: 4, display: "block" }}>Địa chỉ</label>
+                <input
+                  type="text"
+                  value={stationForm.address}
+                  onChange={(e) => setStationForm({ ...stationForm, address: e.target.value })}
+                  placeholder="Số nhà, đường, quận..."
+                  style={{ width: "100%", padding: "10px 14px", borderRadius: 8, border: "1px solid #d9e0de", fontSize: 14 }}
+                />
+              </div>
+
+              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12, marginBottom: 14 }}>
+                <div>
+                  <label style={{ fontSize: 12, color: "#6B8A85", marginBottom: 4, display: "block" }}>
+                    Số thảm tập ({createStationType === "home" ? "3-7" : "5-20"})
+                  </label>
+                  <input
+                    type="number"
+                    min={createStationType === "home" ? 3 : 5}
+                    max={createStationType === "home" ? 7 : 20}
+                    value={stationForm.total_mats}
+                    onChange={(e) => setStationForm({ ...stationForm, total_mats: Number(e.target.value) })}
+                    style={{ width: "100%", padding: "10px 14px", borderRadius: 8, border: "1px solid #d9e0de", fontSize: 14 }}
+                  />
+                </div>
+                <div>
+                  <label style={{ fontSize: 12, color: "#6B8A85", marginBottom: 4, display: "block" }}>Ngày khai trương</label>
+                  <input
+                    type="date"
+                    value={stationForm.opening_date}
+                    onChange={(e) => setStationForm({ ...stationForm, opening_date: e.target.value })}
+                    style={{ width: "100%", padding: "10px 14px", borderRadius: 8, border: "1px solid #d9e0de", fontSize: 14 }}
+                  />
+                </div>
+              </div>
+
+              <div style={{ marginBottom: 14 }}>
+                <label style={{ fontSize: 12, color: "#6B8A85", marginBottom: 4, display: "block" }}>Chủ trạm (BO phụ trách)</label>
+                <input
+                  type="text"
+                  value={stationForm.owner_name}
+                  onChange={(e) => setStationForm({ ...stationForm, owner_name: e.target.value })}
+                  placeholder="Tên BO chịu trách nhiệm..."
+                  style={{ width: "100%", padding: "10px 14px", borderRadius: 8, border: "1px solid #d9e0de", fontSize: 14 }}
+                />
+              </div>
+            </div>
+            <div style={{ padding: "16px 24px", borderTop: "1px solid #E0E8E5", display: "flex", gap: 10, justifyContent: "flex-end" }}>
+              <button
+                onClick={() => setCreateStationType(null)}
+                style={{
+                  padding: "10px 20px", borderRadius: 8, border: "1px solid #d9e0de", background: "#fff",
+                  color: "#6B8A85", fontWeight: 600, cursor: "pointer",
+                }}
+              >
+                Hủy
+              </button>
+              <button
+                onClick={handleCreateStation}
+                disabled={!stationForm.name.trim() || !stationForm.code.trim()}
+                style={{
+                  padding: "10px 20px", borderRadius: 8, border: "none",
+                  background: createStationType === "home" ? "#4DE4C4" : "#FF8C42",
+                  color: "#fff", fontWeight: 700, cursor: "pointer",
+                  opacity: !stationForm.name.trim() || !stationForm.code.trim() ? 0.5 : 1,
+                }}
+              >
+                ✓ Tạo trạm & Bắt đầu setup 72h
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
