@@ -1,10 +1,22 @@
 // Persistence layer — localStorage cho MVP. Khi có BE: thay bằng API calls,
 // giữ nguyên signature các hàm export bên dưới.
 
-import type { TaxpayerProfile, TaxDeclaration } from "../domain/types";
+import type { TaxpayerProfile, TaxDeclaration, RevenueRecord } from "../domain/types";
+
+export interface SupportRequest {
+  id: string;
+  fullName: string;
+  phone: string;
+  topic: string;
+  message: string;
+  createdAt: string;
+  status: "pending" | "contacted" | "resolved";
+}
 
 const KEY_PROFILE = "reborn.tax.profile";
 const KEY_DECLARATIONS = "reborn.tax.declarations";
+const KEY_MANUAL_REVENUES = "reborn.tax.manual_revenues";
+const KEY_SUPPORT_REQUESTS = "reborn.tax.support_requests";
 
 function readLS<T>(key: string, fallback: T): T {
   if (typeof window === "undefined") return fallback;
@@ -72,5 +84,48 @@ export const taxStorage = {
   deleteDeclaration(id: string): void {
     const all = this.listDeclarations().filter((d) => d.id !== id);
     writeLS(KEY_DECLARATIONS, all);
+  },
+
+  // ═══ Manual revenue adjustments ══════════════════════════════════════════
+  // Cho phép chủ hộ nhập tay doanh thu bán ngoài hệ thống (không có trong
+  // adapter nguồn). Được merge vào kết quả tính thuế.
+  listManualRevenues(): RevenueRecord[] {
+    return readLS<RevenueRecord[]>(KEY_MANUAL_REVENUES, []);
+  },
+
+  addManualRevenue(record: Omit<RevenueRecord, "id" | "sourceModule" | "sourceRefId">): RevenueRecord {
+    const saved: RevenueRecord = {
+      ...record,
+      id: `manual-${Date.now()}`,
+      sourceModule: "manual",
+      sourceRefId: `manual-${Date.now()}`,
+    };
+    const all = this.listManualRevenues();
+    all.unshift(saved);
+    writeLS(KEY_MANUAL_REVENUES, all);
+    return saved;
+  },
+
+  deleteManualRevenue(id: string): void {
+    const all = this.listManualRevenues().filter((r) => r.id !== id);
+    writeLS(KEY_MANUAL_REVENUES, all);
+  },
+
+  // ═══ Support requests ════════════════════════════════════════════════════
+  listSupportRequests(): SupportRequest[] {
+    return readLS<SupportRequest[]>(KEY_SUPPORT_REQUESTS, []);
+  },
+
+  addSupportRequest(req: Omit<SupportRequest, "id" | "createdAt" | "status">): SupportRequest {
+    const saved: SupportRequest = {
+      ...req,
+      id: `sr-${Date.now()}`,
+      createdAt: new Date().toISOString(),
+      status: "pending",
+    };
+    const all = this.listSupportRequests();
+    all.unshift(saved);
+    writeLS(KEY_SUPPORT_REQUESTS, all);
+    return saved;
   },
 };

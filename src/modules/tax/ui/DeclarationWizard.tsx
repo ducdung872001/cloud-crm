@@ -1,6 +1,7 @@
 // T3 — Declaration Wizard: 5 bước lập tờ khai thuế 01/CNKD và nộp eTax.
 
 import React, { useMemo, useState } from "react";
+import { Link } from "react-router-dom";
 import { Card, Button, Alert, Badge, formatVND } from "./common";
 import { taxTheme as T } from "./theme";
 import { taxEngine } from "../domain/engine";
@@ -166,9 +167,9 @@ export default function DeclarationWizard() {
       {noProfile && (
         <Alert tone="warning" title="Chưa có hồ sơ thuế">
           Vui lòng hoàn tất{" "}
-          <a href="/tax/profile" style={{ fontWeight: 700 }}>
+          <Link to="/tax/profile" style={{ fontWeight: 700 }}>
             T1 — Hồ sơ thuế
-          </a>{" "}
+          </Link>{" "}
           trước khi lập tờ khai.
         </Alert>
       )}
@@ -300,9 +301,9 @@ export default function DeclarationWizard() {
               <Alert tone="info">
                 Dữ liệu được lấy từ adapter hiện tại. Bạn có thể bổ sung/điều
                 chỉnh thủ công ở tab{" "}
-                <a href="/tax/book" style={{ fontWeight: 700 }}>
+                <Link to="/tax/book" style={{ fontWeight: 700 }}>
                   T2 — Sổ DT/CP
-                </a>
+                </Link>
                 .
               </Alert>
               <div
