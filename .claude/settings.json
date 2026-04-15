@@ -53,7 +53,8 @@
       "Read(//c/Users/HP/.claude/projects/d--Git-reborn-reborn-cloud-cloud-ver2-cloud-crm/**)",
       "Bash(mkdir -p /tmp/bt-template)",
       "Bash(cp docs/backend-tasks/README.md /tmp/bt-template/README.md)",
-      "Bash(echo \"# \\(empty\\)\")"
+      "Bash(echo \"# \\(empty\\)\")",
+      "Bash(python docs/bugs/gen-retest-guide.py)"
     ],
     "additionalDirectories": [
       "\\tmp",
