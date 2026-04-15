@@ -49,7 +49,8 @@
       "Bash(ls -la d:/Git/reborn/reborn-cloud/cloud-ver2/cloud-crm/docs/urd/diagrams/*.png)",
       "Bash(python ../userguides/tooling/md_to_docx.py SAD-full.md SAD-Reborn-CRM.docx --title \"Reborn CRM\" --subtitle \"Solution Architecture Document — Cửa hàng & Spa\" --header \"SAD — Reborn CRM\" --cover-label \"SOLUTION ARCHITECTURE DOCUMENT\" --start-marker \"Part 00\")",
       "Bash(grep -n \"Thanh toán hoa hồng BO\\\\|Xác nhận thanh toán\\\\|^}$\" src/pages/CommunityHub/Partners/index.tsx)",
-      "Bash(grep -n \"Slot trống\\\\|^}$\" src/pages/CommunityHub/NetworkTree/index.tsx)"
+      "Bash(grep -n \"Slot trống\\\\|^}$\" src/pages/CommunityHub/NetworkTree/index.tsx)",
+      "Bash(grep -v \"onClick\\\\|onMouseEnter\\\\|onMouseLeave\\\\|type=\\\\\"button\\\\\"$\")"
     ]
   }
 }

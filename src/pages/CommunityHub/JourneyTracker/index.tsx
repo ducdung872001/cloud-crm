@@ -244,8 +244,44 @@ export default function JourneyTrackerPage() {
                 <div style={{ fontSize: 12, color: "#6B4A00", marginTop: 4 }}>
                   Thành viên đã đến giai đoạn outcome — gợi ý gia hạn gói 90 ngày tiếp theo.
                 </div>
+                <div style={{ display: "flex", gap: 8, marginTop: 10 }}>
+                  <button
+                    onClick={() => alert(`📨 Đã gửi SMS + Zalo nhắc gia hạn cho ${selected.name}`)}
+                    style={{ padding: "8px 14px", background: "#FF8C42", color: "#fff", border: "none", borderRadius: 6, fontSize: 12, fontWeight: 600, cursor: "pointer" }}
+                  >
+                    📨 Gửi nhắc gia hạn
+                  </button>
+                  <button
+                    onClick={() => alert(`✓ Đã tạo đơn gia hạn 90 ngày tiếp theo cho ${selected.name}. Chuyển tới trang thanh toán...`)}
+                    style={{ padding: "8px 14px", background: "#00C9A7", color: "#fff", border: "none", borderRadius: 6, fontSize: 12, fontWeight: 600, cursor: "pointer" }}
+                  >
+                    ✓ Tạo đơn gia hạn ngay
+                  </button>
+                </div>
               </div>
             )}
+
+            {/* Action buttons — always visible */}
+            <div style={{ marginTop: 16, display: "flex", gap: 8, flexWrap: "wrap" }}>
+              <button
+                onClick={() => alert(`🩺 Đã đặt lịch xét nghiệm Medlatec cho ${selected.name}`)}
+                style={{ padding: "8px 14px", background: "#722ed1", color: "#fff", border: "none", borderRadius: 6, fontSize: 12, fontWeight: 600, cursor: "pointer" }}
+              >
+                🩺 Đặt lịch xét nghiệm
+              </button>
+              <button
+                onClick={() => alert(`📝 Đã cập nhật chỉ số cơ thể cho ${selected.name}`)}
+                style={{ padding: "8px 14px", background: "#00C9A7", color: "#fff", border: "none", borderRadius: 6, fontSize: 12, fontWeight: 600, cursor: "pointer" }}
+              >
+                📝 Cập nhật chỉ số
+              </button>
+              <button
+                onClick={() => alert(`💬 Đã mở cửa sổ chat với ${selected.name}`)}
+                style={{ padding: "8px 14px", background: "#1890ff", color: "#fff", border: "none", borderRadius: 6, fontSize: 12, fontWeight: 600, cursor: "pointer" }}
+              >
+                💬 Chat
+              </button>
+            </div>
           </div>
         )}
       </div>

@@ -176,7 +176,10 @@ export default function FitProModulesPage() {
                     <div>✅ Baseline: 2026-02-03 (Done)</div>
                     <div>🔬 Re-test: 2026-04-28 (Upcoming)</div>
                   </div>
-                  <button style={{ width: "100%", padding: "8px", background: "#FF8C42", color: "#fff", border: "none", borderRadius: 6, cursor: "pointer" }}>
+                  <button
+                    onClick={() => alert("📞 Đã kết nối API Medlatec — đặt lịch lấy mẫu tại nhà trạm FitPro.\n📅 Dự kiến: 2026-04-28 08:00\n🩺 Gói xét nghiệm: Tổng quát 12 chỉ số")}
+                    style={{ width: "100%", padding: "8px", background: "#FF8C42", color: "#fff", border: "none", borderRadius: 6, cursor: "pointer" }}
+                  >
                     📞 Đặt lịch Medlatec
                   </button>
                 </div>
@@ -320,7 +323,13 @@ export default function FitProModulesPage() {
                       </div>
                       <div style={{ textAlign: "right" }}>
                         <div style={{ fontSize: 18, fontWeight: 700, color: "#00C9A7" }}>{[1.2, 3.5, 8.0, 12.4, 5.1][i]} km</div>
-                        <button style={{ padding: "4px 10px", background: "#00C9A7", color: "#fff", border: "none", borderRadius: 4, fontSize: 11, marginTop: 4, cursor: "pointer" }}>
+                        <button
+                          onClick={() => {
+                            const mapsUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(s.address + ", " + s.city)}`;
+                            window.open(mapsUrl, "_blank", "noopener");
+                          }}
+                          style={{ padding: "4px 10px", background: "#00C9A7", color: "#fff", border: "none", borderRadius: 4, fontSize: 11, marginTop: 4, cursor: "pointer" }}
+                        >
                           Chỉ đường
                         </button>
                       </div>

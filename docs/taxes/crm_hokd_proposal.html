@@ -1,0 +1,1469 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CRM Hộ Kinh Doanh Cá Thể – Đề xuất Sản phẩm & Mô hình Kinh doanh</title>
+<style>
+  :root {
+    --primary: #1A3A5C;
+    --primary-light: #2563A8;
+    --accent: #E8811A;
+    --accent-soft: #FEF3E6;
+    --teal: #0F7367;
+    --teal-soft: #E1F5F2;
+    --red: #C0392B;
+    --red-soft: #FDECEA;
+    --green: #1A6B3C;
+    --green-soft: #E8F5EE;
+    --gray: #64748B;
+    --gray-light: #F1F5F9;
+    --border: #E2E8F0;
+    --text: #1E293B;
+    --text-muted: #64748B;
+    --white: #FFFFFF;
+    --shadow: 0 2px 12px rgba(0,0,0,0.08);
+    --shadow-md: 0 4px 24px rgba(0,0,0,0.12);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    background: #F8FAFC;
+    color: var(--text);
+    font-size: 14px;
+    line-height: 1.6;
+  }
+  /* HEADER */
+  .doc-header {
+    background: var(--primary);
+    color: white;
+    padding: 40px 48px 32px;
+    position: relative;
+    overflow: hidden;
+  }
+  .doc-header::before {
+    content: '';
+    position: absolute;
+    top: -60px; right: -60px;
+    width: 260px; height: 260px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.04);
+  }
+  .doc-header::after {
+    content: '';
+    position: absolute;
+    bottom: -40px; left: 200px;
+    width: 180px; height: 180px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.03);
+  }
+  .header-tag {
+    display: inline-block;
+    background: var(--accent);
+    color: white;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    padding: 4px 12px;
+    border-radius: 3px;
+    margin-bottom: 16px;
+  }
+  .doc-header h1 {
+    font-size: 28px;
+    font-weight: 700;
+    line-height: 1.3;
+    margin-bottom: 8px;
+  }
+  .doc-header p {
+    color: rgba(255,255,255,0.7);
+    font-size: 14px;
+    max-width: 600px;
+  }
+  .header-meta {
+    display: flex;
+    gap: 32px;
+    margin-top: 24px;
+    flex-wrap: wrap;
+  }
+  .meta-item {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+  .meta-label {
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    color: rgba(255,255,255,0.5);
+  }
+  .meta-value {
+    font-size: 13px;
+    font-weight: 600;
+    color: rgba(255,255,255,0.9);
+  }
+  /* NAV TABS */
+  .tab-nav {
+    background: white;
+    border-bottom: 2px solid var(--border);
+    display: flex;
+    gap: 0;
+    padding: 0 48px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+    overflow-x: auto;
+  }
+  .tab-btn {
+    background: none;
+    border: none;
+    padding: 14px 20px;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--text-muted);
+    cursor: pointer;
+    border-bottom: 2.5px solid transparent;
+    margin-bottom: -2px;
+    white-space: nowrap;
+    transition: all 0.2s;
+  }
+  .tab-btn:hover { color: var(--primary-light); }
+  .tab-btn.active {
+    color: var(--primary-light);
+    border-bottom-color: var(--primary-light);
+    font-weight: 600;
+  }
+  /* CONTENT */
+  .content { max-width: 1100px; margin: 0 auto; padding: 40px 48px 80px; }
+  .tab-pane { display: none; }
+  .tab-pane.active { display: block; }
+  /* SECTION TITLES */
+  .section-label {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 1.2px;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 6px;
+  }
+  .section-title {
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--primary);
+    margin-bottom: 10px;
+  }
+  .section-desc {
+    color: var(--text-muted);
+    font-size: 14px;
+    max-width: 700px;
+    margin-bottom: 32px;
+    line-height: 1.7;
+  }
+  /* OVERVIEW CARDS */
+  .overview-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+    margin-bottom: 40px;
+  }
+  .overview-card {
+    background: white;
+    border-radius: 12px;
+    padding: 24px;
+    border: 1px solid var(--border);
+    box-shadow: var(--shadow);
+  }
+  .overview-card .icon {
+    width: 44px; height: 44px;
+    border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 20px;
+    margin-bottom: 14px;
+  }
+  .overview-card h3 { font-size: 15px; font-weight: 700; color: var(--primary); margin-bottom: 6px; }
+  .overview-card p { font-size: 13px; color: var(--text-muted); line-height: 1.6; }
+  /* PARTNER ECOSYSTEM */
+  .ecosystem {
+    background: white;
+    border-radius: 16px;
+    border: 1px solid var(--border);
+    padding: 36px;
+    margin-bottom: 32px;
+    box-shadow: var(--shadow);
+  }
+  .ecosystem-grid {
+    display: grid;
+    grid-template-columns: 1fr 80px 1fr 80px 1fr 80px 1fr;
+    align-items: center;
+    gap: 0;
+    margin-top: 28px;
+  }
+  .partner-card {
+    border-radius: 12px;
+    padding: 20px 16px;
+    text-align: center;
+    border: 1.5px solid;
+  }
+  .partner-card.platform { background: #EEF2FF; border-color: #6366F1; }
+  .partner-card.tax { background: var(--green-soft); border-color: var(--green); }
+  .partner-card.bank { background: #EFF6FF; border-color: #2563EB; }
+  .partner-card.user { background: var(--accent-soft); border-color: var(--accent); }
+  .partner-icon { font-size: 28px; margin-bottom: 8px; }
+  .partner-name { font-size: 12px; font-weight: 700; margin-bottom: 4px; }
+  .partner-card.platform .partner-name { color: #4338CA; }
+  .partner-card.tax .partner-name { color: var(--green); }
+  .partner-card.bank .partner-name { color: #1D4ED8; }
+  .partner-card.user .partner-name { color: var(--accent); }
+  .partner-role { font-size: 11px; color: var(--text-muted); line-height: 1.4; }
+  .arrow-col { display: flex; flex-direction: column; align-items: center; gap: 4px; }
+  .arrow-line { color: var(--text-muted); font-size: 18px; }
+  .arrow-label { font-size: 10px; color: var(--text-muted); text-align: center; line-height: 1.3; }
+  /* REVENUE MODEL */
+  .revenue-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+    margin-top: 20px;
+  }
+  .revenue-table th {
+    background: var(--primary);
+    color: white;
+    padding: 10px 14px;
+    text-align: left;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.4px;
+  }
+  .revenue-table td {
+    padding: 10px 14px;
+    border-bottom: 1px solid var(--border);
+    vertical-align: top;
+  }
+  .revenue-table tr:nth-child(even) td { background: #FAFBFC; }
+  .revenue-table tr:hover td { background: #F0F4FF; }
+  /* FEATURE MODULE */
+  .module-list { display: flex; flex-direction: column; gap: 16px; }
+  .module-card {
+    background: white;
+    border-radius: 12px;
+    border: 1px solid var(--border);
+    overflow: hidden;
+    box-shadow: var(--shadow);
+  }
+  .module-header {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 18px 24px;
+    cursor: pointer;
+    user-select: none;
+    transition: background 0.2s;
+  }
+  .module-header:hover { background: var(--gray-light); }
+  .module-num {
+    width: 32px; height: 32px;
+    border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 13px;
+    font-weight: 700;
+    color: white;
+    flex-shrink: 0;
+  }
+  .module-info { flex: 1; }
+  .module-title { font-size: 14px; font-weight: 700; color: var(--primary); }
+  .module-subtitle { font-size: 12px; color: var(--text-muted); margin-top: 2px; }
+  .module-badge {
+    font-size: 10px;
+    font-weight: 700;
+    padding: 3px 10px;
+    border-radius: 20px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  .badge-new { background: #FEF3E6; color: var(--accent); border: 1px solid #FBBF66; }
+  .badge-core { background: var(--teal-soft); color: var(--teal); border: 1px solid #5FC9B8; }
+  .badge-enhanced { background: #EEF2FF; color: #4338CA; border: 1px solid #A5B4FC; }
+  .module-chevron {
+    color: var(--text-muted);
+    transition: transform 0.2s;
+    font-size: 12px;
+  }
+  .module-header.open .module-chevron { transform: rotate(180deg); }
+  .module-body {
+    display: none;
+    padding: 0 24px 20px;
+    border-top: 1px solid var(--border);
+  }
+  .module-body.open { display: block; }
+  .feature-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px;
+    margin-top: 16px;
+  }
+  .feature-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    font-size: 13px;
+    color: var(--text);
+    padding: 8px 10px;
+    border-radius: 7px;
+    border: 1px solid var(--border);
+    background: #FAFBFC;
+  }
+  .feature-dot {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    margin-top: 5px;
+    flex-shrink: 0;
+  }
+  /* TAX MODULE SPECIAL */
+  .tax-highlight {
+    background: var(--green-soft);
+    border-radius: 10px;
+    padding: 20px 24px;
+    border-left: 4px solid var(--green);
+    margin: 20px 0;
+  }
+  .tax-highlight h4 { font-size: 14px; font-weight: 700; color: var(--green); margin-bottom: 8px; }
+  .tax-highlight p { font-size: 13px; color: var(--text); line-height: 1.6; }
+  /* BUSINESS MODEL */
+  .biz-section { margin-bottom: 36px; }
+  .biz-section h3 {
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--primary);
+    margin-bottom: 16px;
+    padding-bottom: 8px;
+    border-bottom: 2px solid var(--border);
+  }
+  .value-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 14px;
+    margin-bottom: 20px;
+  }
+  .value-card {
+    border-radius: 10px;
+    padding: 18px 20px;
+    border: 1px solid;
+  }
+  .value-card.platform { background: #F5F3FF; border-color: #C4B5FD; }
+  .value-card.tax { background: var(--green-soft); border-color: #86EFAC; }
+  .value-card.bank { background: #EFF6FF; border-color: #BAD4FF; }
+  .value-card.user { background: var(--accent-soft); border-color: #FCD49A; }
+  .value-card h4 { font-size: 13px; font-weight: 700; margin-bottom: 10px; }
+  .value-card.platform h4 { color: #4338CA; }
+  .value-card.tax h4 { color: var(--green); }
+  .value-card.bank h4 { color: #1D4ED8; }
+  .value-card.user h4 { color: var(--accent); }
+  .value-card ul { list-style: none; display: flex; flex-direction: column; gap: 5px; }
+  .value-card ul li { font-size: 12px; color: var(--text); padding-left: 14px; position: relative; }
+  .value-card ul li::before {
+    content: '✓';
+    position: absolute; left: 0;
+    font-size: 11px;
+    font-weight: 700;
+  }
+  .value-card.platform ul li::before { color: #6366F1; }
+  .value-card.tax ul li::before { color: var(--green); }
+  .value-card.bank ul li::before { color: #2563EB; }
+  .value-card.user ul li::before { color: var(--accent); }
+  /* REVENUE FLOW */
+  .revenue-flow {
+    background: white;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 28px;
+    box-shadow: var(--shadow);
+  }
+  .flow-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 0;
+    border-bottom: 1px dashed var(--border);
+  }
+  .flow-row:last-child { border-bottom: none; }
+  .flow-from {
+    min-width: 130px;
+    font-size: 12px;
+    font-weight: 600;
+    padding: 5px 10px;
+    border-radius: 6px;
+    text-align: center;
+  }
+  .flow-arrow { font-size: 16px; color: var(--text-muted); }
+  .flow-to {
+    min-width: 130px;
+    font-size: 12px;
+    font-weight: 600;
+    padding: 5px 10px;
+    border-radius: 6px;
+    text-align: center;
+  }
+  .flow-desc { font-size: 12px; color: var(--text-muted); flex: 1; }
+  .flow-amount {
+    font-size: 12px;
+    font-weight: 700;
+    min-width: 100px;
+    text-align: right;
+    color: var(--primary);
+  }
+  /* KPIS */
+  .kpi-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+    margin-bottom: 32px;
+  }
+  .kpi-card {
+    background: white;
+    border-radius: 12px;
+    padding: 20px;
+    border: 1px solid var(--border);
+    box-shadow: var(--shadow);
+    text-align: center;
+  }
+  .kpi-value {
+    font-size: 28px;
+    font-weight: 800;
+    color: var(--primary);
+    line-height: 1;
+    margin-bottom: 6px;
+  }
+  .kpi-label {
+    font-size: 12px;
+    color: var(--text-muted);
+    line-height: 1.4;
+  }
+  /* ROADMAP */
+  .roadmap { display: flex; flex-direction: column; gap: 0; }
+  .phase {
+    display: flex;
+    gap: 24px;
+    padding-bottom: 32px;
+    position: relative;
+  }
+  .phase::before {
+    content: '';
+    position: absolute;
+    left: 19px; top: 40px;
+    bottom: 0; width: 2px;
+    background: var(--border);
+  }
+  .phase:last-child::before { display: none; }
+  .phase-dot {
+    width: 40px; height: 40px;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 14px;
+    font-weight: 700;
+    color: white;
+    flex-shrink: 0;
+    z-index: 1;
+  }
+  .phase-content { flex: 1; }
+  .phase-period {
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 4px;
+  }
+  .phase-content h4 { font-size: 15px; font-weight: 700; color: var(--primary); margin-bottom: 8px; }
+  .phase-tasks {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-top: 8px;
+  }
+  .task-tag {
+    font-size: 11px;
+    padding: 4px 10px;
+    border-radius: 20px;
+    background: var(--gray-light);
+    color: var(--text-muted);
+    border: 1px solid var(--border);
+  }
+  /* CALLOUT */
+  .callout {
+    border-radius: 10px;
+    padding: 16px 20px;
+    margin: 20px 0;
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+  }
+  .callout.info { background: #EFF6FF; border: 1px solid #BAD4FF; }
+  .callout.warning { background: var(--accent-soft); border: 1px solid #FCD49A; }
+  .callout.success { background: var(--green-soft); border: 1px solid #86EFAC; }
+  .callout-icon { font-size: 18px; flex-shrink: 0; margin-top: 1px; }
+  .callout-body { font-size: 13px; color: var(--text); line-height: 1.6; }
+  .callout-body strong { font-weight: 700; }
+  /* PRINT */
+  @media print {
+    .tab-nav { display: none; }
+    .tab-pane { display: block !important; page-break-before: always; }
+    .tab-pane:first-of-type { page-break-before: avoid; }
+  }
+  @media (max-width: 760px) {
+    .content { padding: 24px 20px; }
+    .doc-header { padding: 28px 20px; }
+    .tab-nav { padding: 0 8px; }
+    .overview-grid, .kpi-grid { grid-template-columns: 1fr 1fr; }
+    .feature-grid, .value-grid { grid-template-columns: 1fr; }
+    .ecosystem-grid { grid-template-columns: 1fr; }
+    .arrow-col { transform: rotate(90deg); }
+  }
+</style>
+</head>
+<body>
+
+<div class="doc-header">
+  <div class="header-tag">Đề xuất sản phẩm mới</div>
+  <h1>CRM Hộ Kinh Doanh Cá Thể<br>+ Tuân thủ Thuế & Thanh toán</h1>
+  <p>Mở rộng nền tảng CRM Retail sang phân khúc Hộ KD cá thể – tích hợp khai thuế tự động, thanh toán ngân hàng & chương trình Cashback</p>
+  <div class="header-meta">
+    <div class="meta-item"><span class="meta-label">Phiên bản</span><span class="meta-value">v1.0 – Draft</span></div>
+    <div class="meta-item"><span class="meta-label">Đối tượng</span><span class="meta-value">Nội bộ & Đối tác chiến lược</span></div>
+    <div class="meta-item"><span class="meta-label">Phân khúc mục tiêu</span><span class="meta-value">5+ triệu Hộ KD cá thể tại VN</span></div>
+    <div class="meta-item"><span class="meta-label">Mô hình</span><span class="meta-value">Platform × Tax × Banking</span></div>
+  </div>
+</div>
+
+<nav class="tab-nav">
+  <button class="tab-btn active" onclick="switchTab('overview')">1. Tổng quan</button>
+  <button class="tab-btn" onclick="switchTab('features')">2. Tính năng nghiệp vụ</button>
+  <button class="tab-btn" onclick="switchTab('tax')">3. Phân hệ Thuế</button>
+  <button class="tab-btn" onclick="switchTab('bizmodel')">4. Mô hình kinh doanh</button>
+  <button class="tab-btn" onclick="switchTab('revenue')">5. Dòng doanh thu</button>
+  <button class="tab-btn" onclick="switchTab('roadmap')">6. Lộ trình triển khai</button>
+</nav>
+
+<!-- TAB 1: OVERVIEW -->
+<div id="tab-overview" class="tab-pane active">
+<div class="content">
+  <div class="section-label">Cơ hội thị trường</div>
+  <div class="section-title">Tại sao đây là thời điểm đúng?</div>
+  <div class="section-desc">
+    Với hơn 5 triệu hộ kinh doanh cá thể tại Việt Nam, thị trường này đang đối mặt với 2 áp lực lớn đồng thời: <strong>quy định thuế mới từ Nghị định 70/2025/NĐ-CP</strong> buộc hộ KD phải khai thuế định kỳ dựa trên doanh thu thực tế, và <strong>nhu cầu số hoá vận hành</strong> để cạnh tranh với thương mại điện tử. Đây chính là cửa sổ cơ hội để triển khai một nền tảng 3-in-1.
+  </div>
+
+  <div class="kpi-grid">
+    <div class="kpi-card">
+      <div class="kpi-value">5M+</div>
+      <div class="kpi-label">Hộ KD cá thể đang hoạt động tại Việt Nam</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-value">~70%</div>
+      <div class="kpi-label">Chưa có phần mềm quản lý bán hàng</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-value">2025</div>
+      <div class="kpi-label">Năm bắt đầu áp dụng nghĩa vụ khai thuế doanh thu thực tế</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-value">3-in-1</div>
+      <div class="kpi-label">CRM · Khai thuế · Thanh toán + Cashback</div>
+    </div>
+  </div>
+
+  <div class="overview-grid">
+    <div class="overview-card">
+      <div class="icon" style="background:#EEF2FF;">💼</div>
+      <h3>Nền tảng CRM mở rộng</h3>
+      <p>Kế thừa toàn bộ tính năng CRM Retail: quản lý đơn hàng, kho, sản phẩm, khách hàng, báo cáo. Bổ sung thêm các tính năng đặc thù Hộ KD cá thể.</p>
+    </div>
+    <div class="overview-card">
+      <div class="icon" style="background:var(--green-soft);">📋</div>
+      <h3>Khai thuế tự động</h3>
+      <p>Tự động lập tờ khai thuế dựa trên dữ liệu doanh thu thực tế trong hệ thống. Kết nối với đối tác thuế để đảm bảo tính đúng đắn và nộp điện tử.</p>
+    </div>
+    <div class="overview-card">
+      <div class="icon" style="background:#EFF6FF;">🏦</div>
+      <h3>Thanh toán & Cashback</h3>
+      <p>Tích hợp cổng thanh toán ngân hàng, tăng CASA cho đối tác banking. Khách hàng nhận cashback khi mua hàng tại Hộ KD – mô hình win-win 2 chiều.</p>
+    </div>
+  </div>
+
+  <div class="ecosystem">
+    <div class="section-label">Hệ sinh thái đối tác</div>
+    <h3 style="font-size:16px; font-weight:700; color:var(--primary);">Mô hình hợp tác 4 bên</h3>
+    <div class="ecosystem-grid">
+      <div class="partner-card platform">
+        <div class="partner-icon">⚙️</div>
+        <div class="partner-name">Nhà phát triển Platform</div>
+        <div class="partner-role">Xây dựng & vận hành<br>toàn bộ nền tảng CRM +<br>khai thuế + thanh toán</div>
+      </div>
+      <div class="arrow-col">
+        <div class="arrow-line">⟷</div>
+        <div class="arrow-label">Chứng nhận<br>đúng thuế</div>
+      </div>
+      <div class="partner-card tax">
+        <div class="partner-icon">🏛️</div>
+        <div class="partner-name">Đối tác Thuế</div>
+        <div class="partner-role">Công ty dịch vụ thuế<br>hoặc Cục thuế/GDT<br>xác nhận nghiệp vụ thuế</div>
+      </div>
+      <div class="arrow-col">
+        <div class="arrow-line">⟷</div>
+        <div class="arrow-label">Phân phối<br>& Rollout</div>
+      </div>
+      <div class="partner-card bank">
+        <div class="partner-icon">🏦</div>
+        <div class="partner-name">Đối tác Banking</div>
+        <div class="partner-role">Phân phối tới KH SME,<br>tích hợp thanh toán,<br>CASA + Cashback</div>
+      </div>
+      <div class="arrow-col">
+        <div class="arrow-line">⟷</div>
+        <div class="arrow-label">Sử dụng<br>& Lợi ích</div>
+      </div>
+      <div class="partner-card user">
+        <div class="partner-icon">🏪</div>
+        <div class="partner-name">Hộ KD cá thể</div>
+        <div class="partner-role">Vận hành bán hàng,<br>tuân thủ thuế, thu hút<br>khách qua cashback</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="callout info">
+    <div class="callout-icon">💡</div>
+    <div class="callout-body">
+      <strong>Lợi thế cạnh tranh cốt lõi:</strong> Không có sản phẩm nào trên thị trường hiện nay kết hợp đồng thời cả ba yếu tố: quản lý bán hàng + khai thuế tự động + thanh toán/cashback cho phân khúc Hộ KD cá thể. Đây là cơ hội tạo ra vị thế dẫn đầu trong giai đoạn chính sách thuế mới bắt đầu có hiệu lực.
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- TAB 2: FEATURES -->
+<div id="tab-features" class="tab-pane">
+<div class="content">
+  <div class="section-label">Nghiệp vụ sản phẩm</div>
+  <div class="section-title">Tính năng theo phân hệ</div>
+  <div class="section-desc">
+    Nền tảng kế thừa toàn bộ 24 phân hệ của CRM Retail, bổ sung và điều chỉnh một số tính năng đặc thù cho Hộ KD cá thể, đồng thời thêm mới 4 phân hệ chiến lược.
+  </div>
+
+  <div class="module-list" id="featureList">
+
+    <div class="module-card">
+      <div class="module-header" onclick="toggleModule(this)">
+        <div class="module-num" style="background:#E8811A;">1</div>
+        <div class="module-info">
+          <div class="module-title">Đăng nhập / Đăng xuất / Tài khoản</div>
+          <div class="module-subtitle">Xác thực, bảo mật, quản lý phiên làm việc</div>
+        </div>
+        <span class="module-badge badge-core">Core</span>
+        <span class="module-chevron">▼</span>
+      </div>
+      <div class="module-body">
+        <div class="feature-grid">
+          <div class="feature-item"><div class="feature-dot" style="background:#E8811A;"></div>Đăng ký tài khoản bằng SĐT + OTP</div>
+          <div class="feature-item"><div class="feature-dot" style="background:#E8811A;"></div>Đăng nhập user/password, lưu mật khẩu, FaceID</div>
+          <div class="feature-item"><div class="feature-dot" style="background:#E8811A;"></div>Quên/Thay đổi mật khẩu</div>
+          <div class="feature-item"><div class="feature-dot" style="background:#E8811A;"></div>Thông tin tài khoản, liên kết MST (Mã số thuế)</div>
+        </div>
+        <div class="tax-highlight" style="margin-top:14px;">
+          <h4>✦ Bổ sung cho Hộ KD cá thể</h4>
+          <p>Khi đăng ký, yêu cầu nhập thêm <strong>Mã số thuế cá nhân (MST)</strong> hoặc CMND/CCCD để liên kết với hồ sơ thuế. Tích hợp xác minh tự động với cơ sở dữ liệu của Tổng cục Thuế (nếu đối tác cho phép).</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="module-card">
+      <div class="module-header" onclick="toggleModule(this)">
+        <div class="module-num" style="background:#0F7367;">2</div>
+        <div class="module-info">
+          <div class="module-title">Trang chủ & Dashboard</div>
+          <div class="module-subtitle">Tổng quan vận hành, cảnh báo, tìm kiếm nhanh</div>
+        </div>
+        <span class="module-badge badge-enhanced">Nâng cấp</span>
+        <span class="module-chevron">▼</span>
+      </div>
+      <div class="module-body">
+        <div class="feature-grid">
+          <div class="feature-item"><div class="feature-dot" style="background:#0F7367;"></div>Doanh thu, số đơn hàng trong ngày/tuần/tháng</div>
+          <div class="feature-item"><div class="feature-dot" style="background:#0F7367;"></div>Ẩn/Hiện số liệu nhạy cảm (mask ***)</div>
+          <div class="feature-item"><div class="feature-dot" style="background:#0F7367;"></div>Cảnh báo hàng sắp hết, nhắc nhở theo ngày</div>
+          <div class="feature-item"><div class="feature-dot" style="background:#0F7367;"></div>Tìm kiếm nhanh (Elastic Search + QR)</div>
+          <div class="feature-item"><div class="feature-dot" style="background:#0F7367;"></div>Mặt hàng bán chạy theo số lượng/doanh thu</div>
+          <div class="feature-item"><div class="feature-dot" style="background:#0F7367;"></div><strong>MỚI:</strong> Widget cảnh báo kỳ khai thuế sắp đến hạn</div>
+          <div class="feature-item"><div class="feature-dot" style="background:#0F7367;"></div><strong>MỚI:</strong> Số dư tiền mặt & ví điện tử liên kết</div>
+          <div class="feature-item"><div class="feature-dot" style="background:#0F7367;"></div><strong>MỚI:</strong> Tổng cashback tích lũy từ khách hàng</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="module-card">
+      <div class="module-header" onclick="toggleModule(this)">
+        <div class="module-num" style="background:#2563A8;">3</div>
+        <div class="module-info">
+          <div class="module-title">Thiết lập cửa hàng</div>
+          <div class="module-subtitle">Thông tin pháp lý, nhân viên, ca thu ngân</div>
+        </div>
+        <span class="module-badge badge-enhanced">Nâng cấp</span>
+        <span class="module-chevron">▼</span>
+      </div>
+      <div class="module-body">
+        <div class="feature-grid">
+          <div class="feature-item"><div class="feature-dot" style="background:#2563A8;"></div>Thêm cửa hàng, tên, SĐT, địa chỉ, mô tả</div>
+          <div class="feature-item"><div class="feature-dot" style="background:#2563A8;"></div>Thay đổi giờ mở cửa, loại hình kinh doanh</div>
+          <div class="feature-item"><div class="feature-dot" style="background:#2563A8;"></div>Quản lý nhân viên, vai trò, phân quyền</div>
+          <div class="feature-item"><div class="feature-dot" style="background:#2563A8;"></div>Quản lý ca thu ngân, vào ca/kết ca</div>
+          <div class="feature-item"><div class="feature-dot" style="background:#2563A8;"></div><strong>MỚI:</strong> Khai báo ngành nghề kinh doanh (mã VSIC)</div>
+          <div class="feature-item"><div class="feature-dot" style="background:#2563A8;"></div><strong>MỚI:</strong> Nhập Mã số thuế (MST) hộ kinh doanh</div>
+          <div class="feature-item"><div class="feature-dot" style="background:#2563A8;"></div><strong>MỚI:</strong> Liên kết tài khoản ngân hàng nhận tiền</div>
+          <div class="feature-item"><div class="feature-dot" style="background:#2563A8;"></div><strong>MỚI:</strong> Cấu hình mức thuế khoán (nếu áp dụng)</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="module-card">
+      <div class="module-header" onclick="toggleModule(this)">
+        <div class="module-num" style="background:#7C3AED;">4</div>
+        <div class="module-info">
+          <div class="module-title">Quản lý Sản phẩm & Kho hàng</div>
+          <div class="module-subtitle">Sản phẩm, danh mục, tồn kho, nhập/xuất hàng</div>
+        </div>
+        <span class="module-badge badge-core">Core</span>
+        <span class="module-chevron">▼</span>
+      </div>
+      <div class="module-body">
+        <div class="feature-grid">
+          <div class="feature-item"><div class="feature-dot" style="background:#7C3AED;"></div>Thêm/Sửa/Xóa/Nhân bản sản phẩm</div>
+          <div class="feature-item"><div class="feature-dot" style="background:#7C3AED;"></div>Thêm hàng loạt bằng file Excel</div>
+          <div class="feature-item"><div class="feature-dot" style="background:#7C3AED;"></div>Thêm nhanh bằng scan QR</div>
+          <div class="feature-item"><div class="feature-dot" style="background:#7C3AED;"></div>Gán nhãn, phân loại, nhóm sản phẩm</div>
+          <div class="feature-item"><div class="feature-dot" style="background:#7C3AED;"></div>Bật/Tắt hiển thị giá khuyến mãi, giá sỉ</div>
+          <div class="feature-item"><div class="feature-dot" style="background:#7C3AED;"></div>Quản lý kho: nhập hàng, xuất hàng, kiểm kho</div>
+          <div class="feature-item"><div class="feature-dot" style="background:#7C3AED;"></div>Tính giá vốn, hàng trả lại, sổ nợ kho</div>
+          <div class="feature-item"><div class="feature-dot" style="background:#7C3AED;"></div>In tem/mã vạch sản phẩm (điện thoại/máy tính)</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="module-card">
+      <div class="module-header" onclick="toggleModule(this)">
+        <div class="module-num" style="background:#C0392B;">5</div>
+        <div class="module-info">
+          <div class="module-title">Bán hàng & Đơn hàng</div>
+          <div class="module-subtitle">Tạo đơn, thanh toán, in biên lai, xuất hóa đơn</div>
+        </div>
+        <span class="module-badge badge-core">Core</span>
+        <span class="module-chevron">▼</span>
+      </div>
+      <div class="module-body">
+        <div class="feature-grid">
+          <div class="feature-item"><div class="feature-dot" style="background:#C0392B;"></div>Tạo đơn hàng nhanh, Offline, Online</div>
+          <div class="feature-item"><div class="feature-dot" style="background:#C0392B;"></div>Tạo sản phẩm bán hàng nhanh</div>
+          <div class="feature-item"><div class="feature-dot" style="background:#C0392B;"></div>Quản lý trạng thái đơn hàng</div>
+          <div class="feature-item"><div class="feature-dot" style="background:#C0392B;"></div>Tìm kiếm, chỉnh sửa đơn hàng</div>
+          <div class="feature-item"><div class="feature-dot" style="background:#C0392B;"></div>In biên lai, gửi hóa đơn/biên lai điện tử</div>
+          <div class="feature-item"><div class="feature-dot" style="background:#C0392B;"></div>Báo cáo đơn hàng tổng hợp</div>
+          <div class="feature-item"><div class="feature-dot" style="background:#C0392B;"></div><strong>MỚI:</strong> Tự động ghi nhận doanh thu vào sổ thuế</div>
+          <div class="feature-item"><div class="feature-dot" style="background:#C0392B;"></div><strong>MỚI:</strong> Phân loại đơn hàng theo thuế suất áp dụng</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="module-card">
+      <div class="module-header" onclick="toggleModule(this)">
+        <div class="module-num" style="background:#B45309;">6</div>
+        <div class="module-info">
+          <div class="module-title">Khách hàng & Nhà cung cấp</div>
+          <div class="module-subtitle">CRM, loyalty, công nợ, báo cáo</div>
+        </div>
+        <span class="module-badge badge-core">Core</span>
+        <span class="module-chevron">▼</span>
+      </div>
+      <div class="module-body">
+        <div class="feature-grid">
+          <div class="feature-item"><div class="feature-dot" style="background:#B45309;"></div>Danh sách, thêm/sửa/xóa khách hàng & NCC</div>
+          <div class="feature-item"><div class="feature-dot" style="background:#B45309;"></div>Thêm hàng loạt bằng Excel, đồng bộ danh bạ</div>
+          <div class="feature-item"><div class="feature-dot" style="background:#B45309;"></div>Lịch sử mua hàng, công nợ, nhắc nợ</div>
+          <div class="feature-item"><div class="feature-dot" style="background:#B45309;"></div>Tích điểm, gán nhãn, nhóm khách hàng</div>
+          <div class="feature-item"><div class="feature-dot" style="background:#B45309;"></div>Báo cáo Loyalty, công nợ khách hàng/NCC</div>
+          <div class="feature-item"><div class="feature-dot" style="background:#B45309;"></div><strong>MỚI:</strong> Hồ sơ cashback của từng khách hàng</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="module-card">
+      <div class="module-header" onclick="toggleModule(this)">
+        <div class="module-num" style="background:#1D4ED8;">7</div>
+        <div class="module-info">
+          <div class="module-title">Thanh toán & Ngân hàng</div>
+          <div class="module-subtitle">Phương thức thanh toán, QR Pro, đối soát, cashback</div>
+        </div>
+        <span class="module-badge badge-enhanced">Nâng cấp</span>
+        <span class="module-chevron">▼</span>
+      </div>
+      <div class="module-body">
+        <div class="feature-grid">
+          <div class="feature-item"><div class="feature-dot" style="background:#1D4ED8;"></div>Tổng quan phương thức thanh toán</div>
+          <div class="feature-item"><div class="feature-dot" style="background:#1D4ED8;"></div>Kết nối thanh toán điện tử (QR, VNPay, Momo…)</div>
+          <div class="feature-item"><div class="feature-dot" style="background:#1D4ED8;"></div>Thu tiền nhanh bằng QR Pro</div>
+          <div class="feature-item"><div class="feature-dot" style="background:#1D4ED8;"></div>Đối soát ngân hàng tự động</div>
+          <div class="feature-item"><div class="feature-dot" style="background:#1D4ED8;"></div><strong>MỚI:</strong> Tích hợp API ngân hàng đối tác (CASA)</div>
+          <div class="feature-item"><div class="feature-dot" style="background:#1D4ED8;"></div><strong>MỚI:</strong> Quản lý chương trình Cashback cho KH</div>
+          <div class="feature-item"><div class="feature-dot" style="background:#1D4ED8;"></div><strong>MỚI:</strong> Tự động nộp thuế điện tử qua tài khoản NH</div>
+          <div class="feature-item"><div class="feature-dot" style="background:#1D4ED8;"></div><strong>MỚI:</strong> Báo cáo dòng tiền liên kết ngân hàng</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="module-card">
+      <div class="module-header" onclick="toggleModule(this)">
+        <div class="module-num" style="background:#166534;">8</div>
+        <div class="module-info">
+          <div class="module-title">Tài chính & Sổ thu chi</div>
+          <div class="module-subtitle">Thu chi, quỹ tiền, nợ, báo cáo tài chính</div>
+        </div>
+        <span class="module-badge badge-core">Core</span>
+        <span class="module-chevron">▼</span>
+      </div>
+      <div class="module-body">
+        <div class="feature-grid">
+          <div class="feature-item"><div class="feature-dot" style="background:#166534;"></div>Tổng quan thu-chi, tạo quỹ tiền/nguồn tiền</div>
+          <div class="feature-item"><div class="feature-dot" style="background:#166534;"></div>Tạo khoản thu/chi, chỉnh sửa giao dịch</div>
+          <div class="feature-item"><div class="feature-dot" style="background:#166534;"></div>Kiểm kê quỹ, quản lý nguồn tiền</div>
+          <div class="feature-item"><div class="feature-dot" style="background:#166534;"></div>Sổ nợ, tạo giao dịch nợ, đặt lịch nhắc nợ</div>
+          <div class="feature-item"><div class="feature-dot" style="background:#166534;"></div>Báo cáo thu-chi, công nợ, tài chính</div>
+          <div class="feature-item"><div class="feature-dot" style="background:#166534;"></div><strong>MỚI:</strong> Sổ thu chi tự động phân loại chi phí thuế</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="module-card">
+      <div class="module-header" onclick="toggleModule(this)">
+        <div class="module-num" style="background:#6D28D9;">9</div>
+        <div class="module-info">
+          <div class="module-title">Marketing & Khuyến mãi</div>
+          <div class="module-subtitle">CTKM, tích điểm, loyalty, kênh bán hàng</div>
+        </div>
+        <span class="module-badge badge-core">Core</span>
+        <span class="module-chevron">▼</span>
+      </div>
+      <div class="module-body">
+        <div class="feature-grid">
+          <div class="feature-item"><div class="feature-dot" style="background:#6D28D9;"></div>Tạo CTKM theo nhóm KH, địa lý, freeship, nhóm hàng</div>
+          <div class="feature-item"><div class="feature-dot" style="background:#6D28D9;"></div>Tạo chương trình đồng giá, chia sẻ khuyến mãi</div>
+          <div class="feature-item"><div class="feature-dot" style="background:#6D28D9;"></div>Tích hợp chat Fanpage, ZaloOA, lên đơn hàng</div>
+          <div class="feature-item"><div class="feature-dot" style="background:#6D28D9;"></div>Tích điểm khách hàng, chương trình Loyalty</div>
+          <div class="feature-item"><div class="feature-dot" style="background:#6D28D9;"></div>Bán hàng đa kênh (B2C, kết nối TMĐT)</div>
+          <div class="feature-item"><div class="feature-dot" style="background:#6D28D9;"></div><strong>MỚI:</strong> Cashback được tài trợ bởi ngân hàng đối tác</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="module-card">
+      <div class="module-header" onclick="toggleModule(this)">
+        <div class="module-num" style="background:#0D7377;">10</div>
+        <div class="module-info">
+          <div class="module-title">Báo cáo tổng hợp</div>
+          <div class="module-subtitle">Cuối ngày, bán hàng, hàng hóa, tài chính, kho</div>
+        </div>
+        <span class="module-badge badge-core">Core</span>
+        <span class="module-chevron">▼</span>
+      </div>
+      <div class="module-body">
+        <div class="feature-grid">
+          <div class="feature-item"><div class="feature-dot" style="background:#0D7377;"></div>Báo cáo thu-chi cuối ngày, bán hàng</div>
+          <div class="feature-item"><div class="feature-dot" style="background:#0D7377;"></div>Báo cáo hàng hóa tồn, hết hàng</div>
+          <div class="feature-item"><div class="feature-dot" style="background:#0D7377;"></div>Báo cáo công nợ KH/NCC, tài chính/doanh thu</div>
+          <div class="feature-item"><div class="feature-dot" style="background:#0D7377;"></div>Báo cáo kho hàng, vận chuyển</div>
+          <div class="feature-item"><div class="feature-dot" style="background:#0D7377;"></div><strong>MỚI:</strong> Báo cáo doanh thu theo kỳ khai thuế</div>
+          <div class="feature-item"><div class="feature-dot" style="background:#0D7377;"></div><strong>MỚI:</strong> Xuất dữ liệu dạng tờ khai thuế</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+</div>
+
+<!-- TAB 3: TAX MODULE -->
+<div id="tab-tax" class="tab-pane">
+<div class="content">
+  <div class="section-label">Phân hệ mới chiến lược</div>
+  <div class="section-title">Lập tờ khai thuế Hộ KD cá thể</div>
+  <div class="section-desc">
+    Đây là tính năng then chốt tạo ra sự khác biệt hoàn toàn so với CRM Retail thông thường. Được xây dựng cùng với đối tác thuế để đảm bảo tính pháp lý đúng đắn theo quy định hiện hành.
+  </div>
+
+  <div class="callout warning">
+    <div class="callout-icon">⚠️</div>
+    <div class="callout-body">
+      <strong>Bối cảnh pháp lý:</strong> Theo Nghị định 70/2025/NĐ-CP và Thông tư hướng dẫn, Hộ KD cá thể có doanh thu trên ngưỡng nhất định phải chuyển sang khai thuế theo doanh thu thực tế (thay vì thuế khoán cố định). Đây là cơ hội lớn để trở thành công cụ hỗ trợ tuân thủ thuế.
+    </div>
+  </div>
+
+  <div class="module-list">
+
+    <div class="module-card">
+      <div class="module-header open" onclick="toggleModule(this)">
+        <div class="module-num" style="background:#1A6B3C;">T1</div>
+        <div class="module-info">
+          <div class="module-title">Hồ sơ thuế Hộ KD</div>
+          <div class="module-subtitle">Thiết lập thông tin thuế ban đầu</div>
+        </div>
+        <span class="module-badge badge-new">Mới hoàn toàn</span>
+        <span class="module-chevron">▼</span>
+      </div>
+      <div class="module-body open">
+        <div class="feature-grid">
+          <div class="feature-item"><div class="feature-dot" style="background:#1A6B3C;"></div>Khai báo Mã số thuế (MST) – liên kết với CCCD/CMND</div>
+          <div class="feature-item"><div class="feature-dot" style="background:#1A6B3C;"></div>Nhập thông tin đăng ký kinh doanh (số ĐKKD)</div>
+          <div class="feature-item"><div class="feature-dot" style="background:#1A6B3C;"></div>Xác định loại hình khai thuế: Khoán / Thực tế</div>
+          <div class="feature-item"><div class="feature-dot" style="background:#1A6B3C;"></div>Khai báo ngành nghề + mức thuế suất áp dụng</div>
+          <div class="feature-item"><div class="feature-dot" style="background:#1A6B3C;"></div>Cài đặt kỳ khai thuế (tháng/quý)</div>
+          <div class="feature-item"><div class="feature-dot" style="background:#1A6B3C;"></div>Liên kết tài khoản ngân hàng để nộp thuế điện tử</div>
+          <div class="feature-item"><div class="feature-dot" style="background:#1A6B3C;"></div>Kho dữ liệu: lưu trữ hồ sơ thuế các năm trước</div>
+          <div class="feature-item"><div class="feature-dot" style="background:#1A6B3C;"></div>Cập nhật ngưỡng miễn thuế theo quy định mới nhất</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="module-card">
+      <div class="module-header" onclick="toggleModule(this)">
+        <div class="module-num" style="background:#1A6B3C;">T2</div>
+        <div class="module-info">
+          <div class="module-title">Sổ doanh thu & Chi phí theo mục đích thuế</div>
+          <div class="module-subtitle">Tự động ghi nhận dữ liệu từ hệ thống bán hàng</div>
+        </div>
+        <span class="module-badge badge-new">Mới hoàn toàn</span>
+        <span class="module-chevron">▼</span>
+      </div>
+      <div class="module-body">
+        <div class="feature-grid">
+          <div class="feature-item"><div class="feature-dot" style="background:#1A6B3C;"></div>Tự động tổng hợp doanh thu từ đơn hàng trong kỳ</div>
+          <div class="feature-item"><div class="feature-dot" style="background:#1A6B3C;"></div>Phân loại doanh thu theo nhóm hàng hóa/dịch vụ</div>
+          <div class="feature-item"><div class="feature-dot" style="background:#1A6B3C;"></div>Ghi nhận chi phí được khấu trừ (nếu áp dụng)</div>
+          <div class="feature-item"><div class="feature-dot" style="background:#1A6B3C;"></div>Điều chỉnh thủ công doanh thu ngoài hệ thống</div>
+          <div class="feature-item"><div class="feature-dot" style="background:#1A6B3C;"></div>Xem lịch sử doanh thu theo kỳ khai thuế</div>
+          <div class="feature-item"><div class="feature-dot" style="background:#1A6B3C;"></div>Cảnh báo khi doanh thu gần vượt ngưỡng miễn thuế</div>
+          <div class="feature-item"><div class="feature-dot" style="background:#1A6B3C;"></div>Xuất sổ doanh thu ra file Excel/PDF</div>
+          <div class="feature-item"><div class="feature-dot" style="background:#1A6B3C;"></div>Đối chiếu doanh thu với dữ liệu hóa đơn điện tử</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="module-card">
+      <div class="module-header" onclick="toggleModule(this)">
+        <div class="module-num" style="background:#1A6B3C;">T3</div>
+        <div class="module-info">
+          <div class="module-title">Lập tờ khai thuế tự động</div>
+          <div class="module-subtitle">Sinh tờ khai từ dữ liệu thực tế, xét duyệt & nộp</div>
+        </div>
+        <span class="module-badge badge-new">Mới hoàn toàn</span>
+        <span class="module-chevron">▼</span>
+      </div>
+      <div class="module-body">
+        <div class="tax-highlight">
+          <h4>✦ Quy trình khai thuế tự động</h4>
+          <p>Hệ thống tự động lấy dữ liệu doanh thu trong kỳ → tính toán số thuế phải nộp theo thuế suất đã cấu hình → sinh tờ khai theo mẫu chuẩn của Tổng cục Thuế → gửi đối tác thuế xét duyệt → Hộ KD xác nhận → nộp điện tử qua ngân hàng liên kết.</p>
+        </div>
+        <div class="feature-grid">
+          <div class="feature-item"><div class="feature-dot" style="background:#1A6B3C;"></div>Sinh tự động tờ khai theo mẫu 01/CNKD (thuế khoán) hoặc 03/CNKD (doanh thu thực tế)</div>
+          <div class="feature-item"><div class="feature-dot" style="background:#1A6B3C;"></div>Hiển thị dự tính số thuế phải nộp trước khi xác nhận</div>
+          <div class="feature-item"><div class="feature-dot" style="background:#1A6B3C;"></div>Gửi tờ khai cho đối tác thuế xét duyệt (online)</div>
+          <div class="feature-item"><div class="feature-dot" style="background:#1A6B3C;"></div>Nhận phản hồi xét duyệt, chỉnh sửa nếu cần</div>
+          <div class="feature-item"><div class="feature-dot" style="background:#1A6B3C;"></div>Ký điện tử tờ khai (tích hợp chữ ký số/USB token)</div>
+          <div class="feature-item"><div class="feature-dot" style="background:#1A6B3C;"></div>Nộp tờ khai điện tử lên Cổng DVCQG/eTax</div>
+          <div class="feature-item"><div class="feature-dot" style="background:#1A6B3C;"></div>Nộp tiền thuế trực tiếp qua tài khoản ngân hàng liên kết</div>
+          <div class="feature-item"><div class="feature-dot" style="background:#1A6B3C;"></div>Nhận biên lai nộp thuế điện tử</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="module-card">
+      <div class="module-header" onclick="toggleModule(this)">
+        <div class="module-num" style="background:#1A6B3C;">T4</div>
+        <div class="module-info">
+          <div class="module-title">Lịch sử & Theo dõi nghĩa vụ thuế</div>
+          <div class="module-subtitle">Trạng thái khai nộp, lịch đến hạn, cảnh báo</div>
+        </div>
+        <span class="module-badge badge-new">Mới hoàn toàn</span>
+        <span class="module-chevron">▼</span>
+      </div>
+      <div class="module-body">
+        <div class="feature-grid">
+          <div class="feature-item"><div class="feature-dot" style="background:#1A6B3C;"></div>Lịch khai thuế theo năm: tháng/quý đã nộp, chưa nộp, đang xử lý</div>
+          <div class="feature-item"><div class="feature-dot" style="background:#1A6B3C;"></div>Nhắc nhở trước hạn nộp 7 ngày, 3 ngày, 1 ngày</div>
+          <div class="feature-item"><div class="feature-dot" style="background:#1A6B3C;"></div>Cảnh báo chậm nộp, tính phạt/chậm nộp ước tính</div>
+          <div class="feature-item"><div class="feature-dot" style="background:#1A6B3C;"></div>Lưu trữ tờ khai & biên lai các kỳ đã nộp</div>
+          <div class="feature-item"><div class="feature-dot" style="background:#1A6B3C;"></div>Xem tổng số thuế đã nộp theo năm</div>
+          <div class="feature-item"><div class="feature-dot" style="background:#1A6B3C;"></div>Xuất hồ sơ thuế theo yêu cầu kiểm tra của cơ quan thuế</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="module-card">
+      <div class="module-header" onclick="toggleModule(this)">
+        <div class="module-num" style="background:#1A6B3C;">T5</div>
+        <div class="module-info">
+          <div class="module-title">Tư vấn thuế từ đối tác</div>
+          <div class="module-subtitle">Chat hỗ trợ, câu hỏi thuế, cập nhật chính sách</div>
+        </div>
+        <span class="module-badge badge-new">Mới hoàn toàn</span>
+        <span class="module-chevron">▼</span>
+      </div>
+      <div class="module-body">
+        <div class="feature-grid">
+          <div class="feature-item"><div class="feature-dot" style="background:#1A6B3C;"></div>Chat trực tiếp với chuyên viên thuế của đối tác</div>
+          <div class="feature-item"><div class="feature-dot" style="background:#1A6B3C;"></div>FAQ thuế Hộ KD cá thể được cập nhật liên tục</div>
+          <div class="feature-item"><div class="feature-dot" style="background:#1A6B3C;"></div>Thông báo thay đổi chính sách thuế mới nhất</div>
+          <div class="feature-item"><div class="feature-dot" style="background:#1A6B3C;"></div>Yêu cầu xem xét tờ khai bổ sung (nếu có sai sót)</div>
+          <div class="feature-item"><div class="feature-dot" style="background:#1A6B3C;"></div>Gói dịch vụ đại lý thuế (có phí – tùy chọn)</div>
+          <div class="feature-item"><div class="feature-dot" style="background:#1A6B3C;"></div>Hỗ trợ xử lý tranh chấp với cơ quan thuế</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="callout success" style="margin-top:28px;">
+    <div class="callout-icon">✅</div>
+    <div class="callout-body">
+      <strong>Cam kết với Hộ KD:</strong> Với phân hệ thuế này, chủ hộ kinh doanh không cần thuê kế toán riêng, không cần hiểu biết về luật thuế – hệ thống tự động làm tất cả từ tổng hợp doanh thu đến nộp tờ khai. Đối tác thuế chịu trách nhiệm pháp lý về tính chính xác.
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- TAB 4: BIZ MODEL -->
+<div id="tab-bizmodel" class="tab-pane">
+<div class="content">
+  <div class="section-label">Chiến lược hợp tác</div>
+  <div class="section-title">Mô hình kinh doanh 4 bên</div>
+  <div class="section-desc">
+    Mỗi bên trong hệ sinh thái mang lại giá trị khác nhau và nhận về lợi ích tương xứng. Không có bên nào cạnh tranh với bên kia – đây là mô hình cộng sinh thực sự.
+  </div>
+
+  <div class="biz-section">
+    <h3>1. Đề xuất giá trị cho từng đối tác</h3>
+    <div class="value-grid">
+      <div class="value-card platform">
+        <h4>⚙️ Nhà phát triển Platform (bạn)</h4>
+        <ul>
+          <li>Mở rộng thị trường sang phân khúc 5M+ hộ KD</li>
+          <li>Doanh thu SaaS định kỳ (subscription/transaction)</li>
+          <li>Tăng stickiness: hộ KD không thể rời nền tảng vì dữ liệu thuế</li>
+          <li>Vị thế dẫn đầu thị trường nhờ go-to-market qua ngân hàng</li>
+          <li>Không cần chịu rủi ro pháp lý về thuế (đối tác thuế gánh)</li>
+        </ul>
+      </div>
+      <div class="value-card tax">
+        <h4>🏛️ Đối tác Thuế (Công ty thuế/Cục thuế)</h4>
+        <ul>
+          <li>Tiếp cận hàng triệu hộ KD qua kênh số hóa</li>
+          <li>Tăng tỷ lệ tuân thủ thuế tự nguyện – phù hợp mục tiêu nhà nước</li>
+          <li>Doanh thu từ gói dịch vụ đại lý thuế cao cấp</li>
+          <li>Thu thập dữ liệu hành vi thuế phân tích chính sách</li>
+          <li>Branding: được biết đến là đơn vị hỗ trợ số hóa thuế</li>
+        </ul>
+      </div>
+      <div class="value-card bank">
+        <h4>🏦 Đối tác Banking (Ngân hàng)</h4>
+        <ul>
+          <li>Tăng CASA: tiền nộp thuế, tiền thu từ khách hàng qua tài khoản NH</li>
+          <li>Phát triển KH SME/doanh nghiệp nhỏ có dữ liệu tài chính thực</li>
+          <li>Cung cấp sản phẩm tín dụng dựa trên doanh thu thực từ CRM</li>
+          <li>Cashback model tạo thói quen thanh toán qua NH</li>
+          <li>Vị thế "Ngân hàng của Hộ KD" – differentiation với đối thủ</li>
+        </ul>
+      </div>
+      <div class="value-card user">
+        <h4>🏪 Hộ KD cá thể (người dùng cuối)</h4>
+        <ul>
+          <li>Không lo vi phạm thuế – tờ khai được làm tự động</li>
+          <li>Tiết kiệm chi phí kế toán/dịch vụ thuế thuê ngoài</li>
+          <li>Hút khách hàng qua cashback – tăng doanh số</li>
+          <li>Quản lý toàn bộ vận hành bán hàng trên 1 app</li>
+          <li>Tiếp cận vốn vay dễ hơn nhờ lịch sử tài chính minh bạch</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <div class="biz-section">
+    <h3>2. Cơ chế Cashback – Lợi ích kép cho Hộ KD</h3>
+    <div style="background:white; border-radius:12px; border:1px solid var(--border); padding:24px; box-shadow:var(--shadow);">
+      <p style="font-size:13px; color:var(--text); line-height:1.7; margin-bottom:16px;">
+        Ngân hàng đối tác tài trợ một phần phí interchange từ mỗi giao dịch thanh toán để trả cashback cho người mua hàng tại các hộ KD trên nền tảng. Điều này tạo ra hiệu ứng dây chuyền:
+      </p>
+      <div style="display:grid; grid-template-columns:repeat(4,1fr); gap:12px; text-align:center; font-size:12px;">
+        <div style="background:var(--accent-soft); border-radius:8px; padding:14px; border:1px solid #FCD49A;">
+          <div style="font-size:20px; margin-bottom:6px;">👆</div>
+          <strong style="color:var(--accent);">Khách hàng</strong><br>
+          <span style="color:var(--text-muted);">Chọn thanh toán qua QR ngân hàng → nhận cashback x%</span>
+        </div>
+        <div style="background:#EFF6FF; border-radius:8px; padding:14px; border:1px solid #BAD4FF;">
+          <div style="font-size:20px; margin-bottom:6px;">🏪</div>
+          <strong style="color:#1D4ED8;">Hộ KD</strong><br>
+          <span style="color:var(--text-muted);">Khách quay lại nhiều hơn, thanh toán chuyển khoản tăng</span>
+        </div>
+        <div style="background:#EFF6FF; border-radius:8px; padding:14px; border:1px solid #BAD4FF;">
+          <div style="font-size:20px; margin-bottom:6px;">🏦</div>
+          <strong style="color:#1D4ED8;">Ngân hàng</strong><br>
+          <span style="color:var(--text-muted);">Dòng tiền qua tài khoản tăng → CASA tăng → NIM cải thiện</span>
+        </div>
+        <div style="background:#EEF2FF; border-radius:8px; padding:14px; border:1px solid #C4B5FD;">
+          <div style="font-size:20px; margin-bottom:6px;">⚙️</div>
+          <strong style="color:#4338CA;">Platform</strong><br>
+          <span style="color:var(--text-muted);">Giao dịch tăng → phí transaction fee tăng → doanh thu tăng</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="biz-section">
+    <h3>3. Cơ chế Tín dụng dựa trên dữ liệu CRM</h3>
+    <div class="callout info">
+      <div class="callout-icon">💡</div>
+      <div class="callout-body">
+        <strong>Cơ hội mở rộng cho Banking:</strong> Dữ liệu doanh thu thực tế từ CRM (đã được xác nhận bởi đối tác thuế) trở thành <strong>hồ sơ tài chính đáng tin cậy</strong> để ngân hàng cấp hạn mức tín dụng cho Hộ KD. Đây là một trong những bài toán khó nhất với SME lending hiện nay – và nền tảng này giải quyết được.
+        <br><br>Ngân hàng có thể cung cấp: vay vốn lưu động, hạn mức mua hàng trả chậm (buy now pay later cho nhập hàng), và bảo lãnh thuế cho các kỳ khai thuế.
+      </div>
+    </div>
+  </div>
+
+  <div class="biz-section">
+    <h3>4. Đề xuất với đối tác Thuế</h3>
+    <div style="background:var(--green-soft); border-radius:12px; border:1px solid #86EFAC; padding:24px;">
+      <p style="font-size:13px; color:var(--text); margin-bottom:16px; line-height:1.7;">
+        Có thể tiếp cận theo 2 hướng tùy đối tác:
+      </p>
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px;">
+        <div style="background:white; border-radius:8px; padding:16px; border:1px solid var(--border);">
+          <strong style="color:var(--green); font-size:13px;">Phương án A: Công ty dịch vụ thuế tư nhân</strong>
+          <ul style="list-style:none; margin-top:10px; display:flex; flex-direction:column; gap:6px;">
+            <li style="font-size:12px; color:var(--text); padding-left:14px; position:relative;"><span style="position:absolute;left:0;color:var(--green);">✓</span>Linh hoạt hơn trong hợp tác thương mại</li>
+            <li style="font-size:12px; color:var(--text); padding-left:14px; position:relative;"><span style="position:absolute;left:0;color:var(--green);">✓</span>Chịu trách nhiệm pháp lý như đại lý thuế</li>
+            <li style="font-size:12px; color:var(--text); padding-left:14px; position:relative;"><span style="position:absolute;left:0;color:var(--green);">✓</span>Có thể cung cấp dịch vụ tư vấn cao cấp</li>
+            <li style="font-size:12px; color:var(--text); padding-left:14px; position:relative;"><span style="position:absolute;left:0;color:var(--green);">✓</span>Chia sẻ doanh thu từ gói premium</li>
+          </ul>
+        </div>
+        <div style="background:white; border-radius:8px; padding:16px; border:1px solid var(--border);">
+          <strong style="color:var(--green); font-size:13px;">Phương án B: Hợp tác với Cục thuế/Tổng cục Thuế</strong>
+          <ul style="list-style:none; margin-top:10px; display:flex; flex-direction:column; gap:6px;">
+            <li style="font-size:12px; color:var(--text); padding-left:14px; position:relative;"><span style="position:absolute;left:0;color:var(--green);">✓</span>Uy tín cao nhất với người dùng</li>
+            <li style="font-size:12px; color:var(--text); padding-left:14px; position:relative;"><span style="position:absolute;left:0;color:var(--green);">✓</span>Tích hợp trực tiếp với hệ thống eTax</li>
+            <li style="font-size:12px; color:var(--text); padding-left:14px; position:relative;"><span style="position:absolute;left:0;color:var(--green);">✓</span>Phù hợp mục tiêu chuyển đổi số của nhà nước</li>
+            <li style="font-size:12px; color:var(--text); padding-left:14px; position:relative;"><span style="position:absolute;left:0;color:var(--green);">⚠️</span>Phức tạp hơn về quy trình và thủ tục</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- TAB 5: REVENUE -->
+<div id="tab-revenue" class="tab-pane">
+<div class="content">
+  <div class="section-label">Tài chính sản phẩm</div>
+  <div class="section-title">Dòng doanh thu & Phân chia</div>
+  <div class="section-desc">
+    Mô hình doanh thu đa dạng từ subscription, transaction fee và revenue sharing. Tất cả được tối ưu để mỗi bên đều có lý do mạnh để tham gia.
+  </div>
+
+  <div class="biz-section">
+    <h3>1. Các nguồn doanh thu</h3>
+    <div class="revenue-flow">
+      <div class="flow-row" style="font-weight:700; font-size:12px; background:var(--gray-light); border-radius:8px; padding:8px 10px; margin-bottom:4px;">
+        <span style="min-width:130px;">Từ</span>
+        <span style="min-width:16px;"></span>
+        <span style="min-width:130px;">Đến</span>
+        <span style="flex:1;">Mô tả</span>
+        <span style="min-width:100px; text-align:right;">Ước tính/tháng</span>
+      </div>
+      <div class="flow-row">
+        <span class="flow-from" style="background:#EEF2FF; color:#4338CA;">Hộ KD cá thể</span>
+        <span class="flow-arrow">→</span>
+        <span class="flow-to" style="background:#F5F3FF; color:#4338CA;">Platform</span>
+        <span class="flow-desc">Phí SaaS subscription (gói Basic/Pro/Enterprise)</span>
+        <span class="flow-amount">99k – 399k/tháng</span>
+      </div>
+      <div class="flow-row">
+        <span class="flow-from" style="background:#EFF6FF; color:#1D4ED8;">Ngân hàng</span>
+        <span class="flow-arrow">→</span>
+        <span class="flow-to" style="background:#F5F3FF; color:#4338CA;">Platform</span>
+        <span class="flow-desc">Phí tích hợp API & License phân phối qua kênh NH</span>
+        <span class="flow-amount">B2B negotiable</span>
+      </div>
+      <div class="flow-row">
+        <span class="flow-from" style="background:#EFF6FF; color:#1D4ED8;">Giao dịch thanh toán</span>
+        <span class="flow-arrow">→</span>
+        <span class="flow-to" style="background:#EEF2FF; color:#4338CA;">Platform + NH chia sẻ</span>
+        <span class="flow-desc">Transaction fee ~0.1–0.3% mỗi giao dịch qua hệ thống</span>
+        <span class="flow-amount">Tỷ lệ × volume</span>
+      </div>
+      <div class="flow-row">
+        <span class="flow-from" style="background:#E8F5EE; color:#166534;">Hộ KD (gói thuế)</span>
+        <span class="flow-arrow">→</span>
+        <span class="flow-to" style="background:#E8F5EE; color:#166534;">Platform + ĐT Thuế</span>
+        <span class="flow-desc">Phí dịch vụ khai thuế/tháng hoặc theo kỳ khai</span>
+        <span class="flow-amount">30k – 150k/kỳ</span>
+      </div>
+      <div class="flow-row">
+        <span class="flow-from" style="background:#E8F5EE; color:#166534;">Hộ KD (gói cao cấp)</span>
+        <span class="flow-arrow">→</span>
+        <span class="flow-to" style="background:#E8F5EE; color:#166534;">Đối tác Thuế</span>
+        <span class="flow-desc">Gói đại lý thuế: tư vấn, xử lý tranh chấp, đại diện</span>
+        <span class="flow-amount">500k – 2tr/tháng</span>
+      </div>
+      <div class="flow-row">
+        <span class="flow-from" style="background:#EFF6FF; color:#1D4ED8;">Ngân hàng</span>
+        <span class="flow-arrow">→</span>
+        <span class="flow-to" style="background:var(--accent-soft); color:var(--accent);">Hộ KD + Khách hàng</span>
+        <span class="flow-desc">Cashback tài trợ từ phí interchange ngân hàng</span>
+        <span class="flow-amount">0.3–1% giá trị giao dịch</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="biz-section">
+    <h3>2. Cấu trúc gói sản phẩm cho Hộ KD</h3>
+    <table class="revenue-table">
+      <thead>
+        <tr>
+          <th>Gói</th>
+          <th>Giá/tháng</th>
+          <th>CRM Retail</th>
+          <th>Khai thuế tự động</th>
+          <th>Cashback</th>
+          <th>Tư vấn thuế</th>
+          <th>Phù hợp với</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Starter</strong></td>
+          <td>Miễn phí</td>
+          <td>✓ Cơ bản</td>
+          <td>— Không có</td>
+          <td>✓ Qua NH</td>
+          <td>—</td>
+          <td>Hộ KD nhỏ, thử nghiệm</td>
+        </tr>
+        <tr>
+          <td><strong>Basic</strong></td>
+          <td>99.000đ</td>
+          <td>✓ Đầy đủ</td>
+          <td>✓ Tự động (1 kỳ)</td>
+          <td>✓ Đầy đủ</td>
+          <td>FAQ tự phục vụ</td>
+          <td>Hộ KD dưới ngưỡng VAT</td>
+        </tr>
+        <tr>
+          <td><strong>Pro</strong></td>
+          <td>249.000đ</td>
+          <td>✓ Đầy đủ + nâng cao</td>
+          <td>✓ Không giới hạn kỳ</td>
+          <td>✓ Cashback cao hơn</td>
+          <td>Chat 5 lần/tháng</td>
+          <td>Hộ KD chính quy, doanh thu >100tr/tháng</td>
+        </tr>
+        <tr>
+          <td><strong>Enterprise</strong></td>
+          <td>499.000đ+</td>
+          <td>✓ Multi-cửa hàng</td>
+          <td>✓ Đại lý thuế full</td>
+          <td>✓ Ưu tiên cao nhất</td>
+          <td>Chat không giới hạn + hotline</td>
+          <td>Chuỗi kinh doanh nhỏ</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="biz-section">
+    <h3>3. Đề xuất phân chia doanh thu (Revenue Sharing)</h3>
+    <table class="revenue-table">
+      <thead>
+        <tr>
+          <th>Loại doanh thu</th>
+          <th>Nhà phát triển Platform</th>
+          <th>Đối tác Thuế</th>
+          <th>Ngân hàng</th>
+          <th>Ghi chú</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Phí SaaS subscription</td>
+          <td><strong>70%</strong></td>
+          <td>15%</td>
+          <td>15%</td>
+          <td>NH nhận % vì phân phối qua kênh banking</td>
+        </tr>
+        <tr>
+          <td>Phí dịch vụ khai thuế</td>
+          <td>40%</td>
+          <td><strong>50%</strong></td>
+          <td>10%</td>
+          <td>Đối tác thuế nhận nhiều hơn vì chịu rủi ro pháp lý</td>
+        </tr>
+        <tr>
+          <td>Transaction fee thanh toán</td>
+          <td>30%</td>
+          <td>—</td>
+          <td><strong>70%</strong></td>
+          <td>NH xử lý thanh toán nên nhận phần lớn</td>
+        </tr>
+        <tr>
+          <td>Gói đại lý thuế cao cấp</td>
+          <td>20%</td>
+          <td><strong>80%</strong></td>
+          <td>—</td>
+          <td>Dịch vụ thuần của đối tác thuế</td>
+        </tr>
+        <tr>
+          <td>Tín dụng/vay vốn dựa trên CRM data</td>
+          <td>Data fee (thỏa thuận)</td>
+          <td>—</td>
+          <td><strong>100%</strong> NIM từ khoản vay</td>
+          <td>Platform nhận phí cung cấp dữ liệu tín dụng</td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="callout warning" style="margin-top:16px;">
+      <div class="callout-icon">⚠️</div>
+      <div class="callout-body">
+        <strong>Lưu ý khi đàm phán:</strong> Tỷ lệ trên là đề xuất ban đầu để thảo luận. Thực tế cần điều chỉnh theo quy mô cam kết của ngân hàng (số lượng KH SME họ đưa vào nền tảng) và mức độ cam kết pháp lý của đối tác thuế.
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- TAB 6: ROADMAP -->
+<div id="tab-roadmap" class="tab-pane">
+<div class="content">
+  <div class="section-label">Kế hoạch triển khai</div>
+  <div class="section-title">Lộ trình phát triển & Go-to-Market</div>
+  <div class="section-desc">
+    Lộ trình được chia thành 4 giai đoạn, tập trung vào việc ký kết đối tác trước, sau đó phát triển và ra mắt sản phẩm.
+  </div>
+
+  <div class="roadmap">
+    <div class="phase">
+      <div class="phase-dot" style="background:#E8811A;">1</div>
+      <div class="phase-content">
+        <div class="phase-period" style="color:#E8811A;">Giai đoạn 1 – Tháng 1-3: Đàm phán & Thiết kế</div>
+        <h4>Ký kết đối tác chiến lược & Thiết kế chi tiết</h4>
+        <p style="font-size:13px; color:var(--text-muted);">Xác định và ký MOU/LOI với đối tác thuế và ngân hàng. Song song thiết kế chi tiết phân hệ thuế dựa trên quy định mới nhất.</p>
+        <div class="phase-tasks">
+          <span class="task-tag">Đàm phán đối tác thuế</span>
+          <span class="task-tag">Đàm phán ngân hàng</span>
+          <span class="task-tag">Thiết kế UX phân hệ thuế</span>
+          <span class="task-tag">Nghiên cứu pháp lý</span>
+          <span class="task-tag">Thiết kế API ngân hàng</span>
+          <span class="task-tag">Lập business case chi tiết</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="phase">
+      <div class="phase-dot" style="background:#1A3A5C;">2</div>
+      <div class="phase-content">
+        <div class="phase-period" style="color:#1A3A5C;">Giai đoạn 2 – Tháng 4-7: Phát triển MVP</div>
+        <h4>Xây dựng phân hệ thuế & Tích hợp ngân hàng</h4>
+        <p style="font-size:13px; color:var(--text-muted);">Phát triển các phân hệ mới T1-T5, tích hợp API ngân hàng cơ bản, tích hợp eTax/DVCQG. Song song kiểm thử nghiệp vụ thuế với đối tác.</p>
+        <div class="phase-tasks">
+          <span class="task-tag">Dev phân hệ T1-T5</span>
+          <span class="task-tag">Tích hợp API NH</span>
+          <span class="task-tag">Tích hợp eTax</span>
+          <span class="task-tag">Dev cashback engine</span>
+          <span class="task-tag">UAT với đối tác thuế</span>
+          <span class="task-tag">Security audit</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="phase">
+      <div class="phase-dot" style="background:#0F7367;">3</div>
+      <div class="phase-content">
+        <div class="phase-period" style="color:#0F7367;">Giai đoạn 3 – Tháng 8-10: Pilot</div>
+        <h4>Chạy thử nghiệm 500-1.000 hộ KD</h4>
+        <p style="font-size:13px; color:var(--text-muted);">Ra mắt closed beta với nhóm hộ KD được tuyển chọn qua kênh ngân hàng. Thu thập phản hồi, hoàn thiện trước khi mở rộng quy mô.</p>
+        <div class="phase-tasks">
+          <span class="task-tag">Closed beta 1.000 hộ KD</span>
+          <span class="task-tag">Khai thuế kỳ đầu tiên</span>
+          <span class="task-tag">Đo lường cashback usage</span>
+          <span class="task-tag">Fix & optimize</span>
+          <span class="task-tag">Đào tạo CS team</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="phase">
+      <div class="phase-dot" style="background:#1D4ED8;">4</div>
+      <div class="phase-content">
+        <div class="phase-period" style="color:#1D4ED8;">Giai đoạn 4 – Tháng 11+: Scale Up</div>
+        <h4>Ra mắt chính thức & Mở rộng qua kênh ngân hàng</h4>
+        <p style="font-size:13px; color:var(--text-muted);">Launch chính thức qua toàn bộ kênh phân phối của ngân hàng đối tác. Tiếp tục mở rộng sang các ngân hàng khác và các đơn vị dịch vụ thuế bổ sung.</p>
+        <div class="phase-tasks">
+          <span class="task-tag">Public launch</span>
+          <span class="task-tag">Marketing qua NH</span>
+          <span class="task-tag">Mở rộng đối tác NH mới</span>
+          <span class="task-tag">Nâng cấp AI tax advisor</span>
+          <span class="task-tag">Tích hợp TMĐT</span>
+          <span class="task-tag">Mở rộng tỉnh thành</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="biz-section" style="margin-top:12px;">
+    <h3>KPI Mục tiêu Năm đầu</h3>
+    <div class="kpi-grid">
+      <div class="kpi-card">
+        <div class="kpi-value" style="font-size:22px;">50.000</div>
+        <div class="kpi-label">Hộ KD cá thể đang hoạt động trên nền tảng</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-value" style="font-size:22px;">60%</div>
+        <div class="kpi-label">Tỷ lệ hộ KD sử dụng phân hệ khai thuế</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-value" style="font-size:22px;">30%</div>
+        <div class="kpi-label">Tỷ lệ giao dịch qua QR ngân hàng đối tác</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-value" style="font-size:22px;">NPS >60</div>
+        <div class="kpi-label">Chỉ số hài lòng khách hàng (Net Promoter Score)</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="callout success">
+    <div class="callout-icon">🎯</div>
+    <div class="callout-body">
+      <strong>Yếu tố thành công then chốt:</strong> Thành công của sản phẩm này phụ thuộc lớn vào (1) việc ký được đối tác ngân hàng có mạng lưới KH SME/hộ KD lớn để rollout nhanh, và (2) thiết lập được quy trình xét duyệt tờ khai thuế đủ nhanh (target: trong 24h) với đối tác thuế. Hai yếu tố này nên được ưu tiên trong giai đoạn đàm phán đầu tiên.
+    </div>
+  </div>
+</div>
+</div>
+
+<script>
+function switchTab(id) {
+  document.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('tab-' + id).classList.add('active');
+  event.target.classList.add('active');
+  window.scrollTo({top: 0, behavior: 'smooth'});
+}
+
+function toggleModule(header) {
+  const body = header.nextElementSibling;
+  const isOpen = body.classList.contains('open');
+  body.classList.toggle('open', !isOpen);
+  header.classList.toggle('open', !isOpen);
+}
+</script>
+</body>
+</html>
