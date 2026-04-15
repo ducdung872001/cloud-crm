@@ -211,6 +211,9 @@ const CHMembershipPlanSettings = React.lazy(() => import("@/pages/CommunityHub/M
 const CHServiceManagement = React.lazy(() => import("@/pages/CommunityHub/ServiceManagement"));
 const CHTenantConfig = React.lazy(() => import("@/pages/CommunityHub/TenantConfig"));
 
+// [Tax] Phân hệ thuế HKD/CNKD — portable module dùng chung đa nhánh
+const TaxModulePage = React.lazy(() => import("@/modules/tax/ui/TaxModule"));
+
 // [CH] Community Hub - Menu chính
 // Sắp xếp: dùng nhiều nhất ở trên → ít dùng ở dưới
 export const menu: IMenuItem[] = [
@@ -464,6 +467,13 @@ export const routes: IRouter[] = [
     path: "/ch_tenant_config",
     component: <CHTenantConfig />,
   },
+  // [Tax] Phân hệ thuế HKD/CNKD — portable module
+  { path: "/tax", component: <TaxModulePage /> },
+  { path: "/tax/profile", component: <TaxModulePage /> },
+  { path: "/tax/book", component: <TaxModulePage /> },
+  { path: "/tax/declaration", component: <TaxModulePage /> },
+  { path: "/tax/calendar", component: <TaxModulePage /> },
+  { path: "/tax/advisory", component: <TaxModulePage /> },
   // Dashboard
   {
     path: "",
