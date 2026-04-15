@@ -11,20 +11,19 @@ flowchart TB
     end
 
     subgraph SERVICES["services/"]
-      SS[SalesService]
-      IS[InventoryService]
-      WS[WarehouseService]
+      SS[SalesService<br/>order+cashbook]
+      IS[InventoryService<br/>stock+warehouse+PO]
       CS[CustomerService]
-      FS[FinanceService]
+      MS[MarketService<br/>loyalty+campaign]
       RS[ReportService]
       BS[BillingService]
     end
 
     subgraph MODELS["models/"]
-      M_ORD[Order, OrderItem]
-      M_PRD[Product, SKU, Stock]
-      M_CUST[Customer, LoyaltyWallet]
-      M_CASH[CashbookEntry]
+      M_ORD[Order, OrderItem, CashbookEntry]
+      M_PRD[Product, SKU, Stock, Warehouse]
+      M_CUST[Customer]
+      M_LOY[LoyaltyWallet]
     end
 
     subgraph SHARED["components/ + hooks/ + utils/"]
@@ -45,18 +44,20 @@ flowchart TB
     POS_P --> SS
     POS_P --> IS
     POS_P --> CS
+    POS_P --> MS
     ORD_P --> SS
     INV_P --> IS
-    WH_P --> WS
+    WH_P --> IS
     CUST_P --> CS
-    FIN_P --> FS
+    CUST_P --> MS
+    FIN_P --> SS
     RPT_P --> RS
     POS_P --> BS
 
     SS --> M_ORD
     IS --> M_PRD
     CS --> M_CUST
-    FS --> M_CASH
+    MS --> M_LOY
 
     PAGES --> SHARED
     PAGES --> CTX
@@ -68,7 +69,7 @@ flowchart TB
     classDef cx fill:#E1F5EE,stroke:#2C7A7B,color:#0F4C44
 
     class POS_P,ORD_P,INV_P,WH_P,CUST_P,FIN_P,RPT_P pg
-    class SS,IS,WS,CS,FS,RS,BS sv
-    class M_ORD,M_PRD,M_CUST,M_CASH md
+    class SS,IS,CS,MS,RS,BS sv
+    class M_ORD,M_PRD,M_CUST,M_LOY md
     class BOX,HF,MC,SP,FMT,DT sh
     class AUTH,TENANT,CFG cx

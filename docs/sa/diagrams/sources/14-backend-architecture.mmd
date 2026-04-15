@@ -4,23 +4,22 @@ flowchart TB
     GW["API Gateway<br/>Prefix routing + Auth"]
 
     subgraph CORE["Core Retail Services"]
-      AUTH["Auth<br/>/authenticator"]
-      SALES["Sales<br/>/bizapi/sales<br/>(sales_db)"]
-      INV["Inventory<br/>/bizapi/inventory<br/>(inventory_db)"]
-      WH["Warehouse<br/>/bizapi/warehouse<br/>(warehouse_db)"]
-      PUR["Purchase<br/>/bizapi/purchase<br/>(purchase_db)"]
+      AUTH["/authenticator<br/>SSO (Platform)"]
+      SALES["sales<br/>/bizapi/sales<br/>(sales_db)<br/>POS+order+shift+<br/>cashbook+debt+fund+payment"]
+      INV["inventory<br/>/bizapi/inventory<br/>(inventory_db)<br/>stock+warehouse+PO+NCC"]
     end
 
     subgraph OPS["Operational Services"]
-      FIN["Finance<br/>/bizapi/finance<br/>(finance_db)"]
-      LOG["Logistics<br/>/bizapi/logistics<br/>(logistics_db)"]
-      CARE["Care/Loyalty<br/>/bizapi/care<br/>(care_db)"]
-      BILL["Billing VAT<br/>/bizapi/billing<br/>(billing_db)"]
+      LOG["logistics<br/>/bizapi/logistics<br/>(logistics_db)"]
+      CARE["care<br/>/bizapi/care<br/>(care_db)<br/>ticket+warranty+feedback"]
+      BILL["billing VAT<br/>/bizapi/billing<br/>(billing_db)"]
+      INTEG["integration<br/>/bizapi/integration<br/>(integration_db)<br/>marketplace+MSAL+payment+<br/>e-invoice+SMS adapters"]
+      FIN["finance ⚠ banking only<br/>/bizapi/finance<br/>(retail thường KHÔNG bật)"]
     end
 
     subgraph PLAT["Platform Services"]
-      MKT["Marketplace<br/>/bizapi/market<br/>(market_db)"]
-      NOTIF["Notification<br/>/bizapi/notification"]
+      MKT["market<br/>/bizapi/market<br/>(market_db)<br/>campaign+voucher+loyalty"]
+      NOTIF["notification<br/>/bizapi/notification"]
       BPM["BPM Workflow<br/>/bpmapi"]
     end
 
@@ -37,11 +36,10 @@ flowchart TB
 
     SALES -.events.-> MQ
     INV -.events.-> MQ
-    WH -.events.-> MQ
-    MQ -.subscribe.-> FIN
     MQ -.subscribe.-> CARE
     MQ -.subscribe.-> NOTIF
     MQ -.subscribe.-> MKT
+    MQ -.subscribe.-> INTEG
 
     CORE --> REDIS
     OPS --> REDIS
@@ -55,7 +53,7 @@ flowchart TB
     classDef data fill:#FAEEDA,stroke:#D97706,color:#7C2D12
 
     class FE,GW fe
-    class AUTH,SALES,INV,WH,PUR core
-    class FIN,LOG,CARE,BILL ops
+    class AUTH,SALES,INV core
+    class LOG,CARE,BILL,INTEG,FIN ops
     class MKT,NOTIF,BPM plat
     class MQ,REDIS,S3 data

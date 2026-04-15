@@ -56,23 +56,26 @@ flowchart LR
     TENANT[Tenant Webhook<br/>Endpoint]
 
     AUTH <-->|OIDC| SSO
-    CARE <-->|MSAL| MSAL
-    SALES <-->|REST + IPN| VNPAY
-    SALES <-->|REST + IPN| MOMO
-    SALES <-->|REST + IPN| ZALOPAY
+    INTEG <-->|MSAL| MSAL
+    INTEG <-->|REST + IPN| VNPAY
+    INTEG <-->|REST + IPN| MOMO
+    INTEG <-->|REST + IPN| ZALOPAY
     SALES <-->|Serial/USB| CARD
-    BILL -->|REST + ký số| VNPT
-    BILL -->|REST + ký số| MISA
-    BILL -->|REST + ký số| VIETTEL
-    LOG <-->|REST + webhook| GHN
-    LOG <-->|REST + webhook| GHTK
-    LOG <-->|REST + webhook| JT
-    LOG <-->|REST + webhook| VNPOST
-    MKT <-->|REST + webhook| SHOPEE
-    MKT <-->|REST + webhook| LAZADA
-    MKT <-->|REST + webhook| TIKI
-    MKT <-->|REST + webhook| TIKTOK
-    INV -.sync stock.-> MKT
+    INTEG -->|REST + ký số| VNPT
+    INTEG -->|REST + ký số| MISA
+    INTEG -->|REST + ký số| VIETTEL
+    BILL <-.->|via integration| INTEG
+    INTEG <-->|REST + webhook| GHN
+    INTEG <-->|REST + webhook| GHTK
+    INTEG <-->|REST + webhook| JT
+    INTEG <-->|REST + webhook| VNPOST
+    LOG <-.->|via integration| INTEG
+    INTEG <-->|REST + webhook| SHOPEE
+    INTEG <-->|REST + webhook| LAZADA
+    INTEG <-->|REST + webhook| TIKI
+    INTEG <-->|REST + webhook| TIKTOK
+    INV -.sync stock.-> INTEG
+    MKT <-.->|promotions push| INTEG
     NOTIF -->|API| SMS
     NOTIF -->|SMTP| EMAIL
     NOTIF <-->|API + webhook| ZALO

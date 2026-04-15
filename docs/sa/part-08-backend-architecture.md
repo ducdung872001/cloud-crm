@@ -1,6 +1,6 @@
 # Part 08 — Backend Architecture (suy luận)
 
-> **Executive Summary**: Backend Reborn Retail CRM **không có trong repo** này — toàn bộ phần dưới đây là **suy luận ngược từ frontend** (URL prefix, service call, response shape). Kiến trúc quan sát được là mô hình **microservices theo bounded context**, sau một **API gateway** dạng prefix routing (`/bizapi/<domain>`), tách tối thiểu 11 dịch vụ nghiệp vụ (`sales`, `finance`, `inventory`, `warehouse`, `care`, `billing`, `logistics`, `integration`, `market`, `notification`) cộng BPM và Auth. Cách giao tiếp service-to-service, mô hình dữ liệu (database-per-service vs shared DB), và công nghệ nền (Spring/Node/Go) **chưa xác minh được** — được gắn 🔴 và đưa vào danh sách câu hỏi cần BE xác nhận.
+> **Executive Summary**: Backend Reborn Retail CRM **không có trong repo** này — toàn bộ phần dưới đây là **suy luận ngược từ frontend** (URL prefix, service call, response shape). Kiến trúc quan sát được là mô hình **microservices theo bounded context**, sau một **API gateway** dạng prefix routing (`/bizapi/<domain>`). Bộ canonical gồm **11 microservices** nghiệp vụ; **Reborn Retail dùng 9/11**: `sales` (POS, order, shift, cashbook, debt, fund, payment), `inventory` (stock + warehouse + PO + NCC), `care`, `billing`, `logistics`, `integration`, `market` (campaign + loyalty), `notification`, và `finance` (⚠ banking-only — Athena, retail thường KHÔNG dùng). Hai service `contract` và `operation` chỉ thuộc TNPM, retail không bật. Platform: `/authenticator` (SSO) và `/bpmapi` (BPM engine). Cách giao tiếp service-to-service, mô hình dữ liệu (database-per-service vs shared DB), và công nghệ nền (Spring/Node/Go) **chưa xác minh được** — được gắn 🔴 và đưa vào danh sách câu hỏi cần BE xác nhận.
 
 ## 1. Bối cảnh & nguồn suy luận
 
@@ -40,10 +40,10 @@ Phần này dựa **hoàn toàn** vào các artefact sau trong repo:
 └────┬─────┘         └──────────────┘         └──────────────┘
      │
      ├── sales        ├── care
-     ├── finance      ├── billing
-     ├── inventory    ├── logistics
-     ├── warehouse    ├── integration
+     ├── inventory    ├── billing
+     ├── logistics    ├── integration
      ├── market       ├── notification
+     └── finance (⚠ banking only)
 ```
 
 Các gateway ngoại quan sát được (từ `urls.ts`):
@@ -61,70 +61,80 @@ Các gateway ngoại quan sát được (từ `urls.ts`):
 
 ## 3. Bounded contexts
 
-### 3.1. Sales — `/bizapi/sales`
+### 3.1. Sales — `/bizapi/sales` ✅ CORE
 
-🟢 Xác nhận qua `OrderSalesService`, `InvoiceService`, `QuotationService`.
+🟢 Xác nhận qua `OrderSalesService`, `InvoiceService`, `QuotationService`, `CashBookService`, `DebtService`, `FundService`.
 
-- Aggregate: `Order`, `OrderLine`, `Invoice`, `Receipt`, `Quotation`.
-- Use case: tạo đơn POS, báo giá, công nợ phải thu, đơn hàng return.
-- Outbound event (🔴): `order.created`, `order.paid`, `invoice.issued`.
+- Aggregate: `Order`, `OrderLine`, `Invoice`, `Receipt`, `Quotation`, `Shift`, **`CashBookEntry`**, **`Payment`**, **`Fund`**, **`DebtNote`**.
+- Use case: tạo đơn POS, báo giá, công nợ phải thu, đơn hàng return, mở/đóng ca, sổ quỹ, thu chi, công nợ, quỹ tiền.
+- Outbound event (🔴): `order.created`, `order.paid`, `invoice.issued`, `cashbook.entry.created`, `payment.received`.
 
-### 3.2. Finance — `/bizapi/finance`
+#### 3.1.1. Cashbook / Debt / Fund (sub-domain của Sales)
 
-🟢 `CashBookService`, `FinanceService`, `DebtService`, `FundService`.
+⚠️ **Quan trọng**: cashbook, công nợ (debt), quỹ tiền (fund) **thuộc `sales` service**, KHÔNG phải `finance`. FE class `CashBookService.ts`, `FinanceService.ts` (legacy tên), `DebtService.ts`, `FundService.ts` đều gọi xuống `/bizapi/sales/...`. Permission code chuẩn: `SALES_CASHBOOK_VIEW`, `SALES_DEBT_VIEW`, `SALES_FUND_VIEW` (không phải `FINANCE_*`).
 
-- Aggregate: `CashBookEntry`, `Receipt`, `Payment`, `Fund`, `DebtNote`.
-- Tích hợp bank: Athena (`APP_ATHENA_URL`).
+### 3.2. Finance — `/bizapi/finance` ⚠ BANKING ONLY
 
-### 3.3. Inventory — `/bizapi/inventory`
+🟡 `FinanceService` (FE class — đây là legacy naming, không nên hiểu nhầm với cashbook).
 
-🟢 `InventoryService`, `StockMovementService`.
+- **Phạm vi thực**: chỉ phục vụ **hồ sơ tài chính của khách hàng** (banking integration qua **Athena** — `APP_ATHENA_URL`). Sản phẩm này thuộc dòng dịch vụ tài chính/banking (KYC, hồ sơ vay, tài khoản).
+- ⚠️ **Reborn Retail thường KHÔNG dùng** service này. Nếu thấy `/bizapi/finance/*` xuất hiện trong code path retail → flag là bug, chuyển sang `/bizapi/sales/*`.
+- KHÔNG chứa cashbook/debt/fund — những thứ đó nằm ở `sales` (xem §3.1.1).
 
-- Aggregate: `StockItem`, `StockMovement`, `StockCard`.
-- Event: `stock.decreased`, `stock.increased` (🔴).
+### 3.3. Inventory — `/bizapi/inventory` ✅ CORE
 
-### 3.4. Warehouse — `/bizapi/warehouse`
+🟢 `InventoryService`, `StockMovementService`, `WarehouseService`, `TransferOrderService`, `ImportInvoiceService`, `AdjustmentSlipService`, `PurchaseOrderService`, `SupplierService`.
 
-🟢 `WarehouseService`, `TransferOrderService`, `ImportInvoiceService`, `AdjustmentSlipService`.
+- Aggregate: `StockItem`, `StockMovement`, `StockCard`, `Warehouse`, `TransferSlip`, `ImportSlip`, `AdjustmentSlip`, `StockTake`, **`PurchaseOrder`**, **`Supplier`**.
+- Event: `stock.decreased`, `stock.increased`, `stock.transferred` (🔴).
 
-- Aggregate: `Warehouse`, `TransferSlip`, `ImportSlip`, `AdjustmentSlip`, `StockTake`.
-- **Phân biệt** với `inventory`: `warehouse` quản danh mục kho + nghiệp vụ xuất/nhập/chuyển, `inventory` quản số dư tồn tức thời.
+#### 3.3.1. Warehouse (sub-domain của Inventory)
 
-### 3.5. Care — `/bizapi/care`
+⚠️ Warehouse **KHÔNG phải service riêng** — là sub-domain của `inventory`. Quản danh mục kho + nghiệp vụ xuất/nhập/chuyển, song song với số dư tồn tức thời. Prefix `/bizapi/warehouse` xuất hiện trong `urls.ts` chỉ là **legacy URL**, gateway thực tế route về cùng pod `inventory-svc`.
+
+#### 3.3.2. Purchase / NCC (sub-domain của Inventory) 🟡
+
+🟡 Purchase order và nhà cung cấp được gộp vào `inventory` (chưa xác nhận tuyệt đối — có thể là service riêng `purchase` ở phiên bản backend cũ; cần BE confirm).
+
+### 3.4. Care — `/bizapi/care`
 
 🟡 `TicketService`, `WarrantyService`, `FeedbackService`.
 
-- Customer care, ticket, warranty tracking.
+- Customer care, ticket, warranty, feedback, CSKH.
+- ⚠️ KHÔNG chứa loyalty (loyalty thuộc `market`). KHÔNG chứa MSAL (MSAL thuộc `integration`).
 
-### 3.6. Billing — `/bizapi/billing`
+### 3.5. Billing — `/bizapi/billing`
 
-🟢 `BillingService`. Hoá đơn điện tử VAT theo TT78/TT32.
+🟢 `BillingService`. Hoá đơn điện tử VAT theo TT78/NĐ123.
 
 - Adapter: VNPT, M-Invoice, MISA MeInvoice (xem [Part 09](part-09-integration.md)).
 
-### 3.7. Logistics — `/bizapi/logistics`
+### 3.6. Logistics — `/bizapi/logistics`
 
 🟢 `LogisticsService`, `ShipmentService`.
 
-- Adapter: GHN, GHTK, VNPost, J&T.
+- Adapter: GHN, GHTK, VNPost, J&T. COD, tracking.
 
-### 3.8. Integration — `/bizapi/integration`
+### 3.7. Integration — `/bizapi/integration`
 
-🟡 `IntegrationService`. Hub trung tâm cho 3rd party (marketplace, webhook inbound).
+🟡 `IntegrationService`. Hub trung tâm cho **mọi 3rd party connector**: marketplace sync (Shopee/Lazada/Tiki/TikTok), MSAL (Microsoft 365), payment gateway, e-invoice, SMS/Email provider, shipping partner adapter, webhook inbound/outbound.
 
-### 3.9. Market — `/bizapi/market`
+### 3.8. Market — `/bizapi/market`
 
-🟢 `CampaignService`, `SegmentService`, `MarketingAutomationService`, `PromotionService`.
+🟢 `CampaignService`, `SegmentService`, `MarketingAutomationService`, `PromotionService`, **`LoyaltyService`**, **`VoucherService`**.
 
-### 3.10. Notification — `/bizapi/notification`
+- Aggregate: `Campaign`, `Segment`, `Promotion`, `Voucher`, **`LoyaltyPoint`**, **`LoyaltyTier`**, **`LoyaltyWallet`**.
+- ⚠️ **Loyalty là sub-domain của `market`**, không phải service riêng. Marketplace sync KHÔNG ở đây — đã chuyển sang `integration`.
 
-🟢 `NotificationService`. FCM push, SMS, email, Zalo ZNS.
+### 3.9. Notification — `/bizapi/notification`
 
-### 3.11. BPM — `/bpmapi`
+🟢 `NotificationService`. FCM push, SMS, email, Zalo ZNS, Facebook.
 
-🟢 `BpmService`. Workflow engine riêng — có UI reactflow/bpmn-js để vẽ quy trình.
+### 3.10. BPM — `/bpmapi` (Platform)
 
-### 3.12. Auth — `/authenticator`
+🟢 `BpmService`. Workflow engine riêng — có UI reactflow/bpmn-js để vẽ quy trình. Không nằm trong 11 microservices nghiệp vụ.
+
+### 3.11. Auth — `/authenticator` (Platform)
 
 🟢 `EmployeeService.takeRoles`, SSO OAuth callback.
 
@@ -208,15 +218,21 @@ Alternative: **Node.js (NestJS)** nếu team FE fullstack, **Go** nếu hiệu n
 │                                            │
 │  Namespace: biz                            │
 │    ├── sales-svc       (N pods)            │
-│    ├── finance-svc     (N pods)            │
+│    │     POS+order+shift+cashbook+         │
+│    │     debt+fund+payment                 │
 │    ├── inventory-svc   (N pods)            │
-│    ├── warehouse-svc   (N pods)            │
+│    │     stock+warehouse+PO+NCC            │
 │    ├── care-svc        (N pods)            │
 │    ├── billing-svc     (N pods)            │
 │    ├── logistics-svc   (N pods)            │
 │    ├── integration-svc (N pods)            │
+│    │     marketplace+MSAL+payment+         │
+│    │     e-invoice+SMS/Email adapters      │
 │    ├── market-svc      (N pods)            │
-│    └── notification-svc(N pods)            │
+│    │     campaign+voucher+loyalty          │
+│    ├── notification-svc(N pods)            │
+│    └── finance-svc     (banking only,      │
+│          retail thường KHÔNG bật)          │
 │                                            │
 │  Namespace: platform                       │
 │    ├── authenticator                       │

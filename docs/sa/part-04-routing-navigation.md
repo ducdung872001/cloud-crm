@@ -71,11 +71,11 @@ Mỗi `React.lazy()` tạo ra một chunk riêng → Vite tự chia file khi bui
 |------|-------------|-------------|---------|
 | Dashboard | `/` | `Dashboard`, `FinanceDashboard` | — |
 | POS bán hàng | `/create_sale_add`, `/sale_invoice`, `/customer_pay` | `pages/Sell/*` | Bán hàng |
-| Kho hàng | `/import_invoice`, `/product_inventory`, `/inventory`, `/warehouse_list`, `/create_receipt`, `/adjustment_slip`, `/destroy_slip`, `/transfer_order_form` | `pages/ProductImport/*` | Kho |
-| Mua hàng | `/purchase_order`, `/supplier`, … | `pages/Purchase/*` | Mua hàng |
-| Tài chính | `/finance/*`, `/cash_book`, `/payment_history` | `pages/Finance/*`, `pages/CashBook/*` | Tài chính |
+| Kho hàng | `/import_invoice`, `/product_inventory`, `/inventory`, `/warehouse_list`, `/create_receipt`, `/adjustment_slip`, `/destroy_slip`, `/transfer_order_form` | `pages/ProductImport/*` (BE: `/bizapi/inventory`, warehouse là sub-domain) | Kho |
+| Mua hàng | `/purchase_order`, `/supplier`, … | `pages/Purchase/*` (BE: `/bizapi/inventory` — purchase + NCC nằm trong inventory 🟡) | Mua hàng |
+| Tài chính | `/cash_book`, `/payment_history`, debt, fund | `pages/Finance/*`, `pages/CashBook/*` (BE: `/bizapi/sales` — cashbook/debt/fund. `/bizapi/finance` chỉ là banking/Athena, retail KHÔNG dùng) | Tài chính |
 | Khách hàng | `/customer_person`, `/contact`, `/customer_survey`, `/customer_segment` | `pages/CustomerPerson/*` | Khách hàng |
-| Loyalty | `/loyalty_point_ledger`, `/loyalty_reward`, `/loyalty_segment`, `/loyalty_wallet` | `pages/Loyalty*` | Khách hàng |
+| Loyalty | `/loyalty_point_ledger`, `/loyalty_reward`, `/loyalty_segment`, `/loyalty_wallet` | `pages/Loyalty*` (BE: `/bizapi/market` — loyalty là sub-domain của market) | Khách hàng |
 | CSKH | `/ticket`, `/warranty`, `/internal_mail`, `/feedback_customer`, `/call_center` | `pages/Ticket/*`, `pages/Warranty/*` | CSKH |
 | Marketing | `/campaign`, `/marketing_automation`, `/sms_marketing`, `/email_marketing`, `/zalo_marketing` | `pages/*Marketing/*`, `pages/Campaign/*` | Marketing |
 | Kênh bán | `/social_crm_facebook`, `/social_crm_zalo` | `pages/SocialCrm*` | Kênh bán |

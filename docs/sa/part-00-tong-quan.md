@@ -166,7 +166,7 @@ Reborn có nhiều biến thể dùng chung codebase. So với biến thể **Co
 | **Tích hợp ngoại** | Zalo, SMS, loyalty | + Marketplace, Logistics, e-invoice |
 | **Khác biệt data** | `service_quota`, `checkin` | `stock_movement`, `po_line`, `shipment` |
 
-Cả 2 biến thể cùng core: auth SSO, tenant, customer, finance, reporting. Khác biệt nằm ở **module active** (qua routes.tsx + permission code) và **default dashboard**.
+Cả 2 biến thể cùng core: auth SSO, tenant, customer, sales (cashbook/debt/fund), reporting. Khác biệt nằm ở **module active** (qua routes.tsx + permission code) và **default dashboard**.
 
 ## 8. Quy ước trong tài liệu
 

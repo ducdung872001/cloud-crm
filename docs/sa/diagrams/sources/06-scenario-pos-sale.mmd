@@ -3,11 +3,10 @@ sequenceDiagram
     autonumber
     actor CASH as 👤 Cashier
     participant POS as POS Page
-    participant INV as InventoryService
+    participant INV as InventoryService<br/>(stock + warehouse ops)
     participant CS as CustomerService
-    participant SS as SalesService
-    participant WH as WarehouseService
-    participant FS as FinanceService
+    participant SS as SalesService<br/>(order + cashbook)
+    participant MKT as MarketService<br/>(loyalty)
     participant CRS as CareService
     participant BS as BillingService
     participant DB as Database
@@ -20,7 +19,9 @@ sequenceDiagram
     POS->>POS: Add vào giỏ (local state)
     CASH->>POS: Search khách "SĐT 0909..."
     POS->>CS: GET /bizapi/care/customer/filter
-    CS-->>POS: Danh sách khách + điểm loyalty
+    POS->>MKT: GET /bizapi/market/loyalty/wallet
+    CS-->>POS: Danh sách khách
+    MKT-->>POS: Điểm loyalty
     CASH->>POS: Chọn khách + phương thức TT
     CASH->>POS: Bấm Thanh toán
     POS->>SS: POST /bizapi/sales/order/create<br/>{ items, customer, payment }
@@ -28,18 +29,15 @@ sequenceDiagram
     SS->>DB: BEGIN transaction
     SS->>DB: INSERT sales_order
     SS->>DB: INSERT order_item × N
-    SS->>INV: Lock + trừ tồn SKU
+    SS->>INV: Lock + trừ tồn SKU + ghi phiếu xuất
     INV->>DB: UPDATE inventory_stock<br/>(pessimistic lock)
-    INV->>WH: Ghi phiếu xuất kho
-    WH->>DB: INSERT stock_issue
-    WH-->>SS: OK
+    INV->>DB: INSERT stock_issue (warehouse op)
     INV-->>SS: OK
-    SS->>FS: POST cashbook entry<br/>(phiếu thu tiền mặt)
-    FS->>DB: INSERT cashbook
-    FS-->>SS: OK
-    SS->>CRS: Cộng điểm loyalty
-    CRS->>DB: UPDATE loyalty_wallet
-    CRS-->>SS: OK
+    SS->>DB: INSERT cashbook (sales DB)
+    Note over SS: cashbook thuộc sales — không phải finance
+    SS->>MKT: Cộng điểm loyalty
+    MKT->>DB: UPDATE loyalty_wallet
+    MKT-->>SS: OK
     SS->>DB: COMMIT
     SS-->>POS: { orderId, code, total }
     deactivate SS

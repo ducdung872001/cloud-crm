@@ -13,22 +13,20 @@ flowchart TB
         SET_UI[Settings / Cấu hình]
       end
       subgraph BE_CORE["Core Bounded Contexts"]
-        SALES[Sales Service<br/>Đơn hàng / POS]
-        INVENTORY[Inventory Service<br/>Tồn kho SKU]
-        WAREHOUSE[Warehouse Service<br/>Nhập xuất kho]
-        PURCHASE[Purchase Service<br/>Đơn mua hàng NCC]
+        SALES[sales<br/>POS, order, shift,<br/>cashbook, debt, fund, payment]
+        INVENTORY[inventory<br/>Tồn kho + warehouse +<br/>purchase order + NCC]
       end
       subgraph BE_OPS["Operational Contexts"]
-        FINANCE[Finance Service<br/>Thu chi / công nợ]
-        LOGISTICS[Logistics Service<br/>Vận chuyển]
-        CARE[Care Service<br/>Loyalty / thành viên]
-        BILLING[Billing Service<br/>Hóa đơn VAT]
+        LOGISTICS[logistics<br/>Vận chuyển, COD]
+        CARE[care<br/>Ticket, warranty, feedback]
+        BILLING[billing<br/>Hóa đơn VAT TT78]
+        INTEG[integration<br/>3rd party connectors]
       end
       subgraph BE_PLAT["Platform Contexts"]
-        MARKET[Market Service<br/>Sàn TMĐT]
-        NOTIF[Notification Service]
-        AUTH[Auth Service<br/>SSO / RBAC]
-        BPM[BPM Workflow]
+        MARKET[market<br/>Campaign, voucher, loyalty]
+        NOTIF[notification<br/>SMS/Email/Zalo/FB]
+        AUTH[/authenticator<br/>SSO / RBAC]
+        BPM[/bpmapi<br/>BPM Workflow]
       end
     end
 
@@ -36,23 +34,22 @@ flowchart TB
     POS_UI --> INVENTORY
     POS_UI --> CUST_UI
     INV_UI --> INVENTORY
-    INV_UI --> WAREHOUSE
     SALE_UI --> SALES
     CUST_UI --> CARE
-    FIN_UI --> FINANCE
-    MKT_UI --> CARE
+    CUST_UI --> MARKET
+    FIN_UI --> SALES
+    MKT_UI --> MARKET
     RPT_UI --> SALES
-    RPT_UI --> FINANCE
+    RPT_UI --> INVENTORY
     SET_UI --> AUTH
 
     SALES --> INVENTORY
-    SALES --> FINANCE
     SALES --> BILLING
     SALES --> CARE
-    WAREHOUSE --> INVENTORY
-    PURCHASE --> INVENTORY
-    PURCHASE --> FINANCE
+    SALES --> MARKET
     LOGISTICS --> SALES
+    INTEG --> INVENTORY
+    INTEG --> SALES
     MARKET --> SALES
     MARKET --> INVENTORY
     NOTIF --> CARE
@@ -64,6 +61,6 @@ flowchart TB
     classDef plat fill:#D97706,stroke:#7C2D12,color:#fff
 
     class POS_UI,INV_UI,CUST_UI,SALE_UI,FIN_UI,MKT_UI,RPT_UI,SET_UI feMod
-    class SALES,INVENTORY,WAREHOUSE,PURCHASE core
-    class FINANCE,LOGISTICS,CARE,BILLING ops
+    class SALES,INVENTORY core
+    class LOGISTICS,CARE,BILLING,INTEG ops
     class MARKET,NOTIF,AUTH,BPM plat
