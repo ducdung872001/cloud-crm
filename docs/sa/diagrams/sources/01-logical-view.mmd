@@ -1,0 +1,69 @@
+%%{init: {'theme':'base','themeVariables':{'fontFamily':'Calibri','fontSize':'18px'}}}%%
+flowchart TB
+    subgraph RETAIL["REBORN RETAIL CRM"]
+      direction TB
+      subgraph FE_MOD["Frontend SPA Modules"]
+        POS_UI[POS / Bán hàng tại quầy]
+        INV_UI[Inventory / Kho hàng]
+        CUST_UI[Customer / Khách hàng]
+        SALE_UI[Sales / Đơn hàng]
+        FIN_UI[Finance / Tài chính]
+        MKT_UI[Marketing / CSKH]
+        RPT_UI[Reporting / Báo cáo]
+        SET_UI[Settings / Cấu hình]
+      end
+      subgraph BE_CORE["Core Bounded Contexts"]
+        SALES[Sales Service<br/>Đơn hàng / POS]
+        INVENTORY[Inventory Service<br/>Tồn kho SKU]
+        WAREHOUSE[Warehouse Service<br/>Nhập xuất kho]
+        PURCHASE[Purchase Service<br/>Đơn mua hàng NCC]
+      end
+      subgraph BE_OPS["Operational Contexts"]
+        FINANCE[Finance Service<br/>Thu chi / công nợ]
+        LOGISTICS[Logistics Service<br/>Vận chuyển]
+        CARE[Care Service<br/>Loyalty / thành viên]
+        BILLING[Billing Service<br/>Hóa đơn VAT]
+      end
+      subgraph BE_PLAT["Platform Contexts"]
+        MARKET[Market Service<br/>Sàn TMĐT]
+        NOTIF[Notification Service]
+        AUTH[Auth Service<br/>SSO / RBAC]
+        BPM[BPM Workflow]
+      end
+    end
+
+    POS_UI --> SALES
+    POS_UI --> INVENTORY
+    POS_UI --> CUST_UI
+    INV_UI --> INVENTORY
+    INV_UI --> WAREHOUSE
+    SALE_UI --> SALES
+    CUST_UI --> CARE
+    FIN_UI --> FINANCE
+    MKT_UI --> CARE
+    RPT_UI --> SALES
+    RPT_UI --> FINANCE
+    SET_UI --> AUTH
+
+    SALES --> INVENTORY
+    SALES --> FINANCE
+    SALES --> BILLING
+    SALES --> CARE
+    WAREHOUSE --> INVENTORY
+    PURCHASE --> INVENTORY
+    PURCHASE --> FINANCE
+    LOGISTICS --> SALES
+    MARKET --> SALES
+    MARKET --> INVENTORY
+    NOTIF --> CARE
+    BPM --> SALES
+
+    classDef feMod fill:#1F3A68,stroke:#1F3A68,color:#fff
+    classDef core fill:#2C7A7B,stroke:#0F4C44,color:#fff
+    classDef ops fill:#7C3AED,stroke:#5B21B6,color:#fff
+    classDef plat fill:#D97706,stroke:#7C2D12,color:#fff
+
+    class POS_UI,INV_UI,CUST_UI,SALE_UI,FIN_UI,MKT_UI,RPT_UI,SET_UI feMod
+    class SALES,INVENTORY,WAREHOUSE,PURCHASE core
+    class FINANCE,LOGISTICS,CARE,BILLING ops
+    class MARKET,NOTIF,AUTH,BPM plat

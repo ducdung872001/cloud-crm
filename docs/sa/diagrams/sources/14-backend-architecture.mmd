@@ -1,0 +1,61 @@
+%%{init: {'theme':'base','themeVariables':{'fontFamily':'Calibri','fontSize':'18px'}}}%%
+flowchart TB
+    FE["Frontend SPA"]
+    GW["API Gateway<br/>Prefix routing + Auth"]
+
+    subgraph CORE["Core Retail Services"]
+      AUTH["Auth<br/>/authenticator"]
+      SALES["Sales<br/>/bizapi/sales<br/>(sales_db)"]
+      INV["Inventory<br/>/bizapi/inventory<br/>(inventory_db)"]
+      WH["Warehouse<br/>/bizapi/warehouse<br/>(warehouse_db)"]
+      PUR["Purchase<br/>/bizapi/purchase<br/>(purchase_db)"]
+    end
+
+    subgraph OPS["Operational Services"]
+      FIN["Finance<br/>/bizapi/finance<br/>(finance_db)"]
+      LOG["Logistics<br/>/bizapi/logistics<br/>(logistics_db)"]
+      CARE["Care/Loyalty<br/>/bizapi/care<br/>(care_db)"]
+      BILL["Billing VAT<br/>/bizapi/billing<br/>(billing_db)"]
+    end
+
+    subgraph PLAT["Platform Services"]
+      MKT["Marketplace<br/>/bizapi/market<br/>(market_db)"]
+      NOTIF["Notification<br/>/bizapi/notification"]
+      BPM["BPM Workflow<br/>/bpmapi"]
+    end
+
+    subgraph SHARED["Shared Infrastructure"]
+      MQ[(Event Bus<br/>RabbitMQ/Kafka)]
+      REDIS[(Redis cache)]
+      S3[(S3 storage)]
+    end
+
+    FE --> GW
+    GW --> CORE
+    GW --> OPS
+    GW --> PLAT
+
+    SALES -.events.-> MQ
+    INV -.events.-> MQ
+    WH -.events.-> MQ
+    MQ -.subscribe.-> FIN
+    MQ -.subscribe.-> CARE
+    MQ -.subscribe.-> NOTIF
+    MQ -.subscribe.-> MKT
+
+    CORE --> REDIS
+    OPS --> REDIS
+    CORE --> S3
+    OPS --> S3
+
+    classDef fe fill:#1F3A68,stroke:#1F3A68,color:#fff
+    classDef core fill:#2C7A7B,stroke:#0F4C44,color:#fff
+    classDef ops fill:#7C3AED,stroke:#5B21B6,color:#fff
+    classDef plat fill:#D97706,stroke:#7C2D12,color:#fff
+    classDef data fill:#FAEEDA,stroke:#D97706,color:#7C2D12
+
+    class FE,GW fe
+    class AUTH,SALES,INV,WH,PUR core
+    class FIN,LOG,CARE,BILL ops
+    class MKT,NOTIF,BPM plat
+    class MQ,REDIS,S3 data

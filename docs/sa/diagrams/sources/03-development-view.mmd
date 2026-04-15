@@ -1,0 +1,32 @@
+%%{init: {'theme':'base','themeVariables':{'fontFamily':'Calibri','fontSize':'18px'}}}%%
+flowchart TB
+    ROOT["cloud-crm/<br/>Vite + React + TypeScript"]
+    ROOT --> SRC["src/"]
+    ROOT --> PUB["public/"]
+    ROOT --> CFG["vite.config.ts<br/>tsconfig.json<br/>package.json"]
+    ROOT --> DOCS["docs/<br/>userguides, sa/"]
+
+    SRC --> PAGES["pages/<br/>167+ page components<br/>POS, Sales, Inventory,<br/>Customer, Finance, Report"]
+    SRC --> COMP["components/<br/>shared UI<br/>boxTable, HeaderFilter,<br/>ModalConfirm, SlidePanel"]
+    SRC --> SVC["services/<br/>API wrappers<br/>SalesService, InventoryService,<br/>CustomerService..."]
+    SRC --> CTX["contexts/<br/>AuthContext, ConfigContext,<br/>TenantContext"]
+    SRC --> HOOKS["hooks/<br/>useFetch, useDebounce,<br/>usePermission, usePaginate"]
+    SRC --> MODELS["models/<br/>TypeScript interfaces<br/>Order, Product, Customer..."]
+    SRC --> CFGDIR["configs/<br/>urlsApi.ts, fetchConfig.ts,<br/>routes.tsx"]
+    SRC --> LOCALE["locales/<br/>vi.json, en.json<br/>i18next"]
+    SRC --> MODULES["modules/<br/>feature bundles<br/>POS, Reporting"]
+    SRC --> UTILS["utils/<br/>formatCurrency, dateUtil,<br/>validator, storage"]
+    SRC --> ASSETS["assets/<br/>images, icons, fonts"]
+
+    CFG --> BUILD["npm run build<br/>→ dist/ static assets"]
+    BUILD --> CDN["Deploy to CDN / S3"]
+
+    classDef root fill:#1F3A68,stroke:#1F3A68,color:#fff
+    classDef main fill:#2C7A7B,stroke:#0F4C44,color:#fff
+    classDef sub fill:#E1F5EE,stroke:#2C7A7B,color:#0F4C44
+    classDef build fill:#D97706,stroke:#7C2D12,color:#fff
+
+    class ROOT root
+    class SRC,PUB,CFG,DOCS main
+    class PAGES,COMP,SVC,CTX,HOOKS,MODELS,CFGDIR,LOCALE,MODULES,UTILS,ASSETS sub
+    class BUILD,CDN build

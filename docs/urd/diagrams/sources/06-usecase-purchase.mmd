@@ -1,0 +1,45 @@
+%%{init: {'theme':'base', 'themeVariables': {'fontFamily':'Calibri'}}}%%
+flowchart LR
+    PUR(("👤<br/>Purchaser"))
+    WH(("👤<br/>Warehouse<br/>Staff"))
+    ACC(("👤<br/>Accountant"))
+    EMAIL(("🌐<br/>Email SMTP"))
+
+    subgraph SYSTEM["Phân hệ Mua hàng & NCC"]
+        UC1((CRUD NCC<br/>Supplier))
+        UC2((Đánh giá<br/>xếp hạng NCC))
+        UC3((Tạo PO<br/>Purchase Order))
+        UC4((Duyệt PO<br/>Approval))
+        UC5((Gửi PO<br/>qua email))
+        UC6((Nhận hàng<br/>từ PO))
+        UC7((Trả hàng<br/>NCC))
+        UC8((Công nợ<br/>NCC))
+        UC9((Thanh toán<br/>NCC))
+        UC10((Báo cáo<br/>mua hàng))
+    end
+
+    PUR --> UC1
+    PUR --> UC2
+    PUR --> UC3
+    PUR --> UC5
+    PUR --> UC10
+
+    WH --> UC6
+    WH --> UC7
+
+    ACC --> UC8
+    ACC --> UC9
+    ACC --> UC4
+
+    UC5 <-.SMTP.-> EMAIL
+    UC6 -.includes.-> UC3
+    UC6 -.triggers.-> UC8
+    UC9 -.updates.-> UC8
+
+    classDef actor fill:#1F3A68,stroke:#1F3A68,color:#fff
+    classDef ext fill:#FEF3C7,stroke:#F59E0B,color:#78350F
+    classDef uc fill:#E1F5EE,stroke:#2C7A7B,color:#0F4C44
+
+    class PUR,WH,ACC actor
+    class EMAIL ext
+    class UC1,UC2,UC3,UC4,UC5,UC6,UC7,UC8,UC9,UC10 uc

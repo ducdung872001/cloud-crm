@@ -1,0 +1,35 @@
+%%{init: {'theme':'base', 'themeVariables': {'fontFamily':'Calibri','fontSize':'18px'}}}%%
+stateDiagram-v2
+    [*] --> Draft: Tạo giỏ hàng
+    [*] --> Pending: Submit đơn POS
+
+    Draft: Nháp — chưa trừ kho
+    Draft --> Parked: Tạm treo đơn
+    Draft --> Pending: Tiếp tục thanh toán
+    Draft --> [*]: Hủy nháp
+
+    Parked: Tạm treo — chờ khách quay lại
+    Parked --> Pending: Gọi lại đơn
+    Parked --> [*]: Auto xóa sau N ngày
+
+    Pending: Chờ thanh toán
+    Pending --> Paid: Thanh toán đủ
+    Pending --> Debt: Thanh toán + ghi nợ
+    Pending --> Cancelled: Hủy đơn
+
+    Debt: Còn nợ khách
+    Debt --> Paid: Thu nợ (Tài chính)
+
+    Paid: Đã thanh toán
+    Paid --> VatIssued: Phát hành VAT
+    Paid --> RefundedPartial: Trả 1 phần
+    Paid --> RefundedFull: Trả toàn bộ
+    Paid --> Completed: Đóng đơn
+
+    VatIssued: Đã phát hành VAT
+    VatIssued --> Completed
+
+    RefundedPartial --> Completed
+    RefundedFull --> [*]
+    Completed --> [*]
+    Cancelled --> [*]

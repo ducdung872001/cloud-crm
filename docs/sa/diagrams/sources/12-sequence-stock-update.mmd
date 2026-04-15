@@ -1,0 +1,38 @@
+%%{init: {'theme':'base','themeVariables':{'fontFamily':'Calibri','fontSize':'18px'}}}%%
+sequenceDiagram
+    autonumber
+    actor C1 as 👤 Cashier A
+    actor C2 as 👤 Cashier B
+    participant P1 as POS A
+    participant P2 as POS B
+    participant SS as Sales Service
+    participant INV as Inventory Service
+    participant DB as inventory_db
+    participant WH as Warehouse Service
+
+    Note over C1,C2: Cùng lúc bán SKU-001 tồn còn 1
+    C1->>P1: Thanh toán SKU-001 x1
+    C2->>P2: Thanh toán SKU-001 x1
+    P1->>SS: POST /bizapi/sales/order/create
+    P2->>SS: POST /bizapi/sales/order/create
+    SS->>INV: reserveStock(SKU-001, 1) [req A]
+    SS->>INV: reserveStock(SKU-001, 1) [req B]
+    activate INV
+    INV->>DB: BEGIN + SELECT FOR UPDATE<br/>WHERE sku='SKU-001'
+    Note over DB: Row lock — B chờ
+    DB-->>INV: stock = 1 (A)
+    INV->>INV: Check stock >= 1 → OK
+    INV->>DB: UPDATE stock = 0 WHERE sku='SKU-001'
+    INV->>WH: INSERT stock_issue (A)
+    INV->>DB: COMMIT → release lock
+    INV-->>SS: OK (A)
+    deactivate INV
+    activate INV
+    DB-->>INV: stock = 0 (B)
+    INV->>INV: Check stock >= 1 → FAIL
+    INV->>DB: ROLLBACK
+    INV-->>SS: ERR OUT_OF_STOCK (B)
+    deactivate INV
+    SS-->>P1: { orderId } OK
+    SS-->>P2: 409 Conflict — hết hàng
+    P2->>C2: Thông báo hết hàng<br/>gợi ý SKU thay thế

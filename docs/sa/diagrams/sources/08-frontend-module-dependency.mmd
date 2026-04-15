@@ -1,0 +1,74 @@
+%%{init: {'theme':'base','themeVariables':{'fontFamily':'Calibri','fontSize':'18px'}}}%%
+flowchart TB
+    subgraph PAGES["pages/ (167+ routes)"]
+      POS_P[POS/create_sale_add]
+      ORD_P[Sales/OrderList]
+      INV_P[Inventory/ProductList]
+      WH_P[Warehouse/StockIn]
+      CUST_P[Customer/List]
+      FIN_P[Finance/Cashbook]
+      RPT_P[Report/Dashboard]
+    end
+
+    subgraph SERVICES["services/"]
+      SS[SalesService]
+      IS[InventoryService]
+      WS[WarehouseService]
+      CS[CustomerService]
+      FS[FinanceService]
+      RS[ReportService]
+      BS[BillingService]
+    end
+
+    subgraph MODELS["models/"]
+      M_ORD[Order, OrderItem]
+      M_PRD[Product, SKU, Stock]
+      M_CUST[Customer, LoyaltyWallet]
+      M_CASH[CashbookEntry]
+    end
+
+    subgraph SHARED["components/ + hooks/ + utils/"]
+      BOX[boxTable]
+      HF[HeaderFilter]
+      MC[ModalConfirm]
+      SP[SlidePanel]
+      FMT[formatCurrency]
+      DT[dateUtil]
+    end
+
+    subgraph CTX["contexts/ + providers"]
+      AUTH[AuthContext]
+      TENANT[TenantContext]
+      CFG[ConfigContext]
+    end
+
+    POS_P --> SS
+    POS_P --> IS
+    POS_P --> CS
+    ORD_P --> SS
+    INV_P --> IS
+    WH_P --> WS
+    CUST_P --> CS
+    FIN_P --> FS
+    RPT_P --> RS
+    POS_P --> BS
+
+    SS --> M_ORD
+    IS --> M_PRD
+    CS --> M_CUST
+    FS --> M_CASH
+
+    PAGES --> SHARED
+    PAGES --> CTX
+
+    classDef pg fill:#1F3A68,stroke:#1F3A68,color:#fff
+    classDef sv fill:#2C7A7B,stroke:#0F4C44,color:#fff
+    classDef md fill:#7C3AED,stroke:#5B21B6,color:#fff
+    classDef sh fill:#D97706,stroke:#7C2D12,color:#fff
+    classDef cx fill:#E1F5EE,stroke:#2C7A7B,color:#0F4C44
+
+    class POS_P,ORD_P,INV_P,WH_P,CUST_P,FIN_P,RPT_P pg
+    class SS,IS,WS,CS,FS,RS,BS sv
+    class M_ORD,M_PRD,M_CUST,M_CASH md
+    class BOX,HF,MC,SP,FMT,DT sh
+    class AUTH,TENANT,CFG cx

@@ -1,0 +1,35 @@
+%%{init: {'theme':'base','themeVariables':{'fontFamily':'Calibri','fontSize':'18px'}}}%%
+sequenceDiagram
+    autonumber
+    actor CASH as 👤 Cashier
+    actor CUST as 👤 Customer
+    participant POS as POS Page
+    participant SS as Sales Service
+    participant VP as VNPay Gateway
+    participant WH as Webhook Handler
+    participant DB as sales_db
+    participant NS as Notification Service
+
+    CASH->>POS: Chốt đơn — chọn VNPay QR
+    POS->>SS: POST /bizapi/sales/order/create<br/>{ items, payment: VNPAY }
+    SS->>DB: INSERT sales_order status=PENDING
+    SS->>VP: POST /payment/createUrl<br/>{ orderId, amount, returnUrl }
+    VP-->>SS: { paymentUrl, qrCode }
+    SS-->>POS: { orderId, qrCode }
+    POS->>CUST: Hiển thị QR code<br/>trên màn hình phụ
+    CUST->>VP: Quét QR + xác nhận<br/>trong app banking
+    VP->>VP: Trừ tiền + clearing
+    VP-->>CUST: Giao dịch thành công
+    VP->>WH: POST /bizapi/sales/vnpay/ipn<br/>{ orderId, txnRef, amount, signature }
+    activate WH
+    WH->>WH: Verify HMAC signature
+    WH->>DB: SELECT order FOR UPDATE
+    WH->>DB: UPDATE status=PAID<br/>+ payment_ref
+    WH->>DB: INSERT cashbook entry
+    WH->>NS: Emit order.paid event
+    WH-->>VP: 200 OK (ack)
+    deactivate WH
+    POS->>SS: Poll GET /order/{id}/status
+    SS-->>POS: { status: PAID }
+    POS->>CASH: Báo đã thanh toán<br/>→ trừ tồn + in bill
+    NS->>CUST: SMS/Zalo xác nhận đơn

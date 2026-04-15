@@ -1,0 +1,26 @@
+%%{init: {'theme':'base','themeVariables':{'fontFamily':'Calibri','fontSize':'18px'}}}%%
+flowchart TB
+    ROOT["Frontend Component Taxonomy"]
+
+    ROOT --> LAY["Layouts<br/>LayoutPage, AuthLayout,<br/>POSLayout (full-screen)"]
+    ROOT --> PGS["Pages (167+)<br/>POS, OrderList, ProductList,<br/>StockIn, Customer, Cashbook,<br/>Report, Setting..."]
+    ROOT --> SHARED["Shared Components"]
+    ROOT --> HOOKS["Custom Hooks<br/>useFetch, usePaginate,<br/>usePermission, useDebounce,<br/>usePrintBill, useBarcodeScan"]
+    ROOT --> UTIL["Utility / utils<br/>formatCurrency (VND),<br/>calcVat, discountHelper,<br/>dateUtil, storage, validator"]
+
+    SHARED --> TBL["boxTable<br/>agGridTable<br/>paginationBar"]
+    SHARED --> FLT["HeaderFilter<br/>FilterPanel<br/>DateRangePicker"]
+    SHARED --> EDT["RebornEditor<br/>RichTextEditor<br/>formBuilder"]
+    SHARED --> MDL["ModalConfirm<br/>SlidePanel<br/>Drawer"]
+    SHARED --> FB["Toast<br/>Loading/Spinner<br/>ErrorBoundary"]
+    SHARED --> MED["attachmentUpload<br/>imageGallery<br/>qrcode / barcode"]
+    SHARED --> BTN["ButtonComponent<br/>IconButton<br/>PermissionGuard"]
+    SHARED --> POS_C["POS specific<br/>CartList, ProductCard,<br/>PaymentKeypad, BillPreview"]
+
+    classDef root fill:#1F3A68,stroke:#1F3A68,color:#fff
+    classDef cat fill:#2C7A7B,stroke:#0F4C44,color:#fff
+    classDef sub fill:#E1F5EE,stroke:#2C7A7B,color:#0F4C44
+
+    class ROOT root
+    class LAY,PGS,SHARED,HOOKS,UTIL cat
+    class TBL,FLT,EDT,MDL,FB,MED,BTN,POS_C sub

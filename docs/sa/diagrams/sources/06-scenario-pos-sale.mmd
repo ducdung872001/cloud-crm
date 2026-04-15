@@ -1,0 +1,52 @@
+%%{init: {'theme':'base','themeVariables':{'fontFamily':'Calibri','fontSize':'18px'}}}%%
+sequenceDiagram
+    autonumber
+    actor CASH as 👤 Cashier
+    participant POS as POS Page
+    participant INV as InventoryService
+    participant CS as CustomerService
+    participant SS as SalesService
+    participant WH as WarehouseService
+    participant FS as FinanceService
+    participant CRS as CareService
+    participant BS as BillingService
+    participant DB as Database
+    participant PR as Máy in bill
+
+    CASH->>POS: Mở POS / scan barcode
+    POS->>INV: GET /bizapi/inventory/product/search<br/>?keyword=barcode
+    INV->>DB: SELECT product + stock
+    INV-->>POS: { product, price, stock }
+    POS->>POS: Add vào giỏ (local state)
+    CASH->>POS: Search khách "SĐT 0909..."
+    POS->>CS: GET /bizapi/care/customer/filter
+    CS-->>POS: Danh sách khách + điểm loyalty
+    CASH->>POS: Chọn khách + phương thức TT
+    CASH->>POS: Bấm Thanh toán
+    POS->>SS: POST /bizapi/sales/order/create<br/>{ items, customer, payment }
+    activate SS
+    SS->>DB: BEGIN transaction
+    SS->>DB: INSERT sales_order
+    SS->>DB: INSERT order_item × N
+    SS->>INV: Lock + trừ tồn SKU
+    INV->>DB: UPDATE inventory_stock<br/>(pessimistic lock)
+    INV->>WH: Ghi phiếu xuất kho
+    WH->>DB: INSERT stock_issue
+    WH-->>SS: OK
+    INV-->>SS: OK
+    SS->>FS: POST cashbook entry<br/>(phiếu thu tiền mặt)
+    FS->>DB: INSERT cashbook
+    FS-->>SS: OK
+    SS->>CRS: Cộng điểm loyalty
+    CRS->>DB: UPDATE loyalty_wallet
+    CRS-->>SS: OK
+    SS->>DB: COMMIT
+    SS-->>POS: { orderId, code, total }
+    deactivate SS
+    POS->>PR: Trigger print bill
+    opt Khách yêu cầu VAT
+      CASH->>POS: Bấm Xuất hóa đơn VAT
+      POS->>BS: POST /bizapi/billing/einvoice/issue
+      BS-->>POS: { invoiceNo, lookupUrl }
+    end
+    POS->>CASH: Hoàn tất giao dịch

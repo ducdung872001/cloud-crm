@@ -1,0 +1,93 @@
+%%{init: {'theme':'base','themeVariables':{'fontFamily':'Calibri','fontSize':'18px'}}}%%
+flowchart LR
+    subgraph CRM["REBORN RETAIL CRM"]
+      direction TB
+      AUTH[Auth Service]
+      SALES[Sales Service]
+      INV[Inventory Service]
+      LOG[Logistics Service]
+      BILL[Billing Service]
+      MKT[Market Service]
+      CARE[Care Service]
+      NOTIF[Notification Service]
+      INTEG[Integration Service]
+    end
+
+    subgraph IDP["Identity"]
+      SSO[SSO Reborn<br/>OAuth/OIDC]
+      MSAL[Microsoft MSAL]
+    end
+
+    subgraph PAY["Payment Gateways"]
+      VNPAY[VNPay]
+      MOMO[MoMo]
+      ZALOPAY[ZaloPay]
+      CARD[POS Card Terminal<br/>Napas]
+    end
+
+    subgraph VAT_BOX["E-invoice VAT"]
+      VNPT[VNPT Invoice]
+      MISA[MISA meInvoice]
+      VIETTEL[Viettel SInvoice]
+    end
+
+    subgraph SHIP["Shipping"]
+      GHN[GHN]
+      GHTK[GHTK]
+      JT[J&T Express]
+      VNPOST[ViettelPost/VNPost]
+    end
+
+    subgraph MP["Marketplaces"]
+      SHOPEE[Shopee Open API]
+      LAZADA[Lazada Open API]
+      TIKI[Tiki Seller API]
+      TIKTOK[TikTok Shop]
+    end
+
+    subgraph MSG["Messaging"]
+      SMS[eSMS / VietGuys]
+      EMAIL[SendGrid / SMTP]
+      ZALO[Zalo OA]
+      FB[Facebook Page]
+      FCM[Firebase FCM]
+    end
+
+    TENANT[Tenant Webhook<br/>Endpoint]
+
+    AUTH <-->|OIDC| SSO
+    CARE <-->|MSAL| MSAL
+    SALES <-->|REST + IPN| VNPAY
+    SALES <-->|REST + IPN| MOMO
+    SALES <-->|REST + IPN| ZALOPAY
+    SALES <-->|Serial/USB| CARD
+    BILL -->|REST + ký số| VNPT
+    BILL -->|REST + ký số| MISA
+    BILL -->|REST + ký số| VIETTEL
+    LOG <-->|REST + webhook| GHN
+    LOG <-->|REST + webhook| GHTK
+    LOG <-->|REST + webhook| JT
+    LOG <-->|REST + webhook| VNPOST
+    MKT <-->|REST + webhook| SHOPEE
+    MKT <-->|REST + webhook| LAZADA
+    MKT <-->|REST + webhook| TIKI
+    MKT <-->|REST + webhook| TIKTOK
+    INV -.sync stock.-> MKT
+    NOTIF -->|API| SMS
+    NOTIF -->|SMTP| EMAIL
+    NOTIF <-->|API + webhook| ZALO
+    NOTIF <-->|Graph API| FB
+    NOTIF -->|FCM| FCM
+    INTEG -.HTTP POST + HMAC.-> TENANT
+
+    classDef crm fill:#1F3A68,stroke:#1F3A68,color:#fff
+    classDef idp fill:#7C3AED,stroke:#5B21B6,color:#fff
+    classDef pay fill:#2C7A7B,stroke:#0F4C44,color:#fff
+    classDef vat fill:#D97706,stroke:#7C2D12,color:#fff
+    classDef ext fill:#FEF3C7,stroke:#F59E0B,color:#78350F
+
+    class AUTH,SALES,INV,LOG,BILL,MKT,CARE,NOTIF,INTEG crm
+    class SSO,MSAL idp
+    class VNPAY,MOMO,ZALOPAY,CARD pay
+    class VNPT,MISA,VIETTEL vat
+    class GHN,GHTK,JT,VNPOST,SHOPEE,LAZADA,TIKI,TIKTOK,SMS,EMAIL,ZALO,FB,FCM,TENANT ext

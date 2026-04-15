@@ -1,0 +1,47 @@
+%%{init: {'theme':'base', 'themeVariables': {'fontFamily':'Calibri'}}}%%
+flowchart LR
+    SALES(("👤<br/>Sales Rep"))
+    MKT(("👤<br/>Marketer"))
+    CASH(("👤<br/>Cashier"))
+    ADMIN(("👤<br/>Tenant<br/>Admin"))
+
+    subgraph SYSTEM["Phân hệ Khách hàng"]
+        UC1((CRUD<br/>khách hàng))
+        UC2((Tìm khách<br/>nâng cao))
+        UC3((Định nghĩa<br/>Custom fields))
+        UC4((Phân khúc<br/>segment))
+        UC5((Lịch sử<br/>giao dịch))
+        UC6((Gia hạn<br/>member))
+        UC7((Chăm sóc<br/>task/ticket))
+        UC8((Merge trùng<br/>duplicate))
+        UC9((Import<br/>Excel))
+        UC10((Export<br/>Excel/CSV))
+        UC11((Tạo nhanh<br/>khi POS))
+    end
+
+    SALES --> UC1
+    SALES --> UC2
+    SALES --> UC5
+    SALES --> UC7
+
+    MKT --> UC4
+    MKT --> UC9
+    MKT --> UC10
+    MKT --> UC8
+
+    CASH --> UC11
+    CASH --> UC2
+    CASH --> UC6
+
+    ADMIN --> UC3
+    ADMIN --> UC1
+
+    UC11 -.extends.-> UC1
+    UC5 -.includes.-> UC2
+    UC4 -.uses.-> UC3
+
+    classDef actor fill:#1F3A68,stroke:#1F3A68,color:#fff
+    classDef uc fill:#E1F5EE,stroke:#2C7A7B,color:#0F4C44
+
+    class SALES,MKT,CASH,ADMIN actor
+    class UC1,UC2,UC3,UC4,UC5,UC6,UC7,UC8,UC9,UC10,UC11 uc

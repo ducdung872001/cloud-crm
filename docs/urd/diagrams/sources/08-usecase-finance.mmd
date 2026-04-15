@@ -1,0 +1,45 @@
+%%{init: {'theme':'base', 'themeVariables': {'fontFamily':'Calibri'}}}%%
+flowchart LR
+    ACC(("👤<br/>Accountant"))
+    SM(("👤<br/>Store<br/>Manager"))
+    ADMIN(("👤<br/>Tenant<br/>Admin"))
+    PAY(("🌐<br/>Payment<br/>Gateway"))
+
+    subgraph SYSTEM["Phân hệ Tài chính"]
+        UC1((Dashboard<br/>tài chính))
+        UC2((Sổ thu chi<br/>tổng hợp))
+        UC3((Tạo phiếu<br/>thu/chi))
+        UC4((Hủy phiếu<br/>trong ngày))
+        UC5((Quản lý quỹ<br/>+ số dư))
+        UC6((Chuyển tiền<br/>giữa quỹ))
+        UC7((CRUD<br/>khoản mục))
+        UC8((Công nợ<br/>khách hàng))
+        UC9((Công nợ<br/>NCC))
+        UC10((Đối soát<br/>cổng TT))
+        UC11((Cấu hình<br/>PT thanh toán))
+    end
+
+    ACC --> UC2
+    ACC --> UC3
+    ACC --> UC4
+    ACC --> UC6
+    ACC --> UC8
+    ACC --> UC9
+    ACC --> UC10
+
+    SM --> UC1
+    SM --> UC8
+
+    ADMIN --> UC5
+    ADMIN --> UC7
+    ADMIN --> UC11
+
+    UC10 <-.sao kê.-> PAY
+
+    classDef actor fill:#1F3A68,stroke:#1F3A68,color:#fff
+    classDef ext fill:#FEF3C7,stroke:#F59E0B,color:#78350F
+    classDef uc fill:#E1F5EE,stroke:#2C7A7B,color:#0F4C44
+
+    class ACC,SM,ADMIN actor
+    class PAY ext
+    class UC1,UC2,UC3,UC4,UC5,UC6,UC7,UC8,UC9,UC10,UC11 uc

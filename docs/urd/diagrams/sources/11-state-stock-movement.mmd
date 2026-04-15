@@ -1,0 +1,37 @@
+%%{init: {'theme':'base', 'themeVariables': {'fontFamily':'Calibri','fontSize':'18px'}}}%%
+stateDiagram-v2
+    direction LR
+    [*] --> Draft: Tạo phiếu chuyển kho
+    Draft: Nháp — chưa xuất kho
+
+    Draft --> PendingTransfer: Gửi duyệt
+    Draft --> [*]: Hủy nháp
+
+    PendingTransfer: Chờ duyệt chuyển
+    PendingTransfer --> InTransit: Duyệt + Xuất kho nguồn
+    PendingTransfer --> Draft: Từ chối duyệt
+
+    InTransit: Đang vận chuyển
+    InTransit --> Received: Kho đích nhận
+    InTransit --> Rejected: Kho đích từ chối
+
+    Received: Đã nhận — đếm thực tế
+    Received --> Closed: Số lượng khớp
+    Received --> Rejected: Chênh lệch lớn
+
+    Rejected: Có chênh lệch
+    Rejected --> Closed: Tạo phiếu điều chỉnh
+    Rejected --> InTransit: Hoàn trả kho nguồn
+
+    Closed: Đã đóng phiếu
+    Closed --> [*]
+
+    note right of InTransit
+        Tồn kho nguồn đã trừ,
+        kho đích chưa cộng
+    end note
+
+    note right of Rejected
+        Bắt buộc ghi lý do
+        chênh lệch
+    end note

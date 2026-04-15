@@ -78,7 +78,20 @@
       "Bash(clip.exe)",
       "Bash(rm -f tests/test-ship-dbg.mjs tests/reports/dbg-out.txt)",
       "Bash(grep -n \"promotional_program\\\\|promo_code\" /d/Git/reborn/reborn-cloud/cloud-ver2/cloud-crm/src/configs/*.ts)",
-      "Bash(grep -n \"promotion/update\\\\|PromotionService.update\\\\|IPromotionRequest\\\\|interface.*Promotion.*Request\" /d/Git/reborn/reborn-cloud/cloud-ver2/cloud-crm/src/model/promotion/*.ts /d/Git/reborn/reborn-cloud/cloud-ver2/cloud-crm/src/services/PromotionService.ts)"
+      "Bash(grep -n \"promotion/update\\\\|PromotionService.update\\\\|IPromotionRequest\\\\|interface.*Promotion.*Request\" /d/Git/reborn/reborn-cloud/cloud-ver2/cloud-crm/src/model/promotion/*.ts /d/Git/reborn/reborn-cloud/cloud-ver2/cloud-crm/src/services/PromotionService.ts)",
+      "Bash(curl -s -o /dev/null -w \"HTTP %{http_code}\" http://localhost:4000/crm/ --max-time 15)",
+      "Bash(ls /tmp/claude/*/tasks/)",
+      "Bash(curl -sL -o docs/bugs/bug-report-tester.csv \"https://docs.google.com/spreadsheets/d/19yoL8Sn4A2-40jMno_wJ0qVVMv4u_sGigLfQyRusaXk/export?format=csv\")",
+      "Bash(curl -skL -o docs/bugs/bug-report-tester.csv \"https://docs.google.com/spreadsheets/d/19yoL8Sn4A2-40jMno_wJ0qVVMv4u_sGigLfQyRusaXk/export?format=csv\")",
+      "Bash(curl -skL -o docs/bugs/bug-report-tester.xlsx \"https://docs.google.com/spreadsheets/d/19yoL8Sn4A2-40jMno_wJ0qVVMv4u_sGigLfQyRusaXk/export?format=xlsx\")",
+      "Bash(unzip -l bug-report-tester.xlsx)",
+      "Bash(python -c ':*)",
+      "Bash(ls docs/urd/*.md docs/sa/*.md docs/userguides/*.md)",
+      "Bash(wc -l docs/urd/*.md docs/sa/*.md docs/userguides/*.md)",
+      "Bash(ls vitest.config*)",
+      "Bash(npx vitest:*)",
+      "Bash(curl -s -o /dev/null -w \"HTTP %{http_code}\" http://localhost:4000/crm/ --max-time 5)",
+      "Bash(npx mmdc:*)"
     ]
   }
 }

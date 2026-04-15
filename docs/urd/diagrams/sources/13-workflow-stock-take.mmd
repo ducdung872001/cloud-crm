@@ -1,0 +1,43 @@
+%%{init: {'theme':'base', 'themeVariables': {'fontFamily':'Calibri'}}}%%
+flowchart TB
+    START([Lịch kiểm kê định kỳ]) --> B1[Store Manager tạo<br/>phiếu kiểm kê]
+    B1 --> B2[Chọn kho/khu vực<br/>+ danh mục SP]
+    B2 --> B3[Hệ thống snapshot<br/>tồn sổ sách hiện tại]
+    B3 --> B4[Khóa điều chỉnh<br/>tồn kho tạm thời]
+
+    B4 --> C1[Phát mobile scanner<br/>cho nhân viên kiểm kê]
+    C1 --> C2[Nhân viên quét barcode<br/>từng SP]
+    C2 --> C3[Nhập số lượng<br/>đếm thực tế]
+    C3 --> C4{Còn SP<br/>chưa đếm?}
+    C4 -->|Có| C2
+    C4 -->|Không| C5[Submit kết quả đếm]
+
+    C5 --> D1[Hệ thống so sánh<br/>tồn sổ vs thực tế]
+    D1 --> D2{Có chênh<br/>lệch?}
+    D2 -->|Không| E1[Đóng phiếu — Khớp 100%]
+    D2 -->|Có| D3[Liệt kê SP chênh lệch<br/>+ giá trị]
+
+    D3 --> D4[Điều tra nguyên nhân<br/>mất/nhầm/hỏng]
+    D4 --> D5[Tạo phiếu điều chỉnh<br/>stock adjustment]
+    D5 --> D6{Giá trị chênh<br/>> ngưỡng?}
+    D6 -->|Có| D7[Gửi Store Manager<br/>duyệt]
+    D6 -->|Không| D8[Auto approve]
+    D7 --> D9{Duyệt?}
+    D9 -->|Không| D4
+    D9 -->|Có| D8
+    D8 --> D10[Cập nhật tồn kho<br/>theo thực tế]
+
+    D10 --> E1
+    E1 --> F1[Mở khóa điều chỉnh]
+    F1 --> F2[Sinh báo cáo kiểm kê]
+    F2 --> END([Kết thúc])
+
+    classDef start fill:#10B981,stroke:#047857,color:#fff
+    classDef action fill:#E1F5EE,stroke:#2C7A7B,color:#0F4C44
+    classDef decision fill:#FEF3C7,stroke:#F59E0B,color:#78350F
+    classDef endNode fill:#1F3A68,stroke:#1F3A68,color:#fff
+
+    class START,END start
+    class B1,B2,B3,B4,C1,C2,C3,C5,D1,D3,D4,D5,D8,D10,E1,F1,F2 action
+    class C4,D2,D6,D9 decision
+    class D7 endNode
