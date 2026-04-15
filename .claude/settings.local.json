@@ -75,13 +75,10 @@
       "Bash(HEADLESS=true node tests/.inspect-customer.mjs)",
       "Bash(node tests/test-customer-api.mjs)",
       "Bash(curl -s -o /dev/null -w \"%{http_code}\" https://cloud.reborn.vn/adminapi/customer/list_paid?page=1 -H \"Hostname: kcn.reborn.vn\")",
-      "Bash(mkdir -p docs/fitpro)",
-      "Bash(curl -sL -o docs/fitpro/FitPro.pptx \"https://drive.google.com/uc?export=download&id=1wyRJyaF9a_GOK9w6iiSfV1l-a_YkIx56\")",
-      "Bash(curl -sL -o docs/fitpro/FitPro.pptx \"https://drive.google.com/uc?export=download&id=1wyRJyaF9a_GOK9w6iiSfV1l-a_YkIx56\" -w \"HTTP %{http_code} size=%{size_download}\\\\n\")",
-      "Bash(xxd)",
-      "Bash(python -m pip install python-docx python-pptx --quiet)",
-      "Bash(PYTHONIOENCODING=utf-8 python)",
-      "Bash(cd /d \"D:\\\\Git\\\\reborn\\\\reborn-cloud\\\\cloud-ver2\\\\cloud-crm\")"
+      "Bash(ls tests/test-smoke*.mjs tests/helpers.mjs tests/config.mjs tests/login-save.mjs)",
+      "Bash(curl -s -o /dev/null -w \"SSO %{http_code} CRM %{http_code}\" http://localhost:8080/ --max-time 3)",
+      "Bash(curl -s -o /dev/null -w \"CRM %{http_code}\\\\n\" http://localhost:4000/crm/ --max-time 3)",
+      "Bash(grep -E \"FAIL|✅.*pass|failed$\")"
     ]
   }
 }
