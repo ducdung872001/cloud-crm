@@ -1,0 +1,99 @@
+{
+  "module": "TAX-SMK",
+  "name": "Tax Module Smoke",
+  "runId": "zg0kvx",
+  "timestamp": "2026-04-15T02:41:57.957Z",
+  "durationMs": 97032,
+  "baseUrl": "http://localhost:4000/crm",
+  "total": 14,
+  "passed": 14,
+  "failed": 0,
+  "passRate": "100%",
+  "results": [
+    {
+      "testId": "LOGIN",
+      "status": "PASS",
+      "detail": "Dung lai storageState da luu",
+      "ts": "2026-04-15T02:40:33.125Z"
+    },
+    {
+      "testId": "TAX-SMK-001-render",
+      "status": "PASS",
+      "detail": "Dashboard render: tìm thấy text trong [Tổng quan, 5 chỉ số, Doanh thu]",
+      "ts": "2026-04-15T02:40:42.354Z"
+    },
+    {
+      "testId": "TAX-SMK-001-no-error",
+      "status": "PASS",
+      "detail": "Dashboard không có console error",
+      "ts": "2026-04-15T02:40:42.354Z"
+    },
+    {
+      "testId": "TAX-SMK-002-render",
+      "status": "PASS",
+      "detail": "Hồ sơ thuế render: tìm thấy text trong [Hồ sơ thuế, Khoán, Kê khai]",
+      "ts": "2026-04-15T02:40:51.888Z"
+    },
+    {
+      "testId": "TAX-SMK-002-no-error",
+      "status": "PASS",
+      "detail": "Hồ sơ thuế không có console error",
+      "ts": "2026-04-15T02:40:51.888Z"
+    },
+    {
+      "testId": "TAX-SMK-003-render",
+      "status": "PASS",
+      "detail": "Sổ DT/CP render: tìm thấy text trong [Sổ doanh thu, Sổ chi phí]",
+      "ts": "2026-04-15T02:41:02.643Z"
+    },
+    {
+      "testId": "TAX-SMK-003-no-error",
+      "status": "PASS",
+      "detail": "Sổ DT/CP không có console error",
+      "ts": "2026-04-15T02:41:02.643Z"
+    },
+    {
+      "testId": "TAX-SMK-004-render",
+      "status": "PASS",
+      "detail": "Declaration Wizard render: tìm thấy text trong [Chọn kỳ, Tổng hợp]",
+      "ts": "2026-04-15T02:41:14.545Z"
+    },
+    {
+      "testId": "TAX-SMK-004-no-error",
+      "status": "PASS",
+      "detail": "Declaration Wizard không có console error",
+      "ts": "2026-04-15T02:41:14.545Z"
+    },
+    {
+      "testId": "TAX-SMK-005-render",
+      "status": "PASS",
+      "detail": "Lịch thuế render: tìm thấy text trong [Năm, Hạn nộp]",
+      "ts": "2026-04-15T02:41:27.340Z"
+    },
+    {
+      "testId": "TAX-SMK-005-no-error",
+      "status": "PASS",
+      "detail": "Lịch thuế không có console error",
+      "ts": "2026-04-15T02:41:27.340Z"
+    },
+    {
+      "testId": "TAX-SMK-006-render",
+      "status": "PASS",
+      "detail": "Tư vấn render: tìm thấy text trong [Câu hỏi thường gặp, FAQ, Yêu cầu hỗ trợ]",
+      "ts": "2026-04-15T02:41:41.463Z"
+    },
+    {
+      "testId": "TAX-SMK-006-no-error",
+      "status": "PASS",
+      "detail": "Tư vấn không có console error",
+      "ts": "2026-04-15T02:41:41.463Z"
+    },
+    {
+      "testId": "TAX-SMK-007-spa-nav",
+      "status": "PASS",
+      "detail": "SPA navigation tab: http://localhost:4000/crm/tax → http://localhost:4000/crm/tax/profile",
+      "ts": "2026-04-15T02:41:57.956Z"
+    }
+  ],
+  "apiCalls": 58
+}

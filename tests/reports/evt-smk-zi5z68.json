@@ -1,0 +1,69 @@
+{
+  "module": "EVT-SMK",
+  "name": "Events Module Smoke",
+  "runId": "zi5z68",
+  "timestamp": "2026-04-15T03:41:18.711Z",
+  "durationMs": 46759,
+  "baseUrl": "http://localhost:4000/crm",
+  "total": 9,
+  "passed": 9,
+  "failed": 0,
+  "passRate": "100%",
+  "results": [
+    {
+      "testId": "LOGIN",
+      "status": "PASS",
+      "detail": "Dung lai storageState da luu",
+      "ts": "2026-04-15T03:40:40.980Z"
+    },
+    {
+      "testId": "EVT-SMK-001-render",
+      "status": "PASS",
+      "detail": "Event List render: [Quản lý sự kiện, Tạo sự kiện]",
+      "ts": "2026-04-15T03:40:48.475Z"
+    },
+    {
+      "testId": "EVT-SMK-001-no-error",
+      "status": "PASS",
+      "detail": "Event List clean",
+      "ts": "2026-04-15T03:40:48.475Z"
+    },
+    {
+      "testId": "EVT-SMK-002-render",
+      "status": "PASS",
+      "detail": "Event Form Create render: [Tạo sự kiện mới, Thông tin cơ bản]",
+      "ts": "2026-04-15T03:40:57.465Z"
+    },
+    {
+      "testId": "EVT-SMK-002-no-error",
+      "status": "PASS",
+      "detail": "Event Form Create clean",
+      "ts": "2026-04-15T03:40:57.465Z"
+    },
+    {
+      "testId": "EVT-SMK-003-render",
+      "status": "PASS",
+      "detail": "Event Detail render: [Workshop Yoga, Người đăng ký, Chia sẻ]",
+      "ts": "2026-04-15T03:41:07.189Z"
+    },
+    {
+      "testId": "EVT-SMK-003-no-error",
+      "status": "PASS",
+      "detail": "Event Detail clean",
+      "ts": "2026-04-15T03:41:07.189Z"
+    },
+    {
+      "testId": "EVT-SMK-004-render",
+      "status": "PASS",
+      "detail": "Public Share Page render: [Đăng ký tham gia, Workshop Yoga]",
+      "ts": "2026-04-15T03:41:18.710Z"
+    },
+    {
+      "testId": "EVT-SMK-004-no-error",
+      "status": "PASS",
+      "detail": "Public Share Page clean",
+      "ts": "2026-04-15T03:41:18.710Z"
+    }
+  ],
+  "apiCalls": 30
+}

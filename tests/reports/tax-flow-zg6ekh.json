@@ -1,0 +1,135 @@
+{
+  "module": "TAX-FLOW",
+  "name": "Tax Module Flow",
+  "runId": "zg6ekh",
+  "timestamp": "2026-04-15T02:45:55.307Z",
+  "durationMs": 62634,
+  "baseUrl": "http://localhost:4000/crm",
+  "total": 20,
+  "passed": 19,
+  "failed": 1,
+  "passRate": "95%",
+  "results": [
+    {
+      "testId": "LOGIN",
+      "status": "PASS",
+      "detail": "Dung lai storageState da luu",
+      "ts": "2026-04-15T02:44:59.423Z"
+    },
+    {
+      "testId": "TAX-C1-002",
+      "status": "PASS",
+      "detail": "Click được card phương pháp Kê khai",
+      "ts": "2026-04-15T02:45:12.798Z"
+    },
+    {
+      "testId": "TAX-C1-003",
+      "status": "PASS",
+      "detail": "Click được ngành service_no_material",
+      "ts": "2026-04-15T02:45:12.849Z"
+    },
+    {
+      "testId": "TAX-C1-004a",
+      "status": "PASS",
+      "detail": "Fill form: {\"mst\":true,\"cccd\":true,\"name\":true,\"addr\":true,\"province\":true}",
+      "ts": "2026-04-15T02:45:13.207Z"
+    },
+    {
+      "testId": "TAX-C1-004b",
+      "status": "PASS",
+      "detail": "Click được nút Lưu hồ sơ thuế",
+      "ts": "2026-04-15T02:45:14.268Z"
+    },
+    {
+      "testId": "TAX-C1-005",
+      "status": "PASS",
+      "detail": "Profile lưu vào localStorage: 8123456789",
+      "ts": "2026-04-15T02:45:14.272Z"
+    },
+    {
+      "testId": "TAX-C2-001",
+      "status": "PASS",
+      "detail": "Click được nút Thêm điều chỉnh",
+      "ts": "2026-04-15T02:45:24.632Z"
+    },
+    {
+      "testId": "TAX-C2-002",
+      "status": "PASS",
+      "detail": "Validation số tiền lớn hơn 0",
+      "ts": "2026-04-15T02:45:25.518Z"
+    },
+    {
+      "testId": "TAX-C2-004a",
+      "status": "PASS",
+      "detail": "Fill form điều chỉnh: {\"amount\":true,\"desc\":true}",
+      "ts": "2026-04-15T02:45:25.593Z"
+    },
+    {
+      "testId": "TAX-C2-004b",
+      "status": "PASS",
+      "detail": "Manual revenue lưu vào localStorage: 1 records",
+      "ts": "2026-04-15T02:45:26.784Z"
+    },
+    {
+      "testId": "TAX-C3-001",
+      "status": "PASS",
+      "detail": "Stepper render với bước 1",
+      "ts": "2026-04-15T02:45:32.987Z"
+    },
+    {
+      "testId": "TAX-C3-003",
+      "status": "PASS",
+      "detail": "Tiến sang bước 2 — Tổng hợp",
+      "ts": "2026-04-15T02:45:35.184Z"
+    },
+    {
+      "testId": "TAX-C3-005",
+      "status": "PASS",
+      "detail": "Bước 3 — Preview mẫu 01/CNKD render với header tờ khai",
+      "ts": "2026-04-15T02:45:36.826Z"
+    },
+    {
+      "testId": "TAX-C3-008a",
+      "status": "PASS",
+      "detail": "Bước 4 — Ký số UI hiển thị",
+      "ts": "2026-04-15T02:45:37.937Z"
+    },
+    {
+      "testId": "TAX-C3-008b",
+      "status": "PASS",
+      "detail": "Bước 5 — Nộp eTax UI hiển thị",
+      "ts": "2026-04-15T02:45:39.503Z"
+    },
+    {
+      "testId": "TAX-C3-009",
+      "status": "PASS",
+      "detail": "Nhận được mã tra cứu sau nộp",
+      "ts": "2026-04-15T02:45:41.075Z"
+    },
+    {
+      "testId": "TAX-C3-010",
+      "status": "PASS",
+      "detail": "Declaration lưu vào localStorage: 1 records",
+      "ts": "2026-04-15T02:45:41.080Z"
+    },
+    {
+      "testId": "TAX-C4-001",
+      "status": "FAIL",
+      "detail": "Lịch hiển thị kỳ Đã nộp sau khi submit",
+      "ts": "2026-04-15T02:45:47.533Z"
+    },
+    {
+      "testId": "TAX-C5-001",
+      "status": "PASS",
+      "detail": "Fill form hỗ trợ",
+      "ts": "2026-04-15T02:45:54.230Z"
+    },
+    {
+      "testId": "TAX-C5-003",
+      "status": "PASS",
+      "detail": "Support request lưu vào localStorage: 1 records",
+      "ts": "2026-04-15T02:45:55.307Z"
+    }
+  ],
+  "apiCalls": 49
+}
