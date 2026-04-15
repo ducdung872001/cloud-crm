@@ -18,7 +18,10 @@
     "prettier": "prettier --check \"src/**/(*.tsx|*.ts|*.jsx|*.js|*.scss|*.css)\"",
     "prettier:fix": "prettier --write \"src/**/(*.tsx|*.ts|*.jsx|*.js|*.scss|*.css)\"",
     "format": "npm run prettier:fix && npm run lint:fix",
-    "type-check": "tsc --noEmit"
+    "type-check": "tsc --noEmit",
+    "test": "vitest run --config vitest.config.ts",
+    "test:watch": "vitest --config vitest.config.ts",
+    "test:ui": "vitest --ui --config vitest.config.ts"
   },
   "husky": {
     "hooks": {
@@ -60,7 +63,6 @@
     "favicons": "^7.2.0",
     "fetch-intercept": "^2.4.0",
     "file-saver": "^2.0.5",
-    "fingerprintjs": "^0.5.3",
     "firebase": "^9.16.0",
     "firebase-config": "^1.0.0",
     "formula-functionizer": "^1.0.4",
@@ -142,8 +144,8 @@
     "@babel/runtime": "^7.16.5",
     "@types/dompurify": "^3.2.0",
     "@types/escape-html": "^1.0.2",
-    "@types/react": "^17.0.37",
-    "@types/react-dom": "^17.0.11",
+    "@types/react": "^18.3.12",
+    "@types/react-dom": "^18.3.1",
     "@types/uuid": "^8.3.4",
     "@typescript-eslint/eslint-plugin": "^5.8.0",
     "@typescript-eslint/parser": "^5.8.0",
