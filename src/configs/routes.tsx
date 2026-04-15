@@ -520,6 +520,7 @@ export const routes: IRouter[] = [
   { path: "/tax/profile", component: <TaxModulePage /> },
   { path: "/tax/book", component: <TaxModulePage /> },
   { path: "/tax/declaration", component: <TaxModulePage /> },
+  { path: "/tax/license-fee", component: <TaxModulePage /> },
   { path: "/tax/calendar", component: <TaxModulePage /> },
   { path: "/tax/advisory", component: <TaxModulePage /> },
   // Dashboard
