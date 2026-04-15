@@ -5,14 +5,14 @@ flowchart TB
 
     subgraph CORE["Core Retail Services"]
       AUTH["/authenticator<br/>SSO (Platform)"]
-      SALES["sales<br/>/bizapi/sales<br/>(sales_db)<br/>POS+order+shift+<br/>cashbook+debt+fund+payment"]
+      SALES["sales<br/>/bizapi/sales<br/>(sales_db)<br/>POS+order+shift+invoice"]
       INV["inventory<br/>/bizapi/inventory<br/>(inventory_db)<br/>stock+warehouse+PO+NCC"]
     end
 
     subgraph OPS["Operational Services"]
       LOG["logistics<br/>/bizapi/logistics<br/>(logistics_db)"]
       CARE["care<br/>/bizapi/care<br/>(care_db)<br/>ticket+warranty+feedback"]
-      BILL["billing VAT<br/>/bizapi/billing<br/>(billing_db)"]
+      BILL["billing<br/>/bizapi/billing<br/>(billing_db)<br/>cashbook+debt+fund+<br/>payment+VAT"]
       INTEG["integration<br/>/bizapi/integration<br/>(integration_db)<br/>marketplace+MSAL+payment+<br/>e-invoice+SMS adapters"]
       FIN["finance ⚠ banking only<br/>/bizapi/finance<br/>(retail thường KHÔNG bật)"]
     end

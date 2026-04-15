@@ -44,7 +44,7 @@ src/
 ├── pages/                  # 160+ page modules (mỗi module 1 domain)
 │   ├── Sell/               #  ├─ POS: CreateOrderSales, SaleInvoiceList
 │   ├── ProductImport/      #  ├─ NK, tồn, inventory, warehouse (gọi /bizapi/inventory)
-│   ├── Finance/            #  ├─ CashBook, Debt, Fund (BE thuộc /bizapi/sales — KHÔNG /finance)
+│   ├── Finance/            #  ├─ CashBook, Debt, Fund (BE thuộc /bizapi/billing — KHÔNG /sales hay /finance)
 │   ├── CustomerPerson/     #  ├─ KH cá nhân
 │   ├── Warranty/, Ticket/  #  ├─ CSKH (gọi /bizapi/care)
 │   └── …

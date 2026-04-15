@@ -13,13 +13,13 @@ flowchart TB
         SET_UI[Settings / Cấu hình]
       end
       subgraph BE_CORE["Core Bounded Contexts"]
-        SALES[sales<br/>POS, order, shift,<br/>cashbook, debt, fund, payment]
+        SALES[sales<br/>POS, order, shift,<br/>invoice lifecycle]
         INVENTORY[inventory<br/>Tồn kho + warehouse +<br/>purchase order + NCC]
       end
       subgraph BE_OPS["Operational Contexts"]
         LOGISTICS[logistics<br/>Vận chuyển, COD]
         CARE[care<br/>Ticket, warranty, feedback]
-        BILLING[billing<br/>Hóa đơn VAT TT78]
+        BILLING[billing<br/>Cashbook, debt, fund,<br/>payment, VAT TT78]
         INTEG[integration<br/>3rd party connectors]
       end
       subgraph BE_PLAT["Platform Contexts"]
@@ -37,7 +37,7 @@ flowchart TB
     SALE_UI --> SALES
     CUST_UI --> CARE
     CUST_UI --> MARKET
-    FIN_UI --> SALES
+    FIN_UI --> BILLING
     MKT_UI --> MARKET
     RPT_UI --> SALES
     RPT_UI --> INVENTORY

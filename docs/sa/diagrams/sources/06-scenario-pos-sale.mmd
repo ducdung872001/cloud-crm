@@ -5,7 +5,7 @@ sequenceDiagram
     participant POS as POS Page
     participant INV as InventoryService<br/>(stock + warehouse ops)
     participant CS as CustomerService
-    participant SS as SalesService<br/>(order + cashbook)
+    participant SS as SalesService<br/>(order + invoice)
     participant MKT as MarketService<br/>(loyalty)
     participant CRS as CareService
     participant BS as BillingService
@@ -33,8 +33,9 @@ sequenceDiagram
     INV->>DB: UPDATE inventory_stock<br/>(pessimistic lock)
     INV->>DB: INSERT stock_issue (warehouse op)
     INV-->>SS: OK
-    SS->>DB: INSERT cashbook (sales DB)
-    Note over SS: cashbook thuộc sales — không phải finance
+    SS->>BS: emit sales.invoice.paid event
+    BS->>DB: INSERT cashbook (billing DB)
+    Note over BS: cashbook thuộc billing — sales emit event, billing consume
     SS->>MKT: Cộng điểm loyalty
     MKT->>DB: UPDATE loyalty_wallet
     MKT-->>SS: OK

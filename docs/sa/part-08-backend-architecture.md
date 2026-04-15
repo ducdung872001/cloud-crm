@@ -101,10 +101,45 @@ Các gateway ngoại quan sát được (từ `urls.ts`):
 - Customer care, ticket, warranty, feedback, CSKH.
 - ⚠️ KHÔNG chứa loyalty (loyalty thuộc `market`). KHÔNG chứa MSAL (MSAL thuộc `integration`).
 
-### 3.5. Billing — `/bizapi/billing`
+### 3.5. Billing — `/bizapi/billing` ✅ CORE (financial settlement hub)
 
-🟢 `BillingService`. Hoá đơn điện tử VAT theo TT78/NĐ123.
+🟢 Xác nhận qua `BillingService`, `CashBookService`, `DebtService`, `FundService`, `FinanceService` (legacy tên), `PaymentService`.
 
+Billing service **owns toàn bộ dòng tiền và financial settlement** của retail:
+
+- **Cashbook (sổ thu chi)** — phiếu thu, phiếu chi, sổ quỹ tiền mặt/ngân hàng.
+- **Debt (công nợ)** — công nợ khách hàng (phải thu), công nợ NCC (phải trả).
+- **Fund (quỹ)** — quỹ tiền mặt, quỹ ngân hàng, số dư tức thời.
+- **Payment** — thanh toán đa phương thức (tiền mặt, thẻ, chuyển khoản, QR, ví), payment allocation.
+- **Settlement** — đối soát cuối ca, cuối ngày.
+- **VAT e-invoice** — hoá đơn điện tử TT78/NĐ123.
+
+⚠️ **Quan trọng**: FE classes `CashBookService.ts`, `DebtService.ts`, `FundService.ts`, `FinanceService.ts` (legacy tên), `PaymentService.ts` đều gọi xuống `/bizapi/billing/...`. Permission code chuẩn: `BILLING_CASHBOOK_VIEW`, `BILLING_DEBT_VIEW`, `BILLING_FUND_VIEW`, `BILLING_PAYMENT_VIEW` (KHÔNG phải `SALES_*` hay `FINANCE_*`).
+
+#### 3.5.1. Cashbook (sub-domain của Billing)
+
+- Aggregate: `CashBookEntry`, `CashBookCategory`.
+- Event in: `sales.invoice.paid` → auto-generate cashbook entry (thu tiền).
+- Event out: `billing.cashbook.entry.created`.
+
+#### 3.5.2. Debt (sub-domain của Billing)
+
+- Aggregate: `DebtNote`, `DebtPayment`, `DebtAging`.
+- Quản lý công nợ KH (AR) + NCC (AP), aging report, nhắc nợ.
+
+#### 3.5.3. Fund (sub-domain của Billing)
+
+- Aggregate: `Fund`, `FundTransaction`, `FundBalance`.
+- Quỹ tiền mặt + ngân hàng, chuyển quỹ nội bộ.
+
+#### 3.5.4. Payment (sub-domain của Billing)
+
+- Aggregate: `Payment`, `PaymentMethod`, `PaymentAllocation`.
+- Thanh toán đa phương thức, allocation vào invoice/debt, refund.
+
+#### 3.5.5. VAT e-invoice (sub-domain của Billing)
+
+- Hoá đơn điện tử VAT theo TT78/NĐ123.
 - Adapter: VNPT, M-Invoice, MISA MeInvoice (xem [Part 09](part-09-integration.md)).
 
 ### 3.6. Logistics — `/bizapi/logistics`
@@ -216,12 +251,13 @@ Alternative: **Node.js (NestJS)** nếu team FE fullstack, **Go** nếu hiệu n
 │                                            │
 │  Namespace: biz                            │
 │    ├── sales-svc       (N pods)            │
-│    │     POS+order+shift+cashbook+         │
-│    │     debt+fund+payment                 │
+│    │     POS+order+shift+invoice           │
+│    ├── billing-svc     (N pods)            │
+│    │     cashbook+debt+fund+payment+       │
+│    │     settlement+VAT e-invoice          │
 │    ├── inventory-svc   (N pods)            │
 │    │     stock+warehouse+PO+NCC            │
 │    ├── care-svc        (N pods)            │
-│    ├── billing-svc     (N pods)            │
 │    ├── logistics-svc   (N pods)            │
 │    ├── integration-svc (N pods)            │
 │    │     marketplace+MSAL+payment+         │

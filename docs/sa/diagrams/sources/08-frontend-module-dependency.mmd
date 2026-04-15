@@ -11,16 +11,17 @@ flowchart TB
     end
 
     subgraph SERVICES["services/"]
-      SS[SalesService<br/>order+cashbook]
+      SS[SalesService<br/>order+invoice]
       IS[InventoryService<br/>stock+warehouse+PO]
       CS[CustomerService]
       MS[MarketService<br/>loyalty+campaign]
       RS[ReportService]
-      BS[BillingService]
+      BS[BillingService<br/>cashbook+debt+fund+<br/>payment+VAT]
     end
 
     subgraph MODELS["models/"]
-      M_ORD[Order, OrderItem, CashbookEntry]
+      M_ORD[Order, OrderItem, Invoice]
+      M_BILL[CashbookEntry, Debt, Fund, Payment]
       M_PRD[Product, SKU, Stock, Warehouse]
       M_CUST[Customer]
       M_LOY[LoyaltyWallet]
@@ -50,11 +51,12 @@ flowchart TB
     WH_P --> IS
     CUST_P --> CS
     CUST_P --> MS
-    FIN_P --> SS
+    FIN_P --> BS
     RPT_P --> RS
     POS_P --> BS
 
     SS --> M_ORD
+    BS --> M_BILL
     IS --> M_PRD
     CS --> M_CUST
     MS --> M_LOY
@@ -70,6 +72,6 @@ flowchart TB
 
     class POS_P,ORD_P,INV_P,WH_P,CUST_P,FIN_P,RPT_P pg
     class SS,IS,CS,MS,RS,BS sv
-    class M_ORD,M_PRD,M_CUST,M_LOY md
+    class M_ORD,M_BILL,M_PRD,M_CUST,M_LOY md
     class BOX,HF,MC,SP,FMT,DT sh
     class AUTH,TENANT,CFG cx
