@@ -45,10 +45,19 @@
       "Bash(ls tests/test-e2e-cancel*.mjs)",
       "Bash(bash docs/urd/diagrams/render.sh)",
       "Bash(bash docs/sa/diagrams/render.sh)",
-      "Bash(wc -l docs/backend-tasks/*.md)"
+      "Bash(wc -l docs/backend-tasks/*.md)",
+      "Bash(ls docs/urd/diagrams/*.png)",
+      "Bash(ls docs/sa/diagrams/*.png)",
+      "Bash(HEADLESS=true timeout 120 node tests/login-save.mjs)",
+      "Bash(HEADLESS=true node tests/capture-hdsd-screenshots.mjs)",
+      "Read(//c/Users/HP/.claude/projects/d--Git-reborn-reborn-cloud-cloud-ver2-cloud-crm/**)",
+      "Bash(mkdir -p /tmp/bt-template)",
+      "Bash(cp docs/backend-tasks/README.md /tmp/bt-template/README.md)",
+      "Bash(echo \"# \\(empty\\)\")"
     ],
     "additionalDirectories": [
-      "\\tmp"
+      "\\tmp",
+      "C:\\Users\\HP\\.claude\\projects\\d--Git-reborn-reborn-cloud-cloud-ver2-cloud-crm\\memory"
     ]
   }
 }
