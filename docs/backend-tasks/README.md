@@ -65,9 +65,7 @@ Tất cả các nhánh CRM (reborn-retail, reborn-tnpm, reborn-fitpro, community
 
 ### [integration/](./integration/) — `cloud-integration-master`
 
-| File | Severity | Tóm tắt |
-|------|----------|---------|
-| [invoice-vat-500.md](./integration/invoice-vat-500.md) | 🟠 HIGH | Route `/invoiceVAT` nhận 500 từ BE khi load trang |
+_Không còn task mở. Xem [integration/resolved/](./integration/resolved/)._
 
 ### [billing/](./billing/) — `cloud-billing-master`
 
@@ -78,6 +76,14 @@ Tất cả các nhánh CRM (reborn-retail, reborn-tnpm, reborn-fitpro, community
 ### Các microservice chưa có task
 
 - [care/](./care/) · [contract/](./contract/) · [finance/](./finance/) · [logistics/](./logistics/) · [market/](./market/) · [notification/](./notification/) · [operation/](./operation/) · [sales/](./sales/)
+
+---
+
+## ✅ Task đã giải quyết (resolved)
+
+| File | Fix date | Verified by |
+|------|----------|-------------|
+| [integration/resolved/invoice-vat-500.md](./integration/resolved/invoice-vat-500.md) | 2026-04-15 | `test-smoke-nav.mjs` trên community-hub + reborn-fitpro — SMK-INVOICE-VAT PASS |
 
 ---
 
