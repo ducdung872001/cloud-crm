@@ -11,8 +11,28 @@ import { useTaxpayerProfile } from "./hooks";
 export default function TaxCalendar() {
   const [profile] = useTaxpayerProfile();
   const [year, setYear] = useState(new Date().getFullYear());
-  const periods = taxEngine.deadlineHelper.buildYearCalendar(profile, year);
+  const schedulePeriods = taxEngine.deadlineHelper.buildYearCalendar(
+    profile,
+    year
+  );
   const declarations = taxStorage.listDeclarations();
+
+  // Merge thêm các kỳ có declaration nhưng chưa nằm trong lịch cấu hình
+  // (ví dụ user cấu hình năm nhưng có lập riêng 1 tờ khai tháng).
+  // Điều này đảm bảo mọi tờ khai đã nộp đều hiển thị trên calendar.
+  const scheduleIds = new Set(schedulePeriods.map((p) => p.id));
+  const extraPeriods = declarations
+    .filter(
+      (d) =>
+        !scheduleIds.has(d.period.id) &&
+        d.period.startDate.slice(0, 4) === String(year)
+    )
+    .map((d) => d.period);
+  // Deduplicate extras by id
+  const extraById = new Map(extraPeriods.map((p) => [p.id, p]));
+  const periods = [...schedulePeriods, ...Array.from(extraById.values())].sort(
+    (a, b) => a.startDate.localeCompare(b.startDate)
+  );
 
   const today = new Date();
   return (
