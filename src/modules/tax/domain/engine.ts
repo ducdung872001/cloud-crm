@@ -398,7 +398,12 @@ export class DeadlineHelper {
 }
 
 function isoDate(d: Date): string {
-  return d.toISOString().slice(0, 10);
+  // Dùng local Y/M/D thay vì toISOString() — tránh lệch timezone cho VN (UTC+7).
+  // `new Date(y, m, 1)` tạo giờ local midnight; toISOString() sẽ shift về ngày hôm trước.
+  const y = d.getFullYear();
+  const m = String(d.getMonth() + 1).padStart(2, "0");
+  const day = String(d.getDate()).padStart(2, "0");
+  return `${y}-${m}-${day}`;
 }
 
 // ═══ FACADE ═══════════════════════════════════════════════════════════════
