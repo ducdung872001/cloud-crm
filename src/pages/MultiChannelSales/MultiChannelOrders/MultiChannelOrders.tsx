@@ -250,20 +250,20 @@ export default function MultiChannelOrders() {
       text={
         item?.status === "PENDING"
           ? "Chờ xử lý"
-          : item?.status === "PROCESSING"
+          : item?.status === "SHIPPING"
           ? "Đang giao"
           : item?.status === "COMPLETED"
           ? "Hoàn thành"
           : item?.status === "CONFIRMED"
           ? "Đã xác nhận"
-          : item?.status === "REFUNDED"
+          : item?.status === "CANCELED"
           ? "Đã huỷ"
           : ""
       }
       variant={
         item.status === "PENDING"
           ? "warning"
-          : item.status === "PROCESSING"
+          : item.status === "SHIPPING"
           ? "primary"
           : item.status === "COMPLETED"
           ? "success"
@@ -299,7 +299,7 @@ export default function MultiChannelOrders() {
         </div>
       ) : null}
 
-      {item.status === "PROCESSING" ? (
+      {item.status === "SHIPPING" ? (
         <div
           style={{
             backgroundColor: "green",
@@ -339,7 +339,7 @@ export default function MultiChannelOrders() {
         </div>
       ) : null}
 
-      {item.status === "REFUNDED" ? (
+      {item.status === "CANCELED" ? (
         <div
           style={{
             backgroundColor: "var(--extra-color-20)",
@@ -385,9 +385,9 @@ export default function MultiChannelOrders() {
   const TAB_STATUS_MAP: Record<number, string | undefined> = {
     1: undefined,          // Tất cả — không filter
     2: "PENDING",
-    3: "PROCESSING",
+    3: "SHIPPING",
     4: "COMPLETED",
-    5: "REFUNDED",
+    5: "CANCELED",
   };
 
   const handleTabChange = (tabId: number) => {

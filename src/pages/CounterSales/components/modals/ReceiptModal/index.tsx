@@ -114,9 +114,14 @@ export default function ReceiptModal({
 
   // ── Tính tiền ───────────────────────────────────────────────────────────────
   const subtotal      = cartItems.reduce((s, c) => s + c.price * c.qty, 0);
-  const taxAmount     = cartItems.reduce((s, c) => s + (c.taxRate ? Math.round(c.price * c.qty * c.taxRate / 100) : 0), 0);
+  // VAT bóc tách từ giá bán (đã bao gồm thuế) — KHÔNG cộng vào tổng thanh toán
+  const taxAmount     = cartItems.reduce((s, c) => {
+    if (!c.taxRate) return s;
+    const gross = c.price * c.qty;
+    return s + Math.round((gross * c.taxRate) / (100 + c.taxRate));
+  }, 0);
   const totalDiscount = couponDiscount + promoDiscount;
-  const total         = subtotal + taxAmount - totalDiscount + lockedShippingFee;
+  const total         = subtotal - totalDiscount + lockedShippingFee;
   const fmt           = (n: number) => n.toLocaleString("vi") + " đ";
 
   // Tiền thực thu và nợ — dùng giá trị từ PayModal nếu có, fallback total/0

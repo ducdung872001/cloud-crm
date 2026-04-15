@@ -515,7 +515,9 @@ export default function AddProductPage({ idProduct, data, onBack, preFillBarcode
                   unitName: u.unitName ?? u.unit_name ?? "",
                   price: u.price ?? u.priceRetail ?? "",
                   priceWholesale: u.priceWholesale ?? u.price_wholesale ?? "",
-                  barcode: u.barcode ?? u.barcodeCode ?? v.barcode ?? v.code ?? v.barcodeCode ?? "",
+                  // Dùng `||` thay vì `??` để fallback cả khi BE trả "" (empty string).
+                  // Bug D.1.3: nếu `u.barcode = ""` thì `??` giữ rỗng, không rơi xuống `v.barcode`.
+                  barcode: u.barcode || u.barcodeCode || v.barcode || v.code || v.barcodeCode || "",
                 }))
               : [
                   {
@@ -1085,10 +1087,26 @@ export default function AddProductPage({ idProduct, data, onBack, preFillBarcode
           const idx = k.indexOf(":");
           return { name: k.slice(0, idx), value: k.slice(idx + 1) };
         });
+        const selectedOptions = activeAttrs.map((attr) => ({
+          groupName: attr.name,
+          label: keyParts.find((k) => k.name === attr.name)?.value ?? "",
+        }));
+        // Đồng nhất với logic save thường: cần gửi `attributes` + `optionValueIds`
+        // để BE khớp biến thể với option của sản phẩm mới. Bug D.1.4: thiếu 2 field
+        // này khiến biến thể nhân bản bị mất attribute sau khi BE persist.
+        const attributes = selectedOptions.map((o) => ({ name: o.groupName, value: o.label }));
+        const optionValueIds = activeAttrs
+          .map((attr) => {
+            const value = keyParts.find((k) => k.name === attr.name)?.value ?? "";
+            return attr.optionIds?.[value] ?? null;
+          })
+          .filter((id): id is number => id != null);
+
+        const dupBarcode = generateEAN13();
         return {
           label: c.label,
           sku: variantSku,
-          barcode: generateEAN13(),   // sinh barcode mới hoàn toàn để tránh unique constraint
+          barcode: dupBarcode,   // sinh barcode mới hoàn toàn để tránh unique constraint
           unitId: c.unitId ?? null,
           price: +(c.price ?? 0) || 0,
           taxRate: c.taxRate ?? 0,
@@ -1097,10 +1115,9 @@ export default function AddProductPage({ idProduct, data, onBack, preFillBarcode
           pricePromo: +(c.pricePromo ?? 0) || 0,
           pricePromotion: +(c.pricePromo ?? 0) || 0,
           images: c.images || [],
-          selectedOptions: activeAttrs.map((attr) => ({
-            groupName: attr.name,
-            label: keyParts.find((k) => k.name === attr.name)?.value ?? "",
-          })),
+          attributes,
+          selectedOptions,
+          ...(optionValueIds.length ? { optionValueIds } : {}),
           variantPrices: c.variantPrices.map((u, ui) => ({
             sku: safeSku(`${variantSku}-${toSkuPart(u.unitName) || `U${ui + 1}`}`),
             unitId: u.unitId,

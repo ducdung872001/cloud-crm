@@ -60,8 +60,9 @@ export default {
   update: (body: IProductRequest) => {
     return apiPost(urlsApi.product.update, body);
   },
-  detail: (id: number) => {
-    return fetch(`${urlsApi.product.detail}?id=${id}`, {
+  detail: (id: number, branchId?: number) => {
+    const qs = branchId ? `?id=${id}&branchId=${branchId}` : `?id=${id}`;
+    return fetch(`${urlsApi.product.detail}${qs}`, {
       method: "GET",
     }).then((res) => res.json());
   },

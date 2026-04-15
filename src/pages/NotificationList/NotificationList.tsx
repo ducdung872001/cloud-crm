@@ -433,32 +433,10 @@ export default function NotificationList(props: Record<string, unknown>) {
       }
     }
 
-    if (item.targetLink) {
-      navigate(item.targetLink);
-      return;
-    }
-    if (item.payload && isJsonString(item.payload)) {
-      const payload = JSON.parse(item.payload);
-      switch (payload?.type) {
-        case "ORDER":
-        case "ORDER_REQUEST":
-          if (payload.orderId) navigate(`/orders/${payload.orderId}`);
-          break;
-        case "CAMPAIGN":
-          if (payload.campaignId) navigate(`/campaigns/${payload.campaignId}`);
-          break;
-        case "BID":
-          if (payload.packageId)
-            navigate("/bpm/bid_management", { state: { viewDetail: true, packageId: payload.packageId } });
-          break;
-        case "TASK":
-          if (payload.workId)
-            navigate("/bpm/task_assignment", { state: { viewDetail: true, workId: payload.workId } });
-          break;
-        default:
-          break;
-      }
-    }
+    // Fallback: mở modal hiển thị nội dung thông báo thay vì điều hướng
+    // tới route không tồn tại trong reborn-retail (gây 404).
+    setDataNoti(item);
+    setIsModalViewNoti(true);
   };
 
   const getNotificationIconName = (item: Record<string, unknown>): string => {

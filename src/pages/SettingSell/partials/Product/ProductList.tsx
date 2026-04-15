@@ -303,15 +303,36 @@ export default function ProductList(props: IProductListProps) {
     if (!q) return;
     setScanSearching(true); setScanFound(null); setScanNotFound(false); setScanCode(q);
     try {
-      const res = await ProductService.wScan(q);
-      if (res.code === 0 && res.result?.id) {
-        setScanFound(res.result);
-      } else {
-        // Fallback: tìm trong danh sách sản phẩm theo keyword
-        setParams((prev) => ({ ...prev, name: q, page: 1 }));
-        setScanNotFound(true);
-      }
-    } catch {
+      // Thử wScan trước (Inventory microservice)
+      try {
+        const res = await ProductService.wScan(q);
+        if (res?.code === 0 && res.result?.id) {
+          setScanFound(res.result);
+          return;
+        }
+      } catch { /* rơi xuống fallback */ }
+
+      // Fallback 1: search bằng barcode/sku trong list API
+      try {
+        const listRes = await ProductService.wList({ keyword: q, page: 1, limit: 5 });
+        const items = listRes?.result?.items ?? listRes?.result?.pagedLst?.items ?? [];
+        const hit = items.find((p: Record<string, unknown>) =>
+          p.barcode === q || p.sku === q || p.code === q
+        ) ?? items[0];
+        if (hit) {
+          setScanFound({
+            id: hit.id,
+            productId: hit.id,
+            name: hit.name,
+            sku: hit.sku,
+            onHandQty: hit.stockQuantity ?? hit.onHandQty ?? 0,
+          });
+          return;
+        }
+      } catch { /* tiếp tục tới not-found */ }
+
+      // Cuối cùng: filter list bằng keyword để user thấy gợi ý + hiện not-found state
+      setParams((prev) => ({ ...prev, name: q, page: 1 }));
       setScanNotFound(true);
     } finally {
       setScanSearching(false);

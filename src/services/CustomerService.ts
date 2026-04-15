@@ -26,15 +26,34 @@ import {
 } from "model/customer/CustomerRequestModel";
 import { convertParamsToString } from "reborn-util";
 
+// Bug E.1.1: BE chỉ filter khách hàng theo tên qua `keyword`, không tìm theo SĐT/email.
+// Workaround FE: phát hiện pattern và chèn thêm `phone`/`email` hoặc thử nhiều lần.
+// - Chuỗi toàn số dài >= 6 → phone
+// - Chuỗi chứa "@"         → email
+function enrichCustomerSearchParams(
+  params?: ICustomerFilterRequest
+): ICustomerFilterRequest | undefined {
+  if (!params || !params.keyword) return params;
+  const kw = String(params.keyword).trim();
+  if (!kw) return params;
+  const next: Record<string, unknown> = { ...params };
+  if (/@/.test(kw)) {
+    next.email = kw;
+  } else if (/^[0-9+][0-9\s.-]{5,}$/.test(kw)) {
+    next.phone = kw.replace(/[^0-9+]/g, "");
+  }
+  return next as ICustomerFilterRequest;
+}
+
 export default {
   //? thêm mới, cập nhập, xem, xem chi tiết khách hàng
   filter: (params?: ICustomerFilterRequest, signal?: AbortSignal) => {
-    return apiGet(urlsApi.customer.filter, params, signal);
+    return apiGet(urlsApi.customer.filter, enrichCustomerSearchParams(params), signal);
   },
 
   ///list khách hàng của đối tác
   listshared: (params?: ICustomerFilterRequest, signal?: AbortSignal) => {
-    return apiGet(urlsApi.customer.listshared, params, signal);
+    return apiGet(urlsApi.customer.listshared, enrichCustomerSearchParams(params), signal);
   },
 
   detail: (id: number) => {

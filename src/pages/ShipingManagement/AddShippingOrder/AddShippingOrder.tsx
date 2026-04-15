@@ -20,6 +20,39 @@ import { IEmployeeFilterRequest } from "model/employee/EmployeeRequestModel";
 import { fetchCustomerMap } from "@/hooks/useCustomerEnrich";
 import "./AddShippingOrder.scss";
 
+/**
+ * Dịch message lỗi raw từ BE/hãng vận chuyển sang tiếng Việt rõ ràng cho user.
+ * Bug C.5.3: các lỗi gốc như "COD vượt quá mức cho phép" / "Không hỗ trợ giao..."
+ * quá mơ hồ — không nói rõ vượt bao nhiêu hoặc địa chỉ nào không hỗ trợ.
+ */
+function translateShippingError(raw: string, form?: Record<string, unknown>): string {
+  if (!raw) return "Có lỗi xảy ra khi tạo đơn vận chuyển. Vui lòng thử lại.";
+  const lower = raw.toLowerCase();
+
+  if (lower.includes("cod") && (lower.includes("vượt") || lower.includes("quá") || lower.includes("exceed") || lower.includes("max"))) {
+    const cod = form?.codAmount ? ` (COD hiện tại: ${Number(form.codAmount).toLocaleString("vi")}₫)` : "";
+    return `Giá trị COD vượt quá mức tối đa mà hãng vận chuyển cho phép${cod}. Vui lòng giảm COD hoặc chọn hãng khác.`;
+  }
+  if (lower.includes("không hỗ trợ") && (lower.includes("giao") || lower.includes("địa") || lower.includes("khu vực"))) {
+    const addr = form ? [form.receiverWard, form.receiverDistrict, form.receiverProvinceName].filter(Boolean).join(", ") : "";
+    return `Hãng vận chuyển không hỗ trợ giao tới địa chỉ${addr ? `: ${addr}` : " này"}. Vui lòng chọn hãng khác hoặc đổi địa chỉ người nhận.`;
+  }
+  if ((lower.includes("hóa đơn") || lower.includes("invoice")) && (lower.includes("đã") || lower.includes("already"))) {
+    return "Hóa đơn này đã được tạo đơn vận chuyển trước đó. Vui lòng mở đơn vận chuyển hiện có để cập nhật thay vì tạo mới.";
+  }
+  if (lower.includes("weight") || lower.includes("khối lượng") || lower.includes("cân nặng")) {
+    return "Khối lượng hàng vượt quá giới hạn của hãng vận chuyển hoặc thiếu thông tin cân nặng. Vui lòng kiểm tra lại.";
+  }
+  if (lower.includes("token") || lower.includes("unauthorized") || lower.includes("401")) {
+    return "Token kết nối hãng vận chuyển đã hết hạn hoặc chưa được cấu hình. Vào Cài đặt → Hãng vận chuyển để cập nhật.";
+  }
+  if (lower.includes("timeout") || lower.includes("connection") || lower.includes("network")) {
+    return "Không kết nối được tới hãng vận chuyển. Vui lòng kiểm tra mạng và thử lại.";
+  }
+  // Mặc định: trả raw nhưng thêm gợi ý
+  return `${raw}. Vui lòng kiểm tra lại thông tin hoặc liên hệ hỗ trợ.`;
+}
+
 function useAddressOptions() {
   const [provinces, setProvinces] = useState<IProvince[]>([]);
   const [districts, setDistricts] = useState<IDistrict[]>([]);
@@ -656,8 +689,6 @@ export default function AddShippingOrder() {
             if (nested?.message) errorMsg = nested.message;
             else if (nested?.error) errorMsg = nested.error;
           } catch {
-            // Nếu error chứa message dạng "Integration API error 500: {\"error\":\"...\"}",
-            // thử extract message bên trong
             const match = errorMsg.match(/"message"\s*:\s*"([^"]+)"/);
             if (match) errorMsg = match[1];
             else {
@@ -666,7 +697,7 @@ export default function AddShippingOrder() {
             }
           }
         }
-        showToast(errorMsg, "error");
+        showToast(translateShippingError(String(errorMsg), form), "error");
       }
     } catch (err) {
       const errMsg = (err as Record<string, unknown>)?.message ?? (err as Record<string, unknown>)?.error ?? "Có lỗi xảy ra, vui lòng thử lại";

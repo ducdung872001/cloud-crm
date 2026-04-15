@@ -108,10 +108,15 @@ export default function PayModal({
   useEffect(() => { onConfigChange?.(activeConfig); }, [activeConfig]);
 
   const subtotal   = cartItems.reduce((s, c) => s + c.price * c.qty, 0);
-  const taxAmount  = cartItems.reduce((s, c) => s + (c.taxRate ? Math.round(c.price * c.qty * c.taxRate / 100) : 0), 0);
+  // VAT bóc tách từ giá bán (đã bao gồm thuế) — KHÔNG cộng vào tổng thanh toán
+  const taxAmount  = cartItems.reduce((s, c) => {
+    if (!c.taxRate) return s;
+    const gross = c.price * c.qty;
+    return s + Math.round((gross * c.taxRate) / (100 + c.taxRate));
+  }, 0);
   const discount   = couponDiscount + promoDiscount;
   const shipCharge = shippingFeeBearer === "RECEIVER" ? shippingFee : 0;
-  const total      = Math.max(0, subtotal + taxAmount - discount - loyaltyDiscount + shipCharge);
+  const total      = Math.max(0, subtotal - discount - loyaltyDiscount + shipCharge);
   const fmt        = (n: number) => n.toLocaleString("vi") + " ₫";
 
   // ── Tính tiền thối / nợ theo method ─────────────────────────────────────

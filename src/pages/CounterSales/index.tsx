@@ -14,7 +14,6 @@ const DEFAULT_SHIPPING_INFO: ShippingInfo = {
   receiverProvince: "", shippingFee: 0,
   shippingFeeBearer: "RECEIVER", codAmount: 0,
 };
-import OrderDetailModal from "./components/modals/OrderDetailModal";
 import PayModal from "./components/modals/PayModal";
 import ReceiptModal from "./components/modals/ReceiptModal";
 import QrScanModal from "./components/modals/QrScanModal";
@@ -137,7 +136,6 @@ const CounterSales: React.FC = () => {
   const [payModalOpen, setPayModalOpen] = useState(false);
   const [receiptModalOpen, setReceiptModalOpen] = useState(false);
   const [paymentSuccessCount, setPaymentSuccessCount] = useState(0);
-  const [orderDetailModalOpen, setOrderDetailModalOpen] = useState(false);
   const [qrScanModalOpen, setQrScanModalOpen] = useState(false);
   const [syncModalOpen, setSyncModalOpen] = useState(false);
   const [customerModalOpen, setCustomerModalOpen] = useState(false);
@@ -462,8 +460,6 @@ const CounterSales: React.FC = () => {
     }
   };
 
-  const handleConfirmOrder = useCallback(() => setOrderDetailModalOpen(false), []);
-
   const handleQrAddToCart = useCallback((item: {
     id: string; variantId: string; unitId?: number; name: string;
     price: number; priceLabel: string; unit: string;
@@ -690,13 +686,6 @@ const CounterSales: React.FC = () => {
           setShippingInfo(DEFAULT_SHIPPING_INFO);
           setOrderType("retail");
         }}
-      />
-
-      <OrderDetailModal
-        open={orderDetailModalOpen} onClose={() => setOrderDetailModalOpen(false)}
-        invoiceId={-1}
-        onPrint={() => { setOrderDetailModalOpen(false); setReceiptModalOpen(true); }}
-        onConfirm={handleConfirmOrder}
       />
 
       <QrScanModal open={qrScanModalOpen} onClose={() => setQrScanModalOpen(false)} onAddToCart={handleQrAddToCart} />

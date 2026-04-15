@@ -621,6 +621,37 @@ export default function CreateReturnModal({
     setSubmitting(true);
     const pm = PAY_METHODS[payMethodIdx];
     try {
+      // Defensive re-check: lấy lại available qty từ BE, chặn tạo phiếu trùng
+      // cho cùng 1 đơn (bug C.3.4). Nếu qty trong form vượt quá remaining thực
+      // tế → abort.
+      if (autofill?.originalInvoiceId) {
+        const fresh = await ReturnInvoiceService.getReturnItems(autofill.originalInvoiceId);
+        if (fresh?.code === 0 && fresh?.result) {
+          const freshMap = new Map<string, number>();
+          (fresh.result.lstBoughtProduct ?? []).forEach((p: Record<string, unknown>) => {
+            const key = `${p.productId}:${p.variantId ?? ""}`;
+            freshMap.set(key, Number(p.quantity) || 0);
+          });
+          for (const row of retItems) {
+            if (!row.name.trim() || row.qty <= 0) continue;
+            const key = `${row.productId}:${row.variantId ?? ""}`;
+            const remaining = freshMap.get(key) ?? 0;
+            if (row.qty > remaining) {
+              showToast(
+                remaining <= 0
+                  ? `"${row.name}" đã được hoàn trả toàn bộ trước đó, không thể trả lại.`
+                  : `"${row.name}" chỉ còn được trả tối đa ${remaining}. Vui lòng điều chỉnh số lượng.`,
+                "error"
+              );
+              setSubmitting(false);
+              // Refresh form để phản ánh remaining qty mới nhất
+              await fetchReturnItems(autofill.originalInvoiceId, new AbortController().signal);
+              return;
+            }
+          }
+        }
+      }
+
       const retLines  = rowsToApiLines(retItems);
       const exchLines = rowsToApiLines(exchItems);
       const firstItem = retItems.find((r) => r.name.trim());
@@ -711,7 +742,7 @@ export default function CreateReturnModal({
   }, [
     validate, seg, maGoc, customer, reason, note, payMethodIdx,
     retItems, exchItems, retTotal, exchTotal, grandTotal,
-    autofill, totalExisting, onCreate, resetForm,
+    autofill, totalExisting, onCreate, resetForm, fetchReturnItems,
   ]);
 
   const actions = useMemo<IActionModal>(() => ({

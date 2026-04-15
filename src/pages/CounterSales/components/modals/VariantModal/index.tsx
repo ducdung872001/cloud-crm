@@ -12,6 +12,7 @@ import { showToast } from "utils/common";
 interface VariantModalProps {
   open: boolean;
   productData: Record<string, unknown>;
+  branchId?: number;
   onClose: () => void;
   onAddToCart: (item: Omit<CartItem, "qty"> & { qty: number }) => void;
 }
@@ -69,7 +70,7 @@ export const MOCK_IPHONE: VariantProduct = {
 
 // ── Component ─────────────────────────────────────────────────────────────────
 
-export default function VariantModal({ open, productData, onClose, onAddToCart }: VariantModalProps) {
+export default function VariantModal({ open, productData, branchId, onClose, onAddToCart }: VariantModalProps) {
   const { t } = useTranslation();
   // selected: { groupId → optionId }
   const [selected, setSelected] = useState<Record<string, string>>({});
@@ -82,6 +83,7 @@ export default function VariantModal({ open, productData, onClose, onAddToCart }
   const { isLoading, dataProduct } = useGetDetailProduct({
     productId: Number(productData?.id) || 0,
     enabled: open,
+    branchId,
   });
   useEffect(() => {
     if (dataProduct) {

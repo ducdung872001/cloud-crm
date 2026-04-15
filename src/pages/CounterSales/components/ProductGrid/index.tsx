@@ -161,6 +161,7 @@ const ProductGrid: React.FC<ProductGridProps> = ({ onAddToCart, onQrScan, wareho
       <VariantModal
         open={variantModalOpen}
         productData={selectedProduct}
+        branchId={warehouseId}
         onClose={() => setVariantModalOpen(false)}
         onAddToCart={(item) => {
           onAddToCart(item);

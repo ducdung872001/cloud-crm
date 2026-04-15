@@ -60,7 +60,8 @@ interface UseGetVariantReturn {
 export function useGetDetailProduct({
   productId,
   enabled = true, // ✅ mặc định true, truyền false để tắt
-}: UseGetVariantParams): UseGetVariantReturn {
+  branchId,
+}: UseGetVariantParams & { branchId?: number }): UseGetVariantReturn {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [isNoItem, setIsNoItem] = useState<boolean>(false);
   const [isPermissions, setIsPermissions] = useState<boolean>(false);
@@ -68,11 +69,13 @@ export function useGetDetailProduct({
 
   // ── Core fetch ──────────────────────────────────────────────────────────────
 
-  const fetchProducts = useCallback(async (id: number) => {
+  const fetchProducts = useCallback(async (id: number, bid?: number) => {
     setIsNoItem(false);
 
     try {
-      const response = await ProductService.detail(id);
+      // Truyền branchId để BE filter tồn theo chi nhánh đang chọn,
+      // đảm bảo tồn trong popup biến thể đồng nhất với tồn ngoài list (D.4.2).
+      const response = await ProductService.detail(id, bid);
 
       if (response.code === 0) {
         const result = response.result;
@@ -105,12 +108,12 @@ export function useGetDetailProduct({
   useEffect(() => {
     if (!enabled) return; // ✅ guard: nếu không enabled thì không fetch
     setIsLoading(true);
-    fetchProducts(productId);
+    fetchProducts(productId, branchId);
 
     // return () => {
     //   abortControllerRef.current?.abort();
     // };
-  }, [productId, enabled]);
+  }, [productId, enabled, branchId]);
   //  ^^^^^^^^^^^
   //  Chỉ theo dõi params và enabled — giá trị primitive (string/boolean)
   //  string/boolean so sánh bằng value, không bị lặp như object

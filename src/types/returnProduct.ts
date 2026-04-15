@@ -81,6 +81,9 @@ export interface IReturnInvoiceResponse {
     variantId?: number;
     name?: string;
     qty?: number;
+    quantity?: number;
+    price?: number;
+    fee?: number;
   }>;
 }
 
@@ -241,6 +244,18 @@ export function mapApiToUi(item: IReturnInvoiceResponse): ReturnProduct {
     || formatDate(item.updatedTime)
     || "";
 
+  const items: ReturnProductItem[] = (item.products ?? []).map((p, idx) => {
+    const qty = Number(p.qty ?? p.quantity ?? 0) || 0;
+    const fee = Number(p.fee ?? 0);
+    const price = Number(p.price ?? (qty > 0 ? fee / qty : 0)) || 0;
+    return {
+      id: `${item.id}-${p.productId ?? idx}-${p.variantId ?? idx}`,
+      name: p.name ?? `SP #${p.productId ?? idx}`,
+      qty,
+      price,
+    };
+  });
+
   return {
     id: String(item.id),
     code: item.invoiceCode ?? `PTH-${item.id}`,
@@ -254,6 +269,7 @@ export function mapApiToUi(item: IReturnInvoiceResponse): ReturnProduct {
     reason: item.reason ?? "",
     staffName: item.employeeName ?? `NV #${item.employeeId}`,
     paymentMethod: REFUND_LABEL[item.refundMethod] ?? "–",
+    items,
   };
 }
 
@@ -270,18 +286,27 @@ export function enrichProductSummary(
 ): ReturnProduct {
   if (!apiItem.products || apiItem.products.length === 0) return item;
 
-  const parts = apiItem.products.map((p) => {
-    let label = "";
-    if (p.variantId && variantMap[p.variantId]) {
-      const v = variantMap[p.variantId];
-      const productName = v.productName ?? p.name ?? `SP #${p.productId}`;
+  const enrichedItems = (item.items ?? []).map((it, idx) => {
+    const apiP = apiItem.products?.[idx];
+    if (!apiP) return it;
+    let label = it.name;
+    if (apiP.variantId && variantMap[apiP.variantId]) {
+      const v = variantMap[apiP.variantId];
+      const productName = v.productName ?? apiP.name ?? it.name;
       const variantName = v.variantName ?? v.name;
       label = variantName ? `${productName} / ${variantName}` : productName;
-    } else {
-      label = p.name ?? `SP #${p.productId}`;
+    } else if (apiP.name) {
+      label = apiP.name;
     }
-    return p.quantity && p.quantity > 1 ? `${label} (x${p.quantity})` : label;
+    return { ...it, name: label };
   });
 
-  return { ...item, productSummary: parts.join(", ") };
+  const parts = apiItem.products.map((p, idx) => {
+    const it = enrichedItems[idx];
+    const label = it?.name ?? p.name ?? `SP #${p.productId}`;
+    const qty = Number(p.qty ?? p.quantity ?? it?.qty ?? 0) || 0;
+    return qty > 1 ? `${label} (x${qty})` : label;
+  });
+
+  return { ...item, productSummary: parts.join(", "), items: enrichedItems };
 }

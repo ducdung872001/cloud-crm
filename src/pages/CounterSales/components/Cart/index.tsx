@@ -75,7 +75,14 @@ const Cart: React.FC<CartProps> = ({
   };
 
   const subtotal  = items.reduce((sum, i) => sum + i.price * i.qty, 0);
-  const taxAmount = items.reduce((sum, i) => sum + (i.taxRate ? Math.round(i.price * i.qty * i.taxRate / 100) : 0), 0);
+  // Giá bán lẻ VN đã bao gồm VAT → taxAmount chỉ là phần VAT bóc tách
+  // từ subtotal (để hiển thị/ghi nhận), KHÔNG cộng thêm vào tổng thanh toán.
+  // Công thức: vat = subtotal * rate / (100 + rate)
+  const taxAmount = items.reduce((sum, i) => {
+    if (!i.taxRate) return sum;
+    const gross = i.price * i.qty;
+    return sum + Math.round((gross * i.taxRate) / (100 + i.taxRate));
+  }, 0);
   const itemCount = items.length;
   const formatVND = (n: number) => n ? n.toLocaleString("vi") + " ₫" : "0 ₫";
 
@@ -92,7 +99,6 @@ const Cart: React.FC<CartProps> = ({
   const finalTotal = Math.max(
     0,
     subtotal
-    + taxAmount
     - moneyFromPoints
     - promoDiscount
     - couponDiscount

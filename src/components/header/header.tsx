@@ -30,6 +30,7 @@ import "swiper/css/pagination";
 import Loading from "../loading";
 import NotificationService from "@/services/NotificationService";
 import { requestPermission } from "@/firebase-config";
+import ModalViewNoti from "@/pages/NotificationList/ModalViewNoti/ModalViewNoti";
 import CustomerService from "services/CustomerService";
 import ProductService from "services/ProductService";
 import InvoiceService from "services/InvoiceService";
@@ -232,6 +233,8 @@ function Header(props: HeaderProps) {
 
   const [detailNotification, setDetailNotification] = useState<INotificationItem>(null);
   const [showModalDetailNotification, setShowModalDetailNotification] = useState<boolean>(false);
+  const [isModalViewNoti, setIsModalViewNoti] = useState<boolean>(false);
+  const [dataNoti, setDataNoti] = useState<Record<string, unknown>>(null);
   const [isLoadingNotification, setIsLoadingNotification] = useState<boolean>(false);
   const [paramsNotification, setParamsNotification] = useState({
     per_page: 5,
@@ -603,33 +606,10 @@ function Header(props: HeaderProps) {
       }
     }
 
-    if (item.targetLink) {
-      navigate(item.targetLink);
-      return;
-    }
-
-    if (item.payload && isJsonString(item.payload)) {
-      const payload = JSON.parse(item.payload);
-      switch (payload?.type) {
-        case "ORDER":
-        case "ORDER_REQUEST":
-          if (payload.orderId) navigate(`/orders/${payload.orderId}`);
-          break;
-        case "CAMPAIGN":
-          if (payload.campaignId) navigate(`/campaigns/${payload.campaignId}`);
-          break;
-        case "BID":
-          if (payload.packageId)
-            navigate("/bpm/bid_management", { state: { viewDetail: true, packageId: payload.packageId } });
-          break;
-        case "TASK":
-          if (payload.workId)
-            navigate("/bpm/task_assignment", { state: { viewDetail: true, workId: payload.workId } });
-          break;
-        default:
-          break;
-      }
-    }
+    // Fallback: mở modal hiển thị nội dung thông báo thay vì điều hướng tới
+    // route không tồn tại trong reborn-retail (gây 404).
+    setDataNoti(item as unknown as Record<string, unknown>);
+    setIsModalViewNoti(true);
   }, [navigate, onUnread]);
 
   const getNotificationIconName = (item: NotificationItem): string => {
@@ -1097,6 +1077,14 @@ function Header(props: HeaderProps) {
         onShow={showModalChangeRole}
         onHide={() => setShowModalChangeRole(false)}
         data={localStorage.getItem("SelectedRole") || null}
+      />
+      <ModalViewNoti
+        onShow={isModalViewNoti}
+        data={dataNoti}
+        onHide={() => {
+          setIsModalViewNoti(false);
+          setDataNoti(null);
+        }}
       />
     </div>
   );
