@@ -1,6 +1,6 @@
 # Backend Tasks — Phân theo Microservice
 
-Tài liệu được tổ chức theo **ranh giới DDD** — mỗi microservice tự quản task domain của mình. Backend là **code dùng chung** cho mọi ngành (retail, community-hub, tech, reborn-tnpm, banking, …), mỗi fix phải **neutral theo ngành**: không hardcode business rule của một ngành cụ thể, phải config hóa qua tenant setting hoặc feature flag.
+Tài liệu được tổ chức theo **ranh giới DDD** — mỗi microservice tự quản task domain của mình. Backend là **code dùng chung** cho mọi ngành (retail, community-hub, tech, reborn-tnpm, reborn-fitpro, banking, …), mỗi fix phải **neutral theo ngành**: không hardcode business rule của một ngành cụ thể, phải config hóa qua tenant setting hoặc feature flag.
 
 ## 🔑 Quy tắc phân task theo URL prefix
 
@@ -41,57 +41,26 @@ POST https://biz.reborn.vn/inventory/warehouse/create
 3. **Config > hardcode** — rule khác nhau giữa các ngành (VAT %, voucher stacking, return window, …) phải đọc từ bảng config/tenant setting, không `if/else` theo tenant.
 4. **Outbox pattern** cho cross-service writes — tránh inconsistency khi sale/market/inventory không share DB.
 
----
+## 🔀 Cross-branch consistency
 
-## 📋 Task đang mở (cập nhật khi có task mới)
+Tất cả các nhánh CRM (reborn-retail, reborn-tnpm, reborn-fitpro, community-hub, reborn-tech, crm-banking, …) dùng **chung structure này**. Khi viết task, phải nhớ:
 
-### [sales/](./sales/) — `cloud-sales-master`
-
-| File | Severity | Tóm tắt |
-|------|----------|---------|
-| [invoice-list-cancelled-filter.md](./sales/invoice-list-cancelled-filter.md) | 🟡 MEDIUM | `/invoice/list?status=3` và filter date không trả cancelled invoices (round 2, 2/6 còn open) |
-| [shift-close-cash-diff.md](./sales/shift-close-cash-diff.md) | 🔴 CRITICAL | `/shift/close` tính `cashDifference` sai công thức |
-| [invoice-create-voucher-promotion-fields.md](./sales/invoice-create-voucher-promotion-fields.md) | 🔴 CRITICAL | Mở rộng `/invoice/create` nhận `couponCode` + `promotionId` → link usage record |
-
-### [inventory/](./inventory/) — `cloud-inventory-master`
-
-| File | Severity | Tóm tắt |
-|------|----------|---------|
-| [stock-product-list-NA.md](./inventory/stock-product-list-NA.md) | 🔴 HIGH | `/inventoryBalance/stockProduct/list` trả `"N/A"` cho `productName`, `batchNo`, `expiryDate` |
-| [import-invoice-error-response.md](./inventory/import-invoice-error-response.md) | 🟡 MEDIUM | Error response của `/invoice/import/update` mơ hồ + stock ledger không tạo khi approve |
-| [warehouse-create-api.md](./inventory/warehouse-create-api.md) | 🟡 MEDIUM | Các bug nhỏ Playwright (warehouse create, unit_type, barcode) |
-| [warehouse-list-code-missing.md](./inventory/warehouse-list-code-missing.md) | 🔴 CRITICAL | `GET /warehouse/list` không trả field `code` dù create đã lưu |
-| [product-delete-safety.md](./inventory/product-delete-safety.md) | 🟡 MEDIUM | Validate safe-delete cho product khi có transaction |
-| [unit-delete-safety.md](./inventory/unit-delete-safety.md) | 🟡 MEDIUM | Validate safe-delete cho unit khi đang được tham chiếu |
-
-### [market/](./market/) — `cloud-market-master`
-
-| File | Severity | Tóm tắt |
-|------|----------|---------|
-| [voucher-promotion-unified.md](./market/voucher-promotion-unified.md) | 🔴 CRITICAL | **Unified design** cho voucher + promotion: schema `*_usage`, reverse flow, reports, audit log, budget enforcement, alerting |
-
-### Các microservice chưa có task
-
-- [billing/](./billing/) — chưa có task
-- [care/](./care/) — chưa có task
-- [contract/](./contract/) — chưa có task
-- [finance/](./finance/) — chưa có task (chỉ banking dùng)
-- [integration/](./integration/) — chưa có task
-- [logistics/](./logistics/) — chưa có task
-- [notification/](./notification/) — chưa có task
-- [operation/](./operation/) — chưa có task (chỉ reborn-tnpm dùng)
+- **Không** hardcode business rule của một ngành — BE dùng chung
+- **Không** viết kiểu "ở ngành X thì…" — phải config hóa
+- **Luôn** verify trên ít nhất 2 tenant ngành khác nhau trước khi deploy
 
 ---
 
-## 🔗 Cross-service tasks
+## 📋 Task đang mở
 
-Một số task yêu cầu phối hợp nhiều microservice. Doc chính sống ở microservice **chủ** (nơi có business logic chính), các service khác chỉ có doc pointer ngắn.
+Mỗi subdir tự maintain index tasks bên trong. Hiện tại branch này chưa có task nào — thư mục tạo trước để chuẩn sẵn structure.
 
-| Task | Sales | Market | Inventory |
-|------|:-:|:-:|:-:|
-| Voucher/Promotion tracking per invoice | ✅ [sales](./sales/invoice-create-voucher-promotion-fields.md) | ✅ [market](./market/voucher-promotion-unified.md) | — |
-| Cancel via return (IV2) reverse usage | ✅ sales (reverse call) | ✅ market (reverse service) | ✅ inventory (restock) |
-| Import invoice approve → stock ledger | — | — | ✅ inventory (ledger write) |
+Khi có task mới:
+
+1. Đọc URL endpoint bị bug
+2. Lấy segment đầu sau host (`biz.reborn.vn/<PREFIX>/...`)
+3. Tạo file ở `docs/backend-tasks/<prefix>/<tên-kebab>.md`
+4. Cross-ref trong README nếu task span nhiều microservice (doc chính ở service chủ, pointer ở service phụ)
 
 ---
 
@@ -112,4 +81,4 @@ Sau đó các section: Mô tả → Hard evidence → Root cause → Action → 
 
 **Tên file:** kebab-case, không prefix `BACKEND-TASK-` (thư mục đã nói rồi).
 
-**Delete policy:** khi task **fully done** (BE deploy + FE retest pass), xóa file khỏi đây. Nếu done một phần, strip phần done chỉ giữ phần còn lại. Cập nhật index trong README này.
+**Delete policy:** khi task **fully done** (BE deploy + FE retest pass), xóa file khỏi đây. Nếu done một phần, strip phần done chỉ giữ phần còn lại.
