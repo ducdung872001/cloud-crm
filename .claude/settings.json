@@ -42,7 +42,10 @@
       "Bash(node tests/test-ship-probe2.mjs)",
       "Bash(node tests/test-ship-dbg.mjs)",
       "Bash(mv tests/test-cancel-dashboard-check.mjs tests/test-e2e-cancel-dashboard-sync.mjs)",
-      "Bash(ls tests/test-e2e-cancel*.mjs)"
+      "Bash(ls tests/test-e2e-cancel*.mjs)",
+      "Bash(bash docs/urd/diagrams/render.sh)",
+      "Bash(bash docs/sa/diagrams/render.sh)",
+      "Bash(wc -l docs/backend-tasks/*.md)"
     ],
     "additionalDirectories": [
       "\\tmp"
