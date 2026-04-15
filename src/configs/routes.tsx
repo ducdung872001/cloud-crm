@@ -279,10 +279,21 @@ export const menu: IMenuItem[] = [
     code: "",
   },
   {
-    title: "fpModules", // FitPro modules hub (F2, F4-F11 prototypes)
+    title: "fpModules", // FitPro modules hub (F2, F4-F11 prototypes) — parent menu with 9 children
     path: "/fp_modules",
     icon: <Icon name="SettingsMenu" />,
     code: "",
+    children: [
+      { title: "fpStationType", path: "/fp_station_type", icon: <Icon name="WarehouseListMenu" />, code: "" },
+      { title: "fpCrossCard", path: "/fp_cross_card", icon: <Icon name="PartnerMenu" />, code: "" },
+      { title: "fpBodyMetrics", path: "/fp_body_metrics", icon: <Icon name="OverviewMenu" />, code: "" },
+      { title: "fpSOPCompliance", path: "/fp_sop", icon: <Icon name="SupportSettingMenu" />, code: "" },
+      { title: "fpStationFinder", path: "/fp_finder", icon: <Icon name="PartnerMenu" />, code: "" },
+      { title: "fpCommission", path: "/fp_commission", icon: <Icon name="FinanceMenu" />, code: "" },
+      { title: "fpMarketingFunnel", path: "/fp_funnel", icon: <Icon name="SalesReportMenu" />, code: "" },
+      { title: "fpTaxStation", path: "/fp_tax", icon: <Icon name="CashbookMenu" />, code: "" },
+      { title: "fpMF7Onboarding", path: "/fp_mf7", icon: <Icon name="SettingsMenu" />, code: "" },
+    ],
   },
 
   // ═══ DÙNG THƯỜNG XUYÊN (Tài chính / Cộng đồng) ═══════════════════════
@@ -492,6 +503,15 @@ export const routes: IRouter[] = [
   { path: "/fp_network_tree", component: <FPNetworkTreePage /> },
   { path: "/fp_journey", component: <FPJourneyTrackerPage /> },
   { path: "/fp_modules", component: <FPModulesPage /> },
+  { path: "/fp_station_type", component: <FPModulesPage /> },
+  { path: "/fp_cross_card", component: <FPModulesPage /> },
+  { path: "/fp_body_metrics", component: <FPModulesPage /> },
+  { path: "/fp_sop", component: <FPModulesPage /> },
+  { path: "/fp_finder", component: <FPModulesPage /> },
+  { path: "/fp_commission", component: <FPModulesPage /> },
+  { path: "/fp_funnel", component: <FPModulesPage /> },
+  { path: "/fp_tax", component: <FPModulesPage /> },
+  { path: "/fp_mf7", component: <FPModulesPage /> },
   // Dashboard
   {
     path: "",

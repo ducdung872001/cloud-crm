@@ -95,6 +95,8 @@ const vi = {
     fpNetworkTree: "Mạng lưới 7×7×7",
     fpJourney: "Hành trình 90 ngày",
     fpModules: "FitPro Modules",
+    fpStationType: "Cấu hình loại trạm",
+    fpCrossCard: "Thẻ liên thông",
     fpBodyMetrics: "Chỉ số cơ thể",
     fpStationLayout: "Sơ đồ trạm",
     fpSOPCompliance: "Tuân thủ SOP",

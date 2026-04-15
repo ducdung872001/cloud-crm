@@ -1,27 +1,34 @@
-// [FitPro] Prototype hub cho các module còn lại (F2, F4, F5, F6, F7, F8, F9, F10, F11)
-// Wrap trong 1 page với tabs để demo — production sẽ split ra từng page riêng
+// [FitPro] 9 FitPro-specific modules (F2, F4-F11) — each reachable via dedicated route.
+// Kept in 1 file to avoid prototype churn; each sub-route locks its own tab and hides the tab pills.
 import React, { useState } from "react";
+import { useLocation } from "react-router-dom";
 import { MOCK_FITPRO_STATIONS } from "@/mocks/community-hub/fitpro-stations";
 import { MOCK_NETWORK_NODES } from "@/mocks/community-hub/fitpro-network";
 import { formatCurrency } from "reborn-util";
 
 type TabKey = "f2-station-type" | "f4-body-metrics" | "f5-cross-card" | "f6-sop" | "f7-finder" | "f8-commission" | "f9-funnel" | "f10-tax" | "f11-mf7";
 
-const TABS: { key: TabKey; label: string; icon: string; priority: string }[] = [
-  { key: "f2-station-type", label: "Cấu hình loại trạm", icon: "🏠", priority: "⭐⭐⭐" },
-  { key: "f5-cross-card", label: "Thẻ liên thông", icon: "🎫", priority: "⭐⭐⭐" },
-  { key: "f4-body-metrics", label: "Chỉ số cơ thể", icon: "🩺", priority: "⭐⭐" },
-  { key: "f6-sop", label: "SOP Compliance", icon: "✅", priority: "⭐⭐" },
-  { key: "f7-finder", label: "Tìm trạm", icon: "📍", priority: "⭐⭐" },
-  { key: "f8-commission", label: "Hoa hồng", icon: "💰", priority: "⭐⭐" },
-  { key: "f9-funnel", label: "Phễu marketing", icon: "📣", priority: "⭐⭐" },
-  { key: "f10-tax", label: "Khai thuế", icon: "📋", priority: "⭐" },
-  { key: "f11-mf7", label: "MF7 Onboarding", icon: "🎓", priority: "⭐" },
+const TABS: { key: TabKey; label: string; icon: string; priority: string; path: string; title: string }[] = [
+  { key: "f2-station-type", label: "Cấu hình loại trạm", icon: "🏠", priority: "⭐⭐⭐", path: "/fp_station_type", title: "Cấu hình loại trạm" },
+  { key: "f5-cross-card", label: "Thẻ liên thông", icon: "🎫", priority: "⭐⭐⭐", path: "/fp_cross_card", title: "Thẻ liên thông" },
+  { key: "f4-body-metrics", label: "Chỉ số cơ thể", icon: "🩺", priority: "⭐⭐", path: "/fp_body_metrics", title: "Chỉ số cơ thể" },
+  { key: "f6-sop", label: "SOP Compliance", icon: "✅", priority: "⭐⭐", path: "/fp_sop", title: "SOP Compliance" },
+  { key: "f7-finder", label: "Tìm trạm", icon: "📍", priority: "⭐⭐", path: "/fp_finder", title: "Tìm trạm" },
+  { key: "f8-commission", label: "Hoa hồng", icon: "💰", priority: "⭐⭐", path: "/fp_commission", title: "Hoa hồng" },
+  { key: "f9-funnel", label: "Phễu marketing", icon: "📣", priority: "⭐⭐", path: "/fp_funnel", title: "Phễu marketing" },
+  { key: "f10-tax", label: "Khai thuế", icon: "📋", priority: "⭐", path: "/fp_tax", title: "Khai thuế" },
+  { key: "f11-mf7", label: "MF7 Onboarding", icon: "🎓", priority: "⭐", path: "/fp_mf7", title: "MF7 Onboarding" },
 ];
 
 export default function FitProModulesPage() {
-  document.title = "FitPro Modules";
-  const [tab, setTab] = useState<TabKey>("f2-station-type");
+  const location = useLocation();
+  const pathTab = TABS.find((t) => t.path === location.pathname);
+  const isStandalone = Boolean(pathTab);
+  document.title = pathTab ? `FitPro — ${pathTab.title}` : "FitPro Modules";
+  const [tab, setTab] = useState<TabKey>(pathTab ? pathTab.key : "f2-station-type");
+  React.useEffect(() => {
+    if (pathTab) setTab(pathTab.key);
+  }, [pathTab?.key]);
   const [createStationType, setCreateStationType] = useState<"home" | "coworking" | null>(null);
   const [shareContent, setShareContent] = useState<{ title: string; type: string } | null>(null);
   const [stationForm, setStationForm] = useState({
@@ -45,33 +52,39 @@ export default function FitProModulesPage() {
   return (
     <div style={{ padding: 20, background: "#F5F9F8", minHeight: "calc(100vh - 60px)" }}>
       <div style={{ marginBottom: 16 }}>
-        <h2 style={{ margin: 0, color: "#0B2E2A" }}>🛠️ FitPro Modules (Prototype)</h2>
+        <h2 style={{ margin: 0, color: "#0B2E2A" }}>
+          {pathTab ? `${pathTab.icon} ${pathTab.title}` : "🛠️ FitPro Modules (Prototype)"}
+        </h2>
         <p style={{ fontSize: 13, color: "#6B8A85", marginTop: 4 }}>
-          9 phân hệ FitPro-specific (F2, F4–F11) — prototype để duyệt trước khi tách page riêng và làm BE
+          {pathTab
+            ? "Phân hệ FitPro-specific — truy cập qua menu bên trái hoặc link trực tiếp"
+            : "9 phân hệ FitPro-specific (F2, F4–F11) — prototype hub, mỗi phân hệ cũng có menu + URL riêng"}
         </p>
       </div>
 
-      {/* Tab pills */}
-      <div style={{ display: "flex", gap: 6, flexWrap: "wrap", marginBottom: 20 }}>
-        {TABS.map((t) => (
-          <button
-            key={t.key}
-            onClick={() => setTab(t.key)}
-            style={{
-              padding: "8px 14px",
-              borderRadius: 20,
-              border: tab === t.key ? "2px solid #00C9A7" : "1px solid #d9e0de",
-              background: tab === t.key ? "#E4F7F3" : "#fff",
-              color: tab === t.key ? "#0B2E2A" : "#6B8A85",
-              fontSize: 12,
-              fontWeight: tab === t.key ? 700 : 500,
-              cursor: "pointer",
-            }}
-          >
-            {t.icon} {t.label} <span style={{ fontSize: 9 }}>{t.priority}</span>
-          </button>
-        ))}
-      </div>
+      {/* Tab pills — chỉ hiện ở hub, ẩn khi truy cập route riêng */}
+      {!isStandalone && (
+        <div style={{ display: "flex", gap: 6, flexWrap: "wrap", marginBottom: 20 }}>
+          {TABS.map((t) => (
+            <button
+              key={t.key}
+              onClick={() => setTab(t.key)}
+              style={{
+                padding: "8px 14px",
+                borderRadius: 20,
+                border: tab === t.key ? "2px solid #00C9A7" : "1px solid #d9e0de",
+                background: tab === t.key ? "#E4F7F3" : "#fff",
+                color: tab === t.key ? "#0B2E2A" : "#6B8A85",
+                fontSize: 12,
+                fontWeight: tab === t.key ? 700 : 500,
+                cursor: "pointer",
+              }}
+            >
+              {t.icon} {t.label} <span style={{ fontSize: 9 }}>{t.priority}</span>
+            </button>
+          ))}
+        </div>
+      )}
 
       <div style={{ background: "#fff", borderRadius: 12, padding: 24, boxShadow: "0 2px 12px rgba(11,46,42,.06)", minHeight: 400 }}>
         {/* F2: Station Type config */}
@@ -79,7 +92,7 @@ export default function FitProModulesPage() {
           <div>
             <h3 style={{ marginTop: 0 }}>🏠 Cấu hình loại trạm (Home vs Co-Working)</h3>
             <p style={{ fontSize: 13, color: "#6B8A85" }}>Định nghĩa cấu hình mặc định cho 2 loại trạm theo slide 7</p>
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16, marginTop: 20 }}>
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: 16, marginTop: 20 }}>
               {[
                 {
                   type: "home", label: "Home FitPro", color: "#4DE4C4", icon: "🏠",
@@ -131,10 +144,10 @@ export default function FitProModulesPage() {
           <div>
             <h3 style={{ marginTop: 0 }}>🩺 Chỉ số cơ thể + Medlatec integration</h3>
             <p style={{ fontSize: 13, color: "#6B8A85" }}>Kết nối xét nghiệm máu với Medlatec — lấy mẫu tại nhà trạm, scheduled 2 lần (trước & sau 90 ngày)</p>
-            <div style={{ display: "grid", gridTemplateColumns: "2fr 1fr", gap: 16, marginTop: 20 }}>
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(320px, 1fr))", gap: 16, marginTop: 20 }}>
               <div style={{ padding: 18, background: "#F5F9F8", borderRadius: 10 }}>
                 <h4 style={{ marginTop: 0 }}>Bảng đo mẫu cho thành viên "Trần Thị Hương" (Day 73/90)</h4>
-                <table style={{ width: "100%", fontSize: 12, borderCollapse: "collapse" }}>
+                <div style={{ overflowX: "auto" }}><table style={{ width: "100%", minWidth: 560, fontSize: 12, borderCollapse: "collapse" }}>
                   <thead>
                     <tr style={{ background: "#E4F7F3" }}>
                       <th style={{ padding: 10, textAlign: "left" }}>Chỉ số</th>
@@ -167,7 +180,7 @@ export default function FitProModulesPage() {
                       </tr>
                     ))}
                   </tbody>
-                </table>
+                </table></div>
               </div>
               <div>
                 <div style={{ padding: 14, background: "#FFF7E6", borderRadius: 10, marginBottom: 12 }}>
@@ -199,7 +212,7 @@ export default function FitProModulesPage() {
           <div>
             <h3 style={{ marginTop: 0 }}>🎫 Thẻ liên thông cross-station</h3>
             <p style={{ fontSize: 13, color: "#6B8A85" }}>Check-in với tiêu chuẩn đồng nhất tại bất kỳ trạm FitPro nào trên toàn quốc — slide 8 "ĐẶC QUYỀN THẺ LIÊN THÔNG"</p>
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 1.5fr", gap: 20, marginTop: 20 }}>
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: 20, marginTop: 20 }}>
               {/* Mock member card */}
               <div style={{ padding: 20, background: "linear-gradient(135deg, #00C9A7 0%, #FF8C42 100%)", borderRadius: 14, color: "#fff", boxShadow: "0 6px 20px rgba(0,201,167,.3)" }}>
                 <div style={{ fontSize: 11, opacity: 0.8 }}>FITPRO MEMBER CARD</div>
@@ -252,10 +265,24 @@ export default function FitProModulesPage() {
         {/* F6: SOP Compliance */}
         {tab === "f6-sop" && (
           <div>
-            <h3 style={{ marginTop: 0 }}>✅ SOP Compliance — Giám sát chất lượng trạm</h3>
-            <p style={{ fontSize: 13, color: "#6B8A85" }}>Master BO giám sát tất cả trạm downline tuân thủ SOP chuẩn thương hiệu FitPro</p>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "start" }}>
+              <div>
+                <h3 style={{ marginTop: 0 }}>✅ SOP Compliance — Giám sát chất lượng trạm</h3>
+                <p style={{ fontSize: 13, color: "#6B8A85" }}>Master BO giám sát tất cả trạm downline tuân thủ SOP chuẩn thương hiệu FitPro</p>
+              </div>
+              <div style={{ display: "flex", gap: 8 }}>
+                <button onClick={() => alert("📊 Đã xuất báo cáo SOP compliance xuống file Excel")}
+                  style={{ padding: "8px 14px", background: "#fff", color: "#00C9A7", border: "1px solid #00C9A7", borderRadius: 6, fontSize: 12, fontWeight: 600, cursor: "pointer" }}>
+                  📊 Xuất báo cáo
+                </button>
+                <button onClick={() => alert("📝 Đã lên lịch đợt audit tiếp theo — các trạm có điểm < 85 sẽ được kiểm tra đột xuất trong 7 ngày tới")}
+                  style={{ padding: "8px 14px", background: "#00C9A7", color: "#fff", border: "none", borderRadius: 6, fontSize: 12, fontWeight: 600, cursor: "pointer" }}>
+                  ⚡ Lên lịch audit
+                </button>
+              </div>
+            </div>
             <div style={{ marginTop: 20 }}>
-              <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 12, marginBottom: 16 }}>
+              <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(140px, 1fr))", gap: 12, marginBottom: 16 }}>
                 {[
                   { l: "Tuân thủ 100%", v: "3", c: "#00C9A7" },
                   { l: "Cần cải thiện", v: "2", c: "#FF8C42" },
@@ -268,7 +295,7 @@ export default function FitProModulesPage() {
                   </div>
                 ))}
               </div>
-              <table style={{ width: "100%", fontSize: 12, borderCollapse: "collapse" }}>
+              <div style={{ overflowX: "auto" }}><table style={{ width: "100%", minWidth: 560, fontSize: 12, borderCollapse: "collapse" }}>
                 <thead>
                   <tr style={{ background: "#E4F7F3" }}>
                     <th style={{ padding: 10, textAlign: "left" }}>Trạm</th>
@@ -300,7 +327,7 @@ export default function FitProModulesPage() {
                     );
                   })}
                 </tbody>
-              </table>
+              </table></div>
             </div>
           </div>
         )}
@@ -312,7 +339,7 @@ export default function FitProModulesPage() {
             <p style={{ fontSize: 13, color: "#6B8A85" }}>Giúp thành viên tìm trạm FitPro gần nhất — dùng trong app mobile / map công khai</p>
             <div style={{ marginTop: 20 }}>
               <input type="text" placeholder="🔍 Nhập địa chỉ / quận / thành phố..." style={{ width: "100%", padding: "12px 16px", borderRadius: 8, border: "1px solid #d9e0de", fontSize: 14, marginBottom: 16 }} />
-              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
+              <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))", gap: 12 }}>
                 {MOCK_FITPRO_STATIONS.filter(s => s.status === "active").map((s, i) => (
                   <div key={s.id} style={{ padding: 14, background: "#F5F9F8", borderRadius: 10, borderLeft: `3px solid ${s.type === "home" ? "#4DE4C4" : "#FF8C42"}` }}>
                     <div style={{ display: "flex", justifyContent: "space-between", alignItems: "start" }}>
@@ -347,10 +374,24 @@ export default function FitProModulesPage() {
         {/* F8: Commission dashboard */}
         {tab === "f8-commission" && (
           <div>
-            <h3 style={{ marginTop: 0 }}>💰 Hoa hồng hệ thống (hãng tự trả)</h3>
-            <p style={{ fontSize: 13, color: "#6B8A85" }}>Dashboard xem hoa hồng 5%/tầng × 3 tầng từ hãng Herbalife — BO chỉ view, không cần quản lý</p>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "start" }}>
+              <div>
+                <h3 style={{ marginTop: 0 }}>💰 Hoa hồng hệ thống (hãng tự trả)</h3>
+                <p style={{ fontSize: 13, color: "#6B8A85" }}>Dashboard xem hoa hồng 5%/tầng × 3 tầng từ hãng Herbalife — BO chỉ view, không cần quản lý</p>
+              </div>
+              <div style={{ display: "flex", gap: 8 }}>
+                <button onClick={() => alert("📄 Đã xuất báo cáo hoa hồng tháng 04/2026 → PDF")}
+                  style={{ padding: "8px 14px", background: "#fff", color: "#722ed1", border: "1px solid #722ed1", borderRadius: 6, fontSize: 12, fontWeight: 600, cursor: "pointer" }}>
+                  📄 Xuất PDF
+                </button>
+                <button onClick={() => alert("🔄 Đã sync dữ liệu mới nhất từ Herbalife API — cập nhật thành công")}
+                  style={{ padding: "8px 14px", background: "#722ed1", color: "#fff", border: "none", borderRadius: 6, fontSize: 12, fontWeight: 600, cursor: "pointer" }}>
+                  🔄 Sync từ hãng
+                </button>
+              </div>
+            </div>
             <div style={{ marginTop: 20 }}>
-              <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 12, marginBottom: 16 }}>
+              <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(140px, 1fr))", gap: 12, marginBottom: 16 }}>
                 {[
                   { l: "Tháng này", v: "42 tr", c: "#00C9A7", i: "💰" },
                   { l: "Tầng 1 (5%)", v: "18 tr", c: "#4DE4C4", i: "1️⃣" },
@@ -369,7 +410,7 @@ export default function FitProModulesPage() {
               </div>
               <div style={{ marginTop: 16 }}>
                 <h4>Breakdown từ downline (6 BO)</h4>
-                <table style={{ width: "100%", fontSize: 12, borderCollapse: "collapse" }}>
+                <div style={{ overflowX: "auto" }}><table style={{ width: "100%", minWidth: 560, fontSize: 12, borderCollapse: "collapse" }}>
                   <thead>
                     <tr style={{ background: "#E4F7F3" }}>
                       <th style={{ padding: 10, textAlign: "left" }}>BO</th>
@@ -392,7 +433,7 @@ export default function FitProModulesPage() {
                       </tr>
                     ))}
                   </tbody>
-                </table>
+                </table></div>
               </div>
             </div>
           </div>
@@ -403,7 +444,7 @@ export default function FitProModulesPage() {
           <div>
             <h3 style={{ marginTop: 0 }}>📣 Phễu marketing & Content</h3>
             <p style={{ fontSize: 13, color: "#6B8A85" }}>Chuyển khách lạnh → cộng đồng → thành viên. Thư viện video/bài viết + công cụ lan tỏa cho BO</p>
-            <div style={{ display: "flex", justifyContent: "space-around", alignItems: "center", padding: 30, background: "#F5F9F8", borderRadius: 12, marginTop: 20 }}>
+            <div style={{ display: "flex", flexWrap: "wrap", justifyContent: "space-around", alignItems: "center", gap: 12, padding: 30, background: "#F5F9F8", borderRadius: 12, marginTop: 20 }}>
               {[
                 { l: "Khách lạnh", v: "12,450", c: "#8E9BAE", i: "🌱", w: 240 },
                 { l: "Cộng đồng", v: "2,180", c: "#4DE4C4", i: "👥", w: 180 },
@@ -432,7 +473,7 @@ export default function FitProModulesPage() {
             </div>
             <div style={{ marginTop: 20 }}>
               <h4>📚 Thư viện content cho BO</h4>
-              <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 12 }}>
+              <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))", gap: 12 }}>
                 {[
                   { title: "Video: Tại sao chọn FitPro?", type: "🎥 Video", shares: 345 },
                   { title: "Bài viết: 5 sai lầm khi giảm cân", type: "📄 Blog", shares: 182 },
@@ -463,9 +504,27 @@ export default function FitProModulesPage() {
         {/* F10: Tax per station */}
         {tab === "f10-tax" && (
           <div>
-            <h3 style={{ marginTop: 0 }}>📋 Khai thuế từng trạm (Hộ kinh doanh)</h3>
-            <p style={{ fontSize: 13, color: "#6B8A85" }}>Mỗi trạm có thể là 1 hộ kinh doanh riêng — quản lý doanh thu, khai thuế hàng tháng</p>
-            <table style={{ width: "100%", fontSize: 12, borderCollapse: "collapse", marginTop: 20 }}>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginTop: 0 }}>
+              <div>
+                <h3 style={{ marginTop: 0, marginBottom: 4 }}>📋 Khai thuế từng trạm (Hộ kinh doanh)</h3>
+                <p style={{ fontSize: 13, color: "#6B8A85", margin: 0 }}>Mỗi trạm có thể là 1 hộ kinh doanh riêng — quản lý doanh thu, khai thuế hàng tháng</p>
+              </div>
+              <div style={{ display: "flex", gap: 8 }}>
+                <button
+                  onClick={() => alert("💰 Đã gửi khai thuế tháng 03/2026 cho tất cả trạm → Chi cục Thuế\n\n• 4 trạm đã nộp\n• 1 trạm chưa phát sinh doanh thu")}
+                  style={{ padding: "8px 14px", background: "#00C9A7", color: "#fff", border: "none", borderRadius: 6, fontSize: 12, cursor: "pointer", fontWeight: 600 }}
+                >
+                  💰 Khai thuế hàng loạt
+                </button>
+                <button
+                  onClick={() => alert("📑 Đã xuất báo cáo thuế tháng 03/2026 → Excel")}
+                  style={{ padding: "8px 14px", background: "#fff", color: "#00C9A7", border: "1px solid #00C9A7", borderRadius: 6, fontSize: 12, cursor: "pointer", fontWeight: 600 }}
+                >
+                  📑 Xuất báo cáo
+                </button>
+              </div>
+            </div>
+            <div style={{ overflowX: "auto", marginTop: 20 }}><table style={{ width: "100%", minWidth: 700, fontSize: 12, borderCollapse: "collapse" }}>
               <thead>
                 <tr style={{ background: "#E4F7F3" }}>
                   <th style={{ padding: 10, textAlign: "left" }}>Trạm</th>
@@ -474,6 +533,7 @@ export default function FitProModulesPage() {
                   <th style={{ padding: 10 }}>Thuế khoán (1.5%)</th>
                   <th style={{ padding: 10 }}>Trạng thái nộp</th>
                   <th style={{ padding: 10 }}>Hạn nộp</th>
+                  <th style={{ padding: 10 }}>Hành động</th>
                 </tr>
               </thead>
               <tbody>
@@ -496,11 +556,19 @@ export default function FitProModulesPage() {
                         </span>
                       </td>
                       <td style={{ padding: 10, textAlign: "center", fontSize: 11, color: "#6B8A85" }}>20/04/2026</td>
+                      <td style={{ padding: 10, textAlign: "center" }}>
+                        <button
+                          onClick={() => alert(`📋 Trạm ${s.code}\n\nDoanh thu: ${formatCurrency(s.month_revenue_vnd, ".", "")}đ\nThuế khoán (1.5%): ${formatCurrency(taxAmount, ".", "")}đ\n\n→ Mở form khai thuế chi tiết`)}
+                          style={{ padding: "4px 10px", background: statusText === "Chưa nộp" ? "#FF8C42" : "#E4F7F3", color: statusText === "Chưa nộp" ? "#fff" : "#00C9A7", border: "none", borderRadius: 4, fontSize: 11, cursor: "pointer", fontWeight: 600 }}
+                        >
+                          {statusText === "Chưa nộp" ? "Khai ngay" : "Xem"}
+                        </button>
+                      </td>
                     </tr>
                   );
                 })}
               </tbody>
-            </table>
+            </table></div>
           </div>
         )}
 
@@ -560,7 +628,16 @@ export default function FitProModulesPage() {
                     <div style={{ flex: 1, fontSize: 13, fontWeight: 500, color: s.done ? "#0B2E2A" : "#6B8A85" }}>
                       Ngày {s.day}: {s.title}
                     </div>
-                    {s.done && <span style={{ fontSize: 11, color: "#00C9A7" }}>✅ Hoàn thành</span>}
+                    {s.done ? (
+                      <span style={{ fontSize: 11, color: "#00C9A7" }}>✅ Hoàn thành</span>
+                    ) : (
+                      <button
+                        onClick={() => alert(`🎓 Bắt đầu bài học ngày ${s.day}\n\n"${s.title}"\n\n→ Mở giáo trình chi tiết + video hướng dẫn`)}
+                        style={{ padding: "6px 12px", background: "#00C9A7", color: "#fff", border: "none", borderRadius: 6, fontSize: 11, cursor: "pointer", fontWeight: 600 }}
+                      >
+                        ▶ Bắt đầu
+                      </button>
+                    )}
                   </div>
                 ))}
               </div>

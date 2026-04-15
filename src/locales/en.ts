@@ -95,6 +95,8 @@ const en = {
     fpNetworkTree: "Network 7×7×7",
     fpJourney: "90-day Journey",
     fpModules: "FitPro Modules",
+    fpStationType: "Station Type Config",
+    fpCrossCard: "Cross-station Card",
     fpBodyMetrics: "Body Metrics",
     fpStationLayout: "Station Layout",
     fpSOPCompliance: "SOP Compliance",

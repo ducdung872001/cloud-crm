@@ -221,11 +221,20 @@ export default function NetworkTreePage() {
           <div style={{ fontSize: 12, color: "#6B8A85", marginBottom: 10, textAlign: "center" }}>
             TIER 2 — VỆ TINH ({tier2.length}/49)
           </div>
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(160px, 1fr))", gap: 10 }}>
-            {tier2.map((node) => (
-              <NodeCard key={node.id} node={node} onClick={() => setSelectedNode(node)} selected={selectedNode?.id === node.id} />
-            ))}
-          </div>
+          {tier2.length === 0 ? (
+            <div style={{ padding: 30, background: "#fff", borderRadius: 10, textAlign: "center", border: "1.5px dashed #d9e0de" }}>
+              <div style={{ fontSize: 36, opacity: 0.3 }}>🌱</div>
+              <div style={{ fontSize: 13, color: "#6B8A85", marginTop: 8 }}>
+                Chưa có BO tầng 2 nào — mời tầng 1 nhân bản để lan tỏa tới tầng 2
+              </div>
+            </div>
+          ) : (
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(160px, 1fr))", gap: 10 }}>
+              {tier2.map((node) => (
+                <NodeCard key={node.id} node={node} onClick={() => setSelectedNode(node)} selected={selectedNode?.id === node.id} />
+              ))}
+            </div>
+          )}
         </div>
       </div>
 
