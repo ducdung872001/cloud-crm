@@ -1,6 +1,4 @@
-# ✅ [RESOLVED 2026-04-15] BACKEND-TASK — Hoá đơn VAT 500
-
-> **Status**: ✅ **FIXED** — verified 2026-04-15 bởi `test-smoke-nav.mjs` trên cả community-hub và reborn-fitpro. SMK-INVOICE-VAT PASS, route `/invoiceVAT` không còn trả 500.
+# BACKEND-TASK — Hoá đơn VAT 500
 
 **Phát hiện**: `tests/test-smoke-nav.mjs` — route `/invoiceVAT` nhận 500 từ server khi load trang.
 
