@@ -1,6 +1,7 @@
 // Dashboard — 5 chỉ số sinh tồn theo slide 8 của chiến lược Reborn CRM Tax.
 
 import React, { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 import { Card, KpiTile, Alert, Badge, formatVNDFull, formatVND } from "./common";
 import { taxTheme as T } from "./theme";
 import { taxEngine } from "../domain/engine";
@@ -28,12 +29,12 @@ export default function TaxDashboard() {
       {!hasProfile && (
         <Alert tone="info" title="Chưa có hồ sơ thuế">
           Hãy hoàn tất đăng ký hồ sơ thuế trong tab{" "}
-          <a
-            href="/tax/profile"
+          <Link
+            to="/tax/profile"
             style={{ color: T.colors.primaryDark, fontWeight: 700 }}
           >
             T1 — Hồ sơ thuế
-          </a>{" "}
+          </Link>{" "}
           để hệ thống có thể tự động lập tờ khai.
         </Alert>
       )}
@@ -302,8 +303,8 @@ export default function TaxDashboard() {
             </Badge>
           </div>
           <div style={{ marginTop: T.spacing.lg }}>
-            <a
-              href="/tax/declaration"
+            <Link
+              to="/tax/declaration"
               style={{
                 display: "block",
                 textAlign: "center",
@@ -317,7 +318,7 @@ export default function TaxDashboard() {
               }}
             >
               📝 Lập tờ khai ngay
-            </a>
+            </Link>
           </div>
         </Card>
       </div>

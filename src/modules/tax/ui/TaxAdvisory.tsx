@@ -1,8 +1,10 @@
 // T5 — Tư vấn thuế: FAQ, bản tin chính sách, kết nối đại lý thuế.
 
-import React from "react";
-import { Card, Button, Badge, Alert } from "./common";
+import React, { useState } from "react";
+import { Card, Button, Badge, Alert, Field, inputStyle } from "./common";
 import { taxTheme as T } from "./theme";
+import { taxStorage } from "../services/taxStorage";
+import { useTaxpayerProfile } from "./hooks";
 
 const FAQS: { q: string; a: string; tags?: string[] }[] = [
   {
@@ -59,6 +61,56 @@ const POLICIES: { title: string; date: string; body: string; tag: string }[] = [
 ];
 
 export default function TaxAdvisory() {
+  const [profile] = useTaxpayerProfile();
+  const [showForm, setShowForm] = useState(false);
+  const [submitted, setSubmitted] = useState(false);
+  const [formError, setFormError] = useState<string | null>(null);
+  const [form, setForm] = useState({
+    fullName: "",
+    phone: "",
+    topic: "Tư vấn khai thuế chung",
+    message: "",
+  });
+
+  const handleSubmitSupport = () => {
+    if (!form.fullName.trim()) {
+      setFormError("Vui lòng nhập họ tên");
+      return;
+    }
+    if (!form.phone.trim()) {
+      setFormError("Vui lòng nhập số điện thoại");
+      return;
+    }
+    if (!form.message.trim()) {
+      setFormError("Vui lòng mô tả yêu cầu cần hỗ trợ");
+      return;
+    }
+    taxStorage.addSupportRequest(form);
+    setSubmitted(true);
+    setFormError(null);
+    setForm({
+      fullName: "",
+      phone: "",
+      topic: "Tư vấn khai thuế chung",
+      message: "",
+    });
+    setTimeout(() => {
+      setShowForm(false);
+      setSubmitted(false);
+    }, 4000);
+  };
+
+  // Prefill họ tên + SĐT từ profile nếu có
+  React.useEffect(() => {
+    if (showForm && !form.fullName && profile.fullName) {
+      setForm((f) => ({
+        ...f,
+        fullName: profile.fullName,
+        phone: profile.phone ?? "",
+      }));
+    }
+  }, [showForm]);
+
   return (
     <div
       style={{
@@ -178,17 +230,98 @@ export default function TaxAdvisory() {
             Không có thời gian tự khai? Kết nối với đại lý thuế chuyên nghiệp, họ
             sẽ kiểm tra tờ khai trong &lt;24h và nộp giúp bạn.
           </Alert>
-          <div
-            style={{
-              textAlign: "center",
-              padding: T.spacing.md,
-            }}
-          >
-            <div style={{ fontSize: 48 }}>🤝</div>
-            <Button variant="primary" size="md">
-              Yêu cầu hỗ trợ
-            </Button>
-          </div>
+          {!showForm && !submitted && (
+            <div
+              style={{
+                textAlign: "center",
+                padding: T.spacing.md,
+              }}
+            >
+              <div style={{ fontSize: 48 }}>🤝</div>
+              <Button
+                variant="primary"
+                size="md"
+                onClick={() => setShowForm(true)}
+              >
+                Yêu cầu hỗ trợ
+              </Button>
+            </div>
+          )}
+
+          {submitted && (
+            <Alert tone="success" title="Đã gửi yêu cầu">
+              Chuyên viên tư vấn sẽ liên hệ với bạn trong vòng 24h qua số điện
+              thoại đã đăng ký.
+            </Alert>
+          )}
+
+          {showForm && !submitted && (
+            <div style={{ marginTop: 10 }}>
+              {formError && <Alert tone="danger">{formError}</Alert>}
+              <Field label="Họ tên" required>
+                <input
+                  style={inputStyle}
+                  value={form.fullName}
+                  onChange={(e) =>
+                    setForm({ ...form, fullName: e.target.value })
+                  }
+                />
+              </Field>
+              <Field label="Số điện thoại" required>
+                <input
+                  style={inputStyle}
+                  value={form.phone}
+                  onChange={(e) => setForm({ ...form, phone: e.target.value })}
+                />
+              </Field>
+              <Field label="Chủ đề">
+                <select
+                  style={inputStyle}
+                  value={form.topic}
+                  onChange={(e) => setForm({ ...form, topic: e.target.value })}
+                >
+                  <option>Tư vấn khai thuế chung</option>
+                  <option>Khai hộ tờ khai 01/CNKD</option>
+                  <option>Chuyển phương pháp khoán → kê khai</option>
+                  <option>Hỗ trợ máy tính tiền kết nối TCT</option>
+                  <option>Giải trình thanh tra thuế</option>
+                  <option>Khác</option>
+                </select>
+              </Field>
+              <Field label="Nội dung yêu cầu" required>
+                <textarea
+                  style={{ ...inputStyle, minHeight: 80, resize: "vertical" }}
+                  placeholder="Mô tả ngắn gọn tình huống của bạn..."
+                  value={form.message}
+                  onChange={(e) =>
+                    setForm({ ...form, message: e.target.value })
+                  }
+                />
+              </Field>
+              <div
+                style={{
+                  display: "flex",
+                  justifyContent: "flex-end",
+                  gap: 8,
+                }}
+              >
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => setShowForm(false)}
+                >
+                  Huỷ
+                </Button>
+                <Button
+                  variant="primary"
+                  size="sm"
+                  onClick={handleSubmitSupport}
+                >
+                  📨 Gửi yêu cầu
+                </Button>
+              </div>
+            </div>
+          )}
           <div
             style={{
               marginTop: T.spacing.md,
