@@ -49,12 +49,19 @@ export function defaultProfile(): TaxpayerProfile {
   };
 }
 
-/** Aggregate doanh thu + chi phí cho 1 kỳ bằng adapter mặc định */
+/** Aggregate doanh thu + chi phí cho 1 kỳ bằng adapter mặc định.
+ * Merge thêm manual adjustments từ taxStorage (điều chỉnh thủ công của user).
+ * Tăng `refreshKey` (hoặc gọi `refresh()`) để fetch lại — ví dụ sau khi user
+ * thêm 1 điều chỉnh thủ công.
+ */
 export function usePeriodData(period: TaxPeriod | null) {
   const [revenues, setRevenues] = useState<RevenueRecord[]>([]);
   const [expenses, setExpenses] = useState<ExpenseRecord[]>([]);
   const [loading, setLoading] = useState(false);
   const [adapterName, setAdapterName] = useState<string>("");
+  const [refreshKey, setRefreshKey] = useState(0);
+
+  const refresh = () => setRefreshKey((k) => k + 1);
 
   useEffect(() => {
     if (!period) return;
@@ -75,13 +82,20 @@ export function usePeriodData(period: TaxPeriod | null) {
         : Promise.resolve([]),
     ])
       .then(([rev, exp]) => {
-        setRevenues(rev);
+        // Merge manual adjustments nằm trong khoảng kỳ
+        const manual = taxStorage
+          .listManualRevenues()
+          .filter(
+            (r) =>
+              r.occurredAt >= period.startDate && r.occurredAt <= period.endDate
+          );
+        setRevenues([...manual, ...rev]);
         setExpenses(exp);
       })
       .finally(() => setLoading(false));
-  }, [period?.id]);
+  }, [period?.id, refreshKey]);
 
-  return { revenues, expenses, loading, adapterName };
+  return { revenues, expenses, loading, adapterName, refresh };
 }
 
 /** Tính thuế + cảnh báo ngưỡng cho profile + period hiện tại */

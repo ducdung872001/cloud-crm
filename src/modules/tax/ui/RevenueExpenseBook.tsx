@@ -2,12 +2,13 @@
 // Aggregate từ adapter, hiển thị list có filter theo nhóm ngành.
 
 import React, { useMemo, useState } from "react";
-import { Card, Button, Badge, formatVND, Alert } from "./common";
+import { Card, Button, Badge, formatVND, Alert, Field, inputStyle } from "./common";
 import { taxTheme as T } from "./theme";
 import { INDUSTRY_GROUP_LABELS } from "../domain/constants";
 import { taxEngine } from "../domain/engine";
 import type { IndustryGroup, ExpenseCategory } from "../domain/types";
 import { useTaxpayerProfile, usePeriodData } from "./hooks";
+import { taxStorage } from "../services/taxStorage";
 
 const EXPENSE_CATEGORY_LABELS: Record<ExpenseCategory, string> = {
   labor: "[24] Nhân công",
@@ -31,7 +32,7 @@ export default function RevenueExpenseBook() {
     return helper.buildYearPeriod(new Date());
   }, [periodKind]);
 
-  const { revenues, expenses, loading, adapterName } = usePeriodData(period);
+  const { revenues, expenses, loading, adapterName, refresh } = usePeriodData(period);
   const [filter, setFilter] = useState<IndustryGroup | "all">("all");
 
   const filteredRev =
@@ -39,6 +40,58 @@ export default function RevenueExpenseBook() {
 
   const totalRev = filteredRev.reduce((s, r) => s + r.amount, 0);
   const totalExp = expenses.reduce((s, e) => s + e.amount, 0);
+
+  // Manual adjustment form state
+  const [showForm, setShowForm] = useState(false);
+  const [formError, setFormError] = useState<string | null>(null);
+  const [formOk, setFormOk] = useState(false);
+  const [form, setForm] = useState({
+    occurredAt: new Date().toISOString().slice(0, 10),
+    amount: "",
+    industryGroup: profile.primaryIndustryGroup as IndustryGroup,
+    description: "",
+  });
+
+  const resetForm = () => {
+    setForm({
+      occurredAt: new Date().toISOString().slice(0, 10),
+      amount: "",
+      industryGroup: profile.primaryIndustryGroup,
+      description: "",
+    });
+    setFormError(null);
+  };
+
+  const handleAddManual = () => {
+    const amt = parseInt(form.amount.replace(/[^\d]/g, ""), 10);
+    if (!amt || amt <= 0) {
+      setFormError("Số tiền phải lớn hơn 0");
+      return;
+    }
+    if (!form.description.trim()) {
+      setFormError("Vui lòng nhập mô tả");
+      return;
+    }
+    taxStorage.addManualRevenue({
+      occurredAt: new Date(form.occurredAt).toISOString(),
+      amount: amt,
+      industryGroup: form.industryGroup,
+      description: form.description.trim(),
+      isTaxable: true,
+    });
+    setFormOk(true);
+    setFormError(null);
+    resetForm();
+    setShowForm(false);
+    refresh();
+    setTimeout(() => setFormOk(false), 3000);
+  };
+
+  const handleDeleteManual = (id: string) => {
+    if (!confirm("Xoá điều chỉnh thủ công này?")) return;
+    taxStorage.deleteManualRevenue(id);
+    refresh();
+  };
 
   return (
     <div>
@@ -122,13 +175,19 @@ export default function RevenueExpenseBook() {
                   <th style={{ padding: "8px 10px", textAlign: "right" }}>
                     Số tiền
                   </th>
+                  <th style={{ padding: "8px 10px", width: 40 }}></th>
                 </tr>
               </thead>
               <tbody>
-                {filteredRev.slice(0, 200).map((r) => (
+                {filteredRev.slice(0, 200).map((r) => {
+                  const isManual = r.sourceModule === "manual";
+                  return (
                   <tr
                     key={r.id}
-                    style={{ borderTop: `1px solid ${T.colors.border}` }}
+                    style={{
+                      borderTop: `1px solid ${T.colors.border}`,
+                      background: isManual ? "#FFFBEB" : undefined,
+                    }}
                   >
                     <td style={{ padding: "8px 10px", fontSize: T.font.tiny }}>
                       {r.occurredAt.slice(0, 10)}
@@ -136,7 +195,11 @@ export default function RevenueExpenseBook() {
                     <td style={{ padding: "8px 10px", fontSize: T.font.small }}>
                       {r.description || "—"}
                       <div style={{ fontSize: 10, color: T.colors.textMuted }}>
-                        {r.sourceModule}:{r.sourceRefId}
+                        {isManual ? (
+                          <Badge tone="warning">Điều chỉnh tay</Badge>
+                        ) : (
+                          <>{r.sourceModule}:{r.sourceRefId}</>
+                        )}
                       </div>
                     </td>
                     <td style={{ padding: "8px 10px" }}>
@@ -154,12 +217,30 @@ export default function RevenueExpenseBook() {
                     >
                       {formatVND(r.amount)}
                     </td>
+                    <td style={{ padding: "8px 10px", textAlign: "center" }}>
+                      {isManual && (
+                        <button
+                          onClick={() => handleDeleteManual(r.id)}
+                          title="Xoá"
+                          style={{
+                            background: "transparent",
+                            border: "none",
+                            cursor: "pointer",
+                            color: T.colors.danger,
+                            fontSize: 14,
+                          }}
+                        >
+                          ✕
+                        </button>
+                      )}
+                    </td>
                   </tr>
-                ))}
+                  );
+                })}
                 {filteredRev.length === 0 && !loading && (
                   <tr>
                     <td
-                      colSpan={4}
+                      colSpan={5}
                       style={{
                         textAlign: "center",
                         padding: 30,
@@ -236,10 +317,106 @@ export default function RevenueExpenseBook() {
             </tbody>
           </table>
           <div style={{ marginTop: 12 }}>
-            <Button variant="secondary" size="sm">
-              + Thêm điều chỉnh thủ công
+            <Button
+              variant="secondary"
+              size="sm"
+              onClick={() => {
+                setShowForm(!showForm);
+                setFormError(null);
+              }}
+            >
+              {showForm ? "✕ Đóng form" : "+ Thêm điều chỉnh doanh thu thủ công"}
             </Button>
           </div>
+
+          {showForm && (
+            <div
+              style={{
+                marginTop: 14,
+                padding: 14,
+                background: "#FFFBEB",
+                border: `1px dashed ${T.colors.warning}`,
+                borderRadius: T.radius.md,
+              }}
+            >
+              <div
+                style={{
+                  fontSize: T.font.small,
+                  fontWeight: 700,
+                  color: T.colors.primaryDark,
+                  marginBottom: 10,
+                }}
+              >
+                📝 Ghi nhận doanh thu bán ngoài hệ thống
+              </div>
+              {formError && (
+                <Alert tone="danger">{formError}</Alert>
+              )}
+              <Field label="Ngày phát sinh" required>
+                <input
+                  type="date"
+                  style={inputStyle}
+                  value={form.occurredAt}
+                  onChange={(e) =>
+                    setForm({ ...form, occurredAt: e.target.value })
+                  }
+                />
+              </Field>
+              <Field label="Số tiền (VND)" required>
+                <input
+                  style={inputStyle}
+                  placeholder="VD: 1500000"
+                  value={form.amount}
+                  onChange={(e) => setForm({ ...form, amount: e.target.value })}
+                />
+              </Field>
+              <Field label="Nhóm ngành" required>
+                <select
+                  style={inputStyle}
+                  value={form.industryGroup}
+                  onChange={(e) =>
+                    setForm({
+                      ...form,
+                      industryGroup: e.target.value as IndustryGroup,
+                    })
+                  }
+                >
+                  {Object.entries(INDUSTRY_GROUP_LABELS).map(([k, v]) => (
+                    <option key={k} value={k}>
+                      {v}
+                    </option>
+                  ))}
+                </select>
+              </Field>
+              <Field label="Mô tả" required>
+                <input
+                  style={inputStyle}
+                  placeholder="VD: Bán hàng tại chợ, không qua POS"
+                  value={form.description}
+                  onChange={(e) =>
+                    setForm({ ...form, description: e.target.value })
+                  }
+                />
+              </Field>
+              <div style={{ display: "flex", gap: 8, justifyContent: "flex-end" }}>
+                <Button variant="ghost" size="sm" onClick={() => setShowForm(false)}>
+                  Huỷ
+                </Button>
+                <Button variant="primary" size="sm" onClick={handleAddManual}>
+                  💾 Lưu điều chỉnh
+                </Button>
+              </div>
+            </div>
+          )}
+
+          {formOk && (
+            <div style={{ marginTop: 10 }}>
+              <Alert tone="success">
+                Đã thêm điều chỉnh thủ công — doanh thu và thuế dự kiến đã được
+                cập nhật lại.
+              </Alert>
+            </div>
+          )}
         </Card>
       </div>
     </div>

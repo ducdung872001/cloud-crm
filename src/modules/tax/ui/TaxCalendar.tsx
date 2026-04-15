@@ -1,6 +1,7 @@
 // T4 — Lịch thuế: hiển thị tất cả kỳ trong năm + trạng thái + số ngày còn lại.
 
 import React, { useState } from "react";
+import { Link } from "react-router-dom";
 import { Card, Badge, Alert } from "./common";
 import { taxTheme as T } from "./theme";
 import { taxEngine } from "../domain/engine";
@@ -53,7 +54,7 @@ export default function TaxCalendar() {
 
       <Alert tone="info">
         Lịch sinh tự động theo <b>kỳ khai {profile.periodKind}</b>. Muốn đổi vào{" "}
-        <a href="/tax/profile">T1 — Hồ sơ thuế</a>.
+        <Link to="/tax/profile">T1 — Hồ sơ thuế</Link>.
       </Alert>
 
       <div style={{ display: "grid", gap: T.spacing.md }}>
@@ -121,8 +122,8 @@ export default function TaxCalendar() {
                   }}
                 >
                   <Badge tone={tone}>{statusLabel}</Badge>
-                  <a
-                    href="/tax/declaration"
+                  <Link
+                    to="/tax/declaration"
                     style={{
                       padding: "6px 14px",
                       background: T.colors.primary,
@@ -134,7 +135,7 @@ export default function TaxCalendar() {
                     }}
                   >
                     {existingDecl ? "Xem" : "Lập"}
-                  </a>
+                  </Link>
                 </div>
               </div>
               {existingDecl?.receiptCode && (

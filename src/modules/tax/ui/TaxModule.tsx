@@ -2,7 +2,7 @@
 // Dùng đơn file routing nội bộ để dễ copy sang nhánh khác mà không đụng react-router.
 
 import React, { useState, useEffect } from "react";
-import { useLocation } from "react-router-dom";
+import { useLocation, Link } from "react-router-dom";
 import { taxTheme as T } from "./theme";
 import TaxDashboard from "./TaxDashboard";
 import TaxpayerProfilePage from "./TaxpayerProfilePage";
@@ -167,13 +167,9 @@ export default function TaxModule() {
         {TABS.map((t) => {
           const active = tab === t.key;
           return (
-            <a
+            <Link
               key={t.key}
-              href={t.path}
-              onClick={(e) => {
-                // Để react-router xử lý: không preventDefault — chuyển trang thật.
-                void e;
-              }}
+              to={t.path}
               style={{
                 padding: "8px 16px",
                 borderRadius: T.radius.pill,
@@ -193,7 +189,7 @@ export default function TaxModule() {
             >
               <span>{t.icon}</span>
               {t.label}
-            </a>
+            </Link>
           );
         })}
       </div>
