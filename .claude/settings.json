@@ -50,7 +50,26 @@
       "Bash(python ../userguides/tooling/md_to_docx.py SAD-full.md SAD-Reborn-CRM.docx --title \"Reborn CRM\" --subtitle \"Solution Architecture Document — Cửa hàng & Spa\" --header \"SAD — Reborn CRM\" --cover-label \"SOLUTION ARCHITECTURE DOCUMENT\" --start-marker \"Part 00\")",
       "Bash(grep -n \"Thanh toán hoa hồng BO\\\\|Xác nhận thanh toán\\\\|^}$\" src/pages/CommunityHub/Partners/index.tsx)",
       "Bash(grep -n \"Slot trống\\\\|^}$\" src/pages/CommunityHub/NetworkTree/index.tsx)",
-      "Bash(grep -v \"onClick\\\\|onMouseEnter\\\\|onMouseLeave\\\\|type=\\\\\"button\\\\\"$\")"
+      "Bash(grep -v \"onClick\\\\|onMouseEnter\\\\|onMouseLeave\\\\|type=\\\\\"button\\\\\"$\")",
+      "Bash(pdftotext -layout \"D:/Git/reborn/reborn-cloud/cloud-ver2/cloud-crm/docs/taxes/Reborn_CRM_Tax_Compliance_Strategy \\(1\\).pdf\" /tmp/strategy.txt)",
+      "Bash(pdftotext -layout \"D:/Git/reborn/reborn-cloud/cloud-ver2/cloud-crm/docs/taxes/hokinhdoanh.pdf\" /tmp/hokd.txt)",
+      "Bash(pdftotext \"D:/Git/reborn/reborn-cloud/cloud-ver2/cloud-crm/docs/taxes/hokinhdoanh.pdf\" /tmp/hokd.txt)",
+      "Bash(pdfinfo \"D:/Git/reborn/reborn-cloud/cloud-ver2/cloud-crm/docs/taxes/hokinhdoanh.pdf\")",
+      "Bash(cp \"D:/Git/reborn/reborn-cloud/cloud-ver2/cloud-crm/docs/taxes/hokinhdoanh.pdf\" /tmp/hokd.pdf)",
+      "Bash(cp \"D:/Git/reborn/reborn-cloud/cloud-ver2/cloud-crm/docs/taxes/Reborn_CRM_Tax_Compliance_Strategy \\(1\\).pdf\" /tmp/strategy.pdf)",
+      "Bash(ls -la /tmp/*.pdf)",
+      "Bash(mkdir -p \"D:/tmp_tax\")",
+      "Bash(cp \"D:/Git/reborn/reborn-cloud/cloud-ver2/cloud-crm/docs/taxes/hokinhdoanh.pdf\" \"D:/tmp_tax/hokd.pdf\")",
+      "Bash(cp \"D:/Git/reborn/reborn-cloud/cloud-ver2/cloud-crm/docs/taxes/Reborn_CRM_Tax_Compliance_Strategy \\(1\\).pdf\" \"D:/tmp_tax/strategy.pdf\")",
+      "Read(//d/tmp_tax/**)",
+      "Bash(python -c \"import fitz; print\\(fitz.__version__\\)\")",
+      "Bash(python -c \"import pdfplumber; print\\(pdfplumber.__version__\\)\")",
+      "Bash(python -c \"import PyPDF2; print\\(PyPDF2.__version__\\)\")",
+      "Bash(pip install:*)",
+      "Bash(python -m pip install --upgrade pip)",
+      "Bash(python -m pip install pymupdf)",
+      "Read(//d//**)",
+      "Bash(wait %1)"
     ]
   }
 }
