@@ -1,4 +1,6 @@
-# BACKEND TASK — `/invoice/list?status=3` và filter date không hoạt động
+# ✅ [RESOLVED 2026-04-15] BACKEND TASK — `/invoice/list?status=3` và filter date không hoạt động
+
+> **Status**: ✅ **FIXED** — verified 2026-04-15 bởi `test-e2e-cancel-dashboard-sync.mjs` (5/5 PASS). T3 cancelled-list-count delta=+1, T4 cancelled-list-total delta=+200k, T5 latest cancelled = HD004131 đúng. Cả `status=3` filter và `fromDate/toDate` hoạt động chính xác.
 
 **Discovered:** 2026-04-13 — E2E `test-e2e-cancel-dashboard-sync.mjs`
 **Severity:** 🟡 **MEDIUM** — Tab "Đã hủy" trong POS Orders rỗng dù dashboard đã đúng

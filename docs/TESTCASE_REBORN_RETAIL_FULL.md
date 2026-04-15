@@ -4012,7 +4012,7 @@ Automated: `tests/test-e2e-return-exchange.mjs`, `tests/test-e2e-financial-flow.
 | 3 | Ban 3 don (300k tien mat) + tra 1 don (100k) | Invoice create x3 + return | Net = 200k |
 | 4 | Get active-dashboard | | totalCashSales = 300k, currentCash = 5,300,000 |
 | 5 | Close ca voi closingCash = currentCash | POST /shift/close | expectedCash phai = openingCash + totalCashSales - totalCashRefunds |
-| 6 | **CROSS CHECK**: cashDifference phai = 0 (neu dem dung) | `/shift/close-report` | Hien BE bug BACKEND-TASK-shift-close-cash-diff.md |
+| 6 | **CROSS CHECK**: cashDifference phai = 0 (neu dem dung) | `/shift/close-report` | ✅ [RESOLVED 2026-04-15] BE da fix, verified bang test-e2e-shift-flow.mjs 20/20 PASS |
 | 7 | Get close-report | | totalRevenue khop, cashDifference = 0 |
 | 8 | Get general-report | | Ca hien trong list, status=closed |
 | 9 | Get finance dashboard sau close | | Khop voi tong shift revenue |

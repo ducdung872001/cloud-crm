@@ -1,4 +1,6 @@
-# BACKEND TASK — `/shift/close` tính `cashDifference` sai công thức
+# ✅ [RESOLVED 2026-04-15] BACKEND TASK — `/shift/close` tính `cashDifference` sai công thức
+
+> **Status**: ✅ **FIXED** — verified 2026-04-15 bởi `test-e2e-shift-flow.mjs` (20/20 PASS, S6-04 = `cashDifference = 0` khi đếm khớp). BE đã áp công thức đúng: `expectedCash = openingCash + totalCashSales - totalCashRefunds`.
 
 **Discovered:** 2026-04-13 — E2E test `test-e2e-shift-flow.mjs` (S6-04)
 **Severity:** 🔴 **CRITICAL** — Báo cáo ca sai, kế toán nghi ngờ cashier gian lận mặc dù đếm đúng

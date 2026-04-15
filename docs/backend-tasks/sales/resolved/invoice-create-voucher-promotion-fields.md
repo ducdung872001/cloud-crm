@@ -1,4 +1,6 @@
-# BACKEND TASK — Mở rộng `POST /sales/invoice/create` để link voucher + promotion
+# ✅ [RESOLVED 2026-04-15] BACKEND TASK — Mở rộng `POST /sales/invoice/create` để link voucher + promotion
+
+> **Status**: ✅ **FIXED** — verified 2026-04-15 bởi `test-e2e-voucher-flow.mjs` (20/20 PASS, S6-02 `usedCount = MAX_USES = 3`, S8-03 `usedCount = maxUses` đã hết) + `test-e2e-promotion-flow.mjs` (26/26 PASS, S9-01 count-by-status, S9-02 list-active). BE nhận `couponCode` + `promotionId`, auto increment `usedCount` sau sale, cả 2 reject quota exhausted đúng. Cross-service với `market` hoạt động.
 
 **Severity:** 🔴 **CRITICAL** — phần thuộc `cloud-sales-master` trong unified design
 **Module:** `cloud-sales-master`

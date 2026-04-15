@@ -49,11 +49,7 @@ POST https://biz.reborn.vn/inventory/warehouse/create
 
 ### [sales/](./sales/) — `cloud-sales-master`
 
-| File | Severity | Tóm tắt |
-|------|----------|---------|
-| [invoice-list-cancelled-filter.md](./sales/invoice-list-cancelled-filter.md) | 🟡 MEDIUM | `/invoice/list?status=3` và filter date không trả cancelled invoices (round 2, 2/6 còn open) |
-| [shift-close-cash-diff.md](./sales/shift-close-cash-diff.md) | 🔴 CRITICAL | `/shift/close` tính `cashDifference` sai công thức |
-| [invoice-create-voucher-promotion-fields.md](./sales/invoice-create-voucher-promotion-fields.md) | 🔴 CRITICAL | Mở rộng `/invoice/create` nhận `couponCode` + `promotionId` → link usage record |
+_Không còn task mở. Xem [sales/resolved/](./sales/resolved/) cho 3 task đã fix (verified 2026-04-15)._
 
 ### [inventory/](./inventory/) — `cloud-inventory-master`
 
@@ -91,9 +87,21 @@ Một số task yêu cầu phối hợp nhiều microservice. Doc chính sống 
 
 | Task | Sales | Market | Inventory |
 |------|:-:|:-:|:-:|
-| Voucher/Promotion tracking per invoice | ✅ [sales](./sales/invoice-create-voucher-promotion-fields.md) | ✅ [market](./market/voucher-promotion-unified.md) | — |
+| Voucher/Promotion tracking per invoice | ✅ [resolved](./sales/resolved/invoice-create-voucher-promotion-fields.md) | ✅ [market](./market/voucher-promotion-unified.md) | — |
 | Cancel via return (IV2) reverse usage | ✅ sales (reverse call) | ✅ market (reverse service) | ✅ inventory (restock) |
 | Import invoice approve → stock ledger | — | — | ✅ inventory (ledger write) |
+
+---
+
+## ✅ Task đã giải quyết (resolved)
+
+### [sales/resolved/](./sales/resolved/)
+
+| File | Fix date | Verified by |
+|------|----------|-------------|
+| [shift-close-cash-diff.md](./sales/resolved/shift-close-cash-diff.md) | 2026-04-15 | `test-e2e-shift-flow.mjs` 20/20 PASS (S6-04 cashDifference=0) |
+| [invoice-list-cancelled-filter.md](./sales/resolved/invoice-list-cancelled-filter.md) | 2026-04-15 | `test-e2e-cancel-dashboard-sync.mjs` 5/5 PASS (T3 list+1, T4 total+200k) |
+| [invoice-create-voucher-promotion-fields.md](./sales/resolved/invoice-create-voucher-promotion-fields.md) | 2026-04-15 | `test-e2e-voucher-flow.mjs` 20/20 PASS + `test-e2e-promotion-flow.mjs` 26/26 PASS |
 
 ---
 
