@@ -3,7 +3,6 @@
 import React, { useState } from "react";
 import { MOCK_NETWORK_NODES, NETWORK_SUMMARY, INetworkNode } from "@/mocks/community-hub/fitpro-network";
 import { formatCurrency } from "reborn-util";
-import "./index.scss";
 
 const ROLE_ICON: Record<string, string> = {
   office: "💼",
@@ -60,11 +59,56 @@ function NodeCard({ node, onClick, selected }: { node: INetworkNode; onClick: ()
 
 export default function NetworkTreePage() {
   document.title = "Mạng lưới 7×7×7 — FitPro";
-  const [selectedNode, setSelectedNode] = useState<INetworkNode | null>(MOCK_NETWORK_NODES[0]);
+  const [nodes, setNodes] = useState<INetworkNode[]>(MOCK_NETWORK_NODES);
+  const [selectedNode, setSelectedNode] = useState<INetworkNode | null>(nodes[0]);
+  const [showInvite, setShowInvite] = useState(false);
+  const [inviteForm, setInviteForm] = useState({
+    name: "",
+    role: "office" as INetworkNode["role"],
+    station_code: "",
+    city: "Hà Nội",
+    parent_id: "BO-MASTER",
+    phone: "",
+    email: "",
+  });
 
-  const master = MOCK_NETWORK_NODES.find((n) => n.parent_id === null);
-  const tier1 = MOCK_NETWORK_NODES.filter((n) => n.tier === 1 && n.parent_id !== null);
-  const tier2 = MOCK_NETWORK_NODES.filter((n) => n.tier === 2);
+  const master = nodes.find((n) => n.parent_id === null);
+  const tier1 = nodes.filter((n) => n.tier === 1 && n.parent_id !== null);
+  const tier2 = nodes.filter((n) => n.tier === 2);
+
+  const handleInvite = () => {
+    if (!inviteForm.name.trim()) { alert("Vui lòng nhập tên BO mới"); return; }
+    if (!inviteForm.station_code.trim()) { alert("Vui lòng nhập mã trạm"); return; }
+    const parent = nodes.find((n) => n.id === inviteForm.parent_id);
+    const newTier = parent ? (parent.parent_id === null ? 1 : parent.tier + 1) : 1;
+    if (newTier > 3) { alert("Đã vượt quá 3 tầng của mạng lưới"); return; }
+    if (parent && parent.children_ids.length >= 7) { alert("BO này đã đủ 7 downline — không thể thêm"); return; }
+
+    const newId = `BO-T${newTier}-${String(nodes.length + 1).padStart(3, "0")}`;
+    const newNode: INetworkNode = {
+      id: newId,
+      name: inviteForm.name,
+      role: inviteForm.role,
+      tier: newTier as 1 | 2 | 3,
+      station_code: inviteForm.station_code,
+      city: inviteForm.city,
+      joined_date: new Date().toISOString().split("T")[0],
+      stations_count: 0,
+      monthly_revenue_vnd: 0,
+      monthly_commission_vnd: 0,
+      status: "setup",
+      parent_id: inviteForm.parent_id,
+      children_ids: [],
+    };
+
+    // Add newNode + update parent children_ids
+    setNodes((prev) =>
+      prev.map((n) => (n.id === inviteForm.parent_id ? { ...n, children_ids: [...n.children_ids, newId] } : n)).concat(newNode)
+    );
+    setShowInvite(false);
+    setInviteForm({ name: "", role: "office", station_code: "", city: "Hà Nội", parent_id: "BO-MASTER", phone: "", email: "" });
+    setSelectedNode(newNode);
+  };
 
   return (
     <div style={{ padding: 20, background: "#F5F9F8", minHeight: "calc(100vh - 60px)" }}>
@@ -75,15 +119,18 @@ export default function NetworkTreePage() {
             Hệ thống đòn bẩy MF7: 1 Master → 7 trực tiếp → 49 vệ tinh → 343 bùng nổ (mục tiêu 10.000 trạm 2027)
           </p>
         </div>
-        <button style={{
-          background: "linear-gradient(135deg, #00C9A7 0%, #FF8C42 100%)",
-          color: "#fff",
-          border: "none",
-          padding: "10px 20px",
-          borderRadius: 8,
-          fontWeight: 700,
-          cursor: "pointer",
-        }}>
+        <button
+          onClick={() => setShowInvite(true)}
+          style={{
+            background: "linear-gradient(135deg, #00C9A7 0%, #FF8C42 100%)",
+            color: "#fff",
+            border: "none",
+            padding: "10px 20px",
+            borderRadius: 8,
+            fontWeight: 700,
+            cursor: "pointer",
+          }}
+        >
           + Mời Business Owner mới
         </button>
       </div>

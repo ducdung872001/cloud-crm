@@ -18,15 +18,53 @@ const ROLE_META: Record<RoleKey, { label: string; icon: string; color: string }>
 
 export default function PartnersPage() {
   document.title = "Business Owners — FitPro";
+  const [partners, setPartners] = useState<Partner[]>(MOCK_PARTNERS as Partner[]);
   const [activeTab, setActiveTab] = useState<"all" | RoleKey>("all");
   const [detailPartner, setDetailPartner] = useState<Partner | null>(null);
   const [payPartner, setPayPartner] = useState<Partner | null>(null);
   const [payAmount, setPayAmount] = useState("");
   const [payNote, setPayNote] = useState("");
+  const [showAddForm, setShowAddForm] = useState(false);
+  const [addForm, setAddForm] = useState({
+    name: "",
+    role: "office" as RoleKey,
+    area: "",
+    tier: 1,
+    stations_owned: 1,
+  });
 
   const filteredPartners = activeTab === "all"
-    ? MOCK_PARTNERS
-    : MOCK_PARTNERS.filter((p) => p.role === activeTab);
+    ? partners
+    : partners.filter((p) => p.role === activeTab);
+
+  const handleAddBO = () => {
+    if (!addForm.name.trim()) {
+      showToast("Vui lòng nhập tên BO", "error");
+      return;
+    }
+    const newBO = {
+      id: `BO-${String(partners.length + 1).padStart(3, "0")}`,
+      name: addForm.name,
+      role: addForm.role,
+      roleLabel: ROLE_META[addForm.role].label,
+      area: addForm.area || "Chưa rõ",
+      avatar: null,
+      tier: addForm.tier,
+      stations_owned: addForm.stations_owned,
+      stations_downline: 0,
+      total_members_served: 0,
+      commission_this_month_vnd: 0,
+      commission_rate: addForm.tier === 1 ? 0.5 : 0.25,
+      referrals: 0,
+      joined_date: new Date().toISOString().split("T")[0],
+      problem: "",
+      solution: "",
+    } as Partner;
+    setPartners([...partners, newBO]);
+    setShowAddForm(false);
+    setAddForm({ name: "", role: "office", area: "", tier: 1, stations_owned: 1 });
+    showToast(`✓ Đã thêm Business Owner ${newBO.name}`, "info");
+  };
 
   const handlePay = () => {
     if (payPartner) {
@@ -108,7 +146,7 @@ export default function PartnersPage() {
           );
         })}
 
-        <div className="partner-card partner-card--add">
+        <div className="partner-card partner-card--add" onClick={() => setShowAddForm(true)} style={{ cursor: "pointer" }}>
           <div className="add-content">
             <span className="add-icon">+</span>
             <span>Thêm Business Owner</span>
@@ -250,6 +288,98 @@ export default function PartnersPage() {
               <button className="btn-cancel" onClick={() => setPayPartner(null)}>Hủy</button>
               <button className="btn-confirm" onClick={handlePay} disabled={!payAmount || Number(payAmount) <= 0}>
                 Xác nhận thanh toán
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ── Modal Thêm Business Owner ── */}
+      {showAddForm && (
+        <div className="ch-modal-overlay" onClick={() => setShowAddForm(false)}>
+          <div className="ch-modal ch-modal--sm" onClick={(e) => e.stopPropagation()}>
+            <div className="ch-modal__header">
+              <h3>Thêm Business Owner mới</h3>
+              <button className="btn-close" onClick={() => setShowAddForm(false)}>✕</button>
+            </div>
+            <div className="ch-modal__body">
+              <div className="form-group">
+                <label>Họ và tên *</label>
+                <input
+                  type="text"
+                  value={addForm.name}
+                  onChange={(e) => setAddForm({ ...addForm, name: e.target.value })}
+                  placeholder="Nguyễn Văn A..."
+                  autoFocus
+                />
+              </div>
+              <div className="form-group">
+                <label>Profile BO *</label>
+                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8 }}>
+                  {(Object.keys(ROLE_META) as RoleKey[]).map((k) => {
+                    const m = ROLE_META[k];
+                    const active = addForm.role === k;
+                    return (
+                      <button
+                        key={k}
+                        type="button"
+                        onClick={() => setAddForm({ ...addForm, role: k })}
+                        style={{
+                          padding: "10px 12px",
+                          border: active ? `2px solid ${m.color}` : "1px solid #d9e0de",
+                          background: active ? `${m.color}22` : "#fff",
+                          color: active ? m.color : "#6B8A85",
+                          borderRadius: 8,
+                          fontWeight: active ? 700 : 500,
+                          fontSize: 12,
+                          cursor: "pointer",
+                          textAlign: "left",
+                        }}
+                      >
+                        {m.icon} {m.label}
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+              <div className="form-group">
+                <label>Khu vực hoạt động</label>
+                <input
+                  type="text"
+                  value={addForm.area}
+                  onChange={(e) => setAddForm({ ...addForm, area: e.target.value })}
+                  placeholder="VD: Hà Nội, Cầu Giấy..."
+                />
+              </div>
+              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
+                <div className="form-group">
+                  <label>Tier</label>
+                  <select
+                    value={addForm.tier}
+                    onChange={(e) => setAddForm({ ...addForm, tier: Number(e.target.value) })}
+                    style={{ width: "100%", padding: "8px 12px", borderRadius: 6, border: "1px solid #d9e0de" }}
+                  >
+                    <option value={1}>Tier 1 (trực tiếp Master)</option>
+                    <option value={2}>Tier 2 (vệ tinh)</option>
+                    <option value={3}>Tier 3 (bùng nổ)</option>
+                  </select>
+                </div>
+                <div className="form-group">
+                  <label>Số trạm sở hữu</label>
+                  <input
+                    type="number"
+                    min={0}
+                    max={7}
+                    value={addForm.stations_owned}
+                    onChange={(e) => setAddForm({ ...addForm, stations_owned: Number(e.target.value) })}
+                  />
+                </div>
+              </div>
+            </div>
+            <div className="ch-modal__footer">
+              <button className="btn-cancel" onClick={() => setShowAddForm(false)}>Hủy</button>
+              <button className="btn-confirm" onClick={handleAddBO} disabled={!addForm.name.trim()}>
+                + Thêm BO
               </button>
             </div>
           </div>
