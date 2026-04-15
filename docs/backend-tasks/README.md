@@ -12,13 +12,14 @@ POST https://biz.reborn.vn/inventory/warehouse/create
 → task vào docs/backend-tasks/inventory/
 ```
 
-## 📁 11 microservice
+## 📁 12 microservice
 
 | Prefix | Thư mục | Domain | Ghi chú |
 |--------|---------|--------|---------|
 | `/billing/…` | [billing/](./billing/) | Cashbook (sổ thu chi), debt (công nợ), fund (quỹ), payment (thanh toán), hoá đơn VAT (TT78/NĐ123). Owns toàn bộ dòng tiền + settlement | |
-| `/care/…` | [care/](./care/) | Chăm sóc khách hàng, ticket, feedback, quản lý customer lifecycle | |
+| `/care/…` | [care/](./care/) | Ticket, feedback, warranty, chăm sóc sau bán | |
 | `/contract/…` | [contract/](./contract/) | Hợp đồng, workflow phê duyệt | |
+| `/customer/…` | [customer/](./customer/) | Customer entity CRUD, customer lifecycle, telesale assignment, customer group / source / relationship | **Legacy prefix `/adminapi/customer/*`** cũng thuộc domain này |
 | `/finance/…` | [finance/](./finance/) | Hồ sơ tài chính chi tiết của KH | **⚠️ CHỈ dùng riêng domain banking** — không áp dụng retail/spa/tech |
 | `/integration/…` | [integration/](./integration/) | Tích hợp bên thứ 3 (Viettel sInvoice, Zalo, Facebook, shipping partners, …) | |
 | `/inventory/…` | [inventory/](./inventory/) | Kho, sản phẩm, biến thể, đơn vị, nhập/xuất, stock ledger | |
@@ -32,6 +33,7 @@ POST https://biz.reborn.vn/inventory/warehouse/create
 
 - **`sales/` vs `billing/`**: `sales` owns invoice lifecycle (draft → confirm → cancel); `billing` owns cashbook, debt collection, fund management, payment + financial settlement. Nếu task là "thu tiền / sổ quỹ / công nợ" → `billing/`, "quản lý trạng thái hoá đơn" → `sales/`.
 - **`billing/` vs `finance/`**: `billing` là thanh toán / công nợ chung cho mọi ngành; `finance` là hồ sơ tài chính cá nhân khách banking (thu nhập, khoản vay, tài sản, …) — **chỉ banking dùng**.
+- **`customer/` vs `care/`**: `customer` owns data entity + lifecycle (CRUD, assignment, segment, source, telesale pipeline); `care` owns post-sale support (ticket, feedback, warranty, complaint).
 - **`care/` vs `notification/`**: `care` chăm KH qua ticket / workflow có người xử lý; `notification` chỉ gửi thông báo một chiều (push/email/SMS/ZNS).
 
 ## ⚠️ Lưu ý trước khi fix
@@ -53,15 +55,15 @@ Tất cả các nhánh CRM (reborn-retail, reborn-tnpm, reborn-fitpro, community
 
 ## 📋 Task đang mở
 
-### [care/](./care/) — `cloud-care-master`
+### [customer/](./customer/) — `cloud-customer-master`
 
 | File | Severity | Tóm tắt |
 |------|----------|---------|
-| [reset-customer-to-new.md](./care/reset-customer-to-new.md) | 🟢 FEATURE | Spec API mới `POST /customer/reset_to_new` — reset KH về trạng thái lead mới cho Telesale chia lại data |
+| [reset-customer-to-new.md](./customer/reset-customer-to-new.md) | 🟢 FEATURE | Spec API mới `POST /customer/reset_to_new` (hiện legacy là `/adminapi/customer/reset_to_new`) — reset KH về trạng thái lead mới cho Telesale chia lại data |
 
 ### Các microservice chưa có task
 
-- [billing/](./billing/) · [contract/](./contract/) · [finance/](./finance/) · [integration/](./integration/) · [inventory/](./inventory/) · [logistics/](./logistics/) · [market/](./market/) · [notification/](./notification/) · [operation/](./operation/) · [sales/](./sales/)
+- [billing/](./billing/) · [care/](./care/) · [contract/](./contract/) · [finance/](./finance/) · [integration/](./integration/) · [inventory/](./inventory/) · [logistics/](./logistics/) · [market/](./market/) · [notification/](./notification/) · [operation/](./operation/) · [sales/](./sales/)
 
 ---
 
