@@ -215,6 +215,9 @@ const FPNetworkTreePage = React.lazy(() => import("@/pages/CommunityHub/NetworkT
 const FPJourneyTrackerPage = React.lazy(() => import("@/pages/CommunityHub/JourneyTracker"));
 const FPModulesPage = React.lazy(() => import("@/pages/CommunityHub/FitProModules"));
 
+// [Tax] Phân hệ thuế HKD/CNKD — portable module
+const TaxModulePage = React.lazy(() => import("@/modules/tax/ui/TaxModule"));
+
 // [FitPro] Menu chính (rebranded from Community Hub)
 // Sắp xếp: dùng nhiều nhất ở trên → ít dùng ở dưới
 export const menu: IMenuItem[] = [
@@ -510,8 +513,15 @@ export const routes: IRouter[] = [
   { path: "/fp_finder", component: <FPModulesPage /> },
   { path: "/fp_commission", component: <FPModulesPage /> },
   { path: "/fp_funnel", component: <FPModulesPage /> },
-  { path: "/fp_tax", component: <FPModulesPage /> },
+  { path: "/fp_tax", component: <TaxModulePage /> },
   { path: "/fp_mf7", component: <FPModulesPage /> },
+  // [Tax] Phân hệ thuế HKD/CNKD — portable module, dùng chung qua mọi nhánh
+  { path: "/tax", component: <TaxModulePage /> },
+  { path: "/tax/profile", component: <TaxModulePage /> },
+  { path: "/tax/book", component: <TaxModulePage /> },
+  { path: "/tax/declaration", component: <TaxModulePage /> },
+  { path: "/tax/calendar", component: <TaxModulePage /> },
+  { path: "/tax/advisory", component: <TaxModulePage /> },
   // Dashboard
   {
     path: "",

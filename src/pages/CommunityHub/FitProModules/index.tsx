@@ -501,9 +501,14 @@ export default function FitProModulesPage() {
           </div>
         )}
 
-        {/* F10: Tax per station */}
+        {/* F10: Tax per station — prototype view. Full module nằm ở /tax (src/modules/tax) */}
         {tab === "f10-tax" && (
           <div>
+            <div style={{ padding: 12, marginBottom: 16, background: "#FFFBEB", borderLeft: "4px solid #F59E0B", borderRadius: 6, fontSize: 12, color: "#92400E" }}>
+              ℹ️ Đây là prototype view cấp trạm. Phân hệ Thuế HKD/CNKD đầy đủ (TT 40/2021, NĐ 70/2025) đã có tại{" "}
+              <a href="/tax" style={{ color: "#0B2E2A", fontWeight: 700 }}>/tax</a>
+              {" — "}portable, dùng chung cho mọi nhánh sản phẩm.
+            </div>
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginTop: 0 }}>
               <div>
                 <h3 style={{ marginTop: 0, marginBottom: 4 }}>📋 Khai thuế từng trạm (Hộ kinh doanh)</h3>
