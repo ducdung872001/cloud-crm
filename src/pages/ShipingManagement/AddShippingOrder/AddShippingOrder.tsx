@@ -628,22 +628,36 @@ export default function AddShippingOrder() {
       const totalQty = rawProducts.reduce((sum, p) => sum + (p.qty ?? 1), 0) || 1;
       const totalWeightGram = form.weight ? +form.weight : 0;
 
+      // Bug C.5.3 blocker: BE trả 500 khi các field bắt buộc rỗng/invalid.
+      // Pre-check ở FE để báo lỗi rõ thay vì để 500 lên user.
+      const carrierCode = CARRIER_CODE_MAP[form.partnerId];
+      if (!carrierCode) {
+        showToast("Hãng vận chuyển chưa được hỗ trợ hoặc chưa chọn. Vui lòng chọn lại.", "error");
+        setIsLoading(false);
+        return;
+      }
+      if (totalWeightGram <= 0) {
+        showToast("Vui lòng nhập trọng lượng hợp lệ (> 0 gram).", "error");
+        setIsLoading(false);
+        return;
+      }
+
       const items = rawProducts.length > 0
         ? rawProducts.map((p) => ({
             name: p.name,
             quantity: p.qty ?? 1,
             weightGram: (p as Record<string, unknown>).weightGram
               ? +(p as Record<string, unknown>).weightGram
-              : Math.round(totalWeightGram / totalQty),
+              : Math.max(1, Math.round(totalWeightGram / totalQty)),
             price: p.price ?? 0,
           }))
         : selectedInvoice
           ? [{ name: selectedInvoice.invoiceCode, quantity: 1, weightGram: totalWeightGram, price: selectedInvoice.amount ?? 0 }]
-          : [];
+          : [{ name: "Hàng hóa", quantity: 1, weightGram: totalWeightGram, price: 0 }];
 
       const payload: IShipmentCreatePayload = {
-        internalOrderId: selectedInvoice?.invoiceCode ?? String(form.invoiceId ?? ""),
-        carrierCode: CARRIER_CODE_MAP[form.partnerId] ?? "",
+        internalOrderId: selectedInvoice?.invoiceCode ?? String(form.invoiceId ?? `TEMP-${Date.now()}`),
+        carrierCode,
         sender: {
           name: form.senderName ?? "",
           phone: form.senderPhone ?? "",
@@ -700,8 +714,14 @@ export default function AddShippingOrder() {
         showToast(translateShippingError(String(errorMsg), form), "error");
       }
     } catch (err) {
-      const errMsg = (err as Record<string, unknown>)?.message ?? (err as Record<string, unknown>)?.error ?? "Có lỗi xảy ra, vui lòng thử lại";
-      showToast(String(errMsg), "error");
+      // HTTP 500 từ apiPost sẽ throw ra đây (không có response.code).
+      // Dịch sang message thân thiện thay vì hiển thị raw "HTTP 500" / stack.
+      const raw = (err as Record<string, unknown>)?.message ?? (err as Record<string, unknown>)?.error ?? "";
+      const is500 = /\b500\b|internal\s*server/i.test(String(raw));
+      const friendly = is500
+        ? "Hãng vận chuyển đang trả lỗi hệ thống. Vui lòng kiểm tra lại địa chỉ / khối lượng / COD và thử lại, hoặc liên hệ kỹ thuật."
+        : translateShippingError(String(raw || "Có lỗi xảy ra, vui lòng thử lại"), form);
+      showToast(friendly, "error");
     } finally {
       setIsLoading(false);
     }

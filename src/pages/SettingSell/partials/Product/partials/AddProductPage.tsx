@@ -1091,22 +1091,17 @@ export default function AddProductPage({ idProduct, data, onBack, preFillBarcode
           groupName: attr.name,
           label: keyParts.find((k) => k.name === attr.name)?.value ?? "",
         }));
-        // Đồng nhất với logic save thường: cần gửi `attributes` + `optionValueIds`
-        // để BE khớp biến thể với option của sản phẩm mới. Bug D.1.4: thiếu 2 field
-        // này khiến biến thể nhân bản bị mất attribute sau khi BE persist.
+        // Bug D.1.4: gửi `attributes` (name+value) để BE khớp biến thể với
+        // option mới tạo trong sản phẩm nhân bản. KHÔNG gửi `optionValueIds`
+        // vì đó là ID của option bên sản phẩm GỐC — không thuộc về sản phẩm
+        // mới, sẽ gây mismatch khi BE link variant → option.
         const attributes = selectedOptions.map((o) => ({ name: o.groupName, value: o.label }));
-        const optionValueIds = activeAttrs
-          .map((attr) => {
-            const value = keyParts.find((k) => k.name === attr.name)?.value ?? "";
-            return attr.optionIds?.[value] ?? null;
-          })
-          .filter((id): id is number => id != null);
 
         const dupBarcode = generateEAN13();
         return {
           label: c.label,
           sku: variantSku,
-          barcode: dupBarcode,   // sinh barcode mới hoàn toàn để tránh unique constraint
+          barcode: dupBarcode,
           unitId: c.unitId ?? null,
           price: +(c.price ?? 0) || 0,
           taxRate: c.taxRate ?? 0,
@@ -1117,14 +1112,13 @@ export default function AddProductPage({ idProduct, data, onBack, preFillBarcode
           images: c.images || [],
           attributes,
           selectedOptions,
-          ...(optionValueIds.length ? { optionValueIds } : {}),
           variantPrices: c.variantPrices.map((u, ui) => ({
             sku: safeSku(`${variantSku}-${toSkuPart(u.unitName) || `U${ui + 1}`}`),
             unitId: u.unitId,
             unitName: u.unitName,
             price: +(u.price ?? 0) || 0,
             priceWholesale: +(u.priceWholesale ?? 0) || 0,
-            barcode: generateEAN13(),  // sinh barcode mới cho từng unit khi duplicate
+            barcode: generateEAN13(),
           })),
         };
       });
@@ -1135,12 +1129,16 @@ export default function AddProductPage({ idProduct, data, onBack, preFillBarcode
         position: 0,
         status: formData.status,
         categoryId: selectedCategory?.value ?? null,
+        // Bug D.1.4: bổ sung các field mà flow save thường gửi, nếu thiếu BE
+        // có thể persist không đúng variant-level state.
+        trackStock: formData.trackStock,
+        stock: +(formData.stock ?? 0) || 0,
         exchange: 1,
         otherUnits: detailProduct?.otherUnits ?? "",
         type: detailProduct?.type ? String(detailProduct.type) : "1",
         description: formData.description,
-        minStock: formData.minStock ?? null,
-        maxStock: formData.maxStock ?? null,
+        minStock: +(formData.minStock ?? 0) || 0,
+        maxStock: +(formData.maxStock ?? 0) || 0,
         variantGroups: dupVariantGroups,
         variants:
           dupVariants.length > 0

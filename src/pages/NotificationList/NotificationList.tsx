@@ -431,6 +431,13 @@ export default function NotificationList(props: Record<string, unknown>) {
         navigate("/multi_channel_sales", { state: { tab: 2, orderRequestModalId: payload.orderId } });
         return;
       }
+      // Bug B.1: "Cảnh báo ngưỡng tồn kho" → màn Sản phẩm tồn kho
+      if (payload?.type === "INVENTORY_THRESHOLD_ALERT") {
+        navigate("/product_inventory", {
+          state: payload.productId ? { highlightProductId: payload.productId } : undefined,
+        });
+        return;
+      }
     }
 
     // Fallback: mở modal hiển thị nội dung thông báo thay vì điều hướng

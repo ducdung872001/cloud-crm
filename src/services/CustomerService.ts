@@ -26,34 +26,88 @@ import {
 } from "model/customer/CustomerRequestModel";
 import { convertParamsToString } from "reborn-util";
 
-// Bug E.1.1: BE chỉ filter khách hàng theo tên qua `keyword`, không tìm theo SĐT/email.
-// Workaround FE: phát hiện pattern và chèn thêm `phone`/`email` hoặc thử nhiều lần.
-// - Chuỗi toàn số dài >= 6 → phone
-// - Chuỗi chứa "@"         → email
-function enrichCustomerSearchParams(
-  params?: ICustomerFilterRequest
-): ICustomerFilterRequest | undefined {
-  if (!params || !params.keyword) return params;
-  const kw = String(params.keyword).trim();
-  if (!kw) return params;
-  const next: Record<string, unknown> = { ...params };
-  if (/@/.test(kw)) {
-    next.email = kw;
-  } else if (/^[0-9+][0-9\s.-]{5,}$/.test(kw)) {
-    next.phone = kw.replace(/[^0-9+]/g, "");
+// Bug E.1.1: BE filter chỉ lọc theo tên qua `keyword`, KHÔNG lọc SĐT/email.
+// Workaround FE:
+// - Keyword là email (chứa "@")  → fetch rộng rồi filter client-side theo email
+// - Keyword là số điện thoại (toàn số, ≥6 ký tự) → gửi thêm field `phone` +
+//   filter client-side khi BE trả về (phòng khi BE không đọc field `phone`)
+// - Keyword thường (tên)         → pass-through qua BE
+function isEmailLike(s: string) {
+  return /@/.test(s);
+}
+function isPhoneLike(s: string) {
+  return /^[0-9+][0-9\s.-]{5,}$/.test(s);
+}
+
+async function filterCustomerSmart(
+  endpoint: string,
+  params?: ICustomerFilterRequest,
+  signal?: AbortSignal
+) {
+  const kw = String(params?.keyword ?? "").trim();
+  if (!kw) return apiGet(endpoint, params, signal);
+
+  const email = isEmailLike(kw);
+  const phone = !email && isPhoneLike(kw);
+  if (!email && !phone) {
+    // Tên bình thường — gửi thẳng
+    return apiGet(endpoint, params, signal);
   }
-  return next as ICustomerFilterRequest;
+
+  // Fetch rộng (bỏ keyword, nâng limit) rồi lọc client-side.
+  const broadParams: Record<string, unknown> = {
+    ...params,
+    keyword: "",
+    limit: Math.max(Number(params?.limit ?? 20), 200),
+    page: 1,
+  };
+  if (phone) broadParams.phone = kw.replace(/[^0-9+]/g, ""); // BE nếu có support sẽ filter sẵn
+  if (email) broadParams.email = kw;
+
+  const res = await apiGet(endpoint, broadParams, signal);
+  if (res?.code !== 0 || !res?.result?.items) return res;
+
+  const kwLower = kw.toLowerCase();
+  const normalizedPhone = kw.replace(/[^0-9+]/g, "");
+  const filtered = (res.result.items as Record<string, unknown>[]).filter((c) => {
+    if (email) {
+      const emails: string[] = [
+        String(c.email ?? ""),
+        String(c.customerEmail ?? ""),
+        String(c.emailAddress ?? ""),
+      ];
+      return emails.some((e) => e.toLowerCase().includes(kwLower));
+    }
+    // phone
+    const phones: string[] = [
+      String(c.phone ?? ""),
+      String(c.number_phone ?? ""),
+      String(c.phoneNumber ?? ""),
+      String(c.customerPhone ?? ""),
+    ].map((p) => p.replace(/[^0-9+]/g, ""));
+    return phones.some((p) => p && p.includes(normalizedPhone));
+  });
+
+  return {
+    ...res,
+    result: {
+      ...res.result,
+      items: filtered,
+      total: filtered.length,
+      loadMoreAble: false,
+    },
+  };
 }
 
 export default {
   //? thêm mới, cập nhập, xem, xem chi tiết khách hàng
   filter: (params?: ICustomerFilterRequest, signal?: AbortSignal) => {
-    return apiGet(urlsApi.customer.filter, enrichCustomerSearchParams(params), signal);
+    return filterCustomerSmart(urlsApi.customer.filter, params, signal);
   },
 
   ///list khách hàng của đối tác
   listshared: (params?: ICustomerFilterRequest, signal?: AbortSignal) => {
-    return apiGet(urlsApi.customer.listshared, enrichCustomerSearchParams(params), signal);
+    return filterCustomerSmart(urlsApi.customer.listshared, params, signal);
   },
 
   detail: (id: number) => {

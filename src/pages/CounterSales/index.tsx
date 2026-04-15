@@ -20,6 +20,7 @@ import QrScanModal from "./components/modals/QrScanModal";
 import SyncModal from "./components/modals/SyncModal";
 import CustomerModal from "./components/modals/CustomerModal";
 import BoughtProductService from "@/services/BoughtProductService";
+import LoyaltyService from "@/services/LoyaltyService";
 import { showToast } from "@/utils/common";
 import AddCustomerPersonModal from "../CustomerPerson/partials/AddCustomerPersonModal";
 import QrCodeProService from "@/services/QrCodeProService";
@@ -656,6 +657,22 @@ const CounterSales: React.FC = () => {
         warehouseId={warehouseId}
         shippingFee={shippingInfo.shippingFeeBearer === "RECEIVER" ? shippingInfo.shippingFee : 0}
         onPaymentSuccess={() => {
+          // Bug C.1.5: cộng điểm loyalty cho KH sau khi thanh toán thành công.
+          // Công thức: points = floor(subtotal / exchangeRate) — trừ đi phần
+          // đã redeem (moneyFromPoints). Chỉ cộng khi KH là loyalty member và
+          // invoiceId hợp lệ.
+          if (customer?.id && loyaltyWallet && invoiceId) {
+            const subtotal = cartItems.reduce((s, c) => s + c.price * c.qty, 0);
+            const netSpent = Math.max(0, subtotal - moneyFromPoints - promoDiscount - couponDiscount);
+            const earnedPoints = Math.floor(netSpent / (exchangeRate || 1000));
+            if (earnedPoints > 0) {
+              LoyaltyService.fluctuatePoint({
+                customerId: Number(customer.id),
+                point: earnedPoints,
+                description: `Cộng điểm đơn hàng #${invoiceId}`,
+              }).catch(() => undefined);
+            }
+          }
           setCouponDiscount(0);
           setAppliedCouponCode(null);
           setPromoDiscount(0);
