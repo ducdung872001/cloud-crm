@@ -128,11 +128,13 @@ export default function EventFormPage() {
 
   useEffect(() => {
     if (isEdit && id) {
-      const e = eventStorage.getEvent(id);
-      if (e) {
-        setForm(entityToForm(e));
-        setEditorKey((k) => k + 1);
-      }
+      (async () => {
+        const e = await eventStorage.getEventAsync(id);
+        if (e) {
+          setForm(entityToForm(e));
+          setEditorKey((k) => k + 1);
+        }
+      })();
     }
   }, [id]);
 
@@ -180,7 +182,7 @@ export default function EventFormPage() {
     return null;
   };
 
-  const handleSave = (publish: boolean) => {
+  const handleSave = async (publish: boolean) => {
     const err = validate();
     if (err) {
       setError(err);
@@ -233,10 +235,10 @@ export default function EventFormPage() {
     };
 
     if (isEdit && id) {
-      eventStorage.updateEvent(id, payload);
+      await eventStorage.updateEventAsync(id, payload);
       navigate(`/ch_events/${id}`);
     } else {
-      const created = eventStorage.createEvent(payload);
+      const created = await eventStorage.createEventAsync(payload);
       navigate(`/ch_events/${created.id}`);
     }
     setSaving(false);

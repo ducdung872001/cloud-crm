@@ -41,14 +41,14 @@ export default function CheckinBoard({ event, registrations, onRefresh }: Props)
     return list;
   }, [eligibleRegs, search, dateFilter]);
 
-  const handleCheckIn = (regId: string) => {
+  const handleCheckIn = async (regId: string) => {
     const date = dateFilter !== "all" ? dateFilter : undefined;
-    eventStorage.checkInRegistrant(regId, date, "Admin");
+    await eventStorage.checkInRegistrantAsync(regId, date, "Admin");
     onRefresh();
   };
 
-  const handleCheckOut = (regId: string) => {
-    eventStorage.checkOutRegistrant(regId);
+  const handleCheckOut = async (regId: string) => {
+    await eventStorage.checkOutRegistrantAsync(regId);
     onRefresh();
   };
 

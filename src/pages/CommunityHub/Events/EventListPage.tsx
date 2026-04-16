@@ -1,7 +1,7 @@
 // CH Events — Danh sách sự kiện trong CRM (community-hub).
 // Route: /ch_events
 
-import React, { useMemo, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { eventStorage } from "./storage";
 import type { EventEntity, EventStatus } from "./types";
@@ -16,11 +16,32 @@ import {
 
 export default function EventListPage() {
   const navigate = useNavigate();
-  const [refreshKey, setRefreshKey] = useState(0);
+  const [events, setEvents] = useState<EventEntity[]>([]);
+  const [loading, setLoading] = useState(true);
   const [filterStatus, setFilterStatus] = useState<EventStatus | "all">("all");
   const [search, setSearch] = useState("");
+  const [regCounts, setRegCounts] = useState<Record<string, number>>({});
 
-  const events = useMemo(() => eventStorage.listEvents(), [refreshKey]);
+  const loadEvents = useCallback(async () => {
+    setLoading(true);
+    try {
+      const list = await eventStorage.listEventsAsync();
+      setEvents(list);
+      // Load reg counts
+      const counts: Record<string, number> = {};
+      for (const e of list) {
+        const regs = await eventStorage.listRegistrationsByEventAsync(e.id);
+        counts[e.id] = regs.filter((r) => r.status !== "cancelled").length;
+      }
+      setRegCounts(counts);
+    } catch {
+      setEvents(eventStorage.listEvents());
+    }
+    setLoading(false);
+  }, []);
+
+  useEffect(() => { loadEvents(); }, [loadEvents]);
+
   const filtered = useMemo(() => {
     let list = [...events];
     if (filterStatus !== "all") {
@@ -43,6 +64,7 @@ export default function EventListPage() {
   }, [events, filterStatus, search]);
 
   const stats = useMemo(() => {
+    const totalRegistrations = Object.values(regCounts).reduce((s, c) => s + c, 0);
     return {
       total: events.length,
       published: events.filter(
@@ -52,26 +74,23 @@ export default function EventListPage() {
         (e) => getEffectiveStatus(e.status, e.startDate, e.endDate) === "ongoing"
       ).length,
       draft: events.filter((e) => e.status === "draft").length,
-      totalRegistrations: events.reduce(
-        (s, e) => s + eventStorage.listRegistrationsByEvent(e.id).length,
-        0
-      ),
+      totalRegistrations,
     };
-  }, [events]);
+  }, [events, regCounts]);
 
-  const handleDelete = (id: string, title: string) => {
+  const handleDelete = async (id: string, title: string) => {
     if (!confirm(`Xoá sự kiện "${title}"?\n\nTất cả đăng ký liên quan cũng sẽ bị xoá.`)) return;
-    eventStorage.deleteEvent(id);
-    setRefreshKey((k) => k + 1);
+    await eventStorage.deleteEventAsync(id);
+    loadEvents();
   };
 
-  const handleTogglePublish = (event: EventEntity) => {
+  const handleTogglePublish = async (event: EventEntity) => {
     if (event.status === "draft") {
-      eventStorage.publishEvent(event.id);
+      await eventStorage.publishEventAsync(event.id);
     } else {
-      eventStorage.unpublishEvent(event.id);
+      await eventStorage.unpublishEventAsync(event.id);
     }
-    setRefreshKey((k) => k + 1);
+    loadEvents();
   };
 
   return (
@@ -121,25 +140,10 @@ export default function EventListPage() {
         }}
       >
         <KpiTile label="Tổng sự kiện" value={stats.total} icon="📅" />
-        <KpiTile
-          label="Đang công bố"
-          value={stats.published}
-          icon="🟢"
-          tone="success"
-        />
-        <KpiTile
-          label="Đang diễn ra"
-          value={stats.ongoing}
-          icon="🔵"
-          tone="info"
-        />
+        <KpiTile label="Đang công bố" value={stats.published} icon="🟢" tone="success" />
+        <KpiTile label="Đang diễn ra" value={stats.ongoing} icon="🔵" tone="info" />
         <KpiTile label="Nháp" value={stats.draft} icon="📝" tone="muted" />
-        <KpiTile
-          label="Tổng đăng ký"
-          value={stats.totalRegistrations}
-          icon="👥"
-          tone="accent"
-        />
+        <KpiTile label="Tổng đăng ký" value={stats.totalRegistrations} icon="👥" tone="accent" />
       </div>
 
       {/* Filter bar */}
@@ -192,192 +196,199 @@ export default function EventListPage() {
         </div>
       </div>
 
+      {loading && (
+        <div style={{ textAlign: "center", padding: 40, color: THEME.textMuted }}>
+          Đang tải...
+        </div>
+      )}
+
       {/* Grid events */}
-      <div
-        style={{
-          display: "grid",
-          gridTemplateColumns: "repeat(auto-fill, minmax(320px, 1fr))",
-          gap: 14,
-        }}
-      >
-        {filtered.map((e) => {
-          const effStatus = getEffectiveStatus(e.status, e.startDate, e.endDate);
-          const regs = eventStorage.listRegistrationsByEvent(e.id);
-          const activeCount = regs.filter((r) => r.status !== "cancelled").length;
-          return (
-            <div
-              key={e.id}
-              style={{
-                background: "#fff",
-                borderRadius: 12,
-                border: `1px solid ${THEME.border}`,
-                overflow: "hidden",
-                boxShadow: "0 2px 8px rgba(11,46,42,0.06)",
-                display: "flex",
-                flexDirection: "column",
-              }}
-            >
-              {/* Cover */}
+      {!loading && (
+        <div
+          style={{
+            display: "grid",
+            gridTemplateColumns: "repeat(auto-fill, minmax(320px, 1fr))",
+            gap: 14,
+          }}
+        >
+          {filtered.map((e) => {
+            const effStatus = getEffectiveStatus(e.status, e.startDate, e.endDate);
+            const activeCount = regCounts[e.id] ?? 0;
+            return (
               <div
+                key={e.id}
                 style={{
-                  height: 140,
-                  background: e.coverImageUrl
-                    ? `url(${e.coverImageUrl}) center/cover`
-                    : `linear-gradient(135deg, ${THEME.primarySoft}, ${THEME.primary})`,
-                  position: "relative",
+                  background: "#fff",
+                  borderRadius: 12,
+                  border: `1px solid ${THEME.border}`,
+                  overflow: "hidden",
+                  boxShadow: "0 2px 8px rgba(11,46,42,0.06)",
+                  display: "flex",
+                  flexDirection: "column",
                 }}
               >
-                <span
+                {/* Cover */}
+                <div
                   style={{
-                    position: "absolute",
-                    top: 10,
-                    right: 10,
-                    padding: "4px 10px",
-                    background: EVENT_STATUS_COLORS[effStatus],
-                    color: "#fff",
-                    borderRadius: 999,
-                    fontSize: 10,
-                    fontWeight: 700,
-                    textTransform: "uppercase",
+                    height: 140,
+                    background: e.coverImageUrl
+                      ? `url(${e.coverImageUrl}) center/cover`
+                      : `linear-gradient(135deg, ${THEME.primarySoft}, ${THEME.primary})`,
+                    position: "relative",
                   }}
                 >
-                  {EVENT_STATUS_LABELS[effStatus]}
-                </span>
-                {e.ticketPrice === 0 && (
                   <span
                     style={{
                       position: "absolute",
                       top: 10,
-                      left: 10,
+                      right: 10,
                       padding: "4px 10px",
-                      background: THEME.success,
+                      background: EVENT_STATUS_COLORS[effStatus],
                       color: "#fff",
                       borderRadius: 999,
                       fontSize: 10,
                       fontWeight: 700,
+                      textTransform: "uppercase",
                     }}
                   >
-                    MIỄN PHÍ
+                    {EVENT_STATUS_LABELS[effStatus]}
                   </span>
-                )}
-              </div>
-              {/* Body */}
-              <div
-                style={{
-                  padding: 14,
-                  display: "flex",
-                  flexDirection: "column",
-                  flex: 1,
-                }}
-              >
-                <h3
-                  style={{
-                    margin: 0,
-                    fontSize: 15,
-                    color: THEME.primaryDark,
-                    fontWeight: 700,
-                  }}
-                >
-                  {e.title}
-                </h3>
+                  {e.ticketPrice === 0 && (
+                    <span
+                      style={{
+                        position: "absolute",
+                        top: 10,
+                        left: 10,
+                        padding: "4px 10px",
+                        background: THEME.success,
+                        color: "#fff",
+                        borderRadius: 999,
+                        fontSize: 10,
+                        fontWeight: 700,
+                      }}
+                    >
+                      MIỄN PHÍ
+                    </span>
+                  )}
+                </div>
+                {/* Body */}
                 <div
                   style={{
-                    fontSize: 11,
-                    color: THEME.textMuted,
-                    marginTop: 4,
+                    padding: 14,
                     display: "flex",
-                    flexWrap: "wrap",
-                    gap: 8,
-                  }}
-                >
-                  <span>🕐 {formatDateTime(e.startDate)}</span>
-                  <span>📍 {e.venue.isOnline ? "Online" : e.venue.name}</span>
-                </div>
-                <p
-                  style={{
-                    fontSize: 12,
-                    color: THEME.textMain,
-                    marginTop: 8,
-                    lineHeight: 1.45,
-                    display: "-webkit-box",
-                    WebkitLineClamp: 2,
-                    WebkitBoxOrient: "vertical",
-                    overflow: "hidden",
+                    flexDirection: "column",
                     flex: 1,
                   }}
                 >
-                  {e.description}
-                </p>
-                <div
-                  style={{
-                    display: "flex",
-                    gap: 10,
-                    marginTop: 10,
-                    fontSize: 11,
-                    color: THEME.textMuted,
-                  }}
-                >
-                  <span>
-                    👥{" "}
-                    <strong style={{ color: THEME.primaryDark }}>
-                      {activeCount}
-                      {e.maxAttendees ? `/${e.maxAttendees}` : ""}
-                    </strong>{" "}
-                    đăng ký
-                  </span>
-                  <span>
-                    💰{" "}
-                    <strong style={{ color: THEME.primaryDark }}>
-                      {e.ticketPrice ? `${formatVND(e.ticketPrice)}đ` : "Free"}
-                    </strong>
-                  </span>
-                </div>
-                {/* Actions */}
-                <div
-                  style={{
-                    display: "flex",
-                    gap: 6,
-                    marginTop: 12,
-                    flexWrap: "wrap",
-                  }}
-                >
-                  <button
-                    onClick={() => navigate(`/ch_events/${e.id}`)}
-                    style={actionBtnStyle(THEME.primary, "#fff")}
+                  <h3
+                    style={{
+                      margin: 0,
+                      fontSize: 15,
+                      color: THEME.primaryDark,
+                      fontWeight: 700,
+                    }}
                   >
-                    Chi tiết
-                  </button>
-                  <button
-                    onClick={() => navigate(`/ch_events/${e.id}/edit`)}
-                    style={actionBtnStyle("#fff", THEME.primaryDark, THEME.border)}
+                    {e.title}
+                  </h3>
+                  <div
+                    style={{
+                      fontSize: 11,
+                      color: THEME.textMuted,
+                      marginTop: 4,
+                      display: "flex",
+                      flexWrap: "wrap",
+                      gap: 8,
+                    }}
                   >
-                    ✏️ Sửa
-                  </button>
-                  <button
-                    onClick={() => handleTogglePublish(e)}
-                    style={actionBtnStyle(
-                      e.status === "draft" ? THEME.success : "#fff",
-                      e.status === "draft" ? "#fff" : THEME.warning,
-                      THEME.warning
-                    )}
+                    <span>🕐 {formatDateTime(e.startDate)}</span>
+                    <span>📍 {e.venue.isOnline ? "Online" : e.venue.name}</span>
+                  </div>
+                  <p
+                    style={{
+                      fontSize: 12,
+                      color: THEME.textMain,
+                      marginTop: 8,
+                      lineHeight: 1.45,
+                      display: "-webkit-box",
+                      WebkitLineClamp: 2,
+                      WebkitBoxOrient: "vertical",
+                      overflow: "hidden",
+                      flex: 1,
+                    }}
                   >
-                    {e.status === "draft" ? "🚀 Công bố" : "⏸ Ẩn"}
-                  </button>
-                  <button
-                    onClick={() => handleDelete(e.id, e.title)}
-                    style={actionBtnStyle("#fff", THEME.danger, THEME.danger)}
-                    title="Xoá"
+                    {e.description}
+                  </p>
+                  <div
+                    style={{
+                      display: "flex",
+                      gap: 10,
+                      marginTop: 10,
+                      fontSize: 11,
+                      color: THEME.textMuted,
+                    }}
                   >
-                    🗑
-                  </button>
+                    <span>
+                      👥{" "}
+                      <strong style={{ color: THEME.primaryDark }}>
+                        {activeCount}
+                        {e.maxAttendees ? `/${e.maxAttendees}` : ""}
+                      </strong>{" "}
+                      đăng ký
+                    </span>
+                    <span>
+                      💰{" "}
+                      <strong style={{ color: THEME.primaryDark }}>
+                        {e.ticketPrice ? `${formatVND(e.ticketPrice)}đ` : "Free"}
+                      </strong>
+                    </span>
+                  </div>
+                  {/* Actions */}
+                  <div
+                    style={{
+                      display: "flex",
+                      gap: 6,
+                      marginTop: 12,
+                      flexWrap: "wrap",
+                    }}
+                  >
+                    <button
+                      onClick={() => navigate(`/ch_events/${e.id}`)}
+                      style={actionBtnStyle(THEME.primary, "#fff")}
+                    >
+                      Chi tiết
+                    </button>
+                    <button
+                      onClick={() => navigate(`/ch_events/${e.id}/edit`)}
+                      style={actionBtnStyle("#fff", THEME.primaryDark, THEME.border)}
+                    >
+                      ✏️ Sửa
+                    </button>
+                    <button
+                      onClick={() => handleTogglePublish(e)}
+                      style={actionBtnStyle(
+                        e.status === "draft" ? THEME.success : "#fff",
+                        e.status === "draft" ? "#fff" : THEME.warning,
+                        THEME.warning
+                      )}
+                    >
+                      {e.status === "draft" ? "🚀 Công bố" : "⏸ Ẩn"}
+                    </button>
+                    <button
+                      onClick={() => handleDelete(e.id, e.title)}
+                      style={actionBtnStyle("#fff", THEME.danger, THEME.danger)}
+                      title="Xoá"
+                    >
+                      🗑
+                    </button>
+                  </div>
                 </div>
               </div>
-            </div>
-          );
-        })}
-      </div>
+            );
+          })}
+        </div>
+      )}
 
-      {filtered.length === 0 && (
+      {!loading && filtered.length === 0 && (
         <div
           style={{
             textAlign: "center",

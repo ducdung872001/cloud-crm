@@ -1,10 +1,10 @@
 // CH Events — Event detail với 4 tabs: Info · Người đăng ký · Check-in · Chia sẻ
 // Route: /ch_events/:id
 
-import React, { useMemo, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { eventStorage } from "./storage";
-import type { EventEntity, EventRegistration, RegistrationStatus } from "./types";
+import type { EventEntity, EventRegistration, EventStats, RegistrationStatus } from "./types";
 import {
   THEME,
   EVENT_STATUS_LABELS,
@@ -26,20 +26,40 @@ export default function EventDetailPage() {
   const navigate = useNavigate();
   const { id } = useParams<{ id: string }>();
   const [tab, setTab] = useState<TabKey>("info");
-  const [refreshKey, setRefreshKey] = useState(0);
+  const [event, setEvent] = useState<EventEntity | null>(null);
+  const [registrations, setRegistrations] = useState<EventRegistration[]>([]);
+  const [stats, setStats] = useState<EventStats | null>(null);
+  const [loading, setLoading] = useState(true);
 
-  const event = useMemo(
-    () => (id ? eventStorage.getEvent(id) : null),
-    [id, refreshKey]
-  );
-  const registrations = useMemo(
-    () => (id ? eventStorage.listRegistrationsByEvent(id) : []),
-    [id, refreshKey]
-  );
-  const stats = useMemo(
-    () => (id ? eventStorage.getEventStats(id) : null),
-    [id, refreshKey]
-  );
+  const loadData = useCallback(async () => {
+    if (!id) return;
+    setLoading(true);
+    try {
+      const [evt, regs] = await Promise.all([
+        eventStorage.getEventAsync(id),
+        eventStorage.listRegistrationsByEventAsync(id),
+      ]);
+      setEvent(evt);
+      setRegistrations(regs);
+      // Stats vẫn tính local từ regs (hoặc API nếu có)
+      setStats(eventStorage.getEventStats(id));
+    } catch {
+      setEvent(eventStorage.getEvent(id));
+      setRegistrations(eventStorage.listRegistrationsByEvent(id));
+      setStats(eventStorage.getEventStats(id));
+    }
+    setLoading(false);
+  }, [id]);
+
+  useEffect(() => { loadData(); }, [loadData]);
+
+  if (loading) {
+    return (
+      <div style={{ padding: 40, textAlign: "center", color: THEME.textMuted }}>
+        Đang tải...
+      </div>
+    );
+  }
 
   if (!event) {
     return (
@@ -67,13 +87,13 @@ export default function EventDetailPage() {
     event.startDate,
     event.endDate
   );
-  const refresh = () => setRefreshKey((k) => k + 1);
+  const refresh = () => loadData();
 
-  const handleTogglePublish = () => {
+  const handleTogglePublish = async () => {
     if (event.status === "draft") {
-      eventStorage.publishEvent(event.id);
+      await eventStorage.publishEventAsync(event.id);
     } else {
-      eventStorage.unpublishEvent(event.id);
+      await eventStorage.unpublishEventAsync(event.id);
     }
     refresh();
   };
@@ -482,12 +502,12 @@ function RegistrantsTab({
   const filtered =
     filter === "all" ? registrations : registrations.filter((r) => r.status === filter);
 
-  const handleStatusChange = (reg: EventRegistration, status: RegistrationStatus) => {
-    eventStorage.updateRegistrationStatus(reg.id, status);
+  const handleStatusChange = async (reg: EventRegistration, status: RegistrationStatus) => {
+    await eventStorage.updateRegistrationStatusAsync(reg.id, status);
     onRefresh();
   };
 
-  const handleConvert = (reg: EventRegistration) => {
+  const handleConvert = async (reg: EventRegistration) => {
     if (reg.convertedToCustomerId) {
       alert(`Đã chuyển thành hội viên trước đó. ID: ${reg.convertedToCustomerId}`);
       return;
@@ -501,28 +521,21 @@ function RegistrantsTab({
       )
     )
       return;
-    // Prototype: tạo mock customer id, BE thật sẽ gọi CustomerService.addOther
-    const mockCustomerId = `cust-${Date.now()}`;
-    eventStorage.markConvertedToMember(reg.id, mockCustomerId);
+    const result = await eventStorage.markConvertedToMemberAsync(reg.id);
     alert(
-      `✓ Đã tạo hội viên.\n\nCustomer ID: ${mockCustomerId}\n\n` +
-        `(Prototype: BE thật sẽ gọi CustomerService.addOther + redirect sang trang customer detail)`
+      `✓ Đã tạo hội viên.\n\nCustomer ID: ${result?.convertedToCustomerId ?? "N/A"}`
     );
     onRefresh();
   };
 
-  const handleIssueTicket = (reg: EventRegistration) => {
+  const handleIssueTicket = async (reg: EventRegistration) => {
     if (reg.ticketCode) {
       alert(`Vé đã phát hành: ${reg.ticketCode}`);
       return;
     }
-    eventStorage.updateRegistrationStatus(reg.id, "confirmed");
-    const updated = eventStorage
-      .listRegistrationsByEvent(event.id)
-      .find((r) => r.id === reg.id);
+    const updated = await eventStorage.updateRegistrationStatusAsync(reg.id, "confirmed");
     alert(
-      `🎟️ Đã phát hành vé cho ${reg.fullName}\n\nMã vé: ${updated?.ticketCode}\n\n` +
-        `(Prototype: BE thật sẽ sinh QR code + gửi email/SMS)`
+      `🎟️ Đã phát hành vé cho ${reg.fullName}\n\nMã vé: ${updated?.ticketCode ?? "—"}`
     );
     onRefresh();
   };
@@ -670,12 +683,12 @@ function RegistrantsTab({
                   <td style={tdStyle}>
                     <PaymentProofReview
                       proof={r.paymentProof}
-                      onApprove={() => {
-                        eventStorage.reviewPaymentProof(r.id, true);
+                      onApprove={async () => {
+                        await eventStorage.reviewPaymentProofAsync(r.id, true);
                         onRefresh();
                       }}
-                      onReject={(reason) => {
-                        eventStorage.reviewPaymentProof(r.id, false, reason);
+                      onReject={async (reason) => {
+                        await eventStorage.reviewPaymentProofAsync(r.id, false, reason);
                         onRefresh();
                       }}
                     />

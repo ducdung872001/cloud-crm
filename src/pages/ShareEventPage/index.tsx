@@ -76,13 +76,15 @@ export default function ShareEventPage() {
       setNotFound(true);
       return;
     }
-    const e = eventStorage.getEventBySlug(slug);
-    if (!e || (e.status !== "published" && e.status !== "ongoing")) {
-      setNotFound(true);
-    } else {
-      setEvent(e);
-      document.title = `${e.title} — Đăng ký ngay`;
-    }
+    (async () => {
+      const e = await eventStorage.getEventBySlugAsync(slug);
+      if (!e || (e.status !== "published" && e.status !== "ongoing")) {
+        setNotFound(true);
+      } else {
+        setEvent(e);
+        document.title = `${e.title} — Đăng ký ngay`;
+      }
+    })();
   }, [slug]);
 
   if (notFound) {
@@ -126,13 +128,20 @@ export default function ShareEventPage() {
     );
   }
 
+  const [activeCount, setActiveCount] = useState(0);
+  useEffect(() => {
+    if (!event) return;
+    (async () => {
+      const regs = await eventStorage.listRegistrationsByEventAsync(event.id);
+      setActiveCount(regs.filter((r) => r.status !== "cancelled").length);
+    })();
+  }, [event]);
+
   const now = new Date();
   const regOpen = new Date(event.registrationOpenDate);
   const regClose = new Date(event.registrationCloseDate);
   const regNotYet = now < regOpen;
   const regClosed = now > regClose;
-  const registrations = eventStorage.listRegistrationsByEvent(event.id);
-  const activeCount = registrations.filter((r) => r.status !== "cancelled").length;
   const isFull = !!event.maxAttendees && activeCount >= event.maxAttendees;
   const canRegister = !regNotYet && !regClosed && !isFull;
 
@@ -144,7 +153,7 @@ export default function ShareEventPage() {
   }, 0);
   const grandTotal = ticketPrice + addOnSubtotal;
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     if (!form.fullName.trim()) {
       setError("Vui lòng nhập họ tên");
       return;
@@ -183,7 +192,7 @@ export default function ShareEventPage() {
           }
         : undefined;
 
-    const result = eventStorage.registerForEvent(event.slug, {
+    const result = await eventStorage.registerForEventAsync(event.slug, {
       fullName: form.fullName.trim(),
       phone: form.phone.trim(),
       email: form.email.trim() || undefined,
