@@ -1,0 +1,1751 @@
+openapi: 3.0.3
+info:
+  title: Loyalty API
+  description: |
+    API quan ly chuong trinh khach hang than thiet (Loyalty) cua he thong Reborn CRM.
+    Bao gom: Vi thanh vien, Diem tich luy, Phan thuong, Hang thanh vien, Cau hinh, Chuong trinh.
+  version: 1.0.0
+  contact:
+    email: ceo@reborn.vn
+
+servers:
+  - url: https://biz.reborn.vn/market
+    description: Production
+
+security:
+  - BearerAuth: []
+  - HostnameAuth: []
+
+tags:
+  - name: Wallet
+    description: Vi thanh vien (Member Wallet)
+  - name: Points
+    description: Diem tich luy (Point Ledger)
+  - name: Rewards
+    description: Phan thuong doi diem
+  - name: Segments
+    description: Hang thanh vien (Tiers)
+  - name: Config
+    description: Cau hinh chuong trinh loyalty
+  - name: Programs
+    description: Chuong trinh loyalty
+
+paths:
+  # ──────────────────────────────────────────────
+  # Wallet (Member)
+  # ──────────────────────────────────────────────
+  /loyaltyWallet/list:
+    get:
+      tags: [Wallet]
+      summary: Danh sach thanh vien
+      description: Lay danh sach vi thanh vien co phan trang. Ho tro loc theo ten khach hang.
+      operationId: listWallets
+      parameters:
+        - $ref: '#/components/parameters/Page'
+        - $ref: '#/components/parameters/Limit'
+        - name: customerName
+          in: query
+          description: Loc theo ten khach hang (tim kiem gan dung)
+          schema:
+            type: string
+            example: Nguyen Van A
+      responses:
+        '200':
+          description: Thanh cong
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/SuccessResponse'
+                  - type: object
+                    properties:
+                      result:
+                        type: object
+                        properties:
+                          items:
+                            type: array
+                            items:
+                              $ref: '#/components/schemas/Wallet'
+                          total:
+                            type: integer
+                            example: 128
+              example:
+                code: 0
+                message: OK
+                result:
+                  items:
+                    - _id: w001
+                      customerId: c001
+                      customerName: Nguyen Van A
+                      phone: "0901234567"
+                      totalPoint: 1200
+                      usedPoint: 300
+                      currentPoint: 900
+                      segmentId: seg01
+                      segmentName: Gold
+                      createdAt: "2026-01-15T08:00:00Z"
+                      updatedAt: "2026-04-10T10:30:00Z"
+                  total: 128
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+
+  /loyaltyWallet/getByCustomer:
+    get:
+      tags: [Wallet]
+      summary: Lay vi theo khach hang
+      description: Tra ve thong tin vi thanh vien cua mot khach hang cu the.
+      operationId: getWalletByCustomer
+      parameters:
+        - name: customerId
+          in: query
+          required: true
+          description: ID khach hang
+          schema:
+            type: string
+            example: c001
+      responses:
+        '200':
+          description: Thanh cong
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/SuccessResponse'
+                  - type: object
+                    properties:
+                      result:
+                        $ref: '#/components/schemas/Wallet'
+              example:
+                code: 0
+                message: OK
+                result:
+                  _id: w001
+                  customerId: c001
+                  customerName: Nguyen Van A
+                  phone: "0901234567"
+                  totalPoint: 1200
+                  usedPoint: 300
+                  currentPoint: 900
+                  segmentId: seg01
+                  segmentName: Gold
+                  createdAt: "2026-01-15T08:00:00Z"
+                  updatedAt: "2026-04-10T10:30:00Z"
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  /loyaltyWallet/update:
+    post:
+      tags: [Wallet]
+      summary: Tao / cap nhat vi thanh vien
+      description: |
+        Tao moi hoac cap nhat thong tin vi thanh vien.
+        Neu truyen _id thi cap nhat, neu khong truyen thi tao moi.
+      operationId: updateWallet
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/WalletInput'
+            example:
+              customerId: c001
+              customerName: Nguyen Van A
+              phone: "0901234567"
+              segmentId: seg01
+      responses:
+        '200':
+          description: Tao/cap nhat thanh cong
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/SuccessResponse'
+                  - type: object
+                    properties:
+                      result:
+                        $ref: '#/components/schemas/Wallet'
+              example:
+                code: 0
+                message: OK
+                result:
+                  _id: w001
+                  customerId: c001
+                  customerName: Nguyen Van A
+                  phone: "0901234567"
+                  totalPoint: 0
+                  usedPoint: 0
+                  currentPoint: 0
+                  segmentId: seg01
+                  segmentName: Gold
+                  createdAt: "2026-04-16T08:00:00Z"
+                  updatedAt: "2026-04-16T08:00:00Z"
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '409':
+          $ref: '#/components/responses/Conflict'
+
+  /loyaltyWallet/import:
+    post:
+      tags: [Wallet]
+      summary: Import thanh vien tu CSV
+      description: |
+        Nhap hang loat thanh vien tu file CSV (multipart/form-data).
+        File CSV can cot: customerName, phone, segmentId.
+      operationId: importWallets
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required: [file]
+              properties:
+                file:
+                  type: string
+                  format: binary
+                  description: File CSV chua danh sach thanh vien
+      responses:
+        '200':
+          description: Import thanh cong
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/SuccessResponse'
+                  - type: object
+                    properties:
+                      result:
+                        type: object
+                        properties:
+                          imported:
+                            type: integer
+                            example: 50
+                          skipped:
+                            type: integer
+                            example: 2
+                          errors:
+                            type: array
+                            items:
+                              type: object
+                              properties:
+                                row:
+                                  type: integer
+                                message:
+                                  type: string
+              example:
+                code: 0
+                message: OK
+                result:
+                  imported: 50
+                  skipped: 2
+                  errors:
+                    - row: 12
+                      message: "Thieu truong phone"
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+
+  /loyaltyWallet/export:
+    get:
+      tags: [Wallet]
+      summary: Xuat danh sach thanh vien ra Excel
+      description: Xuat toan bo danh sach thanh vien sang file Excel (.xlsx).
+      operationId: exportWallets
+      responses:
+        '200':
+          description: File Excel
+          content:
+            application/vnd.openxmlformats-officedocument.spreadsheetml.sheet:
+              schema:
+                type: string
+                format: binary
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+
+  # ──────────────────────────────────────────────
+  # Points (Point Ledger)
+  # ──────────────────────────────────────────────
+  /loyaltyPointLedger/list:
+    get:
+      tags: [Points]
+      summary: Lich su diem
+      description: Lay lich su bien dong diem cua mot khach hang, co phan trang.
+      operationId: listPointLedger
+      parameters:
+        - name: customerId
+          in: query
+          required: true
+          description: ID khach hang can xem lich su diem
+          schema:
+            type: string
+            example: c001
+        - $ref: '#/components/parameters/Page'
+        - $ref: '#/components/parameters/Limit'
+      responses:
+        '200':
+          description: Thanh cong
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/SuccessResponse'
+                  - type: object
+                    properties:
+                      result:
+                        type: object
+                        properties:
+                          items:
+                            type: array
+                            items:
+                              $ref: '#/components/schemas/PointLedgerEntry'
+                          total:
+                            type: integer
+                            example: 45
+              example:
+                code: 0
+                message: OK
+                result:
+                  items:
+                    - _id: pl001
+                      customerId: c001
+                      type: earn
+                      point: 100
+                      balance: 900
+                      reason: "Mua hang don #ORD123"
+                      orderId: ORD123
+                      createdBy: staff01
+                      createdAt: "2026-04-10T14:20:00Z"
+                  total: 45
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+
+  /loyaltyPointLedger/update:
+    post:
+      tags: [Points]
+      summary: Dieu chinh diem thu cong
+      description: |
+        Them hoac tru diem thu cong cho khach hang.
+        Dung khi can dieu chinh diem ngoai luong tu dong (vi du: boi thuong, sua loi).
+      operationId: updatePointLedger
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [customerId, point, reason]
+              properties:
+                customerId:
+                  type: string
+                  description: ID khach hang
+                  example: c001
+                point:
+                  type: integer
+                  description: So diem dieu chinh (duong = cong, am = tru)
+                  example: 50
+                reason:
+                  type: string
+                  description: Ly do dieu chinh
+                  example: "Boi thuong loi he thong"
+            example:
+              customerId: c001
+              point: 50
+              reason: "Boi thuong loi he thong"
+      responses:
+        '200':
+          description: Dieu chinh thanh cong
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/SuccessResponse'
+                  - type: object
+                    properties:
+                      result:
+                        $ref: '#/components/schemas/PointLedgerEntry'
+              example:
+                code: 0
+                message: OK
+                result:
+                  _id: pl002
+                  customerId: c001
+                  type: adjust
+                  point: 50
+                  balance: 950
+                  reason: "Boi thuong loi he thong"
+                  createdBy: staff01
+                  createdAt: "2026-04-16T09:00:00Z"
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+
+  /loyaltyPointLedger/fluctuatePoint:
+    post:
+      tags: [Points]
+      summary: Tich diem (earn)
+      description: Cong diem tich luy cho khach hang khi thuc hien giao dich hoac hanh dong du dieu kien.
+      operationId: fluctuatePoint
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [customerId, point]
+              properties:
+                customerId:
+                  type: string
+                  description: ID khach hang
+                  example: c001
+                point:
+                  type: integer
+                  description: So diem tich luy
+                  example: 200
+                reason:
+                  type: string
+                  description: Ly do tich diem
+                  example: "Tich diem don hang #ORD456"
+                orderId:
+                  type: string
+                  description: Ma don hang lien quan (neu co)
+                  example: ORD456
+            example:
+              customerId: c001
+              point: 200
+              reason: "Tich diem don hang #ORD456"
+              orderId: ORD456
+      responses:
+        '200':
+          description: Tich diem thanh cong
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/SuccessResponse'
+                  - type: object
+                    properties:
+                      result:
+                        $ref: '#/components/schemas/PointLedgerEntry'
+              example:
+                code: 0
+                message: OK
+                result:
+                  _id: pl003
+                  customerId: c001
+                  type: earn
+                  point: 200
+                  balance: 1150
+                  reason: "Tich diem don hang #ORD456"
+                  orderId: ORD456
+                  createdBy: system
+                  createdAt: "2026-04-16T09:15:00Z"
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+
+  /loyaltyPointLedger/consumePoint:
+    post:
+      tags: [Points]
+      summary: Tieu diem (spend)
+      description: Tru diem khi khach hang doi thuong hoac su dung diem de thanh toan.
+      operationId: consumePoint
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [customerId, point]
+              properties:
+                customerId:
+                  type: string
+                  description: ID khach hang
+                  example: c001
+                point:
+                  type: integer
+                  description: So diem tieu (gia tri duong)
+                  example: 100
+                reason:
+                  type: string
+                  description: Ly do tieu diem
+                  example: "Doi voucher giam 50k"
+                rewardId:
+                  type: string
+                  description: ID phan thuong doi (neu co)
+                  example: rw001
+            example:
+              customerId: c001
+              point: 100
+              reason: "Doi voucher giam 50k"
+              rewardId: rw001
+      responses:
+        '200':
+          description: Tieu diem thanh cong
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/SuccessResponse'
+                  - type: object
+                    properties:
+                      result:
+                        $ref: '#/components/schemas/PointLedgerEntry'
+              example:
+                code: 0
+                message: OK
+                result:
+                  _id: pl004
+                  customerId: c001
+                  type: spend
+                  point: -100
+                  balance: 1050
+                  reason: "Doi voucher giam 50k"
+                  rewardId: rw001
+                  createdBy: staff01
+                  createdAt: "2026-04-16T09:30:00Z"
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+
+  /loyaltyPointLedger/autoEarn:
+    post:
+      tags: [Points]
+      summary: Tu dong tich diem tu POS
+      description: |
+        Endpoint duoc goi tu he thong POS sau khi khach hang thanh toan.
+        Tu dong tinh diem dua tren cau hinh exchangeRate va chuong trinh dang hoat dong.
+      operationId: autoEarnPoints
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [phone, orderAmount, orderId, branchId]
+              properties:
+                phone:
+                  type: string
+                  description: So dien thoai khach hang
+                  example: "0901234567"
+                orderAmount:
+                  type: number
+                  description: Tong gia tri don hang (VND)
+                  example: 500000
+                orderId:
+                  type: string
+                  description: Ma don hang tu POS
+                  example: POS-20260416-001
+                branchId:
+                  type: string
+                  description: ID chi nhanh ban hang
+                  example: br01
+                items:
+                  type: array
+                  description: Danh sach san pham trong don hang
+                  items:
+                    type: object
+                    properties:
+                      productId:
+                        type: string
+                        example: prod01
+                      productName:
+                        type: string
+                        example: "Dich vu massage 60p"
+                      quantity:
+                        type: integer
+                        example: 1
+                      price:
+                        type: number
+                        example: 500000
+                      categoryId:
+                        type: string
+                        example: cat01
+            example:
+              phone: "0901234567"
+              orderAmount: 500000
+              orderId: POS-20260416-001
+              branchId: br01
+              items:
+                - productId: prod01
+                  productName: "Dich vu massage 60p"
+                  quantity: 1
+                  price: 500000
+                  categoryId: cat01
+      responses:
+        '200':
+          description: Tich diem tu dong thanh cong
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/SuccessResponse'
+                  - type: object
+                    properties:
+                      result:
+                        type: object
+                        properties:
+                          earnedPoint:
+                            type: integer
+                            description: So diem da tich
+                            example: 50
+                          currentPoint:
+                            type: integer
+                            description: So du diem hien tai
+                            example: 1100
+                          customerId:
+                            type: string
+                            example: c001
+                          segmentName:
+                            type: string
+                            example: Gold
+              example:
+                code: 0
+                message: OK
+                result:
+                  earnedPoint: 50
+                  currentPoint: 1100
+                  customerId: c001
+                  segmentName: Gold
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          description: Khong tim thay khach hang theo so dien thoai
+          content:
+            application/json:
+              example:
+                code: 404
+                message: "Khong tim thay khach hang voi SDT 0901234567"
+                result: null
+
+  /loyaltyPointLedger/export:
+    get:
+      tags: [Points]
+      summary: Xuat lich su diem ra Excel
+      description: Xuat toan bo lich su bien dong diem sang file Excel (.xlsx).
+      operationId: exportPointLedger
+      parameters:
+        - name: customerId
+          in: query
+          description: Loc theo ID khach hang (bo trong de xuat tat ca)
+          schema:
+            type: string
+      responses:
+        '200':
+          description: File Excel
+          content:
+            application/vnd.openxmlformats-officedocument.spreadsheetml.sheet:
+              schema:
+                type: string
+                format: binary
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+
+  # ──────────────────────────────────────────────
+  # Rewards
+  # ──────────────────────────────────────────────
+  /loyaltyReward/list:
+    get:
+      tags: [Rewards]
+      summary: Danh sach phan thuong
+      description: Lay danh sach cac phan thuong co the doi diem.
+      operationId: listRewards
+      parameters:
+        - $ref: '#/components/parameters/Page'
+        - $ref: '#/components/parameters/Limit'
+      responses:
+        '200':
+          description: Thanh cong
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/SuccessResponse'
+                  - type: object
+                    properties:
+                      result:
+                        type: object
+                        properties:
+                          items:
+                            type: array
+                            items:
+                              $ref: '#/components/schemas/Reward'
+                          total:
+                            type: integer
+                            example: 12
+              example:
+                code: 0
+                message: OK
+                result:
+                  items:
+                    - _id: rw001
+                      name: "Voucher giam 50k"
+                      description: "Giam 50.000d cho don tiep theo"
+                      pointCost: 100
+                      type: voucher
+                      value: 50000
+                      stock: 200
+                      isActive: true
+                      imageUrl: "https://cdn.reborn.vn/rewards/voucher50k.jpg"
+                      createdAt: "2026-01-01T00:00:00Z"
+                      updatedAt: "2026-04-10T00:00:00Z"
+                  total: 12
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+
+  /loyaltyReward/get:
+    get:
+      tags: [Rewards]
+      summary: Chi tiet phan thuong
+      description: Lay thong tin chi tiet cua mot phan thuong theo ID.
+      operationId: getReward
+      parameters:
+        - name: id
+          in: query
+          required: true
+          description: ID phan thuong
+          schema:
+            type: string
+            example: rw001
+      responses:
+        '200':
+          description: Thanh cong
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/SuccessResponse'
+                  - type: object
+                    properties:
+                      result:
+                        $ref: '#/components/schemas/Reward'
+              example:
+                code: 0
+                message: OK
+                result:
+                  _id: rw001
+                  name: "Voucher giam 50k"
+                  description: "Giam 50.000d cho don tiep theo"
+                  pointCost: 100
+                  type: voucher
+                  value: 50000
+                  stock: 200
+                  isActive: true
+                  imageUrl: "https://cdn.reborn.vn/rewards/voucher50k.jpg"
+                  createdAt: "2026-01-01T00:00:00Z"
+                  updatedAt: "2026-04-10T00:00:00Z"
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  /loyaltyReward/update:
+    post:
+      tags: [Rewards]
+      summary: Tao / cap nhat phan thuong
+      description: |
+        Tao moi hoac cap nhat phan thuong.
+        Neu truyen _id thi cap nhat, neu khong truyen thi tao moi.
+      operationId: updateReward
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RewardInput'
+            example:
+              name: "Voucher giam 50k"
+              description: "Giam 50.000d cho don tiep theo"
+              pointCost: 100
+              type: voucher
+              value: 50000
+              stock: 200
+              isActive: true
+      responses:
+        '200':
+          description: Tao/cap nhat thanh cong
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/SuccessResponse'
+                  - type: object
+                    properties:
+                      result:
+                        $ref: '#/components/schemas/Reward'
+              example:
+                code: 0
+                message: OK
+                result:
+                  _id: rw001
+                  name: "Voucher giam 50k"
+                  description: "Giam 50.000d cho don tiep theo"
+                  pointCost: 100
+                  type: voucher
+                  value: 50000
+                  stock: 200
+                  isActive: true
+                  imageUrl: null
+                  createdAt: "2026-04-16T08:00:00Z"
+                  updatedAt: "2026-04-16T08:00:00Z"
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+
+  /loyaltyReward/delete:
+    delete:
+      tags: [Rewards]
+      summary: Xoa phan thuong
+      description: Xoa vinh vien mot phan thuong. Khong the phuc hoi.
+      operationId: deleteReward
+      parameters:
+        - name: id
+          in: query
+          required: true
+          description: ID phan thuong can xoa
+          schema:
+            type: string
+            example: rw001
+      responses:
+        '200':
+          description: Xoa thanh cong
+          content:
+            application/json:
+              example:
+                code: 0
+                message: OK
+                result: null
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  # ──────────────────────────────────────────────
+  # Segments (Tiers)
+  # ──────────────────────────────────────────────
+  /loyaltySegment/list:
+    get:
+      tags: [Segments]
+      summary: Danh sach hang thanh vien
+      description: Lay danh sach cac hang thanh vien (tier) trong chuong trinh loyalty.
+      operationId: listSegments
+      parameters:
+        - $ref: '#/components/parameters/Page'
+        - $ref: '#/components/parameters/Limit'
+      responses:
+        '200':
+          description: Thanh cong
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/SuccessResponse'
+                  - type: object
+                    properties:
+                      result:
+                        type: object
+                        properties:
+                          items:
+                            type: array
+                            items:
+                              $ref: '#/components/schemas/Segment'
+                          total:
+                            type: integer
+                            example: 4
+              example:
+                code: 0
+                message: OK
+                result:
+                  items:
+                    - _id: seg01
+                      name: Gold
+                      description: "Hang vang - tich luy tu 5.000 diem"
+                      minPoint: 5000
+                      maxPoint: 19999
+                      multiplier: 1.5
+                      color: "#FFD700"
+                      order: 2
+                      benefits:
+                        - "Giam 10% dich vu"
+                        - "Uu tien dat lich"
+                      createdAt: "2026-01-01T00:00:00Z"
+                      updatedAt: "2026-03-15T00:00:00Z"
+                  total: 4
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+
+  /loyaltySegment/update:
+    post:
+      tags: [Segments]
+      summary: Tao / cap nhat hang thanh vien
+      description: |
+        Tao moi hoac cap nhat hang thanh vien.
+        Neu truyen _id thi cap nhat, khong truyen thi tao moi.
+      operationId: updateSegment
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SegmentInput'
+            example:
+              name: Gold
+              description: "Hang vang - tich luy tu 5.000 diem"
+              minPoint: 5000
+              maxPoint: 19999
+              multiplier: 1.5
+              color: "#FFD700"
+              order: 2
+              benefits:
+                - "Giam 10% dich vu"
+                - "Uu tien dat lich"
+      responses:
+        '200':
+          description: Tao/cap nhat thanh cong
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/SuccessResponse'
+                  - type: object
+                    properties:
+                      result:
+                        $ref: '#/components/schemas/Segment'
+              example:
+                code: 0
+                message: OK
+                result:
+                  _id: seg01
+                  name: Gold
+                  description: "Hang vang - tich luy tu 5.000 diem"
+                  minPoint: 5000
+                  maxPoint: 19999
+                  multiplier: 1.5
+                  color: "#FFD700"
+                  order: 2
+                  benefits:
+                    - "Giam 10% dich vu"
+                    - "Uu tien dat lich"
+                  createdAt: "2026-04-16T08:00:00Z"
+                  updatedAt: "2026-04-16T08:00:00Z"
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+
+  /loyaltySegment/delete:
+    delete:
+      tags: [Segments]
+      summary: Xoa hang thanh vien
+      description: |
+        Xoa mot hang thanh vien. Cac thanh vien thuoc hang nay se duoc chuyen ve hang mac dinh.
+      operationId: deleteSegment
+      parameters:
+        - name: id
+          in: query
+          required: true
+          description: ID hang thanh vien can xoa
+          schema:
+            type: string
+            example: seg01
+      responses:
+        '200':
+          description: Xoa thanh cong
+          content:
+            application/json:
+              example:
+                code: 0
+                message: OK
+                result: null
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  # ──────────────────────────────────────────────
+  # Config
+  # ──────────────────────────────────────────────
+  /loyaltyConfig/get:
+    get:
+      tags: [Config]
+      summary: Lay cau hinh loyalty
+      description: |
+        Tra ve cau hinh chuong trinh loyalty bao gom ty le quy doi diem (exchangeRate)
+        va cac cau hinh mo rong (extendedConfig) dang JSON.
+      operationId: getConfig
+      responses:
+        '200':
+          description: Thanh cong
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/SuccessResponse'
+                  - type: object
+                    properties:
+                      result:
+                        $ref: '#/components/schemas/LoyaltyConfig'
+              example:
+                code: 0
+                message: OK
+                result:
+                  _id: cfg001
+                  exchangeRate: 10000
+                  pointUnit: "diem"
+                  extendedConfig:
+                    enableAutoEarn: true
+                    enableRewardRedeem: true
+                    pointExpireDays: 365
+                    minEarnAmount: 50000
+                    birthdayBonus: 100
+                  updatedAt: "2026-04-01T00:00:00Z"
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+
+  /loyaltyConfig/update:
+    post:
+      tags: [Config]
+      summary: Cap nhat cau hinh loyalty
+      description: |
+        Cap nhat cau hinh chuong trinh loyalty.
+        exchangeRate la so tien (VND) doi duoc 1 diem.
+        extendedConfig la JSON tu do de luu cac cau hinh mo rong.
+      operationId: updateConfig
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoyaltyConfigInput'
+            example:
+              exchangeRate: 10000
+              pointUnit: "diem"
+              extendedConfig:
+                enableAutoEarn: true
+                enableRewardRedeem: true
+                pointExpireDays: 365
+                minEarnAmount: 50000
+                birthdayBonus: 100
+      responses:
+        '200':
+          description: Cap nhat thanh cong
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/SuccessResponse'
+                  - type: object
+                    properties:
+                      result:
+                        $ref: '#/components/schemas/LoyaltyConfig'
+              example:
+                code: 0
+                message: OK
+                result:
+                  _id: cfg001
+                  exchangeRate: 10000
+                  pointUnit: "diem"
+                  extendedConfig:
+                    enableAutoEarn: true
+                    enableRewardRedeem: true
+                    pointExpireDays: 365
+                    minEarnAmount: 50000
+                    birthdayBonus: 100
+                  updatedAt: "2026-04-16T10:00:00Z"
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+
+  # ──────────────────────────────────────────────
+  # Programs
+  # ──────────────────────────────────────────────
+  /loyaltyProgram/list:
+    get:
+      tags: [Programs]
+      summary: Danh sach chuong trinh loyalty
+      description: Lay danh sach cac chuong trinh loyalty dang hoat dong hoac da ket thuc.
+      operationId: listPrograms
+      parameters:
+        - $ref: '#/components/parameters/Page'
+        - $ref: '#/components/parameters/Limit'
+      responses:
+        '200':
+          description: Thanh cong
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/SuccessResponse'
+                  - type: object
+                    properties:
+                      result:
+                        type: object
+                        properties:
+                          items:
+                            type: array
+                            items:
+                              $ref: '#/components/schemas/Program'
+                          total:
+                            type: integer
+                            example: 3
+              example:
+                code: 0
+                message: OK
+                result:
+                  items:
+                    - _id: prg001
+                      name: "Tich diem mua he 2026"
+                      description: "Nhan x2 diem cho moi giao dich tu 01/06 - 31/08"
+                      type: multiplier
+                      multiplier: 2
+                      startDate: "2026-06-01T00:00:00Z"
+                      endDate: "2026-08-31T23:59:59Z"
+                      isActive: true
+                      conditions:
+                        minOrderAmount: 100000
+                        applicableBranches: ["br01", "br02"]
+                        applicableCategories: []
+                      createdAt: "2026-04-01T00:00:00Z"
+                      updatedAt: "2026-04-15T00:00:00Z"
+                  total: 3
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+
+  /loyaltyProgram/update:
+    post:
+      tags: [Programs]
+      summary: Tao / cap nhat chuong trinh
+      description: |
+        Tao moi hoac cap nhat chuong trinh loyalty.
+        Neu truyen _id thi cap nhat, khong truyen thi tao moi.
+      operationId: updateProgram
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ProgramInput'
+            example:
+              name: "Tich diem mua he 2026"
+              description: "Nhan x2 diem cho moi giao dich tu 01/06 - 31/08"
+              type: multiplier
+              multiplier: 2
+              startDate: "2026-06-01T00:00:00Z"
+              endDate: "2026-08-31T23:59:59Z"
+              isActive: true
+              conditions:
+                minOrderAmount: 100000
+                applicableBranches: ["br01", "br02"]
+                applicableCategories: []
+      responses:
+        '200':
+          description: Tao/cap nhat thanh cong
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/SuccessResponse'
+                  - type: object
+                    properties:
+                      result:
+                        $ref: '#/components/schemas/Program'
+              example:
+                code: 0
+                message: OK
+                result:
+                  _id: prg001
+                  name: "Tich diem mua he 2026"
+                  description: "Nhan x2 diem cho moi giao dich tu 01/06 - 31/08"
+                  type: multiplier
+                  multiplier: 2
+                  startDate: "2026-06-01T00:00:00Z"
+                  endDate: "2026-08-31T23:59:59Z"
+                  isActive: true
+                  conditions:
+                    minOrderAmount: 100000
+                    applicableBranches: ["br01", "br02"]
+                    applicableCategories: []
+                  createdAt: "2026-04-16T08:00:00Z"
+                  updatedAt: "2026-04-16T08:00:00Z"
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+
+  /loyaltyProgram/delete:
+    delete:
+      tags: [Programs]
+      summary: Xoa chuong trinh loyalty
+      description: Xoa mot chuong trinh loyalty. Chuong trinh dang hoat dong can duoc tat truoc khi xoa.
+      operationId: deleteProgram
+      parameters:
+        - name: id
+          in: query
+          required: true
+          description: ID chuong trinh can xoa
+          schema:
+            type: string
+            example: prg001
+      responses:
+        '200':
+          description: Xoa thanh cong
+          content:
+            application/json:
+              example:
+                code: 0
+                message: OK
+                result: null
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+# ════════════════════════════════════════════════
+# Components
+# ════════════════════════════════════════════════
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: JWT token hoac API key duoc truyen qua header Authorization
+    HostnameAuth:
+      type: apiKey
+      in: header
+      name: Hostname
+      description: |
+        Ten mien cua tenant (vi du: spa-abc.reborn.vn).
+        Dung de xac dinh tenant trong he thong multi-tenant.
+
+  parameters:
+    Page:
+      name: page
+      in: query
+      description: So trang (bat dau tu 1)
+      schema:
+        type: integer
+        minimum: 1
+        default: 1
+        example: 1
+    Limit:
+      name: limit
+      in: query
+      description: So ban ghi moi trang
+      schema:
+        type: integer
+        minimum: 1
+        maximum: 200
+        default: 20
+        example: 20
+
+  schemas:
+    # ── Base response ──
+    SuccessResponse:
+      type: object
+      properties:
+        code:
+          type: integer
+          example: 0
+        message:
+          type: string
+          example: OK
+        result:
+          type: object
+
+    ErrorResponse:
+      type: object
+      properties:
+        code:
+          type: integer
+          description: Ma loi (400, 401, 404, 409, 429)
+          example: 400
+        message:
+          type: string
+          example: "Thieu truong bat buoc: customerId"
+        result:
+          nullable: true
+          example: null
+
+    # ── Wallet ──
+    Wallet:
+      type: object
+      properties:
+        _id:
+          type: string
+          example: w001
+        customerId:
+          type: string
+          example: c001
+        customerName:
+          type: string
+          example: Nguyen Van A
+        phone:
+          type: string
+          example: "0901234567"
+        totalPoint:
+          type: integer
+          description: Tong diem da tich luy tu truoc den nay
+          example: 1200
+        usedPoint:
+          type: integer
+          description: Tong diem da su dung
+          example: 300
+        currentPoint:
+          type: integer
+          description: So du diem hien tai (totalPoint - usedPoint)
+          example: 900
+        segmentId:
+          type: string
+          description: ID hang thanh vien hien tai
+          example: seg01
+        segmentName:
+          type: string
+          description: Ten hang thanh vien
+          example: Gold
+        createdAt:
+          type: string
+          format: date-time
+          example: "2026-01-15T08:00:00Z"
+        updatedAt:
+          type: string
+          format: date-time
+          example: "2026-04-10T10:30:00Z"
+
+    WalletInput:
+      type: object
+      required: [customerId]
+      properties:
+        _id:
+          type: string
+          description: Truyen _id de cap nhat, bo trong de tao moi
+        customerId:
+          type: string
+          example: c001
+        customerName:
+          type: string
+          example: Nguyen Van A
+        phone:
+          type: string
+          example: "0901234567"
+        segmentId:
+          type: string
+          example: seg01
+
+    # ── Point Ledger ──
+    PointLedgerEntry:
+      type: object
+      properties:
+        _id:
+          type: string
+          example: pl001
+        customerId:
+          type: string
+          example: c001
+        type:
+          type: string
+          enum: [earn, spend, adjust]
+          description: "Loai giao dich: earn (tich), spend (tieu), adjust (dieu chinh)"
+          example: earn
+        point:
+          type: integer
+          description: So diem thay doi (duong = cong, am = tru)
+          example: 100
+        balance:
+          type: integer
+          description: So du diem sau giao dich
+          example: 900
+        reason:
+          type: string
+          example: "Mua hang don #ORD123"
+        orderId:
+          type: string
+          nullable: true
+          example: ORD123
+        rewardId:
+          type: string
+          nullable: true
+          example: null
+        createdBy:
+          type: string
+          description: ID nguoi thuc hien (hoac "system")
+          example: staff01
+        createdAt:
+          type: string
+          format: date-time
+          example: "2026-04-10T14:20:00Z"
+
+    # ── Reward ──
+    Reward:
+      type: object
+      properties:
+        _id:
+          type: string
+          example: rw001
+        name:
+          type: string
+          example: "Voucher giam 50k"
+        description:
+          type: string
+          example: "Giam 50.000d cho don tiep theo"
+        pointCost:
+          type: integer
+          description: So diem can de doi
+          example: 100
+        type:
+          type: string
+          enum: [voucher, gift, service, discount]
+          description: "Loai phan thuong"
+          example: voucher
+        value:
+          type: number
+          description: Gia tri phan thuong (VND hoac %)
+          example: 50000
+        stock:
+          type: integer
+          description: So luong con lai
+          example: 200
+        isActive:
+          type: boolean
+          example: true
+        imageUrl:
+          type: string
+          nullable: true
+          example: "https://cdn.reborn.vn/rewards/voucher50k.jpg"
+        createdAt:
+          type: string
+          format: date-time
+          example: "2026-01-01T00:00:00Z"
+        updatedAt:
+          type: string
+          format: date-time
+          example: "2026-04-10T00:00:00Z"
+
+    RewardInput:
+      type: object
+      required: [name, pointCost, type]
+      properties:
+        _id:
+          type: string
+          description: Truyen _id de cap nhat, bo trong de tao moi
+        name:
+          type: string
+          example: "Voucher giam 50k"
+        description:
+          type: string
+          example: "Giam 50.000d cho don tiep theo"
+        pointCost:
+          type: integer
+          example: 100
+        type:
+          type: string
+          enum: [voucher, gift, service, discount]
+          example: voucher
+        value:
+          type: number
+          example: 50000
+        stock:
+          type: integer
+          example: 200
+        isActive:
+          type: boolean
+          default: true
+        imageUrl:
+          type: string
+          nullable: true
+
+    # ── Segment (Tier) ──
+    Segment:
+      type: object
+      properties:
+        _id:
+          type: string
+          example: seg01
+        name:
+          type: string
+          example: Gold
+        description:
+          type: string
+          example: "Hang vang - tich luy tu 5.000 diem"
+        minPoint:
+          type: integer
+          description: Diem toi thieu de dat hang nay
+          example: 5000
+        maxPoint:
+          type: integer
+          description: Diem toi da cua hang nay
+          example: 19999
+        multiplier:
+          type: number
+          description: He so nhan diem (1.0 = khong nhan)
+          example: 1.5
+        color:
+          type: string
+          description: Ma mau hien thi
+          example: "#FFD700"
+        order:
+          type: integer
+          description: Thu tu sap xep (nho = thap hon)
+          example: 2
+        benefits:
+          type: array
+          description: Danh sach quyen loi cua hang
+          items:
+            type: string
+          example: ["Giam 10% dich vu", "Uu tien dat lich"]
+        createdAt:
+          type: string
+          format: date-time
+          example: "2026-01-01T00:00:00Z"
+        updatedAt:
+          type: string
+          format: date-time
+          example: "2026-03-15T00:00:00Z"
+
+    SegmentInput:
+      type: object
+      required: [name, minPoint]
+      properties:
+        _id:
+          type: string
+          description: Truyen _id de cap nhat, bo trong de tao moi
+        name:
+          type: string
+          example: Gold
+        description:
+          type: string
+          example: "Hang vang - tich luy tu 5.000 diem"
+        minPoint:
+          type: integer
+          example: 5000
+        maxPoint:
+          type: integer
+          example: 19999
+        multiplier:
+          type: number
+          default: 1.0
+          example: 1.5
+        color:
+          type: string
+          example: "#FFD700"
+        order:
+          type: integer
+          example: 2
+        benefits:
+          type: array
+          items:
+            type: string
+
+    # ── Config ──
+    LoyaltyConfig:
+      type: object
+      properties:
+        _id:
+          type: string
+          example: cfg001
+        exchangeRate:
+          type: number
+          description: So tien VND doi duoc 1 diem (vi du 10000 = 10.000d/diem)
+          example: 10000
+        pointUnit:
+          type: string
+          description: Don vi diem hien thi
+          example: "diem"
+        extendedConfig:
+          type: object
+          description: Cau hinh mo rong (JSON tu do)
+          properties:
+            enableAutoEarn:
+              type: boolean
+              description: Bat/tat tu dong tich diem tu POS
+              example: true
+            enableRewardRedeem:
+              type: boolean
+              description: Bat/tat chuc nang doi thuong
+              example: true
+            pointExpireDays:
+              type: integer
+              description: So ngay het han diem (0 = khong het han)
+              example: 365
+            minEarnAmount:
+              type: number
+              description: Gia tri don hang toi thieu de duoc tich diem (VND)
+              example: 50000
+            birthdayBonus:
+              type: integer
+              description: Diem tang them vao ngay sinh nhat
+              example: 100
+          additionalProperties: true
+        updatedAt:
+          type: string
+          format: date-time
+          example: "2026-04-01T00:00:00Z"
+
+    LoyaltyConfigInput:
+      type: object
+      properties:
+        exchangeRate:
+          type: number
+          example: 10000
+        pointUnit:
+          type: string
+          example: "diem"
+        extendedConfig:
+          type: object
+          additionalProperties: true
+          example:
+            enableAutoEarn: true
+            enableRewardRedeem: true
+            pointExpireDays: 365
+            minEarnAmount: 50000
+            birthdayBonus: 100
+
+    # ── Program ──
+    Program:
+      type: object
+      properties:
+        _id:
+          type: string
+          example: prg001
+        name:
+          type: string
+          example: "Tich diem mua he 2026"
+        description:
+          type: string
+          example: "Nhan x2 diem cho moi giao dich tu 01/06 - 31/08"
+        type:
+          type: string
+          enum: [multiplier, bonus, category]
+          description: "Loai chuong trinh: multiplier (nhan diem), bonus (cong them), category (theo danh muc)"
+          example: multiplier
+        multiplier:
+          type: number
+          description: He so nhan diem (chi ap dung khi type = multiplier)
+          example: 2
+        bonusPoint:
+          type: integer
+          description: Diem thuong them (chi ap dung khi type = bonus)
+          nullable: true
+        startDate:
+          type: string
+          format: date-time
+          example: "2026-06-01T00:00:00Z"
+        endDate:
+          type: string
+          format: date-time
+          example: "2026-08-31T23:59:59Z"
+        isActive:
+          type: boolean
+          example: true
+        conditions:
+          type: object
+          description: Dieu kien ap dung chuong trinh
+          properties:
+            minOrderAmount:
+              type: number
+              description: Gia tri don hang toi thieu (VND)
+              example: 100000
+            applicableBranches:
+              type: array
+              description: Danh sach ID chi nhanh ap dung (rong = tat ca)
+              items:
+                type: string
+              example: ["br01", "br02"]
+            applicableCategories:
+              type: array
+              description: Danh sach ID danh muc san pham ap dung (rong = tat ca)
+              items:
+                type: string
+              example: []
+        createdAt:
+          type: string
+          format: date-time
+          example: "2026-04-01T00:00:00Z"
+        updatedAt:
+          type: string
+          format: date-time
+          example: "2026-04-15T00:00:00Z"
+
+    ProgramInput:
+      type: object
+      required: [name, type, startDate, endDate]
+      properties:
+        _id:
+          type: string
+          description: Truyen _id de cap nhat, bo trong de tao moi
+        name:
+          type: string
+          example: "Tich diem mua he 2026"
+        description:
+          type: string
+          example: "Nhan x2 diem cho moi giao dich tu 01/06 - 31/08"
+        type:
+          type: string
+          enum: [multiplier, bonus, category]
+          example: multiplier
+        multiplier:
+          type: number
+          example: 2
+        bonusPoint:
+          type: integer
+          nullable: true
+        startDate:
+          type: string
+          format: date-time
+          example: "2026-06-01T00:00:00Z"
+        endDate:
+          type: string
+          format: date-time
+          example: "2026-08-31T23:59:59Z"
+        isActive:
+          type: boolean
+          default: true
+        conditions:
+          type: object
+          properties:
+            minOrderAmount:
+              type: number
+            applicableBranches:
+              type: array
+              items:
+                type: string
+            applicableCategories:
+              type: array
+              items:
+                type: string
+
+  responses:
+    Unauthorized:
+      description: Chua xac thuc hoac token het han
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+          example:
+            code: 401
+            message: "Token khong hop le hoac da het han"
+            result: null
+
+    NotFound:
+      description: Khong tim thay tai nguyen
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+          example:
+            code: 404
+            message: "Khong tim thay ban ghi"
+            result: null
+
+    Conflict:
+      description: Xung dot du lieu (vi du: trung customerId)
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+          example:
+            code: 409
+            message: "Vi thanh vien cho khach hang nay da ton tai"
+            result: null
+
+    TooManyRequests:
+      description: Vuot qua gioi han request
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+          example:
+            code: 429
+            message: "Qua nhieu request, vui long thu lai sau"
+            result: null
