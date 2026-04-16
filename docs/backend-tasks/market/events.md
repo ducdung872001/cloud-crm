@@ -20,13 +20,139 @@ FE đã thiết kế storage.ts theo pattern **API-first, fallback localStorage*
 
 ---
 
-## PHẦN 1: ENDPOINTS CƠ BẢN (đã có spec)
+## PHẦN 1: DB SCHEMA + ENDPOINTS CƠ BẢN
 
-Xem chi tiết trong `docs/events/backend-spec.md`. Tóm tắt:
+### Table: `marketing_events`
 
-### DB Tables
-- `marketing_events` — Event CRUD (xem spec dòng 65-104)
-- `marketing_event_registrations` — Đăng ký (xem spec dòng 108-143)
+```sql
+CREATE TABLE marketing_events (
+  id              BIGINT AUTO_INCREMENT PRIMARY KEY,
+  tenant_id       BIGINT NOT NULL,
+  slug            VARCHAR(80) NOT NULL,
+  title           VARCHAR(255) NOT NULL,
+  description     TEXT,
+  content_html    MEDIUMTEXT COMMENT 'Nội dung chi tiết từ RebornEditor',
+  cover_image_url VARCHAR(500) DEFAULT NULL,
+
+  -- Thời gian
+  start_date              DATETIME NOT NULL,
+  end_date                DATETIME NOT NULL,
+  registration_open_date  DATETIME NOT NULL,
+  registration_close_date DATETIME NOT NULL,
+
+  -- Địa điểm
+  venue_name       VARCHAR(255),
+  venue_address    VARCHAR(500),
+  venue_city       VARCHAR(100),
+  venue_map_url    VARCHAR(500),
+  venue_is_online  TINYINT(1) DEFAULT 0,
+  venue_online_url VARCHAR(500),
+
+  -- Người liên hệ
+  contact_name  VARCHAR(100),
+  contact_phone VARCHAR(20),
+  contact_email VARCHAR(100),
+  contact_role  VARCHAR(100),
+
+  -- Sức chứa + giá vé
+  max_attendees INT DEFAULT NULL COMMENT 'NULL = không giới hạn',
+  ticket_price  DECIMAL(12,0) DEFAULT 0 COMMENT 'VND, 0 = miễn phí',
+
+  -- Trạng thái (ongoing/ended được tính runtime từ start_date/end_date)
+  status       ENUM('draft','published','ongoing','ended','cancelled') DEFAULT 'draft',
+  published_at DATETIME DEFAULT NULL,
+
+  -- Metadata
+  category VARCHAR(50) DEFAULT NULL COMMENT 'workshop, hội thảo, lớp học, networking, training, khác',
+  tags     JSON DEFAULT NULL COMMENT '["yoga","beginner"]',
+
+  -- Mở rộng GAP (xem PHẦN 2-6 bên dưới)
+  dynamic_fields       JSON DEFAULT NULL,
+  add_on_items         JSON DEFAULT NULL,
+  gallery_image_urls   JSON DEFAULT NULL,
+  require_payment_proof TINYINT(1) DEFAULT 0,
+  selectable_dates     JSON DEFAULT NULL,
+
+  -- Audit
+  created_by BIGINT DEFAULT NULL,
+  created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+  updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  deleted_at DATETIME DEFAULT NULL COMMENT 'Soft delete',
+
+  -- Indexes
+  UNIQUE INDEX idx_tenant_slug (tenant_id, slug),
+  INDEX idx_tenant_status_start (tenant_id, status, start_date),
+  INDEX idx_tenant_created (tenant_id, created_at DESC)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+```
+
+### Table: `marketing_event_registrations`
+
+```sql
+CREATE TABLE marketing_event_registrations (
+  id         BIGINT AUTO_INCREMENT PRIMARY KEY,
+  tenant_id  BIGINT NOT NULL,
+  event_id   BIGINT NOT NULL,
+  event_slug VARCHAR(80) NOT NULL COMMENT 'Denormalized để tra cứu nhanh',
+
+  -- Thông tin người đăng ký
+  full_name VARCHAR(100) NOT NULL,
+  phone     VARCHAR(20) NOT NULL,
+  email     VARCHAR(100) DEFAULT NULL,
+  company   VARCHAR(200) DEFAULT NULL,
+  note      TEXT DEFAULT NULL,
+
+  -- Trạng thái
+  status      ENUM('pending','confirmed','checked_in','cancelled','no_show') DEFAULT 'pending',
+  ticket_code VARCHAR(50) DEFAULT NULL COMMENT 'Sinh khi confirmed, format: SLUG8-RANDOM6',
+  ticket_qr_url VARCHAR(500) DEFAULT NULL,
+
+  -- Liên kết Sales + Customer
+  order_id                BIGINT DEFAULT NULL COMMENT 'FK → sale_orders (nếu có phí)',
+  converted_to_customer_id BIGINT DEFAULT NULL COMMENT 'FK → customers',
+
+  -- Timestamps trạng thái
+  confirmed_at  DATETIME DEFAULT NULL,
+  checked_in_at DATETIME DEFAULT NULL,
+  converted_at  DATETIME DEFAULT NULL,
+
+  -- Nguồn + UTM
+  source       ENUM('public_portal','manual','import','api') DEFAULT 'public_portal',
+  utm_source   VARCHAR(50) DEFAULT NULL,
+  utm_campaign VARCHAR(50) DEFAULT NULL,
+  utm_medium   VARCHAR(50) DEFAULT NULL,
+
+  -- Mở rộng GAP (xem PHẦN 2-5 bên dưới)
+  dynamic_field_values JSON DEFAULT NULL,
+  selected_add_ons     JSON DEFAULT NULL,
+  total_amount         DECIMAL(12,0) DEFAULT NULL,
+  selected_dates       JSON DEFAULT NULL,
+
+  -- Payment proof
+  payment_proof_url           VARCHAR(500) DEFAULT NULL,
+  payment_proof_status        ENUM('not_required','pending','submitted','approved','rejected') DEFAULT 'not_required',
+  payment_proof_submitted_at  DATETIME DEFAULT NULL,
+  payment_proof_reviewed_at   DATETIME DEFAULT NULL,
+  payment_proof_reviewed_by   BIGINT DEFAULT NULL,
+  payment_proof_reject_reason VARCHAR(500) DEFAULT NULL,
+
+  -- Audit
+  created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+  updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  deleted_at DATETIME DEFAULT NULL,
+
+  -- Indexes
+  INDEX idx_tenant_event_status (tenant_id, event_id, status),
+  INDEX idx_tenant_phone (tenant_id, phone),
+  UNIQUE INDEX idx_ticket_code (ticket_code),
+  INDEX idx_order (order_id),
+  INDEX idx_customer (converted_to_customer_id),
+  FOREIGN KEY (event_id) REFERENCES marketing_events(id) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+```
+
+### Dedupe rule
+Cùng `event_id` + cùng `phone` → reject HTTP 409 `DUPLICATE_PHONE`
 
 ### Endpoints cần triển khai
 
