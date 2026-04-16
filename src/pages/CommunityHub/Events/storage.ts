@@ -1,5 +1,7 @@
-// Event storage — localStorage cho MVP prototype.
-// Khi BE sẵn sàng, thay implementation bên dưới bằng API calls nhưng giữ signature.
+// Event storage — API-first, fallback localStorage khi BE chưa sẵn sàng.
+//
+// Pattern: mỗi method gọi API trước. Nếu API lỗi (network, 404, BE chưa deploy)
+// → fallback sang localStorage (prototype). Khi BE ready, localStorage code tự vô hiệu.
 
 import type {
   EventEntity,
@@ -12,9 +14,13 @@ import type {
   CheckInOutRecord,
 } from "./types";
 import { MOCK_EVENTS } from "@/mocks/community-hub/events";
+import EventService from "services/EventService";
 
 const KEY_EVENTS = "reborn.events";
 const KEY_REGISTRATIONS = "reborn.event_registrations";
+
+// ── Flag: set true khi API trả về thành công lần đầu → tắt fallback ──
+let apiAvailable = false;
 
 function readLS<T>(key: string, fallback: T): T {
   if (typeof window === "undefined") return fallback;
@@ -55,7 +61,6 @@ function generateTicketCode(eventSlug: string): string {
   return `${eventSlug.slice(0, 8).toUpperCase()}-${rand}`;
 }
 
-// Seed mock data nếu localStorage trống (dev first-time load)
 function ensureSeed(): void {
   const existing = readLS<EventEntity[] | null>(KEY_EVENTS, null);
   if (!existing) {
@@ -63,78 +68,202 @@ function ensureSeed(): void {
   }
 }
 
+/** Kiểm tra response API hợp lệ (code === 0 hoặc có result) */
+function isApiOk(res: any): boolean {
+  return res && (res.code === 0 || res.result !== undefined || res.ok === true);
+}
+
+/** Trích result từ API response */
+function unwrap<T>(res: any): T {
+  return res.result ?? res.data ?? res;
+}
+
 export const eventStorage = {
   // ═══ Events ═══════════════════════════════════════════════════════════
+  async listEventsAsync(params?: Record<string, unknown>): Promise<EventEntity[]> {
+    try {
+      const res = await EventService.list(params);
+      if (isApiOk(res)) {
+        apiAvailable = true;
+        return unwrap<{ items: EventEntity[] }>(res).items ?? unwrap<EventEntity[]>(res);
+      }
+    } catch { /* fallback */ }
+    return this.listEvents();
+  },
+
+  /** Sync version — dùng localStorage (backward-compatible với code hiện tại) */
   listEvents(): EventEntity[] {
     ensureSeed();
     return readLS<EventEntity[]>(KEY_EVENTS, []);
+  },
+
+  async getEventAsync(id: string): Promise<EventEntity | null> {
+    try {
+      const res = await EventService.get(id);
+      if (isApiOk(res)) {
+        apiAvailable = true;
+        return unwrap<EventEntity>(res);
+      }
+    } catch { /* fallback */ }
+    return this.getEvent(id);
   },
 
   getEvent(id: string): EventEntity | null {
     return this.listEvents().find((e) => e.id === id) ?? null;
   },
 
+  async getEventBySlugAsync(slug: string): Promise<EventEntity | null> {
+    try {
+      const res = await EventService.getPublic(slug);
+      if (isApiOk(res)) {
+        apiAvailable = true;
+        return unwrap<EventEntity>(res);
+      }
+    } catch { /* fallback */ }
+    return this.getEventBySlug(slug);
+  },
+
   getEventBySlug(slug: string): EventEntity | null {
     return this.listEvents().find((e) => e.slug === slug) ?? null;
+  },
+
+  async createEventAsync(
+    data: Omit<EventEntity, "id" | "slug" | "createdAt" | "updatedAt">,
+  ): Promise<EventEntity> {
+    try {
+      const res = await EventService.create(data as any);
+      if (isApiOk(res)) {
+        apiAvailable = true;
+        return unwrap<EventEntity>(res);
+      }
+    } catch { /* fallback */ }
+    return this.createEvent(data);
   },
 
   createEvent(data: Omit<EventEntity, "id" | "slug" | "createdAt" | "updatedAt">): EventEntity {
     const now = new Date().toISOString();
     const id = `evt-${Date.now()}`;
     const slug = generateSlug(data.title);
-    const entity: EventEntity = {
-      ...data,
-      id,
-      slug,
-      createdAt: now,
-      updatedAt: now,
-    };
+    const entity: EventEntity = { ...data, id, slug, createdAt: now, updatedAt: now };
     const all = this.listEvents();
     all.unshift(entity);
     writeLS(KEY_EVENTS, all);
     return entity;
   },
 
+  async updateEventAsync(id: string, patch: Partial<EventEntity>): Promise<EventEntity | null> {
+    try {
+      const res = await EventService.update(id, patch as any);
+      if (isApiOk(res)) {
+        apiAvailable = true;
+        return unwrap<EventEntity>(res);
+      }
+    } catch { /* fallback */ }
+    return this.updateEvent(id, patch);
+  },
+
   updateEvent(id: string, patch: Partial<EventEntity>): EventEntity | null {
     const all = this.listEvents();
     const idx = all.findIndex((e) => e.id === id);
     if (idx < 0) return null;
-    const updated: EventEntity = {
-      ...all[idx],
-      ...patch,
-      updatedAt: new Date().toISOString(),
-    };
+    const updated: EventEntity = { ...all[idx], ...patch, updatedAt: new Date().toISOString() };
     all[idx] = updated;
     writeLS(KEY_EVENTS, all);
     return updated;
   },
 
+  async publishEventAsync(id: string): Promise<EventEntity | null> {
+    try {
+      const res = await EventService.publish(id);
+      if (isApiOk(res)) { apiAvailable = true; return unwrap<EventEntity>(res); }
+    } catch { /* fallback */ }
+    return this.publishEvent(id);
+  },
+
   publishEvent(id: string): EventEntity | null {
-    return this.updateEvent(id, {
-      status: "published",
-      publishedAt: new Date().toISOString(),
-    });
+    return this.updateEvent(id, { status: "published", publishedAt: new Date().toISOString() });
+  },
+
+  async unpublishEventAsync(id: string): Promise<EventEntity | null> {
+    try {
+      const res = await EventService.unpublish(id);
+      if (isApiOk(res)) { apiAvailable = true; return unwrap<EventEntity>(res); }
+    } catch { /* fallback */ }
+    return this.unpublishEvent(id);
   },
 
   unpublishEvent(id: string): EventEntity | null {
     return this.updateEvent(id, { status: "draft" });
   },
 
+  async deleteEventAsync(id: string): Promise<void> {
+    try {
+      const res = await EventService.delete(id);
+      if (isApiOk(res)) { apiAvailable = true; return; }
+    } catch { /* fallback */ }
+    this.deleteEvent(id);
+  },
+
   deleteEvent(id: string): void {
     const all = this.listEvents().filter((e) => e.id !== id);
     writeLS(KEY_EVENTS, all);
-    // Xoá luôn registrations liên quan
     const regs = this.listRegistrations().filter((r) => r.eventId !== id);
     writeLS(KEY_REGISTRATIONS, regs);
   },
 
   // ═══ Registrations ════════════════════════════════════════════════════
+  async listRegistrationsByEventAsync(
+    eventId: string,
+    params?: Record<string, unknown>,
+  ): Promise<EventRegistration[]> {
+    try {
+      const res = await EventService.listRegistrations({ eventId, ...params });
+      if (isApiOk(res)) {
+        apiAvailable = true;
+        const data = unwrap<any>(res);
+        return data.items ?? data;
+      }
+    } catch { /* fallback */ }
+    return this.listRegistrationsByEvent(eventId);
+  },
+
   listRegistrations(): EventRegistration[] {
     return readLS<EventRegistration[]>(KEY_REGISTRATIONS, []);
   },
 
   listRegistrationsByEvent(eventId: string): EventRegistration[] {
     return this.listRegistrations().filter((r) => r.eventId === eventId);
+  },
+
+  async registerForEventAsync(
+    eventSlug: string,
+    data: {
+      fullName: string;
+      phone: string;
+      email?: string;
+      company?: string;
+      note?: string;
+      source?: "public_portal" | "manual" | "import";
+      utmSource?: string;
+      utmCampaign?: string;
+      dynamicFieldValues?: Record<string, string>;
+      selectedAddOns?: SelectedAddOn[];
+      totalAmount?: number;
+      selectedDates?: string[];
+      paymentProof?: PaymentProof;
+    },
+  ): Promise<{ ok: boolean; registration?: EventRegistration; error?: string }> {
+    try {
+      const res = await EventService.registerPublic(eventSlug, data as any);
+      if (isApiOk(res)) {
+        apiAvailable = true;
+        return { ok: true, registration: unwrap<EventRegistration>(res) };
+      }
+      if (res?.error || res?.message) {
+        return { ok: false, error: res.error ?? res.message };
+      }
+    } catch { /* fallback */ }
+    return this.registerForEvent(eventSlug, data);
   },
 
   registerForEvent(
@@ -148,13 +277,12 @@ export const eventStorage = {
       source?: "public_portal" | "manual" | "import";
       utmSource?: string;
       utmCampaign?: string;
-      // ── CHUNG: Mở rộng ──
       dynamicFieldValues?: Record<string, string>;
       selectedAddOns?: SelectedAddOn[];
       totalAmount?: number;
       selectedDates?: string[];
       paymentProof?: PaymentProof;
-    }
+    },
   ): { ok: boolean; registration?: EventRegistration; error?: string } {
     const event = this.getEventBySlug(eventSlug);
     if (!event) return { ok: false, error: "Không tìm thấy sự kiện" };
@@ -162,19 +290,11 @@ export const eventStorage = {
       return { ok: false, error: "Sự kiện chưa được công bố" };
     }
     const now = new Date();
-    if (new Date(event.registrationOpenDate) > now) {
-      return { ok: false, error: "Chưa đến thời gian mở đăng ký" };
-    }
-    if (new Date(event.registrationCloseDate) < now) {
-      return { ok: false, error: "Đã hết hạn đăng ký" };
-    }
+    if (new Date(event.registrationOpenDate) > now) return { ok: false, error: "Chưa đến thời gian mở đăng ký" };
+    if (new Date(event.registrationCloseDate) < now) return { ok: false, error: "Đã hết hạn đăng ký" };
     if (event.maxAttendees) {
-      const current = this.listRegistrationsByEvent(event.id).filter(
-        (r) => r.status !== "cancelled"
-      ).length;
-      if (current >= event.maxAttendees) {
-        return { ok: false, error: "Sự kiện đã đủ chỗ" };
-      }
+      const current = this.listRegistrationsByEvent(event.id).filter((r) => r.status !== "cancelled").length;
+      if (current >= event.maxAttendees) return { ok: false, error: "Sự kiện đã đủ chỗ" };
     }
 
     const registration: EventRegistration = {
@@ -191,7 +311,6 @@ export const eventStorage = {
       source: data.source ?? "public_portal",
       utmSource: data.utmSource,
       utmCampaign: data.utmCampaign,
-      // ── CHUNG: Mở rộng ──
       dynamicFieldValues: data.dynamicFieldValues,
       selectedAddOns: data.selectedAddOns,
       totalAmount: data.totalAmount,
@@ -204,10 +323,18 @@ export const eventStorage = {
     return { ok: true, registration };
   },
 
-  updateRegistrationStatus(
+  async updateRegistrationStatusAsync(
     regId: string,
-    status: RegistrationStatus
-  ): EventRegistration | null {
+    status: RegistrationStatus,
+  ): Promise<EventRegistration | null> {
+    try {
+      const res = await EventService.updateRegistration(regId, { status });
+      if (isApiOk(res)) { apiAvailable = true; return unwrap<EventRegistration>(res); }
+    } catch { /* fallback */ }
+    return this.updateRegistrationStatus(regId, status);
+  },
+
+  updateRegistrationStatus(regId: string, status: RegistrationStatus): EventRegistration | null {
     const all = this.listRegistrations();
     const idx = all.findIndex((r) => r.id === regId);
     if (idx < 0) return null;
@@ -225,16 +352,20 @@ export const eventStorage = {
     return updated;
   },
 
-  /** Ghi nhận đã chuyển thành customer/member. Thực tế sẽ gọi CustomerService. */
+  async markConvertedToMemberAsync(regId: string): Promise<EventRegistration | null> {
+    try {
+      const res = await EventService.convertToMember(regId);
+      if (isApiOk(res)) { apiAvailable = true; return unwrap<EventRegistration>(res); }
+    } catch { /* fallback */ }
+    const mockCustomerId = `cust-${Date.now()}`;
+    return this.markConvertedToMember(regId, mockCustomerId);
+  },
+
   markConvertedToMember(regId: string, customerId: string): EventRegistration | null {
     const all = this.listRegistrations();
     const idx = all.findIndex((r) => r.id === regId);
     if (idx < 0) return null;
-    all[idx] = {
-      ...all[idx],
-      convertedToCustomerId: customerId,
-      convertedAt: new Date().toISOString(),
-    };
+    all[idx] = { ...all[idx], convertedToCustomerId: customerId, convertedAt: new Date().toISOString() };
     writeLS(KEY_REGISTRATIONS, all);
     return all[idx];
   },
@@ -245,27 +376,39 @@ export const eventStorage = {
   },
 
   // ═══ Payment Proof ═════════════════════════════════════════════════════
+  async submitPaymentProofAsync(regId: string, imageDataUrl: string): Promise<EventRegistration | null> {
+    try {
+      const res = await EventService.submitPaymentProof(regId, { imageUrl: imageDataUrl });
+      if (isApiOk(res)) { apiAvailable = true; return unwrap<EventRegistration>(res); }
+    } catch { /* fallback */ }
+    return this.submitPaymentProof(regId, imageDataUrl);
+  },
+
   submitPaymentProof(regId: string, imageDataUrl: string): EventRegistration | null {
     const all = this.listRegistrations();
     const idx = all.findIndex((r) => r.id === regId);
     if (idx < 0) return null;
     all[idx] = {
       ...all[idx],
-      paymentProof: {
-        imageUrl: imageDataUrl,
-        submittedAt: new Date().toISOString(),
-        status: "submitted",
-      },
+      paymentProof: { imageUrl: imageDataUrl, submittedAt: new Date().toISOString(), status: "submitted" },
     };
     writeLS(KEY_REGISTRATIONS, all);
     return all[idx];
   },
 
-  reviewPaymentProof(
+  async reviewPaymentProofAsync(
     regId: string,
     approved: boolean,
     rejectReason?: string,
-  ): EventRegistration | null {
+  ): Promise<EventRegistration | null> {
+    try {
+      const res = await EventService.reviewPaymentProof(regId, { approved, rejectReason });
+      if (isApiOk(res)) { apiAvailable = true; return unwrap<EventRegistration>(res); }
+    } catch { /* fallback */ }
+    return this.reviewPaymentProof(regId, approved, rejectReason);
+  },
+
+  reviewPaymentProof(regId: string, approved: boolean, rejectReason?: string): EventRegistration | null {
     const all = this.listRegistrations();
     const idx = all.findIndex((r) => r.id === regId);
     if (idx < 0 || !all[idx].paymentProof) return null;
@@ -280,11 +423,19 @@ export const eventStorage = {
   },
 
   // ═══ Check-in / Check-out ═════════════════════════════════════════════
-  checkInRegistrant(
+  async checkInRegistrantAsync(
     regId: string,
     selectedDate?: string,
     adminName?: string,
-  ): EventRegistration | null {
+  ): Promise<EventRegistration | null> {
+    try {
+      const res = await EventService.checkIn(regId, { selectedDate });
+      if (isApiOk(res)) { apiAvailable = true; return unwrap<EventRegistration>(res); }
+    } catch { /* fallback */ }
+    return this.checkInRegistrant(regId, selectedDate, adminName);
+  },
+
+  checkInRegistrant(regId: string, selectedDate?: string, adminName?: string): EventRegistration | null {
     const all = this.listRegistrations();
     const idx = all.findIndex((r) => r.id === regId);
     if (idx < 0) return null;
@@ -294,14 +445,17 @@ export const eventStorage = {
       selectedDate,
     };
     const records = [...(all[idx].checkInOutRecords ?? []), record];
-    all[idx] = {
-      ...all[idx],
-      status: "checked_in",
-      checkedInAt: record.checkedInAt,
-      checkInOutRecords: records,
-    };
+    all[idx] = { ...all[idx], status: "checked_in", checkedInAt: record.checkedInAt, checkInOutRecords: records };
     writeLS(KEY_REGISTRATIONS, all);
     return all[idx];
+  },
+
+  async checkOutRegistrantAsync(regId: string): Promise<EventRegistration | null> {
+    try {
+      const res = await EventService.checkOut(regId);
+      if (isApiOk(res)) { apiAvailable = true; return unwrap<EventRegistration>(res); }
+    } catch { /* fallback */ }
+    return this.checkOutRegistrant(regId);
   },
 
   checkOutRegistrant(regId: string): EventRegistration | null {
@@ -309,7 +463,6 @@ export const eventStorage = {
     const idx = all.findIndex((r) => r.id === regId);
     if (idx < 0) return null;
     const records = [...(all[idx].checkInOutRecords ?? [])];
-    // Check-out record cuối cùng chưa có checkedOutAt
     const lastOpen = records.findIndex((r) => !r.checkedOutAt);
     if (lastOpen >= 0) {
       records[lastOpen] = { ...records[lastOpen], checkedOutAt: new Date().toISOString() };
@@ -329,20 +482,12 @@ export const eventStorage = {
     const cancelled = regs.filter((r) => r.status === "cancelled").length;
     const converted = regs.filter((r) => r.convertedToCustomerId).length;
     const activeCount = regs.filter((r) => r.status !== "cancelled").length;
-    const fillRate = event?.maxAttendees
-      ? Math.min(1, activeCount / event.maxAttendees)
-      : 0;
+    const fillRate = event?.maxAttendees ? Math.min(1, activeCount / event.maxAttendees) : 0;
     const conversionRate = regs.length ? converted / regs.length : 0;
-
-    // ── CHUNG: Mở rộng ──
     const activeRegs = regs.filter((r) => r.status !== "cancelled");
     const totalRevenue = activeRegs.reduce((s, r) => s + (r.totalAmount ?? 0), 0);
-    const paymentPendingCount = regs.filter(
-      (r) => r.paymentProof?.status === "submitted",
-    ).length;
-    const paymentApprovedCount = regs.filter(
-      (r) => r.paymentProof?.status === "approved",
-    ).length;
+    const paymentPendingCount = regs.filter((r) => r.paymentProof?.status === "submitted").length;
+    const paymentApprovedCount = regs.filter((r) => r.paymentProof?.status === "approved").length;
 
     return {
       totalRegistrations: regs.length,

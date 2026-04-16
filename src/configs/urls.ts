@@ -2494,6 +2494,38 @@ export const urlsApi = {
     updateDmnSetting: prefixMarket + "/promotion/update/dmn-setting",
     share: prefixMarket + "/promotion/share",
   },
+  // ═══ Events (Community Hub) ═══════════════════════════════════════════
+  events: {
+    // Public (no auth)
+    getPublic: prefixMarket + "/events/public",        // GET  ?slug={slug}
+    registerPublic: prefixMarket + "/events/public/register", // POST ?slug={slug}
+    checkTicket: prefixMarket + "/events/public/check-ticket", // POST ?slug={slug}
+    // Admin (JWT)
+    list: prefixMarket + "/events/list",               // GET  ?status=&q=&category=&page=&limit=
+    get: prefixMarket + "/events/get",                 // GET  ?id={id}
+    create: prefixMarket + "/events/create",           // POST
+    update: prefixMarket + "/events/update",           // POST ?id={id}
+    delete: prefixMarket + "/events/delete",           // DELETE ?id={id}
+    publish: prefixMarket + "/events/publish",         // POST ?id={id}
+    unpublish: prefixMarket + "/events/unpublish",     // POST ?id={id}
+    cancel: prefixMarket + "/events/cancel",           // POST ?id={id}
+    // Registrations
+    registrations: prefixMarket + "/events/registrations",     // GET ?eventId={id}&status=&q=&page=&limit=
+    updateRegistration: prefixMarket + "/events/registrations/update", // POST ?id={regId}
+    issueTicket: prefixMarket + "/events/registrations/issue-ticket",  // POST ?id={regId}
+    convertToMember: prefixMarket + "/events/registrations/convert",   // POST ?id={regId}
+    importRegistrations: prefixMarket + "/events/registrations/import", // POST multipart
+    // Payment proof
+    submitPaymentProof: prefixMarket + "/events/registrations/payment-proof", // POST ?id={regId}
+    reviewPaymentProof: prefixMarket + "/events/registrations/payment-review", // POST ?id={regId}
+    // Check-in / Check-out
+    checkIn: prefixMarket + "/events/registrations/check-in",   // POST ?id={regId}
+    checkOut: prefixMarket + "/events/registrations/check-out", // POST ?id={regId}
+    // Service usage (đặc thù)
+    listServiceUsage: prefixMarket + "/events/service-usage/list",  // GET ?registrationId={regId}
+    addServiceUsage: prefixMarket + "/events/service-usage/add",    // POST
+    removeServiceUsage: prefixMarket + "/events/service-usage/delete", // DELETE ?id={id}
+  },
   fixedPricePromotion: {
     getProducts: prefixMarket + "/fixedPrice/products",
     saveProducts: prefixMarket + "/fixedPrice/products/save",
