@@ -1,16 +1,16 @@
 # Part 08 — Backend Architecture
 
-> Mo ta kien truc 12 microservice, bounded context, giao tiep dong bo /
-> bat dong bo, BPM engine, va contract service cho B2B CRM enterprise.
+> Mô tả kiến trúc 12 microservice, bounded context, giao tiếp đồng bộ /
+> bất đồng bộ, BPM engine, và contract service cho B2B CRM enterprise.
 
 ---
 
 ## 1. Executive Summary
 
-Backend gom **12 microservice** xay tren **Java Spring Boot**, giao tiep
-qua REST (sync) va RabbitMQ (async). Moi service co bounded context ro rang,
-API prefix rieng, va co the scale doc lap. BPM engine (Camunda/Flowable)
-xu ly workflow phuc tap nhu phe duyet hop dong, approval chain nhieu cap.
+Backend gồm **12 microservice** xây trên **Java Spring Boot**, giao tiếp
+qua REST (sync) và RabbitMQ (async). Mỗi service có bounded context rõ ràng,
+API prefix riêng, và có thể scale độc lập. BPM engine (Camunda/Flowable)
+xử lý workflow phức tạp như phê duyệt hợp đồng, approval chain nhiều cấp.
 
 ---
 
@@ -75,21 +75,21 @@ xu ly workflow phuc tap nhu phe duyet hop dong, approval chain nhieu cap.
 
 ### 4.1. Synchronous — REST
 
-Su dung cho thao tac can response ngay lap tuc:
+Sử dụng cho thao tác cần response ngay lập tức:
 
-| Caller      | Callee     | Endpoint                 | Muc dich                   |
+| Caller      | Callee     | Endpoint                 | Mục đích                   |
 |-------------|------------|--------------------------|----------------------------|
-| sales       | customer   | GET /api/customer/{id}   | Lay thong tin cong ty      |
-| contract    | billing    | POST /api/billing/invoice | Tao invoice tu contract    |
-| care        | customer   | GET /api/customer/search | Tim khach hang theo ticket |
-| billing     | finance    | POST /api/finance/entry  | Ghi but toan ke toan       |
+| sales       | customer   | GET /api/customer/{id}   | Lấy thông tin công ty      |
+| contract    | billing    | POST /api/billing/invoice | Tạo invoice từ contract    |
+| care        | customer   | GET /api/customer/search | Tìm khách hàng theo ticket |
+| billing     | finance    | POST /api/finance/entry  | Ghi bút toán kế toán       |
 
-Convention: su dung **Feign Client** voi circuit breaker (Resilience4j).
-Timeout mac dinh 5s, retry 2 lan.
+Convention: sử dụng **Feign Client** với circuit breaker (Resilience4j).
+Timeout mặc định 5s, retry 2 lần.
 
 ### 4.2. Asynchronous — RabbitMQ Events
 
-Su dung cho thao tac khong can response ngay, hoac fan-out nhieu consumer:
+Sử dụng cho thao tác không cần response ngay, hoặc fan-out nhiều consumer:
 
 | Exchange           | Routing Key              | Publisher  | Consumer(s)           |
 |--------------------|--------------------------|------------|-----------------------|
@@ -98,9 +98,9 @@ Su dung cho thao tac khong can response ngay, hoac fan-out nhieu consumer:
 | crm.billing        | invoice.paid             | billing    | finance, notify       |
 | crm.customer       | company.created          | customer   | market, sales         |
 | crm.care           | ticket.escalated         | care       | notify, operation     |
-| crm.integration    | webhook.received         | integration| tuong ung service     |
+| crm.integration    | webhook.received         | integration| tương ứng service     |
 
-Message format chuan:
+Message format chuẩn:
 
 ```json
 {
@@ -119,30 +119,30 @@ Message format chuan:
 
 ### 5.1. Workflow (BPMN)
 
-Service **operation** tich hop BPM engine (Camunda / Flowable) de xu ly:
+Service **operation** tích hợp BPM engine (Camunda / Flowable) để xử lý:
 
-- Phe duyet hop dong nhieu cap (Manager -> Director -> CEO)
-- Quy trinh onboarding khach hang B2B
-- Ticket escalation tu care -> sales -> management
+- Phê duyệt hợp đồng nhiều cấp (Manager -> Director -> CEO)
+- Quy trình onboarding khách hàng B2B
+- Ticket escalation từ care -> sales -> management
 
 ```
 +--------+     +----------+     +----------+     +---------+
-| Start  | --> | AM Tao   | --> | Manager  | --> | Director|
-|        |     | Contract |     | Duyet    |     | Duyet   |
+| Start  | --> | AM Tạo   | --> | Manager  | --> | Director|
+|        |     | Contract |     | Duyệt    |     | Duyệt   |
 +--------+     +----------+     +----+-----+     +----+----+
                                      |                |
                                   Reject           Reject
                                      |                |
                                      v                v
                                 +----------+     +----------+
-                                | AM Sua   |     | AM Sua   |
-                                | Lai      |     | Lai      |
+                                | AM Sửa   |     | AM Sửa   |
+                                | Lại      |     | Lại      |
                                 +----------+     +----------+
 ```
 
 ### 5.2. Business Rules (DMN)
 
-DMN decision table ap dung cho:
+DMN decision table áp dụng cho:
 
 | Rule                      | Input               | Output              |
 |---------------------------|----------------------|---------------------|
@@ -153,7 +153,7 @@ DMN decision table ap dung cho:
 
 ---
 
-## 6. Contract Service — Chi tiet
+## 6. Contract Service — Chi tiết
 
 ### 6.1. Lifecycle
 
@@ -166,16 +166,16 @@ CANCELLED  REJECTED  REJECTED             VOIDED    RENEWED
 
 ### 6.2. Approval Chain
 
-- Cau hinh dong theo `contract_value` threshold
-- Moi cap phe duyet co deadline (SLA)
-- Neu het han -> tu dong escalate len cap tren
-- Luu toan bo lich su phe duyet trong `approval_log`
+- Cấu hình động theo `contract_value` threshold
+- Mỗi cấp phê duyệt có deadline (SLA)
+- Nếu hết hạn -> tự động escalate lên cấp trên
+- Lưu toàn bộ lịch sử phê duyệt trong `approval_log`
 
 ### 6.3. eSign Integration
 
-- Tich hop eSign provider qua webhook callback
-- Luu `e_sign_log`: signer, timestamp, IP, certificate hash
-- Sau ky -> tu dong chuyen trang thai SIGNED, phat event `contract.signed`
+- Tích hợp eSign provider qua webhook callback
+- Lưu `e_sign_log`: signer, timestamp, IP, certificate hash
+- Sau ký -> tự động chuyển trạng thái SIGNED, phát event `contract.signed`
 
 ---
 
@@ -183,12 +183,12 @@ CANCELLED  REJECTED  REJECTED             VOIDED    RENEWED
 
 | Pattern              | Implementation                              |
 |----------------------|---------------------------------------------|
-| Tenant Middleware    | Filter inject tenant_id tu Hostname header  |
+| Tenant Middleware    | Filter inject tenant_id từ Hostname header  |
 | Base Entity          | id, tenant_id, branch_id, created/updated_at|
 | Pagination           | Page + size + sort, max 200 records/page    |
-| Error Response       | `{ code, message, details }` chuan hoa      |
+| Error Response       | `{ code, message, details }` chuẩn hóa      |
 | Health Check         | `/actuator/health` — MySQL, Redis, RabbitMQ |
-| API Versioning       | URL prefix: /api/v1/... (hien tai v1)       |
+| API Versioning       | URL prefix: /api/v1/... (hiện tại v1)       |
 | Request Validation   | Bean Validation (JSR 380) + custom validator|
 | Logging              | Structured JSON, correlation-id per request |
 
@@ -196,8 +196,8 @@ CANCELLED  REJECTED  REJECTED             VOIDED    RENEWED
 
 ## 8. Scalability
 
-- Moi service chay **2+ instance** phia sau load balancer
-- Stateless design — session luu Redis, khong luu local
-- RabbitMQ consumer co the scale horizontal (competing consumers)
+- Mỗi service chạy **2+ instance** phía sau load balancer
+- Stateless design — session lưu Redis, không lưu local
+- RabbitMQ consumer có thể scale horizontal (competing consumers)
 - Database connection pooling: HikariCP, max 20 conn/service
-- Roadmap: tach DB cho notification + integration khi > 10K CCU
+- Roadmap: tách DB cho notification + integration khi > 10K CCU

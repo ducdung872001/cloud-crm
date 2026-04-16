@@ -1,17 +1,17 @@
 # Part 04 — Routing & Navigation
 
-> Mo ta cach he thong frontend dinh tuyen URL, cau hinh menu sidebar,
-> va ap dung phan quyen vao dieu huong.
+> Mô tả cách hệ thống frontend định tuyến URL, cấu hình menu sidebar,
+> và áp dụng phân quyền vào điều hướng.
 
 ---
 
 ## 1. Executive Summary
 
-Routing cua Reborn CRM duoc dinh nghia trong file `routes.tsx` (1912 dong),
-su dung React Router 5. He thong co **90+ page routes**, moi route duoc
-bao ve boi permission check. Menu sidebar doc tu `menuSidebar.ts` va
-loc theo quyen cua user hien tai. Tenant routing dua tren hostname
-(subdomain) de xac dinh tenant context.
+Routing của Reborn CRM được định nghĩa trong file `routes.tsx` (1912 dòng),
+sử dụng React Router 5. Hệ thống có **90+ page routes**, mỗi route được
+bảo vệ bởi permission check. Menu sidebar đọc từ `menuSidebar.ts` và
+lọc theo quyền của user hiện tại. Tenant routing dựa trên hostname
+(subdomain) để xác định tenant context.
 
 ---
 
@@ -21,89 +21,89 @@ loc theo quyen cua user hien tai. Tenant routing dua tren hostname
 Browser URL:
   https://techcorp.reborn.vn/crm/opportunity
 
-Phan tich:
-  ├── techcorp          → tenantId (extract tu subdomain)
+Phân tích:
+  ├── techcorp          → tenantId (extract từ subdomain)
   ├── reborn.vn         → platform domain
   ├── /crm              → app prefix
   └── /opportunity      → page route
 
-Luong xu ly:
-  1. Nginx nhan request, route tat ca *.reborn.vn → React SPA
-  2. React App khoi dong, doc hostname → extract tenantId
-  3. AuthContext luu tenantId, gui kem moi API call (header X-Tenant-Id)
-  4. Menu sidebar va feature flag loc theo tenant config
+Luồng xử lý:
+  1. Nginx nhận request, route tất cả *.reborn.vn → React SPA
+  2. React App khởi động, đọc hostname → extract tenantId
+  3. AuthContext lưu tenantId, gửi kèm mọi API call (header X-Tenant-Id)
+  4. Menu sidebar và feature flag lọc theo tenant config
 ```
 
 ---
 
-## 3. routes.tsx — Cau truc
+## 3. routes.tsx — Cấu trúc
 
-File `src/configs/routes.tsx` (1912 dong) dinh nghia toan bo route:
+File `src/configs/routes.tsx` (1912 dòng) định nghĩa toàn bộ route:
 
 ```
 routes.tsx
 │
-├── Public Routes (khong can login)
+├── Public Routes (không cần login)
 │   ├── /login
 │   ├── /forgot-password
 │   ├── /register
 │   └── /sso/callback
 │
-├── Protected Routes (can login + permission)
+├── Protected Routes (cần login + permission)
 │   │
-│   ├── /dashboard                    # Trang chu
+│   ├── /dashboard                    # Trang chủ
 │   │
-│   ├── /customer/*                   # Module Khach hang
+│   ├── /customer/*                   # Module Khách hàng
 │   │   ├── /customer/list
 │   │   ├── /customer/detail/:id
 │   │   └── /customer/create
 │   │
-│   ├── /contact/*                    # Lien he
-│   ├── /partner/*                    # Doi tac
+│   ├── /contact/*                    # Liên hệ
+│   ├── /partner/*                    # Đối tác
 │   │
-│   ├── /opportunity/*                # Co hoi ban hang
+│   ├── /opportunity/*                # Cơ hội bán hàng
 │   │   ├── /opportunity/kanban
 │   │   ├── /opportunity/list
 │   │   └── /opportunity/detail/:id
 │   │
-│   ├── /quotation/*                  # Bao gia
-│   ├── /contract/*                   # Hop dong
-│   ├── /invoice/*                    # Hoa don
+│   ├── /quotation/*                  # Báo giá
+│   ├── /contract/*                   # Hợp đồng
+│   ├── /invoice/*                    # Hóa đơn
 │   │
-│   ├── /project/*                    # Du an
+│   ├── /project/*                    # Dự án
 │   │   ├── /project/list
 │   │   ├── /project/detail/:id
 │   │   ├── /project/gantt/:id
 │   │   └── /project/board/:id
 │   │
-│   ├── /ticket/*                     # Ticket ho tro
-│   ├── /warranty/*                   # Bao hanh
+│   ├── /ticket/*                     # Ticket hỗ trợ
+│   ├── /warranty/*                   # Bảo hành
 │   │
-│   ├── /campaign/*                   # Chien dich marketing
-│   ├── /voucher/*                    # Khuyen mai
+│   ├── /campaign/*                   # Chiến dịch marketing
+│   ├── /voucher/*                    # Khuyến mại
 │   │
-│   ├── /cashbook/*                   # So thu chi
-│   ├── /debt/*                       # Cong no
-│   ├── /fund/*                       # Quy
+│   ├── /cashbook/*                   # Sổ thu chi
+│   ├── /debt/*                       # Công nợ
+│   ├── /fund/*                       # Quỹ
 │   │
 │   ├── /kpi/*                        # KPI
-│   ├── /timesheet/*                  # Cham cong / timesheet
+│   ├── /timesheet/*                  # Chấm công / timesheet
 │   │
 │   ├── /bpm/*                        # BPM workflow
 │   │   ├── /bpm/designer
 │   │   ├── /bpm/process-list
 │   │   └── /bpm/approval
 │   │
-│   ├── /product/*                    # San pham / dich vu
+│   ├── /product/*                    # Sản phẩm / dịch vụ
 │   ├── /inventory/*                  # Kho
 │   │
-│   ├── /report/*                     # Bao cao
+│   ├── /report/*                     # Báo cáo
 │   │   ├── /report/sales
 │   │   ├── /report/revenue
 │   │   ├── /report/kpi
 │   │   └── /report/custom
 │   │
-│   └── /setting/*                    # Cai dat
+│   └── /setting/*                    # Cài đặt
 │       ├── /setting/user
 │       ├── /setting/role
 │       ├── /setting/tenant
@@ -146,7 +146,7 @@ routes.tsx
                +-----------------+
 ```
 
-Moi route dinh nghia truong `permission`:
+Mỗi route định nghĩa trường `permission`:
 
 ```typescript
 {
@@ -161,7 +161,7 @@ Moi route dinh nghia truong `permission`:
 
 ## 5. Menu Sidebar
 
-### 5.1. Cau hinh (menuSidebar.ts)
+### 5.1. Cấu hình (menuSidebar.ts)
 
 ```typescript
 const menuItems = [
@@ -174,15 +174,15 @@ const menuItems = [
   },
   {
     key: "customer",
-    label: "Khach hang",
+    label: "Khách hàng",
     icon: <CustomerIcon />,
     children: [
-      { key: "customer-list", label: "Danh sach KH", path: "/customer/list", permission: "customer.view" },
-      { key: "contact-list", label: "Lien he", path: "/contact/list", permission: "contact.view" },
-      { key: "partner-list", label: "Doi tac", path: "/partner/list", permission: "partner.view" },
+      { key: "customer-list", label: "Danh sách KH", path: "/customer/list", permission: "customer.view" },
+      { key: "contact-list", label: "Liên hệ", path: "/contact/list", permission: "contact.view" },
+      { key: "partner-list", label: "Đối tác", path: "/partner/list", permission: "partner.view" },
     ],
   },
-  // ... 15+ nhom menu
+  // ... 15+ nhóm menu
 ];
 ```
 
@@ -198,34 +198,34 @@ filterByPermission(menuItems, user.permissions)
 filterByTenantFeature(menuItems, tenant.features)
     |
     v
-Rendered sidebar (chi hien menu user co quyen)
+Rendered sidebar (chỉ hiện menu user có quyền)
 ```
 
-- Neu user khong co quyen `contract.view`, menu "Hop dong" an hoan toan.
-- Neu tenant khong bat feature `warranty`, menu "Bao hanh" bi an.
+- Nếu user không có quyền `contract.view`, menu "Hợp đồng" ẩn hoàn toàn.
+- Nếu tenant không bật feature `warranty`, menu "Bảo hành" bị ẩn.
 
 ---
 
 ## 6. Navigation Patterns
 
-### 6.1. Breadcrumb tu dong
+### 6.1. Breadcrumb tự động
 
 ```
-Dashboard > Khach hang > Chi tiet > Techcorp JSC
+Dashboard > Khách hàng > Chi tiết > Techcorp JSC
 ```
 
-Breadcrumb duoc generate tu route config, khong hardcode.
+Breadcrumb được generate từ route config, không hardcode.
 
 ### 6.2. Quick Navigation
 
-- **Sidebar click** — chuyen page chinh
-- **Tab trong detail page** — Customer detail → tab Lien he / Co hoi / Hop dong
-- **Action link** — Tu danh sach co hoi, click "Tao bao gia" → /quotation/create?opportunityId=xxx
-- **Search bar** — Tim nhanh khach hang, co hoi, hop dong theo ten/ma
+- **Sidebar click** — chuyển page chính
+- **Tab trong detail page** — Customer detail → tab Liên hệ / Cơ hội / Hợp đồng
+- **Action link** — Từ danh sách cơ hội, click "Tạo báo giá" → /quotation/create?opportunityId=xxx
+- **Search bar** — Tìm nhanh khách hàng, cơ hội, hợp đồng theo tên/mã
 
 ### 6.3. Deep Link
 
-Moi entity co URL duy nhat, ho tro bookmark va share link:
+Mỗi entity có URL duy nhất, hỗ trợ bookmark và share link:
 ```
 /customer/detail/12345
 /opportunity/detail/67890
@@ -234,9 +234,9 @@ Moi entity co URL duy nhat, ho tro bookmark va share link:
 
 ---
 
-## 7. Thong ke Route
+## 7. Thống kê Route
 
-| Nhom                | So route | Vi du                        |
+| Nhóm                | Số route | Ví dụ                        |
 |---------------------|----------|------------------------------|
 | Customer & Contact  | 12       | /customer/*, /contact/*, /partner/* |
 | Sales Pipeline      | 16       | /opportunity/*, /quotation/*, /contract/*, /invoice/* |
@@ -247,8 +247,8 @@ Moi entity co URL duy nhat, ho tro bookmark va share link:
 | KPI & Report        | 8        | /kpi/*, /report/*            |
 | BPM                 | 6        | /bpm/*                       |
 | Settings            | 12       | /setting/*                   |
-| **Tong**            | **90+**  |                              |
+| **Tổng**            | **90+**  |                              |
 
 ---
 
-*Tiep theo: [Part 05 — Component & Module](part-05-component-module.md)*
+*Tiếp theo: [Part 05 — Component & Module](part-05-component-module.md)*

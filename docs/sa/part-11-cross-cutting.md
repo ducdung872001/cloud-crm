@@ -1,7 +1,7 @@
 # Part 11 — Cross-cutting Concerns
 
-> Mo ta cac van de xuyen suot (cross-cutting) anh huong toan he thong:
-> logging, error handling, i18n, date/time, performance, va background jobs.
+> Mô tả các vấn đề xuyên suốt (cross-cutting) ảnh hưởng toàn hệ thống:
+> logging, error handling, i18n, date/time, performance, và background jobs.
 
 ---
 
@@ -9,21 +9,21 @@
 
 ### 1.1. Client-side Logging
 
-Hien tai frontend su dung `console.log` / `console.warn` / `console.error`
-truc tiep trong code. Chua co tap trung log ra external service.
+Hiện tại frontend sử dụng `console.log` / `console.warn` / `console.error`
+trực tiếp trong code. Chưa có tập trung log ra external service.
 
-| Muc do     | Su dung                          | Vi du                          |
+| Mức độ     | Sử dụng                          | Ví dụ                          |
 |-----------|----------------------------------|--------------------------------|
 | `log`     | Debug info trong dev             | API response, state change     |
-| `warn`    | Logic bat thuong nhung khong loi | Missing optional field         |
-| `error`   | Loi can xu ly                    | API fail, render crash         |
+| `warn`    | Logic bất thường nhưng không lỗi | Missing optional field         |
+| `error`   | Lỗi cần xử lý                    | API fail, render crash         |
 
-**Roadmap:** Tich hop Sentry SDK de bat loi production tu dong.
-Config se dung `VITE_SENTRY_DSN` env var, filter sensitive data truoc khi gui.
+**Roadmap:** Tích hợp Sentry SDK để bắt lỗi production tự động.
+Config sẽ dùng `VITE_SENTRY_DSN` env var, filter sensitive data trước khi gửi.
 
 ### 1.2. Server-side Logging
 
-Backend (Spring Boot) su dung **SLF4J + Logback** lam logging framework.
+Backend (Spring Boot) sử dụng **SLF4J + Logback** làm logging framework.
 
 ```
 [2026-04-16 09:23:45.123] [crm-service] [INFO] [req-abc123] 
@@ -31,10 +31,10 @@ Backend (Spring Boot) su dung **SLF4J + Logback** lam logging framework.
 ```
 
 - **Format:** timestamp, service-name, level, correlation-id, message
-- **Correlation ID:** truyen qua header `X-Request-Id` tu API gateway
+- **Correlation ID:** truyền qua header `X-Request-Id` từ API gateway
 - **Log level:** DEBUG (dev), INFO (staging), WARN (prod)
-- **ELK Stack:** Logstash thu log tu container → Elasticsearch → Kibana dashboard
-- **Retention:** 7 ngay (dev), 30 ngay (staging), 90 ngay (prod)
+- **ELK Stack:** Logstash thu log từ container → Elasticsearch → Kibana dashboard
+- **Retention:** 7 ngày (dev), 30 ngày (staging), 90 ngày (prod)
 
 ---
 
@@ -42,7 +42,7 @@ Backend (Spring Boot) su dung **SLF4J + Logback** lam logging framework.
 
 ### 2.1. Frontend — ErrorBoundary
 
-React ErrorBoundary bat render error va hien thi fallback UI:
+React ErrorBoundary bắt render error và hiển thị fallback UI:
 
 ```tsx
 <ErrorBoundary fallback={<ErrorPage />}>
@@ -50,9 +50,9 @@ React ErrorBoundary bat render error va hien thi fallback UI:
 </ErrorBoundary>
 ```
 
-- **Global level:** wrap toan bo `<App />` — bat moi unhandled error
-- **Page level:** tung route co the co ErrorBoundary rieng
-- **API error:** Axios interceptor bat HTTP error, hien thi toast notification
+- **Global level:** wrap toàn bộ `<App />` — bắt mọi unhandled error
+- **Page level:** từng route có thể có ErrorBoundary riêng
+- **API error:** Axios interceptor bắt HTTP error, hiển thị toast notification
 
 ### 2.2. Backend — Global Exception Handler
 
@@ -69,7 +69,7 @@ public class GlobalExceptionHandler {
 
 ### 2.3. Error Code Convention
 
-| Range       | Loai                | Vi du                        |
+| Range       | Loại                | Ví dụ                        |
 |------------|---------------------|------------------------------|
 | 1000-1999  | Authentication      | 1001 = Token expired         |
 | 2000-2999  | Authorization       | 2001 = No permission         |
@@ -83,7 +83,7 @@ public class GlobalExceptionHandler {
 
 ### 3.1. Framework
 
-Frontend su dung **react-i18next** voi cau hinh:
+Frontend sử dụng **react-i18next** với cấu hình:
 
 ```typescript
 i18n.use(initReactI18next).init({
@@ -110,14 +110,14 @@ src/locales/
 
 ### 3.3. Date & Currency Formatting
 
-| Loai     | Vi du (vi)             | Vi du (en)           |
+| Loại     | Ví dụ (vi)             | Ví dụ (en)           |
 |---------|------------------------|----------------------|
 | Date    | 16/04/2026             | 04/16/2026           |
 | Money   | 1.500.000 VND          | 1,500,000 VND       |
 | Percent | 10,5%                  | 10.5%                |
 
-Su dung `Intl.NumberFormat("vi-VN", { style: "currency", currency: "VND" })`
-cho formatting tien te nhat quan.
+Sử dụng `Intl.NumberFormat("vi-VN", { style: "currency", currency: "VND" })`
+cho formatting tiền tệ nhất quán.
 
 ---
 
@@ -125,18 +125,18 @@ cho formatting tien te nhat quan.
 
 ### 4.1. Dual Library (Tech Debt)
 
-He thong hien dung **ca hai** `moment.js` va `date-fns`:
+Hệ thống hiện dùng **cả hai** `moment.js` và `date-fns`:
 
-- **moment.js:** code cu (2022-2024), dung trong form, filter, report
-- **date-fns:** code moi (2024+), nhe hon, tree-shakeable
+- **moment.js:** code cũ (2022-2024), dùng trong form, filter, report
+- **date-fns:** code mới (2024+), nhẹ hơn, tree-shakeable
 
-Day la tech debt da biet (xem ADR-05 trong Part 13). Ke hoach migrate:
-module moi bat buoc dung `date-fns`, module cu migrate dan theo sprint.
+Đây là tech debt đã biết (xem ADR-05 trong Part 13). Kế hoạch migrate:
+module mới bắt buộc dùng `date-fns`, module cũ migrate dần theo sprint.
 
 ### 4.2. Timezone
 
-- **Backend:** luu tat ca thoi gian dang UTC trong MySQL (`DATETIME` column)
-- **Frontend:** convert sang timezone cua user khi hien thi
+- **Backend:** lưu tất cả thời gian dạng UTC trong MySQL (`DATETIME` column)
+- **Frontend:** convert sang timezone của user khi hiển thị
 - **API contract:** ISO 8601 format: `2026-04-16T09:30:00Z`
 
 ---
@@ -145,23 +145,23 @@ module moi bat buoc dung `date-fns`, module cu migrate dan theo sprint.
 
 ### 5.1. Frontend
 
-| Ky thuat                | Mo ta                                          |
+| Kỹ thuật                | Mô tả                                          |
 |------------------------|------------------------------------------------|
-| Vite code-splitting    | Moi route la 1 chunk rieng, load on-demand     |
+| Vite code-splitting    | Mỗi route là 1 chunk riêng, load on-demand     |
 | React.lazy + Suspense  | Lazy load page component                       |
-| ag-Grid virtualization | Chi render row trong viewport (10k+ row OK)    |
-| React.memo             | Tranh re-render component khi props khong doi   |
-| useMemo / useCallback  | Cache gia tri tinh toan nang, callback on cung  |
+| ag-Grid virtualization | Chỉ render row trong viewport (10k+ row OK)    |
+| React.memo             | Tránh re-render component khi props không đổi   |
+| useMemo / useCallback  | Cache giá trị tính toán nặng, callback ổn cùng  |
 | Image optimization     | WebP format, lazy loading, CDN cache            |
 
 ### 5.2. Backend
 
-| Ky thuat             | Mo ta                                           |
+| Kỹ thuật             | Mô tả                                           |
 |---------------------|------------------------------------------------|
 | Redis cache         | Cache permission, config, lookup data           |
 | Query optimization  | Index, pagination, avoid N+1                    |
 | Connection pool     | HikariCP, max 20 connections per service        |
-| Async processing    | RabbitMQ cho task nang (email, report)          |
+| Async processing    | RabbitMQ cho task nặng (email, report)          |
 
 ---
 
@@ -175,29 +175,29 @@ Producer (API) → RabbitMQ Exchange → Queue → Consumer (Worker)
 
 ### 6.2. Job Catalog
 
-| Queue Name              | Chuc nang              | Retry | DLQ |
+| Queue Name              | Chức năng              | Retry | DLQ |
 |------------------------|------------------------|-------|-----|
-| `email.send`           | Gui email (SMTP)       | 3 lan | Co  |
-| `report.generate`      | Tao bao cao Excel/PDF  | 2 lan | Co  |
-| `sla.check`            | Kiem tra SLA deadline   | 1 lan | Co  |
-| `notification.push`    | Push notification       | 3 lan | Co  |
-| `import.process`       | Import Excel data       | 1 lan | Co  |
+| `email.send`           | Gửi email (SMTP)       | 3 lần | Có  |
+| `report.generate`      | Tạo báo cáo Excel/PDF  | 2 lần | Có  |
+| `sla.check`            | Kiểm tra SLA deadline   | 1 lần | Có  |
+| `notification.push`    | Push notification       | 3 lần | Có  |
+| `import.process`       | Import Excel data       | 1 lần | Có  |
 
 ### 6.3. Dead Letter Queue (DLQ)
 
-Khi message that bai sau max retry, chuyen vao DLQ de:
-1. Admin review tren RabbitMQ Management UI
-2. Fix loi va replay message
-3. Alert qua email/Slack neu DLQ > 100 messages
+Khi message thất bại sau max retry, chuyển vào DLQ để:
+1. Admin review trên RabbitMQ Management UI
+2. Fix lỗi và replay message
+3. Alert qua email/Slack nếu DLQ > 100 messages
 
 ---
 
-## 7. Tong ket
+## 7. Tổng kết
 
-Cross-cutting concerns duoc xu ly nhat quan qua cac layer:
-- **Logging:** console (FE) + SLF4J/ELK (BE), huong toi Sentry
+Cross-cutting concerns được xử lý nhất quán qua các layer:
+- **Logging:** console (FE) + SLF4J/ELK (BE), hướng tới Sentry
 - **Error:** ErrorBoundary + Global Exception Handler + error code
-- **i18n:** react-i18next, 2 ngon ngu vi/en
+- **i18n:** react-i18next, 2 ngôn ngữ vi/en
 - **Date:** dual library (tech debt), UTC backend, local frontend
 - **Performance:** code-split, virtualization, cache, async
-- **Jobs:** RabbitMQ voi retry + DLQ pattern
+- **Jobs:** RabbitMQ với retry + DLQ pattern

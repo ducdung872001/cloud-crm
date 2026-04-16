@@ -1,24 +1,24 @@
 # Part 10 — Security Architecture
 
-> Mo ta kien truc bao mat toan dien: authentication, authorization,
-> multi-tenant isolation, OWASP mitigations, bao ve du lieu, va VoIP security.
+> Mô tả kiến trúc bảo mật toàn diện: authentication, authorization,
+> multi-tenant isolation, OWASP mitigations, bảo vệ dữ liệu, và VoIP security.
 
 ---
 
 ## 1. Executive Summary
 
-Reborn CRM ap dung mo hinh bao mat nhieu lop: **SSO + JWT** cho
-authentication, **RBAC** voi permission code cho authorization,
-**row-level tenant isolation** ngan ro ri du lieu giua tenant.
-Tuan thu OWASP Top 10 voi cac bien phap cu the cho XSS, SQLi, CSRF.
-Du lieu ca nhan tuan thu **Nghi dinh 13/2023/ND-CP** ve bao ve du lieu
-ca nhan. VoIP bao mat bang SIP TLS + SRTP.
+Reborn CRM áp dụng mô hình bảo mật nhiều lớp: **SSO + JWT** cho
+authentication, **RBAC** với permission code cho authorization,
+**row-level tenant isolation** ngăn rò rỉ dữ liệu giữa tenant.
+Tuân thủ OWASP Top 10 với các biện pháp cụ thể cho XSS, SQLi, CSRF.
+Dữ liệu cá nhân tuân thủ **Nghị định 13/2023/NĐ-CP** về bảo vệ dữ liệu
+cá nhân. VoIP bảo mật bằng SIP TLS + SRTP.
 
 ---
 
 ## 2. Authentication
 
-### 2.1. Luong xac thuc
+### 2.1. Luồng xác thực
 
 ```
 +----------+                  +-----------+                 +-----------+
@@ -49,25 +49,25 @@ ca nhan. VoIP bao mat bang SIP TLS + SRTP.
 
 ### 2.2. Token Lifecycle
 
-| Token          | Format      | TTL       | Luu tru            | Refresh         |
+| Token          | Format      | TTL       | Lưu trữ            | Refresh         |
 |----------------|-------------|-----------|--------------------|-----------------|
-| Access token   | JWT (RS256) | 15 phut   | Memory (JS var)    | Dung refresh    |
-| Refresh token  | Opaque      | 7 ngay    | HttpOnly cookie    | Rotate moi lan  |
-| SSO cookie     | Session ID  | 8 gio     | HttpOnly, Secure   | Re-login        |
-| API key        | UUID v4     | Vo han    | DB (hashed)        | Revoke + re-gen |
+| Access token   | JWT (RS256) | 15 phút   | Memory (JS var)    | Dùng refresh    |
+| Refresh token  | Opaque      | 7 ngày    | HttpOnly cookie    | Rotate mỗi lần  |
+| SSO cookie     | Session ID  | 8 giờ     | HttpOnly, Secure   | Re-login        |
+| API key        | UUID v4     | Vô hạn    | DB (hashed)        | Revoke + re-gen |
 
 ### 2.3. API Key (External Integration)
 
-- Dung cho he thong ben ngoai goi API (webhook, partner)
-- Truyen qua header `X-API-Key`
-- Luu hash (bcrypt) trong DB, khong luu plain text
-- Moi key gan voi 1 tenant va tap permission gioi han
+- Dùng cho hệ thống bên ngoài gọi API (webhook, partner)
+- Truyền qua header `X-API-Key`
+- Lưu hash (bcrypt) trong DB, không lưu plain text
+- Mỗi key gán với 1 tenant và tập permission giới hạn
 
 ---
 
 ## 3. Authorization — RBAC
 
-### 3.1. Mo hinh
+### 3.1. Mô hình
 
 ```
 +--------+     +---------+     +------------+
@@ -88,32 +88,32 @@ ca nhan. VoIP bao mat bang SIP TLS + SRTP.
 
 Format: `<module>:<resource>:<action>`
 
-| Vi du                    | Mo ta                          |
+| Ví dụ                    | Mô tả                          |
 |--------------------------|--------------------------------|
-| sales:lead:create        | Tao lead moi                   |
+| sales:lead:create        | Tạo lead mới                   |
 | sales:lead:read          | Xem lead                       |
-| sales:lead:update        | Sua lead                       |
-| sales:lead:delete        | Xoa lead                       |
-| contract:approval:approve| Phe duyet hop dong             |
-| finance:invoice:export   | Xuat hoa don                   |
-| admin:role:manage        | Quan ly vai tro                |
+| sales:lead:update        | Sửa lead                       |
+| sales:lead:delete        | Xóa lead                       |
+| contract:approval:approve| Phê duyệt hợp đồng             |
+| finance:invoice:export   | Xuất hóa đơn                   |
+| admin:role:manage        | Quản lý vai trò                |
 
 ### 3.3. Menu Filtering
 
-Frontend nhan danh sach permission tu JWT claims.
-Route guard kiem tra permission truoc khi render menu item
-va truoc khi navigate. Menu bi an neu user khong co quyen.
+Frontend nhận danh sách permission từ JWT claims.
+Route guard kiểm tra permission trước khi render menu item
+và trước khi navigate. Menu bị ẩn nếu user không có quyền.
 
 ### 3.4. Data Scope
 
-| Scope      | Mo ta                                | SQL Filter                    |
+| Scope      | Mô tả                                | SQL Filter                    |
 |------------|--------------------------------------|-------------------------------|
-| OWN        | Chi thay du lieu minh tao            | `created_by = :userId`        |
-| DEPARTMENT | Thay du lieu phong ban               | `dept_id = :userDeptId`       |
-| BRANCH     | Thay du lieu chi nhanh               | `branch_id = :userBranchId`   |
-| ALL        | Thay toan bo du lieu trong tenant    | (khong filter them)           |
+| OWN        | Chỉ thấy dữ liệu mình tạo            | `created_by = :userId`        |
+| DEPARTMENT | Thấy dữ liệu phòng ban               | `dept_id = :userDeptId`       |
+| BRANCH     | Thấy dữ liệu chi nhánh               | `branch_id = :userBranchId`   |
+| ALL        | Thấy toàn bộ dữ liệu trong tenant    | (không filter thêm)           |
 
-BE tu dong inject filter dua tren data_scope cua role.
+BE tự động inject filter dựa trên data_scope của role.
 
 ---
 
@@ -126,20 +126,20 @@ Request --> API Gateway --> Middleware --> Service --> Repository
                               |             |            |
                         [1] Resolve    [2] Validate  [3] Inject
                         hostname ->    tenant_id     tenant_id
-                        tenant_id      trong JWT     vao query
-                                       khop voi
+                        tenant_id      trong JWT     vào query
+                                       khớp với
                                        hostname
 ```
 
-### 4.2. Cac lop bao ve
+### 4.2. Các lớp bảo vệ
 
-| Lop          | Kiem tra                                         |
+| Lớp          | Kiểm tra                                         |
 |--------------|--------------------------------------------------|
-| API Gateway  | Hostname hợp le, tenant ton tai                  |
+| API Gateway  | Hostname hợp lệ, tenant tồn tại                  |
 | Middleware   | JWT tenant_id == hostname tenant_id               |
-| Service      | Business logic khong cho phep cross-tenant access |
-| Repository   | Moi query tu dong co `WHERE tenant_id = ?`        |
-| Database     | Index composite (tenant_id, ...) dam bao filter   |
+| Service      | Business logic không cho phép cross-tenant access |
+| Repository   | Mọi query tự động có `WHERE tenant_id = ?`        |
+| Database     | Index composite (tenant_id, ...) đảm bảo filter   |
 
 ---
 
@@ -147,32 +147,32 @@ Request --> API Gateway --> Middleware --> Service --> Repository
 
 ### 5.1. XSS (Cross-Site Scripting)
 
-- Frontend: **DOMPurify** sanitize moi HTML input truoc khi render
-- React default escape JSX — tranh dung `dangerouslySetInnerHTML`
-- CSP header: `script-src 'self'` ngan inline script injection
+- Frontend: **DOMPurify** sanitize mọi HTML input trước khi render
+- React default escape JSX — tránh dùng `dangerouslySetInnerHTML`
+- CSP header: `script-src 'self'` ngăn inline script injection
 
 ### 5.2. SQL Injection
 
 - Backend: **Parameterized queries** (JPA / MyBatis prepared statements)
-- Khong bao gio noi chuoi SQL tu user input
-- ORM (JPA) tu dong escape
+- Không bao giờ nối chuỗi SQL từ user input
+- ORM (JPA) tự động escape
 
 ### 5.3. CSRF (Cross-Site Request Forgery)
 
-- SPA pattern: JWT trong header (khong tu dong gui nhu cookie)
-- CSRF token cho cac form truyen thong (nếu co)
+- SPA pattern: JWT trong header (không tự động gửi như cookie)
+- CSRF token cho các form truyền thống (nếu có)
 - SameSite=Strict cho cookie
 
-### 5.4. Cac bien phap khac
+### 5.4. Các biện pháp khác
 
 | Threat                  | Mitigation                                    |
 |-------------------------|-----------------------------------------------|
-| Broken Authentication   | Rate limit login (5 lan / 15 phut)            |
+| Broken Authentication   | Rate limit login (5 lần / 15 phút)            |
 | Sensitive Data Exposure | HTTPS everywhere, no sensitive data in URL     |
-| Broken Access Control   | Permission check o ca FE + BE                 |
+| Broken Access Control   | Permission check ở cả FE + BE                 |
 | Security Misconfiguration| Hardened Spring Boot, disable actuator public |
-| Insecure Deserialization| Jackson whitelist, khong dung Java serialize   |
-| Insufficient Logging    | Structured log + audit trail moi action        |
+| Insecure Deserialization| Jackson whitelist, không dùng Java serialize   |
+| Insufficient Logging    | Structured log + audit trail mọi action        |
 
 ---
 
@@ -180,20 +180,20 @@ Request --> API Gateway --> Middleware --> Service --> Repository
 
 ### 6.1. Encryption
 
-| Lop           | Phuong phap                              |
+| Lớp           | Phương pháp                              |
 |---------------|------------------------------------------|
-| In Transit    | TLS 1.2+ (HTTPS) cho moi ket noi         |
-| At Rest       | AES-256 cho file upload tren S3           |
+| In Transit    | TLS 1.2+ (HTTPS) cho mọi kết nối         |
+| At Rest       | AES-256 cho file upload trên S3           |
 | Database      | MySQL TDE (Transparent Data Encryption)   |
-| Backup        | Encrypted backup voi key rotation 90 ngay |
+| Backup        | Encrypted backup với key rotation 90 ngày |
 
-### 6.2. PII Handling — Nghi dinh 13/2023/ND-CP
+### 6.2. PII Handling — Nghị định 13/2023/NĐ-CP
 
-- Du lieu ca nhan (ten, email, SDT, CCCD) duoc danh dau la PII
-- Truy cap PII ghi audit log
-- Export PII can quyen `data:pii:export`
-- Xoa PII theo yeu cau chu the du lieu (Right to Erasure)
-- Luu tru PII toi da theo muc dich thu thap (configurable per tenant)
+- Dữ liệu cá nhân (tên, email, SĐT, CCCD) được đánh dấu là PII
+- Truy cập PII ghi audit log
+- Export PII cần quyền `data:pii:export`
+- Xóa PII theo yêu cầu chủ thể dữ liệu (Right to Erasure)
+- Lưu trữ PII tối đa theo mục đích thu thập (configurable per tenant)
 
 ```
 +----------------+     +----------------+     +----------------+
@@ -208,13 +208,13 @@ Request --> API Gateway --> Middleware --> Service --> Repository
 
 ### 7.1. SIP Credentials
 
-- Moi agent co SIP account rieng (username + password)
-- Credentials luu encrypted trong DB, giai ma khi can
-- Session timeout: 30 phut khong hoat dong -> re-register
+- Mỗi agent có SIP account riêng (username + password)
+- Credentials lưu encrypted trong DB, giải mã khi cần
+- Session timeout: 30 phút không hoạt động -> re-register
 
 ### 7.2. Transport Security
 
-| Layer       | Protocol     | Mo ta                              |
+| Layer       | Protocol     | Mô tả                              |
 |-------------|--------------|------------------------------------|
 | Signaling   | SIP over WSS | WebSocket Secure (TLS)             |
 | Media       | SRTP         | Secure RTP — encrypted audio       |
@@ -222,21 +222,21 @@ Request --> API Gateway --> Middleware --> Service --> Repository
 
 ### 7.3. Call Security
 
-- Recording: chi luu khi tenant bat, encrypted at rest
-- CDR: chi ghi metadata (thoi gian, so, duration), khong ghi noi dung
-- Access CDR: can quyen `care:call:view-cdr`
+- Recording: chỉ lưu khi tenant bật, encrypted at rest
+- CDR: chỉ ghi metadata (thời gian, số, duration), không ghi nội dung
+- Access CDR: cần quyền `care:call:view-cdr`
 
 ---
 
 ## 8. Security Checklist — Deployment
 
-| Hang muc                | Trang thai | Ghi chu                        |
+| Hạng mục                | Trạng thái | Ghi chú                        |
 |-------------------------|------------|--------------------------------|
-| HTTPS everywhere        | BAT BUOC   | Cert tu Let's Encrypt / ACM    |
-| JWT RS256 key rotation  | BAT BUOC   | Rotation moi 90 ngay           |
-| Rate limiting           | BAT BUOC   | Nginx + Redis token bucket     |
-| WAF (Web App Firewall)  | KHUYEN NGHI| AWS WAF hoac Cloudflare        |
-| Penetration test        | KHUYEN NGHI| Moi 6 thang                    |
-| Dependency audit        | BAT BUOC   | `npm audit` + `mvn dependency-check` |
-| Log retention           | BAT BUOC   | 1 nam minimum                  |
-| Backup encryption       | BAT BUOC   | AES-256 + off-site backup      |
+| HTTPS everywhere        | BẮT BUỘC   | Cert từ Let's Encrypt / ACM    |
+| JWT RS256 key rotation  | BẮT BUỘC   | Rotation mỗi 90 ngày           |
+| Rate limiting           | BẮT BUỘC   | Nginx + Redis token bucket     |
+| WAF (Web App Firewall)  | KHUYẾN NGHỊ| AWS WAF hoặc Cloudflare        |
+| Penetration test        | KHUYẾN NGHỊ| Mỗi 6 tháng                    |
+| Dependency audit        | BẮT BUỘC   | `npm audit` + `mvn dependency-check` |
+| Log retention           | BẮT BUỘC   | 1 năm minimum                  |
+| Backup encryption       | BẮT BUỘC   | AES-256 + off-site backup      |

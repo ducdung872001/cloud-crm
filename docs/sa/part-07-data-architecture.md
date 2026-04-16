@@ -1,19 +1,19 @@
 # Part 07 — Data Architecture
 
-> Mo ta chien luoc du lieu da tang (multi-tenant row-level isolation),
-> ERD tong quan, pattern soft-delete / audit, indexing, va storage tiers
-> cho he thong B2B CRM phuc vu doanh nghiep lon / cong ty tech.
+> Mô tả chiến lược dữ liệu đa tầng (multi-tenant row-level isolation),
+> ERD tổng quan, pattern soft-delete / audit, indexing, và storage tiers
+> cho hệ thống B2B CRM phục vụ doanh nghiệp lớn / công ty tech.
 
 ---
 
 ## 1. Executive Summary
 
-Reborn CRM su dung **MySQL** lam primary store voi chien luoc
-**row-level tenant isolation** — moi ban ghi deu co `tenant_id` va
-`branch_id`. Du lieu duoc chia thanh 11 entity group phu hop 12
-microservice. Pattern soft-delete (`deleted_at`), audit trail, va
-indexing composite dam bao hieu suat truy van o quy mo lon.
-Storage chia 3 tang: hot (MySQL), cache (Redis), cold (S3).
+Reborn CRM sử dụng **MySQL** làm primary store với chiến lược
+**row-level tenant isolation** — mỗi bản ghi đều có `tenant_id` và
+`branch_id`. Dữ liệu được chia thành 11 entity group phù hợp 12
+microservice. Pattern soft-delete (`deleted_at`), audit trail, và
+indexing composite đảm bảo hiệu suất truy vấn ở quy mô lớn.
+Storage chia 3 tầng: hot (MySQL), cache (Redis), cold (S3).
 
 ---
 
@@ -45,19 +45,19 @@ Storage chia 3 tang: hot (MySQL), cache (Redis), cold (S3).
      +-------------------------------------+
 ```
 
-Moi table kinh doanh deu co 3 cot bat buoc:
+Mỗi table kinh doanh đều có 3 cột bắt buộc:
 
-| Column      | Type         | Mo ta                          |
+| Column      | Type         | Mô tả                          |
 |-------------|--------------|--------------------------------|
-| tenant_id   | BIGINT NN    | ID tenant (cong ty khach hang) |
-| branch_id   | BIGINT NN    | ID chi nhanh                   |
+| tenant_id   | BIGINT NN    | ID tenant (công ty khách hàng) |
+| branch_id   | BIGINT NN    | ID chi nhánh                   |
 | deleted_at  | DATETIME NULL| Soft-delete timestamp           |
 
 ### 2.2. Shared Database, Separate Schema
 
-Tat ca tenant dung chung 1 MySQL instance, chung schema.
-BE middleware **tu dong inject** `tenant_id` vao moi query —
-developer khong can truyen tay.
+Tất cả tenant dùng chung 1 MySQL instance, chung schema.
+BE middleware **tự động inject** `tenant_id` vào mọi query —
+developer không cần truyền tay.
 
 ---
 
@@ -114,19 +114,19 @@ developer khong can truyen tay.
 ### 4.1. Company Hierarchy
 
 ```
-company (id=1, parent_id=NULL)   -- Tap doan ABC
-  |-- company (id=2, parent_id=1)  -- Cong ty con A
-  |     |-- company (id=3, parent_id=2)  -- Chi nhanh A1
-  |-- company (id=4, parent_id=1)  -- Cong ty con B
+company (id=1, parent_id=NULL)   -- Tập đoàn ABC
+  |-- company (id=2, parent_id=1)  -- Công ty con A
+  |     |-- company (id=3, parent_id=2)  -- Chi nhánh A1
+  |-- company (id=4, parent_id=1)  -- Công ty con B
 ```
 
-Dung `parent_id` self-referencing de mo hinh hoa tap doan — ho tro
-truy van tree bang CTE (Common Table Expression).
+Dùng `parent_id` self-referencing để mô hình hóa tập đoàn — hỗ trợ
+truy vấn tree bằng CTE (Common Table Expression).
 
 ### 4.2. Contact-Company Relation (N:N)
 
-Mot contact co the lien ket nhieu company (vi du: co van nhieu cong ty).
-Bang trung gian `contact_company_role` luu: contact_id, company_id,
+Một contact có thể liên kết nhiều company (ví dụ: cố vấn nhiều công ty).
+Bảng trung gian `contact_company_role` lưu: contact_id, company_id,
 role (Decision Maker / Influencer / User / Technical).
 
 ### 4.3. Opportunity — Contract — Invoice Chain
@@ -138,8 +138,8 @@ opportunity --> quotation --> contract --> invoice --> payment
   (won)        (accepted)    (signed)     (paid/partial)
 ```
 
-Moi entity lien ket qua `source_type` + `source_id` de trace nguon goc
-tu lead den thu tien.
+Mỗi entity liên kết qua `source_type` + `source_id` để trace nguồn gốc
+từ lead đến thu tiền.
 
 ---
 
@@ -147,35 +147,35 @@ tu lead den thu tien.
 
 ### 5.1. Soft Delete
 
-- Moi DELETE request chi set `deleted_at = NOW()`
-- Query mac dinh luon co `WHERE deleted_at IS NULL`
-- Cronjob purge ban ghi > 90 ngay (configurable per tenant)
+- Mỗi DELETE request chỉ set `deleted_at = NOW()`
+- Query mặc định luôn có `WHERE deleted_at IS NULL`
+- Cronjob purge bản ghi > 90 ngày (configurable per tenant)
 
 ### 5.2. Audit Log Table
 
-| Column       | Type        | Mo ta                        |
+| Column       | Type        | Mô tả                        |
 |--------------|-------------|------------------------------|
 | id           | BIGINT PK   | Auto-increment               |
 | tenant_id    | BIGINT      | Tenant                       |
-| user_id      | BIGINT      | Nguoi thuc hien              |
-| entity_type  | VARCHAR(64) | Vi du: "customer", "contract"|
-| entity_id    | BIGINT      | ID ban ghi                   |
+| user_id      | BIGINT      | Người thực hiện              |
+| entity_type  | VARCHAR(64) | Ví dụ: "customer", "contract"|
+| entity_id    | BIGINT      | ID bản ghi                   |
 | action       | ENUM        | CREATE / UPDATE / DELETE      |
-| old_value    | JSON        | Gia tri cu (nullable)        |
-| new_value    | JSON        | Gia tri moi                  |
-| created_at   | DATETIME    | Thoi diem                    |
+| old_value    | JSON        | Giá trị cũ (nullable)        |
+| new_value    | JSON        | Giá trị mới                  |
+| created_at   | DATETIME    | Thời điểm                    |
 
 ---
 
 ## 6. Indexing Strategy
 
-| Loai Index            | Vi du                                     | Muc dich                       |
+| Loại Index            | Ví dụ                                     | Mục đích                       |
 |-----------------------|-------------------------------------------|--------------------------------|
-| Composite tenant      | `(tenant_id, branch_id, id)`              | Moi query deu filter tenant    |
-| Partial index         | `WHERE deleted_at IS NULL`                | Loai bo ban ghi da xoa         |
-| Full-text search      | `FULLTEXT(name, email, phone)` on contact | Tim kiem nhanh khach hang      |
+| Composite tenant      | `(tenant_id, branch_id, id)`              | Mọi query đều filter tenant    |
+| Partial index         | `WHERE deleted_at IS NULL`                | Loại bỏ bản ghi đã xóa         |
+| Full-text search      | `FULLTEXT(name, email, phone)` on contact | Tìm kiếm nhanh khách hàng      |
 | Foreign key           | `customer_id` on opportunity              | JOIN performance               |
-| Date range            | `(tenant_id, created_at)` on invoice      | Bao cao theo ky                |
+| Date range            | `(tenant_id, created_at)` on invoice      | Báo cáo theo kỳ                |
 
 ---
 
@@ -187,22 +187,22 @@ tu lead den thu tien.
 |                  |     |                  |     |                  |
 | - Transactional  |     | - Session        |     | - File upload    |
 | - CRUD realtime  |     | - Permission set |     | - Report export  |
-| - < 2 nam data   |     | - Rate limit     |     | - Audit log > 1y |
+| - < 2 năm data   |     | - Rate limit     |     | - Audit log > 1y |
 |                  |     | - Queue temp     |     | - Email archive  |
-| TTL: unlimited   |     | TTL: 1h - 24h   |     | TTL: 3-7 nam     |
+| TTL: unlimited   |     | TTL: 1h - 24h   |     | TTL: 3-7 năm     |
 +------------------+     +------------------+     +------------------+
 ```
 
-Data migration: Cronjob hang thang chuyen audit_log > 1 nam sang S3
-(Parquet format), giu summary row trong MySQL de bao cao nhanh.
+Data migration: Cronjob hàng tháng chuyển audit_log > 1 năm sang S3
+(Parquet format), giữ summary row trong MySQL để báo cáo nhanh.
 
 ---
 
 ## 8. Database per Service vs Shared
 
-Hien tai: **shared database** — 12 microservice dung chung 1 MySQL
-instance voi cac table prefix rieng (vd: `sales_*`, `inv_*`, `fin_*`).
-Ly do: don gian hoa join bao cao cross-domain.
+Hiện tại: **shared database** — 12 microservice dùng chung 1 MySQL
+instance với các table prefix riêng (vd: `sales_*`, `inv_*`, `fin_*`).
+Lý do: đơn giản hóa join báo cáo cross-domain.
 
-Roadmap: tach database cho cac service co tai cao (notification, integration)
-khi scale vuot 10K concurrent users.
+Roadmap: tách database cho các service có tải cao (notification, integration)
+khi scale vượt 10K concurrent users.

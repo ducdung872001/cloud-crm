@@ -1,24 +1,24 @@
 # Part 09 — Integration Architecture
 
-> Mo ta kien truc tich hop voi cac he thong ben ngoai: SSO, e-invoice,
-> kenh giao tiep (Zalo/Facebook/Email/VoIP), shipping, va webhook system.
+> Mô tả kiến trúc tích hợp với các hệ thống bên ngoài: SSO, e-invoice,
+> kênh giao tiếp (Zalo/Facebook/Email/VoIP), shipping, và webhook system.
 
 ---
 
 ## 1. Executive Summary
 
-Reborn CRM tich hop **15+ he thong ben ngoai** thong qua service
-**integration** (trung tam) va cac adapter chuyen biet. Authentication
-dung SSO Reborn ket hop Azure AD va Firebase. E-invoice qua Viettel
-S-Invoice. Kenh giao tiep da dang: Zalo OA, Facebook Fanpage, Email
-SMTP/IMAP, VoIP/SIP. Webhook system ho tro outbound event voi retry
-policy va signature verification.
+Reborn CRM tích hợp **15+ hệ thống bên ngoài** thông qua service
+**integration** (trung tâm) và các adapter chuyên biệt. Authentication
+dùng SSO Reborn kết hợp Azure AD và Firebase. E-invoice qua Viettel
+S-Invoice. Kênh giao tiếp đa dạng: Zalo OA, Facebook Fanpage, Email
+SMTP/IMAP, VoIP/SIP. Webhook system hỗ trợ outbound event với retry
+policy và signature verification.
 
 ---
 
 ## 2. Authentication — SSO Multi-provider
 
-### 2.1. Flow tong quan
+### 2.1. Flow tổng quan
 
 ```
 +----------+     +------------+     +-------------+     +-----------+
@@ -46,23 +46,23 @@ policy va signature verification.
 
 ### 2.2. Provider Matrix
 
-| Provider      | Muc dich                    | Protocol       | Thu vien       |
+| Provider      | Mục đích                    | Protocol       | Thư viện       |
 |---------------|-----------------------------|----------------|----------------|
-| SSO Reborn    | Login noi bo Reborn         | OAuth 2.0      | Custom SDK     |
-| Azure AD      | Enterprise SSO (khach hang) | OIDC / MSAL    | @azure/msal    |
+| SSO Reborn    | Login nội bộ Reborn         | OAuth 2.0      | Custom SDK     |
+| Azure AD      | Enterprise SSO (khách hàng) | OIDC / MSAL    | @azure/msal    |
 | Firebase Auth | Social login (Google, FB)   | Firebase SDK   | firebase/auth  |
 
 ### 2.3. Token Lifecycle
 
-- Access token: JWT, TTL 15 phut
-- Refresh token: opaque, TTL 7 ngay, rotate moi lan dung
+- Access token: JWT, TTL 15 phút
+- Refresh token: opaque, TTL 7 ngày, rotate mỗi lần dùng
 - SSO cookie: HttpOnly, Secure, SameSite=Strict
 
 ---
 
 ## 3. Viettel Ecosystem
 
-### 3.1. S-Invoice (Hoa don dien tu)
+### 3.1. S-Invoice (Hóa đơn điện tử)
 
 ```
 +-----------+     +-------------+     +---------------+
@@ -87,14 +87,14 @@ policy va signature verification.
       |<-----------------+                     |
 ```
 
-- Moi invoice PAID tu dong phat hoa don dien tu
-- Retry 3 lan neu Viettel API loi, sau do chuyen manual queue
+- Mỗi invoice PAID tự động phát hóa đơn điện tử
+- Retry 3 lần nếu Viettel API lỗi, sau đó chuyển manual queue
 
-### 3.2. eTax (Thue dien tu)
+### 3.2. eTax (Thuế điện tử)
 
-- Tao to khai thue (03/CNKD, 01/LPMB) tu du lieu finance service
-- Xuat XML chuan Tong cuc Thue
-- Upload qua API eTax hoac export file de nop thu cong
+- Tạo tờ khai thuế (03/CNKD, 01/LPMB) từ dữ liệu finance service
+- Xuất XML chuẩn Tổng cục Thuế
+- Upload qua API eTax hoặc export file để nộp thủ công
 
 ---
 
@@ -102,24 +102,24 @@ policy va signature verification.
 
 ### 4.1. Zalo OA
 
-| Chuc nang         | API                        | Service     |
+| Chức năng         | API                        | Service     |
 |-------------------|----------------------------|-------------|
-| Gui tin nhan      | POST /message              | notify      |
-| Nhan tin nhan     | Webhook callback           | integration |
-| Quan ly follower  | GET /followers             | customer    |
+| Gửi tin nhắn      | POST /message              | notify      |
+| Nhận tin nhắn     | Webhook callback           | integration |
+| Quản lý follower  | GET /followers             | customer    |
 | Template message  | POST /message/template     | notify      |
 
 ### 4.2. Facebook Fanpage
 
-- Tich hop qua Facebook Graph API v18
-- Webhook nhan comment + message -> tao ticket trong care service
-- Tra loi truc tiep tu CRM (omnichannel inbox)
+- Tích hợp qua Facebook Graph API v18
+- Webhook nhận comment + message -> tạo ticket trong care service
+- Trả lời trực tiếp từ CRM (omnichannel inbox)
 
 ### 4.3. Email SMTP / IMAP
 
 - Outbound: SMTP (Mailgun / SES) qua notify service
-- Inbound: IMAP polling moi 60s -> parse email -> tao activity/ticket
-- Template engine: Mustache voi merge fields tu customer data
+- Inbound: IMAP polling mỗi 60s -> parse email -> tạo activity/ticket
+- Template engine: Mustache với merge fields từ customer data
 - Tracking: pixel 1x1 cho open rate, redirect link cho click rate
 
 ### 4.4. VoIP / SIP
@@ -147,26 +147,26 @@ policy va signature verification.
      |                |                   |                  |
 ```
 
-- Frontend dung **jssip** hoac **sip.js** lam SIP UA
+- Frontend dùng **jssip** hoặc **sip.js** làm SIP UA
 - WebSocket transport (WSS) cho SIP signaling
 - Media: WebRTC (SRTP encrypted)
-- CDR (Call Detail Record) luu vao care service
+- CDR (Call Detail Record) lưu vào care service
 
 ---
 
 ## 5. Shipping Partners (Logistics)
 
-Tich hop qua adapter pattern:
+Tích hợp qua adapter pattern:
 
-| Partner         | Chuc nang               | Protocol     |
+| Partner         | Chức năng               | Protocol     |
 |-----------------|-------------------------|--------------|
-| GHN             | Tao don, track, huy     | REST API     |
-| GHTK            | Tao don, track, COD     | REST API     |
-| Viettel Post    | Tao don, track          | REST API     |
-| J&T Express     | Tao don, track          | REST API     |
+| GHN             | Tạo đơn, track, hủy     | REST API     |
+| GHTK            | Tạo đơn, track, COD     | REST API     |
+| Viettel Post    | Tạo đơn, track          | REST API     |
+| J&T Express     | Tạo đơn, track          | REST API     |
 
-Moi partner co 1 adapter class implement chung `ShippingProvider`
-interface. Logistics service chon adapter theo cau hinh tenant.
+Mỗi partner có 1 adapter class implement chung `ShippingProvider`
+interface. Logistics service chọn adapter theo cấu hình tenant.
 
 ---
 
@@ -174,46 +174,46 @@ interface. Logistics service chon adapter theo cau hinh tenant.
 
 ### 6.1. Outbound Events
 
-Tenant co the dang ky webhook de nhan event tu CRM:
+Tenant có thể đăng ký webhook để nhận event từ CRM:
 
-| Event                  | Payload              | Khi nao              |
+| Event                  | Payload              | Khi nào              |
 |------------------------|----------------------|----------------------|
-| customer.created       | Customer object      | Tao khach hang moi   |
-| opportunity.won        | Opportunity + amount | Chot deal            |
-| contract.signed        | Contract + signer    | Ky hop dong          |
-| invoice.paid           | Invoice + payment    | Nhan thanh toan      |
-| ticket.created         | Ticket object        | Tao ticket moi       |
+| customer.created       | Customer object      | Tạo khách hàng mới   |
+| opportunity.won        | Opportunity + amount | Chốt deal            |
+| contract.signed        | Contract + signer    | Ký hợp đồng          |
+| invoice.paid           | Invoice + payment    | Nhận thanh toán      |
+| ticket.created         | Ticket object        | Tạo ticket mới       |
 
 ### 6.2. Retry Policy
 
 ```
-Lan 1: ngay lap tuc
-Lan 2: sau 1 phut
-Lan 3: sau 5 phut
-Lan 4: sau 30 phut
-Lan 5: sau 2 gio
---> Sau 5 lan: danh dau FAILED, gui email canh bao admin
+Lần 1: ngay lập tức
+Lần 2: sau 1 phút
+Lần 3: sau 5 phút
+Lần 4: sau 30 phút
+Lần 5: sau 2 giờ
+--> Sau 5 lần: đánh dấu FAILED, gửi email cảnh báo admin
 ```
 
 ### 6.3. Signature Verification
 
-- Moi webhook request co header `X-Reborn-Signature`
+- Mỗi webhook request có header `X-Reborn-Signature`
 - Signature = HMAC-SHA256(request_body, webhook_secret)
-- Receiver verify bang secret duoc cung cap khi dang ky
+- Receiver verify bằng secret được cung cấp khi đăng ký
 
 ---
 
 ## 7. API Gateway — fetchConfig Pattern
 
-Frontend khong hardcode URL backend. Thay vao do:
+Frontend không hardcode URL backend. Thay vào đó:
 
 ```
 1. Browser load app
-2. App goi GET /api/config (hoac doc tu window.__CONFIG__)
-3. Nhan duoc map: { sales: "https://sales.api.reborn.vn", ... }
-4. apiHelper rewrite URL dua tren service prefix
+2. App gọi GET /api/config (hoặc đọc từ window.__CONFIG__)
+3. Nhận được map: { sales: "https://sales.api.reborn.vn", ... }
+4. apiHelper rewrite URL dựa trên service prefix
 ```
 
-Cho phep thay doi URL backend ma khong can rebuild frontend.
-Hostname header (`X-Tenant-Id`) duoc attach tu dong boi interceptor
+Cho phép thay đổi URL backend mà không cần rebuild frontend.
+Hostname header (`X-Tenant-Id`) được attach tự động bởi interceptor
 (xem Part 06).

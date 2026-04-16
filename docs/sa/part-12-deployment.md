@@ -1,40 +1,40 @@
 # Part 12 — Deployment Architecture
 
-> Mo ta cac moi truong trien khai, CI/CD pipeline, Docker containerization,
-> chien luoc scaling, va disaster recovery cho he thong Reborn CRM.
+> Mô tả các môi trường triển khai, CI/CD pipeline, Docker containerization,
+> chiến lược scaling, và disaster recovery cho hệ thống Reborn CRM.
 
 ---
 
 ## 1. Environments
 
-### 1.1. Tong quan
+### 1.1. Tổng quan
 
-| Moi truong  | URL                          | Muc dich                    | Data          |
+| Môi trường  | URL                          | Mục đích                    | Data          |
 |------------|------------------------------|-----------------------------|---------------|
 | Dev        | localhost:5173 / :8080       | Developer local              | Seed data     |
 | Staging    | staging.reborn.vn            | QA testing, UAT              | Anonymized    |
-| Production | *.reborn.vn                  | End-user thuc te             | Real data     |
+| Production | *.reborn.vn                  | End-user thực tế             | Real data     |
 
 ### 1.2. Dev Environment
 
 - Frontend: `npm run dev` → Vite dev server port 5173
-- Backend: Spring Boot chay tung service hoac Docker Compose
-- Database: MySQL 8.0 local hoac Docker
+- Backend: Spring Boot chạy từng service hoặc Docker Compose
+- Database: MySQL 8.0 local hoặc Docker
 - Redis + RabbitMQ: Docker container
 
 ### 1.3. Staging
 
-- Mirror production ve infrastructure
-- Data anonymized tu production (ten, email, SDT duoc mask)
-- Auto-deploy khi merge vao branch `develop`
-- Reset data hang tuan (Sunday 2:00 AM)
+- Mirror production về infrastructure
+- Data anonymized từ production (tên, email, SĐT được mask)
+- Auto-deploy khi merge vào branch `develop`
+- Reset data hàng tuần (Sunday 2:00 AM)
 
 ### 1.4. Production
 
-- Multi-tenant SaaS, moi tenant truy cap qua subdomain: `{tenant}.reborn.vn`
+- Multi-tenant SaaS, mỗi tenant truy cập qua subdomain: `{tenant}.reborn.vn`
 - SSL certificate wildcard: `*.reborn.vn`
 - CDN: Cloudflare cho static assets
-- Monitoring: Uptime check moi 60s
+- Monitoring: Uptime check mỗi 60s
 
 ---
 
@@ -84,7 +84,7 @@ Code Push → Lint → Unit Test → Build → Docker Image → Push Registry
   → Deploy Staging (auto) → Smoke Test → Deploy Production (manual approve)
 ```
 
-| Stage           | Tool              | Thoi gian | Gate           |
+| Stage           | Tool              | Thời gian | Gate           |
 |----------------|-------------------|-----------|----------------|
 | Lint           | ESLint + Checkstyle| ~1 min   | Block on error |
 | Unit Test      | JUnit + Vitest    | ~3 min    | >80% coverage  |
@@ -148,16 +148,16 @@ services:
 
 ### 4.1. Horizontal Scaling (Stateless Services)
 
-- Tat ca 12 microservice la **stateless** — khong luu session local
-- Session luu trong Redis → bat ky instance nao cung xu ly duoc
-- Load balancer (Nginx) phan phoi request round-robin
-- Scale rule: CPU > 70% trong 5 phut → them 1 instance (max 4)
+- Tất cả 12 microservice là **stateless** — không lưu session local
+- Session lưu trong Redis → bất kỳ instance nào cũng xử lý được
+- Load balancer (Nginx) phân phối request round-robin
+- Scale rule: CPU > 70% trong 5 phút → thêm 1 instance (max 4)
 
 ### 4.2. Vertical Scaling (Database)
 
-- MySQL: tang RAM/CPU khi query slow > 2s
-- Redis: tang RAM khi eviction rate > 5%
-- Khong shard MySQL — single-instance voi read replica
+- MySQL: tăng RAM/CPU khi query slow > 2s
+- Redis: tăng RAM khi eviction rate > 5%
+- Không shard MySQL — single-instance với read replica
 
 ### 4.3. Performance Targets
 
@@ -175,20 +175,20 @@ services:
 ### 5.1. Flow
 
 ```
-1. Production dang chay tren "Blue" (v1.2.0)
+1. Production đang chạy trên "Blue" (v1.2.0)
 2. Deploy "Green" (v1.3.0) song song
 3. Smoke test Green qua internal URL
-4. Switch Nginx upstream tu Blue → Green
-5. Monitor 15 phut
-6. Neu OK → remove Blue containers
-7. Neu loi → rollback: switch Nginx ve Blue (< 30s)
+4. Switch Nginx upstream từ Blue → Green
+5. Monitor 15 phút
+6. Nếu OK → remove Blue containers
+7. Nếu lỗi → rollback: switch Nginx về Blue (< 30s)
 ```
 
 ### 5.2. Database Migration
 
-- Flyway migration chay **truoc** khi deploy Green
-- Migration phai backward-compatible (Blue van doc duoc)
-- Khong xoa column trong cung release — deprecate truoc, xoa release sau
+- Flyway migration chạy **trước** khi deploy Green
+- Migration phải backward-compatible (Blue vẫn đọc được)
+- Không xóa column trong cùng release — deprecate trước, xóa release sau
 
 ---
 
@@ -198,33 +198,33 @@ services:
 
 | Data          | Method              | Frequency    | Retention |
 |--------------|---------------------|-------------|-----------|
-| MySQL        | mysqldump + binlog  | Daily full   | 30 ngay   |
-| Redis        | RDB snapshot        | Moi 6h       | 7 ngay    |
-| File storage | rsync to backup     | Daily        | 90 ngay   |
+| MySQL        | mysqldump + binlog  | Daily full   | 30 ngày   |
+| Redis        | RDB snapshot        | Mỗi 6h       | 7 ngày    |
+| File storage | rsync to backup     | Daily        | 90 ngày   |
 | Config/Secret| Git + Vault         | On change    | Unlimited |
 
 ### 6.2. RTO / RPO Targets
 
-| Metric | Target   | Mo ta                                    |
+| Metric | Target   | Mô tả                                    |
 |--------|----------|------------------------------------------|
-| RPO    | 1 gio    | Mat toi da 1 gio du lieu                  |
-| RTO    | 4 gio    | Phuc hoi he thong trong 4 gio             |
+| RPO    | 1 giờ    | Mất tối đa 1 giờ dữ liệu                  |
+| RTO    | 4 giờ    | Phục hồi hệ thống trong 4 giờ             |
 
 ### 6.3. Recovery Procedure
 
-1. **Database:** Restore tu backup moi nhat + replay binlog
-2. **Services:** Re-deploy tu Docker registry (image da luu)
-3. **Config:** Restore tu Git repository
-4. **DNS:** Chuyen sang backup server neu primary down
+1. **Database:** Restore từ backup mới nhất + replay binlog
+2. **Services:** Re-deploy từ Docker registry (image đã lưu)
+3. **Config:** Restore từ Git repository
+4. **DNS:** Chuyển sang backup server nếu primary down
 
 ---
 
-## 7. Tong ket
+## 7. Tổng kết
 
-| Khia canh       | Giai phap                              |
+| Khía cạnh       | Giải pháp                              |
 |----------------|----------------------------------------|
 | Environments   | Dev → Staging → Production             |
-| CI/CD          | GitHub Actions, ~20 phut full pipeline |
+| CI/CD          | GitHub Actions, ~20 phút full pipeline |
 | Container      | Docker, 12 services + 4 infra         |
 | Scaling        | Horizontal (services), Vertical (DB)  |
 | Zero-downtime  | Blue-green deployment                  |
