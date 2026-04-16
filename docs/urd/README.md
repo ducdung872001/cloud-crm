@@ -21,7 +21,7 @@
 | [Part 06](part-06-tai-chinh.md) | Tài chính & Thanh toán | Sổ thu chi, quỹ, công nợ, đối soát |
 | [Part 07](part-07-doi-tac-phan-hoi.md) | Đối tác & Phản hồi | KOL/PO, hoa hồng, ticket phản hồi |
 | [Part 08](part-08-bao-cao.md) | Báo cáo | 6 loại báo cáo + xuất / lịch tự động |
-| [Part 09](part-09-uu-dai-cham-soc.md) | Ưu đãi & Chăm sóc | Khuyến mãi, loyalty, marketing automation |
+| [Part 09](part-09-uu-dai-cham-soc.md) | Ưu đãi & Chăm sóc & Sự kiện | Khuyến mãi, loyalty, marketing automation, Community Hub Events |
 | [Part 10](part-10-kho.md) | Kho & Nguyên vật liệu | Tồn kho, NCC, kiểm kê, báo cáo kho |
 | [Part 11](part-11-cai-dat-co-ban.md) | Cài đặt cơ bản | Tenant config, danh mục SP/DV, gói TV, vận hành |
 | [Part 12](part-12-cai-dat-nang-cao.md) | Cài đặt nâng cao | Phân quyền, kênh, tích hợp, bảo mật, ticket |

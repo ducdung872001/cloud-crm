@@ -26,10 +26,111 @@ Mô hình dữ liệu Reborn CRM là **multi-tenant với row-level isolation** 
 | **Care & Support** | Feedback, Ticket, CareTask, CareHistory, Note | Care |
 | **Workflow** | BusinessProcess, BpmForm, FormArtifact, ProcessInstance | BPM |
 | **Integration** | Webhook, IntegrationConfig, ExternalToken | Integration |
+| **Event** (CommunityHub) | EventEntity, EventRegistration, ServiceUsageRecord | Marketing (Events) |
 
-### 1.2. Số lượng entity ước tính
+### 1.2. Event data model (CommunityHub Events)
 
-- **Tổng**: ~120-150 entity (suy từ `model/` directory + service file count)
+> **Thêm mới** trong đợt mở rộng module CommunityHub Events (2026-04-16).
+
+Module Event phân tách rõ giữa **CHUNG** (generic, mọi ngành) và **ĐẶC THÙ** (industry-specific):
+
+- `types.ts` + `storage.ts` — Kiểu dữ liệu & storage chung, dùng cho mọi tenant
+- `types.industry.ts` + `storage.industry.ts` — Kiểu dữ liệu & storage đặc thù ngành (spa, gym, ...)
+
+#### EventEntity (types.ts — CHUNG)
+
+```ts
+interface EventEntity {
+  id: string;
+  slug: string;                       // URL-friendly identifier
+  title: string;
+  description?: string;
+  dates: { start: string; end: string };  // ISO datetime
+  selectableDates: string[];          // Multi-day events: ngày người tham dự chọn
+  venue: string;
+  contact: { name: string; phone: string; email?: string };
+
+  // Tickets & pricing
+  tickets: EventTicket[];             // Loại vé (free, paid, VIP...)
+  requirePaymentProof: boolean;       // Bật xác nhận chuyển khoản thủ công
+
+  // Dynamic fields — admin tự cấu hình form đăng ký
+  dynamicFields: DynamicField[];      // { key, label, type, required, options? }
+
+  // Add-on items — sản phẩm/dịch vụ bán kèm vé
+  addOnItems: AddOnItem[];            // { id, name, price, maxQty }
+
+  // Media
+  galleryImageUrls: string[];         // Ảnh gallery sự kiện
+
+  // Metadata
+  status: "draft" | "published" | "cancelled" | "completed";
+  tenantId: number;
+  branchId: number;
+  createdAt: string;
+  updatedAt: string;
+}
+```
+
+#### EventRegistration (types.ts — CHUNG)
+
+```ts
+interface EventRegistration {
+  id: string;
+  eventId: string;
+  fullName: string;
+  phone: string;
+  email?: string;
+
+  // Dynamic field responses
+  dynamicFieldValues: Record<string, any>;  // { [fieldKey]: value }
+
+  // Add-ons purchased
+  selectedAddOns: { addOnId: string; qty: number }[];
+  totalAmount: number;
+
+  // Payment proof upload (bank transfer receipt)
+  paymentProof?: {
+    imageUrl: string;
+    submittedAt: string;
+    status: "pending" | "approved" | "rejected";
+    reviewedBy?: number;
+    reviewedAt?: string;
+    note?: string;
+  };
+
+  // Check-in / Check-out records (event-day operations)
+  checkInOutRecords: {
+    type: "checkin" | "checkout";
+    at: string;           // ISO datetime
+    by: number;           // userId
+    note?: string;
+  }[];
+
+  status: "registered" | "confirmed" | "cancelled" | "attended";
+  createdAt: string;
+}
+```
+
+#### ServiceUsageRecord (types.industry.ts — ĐẶC THÙ)
+
+```ts
+interface ServiceUsageRecord {
+  id: string;
+  eventId: string;
+  registrationId: string;
+  serviceName: string;        // Tên dịch vụ (spa treatment, gym class, ...)
+  staffId?: number;           // Nhân viên thực hiện
+  usedAt: string;             // Thời điểm sử dụng
+  note?: string;
+}
+```
+
+> **ServiceUsageRecord** chỉ áp dụng cho tenant có ngành đặc thù (spa, gym, wellness). Tenant generic không dùng entity này.
+
+### 1.3. Số lượng entity ước tính
+
+- **Tổng**: ~120-150 entity (suy từ `model/` directory + service file count), bao gồm 3 entity Event mới
 - **Top 10 entity quan trọng nhất**: Customer, Invoice, Product, Shift, Material, Cashbook, MembershipPlan, Promotion, User, Branch
 
 ---

@@ -246,4 +246,180 @@ Quản lý **các công việc chăm sóc khách định kỳ / sự kiện**:
 
 ---
 
+## F. Quản lý Sự kiện (Community Hub — Events)
+
+**URL:** `/crm/community-hub/events`
+
+Phân hệ **Sự kiện** giúp bạn tổ chức workshop, hội thảo, lớp học, networking... với quy trình khép kín: tạo sự kiện → chia sẻ link → nhận đăng ký → duyệt → check-in → chuyển thành hội viên.
+
+Sidebar có **2 mục con**:
+
+| # | Mục | URL | Dùng để |
+|---|-----|-----|---------|
+| 1 | **Danh sách sự kiện** | `/crm/community-hub/events` | Tạo, quản lý, công bố sự kiện |
+| 2 | **Trang chia sẻ** | `/share_event?slug=xxx` | Link công khai cho khách đăng ký (không cần đăng nhập) |
+
+---
+
+### F.1. Tạo sự kiện với dynamic fields + add-ons
+
+1. Bấm **+ Tạo sự kiện**.
+2. Điền thông tin cơ bản:
+
+#### Quy định nhập liệu — Sự kiện
+
+| Trường | Bắt buộc | Kiểu | Ghi chú |
+|--------|:--------:|------|---------|
+| **Tiêu đề** | ✓ | Text 3–255 | Vd *"Workshop Yoga cho người mới"* |
+| **Mô tả ngắn** | ✓ | Textarea | Dùng cho preview + SEO |
+| **Nội dung chi tiết** | — | HTML Editor | RebornEditor, hỗ trợ ảnh/video inline |
+| **Ảnh bìa** | — | Upload ≤ 5 MB | Hiển thị trên trang chia sẻ |
+| **Gallery ảnh** | — | Upload nhiều ảnh | Ảnh giới thiệu hoạt động |
+| **Ngày bắt đầu** | ✓ | Datetime | |
+| **Ngày kết thúc** | ✓ | Datetime | Phải sau ngày bắt đầu |
+| **Ngày mở đăng ký** | ✓ | Datetime | |
+| **Ngày đóng đăng ký** | ✓ | Datetime | Phải sau ngày mở |
+| **Danh sách ngày chọn** | — | Multi-date | Cho sự kiện nhiều ngày, khách chọn ngày muốn tham gia |
+| **Hình thức** | ✓ | Toggle | Offline (cần địa điểm) / Online (cần link meeting) |
+| **Địa điểm** | ✓ (offline) | Text | Tên + địa chỉ + thành phố + link Maps |
+| **Link online** | ✓ (online) | URL | Zoom/Google Meet |
+| **Người liên hệ** | ✓ | Text | Tên + SĐT (bắt buộc), email + vai trò (tuỳ chọn) |
+| **Sức chứa tối đa** | — | Number | Bỏ trống = không giới hạn |
+| **Giá vé** | ✓ | Number (VND) | 0 = miễn phí |
+| **Danh mục** | — | Select | Workshop / Hội thảo / Lớp học / Networking / Training / Khác |
+| **Tags** | — | Multi-tag | Vd *yoga, beginner, wellness* |
+| **Yêu cầu bằng chứng TT** | — | Toggle | Bật nếu muốn khách upload ảnh chuyển khoản |
+
+3. **Cấu hình trường tùy biến (Dynamic Fields):**
+
+   Bấm **+ Thêm trường** để thêm câu hỏi bổ sung trên form đăng ký. Mỗi trường có:
+   - **Tên trường** — vd *"Size áo"*, *"Level kinh nghiệm"*.
+   - **Kiểu** — Text / Textarea / Number / Dropdown / Checkbox / Date / Email / Phone.
+   - **Bắt buộc** — toggle.
+   - **Lựa chọn** (nếu Dropdown) — vd *S, M, L, XL*.
+   - **Placeholder / Giá trị mặc định** — tuỳ chọn.
+
+   Kéo thả để sắp xếp thứ tự hiển thị. Trường tùy biến sẽ xuất hiện trên form đăng ký công khai.
+
+4. **Cấu hình sản phẩm/dịch vụ bổ sung (Add-ons):**
+
+   Bấm **+ Thêm add-on** để thêm sản phẩm/dịch vụ bán thêm. Mỗi add-on có:
+   - **Tên** — vd *"Bữa trưa"*, *"Áo event"*.
+   - **Mô tả** — tuỳ chọn.
+   - **Đơn giá** (VND).
+   - **Đơn vị** — vd *"phần"*, *"cái"*.
+   - **Số lượng tối đa / người** — tuỳ chọn.
+   - **Ảnh** — tuỳ chọn.
+
+   Khách sẽ thấy danh sách add-on trên form đăng ký và chọn số lượng. Hệ thống tự tính tổng tiền.
+
+5. Bấm **Lưu nháp** hoặc **Công bố** để xuất bản ngay.
+
+---
+
+### F.2. Quản lý trạng thái sự kiện
+
+| Trạng thái | Ý nghĩa | Hành động |
+|------------|----------|-----------|
+| **Nháp** | Chưa công khai, chỉ admin thấy | Bấm **Công bố** để xuất bản |
+| **Đã công bố** | Trang public hiển thị, khách có thể đăng ký | Bấm **Ẩn** để chuyển về nháp |
+| **Đang diễn ra** | Tự chuyển khi đến ngày bắt đầu | — |
+| **Đã kết thúc** | Tự chuyển khi qua ngày kết thúc | — |
+| **Đã huỷ** | Admin huỷ, thông báo cho tất cả người đăng ký | Bấm **Huỷ sự kiện** |
+
+---
+
+### F.3. Chia sẻ link công khai
+
+Sau khi sự kiện được **Công bố**, hệ thống sinh link dạng:
+
+```
+https://ten-tenant.reborn.vn/share_event?slug=workshop-yoga-abcd
+```
+
+- Bấm **Sao chép link** để lấy URL chia sẻ lên Facebook, Zalo, Email...
+- Khách truy cập link → xem thông tin sự kiện → điền form đăng ký → nhận thông báo "BTC sẽ liên hệ xác nhận".
+- Khách **không cần đăng nhập** để đăng ký.
+- Nếu event multi-day, khách chọn ngày muốn tham gia.
+- Nếu có add-on, khách chọn sản phẩm + số lượng, thấy tổng tiền trước khi gửi.
+
+---
+
+### F.4. Xem & duyệt bằng chứng thanh toán
+
+Áp dụng khi sự kiện bật **"Yêu cầu bằng chứng thanh toán"**:
+
+1. Vào **Chi tiết sự kiện** → tab **Người đăng ký**.
+2. Cột **Thanh toán** hiển thị trạng thái:
+   - **Chờ gửi** — khách chưa upload.
+   - **Đã gửi** — khách đã upload ảnh, chờ duyệt.
+   - **Đã duyệt** — admin đã xác nhận.
+   - **Từ chối** — admin từ chối kèm lý do.
+3. Bấm vào đăng ký có trạng thái **Đã gửi** → xem ảnh bằng chứng.
+4. Bấm **Duyệt** nếu hợp lệ, hoặc **Từ chối** + nhập lý do.
+
+---
+
+### F.5. Check-in khách tại sự kiện
+
+Vào ngày sự kiện, nhân viên BTC check-in khách bằng 2 cách:
+
+**Cách 1 — Scan QR:**
+1. Mở trang sự kiện → tab **Check-in**.
+2. Dùng camera quét mã QR trên vé điện tử của khách.
+3. Hệ thống tự nhận diện → hiển thị tên khách → bấm **Xác nhận check-in**.
+
+**Cách 2 — Nhập thủ công:**
+1. Tìm khách trong danh sách đăng ký (theo tên hoặc SĐT).
+2. Bấm nút **Check-in** bên cạnh tên khách.
+
+**Check-out:**
+- Khi khách rời sự kiện, bấm **Check-out** để ghi nhận thời gian ra.
+
+**Sự kiện nhiều ngày:**
+- Mỗi ngày check-in riêng biệt — hệ thống ghi nhận theo ngày.
+
+---
+
+### F.6. Duyệt đăng ký & Phát hành vé
+
+1. Vào **Chi tiết sự kiện** → tab **Người đăng ký**.
+2. Danh sách hiển thị: Tên, SĐT, Email, Trạng thái, Mã vé, Nguồn, Ngày đăng ký.
+3. Với mỗi đăng ký trạng thái **Chờ xác nhận**:
+   - Bấm **Phát hành vé** → hệ thống sinh mã vé + QR code.
+   - Nếu sự kiện có giá vé → tự tạo đơn hàng bên Sales.
+   - Nếu miễn phí → xác nhận ngay.
+4. Bấm **Chuyển thành hội viên** để convert lead → customer trong hệ thống CRM.
+
+---
+
+### F.7. Tracking dịch vụ sử dụng (ngành fitness/spa)
+
+Nếu bạn thuộc ngành fitness, spa, wellness:
+
+1. Vào **Chi tiết đăng ký** của một khách đã check-in.
+2. Tab **Dịch vụ sử dụng** → bấm **+ Ghi nhận dịch vụ**.
+3. Chọn dịch vụ từ catalog (vd: *Massage 60 phút*, *Tập thử CrossFit*).
+4. Nhập số lượng, đơn giá.
+5. Lưu → dùng để phân tích quan tâm của khách và gợi ý upsell sau event.
+
+---
+
+### F.8. Luồng tổ chức sự kiện điển hình
+
+#### "Tổ chức Workshop Yoga cho người mới bắt đầu"
+
+1. **Tạo sự kiện** → điền thông tin: Workshop Yoga, ngày 29/04, 08:00–11:00, địa điểm Home FitPro Thảo Điền, 30 chỗ, giá vé 150.000đ.
+2. **Thêm dynamic fields**: "Level kinh nghiệm" (dropdown: Chưa biết gì / Cơ bản / Trung cấp), "Size áo" (dropdown: S/M/L/XL).
+3. **Thêm add-ons**: "Bữa trưa 65.000đ", "Áo event 120.000đ".
+4. **Bật** "Yêu cầu bằng chứng thanh toán" vì thu phí qua chuyển khoản.
+5. **Công bố** → **Sao chép link** → đăng lên Facebook + Zalo.
+6. Khách truy cập → đăng ký → chọn add-on → upload ảnh chuyển khoản.
+7. Admin **duyệt bằng chứng** → **Phát hành vé** (hệ thống gửi QR qua email).
+8. Ngày event → nhân viên **scan QR check-in** khách tại cửa.
+9. Trong event → **ghi nhận dịch vụ** khách dùng thử (Massage 30 phút miễn phí).
+10. Sau event → **Chuyển thành hội viên** những khách tiềm năng → bán gói tập tiếp.
+
+---
+
 *Hết Part 09.*

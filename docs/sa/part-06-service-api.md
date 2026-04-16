@@ -292,6 +292,61 @@ export default {
 | **Không** ném exception | Trả về `{ code, message }` | Page handle error qua `code` |
 | **Có signal cho list call** | Cho cancel khi unmount | `filter(params, signal)` |
 
+### 5.3. EventService (`src/services/EventService.ts`)
+
+> **Thêm mới** trong đợt mở rộng module CommunityHub Events (2026-04-16).
+
+EventService gọi các endpoint dưới `prefixMarket /events/*` (`/bizapi/market/events/*`). Hỗ trợ đầy đủ CRUD sự kiện, đăng ký công khai, check-in/check-out vận hành ngày sự kiện, duyệt bằng chứng thanh toán, và theo dõi sử dụng dịch vụ (đặc thù ngành).
+
+```ts
+// src/services/EventService.ts (giản lược)
+import { apiGet, apiPost, apiPut, apiDelete } from "services/apiHelper";
+import { urlsApi } from "configs/urls";
+
+export default {
+  // --- CRUD ---
+  list:       (params, signal?) => apiGet(urlsApi.event.list, params, signal),
+  get:        (id)              => apiGet(urlsApi.event.get, { id }),
+  create:     (body)            => apiPost(urlsApi.event.create, body),
+  update:     (body)            => apiPut(urlsApi.event.update, body),
+  delete:     (id)              => apiDelete(urlsApi.event.delete, { id }),
+
+  // --- Lifecycle ---
+  publish:    (id)              => apiPost(urlsApi.event.publish, { id }),
+
+  // --- Public (no auth) ---
+  registerPublic: (body)        => apiPost(urlsApi.event.registerPublic, body),
+
+  // --- Event-day operations ---
+  checkIn:    (body)            => apiPost(urlsApi.event.checkIn, body),
+  checkOut:   (body)            => apiPost(urlsApi.event.checkOut, body),
+
+  // --- Payment proof ---
+  submitPaymentProof: (body)    => apiPost(urlsApi.event.submitPaymentProof, body),
+  reviewPaymentProof: (body)    => apiPost(urlsApi.event.reviewPaymentProof, body),
+
+  // --- Service usage (industry-specific) ---
+  listServiceUsage: (params)    => apiGet(urlsApi.event.listServiceUsage, params),
+};
+```
+
+| Method | HTTP | Endpoint | Mô tả |
+|--------|------|----------|--------|
+| `list` | GET | `/bizapi/market/events/list` | Danh sách sự kiện (pagination, filter) |
+| `get` | GET | `/bizapi/market/events/get` | Chi tiết 1 sự kiện theo id |
+| `create` | POST | `/bizapi/market/events/create` | Tạo sự kiện mới |
+| `update` | PUT | `/bizapi/market/events/update` | Cập nhật sự kiện |
+| `delete` | DELETE | `/bizapi/market/events/delete` | Xóa sự kiện |
+| `publish` | POST | `/bizapi/market/events/publish` | Công khai sự kiện (tạo link chia sẻ) |
+| `registerPublic` | POST | `/bizapi/market/events/registerPublic` | Đăng ký tham gia (public, no auth) |
+| `checkIn` | POST | `/bizapi/market/events/checkIn` | Ghi nhận check-in người tham dự |
+| `checkOut` | POST | `/bizapi/market/events/checkOut` | Ghi nhận check-out người tham dự |
+| `submitPaymentProof` | POST | `/bizapi/market/events/submitPaymentProof` | Upload bằng chứng chuyển khoản |
+| `reviewPaymentProof` | POST | `/bizapi/market/events/reviewPaymentProof` | Admin duyệt/từ chối bằng chứng |
+| `listServiceUsage` | GET | `/bizapi/market/events/listServiceUsage` | Danh sách dịch vụ đã sử dụng (đặc thù ngành) |
+
+> **Storage strategy:** EventService là API-first — gọi backend khi online. Có localStorage fallback cho draft sự kiện khi mất mạng (xem `storage.ts`).
+
 ---
 
 ## 6. Response format chuẩn
@@ -383,6 +438,7 @@ interface PaginatedResponse<T> {
 | Shipping, Logistics | `/bizapi/logistics` | Logistics Service |
 | Integration, Webhook | `/bizapi/integration` | Integration Service |
 | Campaign, Promotion, MarketingAutomation | `/bizapi/market` | Marketing Service |
+| **Event** (CommunityHub Events) | `/bizapi/market/events` | Marketing Service |
 | Notification, AppNotification | `/bizapi/notification` | Notification Service |
 | Auth, OAuth, RefreshToken | `/authenticator` | Auth Service (SSO) |
 | BPM, BusinessProcess, Form | `/bpmapi` (external) | BPM Service (Camunda) |

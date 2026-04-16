@@ -2,7 +2,7 @@
 
 ## Phạm vi
 
-Phân hệ **Ưu đãi & Chăm sóc** là công cụ giữ chân khách và kéo khách mới. Bao gồm: **Khuyến mãi & Voucher**, **Tích điểm hội viên (loyalty)**, **Chiến dịch marketing đa kênh**, **Chăm sóc thành viên (task automation)**.
+Phân hệ **Ưu đãi & Chăm sóc** là công cụ giữ chân khách và kéo khách mới. Bao gồm: **Khuyến mãi & Voucher**, **Tích điểm hội viên (loyalty)**, **Chiến dịch marketing đa kênh**, **Chăm sóc thành viên (task automation)**, **Quản lý Sự kiện (Community Hub Events)**.
 
 **Actors chính:** Marketer (chính), Branch Manager (duyệt), Receptionist (thực hiện task chăm sóc), CSKH.
 
@@ -182,6 +182,172 @@ Phân hệ **Ưu đãi & Chăm sóc** là công cụ giữ chân khách và kéo
 | UR-MKT-12 | Tự chăm sóc theo sự kiện | C |
 
 **Tổng:** 12 yêu cầu — 2 Must, 7 Should, 3 Could.
+
+---
+
+## E. Quản lý Sự kiện — Community Hub Events
+
+Phân hệ **Sự kiện (Events)** thuộc nhóm Community Hub — cho phép tenant tổ chức workshop, hội thảo, lớp học, networking... với quy trình từ tạo sự kiện → đăng ký công khai → duyệt → check-in → chuyển thành hội viên.
+
+**Actors chính:** Marketer (tạo/quản lý sự kiện), Branch Manager (duyệt), Receptionist/Staff (check-in), Khách hàng ẩn danh (đăng ký công khai), Hệ thống (tự động tính toán, phát hành vé).
+
+### UR-EVT-01 — Quản lý sự kiện (CRUD, publish/unpublish)
+
+| Trường | Nội dung |
+|--------|----------|
+| **ID** | UR-EVT-01 |
+| **Tên** | Tạo, sửa, xoá, công bố / ẩn sự kiện |
+| **Actor** | Marketer, Branch Manager |
+| **Mô tả** | Tenant tạo sự kiện với đầy đủ thông tin: tiêu đề, nội dung chi tiết (HTML editor), ảnh bìa, gallery ảnh, thời gian tổ chức, thời gian mở/đóng đăng ký, địa điểm (offline hoặc online), thông tin liên hệ, sức chứa, giá vé, danh mục, tags. Sự kiện có thể ở trạng thái Nháp → Đã công bố → Đang diễn ra → Đã kết thúc / Đã huỷ. Hỗ trợ sự kiện nhiều ngày (multi-day) với danh sách ngày chọn được. |
+| **Tiền điều kiện** | Người dùng có quyền `EVENTS_CREATE` / `EVENTS_EDIT` / `EVENTS_PUBLISH`. |
+| **Đầu vào** | • **Tiêu đề** (M, 3–255 ký tự)<br>• **Mô tả ngắn** (M, text thuần cho SEO/preview)<br>• **Nội dung chi tiết** (S, HTML từ RebornEditor)<br>• **Ảnh bìa** (S, URL, ≤ 5 MB)<br>• **Gallery ảnh** (S, JSON array URL)<br>• **Ngày bắt đầu / kết thúc** (M, datetime, end > start)<br>• **Ngày mở / đóng đăng ký** (M, datetime, close > open)<br>• **Ngày chọn được** (S, JSON array date — cho event multi-day)<br>• **Địa điểm** (M nếu offline: tên + địa chỉ + thành phố; M nếu online: URL)<br>• **Người liên hệ** (M: tên + SĐT; S: email, vai trò)<br>• **Sức chứa** (S, NULL = không giới hạn)<br>• **Giá vé** (M, VND, 0 = miễn phí)<br>• **Danh mục** (S, workshop/hội thảo/lớp học/networking/training/khác)<br>• **Tags** (S, JSON array string)<br>• **Trạng thái** (M, draft/published — khi tạo chỉ 2 giá trị) |
+| **Đầu ra** | Sự kiện được lưu với slug tự sinh (URL-safe, unique per tenant). Trạng thái `ongoing`/`ended` được tính runtime từ ngày hiện tại. |
+| **Tiêu chí chấp nhận** | 1. CRUD đầy đủ với soft delete.<br>2. Slug auto-gen từ title, unique per tenant.<br>3. Nút **Công bố** chuyển draft → published, ghi `published_at`.<br>4. Nút **Ẩn** chuyển published → draft (cảnh báo nếu đã có đăng ký).<br>5. Nút **Huỷ sự kiện** → gửi thông báo cho tất cả người đã đăng ký.<br>6. Không cho xoá sự kiện đã có đăng ký (suggest huỷ thay vì xoá).<br>7. Không cho chuyển cancelled/ended → published. |
+| **Mức ưu tiên** | **M** |
+
+### UR-EVT-02 — Form đăng ký công khai (public share link)
+
+| Trường | Nội dung |
+|--------|----------|
+| **ID** | UR-EVT-02 |
+| **Tên** | Trang đăng ký sự kiện công khai qua share link |
+| **Actor** | Khách hàng ẩn danh (không cần đăng nhập) |
+| **Mô tả** | Mỗi sự kiện đã công bố có một URL công khai dạng `/share_event?slug=xxx`. Khách truy cập xem thông tin sự kiện + điền form đăng ký. Đăng ký tạo ra bản ghi trạng thái `pending`, chờ admin duyệt. Đăng ký = **lead** (chưa phải customer). |
+| **Tiền điều kiện** | Sự kiện có status = published hoặc ongoing; thời gian hiện tại nằm trong khung đăng ký (open ≤ now ≤ close); chưa đầy sức chứa. |
+| **Đầu vào** | • **Họ tên** (M, ≥ 2 ký tự)<br>• **Số điện thoại** (M, regex VN: 09/08/07/03/05xx × 10 số)<br>• **Email** (S, nếu có phải đúng format)<br>• **Công ty** (S)<br>• **Ghi chú** (S)<br>• **Trường tùy biến** (theo cấu hình UR-EVT-03)<br>• **Sản phẩm bổ sung** (theo cấu hình UR-EVT-04)<br>• **Ngày tham gia** (S, nếu event multi-day)<br>• UTM params (S, auto-capture) |
+| **Đầu ra** | Bản ghi đăng ký trạng thái `pending`. Thông báo "BTC sẽ liên hệ xác nhận". |
+| **Tiêu chí chấp nhận** | 1. Trang public KHÔNG yêu cầu đăng nhập.<br>2. Chặn đăng ký trùng (cùng event + cùng phone → 409).<br>3. Chặn đăng ký khi event đã đầy / hết hạn / chưa mở.<br>4. Rate limit 5 request/phút/IP chống spam.<br>5. Không trả về PII của người đăng ký khác.<br>6. Hiển thị số chỗ còn lại (currentAttendees / maxAttendees). |
+| **Mức ưu tiên** | **M** |
+
+### UR-EVT-03 — Dynamic fields (trường tùy biến trên form đăng ký)
+
+| Trường | Nội dung |
+|--------|----------|
+| **ID** | UR-EVT-03 |
+| **Tên** | Admin cấu hình trường tuỳ biến trên form đăng ký |
+| **Actor** | Marketer, Tenant Admin |
+| **Mô tả** | Khi tạo/sửa sự kiện, admin có thể thêm các trường tuỳ biến (dynamic fields) để thu thập thông tin bổ sung từ người đăng ký. Mỗi trường có: label, kiểu dữ liệu, bắt buộc/không, options (cho select), placeholder, giá trị mặc định, thứ tự hiển thị. Ví dụ: "Size áo", "Bữa ăn ưa thích", "Level kinh nghiệm". |
+| **Tiền điều kiện** | Có quyền `EVENTS_CREATE` hoặc `EVENTS_EDIT`. |
+| **Đầu vào** | Mảng JSON cấu hình trường: `[{ id, label, type, required, options?, placeholder?, defaultValue?, order }]`<br>• **type** ∈ `text | textarea | number | select | checkbox | date | email | phone` |
+| **Đầu ra** | Cấu hình lưu vào `marketing_events.dynamic_fields`. Form đăng ký public tự render các trường này. Giá trị người đăng ký nhập lưu vào `marketing_event_registrations.dynamic_field_values` dạng `{ fieldId: value }`. |
+| **Tiêu chí chấp nhận** | 1. Admin thêm/xoá/sắp xếp trường ngay trên form tạo sự kiện.<br>2. Trường `required` → BE validate khi register, trả lỗi nếu thiếu.<br>3. Trường `select` → giá trị phải nằm trong danh sách `options`.<br>4. Trang public tự render đúng type (text input, dropdown, checkbox...).<br>5. Giá trị hiển thị trong danh sách người đăng ký (admin view). |
+| **Mức ưu tiên** | **M** |
+
+### UR-EVT-04 — Sản phẩm / dịch vụ bổ sung (add-on items)
+
+| Trường | Nội dung |
+|--------|----------|
+| **ID** | UR-EVT-04 |
+| **Tên** | Cấu hình sản phẩm / dịch vụ bán thêm khi đăng ký |
+| **Actor** | Marketer, Tenant Admin |
+| **Mô tả** | Admin cấu hình danh sách sản phẩm/dịch vụ bổ sung (add-on) cho sự kiện, vd: "Bữa trưa 65.000đ", "Áo event 120.000đ", "Massage 250.000đ". Khách chọn add-on + nhập số lượng khi đăng ký. Hệ thống tự tính tổng tiền = giá vé + tổng add-on. |
+| **Tiền điều kiện** | Có quyền `EVENTS_CREATE` hoặc `EVENTS_EDIT`. |
+| **Đầu vào** | Cấu hình trên event: `[{ id, name, description?, unitPrice, unit, maxQty?, imageUrl? }]`<br>Khi đăng ký: `[{ addOnId, qty }]` |
+| **Đầu ra** | Tổng tiền (`totalAmount`) được BE tính server-side: `ticketPrice + Σ(unitPrice × qty)`. Lưu `selected_add_ons` + `total_amount` vào registration. |
+| **Tiêu chí chấp nhận** | 1. Admin thêm/xoá add-on trên form sự kiện.<br>2. Trang public hiển thị add-on với giá, ảnh (nếu có), cho chọn số lượng.<br>3. **BE tính lại totalAmount** — KHÔNG tin giá trị từ FE (chống giả mạo).<br>4. Validate: qty ≤ maxQty (nếu có), addOnId phải tồn tại trong event config.<br>5. Tổng tiền hiển thị trong danh sách đăng ký. |
+| **Mức ưu tiên** | **M** |
+
+### UR-EVT-05 — Upload bằng chứng thanh toán
+
+| Trường | Nội dung |
+|--------|----------|
+| **ID** | UR-EVT-05 |
+| **Tên** | Người đăng ký upload ảnh hoá đơn chuyển khoản, admin duyệt |
+| **Actor** | Khách hàng (upload), Marketer/Branch Manager (duyệt) |
+| **Mô tả** | Khi sự kiện bật tuỳ chọn "Yêu cầu bằng chứng thanh toán", sau đăng ký khách phải upload ảnh chuyển khoản. Admin xem ảnh và duyệt (approve) hoặc từ chối (reject + lý do). Trạng thái bằng chứng: `not_required → pending → submitted → approved / rejected`. |
+| **Tiền điều kiện** | Event có `require_payment_proof = true`. Người đăng ký đã có bản ghi registration. |
+| **Đầu vào** | • **Ảnh bằng chứng** (M, URL sau khi upload, ≤ 5 MB)<br>• **Duyệt/Từ chối** (admin): approved (boolean) + rejectReason (S, nếu từ chối) |
+| **Đầu ra** | Cập nhật `payment_proof_url`, `payment_proof_status`, timestamps, `reviewed_by`. |
+| **Tiêu chí chấp nhận** | 1. Khách upload ảnh → status chuyển sang `submitted`.<br>2. Admin xem ảnh trong chi tiết đăng ký.<br>3. Admin approve → status = `approved`, ghi thời gian + người duyệt.<br>4. Admin reject → status = `rejected`, bắt buộc nhập lý do.<br>5. Có quyền `EVENTS_MANAGE_PAYMENT` mới được duyệt. |
+| **Mức ưu tiên** | **S** |
+
+### UR-EVT-06 — Check-in / check-out tại sự kiện
+
+| Trường | Nội dung |
+|--------|----------|
+| **ID** | UR-EVT-06 |
+| **Tên** | Điểm danh khách tại sự kiện bằng mã vé hoặc thủ công |
+| **Actor** | Receptionist, Staff tại sự kiện |
+| **Mô tả** | Nhân viên BTC check-in khách bằng cách scan QR vé hoặc nhập mã thủ công. Hệ thống cập nhật trạng thái registration → `checked_in`, ghi thời gian. Hỗ trợ check-out để tính thời gian tham gia. Với sự kiện multi-day, mỗi ngày ghi nhận check-in riêng (bảng `marketing_event_checkins`). |
+| **Tiền điều kiện** | Người đăng ký đã được xác nhận (status = confirmed). Có quyền `EVENTS_CHECKIN`. |
+| **Đầu vào** | • **Mã vé** (ticketCode) hoặc **ID đăng ký**<br>• **Ngày check-in** (S, cho event multi-day) |
+| **Đầu ra** | Bản ghi check-in trong `marketing_event_checkins`. Registration status → `checked_in`. |
+| **Tiêu chí chấp nhận** | 1. Scan QR → tra mã vé → nếu hợp lệ thì check-in thành công.<br>2. Chặn check-in trùng (mã đã check-in → lỗi `ALREADY_CHECKED_IN`).<br>3. Chặn check-in vé đã huỷ (`CANCELLED`).<br>4. Multi-day: mỗi ngày có bản ghi riêng, không trùng.<br>5. Check-out: ghi `checked_out_at` vào bản ghi cuối cùng chưa có. |
+| **Mức ưu tiên** | **M** |
+
+### UR-EVT-07 — Tracking dịch vụ sử dụng (đặc thù ngành)
+
+| Trường | Nội dung |
+|--------|----------|
+| **ID** | UR-EVT-07 |
+| **Tên** | Ghi nhận dịch vụ khách sử dụng trong sự kiện |
+| **Actor** | Staff, Receptionist |
+| **Mô tả** | Đặc thù ngành fitness/spa/wellness — ghi nhận dịch vụ khách sử dụng trong khuôn khổ sự kiện (vd: massage, tập thử, tư vấn da...). Dữ liệu dùng để phân tích quan tâm của khách và upsell sau event. Lưu trong bảng riêng `marketing_event_service_usage`. |
+| **Tiền điều kiện** | Người đăng ký đã check-in. Có quyền `EVENTS_SERVICE_USAGE`. |
+| **Đầu vào** | • **registrationId** (M)<br>• **serviceId** (M, từ service catalog)<br>• **serviceName** (M, denormalized)<br>• **Số lượng** (M, default 1)<br>• **Đơn giá** (M, VND) |
+| **Đầu ra** | Bản ghi trong `marketing_event_service_usage` với `recorded_at`, `recorded_by`. |
+| **Tiêu chí chấp nhận** | 1. Thêm/xoá bản ghi dịch vụ cho mỗi người đăng ký.<br>2. Hiển thị danh sách dịch vụ đã dùng trong chi tiết đăng ký.<br>3. Tổng giá trị dịch vụ hiển thị trên dashboard event.<br>4. Có thể tắt tính năng này nếu deploy cho ngành không cần. |
+| **Mức ưu tiên** | **C** |
+
+### UR-EVT-08 — Tích hợp API cho sự kiện
+
+| Trường | Nội dung |
+|--------|----------|
+| **ID** | UR-EVT-08 |
+| **Tên** | Tích hợp liên hệ thống: Sales, Customer, Notification |
+| **Actor** | Hệ thống (Marketing service ↔ Sales service ↔ Customer service) |
+| **Mô tả** | Sự kiện tích hợp với các microservice khác: (1) **Sales** — tạo đơn hàng khi sự kiện có giá vé/add-on, nhận webhook khi thanh toán xong; (2) **Customer** — chuyển đổi người đăng ký thành hội viên (convert-to-member), check phone dedupe; (3) **Notification** — gửi email/SMS vé, thông báo huỷ. Dùng domain event bus hoặc direct HTTP call. |
+| **Tiền điều kiện** | Sales service, Customer service, Notification service đã deploy và có endpoint tương ứng. |
+| **Đầu vào** | • Khi confirm paid ticket: gọi `POST /sales/orders` với `orderType: "event_ticket"`<br>• Khi convert to member: gọi `POST /customers/add-other` với thông tin người đăng ký<br>• Webhook: `POST /marketing/webhooks/sales-order-paid` khi thanh toán xong |
+| **Đầu ra** | Registration được link với `order_id` (Sales) và `converted_to_customer_id` (Customer). Domain events: `event.registration.created`, `event.registration.confirmed`, `event.registration.converted_to_member`. |
+| **Tiêu chí chấp nhận** | 1. Vé có giá → tự tạo order trong Sales, lưu `order_id`.<br>2. Thanh toán xong (webhook) → auto-confirm + phát hành vé.<br>3. Convert to member → tạo customer mới hoặc link customer cũ (nếu phone đã tồn tại).<br>4. Import CSV/Excel → bulk tạo đăng ký.<br>5. Permission `EVENTS_CONVERT_TO_MEMBER` gate thao tác chuyển đổi.<br>6. Audit trail đầy đủ cho mọi thao tác cross-service. |
+| **Mức ưu tiên** | **S** |
+
+---
+
+## Tóm tắt yêu cầu Events (phần E)
+
+| ID | Tên | Ưu tiên |
+|----|-----|:-------:|
+| UR-EVT-01 | Quản lý sự kiện (CRUD, publish/unpublish) | M |
+| UR-EVT-02 | Form đăng ký công khai (public share link) | M |
+| UR-EVT-03 | Dynamic fields (trường tùy biến) | M |
+| UR-EVT-04 | Sản phẩm/dịch vụ bổ sung (add-on) | M |
+| UR-EVT-05 | Upload bằng chứng thanh toán | S |
+| UR-EVT-06 | Check-in/check-out tại sự kiện | M |
+| UR-EVT-07 | Tracking dịch vụ sử dụng | C |
+| UR-EVT-08 | Tích hợp API cho sự kiện | S |
+
+**Tổng Events:** 8 yêu cầu — 5 Must, 2 Should, 1 Could.
+
+---
+
+## Tóm tắt toàn bộ Part 09
+
+| ID | Tên | Ưu tiên |
+|----|-----|:-------:|
+| UR-MKT-01 | Tạo chương trình KM | M |
+| UR-MKT-02 | Tạo lô voucher giấy | C |
+| UR-MKT-03 | Theo dõi hiệu quả KM | S |
+| UR-MKT-04 | Ví điểm khách | S |
+| UR-MKT-05 | Quy tắc tích/đổi điểm | S |
+| UR-MKT-06 | Điều chỉnh điểm thủ công | S |
+| UR-MKT-07 | Đổi điểm lấy quà | C |
+| UR-MKT-08 | Chiến dịch đa kênh | M |
+| UR-MKT-09 | Báo cáo chiến dịch | S |
+| UR-MKT-10 | Quản lý task chăm sóc | S |
+| UR-MKT-11 | Automation task | S |
+| UR-MKT-12 | Tự chăm sóc theo sự kiện | C |
+| UR-EVT-01 | Quản lý sự kiện | M |
+| UR-EVT-02 | Form đăng ký công khai | M |
+| UR-EVT-03 | Dynamic fields | M |
+| UR-EVT-04 | Add-on items | M |
+| UR-EVT-05 | Bằng chứng thanh toán | S |
+| UR-EVT-06 | Check-in/check-out | M |
+| UR-EVT-07 | Tracking dịch vụ | C |
+| UR-EVT-08 | Tích hợp API | S |
+
+**Tổng Part 09:** 20 yêu cầu — 7 Must, 9 Should, 4 Could.
 
 ---
 

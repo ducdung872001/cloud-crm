@@ -92,6 +92,11 @@ Menu hiện tại có **12 nhóm chính** với prefix `ch*`:
     ├─ Tích điểm hội viên (loyaltyPoints → /member_list)
     ├─ Chiến dịch marketing (marketingCampaign → /marketing_campaign)
     └─ Chăm sóc thành viên (customerCare → /customer_care_page)
+10b. Sự kiện (chEvents)
+    ├─ Danh sách sự kiện (chEventList → /ch_events)
+    ├─ Tạo sự kiện (chEventCreate → /ch_events/create)
+    ├─ Chi tiết sự kiện (chEventDetail → /ch_events/:id)
+    └─ Chỉnh sửa sự kiện (chEventEdit → /ch_events/:id/edit)
 11. Kho & Nguyên vật liệu (warehouse)
     ├─ NVL (managementMaterial → /material)
     ├─ Nhà cung cấp (supplierList → /supplier_list)
@@ -371,6 +376,8 @@ if (token && !isPublic) {
   config.headers["Authorization"] = `Bearer ${token}`;
 }
 ```
+
+Ngoài ra, route `/share_event` (trang công khai sự kiện Community Hub) cũng là public — không yêu cầu auth, cho phép người dùng bên ngoài xem chi tiết sự kiện và đăng ký tham gia.
 
 ### 8.2. 404 handling
 
