@@ -158,6 +158,7 @@ Billing service **owns toàn bộ dòng tiền và financial settlement** của 
 
 - Aggregate: `Campaign`, `Segment`, `Promotion`, `Voucher`, **`LoyaltyPoint`**, **`LoyaltyTier`**, **`LoyaltyWallet`**.
 - ⚠️ **Loyalty là sub-domain của `market`**, không phải service riêng. Marketplace sync KHÔNG ở đây — đã chuyển sang `integration`.
+- 🟡 **BPM integration**: Business rules có thể trigger promotion/voucher actions — xem [§3.10 BPM](#310-bpm--bpmapi-platform) để hiểu luồng liên kết. MarketingAutomationService có thể khởi tạo BPMN workflow cho drip campaign phức tạp.
 
 ### 3.9. Notification — `/bizapi/notification`
 
@@ -166,6 +167,19 @@ Billing service **owns toàn bộ dòng tiền và financial settlement** của 
 ### 3.10. BPM — `/bpmapi` (Platform)
 
 🟢 `BpmService`. Workflow engine riêng — có UI reactflow/bpmn-js để vẽ quy trình. Không nằm trong 11 microservices nghiệp vụ.
+
+**Business Rules & Promotion Engine Integration** 🟡:
+
+BPM engine cung cấp hai cơ chế rule cho nghiệp vụ Retail:
+
+1. **Business Rule IF-THEN** (`/business_rule`): Luật đơn giản dạng event-driven — khi entity thay đổi (beforeSave, afterCreate), engine đánh giá điều kiện và thực thi action. Ví dụ:
+   - `IF order.total > 5.000.000 THEN require approval from Store Manager`
+   - `IF customer.tier == "VIP" THEN auto-apply voucher 10%`
+   - `IF product.stock < reorderPoint THEN notify Purchasing`
+
+2. **BPMN Workflow** (`/bpm`): Quy trình phức tạp vẽ bằng bpmn-js — dùng cho sale flow, approval chain, fulfillment orchestration.
+
+**Liên kết với Market service** 🟡: Khi business rule hoặc BPMN task trigger action liên quan đến promotion/loyalty (vd: tự động phát voucher, cộng điểm bonus), BPM engine gọi Market service qua internal API (`/bizapi/market`). Chiều ngược lại: khi campaign tạo automation flow (drip email/SMS), `MarketingAutomationService` có thể gọi BPM để khởi tạo workflow phức tạp. Cách giao tiếp cụ thể (sync REST vs event bus) **cần xác nhận từ BE team**.
 
 ### 3.11. Auth — `/authenticator` (Platform)
 
