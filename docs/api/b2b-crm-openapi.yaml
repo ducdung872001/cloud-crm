@@ -1,0 +1,1008 @@
+openapi: 3.0.3
+info:
+  title: Reborn Tech — B2B CRM API
+  description: |
+    API he thong CRM B2B danh cho doanh nghiep cong nghe / dich vu CNTT.
+    Nhanh: reborn-tech | Domain: biz.reborn.vn
+
+    ## Xac thuc
+    - Bearer JWT token trong header `Authorization`
+    - Header `Hostname` bat buoc de dinh danh tenant (multi-tenant routing)
+
+    ## Response chuan
+    Moi API tra ve JSON theo format:
+    ```json
+    {
+      "code": 0,
+      "message": "success",
+      "result": { ... }
+    }
+    ```
+    - `code = 0`: Thanh cong
+    - `code != 0`: Loi (xem message de biet chi tiet)
+  version: 1.0.0
+  contact:
+    name: Reborn Tech Team
+    email: ceo@reborn.vn
+
+servers:
+  - url: https://biz.reborn.vn
+    description: Production
+
+security:
+  - BearerAuth: []
+    HostnameAuth: []
+
+tags:
+  - name: Customer
+    description: Quan ly khach hang doanh nghiep
+  - name: Contact
+    description: Quan ly lien he tai khach hang
+  - name: Opportunity
+    description: Co hoi kinh doanh (deal pipeline)
+  - name: Quotation
+    description: Bao gia giai phap
+  - name: Contract
+    description: Hop dong
+  - name: Sales Invoice
+    description: Hoa don ban hang
+  - name: Billing
+    description: So thu chi & cong no
+  - name: Ticket
+    description: Yeu cau ho tro / cham soc
+  - name: BPM
+    description: Quy trinh nghiep vu (Business Process Management)
+
+paths:
+  # ──────────────────── CUSTOMER ────────────────────
+  /api/customer/filter:
+    post:
+      tags: [Customer]
+      summary: Tim kiem va loc danh sach khach hang
+      description: |
+        Loc khach hang theo nhieu dieu kien: ten, ma so thue, nguon,
+        nhom KH, nhan vien phu trach, trang thai, ngay tao.
+        Ho tro phan trang va sap xep.
+      operationId: customerFilter
+      parameters:
+        - $ref: '#/components/parameters/Hostname'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                page:
+                  type: integer
+                  example: 1
+                pageSize:
+                  type: integer
+                  example: 20
+                keyword:
+                  type: string
+                  description: Tim theo ten, SDT, email, ma so thue
+                  example: "FPT"
+                status:
+                  type: integer
+                  description: "0 = Tat ca, 1 = Dang hoat dong, 2 = Ngung hoat dong"
+                  example: 1
+                customerGroupId:
+                  type: integer
+                  description: ID nhom khach hang
+                sourceId:
+                  type: integer
+                  description: ID nguon khach hang
+                employeeId:
+                  type: integer
+                  description: ID nhan vien phu trach
+                fromDate:
+                  type: string
+                  format: date
+                toDate:
+                  type: string
+                  format: date
+      responses:
+        '200':
+          description: Danh sach khach hang
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedResponse'
+
+  /api/customer/update:
+    post:
+      tags: [Customer]
+      summary: Tao moi hoac cap nhat khach hang
+      description: |
+        Neu co `id` → cap nhat. Khong co `id` → tao moi.
+        Truong bat buoc khi tao moi: customerName, phone.
+      operationId: customerUpdate
+      parameters:
+        - $ref: '#/components/parameters/Hostname'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - customerName
+              properties:
+                id:
+                  type: integer
+                  description: "Null/0 = tao moi, > 0 = cap nhat"
+                customerName:
+                  type: string
+                  example: "Cong ty TNHH ABC Tech"
+                taxCode:
+                  type: string
+                  example: "0123456789"
+                phone:
+                  type: string
+                  example: "0901234567"
+                email:
+                  type: string
+                  format: email
+                address:
+                  type: string
+                customerGroupId:
+                  type: integer
+                sourceId:
+                  type: integer
+                employeeId:
+                  type: integer
+                  description: Nhan vien phu trach
+                note:
+                  type: string
+      responses:
+        '200':
+          description: Ket qua tao/cap nhat
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StandardResponse'
+
+  /api/customer/detail:
+    get:
+      tags: [Customer]
+      summary: Lay chi tiet khach hang theo ID
+      operationId: customerDetail
+      parameters:
+        - $ref: '#/components/parameters/Hostname'
+        - name: id
+          in: query
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Chi tiet khach hang
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StandardResponse'
+
+  # ──────────────────── CONTACT ────────────────────
+  /api/contact/filter:
+    post:
+      tags: [Contact]
+      summary: Tim kiem lien he tai khach hang
+      description: Loc theo khach hang, chuc vu, ten, SDT, email
+      operationId: contactFilter
+      parameters:
+        - $ref: '#/components/parameters/Hostname'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                page:
+                  type: integer
+                  example: 1
+                pageSize:
+                  type: integer
+                  example: 20
+                customerId:
+                  type: integer
+                keyword:
+                  type: string
+      responses:
+        '200':
+          description: Danh sach lien he
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedResponse'
+
+  /api/contact/update:
+    post:
+      tags: [Contact]
+      summary: Tao moi hoac cap nhat lien he
+      operationId: contactUpdate
+      parameters:
+        - $ref: '#/components/parameters/Hostname'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - contactName
+                - customerId
+              properties:
+                id:
+                  type: integer
+                customerId:
+                  type: integer
+                contactName:
+                  type: string
+                  example: "Nguyen Van A"
+                position:
+                  type: string
+                  example: "CTO"
+                phone:
+                  type: string
+                email:
+                  type: string
+                  format: email
+                isPrimary:
+                  type: boolean
+                  description: Lien he chinh cua khach hang
+                note:
+                  type: string
+      responses:
+        '200':
+          description: Ket qua tao/cap nhat lien he
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StandardResponse'
+
+  # ──────────────────── OPPORTUNITY ────────────────────
+  /api/opportunity/list:
+    post:
+      tags: [Opportunity]
+      summary: Danh sach co hoi kinh doanh
+      description: Loc theo trang thai pipeline, khach hang, nhan vien, gia tri deal
+      operationId: opportunityList
+      parameters:
+        - $ref: '#/components/parameters/Hostname'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                page:
+                  type: integer
+                  example: 1
+                pageSize:
+                  type: integer
+                  example: 20
+                stageId:
+                  type: integer
+                  description: Giai doan pipeline (lead, qualified, proposal, negotiation, won, lost)
+                customerId:
+                  type: integer
+                employeeId:
+                  type: integer
+                keyword:
+                  type: string
+      responses:
+        '200':
+          description: Danh sach co hoi
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedResponse'
+
+  /api/opportunity/update:
+    post:
+      tags: [Opportunity]
+      summary: Tao moi hoac cap nhat co hoi kinh doanh
+      operationId: opportunityUpdate
+      parameters:
+        - $ref: '#/components/parameters/Hostname'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - opportunityName
+                - customerId
+              properties:
+                id:
+                  type: integer
+                opportunityName:
+                  type: string
+                  example: "Trien khai ERP cho ABC Corp"
+                customerId:
+                  type: integer
+                contactId:
+                  type: integer
+                stageId:
+                  type: integer
+                expectedValue:
+                  type: number
+                  format: double
+                  description: Gia tri du kien (VND)
+                  example: 500000000
+                expectedCloseDate:
+                  type: string
+                  format: date
+                probability:
+                  type: integer
+                  description: Xac suat thanh cong (%)
+                  example: 70
+                employeeId:
+                  type: integer
+                note:
+                  type: string
+      responses:
+        '200':
+          description: Ket qua tao/cap nhat co hoi
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StandardResponse'
+
+  # ──────────────────── QUOTATION ────────────────────
+  /api/quotation/list:
+    post:
+      tags: [Quotation]
+      summary: Danh sach bao gia
+      operationId: quotationList
+      parameters:
+        - $ref: '#/components/parameters/Hostname'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                page:
+                  type: integer
+                  example: 1
+                pageSize:
+                  type: integer
+                  example: 20
+                customerId:
+                  type: integer
+                opportunityId:
+                  type: integer
+                status:
+                  type: integer
+                  description: "1 = Draft, 2 = Sent, 3 = Accepted, 4 = Rejected"
+                keyword:
+                  type: string
+      responses:
+        '200':
+          description: Danh sach bao gia
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedResponse'
+
+  /api/quotation/update:
+    post:
+      tags: [Quotation]
+      summary: Tao moi hoac cap nhat bao gia
+      operationId: quotationUpdate
+      parameters:
+        - $ref: '#/components/parameters/Hostname'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - customerId
+              properties:
+                id:
+                  type: integer
+                customerId:
+                  type: integer
+                opportunityId:
+                  type: integer
+                contactId:
+                  type: integer
+                quotationDate:
+                  type: string
+                  format: date
+                validUntil:
+                  type: string
+                  format: date
+                items:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      productId:
+                        type: integer
+                      productName:
+                        type: string
+                      quantity:
+                        type: number
+                      unitPrice:
+                        type: number
+                      discount:
+                        type: number
+                      taxRate:
+                        type: number
+                        description: "Thue suat VAT (%)"
+                note:
+                  type: string
+                totalAmount:
+                  type: number
+                  format: double
+      responses:
+        '200':
+          description: Ket qua tao/cap nhat bao gia
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StandardResponse'
+
+  /api/quotation/get:
+    get:
+      tags: [Quotation]
+      summary: Chi tiet bao gia theo ID
+      operationId: quotationGet
+      parameters:
+        - $ref: '#/components/parameters/Hostname'
+        - name: id
+          in: query
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Chi tiet bao gia
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StandardResponse'
+
+  # ──────────────────── CONTRACT ────────────────────
+  /api/contract/list:
+    post:
+      tags: [Contract]
+      summary: Danh sach hop dong
+      operationId: contractList
+      parameters:
+        - $ref: '#/components/parameters/Hostname'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                page:
+                  type: integer
+                  example: 1
+                pageSize:
+                  type: integer
+                  example: 20
+                customerId:
+                  type: integer
+                status:
+                  type: integer
+                  description: "1 = Draft, 2 = Pending Approval, 3 = Active, 4 = Expired, 5 = Cancelled"
+                keyword:
+                  type: string
+                fromDate:
+                  type: string
+                  format: date
+                toDate:
+                  type: string
+                  format: date
+      responses:
+        '200':
+          description: Danh sach hop dong
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedResponse'
+
+  /api/contract/update:
+    post:
+      tags: [Contract]
+      summary: Tao moi hoac cap nhat hop dong
+      operationId: contractUpdate
+      parameters:
+        - $ref: '#/components/parameters/Hostname'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - contractName
+                - customerId
+              properties:
+                id:
+                  type: integer
+                contractName:
+                  type: string
+                  example: "HD-2026-001 Trien khai CRM"
+                customerId:
+                  type: integer
+                quotationId:
+                  type: integer
+                contractValue:
+                  type: number
+                  format: double
+                startDate:
+                  type: string
+                  format: date
+                endDate:
+                  type: string
+                  format: date
+                paymentTerms:
+                  type: string
+                  description: Dieu khoan thanh toan
+                signedDate:
+                  type: string
+                  format: date
+                note:
+                  type: string
+      responses:
+        '200':
+          description: Ket qua tao/cap nhat hop dong
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StandardResponse'
+
+  /api/contract/get:
+    get:
+      tags: [Contract]
+      summary: Chi tiet hop dong theo ID
+      operationId: contractGet
+      parameters:
+        - $ref: '#/components/parameters/Hostname'
+        - name: id
+          in: query
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Chi tiet hop dong
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StandardResponse'
+
+  # ──────────────────── SALES INVOICE ────────────────────
+  /bizapi/sales/invoice/list:
+    post:
+      tags: [Sales Invoice]
+      summary: Danh sach hoa don ban hang
+      operationId: salesInvoiceList
+      parameters:
+        - $ref: '#/components/parameters/Hostname'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                page:
+                  type: integer
+                  example: 1
+                pageSize:
+                  type: integer
+                  example: 20
+                customerId:
+                  type: integer
+                contractId:
+                  type: integer
+                status:
+                  type: integer
+                  description: "1 = Draft, 2 = Confirmed, 3 = Cancelled"
+                fromDate:
+                  type: string
+                  format: date
+                toDate:
+                  type: string
+                  format: date
+      responses:
+        '200':
+          description: Danh sach hoa don
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedResponse'
+
+  /bizapi/sales/invoice/create:
+    post:
+      tags: [Sales Invoice]
+      summary: Tao hoa don ban hang moi
+      operationId: salesInvoiceCreate
+      parameters:
+        - $ref: '#/components/parameters/Hostname'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - customerId
+                - items
+              properties:
+                customerId:
+                  type: integer
+                contractId:
+                  type: integer
+                invoiceDate:
+                  type: string
+                  format: date
+                items:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      productId:
+                        type: integer
+                      productName:
+                        type: string
+                      quantity:
+                        type: number
+                      unitPrice:
+                        type: number
+                      taxRate:
+                        type: number
+                note:
+                  type: string
+      responses:
+        '200':
+          description: Hoa don da tao
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StandardResponse'
+
+  # ──────────────────── BILLING ────────────────────
+  /bizapi/billing/cashbook/list:
+    post:
+      tags: [Billing]
+      summary: Danh sach so thu chi (cashbook)
+      description: Loc phieu thu/chi theo loai, khach hang, thoi gian
+      operationId: billingCashbookList
+      parameters:
+        - $ref: '#/components/parameters/Hostname'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                page:
+                  type: integer
+                  example: 1
+                pageSize:
+                  type: integer
+                  example: 20
+                type:
+                  type: integer
+                  description: "1 = Phieu thu, 2 = Phieu chi"
+                customerId:
+                  type: integer
+                fromDate:
+                  type: string
+                  format: date
+                toDate:
+                  type: string
+                  format: date
+      responses:
+        '200':
+          description: Danh sach phieu thu chi
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedResponse'
+
+  /bizapi/billing/debt/list:
+    post:
+      tags: [Billing]
+      summary: Danh sach cong no khach hang
+      description: Bao cao cong no phai thu / phai tra theo khach hang
+      operationId: billingDebtList
+      parameters:
+        - $ref: '#/components/parameters/Hostname'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                page:
+                  type: integer
+                  example: 1
+                pageSize:
+                  type: integer
+                  example: 20
+                customerId:
+                  type: integer
+                debtType:
+                  type: integer
+                  description: "1 = Phai thu, 2 = Phai tra"
+                fromDate:
+                  type: string
+                  format: date
+                toDate:
+                  type: string
+                  format: date
+      responses:
+        '200':
+          description: Danh sach cong no
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedResponse'
+
+  # ──────────────────── TICKET ────────────────────
+  /bizapi/care/ticket/list:
+    post:
+      tags: [Ticket]
+      summary: Danh sach ticket ho tro
+      operationId: ticketList
+      parameters:
+        - $ref: '#/components/parameters/Hostname'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                page:
+                  type: integer
+                  example: 1
+                pageSize:
+                  type: integer
+                  example: 20
+                customerId:
+                  type: integer
+                status:
+                  type: integer
+                  description: "1 = Open, 2 = In Progress, 3 = Resolved, 4 = Closed"
+                priority:
+                  type: integer
+                  description: "1 = Low, 2 = Medium, 3 = High, 4 = Urgent"
+                assigneeId:
+                  type: integer
+                keyword:
+                  type: string
+      responses:
+        '200':
+          description: Danh sach ticket
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedResponse'
+
+  /bizapi/care/ticket/update:
+    post:
+      tags: [Ticket]
+      summary: Tao moi hoac cap nhat ticket
+      operationId: ticketUpdate
+      parameters:
+        - $ref: '#/components/parameters/Hostname'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - title
+                - customerId
+              properties:
+                id:
+                  type: integer
+                title:
+                  type: string
+                  example: "Loi khong dang nhap duoc module HR"
+                customerId:
+                  type: integer
+                contactId:
+                  type: integer
+                contractId:
+                  type: integer
+                  description: Lien ket hop dong bao hanh/dich vu
+                priority:
+                  type: integer
+                assigneeId:
+                  type: integer
+                category:
+                  type: string
+                  description: "Phan loai: bug, feature_request, support, warranty"
+                description:
+                  type: string
+                resolution:
+                  type: string
+                status:
+                  type: integer
+      responses:
+        '200':
+          description: Ket qua tao/cap nhat ticket
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StandardResponse'
+
+  # ──────────────────── BPM ────────────────────
+  /bpmapi/process/list:
+    post:
+      tags: [BPM]
+      summary: Danh sach quy trinh nghiep vu
+      description: |
+        Lay danh sach cac process definition da cau hinh.
+        Vi du: phe duyet hop dong, phe duyet bao gia, onboarding KH moi.
+      operationId: bpmProcessList
+      parameters:
+        - $ref: '#/components/parameters/Hostname'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                page:
+                  type: integer
+                  example: 1
+                pageSize:
+                  type: integer
+                  example: 20
+                keyword:
+                  type: string
+                status:
+                  type: integer
+                  description: "1 = Active, 0 = Inactive"
+      responses:
+        '200':
+          description: Danh sach quy trinh
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedResponse'
+
+  /bpmapi/process/start:
+    post:
+      tags: [BPM]
+      summary: Khoi tao mot instance quy trinh moi
+      description: |
+        Bat dau chay mot process instance. Vi du: nhan vien gui yeu cau
+        phe duyet hop dong → he thong tao instance va gui thong bao cho
+        nguoi phe duyet.
+      operationId: bpmProcessStart
+      parameters:
+        - $ref: '#/components/parameters/Hostname'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - processDefinitionId
+              properties:
+                processDefinitionId:
+                  type: integer
+                  description: ID cua process definition
+                referenceType:
+                  type: string
+                  description: "Loai doi tuong: contract, quotation, customer"
+                referenceId:
+                  type: integer
+                  description: ID cua doi tuong lien quan
+                variables:
+                  type: object
+                  description: Bien truyen vao process (key-value)
+                  additionalProperties: true
+                note:
+                  type: string
+      responses:
+        '200':
+          description: Process instance da khoi tao
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StandardResponse'
+
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: JWT token nhan tu /auth/login
+    HostnameAuth:
+      type: apiKey
+      in: header
+      name: Hostname
+      description: |
+        Hostname cua tenant, dung de routing multi-tenant.
+        Vi du: abc-tech.reborn.vn
+
+  parameters:
+    Hostname:
+      name: Hostname
+      in: header
+      required: true
+      description: Hostname tenant (multi-tenant routing)
+      schema:
+        type: string
+        example: "abc-tech.reborn.vn"
+
+  schemas:
+    StandardResponse:
+      type: object
+      properties:
+        code:
+          type: integer
+          description: "0 = thanh cong, khac 0 = loi"
+          example: 0
+        message:
+          type: string
+          example: "success"
+        result:
+          type: object
+          description: Du lieu tra ve (khac nhau tuy API)
+
+    PaginatedResponse:
+      type: object
+      properties:
+        code:
+          type: integer
+          example: 0
+        message:
+          type: string
+          example: "success"
+        result:
+          type: object
+          properties:
+            data:
+              type: array
+              items:
+                type: object
+            totalRecord:
+              type: integer
+              example: 150
+            page:
+              type: integer
+              example: 1
+            pageSize:
+              type: integer
+              example: 20
+
+    Error:
+      type: object
+      properties:
+        code:
+          type: integer
+          example: 1001
+        message:
+          type: string
+          example: "Token khong hop le hoac da het han"
+        result:
+          type: object
+          nullable: true
