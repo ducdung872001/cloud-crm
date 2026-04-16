@@ -16,9 +16,16 @@ import { ILoyaltyWalletResponse } from "@/model/loyalty/RoyaltyResposne";
 import LoyaltyService from "@/services/LoyaltyService";
 import HeaderTabMenu from "@/components/HeaderTabMenu/HeaderTabMenu";
 import Icon from "components/icon";
+import MemberCardBarcode from "./MemberCardBarcode";
+import BulkImportModal from "./BulkImportModal";
 
 export default function LoyaltyWallet(props) {
-  document.title = "Danh sách thành viên";
+  document.title = "Danh sách hội viên";
+
+  // ── Member Card + Bulk Import modals ──
+  const [showCard, setShowCard] = useState(false);
+  const [cardMember, setCardMember] = useState<ILoyaltyWalletResponse | null>(null);
+  const [showImport, setShowImport] = useState(false);
 
   const isMounted = useRef(false);
   const { onBackProps, onViewHistory } = props;
@@ -88,7 +95,13 @@ export default function LoyaltyWallet(props) {
   };
 
   const titleActions: ITitleActions = {
-    actions: [],
+    actions: [
+      {
+        title: "Import hội viên",
+        icon: <Icon name="Upload" />,
+        callback: () => setShowImport(true),
+      },
+    ],
     actions_extra: [
       {
         title:    isExporting ? "Đang xuất..." : "Xuất Excel",
@@ -101,9 +114,9 @@ export default function LoyaltyWallet(props) {
 
   // ── Table columns ──────────────────────────────────────────────
   const titles = [
-    "STT", "Khách hàng", "Tổng điểm tích lũy", "Điểm hiện tại", "Hạng hội viên", "Trạng thái",
+    "STT", "Khách hàng", "Tổng điểm tích lũy", "Điểm hiện tại", "Hạng hội viên", "Trạng thái", "",
   ];
-  const dataFormat = ["text-center", "", "text-right", "text-right", "", "text-center"];
+  const dataFormat = ["text-center", "", "text-right", "text-right", "", "text-center", "text-center"];
 
   const dataMappingArray = (item: ILoyaltyWalletResponse, index: number) => [
     getPageOffset(params) + index + 1,
@@ -128,6 +141,12 @@ export default function LoyaltyWallet(props) {
     item.status === 1
       ? <span className="loyalty-status loyalty-status--active">Kích hoạt</span>
       : <span className="loyalty-status loyalty-status--inactive">Không kích hoạt</span>,
+    <button
+      onClick={(e) => { e.stopPropagation(); setCardMember(item); setShowCard(true); }}
+      style={{ padding: "4px 10px", fontSize: 11, background: "#E4F7F3", color: "#0B2E2A", border: "1px solid #00C9A7", borderRadius: 6, cursor: "pointer", fontWeight: 600, whiteSpace: "nowrap" }}
+    >
+      Xem thẻ
+    </button>,
   ];
 
   return (
@@ -190,6 +209,24 @@ export default function LoyaltyWallet(props) {
           </Fragment>
         )}
       </div>
+
+      {/* Member Card Modal */}
+      <MemberCardBarcode
+        visible={showCard}
+        onClose={() => setShowCard(false)}
+        member={cardMember}
+      />
+
+      {/* Bulk Import Modal */}
+      <BulkImportModal
+        visible={showImport}
+        onClose={() => setShowImport(false)}
+        onImport={async (rows) => {
+          showToast(`Import ${rows.length} hội viên thành công (prototype)`, "success");
+          setShowImport(false);
+          setParams((prev) => ({ ...prev })); // refresh list
+        }}
+      />
     </div>
   );
 }

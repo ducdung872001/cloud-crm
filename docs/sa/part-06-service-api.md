@@ -186,7 +186,7 @@ Code `0` = success. Khác `0` → hiển thị toast theo `message`. 401 bị ch
 | `PaymentService.ts` | Thanh toán đa phương thức — BE: `/bizapi/billing` |
 | `LogisticsService.ts` | Vận chuyển — BE: `/bizapi/logistics` |
 | `BillingService.ts` | Hoá đơn điện tử VAT — BE: `/bizapi/billing` |
-| `LoyaltyService.ts` | Loyalty point — BE: `/bizapi/market` (sub-domain của market) |
+| `LoyaltyService.ts` | Loyalty: wallet, ledger, segment, reward, config — BE: `/bizapi/market/loyalty*`. Bổ sung 04/2026: `getConfig/saveConfig` (alias), `autoEarn` endpoint cho POS bên ngoài, `import` endpoint bulk import |
 | `CampaignService.ts` | Chiến dịch |
 | `MarketingAutomationService.ts` | Automation |
 | `NotificationService.ts` | FCM, in-app |

@@ -54,8 +54,12 @@
 | 41 | RT.41 | Quy trinh nghiep vu (BPM) | 22 | **MOI — Co trong menu chinh** |
 | 42 | RT.42 | Marketing Automation | 14 | **MOI — Co route active** |
 | 43 | RT.43 | Quy trinh ban hang (Sale Flow) | 12 | **MOI — Co trong menu** |
+| 44 | RT.48 | Loyalty Menu & Dashboard (Supermarket Chain) | 8 | **MOI** |
+| 45 | RT.49 | Cau hinh Loyalty (Point Expiry, Auto Tier, Scope, Module Toggle, Earn Rules) | 12 | **MOI** |
+| 46 | RT.50 | Member Card & Bulk Import | 8 | **MOI** |
+| 47 | RT.51 | Integration & API Docs Page | 7 | **MOI** |
 
-**Tong cong:** ~860+ buoc kiem thu
+**Tong cong:** ~895+ buoc kiem thu
 
 ---
 
@@ -4121,3 +4125,319 @@ Automated: `tests/test-e2e-return-exchange.mjs` (S3 scenario)
 ---
 
 *Cap nhat 2026-04-13: bo sung RT.44 (CRUD), RT.45 (destructive), RT.46 (cross-module), RT.47 (coverage matrix). Tong so kich ban: 47.*
+
+---
+
+# RT.48 — LOYALTY MENU & DASHBOARD (SUPERMARKET CHAIN)
+
+**Module:** Loyalty (top-level menu)
+**Duong dan:** Loyalty (menu chinh, KHONG con nam duoi Marketing)
+**Lien quan:** Chuoi sieu thi — Loyalty tach rieng thanh menu cap 1
+
+---
+
+## Buoc 1: Loyalty menu hien thi o top-level
+
+- **Hanh dong:** Dang nhap vai "Ban giam doc" hoac admin, quan sat sidebar menu
+- **Yeu cau:** Menu "Loyalty" hien thi la muc cap 1 rieng biet, KHONG nam duoi menu "Marketing"
+- **Trang thai:** —
+
+---
+
+## Buoc 2: Loyalty menu khong con hien duoi Marketing
+
+- **Hanh dong:** Mo menu "Marketing" va kiem tra cac submenu
+- **Yeu cau:** Khong con muc "Loyalty" / "Tich diem" ben trong Marketing
+- **Trang thai:** —
+
+---
+
+## Buoc 3: Dashboard Loyalty > KPI Tiles
+
+- **Hanh dong:** Vao Loyalty > Dashboard
+- **Yeu cau:** Hien thi cac tile KPI: tong thanh vien, diem phat hanh, diem su dung, ty le redeem, tong tier
+- **Trang thai:** —
+
+---
+
+## Buoc 4: Dashboard Loyalty > Donut Chart
+
+- **Hanh dong:** Xem bieu do donut tren dashboard
+- **Yeu cau:** Donut chart hien thi phan bo thanh vien theo tier (VD: Silver / Gold / Platinum). Hover hien so luong
+- **Trang thai:** —
+
+---
+
+## Buoc 5: Dashboard Loyalty > Quick Actions
+
+- **Hanh dong:** Tim va click cac nut quick action tren dashboard
+- **Yeu cau:** Co cac quick action: "Them thanh vien", "Cau hinh diem", "Xem bao cao". Click chuyen dung trang
+- **Trang thai:** —
+
+---
+
+## Buoc 6: Dashboard Loyalty > Filter theo thoi gian
+
+- **Hanh dong:** Chon bo loc thoi gian (7 ngay / 30 ngay / quy / nam)
+- **Yeu cau:** KPI tiles va chart cap nhat theo khoang thoi gian da chon
+- **Trang thai:** —
+
+---
+
+## Buoc 7: Dashboard Loyalty > Du lieu khi chua co thanh vien
+
+- **Hanh dong:** Xem dashboard khi chua co thanh vien loyalty nao
+- **Yeu cau:** Hien thi trang thai empty state, KPI = 0, chart hien placeholder hoac thong bao "Chua co du lieu"
+- **Trang thai:** —
+
+---
+
+## Buoc 8: Loyalty menu > Kiem tra quyen truy cap
+
+- **Hanh dong:** Dang nhap voi user KHONG co quyen Loyalty
+- **Yeu cau:** Menu Loyalty khong hien thi hoac hien thi nhung bao "Khong co quyen"
+- **Trang thai:** —
+
+---
+
+# RT.49 — CAU HINH LOYALTY (POINT EXPIRY, AUTO TIER, SCOPE, MODULE TOGGLE)
+
+**Module:** Loyalty > Cau hinh
+**Duong dan:** Loyalty > Cau hinh
+**Lien quan:** Point Expiry Config, Auto Tier Evaluation, Loyalty Scope, Module Toggle
+
+---
+
+## Buoc 1: Point Expiry Config > Che do "never" (khong het han)
+
+- **Hanh dong:** Vao Loyalty > Cau hinh > Point Expiry. Chon mode = "never"
+- **Yeu cau:** Luu thanh cong, diem khong co ngay het han. Mo lai form → mode = "never" da duoc chon
+- **Trang thai:** —
+
+---
+
+## Buoc 2: Point Expiry Config > Che do "after_months"
+
+- **Hanh dong:** Chon mode = "after_months", nhap so thang = 12, notify_before_days = 30
+- **Yeu cau:** Luu thanh cong. Mo lai form → mode = "after_months", months = 12, notify = 30. API response khop
+- **Trang thai:** —
+
+---
+
+## Buoc 3: Point Expiry Config > Che do "end_of_year"
+
+- **Hanh dong:** Chon mode = "end_of_year", notify_before_days = 15
+- **Yeu cau:** Luu thanh cong. Diem se het han cuoi nam. Mo lai form → mode = "end_of_year", notify = 15
+- **Trang thai:** —
+
+---
+
+## Buoc 4: Auto Tier Evaluation > Cau hinh period
+
+- **Hanh dong:** Vao Auto Tier Evaluation. Chon period = "quarterly", metric = "total_spend"
+- **Yeu cau:** Luu thanh cong. Mo lai → period = quarterly, metric = total_spend
+- **Trang thai:** —
+
+---
+
+## Buoc 5: Auto Tier Evaluation > Auto upgrade / downgrade / grace days
+
+- **Hanh dong:** Bat auto_upgrade = true, auto_downgrade = true, grace_days = 30
+- **Yeu cau:** Luu thanh cong. Mo lai form — tat ca toggle va grace_days dung. API confirm
+- **Trang thai:** —
+
+---
+
+## Buoc 6: Auto Tier Evaluation > Tat auto_downgrade
+
+- **Hanh dong:** Tat auto_downgrade = false, giu auto_upgrade = true
+- **Yeu cau:** Luu thanh cong. Thanh vien khong bi ha tier tu dong. grace_days an di hoac khong ap dung cho downgrade
+- **Trang thai:** —
+
+---
+
+## Buoc 7: Loyalty Scope Config > chain_wide
+
+- **Hanh dong:** Vao Loyalty Scope. Chon scope = "chain_wide", bat cross_brand_points = true
+- **Yeu cau:** Luu thanh cong. Diem tich duoc tai bat ky store nao trong chuoi. Mo lai → scope + cross_brand dung
+- **Trang thai:** —
+
+---
+
+## Buoc 8: Loyalty Scope Config > per_brand va per_store_group
+
+- **Hanh dong:** Chon scope = "per_brand" → luu → verify. Doi sang "per_store_group" → luu → verify
+- **Yeu cau:** Moi lan doi scope, form luu dung va reflect lai khi mo edit. Cross-brand toggle chi hien khi scope = chain_wide
+- **Trang thai:** —
+
+---
+
+## Buoc 9: Module Toggle > Preset modes
+
+- **Hanh dong:** Vao Module Toggle. Chon preset = "Full" → luu. Doi sang "Loyalty only" → luu. Doi sang "Loyalty+Marketing" → luu
+- **Yeu cau:** Moi preset bat/tat dung cac module tuong ung. Menu sidebar cap nhat theo preset da chon
+- **Trang thai:** —
+
+---
+
+## Buoc 10: Module Toggle > Individual toggle
+
+- **Hanh dong:** Chon preset = "Full", sau do tat thu cong 1 module (VD: tat "Bao cao"). Luu
+- **Yeu cau:** Preset chuyen sang "Custom". Module da tat khong hien tren menu. Mo lai form → toggle state dung
+- **Trang thai:** —
+
+---
+
+## Buoc 11: Enhanced Point Earn Rules > Cau hinh earnType va earnRate
+
+- **Hanh dong:** Vao Loyalty > Cau hinh > Point Earn Rules. Chon earnType = "per_amount" (VD: 1 diem / 10,000 VND), nhap earnRate = 1, minSpendThreshold = 50000
+- **Yeu cau:** Luu thanh cong. Mo lai → earnType, earnRate, minSpendThreshold hien dung. Don duoi minSpend khong tich diem
+- **Trang thai:** —
+
+---
+
+## Buoc 12: Enhanced Point Earn Rules > multiplierConfig
+
+- **Hanh dong:** Cau hinh multiplierConfig: VD x2 diem cho ngay sinh nhat, x3 cho tier Gold. Luu
+- **Yeu cau:** Luu thanh cong. Mo lai → multiplier rules hien dung. Verify: khi 1 KH Gold mua hang → diem = earnRate x3. API confirm
+- **Trang thai:** —
+
+---
+
+# RT.50 — MEMBER CARD & BULK IMPORT
+
+**Module:** Loyalty > The thanh vien / Nhap lieu hang loat
+**Duong dan:** Loyalty > Thanh vien
+**Lien quan:** Member Card Barcode, Bulk Member Import
+
+---
+
+## Buoc 1: Member Card Barcode > Hien thi the
+
+- **Hanh dong:** Vao chi tiet 1 thanh vien loyalty. Tim muc "The thanh vien"
+- **Yeu cau:** Hien thi the voi: ten KH, ma the (barcode), tier hien tai, so diem. Barcode render dung dinh dang
+- **Trang thai:** —
+
+---
+
+## Buoc 2: Member Card Barcode > In the
+
+- **Hanh dong:** Click nut "In the" / "Print Card"
+- **Yeu cau:** Mo print preview voi layout the. Barcode in duoc, quet thu bang scanner phai doc dung ma the
+- **Trang thai:** —
+
+---
+
+## Buoc 3: Member Card > The hien thi dung thong tin sau khi cap nhat tier
+
+- **Hanh dong:** Nang tier thanh vien (VD: Silver → Gold), sau do xem lai the
+- **Yeu cau:** The cap nhat tier moi. Barcode van giu nguyen ma the cu
+- **Trang thai:** —
+
+---
+
+## Buoc 4: Bulk Member Import > Tai mau CSV
+
+- **Hanh dong:** Vao Loyalty > Thanh vien > Import. Click "Tai mau CSV"
+- **Yeu cau:** File CSV mau duoc tai ve voi cac cot: name, phone, email, tier, points, join_date
+- **Trang thai:** —
+
+---
+
+## Buoc 5: Bulk Member Import > Upload CSV va Preview
+
+- **Hanh dong:** Upload file CSV co 10 ban ghi (5 moi, 3 trung phone, 2 loi format)
+- **Yeu cau:** Man hinh preview hien 10 dong. 3 dong trung phone duoc highlight (dedupe). 2 dong loi format duoc danh dau do
+- **Trang thai:** —
+
+---
+
+## Buoc 6: Bulk Member Import > Dedupe highlight
+
+- **Hanh dong:** Trong preview, xem cac dong trung phone
+- **Yeu cau:** Hien thi ro: "Trung voi thanh vien #XX — Nguyen Van A". Cho phep chon: bo qua / cap nhat / ghi de
+- **Trang thai:** —
+
+---
+
+## Buoc 7: Bulk Member Import > Thuc hien import
+
+- **Hanh dong:** Bo chon 2 dong loi, giu 5 dong moi + 3 dong trung (chon "cap nhat"). Click Import
+- **Yeu cau:** Import thanh cong: 5 thanh vien moi, 3 thanh vien cap nhat. Toast hien ket qua. Danh sach thanh vien tang dung so luong
+- **Trang thai:** —
+
+---
+
+## Buoc 8: Bulk Member Import > Upload file rong / sai dinh dang
+
+- **Hanh dong:** Upload file .xlsx thay vi .csv, hoac file CSV rong
+- **Yeu cau:** Thong bao loi ro rang: "Dinh dang khong hop le" hoac "File rong"
+- **Trang thai:** —
+
+---
+
+# RT.51 — INTEGRATION & API DOCS PAGE
+
+**Module:** Loyalty > Integration / Tich hop
+**Duong dan:** Loyalty > Integration & API Docs
+**Lien quan:** Trang tai lieu API noi bo — render 7 tab
+
+---
+
+## Buoc 1: Truy cap trang Integration & API Docs
+
+- **Hanh dong:** Vao Loyalty > Integration & API Docs
+- **Yeu cau:** Trang load thanh cong. Hien thi 7 tab tai lieu
+- **Trang thai:** —
+
+---
+
+## Buoc 2: Chuyen doi giua cac tab
+
+- **Hanh dong:** Click lan luot tung tab (tab 1 → tab 2 → ... → tab 7)
+- **Yeu cau:** Moi tab render noi dung khac nhau. Khong bi loi trang / crash. Tab active duoc highlight
+- **Trang thai:** —
+
+---
+
+## Buoc 3: Noi dung tab render dung Markdown / code block
+
+- **Hanh dong:** Xem noi dung 1 tab co code sample
+- **Yeu cau:** Code block duoc format dung (syntax highlight, font monospace). Khong bi hien raw HTML/Markdown
+- **Trang thai:** —
+
+---
+
+## Buoc 4: Copy code snippet
+
+- **Hanh dong:** Tim nut "Copy" ben canh code block, click copy
+- **Yeu cau:** Noi dung code duoc copy vao clipboard. Toast "Da copy" hien thi
+- **Trang thai:** —
+
+---
+
+## Buoc 5: Responsive layout
+
+- **Hanh dong:** Thu nho trinh duyet xuong 768px (tablet) va 375px (mobile)
+- **Yeu cau:** Tab navigation van su dung duoc (scroll ngang hoac dropdown). Noi dung khong bi tran
+- **Trang thai:** —
+
+---
+
+## Buoc 6: API Docs > Kiem tra link endpoint
+
+- **Hanh dong:** Tim cac URL endpoint trong tai lieu (VD: /api/loyalty/points). Copy va goi thu bang Postman/curl
+- **Yeu cau:** Endpoint thuc te ton tai va tra ve response hop le (200 hoac 401 neu chua auth)
+- **Trang thai:** —
+
+---
+
+## Buoc 7: Kiem tra quyen truy cap trang API Docs
+
+- **Hanh dong:** Dang nhap voi user khong co quyen "Loyalty" hoac "Integration"
+- **Yeu cau:** Trang API Docs khong hien thi hoac bao "Khong co quyen truy cap"
+- **Trang thai:** —
+
+---
+
+*Cap nhat 2026-04-16: bo sung RT.48 (Loyalty Menu & Dashboard), RT.49 (Cau hinh Loyalty), RT.50 (Member Card & Bulk Import), RT.51 (Integration & API Docs). Tong so kich ban: 51.*

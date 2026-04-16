@@ -1,7 +1,7 @@
 import React, {Fragment, useCallback, useContext, useEffect, useState, memo} from "react";
 import Navigation from "components/navigation/navigation";
 import LogoMenu from "assets/images/logo-menu.svg";
-import { menu } from "configs/routes";
+import { menu, getFilteredMenu } from "configs/routes";
 import Button from "components/button/button";
 import Icon from "components/icon";
 import { Link } from "react-router-dom";
@@ -71,7 +71,7 @@ function Sidebar() {
           ) : null}
         </div>
         <CustomScrollbar className="sidebar-menu d-flex flex-column" width="100%" height={height - 57} autoHide={true}>
-          <Navigation menuItemList={menu} />
+          <Navigation menuItemList={getFilteredMenu()} />
         </CustomScrollbar>
 
         {/* <div

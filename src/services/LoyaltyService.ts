@@ -156,6 +156,17 @@ export default {
   getLoyaltyConfig: () => {
     return fetch(urlsApi.ma.getLoyaltyConfig, { method: "GET" }).then((r) => r.json());
   },
+  // Alias cho ExchangeRatePanel
+  getConfig: (signal?: AbortSignal) => {
+    return fetch(urlsApi.ma.getLoyaltyConfig, { method: "GET", signal }).then((r) => r.json());
+  },
+  saveConfig: (body: Record<string, unknown>) => {
+    return fetch(urlsApi.ma.updateLoyaltyConfig, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(body),
+    }).then((r) => r.json());
+  },
   updateLoyaltyConfig: (body: Record<string, unknown>) => {
     return fetch(urlsApi.ma.updateLoyaltyConfig, {
       method: "POST",

@@ -66,7 +66,7 @@ export default function AutoTierConfig({ onBackProps }: Props) {
     <div>
       <HeaderTabMenu title="Thăng / hạ hạng tự động" titleBack="Cấu hình Loyalty" onBackProps={onBackProps} />
 
-      <div style={{ padding: 20, maxWidth: 600 }}>
+      <div style={{ padding: 20 }}>
         <div style={cardStyle}>
           {/* Enable toggle */}
           <label style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 16, cursor: "pointer" }}>

@@ -75,9 +75,9 @@ Mỗi `React.lazy()` tạo ra một chunk riêng → Vite tự chia file khi bui
 | Mua hàng | `/purchase_order`, `/supplier`, … | `pages/Purchase/*` (BE: `/bizapi/inventory` — purchase + NCC nằm trong inventory 🟡) | Mua hàng |
 | Tài chính | `/cash_book`, `/payment_history`, debt, fund | `pages/Finance/*`, `pages/CashBook/*` (BE: `/bizapi/billing` — cashbook/debt/fund/payment. `/bizapi/finance` chỉ là banking/Athena, retail KHÔNG dùng) | Tài chính |
 | Khách hàng | `/customer_person`, `/contact`, `/customer_survey`, `/customer_segment` | `pages/CustomerPerson/*` | Khách hàng |
-| Loyalty | `/loyalty_point_ledger`, `/loyalty_reward`, `/loyalty_segment`, `/loyalty_wallet` | `pages/Loyalty*` (BE: `/bizapi/market` — loyalty là sub-domain của market) | Khách hàng |
+| **Loyalty** | `/dashboard_loyalty`, `/member_list`, `/loyalty_point_ledger`, `/loyalty_wallet`, `/setting_loyalty`, `/loyalty_integration` | `pages/DashboardLoyalty`, `pages/MemberCustomersPage`, `pages/LoyaltyWallet`, `pages/LoyaltyPointLedger`, `pages/SettingLoyalty`, `pages/LoyaltyIntegration` (BE: `/bizapi/market/loyalty*`) | **Loyalty** (menu cấp 1 riêng, không nằm trong Marketing) |
 | CSKH | `/ticket`, `/warranty`, `/internal_mail`, `/feedback_customer`, `/call_center` | `pages/Ticket/*`, `pages/Warranty/*` | CSKH |
-| Marketing | `/campaign`, `/marketing_automation`, `/sms_marketing`, `/email_marketing`, `/zalo_marketing` | `pages/*Marketing/*`, `pages/Campaign/*` | Marketing |
+| Marketing | `/campaign`, `/marketing_automation`, `/customer_care_page`, `/customer_analysis` | `pages/*Marketing/*`, `pages/Campaign/*` | Tiếp thị & Chăm sóc (gọn lại, loyalty đã tách riêng) |
 | Kênh bán | `/social_crm_facebook`, `/social_crm_zalo` | `pages/SocialCrm*` | Kênh bán |
 | Vận chuyển | `/logistics/*` | `pages/Logistics/*` | Vận chuyển |
 | Báo cáo | `/report_common`, `/report_customer`, `/report_customer_modern` | `pages/Report*` | Báo cáo |

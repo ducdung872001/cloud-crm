@@ -107,6 +107,7 @@ const LoyaltyPointLedger = React.lazy(() => import("pages/LoyaltyPointLedger"));
 const LoyaltyReward = React.lazy(() => import("pages/LoyaltyReward"));
 const LoyaltySegment = React.lazy(() => import("pages/LoyaltySegment"));
 const LoyaltyWallet = React.lazy(() => import("pages/LoyaltyWallet"));
+const LoyaltyIntegration = React.lazy(() => import("pages/LoyaltyIntegration"));
 // tạo đường link khảo sát
 const LinkSurvey = React.lazy(() => import("pages/LinkSurvey"));
 const SettingProcess = React.lazy(() => import("pages/SettingProcess/SettingProcess"));
@@ -509,26 +510,60 @@ export const menu: IMenuItem[] = [
       },
     ],
   },
+  // ═══ LOYALTY — Tách riêng thành phân hệ chính ═══════════════════════
   {
-    title: "marketing", //Tiếp thị & Chăm sóc
-    path: urls.maketing,
-    icon: <Icon name="Marketing" />,
-    code: "MARKETING",
+    title: "loyalty", // Loyalty
+    path: urls.dashboard_loyalty,
+    icon: <Icon name="LoyaltyMenu" />,
+    code: "",
     children: [
       {
-        title: "promotionalProgram", // chương trình khuyến mãi
-        path: urls.promotional_program,
-        icon: <Icon name="PromotionMenu" />,
-        code: "", //Tài nguyên cho show quản lý đặt hàng hay không
+        title: "loyaltyPoints", // Dashboard Loyalty
+        path: urls.dashboard_loyalty,
+        icon: <Icon name="LoyaltyMenu" />,
+        code: "",
       },
       {
-        title: "memberList", // Danh sách thành viên
+        title: "memberList", // Hội viên
         path: urls.member_list,
         icon: <Icon name="MemberListMenu" />,
         code: "",
       },
       {
-        title: "marketingCampaign", // chiến dịch marketing
+        title: "loyaltyPointLedger", // Sổ điểm
+        path: urls.loyalty_point_ledger,
+        icon: <Icon name="PointsLogMenu" />,
+        code: "",
+      },
+      {
+        title: "promotionalProgram", // Khuyến mãi
+        path: urls.promotional_program,
+        icon: <Icon name="PromotionMenu" />,
+        code: "",
+      },
+      {
+        title: "settingLoyalty", // Cấu hình Loyalty
+        path: urls.setting_loyalty,
+        icon: <Icon name="PointsSettingMenu" />,
+        code: "",
+      },
+      {
+        title: "loyaltyIntegration", // Integration & API
+        path: urls.loyalty_integration,
+        icon: <Icon name="IntegrationMenu" />,
+        code: "",
+      },
+    ],
+  },
+  // ═══ TIẾP THỊ & CHĂM SÓC ══════════════════════════════════════════
+  {
+    title: "marketing", // Tiếp thị & Chăm sóc
+    path: urls.maketing,
+    icon: <Icon name="Marketing" />,
+    code: "MARKETING",
+    children: [
+      {
+        title: "marketingCampaign", // Chiến dịch Marketing
         path: urls.marketing_campaign,
         icon: <Icon name="Marketing" />,
         code: "MA",
@@ -540,116 +575,9 @@ export const menu: IMenuItem[] = [
         code: "",
       },
       {
-        title: "customerAnalysis", // phân tích khách hàng
+        title: "customerAnalysis", // Phân tích khách hàng
         path: urls.customer_analysis,
         icon: <Icon name="AnalysisCustomer" />,
-        code: "",
-      },
-      // {
-      //   title: "emailMarketing",
-      //   path: urls.email_marketting,
-      //   icon: <Icon name="EmailFill" />,
-      //   code: "",
-      // },
-      // {
-      //   title: "smsMarketing",
-      //   path: urls.sms_marketting,
-      //   icon: <Icon name="SMS" />,
-      //   code: "",
-      // },
-      // {
-      //   title: "zaloMarketing",
-      //   path: urls.zalo_marketting,
-      //   icon: <Icon name="Zalo" />,
-      //   code: "",
-      // },
-      // {
-      //   title: "marketingAutomation",
-      //   path: urls.marketing_automation,
-      //   icon: <Icon name="Marketing" />,
-      //   code: "MA",
-      // },
-      {
-        title: "loyaltyPoints", // Loyalty
-        path: urls.dashboard_loyalty,
-        icon: <Icon name="LoyaltyMenu" />,
-        code: "",
-      },
-      {
-        title: "loyaltyPointLedger", // Sổ điểm
-        path: urls.loyalty_point_ledger,
-        icon: <Icon name="PointsLogMenu" />,
-        code: "",
-      },
-
-      // {
-      //   title: "receiveTicket", // Phiếu hỗ trợ
-      //   path: urls.ticket,
-      //   icon: <Icon name="SupportMenu" />,
-      //   code: "TICKET",
-      // },
-      // {
-      //   title: "promotionalReport", // Báo cáo khuyến mãi
-      //   path: urls.promotional_report,
-      //   icon: <Icon name="PromoReportMenu" />,
-      //   code: "",
-      // },
-      // {
-      //   title: "customerCareEmail", // Email CSKH
-      //   path: urls.email,
-      //   icon: <Icon name="EmailFill" />,
-      //   code: "",
-      // },
-      // {
-      //   title: "receiveWarranty", // Tiếp nhận bảo hành
-      //   path: urls.warranty,
-      //   icon: <Icon name="ReceiveWarranty" />,
-      //   code: "WARRANTY",
-      // },
-      // {
-      //   title: "receiveWarrantyProcess", // Tiếp nhận bảo hành
-      //   path: urls.warranty_process,
-      //   icon: <Icon name="ReceiveWarranty" />,
-      //   code: "KANBAN_V2",
-      // },
-      // {
-      //   title: "receiveTicketProcess", // Phiếu hỗ trợ
-      //   path: urls.ticket_process,
-      //   icon: <Icon name="ReceiveTicket" />,
-      //   code: "KANBAN_V2",
-      // },
-      // ...(sourceDomain == "rebornjsc.reborn.vn" || sourceDomain == "localhost"
-      //   ? [
-      //     {
-      //       title: "feedbackEnhancement", // Góp ý cải tiến
-      //       path: urls.feedback_customer,
-      //       icon: <Icon name="Feedback" />,
-      //       code: "",
-      //     },
-      //   ]
-      //   : []),
-      // {
-      //   title: "customerSurvey", // Khảo sát khách hàng
-      //   path: urls.customer_survey,
-      //   icon: <Icon name="SpeakerNotes" />,
-      //   code: "",
-      // },
-      // {
-      //   title: "cxmSurvey", // Chiến dịch khảo sát
-      //   path: urls.cxmSurvey,
-      //   icon: <Icon name="Customer" />,
-      //   code: "CXM_SURVEY",
-      // },
-      // {
-      //   title: "settingWarranty", // Cài đặt bảo hành
-      //   path: urls.setting_warranty,
-      //   icon: <Icon name="SettingWarranty" />,
-      //   code: "",
-      // },
-      {
-        title: "settingLoyalty", // Cấu hình Loyalty
-        path: urls.setting_loyalty,
-        icon: <Icon name="PointsSettingMenu" />,
         code: "",
       },
     ],
@@ -864,6 +792,35 @@ export const menu: IMenuItem[] = [
     ],
   },
 ];
+
+// ── Module Toggle: lọc menu theo cấu hình bật/tắt phân hệ ──────────
+// Menu title → module key mapping
+const MENU_MODULE_MAP: Record<string, string> = {
+  selling: "sales",
+  warehouse: "warehouse",
+  customer: "customer",
+  financeManagement: "finance",
+  loyalty: "loyalty",
+  marketing: "marketing",
+  report: "report",
+  bpm: "bpm",
+  settings: "settings",
+};
+
+export function getFilteredMenu(): IMenuItem[] {
+  try {
+    const raw = localStorage.getItem("reborn.module_toggles");
+    if (!raw) return menu; // no config → show all
+    const toggles = JSON.parse(raw);
+    return menu.filter((item) => {
+      const moduleKey = MENU_MODULE_MAP[item.title];
+      if (!moduleKey) return true; // dashboard, notification → always show
+      return toggles[moduleKey] !== false; // undefined or true → show
+    });
+  } catch {
+    return menu;
+  }
+}
 
 export const routes: IRouter[] = [
   // [Tax] Phân hệ thuế HKD/CNKD — portable module
@@ -1192,6 +1149,10 @@ export const routes: IRouter[] = [
   {
     path: urls.loyalty_wallet,
     component: <LoyaltyWallet />,
+  },
+  {
+    path: urls.loyalty_integration,
+    component: <LoyaltyIntegration />,
   },
   {
     path: urls.setting_sell,

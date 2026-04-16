@@ -11,6 +11,7 @@ import ExchangeRatePanel from "./ExchangeRatePanel";
 import PointExpiryConfig from "./PointExpiryConfig";
 import AutoTierConfig from "./AutoTierConfig";
 import LoyaltyScopeConfig from "./LoyaltyScopeConfig";
+import ModuleToggleConfig from "./ModuleToggleConfig";
 
 interface Props {
   onBackProps?: (v: boolean) => void;
@@ -62,7 +63,7 @@ export default function SettingLoyalty({ onBackProps }: Props = {}) {
       title: "Thăng / hạ hạng tự động",
       is_tab: "tab_tier_eval",
       des: "Tự động đánh giá và thay đổi hạng thành viên theo chu kỳ (tháng/quý/năm)",
-      icon: "TrendUp",
+      icon: "ChartLine",
       backgroundColor: "#ECFDF5",
       strokeColor: "#22C55E",
     },
@@ -70,9 +71,17 @@ export default function SettingLoyalty({ onBackProps }: Props = {}) {
       title: "Phạm vi áp dụng",
       is_tab: "tab_scope",
       des: "Loyalty áp dụng toàn chuỗi, theo thương hiệu, hoặc theo nhóm cửa hàng",
-      icon: "Branch",
+      icon: "BranchList",
       backgroundColor: "#EFF6FF",
       strokeColor: "#3B82F6",
+    },
+    {
+      title: "Chế độ hiển thị",
+      is_tab: "tab_modules",
+      des: "Bật/tắt phân hệ — chế độ Loyalty thuần hoặc đầy đủ",
+      icon: "SettingsMenu",
+      backgroundColor: "#F3F4F6",
+      strokeColor: "#6B7280",
     },
   ];
 
@@ -130,6 +139,12 @@ export default function SettingLoyalty({ onBackProps }: Props = {}) {
         />
       ) : isDetail && tab === "tab_scope" ? (
         <LoyaltyScopeConfig
+          onBackProps={(isBack) => {
+            if (isBack) setIsDetail(false);
+          }}
+        />
+      ) : isDetail && tab === "tab_modules" ? (
+        <ModuleToggleConfig
           onBackProps={(isBack) => {
             if (isBack) setIsDetail(false);
           }}

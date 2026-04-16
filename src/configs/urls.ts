@@ -3443,6 +3443,7 @@ export const urls = {
   setting_loyalty: "/setting_loyalty",
   loyalty_point_ledger: "/loyalty_point_ledger",
   loyalty_wallet: "/loyalty_wallet",
+  loyalty_integration: "/loyalty_integration",
   member_list: "/member_list",
   setting_sell: "/setting_sell",
   //Cài đặt hợp đồng

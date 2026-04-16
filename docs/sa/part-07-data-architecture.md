@@ -150,6 +150,32 @@ Mỗi folder thường có 3-6 file:
                           └───────────────┘
 ```
 
+**Bổ sung 04/2026 — Loyalty mở rộng cho chuỗi siêu thị:**
+
+```
+  LoyaltyConfig
+    ├── exchangeRate: number (VND/điểm)
+    └── extendedConfig: JSON
+          ├── pointExpiry: { expiryType, expiryMonths, expiryAnnualDate, notifyBeforeDays }
+          ├── tierEval: { enabled, evalPeriod, evalMetric, autoUpgrade, autoDowngrade, downgradeGraceDays }
+          ├── loyaltyScope: "chain_wide" | "per_brand" | "per_store_group"
+          └── crossBrandPoints: boolean
+
+  LoyaltyPointLedger (bổ sung)
+    ├── expires_at: datetime (null = không hết hạn)
+    └── expired: boolean
+
+  LoyaltyWallet (bổ sung)
+    ├── brand_id: bigint (null = chain_wide)
+    ├── store_group_id: bigint (null = chain_wide)
+    └── scheduled_downgrade_at: datetime
+
+  ModuleToggles (localStorage → BE tenant config sau)
+    ├── sales, warehouse, customer, finance: boolean
+    ├── loyalty: true (luôn bật)
+    ├── marketing, report, bpm, settings: boolean
+```
+
 ### 2.5. Marketing
 
 ```

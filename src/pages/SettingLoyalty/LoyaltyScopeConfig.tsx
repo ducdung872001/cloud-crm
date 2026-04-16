@@ -73,7 +73,7 @@ export default function LoyaltyScopeConfig({ onBackProps }: Props) {
     <div>
       <HeaderTabMenu title="Phạm vi áp dụng Loyalty" titleBack="Cấu hình Loyalty" onBackProps={onBackProps} />
 
-      <div style={{ padding: 20, maxWidth: 700 }}>
+      <div style={{ padding: 20 }}>
         <div style={cardStyle}>
           <h3 style={{ margin: "0 0 16px", fontSize: 15, color: "#0B2E2A" }}>
             Chương trình Loyalty áp dụng cho

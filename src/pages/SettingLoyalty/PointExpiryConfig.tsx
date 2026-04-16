@@ -70,7 +70,7 @@ export default function PointExpiryConfig({ onBackProps }: Props) {
     <div>
       <HeaderTabMenu title="Hạn sử dụng điểm" titleBack="Cấu hình Loyalty" onBackProps={onBackProps} />
 
-      <div style={{ padding: 20, maxWidth: 600 }}>
+      <div style={{ padding: 20 }}>
         <div style={cardStyle}>
           <h3 style={headingStyle}>Kiểu hết hạn điểm</h3>
 
