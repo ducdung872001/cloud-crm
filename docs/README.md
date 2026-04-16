@@ -1,26 +1,26 @@
 # Reborn Retail CRM -- Documentation Index
 
-> **Reborn Retail CRM** -- He thong quan ly ban le da kenh (Cua hang ban le / Chuoi / Multi-channel POS).
-> Phien ban: cloud-ver2 | Tenant type: Store / Chain / Franchise.
+> **Reborn Retail CRM** -- Hệ thống quản lý bán lẻ đa kênh (Cửa hàng bán lẻ / Chuỗi / Multi-channel POS).
+> Phiên bản: cloud-ver2 | Tenant type: Store / Chain / Franchise.
 
 ---
 
-## 1. Kinh doanh & De xuat
+## 1. Kinh doanh & Đề xuất
 
-| Tai lieu | Duong dan | Mo ta |
+| Tài liệu | Đường dẫn | Mô tả |
 |----------|-----------|-------|
-| De xuat giai phap | [proposal/de-xuat-giai-phap-retail-crm.md](proposal/de-xuat-giai-phap-retail-crm.md) | Bai toan, giai phap, pham vi, loi ich, roadmap trien khai |
+| Đề xuất giải pháp | [proposal/de-xuat-giai-phap-retail-crm.md](proposal/de-xuat-giai-phap-retail-crm.md) | Bài toán, giải pháp, phạm vi, lợi ích, roadmap triển khai |
 
 ---
 
-## 2. Phan tich & Thiet ke (SA)
+## 2. Phân tích & Thiết kế (SA)
 
-Tham chieu: **IEEE 1471** (Architecture Description), **ISO/IEC 25010** (Quality Model).
+Tham chiếu: **IEEE 1471** (Architecture Description), **ISO/IEC 25010** (Quality Model).
 
-| # | Tai lieu | Duong dan |
+| # | Tài liệu | Đường dẫn |
 |---|---------|-----------|
-| 00 | Tong quan | [sa/part-00-tong-quan.md](sa/part-00-tong-quan.md) |
-| 01 | Kien truc tong the | [sa/part-01-kien-truc-tong-the.md](sa/part-01-kien-truc-tong-the.md) |
+| 00 | Tổng quan | [sa/part-00-tong-quan.md](sa/part-00-tong-quan.md) |
+| 01 | Kiến trúc tổng thể | [sa/part-01-kien-truc-tong-the.md](sa/part-01-kien-truc-tong-the.md) |
 | 02 | Frontend Architecture | [sa/part-02-frontend-architecture.md](sa/part-02-frontend-architecture.md) |
 | 03 | Tech Stack | [sa/part-03-tech-stack.md](sa/part-03-tech-stack.md) |
 | 04 | Routing & Navigation | [sa/part-04-routing-navigation.md](sa/part-04-routing-navigation.md) |
@@ -37,96 +37,96 @@ Tham chieu: **IEEE 1471** (Architecture Description), **ISO/IEC 25010** (Quality
 
 ---
 
-## 3. Yeu cau nghiep vu (URD)
+## 3. Yêu cầu nghiệp vụ (URD)
 
-Tham chieu: **IEEE 830** (Software Requirements Specification).
+Tham chiếu: **IEEE 830** (Software Requirements Specification).
 
-| # | Tai lieu | Duong dan |
+| # | Tài liệu | Đường dẫn |
 |---|---------|-----------|
-| 00 | Gioi thieu | [urd/part-00-gioi-thieu.md](urd/part-00-gioi-thieu.md) |
-| 01 | Truy cap & Phan quyen | [urd/part-01-truy-cap.md](urd/part-01-truy-cap.md) |
-| 02 | POS Ban hang | [urd/part-02-pos-ban-hang.md](urd/part-02-pos-ban-hang.md) |
-| 03 | Khach hang | [urd/part-03-khach-hang.md](urd/part-03-khach-hang.md) |
-| 04 | Don hang & Hoa don | [urd/part-04-don-hang-hoa-don.md](urd/part-04-don-hang-hoa-don.md) |
-| 05 | Kho & San pham | [urd/part-05-kho-san-pham.md](urd/part-05-kho-san-pham.md) |
-| 06 | Mua hang NCC | [urd/part-06-mua-hang-ncc.md](urd/part-06-mua-hang-ncc.md) |
-| 07 | Van chuyen | [urd/part-07-van-chuyen.md](urd/part-07-van-chuyen.md) |
-| 08 | Tai chinh | [urd/part-08-tai-chinh.md](urd/part-08-tai-chinh.md) |
-| 09 | Marketing & Khuyen mai | [urd/part-09-marketing-khuyen-mai.md](urd/part-09-marketing-khuyen-mai.md) |
-| 10 | Loyalty & Cham soc | [urd/part-10-loyalty-cham-soc.md](urd/part-10-loyalty-cham-soc.md) |
-| 11 | Bao cao & Phan tich | [urd/part-11-bao-cao-phan-tich.md](urd/part-11-bao-cao-phan-tich.md) |
-| 12 | Cai dat | [urd/part-12-cai-dat.md](urd/part-12-cai-dat.md) |
+| 00 | Giới thiệu | [urd/part-00-gioi-thieu.md](urd/part-00-gioi-thieu.md) |
+| 01 | Truy cập & Phân quyền | [urd/part-01-truy-cap.md](urd/part-01-truy-cap.md) |
+| 02 | POS Bán hàng | [urd/part-02-pos-ban-hang.md](urd/part-02-pos-ban-hang.md) |
+| 03 | Khách hàng | [urd/part-03-khach-hang.md](urd/part-03-khach-hang.md) |
+| 04 | Đơn hàng & Hoá đơn | [urd/part-04-don-hang-hoa-don.md](urd/part-04-don-hang-hoa-don.md) |
+| 05 | Kho & Sản phẩm | [urd/part-05-kho-san-pham.md](urd/part-05-kho-san-pham.md) |
+| 06 | Mua hàng NCC | [urd/part-06-mua-hang-ncc.md](urd/part-06-mua-hang-ncc.md) |
+| 07 | Vận chuyển | [urd/part-07-van-chuyen.md](urd/part-07-van-chuyen.md) |
+| 08 | Tài chính | [urd/part-08-tai-chinh.md](urd/part-08-tai-chinh.md) |
+| 09 | Marketing & Khuyến mãi | [urd/part-09-marketing-khuyen-mai.md](urd/part-09-marketing-khuyen-mai.md) |
+| 10 | Loyalty & Chăm sóc | [urd/part-10-loyalty-cham-soc.md](urd/part-10-loyalty-cham-soc.md) |
+| 11 | Báo cáo & Phân tích | [urd/part-11-bao-cao-phan-tich.md](urd/part-11-bao-cao-phan-tich.md) |
+| 12 | Cài đặt | [urd/part-12-cai-dat.md](urd/part-12-cai-dat.md) |
 | 13 | BPM & Automation | [urd/part-13-bpm-automation.md](urd/part-13-bpm-automation.md) |
-| 14 | NFR & Tich hop | [urd/part-14-nfr-tich-hop.md](urd/part-14-nfr-tich-hop.md) |
+| 14 | NFR & Tích hợp | [urd/part-14-nfr-tich-hop.md](urd/part-14-nfr-tich-hop.md) |
 
 ---
 
 ## 4. API Documentation
 
-Tham chieu: **OpenAPI 3.0** (fka Swagger).
+Tham chiếu: **OpenAPI 3.0** (fka Swagger).
 
-| Tai lieu | Duong dan | Mo ta |
+| Tài liệu | Đường dẫn | Mô tả |
 |----------|-----------|-------|
 | Retail Core API | [api/retail-openapi.yaml](api/retail-openapi.yaml) | Sales, Inventory, Customer, Billing, Market (Promotions) |
 
-> Loyalty API co spec rieng tai module Loyalty service.
+> Loyalty API có spec riêng tại module Loyalty service.
 
 ---
 
-## 5. Huong dan su dung (HDSD)
+## 5. Hướng dẫn sử dụng (HDSD)
 
-| # | Tai lieu | Duong dan |
+| # | Tài liệu | Đường dẫn |
 |---|---------|-----------|
-| 01 | Bat dau | [userguides/part-01-bat-dau.md](userguides/part-01-bat-dau.md) |
-| 02 | POS Ban hang | [userguides/part-02-pos-ban-hang.md](userguides/part-02-pos-ban-hang.md) |
-| 03 | Khach hang | [userguides/part-03-khach-hang.md](userguides/part-03-khach-hang.md) |
-| 04 | Don hang & Hoa don | [userguides/part-04-don-hang-hoa-don.md](userguides/part-04-don-hang-hoa-don.md) |
-| 05 | Kho & San pham | [userguides/part-05-kho-san-pham.md](userguides/part-05-kho-san-pham.md) |
-| 06 | Mua hang NCC | [userguides/part-06-mua-hang-ncc.md](userguides/part-06-mua-hang-ncc.md) |
-| 07 | Van chuyen | [userguides/part-07-van-chuyen.md](userguides/part-07-van-chuyen.md) |
-| 08 | Tai chinh | [userguides/part-08-tai-chinh.md](userguides/part-08-tai-chinh.md) |
-| 09 | Marketing & Khuyen mai | [userguides/part-09-marketing-khuyen-mai.md](userguides/part-09-marketing-khuyen-mai.md) |
-| 10 | Loyalty & Cham soc | [userguides/part-10-loyalty-cham-soc.md](userguides/part-10-loyalty-cham-soc.md) |
-| 11 | Bao cao | [userguides/part-11-bao-cao.md](userguides/part-11-bao-cao.md) |
-| 12 | Cai dat | [userguides/part-12-cai-dat.md](userguides/part-12-cai-dat.md) |
-| 13 | BPM Nang cao | [userguides/part-13-bpm-nang-cao.md](userguides/part-13-bpm-nang-cao.md) |
+| 01 | Bắt đầu | [userguides/part-01-bat-dau.md](userguides/part-01-bat-dau.md) |
+| 02 | POS Bán hàng | [userguides/part-02-pos-ban-hang.md](userguides/part-02-pos-ban-hang.md) |
+| 03 | Khách hàng | [userguides/part-03-khach-hang.md](userguides/part-03-khach-hang.md) |
+| 04 | Đơn hàng & Hoá đơn | [userguides/part-04-don-hang-hoa-don.md](userguides/part-04-don-hang-hoa-don.md) |
+| 05 | Kho & Sản phẩm | [userguides/part-05-kho-san-pham.md](userguides/part-05-kho-san-pham.md) |
+| 06 | Mua hàng NCC | [userguides/part-06-mua-hang-ncc.md](userguides/part-06-mua-hang-ncc.md) |
+| 07 | Vận chuyển | [userguides/part-07-van-chuyen.md](userguides/part-07-van-chuyen.md) |
+| 08 | Tài chính | [userguides/part-08-tai-chinh.md](userguides/part-08-tai-chinh.md) |
+| 09 | Marketing & Khuyến mãi | [userguides/part-09-marketing-khuyen-mai.md](userguides/part-09-marketing-khuyen-mai.md) |
+| 10 | Loyalty & Chăm sóc | [userguides/part-10-loyalty-cham-soc.md](userguides/part-10-loyalty-cham-soc.md) |
+| 11 | Báo cáo | [userguides/part-11-bao-cao.md](userguides/part-11-bao-cao.md) |
+| 12 | Cài đặt | [userguides/part-12-cai-dat.md](userguides/part-12-cai-dat.md) |
+| 13 | BPM Nâng cao | [userguides/part-13-bpm-nang-cao.md](userguides/part-13-bpm-nang-cao.md) |
 | 14 | FAQ & Troubleshooting | [userguides/part-14-faq-troubleshooting.md](userguides/part-14-faq-troubleshooting.md) |
 
 ---
 
-## 6. Kiem thu (QA)
+## 6. Kiểm thử (QA)
 
-Tham chieu: **ISTQB** (Foundation Level), **OWASP Testing Guide**.
+Tham chiếu: **ISTQB** (Foundation Level), **OWASP Testing Guide**.
 
-| Tai lieu | Duong dan | Mo ta |
+| Tài liệu | Đường dẫn | Mô tả |
 |----------|-----------|-------|
 | Test Suites (47 suites) | [TESTCASE_REBORN_RETAIL_FULL.md](TESTCASE_REBORN_RETAIL_FULL.md) | Full regression: CRUD, flow, edge-case, permission |
 | Validation Audit | [VALIDATION_AUDIT.md](VALIDATION_AUDIT.md) | Form validation coverage cho 47+ forms |
-| Bug Reports | [bugs/bug-report-tester.csv](bugs/bug-report-tester.csv) | Danh sach bug tu tester, trang thai fix/retest |
+| Bug Reports | [bugs/bug-report-tester.csv](bugs/bug-report-tester.csv) | Danh sách bug từ tester, trạng thái fix/retest |
 
 ---
 
-## 7. Trien khai & Van hanh
+## 7. Triển khai & Vận hành
 
-Tham chieu: **ITIL v4** (Service Management).
+Tham chiếu: **ITIL v4** (Service Management).
 
-| Tai lieu | Duong dan | Mo ta |
+| Tài liệu | Đường dẫn | Mô tả |
 |----------|-----------|-------|
 | Deployment Guide | deployment-guide.md | CI/CD, Docker, env config, rollback |
 | Operations Runbook | operations-runbook.md | Monitoring, alerting, incident response, backup |
 
-> *Planned -- chua tao file.*
+> *Planned -- chưa tạo file.*
 
 ---
 
-## 8. Quan ly du an
+## 8. Quản lý dự án
 
-Tham chieu: **PMBOK 7th** (Project Management).
+Tham chiếu: **PMBOK 7th** (Project Management).
 
-| Tai lieu | Duong dan | Mo ta |
+| Tài liệu | Đường dẫn | Mô tả |
 |----------|-----------|-------|
-| Risk Register | risk-register.md | Nhan dien rui ro, muc do, bien phap |
-| Acceptance Criteria | acceptance-criteria.md | Tieu chi nghiem thu theo module |
+| Risk Register | risk-register.md | Nhận diện rủi ro, mức độ, biện pháp |
+| Acceptance Criteria | acceptance-criteria.md | Tiêu chí nghiệm thu theo module |
 | Backend Tasks | [backend-tasks/](backend-tasks/) | Task breakdown cho 12 microservices |
 
 Backend microservices:
@@ -150,12 +150,12 @@ Backend microservices:
 
 ## 9. Code Quality
 
-| Tai lieu | Duong dan | Mo ta |
+| Tài liệu | Đường dẫn | Mô tả |
 |----------|-----------|-------|
-| Code Review Report | [CODE_REVIEW_REPORT.md](CODE_REVIEW_REPORT.md) | Ket qua review code toan bo frontend |
+| Code Review Report | [CODE_REVIEW_REPORT.md](CODE_REVIEW_REPORT.md) | Kết quả review code toàn bộ frontend |
 | Dead Code Audit | [DEAD_CODE_AUDIT.md](DEAD_CODE_AUDIT.md) | Unused imports, dead components, orphan files |
-| Tech Debt Inventory | [TECH_DEBT_INVENTORY.md](TECH_DEBT_INVENTORY.md) | No ky thuat can xu ly, do uu tien |
-| Frontend Review | [FRONTEND_REVIEW_RESULT.md](FRONTEND_REVIEW_RESULT.md) | Danh gia chat luong frontend |
+| Tech Debt Inventory | [TECH_DEBT_INVENTORY.md](TECH_DEBT_INVENTORY.md) | Nợ kỹ thuật cần xử lý, độ ưu tiên |
+| Frontend Review | [FRONTEND_REVIEW_RESULT.md](FRONTEND_REVIEW_RESULT.md) | Đánh giá chất lượng frontend |
 | Scan Results | [SCAN_RESULTS_SUMMARY.md](SCAN_RESULTS_SUMMARY.md) | Static analysis, dependency audit |
 
 ---
@@ -214,7 +214,7 @@ docs/
 
 ## Standards & References
 
-| Tieu chuan | Pham vi ap dung | Ghi chu |
+| Tiêu chuẩn | Phạm vi áp dụng | Ghi chú |
 |------------|-----------------|---------|
 | **IEEE 1471** | SA -- Architecture Description | Viewpoints, views, stakeholders |
 | **IEEE 830** | URD -- Software Requirements | Functional & non-functional requirements |

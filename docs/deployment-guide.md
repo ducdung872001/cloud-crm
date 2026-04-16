@@ -1,17 +1,17 @@
 # Deployment Guide — Reborn Retail CRM
 
-> Huong dan trien khai he thong CRM quan ly chuoi cua hang ban le.
-> Phien ban: 2.x | Cap nhat: 2026-04-16
+> Hướng dẫn triển khai hệ thống CRM quản lý chuỗi cửa hàng bán lẻ.
+> Phiên bản: 2.x | Cập nhật: 2026-04-16
 
 ---
 
-## Muc luc
+## Mục lục
 
-1. [Yeu cau he thong](#1-yeu-cau-he-thong)
-2. [Bien moi truong](#2-bien-moi-truong)
+1. [Yêu cầu hệ thống](#1-yeu-cau-he-thong)
+2. [Biến môi trường](#2-bien-moi-truong)
 3. [Build Frontend](#3-build-frontend)
 4. [Backend — 12 Microservices](#4-backend--12-microservices)
-5. [Co so du lieu](#5-co-so-du-lieu)
+5. [Cơ sở dữ liệu](#5-co-so-du-lieu)
 6. [Nginx Reverse Proxy](#6-nginx-reverse-proxy)
 7. [SSL / HTTPS](#7-ssl--https)
 8. [Docker Compose](#8-docker-compose)
@@ -21,20 +21,20 @@
 
 ---
 
-## 1. Yeu cau he thong
+## 1. Yêu cầu hệ thống
 
-| Thanh phan | Phien ban toi thieu | Ghi chu |
+| Thành phần | Phiên bản tối thiểu | Ghi chú |
 |---|---|---|
-| Node.js | 18 LTS | Dung de build frontend (Vite) |
+| Node.js | 18 LTS | Dùng để build frontend (Vite) |
 | Java | 17+ (OpenJDK / Corretto) | Spring Boot 3.x |
 | MySQL | 8.0+ | InnoDB, utf8mb4_unicode_ci |
 | Redis | 7.0+ | Cache, session, pub/sub |
-| RabbitMQ | 3.12+ | Message queue giua cac service |
+| RabbitMQ | 3.12+ | Message queue giữa các service |
 | Nginx | 1.24+ | Reverse proxy, static files |
-| Docker | 24+ | Tuy chon, khuyen dung |
-| Docker Compose | 2.20+ | Tuy chon, khuyen dung |
+| Docker | 24+ | Tuỳ chọn, khuyên dùng |
+| Docker Compose | 2.20+ | Tuỳ chọn, khuyên dùng |
 
-**Tai nguyen toi thieu (production):**
+**Tài nguyên tối thiểu (production):**
 
 - CPU: 8 vCPU
 - RAM: 16 GB
@@ -43,9 +43,9 @@
 
 ---
 
-## 2. Bien moi truong
+## 2. Biến môi trường
 
-Tao file `.env` hoac dat trong he thong CI/CD:
+Tạo file `.env` hoặc đặt trong hệ thống CI/CD:
 
 ```bash
 # ===== API URLs =====
@@ -87,29 +87,29 @@ JWT_SECRET=<chuoi-bi-mat-256-bit>
 JWT_EXPIRATION=86400
 ```
 
-> **Luu y bao mat:** Khong commit file `.env` len repository. Su dung secrets manager (Vault, AWS Secrets Manager) cho moi truong production.
+> **Lưu ý bảo mật:** Không commit file `.env` lên repository. Sử dụng secrets manager (Vault, AWS Secrets Manager) cho môi trường production.
 
 ---
 
 ## 3. Build Frontend
 
 ```bash
-# 1. Cai dat dependencies
+# 1. Cài đặt dependencies
 npm install
 
 # 2. Build production
 npm run build:prod
 
-# 3. Ket qua output tai thu muc dist/
+# 3. Kết quả output tại thư mục dist/
 ls -la dist/
 ```
 
-Thu muc `dist/` chua cac file static (HTML, JS, CSS) san sang deploy len Nginx hoac CDN.
+Thư mục `dist/` chứa các file static (HTML, JS, CSS) sẵn sàng deploy lên Nginx hoặc CDN.
 
-**Kiem tra build thanh cong:**
+**Kiểm tra build thành công:**
 
 ```bash
-# Kich thuoc bundle khong nen vuot qua 5 MB (gzip)
+# Kích thước bundle không nên vượt quá 5 MB (gzip)
 du -sh dist/
 ```
 
@@ -117,24 +117,24 @@ du -sh dist/
 
 ## 4. Backend — 12 Microservices
 
-He thong backend gom 12 Spring Boot microservices:
+Hệ thống backend gồm 12 Spring Boot microservices:
 
-| # | Service | Mo ta | Port mac dinh |
+| # | Service | Mô tả | Port mặc định |
 |---|---|---|---|
-| 1 | **auth** | Xac thuc, phan quyen, JWT | 8080 |
-| 2 | **sales** | Don hang, bao gia, hoa don ban | 8081 |
-| 3 | **inventory** | Ton kho, nhap xuat, kiem ke | 8082 |
-| 4 | **billing** | Thanh toan, cong no, phieu thu/chi | 8083 |
-| 5 | **market** | Marketing, khuyen mai, voucher | 8084 |
-| 6 | **customer** | Khach hang, nhom KH, the thanh vien | 8085 |
-| 7 | **notification** | Thong bao, email, SMS, push | 8086 |
-| 8 | **integration** | Tich hop ben thu 3 (POS, ERP, ecom) | 8087 |
-| 9 | **care** | Cham soc khach hang, ticket, CSKH | 8088 |
-| 10 | **logistics** | Van chuyen, giao hang, doi tac VC | 8089 |
-| 11 | **finance** | Tai chinh, bao cao, so sach ke toan | 8090 |
-| 12 | **operation** | Van hanh cua hang, ca lam, nhan su | 8091 |
+| 1 | **auth** | Xác thực, phân quyền, JWT | 8080 |
+| 2 | **sales** | Đơn hàng, báo giá, hoá đơn bán | 8081 |
+| 3 | **inventory** | Tồn kho, nhập xuất, kiểm kê | 8082 |
+| 4 | **billing** | Thanh toán, công nợ, phiếu thu/chi | 8083 |
+| 5 | **market** | Marketing, khuyến mãi, voucher | 8084 |
+| 6 | **customer** | Khách hàng, nhóm KH, thẻ thành viên | 8085 |
+| 7 | **notification** | Thông báo, email, SMS, push | 8086 |
+| 8 | **integration** | Tích hợp bên thứ 3 (POS, ERP, ecom) | 8087 |
+| 9 | **care** | Chăm sóc khách hàng, ticket, CSKH | 8088 |
+| 10 | **logistics** | Vận chuyển, giao hàng, đối tác VC | 8089 |
+| 11 | **finance** | Tài chính, báo cáo, sổ sách kế toán | 8090 |
+| 12 | **operation** | Vận hành cửa hàng, ca làm, nhân sự | 8091 |
 
-### Khoi dong tung service
+### Khởi động từng service
 
 ```bash
 cd services/<ten-service>
@@ -149,43 +149,43 @@ cd services/<ten-service>
 java -jar target/<ten-service>-1.0.0.jar --spring.profiles.active=prod
 ```
 
-### Thu tu khoi dong
+### Thứ tự khởi động
 
-1. **auth** (bat buoc khoi dong truoc)
-2. **customer**, **inventory** (cac service co ban)
-3. Cac service con lai (bat ky thu tu nao)
+1. **auth** (bắt buộc khởi động trước)
+2. **customer**, **inventory** (các service cơ bản)
+3. Các service còn lại (bất kỳ thứ tự nào)
 
-> Moi service tu dong dang ky voi RabbitMQ khi khoi dong. Dam bao RabbitMQ va Redis da chay truoc khi start backend.
+> Mỗi service tự động đăng ký với RabbitMQ khi khởi động. Đảm bảo RabbitMQ và Redis đã chạy trước khi start backend.
 
 ---
 
-## 5. Co so du lieu
+## 5. Cơ sở dữ liệu
 
-### Khoi tao schema
+### Khởi tạo schema
 
 ```sql
--- Tao database
+-- Tạo database
 CREATE DATABASE reborn_retail_crm
   CHARACTER SET utf8mb4
   COLLATE utf8mb4_unicode_ci;
 
--- Tao user
+-- Tạo user
 CREATE USER 'crm_user'@'%' IDENTIFIED BY '<mat-khau-manh>';
 GRANT ALL PRIVILEGES ON reborn_retail_crm.* TO 'crm_user'@'%';
 FLUSH PRIVILEGES;
 ```
 
-### Chay migration
+### Chạy migration
 
-Moi microservice su dung Flyway de quan ly schema migration:
+Mỗi microservice sử dụng Flyway để quản lý schema migration:
 
 ```bash
-# Migration tu dong chay khi service khoi dong
-# Hoac chay thu cong:
+# Migration tự động chạy khi service khởi động
+# Hoặc chạy thủ công:
 ./mvnw flyway:migrate -Dflyway.url=jdbc:mysql://localhost:3306/reborn_retail_crm
 ```
 
-### Cau hinh MySQL khuyen nghi (my.cnf)
+### Cấu hình MySQL khuyến nghị (my.cnf)
 
 ```ini
 [mysqld]
@@ -281,7 +281,7 @@ server {
         proxy_set_header Connection "upgrade";
     }
 
-    # Gioi han request
+    # Giới hạn request
     limit_req_zone $binary_remote_addr zone=api:10m rate=100r/s;
     location /bizapi/ {
         limit_req zone=api burst=200 nodelay;
@@ -293,20 +293,20 @@ server {
 
 ## 7. SSL / HTTPS
 
-### Su dung Let's Encrypt (mien phi)
+### Sử dụng Let's Encrypt (miễn phí)
 
 ```bash
-# Cai dat certbot
+# Cài đặt certbot
 sudo apt install certbot python3-certbot-nginx
 
-# Cap chung chi
+# Cấp chứng chỉ
 sudo certbot --nginx -d retailcrm.reborn.vn -d api.retailcrm.reborn.vn
 
-# Tu dong gia han (crontab)
+# Tự động gia hạn (crontab)
 0 3 * * * certbot renew --quiet --post-hook "systemctl reload nginx"
 ```
 
-### Cau hinh SSL khuyen nghi
+### Cấu hình SSL khuyến nghị
 
 ```nginx
 ssl_protocols TLSv1.2 TLSv1.3;
@@ -557,19 +557,19 @@ volumes:
   rabbitmq_data:
 ```
 
-### Lenh van hanh Docker
+### Lệnh vận hành Docker
 
 ```bash
-# Khoi dong toan bo
+# Khởi động toàn bộ
 docker compose up -d
 
 # Xem log
 docker compose logs -f --tail=100 sales
 
-# Khoi dong lai 1 service
+# Khởi động lại 1 service
 docker compose restart inventory
 
-# Dung toan bo
+# Dừng toàn bộ
 docker compose down
 ```
 
@@ -577,23 +577,23 @@ docker compose down
 
 ## 9. Health Checks
 
-Moi microservice expose endpoint `/actuator/health`:
+Mỗi microservice expose endpoint `/actuator/health`:
 
 ```bash
-# Kiem tra tung service
+# Kiểm tra từng service
 curl -s http://localhost:8080/actuator/health | jq .
 curl -s http://localhost:8081/actuator/health | jq .
 
-# Script kiem tra tat ca
+# Script kiểm tra tất cả
 for port in $(seq 8080 8091); do
   status=$(curl -s -o /dev/null -w "%{http_code}" http://localhost:$port/actuator/health)
   echo "Port $port: $status"
 done
 ```
 
-**Cac chi so can giam sat:**
+**Các chỉ số cần giám sát:**
 
-| Chi so | Endpoint | Nguong canh bao |
+| Chỉ số | Endpoint | Ngưỡng cảnh báo |
 |---|---|---|
 | Service UP/DOWN | `/actuator/health` | status != UP |
 | DB connection pool | `/actuator/metrics/hikaricp.connections.active` | > 80% pool size |
@@ -608,10 +608,10 @@ done
 ### Rollback Frontend
 
 ```bash
-# Luu lai ban hien tai
+# Lưu lại bản hiện tại
 cp -r /var/www/retailcrm/dist /var/www/retailcrm/dist.backup.$(date +%Y%m%d)
 
-# Khoi phuc ban cu
+# Khôi phục bản cũ
 cp -r /var/www/retailcrm/dist.previous /var/www/retailcrm/dist
 
 # Reload nginx
@@ -621,10 +621,10 @@ sudo nginx -s reload
 ### Rollback Backend (Docker)
 
 ```bash
-# Xem lich su image
+# Xem lịch sử image
 docker images retailcrm/sales --format "table {{.Tag}}\t{{.CreatedAt}}"
 
-# Quay ve phien ban cu
+# Quay về phiên bản cũ
 docker compose down sales
 docker compose up -d sales --no-deps -e IMAGE_TAG=v1.2.3
 ```
@@ -632,14 +632,14 @@ docker compose up -d sales --no-deps -e IMAGE_TAG=v1.2.3
 ### Rollback Database
 
 ```bash
-# Flyway undo (neu co migration undo)
+# Flyway undo (nếu có migration undo)
 ./mvnw flyway:undo -Dflyway.url=jdbc:mysql://localhost:3306/reborn_retail_crm
 
-# Hoac khoi phuc tu backup
+# Hoặc khôi phục từ backup
 mysql -u root -p reborn_retail_crm < /backup/reborn_retail_crm_20260415.sql
 ```
 
-> **Quy tac:** Luon backup database TRUOC khi deploy phien ban moi.
+> **Quy tắc:** Luôn backup database TRƯỚC khi deploy phiên bản mới.
 
 ---
 
@@ -737,30 +737,30 @@ jobs:
             cd /opt/retailcrm
             docker compose pull
             docker compose up -d --remove-orphans
-            # Doi health check
+            # Đợi health check
             sleep 30
             curl -f http://localhost:8080/actuator/health || exit 1
-            echo "Deploy thanh cong!"
+            echo "Deploy thành công!"
 ```
 
-### Quy trinh deploy
+### Quy trình deploy
 
-1. Developer push code len branch `master`
-2. GitHub Actions tu dong: lint -> test -> build -> deploy
-3. Neu build that bai, pipeline dung lai va gui thong bao
-4. Neu deploy that bai, chay rollback tu dong
+1. Developer push code lên branch `master`
+2. GitHub Actions tự động: lint -> test -> build -> deploy
+3. Nếu build thất bại, pipeline dừng lại và gửi thông báo
+4. Nếu deploy thất bại, chạy rollback tự động
 
 ---
 
-## Phu luc: Checklist truoc khi Go-Live
+## Phụ lục: Checklist trước khi Go-Live
 
-- [ ] Tat ca 12 microservices tra ve health UP
-- [ ] SSL certificate hop le
-- [ ] Database migration chay thanh cong
-- [ ] Redis ket noi on dinh
-- [ ] RabbitMQ queues duoc tao dung
+- [ ] Tất cả 12 microservices trả về health UP
+- [ ] SSL certificate hợp lệ
+- [ ] Database migration chạy thành công
+- [ ] Redis kết nối ổn định
+- [ ] RabbitMQ queues được tạo đúng
 - [ ] Nginx config test pass (`nginx -t`)
-- [ ] Firewall chi mo port 80, 443
-- [ ] Backup database tu dong da cau hinh
-- [ ] Monitoring/alerting da bat
-- [ ] DNS tro dung IP server
+- [ ] Firewall chỉ mở port 80, 443
+- [ ] Backup database tự động đã cấu hình
+- [ ] Monitoring/alerting đã bật
+- [ ] DNS trỏ đúng IP server

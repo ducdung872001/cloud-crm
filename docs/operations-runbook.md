@@ -1,51 +1,51 @@
 # Operations Runbook — Reborn Retail CRM
 
-> Tai lieu van hanh va xu ly su co cho he thong CRM chuoi cua hang ban le.
-> Phien ban: 2.x | Cap nhat: 2026-04-16
+> Tài liệu vận hành và xử lý sự cố cho hệ thống CRM chuỗi cửa hàng bán lẻ.
+> Phiên bản: 2.x | Cập nhật: 2026-04-16
 
 ---
 
-## Muc luc
+## Mục lục
 
-1. [SLA cam ket](#1-sla-cam-ket)
-2. [Giam sat he thong](#2-giam-sat-he-thong)
-3. [Cac su co thuong gap](#3-cac-su-co-thuong-gap)
-4. [Backup va khoi phuc](#4-backup-va-khoi-phuc)
-5. [Xu ly su co (Incident Response)](#5-xu-ly-su-co-incident-response)
-6. [Bao tri dinh ky](#6-bao-tri-dinh-ky)
-7. [Bao mat](#7-bao-mat)
-8. [Ke hoach mo rong (Capacity Planning)](#8-ke-hoach-mo-rong-capacity-planning)
-9. [Ma tran lien he](#9-ma-tran-lien-he)
+1. [SLA cam kết](#1-sla-cam-ket)
+2. [Giám sát hệ thống](#2-giam-sat-he-thong)
+3. [Các sự cố thường gặp](#3-cac-su-co-thuong-gap)
+4. [Backup và khôi phục](#4-backup-va-khoi-phuc)
+5. [Xử lý sự cố (Incident Response)](#5-xu-ly-su-co-incident-response)
+6. [Bảo trì định kỳ](#6-bao-tri-dinh-ky)
+7. [Bảo mật](#7-bao-mat)
+8. [Kế hoạch mở rộng (Capacity Planning)](#8-ke-hoach-mo-rong-capacity-planning)
+9. [Ma trận liên hệ](#9-ma-tran-lien-he)
 
 ---
 
-## 1. SLA cam ket
+## 1. SLA cam kết
 
-| Chi so | Muc tieu | Do luong |
+| Chỉ số | Mục tiêu | Đo lường |
 |---|---|---|
-| **Uptime** | 99.5% (toi da ~43.8h downtime/nam) | Tinh theo thang, loai tru bao tri co thong bao |
-| **API Response P95** | < 500ms | Do tai Nginx access log va APM |
-| **API Response P99** | < 1500ms | Do tai APM |
-| **Thoi gian phan hoi ho tro** | < 2 gio (gio lam viec) | Tinh tu luc nhan ticket |
-| **Thoi gian khac phuc P1** | < 4 gio | Tu luc xac nhan su co |
-| **Thoi gian khac phuc P2** | < 8 gio | Tu luc xac nhan su co |
-| **RTO (Recovery Time Objective)** | < 1 gio | Thoi gian khoi phuc toi da |
-| **RPO (Recovery Point Objective)** | < 1 gio | Mat du lieu toi da chap nhan |
+| **Uptime** | 99.5% (tối đa ~43.8h downtime/năm) | Tính theo tháng, loại trừ bảo trì có thông báo |
+| **API Response P95** | < 500ms | Đo tại Nginx access log và APM |
+| **API Response P99** | < 1500ms | Đo tại APM |
+| **Thời gian phản hồi hỗ trợ** | < 2 giờ (giờ làm việc) | Tính từ lúc nhận ticket |
+| **Thời gian khắc phục P1** | < 4 giờ | Từ lúc xác nhận sự cố |
+| **Thời gian khắc phục P2** | < 8 giờ | Từ lúc xác nhận sự cố |
+| **RTO (Recovery Time Objective)** | < 1 giờ | Thời gian khôi phục tối đa |
+| **RPO (Recovery Point Objective)** | < 1 giờ | Mất dữ liệu tối đa chấp nhận |
 
-### Cach tinh Uptime
+### Cách tính Uptime
 
 ```
-Uptime % = ((Tong phut trong thang - Phut downtime) / Tong phut trong thang) * 100
+Uptime % = ((Tổng phút trong tháng - Phút downtime) / Tổng phút trong tháng) * 100
 ```
 
-Downtime duoc tinh khi bat ky dieu kien nao sau xay ra:
-- Trang chu khong truy cap duoc
-- API tra ve 5xx > 5% request trong 5 phut
-- Chuc nang ban hang (POS) khong hoat dong
+Downtime được tính khi bất kỳ điều kiện nào sau xảy ra:
+- Trang chủ không truy cập được
+- API trả về 5xx > 5% request trong 5 phút
+- Chức năng bán hàng (POS) không hoạt động
 
 ---
 
-## 2. Giam sat he thong
+## 2. Giám sát hệ thống
 
 ### 2.1 Health Checks
 
@@ -63,196 +63,196 @@ for port in $SERVICES; do
     --max-time 5 http://localhost:$port/actuator/health)
   if [ "$status" != "200" ]; then
     echo "CRITICAL: ${SERVICE_NAMES[$i]} (port $port) — HTTP $status"
-    # Gui alert
+    # Gửi alert
   fi
   ((i++))
 done
 ```
 
-Chay moi 1 phut qua crontab:
+Chạy mỗi 1 phút qua crontab:
 ```
 * * * * * /opt/retailcrm/scripts/healthcheck.sh >> /var/log/retailcrm/healthcheck.log 2>&1
 ```
 
-### 2.2 Canh bao (Alerts)
+### 2.2 Cảnh báo (Alerts)
 
-| Chi so | Nguong WARNING | Nguong CRITICAL | Hanh dong |
+| Chỉ số | Ngưỡng WARNING | Ngưỡng CRITICAL | Hành động |
 |---|---|---|---|
-| **DB connection pool** | Active > 70% | Active > 90% | Tang pool size hoac kiem tra slow queries |
-| **Redis memory** | Used > 70% maxmemory | Used > 90% maxmemory | Kiem tra key TTL, xoa cache cu |
-| **RabbitMQ queue depth** | > 10,000 messages | > 50,000 messages | Kiem tra consumer, restart neu can |
-| **RabbitMQ unacked** | > 1,000 messages | > 5,000 messages | Consumer bi treo, restart service |
-| **Disk usage** | > 80% | > 90% | Xoa log cu, mo rong disk |
-| **JVM heap** | > 80% max | > 90% max | Kiem tra memory leak, tang heap |
-| **CPU** | > 70% (5 phut) | > 90% (5 phut) | Kiem tra process, scale out |
-| **Error rate (5xx)** | > 1% | > 5% | Kiem tra log, rollback neu can |
-| **SSL cert expiry** | < 30 ngay | < 7 ngay | Renew certificate |
+| **DB connection pool** | Active > 70% | Active > 90% | Tăng pool size hoặc kiểm tra slow queries |
+| **Redis memory** | Used > 70% maxmemory | Used > 90% maxmemory | Kiểm tra key TTL, xoá cache cũ |
+| **RabbitMQ queue depth** | > 10,000 messages | > 50,000 messages | Kiểm tra consumer, restart nếu cần |
+| **RabbitMQ unacked** | > 1,000 messages | > 5,000 messages | Consumer bị treo, restart service |
+| **Disk usage** | > 80% | > 90% | Xoá log cũ, mở rộng disk |
+| **JVM heap** | > 80% max | > 90% max | Kiểm tra memory leak, tăng heap |
+| **CPU** | > 70% (5 phút) | > 90% (5 phút) | Kiểm tra process, scale out |
+| **Error rate (5xx)** | > 1% | > 5% | Kiểm tra log, rollback nếu cần |
+| **SSL cert expiry** | < 30 ngày | < 7 ngày | Renew certificate |
 
-### 2.3 Cong cu khuyen dung
+### 2.3 Công cụ khuyên dùng
 
 - **Metrics:** Prometheus + Grafana (Spring Boot Actuator expose /actuator/prometheus)
-- **Log:** ELK Stack hoac Loki + Grafana
-- **APM:** Elastic APM hoac Jaeger (distributed tracing)
+- **Log:** ELK Stack hoặc Loki + Grafana
+- **APM:** Elastic APM hoặc Jaeger (distributed tracing)
 - **Alerting:** Grafana Alerts -> Telegram / Slack / Email
 
 ---
 
-## 3. Cac su co thuong gap
+## 3. Các sự cố thường gặp
 
 ### 3.1 DB Connection Pool Exhaustion
 
-**Trieu chung:**
-- API tra ve 500 hoac timeout
+**Triệu chứng:**
+- API trả về 500 hoặc timeout
 - Log: `HikariPool - Connection is not available, request timed out`
 
-**Nguyen nhan:**
-- Slow query giu connection qua lau
-- Leak connection (khong dong connection)
-- Burst traffic dot ngot
+**Nguyên nhân:**
+- Slow query giữ connection quá lâu
+- Leak connection (không đóng connection)
+- Burst traffic đột ngột
 
-**Xu ly:**
+**Xử lý:**
 
 ```bash
-# 1. Kiem tra connection hien tai
+# 1. Kiểm tra connection hiện tại
 mysql -u root -p -e "SHOW PROCESSLIST;" | grep -v Sleep | head -20
 
-# 2. Tim slow query
+# 2. Tìm slow query
 mysql -u root -p -e "SELECT * FROM information_schema.processlist WHERE TIME > 10;"
 
-# 3. Kill query co van de
+# 3. Kill query có vấn đề
 mysql -u root -p -e "KILL <process_id>;"
 
-# 4. Restart service bi anh huong
+# 4. Restart service bị ảnh hưởng
 docker compose restart <service-name>
 
-# 5. Tang pool size tam thoi (application.yml)
+# 5. Tăng pool size tạm thời (application.yml)
 # spring.datasource.hikari.maximum-pool-size: 30 -> 50
 ```
 
-**Phong ngua:**
-- Dat `spring.datasource.hikari.leak-detection-threshold=60000`
-- Index dung cac cot filter thuong dung
-- Giam sat slow query log thuong xuyen
+**Phòng ngừa:**
+- Đặt `spring.datasource.hikari.leak-detection-threshold=60000`
+- Index đúng các cột filter thường dùng
+- Giám sát slow query log thường xuyên
 
 ---
 
 ### 3.2 Redis Out of Memory (OOM)
 
-**Trieu chung:**
+**Triệu chứng:**
 - Log: `OOM command not allowed when used memory > maxmemory`
-- Cache miss tang dot bien
-- API cham hon binh thuong
+- Cache miss tăng đột biến
+- API chậm hơn bình thường
 
-**Xu ly:**
+**Xử lý:**
 
 ```bash
-# 1. Kiem tra memory
+# 1. Kiểm tra memory
 redis-cli -a ${REDIS_PASSWORD} INFO memory
 
-# 2. Tim key chiem nhieu memory
+# 2. Tìm key chiếm nhiều memory
 redis-cli -a ${REDIS_PASSWORD} --bigkeys
 
-# 3. Xoa cache khong can thiet
+# 3. Xoá cache không cần thiết
 redis-cli -a ${REDIS_PASSWORD} KEYS "cache:report:*" | xargs redis-cli DEL
 
-# 4. Kiem tra key khong co TTL
+# 4. Kiểm tra key không có TTL
 redis-cli -a ${REDIS_PASSWORD} --scan | while read key; do
   ttl=$(redis-cli -a ${REDIS_PASSWORD} TTL "$key")
   if [ "$ttl" = "-1" ]; then echo "No TTL: $key"; fi
 done
 ```
 
-**Phong ngua:**
-- Tat ca key phai co TTL (toi da 24h cho cache, 8h cho session)
-- Cau hinh `maxmemory-policy allkeys-lru`
-- Giam sat memory usage hang ngay
+**Phòng ngừa:**
+- Tất cả key phải có TTL (tối đa 24h cho cache, 8h cho session)
+- Cấu hình `maxmemory-policy allkeys-lru`
+- Giám sát memory usage hàng ngày
 
 ---
 
 ### 3.3 RabbitMQ Queue Backlog
 
-**Trieu chung:**
-- Thong bao (email, SMS, push) bi tre
-- Don hang khong dong bo giua cac service
-- Queue depth tang lien tuc
+**Triệu chứng:**
+- Thông báo (email, SMS, push) bị trễ
+- Đơn hàng không đồng bộ giữa các service
+- Queue depth tăng liên tục
 
-**Xu ly:**
+**Xử lý:**
 
 ```bash
-# 1. Kiem tra queue
+# 1. Kiểm tra queue
 rabbitmqctl list_queues name messages consumers
 
-# 2. Kiem tra consumer con song khong
+# 2. Kiểm tra consumer còn sống không
 rabbitmqctl list_consumers
 
 # 3. Restart consumer service
 docker compose restart notification
 
-# 4. Neu queue qua lon, purge (CHI KHI CHAP NHAN MAT DU LIEU)
+# 4. Nếu queue quá lớn, purge (CHỈ KHI CHẤP NHẬN MẤT DỮ LIỆU)
 # rabbitmqctl purge_queue <queue_name>
 ```
 
-**Phong ngua:**
-- Moi queue phai co dead-letter exchange
-- Dat `x-max-length: 100000` cho moi queue
+**Phòng ngừa:**
+- Mỗi queue phải có dead-letter exchange
+- Đặt `x-max-length: 100000` cho mỗi queue
 - Alert khi queue > 10,000
 
 ---
 
 ### 3.4 JVM Heap / OutOfMemoryError
 
-**Trieu chung:**
-- Service tu dong restart
+**Triệu chứng:**
+- Service tự động restart
 - Log: `java.lang.OutOfMemoryError: Java heap space`
-- Response time tang dan truoc khi crash
+- Response time tăng dần trước khi crash
 
-**Xu ly:**
+**Xử lý:**
 
 ```bash
-# 1. Lay heap dump truoc khi restart (neu service con chay)
+# 1. Lấy heap dump trước khi restart (nếu service còn chạy)
 jmap -dump:format=b,file=/tmp/heapdump.hprof <PID>
 
 # 2. Restart service
 docker compose restart <service-name>
 
-# 3. Tang heap tam thoi
+# 3. Tăng heap tạm thời
 # JAVA_OPTS: -Xms512m -Xmx1024m -> -Xms1024m -Xmx2048m
 
-# 4. Phan tich heap dump
-# Dung Eclipse MAT hoac VisualVM
+# 4. Phân tích heap dump
+# Dùng Eclipse MAT hoặc VisualVM
 ```
 
-**Phong ngua:**
-- Cau hinh `-XX:+HeapDumpOnOutOfMemoryError -XX:HeapDumpPath=/var/log/`
-- Khong load toan bo list vao memory (phan trang bat buoc)
-- Giam sat GC time qua Actuator metrics
+**Phòng ngừa:**
+- Cấu hình `-XX:+HeapDumpOnOutOfMemoryError -XX:HeapDumpPath=/var/log/`
+- Không load toàn bộ list vào memory (phân trang bắt buộc)
+- Giám sát GC time qua Actuator metrics
 
 ---
 
 ### 3.5 Frontend 404 (SPA Routing)
 
-**Trieu chung:**
-- Truy cap truc tiep URL (`/sales/orders/123`) tra ve 404
-- Refresh trang bi 404
+**Triệu chứng:**
+- Truy cập trực tiếp URL (`/sales/orders/123`) trả về 404
+- Refresh trang bị 404
 
-**Xu ly:**
+**Xử lý:**
 
 ```bash
-# Kiem tra nginx config co try_files khong
+# Kiểm tra nginx config có try_files không
 grep -n "try_files" /etc/nginx/conf.d/default.conf
 
-# Phai co dong nay trong location /:
+# Phải có dòng này trong location /:
 #   try_files $uri $uri/ /index.html;
 
-# Sau khi sua, reload nginx
+# Sau khi sửa, reload nginx
 sudo nginx -t && sudo nginx -s reload
 ```
 
 ---
 
-## 4. Backup va khoi phuc
+## 4. Backup và khôi phục
 
-### 4.1 MySQL — Backup hang ngay
+### 4.1 MySQL — Backup hàng ngày
 
 ```bash
 #!/bin/bash
@@ -271,14 +271,14 @@ mysqldump -u root -p${DB_ROOT_PASSWORD} \
   --events \
   ${DB_NAME} | gzip > ${BACKUP_DIR}/${DB_NAME}_${DATE}.sql.gz
 
-# Xoa backup cu hon 30 ngay
+# Xoá backup cũ hơn 30 ngày
 find ${BACKUP_DIR} -name "*.sql.gz" -mtime +${RETENTION_DAYS} -delete
 
 # Log
 echo "[${DATE}] Backup completed: ${DB_NAME}_${DATE}.sql.gz" >> /var/log/retailcrm/backup.log
 ```
 
-Crontab — chay luc 2:00 AM moi ngay:
+Crontab — chạy lúc 2:00 AM mỗi ngày:
 ```
 0 2 * * * /opt/retailcrm/scripts/backup-mysql.sh
 ```
@@ -286,158 +286,158 @@ Crontab — chay luc 2:00 AM moi ngay:
 ### 4.2 Redis — Backup RDB
 
 ```bash
-# Bat RDB snapshot trong redis.conf
+# Bật RDB snapshot trong redis.conf
 save 900 1
 save 300 10
 save 60 10000
 
-# Copy file dump.rdb ra noi an toan
+# Copy file dump.rdb ra nơi an toàn
 cp /var/lib/redis/dump.rdb /backup/redis/dump_$(date +%Y%m%d).rdb
 ```
 
 ### 4.3 Point-in-Time Recovery (MySQL)
 
 ```bash
-# Bat binary log trong my.cnf
+# Bật binary log trong my.cnf
 [mysqld]
 log-bin = /var/log/mysql/mysql-bin
 binlog_expire_logs_seconds = 604800
 binlog_format = ROW
 
-# Khoi phuc den thoi diem cu the
-# Buoc 1: Khoi phuc tu full backup
+# Khôi phục đến thời điểm cụ thể
+# Bước 1: Khôi phục từ full backup
 mysql -u root -p reborn_retail_crm < backup_20260415.sql
 
-# Buoc 2: Apply binlog den thoi diem mong muon
+# Bước 2: Apply binlog đến thời điểm mong muốn
 mysqlbinlog --stop-datetime="2026-04-15 14:30:00" \
   /var/log/mysql/mysql-bin.000123 | mysql -u root -p reborn_retail_crm
 ```
 
-### 4.4 Kiem tra backup
+### 4.4 Kiểm tra backup
 
-**Bat buoc kiem tra backup moi tuan:**
+**Bắt buộc kiểm tra backup mỗi tuần:**
 
 ```bash
-# Tao database tam
+# Tạo database tạm
 mysql -u root -p -e "CREATE DATABASE backup_test;"
 
-# Restore va kiem tra
+# Restore và kiểm tra
 gunzip < /backup/mysql/reborn_retail_crm_latest.sql.gz | mysql -u root -p backup_test
 mysql -u root -p backup_test -e "SELECT COUNT(*) FROM customers;"
 
-# Xoa database tam
+# Xoá database tạm
 mysql -u root -p -e "DROP DATABASE backup_test;"
 ```
 
 ---
 
-## 5. Xu ly su co (Incident Response)
+## 5. Xử lý sự cố (Incident Response)
 
-### 5.1 Phan loai muc do nghiem trong
+### 5.1 Phân loại mức độ nghiêm trọng
 
-| Muc do | Mo ta | Thoi gian phan hoi | Thoi gian khac phuc | Vi du |
+| Mức độ | Mô tả | Thời gian phản hồi | Thời gian khắc phục | Ví dụ |
 |---|---|---|---|---|
-| **P1 — Critical** | He thong ngung hoat dong hoan toan | 15 phut | 4 gio | Database down, toan bo API 500 |
-| **P2 — High** | Chuc nang chinh bi anh huong | 30 phut | 8 gio | POS khong ban duoc hang, thanh toan loi |
-| **P3 — Medium** | Chuc nang phu bi anh huong | 2 gio | 24 gio | Bao cao xuat cham, thong bao tre |
-| **P4 — Low** | Loi nho, khong anh huong nghiep vu | 8 gio | 72 gio | UI le, typo, tinh nang it dung |
+| **P1 — Critical** | Hệ thống ngừng hoạt động hoàn toàn | 15 phút | 4 giờ | Database down, toàn bộ API 500 |
+| **P2 — High** | Chức năng chính bị ảnh hưởng | 30 phút | 8 giờ | POS không bán được hàng, thanh toán lỗi |
+| **P3 — Medium** | Chức năng phụ bị ảnh hưởng | 2 giờ | 24 giờ | Báo cáo xuất chậm, thông báo trễ |
+| **P4 — Low** | Lỗi nhỏ, không ảnh hưởng nghiệp vụ | 8 giờ | 72 giờ | UI lệ, typo, tính năng ít dùng |
 
-### 5.2 Quy trinh xu ly su co
+### 5.2 Quy trình xử lý sự cố
 
 ```
-1. PHAT HIEN     Monitoring alert / User bao cao
+1. PHÁT HIỆN     Monitoring alert / User báo cáo
        |
-2. XAC NHAN      Xac dinh pham vi, muc do (P1-P4)
+2. XÁC NHẬN      Xác định phạm vi, mức độ (P1-P4)
        |
-3. THONG BAO     Thong bao team theo ma tran lien he
+3. THÔNG BÁO     Thông báo team theo ma trận liên hệ
        |
-4. DIEU TRA      Kiem tra log, metrics, reproduce
+4. ĐIỀU TRA      Kiểm tra log, metrics, reproduce
        |
-5. KHAC PHUC     Hotfix / Rollback / Restart
+5. KHẮC PHỤC     Hotfix / Rollback / Restart
        |
-6. XAC MINH      Kiem tra he thong da binh thuong
+6. XÁC MINH      Kiểm tra hệ thống đã bình thường
        |
-7. POST-MORTEM   Viet bao cao nguyen nhan, cach phong ngua
+7. POST-MORTEM   Viết báo cáo nguyên nhân, cách phòng ngừa
 ```
 
 ### 5.3 Escalation
 
-| Thoi gian | Hanh dong |
+| Thời gian | Hành động |
 |---|---|
-| 0 — 15 phut | On-call engineer tiep nhan |
-| 15 — 30 phut | Thong bao Tech Lead |
-| 30 — 60 phut | Thong bao CTO / Engineering Manager |
-| > 1 gio (P1) | Thong bao Ban giam doc, can nhac thong bao khach hang |
-| > 4 gio (P1) | Hop khan cap toan team |
+| 0 — 15 phút | On-call engineer tiếp nhận |
+| 15 — 30 phút | Thông báo Tech Lead |
+| 30 — 60 phút | Thông báo CTO / Engineering Manager |
+| > 1 giờ (P1) | Thông báo Ban giám đốc, cân nhắc thông báo khách hàng |
+| > 4 giờ (P1) | Họp khẩn cấp toàn team |
 
-### 5.4 Template bao cao su co
+### 5.4 Template báo cáo sự cố
 
 ```markdown
-## Bao cao su co #<so>
+## Báo cáo sự cố #<số>
 
-**Thoi gian phat hien:** YYYY-MM-DD HH:MM
-**Thoi gian khac phuc:** YYYY-MM-DD HH:MM
-**Muc do:** P1/P2/P3/P4
-**Anh huong:** Mo ta anh huong den nguoi dung
+**Thời gian phát hiện:** YYYY-MM-DD HH:MM
+**Thời gian khắc phục:** YYYY-MM-DD HH:MM
+**Mức độ:** P1/P2/P3/P4
+**Ảnh hưởng:** Mô tả ảnh hưởng đến người dùng
 
-### Tom tat
-<Mo ta ngan gon su co>
+### Tóm tắt
+<Mô tả ngắn gọn sự cố>
 
-### Thoi gian xu ly (Timeline)
-- HH:MM — Phat hien ...
-- HH:MM — Bat dau dieu tra ...
-- HH:MM — Tim ra nguyen nhan ...
-- HH:MM — Ap dung ban va ...
-- HH:MM — Xac nhan khac phuc ...
+### Thời gian xử lý (Timeline)
+- HH:MM — Phát hiện ...
+- HH:MM — Bắt đầu điều tra ...
+- HH:MM — Tìm ra nguyên nhân ...
+- HH:MM — Áp dụng bản vá ...
+- HH:MM — Xác nhận khắc phục ...
 
-### Nguyen nhan goc (Root Cause)
-<Nguyen nhan chi tiet>
+### Nguyên nhân gốc (Root Cause)
+<Nguyên nhân chi tiết>
 
-### Hanh dong khac phuc
-<Da lam gi de sua>
+### Hành động khắc phục
+<Đã làm gì để sửa>
 
-### Hanh dong phong ngua
-- [ ] Hanh dong 1 — Nguoi phu trach — Deadline
-- [ ] Hanh dong 2 — Nguoi phu trach — Deadline
+### Hành động phòng ngừa
+- [ ] Hành động 1 — Người phụ trách — Deadline
+- [ ] Hành động 2 — Người phụ trách — Deadline
 ```
 
 ---
 
-## 6. Bao tri dinh ky
+## 6. Bảo trì định kỳ
 
-### 6.1 Lich bao tri
+### 6.1 Lịch bảo trì
 
-| Tan suat | Cong viec | Thoi diem khuyen nghi |
+| Tần suất | Công việc | Thời điểm khuyến nghị |
 |---|---|---|
-| **Hang ngay** | Kiem tra backup, xem alert | 8:00 AM |
-| **Hang tuan** | Kiem tra restore backup, xem slow query | Thu 2, 9:00 AM |
-| **Hang thang** | Cap nhat security patch, xoa log cu | Ngay 1, 2:00 AM |
-| **Hang quy** | Review capacity, rotate JWT secret | Dau quy |
+| **Hàng ngày** | Kiểm tra backup, xem alert | 8:00 AM |
+| **Hàng tuần** | Kiểm tra restore backup, xem slow query | Thứ 2, 9:00 AM |
+| **Hàng tháng** | Cập nhật security patch, xoá log cũ | Ngày 1, 2:00 AM |
+| **Hàng quý** | Review capacity, rotate JWT secret | Đầu quý |
 
-### 6.2 Lam moi cache khuyen mai (Promotion Cache Refresh)
+### 6.2 Làm mới cache khuyến mãi (Promotion Cache Refresh)
 
 ```bash
-# Khi cap nhat chuong trinh khuyen mai, can xoa cache
+# Khi cập nhật chương trình khuyến mãi, cần xoá cache
 redis-cli -a ${REDIS_PASSWORD} KEYS "cache:promotion:*" | xargs redis-cli -a ${REDIS_PASSWORD} DEL
 redis-cli -a ${REDIS_PASSWORD} KEYS "cache:voucher:*" | xargs redis-cli -a ${REDIS_PASSWORD} DEL
 
-# Hoac goi API refresh
+# Hoặc gọi API refresh
 curl -X POST http://localhost:8084/api/admin/cache/refresh-promotions \
   -H "Authorization: Bearer ${ADMIN_TOKEN}"
 ```
 
-### 6.3 Tong hop bao cao (Report Aggregation)
+### 6.3 Tổng hợp báo cáo (Report Aggregation)
 
 ```bash
-# Chay hang dem luc 1:00 AM — tong hop doanh thu, ton kho
+# Chạy hàng đêm lúc 1:00 AM — tổng hợp doanh thu, tồn kho
 # Crontab:
 0 1 * * * curl -X POST http://localhost:8090/api/internal/reports/daily-aggregate
 
-# Tong hop thang — chay ngay 1 hang thang
+# Tổng hợp tháng — chạy ngày 1 hàng tháng
 0 3 1 * * curl -X POST http://localhost:8090/api/internal/reports/monthly-aggregate
 ```
 
-### 6.4 Xoay vong log (Log Rotation)
+### 6.4 Xoay vòng log (Log Rotation)
 
 ```bash
 # /etc/logrotate.d/retailcrm
@@ -459,173 +459,173 @@ curl -X POST http://localhost:8084/api/admin/cache/refresh-promotions \
 ### 6.5 Docker cleanup
 
 ```bash
-# Xoa container/image khong dung — chay hang tuan
+# Xoá container/image không dùng — chạy hàng tuần
 docker system prune -f --filter "until=168h"
 docker image prune -a -f --filter "until=720h"
 ```
 
 ---
 
-## 7. Bao mat
+## 7. Bảo mật
 
 ### 7.1 JWT Rotation
 
 ```bash
-# Quy trinh rotate JWT secret (moi quy)
-# 1. Tao secret moi
+# Quy trình rotate JWT secret (mỗi quý)
+# 1. Tạo secret mới
 NEW_SECRET=$(openssl rand -base64 64)
 
-# 2. Cap nhat bien moi truong (ho tro 2 secret cung luc trong 24h)
+# 2. Cập nhật biến môi trường (hỗ trợ 2 secret cùng lúc trong 24h)
 JWT_SECRET_OLD=${JWT_SECRET}
 JWT_SECRET=${NEW_SECRET}
 
-# 3. Restart toan bo backend service
+# 3. Restart toàn bộ backend service
 docker compose restart auth sales inventory billing market customer \
   notification integration care logistics finance operation
 
-# 4. Sau 24h, xoa JWT_SECRET_OLD
+# 4. Sau 24h, xoá JWT_SECRET_OLD
 ```
 
 ### 7.2 API Key Management
 
-| Loai key | Muc dich | Rotation | Luu tru |
+| Loại key | Mục đích | Rotation | Lưu trữ |
 |---|---|---|---|
-| JWT Secret | Ky token xac thuc | 90 ngay | Secrets Manager |
-| Firebase Key | Push notification | Khi bi lo | Secrets Manager |
-| SMTP Password | Gui email | 90 ngay | Secrets Manager |
-| Payment Gateway Key | Thanh toan | 90 ngay | Secrets Manager |
-| SMS API Key | Gui SMS | 90 ngay | Secrets Manager |
+| JWT Secret | Ký token xác thực | 90 ngày | Secrets Manager |
+| Firebase Key | Push notification | Khi bị lộ | Secrets Manager |
+| SMTP Password | Gửi email | 90 ngày | Secrets Manager |
+| Payment Gateway Key | Thanh toán | 90 ngày | Secrets Manager |
+| SMS API Key | Gửi SMS | 90 ngày | Secrets Manager |
 
-**Quy tac:**
-- Khong hard-code key trong source code
-- Dung Secrets Manager (Vault / AWS SSM / GCP Secret Manager)
-- Log tat ca cac lan truy cap key
-- Revoke key ngay khi nghi bi lo
+**Quy tắc:**
+- Không hard-code key trong source code
+- Dùng Secrets Manager (Vault / AWS SSM / GCP Secret Manager)
+- Log tất cả các lần truy cập key
+- Revoke key ngay khi nghi bị lộ
 
 ### 7.3 Audit Log
 
-He thong ghi nhan audit log cho cac hanh dong quan trong:
+Hệ thống ghi nhận audit log cho các hành động quan trọng:
 
 ```
-Hanh dong duoc ghi log:
-- Dang nhap / Dang xuat (thanh cong va that bai)
-- Thay doi quyen nguoi dung
-- Tao / Sua / Xoa don hang
-- Thay doi gia san pham
-- Xuat / Nhap kho
-- Thay doi cau hinh he thong
-- Truy cap bao cao tai chinh
+Hành động được ghi log:
+- Đăng nhập / Đăng xuất (thành công và thất bại)
+- Thay đổi quyền người dùng
+- Tạo / Sửa / Xoá đơn hàng
+- Thay đổi giá sản phẩm
+- Xuất / Nhập kho
+- Thay đổi cấu hình hệ thống
+- Truy cập báo cáo tài chính
 ```
 
-**Truy van audit log:**
+**Truy vấn audit log:**
 
 ```bash
-# Tim hoat dong cua 1 user
+# Tìm hoạt động của 1 user
 curl "http://localhost:8080/api/admin/audit-logs?userId=123&from=2026-04-01" \
   -H "Authorization: Bearer ${ADMIN_TOKEN}"
 
-# Tim thay doi tren 1 don hang
+# Tìm thay đổi trên 1 đơn hàng
 curl "http://localhost:8080/api/admin/audit-logs?entity=ORDER&entityId=456" \
   -H "Authorization: Bearer ${ADMIN_TOKEN}"
 ```
 
-**Luu tru audit log:** Giu toi thieu 1 nam, luu archive tren S3/GCS cho cac log > 3 thang.
+**Lưu trữ audit log:** Giữ tối thiểu 1 năm, lưu archive trên S3/GCS cho các log > 3 tháng.
 
 ---
 
-## 8. Ke hoach mo rong (Capacity Planning)
+## 8. Kế hoạch mở rộng (Capacity Planning)
 
-### 8.1 Du phong tai nguyen theo quy mo
+### 8.1 Dự phòng tài nguyên theo quy mô
 
-| Quy mo | CPU | RAM | Disk | DB Connections | Redis Memory |
+| Quy mô | CPU | RAM | Disk | DB Connections | Redis Memory |
 |---|---|---|---|---|---|
-| **100 cua hang** | 8 vCPU | 16 GB | 200 GB SSD | 200 | 2 GB |
-| **200 cua hang** | 16 vCPU | 32 GB | 500 GB SSD | 400 | 4 GB |
-| **500 cua hang** | 32 vCPU (cluster) | 64 GB | 1 TB SSD | 800 (read replica) | 8 GB (cluster) |
+| **100 cửa hàng** | 8 vCPU | 16 GB | 200 GB SSD | 200 | 2 GB |
+| **200 cửa hàng** | 16 vCPU | 32 GB | 500 GB SSD | 400 | 4 GB |
+| **500 cửa hàng** | 32 vCPU (cluster) | 64 GB | 1 TB SSD | 800 (read replica) | 8 GB (cluster) |
 
-### 8.2 Chi so can theo doi de quyet dinh scale
+### 8.2 Chỉ số cần theo dõi để quyết định scale
 
-| Chi so | Nguong scale | Hanh dong |
+| Chỉ số | Ngưỡng scale | Hành động |
 |---|---|---|
-| CPU trung binh > 70% (1 tuan) | Scale UP | Tang vCPU hoac them node |
-| RAM trung binh > 80% | Scale UP | Tang RAM hoac tach service |
-| Disk > 70% | Mo rong | Tang disk hoac chuyen sang storage lon hon |
-| DB connection > 70% pool | Scale OUT | Them read replica |
-| API P95 > 800ms (1 tuan) | Optimize | Review query, them cache, scale |
-| Queue backlog tang deu | Scale consumer | Them instance cho consumer service |
+| CPU trung bình > 70% (1 tuần) | Scale UP | Tăng vCPU hoặc thêm node |
+| RAM trung bình > 80% | Scale UP | Tăng RAM hoặc tách service |
+| Disk > 70% | Mở rộng | Tăng disk hoặc chuyển sang storage lớn hơn |
+| DB connection > 70% pool | Scale OUT | Thêm read replica |
+| API P95 > 800ms (1 tuần) | Optimize | Review query, thêm cache, scale |
+| Queue backlog tăng đều | Scale consumer | Thêm instance cho consumer service |
 
-### 8.3 Chien luoc scale
+### 8.3 Chiến lược scale
 
-**Giai doan 100-200 cua hang:**
-- Single server, tang specs (vertical scaling)
-- Them MySQL read replica cho bao cao
-- Redis standalone du dung
+**Giai đoạn 100-200 cửa hàng:**
+- Single server, tăng specs (vertical scaling)
+- Thêm MySQL read replica cho báo cáo
+- Redis standalone đủ dùng
 
-**Giai doan 200-500 cua hang:**
-- Chuyen sang Kubernetes hoac Docker Swarm
+**Giai đoạn 200-500 cửa hàng:**
+- Chuyển sang Kubernetes hoặc Docker Swarm
 - MySQL cluster (1 primary + 2 replica)
 - Redis Cluster (3 master + 3 replica)
 - RabbitMQ cluster (3 nodes)
 - CDN cho static assets
-- Tach database theo service (database-per-service)
+- Tách database theo service (database-per-service)
 
-### 8.4 Uoc tinh luu luong
+### 8.4 Ước tính lưu lượng
 
 ```
-Moi cua hang trung binh:
-- 200 don hang/ngay
-- 5 nhan vien dung dong thoi
-- ~1000 API request/gio (gio cao diem)
+Mỗi cửa hàng trung bình:
+- 200 đơn hàng/ngày
+- 5 nhân viên dùng đồng thời
+- ~1000 API request/giờ (giờ cao điểm)
 
-500 cua hang:
-- 100,000 don hang/ngay
-- 2,500 nguoi dung dong thoi
-- ~500,000 API request/gio (gio cao diem)
-- ~50 GB du lieu moi/nam
+500 cửa hàng:
+- 100,000 đơn hàng/ngày
+- 2,500 người dùng đồng thời
+- ~500,000 API request/giờ (giờ cao điểm)
+- ~50 GB dữ liệu mới/năm
 ```
 
 ---
 
-## 9. Ma tran lien he
+## 9. Ma trận liên hệ
 
-| Vai tro | Ten | Dien thoai | Email | Khi nao lien he |
+| Vai trò | Tên | Điện thoại | Email | Khi nào liên hệ |
 |---|---|---|---|---|
-| **On-call Engineer** | (Cap nhat hang tuan) | — | oncall@reborn.vn | P1-P4, moi su co |
-| **Tech Lead** | — | — | techlead@reborn.vn | P1-P2, sau 15 phut |
+| **On-call Engineer** | (Cập nhật hàng tuần) | — | oncall@reborn.vn | P1-P4, mọi sự cố |
+| **Tech Lead** | — | — | techlead@reborn.vn | P1-P2, sau 15 phút |
 | **DevOps** | — | — | devops@reborn.vn | Infrastructure, deploy |
 | **DBA** | — | — | dba@reborn.vn | Database issues |
-| **CTO** | — | — | cto@reborn.vn | P1, sau 30 phut |
-| **CEO** | — | — | ceo@reborn.vn | P1, sau 1 gio |
-| **Hosting Provider** | — | Hotline nha cung cap | — | Server hardware, network |
+| **CTO** | — | — | cto@reborn.vn | P1, sau 30 phút |
+| **CEO** | — | — | ceo@reborn.vn | P1, sau 1 giờ |
+| **Hosting Provider** | — | Hotline nhà cung cấp | — | Server hardware, network |
 
-### Kenh thong bao
+### Kênh thông báo
 
-| Kenh | Muc dich | Phan hoi ky vong |
+| Kênh | Mục đích | Phản hồi kỳ vọng |
 |---|---|---|
-| **Telegram Group** "CRM Ops" | Alert tu dong, trao doi nhanh | < 5 phut |
-| **Email** oncall@reborn.vn | Su co, bao cao | < 30 phut |
-| **Dien thoai** | P1 Critical | < 5 phut |
-| **Jira / Issue Tracker** | Theo doi su co, post-mortem | Theo SLA |
+| **Telegram Group** "CRM Ops" | Alert tự động, trao đổi nhanh | < 5 phút |
+| **Email** oncall@reborn.vn | Sự cố, báo cáo | < 30 phút |
+| **Điện thoại** | P1 Critical | < 5 phút |
+| **Jira / Issue Tracker** | Theo dõi sự cố, post-mortem | Theo SLA |
 
 ---
 
-## Phu luc: Lenh nhanh (Quick Reference)
+## Phụ lục: Lệnh nhanh (Quick Reference)
 
 ```bash
-# === Kiem tra trang thai ===
-docker compose ps                              # Trang thai container
+# === Kiểm tra trạng thái ===
+docker compose ps                              # Trạng thái container
 curl localhost:8080/actuator/health            # Health check auth
 redis-cli -a $REDIS_PASSWORD INFO memory       # Redis memory
 rabbitmqctl list_queues name messages          # Queue depth
 
 # === Restart ===
 docker compose restart <service>               # Restart 1 service
-docker compose restart                         # Restart tat ca
-docker compose down && docker compose up -d    # Restart hoan toan
+docker compose restart                         # Restart tất cả
+docker compose down && docker compose up -d    # Restart hoàn toàn
 
 # === Log ===
 docker compose logs -f --tail=200 <service>    # Xem log realtime
-docker compose logs --since="1h" <service>     # Log 1 gio gan nhat
+docker compose logs --since="1h" <service>     # Log 1 giờ gần nhất
 
 # === Backup ===
 mysqldump -u root -p reborn_retail_crm | gzip > backup.sql.gz
