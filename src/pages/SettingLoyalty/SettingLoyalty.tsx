@@ -8,13 +8,16 @@ import LoyaltyReward from "@/pages/LoyaltyReward";
 import TabMenuList from "@/components/TabMenuList/TabMenuList";
 import HeaderTabMenu from "@/components/HeaderTabMenu/HeaderTabMenu";
 import ExchangeRatePanel from "./ExchangeRatePanel";
+import PointExpiryConfig from "./PointExpiryConfig";
+import AutoTierConfig from "./AutoTierConfig";
+import LoyaltyScopeConfig from "./LoyaltyScopeConfig";
 
 interface Props {
   onBackProps?: (v: boolean) => void;
 }
 
 export default function SettingLoyalty({ onBackProps }: Props = {}) {
-  document.title = "Cài đặt hệ thống tích điểm";
+  document.title = "Cấu hình Loyalty";
 
   const sourceDomain = getDomain(decodeURIComponent(document.location.href));
   const checkSubdomainTNEX = sourceDomain.includes("tnex");
@@ -47,14 +50,38 @@ export default function SettingLoyalty({ onBackProps }: Props = {}) {
       backgroundColor: "#EEF2FF",
       strokeColor: "#6c5ce7",
     },
+    {
+      title: "Hạn sử dụng điểm",
+      is_tab: "tab_expiry",
+      des: "Cấu hình điểm hết hạn sau bao lâu — cuối năm, sau X tháng, hoặc không hết hạn",
+      icon: "CalendarTime",
+      backgroundColor: "#FFF7ED",
+      strokeColor: "#F5A623",
+    },
+    {
+      title: "Thăng / hạ hạng tự động",
+      is_tab: "tab_tier_eval",
+      des: "Tự động đánh giá và thay đổi hạng thành viên theo chu kỳ (tháng/quý/năm)",
+      icon: "TrendUp",
+      backgroundColor: "#ECFDF5",
+      strokeColor: "#22C55E",
+    },
+    {
+      title: "Phạm vi áp dụng",
+      is_tab: "tab_scope",
+      des: "Loyalty áp dụng toàn chuỗi, theo thương hiệu, hoặc theo nhóm cửa hàng",
+      icon: "Branch",
+      backgroundColor: "#EFF6FF",
+      strokeColor: "#3B82F6",
+    },
   ];
 
   return (
     <div className="page-setting-customer">
       {!isDetail && (
         onBackProps
-          ? <HeaderTabMenu title="Quy tắc tích điểm" titleBack="Khách hàng thành viên" onBackProps={onBackProps} />
-          : <TitleAction title="Cài đặt hệ thống tích điểm" />
+          ? <HeaderTabMenu title="Cấu hình Loyalty" titleBack="Hội viên" onBackProps={onBackProps} />
+          : <TitleAction title="Cấu hình Loyalty" />
       )}
       <div className="d-flex flex-column">
         {!isDetail && (
@@ -85,6 +112,24 @@ export default function SettingLoyalty({ onBackProps }: Props = {}) {
         />
       ) : isDetail && tab === "tab_exchange" ? (
         <ExchangeRatePanel
+          onBackProps={(isBack) => {
+            if (isBack) setIsDetail(false);
+          }}
+        />
+      ) : isDetail && tab === "tab_expiry" ? (
+        <PointExpiryConfig
+          onBackProps={(isBack) => {
+            if (isBack) setIsDetail(false);
+          }}
+        />
+      ) : isDetail && tab === "tab_tier_eval" ? (
+        <AutoTierConfig
+          onBackProps={(isBack) => {
+            if (isBack) setIsDetail(false);
+          }}
+        />
+      ) : isDetail && tab === "tab_scope" ? (
+        <LoyaltyScopeConfig
           onBackProps={(isBack) => {
             if (isBack) setIsDetail(false);
           }}

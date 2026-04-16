@@ -569,18 +569,18 @@ export const menu: IMenuItem[] = [
       //   icon: <Icon name="Marketing" />,
       //   code: "MA",
       // },
-      // {
-      //   title: "loyaltyPoints", // tích điểm Loyalty
-      //   path: urls.dashboard_loyalty,
-      //   icon: <Icon name="LoyaltyMenu" />,
-      //   code: "",
-      // },
-      // {
-      //   title: "loyaltyPointLedger", // Lịch sử điểm
-      //   path: urls.loyalty_point_ledger,
-      //   icon: <Icon name="PointsLogMenu" />,
-      //   code: "",
-      // },
+      {
+        title: "loyaltyPoints", // Loyalty
+        path: urls.dashboard_loyalty,
+        icon: <Icon name="LoyaltyMenu" />,
+        code: "",
+      },
+      {
+        title: "loyaltyPointLedger", // Sổ điểm
+        path: urls.loyalty_point_ledger,
+        icon: <Icon name="PointsLogMenu" />,
+        code: "",
+      },
 
       // {
       //   title: "receiveTicket", // Phiếu hỗ trợ
@@ -646,12 +646,12 @@ export const menu: IMenuItem[] = [
       //   icon: <Icon name="SettingWarranty" />,
       //   code: "",
       // },
-      // {
-      //   title: "settingLoyalty", // Cài đặt hệ thống tích điểm
-      //   path: urls.setting_loyalty,
-      //   icon: <Icon name="PointsSettingMenu" />,
-      //   code: "",
-      // },
+      {
+        title: "settingLoyalty", // Cấu hình Loyalty
+        path: urls.setting_loyalty,
+        icon: <Icon name="PointsSettingMenu" />,
+        code: "",
+      },
     ],
   },
   {
