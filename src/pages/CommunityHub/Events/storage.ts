@@ -6,7 +6,10 @@ import type {
   EventRegistration,
   EventStats,
   EventStatus,
+  PaymentProof,
   RegistrationStatus,
+  SelectedAddOn,
+  CheckInOutRecord,
 } from "./types";
 import { MOCK_EVENTS } from "@/mocks/community-hub/events";
 
@@ -145,6 +148,12 @@ export const eventStorage = {
       source?: "public_portal" | "manual" | "import";
       utmSource?: string;
       utmCampaign?: string;
+      // ── CHUNG: Mở rộng ──
+      dynamicFieldValues?: Record<string, string>;
+      selectedAddOns?: SelectedAddOn[];
+      totalAmount?: number;
+      selectedDates?: string[];
+      paymentProof?: PaymentProof;
     }
   ): { ok: boolean; registration?: EventRegistration; error?: string } {
     const event = this.getEventBySlug(eventSlug);
@@ -182,6 +191,12 @@ export const eventStorage = {
       source: data.source ?? "public_portal",
       utmSource: data.utmSource,
       utmCampaign: data.utmCampaign,
+      // ── CHUNG: Mở rộng ──
+      dynamicFieldValues: data.dynamicFieldValues,
+      selectedAddOns: data.selectedAddOns,
+      totalAmount: data.totalAmount,
+      selectedDates: data.selectedDates,
+      paymentProof: data.paymentProof,
     };
     const all = this.listRegistrations();
     all.unshift(registration);
@@ -229,6 +244,81 @@ export const eventStorage = {
     writeLS(KEY_REGISTRATIONS, all);
   },
 
+  // ═══ Payment Proof ═════════════════════════════════════════════════════
+  submitPaymentProof(regId: string, imageDataUrl: string): EventRegistration | null {
+    const all = this.listRegistrations();
+    const idx = all.findIndex((r) => r.id === regId);
+    if (idx < 0) return null;
+    all[idx] = {
+      ...all[idx],
+      paymentProof: {
+        imageUrl: imageDataUrl,
+        submittedAt: new Date().toISOString(),
+        status: "submitted",
+      },
+    };
+    writeLS(KEY_REGISTRATIONS, all);
+    return all[idx];
+  },
+
+  reviewPaymentProof(
+    regId: string,
+    approved: boolean,
+    rejectReason?: string,
+  ): EventRegistration | null {
+    const all = this.listRegistrations();
+    const idx = all.findIndex((r) => r.id === regId);
+    if (idx < 0 || !all[idx].paymentProof) return null;
+    const proof = { ...all[idx].paymentProof! };
+    proof.status = approved ? "approved" : "rejected";
+    proof.reviewedAt = new Date().toISOString();
+    proof.reviewedBy = "Admin";
+    if (!approved && rejectReason) proof.rejectReason = rejectReason;
+    all[idx] = { ...all[idx], paymentProof: proof };
+    writeLS(KEY_REGISTRATIONS, all);
+    return all[idx];
+  },
+
+  // ═══ Check-in / Check-out ═════════════════════════════════════════════
+  checkInRegistrant(
+    regId: string,
+    selectedDate?: string,
+    adminName?: string,
+  ): EventRegistration | null {
+    const all = this.listRegistrations();
+    const idx = all.findIndex((r) => r.id === regId);
+    if (idx < 0) return null;
+    const record: CheckInOutRecord = {
+      checkedInAt: new Date().toISOString(),
+      checkedInBy: adminName ?? "Admin",
+      selectedDate,
+    };
+    const records = [...(all[idx].checkInOutRecords ?? []), record];
+    all[idx] = {
+      ...all[idx],
+      status: "checked_in",
+      checkedInAt: record.checkedInAt,
+      checkInOutRecords: records,
+    };
+    writeLS(KEY_REGISTRATIONS, all);
+    return all[idx];
+  },
+
+  checkOutRegistrant(regId: string): EventRegistration | null {
+    const all = this.listRegistrations();
+    const idx = all.findIndex((r) => r.id === regId);
+    if (idx < 0) return null;
+    const records = [...(all[idx].checkInOutRecords ?? [])];
+    // Check-out record cuối cùng chưa có checkedOutAt
+    const lastOpen = records.findIndex((r) => !r.checkedOutAt);
+    if (lastOpen >= 0) {
+      records[lastOpen] = { ...records[lastOpen], checkedOutAt: new Date().toISOString() };
+    }
+    all[idx] = { ...all[idx], checkInOutRecords: records };
+    writeLS(KEY_REGISTRATIONS, all);
+    return all[idx];
+  },
+
   // ═══ Stats ════════════════════════════════════════════════════════════
   getEventStats(eventId: string): EventStats {
     const event = this.getEvent(eventId);
@@ -243,6 +333,17 @@ export const eventStorage = {
       ? Math.min(1, activeCount / event.maxAttendees)
       : 0;
     const conversionRate = regs.length ? converted / regs.length : 0;
+
+    // ── CHUNG: Mở rộng ──
+    const activeRegs = regs.filter((r) => r.status !== "cancelled");
+    const totalRevenue = activeRegs.reduce((s, r) => s + (r.totalAmount ?? 0), 0);
+    const paymentPendingCount = regs.filter(
+      (r) => r.paymentProof?.status === "submitted",
+    ).length;
+    const paymentApprovedCount = regs.filter(
+      (r) => r.paymentProof?.status === "approved",
+    ).length;
+
     return {
       totalRegistrations: regs.length,
       pendingCount: pending,
@@ -252,6 +353,9 @@ export const eventStorage = {
       convertedToMemberCount: converted,
       fillRate,
       conversionRate,
+      totalRevenue,
+      paymentPendingCount,
+      paymentApprovedCount,
     };
   },
 };
