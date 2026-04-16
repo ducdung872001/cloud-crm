@@ -7,7 +7,10 @@
 
 import React, { useEffect, useMemo, useState } from "react";
 import { eventStorage } from "@/pages/CommunityHub/Events/storage";
-import type { EventEntity } from "@/pages/CommunityHub/Events/types";
+import type { EventEntity, SelectedAddOn, PaymentProof } from "@/pages/CommunityHub/Events/types";
+import DynamicFieldsRenderer from "@/pages/CommunityHub/Events/components/DynamicFieldsRenderer";
+import AddOnItemsSelector from "@/pages/CommunityHub/Events/components/AddOnItemsSelector";
+import PaymentProofUpload from "@/pages/CommunityHub/Events/components/PaymentProofUpload";
 
 const THEME = {
   primary: "#00C9A7",
@@ -51,6 +54,12 @@ export default function ShareEventPage() {
     company: "",
     note: "",
   });
+  // ── CHUNG: Mở rộng state ──
+  const [dynamicValues, setDynamicValues] = useState<Record<string, string>>({});
+  const [selectedAddOns, setSelectedAddOns] = useState<SelectedAddOn[]>([]);
+  const [selectedDates, setSelectedDates] = useState<string[]>([]);
+  const [paymentProofUrl, setPaymentProofUrl] = useState<string | null>(null);
+
   const [error, setError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
 
@@ -124,6 +133,14 @@ export default function ShareEventPage() {
   const isFull = !!event.maxAttendees && activeCount >= event.maxAttendees;
   const canRegister = !regNotYet && !regClosed && !isFull;
 
+  // ── Tính tổng tiền ──
+  const ticketPrice = event.ticketPrice ?? 0;
+  const addOnSubtotal = selectedAddOns.reduce((sum, s) => {
+    const item = (event.addOnItems ?? []).find((i) => i.id === s.addOnId);
+    return sum + (item ? item.unitPrice * s.qty : 0);
+  }, 0);
+  const grandTotal = ticketPrice + addOnSubtotal;
+
   const handleSubmit = () => {
     if (!form.fullName.trim()) {
       setError("Vui lòng nhập họ tên");
@@ -133,7 +150,36 @@ export default function ShareEventPage() {
       setError("Số điện thoại không hợp lệ");
       return;
     }
+    // Validate multi-day selection
+    if (event.selectableDates?.length && selectedDates.length === 0) {
+      setError("Vui lòng chọn ít nhất 1 ngày tham gia");
+      return;
+    }
+    // Validate dynamic required fields
+    if (event.dynamicFields?.length) {
+      for (const f of event.dynamicFields) {
+        if (f.required && !(dynamicValues[f.id] ?? "").trim()) {
+          setError(`Vui lòng điền "${f.label}"`);
+          return;
+        }
+      }
+    }
+    // Validate payment proof
+    if (event.requirePaymentProof && grandTotal > 0 && !paymentProofUrl) {
+      setError("Vui lòng upload bằng chứng thanh toán");
+      return;
+    }
+
     setSubmitting(true);
+    const paymentProof: PaymentProof | undefined =
+      paymentProofUrl
+        ? {
+            imageUrl: paymentProofUrl,
+            submittedAt: new Date().toISOString(),
+            status: "submitted",
+          }
+        : undefined;
+
     const result = eventStorage.registerForEvent(event.slug, {
       fullName: form.fullName.trim(),
       phone: form.phone.trim(),
@@ -141,6 +187,11 @@ export default function ShareEventPage() {
       company: form.company.trim() || undefined,
       note: form.note.trim() || undefined,
       source: "public_portal",
+      dynamicFieldValues: Object.keys(dynamicValues).length ? dynamicValues : undefined,
+      selectedAddOns: selectedAddOns.length ? selectedAddOns : undefined,
+      totalAmount: grandTotal || undefined,
+      selectedDates: selectedDates.length ? selectedDates : undefined,
+      paymentProof,
     });
     setSubmitting(false);
     if (!result.ok) {
@@ -154,6 +205,12 @@ export default function ShareEventPage() {
     setShowRegisterForm(false);
     window.scrollTo(0, 0);
   };
+
+  const hasGallery = (event.galleryImageUrls ?? []).length > 0;
+  const hasDynamicFields = (event.dynamicFields ?? []).length > 0;
+  const hasAddOns = (event.addOnItems ?? []).length > 0;
+  const hasMultiDay = (event.selectableDates ?? []).length > 0;
+  const needsPayment = event.requirePaymentProof && grandTotal > 0;
 
   return (
     <div style={{ minHeight: "100vh", background: THEME.bg, color: THEME.textMain }}>
@@ -228,6 +285,35 @@ export default function ShareEventPage() {
       </div>
 
       <div style={{ maxWidth: 900, margin: "-40px auto 40px", padding: "0 20px" }}>
+        {/* ── Gallery ảnh hoạt động ── */}
+        {hasGallery && (
+          <div
+            style={{
+              display: "flex",
+              gap: 8,
+              overflowX: "auto",
+              marginBottom: 16,
+              paddingBottom: 6,
+            }}
+          >
+            {event.galleryImageUrls!.map((url, i) => (
+              <img
+                key={i}
+                src={url}
+                alt={`Hoạt động ${i + 1}`}
+                style={{
+                  height: 140,
+                  borderRadius: 10,
+                  objectFit: "cover",
+                  border: `2px solid #fff`,
+                  boxShadow: "0 2px 8px rgba(0,0,0,0.1)",
+                  flexShrink: 0,
+                }}
+              />
+            ))}
+          </div>
+        )}
+
         {/* Registration success banner */}
         {submitted && (
           <div
@@ -319,6 +405,44 @@ export default function ShareEventPage() {
                     ⚠ {error}
                   </div>
                 )}
+
+                {/* ── 1. Chọn ngày tham gia (multi-day) ── */}
+                {hasMultiDay && (
+                  <div style={{ marginBottom: 14 }}>
+                    <div style={{ fontSize: 13, fontWeight: 700, color: THEME.primaryDark, marginBottom: 6 }}>
+                      Chọn ngày tham gia <span style={{ color: THEME.danger }}>*</span>
+                    </div>
+                    <div style={{ display: "flex", flexWrap: "wrap", gap: 6 }}>
+                      {event.selectableDates!.map((d) => {
+                        const active = selectedDates.includes(d);
+                        return (
+                          <button
+                            key={d}
+                            onClick={() =>
+                              setSelectedDates((prev) =>
+                                active ? prev.filter((x) => x !== d) : [...prev, d],
+                              )
+                            }
+                            style={{
+                              padding: "8px 14px",
+                              borderRadius: 8,
+                              border: `1.5px solid ${active ? THEME.primary : THEME.border}`,
+                              background: active ? THEME.primarySoft : "#fff",
+                              color: active ? THEME.primaryDark : THEME.textMain,
+                              fontWeight: active ? 700 : 400,
+                              cursor: "pointer",
+                              fontSize: 13,
+                            }}
+                          >
+                            {active ? "✓ " : ""}{d}
+                          </button>
+                        );
+                      })}
+                    </div>
+                  </div>
+                )}
+
+                {/* ── 2. Thông tin cá nhân ── */}
                 <div
                   style={{
                     display: "grid",
@@ -374,7 +498,97 @@ export default function ShareEventPage() {
                     placeholder="Câu hỏi hoặc thông tin thêm..."
                   />
                 </FieldP>
-                <div style={{ display: "flex", gap: 8, marginTop: 10 }}>
+
+                {/* ── 3. Trường tùy biến (dynamic fields) ── */}
+                {hasDynamicFields && (
+                  <div style={{ marginTop: 10, marginBottom: 10 }}>
+                    <div style={{ fontSize: 13, fontWeight: 700, color: THEME.primaryDark, marginBottom: 8 }}>
+                      Thông tin bổ sung
+                    </div>
+                    <DynamicFieldsRenderer
+                      fields={event.dynamicFields!}
+                      values={dynamicValues}
+                      onChange={setDynamicValues}
+                    />
+                  </div>
+                )}
+
+                {/* ── 4. Sản phẩm/dịch vụ bổ sung ── */}
+                {hasAddOns && (
+                  <div style={{ marginTop: 14 }}>
+                    <div style={{ fontSize: 13, fontWeight: 700, color: THEME.primaryDark, marginBottom: 8 }}>
+                      Sản phẩm / dịch vụ bổ sung
+                    </div>
+                    <AddOnItemsSelector
+                      items={event.addOnItems!}
+                      selected={selectedAddOns}
+                      onChange={setSelectedAddOns}
+                    />
+                  </div>
+                )}
+
+                {/* ── 5. Tổng tiền thanh toán ── */}
+                {grandTotal > 0 && (
+                  <div
+                    style={{
+                      marginTop: 14,
+                      padding: 14,
+                      background: THEME.primarySoft,
+                      borderRadius: 8,
+                      border: `1px solid ${THEME.primary}`,
+                    }}
+                  >
+                    <div style={{ fontSize: 13, fontWeight: 700, color: THEME.primaryDark, marginBottom: 6 }}>
+                      Tổng tiền thanh toán
+                    </div>
+                    <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
+                      {ticketPrice > 0 && (
+                        <div style={{ display: "flex", justifyContent: "space-between", fontSize: 13 }}>
+                          <span>Vé tham gia</span>
+                          <span>{formatVND(ticketPrice)} đ</span>
+                        </div>
+                      )}
+                      {selectedAddOns.map((s) => {
+                        const item = (event.addOnItems ?? []).find((i) => i.id === s.addOnId);
+                        if (!item) return null;
+                        return (
+                          <div key={s.addOnId} style={{ display: "flex", justifyContent: "space-between", fontSize: 12, color: THEME.textMuted }}>
+                            <span>{item.name} x{s.qty}</span>
+                            <span>{formatVND(item.unitPrice * s.qty)} đ</span>
+                          </div>
+                        );
+                      })}
+                      <div
+                        style={{
+                          borderTop: `1px solid ${THEME.primary}`,
+                          paddingTop: 6,
+                          marginTop: 4,
+                          display: "flex",
+                          justifyContent: "space-between",
+                          fontSize: 15,
+                          fontWeight: 800,
+                          color: THEME.primaryDark,
+                        }}
+                      >
+                        <span>Tổng cộng</span>
+                        <span>{formatVND(grandTotal)} VND</span>
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                {/* ── 6. Upload bằng chứng thanh toán ── */}
+                {needsPayment && (
+                  <div style={{ marginTop: 14 }}>
+                    <PaymentProofUpload
+                      imageUrl={paymentProofUrl}
+                      onChange={setPaymentProofUrl}
+                    />
+                  </div>
+                )}
+
+                {/* ── Actions ── */}
+                <div style={{ display: "flex", gap: 8, marginTop: 14 }}>
                   <button
                     onClick={() => {
                       setShowRegisterForm(false);

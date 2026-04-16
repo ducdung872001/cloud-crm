@@ -1,4 +1,4 @@
-// CH Events — Event detail với 3 tabs: Info · Người đăng ký · Chia sẻ
+// CH Events — Event detail với 4 tabs: Info · Người đăng ký · Check-in · Chia sẻ
 // Route: /ch_events/:id
 
 import React, { useMemo, useState } from "react";
@@ -16,8 +16,11 @@ import {
   getEffectiveStatus,
   getShareUrl,
 } from "./shared";
+import PaymentProofReview from "./components/PaymentProofReview";
+import CheckinBoard from "./components/CheckinBoard";
+import CheckinServiceTracker from "./components/CheckinServiceTracker";
 
-type TabKey = "info" | "registrants" | "share";
+type TabKey = "info" | "registrants" | "checkin" | "share";
 
 export default function EventDetailPage() {
   const navigate = useNavigate();
@@ -271,6 +274,20 @@ export default function EventDetailPage() {
             value={`${Math.round(stats.fillRate * 100)}%`}
             tone="primary"
           />
+          {stats.totalRevenue > 0 && (
+            <MiniStat
+              label="Tổng doanh thu"
+              value={`${formatVND(stats.totalRevenue)}đ`}
+              tone="success"
+            />
+          )}
+          {stats.paymentPendingCount > 0 && (
+            <MiniStat
+              label="Chờ duyệt TT"
+              value={stats.paymentPendingCount}
+              tone="warning"
+            />
+          )}
         </div>
       )}
 
@@ -283,6 +300,7 @@ export default function EventDetailPage() {
               key: "registrants",
               label: `👥 Người đăng ký (${registrations.length})`,
             },
+            { key: "checkin", label: "✅ Check-in" },
             { key: "share", label: "🔗 Chia sẻ & công bố" },
           ] as { key: TabKey; label: string }[]
         ).map((t) => {
@@ -318,6 +336,20 @@ export default function EventDetailPage() {
           registrations={registrations}
           onRefresh={refresh}
         />
+      )}
+      {tab === "checkin" && (
+        <Card title="✅ Check-in / Check-out">
+          <CheckinBoard
+            event={event}
+            registrations={registrations}
+            onRefresh={refresh}
+          />
+          {/* ĐẶC THÙ: Service usage tracker */}
+          <CheckinServiceTracker
+            registrations={registrations}
+            onRefresh={refresh}
+          />
+        </Card>
       )}
       {tab === "share" && <ShareTab event={event} />}
     </div>
@@ -566,6 +598,9 @@ function RegistrantsTab({
                 <th style={thStyle}>Liên hệ</th>
                 <th style={thStyle}>Đăng ký lúc</th>
                 <th style={thStyle}>Trạng thái</th>
+                <th style={thStyle}>Thanh toán</th>
+                <th style={thStyle}>Add-on</th>
+                <th style={thStyle}>Tổng tiền</th>
                 <th style={thStyle}>Vé</th>
                 <th style={thStyle}>Hội viên</th>
                 <th style={thStyle}>Hành động</th>
@@ -630,6 +665,43 @@ function RegistrantsTab({
                         </option>
                       ))}
                     </select>
+                  </td>
+                  {/* Thanh toán */}
+                  <td style={tdStyle}>
+                    <PaymentProofReview
+                      proof={r.paymentProof}
+                      onApprove={() => {
+                        eventStorage.reviewPaymentProof(r.id, true);
+                        onRefresh();
+                      }}
+                      onReject={(reason) => {
+                        eventStorage.reviewPaymentProof(r.id, false, reason);
+                        onRefresh();
+                      }}
+                    />
+                  </td>
+                  {/* Add-on */}
+                  <td style={tdStyle}>
+                    {r.selectedAddOns && r.selectedAddOns.length > 0 ? (
+                      <div style={{ fontSize: 10, color: THEME.textMuted }}>
+                        {r.selectedAddOns.map((s) => {
+                          const item = (event.addOnItems ?? []).find((i) => i.id === s.addOnId);
+                          return item ? `${item.name} x${s.qty}` : null;
+                        }).filter(Boolean).join(", ")}
+                      </div>
+                    ) : (
+                      <span style={{ color: THEME.textMuted, fontSize: 10 }}>—</span>
+                    )}
+                  </td>
+                  {/* Tổng tiền */}
+                  <td style={tdStyle}>
+                    {r.totalAmount ? (
+                      <span style={{ fontWeight: 700, fontSize: 11, color: THEME.primaryDark }}>
+                        {formatVND(r.totalAmount)}đ
+                      </span>
+                    ) : (
+                      <span style={{ color: THEME.textMuted, fontSize: 10 }}>—</span>
+                    )}
                   </td>
                   <td style={tdStyle}>
                     {r.ticketCode ? (

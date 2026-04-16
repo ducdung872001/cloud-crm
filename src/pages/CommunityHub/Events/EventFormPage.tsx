@@ -6,8 +6,10 @@ import { useNavigate, useParams } from "react-router-dom";
 import RebornEditor from "components/editor/reborn";
 import { serialize } from "utils/editor";
 import { eventStorage } from "./storage";
-import type { EventEntity } from "./types";
+import type { EventEntity, DynamicFieldDefinition, EventAddOnItem } from "./types";
 import { THEME, formatVND } from "./shared";
+import DynamicFieldsBuilder from "./components/DynamicFieldsBuilder";
+import ServiceCatalogPicker from "./components/ServiceCatalogPicker";
 
 type FormState = {
   title: string;
@@ -31,6 +33,12 @@ type FormState = {
   ticketPrice: string;
   category: string;
   tags: string;
+  // ── CHUNG: Mở rộng ──
+  dynamicFields: DynamicFieldDefinition[];
+  addOnItems: EventAddOnItem[];
+  galleryImageUrls: string[];
+  requirePaymentProof: boolean;
+  selectableDates: string[];
 };
 
 const EMPTY: FormState = {
@@ -55,6 +63,11 @@ const EMPTY: FormState = {
   ticketPrice: "",
   category: "workshop",
   tags: "",
+  dynamicFields: [],
+  addOnItems: [],
+  galleryImageUrls: [],
+  requirePaymentProof: false,
+  selectableDates: [],
 };
 
 // Convert ISO → "YYYY-MM-DDTHH:mm" cho datetime-local input
@@ -95,6 +108,11 @@ function entityToForm(e: EventEntity): FormState {
     ticketPrice: e.ticketPrice ? String(e.ticketPrice) : "",
     category: e.category ?? "workshop",
     tags: (e.tags ?? []).join(", "),
+    dynamicFields: e.dynamicFields ?? [],
+    addOnItems: e.addOnItems ?? [],
+    galleryImageUrls: e.galleryImageUrls ?? [],
+    requirePaymentProof: e.requirePaymentProof ?? false,
+    selectableDates: e.selectableDates ?? [],
   };
 }
 
@@ -206,6 +224,12 @@ export default function EventFormPage() {
       status: publish ? "published" : "draft",
       publishedAt: publish ? new Date().toISOString() : undefined,
       createdBy: "Admin Demo",
+      // ── CHUNG: Mở rộng ──
+      dynamicFields: form.dynamicFields.length ? form.dynamicFields : undefined,
+      addOnItems: form.addOnItems.length ? form.addOnItems : undefined,
+      galleryImageUrls: form.galleryImageUrls.length ? form.galleryImageUrls : undefined,
+      requirePaymentProof: form.requirePaymentProof || undefined,
+      selectableDates: form.selectableDates.length ? form.selectableDates : undefined,
     };
 
     if (isEdit && id) {
@@ -440,6 +464,25 @@ export default function EventFormPage() {
               </Field>
             </div>
           </Section>
+
+          {/* ── CHUNG: Section 6 — Trường tùy biến ── */}
+          <Section title="6. Cấu hình form đăng ký">
+            <p style={{ fontSize: 12, color: THEME.textMuted, margin: "0 0 8px" }}>
+              Thêm trường tuỳ biến ngoài các trường mặc định (Họ tên, SĐT, Email, Công ty, Ghi chú).
+            </p>
+            <DynamicFieldsBuilder
+              fields={form.dynamicFields}
+              onChange={(fields) => setForm((f) => ({ ...f, dynamicFields: fields }))}
+            />
+          </Section>
+
+          {/* ── CHUNG + ĐẶC THÙ: Section 7 — Sản phẩm/dịch vụ bổ sung ── */}
+          <Section title="7. Sản phẩm / dịch vụ bổ sung">
+            <AddOnTab
+              items={form.addOnItems}
+              onChange={(items) => setForm((f) => ({ ...f, addOnItems: items }))}
+            />
+          </Section>
         </div>
 
         {/* Sidebar */}
@@ -530,6 +573,163 @@ export default function EventFormPage() {
             </Field>
           </Section>
 
+          {/* ── CHUNG: Gallery ── */}
+          <Section title="🖼️ Ảnh giới thiệu hoạt động">
+            <div style={{ display: "flex", flexWrap: "wrap", gap: 6, marginBottom: 8 }}>
+              {form.galleryImageUrls.map((url, i) => (
+                <div
+                  key={i}
+                  style={{
+                    width: 70,
+                    height: 70,
+                    borderRadius: 6,
+                    backgroundImage: `url(${url})`,
+                    backgroundSize: "cover",
+                    backgroundPosition: "center",
+                    position: "relative",
+                    border: `1px solid ${THEME.border}`,
+                  }}
+                >
+                  <button
+                    onClick={() =>
+                      setForm((f) => ({
+                        ...f,
+                        galleryImageUrls: f.galleryImageUrls.filter((_, j) => j !== i),
+                      }))
+                    }
+                    style={{
+                      position: "absolute",
+                      top: -6,
+                      right: -6,
+                      width: 18,
+                      height: 18,
+                      borderRadius: "50%",
+                      background: THEME.danger,
+                      color: "#fff",
+                      border: "none",
+                      fontSize: 10,
+                      cursor: "pointer",
+                      lineHeight: "18px",
+                      textAlign: "center",
+                      padding: 0,
+                    }}
+                  >
+                    ✕
+                  </button>
+                </div>
+              ))}
+            </div>
+            <label
+              style={{
+                display: "block",
+                padding: "6px 10px",
+                background: THEME.primarySoft,
+                color: THEME.primaryDark,
+                borderRadius: 6,
+                textAlign: "center",
+                cursor: "pointer",
+                fontSize: 12,
+                fontWeight: 600,
+              }}
+            >
+              + Thêm ảnh
+              <input
+                type="file"
+                accept="image/*"
+                multiple
+                style={{ display: "none" }}
+                onChange={(e) => {
+                  const files = Array.from(e.target.files ?? []);
+                  files.forEach((file) => {
+                    const reader = new FileReader();
+                    reader.onload = () =>
+                      setForm((f) => ({
+                        ...f,
+                        galleryImageUrls: [...f.galleryImageUrls, String(reader.result)],
+                      }));
+                    reader.readAsDataURL(file);
+                  });
+                  e.target.value = "";
+                }}
+              />
+            </label>
+          </Section>
+
+          {/* ── CHUNG: Payment setting ── */}
+          <Section title="💳 Thanh toán">
+            <label style={{ display: "flex", gap: 6, alignItems: "center", fontSize: 12 }}>
+              <input
+                type="checkbox"
+                checked={form.requirePaymentProof}
+                onChange={(e) =>
+                  setForm((f) => ({ ...f, requirePaymentProof: e.target.checked }))
+                }
+              />
+              Yêu cầu upload bằng chứng thanh toán
+            </label>
+            <p style={{ fontSize: 11, color: THEME.textMuted, margin: "6px 0 0" }}>
+              Khi bật, người đăng ký sẽ cần upload ảnh hoá đơn chuyển khoản.
+            </p>
+          </Section>
+
+          {/* ── CHUNG: Multi-day dates ── */}
+          <Section title="📅 Ngày tham gia (multi-day)">
+            <p style={{ fontSize: 11, color: THEME.textMuted, margin: "0 0 8px" }}>
+              Nếu sự kiện diễn ra nhiều ngày, liệt kê các ngày để khách chọn.
+            </p>
+            {form.selectableDates.map((d, i) => (
+              <div key={i} style={{ display: "flex", gap: 6, marginBottom: 4, alignItems: "center" }}>
+                <input
+                  type="date"
+                  value={d}
+                  onChange={(e) => {
+                    const copy = [...form.selectableDates];
+                    copy[i] = e.target.value;
+                    setForm((f) => ({ ...f, selectableDates: copy }));
+                  }}
+                  style={{ ...inputStyle, flex: 1 }}
+                />
+                <button
+                  onClick={() =>
+                    setForm((f) => ({
+                      ...f,
+                      selectableDates: f.selectableDates.filter((_, j) => j !== i),
+                    }))
+                  }
+                  style={{
+                    width: 28,
+                    height: 28,
+                    border: `1px solid ${THEME.danger}`,
+                    borderRadius: 4,
+                    background: "#fff",
+                    color: THEME.danger,
+                    cursor: "pointer",
+                    fontSize: 13,
+                  }}
+                >
+                  ✕
+                </button>
+              </div>
+            ))}
+            <button
+              onClick={() =>
+                setForm((f) => ({ ...f, selectableDates: [...f.selectableDates, ""] }))
+              }
+              style={{
+                padding: "6px 12px",
+                background: THEME.primarySoft,
+                color: THEME.primaryDark,
+                border: `1px dashed ${THEME.primary}`,
+                borderRadius: 6,
+                cursor: "pointer",
+                fontSize: 12,
+                fontWeight: 600,
+              }}
+            >
+              + Thêm ngày
+            </button>
+          </Section>
+
           <Section title="💾 Lưu">
             <button
               onClick={() => handleSave(false)}
@@ -572,6 +772,177 @@ export default function EventFormPage() {
     </div>
   );
 }
+
+// ── Add-on Tab: nhập tay + chọn từ catalog (ĐẶC THÙ) ──
+function AddOnTab({
+  items,
+  onChange,
+}: {
+  items: EventAddOnItem[];
+  onChange: (items: EventAddOnItem[]) => void;
+}) {
+  const [tab, setTab] = React.useState<"manual" | "catalog">("manual");
+
+  const addManual = () => {
+    const next: EventAddOnItem = {
+      id: `addon-${Date.now()}`,
+      name: "",
+      unitPrice: 0,
+      unit: "lần",
+    };
+    onChange([...items, next]);
+  };
+
+  const updateItem = (idx: number, patch: Partial<EventAddOnItem>) => {
+    onChange(items.map((it, i) => (i === idx ? { ...it, ...patch } : it)));
+  };
+
+  const removeItem = (idx: number) => onChange(items.filter((_, i) => i !== idx));
+
+  // Catalog picker callback
+  const handleCatalogToggle = (svcId: string, item: EventAddOnItem | null) => {
+    if (item) {
+      // Thêm nếu chưa có
+      if (!items.find((i) => i.id === item.id)) onChange([...items, item]);
+    } else {
+      // Xoá
+      onChange(items.filter((i) => i.id !== `svc-${svcId}`));
+    }
+  };
+
+  const catalogIds = items.filter((i) => i.id.startsWith("svc-")).map((i) => i.id.replace("svc-", ""));
+
+  return (
+    <div>
+      {/* Tab toggle */}
+      <div style={{ display: "flex", gap: 4, marginBottom: 10 }}>
+        {(
+          [
+            { key: "manual" as const, label: "Nhập tay" },
+            { key: "catalog" as const, label: "Từ danh mục DV" },
+          ] as const
+        ).map((t) => (
+          <button
+            key={t.key}
+            onClick={() => setTab(t.key)}
+            style={{
+              padding: "6px 14px",
+              borderRadius: 16,
+              border: `1px solid ${tab === t.key ? THEME.primary : THEME.border}`,
+              background: tab === t.key ? THEME.primarySoft : "#fff",
+              color: tab === t.key ? THEME.primaryDark : THEME.textMuted,
+              fontSize: 12,
+              fontWeight: tab === t.key ? 700 : 400,
+              cursor: "pointer",
+            }}
+          >
+            {t.label}
+          </button>
+        ))}
+      </div>
+
+      {tab === "manual" && (
+        <div>
+          {items
+            .filter((i) => !i.id.startsWith("svc-"))
+            .map((item, idx) => {
+              const realIdx = items.indexOf(item);
+              return (
+                <div
+                  key={item.id}
+                  style={{
+                    display: "grid",
+                    gridTemplateColumns: "2fr 1fr 80px auto",
+                    gap: 6,
+                    marginBottom: 6,
+                    alignItems: "center",
+                  }}
+                >
+                  <input
+                    value={item.name}
+                    onChange={(e) => updateItem(realIdx, { name: e.target.value })}
+                    placeholder="Tên sản phẩm"
+                    style={inputStyleInner}
+                  />
+                  <input
+                    type="number"
+                    value={item.unitPrice || ""}
+                    onChange={(e) => updateItem(realIdx, { unitPrice: +e.target.value })}
+                    placeholder="Giá (VND)"
+                    style={inputStyleInner}
+                  />
+                  <input
+                    value={item.unit}
+                    onChange={(e) => updateItem(realIdx, { unit: e.target.value })}
+                    placeholder="Đơn vị"
+                    style={inputStyleInner}
+                  />
+                  <button
+                    onClick={() => removeItem(realIdx)}
+                    style={{
+                      width: 28,
+                      height: 28,
+                      border: `1px solid ${THEME.danger}`,
+                      borderRadius: 4,
+                      background: "#fff",
+                      color: THEME.danger,
+                      cursor: "pointer",
+                      fontSize: 13,
+                    }}
+                  >
+                    ✕
+                  </button>
+                </div>
+              );
+            })}
+          <button
+            onClick={addManual}
+            style={{
+              padding: "6px 12px",
+              background: THEME.primarySoft,
+              color: THEME.primaryDark,
+              border: `1px dashed ${THEME.primary}`,
+              borderRadius: 6,
+              cursor: "pointer",
+              fontSize: 12,
+              fontWeight: 600,
+            }}
+          >
+            + Thêm sản phẩm
+          </button>
+        </div>
+      )}
+
+      {tab === "catalog" && (
+        <ServiceCatalogPicker selectedIds={catalogIds} onToggle={handleCatalogToggle} />
+      )}
+
+      {/* Tổng add-on đã chọn */}
+      {items.length > 0 && (
+        <div
+          style={{
+            marginTop: 10,
+            padding: "8px 10px",
+            background: THEME.bg,
+            borderRadius: 6,
+            fontSize: 12,
+            color: THEME.textMuted,
+          }}
+        >
+          Đã cấu hình {items.length} sản phẩm/dịch vụ bổ sung
+        </div>
+      )}
+    </div>
+  );
+}
+
+const inputStyleInner: React.CSSProperties = {
+  padding: "6px 8px",
+  border: "1px solid #D9E0DE",
+  borderRadius: 4,
+  fontSize: 12,
+  outline: "none",
+};
 
 const inputStyle: React.CSSProperties = {
   width: "100%",
