@@ -53,7 +53,9 @@
       "Bash(tasklist /FI \"PID eq 19796\" /FO CSV /NH)",
       "Bash(cmd.exe //C \"tasklist /FI \\\\\"PID eq 19796\\\\\" /FO CSV /NH\")",
       "Bash(wmic process *)",
-      "Bash(taskkill //PID 19796 //F)"
+      "Bash(taskkill //PID 19796 //F)",
+      "Bash(taskkill //PID 9408 //F //T)",
+      "Bash(ls -la /d/Git/reborn/reborn-cloud/cloud-ver2/cloud-crm/src/utils/image*)"
     ]
   }
 }

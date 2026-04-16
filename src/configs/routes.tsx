@@ -285,7 +285,7 @@ export const menu: IMenuItem[] = [
   {
     title: "chEvents", // Sự kiện
     path: "/ch_events",
-    icon: <Icon name="CampaignMenu" />,
+    icon: <Icon name="EventMenu" />,
     code: "",
   },
   {

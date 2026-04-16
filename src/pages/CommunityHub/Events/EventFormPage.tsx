@@ -307,7 +307,7 @@ export default function EventFormPage() {
             </div>
           </Section>
 
-          <Section title="2. Nội dung chi tiết (RebornEditor)">
+          <Section title="2. Nội dung chi tiết">
             <div style={{ border: `1px solid ${THEME.border}`, borderRadius: 6, padding: 8 }}>
               <RebornEditor
                 key={editorKey}
