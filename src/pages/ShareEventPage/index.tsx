@@ -232,24 +232,39 @@ export default function ShareEventPage() {
         <span style={{ fontSize: 11, opacity: 0.7 }}>Sự kiện công khai</span>
       </div>
 
-      {/* Hero */}
+      {/* Title card — nền solid, text luôn đọc được */}
       <div
         style={{
-          background: event.coverImageUrl
-            ? `linear-gradient(180deg, rgba(11,46,42,0.3), rgba(11,46,42,0.75)), url(${event.coverImageUrl}) center/cover`
-            : `linear-gradient(135deg, ${THEME.primarySoft}, ${THEME.primary})`,
+          background: THEME.primaryDark,
           color: "#fff",
-          padding: "60px 20px 80px",
+          padding: "28px 20px 32px",
           textAlign: "center",
         }}
       >
+        {/* Cover image bên trong card, dưới dạng ảnh rounded */}
+        {event.coverImageUrl && (
+          <div style={{ maxWidth: 800, margin: "0 auto 20px" }}>
+            <img
+              src={event.coverImageUrl}
+              alt={event.title}
+              style={{
+                width: "100%",
+                maxHeight: 300,
+                objectFit: "cover",
+                borderRadius: 12,
+                display: "block",
+              }}
+            />
+          </div>
+        )}
+
         <div style={{ maxWidth: 800, margin: "0 auto" }}>
           {event.category && (
             <span
               style={{
                 display: "inline-block",
                 padding: "4px 14px",
-                background: "rgba(255,255,255,0.25)",
+                background: "rgba(255,255,255,0.15)",
                 borderRadius: 999,
                 fontSize: 11,
                 fontWeight: 600,
@@ -261,18 +276,19 @@ export default function ShareEventPage() {
               {event.category}
             </span>
           )}
-          <h1 style={{ margin: 0, fontSize: 32, lineHeight: 1.2 }}>{event.title}</h1>
-          <p style={{ fontSize: 16, marginTop: 12, opacity: 0.95 }}>
+          <h1 style={{ margin: 0, fontSize: 32, lineHeight: 1.2, color: "#fff" }}>{event.title}</h1>
+          <p style={{ fontSize: 15, marginTop: 10, opacity: 0.85 }}>
             {event.description}
           </p>
           <div
             style={{
-              marginTop: 20,
+              marginTop: 16,
               display: "flex",
               gap: 20,
               justifyContent: "center",
               flexWrap: "wrap",
               fontSize: 13,
+              opacity: 0.9,
             }}
           >
             <div>🕐 {formatDateTime(event.startDate)}</div>
@@ -284,7 +300,7 @@ export default function ShareEventPage() {
         </div>
       </div>
 
-      <div style={{ maxWidth: 900, margin: "-40px auto 40px", padding: "0 20px" }}>
+      <div style={{ maxWidth: 900, margin: "0 auto 40px", padding: "20px 20px 0" }}>
         {/* ── Gallery ảnh hoạt động ── */}
         {hasGallery && (
           <div
