@@ -47,7 +47,13 @@
       "Bash(python ../userguides/tooling/md_to_docx.py URD-full.md URD-Reborn-CRM.docx --title \"Reborn CRM\" --subtitle \"Tài liệu Yêu cầu Người dùng — Cửa hàng & Spa\" --header \"URD — Reborn CRM\" --cover-label \"USER REQUIREMENT DOCUMENT\" --start-marker \"Part 00\")",
       "Bash(npx mmdc:*)",
       "Bash(ls -la d:/Git/reborn/reborn-cloud/cloud-ver2/cloud-crm/docs/urd/diagrams/*.png)",
-      "Bash(python ../userguides/tooling/md_to_docx.py SAD-full.md SAD-Reborn-CRM.docx --title \"Reborn CRM\" --subtitle \"Solution Architecture Document — Cửa hàng & Spa\" --header \"SAD — Reborn CRM\" --cover-label \"SOLUTION ARCHITECTURE DOCUMENT\" --start-marker \"Part 00\")"
+      "Bash(python ../userguides/tooling/md_to_docx.py SAD-full.md SAD-Reborn-CRM.docx --title \"Reborn CRM\" --subtitle \"Solution Architecture Document — Cửa hàng & Spa\" --header \"SAD — Reborn CRM\" --cover-label \"SOLUTION ARCHITECTURE DOCUMENT\" --start-marker \"Part 00\")",
+      "Bash(netstat -ano)",
+      "Bash(tasklist //FI \"PID eq 19796\" //FO CSV //NH)",
+      "Bash(tasklist /FI \"PID eq 19796\" /FO CSV /NH)",
+      "Bash(cmd.exe //C \"tasklist /FI \\\\\"PID eq 19796\\\\\" /FO CSV /NH\")",
+      "Bash(wmic process *)",
+      "Bash(taskkill //PID 19796 //F)"
     ]
   }
 }
