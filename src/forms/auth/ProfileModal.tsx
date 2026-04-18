@@ -1,5 +1,6 @@
-import { useState } from "react";
-import { Modal, Field, FieldRow, Input, Select } from "../../components/ui";
+import { FormProvider } from "react-hook-form";
+import { z } from "zod";
+import { Modal, FieldRow, SelectField, TextField, useZodForm, v } from "../../components/ui";
 import { useFormStub } from "../../hooks/useFormStub";
 
 interface Props {
@@ -7,13 +8,26 @@ interface Props {
   onClose: () => void;
 }
 
+const schema = z.object({
+  name: v.requiredString().max(80, v.msg.max(80)),
+  phone: v.phoneSchema,
+  timezone: z.string(),
+  locale: z.string(),
+});
+type Values = z.infer<typeof schema>;
+
 export default function ProfileModal({ open, onClose }: Props) {
-  const [name, setName] = useState("Phan Dũng");
-  const [email] = useState("ceo@reborn.vn");
-  const [phone, setPhone] = useState("0912 345 678");
-  const [timezone, setTimezone] = useState("Asia/Ho_Chi_Minh");
-  const [locale, setLocale] = useState("vi-VN");
   const { submitting, submit } = useFormStub("Profile đã cập nhật");
+  const form = useZodForm<Values>({
+    schema,
+    defaultValues: {
+      name: "Phan Dũng",
+      phone: "0912 345 678",
+      timezone: "Asia/Ho_Chi_Minh",
+      locale: "vi-VN",
+    },
+  });
+  const onSubmit = form.handleSubmit(() => submit(onClose));
 
   return (
     <Modal
@@ -27,7 +41,7 @@ export default function ProfileModal({ open, onClose }: Props) {
           <button type="button" className="btn" onClick={onClose}>
             Hủy
           </button>
-          <button type="button" className="btn primary" disabled={submitting} onClick={() => submit(onClose)}>
+          <button type="button" className="btn primary" disabled={submitting} onClick={onSubmit}>
             {submitting ? "Đang lưu..." : "Lưu"}
           </button>
         </>
@@ -59,41 +73,40 @@ export default function ProfileModal({ open, onClose }: Props) {
         </div>
       </div>
 
-      <Field label="Họ tên" required>
-        <Input value={name} onChange={(e) => setName(e.target.value)} />
-      </Field>
-      <FieldRow>
-        <Field label="Email" help="Không đổi được (SSO)">
-          <Input value={email} disabled />
-        </Field>
-        <Field label="Điện thoại">
-          <Input value={phone} onChange={(e) => setPhone(e.target.value)} />
-        </Field>
-      </FieldRow>
-      <FieldRow>
-        <Field label="Timezone">
-          <Select
-            value={timezone}
-            onChange={(e) => setTimezone(e.target.value)}
-            options={[
-              { value: "Asia/Ho_Chi_Minh", label: "Hà Nội (GMT+7)" },
-              { value: "Asia/Singapore", label: "Singapore (GMT+8)" },
-              { value: "Asia/Tokyo", label: "Tokyo (GMT+9)" },
-              { value: "UTC", label: "UTC" },
-            ]}
-          />
-        </Field>
-        <Field label="Ngôn ngữ">
-          <Select
-            value={locale}
-            onChange={(e) => setLocale(e.target.value)}
-            options={[
-              { value: "vi-VN", label: "Tiếng Việt" },
-              { value: "en-US", label: "English" },
-            ]}
-          />
-        </Field>
-      </FieldRow>
+      <FormProvider {...form}>
+        <form onSubmit={onSubmit} noValidate>
+          <TextField<Values> name="name" label="Họ tên" required />
+          <FieldRow>
+            <div className="field">
+              <div className="field-label">Email</div>
+              <input className="input" value="ceo@reborn.vn" disabled />
+              <div className="field-help">Không đổi được (SSO)</div>
+            </div>
+            <TextField<Values> name="phone" label="Điện thoại" />
+          </FieldRow>
+          <FieldRow>
+            <SelectField<Values>
+              name="timezone"
+              label="Timezone"
+              options={[
+                { value: "Asia/Ho_Chi_Minh", label: "Hà Nội (GMT+7)" },
+                { value: "Asia/Singapore", label: "Singapore (GMT+8)" },
+                { value: "Asia/Tokyo", label: "Tokyo (GMT+9)" },
+                { value: "UTC", label: "UTC" },
+              ]}
+            />
+            <SelectField<Values>
+              name="locale"
+              label="Ngôn ngữ"
+              options={[
+                { value: "vi-VN", label: "Tiếng Việt" },
+                { value: "en-US", label: "English" },
+              ]}
+            />
+          </FieldRow>
+          <button type="submit" style={{ display: "none" }} />
+        </form>
+      </FormProvider>
     </Modal>
   );
 }

@@ -1,5 +1,7 @@
-import { useState } from "react";
-import { Modal, Field, Input, Textarea } from "../../components/ui";
+import { useEffect, useState } from "react";
+import { FormProvider } from "react-hook-form";
+import { z } from "zod";
+import { Modal, TextField, TextareaField, useZodForm, v } from "../../components/ui";
 import { useFormStub } from "../../hooks/useFormStub";
 
 interface Template {
@@ -45,28 +47,37 @@ const INIT: Template[] = [
   },
 ];
 
+const schema = z.object({
+  name: v.requiredString("Tên template bắt buộc").max(120, v.msg.max(120)),
+  subject: v.requiredString("Subject bắt buộc").max(200, v.msg.max(200)),
+  body: v.requiredString("Body bắt buộc").max(10_000, v.msg.max(10_000)),
+});
+type Values = z.infer<typeof schema>;
+
 export default function EmailTemplatesSettings() {
   const [items, setItems] = useState<Template[]>(INIT);
   const [editing, setEditing] = useState<Template | null>(null);
-  const [name, setName] = useState("");
-  const [subject, setSubject] = useState("");
-  const [body, setBody] = useState("");
   const { submitting, submit } = useFormStub("Đã lưu template");
 
-  const open = (t: Template) => {
-    setEditing(t);
-    setName(t.name);
-    setSubject(t.subject);
-    setBody(t.body);
-  };
+  const form = useZodForm<Values>({
+    schema,
+    defaultValues: { name: "", subject: "", body: "" },
+  });
 
-  const onSave = () =>
+  useEffect(() => {
+    if (editing) {
+      form.reset({ name: editing.name, subject: editing.subject, body: editing.body });
+    }
+  }, [editing, form]);
+
+  const onSave = form.handleSubmit((data) =>
     submit(() => {
       if (editing) {
-        setItems((prev) => prev.map((t) => (t.id === editing.id ? { ...t, name, subject, body } : t)));
+        setItems((prev) => prev.map((t) => (t.id === editing.id ? { ...t, ...data } : t)));
       }
       setEditing(null);
-    });
+    })
+  );
 
   return (
     <div>
@@ -78,7 +89,7 @@ export default function EmailTemplatesSettings() {
       <div className="card">
         <div className="file-list">
           {items.map((t) => (
-            <div key={t.id} className="file-item" onClick={() => open(t)}>
+            <div key={t.id} className="file-item" onClick={() => setEditing(t)}>
               <div className="file-ico ico-doc">@</div>
               <div>
                 <div className="file-name">{t.name}</div>
@@ -114,27 +125,26 @@ export default function EmailTemplatesSettings() {
           </>
         }
       >
-        <Field label="Tên template" required>
-          <Input value={name} onChange={(e) => setName(e.target.value)} />
-        </Field>
-        <Field label="Subject" required help="Có thể dùng biến {{project.code}}, {{client.name}}...">
-          <Input value={subject} onChange={(e) => setSubject(e.target.value)} />
-        </Field>
-        <Field label="Body" required>
-          <Textarea className="mono" style={{ minHeight: 200 }} value={body} onChange={(e) => setBody(e.target.value)} />
-        </Field>
-        <div
-          style={{
-            padding: 10,
-            background: "var(--slate-50)",
-            borderRadius: 8,
-            fontSize: 11,
-            color: "var(--slate-600)",
-          }}
-        >
-          <strong>Biến có sẵn:</strong> {"{{client.name}}"}, {"{{project.code}}"}, {"{{project.name}}"}, {"{{urd.version}}"}, {"{{urd.link}}"},{" "}
-          {"{{meeting.date}}"}, {"{{deadline}}"}
-        </div>
+        <FormProvider {...form}>
+          <form onSubmit={onSave} noValidate>
+            <TextField<Values> name="name" label="Tên template" required />
+            <TextField<Values> name="subject" label="Subject" required help="Có thể dùng biến {{project.code}}, {{client.name}}..." />
+            <TextareaField<Values> name="body" label="Body" required mono style={{ minHeight: 200 }} />
+            <div
+              style={{
+                padding: 10,
+                background: "var(--slate-50)",
+                borderRadius: 8,
+                fontSize: 11,
+                color: "var(--slate-600)",
+              }}
+            >
+              <strong>Biến có sẵn:</strong> {"{{client.name}}"}, {"{{project.code}}"}, {"{{project.name}}"}, {"{{urd.version}}"}, {"{{urd.link}}"},{" "}
+              {"{{meeting.date}}"}, {"{{deadline}}"}
+            </div>
+            <button type="submit" style={{ display: "none" }} />
+          </form>
+        </FormProvider>
       </Modal>
     </div>
   );

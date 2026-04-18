@@ -1,7 +1,8 @@
-import { useState } from "react";
-import { Modal, Field, FieldRow, Input, Select } from "../../components/ui";
+import { FormProvider } from "react-hook-form";
+import { z } from "zod";
+import { FieldRow, Modal, SelectField, TextField, useZodForm, v } from "../../components/ui";
 import { useFormStub } from "../../hooks/useFormStub";
-import type { Project } from "../../data/projects";
+import type { Project, ProjectState } from "../../data/projects";
 
 interface Props {
   open: boolean;
@@ -9,12 +10,26 @@ interface Props {
   project: Project;
 }
 
+const schema = z.object({
+  name: v.requiredString().max(120, v.msg.max(120)),
+  client: v.requiredString().max(120, v.msg.max(120)),
+  days: z.coerce.number().int().min(-365, "Không nhỏ hơn -365 ngày").max(3650, "Không lớn hơn 10 năm"),
+  state: z.string(),
+});
+type Values = z.infer<typeof schema>;
+
 export default function EditProjectModal({ open, onClose, project }: Props) {
-  const [name, setName] = useState(project.name);
-  const [client, setClient] = useState(project.client);
-  const [days, setDays] = useState(String(project.days));
-  const [state, setState] = useState(project.state);
   const { submitting, submit } = useFormStub("Đã cập nhật project");
+  const form = useZodForm<Values>({
+    schema,
+    defaultValues: {
+      name: project.name,
+      client: project.client,
+      days: project.days,
+      state: project.state,
+    },
+  });
+  const onSubmit = form.handleSubmit(() => submit(onClose));
 
   return (
     <Modal
@@ -27,35 +42,30 @@ export default function EditProjectModal({ open, onClose, project }: Props) {
           <button type="button" className="btn" onClick={onClose}>
             Hủy
           </button>
-          <button type="button" className="btn primary" disabled={submitting} onClick={() => submit(onClose)}>
+          <button type="button" className="btn primary" disabled={submitting} onClick={onSubmit}>
             {submitting ? "Đang lưu..." : "Lưu"}
           </button>
         </>
       }
     >
-      <Field label="Tên project" required>
-        <Input value={name} onChange={(e) => setName(e.target.value)} />
-      </Field>
-      <Field label="Khách hàng">
-        <Input value={client} onChange={(e) => setClient(e.target.value)} />
-      </Field>
-      <FieldRow>
-        <Field label="Deadline còn (ngày)">
-          <Input type="number" value={days} onChange={(e) => setDays(e.target.value)} />
-        </Field>
-        <Field label="Trạng thái">
-          <Select
-            value={state}
-            onChange={(e) => setState(e.target.value as typeof state)}
-            options={[
-              { value: "normal", label: "Normal" },
-              { value: "warn", label: "Warning" },
-              { value: "danger", label: "Danger / blocked" },
-              { value: "done", label: "Done" },
-            ]}
-          />
-        </Field>
-      </FieldRow>
+      <FormProvider {...form}>
+        <form onSubmit={onSubmit} noValidate>
+          <TextField<Values> name="name" label="Tên project" required />
+          <TextField<Values> name="client" label="Khách hàng" required />
+          <FieldRow>
+            <TextField<Values> name="days" label="Deadline còn (ngày)" type="number" />
+            <SelectField<Values>
+              name="state"
+              label="Trạng thái"
+              options={(["normal", "warn", "danger", "done"] as ProjectState[]).map((s) => ({
+                value: s,
+                label: s,
+              }))}
+            />
+          </FieldRow>
+          <button type="submit" style={{ display: "none" }} />
+        </form>
+      </FormProvider>
     </Modal>
   );
 }

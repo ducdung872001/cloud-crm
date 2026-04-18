@@ -1,5 +1,7 @@
 import { useState } from "react";
-import { Modal, Field, Input, Select, ConfirmDialog } from "../../components/ui";
+import { FormProvider } from "react-hook-form";
+import { z } from "zod";
+import { ConfirmDialog, Modal, SelectField, TextField, useZodForm, v } from "../../components/ui";
 import { useApp } from "../../context/AppContext";
 import { useFormStub } from "../../hooks/useFormStub";
 
@@ -43,39 +45,54 @@ const INITIAL: Key[] = [
   },
 ];
 
+const schema = z.object({
+  provider: z.string(),
+  name: v.requiredString("Tên key bắt buộc").max(80, v.msg.max(80)),
+  secret: z.string().min(12, "Secret key tối thiểu 12 ký tự"),
+});
+type Values = z.infer<typeof schema>;
+
 export default function ApiKeysSettings() {
   const { showToast } = useApp();
   const [keys, setKeys] = useState<Key[]>(INITIAL);
   const [addOpen, setAddOpen] = useState(false);
   const [delId, setDelId] = useState<string | null>(null);
 
-  const [provider, setProvider] = useState("Anthropic");
-  const [name, setName] = useState("");
-  const [secret, setSecret] = useState("");
   const { submitting, submit } = useFormStub("Đã thêm API key");
+  const form = useZodForm<Values>({
+    schema,
+    defaultValues: { provider: "Anthropic", name: "", secret: "" },
+  });
 
-  const onAdd = () =>
+  const onAdd = form.handleSubmit((data) =>
     submit(() => {
       setKeys((prev) => [
         ...prev,
         {
           id: Date.now().toString(),
-          provider,
-          name,
-          key: secret.slice(0, 6) + "****" + secret.slice(-4),
+          provider: data.provider,
+          name: data.name,
+          key: data.secret.slice(0, 6) + "****" + data.secret.slice(-4),
           quota: "Chưa set",
           used: "—",
           created: new Date().toLocaleDateString("vi-VN"),
         },
       ]);
-      setName("");
-      setSecret("");
+      form.reset();
       setAddOpen(false);
-    });
+    })
+  );
 
   return (
     <div>
-      <div style={{ display: "flex", alignItems: "start", justifyContent: "space-between", marginBottom: 4 }}>
+      <div
+        style={{
+          display: "flex",
+          alignItems: "start",
+          justifyContent: "space-between",
+          marginBottom: 4,
+        }}
+      >
         <div>
           <div className="settings-section-title">API Keys</div>
           <div className="settings-section-sub">Token gọi LLM provider (Claude/OpenAI), Git và các dịch vụ khác. Mã hóa at-rest.</div>
@@ -135,31 +152,38 @@ export default function ApiKeysSettings() {
             <button type="button" className="btn" onClick={() => setAddOpen(false)}>
               Hủy
             </button>
-            <button type="button" className="btn primary" onClick={onAdd} disabled={submitting || !name || !secret}>
+            <button type="button" className="btn primary" onClick={onAdd} disabled={submitting}>
               {submitting ? "Đang thêm..." : "Thêm"}
             </button>
           </>
         }
       >
-        <Field label="Provider" required>
-          <Select
-            value={provider}
-            onChange={(e) => setProvider(e.target.value)}
-            options={[
-              { value: "Anthropic", label: "Anthropic (Claude)" },
-              { value: "OpenAI", label: "OpenAI (GPT / Whisper)" },
-              { value: "GitHub", label: "GitHub PAT" },
-              { value: "GitLab", label: "GitLab Token" },
-              { value: "Other", label: "Khác" },
-            ]}
-          />
-        </Field>
-        <Field label="Tên key" required help="VD: Production — Opus 4.7">
-          <Input value={name} onChange={(e) => setName(e.target.value)} />
-        </Field>
-        <Field label="Secret key" required help="Giá trị sẽ được mask sau khi lưu — không hiển thị lại">
-          <Input type="password" placeholder="sk-ant-api03-..." value={secret} onChange={(e) => setSecret(e.target.value)} />
-        </Field>
+        <FormProvider {...form}>
+          <form onSubmit={onAdd} noValidate>
+            <SelectField<Values>
+              name="provider"
+              label="Provider"
+              required
+              options={[
+                { value: "Anthropic", label: "Anthropic (Claude)" },
+                { value: "OpenAI", label: "OpenAI (GPT / Whisper)" },
+                { value: "GitHub", label: "GitHub PAT" },
+                { value: "GitLab", label: "GitLab Token" },
+                { value: "Other", label: "Khác" },
+              ]}
+            />
+            <TextField<Values> name="name" label="Tên key" required help="VD: Production — Opus 4.7" />
+            <TextField<Values>
+              name="secret"
+              label="Secret key"
+              required
+              help="Giá trị sẽ được mask sau khi lưu — không hiển thị lại"
+              type="password"
+              placeholder="sk-ant-api03-..."
+            />
+            <button type="submit" style={{ display: "none" }} />
+          </form>
+        </FormProvider>
       </Modal>
 
       <ConfirmDialog

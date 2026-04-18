@@ -1,5 +1,6 @@
-import { useState } from "react";
-import { Modal, Field, FieldRow, Select, Chips } from "../../components/ui";
+import { FormProvider } from "react-hook-form";
+import { z } from "zod";
+import { ChipsField, FieldRow, Modal, SelectField, TextareaField, useZodForm, v } from "../../components/ui";
 import { useFormStub } from "../../hooks/useFormStub";
 import { ROLE_LABEL, type TeamRole } from "../../data/team";
 
@@ -8,12 +9,27 @@ interface Props {
   onClose: () => void;
 }
 
+const schema = z.object({
+  emails: z.array(z.string().email(v.msg.email)).min(1, "Cần ít nhất 1 email"),
+  role: z.string(),
+  projects: z.array(z.string()),
+  message: z.string().max(500, v.msg.max(500)).optional(),
+});
+type Values = z.infer<typeof schema>;
+
 export default function InviteMemberModal({ open, onClose }: Props) {
-  const [emails, setEmails] = useState<string[]>([]);
-  const [role, setRole] = useState<TeamRole>("Dev");
-  const [projects, setProjects] = useState<string[]>([]);
-  const [message, setMessage] = useState("");
   const { submitting, submit } = useFormStub("Đã gửi lời mời", "Invitation email được gửi đến các địa chỉ");
+  const form = useZodForm<Values>({
+    schema,
+    defaultValues: { emails: [], role: "Dev", projects: [], message: "" },
+  });
+  const emails = form.watch("emails");
+  const onSubmit = form.handleSubmit(() =>
+    submit(() => {
+      form.reset();
+      onClose();
+    })
+  );
 
   return (
     <Modal
@@ -27,35 +43,31 @@ export default function InviteMemberModal({ open, onClose }: Props) {
           <button type="button" className="btn" onClick={onClose}>
             Hủy
           </button>
-          <button type="button" className="btn primary" disabled={submitting || emails.length === 0} onClick={() => submit(onClose)}>
+          <button type="button" className="btn primary" disabled={submitting} onClick={onSubmit}>
             {submitting ? "Đang gửi..." : `Gửi lời mời (${emails.length})`}
           </button>
         </>
       }
     >
-      <Field label="Email (Enter để thêm)" required>
-        <Chips value={emails} onChange={setEmails} placeholder="email@reborn.vn" />
-      </Field>
-      <FieldRow>
-        <Field label="Role" required>
-          <Select
-            value={role}
-            onChange={(e) => setRole(e.target.value as TeamRole)}
-            options={Object.entries(ROLE_LABEL).map(([v, l]) => ({ value: v, label: l }))}
-          />
-        </Field>
-        <Field label="Project scope" help="Bỏ trống = toàn tenant">
-          <Chips value={projects} onChange={setProjects} placeholder="MEGAMART-DOOH..." />
-        </Field>
-      </FieldRow>
-      <Field label="Tin nhắn kèm theo (tùy chọn)">
-        <textarea
-          className="textarea"
-          placeholder="Chào bạn, mời join workspace Reborn Forge..."
-          value={message}
-          onChange={(e) => setMessage(e.target.value)}
-        />
-      </Field>
+      <FormProvider {...form}>
+        <form onSubmit={onSubmit} noValidate>
+          <ChipsField<Values> name="emails" label="Email (Enter để thêm)" required placeholder="email@reborn.vn" />
+          <FieldRow>
+            <SelectField<Values>
+              name="role"
+              label="Role"
+              required
+              options={(Object.keys(ROLE_LABEL) as TeamRole[]).map((r) => ({
+                value: r,
+                label: ROLE_LABEL[r],
+              }))}
+            />
+            <ChipsField<Values> name="projects" label="Project scope" help="Bỏ trống = toàn tenant" placeholder="MEGAMART-DOOH..." />
+          </FieldRow>
+          <TextareaField<Values> name="message" label="Tin nhắn kèm theo (tùy chọn)" placeholder="Chào bạn, mời join workspace Reborn Forge..." />
+          <button type="submit" style={{ display: "none" }} />
+        </form>
+      </FormProvider>
     </Modal>
   );
 }

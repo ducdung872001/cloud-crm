@@ -64,7 +64,8 @@
       "Bash(curl -s -o /dev/null -w \"%{http_code}\\\\n\" http://localhost:4000/hub)",
       "Bash(node tests/smoke.mjs)",
       "Bash(node tests/debug.mjs)",
-      "Bash(echo \"--- exit $? ---\")"
+      "Bash(echo \"--- exit $? ---\")",
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\\\\n\" http://localhost:4000/login)"
     ],
     "additionalDirectories": [
       "\\tmp",

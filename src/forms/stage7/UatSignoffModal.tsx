@@ -1,5 +1,6 @@
-import { useState } from "react";
-import { Modal, Field, Input, Textarea, Checkbox } from "../../components/ui";
+import { FormProvider } from "react-hook-form";
+import { z } from "zod";
+import { CheckboxField, Modal, TextField, TextareaField, useZodForm, v } from "../../components/ui";
 import { useFormStub } from "../../hooks/useFormStub";
 
 interface Props {
@@ -10,19 +11,38 @@ interface Props {
 const UAT_ITEMS = [
   { id: "1", tc: "UAT-001 · Tạo màn hình mới", result: "pass" },
   { id: "2", tc: "UAT-002 · Filter campaign theo tuần", result: "pass" },
-  { id: "3", tc: "UAT-003 · Export báo cáo xuất hiện đầy đủ cột", result: "pass" },
+  { id: "3", tc: "UAT-003 · Export báo cáo đúng cột", result: "pass" },
   { id: "4", tc: "UAT-004 · Dashboard uptime đúng số liệu", result: "pass" },
   { id: "5", tc: "UAT-005 · RBAC Content Mgr không xóa được", result: "pass" },
   { id: "6", tc: "UAT-006 · Filter city mobile responsive", result: "conditional" },
   { id: "7", tc: "UAT-007 · Training deck đầy đủ", result: "pending" },
 ];
 
+const schema = z.object({
+  signerName: v.requiredString("Họ tên người ký bắt buộc").max(80, v.msg.max(80)),
+  signerTitle: z.string().max(120, v.msg.max(120)),
+  conditions: z.string().max(2000, v.msg.max(2000)),
+  agree: z.literal(true, { error: "Phải xác nhận đồng ý" }),
+});
+type Values = z.infer<typeof schema>;
+
 export default function UatSignoffModal({ open, onClose }: Props) {
-  const [signerName, setSignerName] = useState("");
-  const [signerTitle, setSignerTitle] = useState("");
-  const [conditions, setConditions] = useState("1. Hoàn thiện filter city trên mobile trước 25/04.\n2. Training buổi 4 tổ chức trong tuần 22/04.");
-  const [agree, setAgree] = useState(false);
   const { submitting, submit } = useFormStub("UAT đã ký", "Biên bản nghiệm thu tạo và lưu bất biến");
+  const form = useZodForm<Values>({
+    schema,
+    defaultValues: {
+      signerName: "",
+      signerTitle: "",
+      conditions: "1. Hoàn thiện filter city trên mobile trước 25/04.\n2. Training buổi 4 tổ chức trong tuần 22/04.",
+      agree: undefined as unknown as true,
+    },
+  });
+  const onSubmit = form.handleSubmit(() =>
+    submit(() => {
+      form.reset();
+      onClose();
+    })
+  );
 
   const passed = UAT_ITEMS.filter((i) => i.result === "pass").length;
 
@@ -39,7 +59,7 @@ export default function UatSignoffModal({ open, onClose }: Props) {
           <button type="button" className="btn" onClick={onClose}>
             Hủy
           </button>
-          <button type="button" className="btn primary" disabled={submitting || !signerName || !agree} onClick={() => submit(onClose)}>
+          <button type="button" className="btn primary" disabled={submitting} onClick={onSubmit}>
             {submitting ? "Đang ký..." : "Ký & publish biên bản"}
           </button>
         </>
@@ -74,29 +94,28 @@ export default function UatSignoffModal({ open, onClose }: Props) {
         ))}
       </div>
 
-      <Field label="Điều kiện kèm theo (nếu ký có điều kiện)">
-        <Textarea value={conditions} onChange={(e) => setConditions(e.target.value)} style={{ minHeight: 80 }} />
-      </Field>
+      <FormProvider {...form}>
+        <form onSubmit={onSubmit} noValidate>
+          <TextareaField<Values> name="conditions" label="Điều kiện kèm theo (nếu ký có điều kiện)" style={{ minHeight: 80 }} />
 
-      <div style={{ fontWeight: 600, fontSize: 13, margin: "14px 0 6px" }}>Đại diện khách hàng ký</div>
-      <Field label="Họ tên" required>
-        <Input value={signerName} onChange={(e) => setSignerName(e.target.value)} />
-      </Field>
-      <Field label="Chức danh">
-        <Input value={signerTitle} onChange={(e) => setSignerTitle(e.target.value)} placeholder="Marketing Director / CTO / ..." />
-      </Field>
-
-      <Field label="Chữ ký / OTP" help="Ký điện tử qua canvas (hoặc OTP sent to contact email)">
-        <div className="upload-zone" style={{ padding: 20 }}>
-          <div className="field-help">Click để mở signature pad</div>
-        </div>
-      </Field>
-
-      <Checkbox
-        label={<>Tôi xác nhận đã UAT toàn bộ test cases, chấp nhận nghiệm thu theo điều kiện trên. Biên bản có giá trị pháp lý và không thay đổi.</>}
-        checked={agree}
-        onChange={setAgree}
-      />
+          <div style={{ fontWeight: 600, fontSize: 13, margin: "14px 0 6px" }}>Đại diện khách hàng ký</div>
+          <TextField<Values> name="signerName" label="Họ tên" required />
+          <TextField<Values> name="signerTitle" label="Chức danh" placeholder="Marketing Director / CTO / ..." />
+          <div className="field">
+            <div className="field-label">
+              Chữ ký / OTP <span className="field-required">*</span>
+            </div>
+            <div className="upload-zone" style={{ padding: 20 }}>
+              <div className="field-help">Click để mở signature pad (placeholder)</div>
+            </div>
+          </div>
+          <CheckboxField<Values>
+            name="agree"
+            labelText="Tôi xác nhận đã UAT toàn bộ test cases, chấp nhận nghiệm thu theo điều kiện trên. Biên bản có giá trị pháp lý và không thay đổi."
+          />
+          <button type="submit" style={{ display: "none" }} />
+        </form>
+      </FormProvider>
     </Modal>
   );
 }

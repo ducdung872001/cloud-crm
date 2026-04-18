@@ -1,14 +1,30 @@
-import { useState } from "react";
-import { Field, FieldRow, Input, Select } from "../../components/ui";
+import { FormProvider } from "react-hook-form";
+import { z } from "zod";
+import { FieldRow, SelectField, TextField, useZodForm, v } from "../../components/ui";
 import { useFormStub } from "../../hooks/useFormStub";
 
+const schema = z.object({
+  name: v.requiredString("Tên công ty bắt buộc").max(120, v.msg.max(120)),
+  taxId: v.taxIdSchema,
+  address: z.string().max(255, v.msg.max(255)),
+  currency: z.string(),
+  fiscalYear: z.string().regex(/^\d{2}-\d{2}$/, "Định dạng MM-DD"),
+});
+type Values = z.infer<typeof schema>;
+
 export default function CompanySettings() {
-  const [name, setName] = useState("Reborn JSC");
-  const [taxId, setTaxId] = useState("0106-3-xxxxxx");
-  const [address, setAddress] = useState("Tầng 5, Tòa nhà XYZ, Cầu Giấy, Hà Nội");
-  const [currency, setCurrency] = useState("VND");
-  const [fiscalYear, setFiscalYear] = useState("01-01");
   const { submitting, submit } = useFormStub("Đã lưu thông tin công ty");
+  const form = useZodForm<Values>({
+    schema,
+    defaultValues: {
+      name: "Reborn JSC",
+      taxId: "0106-3-xxxxxx",
+      address: "Tầng 5, Tòa nhà XYZ, Cầu Giấy, Hà Nội",
+      currency: "VND",
+      fiscalYear: "01-01",
+    },
+  });
+  const onSubmit = form.handleSubmit(() => submit());
 
   return (
     <div>
@@ -53,37 +69,31 @@ export default function CompanySettings() {
         </div>
       </div>
 
-      <Field label="Tên công ty" required>
-        <Input value={name} onChange={(e) => setName(e.target.value)} />
-      </Field>
-      <FieldRow>
-        <Field label="Mã số thuế">
-          <Input value={taxId} onChange={(e) => setTaxId(e.target.value)} />
-        </Field>
-        <Field label="Currency mặc định">
-          <Select
-            value={currency}
-            onChange={(e) => setCurrency(e.target.value)}
-            options={[
-              { value: "VND", label: "₫ VND" },
-              { value: "USD", label: "$ USD" },
-              { value: "EUR", label: "€ EUR" },
-            ]}
-          />
-        </Field>
-      </FieldRow>
-      <Field label="Địa chỉ">
-        <Input value={address} onChange={(e) => setAddress(e.target.value)} />
-      </Field>
-      <Field label="Đầu năm tài chính (MM-DD)">
-        <Input value={fiscalYear} onChange={(e) => setFiscalYear(e.target.value)} />
-      </Field>
+      <FormProvider {...form}>
+        <form onSubmit={onSubmit} noValidate>
+          <TextField<Values> name="name" label="Tên công ty" required />
+          <FieldRow>
+            <TextField<Values> name="taxId" label="Mã số thuế" />
+            <SelectField<Values>
+              name="currency"
+              label="Currency mặc định"
+              options={[
+                { value: "VND", label: "₫ VND" },
+                { value: "USD", label: "$ USD" },
+                { value: "EUR", label: "€ EUR" },
+              ]}
+            />
+          </FieldRow>
+          <TextField<Values> name="address" label="Địa chỉ" />
+          <TextField<Values> name="fiscalYear" label="Đầu năm tài chính (MM-DD)" />
 
-      <div style={{ display: "flex", gap: 8 }}>
-        <button type="button" className="btn primary" disabled={submitting} onClick={() => submit()}>
-          {submitting ? "Đang lưu..." : "Lưu thay đổi"}
-        </button>
-      </div>
+          <div style={{ display: "flex", gap: 8 }}>
+            <button type="submit" className="btn primary" disabled={submitting}>
+              {submitting ? "Đang lưu..." : "Lưu thay đổi"}
+            </button>
+          </div>
+        </form>
+      </FormProvider>
     </div>
   );
 }

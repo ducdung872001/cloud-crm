@@ -1,5 +1,7 @@
-import { useState } from "react";
-import { Modal, Field, Input, Select, Checkbox, ConfirmDialog } from "../../components/ui";
+import { useEffect, useState } from "react";
+import { FormProvider } from "react-hook-form";
+import { z } from "zod";
+import { Checkbox, ConfirmDialog, Field, Modal, SelectField, TextField, useZodForm, v } from "../../components/ui";
 import { useApp } from "../../context/AppContext";
 import { useFormStub } from "../../hooks/useFormStub";
 
@@ -43,6 +45,17 @@ const INIT: Webhook[] = [
   },
 ];
 
+const schema = z.object({
+  url: z
+    .string()
+    .trim()
+    .url(v.msg.url)
+    .refine((u) => u.startsWith("https://"), "URL phải là HTTPS"),
+  method: z.string(),
+  events: z.array(z.string()).min(1, "Chọn ít nhất 1 event"),
+});
+type Values = z.infer<typeof schema>;
+
 export default function WebhooksSettings() {
   const { showToast } = useApp();
   const [hooks, setHooks] = useState<Webhook[]>(INIT);
@@ -50,30 +63,44 @@ export default function WebhooksSettings() {
   const [editing, setEditing] = useState<Webhook | null>(null);
   const [delId, setDelId] = useState<string | null>(null);
 
-  const [url, setUrl] = useState("");
-  const [selected, setSelected] = useState<string[]>([]);
   const { submitting, submit } = useFormStub("Đã lưu webhook");
+  const form = useZodForm<Values>({
+    schema,
+    defaultValues: { url: "", method: "POST", events: [] },
+  });
+
+  const events = form.watch("events");
+
+  useEffect(() => {
+    if (editOpen) {
+      form.reset({
+        url: editing?.url ?? "",
+        method: "POST",
+        events: editing?.events ?? [],
+      });
+    }
+  }, [editOpen, editing, form]);
 
   const open = (h: Webhook | null) => {
     setEditing(h);
-    setUrl(h?.url ?? "");
-    setSelected(h?.events ?? []);
     setEditOpen(true);
   };
 
-  const toggleEvent = (e: string) => setSelected((prev) => (prev.includes(e) ? prev.filter((x) => x !== e) : [...prev, e]));
+  const toggleEvent = (e: string) => {
+    form.setValue("events", events.includes(e) ? events.filter((x) => x !== e) : [...events, e], { shouldValidate: true });
+  };
 
-  const onSave = () =>
+  const onSave = form.handleSubmit((data) =>
     submit(() => {
       if (editing) {
-        setHooks((prev) => prev.map((h) => (h.id === editing.id ? { ...h, url, events: selected } : h)));
+        setHooks((prev) => prev.map((h) => (h.id === editing.id ? { ...h, url: data.url, events: data.events } : h)));
       } else {
         setHooks((prev) => [
           ...prev,
           {
             id: Date.now().toString(),
-            url,
-            events: selected,
+            url: data.url,
+            events: data.events,
             secret: "whsec_" + Math.random().toString(36).slice(2, 10),
             active: true,
             lastStatus: 0,
@@ -81,7 +108,8 @@ export default function WebhooksSettings() {
         ]);
       }
       setEditOpen(false);
-    });
+    })
+  );
 
   return (
     <div>
@@ -153,31 +181,40 @@ export default function WebhooksSettings() {
             <button type="button" className="btn" onClick={() => setEditOpen(false)}>
               Hủy
             </button>
-            <button type="button" className="btn primary" onClick={onSave} disabled={submitting || !url || selected.length === 0}>
+            <button type="button" className="btn primary" onClick={onSave} disabled={submitting}>
               {submitting ? "Đang lưu..." : "Lưu"}
             </button>
           </>
         }
       >
-        <Field label="Endpoint URL" required help="HTTPS only">
-          <Input type="url" value={url} onChange={(e) => setUrl(e.target.value)} placeholder="https://your-server.com/webhook" />
-        </Field>
-        <Field label="Method">
-          <Select
-            defaultValue="POST"
-            options={[
-              { value: "POST", label: "POST application/json" },
-              { value: "PUT", label: "PUT application/json" },
-            ]}
-          />
-        </Field>
-        <Field label="Events cần subscribe" required>
-          <div>
-            {EVENTS.map((e) => (
-              <Checkbox key={e} label={e} checked={selected.includes(e)} onChange={() => toggleEvent(e)} />
-            ))}
-          </div>
-        </Field>
+        <FormProvider {...form}>
+          <form onSubmit={onSave} noValidate>
+            <TextField<Values> name="url" label="Endpoint URL" required help="HTTPS only" type="url" placeholder="https://your-server.com/webhook" />
+            <SelectField<Values>
+              name="method"
+              label="Method"
+              options={[
+                { value: "POST", label: "POST application/json" },
+                { value: "PUT", label: "PUT application/json" },
+              ]}
+            />
+            <Field
+              label={
+                <>
+                  Events cần subscribe <span className="field-required">*</span>
+                </>
+              }
+              error={form.formState.errors.events?.message as string | undefined}
+            >
+              <div>
+                {EVENTS.map((e) => (
+                  <Checkbox key={e} label={e} checked={events.includes(e)} onChange={() => toggleEvent(e)} />
+                ))}
+              </div>
+            </Field>
+            <button type="submit" style={{ display: "none" }} />
+          </form>
+        </FormProvider>
       </Modal>
 
       <ConfirmDialog

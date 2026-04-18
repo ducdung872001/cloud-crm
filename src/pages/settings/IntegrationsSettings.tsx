@@ -1,5 +1,7 @@
-import { useState } from "react";
-import { Modal, Field, Input, Select } from "../../components/ui";
+import { useEffect, useState } from "react";
+import { FormProvider } from "react-hook-form";
+import { z } from "zod";
+import { Modal, SelectField, TextField, useZodForm, v } from "../../components/ui";
 import { useFormStub } from "../../hooks/useFormStub";
 
 interface Integration {
@@ -22,22 +24,38 @@ const INIT: Integration[] = [
   { id: "notion", name: "Notion", ico: "N", desc: "Embed URD", connected: false },
 ];
 
+const schema = z.object({
+  account: z.string().max(120, v.msg.max(120)),
+  token: z.string().min(8, "Token tối thiểu 8 ký tự").max(500, v.msg.max(500)),
+  scope: z.string(),
+});
+type Values = z.infer<typeof schema>;
+
 export default function IntegrationsSettings() {
   const [items, setItems] = useState<Integration[]>(INIT);
   const [configId, setConfigId] = useState<string | null>(null);
-  const [token, setToken] = useState("");
-  const [account, setAccount] = useState("");
   const { submitting, submit } = useFormStub("Đã kết nối tích hợp");
+
+  const form = useZodForm<Values>({
+    schema,
+    defaultValues: { account: "", token: "", scope: "rw" },
+  });
 
   const current = items.find((i) => i.id === configId);
 
-  const onConnect = () =>
+  useEffect(() => {
+    if (configId) {
+      form.reset({ account: current?.account ?? "", token: "", scope: "rw" });
+    }
+  }, [configId, current, form]);
+
+  const onConnect = form.handleSubmit((data) =>
     submit(() => {
-      setItems((prev) => prev.map((i) => (i.id === configId ? { ...i, connected: true, account } : i)));
+      setItems((prev) => prev.map((i) => (i.id === configId ? { ...i, connected: true, account: data.account } : i)));
+      form.reset();
       setConfigId(null);
-      setToken("");
-      setAccount("");
-    });
+    })
+  );
 
   const onDisconnect = (id: string) => {
     setItems((prev) => prev.map((i) => (i.id === id ? { ...i, connected: false, account: undefined } : i)));
@@ -112,28 +130,32 @@ export default function IntegrationsSettings() {
             <button type="button" className="btn" onClick={() => setConfigId(null)}>
               Hủy
             </button>
-            <button type="button" className="btn primary" disabled={submitting || !token} onClick={onConnect}>
+            <button type="button" className="btn primary" disabled={submitting} onClick={onConnect}>
               {submitting ? "Đang kết nối..." : current?.connected ? "Cập nhật" : "Kết nối"}
             </button>
           </>
         }
       >
-        <Field label={current?.id === "slack" ? "Channel" : "Account / Workspace"} help="Ví dụ: reborn-jsc, team@reborn.vn">
-          <Input value={account} onChange={(e) => setAccount(e.target.value)} />
-        </Field>
-        <Field label="Token / API Key" required>
-          <Input type="password" value={token} onChange={(e) => setToken(e.target.value)} placeholder="ghp_... / xoxb-... / ..." />
-        </Field>
-        <Field label="Scope / Quyền hạn">
-          <Select
-            defaultValue="rw"
-            options={[
-              { value: "r", label: "Read only" },
-              { value: "rw", label: "Read + Write" },
-              { value: "admin", label: "Admin (không khuyến nghị)" },
-            ]}
-          />
-        </Field>
+        <FormProvider {...form}>
+          <form onSubmit={onConnect} noValidate>
+            <TextField<Values>
+              name="account"
+              label={current?.id === "slack" ? "Channel" : "Account / Workspace"}
+              help="Ví dụ: reborn-jsc, team@reborn.vn"
+            />
+            <TextField<Values> name="token" label="Token / API Key" required type="password" />
+            <SelectField<Values>
+              name="scope"
+              label="Scope / Quyền hạn"
+              options={[
+                { value: "r", label: "Read only" },
+                { value: "rw", label: "Read + Write" },
+                { value: "admin", label: "Admin (không khuyến nghị)" },
+              ]}
+            />
+            <button type="submit" style={{ display: "none" }} />
+          </form>
+        </FormProvider>
       </Modal>
     </div>
   );

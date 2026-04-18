@@ -1,5 +1,6 @@
-import { useState } from "react";
-import { Modal, Field, FieldRow, Input, Select, Textarea, Chips } from "../../components/ui";
+import { FormProvider } from "react-hook-form";
+import { z } from "zod";
+import { ChipsField, FieldRow, Modal, SelectField, TextField, TextareaField, useZodForm, v } from "../../components/ui";
 import { useFormStub } from "../../hooks/useFormStub";
 import { MEMBERS } from "../../data/team";
 
@@ -9,19 +10,46 @@ interface Props {
   testCode?: string;
 }
 
+const schema = z.object({
+  title: v.requiredString("Tiêu đề bug bắt buộc").max(200, v.msg.max(200)),
+  severity: z.enum(["blocker", "critical", "major", "minor", "trivial"]),
+  priority: z.enum(["urgent", "high", "medium", "low"]),
+  module: v.requiredString("Module bắt buộc").max(80, v.msg.max(80)),
+  env: z.enum(["dev", "staging", "prod", "local"]),
+  assignee: v.requiredString("Cần assign cho ai đó"),
+  browser: z.string().max(200, v.msg.max(200)),
+  repro: v.requiredString("Bước tái hiện bắt buộc").max(3000, v.msg.max(3000)),
+  actual: v.requiredString("Kết quả thực tế bắt buộc").max(1000, v.msg.max(1000)),
+  expected: v.requiredString("Kết quả mong đợi bắt buộc").max(1000, v.msg.max(1000)),
+  labels: z.array(z.string()),
+});
+type Values = z.infer<typeof schema>;
+
 export default function BugReportModal({ open, onClose, testCode }: Props) {
-  const [title, setTitle] = useState("");
-  const [severity, setSeverity] = useState("major");
-  const [priority, setPriority] = useState("high");
-  const [module, setModule] = useState("Screens");
-  const [env, setEnv] = useState("staging");
-  const [assignee, setAssignee] = useState(MEMBERS.find((m) => m.role === "Dev")?.id ?? "");
-  const [browser, setBrowser] = useState("");
-  const [repro, setRepro] = useState("");
-  const [actual, setActual] = useState("");
-  const [expected, setExpected] = useState("");
-  const [labels, setLabels] = useState<string[]>([]);
   const { submitting, submit } = useFormStub("Đã tạo bug report", "Đã push sang Jira");
+  const form = useZodForm<Values>({
+    schema,
+    defaultValues: {
+      title: "",
+      severity: "major",
+      priority: "high",
+      module: "Screens",
+      env: "staging",
+      assignee: MEMBERS.find((m) => m.role === "Dev")?.id ?? MEMBERS[0].id,
+      browser: "",
+      repro: "",
+      actual: "",
+      expected: "",
+      labels: [],
+    },
+  });
+
+  const onSubmit = form.handleSubmit(() =>
+    submit(() => {
+      form.reset();
+      onClose();
+    })
+  );
 
   return (
     <Modal
@@ -35,102 +63,88 @@ export default function BugReportModal({ open, onClose, testCode }: Props) {
           <button type="button" className="btn" onClick={onClose}>
             Hủy
           </button>
-          <button type="button" className="btn primary" disabled={submitting || !title || !repro} onClick={() => submit(onClose)}>
+          <button type="button" className="btn primary" disabled={submitting} onClick={onSubmit}>
             {submitting ? "Đang tạo..." : "Tạo bug + Jira ticket"}
           </button>
         </>
       }
     >
-      <Field label="Tiêu đề bug" required help="Viết dạng: [Module] Hành vi sai + bối cảnh">
-        <Input value={title} onChange={(e) => setTitle(e.target.value)} placeholder="[Screens] Không filter được theo thành phố HCM" autoFocus />
-      </Field>
-
-      <FieldRow>
-        <Field label="Severity" required>
-          <Select
-            value={severity}
-            onChange={(e) => setSeverity(e.target.value)}
-            options={[
-              { value: "blocker", label: "Blocker (crash, data loss)" },
-              { value: "critical", label: "Critical (core function broken)" },
-              { value: "major", label: "Major (feature không hoạt động đúng)" },
-              { value: "minor", label: "Minor (UI quirk, workaround tồn tại)" },
-              { value: "trivial", label: "Trivial (cosmetic)" },
-            ]}
+      <FormProvider {...form}>
+        <form onSubmit={onSubmit} noValidate>
+          <TextField<Values>
+            name="title"
+            label="Tiêu đề bug"
+            required
+            help="Viết dạng: [Module] Hành vi sai + bối cảnh"
+            placeholder="[Screens] Không filter được theo thành phố HCM"
+            autoFocus
           />
-        </Field>
-        <Field label="Priority" required>
-          <Select
-            value={priority}
-            onChange={(e) => setPriority(e.target.value)}
-            options={[
-              { value: "urgent", label: "Urgent — fix ngay" },
-              { value: "high", label: "High — sprint này" },
-              { value: "medium", label: "Medium — sprint tới" },
-              { value: "low", label: "Low — backlog" },
-            ]}
+          <FieldRow>
+            <SelectField<Values>
+              name="severity"
+              label="Severity"
+              required
+              options={[
+                { value: "blocker", label: "Blocker (crash, data loss)" },
+                { value: "critical", label: "Critical (core function broken)" },
+                { value: "major", label: "Major (feature không đúng)" },
+                { value: "minor", label: "Minor (UI quirk)" },
+                { value: "trivial", label: "Trivial (cosmetic)" },
+              ]}
+            />
+            <SelectField<Values>
+              name="priority"
+              label="Priority"
+              required
+              options={[
+                { value: "urgent", label: "Urgent — fix ngay" },
+                { value: "high", label: "High — sprint này" },
+                { value: "medium", label: "Medium — sprint tới" },
+                { value: "low", label: "Low — backlog" },
+              ]}
+            />
+          </FieldRow>
+          <FieldRow>
+            <TextField<Values> name="module" label="Module" />
+            <SelectField<Values>
+              name="env"
+              label="Environment"
+              options={[
+                { value: "dev", label: "Dev" },
+                { value: "staging", label: "Staging" },
+                { value: "prod", label: "Production" },
+                { value: "local", label: "Local" },
+              ]}
+            />
+          </FieldRow>
+          <FieldRow>
+            <SelectField<Values>
+              name="assignee"
+              label="Assign"
+              required
+              options={MEMBERS.filter((m) => m.active).map((m) => ({
+                value: m.id,
+                label: `${m.name} (${m.role})`,
+              }))}
+            />
+            <TextField<Values> name="browser" label="Browser / Device" placeholder="Chrome 127 — MacBook Pro M3" />
+          </FieldRow>
+          <TextareaField<Values>
+            name="repro"
+            label="Các bước tái hiện"
+            required
+            help="Đánh số, càng chi tiết càng tốt"
+            style={{ minHeight: 100 }}
+            placeholder={`1. Mở trang /screens\n2. Chọn filter 'Thành phố: HCM'\n3. Observe: ...`}
           />
-        </Field>
-      </FieldRow>
-      <FieldRow>
-        <Field label="Module">
-          <Input value={module} onChange={(e) => setModule(e.target.value)} />
-        </Field>
-        <Field label="Environment">
-          <Select
-            value={env}
-            onChange={(e) => setEnv(e.target.value)}
-            options={[
-              { value: "dev", label: "Dev" },
-              { value: "staging", label: "Staging" },
-              { value: "prod", label: "Production" },
-              { value: "local", label: "Local" },
-            ]}
-          />
-        </Field>
-      </FieldRow>
-      <FieldRow>
-        <Field label="Assign">
-          <Select
-            value={assignee}
-            onChange={(e) => setAssignee(e.target.value)}
-            options={MEMBERS.filter((m) => m.active).map((m) => ({
-              value: m.id,
-              label: `${m.name} (${m.role})`,
-            }))}
-          />
-        </Field>
-        <Field label="Browser / Device">
-          <Input value={browser} onChange={(e) => setBrowser(e.target.value)} placeholder="Chrome 127 — MacBook Pro M3" />
-        </Field>
-      </FieldRow>
-
-      <Field label="Các bước tái hiện" required help="Đánh số, càng chi tiết càng tốt">
-        <Textarea
-          value={repro}
-          onChange={(e) => setRepro(e.target.value)}
-          style={{ minHeight: 100 }}
-          placeholder="1. Mở trang /screens
-2. Chọn filter 'Thành phố: HCM'
-3. Observe: ..."
-        />
-      </Field>
-      <FieldRow>
-        <Field label="Actual result" required>
-          <Textarea value={actual} onChange={(e) => setActual(e.target.value)} />
-        </Field>
-        <Field label="Expected result" required>
-          <Textarea value={expected} onChange={(e) => setExpected(e.target.value)} />
-        </Field>
-      </FieldRow>
-      <Field label="Screenshot / video">
-        <div className="upload-zone" style={{ padding: 14 }}>
-          <div className="field-help">Kéo thả ảnh / video / .har file</div>
-        </div>
-      </Field>
-      <Field label="Labels">
-        <Chips value={labels} onChange={setLabels} placeholder="regression, ux, api..." />
-      </Field>
+          <FieldRow>
+            <TextareaField<Values> name="actual" label="Actual result" required />
+            <TextareaField<Values> name="expected" label="Expected result" required />
+          </FieldRow>
+          <ChipsField<Values> name="labels" label="Labels" placeholder="regression, ux..." />
+          <button type="submit" style={{ display: "none" }} />
+        </form>
+      </FormProvider>
     </Modal>
   );
 }
