@@ -65,7 +65,9 @@
       "Bash(node tests/smoke.mjs)",
       "Bash(node tests/debug.mjs)",
       "Bash(echo \"--- exit $? ---\")",
-      "Bash(curl -s -o /dev/null -w \"%{http_code}\\\\n\" http://localhost:4000/login)"
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\\\\n\" http://localhost:4000/login)",
+      "Bash(node tests/validate.mjs)",
+      "Bash(echo \"exit=$?\")"
     ],
     "additionalDirectories": [
       "\\tmp",

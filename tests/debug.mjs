@@ -1,42 +1,22 @@
 import { chromium } from "playwright";
-
 const browser = await chromium.launch();
 const ctx = await browser.newContext({ viewport: { width: 1440, height: 900 } });
 const page = await ctx.newPage();
+const errs = [];
+page.on("pageerror", (err) => errs.push("PAGE: " + err.message));
+page.on("console", (msg) => {
+  if (msg.type() === "error") {
+    const t = msg.text();
+    if (!t.includes("Consider adding") && !t.includes("error occurred in")) errs.push("CONSOLE: " + t.slice(0, 400));
+  }
+});
 
-const ROUTES = [
-  "/login",
-  "/forgot-password",
-  "/reset-password",
-  "/hub",
-  "/inbox",
-  "/analytics",
-  "/prompts",
-  "/team",
-  "/clients",
-  "/settings",
-  "/project/megamart/stage/1",
-];
-
-for (const r of ROUTES) {
-  const errs = [];
-  page.removeAllListeners("pageerror");
-  page.removeAllListeners("console");
-  page.on("pageerror", (err) => errs.push(err.message));
-  page.on("console", (msg) => {
-    if (msg.type() === "error") {
-      const t = msg.text();
-      if (t.includes("error occurred in")) {
-        const m = t.match(/error occurred in the <([^>]+)>/);
-        if (m) errs.push(`component-err:${m[1]}`);
-      } else if (!t.includes("Consider adding")) {
-        errs.push("console:" + t.slice(0, 200));
-      }
-    }
-  });
-  await page.goto("http://localhost:4000" + r, { waitUntil: "networkidle" });
-  await page.waitForTimeout(400);
-  console.log(r.padEnd(40), errs.length ? errs.slice(0, 3) : "OK");
+for (const n of [1, 2, 3]) {
+  errs.length = 0;
+  await page.goto(`http://localhost:4000/project/megamart/stage/${n}`, { waitUntil: "networkidle" });
+  await page.waitForTimeout(800);
+  const mounted = await page.evaluate(() => (document.getElementById("root")?.children.length ?? 0) > 0 && !!document.querySelector("h1.title"));
+  console.log(`stage/${n}: mounted=${mounted}, errs=${errs.length}`);
+  errs.forEach((e) => console.log("  " + e));
 }
-
 await browser.close();
