@@ -97,7 +97,12 @@
       "Bash(python _u.py docs/backend-tasks/README.md)",
       "Bash(rm _u.py)",
       "Bash(cp \"d:/Git/reborn/reborn-cloud/cloud-ver2/cloud-crm/docs/bugs/upgrade-readme-12ms.py\" \"d:/Git/reborn/reborn-cloud/cloud-ver2/cloud-crm-chub/_u.py\")",
-      "Bash(cp \"d:/Git/reborn/reborn-cloud/cloud-ver2/cloud-crm/docs/bugs/upgrade-readme-12ms.py\" \"d:/Git/reborn/reborn-cloud/cloud-ver2/crm-banking/_u.py\")"
+      "Bash(cp \"d:/Git/reborn/reborn-cloud/cloud-ver2/cloud-crm/docs/bugs/upgrade-readme-12ms.py\" \"d:/Git/reborn/reborn-cloud/cloud-ver2/crm-banking/_u.py\")",
+      "Bash(curl -s http://localhost:4000/)",
+      "Bash(curl -s http://localhost:4000/src/main.tsx)",
+      "Bash(taskkill //F //IM node.exe)",
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\\\\n\" http://localhost:4000/)",
+      "Bash(curl -s -o /dev/null -w \"dev: %{http_code}\\\\n\" http://localhost:4000/)"
     ]
   }
 }

@@ -1,80 +1,48 @@
-# Hướng dẫn sử dụng
+# Reborn Forge
 
-1. Cài đặt các gói thư viện
+Multi-Project AI-SDLC Platform — khung skeleton để dựng theo prototype tại
+[`docs/prototype/reborn-forge.html`](docs/prototype/reborn-forge.html).
 
-   `npm install`
+## Cài & chạy
 
-2. Chạy project
-
-   `npm start`
-
-# Các thành phần trong project
-
-- [Hướng dẫn sử dụng](#hướng-dẫn-sử-dụng)
-- [Các thành phần trong project](#các-thành-phần-trong-project)
-  - [1. _CSS Variable_](#1-css-variable)
-  - [2. _Utils_](#2-utils)
-    - [commons.ts](#commonsts)
-
-## 1. _CSS Variable_
-
-- Sửa các màu mặc định tại: shared/assets/styles/\_variable.scss
-- List các màu mặc định:
-
-```scss
-$background: ;
-$white-color: ;
-$white-color-extra: ;
-$silver-color: ;
-$green-color: ;
-$red-color: ;
-$orange-color: ;
-$yellow-color: ;
-$blue-color: ;
-$text-color-primary: ;
-$text-color-secondary: ;
-$line-color: ;
-$line-color-extra: ;
+```bash
+npm install
+npm run dev      # http://localhost:4000
+npm run build    # build production → dist/
+npm run lint     # ESLint
+npm run type-check
 ```
 
-- Các biến màu có thể gọi từ :root:
+## Stack
 
-```scss
---background
---white-color
---white-color-extra
---silver-color
---green-color
---red-color
---red-color-opacity-#{opacity}
---orange-color
---orange-color-opacity-#{opacity}
---yellow-color
---yellow-color-opacity-#{opacity}
---blue-color
---blue-color-opacity-#{opacity}
---text-color-primary
---text-color-primary-60
---text-color-secondary
---line-color
---line-color-extra
+- Vite + React 18 + TypeScript
+- React Router v7
+- CSS thuần với design tokens (không dùng Tailwind/SCSS)
+- Husky + lint-staged + Prettier + ESLint
 
-#{opacity} là các giá trị trong dải sau: 10 | 20 | 30 | 40 | 50 | 60 | 70 | 80 | 90
+## Cấu trúc
+
+```
+src/
+├── main.tsx                  Entry
+├── App.tsx                   Router
+├── layout/
+│   ├── AppLayout.tsx         Grid: Rail + Sidebar + Topbar + Outlet
+│   ├── Rail.tsx              Icon rail bên trái (64px)
+│   ├── Sidebar.tsx           Workspace + Pipeline + Artifacts (260px)
+│   └── Topbar.tsx            Breadcrumb + Search + Role switcher
+├── pages/
+│   ├── Hub.tsx               Projects Hub (placeholder)
+│   └── NotFound.tsx
+└── styles/
+    ├── tokens.css            Màu / font / shadow — trích từ prototype
+    ├── global.css            Reset + scrollbar
+    ├── layout.css            Grid + Rail + Sidebar + Topbar + Main
+    └── components.css        Hero + Button + Card + Tag + Empty
 ```
 
-- Cách sử dụng các biến màu từ :root
+## Next steps
 
-```scss
-background: var(--background);
-border-color: var(--line-color);
-...
-```
-
-## 2. _Utils_
-
-- [commons.ts](#commonsts)
-- [validate.ts](#validatets)
-- [function.ts](#functionts)
-- [dateFormat.ts](#dateFormatts)
-
-### commons.ts
+Mở [docs/prototype/reborn-forge.html](docs/prototype/reborn-forge.html) và dựng
+dần các view: hub, inbox, stage-1..7, sessions, changes, deliverables, analytics,
+prompts, team, clients, settings.

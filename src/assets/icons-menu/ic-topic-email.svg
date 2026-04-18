@@ -1,8 +1,0 @@
-<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#854F0B" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
-        <rect x="2" y="4" width="20" height="16" rx="2"></rect>
-        <polyline points="2,4 12,13 22,4"></polyline>
-        <!-- tag label -->
-        <path d="M7 16l2-2h2l1 1-2 2H8z" stroke-width="1.2" fill="none"></path>
-        <circle cx="16" cy="15" r="2" stroke-width="1.3" fill="none"></circle>
-        <line x1="14.5" y1="16.5" x2="13" y2="18" stroke-width="1.3"></line>
-      </svg>

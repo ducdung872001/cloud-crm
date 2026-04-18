@@ -1,0 +1,207 @@
+/* ============ HERO ============ */
+.hero {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 24px;
+  align-items: end;
+  margin-bottom: 24px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid var(--slate-200);
+}
+.ribbon {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--navy-900);
+  color: var(--teal-300);
+  font-family: var(--font-mono);
+  font-size: 10px;
+  padding: 4px 10px;
+  border-radius: 4px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  margin-bottom: 10px;
+}
+.kicker {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--teal-500);
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  margin-bottom: 6px;
+}
+.title {
+  font-family: var(--font-display);
+  font-size: 36px;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  color: var(--slate-900);
+  line-height: 1.1;
+}
+.desc {
+  color: var(--slate-600);
+  margin-top: 8px;
+  max-width: 650px;
+}
+.actions {
+  display: flex;
+  gap: 8px;
+}
+
+/* ============ BUTTONS ============ */
+.btn {
+  padding: 9px 16px;
+  border-radius: 8px;
+  border: 1px solid var(--slate-200);
+  background: #fff;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--slate-700);
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  transition: all 0.15s;
+  font-family: inherit;
+}
+.btn:hover {
+  border-color: var(--slate-300);
+  background: var(--slate-50);
+}
+.btn.primary {
+  background: var(--navy-900);
+  border-color: var(--navy-900);
+  color: #fff;
+}
+.btn.primary:hover {
+  background: var(--navy-800);
+}
+.btn.ai {
+  background: linear-gradient(135deg, var(--teal-500), var(--teal-400));
+  border-color: transparent;
+  color: var(--navy-900);
+  font-weight: 600;
+}
+.btn.ai:hover {
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-md);
+}
+.btn.sm {
+  padding: 5px 10px;
+  font-size: 11px;
+}
+.btn.danger {
+  color: var(--rose-500);
+  border-color: rgba(225, 29, 72, 0.2);
+}
+.btn.danger:hover {
+  background: rgba(225, 29, 72, 0.05);
+}
+
+/* ============ CARD ============ */
+.card {
+  background: #fff;
+  border-radius: 12px;
+  border: 1px solid var(--slate-200);
+  overflow: hidden;
+}
+.card-head {
+  padding: 14px 18px;
+  border-bottom: 1px solid var(--slate-100);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.card-title {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--slate-900);
+}
+.card-body {
+  padding: 18px;
+}
+
+/* ============ TAGS ============ */
+.tag {
+  font-size: 10px;
+  padding: 3px 8px;
+  border-radius: 4px;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  font-family: var(--font-mono);
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+.tag-ai {
+  background: rgba(20, 184, 166, 0.1);
+  color: var(--teal-500);
+}
+.tag-hu {
+  background: rgba(225, 29, 72, 0.1);
+  color: var(--rose-500);
+}
+.tag-ok {
+  background: rgba(16, 185, 129, 0.1);
+  color: var(--emerald-500);
+}
+.tag-warn {
+  background: rgba(245, 158, 11, 0.1);
+  color: var(--amber-500);
+}
+.tag-info {
+  background: rgba(59, 130, 246, 0.1);
+  color: var(--blue-500);
+}
+.tag-scope {
+  background: rgba(139, 92, 246, 0.1);
+  color: var(--violet-500);
+}
+
+/* ============ GRIDS ============ */
+.grid-2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+.grid-3 {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+}
+.grid-4 {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+}
+
+/* ============ EMPTY STATE ============ */
+.empty {
+  text-align: center;
+  padding: 48px 24px;
+  color: var(--slate-500);
+}
+.empty-ico {
+  width: 64px;
+  height: 64px;
+  background: var(--slate-100);
+  border-radius: 16px;
+  margin: 0 auto 16px;
+  display: grid;
+  place-items: center;
+  font-size: 28px;
+  color: var(--slate-400);
+}
+.empty-title {
+  font-family: var(--font-display);
+  font-size: 20px;
+  font-weight: 600;
+  color: var(--slate-700);
+  margin-bottom: 6px;
+}
+.empty-desc {
+  font-size: 13px;
+  max-width: 400px;
+  margin: 0 auto;
+}

@@ -60,7 +60,9 @@
       "Bash(cp \"d:/Git/reborn/reborn-cloud/cloud-ver2/cloud-crm/docs/bugs/upgrade-readme-12ms.py\" \"d:/Git/reborn/reborn-cloud/cloud-ver2/cloud-crm-tnpm/upgrade-readme-12ms.py\")",
       "Bash(python upgrade-readme-12ms.py docs/backend-tasks/README.md)",
       "Bash(rm upgrade-readme-12ms.py)",
-      "Bash(git checkout *)"
+      "Bash(git checkout *)",
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\\\\n\" http://localhost:4000/hub)",
+      "Bash(node tests/smoke.mjs)"
     ],
     "additionalDirectories": [
       "\\tmp",

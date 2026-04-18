@@ -1,0 +1,2306 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Reborn Forge v2 — Multi-Project AI-SDLC Platform</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,800&family=JetBrains+Mono:wght@400;500;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --navy-900: #0B1426; --navy-800: #13203A; --navy-700: #1C2D4F;
+    --navy-600: #2A3E6B; --navy-500: #3B5184;
+    --teal-500: #14B8A6; --teal-400: #2DD4BF; --teal-300: #5EEAD4;
+    --amber-500: #F59E0B; --amber-400: #FBBF24;
+    --rose-500: #E11D48; --rose-400: #F43F5E;
+    --emerald-500: #10B981; --emerald-400: #34D399;
+    --violet-500: #8B5CF6; --violet-400: #A78BFA;
+    --blue-500: #3B82F6;
+    --slate-50: #F8FAFC; --slate-100: #F1F5F9; --slate-200: #E2E8F0;
+    --slate-300: #CBD5E1; --slate-400: #94A3B8; --slate-500: #64748B;
+    --slate-600: #475569; --slate-700: #334155; --slate-800: #1E293B; --slate-900: #0F172A;
+
+    --font-display: 'Fraunces', Georgia, serif;
+    --font-body: 'Inter', system-ui, sans-serif;
+    --font-mono: 'JetBrains Mono', monospace;
+
+    --shadow-sm: 0 1px 2px rgba(15, 23, 42, 0.08);
+    --shadow-md: 0 4px 14px rgba(15, 23, 42, 0.12);
+    --shadow-lg: 0 20px 40px rgba(15, 23, 42, 0.18);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { height: 100%; }
+  body {
+    font-family: var(--font-body);
+    background: var(--slate-50);
+    color: var(--slate-800);
+    font-size: 14px; line-height: 1.5;
+    overflow: hidden;
+  }
+
+  .app {
+    display: grid;
+    grid-template-columns: 64px 260px 1fr;
+    grid-template-rows: 60px 1fr;
+    grid-template-areas: "rail sidebar topbar" "rail sidebar main";
+    height: 100vh;
+  }
+
+  /* ============ RAIL ============ */
+  .rail {
+    grid-area: rail;
+    background: var(--navy-900);
+    border-right: 1px solid var(--navy-700);
+    display: flex; flex-direction: column; align-items: center;
+    padding: 16px 0; gap: 8px;
+  }
+  .rail-logo {
+    width: 36px; height: 36px;
+    background: linear-gradient(135deg, var(--teal-400), var(--teal-500));
+    border-radius: 8px;
+    display: grid; place-items: center;
+    font-family: var(--font-display);
+    font-weight: 800; color: var(--navy-900); font-size: 18px;
+    margin-bottom: 12px;
+    cursor: pointer;
+  }
+  .rail-item {
+    width: 40px; height: 40px; border-radius: 8px;
+    display: grid; place-items: center;
+    color: var(--slate-400); cursor: pointer;
+    font-size: 18px; position: relative;
+    transition: all 0.2s;
+  }
+  .rail-item:hover { background: var(--navy-700); color: #fff; }
+  .rail-item.active { background: rgba(20, 184, 166, 0.15); color: var(--teal-300); }
+  .rail-item.active::before {
+    content: ''; position: absolute; left: -10px; top: 50%;
+    transform: translateY(-50%);
+    width: 3px; height: 24px;
+    background: var(--teal-400); border-radius: 0 3px 3px 0;
+  }
+  .rail-badge {
+    position: absolute; top: 4px; right: 4px;
+    background: var(--rose-500); color: #fff;
+    font-size: 9px; font-weight: 700;
+    border-radius: 8px; padding: 1px 5px;
+    font-family: var(--font-mono);
+  }
+  .rail-sep { width: 24px; height: 1px; background: var(--navy-700); margin: 8px 0; }
+  .rail-bottom { margin-top: auto; display: flex; flex-direction: column; gap: 8px; align-items: center; }
+  .rail-avatar {
+    width: 32px; height: 32px; border-radius: 50%;
+    background: linear-gradient(135deg, var(--teal-400), var(--violet-500));
+    display: grid; place-items: center;
+    color: #fff; font-weight: 600; font-size: 12px;
+    cursor: pointer;
+  }
+
+  /* ============ SIDEBAR ============ */
+  .sidebar {
+    grid-area: sidebar;
+    background: linear-gradient(180deg, var(--navy-800) 0%, var(--navy-700) 100%);
+    color: var(--slate-100);
+    padding: 20px 16px; overflow-y: auto;
+    border-right: 1px solid var(--navy-600);
+  }
+  .ws-title { font-size: 10px; text-transform: uppercase; letter-spacing: 0.15em; color: var(--slate-400); margin-bottom: 8px; }
+  .ws-name { font-family: var(--font-display); font-weight: 600; font-size: 18px; color: #fff; margin-bottom: 4px; letter-spacing: -0.01em; }
+  .ws-sub { font-size: 11px; color: var(--slate-400); margin-bottom: 18px; }
+
+  .project-switch {
+    background: rgba(0,0,0,0.2);
+    border-radius: 10px;
+    padding: 10px 12px;
+    cursor: pointer;
+    margin-bottom: 16px;
+    display: flex; align-items: center; gap: 10px;
+    border: 1px solid rgba(255,255,255,0.05);
+    transition: all 0.15s;
+  }
+  .project-switch:hover { border-color: rgba(20,184,166,0.3); }
+  .proj-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+  .proj-info { flex: 1; min-width: 0; }
+  .proj-info .name { font-size: 13px; font-weight: 600; color: #fff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .proj-info .client { font-size: 11px; color: var(--slate-400); }
+  .proj-switch-ico { color: var(--slate-500); font-size: 14px; }
+
+  .nav-title { font-size: 10px; text-transform: uppercase; letter-spacing: 0.1em; color: var(--slate-400); padding: 0 8px; margin: 14px 0 6px; }
+
+  .nav-item {
+    display: flex; align-items: center; gap: 10px;
+    padding: 8px 10px; border-radius: 7px;
+    cursor: pointer; font-size: 13px; color: var(--slate-300);
+    position: relative; transition: all 0.2s;
+  }
+  .nav-item:hover { background: rgba(255,255,255,0.04); color: #fff; }
+  .nav-item.active { background: linear-gradient(90deg, rgba(20,184,166,0.15), transparent); color: #fff; }
+  .nav-item.active::before {
+    content: ''; position: absolute; left: -16px; top: 50%;
+    transform: translateY(-50%); width: 3px; height: 20px;
+    background: var(--teal-400); border-radius: 0 3px 3px 0;
+  }
+  .step-num {
+    width: 22px; height: 22px;
+    background: var(--navy-600); border-radius: 5px;
+    display: grid; place-items: center;
+    font-family: var(--font-mono); font-size: 11px; font-weight: 600;
+    flex-shrink: 0;
+  }
+  .nav-item.active .step-num { background: var(--teal-500); color: var(--navy-900); }
+  .nav-item.done .step-num { background: var(--emerald-500); color: #fff; }
+  .step-label { flex: 1; font-size: 12px; }
+  .step-status { font-size: 9px; padding: 2px 5px; border-radius: 3px; font-family: var(--font-mono); font-weight: 600; }
+  .step-status.ai { background: rgba(20, 184, 166, 0.15); color: var(--teal-300); }
+  .step-status.hu { background: rgba(225, 29, 72, 0.15); color: var(--rose-400); }
+
+  .nav-sidebar-count { font-family: var(--font-mono); font-size: 10px; color: var(--slate-400); }
+
+  /* ============ TOPBAR ============ */
+  .topbar {
+    grid-area: topbar;
+    background: #fff;
+    border-bottom: 1px solid var(--slate-200);
+    display: flex; align-items: center;
+    padding: 0 24px; gap: 20px;
+  }
+  .breadcrumb { display: flex; align-items: center; gap: 8px; font-size: 13px; color: var(--slate-500); }
+  .breadcrumb strong { color: var(--slate-900); font-weight: 600; }
+  .breadcrumb .crumb-link { cursor: pointer; }
+  .breadcrumb .crumb-link:hover { color: var(--navy-900); text-decoration: underline; }
+  .spacer { flex: 1; }
+
+  .role-switcher {
+    display: flex; background: var(--slate-100);
+    border-radius: 8px; padding: 3px; gap: 2px;
+  }
+  .role-btn {
+    padding: 6px 12px; font-size: 12px; font-weight: 500;
+    border: none; background: transparent; border-radius: 5px;
+    cursor: pointer; color: var(--slate-600);
+    transition: all 0.15s; font-family: inherit;
+  }
+  .role-btn.active { background: #fff; color: var(--navy-900); box-shadow: var(--shadow-sm); }
+
+  .search-box {
+    background: var(--slate-50);
+    border: 1px solid var(--slate-200);
+    border-radius: 8px;
+    padding: 6px 12px;
+    display: flex; align-items: center; gap: 8px;
+    width: 260px; font-size: 13px;
+    cursor: pointer;
+  }
+  .search-box:hover { border-color: var(--slate-300); }
+  .search-box input { flex: 1; border: none; background: transparent; outline: none; font-size: 13px; font-family: inherit; cursor: pointer; }
+  .search-kbd { font-family: var(--font-mono); font-size: 10px; background: #fff; border: 1px solid var(--slate-200); padding: 1px 6px; border-radius: 3px; color: var(--slate-500); }
+
+  .avatar {
+    width: 32px; height: 32px; border-radius: 50%;
+    background: linear-gradient(135deg, var(--teal-400), var(--violet-500));
+    display: grid; place-items: center;
+    color: #fff; font-weight: 600; font-size: 12px;
+    cursor: pointer;
+  }
+
+  /* ============ MAIN ============ */
+  .main { grid-area: main; overflow-y: auto; background: var(--slate-50); position: relative; }
+  .main-inner { padding: 28px 32px; max-width: 1500px; }
+
+  .hero {
+    display: grid; grid-template-columns: 1fr auto;
+    gap: 24px; align-items: end;
+    margin-bottom: 24px; padding-bottom: 20px;
+    border-bottom: 1px solid var(--slate-200);
+  }
+  .ribbon {
+    display: inline-flex; align-items: center; gap: 6px;
+    background: var(--navy-900); color: var(--teal-300);
+    font-family: var(--font-mono); font-size: 10px;
+    padding: 4px 10px; border-radius: 4px;
+    letter-spacing: 0.08em; text-transform: uppercase;
+    margin-bottom: 10px;
+  }
+  .kicker { font-family: var(--font-mono); font-size: 11px; color: var(--teal-500); letter-spacing: 0.15em; text-transform: uppercase; margin-bottom: 6px; }
+  .title { font-family: var(--font-display); font-size: 36px; font-weight: 600; letter-spacing: -0.02em; color: var(--slate-900); line-height: 1.1; }
+  .desc { color: var(--slate-600); margin-top: 8px; max-width: 650px; }
+  .actions { display: flex; gap: 8px; }
+
+  .btn {
+    padding: 9px 16px; border-radius: 8px;
+    border: 1px solid var(--slate-200); background: #fff;
+    font-size: 13px; font-weight: 500; color: var(--slate-700);
+    cursor: pointer;
+    display: inline-flex; align-items: center; gap: 6px;
+    transition: all 0.15s; font-family: inherit;
+  }
+  .btn:hover { border-color: var(--slate-300); background: var(--slate-50); }
+  .btn.primary { background: var(--navy-900); border-color: var(--navy-900); color: #fff; }
+  .btn.primary:hover { background: var(--navy-800); }
+  .btn.ai {
+    background: linear-gradient(135deg, var(--teal-500), var(--teal-400));
+    border-color: transparent;
+    color: var(--navy-900); font-weight: 600;
+  }
+  .btn.ai:hover { transform: translateY(-1px); box-shadow: var(--shadow-md); }
+  .btn.sm { padding: 5px 10px; font-size: 11px; }
+  .btn.danger { color: var(--rose-500); border-color: rgba(225,29,72,0.2); }
+  .btn.danger:hover { background: rgba(225,29,72,0.05); }
+
+  .card {
+    background: #fff; border-radius: 12px;
+    border: 1px solid var(--slate-200); overflow: hidden;
+  }
+  .card-head {
+    padding: 14px 18px;
+    border-bottom: 1px solid var(--slate-100);
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .card-title { font-size: 13px; font-weight: 600; color: var(--slate-900); }
+  .card-body { padding: 18px; }
+
+  .tag {
+    font-size: 10px; padding: 3px 8px;
+    border-radius: 4px; font-weight: 600;
+    letter-spacing: 0.05em; text-transform: uppercase;
+    font-family: var(--font-mono);
+    display: inline-flex; align-items: center; gap: 4px;
+  }
+  .tag-ai { background: rgba(20,184,166,0.1); color: var(--teal-500); }
+  .tag-hu { background: rgba(225,29,72,0.1); color: var(--rose-500); }
+  .tag-ok { background: rgba(16,185,129,0.1); color: var(--emerald-500); }
+  .tag-warn { background: rgba(245,158,11,0.1); color: var(--amber-500); }
+  .tag-info { background: rgba(59,130,246,0.1); color: var(--blue-500); }
+  .tag-scope { background: rgba(139,92,246,0.1); color: var(--violet-500); }
+
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+  .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+  .grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
+  .grid-1-3 { display: grid; grid-template-columns: 1.3fr 1fr; gap: 20px; }
+
+  .view { display: none; }
+  .view.active { display: block; animation: fadeIn 0.3s ease; }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+
+  /* ============ PROJECTS HUB ============ */
+  .hub-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+    gap: 16px;
+  }
+  .project-card {
+    background: #fff; border: 1px solid var(--slate-200);
+    border-radius: 12px; padding: 18px;
+    cursor: pointer; transition: all 0.2s;
+    position: relative; overflow: hidden;
+  }
+  .project-card:hover {
+    border-color: var(--teal-500);
+    box-shadow: var(--shadow-md);
+    transform: translateY(-2px);
+  }
+  .project-card::before {
+    content: ''; position: absolute;
+    top: 0; left: 0; right: 0; height: 3px;
+    background: var(--teal-500);
+  }
+  .project-card.warn::before { background: var(--amber-500); }
+  .project-card.danger::before { background: var(--rose-500); }
+  .project-card.done::before { background: var(--emerald-500); }
+  .pc-head { display: flex; justify-content: space-between; align-items: start; margin-bottom: 12px; }
+  .pc-name { font-family: var(--font-display); font-size: 18px; font-weight: 600; color: var(--slate-900); line-height: 1.2; }
+  .pc-client { font-size: 12px; color: var(--slate-500); margin-top: 3px; }
+  .pc-code { font-family: var(--font-mono); font-size: 10px; color: var(--slate-400); margin-top: 6px; }
+  .pc-stages { display: flex; gap: 3px; margin: 14px 0 10px; }
+  .pc-stage {
+    flex: 1; height: 24px;
+    background: var(--slate-100); border-radius: 4px;
+    display: grid; place-items: center;
+    font-family: var(--font-mono);
+    font-size: 10px; font-weight: 600;
+    color: var(--slate-400); position: relative;
+  }
+  .pc-stage.done { background: var(--emerald-500); color: #fff; }
+  .pc-stage.current { background: var(--teal-500); color: #fff; animation: pulse 2s infinite; }
+  .pc-stage.blocked { background: var(--rose-500); color: #fff; }
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.6} }
+  .pc-meta {
+    display: grid; grid-template-columns: repeat(3, 1fr);
+    gap: 8px; padding-top: 10px;
+    border-top: 1px solid var(--slate-100);
+    font-size: 11px;
+  }
+  .pc-meta .lbl { color: var(--slate-500); }
+  .pc-meta .val { font-weight: 600; color: var(--slate-900); margin-top: 1px; font-family: var(--font-mono); }
+
+  .stat-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 24px; }
+  .stat { background: #fff; border: 1px solid var(--slate-200); border-radius: 10px; padding: 16px 18px; }
+  .stat-val { font-family: var(--font-display); font-size: 28px; font-weight: 600; color: var(--slate-900); line-height: 1; letter-spacing: -0.02em; }
+  .stat-unit { font-size: 13px; color: var(--slate-500); margin-left: 4px; font-weight: 400; }
+  .stat-label { font-size: 11px; color: var(--slate-500); text-transform: uppercase; letter-spacing: 0.08em; margin-top: 6px; }
+  .stat-delta { font-size: 10px; margin-top: 4px; font-family: var(--font-mono); }
+  .stat-delta.up { color: var(--emerald-500); }
+  .stat-delta.dn { color: var(--rose-500); }
+
+  /* ============ UPLOAD / STAGE 1 ============ */
+  .upload-zone {
+    border: 2px dashed var(--slate-300);
+    border-radius: 12px; padding: 32px;
+    text-align: center; background: var(--slate-50);
+    transition: all 0.2s; cursor: pointer;
+  }
+  .upload-zone:hover { border-color: var(--teal-500); background: rgba(20,184,166,0.03); }
+  .upload-ico {
+    width: 56px; height: 56px;
+    background: linear-gradient(135deg, var(--teal-500), var(--teal-400));
+    border-radius: 14px;
+    display: grid; place-items: center;
+    margin: 0 auto 14px; font-size: 24px; color: #fff;
+  }
+
+  .session-types { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px; margin-top: 16px; }
+  .session-type {
+    padding: 12px 14px;
+    border: 2px solid var(--slate-200);
+    border-radius: 10px; cursor: pointer;
+    transition: all 0.15s; position: relative;
+  }
+  .session-type:hover { border-color: var(--slate-300); background: var(--slate-50); }
+  .session-type.selected { border-color: var(--teal-500); background: rgba(20,184,166,0.05); }
+  .session-type.selected::after {
+    content: '✓'; position: absolute;
+    top: 8px; right: 10px;
+    color: var(--teal-500); font-weight: 700;
+  }
+  .session-type.disabled { opacity: 0.4; cursor: not-allowed; }
+  .st-head { display: flex; align-items: center; gap: 8px; margin-bottom: 6px; }
+  .st-ico { width: 28px; height: 28px; border-radius: 7px; display: grid; place-items: center; font-size: 14px; flex-shrink: 0; }
+  .st-ico.kick { background: rgba(20,184,166,0.15); color: var(--teal-500); }
+  .st-ico.rev { background: rgba(59,130,246,0.15); color: var(--blue-500); }
+  .st-ico.chg { background: rgba(245,158,11,0.15); color: var(--amber-500); }
+  .st-ico.uat { background: rgba(139,92,246,0.15); color: var(--violet-500); }
+  .st-ico.retro { background: rgba(100,116,139,0.15); color: var(--slate-500); }
+  .st-name { font-weight: 600; font-size: 13px; color: var(--slate-900); }
+  .st-desc { font-size: 11px; color: var(--slate-500); line-height: 1.4; }
+  .st-badge { font-size: 9px; font-family: var(--font-mono); color: var(--amber-500); background: rgba(245,158,11,0.1); padding: 1px 5px; border-radius: 3px; margin-left: auto; }
+
+  /* ============ DIFF VIEWER ============ */
+  .diff-wrap { background: var(--slate-50); border: 1px solid var(--slate-200); border-radius: 8px; overflow: hidden; }
+  .diff-body { padding: 14px; font-family: var(--font-mono); font-size: 12px; line-height: 1.7; }
+  .diff-line { padding: 2px 10px; margin: 0 -10px; border-radius: 3px; white-space: pre-wrap; word-break: break-word; }
+  .diff-add { background: rgba(16,185,129,0.1); color: #065F46; border-left: 3px solid var(--emerald-500); }
+  .diff-del { background: rgba(225,29,72,0.08); color: #9F1239; border-left: 3px solid var(--rose-500); text-decoration: line-through; opacity: 0.7; }
+  .diff-ctx { color: var(--slate-500); padding-left: 16px; }
+  .diff-section-head {
+    background: var(--navy-800); color: var(--teal-300);
+    padding: 4px 10px; margin: 10px -14px 6px;
+    font-size: 11px; font-weight: 600;
+  }
+  .diff-stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 14px; }
+  .diff-stat { padding: 10px; border-radius: 8px; text-align: center; }
+  .diff-stat .n { font-family: var(--font-display); font-size: 22px; font-weight: 600; line-height: 1; }
+  .diff-stat .l { font-size: 10px; margin-top: 4px; text-transform: uppercase; letter-spacing: 0.05em; }
+  .diff-stat.add { background: rgba(16,185,129,0.1); color: #065F46; }
+  .diff-stat.mod { background: rgba(245,158,11,0.1); color: #92400E; }
+  .diff-stat.del { background: rgba(225,29,72,0.1); color: #9F1239; }
+
+  /* ============ SESSION / FILE LIST ============ */
+  .session-list, .file-list { display: flex; flex-direction: column; }
+  .session-item {
+    padding: 14px 18px;
+    display: grid; grid-template-columns: 36px 1fr auto;
+    gap: 12px; align-items: center;
+    border-bottom: 1px solid var(--slate-100);
+    cursor: pointer; transition: background 0.15s;
+  }
+  .session-item:hover { background: var(--slate-50); }
+  .session-item:last-child { border-bottom: none; }
+  .sess-ico { width: 36px; height: 36px; border-radius: 9px; display: grid; place-items: center; font-size: 16px; color: #fff; flex-shrink: 0; }
+  .sess-ico.kick { background: var(--teal-500); }
+  .sess-ico.rev { background: var(--blue-500); }
+  .sess-ico.chg { background: var(--amber-500); }
+  .sess-ico.uat { background: var(--violet-500); }
+  .sess-meta { min-width: 0; }
+  .sess-title { font-weight: 600; font-size: 13px; color: var(--slate-900); }
+  .sess-sub { font-size: 11px; color: var(--slate-500); margin-top: 2px; }
+  .sess-tags { display: flex; gap: 4px; margin-top: 5px; }
+
+  .file-item {
+    padding: 12px 18px;
+    display: grid; grid-template-columns: 32px 1fr auto;
+    gap: 12px; align-items: center;
+    border-bottom: 1px solid var(--slate-100);
+    cursor: pointer; transition: background 0.15s;
+  }
+  .file-item:hover { background: var(--slate-50); }
+  .file-item:last-child { border-bottom: none; }
+  .file-ico {
+    width: 32px; height: 32px; border-radius: 7px;
+    display: grid; place-items: center;
+    font-family: var(--font-mono); font-size: 10px; font-weight: 700;
+  }
+  .ico-doc { background: #DBEAFE; color: #1E40AF; }
+  .ico-code { background: #FEF3C7; color: #92400E; }
+  .ico-audio { background: #FCE7F3; color: #9F1239; }
+  .ico-html { background: #FED7AA; color: #9A3412; }
+  .file-name { font-weight: 500; font-size: 13px; color: var(--slate-900); }
+  .file-sub { font-size: 11px; color: var(--slate-500); margin-top: 2px; }
+
+  /* ============ INBOX ============ */
+  .inbox { display: flex; flex-direction: column; }
+  .inbox-item {
+    padding: 14px 18px;
+    border-bottom: 1px solid var(--slate-100);
+    display: grid; grid-template-columns: 4px 1fr auto;
+    gap: 14px; cursor: pointer;
+    transition: background 0.15s;
+    align-items: center;
+  }
+  .inbox-item:hover { background: var(--slate-50); }
+  .inbox-bar { width: 3px; height: 36px; border-radius: 2px; }
+  .inbox-bar.urgent { background: var(--rose-500); }
+  .inbox-bar.high { background: var(--amber-500); }
+  .inbox-bar.normal { background: var(--blue-500); }
+  .inbox-title { font-weight: 600; font-size: 13px; color: var(--slate-900); }
+  .inbox-sub { font-size: 11px; color: var(--slate-500); margin-top: 3px; display: flex; gap: 8px; align-items: center; }
+  .inbox-proj { display: inline-flex; align-items: center; gap: 4px; background: var(--slate-100); padding: 1px 6px; border-radius: 4px; font-family: var(--font-mono); font-size: 10px; color: var(--slate-700); }
+
+  /* ============ CHECKPOINT BANNER ============ */
+  .checkpoint {
+    background: linear-gradient(135deg, rgba(225,29,72,0.08), rgba(245,158,11,0.08));
+    border: 1px solid rgba(225,29,72,0.2);
+    border-radius: 12px;
+    padding: 16px 20px;
+    margin-top: 20px;
+    display: flex; align-items: center; gap: 16px;
+  }
+  .cp-ico {
+    width: 40px; height: 40px;
+    background: var(--rose-500); color: #fff;
+    border-radius: 10px;
+    display: grid; place-items: center;
+    font-size: 20px; flex-shrink: 0;
+  }
+  .cp-text { flex: 1; }
+  .cp-title { font-weight: 600; color: var(--slate-900); margin-bottom: 2px; }
+  .cp-sub { font-size: 12px; color: var(--slate-600); }
+
+  /* ============ TABS ============ */
+  .tabs {
+    display: flex; gap: 4px;
+    border-bottom: 1px solid var(--slate-200);
+    margin-bottom: 16px;
+  }
+  .tab {
+    padding: 9px 14px;
+    font-size: 13px; font-weight: 500;
+    color: var(--slate-500); cursor: pointer;
+    border-bottom: 2px solid transparent;
+    transition: all 0.15s;
+    display: inline-flex; align-items: center; gap: 6px;
+  }
+  .tab:hover { color: var(--slate-800); }
+  .tab.active { color: var(--slate-900); border-color: var(--teal-500); }
+  .tab-count { background: var(--slate-100); color: var(--slate-600); font-size: 10px; padding: 1px 6px; border-radius: 8px; font-family: var(--font-mono); }
+  .tab.active .tab-count { background: var(--teal-500); color: #fff; }
+
+  /* ============ SWITCHER MODAL ============ */
+  .overlay {
+    position: fixed; inset: 0;
+    background: rgba(11, 20, 38, 0.5);
+    backdrop-filter: blur(4px);
+    z-index: 1000; display: none;
+    align-items: flex-start; justify-content: center;
+    padding-top: 80px;
+  }
+  .overlay.show { display: flex; }
+  .dialog {
+    background: #fff; border-radius: 14px;
+    width: 560px; max-height: 70vh;
+    box-shadow: var(--shadow-lg);
+    overflow: hidden;
+    display: flex; flex-direction: column;
+  }
+  .dialog-search {
+    padding: 14px 18px;
+    border-bottom: 1px solid var(--slate-100);
+    display: flex; align-items: center; gap: 10px;
+  }
+  .dialog-search input { flex: 1; border: none; outline: none; font-size: 14px; font-family: inherit; }
+  .dialog-list { overflow-y: auto; }
+  .switch-item {
+    padding: 12px 18px;
+    display: flex; align-items: center; gap: 12px;
+    cursor: pointer;
+    border-bottom: 1px solid var(--slate-100);
+  }
+  .switch-item:hover { background: var(--slate-50); }
+  .switch-item.active { background: rgba(20,184,166,0.05); }
+  .switch-mini {
+    width: 30px; height: 30px; border-radius: 7px;
+    display: grid; place-items: center;
+    color: #fff; font-weight: 700;
+    font-size: 11px; font-family: var(--font-mono);
+    flex-shrink: 0;
+  }
+  .switch-body { flex: 1; }
+  .switch-name { font-weight: 600; font-size: 13px; color: var(--slate-900); }
+  .switch-meta { font-size: 11px; color: var(--slate-500); }
+  .switch-progress { width: 80px; height: 4px; background: var(--slate-100); border-radius: 2px; overflow: hidden; }
+  .switch-progress-fill { height: 100%; background: var(--teal-500); }
+
+  /* ============ TOAST ============ */
+  .toast-container {
+    position: fixed;
+    bottom: 24px; right: 24px;
+    z-index: 2000;
+    display: flex; flex-direction: column;
+    gap: 8px;
+    pointer-events: none;
+  }
+  .toast {
+    background: var(--navy-900); color: #fff;
+    padding: 12px 18px;
+    border-radius: 10px;
+    box-shadow: var(--shadow-lg);
+    display: flex; align-items: center; gap: 12px;
+    min-width: 280px;
+    animation: slideIn 0.3s ease;
+    pointer-events: auto;
+  }
+  @keyframes slideIn { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+  .toast.success { border-left: 3px solid var(--emerald-500); }
+  .toast.info { border-left: 3px solid var(--teal-500); }
+  .toast.warn { border-left: 3px solid var(--amber-500); }
+  .toast-ico {
+    width: 28px; height: 28px; border-radius: 50%;
+    display: grid; place-items: center;
+    font-size: 14px; font-weight: 700;
+    flex-shrink: 0;
+  }
+  .toast.success .toast-ico { background: var(--emerald-500); }
+  .toast.info .toast-ico { background: var(--teal-500); color: var(--navy-900); }
+  .toast.warn .toast-ico { background: var(--amber-500); color: var(--navy-900); }
+  .toast-body { flex: 1; }
+  .toast-title { font-weight: 600; font-size: 13px; }
+  .toast-sub { font-size: 11px; color: var(--slate-400); margin-top: 2px; }
+
+  /* ============ PIPELINE STRIP (stage detail) ============ */
+  .pipeline {
+    display: grid; grid-template-columns: repeat(7, 1fr);
+    gap: 6px; margin-bottom: 24px;
+    background: #fff; padding: 14px;
+    border-radius: 12px; border: 1px solid var(--slate-200);
+  }
+  .pipe-step {
+    padding: 10px 12px; border-radius: 8px;
+    position: relative; cursor: pointer;
+    transition: all 0.2s;
+    border: 1px solid transparent;
+  }
+  .pipe-step:hover { background: var(--slate-50); }
+  .pipe-step.current { background: rgba(20, 184, 166, 0.06); border-color: rgba(20, 184, 166, 0.25); }
+  .pipe-step .pn { font-family: var(--font-mono); font-size: 10px; color: var(--slate-400); }
+  .pipe-step .pl { font-size: 12px; font-weight: 600; color: var(--slate-800); margin-top: 3px; line-height: 1.3; }
+  .pipe-step .pm { font-size: 10px; color: var(--slate-500); margin-top: 4px; display: flex; align-items: center; gap: 4px; }
+  .pipe-step.done .pn { color: var(--emerald-500); }
+  .pipe-step.done::before {
+    content: '✓'; position: absolute;
+    top: 8px; right: 10px;
+    color: var(--emerald-500); font-weight: 700; font-size: 12px;
+  }
+  .dot-ai { width: 6px; height: 6px; border-radius: 50%; background: var(--teal-500); }
+  .dot-hu { width: 6px; height: 6px; border-radius: 50%; background: var(--rose-500); }
+
+  /* ============ CODE BLOCK ============ */
+  .code-block {
+    background: var(--slate-900); color: #E2E8F0;
+    border-radius: 10px;
+    font-family: var(--font-mono); font-size: 12px;
+    padding: 14px 16px; overflow-x: auto;
+    line-height: 1.6;
+  }
+  .code-block .kw { color: #F472B6; }
+  .code-block .str { color: #86EFAC; }
+  .code-block .cm { color: var(--slate-500); font-style: italic; }
+  .code-block .fn { color: #93C5FD; }
+
+  /* ============ WAVE ============ */
+  .wave { display: flex; align-items: center; gap: 3px; height: 40px; padding: 0 10px; }
+  .wave span {
+    display: block; width: 3px;
+    background: var(--teal-500); border-radius: 2px;
+    animation: wv 1.2s ease-in-out infinite;
+  }
+  @keyframes wv { 0%, 100% { height: 15%; } 50% { height: 100%; } }
+
+  /* ============ DEVICE FRAME (prototype preview) ============ */
+  .device-frame { background: var(--slate-800); border-radius: 14px; padding: 8px; box-shadow: var(--shadow-lg); }
+  .device-frame iframe { width: 100%; height: 420px; border: none; border-radius: 8px; background: #fff; }
+  .device-top { display: flex; align-items: center; gap: 6px; padding: 4px 8px 8px; }
+  .device-dot { width: 10px; height: 10px; border-radius: 50%; }
+  .device-url { flex: 1; background: var(--slate-900); color: var(--slate-400); font-family: var(--font-mono); font-size: 11px; padding: 3px 10px; border-radius: 5px; }
+
+  /* ============ TEST ROW ============ */
+  .test-row {
+    display: grid; grid-template-columns: 24px 1fr auto;
+    gap: 10px; padding: 8px 12px;
+    border-bottom: 1px solid var(--slate-100);
+    font-size: 12px; align-items: center;
+  }
+  .test-row:last-child { border: none; }
+  .test-ok { color: var(--emerald-500); }
+  .test-fail { color: var(--rose-500); }
+  .test-time { color: var(--slate-400); font-family: var(--font-mono); font-size: 11px; }
+
+  /* ============ BAR ============ */
+  .bar { height: 6px; background: var(--slate-100); border-radius: 3px; overflow: hidden; }
+  .bar-fill { height: 100%; background: linear-gradient(90deg, var(--teal-500), var(--teal-400)); border-radius: 3px; }
+
+  /* ============ METRIC ============ */
+  .metric { padding: 18px; }
+  .metric-val { font-family: var(--font-display); font-size: 32px; font-weight: 600; color: var(--slate-900); line-height: 1; letter-spacing: -0.02em; }
+  .metric-unit { font-size: 14px; color: var(--slate-500); margin-left: 4px; font-weight: 400; }
+  .metric-label { font-size: 11px; color: var(--slate-500); text-transform: uppercase; letter-spacing: 0.08em; margin-top: 6px; }
+  .metric-delta { font-size: 11px; margin-top: 4px; font-family: var(--font-mono); }
+  .metric-delta.up { color: var(--emerald-500); }
+
+  /* ============ EMPTY STATE ============ */
+  .empty {
+    text-align: center; padding: 48px 24px;
+    color: var(--slate-500);
+  }
+  .empty-ico {
+    width: 64px; height: 64px;
+    background: var(--slate-100);
+    border-radius: 16px;
+    margin: 0 auto 16px;
+    display: grid; place-items: center;
+    font-size: 28px;
+    color: var(--slate-400);
+  }
+  .empty-title { font-family: var(--font-display); font-size: 20px; font-weight: 600; color: var(--slate-700); margin-bottom: 6px; }
+  .empty-desc { font-size: 13px; max-width: 400px; margin: 0 auto; }
+
+  /* ============ SCROLLBAR ============ */
+  ::-webkit-scrollbar { width: 8px; height: 8px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: var(--slate-300); border-radius: 4px; }
+  ::-webkit-scrollbar-thumb:hover { background: var(--slate-400); }
+  .sidebar ::-webkit-scrollbar-thumb, .rail ::-webkit-scrollbar-thumb { background: var(--navy-600); }
+
+  .decor-line {
+    position: absolute;
+    right: 32px; top: 80px;
+    font-family: var(--font-mono);
+    font-size: 10px;
+    color: var(--slate-300);
+    letter-spacing: 0.2em;
+    writing-mode: vertical-rl;
+    transform: rotate(180deg);
+    pointer-events: none;
+  }
+</style>
+</head>
+<body>
+
+<div class="app">
+
+  <!-- ============ RAIL ============ -->
+  <aside class="rail">
+    <div class="rail-logo" data-action="go-hub" title="Về Projects Hub">R</div>
+    <div class="rail-item active" data-rail="hub" data-action="go-hub" title="Projects Hub">◫</div>
+    <div class="rail-item" data-rail="inbox" data-action="go-inbox" title="Inbox (5)">
+      ✉ <span class="rail-badge">5</span>
+    </div>
+    <div class="rail-item" data-rail="analytics" data-action="go-analytics" title="Analytics">📊</div>
+    <div class="rail-item" data-rail="prompts" data-action="go-prompts" title="Prompt Library">✦</div>
+    <div class="rail-sep"></div>
+    <div class="rail-item" data-rail="team" data-action="go-team" title="Team">👥</div>
+    <div class="rail-item" data-rail="clients" data-action="go-clients" title="Clients">🏢</div>
+
+    <div class="rail-bottom">
+      <div class="rail-item" data-rail="settings" data-action="go-settings" title="Settings">⚙</div>
+      <div class="rail-avatar" data-action="toast-profile" title="Profile">RB</div>
+    </div>
+  </aside>
+
+  <!-- ============ SIDEBAR ============ -->
+  <aside class="sidebar">
+    <div class="ws-title">Workspace</div>
+    <div class="ws-name">Reborn Forge</div>
+    <div class="ws-sub">JSC · 14 active projects</div>
+
+    <div class="project-switch" data-action="open-switcher">
+      <div class="proj-dot" style="background: var(--teal-500)"></div>
+      <div class="proj-info">
+        <div class="name" id="current-project-name">Mega Mart DOOH</div>
+        <div class="client" id="current-project-client">Mega Mart Retail</div>
+      </div>
+      <span class="proj-switch-ico">⇅</span>
+    </div>
+
+    <div class="nav-title">Pipeline</div>
+    <div class="nav-item done" data-action="go-stage" data-stage="1">
+      <div class="step-num">01</div>
+      <div class="step-label">Khảo sát & Meeting</div>
+      <div class="step-status ai">AI</div>
+    </div>
+    <div class="nav-item done" data-action="go-stage" data-stage="2">
+      <div class="step-num">02</div>
+      <div class="step-label">URD / SA</div>
+      <div class="step-status ai">AI</div>
+    </div>
+    <div class="nav-item active" data-action="go-stage" data-stage="3">
+      <div class="step-num">03</div>
+      <div class="step-label">Prototype</div>
+      <div class="step-status ai">AI</div>
+    </div>
+    <div class="nav-item" data-action="go-stage" data-stage="4">
+      <div class="step-num">04</div>
+      <div class="step-label">Frontend + DevOps</div>
+      <div class="step-status ai">AI</div>
+    </div>
+    <div class="nav-item" data-action="go-stage" data-stage="5">
+      <div class="step-num">05</div>
+      <div class="step-label">Backend + DevOps</div>
+      <div class="step-status ai">AI</div>
+    </div>
+    <div class="nav-item" data-action="go-stage" data-stage="6">
+      <div class="step-num">06</div>
+      <div class="step-label">Test & QA</div>
+      <div class="step-status hu">QA</div>
+    </div>
+    <div class="nav-item" data-action="go-stage" data-stage="7">
+      <div class="step-num">07</div>
+      <div class="step-label">Bàn giao</div>
+      <div class="step-status hu">HU</div>
+    </div>
+
+    <div class="nav-title">Artifacts</div>
+    <div class="nav-item" data-action="go-sessions">
+      <div class="step-num">🎙</div>
+      <div class="step-label">Meeting sessions</div>
+      <span class="nav-sidebar-count">4</span>
+    </div>
+    <div class="nav-item" data-action="go-changes">
+      <div class="step-num">⇌</div>
+      <div class="step-label">Change Requests</div>
+      <span class="nav-sidebar-count" style="color: var(--amber-400);">2</span>
+    </div>
+    <div class="nav-item" data-action="go-deliverables">
+      <div class="step-num">📦</div>
+      <div class="step-label">Deliverables</div>
+    </div>
+  </aside>
+
+  <!-- ============ TOPBAR ============ -->
+  <header class="topbar">
+    <div class="breadcrumb">
+      <span class="crumb-link" data-action="go-hub">Projects</span>
+      <span>›</span>
+      <span class="crumb-link" data-action="go-project-root" id="crumb-project">Mega Mart DOOH</span>
+      <span>›</span>
+      <strong id="crumb">Stage 03 · Prototype</strong>
+    </div>
+
+    <div class="search-box" data-action="open-switcher">
+      <span style="color: var(--slate-400)">⌕</span>
+      <input placeholder="Tìm project, meeting, URD..." readonly>
+      <span class="search-kbd">⌘K</span>
+    </div>
+
+    <div class="spacer"></div>
+
+    <div class="role-switcher">
+      <button class="role-btn active" data-role="BA">BA/SA</button>
+      <button class="role-btn" data-role="Dev">Dev</button>
+      <button class="role-btn" data-role="QA">QA</button>
+      <button class="role-btn" data-role="PM">PM</button>
+      <button class="role-btn" data-role="Client">Client</button>
+    </div>
+
+    <div class="avatar" data-action="toast-profile">RB</div>
+  </header>
+
+  <!-- ============ MAIN ============ -->
+  <main class="main">
+    <div class="decor-line">REBORN · FORGE · v2.1</div>
+    <div class="main-inner">
+
+      <!-- =========================================================== -->
+      <!-- VIEW: PROJECTS HUB                                          -->
+      <!-- =========================================================== -->
+      <section class="view" id="view-hub">
+        <div class="hero">
+          <div>
+            <div class="ribbon">◫ MULTI-PROJECT HUB</div>
+            <div class="kicker">Projects · All active</div>
+            <h1 class="title">Projects Hub</h1>
+            <p class="desc">Tất cả dự án đang sản xuất song song. Mỗi project là một pipeline độc lập. Click vào project để vào workspace.</p>
+          </div>
+          <div class="actions">
+            <button class="btn" data-action="toast" data-title="Filter áp dụng" data-sub="Đang lọc theo stage đang mở">⌕ Filter</button>
+            <button class="btn primary" data-action="toast" data-title="Wizard tạo project" data-sub="Sẽ mở form khởi tạo dự án mới">+ Tạo project mới</button>
+          </div>
+        </div>
+
+        <div class="stat-row">
+          <div class="stat">
+            <div class="stat-val">14<span class="stat-unit">active</span></div>
+            <div class="stat-label">Dự án đang sản xuất</div>
+            <div class="stat-delta up">↑ 2 tuần này</div>
+          </div>
+          <div class="stat">
+            <div class="stat-val">$284<span class="stat-unit">USD</span></div>
+            <div class="stat-label">Chi phí AI tuần này</div>
+            <div class="stat-delta dn">↓ 12% vs tuần trước</div>
+          </div>
+          <div class="stat">
+            <div class="stat-val">8<span class="stat-unit">pending</span></div>
+            <div class="stat-label">Checkpoint chờ duyệt</div>
+            <div class="stat-delta" style="color: var(--rose-500)">● 2 quá hạn</div>
+          </div>
+          <div class="stat">
+            <div class="stat-val">47<span class="stat-unit">%</span></div>
+            <div class="stat-label">Time saved vs manual</div>
+            <div class="stat-delta up">↑ 5% MoM</div>
+          </div>
+        </div>
+
+        <div class="hub-grid" id="hub-grid">
+          <!-- populated by JS to ensure each card is clickable -->
+        </div>
+      </section>
+
+      <!-- =========================================================== -->
+      <!-- VIEW: INBOX                                                 -->
+      <!-- =========================================================== -->
+      <section class="view" id="view-inbox">
+        <div class="hero">
+          <div>
+            <div class="ribbon">✉ CROSS-PROJECT INBOX</div>
+            <div class="kicker">Todo · Assigned to me</div>
+            <h1 class="title">Việc chờ bạn xử lý</h1>
+            <p class="desc">Tổng hợp tất cả checkpoint, feedback, change request từ mọi project bạn tham gia.</p>
+          </div>
+        </div>
+
+        <div class="tabs" id="inbox-tabs">
+          <div class="tab active" data-inbox-tab="all">Tất cả <span class="tab-count">6</span></div>
+          <div class="tab" data-inbox-tab="cp">Checkpoints <span class="tab-count">3</span></div>
+          <div class="tab" data-inbox-tab="cr">Change Requests <span class="tab-count">2</span></div>
+          <div class="tab" data-inbox-tab="fb">Client feedback <span class="tab-count">1</span></div>
+        </div>
+
+        <div class="card">
+          <div class="inbox" id="inbox-list">
+            <!-- populated by JS -->
+          </div>
+        </div>
+      </section>
+
+      <!-- =========================================================== -->
+      <!-- VIEW: STAGE 1 - MEETING UPLOAD                              -->
+      <!-- =========================================================== -->
+      <section class="view" id="view-stage-1">
+        <div class="hero">
+          <div>
+            <div class="ribbon">① KHẢO SÁT & TIẾP NHẬN YÊU CẦU</div>
+            <div class="kicker">Stage 01 · Meeting session</div>
+            <h1 class="title">Upload ghi âm cuộc họp</h1>
+            <p class="desc">Chọn loại meeting để AI xử lý đúng context. Từ lần thứ 2 trở đi, AI so sánh với URD hiện tại và chỉ sinh phần thay đổi.</p>
+          </div>
+          <div class="actions">
+            <button class="btn" data-action="go-sessions">Lịch sử sessions</button>
+          </div>
+        </div>
+
+        <div class="grid-2">
+          <div>
+            <div class="card" style="margin-bottom: 16px;">
+              <div class="card-head">
+                <div class="card-title">1. Upload audio</div>
+              </div>
+              <div class="card-body">
+                <div class="upload-zone" data-action="toast" data-title="File picker mở" data-sub="Chọn audio từ máy tính">
+                  <div class="upload-ico">🎙</div>
+                  <div style="font-weight: 600; font-size: 15px; color: var(--slate-900);">Kéo thả audio file vào đây</div>
+                  <div style="font-size: 12px; color: var(--slate-500); margin-top: 6px;">Hỗ trợ .mp3, .m4a, .wav, .webm · Tối đa 500 MB</div>
+                  <button class="btn ai" style="margin-top: 14px;">↑ Chọn file</button>
+                </div>
+
+                <div style="display: flex; align-items: center; gap: 14px; background: var(--slate-50); padding: 12px; border-radius: 8px; margin-top: 14px;">
+                  <div style="width: 40px; height: 40px; background: var(--teal-500); color: #fff; border-radius: 8px; display: grid; place-items: center;">🎵</div>
+                  <div style="flex: 1;">
+                    <div style="font-size: 13px; font-weight: 600;">megamart-review-2026-04-18.m4a</div>
+                    <div style="font-size: 11px; color: var(--slate-500);">38:14 · 48.2 MB · Uploaded vừa xong</div>
+                  </div>
+                  <button class="btn sm danger" data-action="toast" data-title="File removed" data-sub="Audio đã bị xóa khỏi session" data-type="warn">✕</button>
+                </div>
+              </div>
+            </div>
+
+            <div class="card">
+              <div class="card-head">
+                <div class="card-title">2. Chọn loại meeting session</div>
+                <span class="tag tag-info">Tự động đề xuất</span>
+              </div>
+              <div class="card-body">
+                <div style="font-size: 12px; color: var(--slate-600); margin-bottom: 10px; padding: 10px; background: rgba(59,130,246,0.05); border-radius: 8px; border-left: 3px solid var(--blue-500);">
+                  💡 Dự án này đã có URD v1.2 được duyệt. AI đề xuất chọn <strong>REVIEW</strong> để so sánh thay đổi với URD hiện tại.
+                </div>
+
+                <div class="session-types" id="session-types">
+                  <div class="session-type disabled" data-session="kickoff">
+                    <div class="st-head">
+                      <div class="st-ico kick">✦</div>
+                      <div class="st-name">Kickoff</div>
+                      <span class="st-badge">Đã qua</span>
+                    </div>
+                    <div class="st-desc">Meeting đầu tiên. AI sinh URD v1.0 từ đầu.</div>
+                  </div>
+
+                  <div class="session-type selected" data-session="review">
+                    <div class="st-head">
+                      <div class="st-ico rev">↻</div>
+                      <div class="st-name">Review</div>
+                    </div>
+                    <div class="st-desc">KH review prototype/URD. AI sinh URD v+1 với diff từ v hiện tại.</div>
+                  </div>
+
+                  <div class="session-type" data-session="change">
+                    <div class="st-head">
+                      <div class="st-ico chg">⇌</div>
+                      <div class="st-name">Change Request</div>
+                    </div>
+                    <div class="st-desc">KH thay đổi scope. AI phân tích impact + cost + timeline.</div>
+                  </div>
+
+                  <div class="session-type" data-session="uat">
+                    <div class="st-head">
+                      <div class="st-ico uat">✓</div>
+                      <div class="st-name">UAT</div>
+                    </div>
+                    <div class="st-desc">Họp nghiệm thu. AI sinh defect list từ buổi test.</div>
+                  </div>
+
+                  <div class="session-type" data-session="internal">
+                    <div class="st-head">
+                      <div class="st-ico retro">◎</div>
+                      <div class="st-name">Internal Sync</div>
+                    </div>
+                    <div class="st-desc">Họp nội bộ. Không ảnh hưởng URD chính thức.</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div>
+            <div class="card" style="margin-bottom: 16px;">
+              <div class="card-head">
+                <div class="card-title">3. Context AI sẽ nhận</div>
+                <span class="tag tag-ai">Auto loaded</span>
+              </div>
+              <div class="card-body">
+                <div style="font-size: 12px; color: var(--slate-600); margin-bottom: 12px;">Vì bạn chọn <strong style="color: var(--blue-500);">REVIEW</strong>, AI tự động load context:</div>
+
+                <div style="display: flex; flex-direction: column; gap: 8px;">
+                  <div style="padding: 10px 12px; background: var(--slate-50); border-radius: 8px; border-left: 3px solid var(--teal-500); display: flex; align-items: center; gap: 10px;">
+                    <div style="width: 28px; height: 28px; background: #DBEAFE; color: #1E40AF; border-radius: 6px; display: grid; place-items: center; font-family: var(--font-mono); font-size: 10px; font-weight: 700;">URD</div>
+                    <div style="flex: 1;">
+                      <div style="font-size: 12px; font-weight: 600;">URD v1.2 — Mega Mart DOOH</div>
+                      <div style="font-size: 10px; color: var(--slate-500);">Phê duyệt 12/04/2026 · 24 requirements</div>
+                    </div>
+                    <span class="tag tag-ok">✓</span>
+                  </div>
+
+                  <div style="padding: 10px 12px; background: var(--slate-50); border-radius: 8px; border-left: 3px solid var(--amber-500); display: flex; align-items: center; gap: 10px;">
+                    <div style="width: 28px; height: 28px; background: #FEF3C7; color: #92400E; border-radius: 6px; display: grid; place-items: center; font-family: var(--font-mono); font-size: 10px; font-weight: 700;">FB</div>
+                    <div style="flex: 1;">
+                      <div style="font-size: 12px; font-weight: 600;">7 open feedback trên prototype v2</div>
+                      <div style="font-size: 10px; color: var(--slate-500);">AI check feedback nào được giải quyết</div>
+                    </div>
+                    <span class="tag tag-warn">7</span>
+                  </div>
+
+                  <div style="padding: 10px 12px; background: var(--slate-50); border-radius: 8px; border-left: 3px solid var(--violet-500); display: flex; align-items: center; gap: 10px;">
+                    <div style="width: 28px; height: 28px; background: #EDE9FE; color: #5B21B6; border-radius: 6px; display: grid; place-items: center; font-family: var(--font-mono); font-size: 10px; font-weight: 700;">HIS</div>
+                    <div style="flex: 1;">
+                      <div style="font-size: 12px; font-weight: 600;">3 meeting sessions trước đó</div>
+                      <div style="font-size: 10px; color: var(--slate-500);">Kickoff + 2 Review sessions</div>
+                    </div>
+                    <span class="tag tag-scope">3</span>
+                  </div>
+                </div>
+
+                <button class="btn ai" style="width: 100%; justify-content: center; margin-top: 16px;" data-action="run-ai">✦ Bắt đầu xử lý AI</button>
+
+                <div style="font-size: 11px; color: var(--slate-500); text-align: center; margin-top: 8px; font-family: var(--font-mono);">
+                  Ước tính: ~45s · ~$0.82 · claude-opus-4-7
+                </div>
+              </div>
+            </div>
+
+            <div class="card">
+              <div class="card-head">
+                <div class="card-title">Các bước AI sẽ thực hiện</div>
+              </div>
+              <div class="card-body">
+                <div style="display: flex; flex-direction: column; gap: 10px;">
+                  <div style="display: flex; gap: 10px; font-size: 12px;"><div style="width: 22px; height: 22px; background: var(--teal-500); color: #fff; border-radius: 50%; display: grid; place-items: center; font-weight: 700; font-size: 11px; flex-shrink: 0;">1</div><div>Whisper bóc tách audio → transcript (Vietnamese + speaker diarization)</div></div>
+                  <div style="display: flex; gap: 10px; font-size: 12px;"><div style="width: 22px; height: 22px; background: var(--teal-500); color: #fff; border-radius: 50%; display: grid; place-items: center; font-weight: 700; font-size: 11px; flex-shrink: 0;">2</div><div>Claude so sánh transcript với URD v1.2 → xác định thay đổi</div></div>
+                  <div style="display: flex; gap: 10px; font-size: 12px;"><div style="width: 22px; height: 22px; background: var(--teal-500); color: #fff; border-radius: 50%; display: grid; place-items: center; font-weight: 700; font-size: 11px; flex-shrink: 0;">3</div><div>Sinh Meeting Note + URD v1.3 + Diff report</div></div>
+                  <div style="display: flex; gap: 10px; font-size: 12px;"><div style="width: 22px; height: 22px; background: var(--teal-500); color: #fff; border-radius: 50%; display: grid; place-items: center; font-weight: 700; font-size: 11px; flex-shrink: 0;">4</div><div>Tự động resolve feedback được đề cập trong meeting</div></div>
+                  <div style="display: flex; gap: 10px; font-size: 12px;"><div style="width: 22px; height: 22px; background: var(--rose-500); color: #fff; border-radius: 50%; display: grid; place-items: center; font-weight: 700; font-size: 11px; flex-shrink: 0;">5</div><div>Tạo checkpoint BA review (Human)</div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- =========================================================== -->
+      <!-- VIEW: STAGE 2 - URD/SA + DIFF                               -->
+      <!-- =========================================================== -->
+      <section class="view" id="view-stage-2">
+        <div class="hero">
+          <div>
+            <div class="ribbon">② PHÂN TÍCH YÊU CẦU</div>
+            <div class="kicker">URD v1.2 → v1.3 · Sinh từ Review Session #4</div>
+            <h1 class="title">Thay đổi URD từ lần họp gần nhất</h1>
+            <p class="desc">AI đã phát hiện 6 thay đổi từ meeting ngày 18/04 (38 phút). Review từng mục và ký duyệt để chính thức chuyển URD sang v1.3.</p>
+          </div>
+          <div class="actions">
+            <button class="btn" data-action="toast" data-title="Export .docx" data-sub="Tải xuống URD v1.3.docx">↗ Export</button>
+            <button class="btn" data-action="toast" data-title="Đã gửi KH review" data-sub="Email gửi đến a.minh@megamart.vn">📧 Gửi KH</button>
+            <button class="btn primary" data-action="approve-diff">Chấp nhận tất cả →</button>
+          </div>
+        </div>
+
+        <div class="diff-stats">
+          <div class="diff-stat add"><div class="n">+3</div><div class="l">Thêm mới</div></div>
+          <div class="diff-stat mod"><div class="n">2</div><div class="l">Sửa đổi</div></div>
+          <div class="diff-stat del"><div class="n">-1</div><div class="l">Hủy bỏ</div></div>
+        </div>
+
+        <div class="grid-2">
+          <div class="card">
+            <div class="card-head">
+              <div class="card-title">Structured diff</div>
+              <span class="tag tag-ai">AI analyzed</span>
+            </div>
+            <div class="diff-wrap" style="border: none; border-radius: 0;">
+              <div class="diff-body">
+                <div class="diff-section-head">§ 2.1 Screen Inventory Management</div>
+                <div class="diff-line diff-ctx">Hệ thống cho phép CRUD màn hình với metadata:</div>
+                <div class="diff-line diff-ctx">  vị trí (GPS), resolution, orientation,</div>
+                <div class="diff-line diff-del">- store branch, trạng thái online/offline.</div>
+                <div class="diff-line diff-add">+ store branch, trạng thái online/offline,</div>
+                <div class="diff-line diff-add">+ nhóm phân loại (promotion/brand/info),</div>
+                <div class="diff-line diff-add">+ tag theo chiến dịch marketing.</div>
+
+                <div class="diff-section-head">§ 3.2 Reporting (NEW)</div>
+                <div class="diff-line diff-add">+ FR-025: Xuất báo cáo định kỳ theo tuần/tháng</div>
+                <div class="diff-line diff-add">+   - Format: PDF + Excel</div>
+                <div class="diff-line diff-add">+   - Tự động gửi email cho Marketing Lead</div>
+
+                <div class="diff-section-head">§ 4.1 Integration (REMOVED)</div>
+                <div class="diff-line diff-del">- FR-018: Tích hợp với hệ thống POS hiện tại</div>
+                <div class="diff-line diff-del">-   (KH đã quyết định không cần vì POS sẽ</div>
+                <div class="diff-line diff-del">-   được thay thế trong Q3/2026)</div>
+
+                <div class="diff-section-head">§ 5.3 Dashboard Metrics</div>
+                <div class="diff-line diff-ctx">Card "Online" hiển thị số màn hình đang hoạt động.</div>
+                <div class="diff-line diff-del">- (hiển thị số cứng)</div>
+                <div class="diff-line diff-add">+ Kèm sparkline trend 7 ngày gần nhất.</div>
+              </div>
+            </div>
+          </div>
+
+          <div>
+            <div class="card" style="margin-bottom: 16px;">
+              <div class="card-head">
+                <div class="card-title">Nguồn thay đổi (traceability)</div>
+              </div>
+              <div class="card-body">
+                <div style="font-size: 12px; color: var(--slate-600); margin-bottom: 12px;">Mỗi thay đổi gán với đoạn transcript cụ thể:</div>
+
+                <div style="padding: 12px; background: var(--slate-50); border-radius: 8px; margin-bottom: 10px; border-left: 3px solid var(--emerald-500); cursor: pointer;" data-action="toast" data-title="Mở transcript" data-sub="Nhảy đến 00:12:34 trong audio">
+                  <div style="font-weight: 600; font-size: 12px; color: var(--emerald-500);">+ Thêm nhóm phân loại màn hình</div>
+                  <div style="font-size: 11px; color: var(--slate-500); margin: 4px 0;">[00:12:34] A. Minh:</div>
+                  <div style="font-style: italic; font-size: 12px; color: var(--slate-700);">"Mình cần phân loại màn hình theo mục đích — promotion khác với brand awareness..."</div>
+                </div>
+
+                <div style="padding: 12px; background: var(--slate-50); border-radius: 8px; margin-bottom: 10px; border-left: 3px solid var(--rose-500); cursor: pointer;" data-action="toast" data-title="Mở transcript" data-sub="Nhảy đến 00:23:18 trong audio">
+                  <div style="font-weight: 600; font-size: 12px; color: var(--rose-500);">- Hủy tích hợp POS</div>
+                  <div style="font-size: 11px; color: var(--slate-500); margin: 4px 0;">[00:23:18] C. Lan:</div>
+                  <div style="font-style: italic; font-size: 12px; color: var(--slate-700);">"Phần tích hợp POS bỏ đi nhé, Q3 thay hệ thống POS mới..."</div>
+                </div>
+
+                <div style="padding: 12px; background: var(--slate-50); border-radius: 8px; border-left: 3px solid var(--emerald-500); cursor: pointer;" data-action="toast" data-title="Mở transcript" data-sub="Nhảy đến 00:29:42 trong audio">
+                  <div style="font-weight: 600; font-size: 12px; color: var(--emerald-500);">+ Sparkline 7 ngày cho card Online</div>
+                  <div style="font-size: 11px; color: var(--slate-500); margin: 4px 0;">[00:29:42] A. Minh:</div>
+                  <div style="font-style: italic; font-size: 12px; color: var(--slate-700);">"Card Online nên có trend 7 ngày, số cứng khó nhìn xu hướng..."</div>
+                </div>
+              </div>
+            </div>
+
+            <div class="card">
+              <div class="card-head">
+                <div class="card-title">Impact analysis</div>
+                <span class="tag tag-warn">Minor</span>
+              </div>
+              <div class="card-body">
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+                  <div><div style="font-size: 11px; color: var(--slate-500);">Change type</div><div style="font-weight: 600;">MINOR</div></div>
+                  <div><div style="font-size: 11px; color: var(--slate-500);">Client approval</div><div style="font-weight: 600; color: var(--emerald-500);">Không cần</div></div>
+                  <div><div style="font-size: 11px; color: var(--slate-500);">Impact stages</div><div style="font-weight: 600;">Prototype, FE</div></div>
+                  <div><div style="font-size: 11px; color: var(--slate-500);">Est. timeline</div><div style="font-weight: 600;">+2 ngày</div></div>
+                  <div><div style="font-size: 11px; color: var(--slate-500);">Est. cost</div><div style="font-weight: 600;">+$320</div></div>
+                  <div><div style="font-size: 11px; color: var(--slate-500);">Feedback resolved</div><div style="font-weight: 600; color: var(--emerald-500);">3/7</div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="checkpoint">
+          <div class="cp-ico">✋</div>
+          <div class="cp-text">
+            <div class="cp-title">Checkpoint — SA/PM duyệt URD diff trước khi thông báo team</div>
+            <div class="cp-sub">Sau khi duyệt, hệ thống sẽ: (1) cập nhật URD sang v1.3, (2) thông báo Dev/QA review impact, (3) resolve 3 feedback đã xử lý.</div>
+          </div>
+          <button class="btn" data-action="toast" data-title="Chế độ edit" data-sub="Mở editor chỉnh sửa diff">Chỉnh sửa</button>
+          <button class="btn primary" data-action="approve-diff">Duyệt v1.3 →</button>
+        </div>
+      </section>
+
+      <!-- =========================================================== -->
+      <!-- VIEW: STAGE 3 - PROTOTYPE                                   -->
+      <!-- =========================================================== -->
+      <section class="view active" id="view-stage-3">
+        <div class="hero">
+          <div>
+            <div class="ribbon">③ LÊN BẢN MẪU PROTOTYPE</div>
+            <div class="kicker">Stage 03 · Visual Prototype</div>
+            <h1 class="title">HTML Prototype</h1>
+            <p class="desc">Claude sinh bản mẫu HTML theo URD đã duyệt, preview iframe, share link cho KH, collect comments trên UI.</p>
+          </div>
+          <div class="actions">
+            <button class="btn" data-action="toast" data-title="Share link đã copy" data-sub="Link gửi được cho khách hàng review" data-type="success">⎘ Copy link</button>
+            <button class="btn" data-action="toast" data-title="Export ZIP" data-sub="Đang đóng gói prototype...">↓ Export</button>
+            <button class="btn ai" data-action="toast" data-title="Regenerate prototype" data-sub="AI đang tạo phiên bản mới...">✦ Regenerate</button>
+          </div>
+        </div>
+
+        <div class="pipeline">
+          <div class="pipe-step done" data-action="go-stage" data-stage="1"><div class="pn">01</div><div class="pl">Meeting Note</div><div class="pm"><span class="dot-ai"></span> AI</div></div>
+          <div class="pipe-step done" data-action="go-stage" data-stage="2"><div class="pn">02</div><div class="pl">URD / SA</div><div class="pm"><span class="dot-ai"></span> AI</div></div>
+          <div class="pipe-step current"><div class="pn">03 · đang làm</div><div class="pl">Prototype</div><div class="pm"><span class="dot-ai"></span> AI</div></div>
+          <div class="pipe-step" data-action="go-stage" data-stage="4"><div class="pn">04</div><div class="pl">Frontend</div><div class="pm"><span class="dot-ai"></span> AI + DevOps</div></div>
+          <div class="pipe-step" data-action="go-stage" data-stage="5"><div class="pn">05</div><div class="pl">Backend</div><div class="pm"><span class="dot-ai"></span> AI + DevOps</div></div>
+          <div class="pipe-step" data-action="go-stage" data-stage="6"><div class="pn">06</div><div class="pl">Test & QA</div><div class="pm"><span class="dot-hu"></span> QA</div></div>
+          <div class="pipe-step" data-action="go-stage" data-stage="7"><div class="pn">07</div><div class="pl">Bàn giao</div><div class="pm"><span class="dot-hu"></span> Human</div></div>
+        </div>
+
+        <div class="grid-1-3">
+          <div class="card">
+            <div class="card-head">
+              <div class="card-title">Live Preview · megamart-dooh-v2.html</div>
+              <div>
+                <span class="tag tag-ai">AI v2</span>
+                <span class="tag tag-ok" style="margin-left:4px;">45 kB</span>
+              </div>
+            </div>
+            <div style="padding: 14px;">
+              <div class="device-frame">
+                <div class="device-top">
+                  <div class="device-dot" style="background:#FF5F57"></div>
+                  <div class="device-dot" style="background:#FEBC2E"></div>
+                  <div class="device-dot" style="background:#28C840"></div>
+                  <div class="device-url">prototype.forge.reborn.vn/megamart-dooh-v2</div>
+                </div>
+                <iframe srcdoc='<!DOCTYPE html><html><head><meta charset="UTF-8"><style>*{margin:0;padding:0;box-sizing:border-box;font-family:-apple-system,sans-serif}body{background:#F8FAFC;color:#1E293B}.h{background:#0B1426;color:#fff;padding:12px 20px;display:flex;align-items:center;gap:16px}.h .logo{font-weight:700;color:#2DD4BF}.h .nav{display:flex;gap:14px;font-size:12px}.h .nav a{color:#94A3B8;text-decoration:none}.h .nav a.on{color:#fff}.h .sp{flex:1}.h .ac{width:28px;height:28px;border-radius:50%;background:#14B8A6;display:grid;place-items:center;font-size:11px;font-weight:700;color:#0B1426}.page{padding:20px}.tit{font-size:22px;font-weight:700;margin-bottom:4px}.sub{font-size:12px;color:#64748B;margin-bottom:16px}.cards{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:20px}.c{background:#fff;border-radius:8px;padding:12px;border:1px solid #E2E8F0}.c .l{font-size:10px;color:#64748B;text-transform:uppercase}.c .v{font-size:22px;font-weight:700;margin-top:2px}.c .d{font-size:10px;color:#10B981;margin-top:2px}.grid{display:grid;grid-template-columns:1.5fr 1fr;gap:12px}.b{background:#fff;border-radius:8px;border:1px solid #E2E8F0;padding:14px}.b h3{font-size:13px;margin-bottom:10px}table{width:100%;font-size:11px;border-collapse:collapse}table td,table th{padding:6px 4px;text-align:left;border-bottom:1px solid #F1F5F9}table th{color:#64748B;font-weight:600;font-size:10px;text-transform:uppercase}.st{display:inline-block;padding:2px 6px;border-radius:3px;font-size:10px;font-weight:600}.st.on{background:#DCFCE7;color:#15803D}.st.off{background:#FEE2E2;color:#B91C1C}.map{height:180px;background:linear-gradient(135deg,#E0F2FE,#CFFAFE);border-radius:6px;position:relative;overflow:hidden}.pin{position:absolute;width:10px;height:10px;border-radius:50%;background:#14B8A6;box-shadow:0 0 0 4px rgba(20,184,166,.2)}</style></head><body><div class="h"><div class="logo">▣ MegaMart DOOH</div><div class="nav"><a href="#" class="on">Dashboard</a><a href="#">Màn hình</a><a href="#">Playlist</a><a href="#">Campaign</a><a href="#">Báo cáo</a></div><div class="sp"></div><div class="ac">MM</div></div><div class="page"><div class="tit">Tổng quan hệ thống</div><div class="sub">Cập nhật 15:42 · 18/04/2026</div><div class="cards"><div class="c"><div class="l">Màn hình</div><div class="v">118</div><div class="d">3 thành phố</div></div><div class="c"><div class="l">Online</div><div class="v" style="color:#10B981">114</div><div class="d">↑ 96.6%</div></div><div class="c"><div class="l">Offline</div><div class="v" style="color:#EF4444">4</div><div class="d">Cần xử lý</div></div><div class="c"><div class="l">Campaign</div><div class="v">7</div><div class="d">12 playlist</div></div></div><div class="grid"><div class="b"><h3>Màn hình hoạt động</h3><table><tr><th>ID</th><th>Chi nhánh</th><th>TP</th><th>Trạng thái</th></tr><tr><td>SCR-0021</td><td>MegaMart Hà Đông</td><td>HN</td><td><span class="st on">Online</span></td></tr><tr><td>SCR-0045</td><td>MegaMart Q7</td><td>HCM</td><td><span class="st on">Online</span></td></tr><tr><td>SCR-0089</td><td>MegaMart Hải Châu</td><td>ĐN</td><td><span class="st off">Offline</span></td></tr><tr><td>SCR-0090</td><td>MegaMart Thanh Khê</td><td>ĐN</td><td><span class="st on">Online</span></td></tr></table></div><div class="b"><h3>Bản đồ phân bố</h3><div class="map"><div class="pin" style="top:20%;left:30%"></div><div class="pin" style="top:24%;left:35%"></div><div class="pin" style="top:60%;left:55%"></div><div class="pin" style="top:45%;left:45%"></div><div class="pin" style="top:75%;left:70%"></div></div></div></div></div></body></html>'></iframe>
+              </div>
+              <div style="margin-top: 10px; display: flex; gap: 6px;">
+                <button class="btn sm" data-action="toast" data-title="Chế độ Mobile" data-sub="Preview 375x812">📱 Mobile</button>
+                <button class="btn sm" data-action="toast" data-title="Chế độ Tablet" data-sub="Preview 768x1024">💻 Tablet</button>
+                <button class="btn sm" style="border-color: var(--teal-500); color: var(--teal-500);">🖥️ Desktop</button>
+                <div style="flex:1;"></div>
+                <button class="btn sm" data-action="toast" data-title="Mở tab mới" data-sub="Prototype mở ở tab riêng">↗ Mở tab</button>
+              </div>
+            </div>
+          </div>
+
+          <div>
+            <div class="card" style="margin-bottom: 16px;">
+              <div class="card-head">
+                <div class="card-title">Client Feedback</div>
+                <span class="tag tag-warn">7 pending</span>
+              </div>
+              <div class="file-list" id="feedback-list">
+                <div class="file-item" data-action="toast" data-title="Mở feedback" data-sub="Comment của A.Minh trên Dashboard">
+                  <div class="file-ico" style="background:#FEE2E2; color:#B91C1C;">💬</div>
+                  <div>
+                    <div class="file-name" style="font-size: 12px;">A. Minh (Mega Mart)</div>
+                    <div class="file-sub" style="color: var(--slate-700); margin-top: 2px;">"Card Online nên có trend 7 ngày, không phải chỉ số cứng"</div>
+                    <div class="file-sub" style="margin-top: 4px;">2h trước · Dashboard</div>
+                  </div>
+                </div>
+                <div class="file-item" data-action="toast" data-title="Mở feedback" data-sub="Comment của C.Lan trên Map">
+                  <div class="file-ico" style="background:#FEE2E2; color:#B91C1C;">💬</div>
+                  <div>
+                    <div class="file-name" style="font-size: 12px;">C. Lan (Mega Mart)</div>
+                    <div class="file-sub" style="color: var(--slate-700); margin-top: 2px;">"Bản đồ cần filter theo thành phố"</div>
+                    <div class="file-sub" style="margin-top: 4px;">3h trước · Map</div>
+                  </div>
+                </div>
+                <div class="file-item" data-action="toast" data-title="Mở feedback" data-sub="Comment của A.Minh trên Reports">
+                  <div class="file-ico" style="background:#FEE2E2; color:#B91C1C;">💬</div>
+                  <div>
+                    <div class="file-name" style="font-size: 12px;">A. Minh (Mega Mart)</div>
+                    <div class="file-sub" style="color: var(--slate-700); margin-top: 2px;">"Thêm cột Doanh thu ước tính theo campaign"</div>
+                    <div class="file-sub" style="margin-top: 4px;">3h trước · Reports</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="card">
+              <div class="card-head">
+                <div class="card-title">AI iterate</div>
+                <span class="tag tag-ai">Opus 4.7</span>
+              </div>
+              <div class="card-body">
+                <textarea style="width: 100%; min-height: 80px; border: 1px solid var(--slate-200); border-radius: 8px; padding: 10px 12px; font-family: inherit; font-size: 12px; resize: vertical;" placeholder="Nhập yêu cầu cho AI, ví dụ: 'Apply feedback #1 và #2 vào prototype'"></textarea>
+                <button class="btn ai" style="width: 100%; justify-content: center; margin-top: 10px;" data-action="toast" data-title="AI đang xử lý..." data-sub="Ước tính 8s, $0.18">✦ Gửi AI</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="checkpoint">
+          <div class="cp-ico">✋</div>
+          <div class="cp-text">
+            <div class="cp-title">Checkpoint 2 — Meeting lại khách hàng (chốt URD + Prototype)</div>
+            <div class="cp-sub">Sau khi apply comment, cần meeting với Mega Mart chốt URD v1.3 và ký duyệt prototype trước khi chuyển Stage 4-5.</div>
+          </div>
+          <button class="btn" data-action="toast" data-title="Mở calendar" data-sub="Đặt lịch với Mega Mart">Đặt lịch</button>
+          <button class="btn primary" data-action="next-stage" data-next="4">Ký duyệt →</button>
+        </div>
+      </section>
+
+      <!-- =========================================================== -->
+      <!-- VIEW: STAGE 4 - FRONTEND + DEVOPS                           -->
+      <!-- =========================================================== -->
+      <section class="view" id="view-stage-4">
+        <div class="hero">
+          <div>
+            <div class="ribbon">④ PHÁT TRIỂN FRONTEND + DEVOPS</div>
+            <div class="kicker">Stage 04 · Frontend Production</div>
+            <h1 class="title">AI Coding Agent · Frontend</h1>
+            <p class="desc">Claude Code CLI chạy headless, thao tác trực tiếp trên repo. Dev/Tech Lead bổ sung prompt, AI scaffold + build + commit.</p>
+          </div>
+          <div class="actions">
+            <button class="btn" data-action="toast" data-title="Git log" data-sub="Hiển thị 27 commits">⎘ Git log</button>
+            <button class="btn ai" data-action="toast" data-title="Agent đang chạy" data-sub="Claude Code session started">▶ Run agent</button>
+          </div>
+        </div>
+
+        <div class="grid-2">
+          <div>
+            <div class="card" style="margin-bottom: 16px;">
+              <div class="card-head">
+                <div class="card-title">Claude Code · Live Session</div>
+                <span class="tag tag-ai">Running</span>
+              </div>
+              <div class="card-body" style="padding: 0;">
+                <div class="code-block" style="border-radius: 0; margin: 0;">
+<span class="cm"># Session: megamart-dooh-fe @ main</span>
+<span class="cm"># Started: 15:34:12 · Elapsed: 4m 22s</span>
+
+<span class="fn">▶</span> <span class="kw">Reading</span> URD v1.3 + prototype v2...
+<span class="fn">▶</span> <span class="kw">Scaffolding</span> Next.js 14 + TypeScript + Tailwind
+  ✓ <span class="str">package.json</span> created
+  ✓ <span class="str">tsconfig.json</span> strict mode enabled
+  ✓ <span class="str">.eslintrc</span>, <span class="str">.prettierrc</span> configured
+<span class="fn">▶</span> <span class="kw">Generating</span> components...
+  ✓ <span class="str">components/screens/ScreenTable.tsx</span> (147 lines)
+  ✓ <span class="str">components/screens/ScreenMap.tsx</span> (92 lines)
+  ✓ <span class="str">components/dashboard/MetricCard.tsx</span> (64 lines)
+  ⠙ <span class="str">components/campaigns/CampaignEditor.tsx</span>...
+<span class="fn">▶</span> <span class="kw">Running</span> <span class="fn">npm run build</span>...
+                </div>
+              </div>
+            </div>
+
+            <div class="card">
+              <div class="card-head"><div class="card-title">Git activity</div></div>
+              <div class="file-list">
+                <div class="file-item" data-action="toast" data-title="Mở commit 6a" data-sub="feat: scaffold Next.js + Tailwind">
+                  <div class="file-ico ico-code">6a</div>
+                  <div><div class="file-name">feat: scaffold Next.js + Tailwind</div><div class="file-sub">Claude Agent · 4m ago · 47 files</div></div>
+                </div>
+                <div class="file-item" data-action="toast" data-title="Mở commit 7b" data-sub="feat: Screen list & map components">
+                  <div class="file-ico ico-code">7b</div>
+                  <div><div class="file-name">feat: Screen list & map components</div><div class="file-sub">Claude Agent · 2m ago · 6 files</div></div>
+                </div>
+                <div class="file-item" data-action="toast" data-title="Commit đang wip" data-sub="campaign editor đang được sinh">
+                  <div class="file-ico ico-code">8c</div>
+                  <div><div class="file-name">wip: campaign editor</div><div class="file-sub">Claude Agent · 30s ago · đang làm</div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div>
+            <div class="card" style="margin-bottom: 16px;">
+              <div class="card-head">
+                <div class="card-title">✦ Prompt bổ sung (Tech Lead)</div>
+                <span class="tag tag-hu">Checkpoint 3</span>
+              </div>
+              <div class="card-body">
+                <div style="font-size: 12px; color: var(--slate-600); margin-bottom: 8px;">Tech Lead bổ sung constraint trước khi chạy. Prompt được version và audit log.</div>
+                <textarea style="width: 100%; min-height: 120px; border: 1px solid var(--slate-200); border-radius: 8px; padding: 10px 12px; font-family: var(--font-mono); font-size: 12px;">TECH STACK:
+- Next.js 14 App Router
+- Tailwind + shadcn/ui
+- React Query + Zustand
+
+CODING RULES:
+- Component tối đa 200 lines
+- Không hardcode API URL
+- ErrorBoundary top-level
+- i18n: vi + en</textarea>
+                <button class="btn primary" style="margin-top: 10px; width: 100%; justify-content: center;" data-action="toast" data-title="Prompt duyệt" data-sub="Agent tiếp tục với constraint mới" data-type="success">Duyệt & chạy →</button>
+              </div>
+            </div>
+
+            <div class="card">
+              <div class="card-head"><div class="card-title">DevOps Pipeline</div></div>
+              <div style="padding: 16px 18px;">
+                <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 12px;">
+                  <div style="width: 28px; height: 28px; background: var(--emerald-500); border-radius: 50%; display: grid; place-items: center; color: #fff; font-size: 12px; font-weight: 700;">✓</div>
+                  <div style="flex:1; height:2px; background: var(--emerald-500);"></div>
+                  <div style="width: 28px; height: 28px; background: var(--emerald-500); border-radius: 50%; display: grid; place-items: center; color: #fff; font-size: 12px; font-weight: 700;">✓</div>
+                  <div style="flex:1; height:2px; background: var(--teal-500);"></div>
+                  <div style="width: 28px; height: 28px; background: var(--teal-500); border-radius: 50%; display: grid; place-items: center; color: #fff; font-size: 11px; font-weight: 700;">⠙</div>
+                  <div style="flex:1; height:2px; background: var(--slate-200);"></div>
+                  <div style="width: 28px; height: 28px; background: var(--slate-200); border-radius: 50%;"></div>
+                </div>
+                <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 4px; font-size: 10px; text-align: center; color: var(--slate-600);">
+                  <div><strong>Lint</strong><br>passed</div>
+                  <div><strong>Build</strong><br>passed</div>
+                  <div><strong>Deploy</strong><br>running</div>
+                  <div><strong>Smoke</strong><br>pending</div>
+                </div>
+                <div style="margin-top: 18px; padding: 12px; background: var(--slate-50); border-radius: 8px; font-family: var(--font-mono); font-size: 11px;">
+                  <div style="color: var(--emerald-500);">✓ Lint passed — 0 errors, 3 warnings</div>
+                  <div style="color: var(--emerald-500);">✓ Build size: 284 KB gzipped</div>
+                  <div style="color: var(--teal-500);">⠙ Deploying to staging.megamart-dooh.reborn.vn...</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div style="margin-top: 20px; display: flex; justify-content: flex-end; gap: 8px;">
+          <button class="btn" data-action="go-stage" data-stage="3">← Quay lại Prototype</button>
+          <button class="btn primary" data-action="next-stage" data-next="5">Chuyển Stage 5 →</button>
+        </div>
+      </section>
+
+      <!-- =========================================================== -->
+      <!-- VIEW: STAGE 5 - BACKEND                                     -->
+      <!-- =========================================================== -->
+      <section class="view" id="view-stage-5">
+        <div class="hero">
+          <div>
+            <div class="ribbon">⑤ PHÁT TRIỂN BACKEND + DEVOPS</div>
+            <div class="kicker">Stage 05 · Backend Production</div>
+            <h1 class="title">AI Coding Agent · Backend + API</h1>
+            <p class="desc">Claude Code xử lý Spring Boot / Vert.x. Sinh API, entity, service, JOOQ codegen, unit test. Loop hai chiều với FE đồng bộ contract.</p>
+          </div>
+          <div class="actions">
+            <button class="btn" data-action="toast" data-title="Mở OpenAPI spec" data-sub="27 endpoints được sinh">⎘ OpenAPI</button>
+            <button class="btn ai" data-action="toast" data-title="Agent đang chạy" data-sub="BE codegen session">▶ Run agent</button>
+          </div>
+        </div>
+
+        <div class="grid-2">
+          <div class="card">
+            <div class="card-head">
+              <div class="card-title">API Endpoints sinh tự động</div>
+              <span class="tag tag-ai">27 endpoints</span>
+            </div>
+            <div style="max-height: 480px; overflow-y: auto;">
+              <div class="file-list">
+                <div class="file-item" data-action="toast" data-title="GET /screens" data-sub="List all screens with filter">
+                  <div class="file-ico" style="background:#DBEAFE; color:#1E40AF;">GET</div>
+                  <div><div class="file-name" style="font-family: var(--font-mono); font-size: 12px;">/api/v1/screens</div><div class="file-sub">List all screens with filter</div></div>
+                  <span class="tag tag-ok">✓</span>
+                </div>
+                <div class="file-item" data-action="toast" data-title="POST /screens" data-sub="Create new screen">
+                  <div class="file-ico" style="background:#DCFCE7; color:#15803D;">POST</div>
+                  <div><div class="file-name" style="font-family: var(--font-mono); font-size: 12px;">/api/v1/screens</div><div class="file-sub">Create new screen</div></div>
+                  <span class="tag tag-ok">✓</span>
+                </div>
+                <div class="file-item" data-action="toast" data-title="GET /campaigns" data-sub="List campaigns">
+                  <div class="file-ico" style="background:#DBEAFE; color:#1E40AF;">GET</div>
+                  <div><div class="file-name" style="font-family: var(--font-mono); font-size: 12px;">/api/v1/campaigns</div><div class="file-sub">List campaigns</div></div>
+                  <span class="tag tag-ok">✓</span>
+                </div>
+                <div class="file-item" data-action="toast" data-title="PUT /campaigns/:id/schedule" data-sub="Update campaign schedule">
+                  <div class="file-ico" style="background:#FEF3C7; color:#92400E;">PUT</div>
+                  <div><div class="file-name" style="font-family: var(--font-mono); font-size: 12px;">/api/v1/campaigns/{id}/schedule</div><div class="file-sub">Update campaign schedule</div></div>
+                  <span class="tag tag-ok">✓</span>
+                </div>
+                <div class="file-item" data-action="toast" data-title="GET /reports/uptime" data-sub="Đang phát triển" data-type="warn">
+                  <div class="file-ico" style="background:#DBEAFE; color:#1E40AF;">GET</div>
+                  <div><div class="file-name" style="font-family: var(--font-mono); font-size: 12px;">/api/v1/reports/uptime</div><div class="file-sub">Screen uptime report</div></div>
+                  <span class="tag tag-warn">wip</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-head">
+              <div class="card-title">Contract sync · FE ↔ BE</div>
+              <span class="tag tag-ai">Live</span>
+            </div>
+            <div class="card-body">
+              <div style="font-size: 12px; color: var(--slate-600); margin-bottom: 12px;">OpenAPI spec tự động generate, FE và BE agent đọc cùng spec.</div>
+              <div class="code-block">
+<span class="kw">openapi:</span> <span class="str">3.0.3</span>
+<span class="kw">info:</span>
+  <span class="kw">title:</span> Mega Mart DOOH API
+  <span class="kw">version:</span> <span class="str">1.0.0</span>
+<span class="kw">paths:</span>
+  <span class="kw">/screens:</span>
+    <span class="kw">get:</span>
+      <span class="kw">parameters:</span>
+        - <span class="kw">name:</span> city
+          <span class="kw">schema:</span>
+            <span class="kw">enum:</span> [<span class="str">HN</span>, <span class="str">HCM</span>, <span class="str">DN</span>]
+              </div>
+              <div style="margin-top: 12px; display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+                <div style="padding: 10px; background: var(--slate-50); border-radius: 6px; font-size: 11px;">
+                  <div style="color: var(--slate-500);">Frontend sync</div>
+                  <div style="color: var(--emerald-500); font-weight: 600;">✓ last: 2m ago</div>
+                </div>
+                <div style="padding: 10px; background: var(--slate-50); border-radius: 6px; font-size: 11px;">
+                  <div style="color: var(--slate-500);">Backend sync</div>
+                  <div style="color: var(--emerald-500); font-weight: 600;">✓ last: 30s ago</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div style="margin-top: 20px; display: flex; justify-content: flex-end; gap: 8px;">
+          <button class="btn" data-action="go-stage" data-stage="4">← Quay lại FE</button>
+          <button class="btn primary" data-action="next-stage" data-next="6">Chuyển Stage 6 →</button>
+        </div>
+      </section>
+
+      <!-- =========================================================== -->
+      <!-- VIEW: STAGE 6 - TEST                                        -->
+      <!-- =========================================================== -->
+      <section class="view" id="view-stage-6">
+        <div class="hero">
+          <div>
+            <div class="ribbon">⑥ TEST CASE · UNIT TEST · QA</div>
+            <div class="kicker">Stage 06 · Quality Assurance</div>
+            <h1 class="title">Testing · AI sinh + QA review</h1>
+            <p class="desc">Claude sinh test case từ URD, QA review và chạy manual test. Unit test được sinh song song với code.</p>
+          </div>
+          <div class="actions">
+            <button class="btn" data-action="toast" data-title="Đang chạy test suite" data-sub="148 test cases">▶ Run all</button>
+            <button class="btn ai" data-action="toast" data-title="AI sinh thêm cases" data-sub="Đang phân tích coverage gaps...">✦ Generate</button>
+          </div>
+        </div>
+
+        <div class="grid-3" style="margin-bottom: 20px;">
+          <div class="card metric">
+            <div class="metric-val">87<span class="metric-unit">%</span></div>
+            <div class="metric-label">Code coverage</div>
+            <div class="bar" style="margin-top: 10px;"><div class="bar-fill" style="width: 87%; background: linear-gradient(90deg, var(--emerald-500), var(--emerald-400));"></div></div>
+          </div>
+          <div class="card metric">
+            <div class="metric-val">142/148</div>
+            <div class="metric-label">Test case pass</div>
+            <div class="metric-delta" style="color: var(--rose-500);">● 6 failed</div>
+          </div>
+          <div class="card metric">
+            <div class="metric-val">23<span class="metric-unit">s</span></div>
+            <div class="metric-label">Suite duration</div>
+            <div class="metric-delta up">↓ 4s vs last run</div>
+          </div>
+        </div>
+
+        <div class="grid-2">
+          <div class="card">
+            <div class="card-head">
+              <div class="card-title">Test scenarios</div>
+              <span class="tag tag-ai">84 scenarios</span>
+            </div>
+            <div style="padding: 4px 0; max-height: 380px; overflow-y: auto;">
+              <div class="test-row"><div class="test-ok">✓</div><div>SCR-001 · Create screen valid data</div><div class="test-time">124ms</div></div>
+              <div class="test-row"><div class="test-ok">✓</div><div>SCR-002 · Reject invalid GPS</div><div class="test-time">87ms</div></div>
+              <div class="test-row"><div class="test-ok">✓</div><div>SCR-003 · Filter by city</div><div class="test-time">156ms</div></div>
+              <div class="test-row"><div class="test-fail">✗</div><div>CMP-014 · Campaign overlap detection</div><div class="test-time">203ms</div></div>
+              <div class="test-row"><div class="test-ok">✓</div><div>CMP-015 · Schedule validation</div><div class="test-time">142ms</div></div>
+              <div class="test-row"><div class="test-fail">✗</div><div>RPT-008 · Uptime DST edge case</div><div class="test-time">312ms</div></div>
+              <div class="test-row"><div class="test-ok">✓</div><div>AUTH-001 · RBAC Content Mgr edit</div><div class="test-time">98ms</div></div>
+              <div class="test-row"><div class="test-ok">✓</div><div>AUTH-002 · RBAC Store Ops readonly</div><div class="test-time">102ms</div></div>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-head">
+              <div class="card-title">QA review — chờ action</div>
+              <span class="tag tag-hu">QA Role</span>
+            </div>
+            <div class="card-body">
+              <div style="background: rgba(239, 68, 68, 0.05); border: 1px solid rgba(239, 68, 68, 0.2); border-radius: 8px; padding: 14px; margin-bottom: 14px;">
+                <div style="font-weight: 600; font-size: 13px; color: var(--rose-500);">✗ CMP-014 — Campaign overlap</div>
+                <div style="font-size: 12px; color: var(--slate-700); margin-top: 6px;">AI sinh test case 2 campaign trùng khung giờ, nhưng logic backend chưa xử lý overlap một phần.</div>
+                <div style="display: flex; gap: 8px; margin-top: 10px;">
+                  <button class="btn sm" data-action="toast" data-title="Gán Dev xử lý" data-sub="Jira ticket #2341 đã tạo">📝 Gán Dev</button>
+                  <button class="btn sm" data-action="toast" data-title="Đã skip test" data-sub="Test này sẽ không chạy đến khi fix" data-type="warn">⏭ Skip</button>
+                </div>
+              </div>
+
+              <div style="font-size: 12px; font-weight: 600; color: var(--slate-500); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 10px;">QA Checklist manual</div>
+              <div style="display: flex; flex-direction: column; gap: 6px;">
+                <label style="display:flex; align-items:center; gap:8px; font-size: 13px; cursor: pointer;"><input type="checkbox" checked> Smoke test staging env</label>
+                <label style="display:flex; align-items:center; gap:8px; font-size: 13px; cursor: pointer;"><input type="checkbox" checked> UX review với design</label>
+                <label style="display:flex; align-items:center; gap:8px; font-size: 13px; cursor: pointer;"><input type="checkbox"> Cross-browser test</label>
+                <label style="display:flex; align-items:center; gap:8px; font-size: 13px; cursor: pointer;"><input type="checkbox"> Performance audit</label>
+                <label style="display:flex; align-items:center; gap:8px; font-size: 13px; cursor: pointer;"><input type="checkbox"> Security scan OWASP</label>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div style="margin-top: 20px; display: flex; justify-content: flex-end; gap: 8px;">
+          <button class="btn" data-action="go-stage" data-stage="5">← Quay lại BE</button>
+          <button class="btn primary" data-action="next-stage" data-next="7">Chuyển Stage 7 →</button>
+        </div>
+      </section>
+
+      <!-- =========================================================== -->
+      <!-- VIEW: STAGE 7 - HANDOVER                                    -->
+      <!-- =========================================================== -->
+      <section class="view" id="view-stage-7">
+        <div class="hero">
+          <div>
+            <div class="ribbon">⑦ QA & CHUYỂN GIAO SẢN PHẨM</div>
+            <div class="kicker">Stage 07 · Handover</div>
+            <h1 class="title">Bàn giao cho khách hàng</h1>
+            <p class="desc">AI sinh release note, user manual, training deck. PM chốt UAT, team triển khai đến site KH, ký biên bản nghiệm thu.</p>
+          </div>
+          <div class="actions">
+            <button class="btn" data-action="toast" data-title="Export biên bản" data-sub="Biên bản nghiệm thu.pdf">↗ Export</button>
+            <button class="btn primary" data-action="toast" data-title="Dự án hoàn tất" data-sub="Mega Mart DOOH đã đóng dự án" data-type="success">Hoàn tất dự án →</button>
+          </div>
+        </div>
+
+        <div class="grid-2">
+          <div class="card">
+            <div class="card-head">
+              <div class="card-title">Deliverables</div>
+              <span class="tag tag-ai">AI + Human</span>
+            </div>
+            <div class="file-list">
+              <div class="file-item" data-action="toast" data-title="Mở Release Note" data-sub="12 trang, VN/EN">
+                <div class="file-ico ico-doc">PDF</div>
+                <div><div class="file-name">Release Note v1.0.0</div><div class="file-sub">AI · 12 trang · VN/EN</div></div>
+                <span class="tag tag-ok">Ready</span>
+              </div>
+              <div class="file-item" data-action="toast" data-title="Mở User Manual" data-sub="34 trang kèm screenshot">
+                <div class="file-ico ico-doc">DOC</div>
+                <div><div class="file-name">User Manual — Content Manager</div><div class="file-sub">AI · 34 trang · Có screenshot</div></div>
+                <span class="tag tag-ok">Ready</span>
+              </div>
+              <div class="file-item" data-action="toast" data-title="Training Deck" data-sub="24 slides tiếng Việt" data-type="warn">
+                <div class="file-ico" style="background:#FEE2E2; color:#B91C1C;">PPT</div>
+                <div><div class="file-name">Training Deck (Vietnamese)</div><div class="file-sub">AI · 24 slides</div></div>
+                <span class="tag tag-warn">Chờ PM</span>
+              </div>
+              <div class="file-item" data-action="toast" data-title="Biên bản UAT" data-sub="Chờ Mega Mart ký">
+                <div class="file-ico ico-doc">PDF</div>
+                <div><div class="file-name">Biên bản nghiệm thu UAT</div><div class="file-sub">Chờ Mega Mart ký</div></div>
+                <span class="tag tag-hu">Human</span>
+              </div>
+              <div class="file-item" data-action="toast" data-title="Source code ZIP" data-sub="Bàn giao qua GitLab">
+                <div class="file-ico ico-code">ZIP</div>
+                <div><div class="file-name">Source code + Docker images</div><div class="file-sub">GitLab private repo</div></div>
+                <span class="tag tag-ok">Ready</span>
+              </div>
+            </div>
+          </div>
+
+          <div>
+            <div class="card" style="margin-bottom: 16px;">
+              <div class="card-head"><div class="card-title">UAT Progress</div></div>
+              <div class="card-body">
+                <div style="display: flex; justify-content: space-between; font-size: 12px; margin-bottom: 6px;"><span>UAT Test Cases</span><strong>38/42</strong></div>
+                <div class="bar" style="margin-bottom: 14px;"><div class="bar-fill" style="width: 90%; background: linear-gradient(90deg, var(--emerald-500), var(--emerald-400));"></div></div>
+                <div style="display: flex; justify-content: space-between; font-size: 12px; margin-bottom: 6px;"><span>Training buổi</span><strong>3/4</strong></div>
+                <div class="bar" style="margin-bottom: 14px;"><div class="bar-fill" style="width: 75%"></div></div>
+                <div style="display: flex; justify-content: space-between; font-size: 12px; margin-bottom: 6px;"><span>Site deployment</span><strong>118/120 màn hình</strong></div>
+                <div class="bar"><div class="bar-fill" style="width: 98%; background: linear-gradient(90deg, var(--emerald-500), var(--emerald-400));"></div></div>
+              </div>
+            </div>
+
+            <div class="card">
+              <div class="card-head">
+                <div class="card-title">Retrospective</div>
+                <span class="tag tag-ai">Auto</span>
+              </div>
+              <div class="card-body">
+                <div style="font-size: 12px; line-height: 1.6; color: var(--slate-700);">
+                  <p><strong style="color: var(--emerald-500);">✓ What worked</strong></p>
+                  <p style="margin-top: 4px;">Pipeline AI-first rút ngắn 47% thời gian. URD review loop chỉ 2 vòng (trung bình 4).</p>
+                  <p style="margin-top: 10px;"><strong style="color: var(--amber-500);">⚠ Cần cải thiện</strong></p>
+                  <p style="margin-top: 4px;">Stage 5 loop với Stage 4 nhiều lần do contract API thay đổi. Nên freeze contract sau CP3.</p>
+                  <p style="margin-top: 10px;"><strong style="color: var(--teal-500);">◆ Metrics</strong></p>
+                  <p style="margin-top: 4px;">AI cost: $284.50 · Human-hour: 186h · CSAT: 9.2/10</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div style="margin-top: 20px; display: flex; justify-content: flex-end; gap: 8px;">
+          <button class="btn" data-action="go-stage" data-stage="6">← Quay lại QA</button>
+        </div>
+      </section>
+
+      <!-- =========================================================== -->
+      <!-- VIEW: SESSIONS HISTORY                                      -->
+      <!-- =========================================================== -->
+      <section class="view" id="view-sessions">
+        <div class="hero">
+          <div>
+            <div class="ribbon">🎙 MEETING SESSIONS</div>
+            <div class="kicker">History · Mega Mart DOOH</div>
+            <h1 class="title">Lịch sử meeting</h1>
+            <p class="desc">Tất cả buổi họp đã ghi âm và xử lý AI, phân loại theo mục đích.</p>
+          </div>
+          <div class="actions">
+            <button class="btn ai" data-action="go-stage" data-stage="1">+ Upload audio mới</button>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-head">
+            <div class="card-title">4 sessions</div>
+            <div style="display: flex; gap: 6px;">
+              <span class="tag tag-ai">1 Kickoff</span>
+              <span class="tag tag-info">2 Review</span>
+              <span class="tag tag-warn">1 Change</span>
+            </div>
+          </div>
+          <div class="session-list">
+            <div class="session-item" data-action="go-stage" data-stage="2">
+              <div class="sess-ico rev">↻</div>
+              <div class="sess-meta">
+                <div class="sess-title">Review #2 · Chốt prototype v2 + chỉnh URD</div>
+                <div class="sess-sub">18/04/2026 · 38:14 · A.Minh, C.Lan, C.Hương, A.Đức</div>
+                <div class="sess-tags"><span class="tag tag-info">REVIEW</span><span class="tag tag-ai">URD v1.2 → v1.3</span><span class="tag tag-ok">3 feedback</span></div>
+              </div>
+              <button class="btn sm">Xem diff →</button>
+            </div>
+
+            <div class="session-item" data-action="go-changes">
+              <div class="sess-ico chg">⇌</div>
+              <div class="sess-meta">
+                <div class="sess-title">Change Request · Multi-language support</div>
+                <div class="sess-sub">16/04/2026 · 24:08 · A.Minh, C.Hương</div>
+                <div class="sess-tags"><span class="tag tag-warn">CHANGE</span><span class="tag tag-scope">+15 ngày</span><span class="tag tag-warn">Chờ KH ký</span></div>
+              </div>
+              <button class="btn sm">Xem CR →</button>
+            </div>
+
+            <div class="session-item" data-action="toast" data-title="Mở Review #1" data-sub="URD v1.1 → v1.2">
+              <div class="sess-ico rev">↻</div>
+              <div class="sess-meta">
+                <div class="sess-title">Review #1 · KH review prototype v1</div>
+                <div class="sess-sub">14/04/2026 · 52:30 · A.Minh, C.Lan, C.Hương, A.Đức</div>
+                <div class="sess-tags"><span class="tag tag-info">REVIEW</span><span class="tag tag-ai">URD v1.1 → v1.2</span><span class="tag tag-ok">5 feedback</span></div>
+              </div>
+              <button class="btn sm">Xem →</button>
+            </div>
+
+            <div class="session-item" data-action="toast" data-title="Mở Kickoff" data-sub="URD v1.0 sinh mới">
+              <div class="sess-ico kick">✦</div>
+              <div class="sess-meta">
+                <div class="sess-title">Kickoff · Khảo sát yêu cầu ban đầu</div>
+                <div class="sess-sub">15/04/2026 · 47:23 · A.Minh, C.Lan, C.Hương, A.Đức</div>
+                <div class="sess-tags"><span class="tag tag-ai">KICKOFF</span><span class="tag tag-ai">URD v1.0</span><span class="tag tag-ok">24 requirements</span></div>
+              </div>
+              <button class="btn sm">Xem →</button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- =========================================================== -->
+      <!-- VIEW: CHANGE REQUESTS                                       -->
+      <!-- =========================================================== -->
+      <section class="view" id="view-changes">
+        <div class="hero">
+          <div>
+            <div class="ribbon">⇌ CHANGE REQUESTS</div>
+            <div class="kicker">Mega Mart DOOH · 2 active</div>
+            <h1 class="title">Yêu cầu thay đổi</h1>
+            <p class="desc">Thay đổi scope sau khi URD đã chốt. Mỗi CR cần PM duyệt + KH ký.</p>
+          </div>
+        </div>
+
+        <div class="grid-2">
+          <div class="card">
+            <div style="padding: 18px; border-bottom: 1px solid var(--slate-100);">
+              <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 10px;">
+                <div>
+                  <div style="font-family: var(--font-mono); font-size: 10px; color: var(--slate-400);">CR-003 · Session #3</div>
+                  <div style="font-family: var(--font-display); font-size: 20px; font-weight: 600; margin-top: 4px;">Thêm multi-language support</div>
+                </div>
+                <span class="tag tag-warn">Chờ KH ký</span>
+              </div>
+              <div style="font-size: 13px; color: var(--slate-700); line-height: 1.6;">KH yêu cầu hệ thống hỗ trợ thêm tiếng Anh cho backend admin + tiếng Hàn cho content màn hình tại chi nhánh có khách du lịch.</div>
+            </div>
+            <div style="padding: 18px; background: var(--slate-50);">
+              <div style="font-size: 11px; font-weight: 600; color: var(--slate-500); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 10px;">Impact analysis</div>
+              <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px;">
+                <div><div style="font-size: 11px; color: var(--slate-500);">Type</div><div style="font-weight: 600; color: var(--amber-500);">MAJOR</div></div>
+                <div><div style="font-size: 11px; color: var(--slate-500);">Timeline</div><div style="font-weight: 600;">+15 ngày</div></div>
+                <div><div style="font-size: 11px; color: var(--slate-500);">Cost</div><div style="font-weight: 600;">+$2,400</div></div>
+                <div><div style="font-size: 11px; color: var(--slate-500);">Stages</div><div style="font-weight: 600;">FE, BE, QA</div></div>
+              </div>
+              <div style="display: flex; gap: 8px; margin-top: 14px;">
+                <button class="btn sm" data-action="toast" data-title="Chi tiết CR-003" data-sub="Mở trang chi tiết change request">Chi tiết</button>
+                <button class="btn sm primary" data-action="toast" data-title="Đã gửi KH ký" data-sub="Email gửi đến a.minh@megamart.vn" data-type="success">Gửi KH ký →</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="card">
+            <div style="padding: 18px; border-bottom: 1px solid var(--slate-100);">
+              <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 10px;">
+                <div>
+                  <div style="font-family: var(--font-mono); font-size: 10px; color: var(--slate-400);">CR-002 · Session #2</div>
+                  <div style="font-family: var(--font-display); font-size: 20px; font-weight: 600; margin-top: 4px;">Bỏ tích hợp POS</div>
+                </div>
+                <span class="tag tag-ok">Approved</span>
+              </div>
+              <div style="font-size: 13px; color: var(--slate-700); line-height: 1.6;">KH quyết định bỏ FR-018 vì Q3/2026 thay hệ thống POS mới. Auto tracked từ Review #2.</div>
+            </div>
+            <div style="padding: 18px; background: var(--slate-50);">
+              <div style="font-size: 11px; font-weight: 600; color: var(--slate-500); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 10px;">Impact analysis</div>
+              <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px;">
+                <div><div style="font-size: 11px; color: var(--slate-500);">Type</div><div style="font-weight: 600; color: var(--emerald-500);">MINOR (reduce)</div></div>
+                <div><div style="font-size: 11px; color: var(--slate-500);">Timeline</div><div style="font-weight: 600; color: var(--emerald-500);">-5 ngày</div></div>
+                <div><div style="font-size: 11px; color: var(--slate-500);">Cost</div><div style="font-weight: 600; color: var(--emerald-500);">-$800</div></div>
+                <div><div style="font-size: 11px; color: var(--slate-500);">Stages</div><div style="font-weight: 600;">BE</div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- =========================================================== -->
+      <!-- VIEW: DELIVERABLES                                          -->
+      <!-- =========================================================== -->
+      <section class="view" id="view-deliverables">
+        <div class="hero">
+          <div>
+            <div class="ribbon">📦 DELIVERABLES</div>
+            <div class="kicker">Mega Mart DOOH</div>
+            <h1 class="title">Sản phẩm bàn giao</h1>
+            <p class="desc">Tổng hợp tất cả artifact sinh ra xuyên suốt dự án — từ meeting note tới source code cuối cùng.</p>
+          </div>
+        </div>
+        <div class="card">
+          <div class="file-list">
+            <div class="file-item" data-action="toast" data-title="Mở URD v1.3" data-sub="Document .docx"><div class="file-ico ico-doc">URD</div><div><div class="file-name">URD v1.3 (final)</div><div class="file-sub">27 requirements · Approved 18/04</div></div><span class="tag tag-ok">Final</span></div>
+            <div class="file-item" data-action="toast" data-title="Mở Prototype" data-sub="HTML preview"><div class="file-ico ico-html">HTM</div><div><div class="file-name">Prototype v2</div><div class="file-sub">Share link · 45 KB</div></div><span class="tag tag-ok">Live</span></div>
+            <div class="file-item" data-action="toast" data-title="Mở Frontend repo" data-sub="Next.js 14"><div class="file-ico ico-code">FE</div><div><div class="file-name">megamart-dooh-fe</div><div class="file-sub">GitLab · main · 284 KB gzipped</div></div><span class="tag tag-ai">Stage 4</span></div>
+            <div class="file-item" data-action="toast" data-title="Mở Backend repo" data-sub="Spring Boot"><div class="file-ico ico-code">BE</div><div><div class="file-name">megamart-dooh-api</div><div class="file-sub">GitLab · develop · 27 endpoints</div></div><span class="tag tag-ai">Stage 5</span></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- =========================================================== -->
+      <!-- VIEW: GENERIC PLACEHOLDERS                                  -->
+      <!-- =========================================================== -->
+      <section class="view" id="view-analytics">
+        <div class="hero"><div><div class="ribbon">📊 ANALYTICS</div><h1 class="title">Analytics Dashboard</h1><p class="desc">Phân tích chi phí AI, hiệu suất pipeline, cycle time xuyên suốt các dự án.</p></div></div>
+        <div class="empty">
+          <div class="empty-ico">📊</div>
+          <div class="empty-title">Analytics view</div>
+          <div class="empty-desc">Báo cáo cost per project, cycle time, AI vs human ratio, cost-per-requirement sẽ hiển thị ở đây trong phiên bản production.</div>
+        </div>
+      </section>
+
+      <section class="view" id="view-prompts">
+        <div class="hero"><div><div class="ribbon">✦ PROMPT LIBRARY</div><h1 class="title">Prompt Templates</h1><p class="desc">Thư viện prompt được version control cho 5 session types + mỗi stage.</p></div></div>
+        <div class="empty">
+          <div class="empty-ico">✦</div>
+          <div class="empty-title">Prompt library</div>
+          <div class="empty-desc">Quản lý template prompt cho KICKOFF / REVIEW / CHANGE_REQUEST / UAT / INTERNAL_SYNC, version control, A/B test.</div>
+        </div>
+      </section>
+
+      <section class="view" id="view-team">
+        <div class="hero"><div><div class="ribbon">👥 TEAM</div><h1 class="title">Team Management</h1><p class="desc">Nhân sự Reborn và phân quyền theo project.</p></div></div>
+        <div class="empty">
+          <div class="empty-ico">👥</div>
+          <div class="empty-title">Team view</div>
+          <div class="empty-desc">Danh sách BA, SA, Dev, QA, PM, Tech Lead — phân quyền project-level, workload balance.</div>
+        </div>
+      </section>
+
+      <section class="view" id="view-clients">
+        <div class="hero"><div><div class="ribbon">🏢 CLIENTS</div><h1 class="title">Clients</h1><p class="desc">Khách hàng Reborn đang làm việc — Mega Mart, TPBank, MSB, Rox Key, TNG, StaffX...</p></div></div>
+        <div class="empty">
+          <div class="empty-ico">🏢</div>
+          <div class="empty-title">Clients view</div>
+          <div class="empty-desc">Database khách hàng, contact, lịch sử dự án, account managers.</div>
+        </div>
+      </section>
+
+      <section class="view" id="view-settings">
+        <div class="hero"><div><div class="ribbon">⚙ SETTINGS</div><h1 class="title">Cài đặt</h1><p class="desc">Cấu hình hệ thống, AI models, integrations.</p></div></div>
+        <div class="empty">
+          <div class="empty-ico">⚙</div>
+          <div class="empty-title">Settings view</div>
+          <div class="empty-desc">AI model selection, API keys, Git integration, notification rules.</div>
+        </div>
+      </section>
+
+    </div>
+  </main>
+</div>
+
+<!-- ============ PROJECT SWITCHER MODAL ============ -->
+<div class="overlay" id="switcher">
+  <div class="dialog">
+    <div class="dialog-search">
+      <span style="color: var(--slate-400);">⌕</span>
+      <input id="switcher-input" placeholder="Chuyển nhanh project..." autofocus>
+      <span class="search-kbd">Esc</span>
+    </div>
+    <div class="dialog-list" id="switcher-list">
+      <!-- populated by JS -->
+    </div>
+  </div>
+</div>
+
+<!-- ============ TOAST CONTAINER ============ -->
+<div class="toast-container" id="toasts"></div>
+
+<script>
+'use strict';
+
+// ============ DATA ============
+const PROJECTS = [
+  { id: 'megamart', name: 'Mega Mart DOOH', client: 'Mega Mart Retail', code: 'MEGAMART-DOOH-2026', stage: 3, stages: ['done','done','current','','','',''], state: 'normal', days: 47, cost: '$18.40', sessions: 4, initials: 'MM', dotColor: 'var(--teal-500)', progress: 42 },
+  { id: 'tpbank', name: 'TPBank CRM Sales', client: 'TPBank · via TNTech', code: 'TPB-CRM-2026', stage: 3, stages: ['done','done','blocked','','','',''], state: 'warn', days: -3, cost: '$42.10', sessions: 5, initials: 'TP', dotColor: 'var(--amber-500)', progress: 38 },
+  { id: 'msb', name: 'MSB FXDealing DR', client: 'MSB · via TNTech', code: 'MSB-FXD-DR-2026', stage: 5, stages: ['done','done','done','done','current','',''], state: 'normal', days: 21, cost: '$67.80', sessions: 7, initials: 'MS', dotColor: 'var(--blue-500)', progress: 65 },
+  { id: 'rox', name: 'Rox Key BPM', client: 'Rox Key Holdings', code: 'ROXKEY-BPM-2026', stage: 4, stages: ['done','done','done','current','','',''], state: 'normal', days: 68, cost: '$31.20', sessions: 3, initials: 'RK', dotColor: 'var(--violet-500)', progress: 52 },
+  { id: 'staffx', name: 'StaffX Marketplace v2', client: 'Internal · Reborn', code: 'STAFFX-MKP-V2', stage: 7, stages: ['done','done','done','done','done','done','current'], state: 'done', days: 5, cost: '$124.50', sessions: 11, initials: 'SX', dotColor: 'var(--emerald-500)', progress: 95 },
+  { id: 'tng', name: 'TNG Archive System', client: 'TNG Holdings', code: 'TNG-ARCH-2026', stage: 2, stages: ['done','current','','','','',''], state: 'normal', days: 92, cost: '$4.20', sessions: 1, initials: 'TN', dotColor: 'var(--slate-500)', progress: 18 }
+];
+
+const INBOX_ITEMS = [
+  { cat: 'cp', bar: 'urgent', title: 'CP2 · Meeting lại KH chốt URD v1.3', projCode: 'MEGAMART-DOOH', meta: 'PM + Client · ● Quá hạn 1 ngày', btn: 'Xử lý', btnPrimary: true, action: { type: 'go-project', proj: 'megamart', view: 'stage-3' } },
+  { cat: 'cr', bar: 'urgent', title: 'Change Request · TPBank thêm bancassurance', projCode: 'TPB-CRM-2026', meta: 'Impact: +15 ngày, +$2,400 · ● Quá hạn', btn: 'Phân tích', btnPrimary: true, action: { type: 'go-project', proj: 'tpbank', view: 'changes' } },
+  { cat: 'cp', bar: 'high', title: 'CP3 · Tech Lead duyệt prompt bổ sung FE', projCode: 'MEGAMART-DOOH', meta: 'Trước Stage 4 · Hạn 17:00 hôm nay', btn: 'Duyệt', action: { type: 'go-project', proj: 'megamart', view: 'stage-4' } },
+  { cat: 'fb', bar: 'high', title: '3 feedback mới từ TPBank trên Prototype v2', projCode: 'TPB-CRM-2026', meta: '2 giờ trước', btn: 'Xem', action: { type: 'go-project', proj: 'tpbank', view: 'stage-3' } },
+  { cat: 'cp', bar: 'normal', title: 'CP1 · BA review Meeting Note', projCode: 'MSB-FXD-DR', meta: 'AI sinh xong 30 phút trước', btn: 'Review', action: { type: 'go-project', proj: 'msb', view: 'stage-1' } },
+  { cat: 'cr', bar: 'normal', title: 'Rox Key ký biên bản UAT module 1', projCode: 'ROXKEY-BPM', meta: 'Upload PDF có chữ ký', btn: 'Upload', action: { type: 'go-project', proj: 'rox', view: 'stage-7' } }
+];
+
+let currentProject = 'megamart';
+let currentInboxTab = 'all';
+let currentRole = 'BA';
+
+// ============ CORE NAVIGATION ============
+function showView(viewId) {
+  document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+  const target = document.getElementById(viewId);
+  if (target) {
+    target.classList.add('active');
+    document.querySelector('.main').scrollTop = 0;
+  }
+  updateBreadcrumb(viewId);
+}
+
+function updateBreadcrumb(viewId) {
+  const proj = PROJECTS.find(p => p.id === currentProject);
+  const crumbProj = document.getElementById('crumb-project');
+  if (crumbProj && proj) crumbProj.textContent = proj.name;
+
+  const titles = {
+    'view-hub': 'Projects Hub',
+    'view-inbox': 'Inbox · Cross-project',
+    'view-stage-1': 'Stage 01 · Meeting upload',
+    'view-stage-2': 'Stage 02 · URD diff',
+    'view-stage-3': 'Stage 03 · Prototype',
+    'view-stage-4': 'Stage 04 · Frontend + DevOps',
+    'view-stage-5': 'Stage 05 · Backend + DevOps',
+    'view-stage-6': 'Stage 06 · Test & QA',
+    'view-stage-7': 'Stage 07 · Bàn giao',
+    'view-sessions': 'Meeting Sessions',
+    'view-changes': 'Change Requests',
+    'view-deliverables': 'Deliverables',
+    'view-analytics': 'Analytics',
+    'view-prompts': 'Prompt Library',
+    'view-team': 'Team',
+    'view-clients': 'Clients',
+    'view-settings': 'Settings'
+  };
+  document.getElementById('crumb').textContent = titles[viewId] || '';
+}
+
+function updateActiveStage(stage) {
+  document.querySelectorAll('.sidebar .nav-item').forEach(n => n.classList.remove('active'));
+  // Re-apply done class for completed stages
+  document.querySelectorAll('.sidebar .nav-item[data-action="go-stage"]').forEach(n => {
+    const s = parseInt(n.dataset.stage);
+    n.classList.toggle('done', s < stage);
+    n.classList.toggle('active', s === stage);
+  });
+}
+
+function updateActiveRail(key) {
+  document.querySelectorAll('.rail-item').forEach(r => r.classList.remove('active'));
+  const el = document.querySelector(`.rail-item[data-rail="${key}"]`);
+  if (el) el.classList.add('active');
+}
+
+function goHub() { showView('view-hub'); updateActiveRail('hub'); }
+function goInbox() { showView('view-inbox'); updateActiveRail('inbox'); }
+function goAnalytics() { showView('view-analytics'); updateActiveRail('analytics'); }
+function goPrompts() { showView('view-prompts'); updateActiveRail('prompts'); }
+function goTeam() { showView('view-team'); updateActiveRail('team'); }
+function goClients() { showView('view-clients'); updateActiveRail('clients'); }
+function goSettings() { showView('view-settings'); updateActiveRail('settings'); }
+function goSessions() { showView('view-sessions'); updateActiveRail(''); }
+function goChanges() { showView('view-changes'); updateActiveRail(''); }
+function goDeliverables() { showView('view-deliverables'); updateActiveRail(''); }
+
+function goStage(stage) {
+  showView('view-stage-' + stage);
+  updateActiveStage(stage);
+  updateActiveRail('');
+}
+
+function goProject(projId, stageOrView) {
+  currentProject = projId;
+  const proj = PROJECTS.find(p => p.id === projId);
+  if (proj) {
+    document.getElementById('current-project-name').textContent = proj.name;
+    document.getElementById('current-project-client').textContent = proj.client;
+    document.querySelector('.project-switch .proj-dot').style.background = proj.dotColor;
+  }
+  if (stageOrView && stageOrView.startsWith('stage-')) {
+    const n = parseInt(stageOrView.split('-')[1]);
+    goStage(n);
+  } else if (stageOrView) {
+    showView('view-' + stageOrView);
+  } else {
+    goStage(proj ? proj.stage : 3);
+  }
+}
+
+function nextStage(n) {
+  const num = parseInt(n);
+  goStage(num);
+  showToast('success', 'Đã chuyển Stage ' + num, 'Pipeline tiến lên giai đoạn tiếp theo');
+}
+
+// ============ PROJECT SWITCHER ============
+function openSwitcher() {
+  const overlay = document.getElementById('switcher');
+  overlay.classList.add('show');
+  setTimeout(() => document.getElementById('switcher-input').focus(), 50);
+}
+
+function closeSwitcher() {
+  document.getElementById('switcher').classList.remove('show');
+}
+
+function renderSwitcher() {
+  const list = document.getElementById('switcher-list');
+  list.innerHTML = PROJECTS.map(p => `
+    <div class="switch-item ${p.id === currentProject ? 'active' : ''}" data-switch-proj="${p.id}">
+      <div class="switch-mini" style="background: ${p.dotColor}">${p.initials}</div>
+      <div class="switch-body">
+        <div class="switch-name">${p.name}</div>
+        <div class="switch-meta">Stage ${p.stage} · ${p.days > 0 ? p.days + ' ngày còn' : 'Quá hạn ' + Math.abs(p.days) + ' ngày'} · ${p.cost}</div>
+      </div>
+      <div class="switch-progress"><div class="switch-progress-fill" style="width: ${p.progress}%; background: ${p.dotColor}"></div></div>
+    </div>
+  `).join('');
+}
+
+// ============ HUB RENDER ============
+function renderHub() {
+  const grid = document.getElementById('hub-grid');
+  grid.innerHTML = PROJECTS.map(p => {
+    const stageIcons = p.stages.map((s, i) => {
+      const cls = s ? ` ${s}` : '';
+      return `<div class="pc-stage${cls}">${i+1}</div>`;
+    }).join('');
+
+    const cardClass = p.state === 'warn' ? 'warn' : p.state === 'done' ? 'done' : p.state === 'danger' ? 'danger' : '';
+    const tagClass = p.state === 'warn' ? 'tag-warn' : p.state === 'done' ? 'tag-ok' : 'tag-ai';
+    const tagText = p.state === 'warn' ? 'Blocked' : p.state === 'done' ? 'Almost done' : `Stage ${p.stage}`;
+    const daysColor = p.days < 0 ? ' style="color: var(--rose-500)"' : '';
+
+    return `
+      <div class="project-card ${cardClass}" data-proj-id="${p.id}">
+        <div class="pc-head">
+          <div>
+            <div class="pc-name">${p.name}</div>
+            <div class="pc-client">${p.client}</div>
+            <div class="pc-code">${p.code}</div>
+          </div>
+          <span class="tag ${tagClass}">${tagText}</span>
+        </div>
+        <div class="pc-stages">${stageIcons}</div>
+        <div class="pc-meta">
+          <div><div class="lbl">Ngày còn</div><div class="val"${daysColor}>${p.days}</div></div>
+          <div><div class="lbl">AI cost</div><div class="val">${p.cost}</div></div>
+          <div><div class="lbl">Sessions</div><div class="val">${p.sessions}</div></div>
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+
+// ============ INBOX RENDER ============
+function renderInbox() {
+  const list = document.getElementById('inbox-list');
+  const filtered = currentInboxTab === 'all' ? INBOX_ITEMS : INBOX_ITEMS.filter(i => i.cat === currentInboxTab);
+
+  if (filtered.length === 0) {
+    list.innerHTML = `
+      <div class="empty" style="padding: 40px 20px;">
+        <div class="empty-ico">✉</div>
+        <div class="empty-title">Không có mục nào</div>
+        <div class="empty-desc">Tab này hiện không có item. Chọn tab khác xem.</div>
+      </div>
+    `;
+    return;
+  }
+
+  list.innerHTML = filtered.map((item, idx) => `
+    <div class="inbox-item" data-inbox-idx="${idx}" data-inbox-cat="${item.cat}">
+      <div class="inbox-bar ${item.bar}"></div>
+      <div>
+        <div class="inbox-title">${item.title}</div>
+        <div class="inbox-sub">
+          <span class="inbox-proj">◦ ${item.projCode}</span>
+          <span>${item.meta}</span>
+        </div>
+      </div>
+      <button class="btn sm ${item.btnPrimary ? 'primary' : ''}">${item.btn} →</button>
+    </div>
+  `).join('');
+}
+
+function setInboxTab(tab) {
+  currentInboxTab = tab;
+  document.querySelectorAll('#inbox-tabs .tab').forEach(t => {
+    t.classList.toggle('active', t.dataset.inboxTab === tab);
+  });
+  renderInbox();
+}
+
+// ============ SESSION TYPE SELECTOR ============
+function selectSessionType(sessionType) {
+  document.querySelectorAll('.session-type').forEach(s => {
+    if (!s.classList.contains('disabled')) {
+      s.classList.toggle('selected', s.dataset.session === sessionType);
+    }
+  });
+  showToast('info', 'Session type đổi thành ' + sessionType.toUpperCase(), 'AI sẽ load context tương ứng');
+}
+
+// ============ ROLE SWITCHER ============
+function setRole(role) {
+  currentRole = role;
+  document.querySelectorAll('.role-btn').forEach(b => {
+    b.classList.toggle('active', b.dataset.role === role);
+  });
+  showToast('info', 'Chế độ xem: ' + role, 'UI điều chỉnh theo vai trò ' + role);
+}
+
+// ============ ACTIONS ============
+function approveDiff() {
+  showToast('success', 'URD v1.3 đã duyệt', 'Thông báo đã gửi cho Dev/QA · 3 feedback tự động resolved');
+  setTimeout(() => {
+    const cpBanner = document.querySelector('#view-stage-2 .checkpoint');
+    if (cpBanner) {
+      cpBanner.style.background = 'linear-gradient(135deg, rgba(16,185,129,0.08), rgba(45,212,191,0.08))';
+      cpBanner.style.borderColor = 'rgba(16,185,129,0.3)';
+      cpBanner.querySelector('.cp-ico').style.background = 'var(--emerald-500)';
+      cpBanner.querySelector('.cp-ico').textContent = '✓';
+      cpBanner.querySelector('.cp-title').textContent = 'Checkpoint đã hoàn tất — URD v1.3 chính thức';
+      cpBanner.querySelector('.cp-sub').textContent = 'Tất cả bước tự động đã thực thi. Bạn có thể chuyển Stage 3.';
+    }
+  }, 200);
+}
+
+function runAI() {
+  showToast('info', 'AI đang xử lý...', 'Whisper bóc tách audio · Claude đang so sánh URD');
+  setTimeout(() => {
+    showToast('success', 'AI hoàn tất', 'Đã sinh Meeting Note + URD v1.3 diff. Click để xem.');
+    setTimeout(() => goStage(2), 1200);
+  }, 2000);
+}
+
+// ============ TOAST ============
+function showToast(type, title, sub) {
+  const container = document.getElementById('toasts');
+  const toast = document.createElement('div');
+  toast.className = 'toast ' + type;
+  const ico = type === 'success' ? '✓' : type === 'warn' ? '⚠' : '◆';
+  toast.innerHTML = `
+    <div class="toast-ico">${ico}</div>
+    <div class="toast-body">
+      <div class="toast-title">${title}</div>
+      ${sub ? `<div class="toast-sub">${sub}</div>` : ''}
+    </div>
+  `;
+  container.appendChild(toast);
+  setTimeout(() => {
+    toast.style.transition = 'all 0.3s';
+    toast.style.opacity = '0';
+    toast.style.transform = 'translateX(100%)';
+    setTimeout(() => toast.remove(), 300);
+  }, 3000);
+}
+
+// ============ GLOBAL CLICK HANDLER ============
+document.addEventListener('click', (e) => {
+  // Close switcher if clicking overlay
+  if (e.target.id === 'switcher') {
+    closeSwitcher();
+    return;
+  }
+
+  // Find action target
+  const target = e.target.closest('[data-action]');
+  if (target) {
+    const action = target.dataset.action;
+    e.stopPropagation();
+    switch (action) {
+      case 'go-hub': goHub(); break;
+      case 'go-inbox': goInbox(); break;
+      case 'go-analytics': goAnalytics(); break;
+      case 'go-prompts': goPrompts(); break;
+      case 'go-team': goTeam(); break;
+      case 'go-clients': goClients(); break;
+      case 'go-settings': goSettings(); break;
+      case 'go-sessions': goSessions(); break;
+      case 'go-changes': goChanges(); break;
+      case 'go-deliverables': goDeliverables(); break;
+      case 'go-stage': goStage(parseInt(target.dataset.stage)); break;
+      case 'go-project-root': goStage(PROJECTS.find(p=>p.id===currentProject)?.stage || 3); break;
+      case 'open-switcher': openSwitcher(); break;
+      case 'next-stage': nextStage(target.dataset.next); break;
+      case 'approve-diff': approveDiff(); break;
+      case 'run-ai': runAI(); break;
+      case 'toast-profile': showToast('info', 'Profile: RB CEO', 'Reborn JSC · BA/SA/Dev/PM'); break;
+      case 'toast': {
+        const title = target.dataset.title || 'Action';
+        const sub = target.dataset.sub || '';
+        const type = target.dataset.type || 'info';
+        showToast(type, title, sub);
+        break;
+      }
+    }
+    return;
+  }
+
+  // Role switcher
+  const role = e.target.closest('.role-btn');
+  if (role) { setRole(role.dataset.role); return; }
+
+  // Project card in hub
+  const projCard = e.target.closest('[data-proj-id]');
+  if (projCard) {
+    goProject(projCard.dataset.projId);
+    showToast('info', 'Đã mở ' + PROJECTS.find(p => p.id === projCard.dataset.projId).name, 'Workspace của project được load');
+    return;
+  }
+
+  // Switcher item
+  const switchItem = e.target.closest('[data-switch-proj]');
+  if (switchItem) {
+    goProject(switchItem.dataset.switchProj);
+    closeSwitcher();
+    const proj = PROJECTS.find(p => p.id === switchItem.dataset.switchProj);
+    showToast('success', 'Chuyển sang ' + proj.name, 'Workspace đã load');
+    renderSwitcher();
+    return;
+  }
+
+  // Session type
+  const sessType = e.target.closest('.session-type');
+  if (sessType && !sessType.classList.contains('disabled')) {
+    selectSessionType(sessType.dataset.session);
+    return;
+  }
+
+  // Inbox tab
+  const inboxTab = e.target.closest('[data-inbox-tab]');
+  if (inboxTab) {
+    setInboxTab(inboxTab.dataset.inboxTab);
+    return;
+  }
+
+  // Inbox item action button
+  const inboxItem = e.target.closest('[data-inbox-idx]');
+  if (inboxItem) {
+    const idx = parseInt(inboxItem.dataset.inboxIdx);
+    const filtered = currentInboxTab === 'all' ? INBOX_ITEMS : INBOX_ITEMS.filter(i => i.cat === currentInboxTab);
+    const item = filtered[idx];
+    if (item && item.action) {
+      if (item.action.type === 'go-project') {
+        goProject(item.action.proj, item.action.view);
+        showToast('info', 'Đã mở: ' + item.title, 'Workspace ' + item.projCode);
+      }
+    }
+    return;
+  }
+});
+
+// ============ KEYBOARD ============
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape') closeSwitcher();
+  if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
+    e.preventDefault();
+    openSwitcher();
+  }
+});
+
+// ============ INIT ============
+renderHub();
+renderInbox();
+renderSwitcher();
+goStage(3);  // Default start at Stage 3 of Mega Mart (as whiteboard scenario)
+</script>
+
+</body>
+</html>
