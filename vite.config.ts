@@ -27,7 +27,7 @@ export default defineConfig(({ mode }) => {
       "APP_CONNECT_URL",
       "APP_UPLOAD_URL",
       "APP_ATHENA_URL",
-    ];
+      "APP_CUSTOMER_API_URL",];
 
     // Add all required environment variables
     requiredEnvVars.forEach((varName) => {
