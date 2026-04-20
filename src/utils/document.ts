@@ -145,7 +145,8 @@ export const uploadDocumentDirectFormData = (data, onSuccess, onError, onProgres
     let formData = new FormData();
     formData.append("file", data);
     let xhr = new XMLHttpRequest();
-    xhr.open("POST", `https://cloud.reborn.vn/adminapi/customer/import`); //Không test ở local
+    const customerApiBase = process.env.APP_CUSTOMER_API_URL || "https://biz.reborn.vn";
+    xhr.open("POST", `${customerApiBase}/customer/customer/import`); //Không test ở local
     xhr.setRequestHeader("Authorization", getToken());
     xhr.setRequestHeader("Hostname", location.hostname || "");
 
