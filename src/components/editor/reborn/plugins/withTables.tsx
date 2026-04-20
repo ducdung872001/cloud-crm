@@ -153,7 +153,7 @@ const insertTableColumn = (editor, currentId) => {
 
         (children || []).map((tableRow, idx) => {
             //Tập các cell tương ứng
-            const cells = Object.assign([], tableRow.children);
+            let cells = Object.assign([], tableRow.children);
             (cells || []).map((cell, subIdx) => {
                 if (cell?.id == currentId) {
                     columnIndex = subIdx;
@@ -165,8 +165,8 @@ const insertTableColumn = (editor, currentId) => {
             //tableRow => Là 1 dòng (row cụ thể)
 
             //Tập các cell tương ứng
-            const cells = Object.assign([], tableRow.children);
-            const newCells = [];
+            let cells = Object.assign([], tableRow.children);
+            let newCells = [];
             (cells || []).map((cell, subIdx) => {
                 newCells[newCells.length] = cell;
                 if (columnIndex == subIdx) {
@@ -178,7 +178,7 @@ const insertTableColumn = (editor, currentId) => {
                 }
             });
 
-            const ntrow = {
+            let ntrow = {
                 type: tableRow.type,
                 children: newCells,
             };
@@ -205,15 +205,15 @@ const insertTableColumn = (editor, currentId) => {
  * @param currentId (ID của cell cần thêm cột)
  */
 const insertTableRow = (editor, currentId) => {
-    const point = new Date().getTime();
+    let point = new Date().getTime();
 
     //Tìm table => lấy ra children => chỉnh sửa children => update lại node
     for (const [node, path] of Editor.nodes(editor, { at: Range, match: (n: Record<string, unknown>) => n.type === "table" })) {
         //1. Trả về mảng table-row
-        const children = Object.assign([], node.children);
+        let children = Object.assign([], node.children);
 
         //Hình thành dòng mới
-        const newRow = {
+        let newRow = {
             type: "table-row",
             children: [],
             id: `row_${uuidv4()}`
@@ -227,7 +227,7 @@ const insertTableRow = (editor, currentId) => {
         });
 
         //Thêm dòng
-        const rows = [];
+        let rows = [];
         (children || []).map(row => {
             rows[rows.length] = row;
 
@@ -275,7 +275,7 @@ const removeTableColumn = (editor, currentId) => {
         //Tìm cột cần xóa
         (children || []).map((tableRow, idx) => {
             //Tập các cell tương ứng
-            const cells = Object.assign([], tableRow.children);
+            let cells = Object.assign([], tableRow.children);
             (cells || []).map((cell, subIdx) => {
                 if (cell?.id == currentId) {
                     columnIndex = subIdx; //==> Thấy cột cần xóa
@@ -287,8 +287,8 @@ const removeTableColumn = (editor, currentId) => {
             //tableRow => Là 1 dòng (row cụ thể)
 
             //Tập các cell tương ứng
-            const cells = Object.assign([], tableRow.children);
-            const newCells = [];
+            let cells = Object.assign([], tableRow.children);
+            let newCells = [];
             (cells || []).map((cell, subIdx) => {
                 //Chỉ giữ lại cột có chỉ số khác columnIndex
                 if (columnIndex != subIdx) {
@@ -296,7 +296,7 @@ const removeTableColumn = (editor, currentId) => {
                 }
             });
 
-            const ntrow = {
+            let ntrow = {
                 type: tableRow.type,
                 children: newCells,
             };
@@ -323,7 +323,7 @@ const removeTableColumn = (editor, currentId) => {
  * @param currentId Đây là cellId
  */
 const removeTableRow = (editor, currentId) => {
-    const point = new Date().getTime();
+    let point = new Date().getTime();
 
     //Tìm table => lấy ra children => chỉnh sửa children => update lại node
     for (const [node, path] of Editor.nodes(editor, { at: Range, match: (n: Record<string, unknown>) => n.type === "table" })) {

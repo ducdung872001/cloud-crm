@@ -29,7 +29,7 @@ declare global {
 import "@bpmn-io/form-js/dist/assets/form-js.css";
 import "@bpmn-io/form-js/dist/assets/form-js-editor.css";
 import "@bpmn-io/form-js/dist/assets/form-js-playground.css";
-import _, { set } from "lodash";
+import isEqual from "lodash/isEqual";
 import { SelectOptionEform } from "utils/apiSelectCommon";
 import { CallApiCommon } from "utils/callApiCommon";
 // import { SelectOptionEform } from "utils/apiSelectCommon";
@@ -104,7 +104,7 @@ const FormViewerComponent = (props: Record<string, unknown>) => {
   const walkInitData = (components, potId, processId, filterItems, dataInit) => {
     if (components && components.length > 0) {
       components.forEach((comp) => {
-        const apiUrl = comp?.properties?.apiUrl || "";
+        let apiUrl = comp?.properties?.apiUrl || "";
         if (comp.type === "group") {
           if (!comp.label?.includes("▼") && !comp.label?.includes("▲")) {
             comp.properties = {
@@ -118,9 +118,9 @@ const FormViewerComponent = (props: Record<string, unknown>) => {
           // Lấy valuesKey từ component,
           // Lấy ra các tham số được gán khởi tạo
           // Thực hiện lưu lại mappers đối với những trường hợp không chuẩn, để biến đổi dữ liệu
-          const key = comp?.properties?.keyApi || comp.valuesKey || comp.key;
-          const paramsUrl = comp?.properties?.paramsUrl || "";
-          const apiParams = comp?.properties?.apiParams || "";
+          let key = comp?.properties?.keyApi || comp.valuesKey || comp.key;
+          let paramsUrl = comp?.properties?.paramsUrl || "";
+          let apiParams = comp?.properties?.apiParams || "";
 
           let paramsTotal = {};
           if(dataInit){            
@@ -141,7 +141,7 @@ const FormViewerComponent = (props: Record<string, unknown>) => {
 
         //Lịch sử phê duyệt
         if (comp.type === "table") {
-          const params = comp.properties || "";
+          let params = comp.properties || "";
           if (params && params?.type == "approval" && params?.controlType == "list") {
             const processIdData = params?.processId || processId;
             filterItems.push({ key: comp.id, params: { groupCode: params?.groupCode, potId, processIdData }, type: "log" });
@@ -277,15 +277,15 @@ const FormViewerComponent = (props: Record<string, unknown>) => {
       ],
     });
 
-    const prevValues = {};
+    let prevValues = {};
     formViewerRef.current.on("changed", async (event) => {
-      const { schema, data } = event;
+      let { schema, data } = event;
 
-      const components = schema.components;
+      let components = schema.components;
       const newValues = data;
       
       for (const key in newValues){
-        if (!_.isEqual(newValues[key], prevValues[key])){
+        if (!isEqual(newValues[key], prevValues[key])){
           const keyFind = components.find((el) => el.path === key || el.key === key || (el.type !== 'text' && el.id));
           //check nếu trường nào được binding thì sẽ không chạy vào chỗ select binding
           if (keyFind?.properties?.bindingTarget) {
@@ -314,8 +314,8 @@ const FormViewerComponent = (props: Record<string, unknown>) => {
     const updateExpressionField = (components, schema, data, pathGroup?) => {
       components.forEach(async (component) => {
         if (component.type === "expression") {
-          const dataExpression = data[component.key]; //Lấy ra key
-          const target = component?.properties?.bindingTarget;
+          let dataExpression = data[component.key]; //Lấy ra key
+          let target = component?.properties?.bindingTarget;
           if (target) {
             if (dataExpression && dataExpression != data[target]) {
               data[target] = dataExpression;
@@ -325,12 +325,12 @@ const FormViewerComponent = (props: Record<string, unknown>) => {
         }
 
         if (component.type == "group") {  
-          const subComponents = component.components;
+          let subComponents = component.components;
           // updateExpressionField(subComponents, schema, data, component?.path);
           component.components.forEach((componentChild, index) => {
             if (componentChild.type == "select") {
-              const target = componentChild?.properties?.bindingTarget;
-              const dataSelect = data[component.path][componentChild.key]; //Lấy ra key
+              let target = componentChild?.properties?.bindingTarget;
+              let dataSelect = data[component.path][componentChild.key]; //Lấy ra key
               
               if (target) {
                 if (componentChild.type == "select") {
@@ -353,10 +353,10 @@ const FormViewerComponent = (props: Record<string, unknown>) => {
         }
 
         if (component.type == "select") {          
-          const dataSelect = data[component.key]; //Lấy ra key              
-          const target = component?.properties?.bindingTarget;
-          const loadApi = component?.properties?.loadApi;
-          const loadApi_params = component?.properties?.loadApi_params;
+          let dataSelect = data[component.key]; //Lấy ra key              
+          let target = component?.properties?.bindingTarget;
+          let loadApi = component?.properties?.loadApi;
+          let loadApi_params = component?.properties?.loadApi_params;
 
           if (target) {
             const listTarget = target.split(",").map((item) => item.trim()) || [];
@@ -384,7 +384,7 @@ const FormViewerComponent = (props: Record<string, unknown>) => {
             const params = {
               [loadApi_params]: dataSelect
             }            
-            const dataOption = await SelectOptionData(loadApi, params);
+            let dataOption = await SelectOptionData(loadApi, params);
             walkGetOptionChangeSelect(schema.components, dataOption, loadApi);
           }
         }
@@ -393,8 +393,8 @@ const FormViewerComponent = (props: Record<string, unknown>) => {
           component.components.forEach((componentChild, index) => {
             if (componentChild.type == "select" || componentChild.type === "expression") {
               data[component.path].map((el) => {
-                const dataSelect = el[componentChild.key]; //Lấy ra key
-                const target = componentChild?.properties?.bindingTarget;
+                let dataSelect = el[componentChild.key]; //Lấy ra key
+                let target = componentChild?.properties?.bindingTarget;
 
                 if (target) {
                   if (componentChild.type == "select") {
@@ -414,7 +414,7 @@ const FormViewerComponent = (props: Record<string, unknown>) => {
                   }
 
                   if (componentChild.type === "expression") {
-                    const dataExpression = el[componentChild.key]; //Lấy ra key
+                    let dataExpression = el[componentChild.key]; //Lấy ra key
 
                     if (dataExpression) {
                       el[target] = dataExpression;
@@ -452,17 +452,17 @@ const FormViewerComponent = (props: Record<string, unknown>) => {
 
       //1. Loại là select
       if (formField.type == "select") {
-        const trigger = formField?.properties?.trigger || "";
+        let trigger = formField?.properties?.trigger || "";
         // console.log("Trigger Type blur =>", trigger);
 
         //Tồn tại trường binding
-        const attrs = formField?.properties;
+        let attrs = formField?.properties;
         if (trigger && trigger == "blur") {
           //Lấy ra properties
-          const attrs = formField?.properties;
+          let attrs = formField?.properties;
           if (attrs?.apiUrl) {
             //Gọi về để xử lý
-            const params = { ...attrs, nodeId, potId, processId };
+            let params = { ...attrs, nodeId, potId, processId };
 
             //Tiền xử lý apiParams (Nếu là curr. thì lấy dữ liệu được binding từ form)
             let apiParams = params.apiParams;
@@ -520,12 +520,12 @@ const FormViewerComponent = (props: Record<string, unknown>) => {
       //1. Loại là select
       if (formField.type == "select") {
         //valuesKey là Input values key đối với loại select là Input Data
-        const key = formField?.properties?.keyApi || formField?.valuesKey || formField?.key;
-        const fields = formField?.properties?.binding || ""; //Trả về departmentId
-        const apiUrl = formField?.properties?.apiUrl || "";
-        const paramsUrl = formField?.properties?.paramsUrl || "";
-        const apiParams = formField?.properties?.apiParams || "";
-        const keyGroup = formField?.properties?.keyGroup || "";
+        let key = formField?.properties?.keyApi || formField?.valuesKey || formField?.key;
+        let fields = formField?.properties?.binding || ""; //Trả về departmentId
+        let apiUrl = formField?.properties?.apiUrl || "";
+        let paramsUrl = formField?.properties?.paramsUrl || "";
+        let apiParams = formField?.properties?.apiParams || "";
+        let keyGroup = formField?.properties?.keyGroup || "";
         let paramsTotal = {};
         if (apiParams) {
           paramsTotal = getParamsPropertiesEform(apiParams, formData, keyGroup);
@@ -535,12 +535,12 @@ const FormViewerComponent = (props: Record<string, unknown>) => {
 
         //Tồn tại trường binding
         if (fields) {
-          const arrField = fields.split(",");
+          let arrField = fields.split(",");
           let params = {};
 
           for (let index = 0; index < arrField.length; index++) {
-            const field = arrField[index].trim();
-            const value = formData[field] ?? 0;
+            let field = arrField[index].trim();
+            let value = formData[field] ?? 0;
             params = {
               ...params,
               [field]: value,
@@ -563,10 +563,10 @@ const FormViewerComponent = (props: Record<string, unknown>) => {
       //2. Loại là button
       if (formField.type == "button") {
         //Lấy ra properties
-        const attrs = formField?.properties;
+        let attrs = formField?.properties;
         if (attrs?.apiUrl) {
           //Gọi về để xử lý
-          const params = { ...attrs, nodeId, potId, processId };
+          let params = { ...attrs, nodeId, potId, processId };
 
           //Tiền xử lý apiParams (Nếu là curr. thì lấy dữ liệu được binding từ form)
           let apiParams = params.apiParams;
@@ -618,7 +618,7 @@ const FormViewerComponent = (props: Record<string, unknown>) => {
 
       //Trường hợp reset co callback => Thực hiện callback
       if (formField?.action == "reset") {
-        const attrs = formField?.properties;
+        let attrs = formField?.properties;
         if (attrs?.callback) {
           document.location = attrs.callback;
         }
@@ -654,7 +654,7 @@ const FormViewerComponent = (props: Record<string, unknown>) => {
 
         //group: L1
         if (component.type == "group") {
-          const subComponents = component.components;
+          let subComponents = component.components;
           bindingTableField(attrs, subComponents, resp);
         }
       });
@@ -681,7 +681,7 @@ const FormViewerComponent = (props: Record<string, unknown>) => {
 
         //group: L3
         if (component.type == "group") {
-          const subComponents = component.components;
+          let subComponents = component.components;
           bindingTableField(attrs, subComponents, resp);
         }
       });
@@ -736,7 +736,7 @@ const FormViewerComponent = (props: Record<string, unknown>) => {
       components.forEach((component) => {
         if (component?.key && resp.hasOwnProperty(component.key)) {
           formData[component.key] = resp[component.key];
-          const props = component?.properties;
+          let props = component?.properties;
 
           if (props?.formatter) {
             //Nếu có bộ format => chuyển đổi
@@ -752,7 +752,7 @@ const FormViewerComponent = (props: Record<string, unknown>) => {
         }
 
         if (component.type == "group") {
-          const subComponents = component.components;
+          let subComponents = component.components;
           bindingLoopToFields(resp, formData, subComponents);
         }
       });
@@ -837,7 +837,7 @@ const FormViewerComponent = (props: Record<string, unknown>) => {
      * @param formData
      */
     const rerenderForm = (updatedFormSchema, formData) => {
-      const updatedSchema = updatedFormSchema ? updatedFormSchema : currFormSchema;
+      let updatedSchema = updatedFormSchema ? updatedFormSchema : currFormSchema;
       formViewerRef?.current
         .importSchema(updatedSchema, formData)
         .then(() => {
@@ -884,7 +884,7 @@ const FormViewerComponent = (props: Record<string, unknown>) => {
     // Lặp qua các components trong đầu vào
     updatedFormSchema.components.forEach((component) => {
       if (component.type === "button" && component?.properties) {
-        const attrs = component.properties;
+        let attrs = component.properties;
         if (attrs.type) {
           component.action = attrs.type;
         }
@@ -906,7 +906,7 @@ const FormViewerComponent = (props: Record<string, unknown>) => {
   const updateComponents = (components) => {
     components.forEach((component) => {
       if (component.type === "button" && component?.properties) {
-        const attrs = component.properties;
+        let attrs = component.properties;
         if (attrs.type) {
           component.action = attrs.type;
         }
@@ -925,12 +925,12 @@ const FormViewerComponent = (props: Record<string, unknown>) => {
     const nodeId = contextData?.nodeId;
     const potId = contextData?.potId;
     const processId = contextData?.processId;
-    const filterItems = [];
+    let filterItems = [];
     walkInitData(updatedFormSchema.components, potId, processId, filterItems, dataInit);
 
     //Lặp tiến hành binding
     for (let index = 0; index < filterItems.length; index++) {
-      const filterItem = filterItems[index];
+      let filterItem = filterItems[index];
       if (filterItem.type == "select") {
         //Đã là 1 dạng list gồm {label, value}
         let dataOption;

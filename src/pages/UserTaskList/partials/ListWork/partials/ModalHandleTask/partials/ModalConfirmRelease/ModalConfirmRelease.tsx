@@ -10,7 +10,7 @@ import { isDifferenceObj, trimContent } from "reborn-util";
 import "./ModalConfirmRelease.scss";
 import SelectCustom from "components/selectCustom/selectCustom";
 import SupplierService from "services/SupplierService";
-import _, { at, get, set } from "lodash";
+// lodash: no methods actually used
 import { use } from "i18next";
 import SupplierAccountService from "services/SupplierAccountService";
 import Icon from "components/icon";

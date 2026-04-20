@@ -1,11 +1,11 @@
 import React, { useState, useContext, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { IOverview } from "model/dashboard/DashboardModel";
-import moment from "moment";
+import { format, subDays } from "date-fns";
+import { vi } from "date-fns/locale";
 import Icon from "components/icon";
 import ReportService from "services/ReportService";
 import { UserContext, ContextType } from "contexts/userContext";
-moment.locale("vi");
 import "./DashboardCustomer.scss";
 
 interface OverViewProps {
@@ -42,9 +42,9 @@ export default function DashboardCustomer(props: OverViewProps) {
   });
 
   useEffect(() => {
-    const currentDate = moment().format("DD/MM/yyyy");
+    const currentDate = format(new Date(), "dd/MM/yyyy");
 
-    const fourteenDaysAgo = moment().subtract(14, "days").format("DD/MM/yyyy");
+    const fourteenDaysAgo = format(subDays(new Date(), 14), "dd/MM/yyyy");
 
     setParams({ fromTime: fourteenDaysAgo, toTime: currentDate });
   }, []);
@@ -98,7 +98,7 @@ export default function DashboardCustomer(props: OverViewProps) {
               <div className="overview-item__icon">{o.icon}</div>
               <div className="overview-item__info">
                 <h3>{t(`pageDashboard.${o.label}`)}</h3>
-                <time>{moment().format("dddd - DD/MM/yyyy")}</time>
+                <time>{format(new Date(), "EEEE - dd/MM/yyyy", { locale: vi })}</time>
               </div>
             </div>
             <div className="overview-item__note">

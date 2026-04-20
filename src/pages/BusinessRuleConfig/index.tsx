@@ -279,7 +279,7 @@ export default function BusinessRuleConfig(props: Record<string, unknown>) {
 
   const dataFormat = ["text-center", "", "", ""];
 
-  const listOperator = {
+  let listOperator = {
     EQUAL: "=",
     NOT_EQUAL: "!=",
     GREATER_THAN: ">",

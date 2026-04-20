@@ -1,434 +1,287 @@
-# Part 13 — Architecture Decision Records (ADR)
+# Part 13 — Architectural Decision Records (ADRs)
 
-> **Executive Summary**: Part này thu thập các quyết định kiến trúc quan trọng đã (hoặc sẽ) áp dụng cho Reborn Retail CRM. Mỗi ADR gồm **Context / Decision / Consequences / Alternatives**. 15 ADR bao phủ lựa chọn framework FE (React + Vite), state management (Context API), routing (react-router v7), multi-tenant (Hostname header), editor (Slate), grid (ag-grid), HTTP client (fetch + interceptor), i18n (react-i18next), và convention code (service pattern, mock pattern, shared util package).
+## Executive Summary
 
-## Convention
+Part này ghi lại **18 quyết định kiến trúc** quan trọng đã/đang áp dụng trong Reborn CRM. Mỗi ADR theo template Michael Nygard: **Trạng thái, Bối cảnh, Quyết định, Hậu quả**. Một số ADR phản ánh quyết định **đã có** trong code (vd dùng React, dùng Vite, dùng Context thay Redux); một số là **đề xuất** dựa trên phân tích — đánh dấu rõ.
+
+---
+
+## Format ADR
 
 ```
-ADR-NN — Tên quyết định
-Status: Accepted / Superseded / Proposed
-Date: YYYY-MM-DD
-Deciders: <role>
+## ADR-NN — Tiêu đề
+
+| Trường | Nội dung |
+|--------|----------|
+| **Trạng thái** | Proposed / Accepted / Deprecated / Superseded by ADR-XX |
+| **Ngày** | YYYY-MM-DD |
+| **Tác giả** | Tên |
+| **Bối cảnh** | Tại sao cần quyết định? Vấn đề gì? |
+| **Quyết định** | Chọn cái gì? |
+| **Lựa chọn khác** | Đã cân nhắc gì khác? Tại sao không chọn? |
+| **Hậu quả** | Gì tốt lên? Gì tệ đi? Cần chuẩn bị gì? |
 ```
 
-- **Context**: vấn đề và ràng buộc.
-- **Decision**: lựa chọn đã chốt.
-- **Consequences**: hệ quả tốt + xấu.
-- **Alternatives considered**: phương án khác + lý do loại.
+---
+
+## ADR-01 — Dùng React 17 + TypeScript làm framework frontend
+
+| Trường | Nội dung |
+|--------|----------|
+| **Trạng thái** | ✅ Accepted (đã triển khai) |
+| **Ngày** | 2021-2022 (estimated) |
+| **Bối cảnh** | Cần SPA framework cho enterprise CRM với hàng trăm trang, tích hợp nhiều thư viện UI, ecosystem mature, TypeScript hỗ trợ tốt. |
+| **Quyết định** | Dùng **React 17** + **TypeScript 4.5**. |
+| **Lựa chọn khác** | Vue 3 (ecosystem nhỏ hơn cho enterprise), Angular 13 (quá cồng kềnh), Svelte (chưa mature đủ thời điểm 2021). |
+| **Hậu quả** | ✅ Ecosystem cực lớn, dễ tuyển dev<br>✅ TypeScript tích hợp tốt<br>⚠️ React 17 đã cũ (hiện tại đã có React 19), thiếu concurrent features<br>📋 **Action**: lên kế hoạch upgrade React 18+ |
 
 ---
 
-## ADR-01 — Dùng React + TypeScript + Vite (không Next.js/Nuxt)
+## ADR-02 — Migrate từ Webpack sang Vite
 
-**Status**: Accepted
-**Date**: 2023 (retro)
+| Trường | Nội dung |
+|--------|----------|
+| **Trạng thái** | ✅ Accepted (vừa hoàn thành 2026-04) |
+| **Ngày** | 2026-04 |
+| **Tác giả** | Đội Reborn |
+| **Bối cảnh** | Webpack dev server cold start mất hơn 30s. HMR chậm. Build production nặng. Vite dùng ESM native + esbuild → faster. |
+| **Quyết định** | Migrate toàn bộ build sang **Vite 8** + Rollup. |
+| **Lựa chọn khác** | Tiếp tục Webpack 5 (status quo), Turbopack (chưa ổn định), esbuild thuần (thiếu plugin). |
+| **Hậu quả** | ✅ Dev cold start < 3s<br>✅ HMR < 200ms<br>✅ Build production nhanh hơn ~3x<br>⚠️ Một số plugin Webpack không có equivalent → phải tìm thay thế (vd swiper module imports phải sửa)<br>⚠️ Bundle output cấu trúc khác → cần update nginx config |
 
-### Context
-
-CRM admin có hàng trăm trang nghiệp vụ, yêu cầu tương tác cao, hot reload nhanh trong dev. Không cần SEO vì là admin nội bộ. Team quen với React.
-
-### Decision
-
-Dùng **React 18** + **TypeScript 4.5** + **Vite 7** build ra SPA static.
-
-### Consequences
-
-**Tốt**:
-- Build time nhanh (~5-10s dev, ~2 phút prod so với Webpack 5 phút).
-- HMR tức thì.
-- Ecosystem React khổng lồ.
-- TypeScript cho type safety trong codebase lớn.
-
-**Xấu**:
-- Không có SSR → FCP chậm hơn Next.js cho trang đầu.
-- SEO yếu — không quan trọng cho CRM.
-- Vite plugin ecosystem chưa phong phú bằng Webpack.
-
-### Alternatives considered
-
-- **Next.js**: SSR không cần, overhead không đáng. Loại.
-- **Angular**: team không quen, learning curve cao.
-- **Vue + Nuxt**: không có lý do mạnh để chuyển.
+> **Migration log**: Quá trình migration đã được thực hiện trong session này (2026-04-14), bao gồm sửa Vite config nhiều lần để khớp với layout webpack cũ, fix lỗi Swiper v11 import, xử lý nginx fallback `try_files`.
 
 ---
 
-## ADR-02 — SPA over SSR cho CRM admin
+## ADR-03 — Dùng react-router-dom v6 (single Route table)
 
-**Status**: Accepted
-
-### Context
-
-CRM chạy sau đăng nhập, không ai share URL cho bot crawler. FCP không critical như marketing site.
-
-### Decision
-
-**SPA thuần**, build ra `dist/` static, serve qua CDN + S3.
-
-### Consequences
-
-**Tốt**: đơn giản deploy, rẻ, scale không giới hạn (CDN).
-**Xấu**: trang đầu tiên tải chậm hơn (~3-5s) nếu bundle lớn.
-
-### Alternatives
-
-- **SSR (Next.js)**: thêm layer Node server, tăng chi phí vận hành.
-- **SSG**: không phù hợp vì dữ liệu per-tenant động.
+| Trường | Nội dung |
+|--------|----------|
+| **Trạng thái** | ✅ Accepted |
+| **Bối cảnh** | App có 167 page module cần URL routing client-side. |
+| **Quyết định** | Dùng **react-router-dom v6** với 1 file [`configs/routes.tsx`](../../src/configs/routes.tsx) chứa cả menu config + route table flat. |
+| **Lựa chọn khác** | Next.js (file-based routing, SSR — nhưng đây không phải Next, Reborn dùng SPA pure), TanStack Router (mới, chưa mature). |
+| **Hậu quả** | ✅ Centralized routing dễ maintain<br>✅ Permission filter trên menu dễ implement<br>⚠️ File 1179 dòng đang phình to → cân nhắc tách theo bounded context<br>⚠️ Không có file-based routing — phải nhớ thêm route khi tạo page mới |
 
 ---
 
-## ADR-03 — Context API thay vì Redux/Zustand
+## ADR-04 — Không dùng Redux mà dùng Context API
 
-**Status**: Accepted
-
-### Context
-
-State toàn cục không quá phức tạp: user info, permissions, UI state (modal, toast), POS cart. Không cần time-travel debug.
-
-### Decision
-
-Dùng **React Context API** với 5 provider (`UserContext`, `UIContext`, `NotificationContext`, `PosContext`, `PermissionContext`).
-
-### Consequences
-
-**Tốt**:
-- Không thêm dependency.
-- API chuẩn React, dev mới onboard dễ.
-- Đủ cho use case.
-
-**Xấu**:
-- Re-render lan khi value thay đổi → cần memo hợp lý.
-- Không có middleware / time-travel.
-- Dev tool yếu.
-
-### Alternatives
-
-- **Redux Toolkit**: boilerplate nhiều, overkill.
-- **Zustand**: nhỏ gọn, có thể cân nhắc migrate nếu Context thành bottleneck.
-- **Jotai / Recoil**: atom-based, khác paradigm.
+| Trường | Nội dung |
+|--------|----------|
+| **Trạng thái** | ✅ Accepted |
+| **Bối cảnh** | Cần global state cho user, auth, UI flags, call session. |
+| **Quyết định** | Dùng **React Context API** với 5 contexts (`auth`, `user`, `ui`, `call`, `index`) + custom hooks cho data fetching. |
+| **Lựa chọn khác** | Redux (boilerplate nhiều, learning curve), MobX (magic), Zustand (nhỏ nhưng mới với team), Recoil (Facebook bỏ rơi). |
+| **Hậu quả** | ✅ Đơn giản, dev mới dễ hiểu<br>✅ Không cần action/reducer/selector boilerplate<br>⚠️ Re-render mọi consumer khi context value đổi → hiệu năng kém với data thay đổi nhiều<br>⚠️ Không có dev tool tốt như Redux DevTools<br>📋 **Mitigation**: Tách `callContext` riêng vì call state thay đổi liên tục, không trộn vào userContext |
 
 ---
 
-## ADR-04 — Multi-tenant via `Hostname` header (soft isolation)
+## ADR-05 — Multi-tenant qua row-level isolation (`tenantId` column)
 
-**Status**: Accepted (có rủi ro — xem [Part 10 §3](part-10-security.md))
-
-### Context
-
-1.000+ tenant cần cô lập dữ liệu. Subdomain per tenant (`<tenant>.reborn.vn`) đã có sẵn. SSO cookie set ở domain gốc.
-
-### Decision
-
-FE inject `Hostname: <tenant>.reborn.vn` header mọi request. BE resolve `tenantId` từ header, thêm filter row-level.
-
-### Consequences
-
-**Tốt**:
-- Một codebase, một deployment — scale rẻ.
-- Thêm tenant không cần deploy mới.
-- Dev local dễ.
-
-**Xấu**:
-- **Rủi ro security**: nếu gateway không verify, user có thể spoof header.
-- Shared infra failure ảnh hưởng tất cả tenant.
-- Query không có tenant filter → data leak.
-
-### Alternatives
-
-- **Subdomain + schema-per-tenant**: isolation mạnh, nhưng migration và scale khó.
-- **Database-per-tenant**: mạnh nhất, nhưng chi phí cao + phức tạp.
-- **JWT claim** thay header: an toàn hơn nhưng đổi token khi switch tenant phức tạp.
+| Trường | Nội dung |
+|--------|----------|
+| **Trạng thái** | ✅ Accepted (suy luận) |
+| **Bối cảnh** | Reborn có hàng nghìn tenant. Cần cô lập dữ liệu nhưng không thể có nghìn DB. |
+| **Quyết định** | Mọi entity có cột `tenant_id` + `branch_id`. Mọi query filter qua. Header `Hostname` xác định tenant ở mức request. |
+| **Lựa chọn khác** | Database per tenant (đắt, ops phức tạp), Schema per tenant (giới hạn ~1000 schema), Hybrid. |
+| **Hậu quả** | ✅ Scale tốt, dùng chung tài nguyên<br>✅ Đơn giản query<br>⚠️ Lỗi query thiếu `WHERE tenant_id` → leak data tenant<br>📋 **Mitigation**: Đề xuất dùng **PostgreSQL Row Level Security** để DB tự enforce |
 
 ---
 
-## ADR-05 — URL prefix routing làm API gateway pattern
+## ADR-06 — Client-side API Gateway (URL prefix routing)
 
-**Status**: Accepted
-
-### Context
-
-Nhiều microservices cần expose qua 1 entry point. Không muốn hardcode full URL trong FE.
-
-### Decision
-
-FE viết URL tương đối với prefix (`/bizapi/sales/invoice/create`). Interceptor rewrite thành full URL dựa env var. BE gateway route theo prefix.
-
-### Consequences
-
-**Tốt**: FE không cần biết BE topology. Đổi BE URL chỉ cần đổi env.
-**Xấu**: prefix khó đổi vì lan khắp service code. Phải đặt đúng từ đầu.
-
-### Alternatives
-
-- **GraphQL gateway**: mạnh hơn nhưng overhead lớn.
-- **BFF per client**: tốt nhưng nhiều service hơn.
+| Trường | Nội dung |
+|--------|----------|
+| **Trạng thái** | ⚠️ Accepted hiện tại, đề xuất review |
+| **Bối cảnh** | Backend là microservices (sales, finance, inventory...). Frontend cần biết gọi service nào. |
+| **Quyết định** | Frontend tự routing qua URL prefix (`/bizapi/sales`, `/bizapi/finance`...) trong [`fetchConfig.ts`](../../src/configs/fetchConfig.ts). Mỗi prefix map sang env var khác nhau. |
+| **Lựa chọn khác** | Server-side API Gateway (Kong, Nginx, Traefik, Apigee). |
+| **Hậu quả** | ✅ Đơn giản, không cần thêm hop<br>⚠️ Frontend phải biết tất cả service URLs<br>⚠️ CORS phải config nhiều subdomain<br>⚠️ Khó áp common policy (rate limit, logging) ở 1 chỗ<br>📋 **Đề xuất**: Migrate sang server-side gateway khi scale > 20 services |
 
 ---
 
-## ADR-06 — SSO tập trung (không per-app auth)
+## ADR-07 — Service layer pattern với apiHelper wrapper
 
-**Status**: Accepted
-
-### Context
-
-User của Reborn dùng nhiều ứng dụng (CRM, POS, BPM, dashboard...). Yêu cầu **1 lần đăng nhập dùng mọi nơi**.
-
-### Decision
-
-Triển khai SSO tại `reborn.vn`. Mọi sub-app redirect về đây để login, nhận cookie tại `.reborn.vn`.
-
-### Consequences
-
-**Tốt**: UX tốt, bảo mật tập trung, policy một nơi.
-**Xấu**: SSO xuống → mọi app xuống (SPOF). Cần HA.
-
-### Alternatives
-
-- **Per-app login**: UX tệ.
-- **OAuth2 Authorization Server (Keycloak)**: chuẩn hơn, phức tạp hơn. Có thể migrate sau.
+| Trường | Nội dung |
+|--------|----------|
+| **Trạng thái** | ✅ Accepted |
+| **Bối cảnh** | 240 service file gọi API. Cần tránh duplicate code fetch + JSON parse. |
+| **Quyết định** | Mọi service dùng `apiGet`/`apiPost`/`apiPut`/`apiDelete` từ `services/apiHelper.ts`. Không gọi `fetch()` trực tiếp. |
+| **Hậu quả** | ✅ DRY, dễ maintain<br>✅ Có 1 chỗ duy nhất để add interceptor, retry, cache<br>⚠️ Một số service legacy còn dùng `fetch()` trực tiếp → cần audit và migrate |
 
 ---
 
-## ADR-07 — react-router-dom v6/v7 (không custom router)
+## ADR-08 — ag-grid cho bảng lớn
 
-**Status**: Accepted
-
-### Context
-
-Cần routing client-side với nested route, lazy load, guard.
-
-### Decision
-
-Dùng **react-router-dom 7.13**.
-
-### Consequences
-
-**Tốt**: chuẩn de-facto, doc phong phú, loader/action API mới mạnh.
-**Xấu**: Breaking change giữa v5 → v6 → v7 từng gây đau.
-
-### Alternatives
-
-- **TanStack Router**: type-safe tốt, nhưng mới và cộng đồng nhỏ.
-- **Wouter**: nhẹ nhưng thiếu tính năng.
+| Trường | Nội dung |
+|--------|----------|
+| **Trạng thái** | ✅ Accepted |
+| **Bối cảnh** | Một số trang (Customer list, Invoice list) có hàng nghìn dòng. HTML table render chậm. |
+| **Quyết định** | Dùng **ag-grid-community 30** (free version) với React wrapper. Virtual scrolling, không re-render mọi cell. |
+| **Lựa chọn khác** | TanStack Table (headless, phải tự style), MUI DataGrid (đẹp nhưng cần MUI ecosystem), react-table (cũ). |
+| **Hậu quả** | ✅ Render mượt với 10k+ dòng<br>✅ Built-in sort, filter, pagination<br>⚠️ Bundle size lớn (~500KB)<br>⚠️ Style customization khó<br>⚠️ Một số feature bị paywall (Enterprise version) |
 
 ---
 
-## ADR-08 — Lazy load route cho performance
+## ADR-09 — Không có refresh token logic ở frontend (gap)
 
-**Status**: Accepted
-
-### Context
-
-100+ route, mỗi route có thể dùng thư viện nặng (ag-grid, slate, bpmn-js). Load hết trong bundle chính → 10MB+ bundle.
-
-### Decision
-
-Mỗi route dùng `React.lazy(() => import("..."))` + `Suspense` fallback.
-
-### Consequences
-
-**Tốt**: bundle chính ~500KB, user chỉ tải trang họ vào.
-**Xấu**: chuyển trang lần đầu có delay (~200-500ms tải chunk).
-
-### Alternatives
-
-- **Manual chunk config**: phức tạp hơn, ít linh hoạt.
+| Trường | Nội dung |
+|--------|----------|
+| **Trạng thái** | ⚠️ Accepted nhưng có technical debt |
+| **Bối cảnh** | Khi access token hết hạn, frontend nhận 401 → interceptor xóa cookie → user bị đẩy về login. UX kém vì user đang gõ form bị mất hết. |
+| **Quyết định** (hiện tại) | Khi 401: clear cookie, để user redirect login ở next render. |
+| **Đề xuất tương lai** | Implement refresh token rotation: catch 401 → call `/oauth/refresh` → retry original request → user không bị logout. |
+| **Hậu quả hiện tại** | ❌ UX kém với session dài<br>📋 **Action**: implement trong sprint tới |
 
 ---
 
-## ADR-09 — react-i18next cho i18n
+## ADR-10 — Soft delete cho hầu hết entity
 
-**Status**: Accepted
-
-### Context
-
-Cần hỗ trợ VI/EN (và mở rộng sau).
-
-### Decision
-
-Dùng **react-i18next 14** + namespace theo module.
-
-### Consequences
-
-**Tốt**: chuẩn React, plugin phong phú, hỗ trợ interpolation, plural, date.
-**Xấu**: overhead load namespace; dev quên import namespace sẽ thấy key thô.
-
-### Alternatives
-
-- **FormatJS (react-intl)**: ICU format mạnh nhưng nặng hơn.
-- **Lingui**: AOT compile tốt, nhưng ecosystem nhỏ.
+| Trường | Nội dung |
+|--------|----------|
+| **Trạng thái** | ✅ Accepted |
+| **Bối cảnh** | Cần audit trail. Khách hàng / đơn hàng / hóa đơn không được mất. Pháp luật yêu cầu giữ. |
+| **Quyết định** | Mọi entity nghiệp vụ có cột `deleted_at TIMESTAMPTZ NULL`. Query mặc định filter `deleted_at IS NULL`. |
+| **Lựa chọn khác** | Hard delete + audit log table. |
+| **Hậu quả** | ✅ Recover dễ (chỉ set lại `deleted_at = NULL`)<br>✅ Audit trail tự nhiên<br>⚠️ Index phải có `WHERE deleted_at IS NULL` (partial index)<br>⚠️ Query không cẩn thận → return cả deleted row |
 
 ---
 
-## ADR-10 — Slate-based RebornEditor (không TinyMCE/CKEditor)
+## ADR-11 — Lazy load mọi page qua React.lazy()
 
-**Status**: Accepted
-
-### Context
-
-CRM cần rich text editor cho mô tả sản phẩm, template email, ghi chú chăm sóc KH. Yêu cầu: tuỳ biến cao, nhúng field động, tiếng Việt tốt.
-
-### Decision
-
-Tự xây **RebornEditor** trên **Slate 0.91**.
-
-### Consequences
-
-**Tốt**: full control, UI khớp brand, không license fee.
-**Xấu**: maintain toàn bộ (toolbar, plugin, dán-copy, table, image)… chi phí dev cao.
-
-### Alternatives
-
-- **TinyMCE**: license commercial, UI khó tuỳ biến.
-- **CKEditor 5**: mạnh, plugin đắt.
-- **Lexical (Meta)**: mới, API lạ.
-- **TipTap**: lên prosemirror, tốt — cân nhắc migrate nếu Slate không maintain.
+| Trường | Nội dung |
+|--------|----------|
+| **Trạng thái** | ✅ Accepted |
+| **Bối cảnh** | 167 page → bundle initial sẽ rất nặng nếu load hết. |
+| **Quyết định** | Mọi page trong [`routes.tsx`](../../src/configs/routes.tsx) đều dùng `React.lazy(() => import("..."))`. Mỗi page = 1 chunk JS. |
+| **Hậu quả** | ✅ Initial bundle nhỏ hơn nhiều<br>✅ Cache hit cao (trang user không vào không cần load)<br>⚠️ Lần đầu load page chậm hơn (cần download chunk)<br>📋 **Mitigation**: Suspense fallback hiển thị loading; preload chunks khi hover menu |
 
 ---
 
-## ADR-11 — ag-grid cho bảng lớn (không react-table)
+## ADR-12 — Camunda BPM Engine cho workflow phức tạp
 
-**Status**: Accepted
-
-### Context
-
-Trang tồn kho, đơn hàng, danh sách KH có thể > 10.000 dòng. Cần virtual scroll, pin column, group, filter, export Excel.
-
-### Decision
-
-Dùng **ag-grid 30 Enterprise** cho trang bảng lớn; dùng bảng Ant Design / custom cho trang ít dòng.
-
-### Consequences
-
-**Tốt**: hiệu năng xuất sắc, tính năng đầy đủ, doc tốt.
-**Xấu**: License Enterprise có phí; bundle ~800KB; API khác React convention.
-
-### Alternatives
-
-- **react-table v8 (TanStack Table)**: headless, cần tự làm UI — nhiều công.
-- **MUI DataGrid Pro**: cũng trả phí, hiệu năng thua ag-grid.
+| Trường | Nội dung |
+|--------|----------|
+| **Trạng thái** | ✅ Accepted |
+| **Bối cảnh** | Có nghiệp vụ cần workflow approval (phê duyệt giảm giá, hợp đồng, quy trình duyệt khách VIP). Hardcode if-else không scale. |
+| **Quyết định** | Tích hợp **Camunda BPMN Engine** chạy ở service riêng (`process.env.APP_BPM_URL`). Frontend dùng **bpmn-js** + **@bpmn-io/form-js** để thiết kế workflow trực quan. |
+| **Lựa chọn khác** | Hardcode Java/Node logic, n8n (lighter), Temporal (code-first), Zeebe (Camunda Cloud). |
+| **Hậu quả** | ✅ Business analyst tự thiết kế workflow không cần code<br>✅ Visual diagram dễ hiểu<br>⚠️ Camunda nặng (Java), thêm 1 service phải maintain<br>⚠️ Bundle frontend lớn vì bpmn-js (~2MB) |
 
 ---
 
-## ADR-12 — Custom fetchConfig (không dùng axios)
+## ADR-13 — Custom field model cho hồ sơ khách hàng
 
-**Status**: Accepted
-
-### Context
-
-Cần interceptor, header injection, URL rewrite. Không muốn thêm dependency nếu native `fetch` đủ.
-
-### Decision
-
-Dùng **`fetch` native** + **`fetch-intercept`** cho interceptor.
-
-### Consequences
-
-**Tốt**: nhẹ (~1KB), modern, không dùng XMLHttpRequest.
-**Xấu**: `fetch` thiếu timeout native, cần AbortController thủ công; response không auto parse JSON.
-
-### Alternatives
-
-- **Axios**: API tiện, interceptor built-in, nhưng +15KB, dùng XHR cũ.
-- **ky** (sindresorhus): fetch wrapper nhẹ, tốt — cân nhắc thay thế.
+| Trường | Nội dung |
+|--------|----------|
+| **Trạng thái** | ✅ Accepted |
+| **Bối cảnh** | Khách hàng Reborn có nhiều ngành (spa, gym, co-working, homestay) — mỗi ngành cần trường data khác nhau cho khách. Không thể có 1 schema cứng. |
+| **Quyết định** | Có core fields cố định (name, phone, email, gender) + **custom fields động** lưu trong table `customer_extra_info` với cấu trúc EAV (Entity-Attribute-Value). Tenant tự định nghĩa fields ở [`SettingCustomer → Định nghĩa trường bổ sung`](../urd/part-03-thanh-vien.md#ur-member-15--định-nghĩa-trường-thông-tin-bổ-sung). |
+| **Lựa chọn khác** | JSON column (Postgres JSONB) — query khó, không index theo field cụ thể. |
+| **Hậu quả** | ✅ Linh hoạt cho mọi ngành<br>⚠️ Query phức tạp (cần JOIN extra table)<br>⚠️ Performance kém với khách có nhiều custom field<br>⚠️ `fieldCode` không được đổi sau khi tạo (CN-07) — gây ràng buộc UX |
 
 ---
 
-## ADR-13 — react-i18next namespace structure
+## ADR-14 — Hardcode Hostname header (BUG, sẽ fix)
 
-**Status**: Accepted
-
-### Context
-
-Nếu dồn tất cả chuỗi vào 1 file, `common.json` sẽ > 5.000 key → lag load và dev khó maintain.
-
-### Decision
-
-Tách namespace theo module: `common`, `pos`, `inventory`, `finance`, `customer`, `bpm`, ...
-
-### Consequences
-
-**Tốt**: load lazy theo route; mỗi team quản namespace riêng; giảm conflict merge.
-**Xấu**: cần nhớ import namespace; dễ quên fallback.
-
-### Alternatives
-
-- **Single file**: đơn giản nhưng không scale.
+| Trường | Nội dung |
+|--------|----------|
+| **Trạng thái** | ⚠️ Bug — cần fix trước production |
+| **Bối cảnh** | Trong [`fetchConfig.ts:42`](../../src/configs/fetchConfig.ts#L42), header `Hostname` đang hardcode `"kcn.reborn.vn"` cho dev. |
+| **Quyết định** (đề xuất) | Đọc từ `location.hostname` runtime, không hardcode. |
+| **Hậu quả nếu không fix** | 🔴 **Critical**: deploy production sẽ load nhầm tenant<br>📋 **Action**: fix trong sprint tới, ưu tiên cao |
 
 ---
 
-## ADR-14 — Mock data pattern (src/mocks/)
+## ADR-15 — API Versioning (chưa có, đề xuất)
 
-**Status**: Accepted
-
-### Context
-
-BE thường phát triển sau FE hoặc API chưa sẵn. Cần FE dev độc lập.
-
-### Decision
-
-Tạo thư mục `src/mocks/` chứa mock JSON/TS. Service có thể swap import giữa real và mock lúc dev.
-
-### Consequences
-
-**Tốt**: FE không block; test UI dễ.
-**Xấu**: swap thủ công → dev quên commit lại mock = bug production.
-
-### Alternatives
-
-- **MSW (Mock Service Worker)**: chuyên nghiệp hơn, intercept fetch. **Khuyến nghị migrate** dần.
+| Trường | Nội dung |
+|--------|----------|
+| **Trạng thái** | 📋 Proposed |
+| **Bối cảnh** | Hiện tại API URL không có version (`/api/customer/filter`). Khi backend đổi shape → frontend break ngay. Không có gradual rollout. |
+| **Đề xuất** | URL versioning: `/api/v1/customer/filter`, `/api/v2/customer/filter`. Frontend bind vào version cụ thể qua env var. |
+| **Lựa chọn khác** | Header versioning (`Accept: application/vnd.reborn.v2+json`), Query param (`?version=2`). |
+| **Hậu quả** | ✅ Backend có thể deploy v2 song song v1 → migrate dần frontend<br>⚠️ Phải maintain 2 version song song một thời gian<br>📋 **Cần**: tài liệu rõ deprecation policy |
 
 ---
 
-## ADR-15 — reborn-util package cho shared logic
+## ADR-16 — Không có refresh token rotation (đề xuất)
 
-**Status**: Accepted
-
-### Context
-
-Nhiều biến thể Reborn (Retail, Spa, F&B, Clinic...) dùng chung util: cookie, validate, format, regex VN.
-
-### Decision
-
-Tách thành package `reborn-util` riêng, publish nội bộ (npm private / git submodule).
-
-### Consequences
-
-**Tốt**: DRY xuyên repo.
-**Xấu**: version drift; thay đổi trong util phải test nhiều app; release cycle phức tạp.
-
-### Alternatives
-
-- **Monorepo (Nx, Turborepo)**: tốt hơn về lâu dài, cần đầu tư lớn để chuyển đổi.
-- **Copy-paste**: nhanh nhưng diverge.
+| Trường | Nội dung |
+|--------|----------|
+| **Trạng thái** | 📋 Proposed |
+| **Bối cảnh** | Refresh token nếu bị steal có thể dùng vô thời hạn. Best practice là rotate mỗi lần dùng. |
+| **Đề xuất** | Khi frontend gọi `/oauth/refresh` với refresh_token A → backend trả về access_token mới + refresh_token B. A bị invalidate. Nếu attacker dùng A → biết là leak → revoke toàn bộ session user. |
+| **Hậu quả** | ✅ Bảo mật cao hơn<br>⚠️ Phức tạp hơn — phải store toàn bộ refresh token<br>📋 **Cần**: thiết kế DB schema cho token rotation |
 
 ---
 
-## ADR log summary
+## ADR-17 — Bundle size optimization (đề xuất action)
 
-| # | Decision | Status | Review date |
-|---|----------|--------|-------------|
-| 01 | React + TS + Vite | Accepted | 2026 |
-| 02 | SPA over SSR | Accepted | 2026 |
-| 03 | Context API | Accepted | 2026 (cân nhắc Zustand) |
-| 04 | Hostname multi-tenant | Accepted ⚠️ | **Urgent review** — security |
-| 05 | URL prefix gateway | Accepted | 2026 |
-| 06 | Centralized SSO | Accepted | 2026 |
-| 07 | react-router v7 | Accepted | 2026 |
-| 08 | Lazy load route | Accepted | 2026 |
-| 09 | react-i18next | Accepted | 2026 |
-| 10 | Slate RebornEditor | Accepted | 2026 (cân nhắc TipTap) |
-| 11 | ag-grid Enterprise | Accepted | 2026 |
-| 12 | fetch + intercept | Accepted | 2026 (cân nhắc ky) |
-| 13 | i18n namespace split | Accepted | 2026 |
-| 14 | Mock pattern | Accepted | 2026 (migrate MSW) |
-| 15 | reborn-util package | Accepted | 2026 (cân nhắc monorepo) |
-
-## Tham chiếu
-
-- [Part 01 — Kiến trúc tổng thể](part-01-kien-truc-tong-the.md)
-- [Part 02 — Frontend Architecture](part-02-frontend-architecture.md)
-- [Part 10 — Security](part-10-security.md)
-- [Part 14 — Quality & Risks](part-14-quality-risks.md)
+| Trường | Nội dung |
+|--------|----------|
+| **Trạng thái** | 📋 Proposed |
+| **Bối cảnh** | Bundle production hiện ~20MB raw / 5MB gzip — quá lớn so với best practice. Lý do: bpmn-js, ag-grid, slate, exceljs đều load eager. |
+| **Đề xuất** | Lazy load các module nặng:<br>1. **bpmn-js** chỉ load khi vào page BPM<br>2. **slate** chỉ khi mở rich text editor<br>3. **exceljs/xlsx** chỉ khi user export<br>4. **highcharts** chỉ khi vào trang báo cáo<br>5. Tách thêm `manualChunks`: `editor`, `chart`, `bpmn`, `excel`<br>6. Cân nhắc dynamic import |
+| **Lợi ích dự kiến** | Initial bundle giảm 60-70%, page load lần đầu ≤ 3s |
+| **Effort** | 1-2 sprint |
 
 ---
-*Hết Part 13. Xem tiếp [Part 14 — Quality attributes & Risks](part-14-quality-risks.md).*
+
+## ADR-18 — Chuẩn hóa date library (đề xuất)
+
+| Trường | Nội dung |
+|--------|----------|
+| **Trạng thái** | 📋 Proposed |
+| **Bối cảnh** | Codebase đang dùng **đồng thời** `moment` 2.29 và `date-fns` 4.1. Tăng bundle size, gây nhầm lẫn. |
+| **Đề xuất** | Thống nhất về **date-fns** (lighter, modular, immutable, treeshakable). Migrate dần các chỗ dùng moment. |
+| **Lựa chọn khác** | Day.js (API tương tự moment, 2KB), Temporal API (proposal, chưa stable). |
+| **Hậu quả** | ✅ Bundle nhỏ hơn ~70KB<br>✅ API nhất quán<br>⚠️ Effort migration lớn vì moment dùng khắp nơi |
+
+---
+
+## Bảng tổng hợp ADR
+
+| ID | Tiêu đề | Trạng thái | Mức ưu tiên |
+|----|---------|:----------:|:-----------:|
+| ADR-01 | React 17 + TypeScript | ✅ Accepted | — |
+| ADR-02 | Migrate Webpack → Vite | ✅ Accepted | Done |
+| ADR-03 | react-router-dom v6 | ✅ Accepted | — |
+| ADR-04 | Context API thay Redux | ✅ Accepted | — |
+| ADR-05 | Multi-tenant row-level | ✅ Accepted | — |
+| ADR-06 | Client-side API Gateway | ⚠️ Review | Med |
+| ADR-07 | Service layer + apiHelper | ✅ Accepted | — |
+| ADR-08 | ag-grid cho bảng lớn | ✅ Accepted | — |
+| ADR-09 | Không có refresh token logic | ⚠️ Bug | High |
+| ADR-10 | Soft delete | ✅ Accepted | — |
+| ADR-11 | Lazy load page | ✅ Accepted | — |
+| ADR-12 | Camunda BPM Engine | ✅ Accepted | — |
+| ADR-13 | Custom field EAV model | ✅ Accepted | — |
+| ADR-14 | Hardcode Hostname (BUG) | 🔴 Bug | **Critical** |
+| ADR-15 | API versioning | 📋 Proposed | High |
+| ADR-16 | Refresh token rotation | 📋 Proposed | Med |
+| ADR-17 | Bundle size optimization | 📋 Proposed | High |
+| ADR-18 | Chuẩn hóa date library | 📋 Proposed | Low |
+
+**Thống kê:**
+- ✅ Accepted: 12
+- ⚠️ Review/Bug: 2
+- 🔴 Critical bug: 1
+- 📋 Proposed: 4
+
+---
+
+## Cách viết ADR mới
+
+Khi đội cần ra quyết định kiến trúc mới:
+
+1. **Tạo file** `docs/sa/adr/ADR-NN-<title>.md`
+2. **Format** theo template trên
+3. **Submit PR** để team review
+4. **Sau khi merge**: cập nhật bảng tổng hợp này
+5. **Trạng thái thay đổi**: thay vì sửa ADR cũ, tạo ADR mới với link `Superseded by ADR-XX`
+
+---
+
+*Hết Part 13.*

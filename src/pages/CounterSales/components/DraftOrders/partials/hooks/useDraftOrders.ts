@@ -3,7 +3,6 @@ import { DraftOrder, RawInvoiceDetail, mapRawToDraftOrder } from "./../../types"
 import { urlsApi } from "configs/urls";
 import { showToast } from "utils/common";
 import { ContextType, UserContext } from "contexts/userContext";
-import { fetchCustomerMap } from "@/hooks/useCustomerEnrich";
 
 interface UseDraftOrdersOptions {
   /** Gọi sau khi xóa thành công — dùng để refresh badge ở CounterSales */
@@ -34,24 +33,8 @@ export function useDraftOrders(options?: UseDraftOrdersOptions) {
       const json = await res.json();
 
       if (json.code === 0 && Array.isArray(json.result)) {
-        const rawItems = json.result as RawInvoiceDetail[];
-        const mapped: DraftOrder[] = rawItems.map(mapRawToDraftOrder);
-
-        // Enrich customer names khi API không trả customerName
-        const needEnrich = mapped.filter(d => d.khachHang === "Khách lẻ" && d.customerId > 0);
-        if (needEnrich.length > 0) {
-          const ids = needEnrich.map(d => d.customerId);
-          fetchCustomerMap(ids).then(customerMap => {
-            setList(prev => prev.map(d => {
-              const info = customerMap[d.customerId];
-              if (info && d.khachHang === "Khách lẻ") {
-                return { ...d, khachHang: info.name || d.khachHang };
-              }
-              return d;
-            }));
-          });
-        }
-
+        const mapped: DraftOrder[] = (json.result as RawInvoiceDetail[])
+          .map(mapRawToDraftOrder);
         setList(mapped);
         setSelectedId(prev =>
           prev && mapped.some(d => d.id === prev) ? prev : null

@@ -102,15 +102,15 @@ export default function ModalAddWarehouse(props: AddInventoryModalProps) {
     },
     {
       name: "name",
-      rules: "required|max:100",
-    },
-    {
-      name: "code",
-      rules: "nullable|max:50",
+      rules: "required",
     },
     {
       name: "address",
-      rules: "required|max:255",
+      rules: "required",
+    },
+    {
+      name: "position",
+      rules: "required",
     },
   ];
 
@@ -135,7 +135,6 @@ export default function ModalAddWarehouse(props: AddInventoryModalProps) {
       type: "text",
       fill: true,
       required: true,
-      maxLength: 100,
       className: "input-name",
     },
     {
@@ -143,8 +142,6 @@ export default function ModalAddWarehouse(props: AddInventoryModalProps) {
       name: "code",
       type: "text",
       fill: true,
-      maxLength: 50,
-      placeholder: "Nhập mã kho (không trùng)",
       className: "input-code",
     },
     {
@@ -153,7 +150,6 @@ export default function ModalAddWarehouse(props: AddInventoryModalProps) {
       type: "textarea",
       fill: true,
       required: true,
-      maxLength: 255,
       className: "input-address",
     },
     {
@@ -169,8 +165,7 @@ export default function ModalAddWarehouse(props: AddInventoryModalProps) {
       name: "position",
       type: "number",
       fill: true,
-      minValue: 0,
-      maxValue: 999,
+      required: false,
       className: "input-position",
     },
     {
@@ -239,18 +234,13 @@ export default function ModalAddWarehouse(props: AddInventoryModalProps) {
       isSelling: formData?.values?.isSelling === "1" ? 1 : 0,
     };
 
-    try {
-      const response = await InventoryService.update(body);
+    const response = await InventoryService.update(body);
 
-      if (response.code === 0) {
-        showToast(`${data ? "Cập nhật" : "Thêm mới"} kho hàng thành công`, "success");
-        onHide(true);
-      } else {
-        showToast(response.message ?? response.error ?? "Có lỗi xảy ra. Vui lòng thử lại sau", "error");
-        setIsSubmit(false);
-      }
-    } catch (err) {
-      showToast("Có lỗi xảy ra. Vui lòng thử lại sau", "error");
+    if (response.code === 0) {
+      showToast(`${data ? "Cập nhật" : "Thêm mới"} kho hàng thành công`, "success");
+      onHide(true);
+    } else {
+      showToast(response.message ?? "Có lỗi xảy ra. Vui lòng thử lại sau", "error");
       setIsSubmit(false);
     }
   };
@@ -344,18 +334,18 @@ export default function ModalAddWarehouse(props: AddInventoryModalProps) {
           <ModalHeader title={`${data ? "Chỉnh sửa" : "Thêm mới"} kho hàng`} toggle={() => !isSubmit && onHide(false)} />
           <ModalBody>
             <div className="list-form-group">
-              {listFieldBeautyBranch.map((field) => (
+              {listFieldBeautyBranch.map((field, index) => (
                 <FieldCustomize
                   field={field}
-                  key={field.name ?? field.label}
+                  key={field.name || index}
                   handleUpdate={(value) => handleChangeValidate(value, field, formData, validations, listFieldBeautyBranch, setFormData)}
                   formData={formData}
                 />
               ))}
 
-              {listField.map((field) => (
+              {listField.map((field, index) => (
                 <FieldCustomize
-                  key={field.name ?? field.label}
+                  key={field.name || index}
                   field={field}
                   handleUpdate={(value) => handleChangeValidate(value, field, formData, validations, listField, setFormData)}
                   formData={formData}

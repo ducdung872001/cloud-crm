@@ -7,7 +7,6 @@ import "./index.scss";
 interface ScannedProduct {
   id: number;
   variantId: number;
-  unitId?: number;
   name: string;
   barcode: string;
   sku: string;
@@ -26,7 +25,7 @@ interface QrScanModalProps {
   open: boolean;
   onClose: () => void;
   onAddToCart: (item: {
-    id: string; variantId: string; unitId?: number; name: string;
+    id: string; variantId: string; name: string;
     price: number; priceLabel: string; unit: string;
     unitName: string; icon: string; qty: number;
   }) => void;
@@ -127,7 +126,6 @@ export default function QrScanModal({ open, onClose, onAddToCart }: QrScanModalP
     onAddToCart({
       id:         String(found.id),
       variantId:  String(found.variantId),
-      unitId:     found.unitId != null ? Number(found.unitId) : undefined,
       name:       found.name,
       price:      found.priceRetail,
       priceLabel: formatCurrency(found.priceRetail) + " ₫",

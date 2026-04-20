@@ -352,11 +352,11 @@ export default function OnRejectModal(props: Record<string, unknown>) {
     if (onShow && listAttactment) {
       setNewData([]);
       (listAttactment || []).map((item) => {
-        const request = new XMLHttpRequest();
+        var request = new XMLHttpRequest();
         request.open("GET", item.url, true);
         request.responseType = "blob";
         request.onload = function () {
-          const reader = new FileReader();
+          var reader = new FileReader();
           reader.readAsDataURL(request.response);
           reader.onload = function (e: Record<string, unknown>) {
             const data = {
@@ -588,7 +588,7 @@ export default function OnRejectModal(props: Record<string, unknown>) {
                     {listAttactment && listAttactment.length > 0
                       ? listAttactment.map((item, index) => (
                           <div
-                            key={index}
+                            key={item.id ?? index}
                             className="item-attachment"
                             onDoubleClick={() => {
                               window.open(

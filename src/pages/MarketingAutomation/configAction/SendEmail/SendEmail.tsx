@@ -377,11 +377,11 @@ export default function SendEmail(props: Record<string, unknown>) {
     if (onShow && listAttactment) {
       setNewData([]);
       (listAttactment || []).map((item) => {
-        const request = new XMLHttpRequest();
+        var request = new XMLHttpRequest();
         request.open("GET", item.url, true);
         request.responseType = "blob";
         request.onload = function () {
-          const reader = new FileReader();
+          var reader = new FileReader();
           reader.readAsDataURL(request.response);
           reader.onload = function (e: Record<string, unknown>) {
             const data = {
@@ -749,7 +749,7 @@ export default function SendEmail(props: Record<string, unknown>) {
               <div className="list-form-group">
                 {listField.map((field, index) => (
                   <FieldCustomize
-                    key={index}
+                    key={field.name || index}
                     field={field}
                     handleUpdate={(value) => handleChangeValidate(value, field, formData, validations, listField, setFormData)}
                     formData={formData}

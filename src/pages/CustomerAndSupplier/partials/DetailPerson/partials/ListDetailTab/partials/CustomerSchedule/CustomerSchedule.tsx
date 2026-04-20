@@ -15,6 +15,7 @@ import { SystemNotification } from "components/systemNotification/systemNotifica
 import BoxTable from "components/boxTable/boxTable";
 import { ContextType, UserContext } from "contexts/userContext";
 import ScheduleCommonService from "services/ScheduleCommonService";
+import AddConsultationScheduleModal from "pages/CalendarCommon/partials/AddConsultationScheduleModal/AddConsultationScheduleModal";
 
 import "./CustomerSchedule.scss";
 
@@ -59,13 +60,13 @@ export default function CustomerSchedule({ idCustomer }) {
     const response = await ScheduleCommonService.listCommon(paramsSearch, abortController.signal);
 
     if (response.code == 0) {
-      const _result = response.result;
+      let _result = response.result;
       const result = (_result?.items ? _result?.items : _result || []).map((item) => {
         return {
           id: item.id,
           title: item.title,
-          start: new Date(moment(item.startTime).format()),
-          end: new Date(moment(item.endTime).format()),
+          start: new Date(item.startTime),
+          end: new Date(item.endTime),
           startTime: item.startTime,
           endTime: item.endTime,
           type: item.type,
@@ -187,6 +188,18 @@ export default function CustomerSchedule({ idCustomer }) {
           </Fragment>
         )}
       </div>
+      <AddConsultationScheduleModal
+        onShow={showModalAdd}
+        onHide={(reload) => {
+          if (reload) {
+            getListSchedule(params);
+          }
+
+          setShowModalAdd(false);
+        }}
+        idCustomer={idCustomer}
+        startDate={new Date()}
+      />
     </div>
   );
 }

@@ -57,9 +57,9 @@ export default function EditParentStore(props: Record<string, unknown>) {
         const newData = [...dataOption];
         newData.unshift({
           value: "",
-          label: "Không có cửa hàng cha",
+          label: "Không có cơ sở cha",
         });
-        // Lọc bỏ cửa hàng hiện tại để tránh tự tham chiếu
+        // Lọc bỏ cơ sở hiện tại để tránh tự tham chiếu
         const filteredData = newData.filter((item) => item.value !== branchId);
         setListStore(filteredData);
       }
@@ -109,7 +109,7 @@ export default function EditParentStore(props: Record<string, unknown>) {
 
   const listFieldBasic: IFieldCustomize[] = [
     {
-      label: "Cửa hàng cha",
+      label: "Cơ sở cha",
       name: "parentId",
       type: "select",
       fill: true,
@@ -140,9 +140,9 @@ export default function EditParentStore(props: Record<string, unknown>) {
       return;
     }
 
-    // Kiểm tra không cho phép chọn chính cửa hàng hiện tại làm cửa hàng cha
+    // Kiểm tra không cho phép chọn chính cơ sở hiện tại làm cơ sở cha
     if (formData.values.parentId && formData.values.parentId === branchId) {
-      showToast("Không thể chọn chính cửa hàng hiện tại làm cửa hàng cha", "error");
+      showToast("Không thể chọn chính cơ sở hiện tại làm cơ sở cha", "error");
       return;
     }
 
@@ -154,7 +154,7 @@ export default function EditParentStore(props: Record<string, unknown>) {
     const response = await BeautyBranchService.update(body);
 
     if (response.code === 0) {
-      showToast(`Thay đổi cửa hàng cha thành công`, "success");
+      showToast(`Thay đổi cơ sở cha thành công`, "success");
       onHide(true);
     } else {
       showToast(response.message ?? "Có lỗi xảy ra. Vui lòng thử lại sau", "error");
@@ -248,13 +248,13 @@ export default function EditParentStore(props: Record<string, unknown>) {
         className="modal-edit-parent-branch"
       >
         <form className="form-branch-group" onSubmit={(e) => onSubmit(e)}>
-          <ModalHeader title={`Chỉnh sửa cửa hàng cha`} toggle={() => !isSubmit && onHide(false)} />
+          <ModalHeader title={`Chỉnh sửa cơ sở cha`} toggle={() => !isSubmit && onHide(false)} />
           <ModalBody>
             <div className="list-form-group">
               <div className="form-basic">
                 {listFieldBasic.map((field, index) => (
                   <FieldCustomize
-                    key={index}
+                    key={field.name || index}
                     field={field}
                     handleUpdate={(value) => handleChangeValidate(value, field, formData, validations, listFieldBasic, setFormData)}
                     formData={formData}

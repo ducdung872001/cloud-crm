@@ -37,6 +37,9 @@ import ServiceExtraInfoService from "services/ServiceExtraInfoService";
 import CategoryServiceService from "services/CategoryServiceService";
 import FileService from "services/FileService";
 import { uploadDocumentFormData } from "utils/document";
+import RebornEditor from "components/editor/reborn";
+import ShareLinkModal from "../../../Product/partials/ShareLinkModal";
+import BarcodePrintModal from "../../../Product/partials/BarcodePrintModal";
 
 export default function AddServiceModal(props: IAddServiceModalProps) {
   const { onShow, onHide, data } = props;
@@ -48,6 +51,9 @@ export default function AddServiceModal(props: IAddServiceModalProps) {
   const [contentDialog, setContentDialog] = useState<IContentDialog>(null);
 
   const [showModalAddPrice, setShowModalAddPrice] = useState<boolean>(false);
+  const [showShareModal, setShowShareModal] = useState<boolean>(false);
+  const [showBarcodeModal, setShowBarcodeModal] = useState<boolean>(false);
+  const [contentEditor, setContentEditor] = useState<string>(data?.content || "");
 
   //! đoạn này xử lý vấn đề call api danh sách dịch vụ
   const [listCategoryService, setListCategoryService] = useState<IOption[]>(null);
@@ -174,11 +180,7 @@ export default function AddServiceModal(props: IAddServiceModalProps) {
   const validations: IValidation[] = [
     {
       name: "name",
-      rules: "required|max:100",
-    },
-    {
-      name: "code",
-      rules: "nullable|max:50",
+      rules: "required",
     },
     {
       name: "avatar",
@@ -202,7 +204,7 @@ export default function AddServiceModal(props: IAddServiceModalProps) {
     },
     {
       name: "price",
-      rules: "required|min_equal:0",
+      rules: "required|min:0",
     },
   ];
 
@@ -293,14 +295,12 @@ export default function AddServiceModal(props: IAddServiceModalProps) {
           type: "text",
           fill: true,
           required: true,
-          maxLength: 100,
         },
         {
           label: "Mã dịch vụ",
           name: "code",
           type: "text",
           fill: true,
-          maxLength: 50,
         },
       ] as IFieldCustomize[],
     [listCategoryService, isLoading, validateFieldCategory, detailCategory]
@@ -353,7 +353,6 @@ export default function AddServiceModal(props: IAddServiceModalProps) {
           type: "number",
           fill: true,
           required: true,
-          minValue: 0,
         },
         {
           label: "Giá ưu đãi",
@@ -559,7 +558,7 @@ export default function AddServiceModal(props: IAddServiceModalProps) {
       showToast(`${data ? "Cập nhật" : "Thêm mới"} dịch vụ thành công`, "success");
       handleClear(true);
     } else {
-      showToast(response.error ?? response.message ?? "Có lỗi xảy ra. Vui lòng thử lại sau", "error");
+      showToast(response.message ?? "Có lỗi xảy ra. Vui lòng thử lại sau", "error");
       setIsSubmit(false);
     }
   };
@@ -1039,7 +1038,7 @@ export default function AddServiceModal(props: IAddServiceModalProps) {
           <div className="list__field--basic">
             {listFieldBasic.map((field, index) => (
               <FieldCustomize
-                key={index}
+                key={field.name || index}
                 field={field}
                 handleUpdate={(value) => handleChangeValidate(value, field, formData, validations, listFieldBasic, setFormData)}
                 formData={formData}
@@ -1051,7 +1050,7 @@ export default function AddServiceModal(props: IAddServiceModalProps) {
             {/* <div className={`list__field--advanced`}>
               {listFieldAdvanced.map((field, index) => (
                 <FieldCustomize
-                  key={index}
+                  key={field.name || index}
                   field={field}
                   handleUpdate={(value) => handleChangeValidate(value, field, formData, validations, listFieldAdvanced, setFormData)}
                   formData={formData}
@@ -1063,7 +1062,7 @@ export default function AddServiceModal(props: IAddServiceModalProps) {
               <div className="field__price--item">
                 {listFieldPrice.map((field, index) => (
                   <FieldCustomize
-                    key={index}
+                    key={field.name || index}
                     field={field}
                     handleUpdate={(value) => handleChangeValidate(value, field, formData, validations, listFieldPrice, setFormData)}
                     formData={formData}
@@ -1076,7 +1075,7 @@ export default function AddServiceModal(props: IAddServiceModalProps) {
           {/* <div className={`list__field--advanced`}>
             {listFieldAdvanced.map((field, index) => (
               <FieldCustomize
-                key={index}
+                key={field.name || index}
                 field={field}
                 handleUpdate={(value) => handleChangeValidate(value, field, formData, validations, listFieldAdvanced, setFormData)}
                 formData={formData}
@@ -1088,7 +1087,7 @@ export default function AddServiceModal(props: IAddServiceModalProps) {
             <div className="field__price--item">
               {listFieldPrice.map((field, index) => (
                 <FieldCustomize
-                  key={index}
+                  key={field.name || index}
                   field={field}
                   handleUpdate={(value) => handleChangeValidate(value, field, formData, validations, listFieldPrice, setFormData)}
                   formData={formData}
@@ -1133,7 +1132,7 @@ export default function AddServiceModal(props: IAddServiceModalProps) {
 
             {listFieldIntroduce.map((field, index) => (
               <FieldCustomize
-                key={index}
+                key={field.name || index}
                 field={field}
                 handleUpdate={(value) => handleChangeValidate(value, field, formData, validations, listFieldIntroduce, setFormData)}
                 formData={formData}
@@ -1182,12 +1181,39 @@ export default function AddServiceModal(props: IAddServiceModalProps) {
             />
           </div>
 
+          {/* [CH] Mô tả chi tiết — RebornEditor */}
+          <div className="list__field--content">
+            <label className="label-title">Mô tả chi tiết dịch vụ</label>
+            <div className="editor-wrapper">
+              <RebornEditor
+                initialValue={contentEditor}
+                onChangeContent={(value: string) => setContentEditor(value)}
+                placeholder="Nhập mô tả chi tiết dịch vụ..."
+              />
+            </div>
+          </div>
+
+          {/* [CH] Chia sẻ & Mã vạch */}
+          {data?.id && (
+            <div className="list__field--share">
+              <label className="label-title">Chia sẻ & Mã vạch</label>
+              <div className="share-actions">
+                <button type="button" className="btn-share" onClick={() => setShowShareModal(true)}>
+                  <Icon name="Share" /> Chia sẻ dịch vụ
+                </button>
+                <button type="button" className="btn-barcode" onClick={() => setShowBarcodeModal(true)}>
+                  <Icon name="Barchart" /> In mã vạch
+                </button>
+              </div>
+            </div>
+          )}
+
           {mapServiceAttribute ? (
             <div className="list--attribute">
               {Object.entries(mapServiceAttribute).map((lstAttribute: Record<string, unknown>, key: number) => (
                 <Fragment key={key}>
                   {(lstAttribute[1] || []).map((attribute, index: number) => (
-                    <Fragment key={index}>
+                    <Fragment key={attribute.name || index}>
                       {!attribute.parentId ? (
                         <label className="label-title" key={`parent_${key}`}>
                           {attribute.name}
@@ -1220,6 +1246,24 @@ export default function AddServiceModal(props: IAddServiceModalProps) {
         }}
       />
       <Dialog content={contentDialog} isOpen={showDialog} />
+
+      {/* [CH] Modal Chia sẻ dịch vụ */}
+      {showShareModal && data && (
+        <ShareLinkModal
+          onShow={showShareModal}
+          data={{ id: data.id, name: data.name, avatar: data.avatar }}
+          onHide={() => setShowShareModal(false)}
+        />
+      )}
+
+      {/* [CH] Modal In mã vạch */}
+      {showBarcodeModal && data && (
+        <BarcodePrintModal
+          onShow={showBarcodeModal}
+          data={{ id: data.id, name: data.name, code: data.code, barcode: data.barcode }}
+          onHide={() => setShowBarcodeModal(false)}
+        />
+      )}
     </div>
   );
 }

@@ -5,6 +5,7 @@ import "bpmn-js/dist/assets/diagram-js.css";
 import "bpmn-js/dist/assets/bpmn-js.css";
 import copyPasteModule from "bpmn-js/lib/features/copy-paste";
 import keyboardModule from "diagram-js/lib/features/keyboard";
+import ColorRenderer from "./ColorRenderer";
 import "./index.scss";
 import Button from "components/button/button";
 import urls from "configs/urls";
@@ -346,8 +347,9 @@ const BusinessProcessCreate = () => {
         copyPasteModule,
         keyboardModule,
         {
-          __init__: ["customContextPad"],
+          __init__: ["customContextPad", "colorRenderer"],
           customContextPad: ["type", CustomContextPadProvider],
+          colorRenderer: ["type", ColorRenderer],
         },
       ],
     });
@@ -511,7 +513,7 @@ const BusinessProcessCreate = () => {
       }
 
       // Display tooltip
-      tooltip.innerHTML = name;
+      tooltip.textContent = name;
       tooltip.style.display = "block";
 
       // Position the tooltip near the mouse pointer

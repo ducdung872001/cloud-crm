@@ -8,23 +8,23 @@ import SettingList from "pages/Setting/SettingList";
 import "./SettingBasisList.scss";
 
 /**
- * Menu cấp 1: "Vận hành cửa hàng"  →  /setting_basis
- * Items cấp 2: Quản lý cửa hàng | Phương thức thanh toán | Ca làm việc | Cấu hình chung
+ * Menu cấp 1: "Vận hành cơ sở"  →  /setting_basis
+ * Items cấp 2: Quản lý cơ sở | Phương thức thanh toán | Ca làm việc | Cấu hình chung
  */
 export default function SettingBasisList() {
   const { t } = useTranslation();
-  document.title = "Vận hành cửa hàng";
+  document.title = "Vận hành cơ sở";
 
   const [tab, setTab] = useState<string>("");
   const [isDetail, setIsDetail] = useState<boolean>(false);
 
   const listTab = [
     {
-      title: "Quản lý cửa hàng",
+      title: "Quản lý cơ sở",
       is_tab: "store",
       icon: "StoreManagement",
       backgroundColor: "#FAECE7",
-      des: "Cấu hình thông tin, địa chỉ và hoạt động của từng cửa hàng / chi nhánh.",
+      des: "Cấu hình thông tin, địa chỉ và hoạt động của từng cơ sở / chi nhánh.",
     },
     {
       title: "Phương thức thanh toán",
@@ -51,7 +51,7 @@ export default function SettingBasisList() {
 
   return (
     <div className="page-setting-basis">
-      {!isDetail && <h1>Vận hành cửa hàng</h1>}
+      {!isDetail && <h1>Vận hành cơ sở</h1>}
       {!isDetail && (
         <TabMenuList
           listTab={listTab}

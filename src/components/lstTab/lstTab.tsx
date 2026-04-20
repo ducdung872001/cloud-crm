@@ -61,7 +61,7 @@ export default function LstTab(props: ILstTabProps) {
                 color={el.color}
                 disabled={el.disabled}
                 variant={el.variant}
-                key={index}
+                key={el.id ?? index}
                 onClick={() => el.callback()}
                 dataTip={el.data_tip}
               >

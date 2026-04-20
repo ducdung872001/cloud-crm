@@ -33,15 +33,21 @@ export default function WebRTCEmbed() {
         // key: '6e2f44e0c8ccdee4a4e69ff780230d60'
       },
       callbacks: {
-        embed_success_handle: () => { /* noop */ },
+        embed_success_handle: (data) => {
+          /* noop */
+        },
 
         embed_error_handle: (error) => {
           console.error("Embed error", error);
         },
 
-        background_registered_handle: () => { /* noop */ },
+        background_registered_handle: (data) => {
+          /* noop */
+        },
 
-        background_unregistered_handle: () => { /* noop */ },
+        background_unregistered_handle: (data) => {
+          /* noop */
+        },
 
         background_registrationFailed_handle: (data) => {
           console.error("Register failed", data);
@@ -51,13 +57,21 @@ export default function WebRTCEmbed() {
           // Hiển thị popup incoming call tại đây
         },
 
-        background_outgoingcall_handle: () => { /* noop */ },
+        background_outgoingcall_handle: (data) => {
+          /* noop */
+        },
 
-        background_outgoingringing_handle: () => { /* noop */ },
+        background_outgoingringing_handle: (data) => {
+          /* noop */
+        },
 
-        background_accepted_handle: () => { /* noop */ },
+        background_accepted_handle: (data) => {
+          /* noop */
+        },
 
-        background_ended_handle: () => { /* noop */ },
+        background_ended_handle: (data) => {
+          /* noop */
+        },
 
         background_failed_handle: (data) => {
           console.error("Call failed", data);

@@ -3,7 +3,7 @@ import React, {Fragment, ReactElement, useRef, useState, memo} from "react";
 import vi from "date-fns/locale/vi";
 import { Portal } from "react-overlays";
 import DatePicker from "react-datepicker";
-import moment from "moment";
+import { format, parse, isValid } from "date-fns";
 import MaskedInput from "react-text-mask";
 import createAutoCorrectedDatePipe from "text-mask-addons/dist/createAutoCorrectedDatePipe";
 import { useOnClickOutside } from "utils/hookCustom";
@@ -85,7 +85,7 @@ function DatePickerCustom(props: DatePickerCustomProps) {
 
   const refPicker = useRef();
 
-  const fmtValue = hasSelectTime ? "DD/MM/YYYY HH:mm" : "DD/MM/YYYY";
+  const fmtValue = hasSelectTime ? "dd/MM/yyyy HH:mm" : "dd/MM/yyyy";
 
   const autoCorrectedDatePipe = createAutoCorrectedDatePipe(hasSelectTime ? "dd/mm/yyyy HH:MM" : "dd/mm/yyyy");
 
@@ -158,11 +158,14 @@ function DatePickerCustom(props: DatePickerCustomProps) {
           selected={
             value &&
             value.length !== 0 &&
-            moment(value, hasSelectTime ? "HH:mm DD/MM/yyyy" : "DD/MM/yyyy", true).isValid() &&
-            moment(value, hasSelectTime ? "HH:mm DD/MM/yyyy" : "DD/MM/yyyy", true).toDate()
+            (() => {
+              const fmt = hasSelectTime ? "HH:mm dd/MM/yyyy" : "dd/MM/yyyy";
+              const parsed = parse(String(value), fmt, new Date());
+              return isValid(parsed) ? parsed : null;
+            })()
           }
           // value={value ? (isFmtText ? value : moment(value).format(fmtValue)) : ""}
-          value={value ? (isFmtText ? value : moment(parseDateString(value)).format(fmtValue)) : ""}
+          value={value ? (isFmtText ? value : (() => { const d = parseDateString(value); return d ? format(d, fmtValue) : ""; })()) : ""}
           showYearDropdown
           showMonthDropdown
           showTimeSelect={hasSelectTime}

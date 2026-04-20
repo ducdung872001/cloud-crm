@@ -182,11 +182,11 @@ export default function KanbanOrderTracking(props: Record<string, unknown>) {
 
   const OrderRequestServiceList = useCallback(
     async (params: Record<string, unknown>, signal?: AbortSignal) => {
-      const mergedParams = {
+      let mergedParams = {
         ...params,
         ...(beautySalonId ? { bsnId: beautySalonId } : {}),
       };
-      const response = await OrderRequestService.list(mergedParams, signal);
+      let response = await OrderRequestService.list(mergedParams, signal);
       return response;
     },
     [beautySalonId]

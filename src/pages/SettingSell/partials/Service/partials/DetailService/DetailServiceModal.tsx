@@ -27,9 +27,7 @@ export default function DetailServiceModal(props: Record<string, unknown>) {
     [onShow, data]
   );
 
-  const validations: IValidation[] = [
-    { name: "content", rules: "nullable" },
-  ];
+  const validations: IValidation[] = [];
 
   const [formData, setFormData] = useState<IFormData>({ values: values });
 

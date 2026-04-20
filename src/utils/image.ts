@@ -1,6 +1,7 @@
 import { v4 as uuidv4 } from "uuid";
 import imageApi from "services/ImageService";
 import { showToast } from "./common";
+import { imagesSize, replaceImageURL } from "./generation";
 import { getFileBase64, getImageBase64KeepFileType } from "utils/file";
 
 /**
@@ -90,7 +91,8 @@ export const uploadImageFromFiles = (files: FileList | File[], callback: (url: s
             // console.log("percent =>", percent);
             getProgress && getProgress(percent);
           },
-          onError: () => {
+          onError: (error) => {
+            // console.log(error);
             showToast("Có lỗi xảy ra trong quá trình upload ảnh", "error");
           },
         });

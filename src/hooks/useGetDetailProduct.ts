@@ -20,9 +20,6 @@ export interface ProductVariant {
   sku: string;
   price: number;
   stock: number;
-  unitId?: number;
-  unitName?: string;
-  taxRate?: number;
   // map groupId → optionId
   combination: Record<string, string>;
   images?: string[]; // giả sử API mới có thêm trường images là array để chứa nhiều ảnh của biến thể
@@ -35,7 +32,6 @@ export interface VariantProduct {
   avatar?: string; // tạm map image sang avatar để dùng chung component với product list
   icon?: string;
   unit: string;
-  unitId?: number;
   variantGroups: VariantGroup[];
   variants: ProductVariant[];
 }
@@ -60,8 +56,7 @@ interface UseGetVariantReturn {
 export function useGetDetailProduct({
   productId,
   enabled = true, // ✅ mặc định true, truyền false để tắt
-  branchId,
-}: UseGetVariantParams & { branchId?: number }): UseGetVariantReturn {
+}: UseGetVariantParams): UseGetVariantReturn {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [isNoItem, setIsNoItem] = useState<boolean>(false);
   const [isPermissions, setIsPermissions] = useState<boolean>(false);
@@ -69,13 +64,11 @@ export function useGetDetailProduct({
 
   // ── Core fetch ──────────────────────────────────────────────────────────────
 
-  const fetchProducts = useCallback(async (id: number, bid?: number) => {
+  const fetchProducts = useCallback(async (id: number) => {
     setIsNoItem(false);
 
     try {
-      // Truyền branchId để BE filter tồn theo chi nhánh đang chọn,
-      // đảm bảo tồn trong popup biến thể đồng nhất với tồn ngoài list (D.4.2).
-      const response = await ProductService.detail(id, bid);
+      const response = await ProductService.detail(id);
 
       if (response.code === 0) {
         const result = response.result;
@@ -108,12 +101,12 @@ export function useGetDetailProduct({
   useEffect(() => {
     if (!enabled) return; // ✅ guard: nếu không enabled thì không fetch
     setIsLoading(true);
-    fetchProducts(productId, branchId);
+    fetchProducts(productId);
 
     // return () => {
     //   abortControllerRef.current?.abort();
     // };
-  }, [productId, enabled, branchId]);
+  }, [productId, enabled]);
   //  ^^^^^^^^^^^
   //  Chỉ theo dõi params và enabled — giá trị primitive (string/boolean)
   //  string/boolean so sánh bằng value, không bị lặp như object
@@ -540,7 +533,6 @@ function mapToVariantProduct(detail): VariantProduct {
     name: detail.name,
     icon: detail?.icon || "📦",
     unit: detail.unitName ?? detail.unit ?? "",
-    unitId: detail?.unitId != null ? toSafeNumber(detail.unitId) : undefined,
     image: detail.image,
     avatar: detail.avatar, // tạm map image sang avatar để dùng chung component với product list
     variantGroups: detail?.variantGroups
@@ -560,9 +552,6 @@ function mapToVariantProduct(detail): VariantProduct {
           price: toSafeNumber(v.promotionPrice ?? v.price ?? v.priceRetail ?? v.salePrice, basePrice),
           images: v?.images ? v.images.map((img) => img) : [], // giả sử API mới có thêm trường images là array để chứa nhiều ảnh của biến thể
           stock: toSafeNumber(v?.quantity, 0),
-          unitId: v?.unitId != null ? toSafeNumber(v.unitId) : undefined,
-          unitName: v?.unitName ?? detail.unitName ?? detail.unit ?? "",
-          taxRate: v?.taxRate != null ? toSafeNumber(v.taxRate) : (detail?.taxRate != null ? toSafeNumber(detail.taxRate) : undefined),
           combination: v.selectedOptions
             ? v.selectedOptions.reduce((acc, opt) => {
                 acc[String(opt.groupId)] = String(opt.optionValueId);

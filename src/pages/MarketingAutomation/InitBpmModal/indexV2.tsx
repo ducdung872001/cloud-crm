@@ -108,7 +108,7 @@ export default function InitBpmModalV2(props: Record<string, unknown>) {
       limit: 10,
     };
     const response = await BusinessProcessService.list(param);
-    const optionProcess =
+    let optionProcess =
       page === 1
         ? [
             // {

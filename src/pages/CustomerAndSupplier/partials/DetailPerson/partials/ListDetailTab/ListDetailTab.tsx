@@ -23,7 +23,7 @@ export default function ListDetailTab({ data, onInvoiceStatsLoaded }: ListDetail
   ];
 
   return (
-    <div className="wrapper-tab retail-wrapper-tab">
+    <div className="wrapper-tab ch-member-wrapper-tab">
       <div className="list-tab">
         <ul className="action__option--title">
           {listTabItems.map((item) => (

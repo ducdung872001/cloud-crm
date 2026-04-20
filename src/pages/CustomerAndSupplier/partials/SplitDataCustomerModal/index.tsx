@@ -217,7 +217,7 @@ export default function SplitDataCustomerModal(props: Record<string, unknown>) {
     
     if(type === "SMART"){
       if(!quantityData){
-        showToast("Vui lòng nhập số khách hàng cho mỗi nhân viên", "error");
+        showToast("Vui lòng nhập số thành viên cho mỗi nhân viên", "error");
         return;
       }
       if(listIdCheckedEmployee?.length === 0){
@@ -247,7 +247,7 @@ export default function SplitDataCustomerModal(props: Record<string, unknown>) {
     const response = await CustomerService.customerAssign(body);
 
     if (response.code === 0) {
-      showToast("Chia dữ liệu khách hàng thành công", "success");
+      showToast("Chia dữ liệu thành viên thành công", "success");
       handleClearForm(true);
     } else {
       showToast(response?.message ?? "Có lỗi xảy ra. Vui lòng thử lại sau!", "error");
@@ -335,7 +335,7 @@ export default function SplitDataCustomerModal(props: Record<string, unknown>) {
         size="lg"
       >
         <form className="form_split-data-customer" onSubmit={(e) => onSubmit(e)}>
-          <ModalHeader title={`Chia dữ liệu khách hàng`} toggle={() => !isSubmit && handleClearForm(false)} />
+          <ModalHeader title={`Chia dữ liệu thành viên`} toggle={() => !isSubmit && handleClearForm(false)} />
           <ModalBody>
             <div 
               className= "list-form-group" 
@@ -368,7 +368,7 @@ export default function SplitDataCustomerModal(props: Record<string, unknown>) {
               {type === "SMART" ? 
                 <div className="form-group">
                   <NummericInput
-                    label={'Số khách hàng cho mỗi nhân viên:'}
+                    label={'Số thành viên cho mỗi nhân viên:'}
                     value={quantityData}
                     fill={true}
                     required={true}

@@ -21,7 +21,6 @@ const LIST_FIELD: IFieldCustomize[] = [
     type:        "text",
     fill:        true,
     placeholder: "VD: NCC001 (để trống sẽ tự động tạo)",
-    maxLength:   50,
   },
   {
     label:       "Tên nhà cung cấp",
@@ -30,7 +29,7 @@ const LIST_FIELD: IFieldCustomize[] = [
     fill:        true,
     required:    true,
     placeholder: "Nhập tên nhà cung cấp",
-    maxLength:   100,
+    maxLength:   300,
   },
   {
     label:       "Số điện thoại",
@@ -38,8 +37,6 @@ const LIST_FIELD: IFieldCustomize[] = [
     type:        "text",
     fill:        true,
     placeholder: "Số điện thoại liên hệ",
-    regex:       /^(0[0-9]{9,10})$/,
-    messageErrorRegex: "Số điện thoại không đúng định dạng",
   },
   {
     label:       "Email",
@@ -47,8 +44,6 @@ const LIST_FIELD: IFieldCustomize[] = [
     type:        "text",
     fill:        true,
     placeholder: "Email liên hệ",
-    regex:       /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
-    messageErrorRegex: "Email không đúng định dạng",
   },
   {
     label:       "Mã số thuế",
@@ -84,7 +79,6 @@ const LIST_FIELD: IFieldCustomize[] = [
     type:        "text",
     fill:        true,
     placeholder: "Địa chỉ cơ sở kinh doanh",
-    maxLength:   255,
   },
   {
     label:       "Ghi chú",
@@ -92,17 +86,11 @@ const LIST_FIELD: IFieldCustomize[] = [
     type:        "textarea",
     fill:        true,
     placeholder: "Ghi chú thêm về nhà cung cấp",
-    maxLength:   500,
   },
 ];
 
 const VALIDATIONS: IValidation[] = [
-  { name: "name", rules: "required|max:100" },
-  { name: "code", rules: "nullable|max:50" },
-  { name: "phone", rules: "nullable|regex" },
-  { name: "email", rules: "nullable|regex" },
-  { name: "address", rules: "nullable|max:255" },
-  { name: "note", rules: "nullable|max:500" },
+  { name: "name", rules: "required" },
 ];
 
 function buildInitFormData(item: ISupplierItem | null): IFormData {
@@ -172,7 +160,7 @@ export default function AddSupplierModal({ onShow, data, onHide }: Props) {
       );
       onHide(true);
     } else {
-      showToast(res?.error ?? res?.message ?? "Có lỗi xảy ra. Vui lòng thử lại.", "error");
+      showToast(res?.message ?? "Có lỗi xảy ra. Vui lòng thử lại.", "error");
       setIsSubmit(false);
     }
   };
@@ -217,7 +205,7 @@ export default function AddSupplierModal({ onShow, data, onHide }: Props) {
         <div className="list-form-group">
           {LIST_FIELD.map((field, index) => (
             <FieldCustomize
-              key={index}
+              key={field.name || index}
               field={field}
               formData={formData}
               handleUpdate={(value) =>

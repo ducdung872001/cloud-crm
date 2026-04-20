@@ -17,10 +17,6 @@ export interface IInvoiceResponse {
   customerId?: number;
   customerName: string;
   customerPhone: string;
-  /** Điểm tích luỹ loyalty của khách hàng (BE bổ sung 04/2026) */
-  loyaltyPoint?: number;
-  /** Hạng thành viên (BRONZE/SILVER/GOLD/PLATINUM/DIAMOND/VIP). BE bổ sung 04/2026 */
-  membershipTier?: string;
   employeeId: number;
   employeeName: string;
   employeePhone: string;

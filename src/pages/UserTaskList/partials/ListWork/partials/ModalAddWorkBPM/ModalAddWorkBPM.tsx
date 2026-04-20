@@ -533,7 +533,7 @@ export default function ModalAddWorkBpm(props: Record<string, unknown>) {
                 {listAttactment && listAttactment.length > 0
                   ? listAttactment.map((item, index) => (
                       <div
-                        key={index}
+                        key={item.id ?? index}
                         className="item-attachment"
                         onDoubleClick={() => {
                           window.open(
@@ -1071,7 +1071,7 @@ export default function ModalAddWorkBpm(props: Record<string, unknown>) {
             <div className="list-form-group">
               {listField.map((field, index) => (
                 <FieldCustomize
-                  key={index}
+                  key={field.name || index}
                   field={field}
                   handleUpdate={(value) => handleChangeValidate(value, field, formData, validations, listField, setFormData)}
                   formData={formData}

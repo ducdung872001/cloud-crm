@@ -215,7 +215,7 @@ export default function ModalAddDecision({ onShow, onHide, setListColumn, listKe
 
     if (response.code === 0) {
       const dataOption = response.result?.items;
-      const listVar = [];
+      let listVar = [];
       dataOption &&
         dataOption.length > 0 &&
         dataOption.map((item) => {

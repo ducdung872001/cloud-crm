@@ -93,7 +93,7 @@ export default function ModalSelectTypeZalo(props: Record<string, unknown>) {
     // const response = await CustomerSourceService.update(body);
 
     // if (response.code === 0) {
-    //   showToast(`${data ? "Cập nhật" : "Thêm mới"} nguồn khách hàng thành công`, "success");
+    //   showToast(`${data ? "Cập nhật" : "Thêm mới"} nguồn thành viên thành công`, "success");
     //   onHide(true);
     // } else {
     //   showToast(response.message ?? "Có lỗi xảy ra. Vui lòng thử lại sau", "error");
@@ -193,7 +193,7 @@ export default function ModalSelectTypeZalo(props: Record<string, unknown>) {
             <div className="list-form-group">
               {listField.map((field, index) => (
                 <FieldCustomize
-                  key={index}
+                  key={field.name || index}
                   field={field}
                   handleUpdate={(value) => handleChangeValidate(value, field, formData, validations, listField, setFormData)}
                   formData={formData}

@@ -70,7 +70,7 @@ export default function Shortcut({ classNames }: ShortcutProps) {
             <>
               {shortcutsToRender.map((s, index) => (
                 <Link
-                  key={index}
+                  key={s.id ?? index}
                   className="d-flex flex-column align-items-center shortcut__item"
                   to={s.path ?? ""}
                   title={s.title}

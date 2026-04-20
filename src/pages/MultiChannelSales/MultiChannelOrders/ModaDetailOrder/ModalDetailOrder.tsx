@@ -8,12 +8,6 @@ import Badge from "@/components/badge/badge";
 import { showToast } from "@/utils/common";
 import OrderRequestService from "@/services/OrderRequestService";
 
-const normalizeOrderStatus = (status?: string) => {
-  if (status === "SHIPPING") return "DELIVERY";
-  if (status === "CANCELED") return "DELETED";
-  return status;
-};
-
 export default function ModalDetailOrder(props: Record<string, unknown>) {
   const { onShow, onHide, dataOrder } = props;
 
@@ -227,19 +221,19 @@ export default function ModalDetailOrder(props: Record<string, unknown>) {
               <Badge
                 text={
                   localStatus === "PENDING" ? "Chờ xử lý"
-                    : localStatus === "CONFIRMED" ? "Đã xác nhận"
-                      : localStatus === "DELIVERY" ? "Đang giao"
-                        : localStatus === "COMPLETED" ? "Hoàn thành"
-                          : localStatus === "DELETED" ? "Đã hủy"
-                            : "Chờ xử lý"
+                  : localStatus === "CONFIRMED" ? "Đã xác nhận"
+                  : localStatus === "SHIPPING" ? "Đang giao"
+                  : localStatus === "COMPLETED" ? "Hoàn thành"
+                  : localStatus === "CANCELED" ? "Đã hủy"
+                  : "Chờ xử lý"
                 }
                 variant={
                   localStatus === "PENDING" ? "warning"
-                    : localStatus === "CONFIRMED" ? "primary"
-                      : localStatus === "DELIVERY" ? "primary"
-                        : localStatus === "COMPLETED" ? "success"
-                          : localStatus === "DELETED" ? "error"
-                            : "warning"
+                  : localStatus === "CONFIRMED" ? "primary"
+                  : localStatus === "SHIPPING" ? "primary"
+                  : localStatus === "COMPLETED" ? "success"
+                  : localStatus === "CANCELED" ? "error"
+                  : "warning"
                 }
               />
             </div>
@@ -251,7 +245,7 @@ export default function ModalDetailOrder(props: Record<string, unknown>) {
         <ModalBody>
           <div className="kanban-order">
             {dataStep.map((item, index) => (
-              <div key={index}>
+              <div key={item.id ?? index}>
                 <div className="item-kanban">
                   <div
                     className="step-kanban"

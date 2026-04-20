@@ -327,7 +327,7 @@ export default function AddTemplateSMSModal(props: AddTemplateSMSModalProps) {
             <div className="list-form-group">
               {listField.map((field, index) => (
                 <FieldCustomize
-                  key={index}
+                  key={field.name || index}
                   field={field}
                   handleUpdate={(value) => handleChangeValidate(value, field, formData, validations, listField, setFormData)}
                   formData={formData}
@@ -342,7 +342,7 @@ export default function AddTemplateSMSModal(props: AddTemplateSMSModalProps) {
               </div>
               {listFieldContent.map((field, index) => (
                 <FieldCustomize
-                  key={index}
+                  key={field.name || index}
                   field={field}
                   handleUpdate={(value) => handleChangeValidate(value, field, formData, validations, listFieldContent, setFormData)}
                   formData={formData}

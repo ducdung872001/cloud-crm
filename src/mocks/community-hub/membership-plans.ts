@@ -1,0 +1,85 @@
+// [CH] Community Hub - Mock data for membership plans (thẻ thành viên)
+export const MOCK_MEMBERSHIP_PLANS = [
+  {
+    id: "PLAN-01",
+    name: "Standard",
+    price: 2500000,
+    duration_months: 1,
+    description: "Gói tiêu chuẩn hàng tháng",
+    color: "#2D6A5A",
+    includes: [
+      { service: "Co-working", quota: null, unit: "Không giới hạn" },
+      { service: "Đồ uống tự chọn", quota: 30, unit: "lần/tháng" },
+      { service: "Spa & Massage", quota: 4, unit: "lần/tháng" },
+      { service: "Phòng họp", quota: 8, unit: "giờ/tháng" },
+    ],
+  },
+  {
+    id: "PLAN-02",
+    name: "Premium",
+    price: 4500000,
+    duration_months: 1,
+    description: "Gói cao cấp, thêm lưu trú & dịch vụ VIP",
+    color: "#D4A574",
+    popular: true,
+    includes: [
+      { service: "Co-working", quota: null, unit: "Không giới hạn" },
+      { service: "Đồ uống tự chọn", quota: null, unit: "Không giới hạn" },
+      { service: "Spa & Massage", quota: 8, unit: "lần/tháng" },
+      { service: "Phòng họp", quota: 16, unit: "giờ/tháng" },
+      { service: "Lưu trú (giường KTX)", quota: null, unit: "Không giới hạn" },
+      { service: "Giặt là", quota: 8, unit: "kg/tháng" },
+    ],
+  },
+  {
+    id: "PLAN-03",
+    name: "Basic",
+    price: 1200000,
+    duration_months: 1,
+    description: "Gói cơ bản, chỉ co-working & đồ uống",
+    color: "#6B8078",
+    includes: [
+      { service: "Co-working", quota: null, unit: "Không giới hạn" },
+      { service: "Đồ uống tự chọn", quota: 15, unit: "lần/tháng" },
+    ],
+  },
+  {
+    id: "PLAN-04",
+    name: "Standard 6 tháng",
+    price: 13500000,
+    duration_months: 6,
+    description: "Gói Standard 6 tháng — tiết kiệm 10%",
+    color: "#2D6A5A",
+    badge: "Tiết kiệm 10%",
+    includes: [
+      { service: "Co-working", quota: null, unit: "Không giới hạn" },
+      { service: "Đồ uống tự chọn", quota: 30, unit: "lần/tháng" },
+      { service: "Spa & Massage", quota: 4, unit: "lần/tháng" },
+      { service: "Phòng họp", quota: 8, unit: "giờ/tháng" },
+    ],
+  },
+  {
+    id: "PLAN-05",
+    name: "Premium 12 tháng",
+    price: 48600000,
+    duration_months: 12,
+    description: "Gói Premium cả năm — tiết kiệm 10%",
+    color: "#D4A574",
+    badge: "Tiết kiệm 10%",
+    includes: [
+      { service: "Co-working", quota: null, unit: "Không giới hạn" },
+      { service: "Đồ uống tự chọn", quota: null, unit: "Không giới hạn" },
+      { service: "Spa & Massage", quota: 8, unit: "lần/tháng" },
+      { service: "Phòng họp", quota: 16, unit: "giờ/tháng" },
+      { service: "Lưu trú (giường KTX)", quota: null, unit: "Không giới hạn" },
+      { service: "Giặt là", quota: 8, unit: "kg/tháng" },
+    ],
+  },
+];
+
+export const MOCK_PAYMENT_METHODS = [
+  { id: "PAY-01", name: "Tiền mặt", icon: "cash" },
+  { id: "PAY-02", name: "Chuyển khoản", icon: "bank" },
+  { id: "PAY-03", name: "Thẻ tín dụng", icon: "card" },
+  { id: "PAY-04", name: "Ví MoMo", icon: "momo" },
+];

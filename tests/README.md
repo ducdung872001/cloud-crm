@@ -1,4 +1,4 @@
-# Tests — Reborn Community
+# Tests — Cloud CRM (Community Hub)
 
 ## Cau truc
 

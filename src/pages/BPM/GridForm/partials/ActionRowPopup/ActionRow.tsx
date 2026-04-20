@@ -16,7 +16,6 @@ import TextArea from "components/textarea/textarea";
 import Icon from "components/icon";
 import Input from "components/input/input"; 
 import Button from "components/button/button";
-import { set } from "lodash";
 import Popover from "components/popover/popover";
 
 export interface INoteData {
@@ -113,10 +112,10 @@ export default function ActionRow(props: INoteFieldProps) {
           {listTypeTitle.map((item, index) => {
             return (
               <div
-                key={index}
+                key={item.id ?? index}
                 className="item-action"
                 onClick={() => {
-                  const newList = [...listTypeTitle];
+                  let newList = [...listTypeTitle];
                   newList.map((item) => {
                     item.isShow = false;
                   });

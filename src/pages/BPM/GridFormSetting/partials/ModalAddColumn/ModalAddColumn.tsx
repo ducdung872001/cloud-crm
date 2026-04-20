@@ -16,7 +16,6 @@ import Icon from "components/icon";
 import RadioList from "components/radio/radioList";
 import SelectCustom from "components/selectCustom/selectCustom";
 import TextArea from "components/textarea/textarea";
-import { bind, fill, set } from "lodash";
 import GirdService from "services/GridService";
 import { BindingFieldMap } from "./BindingFieldMap";
 import Checkbox from "components/checkbox/checkbox";
@@ -195,7 +194,7 @@ export default function ModalAddColumn(props: Record<string, unknown>) {
   const getCustomerAttributes = async () => {
     const response = await CustomerAttributeService.listAll(formData?.values["custType"]);
 
-    const arrField = [];
+    let arrField = [];
 
     if (response.code === 0) {
       const dataOption = response.result;
@@ -761,7 +760,7 @@ export default function ModalAddColumn(props: Record<string, unknown>) {
     let includeContactOrg = false;
     let readOnlyContactOrg = true;
 
-    const list_column = [
+    let list_column = [
       ...listColumn,
       {
         name: formData.values["name"],
@@ -812,8 +811,8 @@ export default function ModalAddColumn(props: Record<string, unknown>) {
         : []),
     ];
     if (includeContactOrg) {
-      const indexContactOrg = list_column.findIndex((item) => item.bindingField == "contactOrg");
-      const listColumnBindingContactOrg = listBindingFieldContactOrg.map((item) => {
+      let indexContactOrg = list_column.findIndex((item) => item.bindingField == "contactOrg");
+      let listColumnBindingContactOrg = listBindingFieldContactOrg.map((item) => {
         return {
           name: item.label,
           key: item.key,
@@ -832,7 +831,7 @@ export default function ModalAddColumn(props: Record<string, unknown>) {
       list_column.splice(indexContactOrg + 1, 0, ...listColumnBindingContactOrg);
     }
 
-    const dataSubmit = {
+    let dataSubmit = {
       nodeId: nodeId || "Activity_0n3i8dv",
       processId: processId || 380,
       fieldName: fieldName || "boq",
@@ -1000,7 +999,7 @@ export default function ModalAddColumn(props: Record<string, unknown>) {
   const [listOptionDate, setlistOptionDate] = useState<IOption[]>([]);
 
   useEffect(() => {
-    const _listOptionDate = [];
+    let _listOptionDate = [];
 
     listColumn.map((item) => {
       if (item.type == "date") {
@@ -1038,7 +1037,7 @@ export default function ModalAddColumn(props: Record<string, unknown>) {
             <div className="list-form-group">
               {/* {listField.map((field, index) => (
                 <FieldCustomize
-                  key={index}
+                  key={field.name || index}
                   field={field}
                   handleUpdate={(value) => handleChangeValidate(value, field, formData, validations, listField, setFormData)}
                   formData={formData}
@@ -1046,7 +1045,7 @@ export default function ModalAddColumn(props: Record<string, unknown>) {
               ))} */}
               {listFieldFirst.map((field, index) => (
                 <FieldCustomize
-                  key={index}
+                  key={field.name || index}
                   field={field}
                   handleUpdate={(value) => handleChangeValidate(value, field, formData, validations, listFieldFirst, setFormData)}
                   formData={formData}
@@ -1198,7 +1197,7 @@ export default function ModalAddColumn(props: Record<string, unknown>) {
                                 label={"Chỉ xem"}
                                 checked={item.readOnly}
                                 onChange={(e) => {
-                                  const _detailBindingField = detailBindingField.map((x) => {
+                                  let _detailBindingField = detailBindingField.map((x) => {
                                     if (x.value == item.value) {
                                       x.readOnly = e.target.checked;
                                     }
@@ -1212,7 +1211,7 @@ export default function ModalAddColumn(props: Record<string, unknown>) {
                               <Icon
                                 name="Times"
                                 onClick={(e) => {
-                                  const _detailBindingField = detailBindingField.filter((x) => x.value != item.value);
+                                  let _detailBindingField = detailBindingField.filter((x) => x.value != item.value);
                                   setDetailBindingField(_detailBindingField);
                                   setListBindingField([...listBindingField, { ...item, readOnly: true }]);
                                 }}
@@ -1312,7 +1311,7 @@ export default function ModalAddColumn(props: Record<string, unknown>) {
 
               {listFieldSecond.map((field, index) => (
                 <FieldCustomize
-                  key={index}
+                  key={field.name || index}
                   field={field}
                   handleUpdate={(value) => handleChangeValidate(value, field, formData, validations, listFieldSecond, setFormData)}
                   formData={formData}

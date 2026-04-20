@@ -141,7 +141,7 @@ export default function QuantityByAge(props) {
         ],
       });
     } else {
-      showToast("Báo cáo theo độ tuổi khách hàng lỗi. Vui lòng xem lại sau!", "error");
+      showToast("Báo cáo theo độ tuổi thành viên lỗi. Vui lòng xem lại sau!", "error");
     }
   };
 
@@ -195,7 +195,7 @@ export default function QuantityByAge(props) {
   return (
     <div className="page__quantity__by--age">
       <div className="title__common d-flex align-items-start">
-        <h2 className="name-common">Theo độ tuổi khách hàng</h2>
+        <h2 className="name-common">Theo độ tuổi thành viên</h2>
         <div
           ref={refOptionContainer}
           className={`icon__option--download ${showOption ? "active__option" : ""}`}

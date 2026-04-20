@@ -1,5 +1,5 @@
 /**
- * Test Configuration — Reborn Retail CRM
+ * Test Configuration — Cloud CRM (Community Hub)
  *
  * Cau hinh chung cho tat ca test scripts.
  * Thay doi o day se anh huong toan bo test suite.

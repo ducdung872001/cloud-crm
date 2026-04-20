@@ -1,40 +1,33 @@
 %%{init: {'theme':'base', 'themeVariables': {'fontFamily':'Calibri'}}}%%
 sequenceDiagram
     autonumber
-    actor CASH as 👤 Cashier
-    participant POS as POS Frontend
-    participant CRM as Reborn CRM API
+    actor ACC as 👤 Accountant
+    participant CRM as Reborn CRM
     participant DB as Database
     participant CA as Chứng thư số CA
-    participant EI as VAT Provider<br/>(VNPT/MISA)
+    participant EI as Nhà cung cấp<br/>E-invoice
     participant TAX as Cơ quan thuế
     actor CUST as 👤 Khách hàng
 
-    CASH->>POS: Đơn đã PAID, bấm "Phát hành VAT"
-    POS->>CRM: GET /orders/{id}
-    CRM->>DB: Load order + items + customer
-    DB-->>CRM: Trả về dữ liệu đơn
-    CRM-->>POS: Form VAT + pre-fill
-    POS-->>CASH: Hiển thị form
-    CASH->>POS: Nhập MST + tên cty + địa chỉ + email
-    CASH->>POS: Bấm "Phát hành"
-    POS->>CRM: POST /vat-invoices
+    ACC->>CRM: Mở "Hóa đơn VAT" → Tạo mới
+    CRM->>DB: Load đơn bán gốc
+    DB-->>CRM: Trả về items
+    CRM-->>ACC: Hiển thị form
+    ACC->>CRM: Nhập MST + tên + địa chỉ + email
+    ACC->>CRM: Bấm "Phát hành"
 
-    CRM->>CRM: Validate (MST, tổng tiền, thuế suất)
-    alt Validate FAIL
-        CRM-->>POS: ❌ Lỗi field cụ thể
-        POS-->>CASH: Hiển thị lỗi
+    CRM->>CRM: Validate dữ liệu<br/>(MST, tổng tiền, thuế suất)
+    alt Validate fail
+        CRM-->>ACC: ❌ Báo lỗi cụ thể
     else Validate OK
-        CRM->>CA: Request ký số
-        CA-->>CRM: Trả chữ ký số
-        CRM->>EI: POST invoice + signature
-        EI->>EI: Validate XML format
+        CRM->>CA: Lấy chứng thư số
+        CA-->>CRM: Trả ký số
+        CRM->>EI: POST hóa đơn + chữ ký
+        EI->>EI: Validate format
         EI->>TAX: Đẩy lên hệ thống thuế
-        TAX-->>EI: Mã tra cứu + ký xác nhận
+        TAX-->>EI: Mã tra cứu
         EI-->>CRM: Trả mã tra cứu + URL PDF
-        CRM->>DB: Lưu VAT invoice + mã tra cứu
-        CRM->>CUST: Email PDF + link tra cứu
-        CRM->>CUST: SMS mã tra cứu
-        CRM-->>POS: ✅ Thành công + mã
-        POS-->>CASH: Hiển thị mã tra cứu
+        CRM->>DB: Lưu hóa đơn + mã tra cứu
+        CRM->>CUST: Gửi email PDF + link tra cứu
+        CRM-->>ACC: ✅ Thành công + hiển thị mã
     end

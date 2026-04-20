@@ -2,44 +2,37 @@
 flowchart TB
     subgraph EXT["🌐 Hệ thống bên ngoài"]
         SSO[("SSO Reborn<br/>(OAuth/OIDC)")]
-        VAT[("Hóa đơn điện tử<br/>VNPT/MISA")]
+        VAT[("Hóa đơn điện tử<br/>Viettel/VNPT/Misa")]
         PAY[("Cổng thanh toán<br/>VNPay/MoMo/ZaloPay")]
-        SHIP[("Vận chuyển<br/>GHN/GHTK/J&T/VNPost")]
-        SMS[("SMS Gateway")]
-        EMAIL[("Email SMTP")]
+        SHIP[("Vận chuyển<br/>GHN/GHTK/J&T")]
+        SMS[("SMS Gateway<br/>Viettel/VinaSMS")]
+        EMAIL[("Email SMTP<br/>Gmail/SendGrid")]
         ZALO[("Zalo OA")]
-        FB[("Facebook")]
-        MKP[("Marketplace<br/>Shopee/Lazada/TikTok")]
+        FB[("Facebook<br/>Messenger")]
     end
 
-    CRM{{"<b>REBORN RETAIL CRM</b><br/>(Chuỗi cửa hàng bán lẻ)"}}
+    CRM{{"<b>REBORN CRM</b><br/>(Cửa hàng & Spa)"}}
 
     subgraph USERS["👥 Người dùng nội bộ"]
-        TADMIN["Tenant Admin"]
-        CHAIN["Chain Manager"]
-        SM["Store Manager"]
-        CASH["Cashier"]
-        WH["Warehouse Staff"]
-        PUR["Purchaser"]
+        ADMIN["Tenant Admin"]
+        BM["Branch Manager"]
+        REC["Receptionist"]
+        TECH["Technician"]
         ACC["Accountant"]
         MKT["Marketer"]
-        SALES["Sales Rep"]
     end
 
     subgraph CUST["👤 Khách hàng"]
         WALK["Khách lẻ<br/>walk-in"]
-        MEMBER["Hội viên<br/>(thẻ loyalty)"]
+        MEMBER["Hội viên<br/>(thẻ/QR)"]
     end
 
-    TADMIN -.->|Cấu hình tenant| CRM
-    CHAIN -.->|Quản lý chuỗi| CRM
-    SM -.->|Vận hành cửa hàng| CRM
-    CASH -.->|POS bán hàng| CRM
-    WH -.->|Kho & chuyển kho| CRM
-    PUR -.->|Mua hàng/PO| CRM
-    ACC -.->|Thu/chi/Đối soát| CRM
-    MKT -.->|Chiến dịch/KM| CRM
-    SALES -.->|CSKH/Chốt đơn| CRM
+    ADMIN -.->|Cấu hình| CRM
+    BM -.->|Vận hành| CRM
+    REC -.->|Bán hàng/Check-in| CRM
+    TECH -.->|Trừ quota| CRM
+    ACC -.->|Thu/Chi/Đối soát| CRM
+    MKT -.->|Chiến dịch| CRM
 
     MEMBER -->|Quét thẻ/QR| CRM
     WALK -->|Mua tại quầy| CRM
@@ -52,14 +45,13 @@ flowchart TB
     CRM -->|Gửi tin| EMAIL
     CRM -->|Gửi tin| ZALO
     CRM <-->|Inbox/Tin| FB
-    CRM <-->|Sync đơn/kho| MKP
 
     classDef ext fill:#FEF3C7,stroke:#F59E0B,stroke-width:2px,color:#78350F
     classDef user fill:#E1F5EE,stroke:#2C7A7B,stroke-width:2px,color:#0F4C44
     classDef cust fill:#FAEEDA,stroke:#D97706,stroke-width:2px,color:#7C2D12
     classDef sys fill:#1F3A68,stroke:#1F3A68,stroke-width:3px,color:#fff
 
-    class SSO,VAT,PAY,SHIP,SMS,EMAIL,ZALO,FB,MKP ext
-    class TADMIN,CHAIN,SM,CASH,WH,PUR,ACC,MKT,SALES user
+    class SSO,VAT,PAY,SHIP,SMS,EMAIL,ZALO,FB ext
+    class ADMIN,BM,REC,TECH,ACC,MKT user
     class WALK,MEMBER cust
     class CRM sys

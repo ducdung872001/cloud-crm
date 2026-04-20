@@ -6,7 +6,7 @@ interface Props {
   onBack: () => void;
 }
 
-export default function WarehouseReportTopbar({ onBack }: Props) {
+export default function WarehouseReportTopbar({ currentView, onBack }: Props) {
   return (
     <div className="warehouse-report-topbar">
       <div className="warehouse-report-topbar__breadcrumb">

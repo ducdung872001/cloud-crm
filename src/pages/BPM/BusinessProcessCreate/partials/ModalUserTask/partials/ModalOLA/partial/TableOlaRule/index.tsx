@@ -97,10 +97,10 @@ export default function TableOlaRule({ processId, childProcessId, dataConfigAdva
   const [lookupError, setLookupError] = useState(null);
 
   const genNewBaseRow = (listColumn) => {
-    const _baseRow = [];
+    let _baseRow = [];
     listColumn.forEach((item) => {
       if (item?.children && item?.children?.length > 0) {
-        const _children = item.children.map((child) => {
+        let _children = item.children.map((child) => {
           return {
             ...child,
             value: "",
@@ -122,17 +122,17 @@ export default function TableOlaRule({ processId, childProcessId, dataConfigAdva
   };
 
   const genNewDataRow = (dataRow, newBaseRow) => {
-    const newDataRow = [];
+    let newDataRow = [];
     //Lặp qua từng hàng trong dataRow và kiểm tra các hàng trong dataRow so với newBaseRow, nếu số trường trong dataRow không bằng số trường trong _baseRow thì thêm các trường còn thiếu vào dataRow và xoá bớt các trường thừa trong dataRow so với newBaseRow
     if (dataRow && dataRow.length > 0) {
       for (let i = 0; i < dataRow.length; i++) {
-        const row = dataRow[i];
-        const newRow = [];
+        let row = dataRow[i];
+        let newRow = [];
         for (let j = 0; j < newBaseRow.length; j++) {
-          const field = newBaseRow[j];
-          const fieldBase = row.find((item) => item.key == field.key);
+          let field = newBaseRow[j];
+          let fieldBase = row.find((item) => item.key == field.key);
           if (fieldBase) {
-            const newField = {
+            let newField = {
               ...fieldBase,
               name: field.name, // Cho trường hợp đổi tên cột
               value: fieldBase.value,
@@ -148,7 +148,7 @@ export default function TableOlaRule({ processId, childProcessId, dataConfigAdva
             };
             newRow.push(newField);
           } else {
-            const newField = {
+            let newField = {
               ...field,
               name: field.name, // Cho trường hợp đổi tên cột
               value: field.value,
@@ -337,7 +337,7 @@ export default function TableOlaRule({ processId, childProcessId, dataConfigAdva
             color="secondary"
             type="button"
             onClick={() => {
-              const uuid = uuidv4();
+              let uuid = uuidv4();
               setDataRow((prevDataRow) => [
                 ...prevDataRow,
                 baseRow.map((item) => {

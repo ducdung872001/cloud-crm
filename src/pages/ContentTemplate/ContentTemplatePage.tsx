@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import HeaderTabMenu from "@/components/HeaderTabMenu/HeaderTabMenu";
 import { ITitleActions } from "components/titleAction/titleAction";
-import { showToast } from "utils/common";
+import { showToast } from "@/utils/common";
 import "./ContentTemplatePage.scss";
 
 type Channel = "SMS" | "Zalo" | "Email" | "App";
@@ -102,7 +102,7 @@ export default function ContentTemplatePage({ onBackProps }: { onBackProps: (v: 
           </div>
           <div className="ct-form-actions">
             <button className="cm-btn cm-btn--secondary" onClick={() => setCreate(false)}>Hủy</button>
-            <button className="cm-btn cm-btn--primary" onClick={() => { showToast("Đã lưu mẫu", "success"); setCreate(false); }}>Lưu mẫu</button>
+            <button className="cm-btn cm-btn--primary" onClick={() => { showToast("Đã lưu mẫu (demo)", "info"); setCreate(false); }}>Lưu mẫu</button>
           </div>
         </div>
       )}
@@ -152,7 +152,7 @@ export default function ContentTemplatePage({ onBackProps }: { onBackProps: (v: 
               <div className="ct-template-card__actions">
                 <button className="cm-btn cm-btn--secondary cm-btn--sm" onClick={() => setPreview(t)}>Xem trước</button>
                 <button className="cm-btn cm-btn--secondary cm-btn--sm">Chỉnh sửa</button>
-                <button className="cm-btn cm-btn--primary cm-btn--sm" onClick={() => showToast(`Dùng mẫu "${t.name}"`, "info")}>Dùng mẫu</button>
+                <button className="cm-btn cm-btn--primary cm-btn--sm" onClick={() => showToast(`Dùng mẫu "${t.name}" (demo)`, "info")}>Dùng mẫu</button>
               </div>
             </div>
           );

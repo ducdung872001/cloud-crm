@@ -38,13 +38,13 @@ const SECTIONS = [
   {
     label: "PHÂN TÍCH & BÁO CÁO",
     cards: [
-      { tab: "loyalty_report",   icon: "LoyaltyMenu",        title: "Báo cáo thành viên",     bg: "#fef3c7", des: "Phân tích tỷ lệ giữ chân, giá trị vòng đời khách hàng và hiệu quả chương trình loyalty" },
+      { tab: "loyalty_report",   icon: "LoyaltyMenu",        title: "Báo cáo thành viên",     bg: "#fef3c7", des: "Phân tích tỷ lệ giữ chân, giá trị vòng đời thành viên và hiệu quả chương trình loyalty" },
     ],
   },
 ];
 
 export default function MemberCustomersPage() {
-  document.title = "Khách hàng thành viên";
+  document.title = "Tích điểm hội viên";
 
   const [tab, setTab]                         = useState<TabKey>(null);
   const [isDetail, setIsDetail]               = useState(false);
@@ -62,7 +62,7 @@ export default function MemberCustomersPage() {
 
   return (
     <div className="page-content">
-      {!isDetail && <TitleAction title="Khách hàng thành viên" />}
+      {!isDetail && <TitleAction title="Tích điểm hội viên" />}
 
       {/* ── Hub: layout 3 section ── */}
       {!isDetail && (

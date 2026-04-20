@@ -1,74 +1,73 @@
-# Tài liệu Kiến trúc Giải pháp — Reborn Retail CRM
+# Tài liệu Kiến trúc Giải pháp — Reborn CRM
 
-**Solution Architecture Document (SAD)** — mô tả kiến trúc kỹ thuật của hệ thống **Reborn Retail** (biến thể Cửa hàng bán lẻ / Chuỗi / Multi-channel POS), biên soạn ngược từ codebase branch `reborn-retail`.
+**Solution Architecture Document (SAD)** — tài liệu kỹ thuật mô tả kiến trúc tổng thể và chi tiết của hệ thống Reborn CRM (biến thể Cửa hàng / Spa / Cộng đồng).
 
-> **Mục đích**: SAD là tài liệu **kỹ thuật** cho đội phát triển, vận hành, bảo trì. Khác với URD (mô tả *hệ thống làm gì*) và HDSD (hướng dẫn *người dùng thao tác*), SAD trả lời câu hỏi **"Hệ thống được xây thế nào?"**.
+> **Trạng thái:** Bản thảo (Draft) — biên soạn ngược từ codebase frontend + best practice cho stack tương đương. Các phần được đánh dấu rõ mức độ tự tin.
+
+## Mục đích tài liệu
+
+SAD trả lời câu hỏi **"Hệ thống được xây như thế nào?"** từ góc độ kỹ thuật, bổ sung cho:
+- **HDSD** (`docs/userguides/`) — *"dùng thế nào?"* (góc nhìn người dùng cuối)
+- **URD** (`docs/urd/`) — *"phải làm được gì?"* (góc nhìn yêu cầu nghiệp vụ)
 
 ## Cấu trúc tài liệu
 
-Tài liệu gồm **15 part** theo mô hình **4+1 View** (Kruchten) mở rộng + ADR + NFR:
-
-| Part | Tiêu đề | View / Chủ đề |
-|------|---------|---------------|
-| [Part 00](part-00-tong-quan.md) | Tổng quan & Đối tượng đọc | Intro, scope, convention |
-| [Part 01](part-01-kien-truc-tong-the.md) | Kiến trúc tổng thể | Context, 4+1 view, driver |
-| [Part 02](part-02-frontend-architecture.md) | Kiến trúc Frontend | SPA, module structure, patterns |
-| [Part 03](part-03-tech-stack.md) | Tech Stack | Library inventory, version matrix |
-| [Part 04](part-04-routing-navigation.md) | Routing & Navigation | react-router, sidebar, lazy load |
-| [Part 05](part-05-component-module.md) | Component & Module | Categorization, dependencies |
-| [Part 06](part-06-service-api.md) | Service layer & API | fetchConfig, URL prefix, interceptor |
-| [Part 07](part-07-data-architecture.md) | Data Architecture | Models, types, state mgmt |
-| [Part 08](part-08-backend-architecture.md) | Backend (suy luận) | Microservices, bounded contexts |
-| [Part 09](part-09-integration.md) | Integration | SSO, payment, e-invoice, 3rd party |
-| [Part 10](part-10-security.md) | Bảo mật | AuthN/AuthZ, OWASP, secrets |
-| [Part 11](part-11-cross-cutting.md) | Cross-cutting | Logging, error, i18n, perf |
-| [Part 12](part-12-deployment.md) | Triển khai | Environment, scaling, DR |
-| [Part 13](part-13-adr.md) | ADR — Quyết định kiến trúc | Trade-off đã chọn |
-| [Part 14](part-14-quality-risks.md) | Quality attributes & Risks | Metric, NFR tracker, rủi ro |
+| Part | Tiêu đề | Tự tin | Mô tả ngắn |
+|------|---------|:------:|------------|
+| [Part 00](part-00-tong-quan.md) | Tổng quan & Đối tượng đọc | 🟢 | Mục đích, scope, độc giả, conventions |
+| [Part 01](part-01-kien-truc-tong-the.md) | Kiến trúc tổng thể (4+1 views) | 🟢 | Logical / Process / Development / Deployment / Scenario |
+| [Part 02](part-02-frontend-architecture.md) | Frontend Architecture | 🟢 | React + TypeScript + Vite, structure, patterns |
+| [Part 03](part-03-tech-stack.md) | Tech Stack & Dependencies | 🟢 | Toàn bộ thư viện + lý do dùng |
+| [Part 04](part-04-routing-navigation.md) | Routing & Navigation | 🟢 | react-router, sidebar config, lazy load, tenant variants |
+| [Part 05](part-05-component-module.md) | Component & Module Architecture | 🟢 | 167 page modules, 78 components, contexts, hooks |
+| [Part 06](part-06-service-api.md) | Service Layer & API Contract | 🟡 | 240 service files, fetch interceptor, conventions |
+| [Part 07](part-07-data-architecture.md) | Data Architecture | 🟡 | ERD, multi-tenant, soft delete, audit trail |
+| [Part 08](part-08-backend-architecture.md) | Backend Architecture (suy luận) | 🔴 | Microservices, bounded contexts, gateway pattern |
+| [Part 09](part-09-integration.md) | Integration Architecture | 🟡 | SSO, payment, e-invoice, SMS/email, webhook |
+| [Part 10](part-10-security.md) | Security Architecture | 🟡 | AuthN/AuthZ, tenant isolation, encryption, OWASP |
+| [Part 11](part-11-cross-cutting.md) | Cross-cutting Concerns | 🟡 | Logging, monitoring, error handling, i18n, config |
+| [Part 12](part-12-deployment.md) | Deployment & Infrastructure | 🔴 | Environments, CI/CD, network, DR |
+| [Part 13](part-13-adr.md) | Architectural Decisions (ADRs) | 🟢🟡 | 18 quyết định kiến trúc quan trọng |
+| [Part 14](part-14-quality-risks.md) | Performance, Quality, Risks | 🟡 | NFR mapping, test strategy, risk register |
 
 ## Quy ước
 
-### Mã ADR
-
-```
-ADR-<NN> — Tên quyết định
-```
-
-Mỗi ADR có: Context, Decision, Consequences, Alternatives considered.
-
-### Mức độ tự tin (Confidence)
-
-Mỗi khẳng định được gắn nhãn:
-
-- 🟢 **Cao** — có bằng chứng trực tiếp từ code / config trong repo này
-- 🟡 **Trung bình** — suy luận hợp lý từ convention / comment
-- 🔴 **Thấp** — phỏng đoán từ pattern ngành, cần BE xác nhận
-
-### Reference format
-
-```
-[file: src/configs/fetchConfig.ts:42]
-[file: src/services/CustomerService.ts:32]
-```
-
-### Ký hiệu sơ đồ
+### Mức độ tự tin
 
 | Ký hiệu | Ý nghĩa |
 |---------|---------|
-| Hộp chữ nhật | Component / Service |
-| Hộp tròn (cylinder) | Database / Storage |
-| Mũi tên đậm | Đồng bộ (sync) |
-| Mũi tên nét đứt | Bất đồng bộ (async) / event |
-| 🌐 | External system |
-| 👤 | Actor (user) |
-| ⚙️ | Background job / cron |
+| 🟢 **Cao** | Quan sát trực tiếp từ source code đang chạy. Có thể trích dẫn file/dòng cụ thể |
+| 🟡 **Trung bình** | Suy luận từ frontend / model / service interface. Có thể đúng về bản chất nhưng chi tiết cần backend xác nhận |
+| 🔴 **Thấp** | Suy luận theo best practice cho stack tương tự. Đội backend / DevOps cần xác nhận hoặc thay bằng thông tin thực tế |
 
-## Phân biệt với URD và HDSD
+Mỗi mục có mức độ ≠ 🟢 sẽ có **box cảnh báo** ở đầu nội dung.
 
-| | URD | SAD | HDSD |
-|---|---|---|---|
-| **Trả lời** | Hệ thống làm gì? | Xây thế nào? | Dùng thế nào? |
-| **Người đọc** | BA, PO, QA, KH | Dev, Architect | User cuối |
-| **Format** | Requirement + AC | Diagram + ADR | Step-by-step |
+### Mã định danh ADR
 
-Xem [docs/urd/](../urd/) và [docs/userguides/](../userguides/).
+`ADR-NN` — Architectural Decision Record số NN. Format theo Michael Nygard:
+- **Trạng thái** (Proposed / Accepted / Deprecated / Superseded by)
+- **Bối cảnh** (Context)
+- **Quyết định** (Decision)
+- **Hậu quả** (Consequences)
+
+### Đối tượng đọc
+
+| Vai trò | Sử dụng SAD để |
+|---------|----------------|
+| **Tech Lead / Architect** | Hiểu toàn bộ kiến trúc, ra quyết định nâng cấp |
+| **Senior Developer** | Onboarding, hiểu lý do design pattern |
+| **DevOps / SRE** | Cấu hình hạ tầng, monitoring, troubleshoot |
+| **Security Reviewer** | Audit bảo mật, kiểm tra threat model |
+| **Đối tác triển khai** | Hiểu để build add-on / tích hợp |
+
+### Tài liệu liên quan
+
+- HDSD: `docs/userguides/HDSD-full-final.md`
+- URD: `docs/urd/URD-full.md`
+- Codebase: thư mục root của repository này
+
+## Lịch sử phiên bản
+
+| Phiên bản | Ngày | Người soạn | Mô tả |
+|-----------|------|------------|-------|
+| 0.1 (Draft) | 2026-04-14 | Reborn (reverse-engineered) | Bản thảo đầu tiên, biên soạn ngược |

@@ -7,7 +7,7 @@ import CreateReturnModal from "./modals/CreateReturnModal";
 import ReturnDetailModal from "./modals/ReturnDetailModal";
 import ReturnTopbar from "./components/ReturnTopbar";
 import ReturnInvoiceService from "@/services/ReturnInvoiceService";
-import { showToast } from "utils/common";
+import { showToast } from "@/utils/common";
 
 const PAGE_SIZE = 20;
 
@@ -40,8 +40,8 @@ const ReturnProductPage: React.FC = () => {
   const [filterType,   setFilterType]   = useState("");
   const [filterStatus, setFilterStatus] = useState("");
   const [search,       setSearch]       = useState("");
-  const [fromDate]     = useState("");
-  const [toDate]       = useState("");
+  const [fromDate,     setFromDate]     = useState("");
+  const [toDate,       setToDate]       = useState("");
 
   // ── Modal state ─────────────────────────────────────────────────────────────
   const [isExporting,   setIsExporting]   = useState(false);

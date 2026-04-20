@@ -86,7 +86,7 @@ function TagsInput(props: TagsInputProps) {
         {label ? <label className="label-text">{label}</label> : ""}
         <div className="react-tag-input__list">
           {tagsData?.map((tag, index) => (
-            <span key={index} className="react-tag-input__item">
+            <span key={tag.id ?? index} className="react-tag-input__item">
               <span className="tag-name">{tag}</span>
               <span className="react-tag-input__remove" onClick={() => onRemoveTag(index)}>
                 <Icon name="Times" />

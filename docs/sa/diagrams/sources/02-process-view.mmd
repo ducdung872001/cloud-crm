@@ -1,59 +1,59 @@
 %%{init: {'theme':'base','themeVariables':{'fontFamily':'Calibri','fontSize':'18px'}}}%%
 flowchart LR
-    subgraph CLIENT["Client Runtime"]
-      POSTERM[POS Terminal<br/>Browser SPA]
-      MOBILE[Mobile Web<br/>nhân viên kho]
-      ADMIN[Admin Browser]
+    USER((User Browser))
+    subgraph FE["Frontend SPA process"]
+      MAIN[Main React thread]
+      SW[Service Worker — FCM Push]
+      WW[Web Worker — heavy parsing]
     end
-
-    subgraph SYNC["Synchronous Request Flow"]
-      direction TB
-      REQ[HTTP Request] --> GW1[API Gateway]
-      GW1 --> SVC1[Microservice handler]
-      SVC1 --> DB1[(DB transaction)]
-      DB1 --> RESP[HTTP Response]
+    subgraph EDGE["Edge tier"]
+      CDN[CDN]
+      WAF[WAF + Rate limit]
+      LB[Load Balancer]
     end
-
-    subgraph ASYNC["Async Background Processes"]
-      direction TB
-      MQ[(Message Queue<br/>RabbitMQ/Kafka)]
-      SYNC_JOB[Marketplace Sync Job<br/>Shopee/Lazada/Tiki]
-      WEBHOOK[Webhook Dispatcher<br/>order.created event]
-      STOCK_JOB[Stock recon job<br/>nightly]
-      BATCH[Batch Report Job<br/>daily sales summary]
-      LOYALTY[Loyalty points<br/>accrual worker]
+    subgraph APP["App tier"]
+      API1[API Server 1]
+      API2[API Server 2]
+      API3[API Server 3]
+      WORKER[Background Worker]
+      CRON[Cron Scheduler]
+      WHRX[Webhook Receiver]
+      WHTX[Webhook Dispatcher]
     end
-
-    subgraph SCHED["Scheduled Jobs (cron)"]
-      direction TB
-      C1[00:00 đối soát tồn kho]
-      C2[02:00 tổng hợp doanh thu]
-      C3[06:00 pull đơn sàn]
-      C4[Mỗi 5 phút<br/>push stock lên sàn]
-      C5[Mỗi giờ<br/>retry webhook DLQ]
+    subgraph DATA["Data tier"]
+      DB[(PostgreSQL)]
+      REDIS[(Redis)]
+      S3[(S3 Object Storage)]
     end
+    EXT[External Services]
 
-    POSTERM --> REQ
-    MOBILE --> REQ
-    ADMIN --> REQ
+    USER --> MAIN
+    MAIN --> SW
+    MAIN -.spawn.-> WW
+    MAIN -->|HTTPS REST| CDN
+    CDN --> WAF
+    WAF --> LB
+    LB --> API1
+    LB --> API2
+    LB --> API3
+    API1 --> DB
+    API1 --> REDIS
+    API1 --> S3
+    API1 -->|emit job| REDIS
+    REDIS -.subscribe.-> WORKER
+    CRON -.trigger.-> WORKER
+    WORKER --> DB
+    WORKER -->|push event| WHTX
+    WHTX -->|HTTP POST| EXT
+    EXT -->|webhook IPN| WHRX
+    WHRX --> DB
 
-    SVC1 -.publish event.-> MQ
-    MQ --> SYNC_JOB
-    MQ --> WEBHOOK
-    MQ --> LOYALTY
+    classDef ext fill:#FEF3C7,stroke:#F59E0B,color:#78350F
+    classDef edge fill:#E1F5EE,stroke:#2C7A7B,color:#0F4C44
+    classDef app fill:#1F3A68,stroke:#1F3A68,color:#fff
+    classDef data fill:#FAEEDA,stroke:#D97706,color:#7C2D12
 
-    C1 --> STOCK_JOB
-    C2 --> BATCH
-    C3 --> SYNC_JOB
-    C4 --> SYNC_JOB
-    C5 --> WEBHOOK
-
-    classDef client fill:#1F3A68,stroke:#1F3A68,color:#fff
-    classDef sync fill:#2C7A7B,stroke:#0F4C44,color:#fff
-    classDef async fill:#7C3AED,stroke:#5B21B6,color:#fff
-    classDef sched fill:#D97706,stroke:#7C2D12,color:#fff
-
-    class POSTERM,MOBILE,ADMIN client
-    class REQ,GW1,SVC1,DB1,RESP sync
-    class MQ,SYNC_JOB,WEBHOOK,STOCK_JOB,BATCH,LOYALTY async
-    class C1,C2,C3,C4,C5 sched
+    class USER,EXT ext
+    class CDN,WAF,LB edge
+    class API1,API2,API3,WORKER,CRON,WHRX,WHTX,MAIN,SW,WW app
+    class DB,REDIS,S3 data

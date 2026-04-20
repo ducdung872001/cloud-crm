@@ -298,7 +298,7 @@ export default function Kanban(props: Record<string, unknown>) {
       if (response.code === 0) {
         const result = response.result;
 
-        const newDataOfApproach = [...dataOfApproach];
+        let newDataOfApproach = [...dataOfApproach];
         const indexApproach = newDataOfApproach.findIndex((el) => el.approachId === itemApproach.id);
         const approachFind = newDataOfApproach.find((el) => el.approachId === itemApproach.id);
         if (indexApproach !== -1) {

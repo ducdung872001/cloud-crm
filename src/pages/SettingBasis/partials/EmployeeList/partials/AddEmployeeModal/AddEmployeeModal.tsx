@@ -24,7 +24,8 @@ import Icon from "components/icon";
 
 import "./AddEmployeeModal.scss";
 import Input from "components/input/input";
-import { isEqual, set } from "lodash";
+import isEqual from "lodash/isEqual";
+import set from "lodash/set";
 
 export default function AddEmployeeModal(props: AddEmployeeModalProps) {
   const { onShow, onHide, data } = props;
@@ -228,14 +229,10 @@ export default function AddEmployeeModal(props: AddEmployeeModalProps) {
   const validations: IValidation[] = [
     {
       name: "name",
-      rules: "required|max:100",
+      rules: "required",
     },
     {
       name: "phone",
-      rules: "nullable|regex",
-    },
-    {
-      name: "email",
       rules: "nullable|regex",
     },
     {
@@ -954,7 +951,7 @@ export default function AddEmployeeModal(props: AddEmployeeModalProps) {
                 onChange={(e) => {
                   setValueListRole(
                     e.map((item) => {
-                      const check = defaultListRole.find((el) => el.value === item.value);
+                      let check = defaultListRole.find((el) => el.value === item.value);
                       return { value: item.value, label: item.label, id: (check && check?.id) || null };
                     })
                   );
@@ -963,7 +960,7 @@ export default function AddEmployeeModal(props: AddEmployeeModalProps) {
                     values: {
                       ...prev.values,
                       roleEmployeeList: e.map((item) => {
-                        const check = defaultListRole.find((el) => el.value === item.value);
+                        let check = defaultListRole.find((el) => el.value === item.value);
                         return { roleId: item.value, employeeId: data?.id || null, id: (check && check?.id) || null };
                       }),
                     },
@@ -1081,7 +1078,7 @@ export default function AddEmployeeModal(props: AddEmployeeModalProps) {
                 <div style={{ width: "65%" }}>
                   {listFieldInfoBasicEmployee.map((field, index) => (
                     <FieldCustomize
-                      key={index}
+                      key={field.name || index}
                       field={field}
                       handleUpdate={(value) => handleChangeValidate(value, field, formData, validations, listFieldInfoBasicEmployee, setFormData)}
                       formData={formData}
@@ -1108,7 +1105,7 @@ export default function AddEmployeeModal(props: AddEmployeeModalProps) {
               <div className="list-form-enhance">
                 {listFieldEnhance.map((field, index) => (
                   <FieldCustomize
-                    key={index}
+                    key={field.name || index}
                     field={field}
                     handleUpdate={(value) => handleChangeValidate(value, field, formData, validations, listFieldEnhance, setFormData)}
                     formData={formData}

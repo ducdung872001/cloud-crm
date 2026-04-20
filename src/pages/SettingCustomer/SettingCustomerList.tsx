@@ -14,7 +14,7 @@ import CustomerLoyaltyPointLedger from "./partials/CustomerLoyaltyPointLedger";
 import TabMenuList from "@/components/TabMenuList/TabMenuList";
 
 export default function SettingCustomerList() {
-  document.title = "Cài đặt khách hàng";
+  document.title = "Cài đặt thành viên"; // [CH]
 
   const sourceDomain = getDomain(decodeURIComponent(document.location.href));
   const checkSubdomainTNEX = sourceDomain.includes("tnex");
@@ -22,56 +22,57 @@ export default function SettingCustomerList() {
   const [tab, setTab] = useState<string>("");
   const [isDetail, setIsDetail] = useState<boolean>(false);
 
+  // [CH] Community Hub — đổi thuật ngữ "khách hàng" → "thành viên"
   const listTab = [
     {
-      title: "Danh sách thẻ khách hàng",
+      title: "Danh sách thẻ thành viên",
       icon: "CardList",
       is_tab: "tab_one",
       backgroundColor: "#EEEDFE",
-      des: "Quản lý các loại thẻ thành viên, thẻ tích điểm hoặc thẻ ưu đãi áp dụng cho khách hàng."
+      des: "Quản lý các loại thẻ thành viên, thẻ tích điểm hoặc thẻ ưu đãi áp dụng cho thành viên."
     },
     {
-      title: "Danh sách nguồn khách hàng",
+      title: "Danh sách nguồn thành viên",
       icon: "CustomerSource",
       backgroundColor: "#E1F5EE",
       is_tab: "tab_two",
-      des: "Định nghĩa các kênh tiếp cận khách hàng như mạng xã hội, giới thiệu, quảng cáo, v.v."
+      des: "Định nghĩa các kênh tiếp cận thành viên như mạng xã hội, giới thiệu, quảng cáo, v.v."
     },
     {
-      title: "Danh sách nhóm khách hàng",
+      title: "Danh sách nhóm thành viên",
       icon: "CustomerGroup",
       backgroundColor: "#FAEEDA",
       is_tab: "tab_three",
-      des: "Phân loại khách hàng thành các nhóm để áp dụng chính sách giá, ưu đãi riêng biệt."
+      des: "Phân loại thành viên thành các nhóm để áp dụng chính sách giá, ưu đãi riêng biệt."
     },
     {
       title: "Danh sách ngành nghề/nghề nghiệp",
       icon: "Industry",
       backgroundColor: "#E6F1FB",
       is_tab: "tab_four",
-      des: "Cấu hình danh mục ngành nghề để phân tích và phân khúc tệp khách hàng hiệu quả hơn."
+      des: "Cấu hình danh mục ngành nghề để phân tích và phân khúc tệp thành viên hiệu quả hơn."
     },
     {
-      title: "Danh sách mối quan hệ khách hàng",
+      title: "Danh sách mối quan hệ thành viên",
       icon: "Relationship",
       backgroundColor: "#FAECE7",
       is_tab: "tab_five",
-      des: "Định nghĩa các loại quan hệ như người giới thiệu, người thân, đối tác để theo dõi mạng lưới khách hàng."
+      des: "Định nghĩa các loại quan hệ như người giới thiệu, người thân, đối tác để theo dõi mạng lưới thành viên."
     },
     {
-      title: "Định nghĩa trường thông tin bổ sung khách hàng",
+      title: "Định nghĩa trường thông tin bổ sung thành viên",
       icon: "CustomField",
       backgroundColor: "#EAF3DE",
       is_tab: "tab_six",
-      des: "Tạo thêm các trường dữ liệu tuỳ chỉnh để lưu trữ thông tin đặc thù của khách hàng theo nhu cầu doanh nghiệp."
-    }, 
+      des: "Tạo thêm các trường dữ liệu tuỳ chỉnh để lưu trữ thông tin đặc thù của thành viên."
+    },
     {
       title: "Định nghĩa cấu trúc xem thông tin",
       icon: "ViewStructure",
       backgroundColor: "#FBEAF0",
       is_tab: "tab_seven",
-      des: "Tùy chỉnh bố cục hiển thị thông tin khách hàng trên màn hình chi tiết theo từng vai trò hoặc bộ phận."
-    }, 
+      des: "Tùy chỉnh bố cục hiển thị thông tin thành viên trên màn hình chi tiết theo từng vai trò hoặc bộ phận."
+    },
 
     ...(checkSubdomainTNEX ? [
       {
@@ -85,7 +86,7 @@ export default function SettingCustomerList() {
 
   return (
     <div className="page-setting-customer">
-      {!isDetail && <TitleAction title="Cài đặt khách hàng" />}
+      {!isDetail && <TitleAction title="Cài đặt thành viên" />}
       
       <div className="d-flex flex-column">
         {!isDetail && (

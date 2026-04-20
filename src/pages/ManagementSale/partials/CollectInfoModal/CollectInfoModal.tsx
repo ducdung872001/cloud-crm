@@ -102,8 +102,8 @@ export default function CollectInfoModal(props: Record<string, unknown>) {
   }, [onShow, data]);
 
   const getContractAttributeFormula = (attributes) => {
-    const attributeValue = attributes ? JSON.parse(attributes)?.formula : "";
-    const attrObj = {};
+    let attributeValue = attributes ? JSON.parse(attributes)?.formula : "";
+    let attrObj = {};
     (contractExtraInfos || []).map((item, idx) => {
       if (item.datatype == "number") {
         attrObj["contractAttribute_" + convertToId(item.attributeName)] = +item.attributeValue;
@@ -125,7 +125,7 @@ export default function CollectInfoModal(props: Record<string, unknown>) {
   };
 
   const updateContractMultiselectAttribute = (attributeId, e) => {
-    const attributeValue = e ? e.split(",") : [];
+    let attributeValue = e ? e.split(",") : [];
     updateContractAttribute(attributeId, JSON.stringify(attributeValue));
   };
 
@@ -142,7 +142,7 @@ export default function CollectInfoModal(props: Record<string, unknown>) {
     });
 
     if (!found) {
-      const item: Record<string, unknown> = {};
+      let item: Record<string, unknown> = {};
       item.attributeId = attributeId;
       item.attributeValue = attributeValue;
       // item.contractId = contractId;
@@ -221,7 +221,7 @@ export default function CollectInfoModal(props: Record<string, unknown>) {
 
   const getDecimalScale = (attributes) => {
     attributes = attributes ? JSON.parse(attributes) : {};
-    const numberFormat = attributes?.numberFormat || "";
+    let numberFormat = attributes?.numberFormat || "";
     if (numberFormat.endsWith(".#")) {
       return 1;
     }
@@ -283,7 +283,7 @@ export default function CollectInfoModal(props: Record<string, unknown>) {
             decimalScale={getDecimalScale(contractAttribute.attributes)}
             onChange={(e) => {
               const value = e.target.value;
-              const valueNum = value?.replace(/,/g, "");
+              let valueNum = value?.replace(/,/g, "");
               updateContractAttribute(contractAttribute.id, valueNum);
             }}
           />
@@ -309,7 +309,7 @@ export default function CollectInfoModal(props: Record<string, unknown>) {
         );
         break;
       case "multiselect":
-        const attris = getContractAttributeValue(contractAttribute.id);
+        let attris = getContractAttributeValue(contractAttribute.id);
         CustomControl = (
           <CheckboxList
             title={contractAttribute.name}
@@ -370,7 +370,7 @@ export default function CollectInfoModal(props: Record<string, unknown>) {
         );
         break;
       case "lookup":
-        const attrs = contractAttribute.attributes ? JSON.parse(contractAttribute.attributes) : {};
+        let attrs = contractAttribute.attributes ? JSON.parse(contractAttribute.attributes) : {};
 
         //1. Trường hợp là customer (khách hàng)
         //2. Trường hợp là employee (nhân viên)
@@ -540,7 +540,7 @@ export default function CollectInfoModal(props: Record<string, unknown>) {
     // }
 
     if (listEformAttribute && listEformAttribute.length > 0) {
-      const checkArray = [];
+      let checkArray = [];
 
       listEformAttribute.map((item) => {
         if (item.required === 1 && item.parentId !== 0) {
@@ -697,7 +697,7 @@ export default function CollectInfoModal(props: Record<string, unknown>) {
                 <div className="list__contract--attribute">
                   <Fragment>
                     {listEformAttribute.map((contractAttribute, index: number) => (
-                      <Fragment key={index}>
+                      <Fragment key={contractAttribute.name || index}>
                         {!contractAttribute.parentId ? (
                           <label className={index === 0 ? "label-title-first" : "label-title"}>{contractAttribute.name}</label>
                         ) : null}

@@ -34,10 +34,7 @@ export default function AddWorkInprogressModal(props: IAddWorkInprogressModalPro
     [onShow, idWork]
   );
 
-  const validations: IValidation[] = [
-    { name: "percent", rules: "required|min_equal:0" },
-    { name: "note", rules: "nullable|max:500" },
-  ];
+  const validations: IValidation[] = [];
 
   const listField = useMemo(
     () =>
@@ -201,7 +198,7 @@ export default function AddWorkInprogressModal(props: IAddWorkInprogressModalPro
 
               {listField.map((field, index) => (
                 <FieldCustomize
-                  key={index}
+                  key={field.name || index}
                   field={field}
                   handleUpdate={(value) => handleChangeValidate(value, field, formData, validations, listField, setFormData)}
                   formData={formData}

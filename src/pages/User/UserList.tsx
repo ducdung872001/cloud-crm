@@ -6,7 +6,7 @@ import { isDifferenceObj, showToast } from "utils/common";
 import SearchBox from "components/searchBox/searchBox";
 import { SystemNotification } from "components/systemNotification/systemNotification";
 import Loading from "components/loading";
-import { IAction, IFilterItem, ISaveSearch } from "model/OtherModel";
+import { IAction, IFilterItem, IOption, ISaveSearch } from "model/OtherModel";
 import { DataPaginationDefault, PaginationProps } from "components/pagination/pagination";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import cloneDeep from "lodash/cloneDeep";
@@ -16,6 +16,7 @@ import { formatDateTime } from "utils/dateUtils";
 import { PHONE_REGEX, EMAIL_REGEX } from "utils/constant";
 import AddUserModal from "pages/User/partials/AddUserModal";
 import UserService from "services/UserService";
+import Image from "components/image";
 import { getPageOffset } from "reborn-util";
 import Dialog, { IContentDialog } from "components/dialog/dialog";
 import ChangePasswordUser from "./partials/ChangePasswordUser";
@@ -143,7 +144,6 @@ export default function UserList() {
       paramsTemp[value] = key;
     });
     setParams((prevParams) => ({ ...prevParams, ...paramsTemp }));
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
@@ -170,7 +170,6 @@ export default function UserList() {
     return () => {
       abortController.abort();
     };
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [params]);
 
   const titleActions: ITitleActions = {
@@ -306,7 +305,26 @@ export default function UserList() {
   const [dataUser, setDataUser] = useState<Record<string, unknown>>(null);
 
   //Export
-  const [, setOnShowModalExport] = useState<boolean>(false);
+  const [onShowModalExport, setOnShowModalExport] = useState<boolean>(false);
+  const optionsExport: IOption[] = useMemo(
+    () => [
+      {
+        value: "all",
+        label: "Tất cả người dùng ",
+      },
+      {
+        value: "current_page",
+        label: "Trên trang này",
+        disabled: pagination.totalItem === 0,
+      },
+      {
+        value: "current_search",
+        label: `${pagination.totalItem} người dùng phù hợp với kết quả tìm kiếm hiện tại`,
+        disabled: pagination.totalItem === 0 || !isDifferenceObj(params, { keyword: "" }),
+      },
+    ],
+    [pagination, listIdChecked, params]
+  );
 
   return (
     <div className={`page-content page-user${isNoItem ? " bg-white" : ""}`}>
@@ -414,7 +432,7 @@ export default function UserList() {
           setIsShowResetPassword(false);
         }}
       />
-      <ViewOrgModal onShow={modalViewOrg} onHide={() => setModalViewOrg(false)} data={dataUser} />
+      <ViewOrgModal onShow={modalViewOrg} onHide={(reload) => setModalViewOrg(false)} data={dataUser} />
       <Dialog content={contentDialog} isOpen={showDialog} />
     </div>
   );

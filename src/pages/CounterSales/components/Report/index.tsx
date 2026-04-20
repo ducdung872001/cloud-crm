@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback, useContext, useRef, useMemo } from "react";
+import React, { useState, useEffect, useCallback, useContext, useRef } from "react";
 import "./index.scss";
 import { urlsApi } from "configs/urls";
 import { ContextType, UserContext } from "contexts/userContext";
@@ -207,24 +207,7 @@ const Report: React.FC = () => {
   const handleToInput   = (v: string) => setToDate(toApiDateFormat(v));
 
   // ── Derived chart data ────────────────────────────────────────────────────
-  // Filter: bỏ phần tử time rỗng hoặc nằm ngoài khoảng fromDate–toDate
-  const chartData = useMemo(() => {
-    const series = data?.dailySeries ?? [];
-    // Convert dd/MM/yyyy → yyyy-MM-dd để so sánh
-    const toIso = (s: string) => {
-      const m = s.match(/^(\d{2})\/(\d{2})\/(\d{4})$/);
-      return m ? `${m[3]}-${m[2]}-${m[1]}` : s;
-    };
-    const isoFrom = toIso(fromDate);
-    const isoTo = toIso(toDate);
-    // Lọc bỏ phần tử có time null/undefined/rỗng và nằm ngoài khoảng ngày
-    return series.filter(d =>
-      d.time != null &&
-      d.time.trim() !== "" &&
-      d.time >= isoFrom &&
-      d.time <= isoTo
-    );
-  }, [data?.dailySeries, fromDate, toDate]);
+  const chartData   = data?.dailySeries ?? [];
   const chartValues = chartData.map(d => chartMode === "revenue" ? d.revenue : d.orderCount);
   const chartMax    = Math.max(...chartValues, 1);
 

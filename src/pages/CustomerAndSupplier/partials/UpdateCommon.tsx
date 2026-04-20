@@ -96,7 +96,7 @@ export default function UpdateCommon(props: UpdateCommonModalProps) {
     }
   }, [listId, onShow]);
 
-  // đoạn này mình sẽ xử lý list ra nguồn khách hàng
+  // đoạn này mình sẽ xử lý list ra nguồn thành viên
   const onSelectOpenCustomerSource = async () => {
     if (!listCustomerSource || listCustomerSource.length === 0) {
       setIsLoadingCustomerSource(true);
@@ -118,7 +118,7 @@ export default function UpdateCommon(props: UpdateCommonModalProps) {
     }
   }, [customerDetail?.sourceId, isActiveCustomerSource]);
 
-  // đoạn này mình sẽ xử lý list ra nhóm khách hàng
+  // đoạn này mình sẽ xử lý list ra nhóm thành viên
   const onSelectOpenCustomerGroup = async () => {
     if (!listCustomerGroup || listCustomerGroup.length === 0) {
       setIsLoadingCustomerGroup(true);
@@ -141,7 +141,7 @@ export default function UpdateCommon(props: UpdateCommonModalProps) {
     }
   }, [customerDetail?.cgpId, isActiveCustomerGroup]);
 
-  // đoạn này mình sẽ xử lý list ra ngành nghề khách hàng
+  // đoạn này mình sẽ xử lý list ra ngành nghề thành viên
   const onSelectOpenCustomerEmployee = async () => {
     if (!listCustomerEmployee || listCustomerEmployee.length === 0) {
       setIsLoadingCustomerEmployee(true);
@@ -216,7 +216,7 @@ export default function UpdateCommon(props: UpdateCommonModalProps) {
     setFormData({ ...formData, values: { ...formData.values, employeeId: e.value } });
   };
 
-  //đoạn này mình xử lý lấy ra quan hệ khách hàng rồi update lại
+  //đoạn này mình xử lý lấy ra quan hệ thành viên rồi update lại
   const onSelectOpenCustomerRelationship = async () => {
     if (!listCustomerRelationship || listCustomerRelationship.length === 0) {
       setIsLoadingCustomerRelationship(true);
@@ -290,12 +290,7 @@ export default function UpdateCommon(props: UpdateCommonModalProps) {
     };
   }, [values]);
 
-  const validations: IValidation[] = [
-    ...(isActiveCustomerGroup ? [{ name: "cgpId", rules: "required" }] : []),
-    ...(isActiveCustomerSource ? [{ name: "sourceId", rules: "required" }] : []),
-    ...(isActiveCustomerEmployee ? [{ name: "employeeId", rules: "required" }] : []),
-    ...(isActiveCustomeRelationship ? [{ name: "relationshipId", rules: "required" }] : []),
-  ];
+  const validations: IValidation[] = [];
 
   const listField = useMemo(
     () =>
@@ -303,7 +298,7 @@ export default function UpdateCommon(props: UpdateCommonModalProps) {
         ...((listCustomerGroup?.length >= 0 && isActiveCustomerGroup === true
           ? [
               {
-                label: "Nhóm khách hàng",
+                label: "Nhóm thành viên",
                 name: "cgpId",
                 type: "select",
                 options: listCustomerGroup,
@@ -316,7 +311,7 @@ export default function UpdateCommon(props: UpdateCommonModalProps) {
         ...((listCustomerSource?.length >= 0 && isActiveCustomerSource === true
           ? [
               {
-                label: "Nguồn khách hàng",
+                label: "Nguồn thành viên",
                 name: "sourceId",
                 type: "select",
                 options: listCustomerSource,
@@ -329,7 +324,7 @@ export default function UpdateCommon(props: UpdateCommonModalProps) {
         ...((listCustomerEmployee?.length >= 0 && isActiveCustomerEmployee === true
           ? [
               // {
-              //   label: "Người phụ trách khách hàng",
+              //   label: "Người phụ trách thành viên",
               //   name: "employeeId",
               //   type: "select",
               //   options: listCustomerEmployee,
@@ -344,7 +339,7 @@ export default function UpdateCommon(props: UpdateCommonModalProps) {
                   <SelectCustom
                     id="employeeId"
                     name="employeeId"
-                    label="Người phụ trách khách hàng"
+                    label="Người phụ trách thành viên"
                     options={[]}
                     fill={true}
                     value={dataEmployee}
@@ -435,7 +430,7 @@ export default function UpdateCommon(props: UpdateCommonModalProps) {
 
     if (response.code === 0) {
       if (isActiveCustomerEmployee) {
-        showToast(`Cập nhật ${dataEmployee.label} phụ trách khách hàng thành công`, "success");
+        showToast(`Cập nhật ${dataEmployee.label} phụ trách thành viên thành công`, "success");
       } else {
         showToast(`${titleProps} thành công`, "success");
       }
@@ -544,7 +539,7 @@ export default function UpdateCommon(props: UpdateCommonModalProps) {
             <div className="list-form-group">
               {listField.map((field, index) => (
                 <FieldCustomize
-                  key={index}
+                  key={field.name || index}
                   field={field}
                   handleUpdate={(value) => handleChangeValidate(value, field, formData, validations, listField, setFormData)}
                   formData={formData}

@@ -463,7 +463,7 @@ export default function ModalSetting({ onShow, onHide, dataNode, processId }) {
                         </div>
                         {listAttribute && listAttribute.length > 0 ? 
                           listAttribute.map((item, index) => (
-                            <div key={index} className="item-attribute">
+                            <div key={item.id ?? index} className="item-attribute">
                               <div className="box-attribute">
                                 <div className="name-attribute">
                                   <Input

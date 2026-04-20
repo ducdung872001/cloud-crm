@@ -144,7 +144,7 @@ export default function AddContactModal(props: AddContactModalProps) {
         setLstCoordinator(newLstCoordinator || []);
       }
     } else {
-      showToast(response.message ?? response.error ?? "Có lỗi xảy ra. Vui lòng thử lại sau", "error");
+      showToast(response.message ?? "Có lỗi xảy ra. Vui lòng thử lại sau", "error");
     }
   };
 
@@ -501,7 +501,7 @@ export default function AddContactModal(props: AddContactModalProps) {
   const validations: IValidation[] = [
     {
       name: "name",
-      rules: "required|max:100",
+      rules: "required",
     },
     {
       name: "phone",
@@ -526,7 +526,6 @@ export default function AddContactModal(props: AddContactModalProps) {
           type: "text",
           fill: true,
           required: true,
-          maxLength: 100,
         },
         {
           label: "Số điện thoại",
@@ -729,7 +728,7 @@ export default function AddContactModal(props: AddContactModalProps) {
         }
         showToast(response.error, "error");
       } else {
-        showToast(response.message ?? response.error ?? "Có lỗi xảy ra. Vui lòng thử lại sau", "error");
+        showToast(response.message ?? "Có lỗi xảy ra. Vui lòng thử lại sau", "error");
       }
       setIsSubmit(false);
     }
@@ -1392,7 +1391,7 @@ export default function AddContactModal(props: AddContactModalProps) {
               {listField.map((field, index) =>
                 field.label === "Tên liên hệ" || field.label === "Số điện thoại" ? (
                   <FieldCustomize
-                    key={index}
+                    key={field.name || index}
                     field={field}
                     handleUpdate={(value) => handleChangeValidate(value, field, formData, validations, listField, setFormData)}
                     formData={formData}
@@ -1491,7 +1490,7 @@ export default function AddContactModal(props: AddContactModalProps) {
               {listField.map((field, index) =>
                 field.label === "Chức vụ" || field.label === "Phòng ban" ? (
                   <FieldCustomize
-                    key={index}
+                    key={field.name || index}
                     field={field}
                     handleUpdate={(value) => handleChangeValidate(value, field, formData, validations, listField, setFormData)}
                     formData={formData}
@@ -1549,7 +1548,7 @@ export default function AddContactModal(props: AddContactModalProps) {
                 field.label === "Ghi chú" ? (
                   <div style={{ width: "100%" }}>
                     <FieldCustomize
-                      key={index}
+                      key={field.name || index}
                       field={field}
                       handleUpdate={(value) => handleChangeValidate(value, field, formData, validations, listField, setFormData)}
                       formData={formData}
@@ -1647,7 +1646,7 @@ export default function AddContactModal(props: AddContactModalProps) {
               {listField.map((field, index) =>
                 field.name === "employeeId" || field.name === "coordinators" ? (
                   <FieldCustomize
-                    key={index}
+                    key={field.name || index}
                     field={field}
                     handleUpdate={(value) => handleChangeValidate(value, field, formData, validations, listField, setFormData)}
                     formData={formData}
@@ -1661,7 +1660,7 @@ export default function AddContactModal(props: AddContactModalProps) {
                   {Object.entries(mapContactAttribute).map((lstContactAttribute: Record<string, unknown>, key: number) => (
                     <Fragment key={key}>
                       {(lstContactAttribute[1] || []).map((contactAttribute, index: number) => (
-                        <Fragment key={index}>
+                        <Fragment key={contactAttribute.name || index}>
                           {!contactAttribute.parentId ? (
                             <label className="label-title" key={`parent_${key}`}>
                               {contactAttribute.name}

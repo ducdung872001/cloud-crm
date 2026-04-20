@@ -1,7 +1,6 @@
 export interface CartItem {
   id: string;
   variantId: string;
-  unitId?: number;
   icon: string;
   avatar?: string;
   image?: string;
@@ -15,15 +14,14 @@ export interface CartItem {
   fixedPrice?: number;
   /** Tên CT đồng giá để hiển thị tooltip */
   promoName?: string;
-  /** Thuế suất % theo đơn giá (vd: 10 = 10%) */
-  taxRate?: number;
-  /** Tồn kho tối đa — dùng để validate số lượng trong giỏ hàng */
-  maxStock?: number;
+  /** [CH] Loại item: product (mặc định), service, membership */
+  itemType?: "product" | "service" | "membership";
+  /** [CH] Thời hạn gói (tháng) — chỉ cho membership */
+  durationMonths?: number;
 }
 
 export interface Product {
   id: string;
-  unitId?: number;
   icon: string;
   avatar?: string;
   unitName?: string;

@@ -17,41 +17,7 @@ import ShippingService from "services/ShippingService";
 import EmployeeService from "services/EmployeeService";
 import { IEmployeeResponse } from "model/employee/EmployeeResponseModel";
 import { IEmployeeFilterRequest } from "model/employee/EmployeeRequestModel";
-import { fetchCustomerMap } from "@/hooks/useCustomerEnrich";
 import "./AddShippingOrder.scss";
-
-/**
- * Dịch message lỗi raw từ BE/hãng vận chuyển sang tiếng Việt rõ ràng cho user.
- * Bug C.5.3: các lỗi gốc như "COD vượt quá mức cho phép" / "Không hỗ trợ giao..."
- * quá mơ hồ — không nói rõ vượt bao nhiêu hoặc địa chỉ nào không hỗ trợ.
- */
-function translateShippingError(raw: string, form?: Record<string, unknown>): string {
-  if (!raw) return "Có lỗi xảy ra khi tạo đơn vận chuyển. Vui lòng thử lại.";
-  const lower = raw.toLowerCase();
-
-  if (lower.includes("cod") && (lower.includes("vượt") || lower.includes("quá") || lower.includes("exceed") || lower.includes("max"))) {
-    const cod = form?.codAmount ? ` (COD hiện tại: ${Number(form.codAmount).toLocaleString("vi")}₫)` : "";
-    return `Giá trị COD vượt quá mức tối đa mà hãng vận chuyển cho phép${cod}. Vui lòng giảm COD hoặc chọn hãng khác.`;
-  }
-  if (lower.includes("không hỗ trợ") && (lower.includes("giao") || lower.includes("địa") || lower.includes("khu vực"))) {
-    const addr = form ? [form.receiverWard, form.receiverDistrict, form.receiverProvinceName].filter(Boolean).join(", ") : "";
-    return `Hãng vận chuyển không hỗ trợ giao tới địa chỉ${addr ? `: ${addr}` : " này"}. Vui lòng chọn hãng khác hoặc đổi địa chỉ người nhận.`;
-  }
-  if ((lower.includes("hóa đơn") || lower.includes("invoice")) && (lower.includes("đã") || lower.includes("already"))) {
-    return "Hóa đơn này đã được tạo đơn vận chuyển trước đó. Vui lòng mở đơn vận chuyển hiện có để cập nhật thay vì tạo mới.";
-  }
-  if (lower.includes("weight") || lower.includes("khối lượng") || lower.includes("cân nặng")) {
-    return "Khối lượng hàng vượt quá giới hạn của hãng vận chuyển hoặc thiếu thông tin cân nặng. Vui lòng kiểm tra lại.";
-  }
-  if (lower.includes("token") || lower.includes("unauthorized") || lower.includes("401")) {
-    return "Token kết nối hãng vận chuyển đã hết hạn hoặc chưa được cấu hình. Vào Cài đặt → Hãng vận chuyển để cập nhật.";
-  }
-  if (lower.includes("timeout") || lower.includes("connection") || lower.includes("network")) {
-    return "Không kết nối được tới hãng vận chuyển. Vui lòng kiểm tra mạng và thử lại.";
-  }
-  // Mặc định: trả raw nhưng thêm gợi ý
-  return `${raw}. Vui lòng kiểm tra lại thông tin hoặc liên hệ hỗ trợ.`;
-}
 
 function useAddressOptions() {
   const [provinces, setProvinces] = useState<IProvince[]>([]);
@@ -308,25 +274,15 @@ export default function AddShippingOrder() {
     const response = await InvoiceService.list(filterParams);
     if (response.code === 0) {
       const rawItems: Record<string, unknown>[] = response.result?.pagedLst?.items ?? [];
-
-      // Enrich customer names từ customerId nếu API không trả customerName
-      const customerIds = rawItems
-        .map((item) => (item.invoice ?? item)?.customerId)
-        .filter((id): id is number => !!id && Number(id) > 0);
-      const customerMap = customerIds.length > 0 ? await fetchCustomerMap(customerIds) : {};
-
       const options = rawItems
         .map((item) => {
           const inv: IInvoiceResponse = item.invoice ?? item;
           const id = item.invoiceId ?? inv.id;
           if (!id) return null;
-          const enriched = inv.customerId ? customerMap[Number(inv.customerId)] : null;
-          const name = inv.customerName || enriched?.name || "";
-          const phone = inv.customerPhone || enriched?.phone || "";
           return {
             value: id,
-            label: `${inv.invoiceCode ?? ""}${name ? " — " + name : ""}${phone ? " — " + phone : ""}`,
-            origin: { ...inv, id, customerName: name, customerPhone: phone },
+            label: `${inv.invoiceCode ?? ""}${inv.customerName ? " — " + inv.customerName : ""}${inv.customerPhone ? " — " + inv.customerPhone : ""}`,
+            origin: { ...inv, id },
           };
         })
         .filter(Boolean);
@@ -417,30 +373,13 @@ export default function AddShippingOrder() {
         productNames.slice(0, 4).join(", ") + (productNames.length > 4 ? ` +${productNames.length - 4} khác` : "");
       const invFromApi: IInvoiceResponse = detail.invoice ?? null;
       const resolvedId: number = detail.invoiceId ?? invoiceId;
-      let customerName = invFromApi?.customerName ?? invoiceBasic?.customerName ?? "";
-      let customerPhone = invFromApi?.customerPhone ?? invoiceBasic?.customerPhone ?? "";
-      const customerAddress = invFromApi?.customerAddress ?? invoiceBasic?.customerAddress ?? "";
-
-      // Nếu API không trả customerName, enrich từ customerId
-      const customerId = invFromApi?.customerId ?? invoiceBasic?.customerId;
-      if (!customerName && customerId && Number(customerId) > 0) {
-        try {
-          const map = await fetchCustomerMap([Number(customerId)]);
-          const info = map[Number(customerId)];
-          if (info) {
-            customerName = info.name || customerName;
-            customerPhone = customerPhone || info.phone || "";
-          }
-        } catch { /* ignore */ }
-      }
-
       const inv = {
         ...(invoiceBasic ?? {}),
         ...(invFromApi ?? {}),
         id: resolvedId,
-        customerName,
-        customerPhone,
-        customerAddress,
+        customerName: invFromApi?.customerName ?? invoiceBasic?.customerName ?? "",
+        customerPhone: invFromApi?.customerPhone ?? invoiceBasic?.customerPhone ?? "",
+        customerAddress: invFromApi?.customerAddress ?? invoiceBasic?.customerAddress ?? "",
         amount: invFromApi?.amount ?? invoiceBasic?.amount ?? 0,
         amountCard: invFromApi?.amountCard ?? invoiceBasic?.amountCard ?? 0,
         invoiceCode: invFromApi?.invoiceCode ?? invoiceBasic?.invoiceCode ?? "",
@@ -628,36 +567,22 @@ export default function AddShippingOrder() {
       const totalQty = rawProducts.reduce((sum, p) => sum + (p.qty ?? 1), 0) || 1;
       const totalWeightGram = form.weight ? +form.weight : 0;
 
-      // Bug C.5.3 blocker: BE trả 500 khi các field bắt buộc rỗng/invalid.
-      // Pre-check ở FE để báo lỗi rõ thay vì để 500 lên user.
-      const carrierCode = CARRIER_CODE_MAP[form.partnerId];
-      if (!carrierCode) {
-        showToast("Hãng vận chuyển chưa được hỗ trợ hoặc chưa chọn. Vui lòng chọn lại.", "error");
-        setIsLoading(false);
-        return;
-      }
-      if (totalWeightGram <= 0) {
-        showToast("Vui lòng nhập trọng lượng hợp lệ (> 0 gram).", "error");
-        setIsLoading(false);
-        return;
-      }
-
       const items = rawProducts.length > 0
         ? rawProducts.map((p) => ({
             name: p.name,
             quantity: p.qty ?? 1,
             weightGram: (p as Record<string, unknown>).weightGram
               ? +(p as Record<string, unknown>).weightGram
-              : Math.max(1, Math.round(totalWeightGram / totalQty)),
+              : Math.round(totalWeightGram / totalQty),
             price: p.price ?? 0,
           }))
         : selectedInvoice
           ? [{ name: selectedInvoice.invoiceCode, quantity: 1, weightGram: totalWeightGram, price: selectedInvoice.amount ?? 0 }]
-          : [{ name: "Hàng hóa", quantity: 1, weightGram: totalWeightGram, price: 0 }];
+          : [];
 
       const payload: IShipmentCreatePayload = {
-        internalOrderId: selectedInvoice?.invoiceCode ?? String(form.invoiceId ?? `TEMP-${Date.now()}`),
-        carrierCode,
+        internalOrderId: selectedInvoice?.invoiceCode ?? String(form.invoiceId ?? ""),
+        carrierCode: CARRIER_CODE_MAP[form.partnerId] ?? "",
         sender: {
           name: form.senderName ?? "",
           phone: form.senderPhone ?? "",
@@ -695,33 +620,10 @@ export default function AddShippingOrder() {
         showToast("Cập nhật đơn vận chuyển thành công", "success");
         navigate("/shipping");
       } else {
-        let errorMsg = response.message ?? response.error ?? "Cập nhật đơn thất bại";
-        // Parse nested JSON error từ hãng vận chuyển
-        if (typeof errorMsg === "string") {
-          try {
-            const nested = JSON.parse(errorMsg.replace(/^.*?(\{.*)$/, "$1"));
-            if (nested?.message) errorMsg = nested.message;
-            else if (nested?.error) errorMsg = nested.error;
-          } catch {
-            const match = errorMsg.match(/"message"\s*:\s*"([^"]+)"/);
-            if (match) errorMsg = match[1];
-            else {
-              const errMatch = errorMsg.match(/"error"\s*:\s*"([^"]+)"/);
-              if (errMatch) errorMsg = errMatch[1];
-            }
-          }
-        }
-        showToast(translateShippingError(String(errorMsg), form), "error");
+        showToast(response.message ?? "Cập nhật đơn thất bại", "error");
       }
     } catch (err) {
-      // HTTP 500 từ apiPost sẽ throw ra đây (không có response.code).
-      // Dịch sang message thân thiện thay vì hiển thị raw "HTTP 500" / stack.
-      const raw = (err as Record<string, unknown>)?.message ?? (err as Record<string, unknown>)?.error ?? "";
-      const is500 = /\b500\b|internal\s*server/i.test(String(raw));
-      const friendly = is500
-        ? "Hãng vận chuyển đang trả lỗi hệ thống. Vui lòng kiểm tra lại địa chỉ / khối lượng / COD và thử lại, hoặc liên hệ kỹ thuật."
-        : translateShippingError(String(raw || "Có lỗi xảy ra, vui lòng thử lại"), form);
-      showToast(friendly, "error");
+      showToast("Có lỗi xảy ra, vui lòng thử lại", "error");
     } finally {
       setIsLoading(false);
     }
@@ -1319,12 +1221,9 @@ export default function AddShippingOrder() {
                   label="Số tiền thu hộ"
                   fill
                   disabled={isEdit}
-                  value={form.codAmount ? Number(form.codAmount).toLocaleString("vi") : ""}
-                  onChange={(e) => {
-                    const raw = e.target.value.replace(/[^0-9]/g, "");
-                    setForm((prev) => ({ ...prev, codAmount: raw ? +raw : null }));
-                    setErrors((prev) => ({ ...prev, codAmount: "" }));
-                  }}
+                  type="number"
+                  value={form.codAmount ?? ""}
+                  onChange={setField("codAmount")}
                   placeholder="0"
                 />
                 {form.codAmount > 0 && (

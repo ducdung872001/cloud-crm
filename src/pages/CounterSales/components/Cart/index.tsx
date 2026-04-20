@@ -4,6 +4,8 @@ import { CartItem, Customer, OrderType, ShippingInfo } from "../../types";
 import "./index.scss";
 import InvoiceService from "@/services/InvoiceService";
 import BoughtProductService from "@/services/BoughtProductService";
+import BoughtServiceService from "@/services/BoughtServiceService";
+import BoughtCardService from "@/services/BoughtCardService";
 import CouponService from "@/services/CouponService";
 import ShippingFeeConfigService from "@/services/ShippingFeeConfigService";
 import { showToast } from "utils/common";
@@ -35,8 +37,6 @@ interface CartProps {
   onViewPromos?: () => void;
   onRemovePromo?: () => void;
   onCouponDiscountChange?: (discount: number) => void;
-  /** Bubble voucher code lên parent để invoice/create gửi kèm couponCode (sau BE fix tracking) */
-  onCouponCodeChange?: (code: string | null) => void;
   onManualDiscountChange?: (discount: number) => void;
   onResetVoucher?: () => void;
   // ── Ghi chú ──────────────────────────────────────────────────────────────
@@ -51,7 +51,7 @@ const Cart: React.FC<CartProps> = ({
   orderType, onOrderTypeChange, shippingInfo, onShippingInfoChange,
   loyaltyWallet, exchangeRate = 1000, pointsToUse = 0, onPointsChange,
   eligiblePromoCount = 0, appliedPromo, promoDiscount = 0,
-  onViewPromos, onRemovePromo, onCouponDiscountChange, onCouponCodeChange, onManualDiscountChange, onResetVoucher,
+  onViewPromos, onRemovePromo, onCouponDiscountChange, onManualDiscountChange, onResetVoucher,
   note = "", onNoteChange,
 }) => {
   const { t } = useTranslation();
@@ -75,14 +75,6 @@ const Cart: React.FC<CartProps> = ({
   };
 
   const subtotal  = items.reduce((sum, i) => sum + i.price * i.qty, 0);
-  // Giá bán lẻ VN đã bao gồm VAT → taxAmount chỉ là phần VAT bóc tách
-  // từ subtotal (để hiển thị/ghi nhận), KHÔNG cộng thêm vào tổng thanh toán.
-  // Công thức: vat = subtotal * rate / (100 + rate)
-  const taxAmount = items.reduce((sum, i) => {
-    if (!i.taxRate) return sum;
-    const gross = i.price * i.qty;
-    return sum + Math.round((gross * i.taxRate) / (100 + i.taxRate));
-  }, 0);
   const itemCount = items.length;
   const formatVND = (n: number) => n ? n.toLocaleString("vi") + " ₫" : "0 ₫";
 
@@ -143,7 +135,6 @@ const Cart: React.FC<CartProps> = ({
   useEffect(() => {
     const handleReset = () => {
       setVoucher(""); setCouponDiscount(0); setCouponMessage(""); setCouponError("");
-      onCouponCodeChange?.(null);
     };
     if (onResetVoucher) handleReset();
   }, [onResetVoucher]);
@@ -169,19 +160,15 @@ const Cart: React.FC<CartProps> = ({
         setCouponError(payload?.message ?? t("pageCounterSales.voucherInvalid"));
       } else if (payload?.code || (res as Record<string, unknown>)?.success === true) {
         handleCouponDiscountChange(calcDiscount);
-        // Bubble code lên parent để invoice/create gắn couponCode (audit trail)
-        onCouponCodeChange?.(calcDiscount > 0 ? code : null);
         setCouponMessage(calcDiscount > 0
           ? (payload?.message ?? `${t("pageCounterSales.voucherSuccess")} − ${calcDiscount.toLocaleString("vi")} đ`)
           : (payload?.message ?? `${t("pageCounterSales.voucherSuccess")} ✓`));
       } else {
         handleCouponDiscountChange(0);
-        onCouponCodeChange?.(null);
         setCouponError(t("pageCounterSales.voucherInvalid"));
       }
     } catch {
       handleCouponDiscountChange(0);
-      onCouponCodeChange?.(null);
       setCouponError(t("pageCounterSales.voucherConnectionError"));
     } finally {
       setIsApplyingCoupon(false);
@@ -190,10 +177,6 @@ const Cart: React.FC<CartProps> = ({
 
   // ── Tạo đơn ──────────────────────────────────────────────────────────────
   const onCreateInvoice = async () => {
-    if (!customer) {
-      showToast("Vui lòng chọn khách hàng trước khi tạo hóa đơn", "warning");
-      return;
-    }
     if (isShipOrder) {
       if (!shippingInfo.receiverName?.trim()) { showToast(t("pageCounterSales.requireReceiverName"), "warning"); return; }
       if (!shippingInfo.receiverPhone?.trim()) { showToast(t("pageCounterSales.requireReceiverPhone"), "warning"); return; }
@@ -202,8 +185,6 @@ const Cart: React.FC<CartProps> = ({
     try {
       const invoice = await InvoiceService.createInvoice({
         customerId: customer?.id ?? -1,
-        customerName: customer?.name ?? "",
-        customerPhone: customer?.phone ?? "",
         ...(note?.trim() ? { note: note.trim() } : {}),
       });
       if (invoice.code === 0 && invoice?.result?.invoiceId) {
@@ -223,8 +204,6 @@ const Cart: React.FC<CartProps> = ({
     try {
       const draftRes = await InvoiceService.createInvoice({
         customerId: Number(customer?.id ?? -1),
-        customerName: customer?.name ?? "",
-        customerPhone: customer?.phone ?? "",
         ...(note?.trim() ? { note: note.trim() } : {}),
       });
       if (draftRes.code !== 0 || !draftRes?.result?.invoiceId) {
@@ -232,20 +211,59 @@ const Cart: React.FC<CartProps> = ({
         return;
       }
       const invoiceId: number = draftRes.result.invoiceId;
-      const body = items.map((item) => ({
-        productId: Number(item.id), variantId: Number(item.variantId),
-        ...(item.unitId != null ? { unitId: Number(item.unitId) } : {}),
-        price: item.price, customerId: Number(customer?.id ?? -1),
-        quantity: item.qty, name: item.name, avatar: item.avatar ?? "",
-        unitName: item.unitName ?? item.unit ?? "", fee: item.price * item.qty,
-      }));
-      const insertRes = await BoughtProductService.insert(body, { invoiceId });
-      if (insertRes.code !== 0) {
-        await fetch(`${urlsApi.invoice.draftDelete}?id=${invoiceId}`, { method: "DELETE" });
-        showToast(insertRes.message ?? t("pageCounterSales.draftProductFailed"), "error");
-        return;
+
+      // [CH] Tách items theo loại: product / service / membership
+      const productItems = items.filter((i) => !i.itemType || i.itemType === "product");
+      const serviceItems = items.filter((i) => i.itemType === "service");
+      const membershipItems = items.filter((i) => i.itemType === "membership");
+
+      // Insert sản phẩm
+      if (productItems.length > 0) {
+        const body = productItems.map((item) => ({
+          productId: Number(item.id), variantId: Number(item.variantId),
+          price: item.price, customerId: Number(customer?.id ?? -1),
+          qty: item.qty, name: item.name, avatar: item.avatar ?? "",
+          unitName: item.unitName ?? item.unit ?? "", fee: item.price * item.qty,
+        }));
+        const insertRes = await BoughtProductService.insert(body, { invoiceId });
+        if (insertRes.code !== 0) {
+          await fetch(`${urlsApi.invoice.draftDelete}?id=${invoiceId}`, { method: "DELETE" });
+          showToast(insertRes.message ?? t("pageCounterSales.draftProductFailed"), "error");
+          return;
+        }
       }
-      showToast(`${t("pageCounterSales.draftSaved")} (${items.length} ${t("common.product")})`, "success");
+
+      // [CH] Insert dịch vụ
+      if (serviceItems.length > 0) {
+        for (const svc of serviceItems) {
+          try {
+            await BoughtServiceService.addProductToInvoice({
+              invoiceId,
+              serviceId: Number(svc.id),
+              price: svc.price,
+              qty: svc.qty,
+              customerId: Number(customer?.id ?? -1),
+            } as any);
+          } catch { /* silent — log lỗi nhưng không block */ }
+        }
+      }
+
+      // [CH] Insert thẻ thành viên
+      if (membershipItems.length > 0) {
+        for (const card of membershipItems) {
+          try {
+            await BoughtCardService.add({
+              invoiceId,
+              cardId: Number(card.id),
+              price: card.price,
+              qty: card.qty,
+              customerId: Number(customer?.id ?? -1),
+            } as any);
+          } catch { /* silent */ }
+        }
+      }
+
+      showToast(`${t("pageCounterSales.draftSaved")} (${items.length} items)`, "success");
       onSavedDraft?.();
     } catch {
       showToast(t("common.error"), "error");
@@ -308,6 +326,22 @@ const Cart: React.FC<CartProps> = ({
             <div className="ci__info">
               <div className="ci__name">
                 {item.name}
+                {item.itemType === "service" && (
+                  <span style={{
+                    marginLeft: 6, fontSize: 10, fontWeight: 700,
+                    background: "#2D6A5A", color: "#fff",
+                    padding: "1px 6px", borderRadius: 99,
+                    verticalAlign: "middle",
+                  }}>Dịch vụ</span>
+                )}
+                {item.itemType === "membership" && (
+                  <span style={{
+                    marginLeft: 6, fontSize: 10, fontWeight: 700,
+                    background: "#D4A574", color: "#fff",
+                    padding: "1px 6px", borderRadius: 99,
+                    verticalAlign: "middle",
+                  }}>Thẻ TV</span>
+                )}
                 {item.fixedPrice && (
                   <span style={{
                     marginLeft: 6, fontSize: 10, fontWeight: 700,
@@ -324,19 +358,19 @@ const Cart: React.FC<CartProps> = ({
             <div className="ci__qty">
               <button className="qb" onClick={() => onChangeQty(item.id, -1)}>−</button>
               <input
-                type="text"
-                inputMode="numeric"
+                type="number"
                 className="qi"
                 value={qtyDraft[item.id] !== undefined ? qtyDraft[item.id] : item.qty}
+                min={1}
                 onFocus={() => setQtyDraft(prev => ({ ...prev, [item.id]: String(item.qty) }))}
                 onChange={(e) => {
-                  const raw = e.target.value.replace(/[^0-9]/g, "");
+                  const raw = e.target.value;
                   setQtyDraft(prev => ({ ...prev, [item.id]: raw }));
-                  // Chỉ cập nhật qty khi giá trị hợp lệ >= 1; cho phép trống khi đang gõ
                   const v = Number(raw);
                   if (raw !== "" && v >= 1) {
                     onChangeQty(item.id, v - item.qty);
                   }
+                  // nếu trống hoặc 0: chỉ cập nhật draft, không gọi onChangeQty
                 }}
                 onBlur={() => {
                   const raw = qtyDraft[item.id];
@@ -344,10 +378,6 @@ const Cart: React.FC<CartProps> = ({
                   if (!raw || v < 1) {
                     // reset về 1 nếu bỏ trống hoặc nhập 0
                     onChangeQty(item.id, 1 - item.qty);
-                  } else if (item.maxStock && v > item.maxStock) {
-                    // Vượt tồn kho → cap tại maxStock + cảnh báo
-                    onChangeQty(item.id, item.maxStock - item.qty);
-                    showToast(t("pageCounterSales.qtyExceedStock") || `Số lượng tối đa: ${item.maxStock}`, "warning");
                   }
                   setQtyDraft(prev => { const n = { ...prev }; delete n[item.id]; return n; });
                 }}
@@ -515,13 +545,6 @@ const Cart: React.FC<CartProps> = ({
             <span className="sr__k">{t("pageCounterSales.subtotal")} ({itemCount} {t("common.product")})</span>
             <span className="sr__v">{formatVND(subtotal)}</span>
           </div>
-
-          {taxAmount > 0 && (
-            <div className="sr">
-              <span className="sr__k">Thuế suất</span>
-              <span className="sr__v" style={{ color: "#d97706" }}>+{formatVND(taxAmount)}</span>
-            </div>
-          )}
 
           <div className="sr">
             <span className="sr__k">{t("pageCounterSales.voucherDiscount")}</span>

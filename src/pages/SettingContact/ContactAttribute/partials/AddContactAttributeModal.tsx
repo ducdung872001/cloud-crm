@@ -18,7 +18,7 @@ import TextArea from "components/textarea/textarea";
 import Icon from "components/icon";
 import { Parser } from 'formula-functionizer';
 import { convertToId } from "reborn-util";
-import { isNumber } from "lodash";
+import isNumber from "lodash/isNumber";
 import RadioList from "components/radio/radioList";
 
 import "./AddContactAttributeModal.scss";
@@ -54,7 +54,7 @@ export default function AddContactAttributeModal(props: AddContactAttributeModal
   const [checkFieldName, setCheckFieldName] = useState(false);
 
   useEffect(() => {
-    const isMounted = true;
+    let isMounted = true;
     setData(dataContactAttribute)
   }, [dataContactAttribute])
 
@@ -165,7 +165,7 @@ export default function AddContactAttributeModal(props: AddContactAttributeModal
   const getContactAttributes = async () => {
     const response = await ContactAttributeService.listAll();
 
-    const arrField = [];
+    let arrField = [];
 
     if (response.code === 0) {
       const dataOption = response.result;
@@ -790,7 +790,7 @@ export default function AddContactAttributeModal(props: AddContactAttributeModal
             <div className="list-form-group">
               {listFieldFirst.map((field, index) => (
                 <FieldCustomize
-                  key={index}
+                  key={field.name || index}
                   field={field}
                   handleUpdate={(value) => handleChangeValidate(value, field, formData, validations, listFieldFirst, setFormData)}
                   formData={formData}
@@ -930,7 +930,7 @@ export default function AddContactAttributeModal(props: AddContactAttributeModal
 
               {listFieldSecond.map((field, index) => (
                 <FieldCustomize
-                  key={index}
+                  key={field.name || index}
                   field={field}
                   handleUpdate={(value) => handleChangeValidate(value, field, formData, validations, listFieldSecond, setFormData)}
                   formData={formData}

@@ -1,13 +1,12 @@
 #!/bin/bash
 # Render all .mmd source files to PNG using mermaid-cli (mmdc)
-SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
-SRC_DIR="$SCRIPT_DIR/sources"
-OUT_DIR="$SCRIPT_DIR"
-TOOL_DIR="$SCRIPT_DIR/../../userguides/tooling"
+set -e
+SRC_DIR="$(dirname "$0")/sources"
+OUT_DIR="$(dirname "$0")"
+TOOL_DIR="$(dirname "$0")/../../userguides/tooling"
 
-cd "$TOOL_DIR" || exit 1
+cd "$TOOL_DIR"
 
-shopt -s nullglob
 for mmd in "$SRC_DIR"/*.mmd; do
   name=$(basename "$mmd" .mmd)
   out="$OUT_DIR/$name.png"

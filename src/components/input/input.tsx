@@ -107,7 +107,7 @@ function Input(props: InputProps) {
         {icons && (
           <div className="lst__icons">
             {icons.map((icon, index) => (
-              <span key={index} onClick={icon.clickEvent} className={`icon${icon.clickEvent ? " has-event" : ""}`}>
+              <span key={icon.name || index} onClick={icon.clickEvent} className={`icon${icon.clickEvent ? " has-event" : ""}`}>
                 <Icon name={icon.name} />
               </span>
             ))}

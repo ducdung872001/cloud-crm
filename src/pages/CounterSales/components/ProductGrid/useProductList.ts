@@ -75,7 +75,6 @@ export function useProductList({ categoryId, params = {} }: UseProductListParams
           const price = p.originalPrice ?? p.promotionPrice ?? 0;
           return {
             ...p,
-            unitId: p.unitId != null ? Number(p.unitId) : undefined,
             // Tồn kho: tổng tất cả biến thể từ backend (stockQuantity = SUM variant quantities)
             minQuantity: stock,
             // Giá hiển thị

@@ -66,7 +66,7 @@ export default function SendEmailModal(props: IAddEmailModelProps) {
 
   const validateCheckEmail = (value) => {
     if (value && !value.includes("*")) {
-      const re =
+      var re =
         /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
       return re.test(String(value).toLowerCase());
     } else {
@@ -522,7 +522,7 @@ export default function SendEmailModal(props: IAddEmailModelProps) {
             <div className="list-form-group">
               {listField.map((field, index) => (
                 <FieldCustomize
-                  key={index}
+                  key={field.name || index}
                   field={field}
                   handleUpdate={(value) => handleChangeValidate(value, field, formData, validations, listField, setFormData)}
                   formData={formData}

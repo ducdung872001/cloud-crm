@@ -111,20 +111,16 @@ export default function AddTicketModal(props: IAddTicketModalProps) {
       rules: "required",
     },
     {
-      name: "customerName",
-      rules: "required|max:100",
-    },
-    {
       name: "customerPhone",
       rules: "required",
     },
     {
       name: "customerEmail",
-      rules: "nullable|regex",
+      rules: "regex",
     },
     {
       name: "content",
-      rules: "required|max:500",
+      rules: "required",
     },
   ];
 
@@ -318,7 +314,6 @@ export default function AddTicketModal(props: IAddTicketModalProps) {
       type: "text",
       fill: true,
       required: true,
-      maxLength: 100,
       disabled: idCustomer ? true : false,
     },
     {
@@ -391,7 +386,6 @@ export default function AddTicketModal(props: IAddTicketModalProps) {
       type: "textarea",
       fill: true,
       required: true,
-      maxLength: 500,
     },
   ], [listSupport, isLoadingSupport, detailCustomer, idCustomer, isLoadingCustomer, data?.customerId, formData?.values?.customerId, isShowPhone, loadingPhone, idCustomer, data?.customerId]);
 
@@ -641,7 +635,7 @@ export default function AddTicketModal(props: IAddTicketModalProps) {
                 <div className="list-field">
                   {listFieldVoteInfo.map((field, index) => (
                     <FieldCustomize
-                      key={index}
+                      key={field.name || index}
                       field={field}
                       handleUpdate={(value) => handleChangeValidate(value, field, formData, validations, listFieldVoteInfo, setFormData)}
                       formData={formData}
@@ -687,7 +681,7 @@ export default function AddTicketModal(props: IAddTicketModalProps) {
                 <div className="lst-field--date">
                   {listFieldDate.map((field, index) => (
                     <FieldCustomize
-                      key={index}
+                      key={field.name || index}
                       field={field}
                       handleUpdate={(value) => handleChangeValidate(value, field, formData, validations, listFieldDate, setFormData)}
                       formData={formData}

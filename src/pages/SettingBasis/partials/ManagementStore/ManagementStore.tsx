@@ -26,7 +26,7 @@ import { IStoreProps } from "@/model/managementStore/PropsModel";
 import { IStoreFilterRequest } from "@/model/managementStore/StoreRequestModel";
 
 export default function ManagementStore(props: IStoreProps) {
-  document.title = "Danh sách cửa hàng";
+  document.title = "Danh sách cơ sở";
 
   const { onBackProps } = props;
 
@@ -51,19 +51,19 @@ export default function ManagementStore(props: IStoreProps) {
   const [listSaveSearch] = useState<ISaveSearch[]>([
     {
       key: "all",
-      name: "Danh sách cửa hàng",
+      name: "Danh sách cơ sở",
       is_active: true,
     },
   ]);
 
   const listTabs = [
     {
-      title: "Danh sách cửa hàng",
+      title: "Danh sách cơ sở",
       is_active: "tab_one",
       type: 1,
     },
     {
-      title: "Sơ đồ phân cấp cửa hàng",
+      title: "Sơ đồ phân cấp cơ sở",
       is_active: "tab_two",
       type: 2,
     },
@@ -76,7 +76,7 @@ export default function ManagementStore(props: IStoreProps) {
 
   const [pagination, setPagination] = useState<PaginationProps>({
     ...DataPaginationDefault,
-    name: "cửa hàng",
+    name: "cơ sở",
     isChooseSizeLimit: true,
     setPage: (page) => {
       setParams((prevParams) => ({ ...prevParams, page: page }));
@@ -142,7 +142,7 @@ export default function ManagementStore(props: IStoreProps) {
     };
   }, [params]);
 
-  const titles = ["STT", "Tên cửa hàng", "Địa chỉ", "Số điện thoại", "Là trụ sở", "Trạng thái cửa hàng"];
+  const titles = ["STT", "Tên cơ sở", "Địa chỉ", "Số điện thoại", "Là trụ sở", "Trạng thái cơ sở"];
 
   const dataFormat = ["text-center", "", "", "text-center", "text-center", "text-center"];
 
@@ -169,7 +169,7 @@ export default function ManagementStore(props: IStoreProps) {
     }
 
     if (response.code === 0) {
-      showToast(`cửa hàng ${item.status == 2 ? "ngừng hoạt động" : "hoạt động"} thành công`, "success");
+      showToast(`cơ sở ${item.status == 2 ? "ngừng hoạt động" : "hoạt động"} thành công`, "success");
       getListStore(params);
     } else {
       showToast(response.message ?? "Có lỗi xảy ra. Vui lòng thử lại sau", "error");
@@ -270,7 +270,7 @@ export default function ManagementStore(props: IStoreProps) {
     const response = await BeautyBranchService.delete(id);
 
     if (response.code === 0) {
-      showToast("Xóa cửa hàng thành công", "success");
+      showToast("Xóa cơ sở thành công", "success");
       getListStore(params);
     } else {
       showToast(response.message ?? "Có lỗi xảy ra. Vui lòng thử lại sau", "error");
@@ -292,7 +292,7 @@ export default function ManagementStore(props: IStoreProps) {
 
     Promise.all(arrayPromise).then((result) => {
       if (result.length > 0) {
-        showToast("Xoá cửa hàng thành công", "success");
+        showToast("Xoá cơ sở thành công", "success");
         getListStore(params);
         setListIdChecked([]);
       } else {
@@ -312,7 +312,7 @@ export default function ManagementStore(props: IStoreProps) {
       title: <Fragment>Xóa...</Fragment>,
       message: (
         <Fragment>
-          Bạn có chắc chắn muốn xóa {item ? "cửa hàng " : `${listIdChecked.length} cửa hàng đã chọn`}
+          Bạn có chắc chắn muốn xóa {item ? "cơ sở " : `${listIdChecked.length} cơ sở đã chọn`}
           {item ? <strong>{item.name}</strong> : ""}? Thao tác này không thể khôi phục.
         </Fragment>
       ),
@@ -336,7 +336,7 @@ export default function ManagementStore(props: IStoreProps) {
 
   const bulkActionList: BulkActionItemModel[] = [
     permissions["BEAUTY_BRANCH_DELETE"] == 1 && {
-      title: "Xóa cửa hàng",
+      title: "Xóa cơ sở",
       callback: () => showDialogConfirmDelete(),
     },
   ];
@@ -420,7 +420,7 @@ export default function ManagementStore(props: IStoreProps) {
               onBackProps(true);
             }}
           />
-          <h1 className="title-last">Danh sách cửa hàng</h1>
+          <h1 className="title-last">Danh sách cơ sở</h1>
         </div>
         {permissions["BEAUTY_BRANCH_ADD"] == 1 && (
           <Button
@@ -470,7 +470,7 @@ export default function ManagementStore(props: IStoreProps) {
           {/* {tab.type == 1 ?  */}
           <div className={tab.type == 1 ? "" : "d-none"}>
             <SearchBox
-              name="Tên cửa hàng"
+              name="Tên cơ sở"
               params={params}
               // isSaveSearch={true}
               // listSaveSearch={listSaveSearch}
@@ -482,7 +482,7 @@ export default function ManagementStore(props: IStoreProps) {
         {tab.type == 1 ? (
           !isLoading && listStore && listStore.length > 0 ? (
             <BoxTable
-              name="cửa hàng"
+              name="cơ sở"
               titles={titles}
               items={listStore}
               isPagination={true}
@@ -507,12 +507,12 @@ export default function ManagementStore(props: IStoreProps) {
                 <SystemNotification
                   description={
                     <span>
-                      Hiện tại chưa có cửa hàng nào. <br />
-                      Hãy thêm mới cửa hàng đầu tiên nhé!
+                      Hiện tại chưa có cơ sở nào. <br />
+                      Hãy thêm mới cơ sở đầu tiên nhé!
                     </span>
                   }
                   type="no-item"
-                  titleButton="Thêm mới cửa hàng"
+                  titleButton="Thêm mới cơ sở"
                   action={() => {
                     setDataBranch(null);
                     setShowModalAdd(true);

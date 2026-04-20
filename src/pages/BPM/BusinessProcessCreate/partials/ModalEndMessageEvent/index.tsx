@@ -600,7 +600,7 @@ export default function ModalEndMessageEvent({ onShow, onHide, dataNode, process
                 </div>
                 {listInputVar && listInputVar.length > 0
                   ? listInputVar.map((item, index) => (
-                      <div key={index} className="list-item-inputVar">
+                      <div key={item.id ?? index} className="list-item-inputVar">
                         <div className="item-inputVar">
                           <Input
                             id="nameInput"

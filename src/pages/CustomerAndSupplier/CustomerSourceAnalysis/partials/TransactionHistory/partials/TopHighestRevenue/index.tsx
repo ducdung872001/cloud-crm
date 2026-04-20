@@ -113,7 +113,7 @@ export default function TopHighestRevenue(props) {
         ],
       });
     } else {
-      showToast("Báo cáo theo top 5 khách hàng có doanh thu cao nhất lỗi. Vui lòng xem lại sau!", "error");
+      showToast("Báo cáo theo top 5 thành viên có doanh thu cao nhất lỗi. Vui lòng xem lại sau!", "error");
     }
   };
 
@@ -167,7 +167,7 @@ export default function TopHighestRevenue(props) {
   return (
     <div className="page__top__highest--revenue">
       <div className="title__common d-flex align-items-start">
-        <h2 className="name-common">Top 05 khách hàng có doanh thu cao nhất</h2>
+        <h2 className="name-common">Top 05 thành viên có doanh thu cao nhất</h2>
         <div
           ref={refOptionContainer}
           className={`icon__option--download ${showOption ? "active__option" : ""}`}

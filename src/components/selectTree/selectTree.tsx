@@ -154,7 +154,7 @@ function SelectTree(props: SelectCustomProps) {
         };
         const flatData = flattenData(data);
 
-        const newData = flatData.find((item) => (isAsyncPaginate ? item.value === value.value : item.value == value));
+        let newData = flatData.find((item) => (isAsyncPaginate ? item.value === value.value : item.value == value));
         if (newData) {
           setValueChoose({
             label: newData.label,
@@ -162,9 +162,9 @@ function SelectTree(props: SelectCustomProps) {
           });
         }
       }
-      const newDataExpand = data.map((item) => {
+      let newDataExpand = data.map((item) => {
         if (item.children && item.children.length > 0) {
-          const itemValue = item.children.find((child) => (isAsyncPaginate ? child.value === value.value : child.value == value));
+          let itemValue = item.children.find((child) => (isAsyncPaginate ? child.value === value.value : child.value == value));
           if (itemValue) {
             item.isExpand = true;
           }
@@ -374,7 +374,7 @@ function SelectTree(props: SelectCustomProps) {
                       </div>
                       {item?.children && item?.children.length > 0 && item?.isExpand ? (
                         <div className="item-child">
-                          {item?.children.map((child) => {
+                          {item?.children.map((child, idx) => {
                             return (
                               <div
                                 key={child.value}

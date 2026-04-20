@@ -48,7 +48,6 @@ export const uploadDocumentFormData = (
 
     let xhr = new XMLHttpRequest();
     const linkUpload = process.env.APP_API_URL;
-    const customerApiBase = process.env.APP_CUSTOMER_API_URL || "https://biz.reborn.vn";
     const importBPM = process.env.APP_BPM_URL;
 
     xhr.open(
@@ -56,7 +55,7 @@ export const uploadDocumentFormData = (
       `${
         type
           ? type === "customer"
-            ? `${customerApiBase}/customer/customer/import/uploadFile?custType=${parmas}`
+            ? `${linkUpload}/adminapi/customer/import/uploadFile?custType=${parmas}`
             : type === "contact"
             ? `${linkUpload}/adminapi/contact/import/uploadFile`
             : type === "partner"

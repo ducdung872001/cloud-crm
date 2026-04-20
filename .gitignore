@@ -16,7 +16,7 @@ package-lock.json
 yarn.lock
 yarn-error.log
 
-# test outputs
-tests/screenshots/
+# test artifacts
 tests/reports/
+tests/screenshots/
 tests/.auth-cookies.json

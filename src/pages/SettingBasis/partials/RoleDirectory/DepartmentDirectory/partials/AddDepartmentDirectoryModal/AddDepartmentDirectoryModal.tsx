@@ -539,7 +539,7 @@ export default function AddDepartmentDirectoryModal(props: AddDepartmentModalPro
               <div className="list-form-info-basic">
                 {listFieldInfoBasic.map((field, index) => (
                   <FieldCustomize
-                    key={index}
+                    key={field.name || index}
                     field={field}
                     handleUpdate={(value) => handleChangeValidate(value, field, formData, validations, listFieldInfoBasic, setFormData)}
                     formData={formData}
@@ -604,7 +604,7 @@ export default function AddDepartmentDirectoryModal(props: AddDepartmentModalPro
               <div className="list-form-note">
                 {listFieldNote.map((field, index) => (
                   <FieldCustomize
-                    key={index}
+                    key={field.name || index}
                     field={field}
                     handleUpdate={(value) => handleChangeValidate(value, field, formData, validations, listFieldNote, setFormData)}
                     formData={formData}

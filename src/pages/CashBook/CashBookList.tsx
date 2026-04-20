@@ -2,7 +2,7 @@
 import React, { useState, useEffect, useMemo, useRef, useContext } from "react";
 import cloneDeep from "lodash/cloneDeep";
 
-import moment from "moment";
+import { formatDateCustom } from "utils/dateUtils";
 import { useSearchParams } from "react-router-dom";
 import { Options } from "highcharts";
 import TitleAction from "components/titleAction/titleAction";
@@ -93,9 +93,9 @@ const buildCashFlowSeries = (items: ICashBookResponse[]): CashbookChartPoint[] =
 
   (items || [])
     .slice()
-    .sort((a, b) => moment(a.transDate).valueOf() - moment(b.transDate).valueOf())
+    .sort((a, b) => new Date(a.transDate).getTime() - new Date(b.transDate).getTime())
     .forEach((item) => {
-      const key = moment(item.transDate).format("DD/MM");
+      const key = formatDateCustom(item.transDate, "dd/MM");
       const current = grouped.get(key) || { label: key, income: 0, expense: 0 };
 
       if (+item.type === 1) {
@@ -518,7 +518,7 @@ export default function CashBookList() {
     () =>
       (reportSource || [])
         .slice()
-        .sort((a, b) => moment(b.transDate).valueOf() - moment(a.transDate).valueOf())
+        .sort((a, b) => new Date(b.transDate).getTime() - new Date(a.transDate).getTime())
         .slice(0, 50),
     [reportSource]
   );

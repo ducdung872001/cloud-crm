@@ -7,7 +7,7 @@ function ReportOverview(props: Record<string, unknown>) {
 
   const data = [
     {
-        label: 'Tổng khách hàng',
+        label: 'Tổng thành viên',
         value: 20000
     },
     {

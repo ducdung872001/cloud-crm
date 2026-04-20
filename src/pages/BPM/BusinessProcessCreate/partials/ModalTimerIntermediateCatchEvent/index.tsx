@@ -81,7 +81,7 @@ export default function ModalTimerIntermediateCatchEvent({ onShow, onHide, dataN
         minute: [],
         second: [],
       };
-      const _configData = [];
+      let _configData = [];
       if (configData.length > 0 && Array.isArray(configData)) {
         configData.forEach((item) => {
           configDefault = {
@@ -162,7 +162,7 @@ export default function ModalTimerIntermediateCatchEvent({ onShow, onHide, dataN
     let configCylce = [];
     if (formData?.timerType == "Cycle" && config?.length) {
       configCylce = config?.map((item) => {
-        const itemCylce = {
+        let itemCylce = {
           second: item.second.map((i) => i.value).join(",") || null,
           minute: item.minute.map((i) => i.value).join(",") || null,
           hour: item.hour.map((i) => i.value).join(",") || null,
@@ -319,7 +319,7 @@ export default function ModalTimerIntermediateCatchEvent({ onShow, onHide, dataN
 
     if (response.code === 0) {
       const dataOption = response.result?.items;
-      const listVar = [];
+      let listVar = [];
       dataOption &&
         dataOption.length > 0 &&
         dataOption.map((item) => {
@@ -367,7 +367,7 @@ export default function ModalTimerIntermediateCatchEvent({ onShow, onHide, dataN
 
     if (response.code === 0) {
       const dataOption = response.result?.filter((el) => el.code) || [];
-      const listForm = [];
+      let listForm = [];
       dataOption &&
         dataOption.length > 0 &&
         dataOption.map((item) => {

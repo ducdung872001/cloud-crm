@@ -42,7 +42,7 @@ export default function ModalOverLap(props: Record<string, unknown>) {
             <div className="list-overlap-OLA">
               {dataNode.map((item, index) => {
                 return (
-                  <div className="item-overlap-OLA" key={index}>
+                  <div className="item-overlap-OLA" key={item.id ?? index}>
                     <span className="text-overlap-OLA">
                       - Điều kiện có STT {item[0] + 1} chồng lấn với điều kiện có STT {item[1] + 1}
                     </span>

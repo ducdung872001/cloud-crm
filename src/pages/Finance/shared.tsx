@@ -502,9 +502,6 @@ export function CashbookSlideOver({ open, onClose, onSuccess }: CashbookSlideOve
     if (!form.fundId) { setFormError("Vui lòng chọn quỹ tiền"); return; }
     const amountNum = parseInt(form.amount.replace(/\D/g, ""), 10);
     if (!amountNum || amountNum <= 0) { setFormError("Số tiền phải lớn hơn 0"); return; }
-    if (!form.transDate) { setFormError("Vui lòng chọn ngày giao dịch"); return; }
-    if (form.note && form.note.length > 500) { setFormError("Nội dung phiếu không được vượt quá 500 ký tự"); return; }
-    if (form.relatedEntity && form.relatedEntity.length > 255) { setFormError("Đối tượng liên quan không được vượt quá 255 ký tự"); return; }
 
     setSubmitting(true);
 
@@ -530,7 +527,7 @@ export function CashbookSlideOver({ open, onClose, onSuccess }: CashbookSlideOve
         handleClose();
         onSuccess();
       } else {
-        setFormError(res?.error ?? res?.message ?? "Tạo phiếu thất bại — vui lòng thử lại");
+        setFormError(res?.message ?? "Tạo phiếu thất bại — vui lòng thử lại");
       }
     } catch {
       setFormError("Lỗi kết nối — vui lòng thử lại");
@@ -687,7 +684,6 @@ export function CashbookSlideOver({ open, onClose, onSuccess }: CashbookSlideOve
               <input
                 type="text"
                 placeholder="Nhập tên khách hàng hoặc nhà cung cấp"
-                maxLength={255}
                 value={form.relatedEntity}
                 onChange={e => setForm(f => ({ ...f, relatedEntity: e.target.value }))}
               />
@@ -710,7 +706,6 @@ export function CashbookSlideOver({ open, onClose, onSuccess }: CashbookSlideOve
               <textarea
                 rows={3}
                 placeholder="Nhập diễn giải giao dịch..."
-                maxLength={500}
                 value={form.note}
                 onChange={e => setForm(f => ({ ...f, note: e.target.value }))}
               />

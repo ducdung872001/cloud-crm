@@ -17,6 +17,7 @@ import { ICustomerSchedulerFilterRequest } from "model/customer/CustomerRequestM
 import { showToast } from "utils/common";
 import CustomerService from "services/CustomerService";
 import AddPhoneModal from "../AddPhoneModal";
+import AddConsultationScheduleModal from "pages/CalendarCommon/partials/AddConsultationScheduleModal/AddConsultationScheduleModal";
 import { ContextType, UserContext } from "contexts/userContext";
 import EmployeeAgentService from "services/EmployeeAgentService";
 import JsSIP from "jssip";
@@ -53,6 +54,7 @@ export default function CustomerList(props: ICustomerListProps) {
   const [listCustomer, setListCustomer] = useState<ICustomerResponse[]>([]);
   const [dataCustomer, setDataCustomer] = useState<ICustomerResponse>(null);
   const [idCustomer, setIdCustomer] = useState<number>(null);
+  const [showModalAddConsultationScheduleModal, setShowModalAddConsultationScheduleModal] = useState<boolean>(false);
 
   const [params, setParams] = useState<IParamsCustomerInCallCenter>({
     keyword: "",
@@ -114,7 +116,7 @@ export default function CustomerList(props: ICustomerListProps) {
 
   const [pagination, setPagination] = useState<PaginationProps>({
     ...DataPaginationDefault,
-    name: "Khách hàng",
+    name: "Thành viên",
     isChooseSizeLimit: true,
     setPage: (page) => {
       setParams((prevParams) => ({ ...prevParams, page: page }));
@@ -193,7 +195,7 @@ export default function CustomerList(props: ICustomerListProps) {
   const titles = [
     "STT",
     "Ảnh đại diện",
-    "Tên khách hàng",
+    "Tên thành viên",
     "Giới tính",
     "Điện thoại",
     "Email",
@@ -219,6 +221,7 @@ export default function CustomerList(props: ICustomerListProps) {
       style={{ color: "var(--primary-color-90)", fontWeight: "500", cursor: "pointer" }}
       onClick={() => {
         setIdCustomer(item.id);
+        setShowModalAddConsultationScheduleModal(true);
       }}
     >
       Tạo
@@ -289,8 +292,8 @@ export default function CustomerList(props: ICustomerListProps) {
   // }
 
   const handleMakeCall = () => {
-    const socket = new JsSIP.WebSocketInterface("wss://pbx-athenaspear-prod.athenafs.io:7443");
-    const configuration = {
+    var socket = new JsSIP.WebSocketInterface("wss://pbx-athenaspear-prod.athenafs.io:7443");
+    var configuration = {
       sockets: [socket],
       // uri      : 'sip:alice@example.com',
       // password : 'superpassword'
@@ -298,12 +301,12 @@ export default function CustomerList(props: ICustomerListProps) {
       password: "B44pW9dkW9G9X1dGPo6vcnYFgDES9eDR",
     };
 
-    const ua = new JsSIP.UA(configuration);
+    var ua = new JsSIP.UA(configuration);
 
     ua.start();
 
     // Register callbacks to desired call events
-    const eventHandlers = {
+    var eventHandlers = {
       progress: function (e) {
       },
       failed: function (e) {
@@ -315,12 +318,12 @@ export default function CustomerList(props: ICustomerListProps) {
       },
     };
 
-    const options = {
+    var options = {
       eventHandlers: eventHandlers,
       mediaConstraints: { audio: true, video: true },
     };
 
-    const session = ua.call("sip:athena_101057@pbx-athenaspear-prod.athenafs.io:7443", options);
+    var session = ua.call("sip:athena_101057@pbx-athenaspear-prod.athenafs.io:7443", options);
   };
 
   // const sipUri = new URI("sip", "athena_101057", "pbx-athenaspear-prod.athenafs.io");
@@ -469,17 +472,17 @@ export default function CustomerList(props: ICustomerListProps) {
         <audio ref={remoteAudioRef} autoPlay />
       </div> */}
       <SearchBox
-        name="Khách hàng"
+        name="Thành viên"
         params={params}
         isFilter={true}
         listFilterItem={customerFilterList}
-        placeholderSearch="Tìm kiếm theo tên, số điện thoại, email khách hàng"
+        placeholderSearch="Tìm kiếm theo tên, số điện thoại, email thành viên"
         updateParams={(paramNew) => setParams(paramNew)}
       />
 
       {!isLoading && listCustomer && listCustomer.length > 0 ? (
         <BoxTable
-          name="Khách hàng"
+          name="Thành viên"
           titles={titles}
           items={listCustomer}
           isPagination={true}
@@ -495,7 +498,7 @@ export default function CustomerList(props: ICustomerListProps) {
       ) : (
         <Fragment>
           {!isNoItem ? (
-            <SystemNotification description={<span>Hiện tại chưa có khách hàng nào.</span>} type="no-item" />
+            <SystemNotification description={<span>Hiện tại chưa có thành viên nào.</span>} type="no-item" />
           ) : (
             <SystemNotification
               description={
@@ -536,6 +539,19 @@ export default function CustomerList(props: ICustomerListProps) {
       /> */}
       {/* <AddPhoneModal onShow={showModalPhone} dataCustomer={dataCustomer} onHide={() => setShowModalPhone(false)} /> */}      
 
+      <AddConsultationScheduleModal
+        onShow={showModalAddConsultationScheduleModal}
+        idData={null}
+        idCustomer={idCustomer}
+        startDate={new Date()}
+        endDate={new Date(new Date().setMinutes(new Date().getMinutes() + 10))}
+        onHide={(reload) => {
+          if (reload) {
+            // getListSchedule(params);
+          }
+          setShowModalAddConsultationScheduleModal(false);
+        }}
+      />
     </Fragment>
   );
 }

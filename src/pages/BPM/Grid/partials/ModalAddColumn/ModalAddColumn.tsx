@@ -17,7 +17,9 @@ import Icon from "components/icon";
 import RadioList from "components/radio/radioList";
 import SelectCustom from "components/selectCustom/selectCustom";
 import TextArea from "components/textarea/textarea";
-import { bind, fill, set } from "lodash";
+import bind from "lodash/bind";
+import fill from "lodash/fill";
+import set from "lodash/set";
 import GirdService from "services/GridService";
 import { BindingFieldMap } from "./BindingFieldMap";
 import { is } from "bpmn-js/lib/util/ModelUtil";
@@ -196,7 +198,7 @@ export default function ModalAddColumn(props: Record<string, unknown>) {
   const getCustomerAttributes = async () => {
     const response = await CustomerAttributeService.listAll(formData?.values["custType"]);
 
-    const arrField = [];
+    let arrField = [];
 
     if (response.code === 0) {
       const dataOption = response.result;
@@ -720,7 +722,7 @@ export default function ModalAddColumn(props: Record<string, unknown>) {
       };
     });
 
-    const list_column = [
+    let list_column = [
       ...listColumn,
       {
         name: formData.values["name"],
@@ -756,7 +758,7 @@ export default function ModalAddColumn(props: Record<string, unknown>) {
         : []),
     ];
 
-    const dataSubmit = {
+    let dataSubmit = {
       nodeId: params?.nodeId || "Activity_0n3i8dv",
       processId: params?.processId || 380,
       fieldName: params?.fieldName || "boq",
@@ -933,7 +935,7 @@ export default function ModalAddColumn(props: Record<string, unknown>) {
             <div className="list-form-group">
               {/* {listField.map((field, index) => (
                 <FieldCustomize
-                  key={index}
+                  key={field.name || index}
                   field={field}
                   handleUpdate={(value) => handleChangeValidate(value, field, formData, validations, listField, setFormData)}
                   formData={formData}
@@ -941,7 +943,7 @@ export default function ModalAddColumn(props: Record<string, unknown>) {
               ))} */}
               {listFieldFirst.map((field, index) => (
                 <FieldCustomize
-                  key={index}
+                  key={field.name || index}
                   field={field}
                   handleUpdate={(value) => handleChangeValidate(value, field, formData, validations, listFieldFirst, setFormData)}
                   formData={formData}
@@ -1110,7 +1112,7 @@ export default function ModalAddColumn(props: Record<string, unknown>) {
 
               {listFieldSecond.map((field, index) => (
                 <FieldCustomize
-                  key={index}
+                  key={field.name || index}
                   field={field}
                   handleUpdate={(value) => handleChangeValidate(value, field, formData, validations, listFieldSecond, setFormData)}
                   formData={formData}

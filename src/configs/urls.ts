@@ -1,5 +1,4 @@
-// Toàn bộ endpoint trước đây ở /adminapi/* đã migrate sang biz.reborn.vn/customer/*.
-// Prod mặc định: https://biz.reborn.vn/customer; override bằng env APP_CUSTOMER_API_URL.
+// Đã migrate: toàn bộ endpoint /adminapi/* → biz.reborn.vn/customer/*.
 const prefixCustomer = (process.env.APP_CUSTOMER_API_URL || "https://biz.reborn.vn") + "/customer";
 const prefixBiz = "/bizapi";
 // const prefixBpm = process.env.APP_BPM_URL + "/bpmapi";
@@ -14,6 +13,7 @@ const prefixCs = "/cs";
 const prefixApplication = "/application";
 const prefixHr = "/hr";
 const prefixRebornVn = (process.env.APP_AUTHENTICATOR_URL || "https://reborn.vn") + "/api";
+const prefixOperation = (process.env.APP_AUTHENTICATOR_URL || "https://reborn.vn") + "/operation";
 const prefixCloudMarket = (process.env.APP_API_URL || "https://cloud.reborn.vn") + "/market";
 const prefixConnect = process.env.APP_CONNECT_URL || "https://connect.reborn.vn";
 const prefixUpload = process.env.APP_UPLOAD_URL || "https://login.noron.vn";
@@ -297,6 +297,104 @@ export const urlsApi = {
     report: prefixCustomer + "/cashbook/report",
   },
 
+  // Khu vực quản lý vận hành ---
+  space: {
+    list: prefixOperation + "/space/list",
+    update: prefixOperation + "/space/update",
+    detail: prefixOperation + "/space/get",
+    delete: prefixOperation + "/space/delete",
+  },
+  spaceType: {
+    list: prefixOperation + "/spaceType/list",
+    update: prefixOperation + "/spaceType/update",
+    detail: prefixOperation + "/spaceType/get",
+    delete: prefixOperation + "/spaceType/delete",
+  },
+  spaceCustomer: {
+    list: prefixOperation + "/spaceCustomer/list",
+    update: prefixOperation + "/spaceCustomer/update",
+    detail: prefixOperation + "/spaceCustomer/get",
+    delete: prefixOperation + "/spaceCustomer/delete",
+  },
+  ortherFee: {
+    list: prefixOperation + "/otherFee/list",
+    update: prefixOperation + "/otherFee/update",
+    detail: prefixOperation + "/otherFee/get",
+    delete: prefixOperation + "/otherFee/delete",
+  },
+  utilityReading: {
+    list: prefixOperation + "/utilityReading/list",
+    update: prefixOperation + "/utilityReading/update",
+    detail: prefixOperation + "/utilityReading/get",
+    delete: prefixOperation + "/utilityReading/delete",
+  },
+  managementFee: {
+    list: prefixOperation + "/managementFee/list",
+    update: prefixOperation + "/managementFee/update",
+    detail: prefixOperation + "/managementFee/get",
+    delete: prefixOperation + "/managementFee/delete",
+  },
+  vehicleRegistration: {
+    list: prefixOperation + "/vehicleRegistration/list",
+    update: prefixOperation + "/vehicleRegistration/update",
+    detail: prefixOperation + "/vehicleRegistration/get",
+    delete: prefixOperation + "/vehicleRegistration/delete",
+  },
+  vehicle: {
+    list: prefixOperation + "/vehicle/list",
+    update: prefixOperation + "/vehicle/update",
+    detail: prefixOperation + "/vehicle/get",
+    delete: prefixOperation + "/vehicle/delete",
+  },
+  building: {
+    list: prefixOperation + "/building/list",
+    update: prefixOperation + "/building/update",
+    detail: prefixOperation + "/building/get",
+    delete: prefixOperation + "/building/delete",
+  },
+  buildingFloor: {
+    list: prefixOperation + "/buildingFloor/list",
+    update: prefixOperation + "/buildingFloor/update",
+    detail: prefixOperation + "/buildingFloor/get",
+    delete: prefixOperation + "/buildingFloor/delete",
+  },
+  operationProject: {
+    list: prefixOperation + "/project/list",
+    update: prefixOperation + "/project/update",
+    detail: prefixOperation + "/project/get",
+    delete: prefixOperation + "/project/delete",
+  },
+  electricityMeter: {
+    list: prefixOperation + "/electricMeter/list",
+    update: prefixOperation + "/electricMeter/update",
+    detail: prefixOperation + "/electricMeter/get",
+    delete: prefixOperation + "/electricMeter/delete",
+  },
+  electricityRate: {
+    list: prefixOperation + "/electricityRate/list",
+    update: prefixOperation + "/electricityRate/update",
+    detail: prefixOperation + "/electricityRate/get",
+    delete: prefixOperation + "/electricityRate/delete",
+  },
+  waterRate: {
+    list: prefixOperation + "/waterRate/list",
+    update: prefixOperation + "/waterRate/update",
+    detail: prefixOperation + "/waterRate/get",
+    delete: prefixOperation + "/waterRate/delete",
+  },
+  managementFeeRate: {
+    list: prefixOperation + "/managementFeeRate/list",
+    update: prefixOperation + "/managementFeeRate/update",
+    detail: prefixOperation + "/managementFeeRate/get",
+    delete: prefixOperation + "/managementFeeRate/delete",
+  },
+  parkingFee: {
+    list: prefixOperation + "/parkingFee/list",
+    update: prefixOperation + "/parkingFee/update",
+    detail: prefixOperation + "/parkingFee/get",
+    delete: prefixOperation + "/parkingFee/delete",
+  },
+  //--- Khu vực quản lý vận hành
 
   historySend: {
     historySendSMS: prefixCustomer + "/customerSms/list",
@@ -480,16 +578,6 @@ export const urlsApi = {
     wUpdateInventory: prefixInventory + "/product/update/inventory-setting",
     wWebsiteSettingGet: prefixInventory + "/product/website-setting/get",
     wWebsiteSettingUpdate: prefixInventory + "/product/website-setting/update",
-    wWebsiteSettingUpdateShowOnWebsite: prefixInventory + "/product/website-setting/update/show-on-website",
-    wWebsiteSettingUpdateShowImage: prefixInventory + "/product/website-setting/update/show-image",
-    wWebsiteSettingUpdateShowUnit: prefixInventory + "/product/website-setting/update/show-unit",
-    wWebsiteSettingUpdateShowDescription: prefixInventory + "/product/website-setting/update/show-description",
-    wWebsiteSettingUpdateShowPromotionPrice: prefixInventory + "/product/website-setting/update/show-promotion-price",
-    wWebsiteSettingUpdateShowWholesalePrice: prefixInventory + "/product/website-setting/update/show-wholesale-price",
-    wWebsiteSettingUpdateShowInventory: prefixInventory + "/product/website-setting/update/show-inventory",
-    wWebsiteSettingUpdateShowBarcode: prefixInventory + "/product/website-setting/update/show-barcode",
-    wWebsiteSettingUpdateShowVariant: prefixInventory + "/product/website-setting/update/show-variant",
-    wWebsiteSettingUpdateHideWhenOutOfStock: prefixInventory + "/product/website-setting/update/hide-when-out-of-stock",
     wWebsiteSettingDefaultGet: prefixInventory + "/product/website-setting/default",
     wWebsiteSettingDefaultUpdate: prefixInventory + "/product/website-setting/default/update",
     wWebsiteToggle: prefixInventory + "/product/update/website-toggle",
@@ -667,9 +755,58 @@ export const urlsApi = {
     deleteEmployee: prefixCustomer + "/groupEmployee/delete",
   },
 
+  treatment: {
+    // đoạn api này cần xem lại chút
+    filterSchedule: prefixCustomer + "/treatmentTime/list_schedule_next",
+    filterByScheduler: prefixCustomer + "/treatmentTime/get_byscheduler",
+    updateNext: prefixCustomer + "/treatmentTime/update_next",
+    delete: prefixCustomer + "/treatmentTime/delete",
+    updateCaringEmployee: prefixCustomer + "/treatmentTime/update_caring_employee",
+    update: prefixCustomer + "/treatmentTime/update",
+  },
+  // lịch sử điều trị
+  treatmentHistory: {
+    list: prefixCustomer + "/treatmentHistory/list_all",
+    update: prefixCustomer + "/treatmentHistory/update",
+    detail: prefixCustomer + "/treatmentHistory/get",
+    delete: prefixCustomer + "/treatmentHistory/delete",
+    listByCustomer: prefixCustomer + "/treatmentHistory/list_by_customer",
+  },
+  // nhật ký điều trị
+  diarySurgery: {
+    list: prefixCustomer + "/diarySurgery/listAll",
+    update: prefixCustomer + "/diarySurgery/update",
+    detail: prefixCustomer + "/diarySurgery/get",
+    delete: prefixCustomer + "/diarySurgery/delete",
+  },
+  // lịch trình tư vấn
+  scheduleConsultant: {
+    list: prefixCustomer + "/scheduleConsultant/list",
+    update: prefixCustomer + "/scheduleConsultant/update",
+    detail: prefixCustomer + "/scheduleConsultant/get",
+    delete: prefixCustomer + "/scheduleConsultant/delete",
+    updateKafka: prefixBpm + "/kafka/activate/receiveTask",
+  },
+  // lịch điều trị
+  scheduleTreatment: {
+    list: prefixCustomer + "/scheduleTreatment/list",
+    update: prefixCustomer + "/scheduleTreatment/update",
+    detail: prefixCustomer + "/scheduleTreatment/get",
+    delete: prefixCustomer + "/scheduleTreatment/delete",
+    updateKafka: prefixBpm + "/kafka/activateProcess",
+  },
+  // lịch chung (điều trị, tư vấn, công việc)
   scheduleCommon: {
     list: prefixCustomer + "/schedule/list",
     listRelatedToCustomer: prefixCustomer + "/schedule/list/by_customer",
+  },
+  // phòng điều trị
+  treatmentRoom: {
+    list: prefixCustomer + "/treatmentRoom/list",
+    update: prefixCustomer + "/treatmentRoom/update",
+    detail: prefixCustomer + "/treatmentRoom/get",
+    delete: prefixCustomer + "/treatmentRoom/delete",
+    checkTreatmentRoom: prefixCustomer + "/treatmentRoom/check",
   },
   crmCareHistory: {
     list: prefixCustomer + "/crmCareHistory/list",
@@ -767,9 +904,6 @@ export const urlsApi = {
   //khu vực trải nghiệm khách hàng
   warehouse: {
     list: prefixInventory + "/warehouse/list",
-    create: prefixInventory + "/warehouse/create",
-    update: prefixInventory + "/warehouse/update",
-    delete: prefixInventory + "/warehouse/delete",
     //API lấy ra danh sách sản phẩm trong kho
     productList: prefixInventory + "/warehouse/product/list",
     //API lấy ra thông tin ngày hết hạn / sản xuất dựa trên số lô của sản phẩm
@@ -2361,6 +2495,38 @@ export const urlsApi = {
     updateDmnSetting: prefixMarket + "/promotion/update/dmn-setting",
     share: prefixMarket + "/promotion/share",
   },
+  // ═══ Events (Community Hub) ═══════════════════════════════════════════
+  events: {
+    // Public (no auth)
+    getPublic: prefixMarket + "/events/public",        // GET  ?slug={slug}
+    registerPublic: prefixMarket + "/events/public/register", // POST ?slug={slug}
+    checkTicket: prefixMarket + "/events/public/check-ticket", // POST ?slug={slug}
+    // Admin (JWT)
+    list: prefixMarket + "/events/list",               // GET  ?status=&q=&category=&page=&limit=
+    get: prefixMarket + "/events/get",                 // GET  ?id={id}
+    create: prefixMarket + "/events/create",           // POST
+    update: prefixMarket + "/events/update",           // POST ?id={id}
+    delete: prefixMarket + "/events/delete",           // DELETE ?id={id}
+    publish: prefixMarket + "/events/publish",         // POST ?id={id}
+    unpublish: prefixMarket + "/events/unpublish",     // POST ?id={id}
+    cancel: prefixMarket + "/events/cancel",           // POST ?id={id}
+    // Registrations
+    registrations: prefixMarket + "/events/registrations",     // GET ?eventId={id}&status=&q=&page=&limit=
+    updateRegistration: prefixMarket + "/events/registrations/update", // POST ?id={regId}
+    issueTicket: prefixMarket + "/events/registrations/issue-ticket",  // POST ?id={regId}
+    convertToMember: prefixMarket + "/events/registrations/convert",   // POST ?id={regId}
+    importRegistrations: prefixMarket + "/events/registrations/import", // POST multipart
+    // Payment proof
+    submitPaymentProof: prefixMarket + "/events/registrations/payment-proof", // POST ?id={regId}
+    reviewPaymentProof: prefixMarket + "/events/registrations/payment-review", // POST ?id={regId}
+    // Check-in / Check-out
+    checkIn: prefixMarket + "/events/registrations/check-in",   // POST ?id={regId}
+    checkOut: prefixMarket + "/events/registrations/check-out", // POST ?id={regId}
+    // Service usage (đặc thù)
+    listServiceUsage: prefixMarket + "/events/service-usage/list",  // GET ?registrationId={regId}
+    addServiceUsage: prefixMarket + "/events/service-usage/add",    // POST
+    removeServiceUsage: prefixMarket + "/events/service-usage/delete", // DELETE ?id={id}
+  },
   fixedPricePromotion: {
     getProducts: prefixMarket + "/fixedPrice/products",
     saveProducts: prefixMarket + "/fixedPrice/products/save",
@@ -3308,6 +3474,7 @@ export const urls = {
   partner: "/partner",
   detail_partner: "/detail_partner/partnerId/:id?",
 
+  schedule_next: "/schedule_next",
   schedule: "/schedule",
   timekeeping: "/timekeeping",
   cashbook: "/cashbook",
@@ -3483,6 +3650,10 @@ export const urls = {
   public_connect_zalo: "/public_connect_zalo",
   // đường dẫn quản trị tài nguyên
   resource_management: "/resource_management",
+  // đường dẫn lịch sử điều trị
+  treatment_history: "/treatment_history",
+  // đường dẫn nhật ký điều trị
+  diary_surgery: "/diary_surgery",
   // lịch
   calendar_common: "/calendar_common",
   // quy trình bán hàng
@@ -3550,6 +3721,7 @@ export const urls = {
   bpm: "/bpm",
   bpm_create: "/bpm/create/:id",
   manage_processes: "/manage_processes",
+  manage_default_processes: "/manage_default_processes",
   process_simulation: "/process_simulation",
   object_manage: "/object_manage",
   //cài đặt quy trình
@@ -3575,6 +3747,17 @@ export const urls = {
   outbound_invoice: "/outbound_invoice",
   inventory_transfer_document: "/inventory_transfer_document",
 
+  // Cài đặt vận hành
+  ortherFee: "/orther_fee",
+  // utilityReading: "/utility_reading",
+  electricityIndex: "/electricity_index",
+  waterIndex: "/water_index",
+  spaceCustomer: "/space_customer",
+  managementFee: "/management_fee",
+  vehicleRegistration: "/vehicle_registration",
+  vehicle: "/vehicle",
+  building: "/building",
+  buildingFloor: "/building_floor",
   //quản lý nguyên vật liệu
   material: "/material",
 

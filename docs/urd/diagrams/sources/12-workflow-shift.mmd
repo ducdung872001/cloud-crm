@@ -1,0 +1,47 @@
+%%{init: {'theme':'base', 'themeVariables': {'fontFamily':'Calibri'}}}%%
+flowchart TB
+    START([Bắt đầu ngày làm việc]) --> A1[Đăng nhập SSO]
+    A1 --> A2{Có ca\nđang mở?}
+    A2 -->|Có| ON[Vào tab Đang ca\ntiếp tục công việc]
+    A2 -->|Không| A3[Chọn cấu hình ca]
+    A3 --> A4[Đếm tiền trong két]
+    A4 --> A5{Chế độ nhập?}
+    A5 -->|Tổng tiền| A6[Gõ tổng số]
+    A5 -->|Mệnh giá| A7[Gõ số tờ\ntừng mệnh giá]
+    A6 --> A8{Tiền > 0?}
+    A7 --> A8
+    A8 -->|Không| A4
+    A8 -->|Có| A9[Xác nhận vào ca]
+    A9 --> ON
+
+    ON --> WORK{Loại tác vụ?}
+    WORK -->|Bán hàng| W1[Tạo đơn POS]
+    WORK -->|Khách đến| W2[Check-in/Cửa vào]
+    WORK -->|Khách dùng DV| W3[Trừ quota dịch vụ]
+    WORK -->|Khách mua gói| W4[Bán gói thành viên]
+    W1 --> ON
+    W2 --> ON
+    W3 --> ON
+    W4 --> ON
+    WORK -->|Hết khách| END_DAY[Kết thúc ca]
+
+    END_DAY --> C1[Bấm Kết thúc ca]
+    C1 --> C2[Đếm tiền thực tế trong két]
+    C2 --> C3[Hệ thống tính chênh lệch]
+    C3 --> C4{Chênh lệch?}
+    C4 -->|= 0| C6[Xác nhận đóng ca]
+    C4 -->|≠ 0| C5[Bắt buộc nhập\nlý do chênh lệch]
+    C5 --> C6
+    C6 --> C7[Sinh báo cáo kết ca]
+    C7 --> C8[In/Xuất Excel/Gửi quản lý]
+    C8 --> END([Đăng xuất])
+
+    classDef start fill:#10B981,stroke:#047857,color:#fff
+    classDef action fill:#E1F5EE,stroke:#2C7A7B,color:#0F4C44
+    classDef decision fill:#FEF3C7,stroke:#F59E0B,color:#78350F
+    classDef endNode fill:#1F3A68,stroke:#1F3A68,color:#fff
+
+    class START,END start
+    class A1,A3,A4,A6,A7,A9,W1,W2,W3,W4,C1,C2,C3,C5,C6,C7,C8 action
+    class A2,A5,A8,WORK,C4 decision
+    class ON,END_DAY endNode

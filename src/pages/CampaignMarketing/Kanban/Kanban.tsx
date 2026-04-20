@@ -8,7 +8,6 @@ import Tippy from "@tippyjs/react";
 import Icon from "components/icon";
 import { ICustomPlaceholderResponse } from "model/customPlaceholder/CustomPlaceholderResponseModel";
 import SaleflowInvoiceService from "services/SaleflowInvoiceService";
-import { AnyKindOfDictionary } from "lodash";
 
 export default function Kanban(props: Record<string, unknown>) {
   const {
@@ -294,7 +293,7 @@ export default function Kanban(props: Record<string, unknown>) {
         status: status,
       };
 
-      const response = null;
+      let response = null;
 
       if (response?.code === 0) {
         const result = response.result;

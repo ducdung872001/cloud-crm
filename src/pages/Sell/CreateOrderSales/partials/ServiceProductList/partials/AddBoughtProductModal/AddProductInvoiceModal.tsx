@@ -48,7 +48,7 @@ export default function AddBoughtProductModal(props: AddBoughtProductModalProps)
     if (!listInventory || listInventory.length == 0) {
       setIsLoadingInventory(true);
 
-      const response = await InventoryService.list();
+      const response = await InventoryService.list({ page: 1, limit: 200 });
 
       if (response.code === 0) {
         const dataOption = response.result || [];
@@ -836,7 +836,7 @@ export default function AddBoughtProductModal(props: AddBoughtProductModalProps)
             <div className="list-form-group">
               {listField.map((field, index) => (
                 <FieldCustomize
-                  key={index}
+                  key={field.name || index}
                   field={field}
                   handleUpdate={(value) => handleChangeValidate(value, field, formData, validations, listField, setFormData)}
                   formData={formData}

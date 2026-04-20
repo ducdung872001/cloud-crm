@@ -147,12 +147,12 @@ export default function InfoProcess(props: { data: Record<string, unknown> }) {
   };
 
   const updateCustomerMultiselectAttribute = (attributeId, e) => {
-    const attributeValue = e ? e.split(",") : [];
+    let attributeValue = e ? e.split(",") : [];
     updateCustomerAttribute(attributeId, JSON.stringify(attributeValue));
   };
 
   const updateCustomerAttribute = (attributeId, attributeValue) => {
-    const objectId = data?.id || 0;
+    let objectId = data?.id || 0;
 
     let found = false;
     (objectExtraInfos || []).map((item, idx) => {
@@ -164,7 +164,7 @@ export default function InfoProcess(props: { data: Record<string, unknown> }) {
     });
 
     if (!found) {
-      const item: Record<string, unknown> = {};
+      let item: Record<string, unknown> = {};
       item.attributeId = attributeId;
       item.attributeValue = attributeValue;
       item.objectId = objectId;
@@ -187,7 +187,7 @@ export default function InfoProcess(props: { data: Record<string, unknown> }) {
 
   const getDecimalScale = (attributes) => {
     attributes = attributes ? JSON.parse(attributes) : {};
-    const numberFormat = attributes?.numberFormat || "";
+    let numberFormat = attributes?.numberFormat || "";
     if (numberFormat.endsWith(".#")) {
       return 1;
     }
@@ -241,8 +241,8 @@ export default function InfoProcess(props: { data: Record<string, unknown> }) {
    * @param isFormula
    */
   const getCustomerAttributeFormula = (attributes) => {
-    const attributeValue = attributes ? JSON.parse(attributes)?.formula : "";
-    const attrObj = {};
+    let attributeValue = attributes ? JSON.parse(attributes)?.formula : "";
+    let attrObj = {};
     (objectExtraInfos || []).map((item, idx) => {
       if (item.datatype == "number") {
         attrObj["customerAttribute_" + convertToId(item.attributeName)] = +item.attributeValue;
@@ -298,7 +298,7 @@ export default function InfoProcess(props: { data: Record<string, unknown> }) {
             decimalScale={getDecimalScale(customerAttribute.attributes)}
             onChange={(e) => {
               const value = e.target.value;
-              const valueNum = value?.replace(/,/g, "");
+              let valueNum = value?.replace(/,/g, "");
               updateCustomerAttribute(customerAttribute.id, valueNum);
             }}
             // disabled={true}
@@ -326,7 +326,7 @@ export default function InfoProcess(props: { data: Record<string, unknown> }) {
         );
         break;
       case "multiselect":
-        const attris = getCustomerAttributeValue(customerAttribute.id);
+        let attris = getCustomerAttributeValue(customerAttribute.id);
         CustomControl = (
           <CheckboxList
             title={customerAttribute.name}
@@ -391,7 +391,7 @@ export default function InfoProcess(props: { data: Record<string, unknown> }) {
         );
         break;
       case "lookup":
-        const attrs = customerAttribute.attributes ? JSON.parse(customerAttribute.attributes) : {};
+        let attrs = customerAttribute.attributes ? JSON.parse(customerAttribute.attributes) : {};
 
         //1. Trường hợp là customer (khách hàng)
         //2. Trường hợp là employee (nhân viên)
@@ -527,7 +527,7 @@ export default function InfoProcess(props: { data: Record<string, unknown> }) {
                 <tr key={item.value}>
                   {item.map((el, index) => {
                     return (
-                      <td key={index} style={{ textAlign: `${el.type === "number" ? "right" : el.type === "select" ? "center" : "left"}` }}>
+                      <td key={el.id ?? index} style={{ textAlign: `${el.type === "number" ? "right" : el.type === "select" ? "center" : "left"}` }}>
                         {el.type === "number" ? formatCurrency(Object.values(el)[0], ",", "") : Object.values(el)[0]}
                       </td>
                     );

@@ -7,7 +7,7 @@ import WorkTableByGroup from "./partials/WorkTableByGroup";
 export default function ListWork(props: Record<string, unknown>) {
   const { activeTitleHeader } = props;
   const [isDetailWork, setIsDetailWork] = useState<boolean>(false);
-  const _isFullPage = localStorage.getItem("isFullPageWorkManagement");
+  let _isFullPage = localStorage.getItem("isFullPageWorkManagement");
   const [isFullPage, setIsFullPage] = useState<boolean>(_isFullPage ? (_isFullPage === "true" ? true : false) : false);
   const [isVertical, setIsVertical] = useState<boolean>(false);
   const [isRegimeKanban, setIsRegimeKanban] = useState<boolean>(false);

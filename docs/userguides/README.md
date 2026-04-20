@@ -1,80 +1,35 @@
-# Hướng dẫn sử dụng — Reborn Retail CRM
+# Hướng dẫn sử dụng Reborn CRM — Cửa hàng & Spa
 
-**HDSD (Hướng dẫn sử dụng)** dành cho người dùng cuối của hệ thống Reborn Retail CRM — biến thể *Cửa hàng bán lẻ / Chuỗi / Multi-channel POS*.
+Tài liệu HDSD dành cho khách hàng thuê sử dụng Reborn CRM (biến thể Cửa hàng / Spa / Dịch vụ). Được biên soạn theo hướng **task-based**: bạn muốn làm gì → đi qua các bước nào → kết thúc ở đâu.
 
-> **Mục đích**: Hướng dẫn từng bước **cách thao tác** trên hệ thống. Khác với URD (mô tả hệ thống làm gì) và SAD (kiến trúc kỹ thuật), HDSD trả lời câu hỏi **"Người dùng cần bấm gì để làm X?"**
+## Cấu trúc tài liệu
 
-## Đối tượng đọc
+Tài liệu chia thành nhiều Part. Mỗi Part là một phân hệ độc lập trên sidebar bên trái, kèm các chức năng liên quan (dependencies) mà phân hệ đó liên kết tới.
 
-- **Nhân viên mới** cần onboarding
-- **Quản lý cửa hàng** cần cấu hình vận hành
-- **Thu ngân / nhân viên kho / kế toán** cần tra cứu thao tác cụ thể
-- **Đội triển khai Reborn** dùng làm tài liệu đào tạo tenant mới
+| Part | Phân hệ | Nội dung chính |
+|------|---------|----------------|
+| [Part 01](part-01-bat-dau.md) | Bắt đầu | Đăng nhập, tổng quan giao diện, Dashboard, thanh công cụ |
+| [Part 02](part-02-le-tan.md) | Lễ tân | Bán hàng tại quầy, Check-in khách, Trừ quota dịch vụ, Quản lý ca làm việc |
+| [Part 03](part-03-thanh-vien.md) | Thành viên | Danh sách thành viên, Tạo/sửa thành viên, Cấu hình trường dữ liệu, Hạng thành viên |
+| [Part 04](part-04-giao-dich.md) | Giao dịch | Danh sách đơn, Hóa đơn VAT, Xử lý trả hàng |
+| [Part 05](part-05-luu-tru.md) | Lưu trú | Check-in phòng, Đặt phòng, Quản lý lưu trú |
+| [Part 06](part-06-tai-chinh.md) | Tài chính & Thanh toán | Tổng quan, Sổ thu chi, Quản lý quỹ, Khoản mục, Công nợ, Đối soát thanh toán |
+| [Part 07](part-07-doi-tac-phan-hoi.md) | Đối tác & Phản hồi | KOL/PO, Phản hồi khách hàng |
+| [Part 08](part-08-bao-cao.md) | Báo cáo | Doanh thu & MRR, Thành viên, Check-in, Dịch vụ, Đối tác, Tài chính & Công nợ |
+| [Part 09](part-09-uu-dai-cham-soc.md) | Ưu đãi & Chăm sóc | Khuyến mãi & Voucher, Tích điểm hội viên, Chiến dịch marketing, Chăm sóc thành viên |
+| [Part 10](part-10-kho.md) | Kho & Nguyên vật liệu | NVL, Nhà cung cấp, Kho, Sổ kho, Quản lý kho, Báo cáo kho |
+| [Part 11](part-11-cai-dat-co-ban.md) | Cài đặt cơ bản | Cấu hình toàn cục, Danh mục dịch vụ, Gói thành viên, Vận hành cơ sở |
+| [Part 12](part-12-cai-dat-nang-cao.md) | Cài đặt nâng cao | Tổ chức & phân quyền, Kênh liên lạc, Tích hợp, Tài khoản & bảo mật, Hỗ trợ |
+| Final | Tổng hợp | Gộp toàn bộ Part thành một file .md duy nhất + hướng dẫn upload |
 
-## Cách đọc tài liệu
+## Quy ước
 
-1. **Người mới** — đọc Part 01 (Bắt đầu) + Part 02 (POS) trước.
-2. **Quản lý** — xem Part 12-13 về cấu hình.
-3. **Tra cứu nhanh** — dùng mục lục dưới đây, click vào task cần làm.
+- **Ảnh chụp**: tất cả ảnh nằm trong thư mục `images/` và được tham chiếu bằng đường dẫn tương đối trong từng file markdown.
+- **Đường dẫn (URL)**: các đường dẫn trong hướng dẫn đều bắt đầu bằng `/crm/` — đó là đường dẫn của ứng dụng trên tên miền của bạn (ví dụ: `https://tnex.reborn.vn/crm/dashboard`).
+- **"Bấm"** và **"Nhấp"** dùng thay thế nhau, chỉ hành động click chuột trái.
+- **Phím tắt** được in đậm, ví dụ: **Esc**, **Enter**.
+- Hộp thoại lưu ý / cảnh báo được đánh dấu với tiền tố **Lưu ý:** / **Quan trọng:**.
 
-## Mục lục
+## Cập nhật sau mỗi phiên
 
-| Part | Nội dung | Dành cho |
-|---|---|---|
-| [Part 01](part-01-bat-dau.md) | Bắt đầu — Đăng nhập, giao diện, Dashboard | Tất cả |
-| [Part 02](part-02-pos-ban-hang.md) | POS — Bán hàng tại quầy | Thu ngân, Quản lý |
-| [Part 03](part-03-khach-hang.md) | Quản lý Khách hàng | Thu ngân, Sales |
-| [Part 04](part-04-don-hang-hoa-don.md) | Đơn hàng & Hoá đơn VAT | Thu ngân, Kế toán |
-| [Part 05](part-05-kho-san-pham.md) | Kho & Sản phẩm | Nhân viên kho, Quản lý |
-| [Part 06](part-06-mua-hang-ncc.md) | Mua hàng & Nhà cung cấp | Purchaser, Kế toán |
-| [Part 07](part-07-van-chuyen.md) | Vận chuyển & Giao hàng | Sales, Warehouse |
-| [Part 08](part-08-tai-chinh.md) | Tài chính & Thanh toán | Kế toán |
-| [Part 09](part-09-marketing-khuyen-mai.md) | Marketing & Khuyến mãi | Marketing |
-| [Part 10](part-10-loyalty-cham-soc.md) | Loyalty & Chăm sóc khách | CSKH, Sales |
-| [Part 11](part-11-bao-cao.md) | Báo cáo & Phân tích | Quản lý, Chủ cửa hàng |
-| [Part 12](part-12-cai-dat.md) | Cài đặt cơ bản | Tenant Admin |
-| [Part 13](part-13-bpm-nang-cao.md) | BPM & Tự động hoá nâng cao | Tenant Admin, Dev |
-| [Part 14](part-14-faq-troubleshooting.md) | FAQ & Xử lý sự cố | Tất cả |
-
-## Quy ước trong HDSD
-
-### Ký hiệu
-
-- **Ô bấm** — nút trên màn hình: "Nhấn **[Tạo đơn mới]**"
-- **Đường dẫn menu** — `Bán hàng → POS → Mở ca`
-- **Trường input** — *Tên khách hàng*: nhập "Nguyễn Văn A"
-- **Phím tắt** — `Ctrl + K` để mở tìm kiếm nhanh
-- 💡 **Mẹo** — Gợi ý tăng hiệu quả thao tác
-- ⚠️ **Chú ý** — Cảnh báo lỗi thường gặp hoặc hành động không hoàn tác được
-- 🔒 **Quyền** — Yêu cầu quyền tối thiểu để làm được
-
-### Ảnh minh hoạ
-
-Mọi thao tác quan trọng đều có screenshot kèm. Ảnh được lưu trong [images/](images/) theo từng part.
-
-### Màu nút trong UI
-
-| Màu | Ý nghĩa |
-|-----|---------|
-| 🟢 Xanh lá | Hành động chính (lưu, tạo, xác nhận) |
-| 🔵 Xanh dương | Hành động phụ (xem, sửa, sao chép) |
-| 🟠 Cam | Cảnh báo (huỷ, điều chỉnh) |
-| 🔴 Đỏ | Nguy hiểm / không hoàn tác (xoá, reset) |
-
-## Môi trường & Truy cập
-
-- **URL**: do đội triển khai cung cấp (ví dụ: `https://demo.reborn.vn/crm`)
-- **Tài khoản**: SSO — cấp bởi Tenant Admin
-- **Trình duyệt đề xuất**: Chrome / Edge phiên bản ≥ 110
-- **Thiết bị**: Máy tính desktop/laptop hoặc POS terminal. Một số tính năng có PWA cho tablet / điện thoại (kiểm kê kho, scanner).
-
-## Liên hệ hỗ trợ
-
-- **Support thời gian làm việc**: xem trang `Cài đặt → Liên hệ` trong app.
-- **Tài liệu kỹ thuật**: [../sa/](../sa/) và [../urd/](../urd/).
-
-## Lịch sử phiên bản
-
-| Version | Ngày | Mô tả |
-|---|---|---|
-| 1.0 | 2026-04-15 | Bản đầu tiên cho Reborn Retail CRM |
+Mỗi Part được biên soạn trong một phiên riêng biệt với Claude. Khi tất cả Part hoàn tất, một phiên tổng hợp cuối sẽ gộp thành file `HDSD-full.md` để bạn chuyển đổi sang DOCX (khuyến nghị dùng chính Claude web để format đẹp, kèm theo upload thư mục `images/`).

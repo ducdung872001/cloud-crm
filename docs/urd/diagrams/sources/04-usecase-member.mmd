@@ -1,0 +1,42 @@
+%%{init: {'theme':'base', 'themeVariables': {'fontFamily':'Calibri'}}}%%
+flowchart LR
+    STAFF(("👤<br/>Staff"))
+    REC(("👤<br/>Receptionist"))
+    MKT(("👤<br/>Marketer"))
+    ADMIN(("👤<br/>Tenant<br/>Admin"))
+
+    subgraph SYSTEM["Phân hệ Thành viên"]
+        UC1((Xem danh sách<br/>+ KPI))
+        UC2((Tìm kiếm<br/>+ Lọc nâng cao))
+        UC3((Tạo nhanh<br/>thành viên))
+        UC4((Xem hồ sơ<br/>chi tiết))
+        UC5((Cập nhật<br/>thông tin))
+        UC6((Import từ<br/>Excel))
+        UC7((Export Excel<br/>/CSV))
+        UC8((Định nghĩa<br/>trường tùy chỉnh))
+        UC9((Cấu hình<br/>thẻ/nhóm/nguồn))
+        UC10((Cấu hình<br/>cấu trúc xem))
+    end
+
+    STAFF --> UC1
+    STAFF --> UC2
+    STAFF --> UC4
+
+    REC --> UC3
+
+    MKT --> UC6
+    MKT --> UC7
+
+    ADMIN --> UC8
+    ADMIN --> UC9
+    ADMIN --> UC10
+    ADMIN --> UC5
+
+    UC3 -.extends.-> UC5
+    UC4 -.includes.-> UC1
+
+    classDef actor fill:#1F3A68,stroke:#1F3A68,color:#fff
+    classDef uc fill:#E1F5EE,stroke:#2C7A7B,color:#0F4C44
+
+    class STAFF,REC,MKT,ADMIN actor
+    class UC1,UC2,UC3,UC4,UC5,UC6,UC7,UC8,UC9,UC10 uc

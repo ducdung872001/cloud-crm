@@ -30,7 +30,7 @@ import OnSuccessExpireModal from "../HandleTask/OnSuccessExprieModal/OnSuccessEx
 import JSZip from "jszip";
 import { saveAs } from "file-saver";
 import ReplyRequestModal from "../ReplyRequestModal/ReplyRequestModal";
-// PurchaseRequestService removed (non-retail)
+import PurchaseRequestService from "services/PurchaseRequestService";
 import ManagementAskedService from "services/ManagementAskedService";
 import ModalEvaluateBidding from "./partials/ModalEvaluateBidding/ModalEvaluateBidding";
 import UserTaskService from "services/UserTaskService";
@@ -193,9 +193,25 @@ const DetailTask = (props: Record<string, unknown>) => {
     }
   };
 
-  // getProcumentType removed — PurchaseRequestService deleted (non-retail)
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const getProcumentType = async (_potId: number, _dataWork: unknown) => {};
+  const getProcumentType = async (potId: number, dataWork) => {
+    const body: Record<string, unknown> = {
+      potId: potId,
+    };
+
+    const response = await PurchaseRequestService.detail(body);
+
+    if (response.code === 0) {
+      const result = response.result;
+      if (result?.procurementTypeId) {
+        setData({
+          ...dataWork,
+          procurementTypeId: result?.procurementTypeId,
+        });
+      }
+    } else {
+      showToast("Có lỗi xảy ra. Vui lòng thử lại sau!", "error");
+    }
+  };
 
   useEffect(() => {
     if (idData) {
@@ -1147,9 +1163,9 @@ const DetailTask = (props: Record<string, unknown>) => {
                               </div>
                               <div className="list_document">
                                 {data?.attachments.map((item, index) => (
-                                  <Tippy key={index} content="Mở File">
+                                  <Tippy key={item.id ?? index} content="Mở File">
                                     <div
-                                      key={index}
+                                      key={item.id ?? index}
                                       className="item_document"
                                       onClick={() => {
                                         // setIsModalViewDocument(true);
@@ -1356,7 +1372,7 @@ const DetailTask = (props: Record<string, unknown>) => {
                     <div className="container_note_project">
                       {/* <div className="column_road">
                             {listWorkPause.map((item, index) => (
-                              <div key={index} className="item_column_road">
+                              <div key={item.id ?? index} className="item_column_road">
                                 <div className="icon">
                                   <Icon name='NoteDetailWork'/>
                                 </div>
@@ -1367,7 +1383,7 @@ const DetailTask = (props: Record<string, unknown>) => {
 
                       <div className="container_step">
                         {listWorkPause.map((item, index) => (
-                          <div key={index} style={{ width: "100%", display: "flex", gap: "0 1.3rem" }}>
+                          <div key={item.id ?? index} style={{ width: "100%", display: "flex", gap: "0 1.3rem" }}>
                             <div className="item_column_road">
                               <div className="icon">
                                 <Icon name="NoteDetailWork" />

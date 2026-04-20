@@ -102,7 +102,7 @@ export default function ModalValueForm({ onShow, onHide, data, dataObject }) {
                 {dataForm.map((item, index) => {
                   const attributeValue = (item.attributeValue && JSON.parse(item.attributeValue)) || {};
                   return (
-                    <div key={index} className="item-data-form">
+                    <div key={item.id ?? index} className="item-data-form">
                       <div>
                         <span style={{ fontSize: 14, fontWeight: "500" }}>Lần {dataForm.length - index}</span>
                       </div>

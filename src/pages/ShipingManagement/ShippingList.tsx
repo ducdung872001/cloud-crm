@@ -19,7 +19,6 @@ import { formatCurrency, isDifferenceObj } from "reborn-util";
 import Badge from "components/badge/badge";
 
 import ShippingService from "services/ShippingService";
-import { cancelInvoiceByReturn } from "@/utils/cancelInvoiceFlow";
 
 import { IShippingOrderFilterRequest } from "model/shipping/ShippingRequestModel";
 import { IShippingOrderResponse } from "model/shipping/ShippingResponseModel";
@@ -193,45 +192,14 @@ export default function ShippingOrderList() {
     }
   }, []);
 
-  // ── Hủy đơn vận chuyển + auto-trả đơn hàng gốc ────────────────────────────
-  // Step 1: Hủy shipment (stop push sang carrier)
-  // Step 2: Nếu shipment link với invoice → tạo phiếu trả toàn bộ để hoàn kho + hoàn tiền
+  // ── Hủy đơn ──────────────────────────────────────────────────────────────────
   const handleCancelOrder = useCallback(async (item: IShippingOrderResponse) => {
     try {
-      // Step 1 — Hủy shipment
       const res = await ShippingService.cancel(item.shipmentOrder);
-      if (res.code !== 0) {
-        showToast(res.message ?? "Hủy đơn vận chuyển thất bại", "error");
-        return;
-      }
-
-      // Step 2 — Auto-trả đơn hàng gốc nếu có link
-      const linkedInvoiceId = Number(
-        (item as Record<string, unknown>).orderId ??
-        (item as Record<string, unknown>).invoiceId ??
-        0
-      );
-      if (linkedInvoiceId > 0) {
-        const ret = await cancelInvoiceByReturn(
-          linkedInvoiceId,
-          `Hủy đơn vận chuyển ${item.carrierTrackingCode || item.shipmentOrder}`
-        );
-        if (ret.ok) {
-          showToast(
-            `Đã hủy đơn vận chuyển + hoàn ${ret.refundAmount?.toLocaleString("vi")}đ cho đơn hàng gốc`,
-            "success"
-          );
-        } else {
-          showToast(
-            `Đã hủy shipment nhưng hoàn đơn thất bại: ${ret.message}`,
-            "warning"
-          );
-        }
+      if (res.code === 0) {
+        showToast("Đã hủy đơn hàng thành công", "success");
       } else {
-        showToast(
-          "Đã hủy đơn vận chuyển (shipment chưa link với đơn hàng → không tự hoàn)",
-          "success"
-        );
+        showToast(res.message ?? "Hủy đơn thất bại", "error");
       }
     } catch {
       showToast("Lỗi kết nối khi hủy đơn", "error");
@@ -252,14 +220,7 @@ export default function ShippingOrderList() {
       message: (
         <Fragment>
           Bạn có chắc muốn hủy đơn{" "}
-          <strong>{item.carrierTrackingCode || item.shipmentOrder}</strong>?
-          <br /><br />
-          <strong>Lưu ý:</strong> Hệ thống sẽ tự động:
-          <ul style={{ marginTop: 4, marginBottom: 0, paddingLeft: 20 }}>
-            <li>Hủy đơn vận chuyển (stop carrier)</li>
-            <li>Hoàn tồn kho cho đơn hàng liên kết</li>
-            <li>Hoàn tiền cho khách hàng</li>
-          </ul>
+          <strong>{item.carrierTrackingCode || item.shipmentOrder}</strong>? 
           Thao tác này không thể khôi phục.
         </Fragment>
       ),

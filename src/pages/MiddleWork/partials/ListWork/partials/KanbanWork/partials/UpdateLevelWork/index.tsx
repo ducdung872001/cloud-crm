@@ -35,9 +35,7 @@ export default function UpdateLevelWorkModal(props: IUpdateLevelWorkModalProps) 
     [onShow, data]
   );
 
-  const validations: IValidation[] = [
-    { name: "priorityLevel", rules: "required" },
-  ];
+  const validations: IValidation[] = [];
 
   const listField: IFieldCustomize[] = [
     {
@@ -198,7 +196,7 @@ export default function UpdateLevelWorkModal(props: IUpdateLevelWorkModalProps) 
             <div className="list-form-group">
               {listField.map((field, index) => (
                 <FieldCustomize
-                  key={index}
+                  key={field.name || index}
                   field={field}
                   handleUpdate={(value) => handleChangeValidate(value, field, formData, validations, listField, setFormData)}
                   formData={formData}

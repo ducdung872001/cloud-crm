@@ -333,7 +333,7 @@ export default function AddBrandNameModel(props: IAddBrandNameModelProps) {
                 {listField.map((field, index) => (
                   <FieldCustomize
                     field={field}
-                    key={index}
+                    key={field.name || index}
                     handleUpdate={(value) => handleChangeValidate(value, field, formData, validations, listField, setFormData)}
                     formData={formData}
                   />

@@ -1,5 +1,6 @@
 import VNnum2words from "vn-num2words";
 import { ExportExcel } from "exports/excel";
+import { format } from "date-fns";
 import { formatDateCustom } from "utils/dateUtils";
 
 
@@ -155,9 +156,7 @@ export const getCashbookDetail = async (cashbook, type) => {
   const titleExtra = [
     [`PHIẾU ${type === "PT" ? "THU" : "CHI"}`],
     [
-      `Ngày ${formatDateCustom(cashbook?.cashDate, "EEEEEE")} tháng ${formatDateCustom(cashbook?.cashDate, "MM")} năm ${moment(cashbook?.cashDate).format(
-        "YYYY"
-      )}`,
+      `Ngày ${formatDateCustom(cashbook?.cashDate, "EEEEEE")} tháng ${formatDateCustom(cashbook?.cashDate, "MM")} năm ${format(new Date(cashbook?.cashDate), "yyyy")}`,
     ],
     [],
     [],

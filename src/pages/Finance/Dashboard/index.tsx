@@ -81,13 +81,13 @@ export default function FinanceDashboard() {
 
     // KPI + giao dịch gần nhất
     FinanceDashboardService.full(params, ctrl.signal)
-      .then(data => {
-        if (!data) return;
+      .then((data) => {
+        const safe = data ?? ({} as Partial<typeof data>);
         setDashboard({
-          totalFundBalance: data.totalFundBalance ?? 0,
-          totalIncome:      data.totalIncome      ?? 0,
-          totalExpense:     data.totalExpense      ?? 0,
-          transactions:     data.recentTransactions ?? [],
+          totalFundBalance: safe.totalFundBalance ?? 0,
+          totalIncome:      safe.totalIncome      ?? 0,
+          totalExpense:     safe.totalExpense      ?? 0,
+          transactions:     safe.recentTransactions ?? [],
         });
       })
       .catch(err => { if (err.name !== "AbortError") console.error("[Dashboard]", err); })
@@ -95,10 +95,10 @@ export default function FinanceDashboard() {
 
     // Biểu đồ thu/chi — không block UI chính
     FinanceDashboardService.chart(params, ctrl.signal)
-      .then(data => {
-        if (!data) return;
-        setIncomeChart(data.incomeChart   ?? []);
-        setExpenseChart(data.expenseChart ?? []);
+      .then((data) => {
+        const safe = data ?? ({} as Partial<typeof data>);
+        setIncomeChart(safe.incomeChart   ?? []);
+        setExpenseChart(safe.expenseChart ?? []);
       })
       .catch(err => { if (err.name !== "AbortError") { /* ignored */ } })
       .finally(() => setChartLoading(false));

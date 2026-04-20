@@ -20,11 +20,7 @@ import Loading from "components/loading";
 import { DataPaginationDefault, PaginationProps } from "components/pagination/pagination";
 import Badge from "components/badge/badge";
 import BoxTable from "components/boxTable/boxTable";
-// TenderPackageService removed (non-retail)
-const TenderPackageService = {
-  listContractor: async () => ({ code: -1, result: [], message: "Service removed" }),
-  submitReview: async () => ({ code: -1, message: "Service removed" }),
-};
+import TenderPackageService from "services/TenderPackageService";
 import ModalConfirm from "components/ModalConfirm/ModalConfirm";
 import ButtonComponent from "components/ButtonComponent/ButtonComponent";
 

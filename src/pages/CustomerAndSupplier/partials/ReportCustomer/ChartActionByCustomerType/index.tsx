@@ -273,7 +273,7 @@ export default function ChartActionByCustomerType(props: ReportRevenueProps) {
   return (
     <div className={`card-box report-revenue${classNames ? ` ${classNames}` : ""}`}>
       <div className="title__common d-flex align-items-start">
-        <h2 className="name-common">Tỉ lệ tương tác theo nhóm khách hàng</h2>
+        <h2 className="name-common">Tỉ lệ tương tác theo nhóm thành viên</h2>
         <div
           ref={refOptionContainer}
           className={`icon__option--download ${showOption ? "active__option" : ""}`}

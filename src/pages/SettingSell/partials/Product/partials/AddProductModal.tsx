@@ -186,12 +186,7 @@ export default function AddProductModal(props: AddProductProps) {
   const validations: IValidation[] = [
     {
       name: "name",
-      rules: "required|max:100",
-    },
-
-    {
-      name: "code",
-      rules: "nullable|max:50",
+      rules: "required",
     },
 
     {
@@ -209,7 +204,7 @@ export default function AddProductModal(props: AddProductProps) {
     },
     {
       name: "price",
-      rules: "required|min_equal:0",
+      rules: "required|min:0",
     },
   ];
 
@@ -303,7 +298,6 @@ export default function AddProductModal(props: AddProductProps) {
                     label="Tên sản phẩm"
                     fill={true}
                     required={true}
-                    maxLength={100}
                     value={formData?.values?.name}
                     placeholder="Nhập tên sản phẩm"
                     onChange={(e) => setFormData({ ...formData, values: { ...formData.values, name: e.target.value } })}
@@ -314,7 +308,6 @@ export default function AddProductModal(props: AddProductProps) {
                     name="code"
                     label="Mã sản phẩm"
                     fill={true}
-                    maxLength={50}
                     value={formData?.values?.code}
                     placeholder="Nhập mã sản phẩm"
                     onChange={(e) => setFormData({ ...formData, values: { ...formData.values, code: e.target.value } })}
@@ -419,7 +412,6 @@ export default function AddProductModal(props: AddProductProps) {
           type: "number",
           fill: true,
           required: true,
-          minValue: 0,
         },
       ] as IFieldCustomize[],
     [listUnit, isLoadingUnit]
@@ -654,7 +646,7 @@ export default function AddProductModal(props: AddProductProps) {
       showToast(`${detailProduct ? "Cập nhật" : "Thêm mới"} sản phẩm thành công`, "success");
       handleClear(true);
     } else {
-      showToast(response.error ?? response.message ?? "Có lỗi xảy ra. Vui lòng thử lại sau", "error");
+      showToast(response.message ?? "Có lỗi xảy ra. Vui lòng thử lại sau", "error");
       setIsSubmit(false);
     }
   };
@@ -1149,7 +1141,7 @@ export default function AddProductModal(props: AddProductProps) {
             <div className="list-form-group">
               {listFieldBasic.map((field, index) => (
                 <FieldCustomize
-                  key={index}
+                  key={field.name || index}
                   field={field}
                   handleUpdate={(value) => handleChangeValidate(value, field, formData, validations, listFieldBasic, setFormData)}
                   formData={formData}
@@ -1158,7 +1150,7 @@ export default function AddProductModal(props: AddProductProps) {
               <div className="option__field--lst">
                 {listFieldOption.map((field, index) => (
                   <FieldCustomize
-                    key={index}
+                    key={field.name || index}
                     field={field}
                     handleUpdate={(value) => handleChangeValidate(value, field, formData, validations, listFieldOption, setFormData)}
                     formData={formData}
@@ -1209,7 +1201,7 @@ export default function AddProductModal(props: AddProductProps) {
                 <div className="exchange__default">
                   {listFieldAdvanced.map((field, index) => (
                     <FieldCustomize
-                      key={index}
+                      key={field.name || index}
                       field={field}
                       handleUpdate={(value) => handleChangeValidate(value, field, formData, validations, listFieldAdvanced, setFormData)}
                       formData={formData}
@@ -1288,7 +1280,7 @@ export default function AddProductModal(props: AddProductProps) {
                   {Object.entries(mapProductAttribute).map((lstAttribute: Record<string, unknown>, key: number) => (
                     <Fragment key={key}>
                       {(lstAttribute[1] || []).map((attribute, index: number) => (
-                        <Fragment key={index}>
+                        <Fragment key={attribute.name || index}>
                           {!attribute.parentId ? (
                             <label className="label-title" key={`parent_${key}`}>
                               {attribute.name}

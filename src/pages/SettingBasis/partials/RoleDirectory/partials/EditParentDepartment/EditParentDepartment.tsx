@@ -253,7 +253,7 @@ export default function EditParentDepartment(props: AddDepartmentModalProps) {
               <div className="list-form-info-basic">
                 {listFieldInfoBasic.map((field, index) => (
                   <FieldCustomize
-                    key={index}
+                    key={field.name || index}
                     field={field}
                     handleUpdate={(value) => handleChangeValidate(value, field, formData, validations, listFieldInfoBasic, setFormData)}
                     formData={formData}

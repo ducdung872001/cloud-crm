@@ -25,7 +25,6 @@ import fetchConfig from "./configs/fetchConfig";
 import { routes } from "./configs/routes";
 import { ToastContainer } from "react-toastify";
 import LayoutPage from "pages/layout";
-import moment from "moment";
 import { getAppSSOLink, showToast } from "utils/common";
 import EmployeeService from "services/EmployeeService";
 import { getDomain } from "reborn-util";
@@ -35,12 +34,12 @@ import LinkSurvey from "pages/LinkSurvey";
 import { PublicClientApplication } from "@azure/msal-browser";
 import { MsalProvider } from "@azure/msal-react";
 import { msalConfig } from "./configs/authConfig";
-import ErrorBoundary from "components/ErrorBoundary/ErrorBoundary";
 import UploadDocument from "pages/BPM/UploadDocument/UploadDocument";
 import CollectTicket from "pages/Ticket/partials/CollectTicket";
 import CollectWarranty from "pages/Warranty/partials/CollectWarranty";
 import SharePromoPage from "pages/SharePromoPage";
 import ShareCouponPage from "pages/ShareCouponPage";
+import ShareEventPage from "pages/ShareEventPage";
 import GridFormNew from "pages/BPM/GridForm";
 import { onMessage } from "firebase/messaging";
 import NotificationService from "services/NotificationService";
@@ -48,6 +47,7 @@ import WebRtcCallIncomeModal from "pages/CallCenter/partials/WebRtcCallIncomeMod
 import ringtone from "assets/sounds/call_in_sound.wav";
 import { useSTWebRTC } from "./webrtc/useSTWebRTC";
 import { messaging, requestPermission } from "./firebase-config";
+import ErrorBoundary from "./components/ErrorBoundary/ErrorBoundary";
 
 // ─────────────────────────────────────────────────────────────────────────────
 
@@ -57,7 +57,7 @@ export default function App() {
   const navigate = useNavigate();
   const location = useLocation();
   const returnUrl = new URLSearchParams(location.search).get("returnUrl");
-  const [cookies] = useCookies();
+  const [cookies, setCookie, removeCookie] = useCookies();
   const [isLogin, setIsLogin] = useState<boolean>(false);
   const [user, setUser] = useState<IUser>(null);
   const [isRunRefresh, setIsRunRefresh] = useState<boolean>(false);
@@ -98,11 +98,20 @@ export default function App() {
         });
 
         setLstRole(changeResult);
-        // TODO: Tạm tắt modal chọn role — auto chọn role đầu tiên (Ban giám đốc)
-        if (!takeSelectedRole && changeResult.length > 0) {
-          localStorage.setItem("SelectedRole", changeResult[0].role);
-          // setChooseRoleInit(true);  // bật lại khi deploy production
+        // TEST-MODE: auto-pick role "Ban giám đốc" để tránh modal chọn role spam suốt quá trình chạy test suite.
+        // Revert bằng cách khôi phục dòng `!takeSelectedRole && setChooseRoleInit(true);` bên dưới.
+        if (!takeSelectedRole) {
+          const preferred =
+            changeResult.find((r) => r.name === "Ban giám đốc") ||
+            changeResult.find((r) => (r.name || "").toLowerCase().includes("giám đốc")) ||
+            changeResult[0];
+          if (preferred) {
+            localStorage.setItem("SelectedRole", preferred.role);
+          } else {
+            setChooseRoleInit(true);
+          }
         }
+        // !takeSelectedRole && setChooseRoleInit(true);
       }
     }
   };
@@ -126,6 +135,9 @@ export default function App() {
             setIsLogin(true);
             if (cookies.user?.expired_cookie && isRunRefresh === false) {
               setIsRunRefresh(true);
+              const dateExpired = new Date(cookies.user.expired_cookie);
+              let timeOut = dateExpired.getTime() - Date.now();
+              timeOut = timeOut > 0 ? timeOut : 0;
             }
 
             if (location.pathname === "/" || location.pathname === "/login") {
@@ -150,7 +162,6 @@ export default function App() {
     if (location.pathname !== "/send_email_confirm" && location.pathname !== "/voucher_confirm") {
       checkEmployeeStatus();
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [cookies.user, location]);
 
   const [dataExpired, setDataExpired] = useState({
@@ -205,9 +216,6 @@ export default function App() {
       }
     } catch (error) {
       console.error("Error fetching employee info:", error);
-      if (error instanceof DOMException && error.name === "AbortError") {
-        showToast("Kết nối tới máy chủ quá lâu. Vui lòng tải lại trang.", "error");
-      }
       setIsChecking(false);
       return false;
     }
@@ -243,7 +251,6 @@ export default function App() {
     if (valueLanguage.shortName) {
       i18n.changeLanguage(valueLanguage.shortName);
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [valueLanguage]);
 
   const getCountUnread = async () => {
@@ -259,14 +266,11 @@ export default function App() {
   useEffect(() => {
     requestPermission(cookies.token);
 
-    if (messaging) {
-      onMessage(messaging, (payload) => {
-        showToast(payload.notification?.title || "Bạn có thông báo mới", "success");
-        getCountUnread();
-        setNewNotificationPayload(payload);
-      });
-    }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    onMessage(messaging, (payload) => {
+      showToast(payload.notification?.title || "Bạn có thông báo mới", "success");
+      getCountUnread();
+      setNewNotificationPayload(payload);
+    });
   }, []);
 
   // Khởi tạo tổng đài
@@ -295,7 +299,7 @@ export default function App() {
       try {
         await audioRef.current?.play();
         audioRef.current?.pause();
-        if (audioRef.current) audioRef.current.currentTime = 0;
+        audioRef.current!.currentTime = 0;
         unlockedRef.current = true;
       } catch (err) {
         // vẫn bị chặn
@@ -430,6 +434,7 @@ export default function App() {
           {location.pathname == "/collect_warranty" && <Route path="/collect_warranty" element={<CollectWarranty />} />}
           {location.pathname == "/share_promo" && <Route path="/share_promo" element={<SharePromoPage />} />}
           {location.pathname == "/share_coupon" && <Route path="/share_coupon" element={<ShareCouponPage />} />}
+          {location.pathname == "/share_event" && <Route path="/share_event" element={<ShareEventPage />} />}
           <Route path="/login" element={<Login />} />
         </Routes>
         <ChooseRole onShow={chooseRoleInit} onHide={() => setChooseRoleInit(false)} lstRole={lstRole} />

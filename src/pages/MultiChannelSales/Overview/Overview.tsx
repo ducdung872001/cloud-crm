@@ -2,10 +2,10 @@ import React, { useState, useEffect, useRef, useCallback } from "react";
 import { formatDate } from "utils/dateUtils";
 
 import Loading from "components/loading";
-import { showToast } from "utils/common";
 import "./Overview.scss";
 import ModalAddChannel from "./ModalAddChannel/ModalAddChannel";
 import OrderRequestService from "services/OrderRequestService";
+import { showToast } from "utils/common";
 import MultiChannelService, {
   IStatCards,
   IChannelRow,
@@ -53,7 +53,7 @@ export default function Overview() {
   const [isExporting, setIsExporting] = useState(false);
   const [statCards, setStatCards]   = useState<IStatCards | null>(null);
   const [channels,  setChannels]    = useState<IChannelRow[] | null>(null);
-  const [, setStatError]   = useState(false);
+  const [statError, setStatError]   = useState(false);
   const [chError,   setChError]     = useState(false);
 
   const abortStat = useRef<AbortController | null>(null);
@@ -82,7 +82,6 @@ export default function Overview() {
           setStatError(true);
         }
       });
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // ── Fetch channel breakdown ─────────────────────────────────────────────────
@@ -111,7 +110,6 @@ export default function Overview() {
           setChError(true);
         }
       });
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
@@ -121,7 +119,6 @@ export default function Overview() {
       abortStat.current?.abort();
       abortCh.current?.abort();
     };
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // ── Derived KPI ─────────────────────────────────────────────────────────────
@@ -206,6 +203,7 @@ export default function Overview() {
     const chs = channels  ?? [];
     const esc = (s: string) =>
       String(s ?? "").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
+    const fmtNum = (n: number) => (n ?? 0).toLocaleString("vi-VN");
     const fmtPct = (n: number) => (n > 0 ? "+" : "") + (n ?? 0).toFixed(1) + "%";
     const trendLabel = (t: string) => t === "UP" ? "↑ Tăng" : t === "DOWN" ? "↓ Giảm" : "→ Ổn định";
 
@@ -368,7 +366,7 @@ ${chs.map(ch => `<Row>
             const pct = Math.round((item.revenue / maxRevenue) * 100);
 
             return (
-              <div key={index} className="line-body">
+              <div key={item.id ?? index} className="line-body">
                 <div style={{ display: "flex", gap: "0 1.5rem", alignItems: "center" }}>
                   <div className="avatar" style={{ backgroundColor: cfg.bg }}>
                     <span style={{ fontSize: 12, fontWeight: "700", color: "white" }}>

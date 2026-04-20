@@ -51,16 +51,7 @@ export default function ViettelSettings({ onNavigate }: Props) {
     []
   );
 
-  const validations: IValidation[] = [
-    { name: "syncFrequency", rules: "required" },
-    { name: "syncErrorAction", rules: "required" },
-    { name: "invoiceTemplate", rules: "required" },
-    { name: "invoiceThreshold", rules: "nullable|max:50" },
-    { name: "tendooApiKey", rules: "nullable|max:255" },
-    { name: "tendooShopId", rules: "nullable|max:50" },
-    { name: "hostDomain", rules: "nullable|max:255" },
-    { name: "bhdTaxCode", rules: "nullable|max:50" },
-  ];
+  const validations: IValidation[] = [];
 
   const [formData, setFormData] = useState<IFormData>({ values: values, errors: {} });
 
@@ -268,7 +259,7 @@ export default function ViettelSettings({ onNavigate }: Props) {
             <div className="setting-2col">
               {listFieldSync.map((field, index) => (
                 <FieldCustomize
-                  key={index}
+                  key={field.name || index}
                   field={field}
                   handleUpdate={(value) => handleChangeValidate(value, field, formData, validations, listFieldSync, setFormData)}
                   formData={formData}
@@ -308,7 +299,7 @@ export default function ViettelSettings({ onNavigate }: Props) {
             <div className="setting-2col">
               {listFieldInvoice.map((field, index) => (
                 <FieldCustomize
-                  key={index}
+                  key={field.name || index}
                   field={field}
                   handleUpdate={(value) => handleChangeValidate(value, field, formData, validations, listFieldInvoice, setFormData)}
                   formData={formData}
@@ -372,7 +363,7 @@ export default function ViettelSettings({ onNavigate }: Props) {
             <div className="setting-2col" style={{ marginTop: 0, paddingTop: 0, borderTop: "none", marginBottom: "1.2rem" }}>
               {listFieldTendoo1.map((field, index) => (
                 <FieldCustomize
-                  key={index}
+                  key={field.name || index}
                   field={field}
                   handleUpdate={(value) => handleChangeValidate(value, field, formData, validations, listFieldTendoo1, setFormData)}
                   formData={formData}
@@ -382,7 +373,7 @@ export default function ViettelSettings({ onNavigate }: Props) {
             <div className="setting-2col" style={{ marginTop: 0, paddingTop: 0, borderTop: "none", marginBottom: "1.4rem" }}>
               {listFieldTendoo2.map((field, index) => (
                 <FieldCustomize
-                  key={index}
+                  key={field.name || index}
                   field={field}
                   handleUpdate={(value) => handleChangeValidate(value, field, formData, validations, listFieldTendoo2, setFormData)}
                   formData={formData}
@@ -413,7 +404,7 @@ export default function ViettelSettings({ onNavigate }: Props) {
             <div className="setting-2col" style={{ marginTop: 0, paddingTop: 0, borderTop: "none" }}>
               {listFieldHost.map((field, index) => (
                 <FieldCustomize
-                  key={index}
+                  key={field.name || index}
                   field={field}
                   handleUpdate={(value) => handleChangeValidate(value, field, formData, validations, listFieldHost, setFormData)}
                   formData={formData}
@@ -433,7 +424,7 @@ export default function ViettelSettings({ onNavigate }: Props) {
             <div className="setting-2col" style={{ marginTop: "1.2rem", paddingTop: 0, borderTop: "none" }}>
               {listFieldBhd.map((field, index) => (
                 <FieldCustomize
-                  key={index}
+                  key={field.name || index}
                   field={field}
                   handleUpdate={(value) => handleChangeValidate(value, field, formData, validations, listFieldBhd, setFormData)}
                   formData={formData}

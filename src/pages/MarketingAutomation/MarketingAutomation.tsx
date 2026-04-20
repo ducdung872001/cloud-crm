@@ -123,8 +123,8 @@ const MarketingAutomation = () => {
       const result = response.result;
       const configData = result?.configs;
       const nodeList = result?.nodes;
-      const nodeData = [];
-      const edgeData = [];
+      let nodeData = [];
+      let edgeData = [];
 
       if(nodeList && nodeList.length > 0){
         nodeList.map(item => {
@@ -290,7 +290,7 @@ const MarketingAutomation = () => {
     if (response.code === 0) {
       const result = response.result;
       const configData = result?.configs;
-      const edgeData = [];
+      let edgeData = [];
 
       if (configData && configData.length > 0) {
         configData.map((item) => {

@@ -52,11 +52,11 @@ export default function AddRoleDirectoryModal(props: Record<string, unknown>) {
   const validations: IValidation[] = [
     {
       name: "name",
-      rules: "required|max:100",
+      rules: "required",
     },
     {
       name: "code",
-      rules: "required|max:50",
+      rules: "required",
     },
   ];
 
@@ -69,7 +69,6 @@ export default function AddRoleDirectoryModal(props: Record<string, unknown>) {
           type: "text",
           fill: true,
           required: true,
-          maxLength: 100,
         },
         {
           label: "Mã nhóm quyền",
@@ -77,7 +76,6 @@ export default function AddRoleDirectoryModal(props: Record<string, unknown>) {
           type: "text",
           fill: true,
           required: true,
-          maxLength: 50,
         },
         {
           label: "Vị trí hiển thị",
@@ -242,7 +240,7 @@ export default function AddRoleDirectoryModal(props: Record<string, unknown>) {
               <div className="list-form-info-basic">
                 {listFieldInfoBasic.map((field, index) => (
                   <FieldCustomize
-                    key={index}
+                    key={field.name || index}
                     field={field}
                     handleUpdate={(value) => handleChangeValidate(value, field, formData, validations, listFieldInfoBasic, setFormData)}
                     formData={formData}

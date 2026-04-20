@@ -1,7 +1,7 @@
 import React, { Fragment, useState, useEffect, useCallback, useMemo, useRef, useContext } from "react";
 import isEqual from "lodash/isEqual";
 
-import moment from "moment";
+import { startOfDay, endOfDay } from "date-fns";
 import { getSearchParameters, isDifferenceObj } from "reborn-util";
 import { IActionModal } from "model/OtherModel";
 import { IFieldCustomize, IFormData, IValidation } from "model/FormModel";
@@ -969,8 +969,8 @@ export default function AddWorkModal(props: IAddWorkModelProps) {
   ];
 
   const intervalMinutes = 15;
-  const startTime = moment(new Date()).startOf("day");
-  const endTime = moment(new Date()).endOf("day");
+  const startTime = startOfDay(new Date());
+  const endTime = endOfDay(new Date());
   const timeSlots = listTimeSlots(startTime, endTime, intervalMinutes);
 
   const [lstPeriodicSchedule, setLstPeriodicSchedule] = useState(defaultPeriodicSchedule);
@@ -1598,7 +1598,7 @@ export default function AddWorkModal(props: IAddWorkModelProps) {
                             ) : (
                               item.time.map((el, index) => {
                                 return (
-                                  <div key={index} className="item__choose--time">
+                                  <div key={el.id ?? index} className="item__choose--time">
                                     <div className="data__time">
                                       <div className="form-time" ref={refContainerStartTime}>
                                         <Input
@@ -1966,7 +1966,7 @@ export default function AddWorkModal(props: IAddWorkModelProps) {
             <div className="list-form-group">
               {listField.map((field, index) => (
                 <FieldCustomize
-                  key={index}
+                  key={field.name || index}
                   field={field}
                   handleUpdate={(value) => handleChangeValidate(value, field, formData, validations, listField, setFormData)}
                   formData={formData}

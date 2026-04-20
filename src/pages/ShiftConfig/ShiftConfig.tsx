@@ -12,7 +12,6 @@ import NummericInput from "components/input/numericInput";
 import { UserContext, ContextType } from "contexts/userContext";
 import ShiftService from "services/ShiftService";
 import EmployeeService from "services/EmployeeService";
-import { showToast } from "utils/common";
 import { RulesSettings } from "./partials/ShiftRulesNotify/ShiftRulesNotifyTab";
 import ShiftRulesNotifyTab from "./partials/ShiftRulesNotify/ShiftRulesNotifyTab";
 import "./ShiftConfig.scss";
@@ -185,30 +184,11 @@ export default function ShiftConfigTabs() {
     setRulesSettings(savedRulesSettings);
   };
 
-  // ── Validate shift configs ───────────────────────────────────────────
-  const [shiftErrors, setShiftErrors] = useState<Record<number, string[]>>({});
-
-  const validateShiftConfigs = (): boolean => {
-    const errors: Record<number, string[]> = {};
-    let valid = true;
-    shiftConfigs.forEach((cfg) => {
-      const errs: string[] = [];
-      if (!cfg.shiftName.trim()) errs.push("Tên ca không được để trống");
-      if (cfg.shiftName.length > 100) errs.push("Tên ca không được quá 100 ký tự");
-      if (!cfg.startTime) errs.push("Giờ bắt đầu không được để trống");
-      if (!cfg.endTime) errs.push("Giờ kết thúc không được để trống");
-      if (errs.length > 0) { errors[cfg.id] = errs; valid = false; }
-    });
-    setShiftErrors(errors);
-    return valid;
-  };
-
   // ── Lưu ──────────────────────────────────────────────────────────────
   const onSave = async () => {
     setSaving(true); setSaveSuccess(false);
     try {
       if (tab === "shift_config") {
-        if (!validateShiftConfigs()) { setSaving(false); return; }
         const payload = shiftConfigs.map((c) => ({
           id: c.id > 0 ? c.id : undefined,
           name: c.shiftName, color: c.color,
@@ -257,11 +237,7 @@ export default function ShiftConfigTabs() {
       await ShiftService.saveRules(branchId, rulesPayload);
       setSavedRulesSettings(rulesSettings);
       setSaveSuccess(true);
-    } catch (e: unknown) {
-      const err = e as Record<string, unknown>;
-      const msg = (err?.response as Record<string, unknown>)?.message ?? (err?.response as Record<string, unknown>)?.error ?? "Có lỗi xảy ra. Vui lòng thử lại sau";
-      showToast(String(msg), "error");
-    }
+    } catch (e) { console.error("Lỗi lưu:", e); }
     finally {
       setSaving(false);
       setTimeout(() => setSaveSuccess(false), 3000);
@@ -378,11 +354,10 @@ export default function ShiftConfigTabs() {
                   <div key={cfg.id} className="shift-card-editable">
                     <div className="shift-card-editable__top" style={{ borderTopColor: cfg.color }}>
                       <input
-                        className={`name-input${shiftErrors[cfg.id] ? " input-error" : ""}`}
+                        className="name-input"
                         value={cfg.shiftName}
                         placeholder="Tên ca..."
-                        maxLength={100}
-                        onChange={(e) => { updateShift(cfg.id, { shiftName: e.target.value }); setShiftErrors((prev) => { const n = { ...prev }; delete n[cfg.id]; return n; }); }}
+                        onChange={(e) => updateShift(cfg.id, { shiftName: e.target.value })}
                       />
                       <button className="btn-delete" onClick={() => confirmDelete(cfg)} title="Xóa ca">
                         <Icon name="Trash" />
@@ -453,11 +428,6 @@ export default function ShiftConfigTabs() {
                         </div>
                       </div>
                     </div>
-                    {shiftErrors[cfg.id] && (
-                      <div className="shift-card-errors" style={{ padding: "0 1rem 0.5rem", color: "#ef4444", fontSize: "0.8rem" }}>
-                        {shiftErrors[cfg.id].map((err, i) => <div key={i}>{err}</div>)}
-                      </div>
-                    )}
                   </div>
                 ))}
                 <button className="shift-card-add" onClick={addShift}>

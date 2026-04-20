@@ -209,13 +209,13 @@ export default function SupplierPage() {
       // Liên hệ
       <div key="contact" className="sup-contact-cell">
         {item.phone && (
-          <span className="sup-contact-cell__row" title={item.phone}>
-            <Icon name="Phone" /><span className="sup-contact-cell__text">{item.phone}</span>
+          <span className="sup-contact-cell__row">
+            <Icon name="Phone" />{item.phone}
           </span>
         )}
         {item.email && (
-          <span className="sup-contact-cell__row sup-contact-cell__row--muted" title={item.email}>
-            <Icon name="Mail" /><span className="sup-contact-cell__text">{item.email}</span>
+          <span className="sup-contact-cell__row sup-contact-cell__row--muted">
+            <Icon name="Mail" />{item.email}
           </span>
         )}
         {!item.phone && !item.email && <span className="sup-muted">—</span>}

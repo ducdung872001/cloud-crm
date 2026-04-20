@@ -31,7 +31,7 @@ export default function DetailReportCusModal(props: Record<string, unknown>) {
 
   const [pagination, setPagination] = useState<PaginationProps>({
     ...DataPaginationDefault,
-    name: reportDetail?.key == "totalCustomer" ? "Khách hàng" : "Hợp đồng",
+    name: reportDetail?.key == "totalCustomer" ? "Thành viên" : "Hợp đồng",
     isChooseSizeLimit: true,
     setPage: (page) => {
       setParams((prevParams) => ({ ...prevParams, page: page }));
@@ -45,7 +45,7 @@ export default function DetailReportCusModal(props: Record<string, unknown>) {
   const getListReport = async (paramsSearch: Record<string, unknown>) => {
     setIsLoading(true);
     let response: Record<string, unknown> = {};
-    const paramsTemp = cloneDeep(params);
+    let paramsTemp = cloneDeep(params);
 
     switch (reportDetail.key) {
       case "totalCustomer":
@@ -137,7 +137,7 @@ export default function DetailReportCusModal(props: Record<string, unknown>) {
     };
   }, [params]);
 
-  const titles = ["STT", "Tên khách hàng", "Điện thoại", "Xem"];
+  const titles = ["STT", "Tên thành viên", "Điện thoại", "Xem"];
   const titleContract = ["STT", "Tên hợp đồng", "Giá trị hợp đồng", "Giai đoạn hợp đồng", "Nhân viên phụ trách", "Tên công ty", "Xem"];
 
   const dataFormat = ["text-center", "", "", "text-center"];
@@ -169,7 +169,7 @@ export default function DetailReportCusModal(props: Record<string, unknown>) {
     });
     setPagination({
       ...DataPaginationDefault,
-      name: reportDetail?.key == "totalCustomer" ? "Khách hàng" : "Hợp đồng",
+      name: reportDetail?.key == "totalCustomer" ? "Thành viên" : "Hợp đồng",
       isChooseSizeLimit: true,
       setPage: (page) => {
         setParams((prevParams) => ({ ...prevParams, page: page }));

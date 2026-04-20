@@ -47,8 +47,8 @@ export default function TableDepartment(props: ITableDepartmentProps) {
   
   useEffect(() => {
     if(listDepartment){
-      const parentArray = [];
-      const newArray = [
+      let parentArray = [];
+      let newArray = [
         [
           {
             v: "",

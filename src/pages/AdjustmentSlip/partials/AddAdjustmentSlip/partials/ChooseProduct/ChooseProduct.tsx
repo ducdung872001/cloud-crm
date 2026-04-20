@@ -1,6 +1,9 @@
-import React, { Fragment, useState, useEffect } from "react";
+import React, { Fragment, useState, useEffect, useRef } from "react";
+import cloneDeep from "lodash/cloneDeep";
 
 import { ISaveSearch } from "model/OtherModel";
+import { IChooseProductModalProps } from "model/adjustmentSlip/PropsModel";
+import { IAddUpdateProRequest } from "model/adjustmentSlip/AdjustmentSlipRequestModel";
 import { IWarehouseProResponse } from "model/adjustmentSlip/AdjustmentSlipResponseModel";
 import { IWarehouseProFilterRequest } from "model/adjustmentSlip/AdjustmentSlipRequestModel";
 import Icon from "components/icon";
@@ -19,24 +22,28 @@ import "./ChooseProduct.scss";
 export default function ChooseProduct(props) {
   const { onShow, onHide, lstBatchNoProduct, satId, inventory, takeData} = props;
 
-  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const isMounted = useRef(false);
+
+  const [isLoading, setIsLoading] = useState<boolean>(true);
   const [isNoItem, setIsNoItem] = useState<boolean>(false);
   const [lstProducts, setLstProducts] = useState<IWarehouseProResponse[]>([]);
   const [listIdChecked, setListIdChecked] = useState<number[]>([]);
   const [dataProduct, setDataProduct] = useState([]);
   const [isSubmit, setIsSubmit] = useState<boolean>(false);
 
-  const [params, setParams] = useState<IWarehouseProFilterRequest>({ keyword: "", limit: 10, page: 1 });
-
-  // Reset state + seed inventoryId mỗi lần modal mở. Tránh stale params giữa các lần mở.
   useEffect(() => {
-    if (!onShow) return;
-    setListIdChecked([]);
-    setDataProduct([]);
-    setIsNoItem(false);
-    setLstProducts([]);
-    setParams({ keyword: "", limit: 10, page: 1, inventoryId: inventory?.value });
-  }, [onShow, inventory?.value]);
+    if (onShow && lstBatchNoProduct.length === 0) {
+      setDataProduct([]);
+    }
+  }, [onShow, lstBatchNoProduct]);
+
+  const [params, setParams] = useState<IWarehouseProFilterRequest>({ keyword: "", limit: 0 });
+
+  useEffect(() => {
+    if (onShow && inventory) {
+      setParams({ ...params, inventoryId: inventory?.value, limit: 10 });
+    }
+  }, [onShow, inventory]);
 
   const [listSaveSearch] = useState<ISaveSearch[]>([
     {
@@ -68,7 +75,7 @@ export default function ChooseProduct(props) {
 
       const checkDuplicates = [...result.items].filter((item) => {
         return !lstBatchNoProduct.some((element) => {
-          return element === item.id;
+          return element === item.batchNo;
         });
       });
 
@@ -91,14 +98,30 @@ export default function ChooseProduct(props) {
   };
 
   useEffect(() => {
-    if (!onShow) return;
-    if (!params.inventoryId || (params.limit ?? 0) <= 0) return;
-    getLstProduct(params);
+    if (!isMounted.current) {
+      isMounted.current = true;
+      return;
+    }
+
+    //! đoạn này ép đk call api
+    if (isMounted.current === true && onShow && params.limit > 0) {
+      getLstProduct(params);
+
+      const paramsTemp = cloneDeep(params);
+
+      if (paramsTemp.limit === 10) {
+        delete paramsTemp["limit"];
+      }
+
+      Object.keys(paramsTemp).map((key) => {
+        paramsTemp[key] === "" ? delete paramsTemp[key] : null;
+      });
+    }
   }, [params, onShow]);
 
-  const titles = ["STT", "Ảnh sản phẩm", "Tên sản phẩm", "Danh mục"];
+  const titles = ["STT", "Ảnh sản phẩm", "Tên sản phẩm", "Số lô", "Đơn vị tính"];
 
-  const dataFormat = ["text-center", "text-center", "", ""];
+  const dataFormat = ["text-center", "text-center", "", "text-center", "text-center"];
 
   //! đoạn này xử lý vấn đề lấy hết những sản phẩm đc chọn
   const checkAll = (isChecked: boolean, lstData: IWarehouseProResponse[]) => {
@@ -226,11 +249,12 @@ export default function ChooseProduct(props) {
                               <td className="text-center">{index + 1}</td>
                               <td>
                                 <div key={item.id} className="avatar">
-                                  <Image src={item.avatar} alt={item.name} />
+                                  <Image src={item.productAvatar} alt={item.productName} />
                                 </div>
                               </td>
-                              <td>{item.name}</td>
-                              <td>{item.categoryName}</td>
+                              <td>{item.productName}</td>
+                              <td className="text-center">{item.batchNo}</td>
+                              <td className="text-center">{item.unitName}</td>
                             </tr>
                           </Fragment>
                         );

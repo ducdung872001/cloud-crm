@@ -399,6 +399,7 @@ import IcAuditMenu from "assets/icons-menu/ic-audit.svg";
 import IcCustomersMenu from "assets/icons-menu/ic-customers.svg";
 import IcSegmentMenu from "assets/icons-menu/ic-segment.svg";
 import IcPartnerMenu from "assets/icons-menu/ic-partner.svg";
+import IcEventMenu from "assets/icons-menu/ic-event.svg";
 import IcDebtMenu from "assets/icons-menu/ic-debt.svg";
 import IcCustomerSettingMenu from "assets/icons-menu/ic-customer-settings.svg";
 import IcPartnerSettingMenu from "assets/icons-menu/ic-partner-settings.svg";
@@ -899,6 +900,7 @@ const iconTypes = {
   CustomersMenu: IcCustomersMenu,
   SegmentMenu: IcSegmentMenu,
   PartnerMenu: IcPartnerMenu,
+  EventMenu: IcEventMenu,
   DebtMenu: IcDebtMenu,
   CustomerSettingMenu: IcCustomerSettingMenu,
   PartnerSettingMenu: IcPartnerSettingMenu,

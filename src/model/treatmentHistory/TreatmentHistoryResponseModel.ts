@@ -1,0 +1,36 @@
+export interface ITreatmentHistoryResponseModel {
+  id: number;
+  treatmentStart: string;
+  treatmentEnd: string;
+  treatmentTh: number;
+  procDesc: string;
+  note: string;
+  scheduleNext: string;
+  prevProof: string;
+  afterProof: string;
+  serviceId: number;
+  serviceName: string;
+  employeeId: number;
+  employeeName: string;
+  caringEmployeeId: number;
+  caringEmployeeName: string;
+  sttId: number;
+  customerId: number;
+  customerName: string;
+  customerPhone: string;
+  branchId: number;
+  bsnId: number;
+  fmtScheduleNext: string;
+  fmtTreatmentEnd: string;
+  fmtTreatmentStart: string;
+  lstDiarySurgery: Record<string, unknown>[];
+  scheduleProcessed: number;
+  totalCall: number;
+  totalSuccess: string;
+  treatmentNum: number;
+  cardNumber: string;
+  serviceNumber: string;
+  isCombo: number;
+  totalTreatment: number;
+  commits: string;
+}

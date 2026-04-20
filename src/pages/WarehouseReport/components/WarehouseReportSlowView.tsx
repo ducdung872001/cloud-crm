@@ -89,7 +89,6 @@ function Skeleton({ h = 20, w = "100%" }: { h?: number; w?: string }) {
 
 // ─── Chart builders ───────────────────────────────────────────────────────────
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 function buildDonutOptions(buckets: ISlowBucket[], threshold: number): Highcharts.Options {
   return {
     chart: { type: "pie", height: 280, backgroundColor: "transparent" },
@@ -146,7 +145,7 @@ export default function WarehouseReportSlowView() {
           : Array.isArray(json.result?.items) ? json.result.items : [];
         setWarehouseList(arr.map((i: Record<string, unknown>) => ({ value: i.id, label: i.name })));
       })
-      .catch(() => { /* noop */ });
+      .catch(() => {});
   }, []);
 
   const fetchReport = useCallback(async () => {
@@ -176,15 +175,11 @@ export default function WarehouseReportSlowView() {
   }, [fetchReport]);
 
   const summary     = data?.summary;
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   const buckets     = data?.daysBuckets  ?? [];
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   const groups      = data?.groupValues  ?? [];
   const rows        = data?.productRows  ?? [];
 
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   const donutOptions = useMemo(() => buildDonutOptions(buckets, threshold), [buckets, threshold]);
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   const barOptions   = useMemo(() => buildBarOptions(groups), [groups]);
 
   // ── Export Excel ─────────────────────────────────────────────────────────
@@ -251,6 +246,8 @@ ${dataRows.join("\n")}
   const alertDesc  = summary
     ? `Tổng giá trị ứ đọng ước tính: ${fmtVnd(summary.lockedValue)} · Cần xem xét khuyến mãi hoặc điều chuyển kho`
     : "";
+
+  const bucketLegend = buckets.map(b => `${b.label} (${b.count} SP)`).join("  ");
 
   return (
     <div className="warehouse-report-view">

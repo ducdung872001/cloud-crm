@@ -1,380 +1,627 @@
-# Part 12 — Deployment & Operations
+# Part 12 — Deployment & Infrastructure
 
-> **Executive Summary**: Frontend Reborn Retail CRM là **Vite build static** (`base: "/crm/"`) thích hợp host qua **CDN + object bucket**. Backend microservices (đã suy luận ở [Part 08](part-08-backend-architecture.md)) phù hợp **containerize + Kubernetes** với PostgreSQL master-replica, Redis, và object storage S3-compatible. Không có file CI/CD nào trong repo này — toàn bộ pipeline được đề xuất theo best practice. Mục tiêu **RTO 4h / RPO 1h**, **3 môi trường** (dev/staging/prod), **active-passive multi-region VN**.
+> ⚠️ **Mức độ tự tin: THẤP** — Toàn bộ Part này là **đề xuất** dựa trên best practice. Đội DevOps cần thay bằng infrastructure thực tế.
 
-## 1. Environment strategy
+## Executive Summary
 
-| Env | Mục đích | URL | Deploy trigger |
-|-----|----------|-----|----------------|
-| **dev** | Developer daily, tích hợp nội bộ | `dev-crm.reborn.vn` | Push to `develop` |
-| **staging** | UAT với khách hàng, demo sale | `stg-crm.reborn.vn` | Tag `stg-*` |
-| **production** | Khách hàng thật | `crm.reborn.vn` + tenant subdomain | Tag `v*.*.*` + manual approve |
+Đề xuất triển khai Reborn CRM theo mô hình **multi-environment** (dev/staging/production) trên hạ tầng cloud, sử dụng **container orchestration** (Kubernetes hoặc Docker Swarm), với **API gateway**, **load balancer**, **multiple API instances stateless**, **PostgreSQL HA** (master + read replicas), **Redis cluster**, **S3-compatible object storage**, và **CI/CD pipeline tự động**. Có **3 môi trường** với strategy promote code dần dần.
 
-### Env-specific config
+---
 
-Mỗi env có bộ env var riêng (`APP_API_URL`, `APP_BIZ_URL`, ...). Nên tách ra:
+## 1. Sơ đồ deployment đề xuất
+
+![Deployment Architecture — Multi-tier topology with HA components](./diagrams/18-deployment-architecture.png)
+
+---
+
+## 2. Environments
+
+### 2.1. Strategy 3 môi trường
+
+| Env | Mục đích | URL pattern | Data |
+|-----|---------|-------------|------|
+| **Development** | Dev tự test | `dev.reborn.vn` hoặc localhost | Mock + sample |
+| **Staging** | QA + UAT | `staging.reborn.vn` | Realistic, có thể anonymize từ prod |
+| **Production** | Customer thật | `*.reborn.vn` (tenant subdomain) | Live |
+
+### 2.2. Build pipeline
 
 ```
-.env.development
-.env.staging
-.env.production
+┌─────────────┐   git push    ┌─────────────┐
+│  Developer  ├──────────────►│   GitHub    │
+└─────────────┘   (feature)   │   GitLab    │
+                              └──────┬──────┘
+                                     │ webhook
+                                     ▼
+                              ┌─────────────┐
+                              │     CI      │
+                              │  (Actions/  │
+                              │  GitLab CI) │
+                              └──────┬──────┘
+                                     │
+              ┌──────────────────────┼──────────────────────┐
+              ▼                      ▼                      ▼
+       ┌───────────┐         ┌──────────────┐       ┌─────────────┐
+       │   Lint    │         │  Unit test   │       │  Build prod │
+       └─────┬─────┘         └──────┬───────┘       └──────┬──────┘
+             │                      │                       │
+             └──────────┬───────────┴───────────┬──────────┘
+                        │                       │
+                        ▼                       ▼
+                ┌──────────────┐         ┌──────────────┐
+                │ Pass? Merge  │         │ Build Docker │
+                │ to develop   │         │ image        │
+                └──────┬───────┘         └──────┬───────┘
+                       │                        │
+                       ▼                        ▼
+                ┌──────────────┐         ┌──────────────┐
+                │ Auto deploy  │         │ Push to ECR  │
+                │ to dev env   │         │ /Harbor      │
+                └──────────────┘         └──────┬───────┘
+                                                │
+                                                ▼
+                                         ┌──────────────┐
+                                         │ Manual deploy│
+                                         │ to staging/  │
+                                         │ production   │
+                                         └──────────────┘
 ```
 
-Hoặc **runtime config** — ship 1 build duy nhất, nạp `/config.json` theo host.
+### 2.3. Branch strategy
 
-## 2. Build pipeline (CI)
+- **`main`** (hoặc `master`): luôn deployable, là code đang chạy production
+- **`develop`**: integration branch, auto deploy to dev env
+- **`feature/*`**: feature branch, merge vào develop qua PR
+- **`release/*`**: chuẩn bị release, deploy lên staging để UAT
+- **`hotfix/*`**: bug fix khẩn cấp, branch từ main
 
-### 2.1. Khuyến nghị GitHub Actions / GitLab CI
+### 2.4. Promote code
+
+```
+feature → develop → release/v1.2.0 → main → tag v1.2.0
+   ↓         ↓             ↓           ↓
+  CI       Dev env      Staging    Production
+```
+
+---
+
+## 3. Container strategy
+
+### 3.1. Dockerfile (đề xuất frontend)
+
+```dockerfile
+# Build stage
+FROM node:20-alpine AS builder
+WORKDIR /app
+COPY package.json yarn.lock ./
+RUN yarn install --frozen-lockfile
+COPY . .
+RUN yarn build
+
+# Production stage
+FROM nginx:alpine
+COPY --from=builder /app/bundle /usr/share/nginx/html
+COPY nginx.conf /etc/nginx/conf.d/default.conf
+EXPOSE 80
+CMD ["nginx", "-g", "daemon off;"]
+```
+
+### 3.2. nginx.conf
+
+```nginx
+server {
+  listen 80;
+  root /usr/share/nginx/html;
+  index index.html;
+  
+  # SPA fallback
+  location / {
+    try_files $uri $uri/ /index.html;
+    
+    # Cache control
+    add_header Cache-Control "no-cache, no-store, must-revalidate";
+  }
+  
+  # Static assets - cache aggressive
+  location ~* \.(?:css|js|jpg|jpeg|gif|png|ico|svg|woff|woff2|ttf)$ {
+    expires 1y;
+    add_header Cache-Control "public, immutable";
+  }
+  
+  # Security headers
+  add_header X-Frame-Options "DENY";
+  add_header X-Content-Type-Options "nosniff";
+  add_header Referrer-Policy "strict-origin-when-cross-origin";
+  add_header Strict-Transport-Security "max-age=63072000; includeSubDomains; preload";
+  
+  # Gzip
+  gzip on;
+  gzip_types text/css application/javascript application/json;
+}
+```
+
+### 3.3. Image registry
+
+- **Self-hosted**: Harbor, GitLab Registry
+- **Managed**: AWS ECR, Docker Hub Pro, GCR
+
+---
+
+## 4. Kubernetes deployment (đề xuất)
+
+### 4.1. Deployment YAML (frontend)
+
+```yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: cloud-crm-frontend
+  namespace: production
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: cloud-crm-frontend
+  template:
+    metadata:
+      labels:
+        app: cloud-crm-frontend
+    spec:
+      containers:
+      - name: frontend
+        image: harbor.reborn.vn/cloud-crm:v1.2.0
+        ports:
+        - containerPort: 80
+        resources:
+          requests:
+            memory: "128Mi"
+            cpu: "100m"
+          limits:
+            memory: "256Mi"
+            cpu: "500m"
+        livenessProbe:
+          httpGet:
+            path: /
+            port: 80
+          initialDelaySeconds: 10
+          periodSeconds: 30
+        readinessProbe:
+          httpGet:
+            path: /
+            port: 80
+          initialDelaySeconds: 5
+          periodSeconds: 10
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: cloud-crm-frontend
+spec:
+  type: ClusterIP
+  selector:
+    app: cloud-crm-frontend
+  ports:
+  - port: 80
+    targetPort: 80
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: cloud-crm-ingress
+  annotations:
+    cert-manager.io/cluster-issuer: "letsencrypt-prod"
+    nginx.ingress.kubernetes.io/proxy-body-size: "100m"
+spec:
+  tls:
+  - hosts:
+    - "*.reborn.vn"
+    secretName: reborn-tls
+  rules:
+  - host: hub.reborn.vn
+    http:
+      paths:
+      - path: /crm
+        pathType: Prefix
+        backend:
+          service:
+            name: cloud-crm-frontend
+            port:
+              number: 80
+```
+
+### 4.2. Auto-scaling
+
+```yaml
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: cloud-crm-hpa
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: cloud-crm-frontend
+  minReplicas: 3
+  maxReplicas: 20
+  metrics:
+  - type: Resource
+    resource:
+      name: cpu
+      target:
+        type: Utilization
+        averageUtilization: 70
+```
+
+---
+
+## 5. Database HA
+
+### 5.1. PostgreSQL topology
+
+```
+                    ┌─────────────────┐
+                    │     Master      │
+                    │   (read-write)  │
+                    └────────┬────────┘
+                             │ streaming
+                             │ replication
+              ┌──────────────┼──────────────┐
+              ▼              ▼              ▼
+       ┌──────────┐   ┌──────────┐   ┌──────────┐
+       │ Replica1 │   │ Replica2 │   │ Replica3 │
+       │ (R/O)    │   │ (R/O)    │   │ (Reports)│
+       └──────────┘   └──────────┘   └──────────┘
+```
+
+- **Master**: chỉ nhận write
+- **Replica 1+2**: read replicas cho query bình thường
+- **Replica 3**: dành cho query report (heavy, không ảnh hưởng OLTP)
+
+### 5.2. Failover
+
+- **Manual**: DBA promote replica thành master khi master fail
+- **Auto**: dùng tool như Patroni / repmgr để auto failover
+
+### 5.3. Connection pool
+
+App dùng connection pool (PgBouncer) để tránh exhaust connection:
+
+```
+App pods → PgBouncer (transaction mode) → PostgreSQL
+```
+
+### 5.4. Backup
+
+- **pgBackRest** hoặc **wal-g** cho continuous archiving
+- Snapshot lên S3 hằng đêm
+- Test restore hằng tháng
+
+---
+
+## 6. Redis cluster
+
+### 6.1. Topology
+
+```
+        ┌────────┐
+        │ Sentinel│ × 3 (HA)
+        └────┬───┘
+             │
+        ┌────▼────┐
+        │ Master  │
+        └────┬────┘
+             │
+       ┌─────┴─────┐
+       ▼           ▼
+   ┌───────┐   ┌───────┐
+   │Slave 1│   │Slave 2│
+   └───────┘   └───────┘
+```
+
+- **3 Sentinel** quản lý failover
+- **1 Master + 2 Slave** cho HA
+
+### 6.2. Use case
+
+- Cache session, permission
+- Queue cho background job
+- Rate limit counter
+- Pub/sub cho real-time event
+
+---
+
+## 7. Object storage
+
+### 7.1. Lựa chọn
+
+| Option | Pros | Cons |
+|--------|------|------|
+| **AWS S3** | Most mature, ecosystem | Vendor lock-in |
+| **MinIO** (self-hosted) | Free, S3-compatible | Phải tự ops |
+| **DigitalOcean Spaces** | Rẻ, S3-compatible | Limited region |
+| **Cloudflare R2** | Không tính egress | Mới, ít feature |
+
+### 7.2. Bucket structure
+
+```
+reborn-crm-files/
+├── tenants/
+│   ├── <tenant_id>/
+│   │   ├── customer-avatars/
+│   │   ├── product-images/
+│   │   ├── invoice-attachments/
+│   │   ├── id-card-scans/        ← nhạy cảm, encrypt
+│   │   └── exports/
+├── public/
+│   └── shared-assets/
+└── backups/
+    ├── db-daily/
+    └── db-weekly/
+```
+
+### 7.3. Access control
+
+- **Bucket policy**: deny public access by default
+- **Pre-signed URL**: cho download tạm thời (1h)
+- **CDN**: CloudFront/CloudFlare in front cho static asset
+- **Encryption**: SSE-S3 mặc định, SSE-KMS cho file nhạy cảm
+
+---
+
+## 8. CI/CD pipeline
+
+### 8.1. Tools
+
+| Stage | Tool |
+|-------|------|
+| **CI** | GitHub Actions / GitLab CI / Jenkins |
+| **Build** | Docker / Buildah |
+| **Registry** | Harbor / ECR / GCR |
+| **Deploy** | ArgoCD / FluxCD / Helm |
+| **Secret** | Vault / Sealed Secrets / AWS Secrets Manager |
+
+### 8.2. Pipeline stages
 
 ```yaml
 stages:
-  - lint
-  - typecheck
-  - test
-  - build
-  - scan
-  - publish
-
-lint:
-  script:
-    - yarn install --frozen-lockfile
-    - yarn lint
-
-typecheck:
-  script:
-    - yarn tsc --noEmit
-
-test:
-  script:
-    - yarn test --coverage
-  coverage: '/Statements.*?(\d+\.\d+)%/'
-
-build:
-  script:
-    - yarn build --mode production
-  artifacts:
-    paths:
-      - dist/
-
-scan:
-  script:
-    - yarn audit --level high
-    - trivy fs dist/
-
-publish:
-  script:
-    - aws s3 sync dist/ s3://reborn-crm-prod/crm/ --delete
-    - aws cloudfront create-invalidation --distribution-id $CF_ID --paths "/crm/*"
+  - lint           # ESLint + Prettier
+  - test           # Unit + integration tests
+  - security_scan  # Snyk / Trivy / SonarQube
+  - build          # vite build
+  - dockerize      # docker build
+  - push           # docker push to registry
+  - deploy_dev     # auto deploy to dev
+  - e2e_test       # Playwright E2E on dev
+  - deploy_staging # manual approval → staging
+  - smoke_test     # quick health check
+  - deploy_prod    # manual approval → production
+  - smoke_test_prod
+  - notify         # Slack notification
 ```
 
-### 2.2. Quality gate
+### 8.3. Rollback strategy
 
-- **Lint**: 0 error (warning cho phép).
-- **Typecheck**: 0 error.
-- **Test**: coverage ≥ 60% (hiện tại 0% — xem [Part 14](part-14-quality-risks.md)).
-- **Audit**: 0 high/critical vulnerability.
-- **Build size**: cảnh báo nếu bundle > 5MB.
+- **Blue-green deployment**: deploy version mới → switch traffic → giữ bản cũ standby
+- **Rolling update**: từng pod update, có thể pause/rollback
+- **Canary**: 5% traffic → 25% → 50% → 100%, monitor error rate
+- **Helm rollback**: `helm rollback cloud-crm <prev-version>`
 
-## 3. Continuous deployment (CD)
+---
 
-### 3.1. Frontend
+## 9. Network topology
 
-Build static → upload S3/bucket → invalidate CDN cache → done. **Zero-downtime** tự nhiên vì CDN serve file mới sau khi invalidate.
-
-### 3.2. Backend — Strategy
-
-| Strategy | Use case | Ưu/nhược |
-|----------|----------|----------|
-| **Blue-Green** | Risk-averse, prod quan trọng | Tốn 2× tài nguyên lúc switch |
-| **Canary 1% → 10% → 50% → 100%** | Rollout an toàn, có RUM | Cần load balancer support |
-| **Rolling** | Default K8s deployment | Có thể có lỗi tạm nếu schema change |
-
-**Khuyến nghị**: Canary với Flagger (Kubernetes) + Prometheus metric gate.
-
-### 3.3. Database migration
-
-- Dùng **Flyway** / **Liquibase**.
-- **Forward-only** — không rollback DB.
-- Strategy **expand-and-contract**:
-  1. Expand: thêm column mới, FE chưa dùng.
-  2. Deploy FE dùng column mới.
-  3. Contract: xoá column cũ sau N tuần.
-
-## 4. Frontend hosting
-
-### 4.1. Kiến trúc
+### 9.1. Public + Private subnet
 
 ```
-                   ┌────────────────┐
-User (browser)────►│  CDN Edge      │
-                   │  CloudFlare /  │
-                   │  BunnyCDN /    │
-                   │  CloudFront    │
-                   └────────┬───────┘
-                            │ cache miss
-                            ▼
-                   ┌────────────────┐
-                   │  Object store  │
-                   │  S3 / R2 / MinIO│
-                   │  reborn-crm-*  │
-                   └────────────────┘
+Internet
+    │
+    ▼
+[ Cloud Provider ]
+    │
+    ├── Public subnet (10.0.1.0/24)
+    │   ├── ALB / Cloud Load Balancer
+    │   └── NAT Gateway
+    │
+    ├── Private subnet (10.0.2.0/24) — App tier
+    │   ├── K8s worker nodes
+    │   ├── API server pods
+    │   └── Worker pods
+    │
+    ├── Private subnet (10.0.3.0/24) — Data tier
+    │   ├── PostgreSQL master + replicas
+    │   ├── Redis cluster
+    │   └── ElasticSearch
+    │
+    └── Private subnet (10.0.4.0/24) — Bastion / VPN
+        └── Bastion host (SSH access)
 ```
 
-### 4.2. Khuyến nghị CDN VN
+### 9.2. Security groups
 
-- **BunnyCDN**: rẻ, POP tại VN, support tốt.
-- **CloudFlare**: free tier rộng, DDoS protection.
-- **VNG CloudCDN** / **Viettel CDN**: latency thấp hơn cho user VN.
+| Tier | Inbound | Outbound |
+|------|---------|----------|
+| **Public** | 80, 443 from 0.0.0.0/0 | All to private |
+| **App** | 80 from public LB | 5432 to data tier; 443 to internet |
+| **Data** | 5432 from app tier | None (or via NAT) |
+| **Bastion** | 22 from office IP | 22 to private |
 
-### 4.3. Cache policy
-
-| Path | Cache-Control |
-|------|---------------|
-| `/crm/assets/*.[hash].js` | `public, max-age=31536000, immutable` |
-| `/crm/assets/*.[hash].css` | `public, max-age=31536000, immutable` |
-| `/crm/index.html` | `no-cache, must-revalidate` |
-| `/crm/locales/*.json` | `public, max-age=3600` |
-
-## 5. Backend hosting
-
-### 5.1. Option A — Kubernetes (khuyến nghị)
+### 9.3. CDN
 
 ```
-┌────────────────────────────────────────┐
-│ VN region (Primary — HCM / HN)         │
-│                                        │
-│ ┌────────────────────────────────────┐ │
-│ │  K8s cluster                        │ │
-│ │  - 3 control plane                  │ │
-│ │  - 6-20 worker node                 │ │
-│ │  - HPA autoscale                    │ │
-│ └────────────────────────────────────┘ │
-│                                        │
-│ ┌────────────────────────────────────┐ │
-│ │  Managed PostgreSQL                 │ │
-│ │  - 1 primary (write)                │ │
-│ │  - 2 read replica                   │ │
-│ │  - WAL archive to object store      │ │
-│ └────────────────────────────────────┘ │
-│                                        │
-│ ┌─────────┐  ┌─────────┐  ┌─────────┐  │
-│ │ Redis   │  │ Kafka   │  │ MinIO   │  │
-│ │ cluster │  │ 3 broker│  │         │  │
-│ └─────────┘  └─────────┘  └─────────┘  │
-└────────────────────────────────────────┘
-           │ Async replicate
-           ▼
-┌────────────────────────────────────────┐
-│ VN region (Secondary / DR)             │
-│  - Warm standby                        │
-│  - PG streaming replica                │
-│  - Object store cross-region replica   │
-└────────────────────────────────────────┘
+User → CloudFlare (edge) → Origin (LB)
+       ├── Cache static: 1 year
+       ├── Cache HTML: 5 minutes
+       ├── WAF rules
+       └── DDoS protection
 ```
 
-### 5.2. Option B — ECS / Nomad / VM
+---
 
-Nếu team chưa sẵn sàng K8s, bắt đầu với:
+## 10. Domain & DNS
 
-- **AWS ECS Fargate** — serverless container, đơn giản.
-- **Docker Compose trên VM** — dev/stg phù hợp, prod không scale tốt.
-
-### 5.3. VN cloud provider
-
-- **Viettel IDC Cloud**, **VNG Cloud**, **CMC Cloud**, **FPT Cloud** — compliant NĐ 13.
-- **AWS Singapore / AWS HCM** — latency chấp nhận được, có Direct Connect.
-
-## 6. Multi-region strategy
-
-**Khuyến nghị active-passive VN**:
-
-- **Primary**: HCM (hoặc HN).
-- **DR (warm standby)**: region khác, đồng bộ liên tục.
-- **Failover**: DNS health check + manual promote replica thành primary.
-
-**Không dùng active-active** vì:
-
-- Conflict resolution với row-level data phức tạp.
-- Không cần thiết cho SLA 99.5%.
-
-## 7. Database operations
-
-### 7.1. PostgreSQL
-
-| Thông số | Giá trị |
-|----------|---------|
-| Version | 15+ |
-| Primary | 1 (write) |
-| Read replica | 2 (hot standby) |
-| Connection pool | PgBouncer hoặc RDS Proxy |
-| Backup | Daily pg_basebackup + WAL archive |
-| PITR window | 7 ngày |
-| Maintenance | Weekly VACUUM FULL (off-peak) |
-
-### 7.2. Backup strategy
-
-- **Full backup**: daily 2h sáng → object store, GPG encrypted.
-- **Incremental**: WAL archive mỗi 5 phút.
-- **Test restore**: monthly (bắt buộc — backup không test = không có backup).
-- **Retention**: 30 ngày online, 1 năm cold (Glacier / BackBlaze B2).
-
-### 7.3. Connection pool
+### 10.1. Domain structure
 
 ```
-App → PgBouncer (transaction pool) → Postgres
+*.reborn.vn       → tenant subdomain (vd: kcn.reborn.vn, viettelstore.reborn.vn)
+hub.reborn.vn     → main hub
+sso.reborn.vn     → SSO
+api.reborn.vn     → API gateway
+admin.reborn.vn   → admin portal
+status.reborn.vn  → status page
 ```
 
-Tiết kiệm connection cho Postgres (mỗi connection tốn ~10MB RAM).
+### 10.2. SSL certificate
 
-## 8. Redis
+- **Let's Encrypt** (free, auto-renew via cert-manager)
+- **Wildcard cert** cho `*.reborn.vn`
+- Renew tự động 60 ngày trước expiry
 
-Vai trò:
+---
 
-1. **Cache**: product list, permission, menu.
-2. **Session** (nếu BE dùng session thay JWT).
-3. **Queue**: Bull / BullMQ cho background job.
-4. **Rate limit**: token bucket.
-5. **Pub/Sub**: websocket notification.
+## 11. Monitoring & Alerting infra
 
-Config:
-
-- Persistence: AOF everysec.
-- Cluster: 3 master + 3 replica (production).
-- Eviction: `allkeys-lru` cho cache-only DB.
-
-## 9. Object storage
-
-Dùng cho:
-
-- Ảnh sản phẩm (user upload).
-- File đính kèm (hợp đồng, hoá đơn scan).
-- Report export (.xlsx, .pdf).
-- Backup database.
-
-**S3-compatible** options:
-
-- AWS S3 / GCP Cloud Storage
-- MinIO (self-host)
-- Backblaze B2 (rẻ)
-- CloudFlare R2 (không egress fee)
-
-Kết hợp CDN signed URL cho tải ảnh public.
-
-## 10. Scaling
-
-### 10.1. Horizontal (stateless service)
-
-- HPA Kubernetes theo CPU + custom metric (requests/sec).
-- Min 2 pod, max 20 pod.
-- **Không giữ state trong memory** — dùng Redis.
-
-### 10.2. Vertical (database)
-
-- Scale instance up: 4c8g → 8c16g → 16c32g → ...
-- Khi vượt 32c64g → cân nhắc sharding / Citus.
-
-### 10.3. Read scaling
-
-- Read replica cho report-heavy query.
-- Route read query qua replica bằng connection string riêng.
-
-## 11. Monitoring & alerting
-
-### 11.1. Stack khuyến nghị
+### 11.1. Stack đề xuất
 
 ```
-Metric       →  Prometheus + Grafana
-Log          →  Loki (hoặc ELK)
-Trace        →  Tempo / Jaeger
-APM          →  OpenTelemetry
-Uptime       →  Blackbox Exporter + UptimeRobot external
-Alert        →  Alertmanager → Slack / Telegram / PagerDuty
+[App] → emit metrics → [Prometheus] → [Grafana dashboard]
+         emit logs   → [Loki/ELK]   → [Grafana/Kibana]
+         emit traces → [Jaeger]     → [Jaeger UI]
+                                          │
+                                          ▼
+                                   [Alertmanager]
+                                          │
+                                          ▼
+                                  [Slack/PagerDuty/Email]
 ```
 
-### 11.2. SLO / SLI
+### 11.2. Health check endpoints
 
-| SLO | Target |
-|-----|--------|
-| API availability | 99.5% (3.6h downtime/month) |
-| P95 latency | ≤ 500ms |
-| Error rate | ≤ 0.5% |
-
-### 11.3. Alert example
+Mỗi service expose:
 
 ```
-- alert: HighErrorRate
-  expr: sum(rate(http_requests_total{status=~"5.."}[5m])) / sum(rate(http_requests_total[5m])) > 0.05
-  for: 5m
-  labels:
-    severity: critical
-  annotations:
-    summary: "Error rate > 5% trong 5 phút"
+GET /health            → 200 OK if alive
+GET /health/ready      → 200 OK if ready to serve
+GET /health/dependencies → check DB, Redis, external APIs
+GET /metrics           → Prometheus format
 ```
+
+K8s liveness/readiness probe gọi vào.
+
+---
 
 ## 12. Disaster Recovery
 
-### 12.1. RTO / RPO target
+### 12.1. RTO + RPO
 
-| Metric | Target |
-|--------|--------|
-| **RTO** (Recovery Time Objective) | 4 giờ |
-| **RPO** (Recovery Point Objective) | 1 giờ |
+- **RTO** (Recovery Time): ≤ 4h
+- **RPO** (Recovery Point): ≤ 1h
 
-### 12.2. DR runbook
+### 12.2. DR site
 
-1. **Detect**: monitoring alert primary down > 5 phút.
-2. **Decide**: on-call + CTO quyết định failover (có thể cần 15 phút).
-3. **Execute**:
-   - Promote PG replica → primary.
-   - Update DNS (TTL = 60s).
-   - Điều chuyển traffic.
-4. **Verify**: smoke test endpoint chính.
-5. **Communicate**: status page + email khách.
-6. **Post-mortem**: trong 72h.
+- **Hot standby**: replica region đồng bộ liên tục, switch sang trong vài phút (đắt)
+- **Warm standby**: snapshot mỗi 1h, restore trong 1-2h (cân bằng)
+- **Cold standby**: backup off-site, restore trong 4-8h (rẻ)
 
-### 12.3. DR test
+### 12.3. DR drill
 
-Quarterly (mỗi quý) — tập trận trên staging.
+- **Hằng quý**: full failover sang DR site
+- **Document runbook**: ai làm gì khi có sự cố
+- **Post-mortem**: sau mỗi drill / incident → cập nhật runbook
+
+---
 
 ## 13. Cost optimization
 
-| Kỹ thuật | Tiết kiệm |
-|----------|-----------|
-| Reserved instance (1-3 năm) | 30-60% |
-| Right-sizing (giảm CPU/RAM thừa) | 20-40% |
-| Spot instance cho batch job | 60-80% |
-| Cold storage cho backup cũ | 80% |
-| CDN R2 / BunnyCDN | Free egress |
-| Shutdown dev/stg ngoài giờ | 50% |
-| Gzip/Brotli bundle | 70% bandwidth |
+### 13.1. Reserved instances
 
-## 14. On-call & incident
+Cho các VM/DB chạy 24/7 → mua reserved 1-3 năm để giảm 30-60% chi phí.
 
-- **Rotation**: weekly, ít nhất 2 người.
-- **Tools**: PagerDuty / OpsGenie.
-- **SLA response**: P1 15 phút, P2 1 giờ, P3 1 ngày.
-- **Runbook**: mỗi alert phải có link tới runbook "làm gì khi gặp alert này".
+### 13.2. Spot instances
 
-## 15. Deployment checklist
+Cho background worker không critical → dùng spot/preemptible instance để giảm 60-90%.
 
-- [ ] CI pipeline pass.
-- [ ] DB migration applied (staging).
-- [ ] Smoke test staging pass.
-- [ ] Release note.
-- [ ] Feature flag set.
-- [ ] Rollback plan.
-- [ ] On-call notified.
-- [ ] Monitoring dashboard ready.
-- [ ] Customer notice (nếu maintenance window).
+### 13.3. Right-sizing
 
-## Tham chiếu
+- Monitor CPU/RAM thực tế
+- Down-size nếu < 30% utilization
 
-- Files:
-  - `vite.config.ts` (base `/crm/`)
-  - `package.json` (build script)
-- [Part 08 — Backend](part-08-backend-architecture.md)
-- [Part 11 — Cross-cutting](part-11-cross-cutting.md)
-- [Part 14 — Quality & Risks](part-14-quality-risks.md)
+### 13.4. Object storage tier
+
+- **Hot**: file < 30 ngày
+- **Warm**: 30-90 ngày → S3 IA
+- **Cold**: > 90 ngày → S3 Glacier
+
+### 13.5. Database
+
+- Upgrade chỉ khi cần (storage, IOPS, CPU)
+- Periodic vacuum, cleanup old data
+- Archive cold data sang S3
 
 ---
-*Hết Part 12. Xem tiếp [Part 13 — ADR](part-13-adr.md).*
+
+## 14. Compliance & Data sovereignty
+
+### 14.1. Data location
+
+Theo Luật ANM VN 2018: dữ liệu công dân VN **lưu tại VN**.
+
+→ **Đề xuất**: deploy ở Việt Nam (VNPT/Viettel/FPT cloud) hoặc AWS/GCP region Singapore với contract có cam kết.
+
+### 14.2. Audit log
+
+- Lưu nơi không thể tamper (write-once storage hoặc block chain)
+- Retention ≥ 12 tháng (Luật ANM)
+
+---
+
+## 15. Deployment runbook (template)
+
+### 15.1. Pre-deploy
+
+- [ ] Code merged to main
+- [ ] CI all green
+- [ ] Migration scripts reviewed
+- [ ] Backup taken
+- [ ] On-call notified
+- [ ] Status page updated
+
+### 15.2. Deploy
+
+- [ ] Run migration (downtime ≤ 0)
+- [ ] Deploy new image (rolling)
+- [ ] Monitor error rate (Grafana)
+- [ ] Smoke test critical flows
+
+### 15.3. Post-deploy
+
+- [ ] Verify business metrics OK
+- [ ] Update changelog
+- [ ] Notify team
+- [ ] Tag release in git
+
+### 15.4. Rollback
+
+- [ ] Identify issue
+- [ ] Decide: rollback or fix forward
+- [ ] If rollback: helm rollback or revert image tag
+- [ ] Verify back to stable
+- [ ] Post-mortem
+
+---
+
+## 16. Câu hỏi cho đội DevOps xác nhận
+
+1. Cloud provider hiện dùng?
+2. Container orchestration: K8s? Docker Swarm? VM?
+3. Database engine + version?
+4. Backup strategy hiện tại + RTO/RPO thực tế?
+5. CI/CD tool?
+6. Monitoring stack?
+7. Domain/DNS provider?
+8. CDN provider?
+9. Số env hiện có (dev/staging/prod)?
+10. DR plan đã có chưa?
+
+---
+
+*Hết Part 12.*

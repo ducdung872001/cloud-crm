@@ -30,7 +30,7 @@ export default function HistoryTransaction(props: HistoryTransactionProps) {
       <CustomScrollbar width="100%" height={388} autoHide={false}>
         <ul className="d-flex flex-column">
           {eventTransaction.map((e, index) => (
-            <li key={index} className="d-flex align-items-start">
+            <li key={e.id ?? index} className="d-flex align-items-start">
               <span className={`type type-${["sale", "return_supplier"].includes(e.type) ? "in" : "out"}`}></span>
               <div className="info">
                 <h3>{e.received}</h3>

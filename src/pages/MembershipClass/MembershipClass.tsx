@@ -177,7 +177,7 @@ export default function MembershipClass(props) {
         {listData.length > 0 && (
           <div className="package-list">
             {listData.map((item, index) => (
-              <div key={index} className="package-item" style={{ borderColor: item.borderColor }}>
+              <div key={item.id ?? index} className="package-item" style={{ borderColor: item.borderColor }}>
                 {/* Header */}
                 <div className="header-item" style={{ background: item.backgroundColor }}>
                   <div style={{ fontSize: 35 }}>{item.icon}</div>

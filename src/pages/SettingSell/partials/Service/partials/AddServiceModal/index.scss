@@ -269,6 +269,72 @@
         }
       }
 
+      // [CH] Mô tả chi tiết — RebornEditor
+      .list__field--content {
+        padding: 1.8rem 0;
+        width: 100%;
+
+        .label-title {
+          font-weight: 600;
+          font-size: 1.4rem;
+          margin-bottom: 1rem;
+          display: block;
+        }
+
+        .editor-wrapper {
+          border: 1px solid var(--border-color);
+          border-radius: 0.6rem;
+          min-height: 24rem;
+          overflow: hidden;
+        }
+      }
+
+      // [CH] Chia sẻ & Mã vạch
+      .list__field--share {
+        padding: 1.8rem 0;
+        width: 100%;
+        border-top: 1px dashed #ddd;
+
+        .label-title {
+          font-weight: 600;
+          font-size: 1.4rem;
+          margin-bottom: 1rem;
+          display: block;
+        }
+
+        .share-actions {
+          display: flex;
+          gap: 1rem;
+
+          .btn-share,
+          .btn-barcode {
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            padding: 0.8rem 1.6rem;
+            border: 1px solid var(--border-color);
+            border-radius: 0.6rem;
+            background: #fff;
+            cursor: pointer;
+            font-size: 1.3rem;
+            font-weight: 500;
+            color: var(--ch-text, #1B2E2A);
+            transition: all 0.15s;
+
+            svg {
+              width: 1.6rem;
+              height: 1.6rem;
+              fill: currentColor;
+            }
+
+            &:hover {
+              border-color: var(--ch-primary, #2D6A5A);
+              color: var(--ch-primary, #2D6A5A);
+            }
+          }
+        }
+      }
+
       .list--attribute {
         display: flex;
         flex-wrap: wrap;

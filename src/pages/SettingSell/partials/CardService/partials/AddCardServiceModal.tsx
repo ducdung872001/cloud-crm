@@ -514,7 +514,7 @@ export default function AddCardServiceModal(props: AddCardServiceModalProps) {
               <div className="list-field-item list-field-basic">
                 {listFieldBasic.map((field, index) => (
                   <FieldCustomize
-                    key={index}
+                    key={field.name || index}
                     field={field}
                     handleUpdate={(value) => handleChangeValidate(value, field, formData, validations, listFieldBasic, setFormData)}
                     formData={formData}
@@ -527,7 +527,7 @@ export default function AddCardServiceModal(props: AddCardServiceModalProps) {
 
                 {listFieldNote.map((field, index) => (
                   <FieldCustomize
-                    key={index}
+                    key={field.name || index}
                     field={field}
                     handleUpdate={(value) => handleChangeValidate(value, field, formData, validations, listFieldNote, setFormData)}
                     formData={formData}

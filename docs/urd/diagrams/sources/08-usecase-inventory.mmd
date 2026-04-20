@@ -1,0 +1,40 @@
+%%{init: {'theme':'base', 'themeVariables': {'fontFamily':'Calibri'}}}%%
+flowchart LR
+    WH(("👤<br/>Warehouse<br/>Staff"))
+    BM(("👤<br/>Branch<br/>Manager"))
+    ACC(("👤<br/>Accountant"))
+    SYS(("⚙️<br/>System"))
+
+    subgraph SYSTEM["Phân hệ Kho & NVL"]
+        UC1((CRUD NVL))
+        UC2((CRUD NCC))
+        UC3((Quản lý<br/>kho vật lý))
+        UC4((Tạo phiếu<br/>nhập kho))
+        UC5((Tạo phiếu<br/>xuất kho))
+        UC6((Tự xuất kho<br/>khi POS))
+        UC7((Kiểm kê<br/>định kỳ))
+        UC8((Báo cáo<br/>hao hụt))
+        UC9((Báo cáo<br/>tồn kho))
+        UC10((Cảnh báo<br/>sắp hết))
+    end
+
+    WH --> UC1
+    WH --> UC4
+    WH --> UC5
+    WH --> UC7
+    BM --> UC2
+    BM --> UC3
+    BM --> UC8
+    BM --> UC9
+    SYS --> UC6
+    SYS --> UC10
+    ACC --> UC8
+
+    UC4 -.includes.-> UC2
+    UC7 -.generates.-> UC8
+
+    classDef actor fill:#1F3A68,stroke:#1F3A68,color:#fff
+    classDef uc fill:#E1F5EE,stroke:#2C7A7B,color:#0F4C44
+
+    class WH,BM,ACC,SYS actor
+    class UC1,UC2,UC3,UC4,UC5,UC6,UC7,UC8,UC9,UC10 uc

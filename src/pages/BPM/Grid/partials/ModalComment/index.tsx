@@ -19,7 +19,6 @@ import ImgFileExcel from "assets/images/img-excel.png";
 import ImgError from "assets/images/error.png";
 import ImgFilePowerpoint from "assets/images/img-powerpoint.png";
 import GridService from "services/GridService";
-import { set } from "lodash";
 import { showToast } from "utils/common";
 
 interface IImportModalProps {
@@ -306,7 +305,7 @@ export default function ModalComment(props: IImportModalProps) {
                 <div className="list-comment">
                   {dataComment.map((item, index) => {
                     return (
-                      <div className="item-parent" key={index}>
+                      <div className="item-parent" key={item.id ?? index}>
                         <div className="item-comment">
                           <div className={item?.childrent?.length ? "line-comment" : "d-none"}></div>
                           <div className="item-comment--top">

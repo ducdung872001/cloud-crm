@@ -1788,7 +1788,7 @@ export default function FilterComponent(props: Record<string, unknown>) {
     if (listBranchDeleted0 && listBranchDeleted0.length > 0 && listBranchValue.length >= 2) {
       let newlistBranch1 = [...listBranchValue[1].value];
 
-      const newListBranchDeleted1 = [];
+      let newListBranchDeleted1 = [];
       if (listBranchValue[1].value.length > 0) {
         listBranchDeleted0.map((item) => {
           const array = newlistBranch1.filter((el) => el.parentId !== item) || [];
@@ -1825,7 +1825,7 @@ export default function FilterComponent(props: Record<string, unknown>) {
   useEffect(() => {
     if (listBranchDeleted1 && listBranchDeleted1.length > 0 && listBranchValue.length >= 3) {
       let newlistBranch2 = [...listBranchValue[2].value];
-      const newListBranchDeleted2 = [];
+      let newListBranchDeleted2 = [];
       if (listBranchValue[2].value.length > 0) {
         listBranchDeleted1.map((item) => {
           const array = newlistBranch2.filter((el) => el.parentId !== item) || [];
@@ -1862,7 +1862,7 @@ export default function FilterComponent(props: Record<string, unknown>) {
   useEffect(() => {
     if (listBranchDeleted2 && listBranchDeleted2.length > 0 && listBranchValue.length >= 4) {
       let newlistBranch3 = [...listBranchValue[3].value];
-      const newListBranchDeleted3 = [];
+      let newListBranchDeleted3 = [];
       if (listBranchValue[3].value.length > 0) {
         listBranchDeleted2.map((item) => {
           const array = newlistBranch3.filter((el) => el.parentId !== item) || [];
@@ -2416,7 +2416,7 @@ export default function FilterComponent(props: Record<string, unknown>) {
                               })
                               .map((ol, index) => {
                                 return (
-                                  <li key={index} className="item__field--drop" onClick={() => handlePushRule(ol, formData.rule)}>
+                                  <li key={ol.id ?? index} className="item__field--drop" onClick={() => handlePushRule(ol, formData.rule)}>
                                     {ol.name}
                                   </li>
                                 );
@@ -2635,7 +2635,7 @@ export default function FilterComponent(props: Record<string, unknown>) {
                                     <ul className="lst__field--drop" ref={refBlockOptionField}>
                                       {filterBlockFieldRule.map((ol, index) => {
                                         return (
-                                          <li key={index} className="item__field--drop" onClick={() => handlePushRuleBlock(ol, idx, item.rule)}>
+                                          <li key={ol.id ?? index} className="item__field--drop" onClick={() => handlePushRuleBlock(ol, idx, item.rule)}>
                                             {ol.name}
                                           </li>
                                         );
@@ -2845,7 +2845,7 @@ export default function FilterComponent(props: Record<string, unknown>) {
                                                     {filterBlockChildrenFieldRule.map((ol, index) => {
                                                       return (
                                                         <li
-                                                          key={index}
+                                                          key={ol.id ?? index}
                                                           className="item__field--drop"
                                                           onClick={() => handlePushRuleChildrenBlock(ol, ids, idx, el.rule)}
                                                         >

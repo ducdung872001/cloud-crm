@@ -1,5 +1,5 @@
 import React, { Fragment, useState, useEffect, useMemo, useCallback } from "react";
-import { formatDateCustom, isValidDate } from "utils/dateUtils";
+import { format, isValid } from "date-fns";
 
 import { IActionModal } from "model/OtherModel";
 import { IFieldCustomize, IFormData, IValidation } from "model/FormModel";
@@ -31,10 +31,10 @@ interface Props {
  * Convert bất kỳ giá trị date (moment object / ISO string / Date) → "YYYY-MM-DDTHH:mm:ss"
  * Trả về "" nếu không hợp lệ.
  */
-function toISOStr(val: Record<string, unknown>): string {
+function toISOStr(val: unknown): string {
   if (!val) return "";
-  const m = moment.isMoment(val) ? val : new Date(val);
-  return m.isValid() ? m.format("YYYY-MM-DDTHH:mm:ss") : "";
+  const d = val instanceof Date ? val : new Date(val as string | number);
+  return isValid(d) ? format(d, "yyyy-MM-dd'T'HH:mm:ss") : "";
 }
 
 export default function AddPromotionalModal({ onShow, data, onHide }: Props) {
@@ -74,8 +74,8 @@ export default function AddPromotionalModal({ onShow, data, onHide }: Props) {
   // Không dùng "required" cho date field vì fieldCustomize type="date"
   // trả về moment object – validate thủ công trong onSubmit
   const validations: IValidation[] = [
-    { name: "name",          rules: "required|max:100" },
-    { name: "discount",      rules: "required|number|min_equal:0" },
+    { name: "name",          rules: "required" },
+    { name: "discount",      rules: "required|number" },
   ];
 
   // Load danh sách SP khi mở modal edit CT đồng giá
@@ -102,8 +102,8 @@ export default function AddPromotionalModal({ onShow, data, onHide }: Props) {
 
   const effectiveValidations: IValidation[] = isFixedPrice
     ? [
-        { name: "name",       rules: "required|max:100" },
-        { name: "fixedPrice", rules: "required|number|min_equal:0" },
+        { name: "name",       rules: "required" },
+        { name: "fixedPrice", rules: "required|number" },
       ]
     : validations;
 
@@ -115,12 +115,11 @@ export default function AddPromotionalModal({ onShow, data, onHide }: Props) {
 
   const listField: IFieldCustomize[] = [
     {
-      label:     "Tên chương trình khuyến mãi",
-      name:      "name",
-      type:      "text",
-      fill:      true,
-      required:  true,
-      maxLength: 100,
+      label:    "Tên chương trình khuyến mãi",
+      name:     "name",
+      type:     "text",
+      fill:     true,
+      required: true,
     },
     {
       label:    "Loại chương trình",
@@ -268,7 +267,7 @@ export default function AddPromotionalModal({ onShow, data, onHide }: Props) {
       );
       onHide(true);
     } else {
-      showToast(res?.message ?? res?.error ?? "Có lỗi xảy ra. Vui lòng thử lại", "error");
+      showToast(res?.message ?? "Có lỗi xảy ra. Vui lòng thử lại", "error");
       setIsSubmit(false);
     }
   };
@@ -365,7 +364,7 @@ export default function AddPromotionalModal({ onShow, data, onHide }: Props) {
             <div className="list-form-group">
               {listField.map((field, index) => (
                 <FieldCustomize
-                  key={index}
+                  key={field.name || index}
                   field={field}
                   handleUpdate={(value) =>
                     handleChangeValidate(

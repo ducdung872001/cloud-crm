@@ -5,6 +5,7 @@ import Modal, { ModalHeader } from "components/modal/modal";
 import { DataPaginationDefault, PaginationProps } from "components/pagination/pagination";
 import cloneDeep from "lodash/cloneDeep";
 
+import { format } from "date-fns";
 import { formatDateCustom } from "utils/dateUtils";
 
 import React, { Fragment, useEffect, useState } from "react";
@@ -89,7 +90,7 @@ export const LogErrorTableModal: React.FC = (props: Record<string, unknown>) => 
     item.payload,
     item.attemptNumber,
     // Format theo GMT + 7
-    item.retryTime ? moment(item.retryTime).utcOffset(7).format("DD/MM/YYYY HH:mm:ss") : "",
+    item.retryTime ? format(new Date(item.retryTime), "dd/MM/yyyy HH:mm:ss") : "",
   ];
 
   return (

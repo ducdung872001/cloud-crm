@@ -1,269 +1,254 @@
-# Part 01 — Bắt đầu với Reborn Retail CRM
+# Part 01 — Bắt đầu sử dụng Reborn CRM
 
-> **Dành cho**: Tất cả người dùng mới (Thu ngân, Nhân viên kho, Kế toán, Quản lý cửa hàng)
-> **Mức độ**: Cơ bản
-> **Tham chiếu URD**: [Part 01 — Truy cập hệ thống](../urd/part-01-truy-cap.md) (UR-ACCESS-01 → UR-ACCESS-10)
+*Phiên bản: Cửa hàng & Spa — Tenant "Viettel Store"*
 
-Chào mừng bạn đến với **Reborn Retail CRM** — hệ thống quản lý bán lẻ đa kênh. Part này sẽ giúp bạn làm quen với giao diện và những thao tác cơ bản nhất trong 10 phút.
+Phần này hướng dẫn bạn những thao tác đầu tiên khi mở ứng dụng: đăng nhập, làm quen với giao diện, nhận diện các khu vực chính trên màn hình, và biết cách đi tới từng phân hệ công việc.
 
-## Mục lục
-- [1. Đăng nhập vào hệ thống](#1-đăng-nhập-vào-hệ-thống)
-- [2. Tour giao diện](#2-tour-giao-diện)
-- [3. Chọn vai trò khi có nhiều role](#3-chọn-vai-trò-khi-có-nhiều-role)
-- [4. Chọn cơ sở làm việc](#4-chọn-cơ-sở-làm-việc)
-- [5. Cập nhật thông tin cá nhân](#5-cập-nhật-thông-tin-cá-nhân)
-- [6. Đổi mật khẩu](#6-đổi-mật-khẩu)
-- [7. Đổi ngôn ngữ VI/EN](#7-đổi-ngôn-ngữ-vien)
-- [8. Thu/gọn sidebar](#8-thugọn-sidebar)
-- [9. Xem thông báo](#9-xem-thông-báo)
-- [10. Tìm kiếm nhanh](#10-tìm-kiếm-nhanh)
-- [11. Đăng xuất an toàn](#11-đăng-xuất-an-toàn)
-- [12. Dashboard Retail](#12-dashboard-retail)
-- [FAQ](#faq)
+> **Đối tượng đọc:** Người dùng mới hoặc quản lý vừa nhận tài khoản. Sau khi đọc xong, bạn sẽ tự tin đăng nhập, di chuyển giữa các mục, và biết "vào đâu để làm gì".
 
 ---
 
-## 1. Đăng nhập vào hệ thống
+## 1. Mở ứng dụng và đăng nhập
 
-Reborn Retail CRM sử dụng **SSO (Single Sign-On)** — bạn chỉ cần 1 tài khoản cho toàn bộ hệ sinh thái Reborn.
+### 1.1. Mở trang đăng nhập
 
-### Bước 1: Mở trình duyệt và truy cập URL
-
-Mở **Chrome** hoặc **Edge** (phiên bản ≥ 110) và truy cập URL do đội triển khai cung cấp, ví dụ:
+Mở trình duyệt (khuyên dùng **Google Chrome** hoặc **Microsoft Edge** phiên bản mới), nhập địa chỉ hệ thống mà đơn vị cung cấp cho bạn. Ví dụ:
 
 ```
-https://yourbrand.reborn.vn/crm
+https://<ten-mien-cua-ban>/crm/
 ```
 
-### Bước 2: Nhập thông tin đăng nhập
+Khi vào lần đầu, hệ thống sẽ tự chuyển sang trang đăng nhập thống nhất (Single Sign-On).
 
-Tại trang SSO, nhập:
+![Trang đăng nhập — trạng thái trống](./images/part-01-bat-dau/01-login-empty.png)
 
-- **Số điện thoại** (10 số) hoặc **Email** đã được cấp
-- **Mật khẩu** (≥ 8 ký tự)
+Trang đăng nhập gồm:
 
-Tích ô **Ghi nhớ đăng nhập** nếu máy bạn dùng cá nhân (phiên sẽ giữ 30 ngày).
+| Ô / Nút | Ý nghĩa |
+|---------|---------|
+| **SĐT/Email/ID** | Nhập số điện thoại, email hoặc ID nhân viên mà đơn vị cấp cho bạn |
+| **Nhập mật khẩu** | Nhập mật khẩu của bạn. Bấm biểu tượng con mắt ở cuối ô để hiện/ẩn mật khẩu |
+| **Ghi nhớ** | Tick vào nếu bạn dùng máy tính cá nhân, lần sau sẽ không cần đăng nhập lại trong thời gian nhất định |
+| **Đăng nhập** (nút xanh) | Gửi thông tin đăng nhập |
+| **Google / AppHub** | Các cách đăng nhập thay thế nếu được cấu hình |
 
-Nhấn nút **[Đăng nhập]** màu xanh lá.
+> **Lưu ý:** Trên máy tính công cộng, **không** tick "Ghi nhớ" để bảo vệ tài khoản của bạn.
 
-> 🖼️ *Ảnh minh hoạ: Màn hình SSO Reborn — chụp sau*
+### 1.2. Nhập thông tin và đăng nhập
 
-### Bước 3: Chờ redirect
+1. Nhấp vào ô **SĐT/Email/ID** rồi nhập thông tin đăng nhập.
+2. Nhấp vào ô **Nhập mật khẩu** rồi gõ mật khẩu.
+3. Kiểm tra lại lần nữa.
 
-Sau khi xác thực thành công, hệ thống sẽ tự động chuyển bạn vào màn hình POS hoặc Dashboard (tuỳ role).
+![Trang đăng nhập — đã điền thông tin](./images/part-01-bat-dau/02-login-filled.png)
 
-⚠️ **Chú ý**: Sai mật khẩu 3 lần liên tiếp → tài khoản sẽ bị khoá 5 phút. Hãy bấm **Quên mật khẩu** nếu không chắc.
+4. Bấm nút **Đăng nhập** (hoặc nhấn phím **Enter** trên bàn phím).
+
+Hệ thống sẽ xác thực và đưa bạn vào màn hình làm việc.
+
+### 1.3. Nếu hệ thống hỏi vai trò
+
+Khi tài khoản của bạn được cấp nhiều vai trò khác nhau (ví dụ vừa là nhân viên bán hàng, vừa tham gia ban quản lý), hệ thống sẽ hiện một cửa sổ **Chọn vai trò** ngay sau khi đăng nhập.
+
+- Chọn vai trò bạn muốn sử dụng trong phiên này.
+- Bấm **Xác nhận / Tiếp tục**.
+
+> **Mẹo:** Nếu công việc hằng ngày chỉ dùng một vai trò, bạn có thể bỏ qua bước này ở các lần sau bằng cách nhờ quản trị viên tắt các vai trò không dùng.
+
+### 1.4. Tôi quên mật khẩu thì làm thế nào?
+
+Hiện tại mật khẩu do đơn vị (admin) của bạn quản lý qua hệ thống SSO. Liên hệ:
+
+- Người phụ trách CNTT / admin hệ thống tại đơn vị → yêu cầu **reset mật khẩu**.
+- Sau khi được cấp lại, đăng nhập và nên đổi mật khẩu ngay trong mục **Tài khoản & bảo mật** (xem Part 12).
 
 ---
 
-## 2. Tour giao diện
+## 2. Tổng quan giao diện làm việc
 
-Sau khi đăng nhập, bạn sẽ thấy giao diện gồm **3 vùng chính**:
+Sau khi đăng nhập thành công, bạn sẽ thấy màn hình chính **Tổng quan** (Dashboard). Giao diện chia làm 3 khu vực:
 
-### 2.1. Header (thanh trên cùng)
+![Màn hình tổng quan sau khi đăng nhập](./images/part-01-bat-dau/03-dashboard-overview.png)
+
+| Khu vực | Vị trí | Chức năng |
+|---------|--------|-----------|
+| **Thanh bên trái (Sidebar)** | Dọc cột trái | Điều hướng giữa các phân hệ |
+| **Thanh trên cùng (Header)** | Ngang trên cùng | Tên tenant, tìm kiếm toàn cục, thông báo, chọn ngôn ngữ, tài khoản |
+| **Vùng nội dung** | Phần còn lại | Hiển thị nội dung của phân hệ bạn đang chọn |
+
+### 2.1. Thanh trên cùng (Header)
+
+![Thanh trên cùng](./images/part-01-bat-dau/05-header.png)
 
 Từ trái sang phải:
 
-- **Logo Reborn** — click để quay về Dashboard
-- **Nút thu/gọn Sidebar** — icon 3 vạch
-- **Ô chọn cơ sở** — hiển thị cơ sở đang làm việc (xem mục 4)
-- **Ô tìm kiếm nhanh** — phím tắt `Ctrl + K`
-- **Chuông thông báo** 🔔 — có badge đỏ nếu có noti mới
-- **Nút ngôn ngữ** — VI / EN
-- **Avatar user** — click để mở menu cá nhân
+1. **Logo Reborn + Nút thu gọn sidebar (« »)**
+   Bấm vào biểu tượng `«` để **thu gọn** thanh bên trái (còn lại các icon nhỏ), giúp có nhiều diện tích hơn cho vùng nội dung. Bấm lại để mở rộng.
 
-### 2.2. Sidebar (thanh trái)
+2. **Tên gói đang dùng**
+   Ví dụ hiển thị *"Viettel - Sử dụng gói vàng"*. Đây là tên tenant (đơn vị) và gói dịch vụ bạn đang thuê.
 
-Menu đa cấp, chia theo phân hệ:
+3. **Thanh tìm kiếm toàn cục**
+   Gõ tên thành viên, dịch vụ hoặc mã đơn hàng để tìm nhanh mà không cần vào từng phân hệ.
 
-- Dashboard
-- Bán hàng (POS, Đơn hàng, Trả hàng)
-- Khách hàng
-- Kho & Sản phẩm
-- Mua hàng
-- Tài chính
-- Marketing
-- Báo cáo
-- Cài đặt
+4. **Tên cơ sở (ví dụ: Viettel Store)**
+   Nếu đơn vị bạn có nhiều cơ sở / cửa hàng, bấm vào đây để chuyển đổi cơ sở làm việc. Mọi số liệu hiển thị sau đó sẽ theo cơ sở bạn vừa chọn.
 
-💡 **Mẹo**: Menu sẽ chỉ hiển thị các mục bạn có **quyền** truy cập. Nếu không thấy menu mong đợi, liên hệ Quản lý để cấp quyền.
+5. **Chọn ngôn ngữ (Tiếng Việt / English)**
 
-### 2.3. Content (vùng làm việc)
+   ![Chọn ngôn ngữ](./images/part-01-bat-dau/08-language-switcher.png)
 
-Khu vực chính bên phải — nơi hiển thị nội dung trang bạn đang mở.
+   Bấm để mở menu và chọn ngôn ngữ hiển thị. Lựa chọn này được ghi nhớ cho các lần đăng nhập sau.
 
-> 🖼️ *Ảnh minh hoạ: Tổng quan 3 vùng layout — chụp sau*
+6. **Chuông thông báo 🔔 (kèm số lượng chưa đọc)**
+   Bấm để xem các thông báo hệ thống gửi cho bạn: đơn hàng mới, yêu cầu phê duyệt, lịch công việc, v.v.
 
----
+7. **Avatar + tên người dùng**
 
-## 3. Chọn vai trò khi có nhiều role
+   ![Menu người dùng](./images/part-01-bat-dau/07-user-menu.png)
 
-Nếu tài khoản của bạn thuộc **nhiều phòng ban / vai trò**, sau khi login sẽ hiện modal **Chọn vai trò**.
+   Bấm vào avatar/tên để mở menu cá nhân gồm:
+   - **Hồ sơ** — xem/chỉnh thông tin cá nhân.
+   - **Vai trò** — chuyển đổi vai trò nếu tài khoản có nhiều vai trò.
+   - **Đăng xuất** — thoát khỏi hệ thống.
 
-### Các bước
+### 2.2. Thanh bên trái (Sidebar)
 
-1. Đọc tên từng vai trò kèm phòng ban.
-2. Click vào vai trò muốn sử dụng cho phiên này.
-3. Nhấn **[Xác nhận]**.
+![Thanh bên trái mặc định](./images/part-01-bat-dau/06-sidebar.png)
 
-Hệ thống lưu vai trò vào phiên. Bạn có thể đổi vai trò sau bằng cách click **Avatar → Đổi vai trò** (không cần logout).
+Thanh bên trái là "mục lục" của toàn bộ ứng dụng. Nó gồm 12 mục lớn, mỗi mục tương ứng với một phân hệ công việc:
 
-🔒 **Quyền**: Vai trò quyết định menu + chức năng bạn thấy. Chọn đúng vai trò trước khi bắt đầu làm việc.
+| # | Mục | Mô tả ngắn | Part liên quan |
+|---|-----|------------|----------------|
+| 1 | **Tổng quan** | Dashboard chính với chỉ số tức thời | Part 01 (mục 3) |
+| 2 | **Lễ tân** | Bán hàng tại quầy, check-in khách, trừ quota, quản lý ca | Part 02 |
+| 3 | **Thành viên** | Danh sách khách hàng là hội viên, cài đặt | Part 03 |
+| 4 | **Giao dịch** | Danh sách đơn hàng, hóa đơn VAT | Part 04 |
+| 5 | **Lưu trú** | Quản lý lưu trú / phòng (nếu kinh doanh có dịch vụ lưu trú) | Part 05 |
+| 6 | **Tài chính & Thanh toán** | Sổ thu chi, quỹ, công nợ, đối soát | Part 06 |
+| 7 | **Đối tác (KOL/PO)** | Đối tác giới thiệu / KOL / purchase order | Part 07 |
+| 8 | **Phản hồi** | Phản hồi / khiếu nại của khách | Part 07 |
+| 9 | **Báo cáo** | Báo cáo doanh thu, thành viên, check-in, dịch vụ, đối tác, tài chính | Part 08 |
+| 10 | **Ưu đãi & Chăm sóc** | Khuyến mãi/voucher, tích điểm, chiến dịch marketing, chăm sóc thành viên | Part 09 |
+| 11 | **Kho & Nguyên vật liệu** | Nguyên vật liệu, nhà cung cấp, kho, kiểm kê | Part 10 |
+| 12 | **Cài đặt** | Cấu hình tenant, danh mục dịch vụ, tổ chức & phân quyền, tích hợp | Part 11 + Part 12 |
 
----
+#### Mở rộng một nhóm để xem các mục con
 
-## 4. Chọn cơ sở làm việc
+Các nhóm có dấu `›` ở cuối dòng là **nhóm có mục con**. Bấm vào tên nhóm (ví dụ *"Lễ tân"*) hoặc vào dấu `›` để mở rộng. Sau khi mở, các mục con hiện bên dưới thụt vào và bạn có thể bấm trực tiếp vào mục cần dùng.
 
-Nếu bạn quản lý nhiều chi nhánh/cửa hàng, hãy chọn đúng cơ sở trước khi thao tác.
+![Nhóm "Lễ tân" đã mở — hiển thị 4 mục con](./images/part-01-bat-dau/09-sidebar-active.png)
 
-### Các bước
+Trong ảnh trên, nhóm **Lễ tân** đã được mở rộng, cho thấy 4 mục con:
 
-1. Ở **Header**, click vào ô hiển thị cơ sở hiện tại (bên cạnh logo).
-2. Dropdown hiện danh sách cơ sở bạn có quyền.
-3. Click chọn cơ sở → các trang đang mở sẽ tự reload theo cơ sở mới.
+- **Bán hàng tại quầy** — tạo hóa đơn bán hàng / dịch vụ ngay tại quầy.
+- **Check-in / Cửa vào** — ghi nhận khách vào sử dụng dịch vụ.
+- **Trừ quota dịch vụ** — trừ suất dịch vụ của gói thành viên.
+- **Quản lý ca làm việc** — mở/đóng ca, bàn giao, kiểm quỹ.
 
-⚠️ **Chú ý**: Nếu đang mở giỏ hàng POS mà đổi cơ sở → hệ thống sẽ **confirm** trước khi mất dữ liệu. Nên hoàn tất đơn trước khi switch.
+Mục đang chọn sẽ được làm nổi bật màu xanh đậm, giúp bạn luôn biết mình đang ở đâu.
 
-> 🖼️ *Ảnh minh hoạ: Dropdown chọn cơ sở — chụp sau*
+> **Mẹo:** Nếu bạn chỉ thấy icon mà không thấy chữ, có nghĩa là sidebar đang ở chế độ thu gọn. Bấm nút `«` ở góc trên-trái để mở rộng trở lại.
 
----
+### 2.3. Vùng nội dung
 
-## 5. Cập nhật thông tin cá nhân
-
-### Các bước
-
-1. Click **Avatar** ở góc phải trên → chọn **Thông tin cá nhân**.
-2. Trang `/setting_personal` mở ra.
-3. Sửa các trường: *Họ tên*, *SĐT liên hệ*, *Avatar*, *Ngôn ngữ ưa thích*.
-4. Nhấn **[Lưu thay đổi]** (nút xanh lá).
-
-💡 **Mẹo**: Ảnh avatar nên ≤ 2MB, định dạng JPG/PNG, tỷ lệ vuông cho đẹp.
+Vùng bên phải là nơi bạn thực hiện công việc thực tế. Nội dung ở đây **thay đổi** theo mục bạn chọn ở thanh bên trái. Ở màn hình **Tổng quan**, vùng này hiển thị các ô số liệu kinh doanh tức thời.
 
 ---
 
-## 6. Đổi mật khẩu
+## 3. Đọc nhanh màn hình Tổng quan
 
-### Các bước
+Màn hình **Tổng quan** (Dashboard) là nơi đầu tiên bạn nhìn thấy sau khi đăng nhập. Nó cung cấp một "ảnh chụp nhanh" tình hình kinh doanh của cơ sở bạn đang làm việc.
 
-1. Vào **Thông tin cá nhân** như mục 5.
-2. Cuộn xuống khu vực **Đổi mật khẩu**.
-3. Nhập:
-   - *Mật khẩu hiện tại*
-   - *Mật khẩu mới* (≥ 8 ký tự, phải có chữ hoa, chữ thường, số)
-   - *Xác nhận mật khẩu mới*
-4. Nhấn **[Cập nhật mật khẩu]**.
+![Dashboard chi tiết](./images/part-01-bat-dau/10-dashboard-final.png)
 
-⚠️ **Chú ý**: Sau khi đổi mật khẩu thành công, hệ thống sẽ **đăng xuất toàn bộ session** (kể cả tablet / POS khác đang login cùng tài khoản). Bạn cần login lại.
+Dashboard gồm 4 loại ô thông tin:
 
----
+### 3.1. Các chỉ số tổng hợp (ô thẻ — KPI)
 
-## 7. Đổi ngôn ngữ VI/EN
+Hàng trên cùng hiển thị các chỉ số quan trọng:
 
-Click nút **VI / EN** ở Header. Giao diện switch tức thời, không cần reload trang.
+- **Thành viên đang hoạt động** (ví dụ *"Active: 47/200"*) — số hội viên còn hiệu lực so với tổng số cho phép của gói dịch vụ.
+- **Check-in hôm nay** — số lượt khách đã check-in trong ngày.
+- **Hội viên sắp hết hạn** — số lượng cần nhắc gia hạn.
+- **Doanh thu** — số liệu doanh thu trong kỳ (ngày / tháng, tùy cấu hình).
 
-💡 **Mẹo**: Ngôn ngữ được lưu theo user — lần sau login sẽ nhớ.
+> **Lưu ý:** Các chỉ số này là con số tức thời, được hệ thống tính lại mỗi khi bạn mở lại màn hình hoặc làm mới trình duyệt (F5).
 
----
+### 3.2. Biểu đồ "Bán tốt nhà"
 
-## 8. Thu/gọn sidebar
+Hiển thị các dịch vụ/sản phẩm bán chạy nhất trong kỳ, dạng thanh ngang có phần trăm. Dùng để biết nhanh mặt hàng nào đang là "xương sống doanh thu" của bạn.
 
-Nếu màn hình nhỏ hoặc bạn muốn tập trung vào vùng nội dung:
+### 3.3. Sự kiện sắp tới
 
-- Click icon **3 vạch** (☰) ở Header → sidebar thu lại chỉ còn icon.
-- Click lại → mở rộng trở lại.
+Liệt kê các mốc thời gian quan trọng: đợt khai trương, các lớp sắp tổ chức, các chiến dịch chuẩn bị chạy. Nhắc bạn không bỏ lỡ.
 
-Trạng thái được nhớ trong trình duyệt.
+### 3.4. Cảnh báo Quota
 
----
+Bảng bên phải nhắc tên những hội viên có quota dịch vụ sắp hết / đã hết. Từ đây bạn có thể bấm vào tên để đi thẳng đến hồ sơ thành viên và nhắc khách gia hạn.
 
-## 9. Xem thông báo
+### 3.5. Truy cập nhanh
 
-### Các bước
-
-1. Click **chuông 🔔** ở Header — dropdown hiện 10 thông báo gần nhất.
-2. Click vào 1 thông báo → navigate tới trang liên quan (đơn hàng, ticket, cảnh báo tồn...).
-3. Để xem tất cả, nhấn **Xem tất cả** cuối dropdown → mở trang `/notification`.
-
-💡 **Mẹo**: Lần đầu, trình duyệt sẽ hỏi quyền gửi notification — **bấm Allow** để nhận thông báo real-time.
+Các nút vuông như **Check-in**, **Trạm trả**, **Lớp lô**, **Lưu trú**, **Phản hồi**, **Lịch lớp**, v.v. là **lối tắt** để mở nhanh màn hình công việc hay dùng nhất, không cần qua sidebar.
 
 ---
 
-## 10. Tìm kiếm nhanh
+## 4. Các luồng công việc cơ bản
 
-Phím tắt `Ctrl + K` (hoặc `⌘ + K` trên Mac) → mở ô tìm kiếm toàn cục.
+Để giúp bạn hình dung, dưới đây là bản đồ "Tôi muốn làm... → vào đâu". Chi tiết từng luồng sẽ được hướng dẫn ở các Part tiếp theo.
 
-Có thể tìm: **đơn hàng, khách hàng, sản phẩm, trang/menu**.
-
-Gõ từ khoá → kết quả gợi ý hiện ngay → Enter để nhảy tới.
-
----
-
-## 11. Đăng xuất an toàn
-
-### Các bước
-
-1. Click **Avatar** → chọn **Đăng xuất**.
-2. Hệ thống xoá cookie + token → redirect về trang login.
-
-⚠️ **Chú ý**: Nếu đang có giỏ hàng POS chưa thanh toán, hệ thống sẽ cảnh báo trước. Nên **Tạm treo đơn** (xem Part 02) trước khi đăng xuất.
-
-🔒 **Nguyên tắc an toàn**: Luôn đăng xuất khi rời máy POS công cộng để tránh người khác thao tác nhầm dưới tài khoản của bạn.
-
----
-
-## 12. Dashboard Retail
-
-Sau khi login (nếu role là Store Manager hoặc cao hơn), bạn sẽ thấy **Dashboard Retail** tại `/dashboard`.
-
-### 12.1. 6 KPI chính
-
-| KPI | Ý nghĩa |
-|---|---|
-| **Doanh thu hôm nay** | Tổng tiền đơn PAID trong ngày |
-| **Đơn hàng hôm nay** | Số đơn đã hoàn tất |
-| **Khách mới** | Số customer mới đăng ký |
-| **AOV** | Giá trị trung bình mỗi đơn |
-| **Tồn kho thấp** | Số SP < ngưỡng cảnh báo |
-| **Công nợ phải thu** | Tổng công nợ chưa thu |
-
-Click vào mỗi tile để xem trang chi tiết.
-
-### 12.2. Biểu đồ doanh thu 7 ngày
-
-Đường biểu diễn doanh thu 7 ngày gần nhất + top 5 sản phẩm bán chạy.
-
-💡 **Mẹo**: Dashboard **tự refresh mỗi 5 phút**. Nếu muốn update ngay, nhấn F5.
-
-> 🖼️ *Ảnh minh hoạ: Dashboard Retail đầy đủ — chụp sau*
+| Tôi muốn... | Đi tới mục | Part hướng dẫn chi tiết |
+|-------------|-----------|-------------------------|
+| Mở ca làm việc đầu ngày | **Lễ tân → Quản lý ca làm việc** | Part 02 |
+| Bán một gói dịch vụ cho khách mới | **Lễ tân → Bán hàng tại quầy** | Part 02 |
+| Check-in cho khách đến sử dụng dịch vụ | **Lễ tân → Check-in / Cửa vào** | Part 02 |
+| Tìm hồ sơ một hội viên | **Thành viên → Thành viên** | Part 03 |
+| Thêm một hội viên mới (ngoài luồng bán hàng) | **Thành viên → Thành viên → Thêm mới** | Part 03 |
+| Xem lại các hóa đơn bán hàng hôm nay | **Giao dịch → Danh sách đơn** | Part 04 |
+| Hoàn tiền / trả hàng cho khách | **Giao dịch → Danh sách đơn → Chi tiết đơn** | Part 04 |
+| Ghi nhận một khoản thu/chi ngoài bán hàng | **Tài chính & Thanh toán → Sổ thu chi** | Part 06 |
+| Đối soát tiền mặt cuối ca | **Tài chính & Thanh toán → Đối soát thanh toán** | Part 06 |
+| Tạo chương trình khuyến mãi | **Ưu đãi & Chăm sóc → Khuyến mãi & Voucher** | Part 09 |
+| Nhập kho nguyên vật liệu mới | **Kho & Nguyên vật liệu → Sổ kho** | Part 10 |
+| Thêm tài khoản nhân viên mới | **Cài đặt → Tổ chức & phân quyền** | Part 12 |
+| Cấu hình danh mục dịch vụ / sản phẩm | **Cài đặt → Danh mục dịch vụ** | Part 11 |
+| Đổi mật khẩu của tôi | **Avatar → Hồ sơ → Đổi mật khẩu** | Part 12 |
 
 ---
 
-## FAQ
+## 5. Các phím tắt và mẹo dùng nhanh
 
-**1. Tôi quên mật khẩu, làm sao lấy lại?**
-Tại trang SSO, nhấn **Quên mật khẩu** → nhập SĐT/email → nhận OTP qua tin nhắn/email → đặt mật khẩu mới.
-
-**2. Tôi login được nhưng không thấy menu POS?**
-Có 2 nguyên nhân: (a) Role của bạn không có quyền POS — liên hệ Quản lý; (b) Bạn đang ở sai vai trò — click Avatar → Đổi vai trò.
-
-**3. Tôi thấy sai cơ sở (ví dụ cơ sở B trong khi đang đứng tại cơ sở A)?**
-Click ô cơ sở ở Header, chọn lại cơ sở A. Nếu không thấy cơ sở A trong dropdown, liên hệ Quản lý để được gán quyền.
-
-**4. Sidebar của tôi bị thu gọn không mở lại được?**
-Nhấn icon 3 vạch ở Header hoặc xoá cache trình duyệt → F5.
-
-**5. Tôi không nhận được thông báo dù có đơn mới?**
-Kiểm tra: (a) Đã Allow notification ở trình duyệt chưa; (b) Trình duyệt có đang mở tab CRM không (FCM cần tab active).
-
-## Các lỗi thường gặp
-
-| Lỗi | Nguyên nhân | Xử lý |
-|---|---|---|
-| "Sai tài khoản hoặc mật khẩu" | Gõ sai | Kiểm tra caps lock, gõ lại |
-| "Tài khoản bị khoá" | Sai 3 lần liên tiếp | Chờ 5 phút, thử lại |
-| "Phiên đã hết hạn" | Quá 8 giờ không tương tác | Login lại |
-| Trang trắng sau login | Cache cũ | Ctrl+Shift+R để reload cứng |
+| Thao tác | Cách làm |
+|----------|----------|
+| Quay lại màn trước | Dùng nút **Back** của trình duyệt hoặc nút mũi tên ở góc trên-trái của màn hình nội dung |
+| Đóng cửa sổ (popup / modal) | Phím **Esc** hoặc bấm dấu **×** ở góc trên-phải của popup |
+| Mở nhanh màn Tổng quan | Bấm biểu tượng **Tổng quan** ở đầu thanh bên trái |
+| Tìm nhanh thành viên / đơn hàng | Dùng ô tìm kiếm trên thanh trên cùng |
+| Thu gọn/mở rộng thanh bên trái | Bấm nút `«` / `»` ở đầu sidebar |
+| Làm mới dữ liệu mà không mất đăng nhập | **F5** hoặc **Ctrl + R** |
 
 ---
 
-*Hết Part 01. Xem tiếp [Part 02 — POS Bán hàng](part-02-pos-ban-hang.md).*
+## 6. Đăng xuất
+
+Khi kết thúc ca làm việc, bạn nên đăng xuất để bảo vệ dữ liệu:
+
+1. Bấm vào **avatar** (hoặc tên bạn) ở góc trên-phải.
+2. Trong menu thả xuống, bấm **Đăng xuất**.
+3. Hệ thống sẽ đưa bạn về trang đăng nhập.
+
+> **Quan trọng:** Trên các máy tính dùng chung (máy tại quầy lễ tân), hãy đăng xuất sau mỗi ca làm việc. Đừng chỉ đóng trình duyệt — người khác mở lại trình duyệt có thể vào nguyên phiên làm việc của bạn nếu có tick "Ghi nhớ".
+
+---
+
+## 7. Tiếp theo cần đọc gì?
+
+Bạn đã sẵn sàng bắt đầu công việc hằng ngày:
+
+- **Part 02 — Lễ tân**: chính là nơi bạn sẽ dành thời gian nhiều nhất trong ngày. Từ mở ca, bán hàng, check-in khách, cho đến đóng ca cuối ngày.
+- **Part 03 — Thành viên**: cách quản lý danh sách khách hàng hội viên, xem lịch sử sử dụng dịch vụ.
+- **Part 12 — Cài đặt nâng cao**: chỉ đọc nếu bạn là người quản trị, cần cấp tài khoản / đổi phân quyền cho nhân viên.
+
+---
+
+*Hết Part 01.*

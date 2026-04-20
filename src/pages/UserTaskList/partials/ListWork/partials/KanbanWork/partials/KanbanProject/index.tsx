@@ -330,7 +330,7 @@ export default function KanbanProject(props: IKanbanProjectProps) {
                             {column.items.map((el, index) => {
                               return (
                                 <TaskItem
-                                  key={index}
+                                  key={el.id ?? index}
                                   totalTask={column.items.length}
                                   item={el}
                                   index={index}

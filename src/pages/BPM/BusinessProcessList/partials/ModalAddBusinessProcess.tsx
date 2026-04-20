@@ -70,7 +70,7 @@ export default function ModalAddBusinessProcess(props: Record<string, unknown>) 
       const result = response.result;
       setListStepProcess(result.items);
     } else {
-      showToast(response.message ?? response.error ?? "Có lỗi xảy ra. Vui lòng thử lại sau", "error");
+      showToast(response.message ?? "Có lỗi xảy ra. Vui lòng thử lại sau", "error");
     }
   };
 
@@ -119,7 +119,7 @@ export default function ModalAddBusinessProcess(props: Record<string, unknown>) 
   const validations: IValidation[] = [
     {
       name: "name",
-      rules: "required|max:100",
+      rules: "required",
     },
   ];
 
@@ -205,7 +205,6 @@ export default function ModalAddBusinessProcess(props: Record<string, unknown>) 
           type: "text",
           fill: true,
           required: true,
-          maxLength: 100,
         },
         {
           label: "Mã quy trình",
@@ -213,7 +212,6 @@ export default function ModalAddBusinessProcess(props: Record<string, unknown>) 
           type: "text",
           fill: true,
           required: true,
-          maxLength: 50,
         },
         {
           label: "Mô tả quy trình",
@@ -221,7 +219,6 @@ export default function ModalAddBusinessProcess(props: Record<string, unknown>) 
           type: "textarea",
           fill: true,
           required: false,
-          maxLength: 500,
         },
         {
           name: "employeeId",
@@ -275,11 +272,6 @@ export default function ModalAddBusinessProcess(props: Record<string, unknown>) 
       return;
     }
 
-    if (String(formData?.values.name).length > 100) {
-      showToast("Tên quy trình tối đa 100 ký tự", "error");
-      return;
-    }
-
     if (!formData?.values.employeeId) {
       showToast("Người phụ trách không được để trống", "error");
       return;
@@ -301,7 +293,7 @@ export default function ModalAddBusinessProcess(props: Record<string, unknown>) 
       setIsSubmit(false);
       setTabStep(2);
     } else {
-      showToast(response.message ?? response.error ?? "Có lỗi xảy ra. Vui lòng thử lại sau", "error");
+      showToast(response.message ?? "Có lỗi xảy ra. Vui lòng thử lại sau", "error");
       setIsSubmit(false);
     }
   };
@@ -321,7 +313,7 @@ export default function ModalAddBusinessProcess(props: Record<string, unknown>) 
       clearForm(true, true);
       setIsSubmit(true);
     } else {
-      showToast(response.message ?? response.error ?? "Có lỗi xảy ra. Vui lòng thử lại sau", "error");
+      showToast(response.message ?? "Có lỗi xảy ra. Vui lòng thử lại sau", "error");
       setIsSubmit(false);
     }
   };
@@ -340,7 +332,7 @@ export default function ModalAddBusinessProcess(props: Record<string, unknown>) 
       showToast(`Cài đặt SLA thành công`, "success");
       clearForm(true, true);
     } else {
-      showToast(response.message ?? response.error ?? "Có lỗi xảy ra. Vui lòng thử lại sau", "error");
+      showToast(response.message ?? "Có lỗi xảy ra. Vui lòng thử lại sau", "error");
       setIsSubmit(false);
     }
   };
@@ -499,14 +491,14 @@ export default function ModalAddBusinessProcess(props: Record<string, unknown>) 
       getListStepProcess(processId);
       // showToast("Thêm quy trình thành công", "success");
     } else {
-      showToast(response.message ?? response.error ?? "Có lỗi xảy ra. Vui lòng thử lại sau", "error");
+      showToast(response.message ?? "Có lỗi xảy ra. Vui lòng thử lại sau", "error");
     }
   };
 
   // Thay đổi tên bước
   const handleBlurValueStep = async (e, idx) => {
     const value = e.target.value;
-    const item: Record<string, unknown> = {};
+    let item: Record<string, unknown> = {};
 
     if (value) {
       listStepProcess.map((obj, index) => {
@@ -537,7 +529,7 @@ export default function ModalAddBusinessProcess(props: Record<string, unknown>) 
       getListStepProcess(processId);
       showToast("Cập bước quy trình thành công", "success");
     } else {
-      showToast(response.message ?? response.error ?? "Có lỗi xảy ra. Vui lòng thử lại sau", "error");
+      showToast(response.message ?? "Có lỗi xảy ra. Vui lòng thử lại sau", "error");
     }
   };
 
@@ -638,7 +630,7 @@ export default function ModalAddBusinessProcess(props: Record<string, unknown>) 
   };
 
   const updateCustomerAttribute = (attributeId, attributeValue) => {
-    const objectId = data?.id || 0;
+    let objectId = data?.id || 0;
 
     let found = false;
     (objectExtraInfos || []).map((item, idx) => {
@@ -650,7 +642,7 @@ export default function ModalAddBusinessProcess(props: Record<string, unknown>) 
     });
 
     if (!found) {
-      const item: Record<string, unknown> = {};
+      let item: Record<string, unknown> = {};
       item.attributeId = attributeId;
       item.attributeValue = attributeValue;
       item.objectId = objectId;
@@ -674,7 +666,7 @@ export default function ModalAddBusinessProcess(props: Record<string, unknown>) 
 
   const getDecimalScale = (attributes) => {
     attributes = attributes ? JSON.parse(attributes) : {};
-    const numberFormat = attributes?.numberFormat || "";
+    let numberFormat = attributes?.numberFormat || "";
     if (numberFormat.endsWith(".#")) {
       return 1;
     }
@@ -691,7 +683,7 @@ export default function ModalAddBusinessProcess(props: Record<string, unknown>) 
   };
 
   const updateCustomerMultiselectAttribute = (attributeId, e) => {
-    const attributeValue = e ? e.split(",") : [];
+    let attributeValue = e ? e.split(",") : [];
     updateCustomerAttribute(attributeId, JSON.stringify(attributeValue));
   };
 
@@ -719,8 +711,8 @@ export default function ModalAddBusinessProcess(props: Record<string, unknown>) 
    * @param isFormula
    */
   const getCustomerAttributeFormula = (attributes) => {
-    const attributeValue = attributes ? JSON.parse(attributes)?.formula : "";
-    const attrObj = {};
+    let attributeValue = attributes ? JSON.parse(attributes)?.formula : "";
+    let attrObj = {};
     (objectExtraInfos || []).map((item, idx) => {
       if (item.datatype == "number") {
         attrObj["customerAttribute_" + convertToId(item.attributeName)] = +item.attributeValue;
@@ -776,7 +768,7 @@ export default function ModalAddBusinessProcess(props: Record<string, unknown>) 
             decimalScale={getDecimalScale(customerAttribute.attributes)}
             onChange={(e) => {
               const value = e.target.value;
-              const valueNum = value?.replace(/,/g, "");
+              let valueNum = value?.replace(/,/g, "");
               updateCustomerAttribute(customerAttribute.id, valueNum);
             }}
             disabled={true}
@@ -804,7 +796,7 @@ export default function ModalAddBusinessProcess(props: Record<string, unknown>) 
         );
         break;
       case "multiselect":
-        const attris = getCustomerAttributeValue(customerAttribute.id);
+        let attris = getCustomerAttributeValue(customerAttribute.id);
         CustomControl = (
           <CheckboxList
             title={customerAttribute.name}
@@ -868,7 +860,7 @@ export default function ModalAddBusinessProcess(props: Record<string, unknown>) 
         );
         break;
       case "lookup":
-        const attrs = customerAttribute.attributes ? JSON.parse(customerAttribute.attributes) : {};
+        let attrs = customerAttribute.attributes ? JSON.parse(customerAttribute.attributes) : {};
 
         //2. Trường hợp là employee (nhân viên)
         switch (attrs?.refType) {
@@ -925,7 +917,7 @@ export default function ModalAddBusinessProcess(props: Record<string, unknown>) 
         getObjectAttributes(result.groupId);
       }
     } else {
-      showToast(response.message ?? response.error ?? "Có lỗi xảy ra. Vui lòng thử lại sau", "error");
+      showToast(response.message ?? "Có lỗi xảy ra. Vui lòng thử lại sau", "error");
     }
   };
 

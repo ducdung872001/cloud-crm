@@ -282,16 +282,6 @@ export default function PaymentBill(props: Record<string, unknown>) {
   const onSubmit = async (e) => {
     e && e.preventDefault();
 
-    if (!idCustomer) {
-      showToast("Vui lòng chọn khách hàng", "error");
-      return;
-    }
-
-    if (formData?.amount === 0) {
-      showToast("Vui lòng thêm ít nhất một sản phẩm hoặc dịch vụ", "error");
-      return;
-    }
-
     if (formData?.branchId == null && +checkUserRoot == 1) {
       setValidateFieldBranch(true);
       return;
@@ -323,7 +313,7 @@ export default function PaymentBill(props: Record<string, unknown>) {
       setIdInvoice(response.result?.id);
       setShowModalInvoice(true);
     } else {
-      showToast(response.message ?? response.error ?? "Có lỗi xảy ra. Vui lòng thử lại sau", "error");
+      showToast(response.message ?? "Có lỗi xảy ra. Vui lòng thử lại sau", "error");
       setShowModalInvoice(false);
     }
 
@@ -343,7 +333,7 @@ export default function PaymentBill(props: Record<string, unknown>) {
       showToast("Lưu tạm báo giá thành công", "success");
       navigate("/offer");
     } else {
-      showToast(response.message ?? response.error ?? "Có lỗi xảy ra. Vui lòng thử lại sau", "error");
+      showToast(response.message ?? "Có lỗi xảy ra. Vui lòng thử lại sau", "error");
     }
 
     setShowDialog(false);

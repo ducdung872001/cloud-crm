@@ -11,7 +11,7 @@ import Dialog, { IContentDialog } from "components/dialog/dialog";
 import TitleAction, { ITitleActions } from "components/titleAction/titleAction";
 import { DataPaginationDefault, PaginationProps } from "components/pagination/pagination";
 import { BulkActionItemModel } from "components/bulkAction/bulkAction";
-import { IFilterItem, ISaveSearch } from "model/OtherModel";
+import { IAction, IFilterItem, ISaveSearch } from "model/OtherModel";
 import { IWarrantyFilterRequest } from "model/warranty/WarrantyRequestModel";
 import { IWarrantyResponseModel } from "model/warranty/WarrantyResponseModel";
 import { ContextType, UserContext } from "contexts/userContext";
@@ -19,8 +19,10 @@ import WarrantyService from "services/WarrantyService";
 import { showToast } from "utils/common";
 import { isDifferenceObj, getPageOffset } from "reborn-util";
 import TableWarranty from "./partials/TableWarranty/TableWarranty";
+import KanbanWarranty from "./partials/KanbanWarranty/KanbanWarranty";
 import AddWarrantyModal from "./partials/AddEditWarrantyModal/AddWarrantyModal";
 import AddTransferVotes from "pages/Common/AddTransferVotes";
+import SelectCustom from "components/selectCustom/selectCustom";
 import KanbanWarrantyProcess from "./partials/KanbanWarrantyProcess";
 import ModalSigner from "./partials/ModalSigner";
 import BusinessProcessService from "services/BusinessProcessService";
@@ -162,7 +164,6 @@ export default function WarrantyList() {
       paramsTemp[value] = key;
     });
     setParams((prevParams) => ({ ...prevParams, ...paramsTemp }));
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
@@ -189,7 +190,6 @@ export default function WarrantyList() {
     return () => {
       abortController.abort();
     };
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [params]);
 
   const titleActions: ITitleActions = {
@@ -472,7 +472,6 @@ export default function WarrantyList() {
 
     //! đoạn này mục đích xóa sự kiện khi component unmount
     return () => window.removeEventListener("keydown", handleHideShowFullPage);
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isCollapsedSidebar]);
 
   const onDelete = async (id: number) => {
@@ -538,9 +537,9 @@ export default function WarrantyList() {
     localStorage.setItem("processTicketName", processName);
   }, [processName]);
 
-  const [, setColumnList] = useState(undefined);
+  const [columnList, setColumnList] = useState(undefined);
 
-  const [, setCheckColumn] = useState(null);
+  const [checkColumn, setCheckColumn] = useState(null);
 
   const colorData = [
     "#E98E4C",
@@ -565,8 +564,8 @@ export default function WarrantyList() {
   ];
 
   const [dataOfStep, setDataOfStep] = useState([]);
-  const [, setDataOfStepStart] = useState([]);
-  const [, setDataOfStepSuccess] = useState([]);
+  const [dataOfStepStart, setDataOfStepStart] = useState([]);
+  const [dataOfStepSuccess, setDataOfStepSuccess] = useState([]);
   const [dataObject, setDataObject] = useState(null);
   const [listStepProcess, setListStepProcess] = useState([]);
 
@@ -580,10 +579,9 @@ export default function WarrantyList() {
     } else {
       getListStepProcess(processId);
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [processId]);
 
-  const [, setValueProcess] = useState(null);
+  const [valueProcess, setValueProcess] = useState(null);
 
   const loadOptionProcess = async (search, loadedOptions, { page }) => {
     const param: Record<string, unknown> = {
@@ -642,7 +640,6 @@ export default function WarrantyList() {
     loadOptionProcess("", undefined, { page: 1 });
   }, []);
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const handleChangeValueProcess = (e) => {
     getListColumns(+e.value);
     setDataOfStep([]);
@@ -662,7 +659,7 @@ export default function WarrantyList() {
     setCheckColumn(null);
   };
   //lấy danh sách bước của quy trình
-  const [, setListColumn] = useState([]);
+  const [listColumn, setListColumn] = useState([]);
 
   const getListStepProcess = async (processId) => {
     const body: Record<string, unknown> = {
@@ -712,7 +709,7 @@ export default function WarrantyList() {
       setIsLoadingKanban(false);
     }
   };
-  const [, setHasHistorySignature] = useState<boolean>(false);
+  const [hasHistorySignature, setHasHistorySignature] = useState<boolean>(false);
 
   const getDataOfStepSpecial = async (processId, status) => {
     const param = {
@@ -755,7 +752,6 @@ export default function WarrantyList() {
     }
   };
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const getDataOfStepAction = async (paramsSearch, stepName) => {
     const response = await BusinessProcessService.listWorkFlow(paramsSearch, abortController.signal);
 
@@ -783,7 +779,7 @@ export default function WarrantyList() {
 
   useEffect(() => {
     if (listStepProcess && listStepProcess.length > 0 && processId && processId !== -1) {
-      listStepProcess.map((item) => {
+      listStepProcess.map((item, index) => {
         const param = {
           processId: processId,
           workflowId: item.value,
@@ -794,13 +790,11 @@ export default function WarrantyList() {
         getDataOfStep(param, item.label);
       });
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [listStepProcess, processId]);
 
   useEffect(() => {
     // getDataOfStepSpecial(processId, 0);
     getDataOfStepSpecial(processId, 2);
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [processId]);
 
   return (

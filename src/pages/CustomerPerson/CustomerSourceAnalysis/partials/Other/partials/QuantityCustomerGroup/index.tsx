@@ -101,7 +101,7 @@ export default function QuantityCustomerGroup(props) {
         ],
       });
     } else {
-      showToast("Báo cáo theo nhóm khách hàng lỗi. Vui lòng xem lại sau!", "error");
+      showToast("Báo cáo theo nhóm thành viên lỗi. Vui lòng xem lại sau!", "error");
     }
   };
 
@@ -155,7 +155,7 @@ export default function QuantityCustomerGroup(props) {
   return (
     <div className="page__quantity__customer--group">
       <div className="title__common d-flex align-items-start">
-        <h2 className="name-common">Theo nhóm khách hàng</h2>
+        <h2 className="name-common">Theo nhóm thành viên</h2>
         <div
           ref={refOptionContainer}
           className={`icon__option--download ${showOption ? "active__option" : ""}`}

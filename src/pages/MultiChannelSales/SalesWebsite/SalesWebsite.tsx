@@ -303,7 +303,7 @@ export default function SalesWebsite() {
           <span style={{ fontSize: 14, fontWeight: "700" }}>Giao diện & Trình bày</span>
           <div>
             {infoDisplay.map((item, index) => (
-              <div key={index} className="item-display">
+              <div key={item.id ?? index} className="item-display">
                 <div>
                   <span style={{ fontSize: 14, fontWeight: "600" }}>{item.lable}</span>
                   <div>

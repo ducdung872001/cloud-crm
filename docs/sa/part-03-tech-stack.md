@@ -1,222 +1,355 @@
-# Part 03 — Tech Stack Inventory
+# Part 03 — Tech Stack & Dependencies
 
 ## Executive Summary
 
-Tài liệu này liệt kê toàn bộ thư viện, runtime, tooling dùng trong Reborn Retail CRM, có version chính xác lấy từ `package.json`. Stack chính: **React 18.3 + TypeScript 4.5 + Vite 7 + react-router-dom 7**, HTTP qua `fetch` + `fetch-intercept` (không có axios), i18n qua `react-i18next`, bảng lớn qua `ag-grid 30`, editor qua `slate 0.91`, BPM qua `reactflow 11` + `bpmn-js 17`. Push notification qua Firebase 9. Auth MSAL 3 cho tích hợp Microsoft 365.
+Reborn CRM frontend dùng **React 17 + TypeScript 4.5 + Vite 8.0**. Quản lý dependency qua **yarn**. Có **~120 production dependencies** và **15+ devDependencies**. Stack chia thành 7 nhóm: Core (React/TS/Vite), Routing & State, UI library, Form & Input, Data viz & Tables, Communication (call, chat, email, SMS), và Integration (Firebase, MS, Facebook, Highcharts...).
 
-## 1. Core runtime
+---
 
-| Thư viện | Version | Mục đích |
-|----------|---------|----------|
-| `react` | 18.3.1 | UI library |
-| `react-dom` | 18.3.1 | DOM render |
-| `typescript` | 4.5.4 (devDep) | Type system |
-| `vite` | 7.1.3 (devDep) | Dev server + bundler |
-| `@vitejs/plugin-react` | 5.1.4 | JSX/Fast Refresh |
-| `vite-plugin-svgr` | 4.5.0 | Import SVG as component |
+## 1. Core stack
 
-> ⚠️ Note: `package.json` devDependencies có `@types/react 17.0.37` nhưng runtime là React 18 — lệch pha types (tech debt).
+### 1.1. Language & Framework
 
-## 2. Routing & Navigation
+| Package | Version | Vai trò |
+|---------|---------|---------|
+| `react` | 17.0.2 | Framework UI chính |
+| `react-dom` | 17.0.2 | Render React vào DOM |
+| `typescript` | 4.5.4 | Static typing |
+| `@types/react` | 17.0.37 | Type definitions |
+| `@types/react-dom` | 17.0.11 | Type definitions |
 
-| Thư viện | Version | Mục đích |
-|----------|---------|----------|
-| `react-router-dom` | 7.13.1 | SPA routing |
-| `react-cookie` | 4.1.1 | Cookie hook (đọc token) |
-| `universal-cookie` | 4.0.4 | Server/client cookie |
+> ⚠️ **React 17 vs 18**: Đang dùng React 17 — không có concurrent features (Suspense for data, automatic batching nâng cao, transitions). Nâng cấp lên 18 là technical debt cần cân nhắc. Xem [Part 14 — Risks](part-14-quality-risks.md).
 
-## 3. HTTP & API
+### 1.2. Build tool
 
-| Thư viện | Version | Mục đích |
-|----------|---------|----------|
-| `whatwg-fetch` | 3.6.2 | Fetch polyfill cho trình duyệt cũ |
-| `fetch-intercept` | 2.4.0 | Interceptor cho fetch (thêm header, xử lý 401) |
+| Package | Version | Vai trò |
+|---------|---------|---------|
+| `vite` | 8.0.7 | Dev server + production bundler |
+| `@vitejs/plugin-react` | 6.0.1 | React fast refresh + JSX |
+| `vite-plugin-svgr` | 5.2.0 | Import SVG as React component |
 
-> ⚠️ Không có `axios` trong dependency — toàn bộ HTTP dùng fetch + interceptor. Xem [Part 06](part-06-service-api.md).
+> Vừa migrate từ Webpack 5 sang Vite — xem [ADR-02](part-13-adr.md#adr-02--migrate-từ-webpack-sang-vite) cho lý do và hậu quả.
 
-## 4. State & Form
+---
 
-| Thư viện | Version | Mục đích |
-|----------|---------|----------|
-| `reborn-util` | 1.1.3 | Helper nội bộ (cookie, domain) |
-| `reborn-validation` | 1.0.5 | Validate form nội bộ |
-| `use-debounce` | 7.0.1 | Debounce hook |
+## 2. Routing & State Management
 
-> Không có Redux, Zustand, SWR, React Query, Formik, react-hook-form, yup, zod.
+| Package | Version | Vai trò |
+|---------|---------|---------|
+| `react-router-dom` | 6.2.1 | Client-side routing |
 
-## 5. UI component libraries
+**Không dùng:** Redux, MobX, Zustand, Jotai, Recoil. State management qua React Context API và custom hooks. Xem [ADR-04](part-13-adr.md#adr-04--không-dùng-redux-mà-dùng-context-api).
 
-| Thư viện | Version | Mục đích |
-|----------|---------|----------|
-| `ag-grid-community` | 30.2.1 | Bảng ảo (POS, kho, hoá đơn) |
-| `ag-grid-react` | 30.2.1 | Bindings React cho ag-grid |
-| `react-select` | 5.2.1 | Select dropdown nâng cao |
-| `react-select-async-paginate` | 0.7.2 | Select với async pagination |
-| `react-datepicker` | 8.10.0 | Chọn ngày/giờ |
-| `react-number-format` | 4.9.0 | Format tiền tệ |
-| `react-text-mask` | 5.4.3 | Mask nhập liệu (CCCD, SĐT) |
-| `text-mask-addons` | 3.8.0 | Addon mask |
-| `rc-slider` | 10.5.0 | Slider |
-| `react-color` | 2.19.3 | Chọn màu |
-| `react-colorful` | 5.6.1 | Chọn màu (nhẹ hơn) |
-| `react-big-calendar` | 1.6.8 | Lịch tháng / tuần |
-| `react-beautiful-dnd` | 13.1.1 | Kéo thả |
-| `react-grid-layout` | 1.4.4 | Dashboard grid |
-| `react-custom-scrollbars` | 4.2.1 | Custom scrollbar |
-| `react-toastify` | 11.0.5 | Toast notification |
-| `react-tooltip` | 4.2.21 | Tooltip cổ điển |
-| `react-popper-tooltip` | 4.3.1 | Tooltip với popper |
-| `@tippyjs/react` | 4.2.6 | Tooltip / popover nâng cao |
-| `react-overlays` | 5.1.1 | Modal / Dropdown primitives |
-| `swiper` | 11.2.10 | Slider / carousel |
-| `@fancyapps/ui` | 5.0.33 | Lightbox ảnh |
-| `react-to-print` | 2.14.13 | In tài liệu |
-| `react-circular-progressbar` | 2.1.0 | Progress bar vòng |
-| `reactour` | 1.19.0 | Tour hướng dẫn |
-| `qrcode.react` | 3.1.0 | Render QR code |
-| `material-icons` | 1.13.1 | Icon set |
+---
 
-## 6. Form editor / Rich content
+## 3. UI Library & Styling
 
-| Thư viện | Version | Mục đích |
-|----------|---------|----------|
-| `slate` | 0.91.3 | Rich text model |
-| `slate-react` | 0.91.3 | Bindings React |
-| `slate-history` | 0.86.0 | Undo/redo |
-| `slate-html-serializer` | 0.8.13 | HTML ↔ Slate |
-| `slate-hyperscript` | 0.77.0 | Factory node |
-| `dompurify` | 3.3.3 | Sanitize HTML |
-| `html-react-parser` | 3.0.15 | Parse HTML → React |
-| `escape-html` | 1.0.3 | Escape |
-| `is-url` | 1.2.4 | Detect URL |
-| `image-extensions` | 1.1.0 | Detect ảnh |
-| `is-hotkey` | 0.2.0 | Hotkey cho editor |
-| `jsoneditor` | 10.1.0 | JSON editor (cài đặt kỹ thuật) |
-| `react-json-view` | 1.21.3 | View JSON |
-| `react18-json-view` | 0.2.8 | View JSON (bản React 18) |
-| `emoji-mart` | 5.4.0 | Emoji picker |
-| `@emoji-mart/data` / `/react` | 1.1.0 | Data + wrapper |
+### 3.1. Styling
 
-## 7. Charts & Visualization
+| Package | Version | Vai trò |
+|---------|---------|---------|
+| `sass` | 1.45 | SCSS preprocessor |
+| `@emotion/css` | 11.10 | CSS-in-JS (cho dynamic styles) |
+| `material-icons` | 1.13 | Icon font |
 
-| Thư viện | Version | Mục đích |
-|----------|---------|----------|
-| `highcharts` | 9.3.2 | Chart engine |
-| `highcharts-react-official` | 3.1.0 | React wrapper |
-| `react-google-charts` | 4.0.1 | Google Charts |
-| `react-funnel-pipeline` | 0.2.0 | Biểu đồ funnel (pipeline CRM) |
-| `gantt-task-react` | 0.3.9 | Biểu đồ Gantt |
-| `reactflow` | 11.10.1 | Biểu đồ node (BPM, automation) |
+### 3.2. UI Components
 
-> Không dùng `recharts`, `chart.js`. Không có `leaflet` / bản đồ.
+| Package | Version | Vai trò |
+|---------|---------|---------|
+| `react-overlays` | 5.1 | Modal/popover primitives |
+| `react-popper-tooltip` | 4.3 | Tooltip positioning |
+| `@tippyjs/react` | 4.2 | Tooltip ready-to-use |
+| `react-toastify` | 8.1 | Toast notification |
+| `react-circular-progressbar` | 2.1 | Progress circle |
+| `rc-slider` | 10.5 | Slider control |
 
-## 8. Date & Time
+### 3.3. Form & Input
 
-| Thư viện | Version | Mục đích |
-|----------|---------|----------|
-| `moment` | 2.29.3 | Format / parse date (legacy) |
-| `date-fns` | 4.1.0 | Format / parse date (mới) |
+| Package | Version | Vai trò |
+|---------|---------|---------|
+| `react-select` | 5.2 | Select dropdown nâng cao |
+| `react-select-async-paginate` | 0.7 | Select với pagination + lazy load |
+| `react-datepicker` | 8.10 | Date picker |
+| `react-text-mask` | 5.4 | Input masking (SĐT, CMND...) |
+| `text-mask-addons` | 3.8 | Mask helpers |
+| `react-number-format` | 4.9 | Number input formatting |
+| `react-color` | 2.19 | Color picker (cho cấu hình badge nhóm) |
+| `react-colorful` | 5.6 | Color picker thay thế |
+| `react-cookie` | 4.1 | Đọc/ghi cookie |
+| `universal-cookie` | 4.0 | Cookie helper SSR-friendly |
 
-> Đồng thời có `moment` + `date-fns` → bundle dư thừa. `vite.config.ts` tự viết plugin `momentLocaleStrip` bỏ locale không cần → tiết kiệm ~250KB.
+### 3.4. Layout & Drag-drop
 
-## 9. BPM & Workflow
+| Package | Version | Vai trò |
+|---------|---------|---------|
+| `react-grid-layout` | 1.4 | Drag-drop dashboard |
+| `react-beautiful-dnd` | 13.1 | Drag-drop list (kanban) |
+| `react-custom-scrollbars` | 4.2 | Custom scrollbar |
+| `react-resizable` | (transitive) | Resizable panels |
 
-| Thư viện | Version | Mục đích |
-|----------|---------|----------|
-| `bpmn-js` | 17.8.1 | BPMN 2.0 diagram |
-| `bpmn-js-properties-panel` | 5.17.1 | Properties panel BPMN |
-| `camunda-bpmn-moddle` | 7.0.1 | Camunda extension |
-| `react-bpmn` | 0.2.0 | Wrapper React |
-| `@bpmn-io/form-js` | 1.17.0 | BPM Form engine |
-| `@bpmn-io/form-js-editor` | 1.15.1 | Form editor |
-| `@bpmn-io/form-js-viewer` | 1.15.0 | Form viewer |
-| `@bpmn-io/properties-panel` | 3.24.0 | Properties panel shared |
-| `formula-functionizer` | 1.0.4 | Compile formula |
+---
 
-## 10. Auth & Security
+## 4. Data Visualization & Tables
 
-| Thư viện | Version | Mục đích |
-|----------|---------|----------|
-| `@azure/msal-browser` | 3.7.0 | Microsoft Auth (OAuth2) |
-| `@azure/msal-react` | 2.0.9 | Wrapper React |
-| `@fingerprintjs/fingerprintjs` | 5.0.1 | Device fingerprint |
-| `fingerprintjs` | 0.5.3 | (Bản cũ — trùng lặp) |
-| `object-hash` | 3.0.0 | Hash object |
+### 4.1. Tables
 
-## 11. Integration (3rd party)
+| Package | Version | Vai trò |
+|---------|---------|---------|
+| `ag-grid-community` | 30.2.1 | Bảng dữ liệu lớn (virtual scroll) |
+| `ag-grid-react` | 30.2.1 | React wrapper cho ag-grid |
 
-| Thư viện | Version | Mục đích |
-|----------|---------|----------|
-| `firebase` | 9.16.0 | FCM push notification |
-| `firebase-config` | 1.0.0 | Cấu hình nội bộ |
-| `react-facebook-login` | 4.1.1 | Login FB (legacy) |
-| `jssip` / `sip.js` | 3.10.1 / 0.8.3 | WebRTC SIP (call center) |
+> Dùng cho mọi page có bảng > 100 dòng (Customer list, Invoice list, Inventory). Xem [ADR-08](part-13-adr.md#adr-08--ag-grid-cho-bảng-lớn).
 
-## 12. File, Image, Office
+### 4.2. Charts
 
-| Thư viện | Version | Mục đích |
-|----------|---------|----------|
-| `exceljs` | 4.3.0 | Export Excel (xlsx) |
-| `xlsx` | 0.18.5 | Đọc Excel |
-| `file-saver` | 2.0.5 | Save as |
-| `favicons` | 7.2.0 | Generate favicon |
-| `sharp` | 0.33.5 | Resize ảnh (build-time) |
-| `exif-js` | 2.3.0 | Đọc metadata ảnh |
-| `react-doc-viewer` | 0.1.5 | View PDF/Doc |
+| Package | Version | Vai trò |
+|---------|---------|---------|
+| `highcharts` | 9.3 | Chart library chính (line/bar/pie/heatmap) |
+| `highcharts-react-official` | 3.1 | React wrapper |
+| `react-google-charts` | 4.0 | Backup chart library |
+| `react-funnel-pipeline` | 0.2 | Funnel chart cho sales pipeline |
+| `gantt-task-react` | 0.3 | Gantt chart cho project mgmt |
 
-## 13. i18n & Locale
+### 4.3. Carousel & Slider
 
-| Thư viện | Version | Mục đích |
-|----------|---------|----------|
-| `i18next` | 23.11.4 | Core i18n |
-| `react-i18next` | 14.1.1 | Hooks cho React |
+| Package | Version | Vai trò |
+|---------|---------|---------|
+| `swiper` | 11.2.10 | Carousel chính |
+| `react-big-calendar` | 1.6 | Lịch tháng/tuần (booking, event) |
 
-## 14. Tooling / Lint / Format
+---
 
-| Thư viện | Version | Mục đích |
-|----------|---------|----------|
-| `eslint` | 8.5.0 | Lint |
-| `@typescript-eslint/*` | 5.8.0 | Rule TS |
-| `eslint-plugin-react` | 7.27.1 | React rule |
-| `eslint-plugin-react-hooks` | 4.3.0 | Hook rule |
-| `prettier` | 2.5.1 | Format |
-| `husky` | 7.0.4 | Git hook |
-| `lint-staged` | 12.1.3 | Lint trên staged file |
-| `playwright` | 1.59.1 (devDep) | E2E test |
+## 5. Specialized Modules
 
-## 15. Scripts
+### 5.1. Workflow / BPM
 
-🟢 Từ `package.json`:
+| Package | Version | Vai trò |
+|---------|---------|---------|
+| `bpmn-js` | 17.8 | BPMN diagram editor |
+| `bpmn-js-properties-panel` | 5.17 | Properties editor cho BPMN |
+| `@bpmn-io/form-js` | 1.13 | Form builder |
+| `@bpmn-io/form-js-editor` | 1.13 | Form editor visual |
+| `@bpmn-io/properties-panel` | 3.25 | Form properties panel |
+| `camunda-bpmn-moddle` | 7.0 | Camunda BPMN extensions |
+| `react-bpmn` | 0.2 | React wrapper |
+| `reactflow` | 11.10 | Flow diagram (alternative cho BPMN) |
+| `formula-functionizer` | 1.0 | Eval formula trong form |
 
+> Module **BPM** (`pages/BPM/`) là một sub-app khá lớn dùng Camunda BPMN engine. Backend tương ứng ở `/bpmapi`.
+
+### 5.2. Rich Text Editor (Slate)
+
+| Package | Version | Vai trò |
+|---------|---------|---------|
+| `slate` | 0.91 | Rich text core |
+| `slate-react` | 0.91 | React bindings |
+| `slate-history` | 0.86 | Undo/redo |
+| `slate-html-serializer` | 0.8 | Serialize ↔ HTML |
+| `slate-hyperscript` | 0.77 | DSL helpers |
+
+> Dùng cho email marketing, mô tả sản phẩm, ghi chú dài.
+
+### 5.3. Call Center & Communication
+
+| Package | Version | Vai trò |
+|---------|---------|---------|
+| `jssip` | 3.10 | SIP signaling cho VoIP |
+| `sip.js` | 0.8 | SIP alternative |
+
+> Module `pages/CallCenter/` + `src/webrtc/` dùng để tích hợp tổng đài ảo (Viettel / VoIP). Xem [Part 09 — Integration](part-09-integration.md).
+
+### 5.4. File handling
+
+| Package | Version | Vai trò |
+|---------|---------|---------|
+| `xlsx` | 0.18 | Đọc/ghi Excel (cho import/export) |
+| `exceljs` | 4.3 | Excel nâng cao (style, formula) |
+| `file-saver` | 2.0 | Trigger download file |
+| `react-doc-viewer` | 0.1.5 | Xem PDF/Word/Excel inline |
+| `react-to-print` | 2.14 | In hóa đơn |
+| `qrcode.react` | 3.1 | Generate QR |
+| `exif-js` | 2.3 | Đọc metadata ảnh |
+| `image-extensions` | 1.1 | List image MIME types |
+| `is-url` | 1.2 | URL validation |
+| `escape-html` | 1.0 | XSS escape |
+
+### 5.5. Date & Time
+
+| Package | Version | Vai trò |
+|---------|---------|---------|
+| `moment` | 2.29 | Date library cũ |
+| `date-fns` | 4.1 | Date library mới (đang migrate?) |
+
+> Đang có **2 date library cùng tồn tại** — đây là technical debt nhỏ. Nên thống nhất về `date-fns` (lighter, modular, immutable). Xem [Part 14 — Risks](part-14-quality-risks.md).
+
+---
+
+## 6. Authentication & Security
+
+| Package | Version | Vai trò |
+|---------|---------|---------|
+| `@azure/msal-browser` | 3.7 | Microsoft auth (Outlook integration) |
+| `@azure/msal-react` | 2.0 | React wrapper |
+| `@fingerprintjs/fingerprintjs` | 5.0 | Browser fingerprint (anti-fraud) |
+| `fingerprintjs` | 0.5 | Legacy fingerprint |
+| `react-facebook-login` | 4.1 | Facebook OAuth |
+
+> Lưu ý: **không thấy library OAuth/OIDC chuyên dụng** — đăng nhập SSO của Reborn dùng cookie + redirect manual qua `pages/Login/index.tsx`.
+
+---
+
+## 7. Integration Libraries
+
+### 7.1. Firebase (Push Notification)
+
+| Package | Version | Vai trò |
+|---------|---------|---------|
+| `firebase` | 9.16 | Firebase Cloud Messaging cho push notification |
+
+**File config:** `src/firebase-config.ts`, `src/firebase-messaging-sw.js`
+
+### 7.2. Reborn internal libraries
+
+| Package | Version | Vai trò |
+|---------|---------|---------|
+| `reborn-util` | 1.1.3 | Helpers nội bộ Reborn (formatCurrency, getDomain, getCookie, getSearchParameters...) |
+| `reborn-validation` | 1.0.5 | Validation framework nội bộ (Validate function, IValidation type) |
+
+> 2 package này được publish riêng bởi đội Reborn và dùng chung cho các sản phẩm Reborn khác. Xem code trong `node_modules/reborn-util/` để hiểu API.
+
+---
+
+## 8. Testing & Quality
+
+### 8.1. Linting & Formatting
+
+| Package | Version | Vai trò |
+|---------|---------|---------|
+| `eslint` | 8.5 | Linter |
+| `@typescript-eslint/eslint-plugin` | 5.8 | TS rules |
+| `@typescript-eslint/parser` | 5.8 | TS parser |
+| `eslint-plugin-react` | 7.27 | React rules |
+| `eslint-plugin-react-hooks` | 4.3 | Hooks rules |
+| `eslint-config-prettier` | 8.3 | Prettier integration |
+| `eslint-plugin-prettier` | 4.0 | Prettier as ESLint |
+| `prettier` | 2.5 | Code formatter |
+
+### 8.2. Pre-commit
+
+| Package | Version | Vai trò |
+|---------|---------|---------|
+| `husky` | 7.0 | Git hooks |
+| `lint-staged` | 12.1 | Run lint on staged files |
+
+**Pre-commit hook:**
 ```json
-"scripts": {
-  "build": "vite build",
-  "dev": "vite --mode devlocal",
-  "locallaptop": "vite --mode locallaptop",
-  "build:dev": "vite build --mode dev",
-  "build:uat": "vite build --mode uat",
-  "build:prod": "vite build --mode prod",
-  "lint": "eslint --ext js,jsx,ts,tsx src/",
-  "lint:fix": "eslint --fix ...",
-  "type-check": "tsc --noEmit"
+"lint-staged": {
+  "*.{js,ts,tsx}": ["npm run lint:fix"]
 }
 ```
 
-## 16. Version Matrix — health
+### 8.3. Test (chưa có)
 
-| Chỉ số | Trạng thái | Ghi chú |
-|--------|-----------|---------|
-| React major | 18 | (React 19 đã ra) |
-| TypeScript major | 4.5 | (Hiện tại 5.x) |
-| Vite major | 7 | Mới, tốt |
-| ag-grid | 30 | (Hiện 31+) — xem changelog breaking |
-| moment | 2.29 | Legacy — nên migrate sang `date-fns` |
-| react-router-dom | 7 | Mới |
-| firebase | 9.16 | (Đã ra v10) |
-
-## Tham chiếu
-
-- Files: `package.json`, `vite.config.ts`, `tsconfig.json`.
+> ⚠️ **Quan sát:** Không có `vitest`, `jest`, `@testing-library/react`, hoặc `playwright` trong `devDependencies`. Có Playwright nhưng cài tách trong `docs/userguides/tooling/` cho mục đích chụp ảnh HDSD, không phải production test suite. Đây là **gap lớn** cần xử lý — xem [Part 14](part-14-quality-risks.md).
 
 ---
-*Hết Part 03. Xem tiếp [Part 04 — Routing & Navigation](part-04-routing-navigation.md).*
+
+## 9. Polyfill & Compatibility
+
+| Package | Version | Vai trò |
+|---------|---------|---------|
+| `whatwg-fetch` | 3.6 | fetch polyfill cho browser cũ |
+| `fetch-intercept` | 2.4 | Interceptor cho fetch (dùng cho auth header) |
+| `core-js` | (transitive) | ES polyfills |
+
+---
+
+## 10. Build & dev scripts
+
+`package.json`:
+
+```json
+"scripts": {
+  "dev": "vite --mode development",
+  "build": "vite build --mode production",
+  "build-beta": "vite build --mode staging",
+  "preview": "vite preview",
+  "lint": "eslint --ext js,jsx,ts,tsx src/",
+  "lint:fix": "eslint --fix --ext js,jsx,ts,tsx src/",
+  "prettier": "prettier --check ...",
+  "prettier:fix": "prettier --write ..."
+}
+```
+
+**Mode triggers env file:**
+
+- `development` → `.env.development`
+- `staging` → `.env.staging`
+- `production` → `.env.production`
+
+---
+
+## 11. Phân tích bundle size
+
+> ⚠️ **Quan sát hiện tại:** Sau khi build production:
+>
+> - `bundle/crm/js/index.<hash>.js` ≈ **20.7 MB raw / 5 MB gzip** ❗
+> - `bundle/crm/css/index.<hash>.css` ≈ **4.6 MB raw / 446 KB gzip**
+>
+> Đây là bundle **cực lớn** so với mức acceptable cho web app (thường < 1 MB raw). Lý do:
+>
+> 1. Quá nhiều thư viện UI (highcharts + ag-grid + bpmn-js + reactflow + slate + ...)
+> 2. **Chưa lazy load** đủ — manualChunks chỉ tách 3 vendor
+> 3. Một số module nặng (bpmn-js, slate, exceljs) không cần load trừ khi user vào page tương ứng
+
+**Đề xuất tối ưu** (chi tiết ở [Part 14](part-14-quality-risks.md)):
+
+1. Lazy load **bpmn-js** chỉ khi vào page BPM
+2. Lazy load **slate** chỉ khi mở rich text editor
+3. Lazy load **exceljs/xlsx** chỉ khi user bấm Export
+4. Lazy load **highcharts** chỉ khi vào trang báo cáo
+5. Tách thêm `manualChunks`: `editor`, `chart`, `bpmn`, `excel`
+6. Cân nhắc dynamic import cho route-level
+
+---
+
+## 12. Bảng tổng hợp dependencies theo nhóm
+
+| Nhóm | Số package | Tỷ lệ |
+|------|:----------:|:-----:|
+| Core (React/TS/Vite) | 6 | 5% |
+| Routing | 1 | 1% |
+| UI components | 15 | 13% |
+| Form & input | 12 | 10% |
+| Data viz & tables | 8 | 7% |
+| BPM | 9 | 8% |
+| Slate (rich text) | 5 | 4% |
+| Communication (SIP) | 2 | 2% |
+| File handling | 11 | 9% |
+| Date/time | 2 | 2% |
+| Auth/Security | 5 | 4% |
+| Firebase + Reborn util | 3 | 3% |
+| Lint/format | 8 | 7% |
+| Polyfill/compat | 3 | 3% |
+| Khác | ~30 | 25% |
+| **Tổng** | **~120** | **100%** |
+
+---
+
+## 13. Phụ thuộc vào dịch vụ Reborn nội bộ
+
+Ngoài npm package, frontend còn phụ thuộc các API/service nội bộ:
+
+| Service Reborn | Vai trò | URL prefix |
+|---------------|---------|-----------|
+| **SSO Reborn** | Đăng nhập, OAuth | `process.env.APP_AUTHENTICATOR_URL` |
+| **Cloud API** | Main backend | `process.env.APP_API_URL` |
+| **Biz API** | Microservices nghiệp vụ | `process.env.APP_BIZ_URL` |
+| **BPM Engine** | Workflow | `process.env.APP_BPM_URL` |
+| **Connect Service** | Tích hợp 3rd party | `process.env.APP_CONNECT_URL` |
+| **Upload Service** | Upload file | `process.env.APP_UPLOAD_URL` |
+| **Athena** | Analytics | `process.env.APP_ATHENA_URL` |
+
+---
+
+*Hết Part 03.*

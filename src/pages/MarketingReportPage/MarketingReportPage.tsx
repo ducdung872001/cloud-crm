@@ -3,7 +3,7 @@ import TitleAction from "components/titleAction/titleAction";
 import ReportPanel from "components/reportShared/ReportPanel";
 import Highcharts from "highcharts";
 import HighchartsReact from "highcharts-react-official";
-import moment from "moment";
+import { format, subMonths, startOfMonth, endOfMonth } from "date-fns";
 import { formatCurrency } from "reborn-util";
 import { CAMPAIGN_REPORTS, CHANNEL_COLORS, CHANNEL_OPTIONS, CHANNEL_REPORTS } from "./mockData";
 import { createChannelMixOptions, createChannelPerformanceOptions, createTrendChartOptions } from "./chartOptions";
@@ -19,8 +19,8 @@ export default function MarketingReportPage() {
   const [channel, setChannel] = useState("all");
   const [viewMode, setViewMode] = useState("campaign");
   const [dateRange, setDateRange] = useState<[string, string]>([
-    moment().subtract(5, "months").startOf("month").format("YYYY-MM-DD"),
-    moment().endOf("month").format("YYYY-MM-DD"),
+    format(startOfMonth(subMonths(new Date(), 5)), "yyyy-MM-dd"),
+    format(endOfMonth(new Date()), "yyyy-MM-dd"),
   ]);
 
   const channels = useMemo(() => {

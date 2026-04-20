@@ -848,7 +848,7 @@ export default function ModalAddWebhook(props: Record<string, unknown>) {
                     <div className="mapping-attribute">
                         {listAttribute && listAttribute.length > 0 ? 
                             listAttribute.map((item, index) => (
-                                <div key={index} className="item-mapping">
+                                <div key={item.id ?? index} className="item-mapping">
                                  
                                   <div className="form-group">
                                     <SelectCustom

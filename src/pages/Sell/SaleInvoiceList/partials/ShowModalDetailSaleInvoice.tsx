@@ -118,7 +118,7 @@ export default function ShowModalDetailSaleInvoice(props: ShowModalDetailSaleInv
       // Fetch card information
       const cardIds = mergedList.map((item: Record<string, unknown>) => item.cardId).filter((id): id is number => id !== undefined && id !== null);
 
-      const cardMap: Record<number, { name: string; avatar: string; price: number }> = {};
+      let cardMap: Record<number, { name: string; avatar: string; price: number }> = {};
 
       if (cardIds.length > 0) {
         const cardRes = await CardService.list({});

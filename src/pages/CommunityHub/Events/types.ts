@@ -1,0 +1,203 @@
+// Event types cho phân hệ Sự kiện — Community Hub.
+// Prototype dùng localStorage; BE sau này thay bằng API calls (xem docs/events/backend-spec.md).
+//
+// ── CHUNG (generic) ─────────────────────────────────────────────────────────
+// Tất cả types dưới đây là CHUNG — dùng cho mọi ngành.
+// Types ĐẶC THÙ (fitness/spa) nằm ở types.industry.ts.
+
+export type EventStatus = "draft" | "published" | "ongoing" | "ended" | "cancelled";
+
+export type RegistrationStatus =
+  | "pending" // mới đăng ký, chưa xác nhận
+  | "confirmed" // admin đã duyệt / đã thanh toán
+  | "checked_in" // đã check-in tại sự kiện
+  | "cancelled" // huỷ đăng ký
+  | "no_show"; // không đến
+
+export interface EventVenue {
+  name: string; // VD: "Trung tâm Hội nghị Quốc gia"
+  address: string;
+  city?: string;
+  mapUrl?: string; // Google Maps share link
+  isOnline?: boolean;
+  onlineUrl?: string; // Zoom/Meet link
+}
+
+export interface EventContactPerson {
+  name: string;
+  phone: string;
+  email?: string;
+  role?: string; // VD: "Trưởng BTC"
+}
+
+// ── Dynamic Fields — admin tự cấu hình trường trên form đăng ký ────────────
+export type DynamicFieldType =
+  | "text"
+  | "textarea"
+  | "number"
+  | "select"
+  | "checkbox"
+  | "date"
+  | "email"
+  | "phone";
+
+export interface DynamicFieldDefinition {
+  id: string; // unique trong event
+  label: string; // nhãn hiển thị
+  type: DynamicFieldType;
+  required: boolean;
+  placeholder?: string;
+  options?: string[]; // cho type "select"
+  defaultValue?: string;
+  order: number; // thứ tự hiển thị
+}
+
+// ── Add-on Line Item — sản phẩm/dịch vụ bổ sung khi đăng ký ──────────────
+export interface EventAddOnItem {
+  id: string;
+  name: string;
+  description?: string;
+  unitPrice: number; // VND
+  unit: string; // "lần", "suất", "cái"...
+  maxQty?: number; // giới hạn mỗi người (để trống = không giới hạn)
+  imageUrl?: string; // ảnh minh hoạ (data URL / URL)
+}
+
+// ── Payment Proof — bằng chứng thanh toán ─────────────────────────────────
+export type PaymentStatus =
+  | "not_required" // event miễn phí
+  | "pending" // chưa upload
+  | "submitted" // đã upload, chờ duyệt
+  | "approved" // admin đã duyệt
+  | "rejected"; // admin từ chối
+
+export interface PaymentProof {
+  imageUrl: string; // data URL (prototype) / URL (production)
+  submittedAt: string; // ISO
+  status: PaymentStatus;
+  reviewedAt?: string;
+  reviewedBy?: string;
+  rejectReason?: string;
+}
+
+// ── Check-in / Check-out Record ───────────────────────────────────────────
+export interface CheckInOutRecord {
+  checkedInAt: string; // ISO
+  checkedOutAt?: string; // ISO, null nếu chưa check-out
+  checkedInBy?: string; // tên admin
+  selectedDate?: string; // ngày nào của event multi-day (YYYY-MM-DD)
+}
+
+// ── Selected Add-on ───────────────────────────────────────────────────────
+export interface SelectedAddOn {
+  addOnId: string;
+  qty: number;
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+// EVENT ENTITY
+// ═══════════════════════════════════════════════════════════════════════════
+export interface EventEntity {
+  id: string;
+  slug: string; // dùng cho share URL, unique
+  title: string;
+  description: string; // mô tả ngắn (plain text)
+  content: string; // nội dung chi tiết HTML từ RebornEditor
+  coverImageUrl?: string;
+
+  // Thời gian sự kiện
+  startDate: string; // ISO datetime
+  endDate: string;
+
+  // Thời gian mở đăng ký (có thể khác thời gian sự kiện)
+  registrationOpenDate: string;
+  registrationCloseDate: string;
+
+  // Địa điểm + liên hệ
+  venue: EventVenue;
+  contactPerson: EventContactPerson;
+
+  // Sức chứa + giá vé
+  maxAttendees?: number; // để trống = không giới hạn
+  ticketPrice?: number; // VND, 0 hoặc undefined = free
+
+  // Trạng thái
+  status: EventStatus;
+  publishedAt?: string;
+
+  // Metadata
+  tags?: string[];
+  category?: string; // VD: "workshop", "hội thảo", "lớp học", "networking"
+  createdAt: string;
+  updatedAt: string;
+  createdBy?: string; // user id / tên
+
+  // ── CHUNG: Mở rộng ────────────────────────────────
+  dynamicFields?: DynamicFieldDefinition[]; // trường tùy biến trên form đăng ký
+  addOnItems?: EventAddOnItem[]; // sản phẩm/dịch vụ bán thêm
+  galleryImageUrls?: string[]; // ảnh giới thiệu hoạt động
+  requirePaymentProof?: boolean; // bắt buộc upload bằng chứng thanh toán
+  selectableDates?: string[]; // multi-day: ngày khách có thể chọn (YYYY-MM-DD)
+}
+
+export interface EventRegistration {
+  id: string;
+  eventId: string;
+  eventSlug: string; // để tra cứu
+
+  // Thông tin người đăng ký
+  fullName: string;
+  phone: string;
+  email?: string;
+  company?: string;
+  note?: string;
+
+  // Trạng thái
+  status: RegistrationStatus;
+  ticketCode?: string; // sinh khi confirm
+  registeredAt: string;
+  confirmedAt?: string;
+  checkedInAt?: string;
+
+  // Chuyển thành customer/member
+  convertedToCustomerId?: string; // id trong CustomerService
+  convertedAt?: string;
+
+  // Nguồn
+  source: "public_portal" | "manual" | "import";
+  utmSource?: string;
+  utmCampaign?: string;
+
+  // ── CHUNG: Mở rộng ────────────────────────────────
+  dynamicFieldValues?: Record<string, string>; // fieldId → giá trị
+  selectedAddOns?: SelectedAddOn[]; // sản phẩm/dịch vụ đã chọn
+  totalAmount?: number; // tổng tiền (vé + add-on)
+  paymentProof?: PaymentProof; // bằng chứng thanh toán
+  selectedDates?: string[]; // ngày tham gia (multi-day)
+  checkInOutRecords?: CheckInOutRecord[]; // lịch sử check-in/out (thay thế checkedInAt đơn giản)
+}
+
+// Helper type cho form create/edit
+export type EventFormData = Omit<
+  EventEntity,
+  "id" | "slug" | "createdAt" | "updatedAt" | "publishedAt" | "status"
+> & {
+  status?: EventStatus;
+};
+
+// Stat tổng quan cho dashboard event
+export interface EventStats {
+  totalRegistrations: number;
+  pendingCount: number;
+  confirmedCount: number;
+  checkedInCount: number;
+  cancelledCount: number;
+  convertedToMemberCount: number;
+  fillRate: number; // 0..1, so với maxAttendees
+  conversionRate: number; // members / registrations
+
+  // ── CHUNG: Mở rộng ────────────────────────────────
+  totalRevenue: number; // tổng tiền từ đăng ký không bị huỷ
+  paymentPendingCount: number; // chờ duyệt thanh toán
+  paymentApprovedCount: number; // đã duyệt thanh toán
+}

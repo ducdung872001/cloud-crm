@@ -27,7 +27,6 @@ import WorkCategoryService from "services/WorkCategoryService";
 import BeautyBranchService from "services/BeautyBranchService";
 import EmployeeService from "services/EmployeeService";
 import DepartmentService from "services/DepartmentService";
-import { set } from "lodash";
 
 interface SelectLookupProps {
   id?: string;
@@ -210,7 +209,7 @@ export default function SelectLookup(props: SelectLookupProps) {
     }
     if (response.code === 0) {
       const dataDetailLookup = response.result;
-      const data_lookup = {
+      let data_lookup = {
         value: dataDetailLookup?.id,
         label:
           lookup == "reason"
@@ -329,7 +328,7 @@ export default function SelectLookup(props: SelectLookupProps) {
             setListColumn(
               listColumn.map((el, index) => {
                 if (index === columnIndex) {
-                  const newItem = {
+                  let newItem = {
                     ...el,
                     options: [item],
                   };
@@ -349,7 +348,7 @@ export default function SelectLookup(props: SelectLookupProps) {
     let orgId = 0;
     if (lookup == "contact_org") {
       // orgId = dataRow[rowIndex]
-      const itemOrg = dataRow[rowIndex].find(
+      let itemOrg = dataRow[rowIndex].find(
         (el) => el.type === "binding" && el.lookup === "supplier" && el.listBindingField.find((ell) => ell.value === "contactOrg")
       );
       orgId = itemOrg?.value || 0;

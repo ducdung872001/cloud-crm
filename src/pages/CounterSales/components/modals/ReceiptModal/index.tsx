@@ -9,7 +9,6 @@ import { showToast } from "@/utils/common";
 import { PAY_METHODS } from "../PayModal";
 import { QRCodeCanvas } from "qrcode.react";
 import { getActiveShiftId } from "utils/ShiftStorage";
-import { formatDateCustom } from "utils/dateUtils";
 
 // ── Paper size config (dùng chung với InvoiceReceiptModal) ───────────────────
 
@@ -60,14 +59,10 @@ interface ReceiptModalProps {
   paidAmount?: number;
   /** Số tiền còn nợ (từ PayModal) — ghi vào invoice khi xác nhận */
   debtAmount?: number;
-  /** Tiền khách đưa thực tế (hiển thị trên biên lai) */
-  cashGivenAmount?: number;
   /** Tên khách hàng — truyền vào body để billing dùng khi tạo debt record */
   customerName?: string;
   /** Kho bán hàng (warehouseId) — truyền vào inventoryId để backend lưu */
   warehouseId?: number;
-  /** Phí ship (người nhận trả) */
-  shippingFee?: number;
 }
 
 // ── Component ─────────────────────────────────────────────────────────────────
@@ -79,10 +74,8 @@ export default function ReceiptModal({
   note = "",
   paidAmount,
   debtAmount = 0,
-  cashGivenAmount,
   customerName = "",
   warehouseId,
-  shippingFee = 0,
 }: ReceiptModalProps) {
   const printRef = useRef<HTMLDivElement>(null);
   const qrRef    = useRef<HTMLDivElement>(null);
@@ -97,40 +90,15 @@ export default function ReceiptModal({
   const [isRevealingEmail, setIsRevealingEmail]       = useState(false);
   const [isSending, setIsSending]                     = useState(false);
 
-  // Snapshot phí ship khi mở modal — tránh bị reset bởi onPaymentSuccess ở parent
-  const snapshotShippingFeeRef = useRef(0);
-  useEffect(() => {
-    if (open) snapshotShippingFeeRef.current = shippingFee;
-  }, [open]);
-  const lockedShippingFee = open ? snapshotShippingFeeRef.current : shippingFee;
-
-  // Snapshot cashGivenAmount khi mở modal — tránh bị mất giá trị khi parent re-render
-  const snapshotCashGivenRef = useRef(0);
-  useEffect(() => {
-    if (open && cashGivenAmount && cashGivenAmount > 0) {
-      snapshotCashGivenRef.current = cashGivenAmount;
-    }
-  }, [open, cashGivenAmount]);
-
   // ── Tính tiền ───────────────────────────────────────────────────────────────
   const subtotal      = cartItems.reduce((s, c) => s + c.price * c.qty, 0);
-  // VAT bóc tách từ giá bán (đã bao gồm thuế) — KHÔNG cộng vào tổng thanh toán
-  const taxAmount     = cartItems.reduce((s, c) => {
-    if (!c.taxRate) return s;
-    const gross = c.price * c.qty;
-    return s + Math.round((gross * c.taxRate) / (100 + c.taxRate));
-  }, 0);
   const totalDiscount = couponDiscount + promoDiscount;
-  const total         = subtotal - totalDiscount + lockedShippingFee;
+  const total         = subtotal - totalDiscount;
   const fmt           = (n: number) => n.toLocaleString("vi") + " đ";
 
   // Tiền thực thu và nợ — dùng giá trị từ PayModal nếu có, fallback total/0
-  const effectivePaid = (paidAmount != null && paidAmount > 0) ? paidAmount : total;
+  const effectivePaid = paidAmount !== undefined ? paidAmount : total;
   const effectiveDebt = debtAmount ?? 0;
-  // Tiền khách đưa thực tế (hiển thị trên biên lai)
-  // Ưu tiên cashGivenAmount snapshot (số tiền khách thực đưa) > effectivePaid > total
-  const resolvedCashGiven = (cashGivenAmount != null && cashGivenAmount > 0) ? cashGivenAmount : snapshotCashGivenRef.current;
-  const displayCashGiven = resolvedCashGiven > 0 ? resolvedCashGiven : effectivePaid;
 
   const now     = new Date();
   const dateStr = `${now.getDate().toString().padStart(2,"0")}/${(now.getMonth()+1).toString().padStart(2,"0")}/${now.getFullYear()}`;
@@ -160,7 +128,7 @@ export default function ReceiptModal({
         debt:         effectiveDebt,   // còn nợ (từ PayModal)
         amount:       total,           // tổng trước giảm giá (dùng subtotal nếu cần)
         discount:     totalDiscount,
-        vatAmount:    taxAmount,
+        vatAmount:    0,
         amountCard:   0,
         paymentType:  1,               // 1 = tiền mặt/mặc định
 
@@ -178,7 +146,7 @@ export default function ReceiptModal({
         ...(warehouseId ? { inventoryId: warehouseId } : {}),
 
         // ── Thời gian ────────────────────────────────────────────────────────
-        receiptDate:  formatDateCustom(new Date(), "yyyy-MM-dd'T'HH:mm:ss"),
+        receiptDate:  new Date().toISOString(),
 
         // ── Khác ─────────────────────────────────────────────────────────────
         account:      "[]",
@@ -483,20 +451,6 @@ ${html}
               <span style={{ color:"var(--muted)" }}>Giảm giá</span>
               <span className="receipt__discount" style={{ fontWeight:700, color:"var(--red,#e53e3e)" }}>{totalDiscount > 0 ? `−${fmt(totalDiscount)}` : "−0 đ"}</span>
             </div>
-            {taxAmount > 0 && (
-              <div className="receipt__totals-row"
-                style={{ display:"flex", justifyContent:"space-between", padding:"3px 0", fontSize:"1.3rem" }}>
-                <span style={{ color:"var(--muted)" }}>Thuế suất</span>
-                <span style={{ fontWeight:700, color:"#d97706" }}>+{fmt(taxAmount)}</span>
-              </div>
-            )}
-            {lockedShippingFee > 0 && (
-              <div className="receipt__totals-row"
-                style={{ display:"flex", justifyContent:"space-between", padding:"3px 0", fontSize:"1.3rem" }}>
-                <span style={{ color:"var(--muted)" }}>Phí ship</span>
-                <span style={{ fontWeight:700, color:"var(--blue,#0369a1)" }}>+{fmt(lockedShippingFee)}</span>
-              </div>
-            )}
             <div className="receipt__totals-row receipt__totals-row--grand"
               style={{ display:"flex", justifyContent:"space-between", padding:"8px 0",
                        fontSize:"1.5rem", fontWeight:900,
@@ -510,12 +464,12 @@ ${html}
                 <div className="receipt__totals-row"
                   style={{ display:"flex", justifyContent:"space-between", padding:"3px 0", fontSize:"1.3rem" }}>
                   <span style={{ color:"var(--muted)" }}>Tiền khách đưa</span>
-                  <span style={{ fontWeight:700 }}>{fmt(displayCashGiven)}</span>
+                  <span style={{ fontWeight:700 }}>{fmt(effectivePaid)}</span>
                 </div>
                 <div className="receipt__totals-row"
                   style={{ display:"flex", justifyContent:"space-between", padding:"3px 0", fontSize:"1.3rem" }}>
                   <span style={{ color:"var(--muted)" }}>Tiền thối</span>
-                  <span className="receipt__change" style={{ fontWeight:800, color:"var(--blue,#3182ce)" }}>{fmt(Math.max(0, displayCashGiven - total))}</span>
+                  <span className="receipt__change" style={{ fontWeight:800, color:"var(--blue,#3182ce)" }}>{fmt(Math.max(0, effectivePaid - total))}</span>
                 </div>
                 {effectiveDebt > 0 && (
                   <div className="receipt__totals-row"

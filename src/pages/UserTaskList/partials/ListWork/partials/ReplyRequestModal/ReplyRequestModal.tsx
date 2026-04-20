@@ -536,7 +536,7 @@ export default function ReplyRequestModal({ onShow, onHide, data }) {
                         {listAttactmentRequest && listAttactmentRequest.length > 0
                           ? listAttactmentRequest.map((item, index) => (
                               <div
-                                key={index}
+                                key={item.id ?? index}
                                 className="item-attachment"
                                 onDoubleClick={() => {
                                   window.open(
@@ -645,7 +645,7 @@ export default function ReplyRequestModal({ onShow, onHide, data }) {
                         {listAttactment && listAttactment.length > 0
                           ? listAttactment.map((item, index) => (
                               <div
-                                key={index}
+                                key={item.id ?? index}
                                 className="item-attachment"
                                 onDoubleClick={() => {
                                   window.open(

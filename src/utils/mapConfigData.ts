@@ -170,7 +170,7 @@ export function mapConfigData(
         rawValue = safeParseJson(rawValue);
         if (rawValue !== undefined) {
           if (Array.isArray(rawValue)) {
-            const _rawValue = rawValue.map((item) => {
+            let _rawValue = rawValue.map((item) => {
               if (item) {
                 return {
                   url: item || "",

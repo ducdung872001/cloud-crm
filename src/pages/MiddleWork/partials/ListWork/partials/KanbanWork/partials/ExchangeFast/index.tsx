@@ -163,7 +163,7 @@ export default function ExchangeFast(props: IExchangeFastProps) {
   };
 
   useEffect(() => {
-    const isMounted = true;
+    let isMounted = true;
     if (params.page === 1) {
       scrollToLastMessage();
     }

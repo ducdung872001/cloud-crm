@@ -221,7 +221,7 @@ export default function ModalConditionalStartEvent({ onShow, onHide, dataNode, p
 
     if (response.code === 0) {
       const dataOption = response.result?.items;
-      const listVar = [];
+      let listVar = [];
       dataOption &&
         dataOption.length > 0 &&
         dataOption.map((item) => {
@@ -1257,7 +1257,7 @@ export default function ModalConditionalStartEvent({ onShow, onHide, dataNode, p
                                       item.rule.length > 0 &&
                                       item.rule.map((el, index) => {
                                         return (
-                                          <Fragment key={index}>
+                                          <Fragment key={el.id ?? index}>
                                             <div className="item__rule">
                                               <div className="lst__info--rule">
                                                 <div className="info-item" style={!el.fieldName ? { width: "100%" } : {}}>

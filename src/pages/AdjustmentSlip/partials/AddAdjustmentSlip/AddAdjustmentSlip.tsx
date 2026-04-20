@@ -87,7 +87,7 @@ export default function AddAdjustmentSlip(props: IAddAdjustmentSlipProps) {
   }, [onShow, id]);
 
   useEffect(() => {
-    setLstBatchNoProduct(lstProducts.map((item) => item.id));
+    setLstBatchNoProduct(lstProducts.map((item) => item.batchNo));
   }, [lstProducts]);
 
   const [listInventory, setListInventory] = useState<Record<string, unknown>[]>([]);
@@ -148,9 +148,9 @@ export default function AddAdjustmentSlip(props: IAddAdjustmentSlipProps) {
     if (!data?.length) return;
     const converted = data.map((item) => ({
       id: item.id ?? 0,
-      productId: item.id ?? item.productId,
-      productName: item.name ?? item.productName ?? "",
-      productAvatar: item.avatar ?? item.productAvatar ?? "",
+      productId: item.productId ?? item.productId,
+      productName: item.productName ?? "",
+      productAvatar: item.productAvatar ?? "",
       batchNo: item.batchNo ?? "",
       unitId: item.unitId ?? null,
       unitName: item.unitName ?? (item.unit?.name ?? ""),
@@ -162,8 +162,8 @@ export default function AddAdjustmentSlip(props: IAddAdjustmentSlipProps) {
       inventoryName: item.inventoryName ?? dataInventory?.label ?? "",
     }));
     setLstProducts((prev) => {
-      const existKeys = new Set(prev.map((p) => p.productId));
-      return [...prev, ...converted.filter((c) => !existKeys.has(c.productId))];
+      const existKeys = new Set(prev.map((p) => `${p.productId}_${p.batchNo}`));
+      return [...prev, ...converted.filter((c) => !existKeys.has(`${c.productId}_${c.batchNo}`))];
     });
   };
 

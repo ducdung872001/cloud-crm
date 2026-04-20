@@ -131,8 +131,8 @@ export default function DetailProject() {
 
   const getProjectAttributeFormula = (attributes) => {
     // let attributeValue = attributes ? JSON.parse(attributes)?.formula : "";
-    const attributeValue = "";
-    const attrObj = {};
+    let attributeValue = "";
+    let attrObj = {};
     (projectExtraInfos || []).map((item, idx) => {
       if (item.datatype == "number") {
         attrObj["projectAttribute_" + convertToId(item.attributeName)] = +item.attributeValue;

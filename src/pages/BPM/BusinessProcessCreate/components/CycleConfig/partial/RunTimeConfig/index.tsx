@@ -113,7 +113,7 @@ const RunTimeConfig: React.FC<TimeConfigBoxProps> = ({
       {config?.length > 0 ? (
         <>
           {config.map((item_config, index) => (
-            <div className="box_setting_time" key={index}>
+            <div className="box_setting_time" key={item_config.id ?? index}>
               {config?.length > 1 ? (
                 <div className="icon-delete">
                   <Icon

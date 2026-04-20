@@ -69,7 +69,7 @@ export default function MultiChannelConfiguration() {
 
                 <div>
                     {inventory.map((item, index) => (
-                        <div key={index} className="item-inventory">
+                        <div key={item.id ?? index} className="item-inventory">
                             <div>
                                 <span style={{fontSize: 14, fontWeight: '600'}}>{item.lable}</span>
                                 <div>
@@ -146,7 +146,7 @@ export default function MultiChannelConfiguration() {
 
                 <div>
                     {dataPrice.map((item, index) => (
-                        <div key={index} className="item-price">
+                        <div key={item.id ?? index} className="item-price">
                             <div>
                                 <span style={{fontSize: 14, fontWeight: '600'}}>{item.lable}</span>
                                 <div>

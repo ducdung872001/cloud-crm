@@ -54,7 +54,7 @@ export default function ModalSaleDepartment(props: Record<string, unknown>) {
   };
 
   useEffect(() => {
-    const isMounted = true;
+    let isMounted = true;
     if (detailSaleflowSale) {
       setDetailDepartment({ value: detailSaleflowSale.departmentId, label: detailSaleflowSale.departmentName });
       const newEmployees =

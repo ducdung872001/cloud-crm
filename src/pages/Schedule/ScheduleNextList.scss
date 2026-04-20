@@ -1,0 +1,11 @@
+.page-schedule-next {
+  .link-employee,
+  .link-history {
+    color: var(--extra-color);
+    text-decoration: none;
+
+    &:hover {
+      color: var(--primary-color);
+    }
+  }
+}

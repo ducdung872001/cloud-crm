@@ -124,19 +124,8 @@ export default function ReturnDetailModal({
     { label: t("pageReturnProduct.detailStaff"),         value: item.staffName },
   ];
 
-  // Dùng items array nếu có, fallback parse productSummary cho dữ liệu cũ
-  const displayItems = item.items && item.items.length > 0
-    ? item.items
-    : (() => {
-        const qtyMatch = item.productSummary.match(/x(\d+)\)/);
-        const qty = qtyMatch ? +qtyMatch[1] : 1;
-        return [{
-          id: "legacy",
-          name: item.productSummary.replace(/\s*\(x\d+\)/, ""),
-          qty,
-          price: qty > 0 ? Math.round(item.refundAmount / qty) : item.refundAmount,
-        }];
-      })();
+  const qtyMatch = item.productSummary.match(/x(\d+)\)/);
+  const qty = qtyMatch ? +qtyMatch[1] : 1;
 
   return (
     <Modal
@@ -177,13 +166,11 @@ export default function ReturnDetailModal({
             </tr>
           </thead>
           <tbody>
-            {displayItems.map((di) => (
-              <tr key={di.id}>
-                <td>{di.name}</td>
-                <td style={{ textAlign: "center" }}>{di.qty}</td>
-                <td style={{ textAlign: "right", fontWeight: 700 }}>{fmt(di.qty * di.price)}</td>
-              </tr>
-            ))}
+            <tr>
+              <td>{item.productSummary.replace(/\s*\(x\d+\)/, "")}</td>
+              <td style={{ textAlign: "center" }}>{qty}</td>
+              <td style={{ textAlign: "right", fontWeight: 700 }}>{fmt(item.refundAmount)}</td>
+            </tr>
           </tbody>
         </table>
 

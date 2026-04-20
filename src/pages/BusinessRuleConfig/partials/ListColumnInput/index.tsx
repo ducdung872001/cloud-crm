@@ -12,7 +12,7 @@ import DecisionTableInputService from "services/DecisionTableInputService";
 import { showToast } from "utils/common";
 import Button from "components/button/button";
 import Icon from "components/icon";
-import { set } from "lodash";
+import set from "lodash/set";
 
 export default function ListColumnInput(props: Record<string, unknown>) {
   const { onShow, onHide, businessRuleId } = props;

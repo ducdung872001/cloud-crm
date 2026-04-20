@@ -33,7 +33,7 @@ export default function ChatBot() {
   const { setIsShowChatBot, isShowChatBot, isShowFeedback, avatar } = useContext(UserContext) as ContextType;
 
   useEffect(() => {
-    const isMounted = true;
+    let isMounted = true;
     if(isShowFeedback){
       setIsShowChatBot(false);
     }

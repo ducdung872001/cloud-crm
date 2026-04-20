@@ -378,7 +378,7 @@ export default function ModalAddComponent(props: ModalAddComponentProps) {
               <div className="list-field-item list-field-basic">
                 {listFieldBasic.map((field, index) => (
                   <FieldCustomize
-                    key={index}
+                    key={field.name || index}
                     field={field}
                     formData={formData}
                     handleUpdate={(value: unknown) => {

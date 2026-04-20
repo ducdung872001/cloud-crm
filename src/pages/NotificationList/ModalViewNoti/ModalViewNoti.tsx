@@ -98,17 +98,9 @@ export default function ModalViewNoti(props: Record<string, unknown>) {
           <ModalBody>
             <div className="container-noti-body">
               <div className="title-noti">
-                <span style={{ fontSize: 18, fontWeight: "600" }}>
-                  {data?.messageTitle || data?.title || "Thông báo"}
-                </span>
+                <span style={{ fontSize: 18, fontWeight: "600" }}>{data?.title}</span>
               </div>
-              <div className="content-noti">
-                {data?.messageText
-                  ? data.messageText
-                  : data?.content
-                  ? parser(String(data.content))
-                  : null}
-              </div>
+              <div className="content-noti">{data && parser(data.content)}</div>
             </div>
           </ModalBody>
           <ModalFooter actions={actions} />

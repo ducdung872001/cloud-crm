@@ -168,7 +168,7 @@ export default function ModalBusinessRuleTask({ onShow, onHide, dataNode, proces
       }
 
       if (result?.mappingInput && typeof JSON.parse(result?.mappingInput) == "object") {
-        const listMapInput = [];
+        let listMapInput = [];
         Object.keys(JSON.parse(result?.mappingInput)).map((item) => {
           listMapInput.push({
             mappingType: JSON.parse(result?.mappingInput)[item].includes("frm_")
@@ -186,7 +186,7 @@ export default function ModalBusinessRuleTask({ onShow, onHide, dataNode, proces
       }
 
       if (result?.mappingOutput && typeof JSON.parse(result?.mappingOutput) == "object") {
-        const listMapOutput = [];
+        let listMapOutput = [];
         Object.keys(JSON.parse(result?.mappingOutput)).map((item) => {
           listMapOutput.push({
             mappingType: JSON.parse(result?.mappingOutput)[item].includes("frm_")
@@ -311,7 +311,7 @@ export default function ModalBusinessRuleTask({ onShow, onHide, dataNode, proces
     e.preventDefault();
     // setIsSubmit(true);
     if (typeNode === "advance") {
-      const dataConfig = convertDataRow(dataConfigAdvanceEdit, dataNode?.id);
+      let dataConfig = convertDataRow(dataConfigAdvanceEdit, dataNode?.id);
 
       const body = {
         id: formDataAdvance.id ?? null,
@@ -340,13 +340,13 @@ export default function ModalBusinessRuleTask({ onShow, onHide, dataNode, proces
     }
 
     if (typeNode === "complex") {
-      const mappingInput = {};
+      let mappingInput = {};
       if (listMappingInput?.length) {
         listMappingInput.forEach((item) => {
           mappingInput[item.ruleField] = item.mappingField;
         });
       }
-      const mappingOutput = {};
+      let mappingOutput = {};
       if (listMappingOutput?.length) {
         listMappingOutput.forEach((item) => {
           // mappingOutput[item.mappingField] = item.ruleField;
@@ -1294,7 +1294,7 @@ export default function ModalBusinessRuleTask({ onShow, onHide, dataNode, proces
 
     if (response.code === 0) {
       const dataOption = response.result?.items;
-      const listVar = [];
+      let listVar = [];
       dataOption &&
         dataOption.length > 0 &&
         dataOption.map((item) => {
@@ -1343,7 +1343,7 @@ export default function ModalBusinessRuleTask({ onShow, onHide, dataNode, proces
 
     if (response.code === 0) {
       const dataOption = response.result?.filter((el) => el.code) || [];
-      const listForm = [];
+      let listForm = [];
       dataOption &&
         dataOption.length > 0 &&
         dataOption.map((item) => {
@@ -2354,7 +2354,7 @@ export default function ModalBusinessRuleTask({ onShow, onHide, dataNode, proces
                                             el.rule.length > 0 &&
                                             el.rule.map((il, index) => {
                                               return (
-                                                <Fragment key={index}>
+                                                <Fragment key={il.id ?? index}>
                                                   <div className="item__rule">
                                                     <div className="lst__info--rule">
                                                       <div className="info-item" style={!il.fieldName ? { width: "100%" } : {}}>

@@ -2,41 +2,28 @@
 sequenceDiagram
     autonumber
     participant SS as Sales Service
-    participant MQ as Event Bus<br/>(RabbitMQ/Kafka)
-    participant WD as Webhook Dispatcher
-    participant CFG as Webhook Config DB
-    participant EXT as Tenant External<br/>Endpoint
-    participant DLQ as Dead Letter Queue
-    participant RETRY as Retry Scheduler
-    participant LOG as Webhook Log DB
+    participant MQ as Message Queue
+    participant IS as Integration Service
+    participant DB as DB (subscriptions)
+    participant Q as Webhook Queue
+    participant W as Webhook Worker
+    participant TENANT as Tenant Endpoint
 
-    SS->>SS: Tạo đơn thành công (COMMIT)
-    SS->>MQ: publish event<br/>{ type: order.created,<br/>orderId, tenantId, payload }
-    MQ->>WD: consume event
-    activate WD
-    WD->>CFG: GET subscriptions<br/>WHERE event=order.created<br/>AND tenantId=?
-    CFG-->>WD: [ { url, secret, headers } ]
-    loop Mỗi subscription
-      WD->>WD: Build HMAC-SHA256 signature<br/>với secret
-      WD->>EXT: POST {url}<br/>X-Reborn-Signature: ...<br/>body=payload
-      alt 2xx response
-        EXT-->>WD: 200 OK
-        WD->>LOG: INSERT status=SUCCESS
-      else 4xx client error
-        EXT-->>WD: 400 Bad Request
-        WD->>LOG: INSERT status=FAILED_PERMANENT
-      else 5xx / timeout
-        EXT-->>WD: 500 / timeout
-        WD->>LOG: INSERT status=RETRYING<br/>attempt=1
-        WD->>DLQ: enqueue with delay<br/>(exp backoff 1m/5m/30m/2h)
-      end
-    end
-    deactivate WD
-    Note over DLQ,RETRY: Sau delay
-    RETRY->>DLQ: poll
-    DLQ-->>RETRY: failed message
-    RETRY->>WD: re-dispatch
-    alt Hết 5 lần retry
-      WD->>LOG: status=FAILED_PERMANENT
-      WD->>MQ: publish webhook.failed alert
+    SS->>SS: createInvoice() success
+    SS->>MQ: emit "invoice.created"<br/>{ tenantId, invoiceId, ... }
+    MQ->>IS: deliver event
+    IS->>DB: lookup webhook subscriptions<br/>WHERE tenantId AND event LIKE 'invoice.*'
+    DB-->>IS: [{ url, secret, event }]
+    IS->>Q: push job per subscription
+    Q->>W: pull job
+    W->>W: build payload
+    W->>W: sign HMAC-SHA256(secret, body)
+    W->>TENANT: POST <url><br/>X-Reborn-Signature: <hmac><br/>X-Reborn-Event: invoice.created<br/>X-Reborn-Delivery: <uuid>
+    alt 2xx response
+      TENANT-->>W: 200 OK
+      W->>DB: mark delivered
+    else non-2xx
+      TENANT-->>W: 5xx / timeout
+      W->>Q: schedule retry (1m, 5m, 30m, 2h, 12h)
+      Note over W,Q: After 5 fails → DLQ + alert admin
     end

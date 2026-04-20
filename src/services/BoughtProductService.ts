@@ -24,11 +24,7 @@ export default {
     return apiPost(urlsApi.boughtProduct.update, body);
   },
   insert: (body: IInsertedItem[], params?: Record<string, any>) => {
-    const normalizedBody = body.map((item) => ({
-      ...item,
-      quantity: item.quantity ?? item.qty,
-    }));
-    return apiPost(`${urlsApi.boughtProduct.insert}${convertParamsToString(params)}`, normalizedBody);
+    return apiPost(`${urlsApi.boughtProduct.insert}${convertParamsToString(params)}`, body);
   },
   detail: (id: number) => {
     return fetch(`${urlsApi.boughtProduct.detail}?id=${id}`, {

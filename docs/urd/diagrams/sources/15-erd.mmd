@@ -1,53 +1,55 @@
 %%{init: {'theme':'base', 'themeVariables': {'fontFamily':'Calibri'}}}%%
 erDiagram
     TENANT ||--o{ BRANCH : "có nhiều"
-    TENANT ||--o{ USER : "có"
+    TENANT ||--o{ DEPARTMENT : "có"
     TENANT ||--o{ ROLE : "có"
+    TENANT ||--o{ USER : "có"
     TENANT ||--o{ CUSTOMER : "có"
-    TENANT ||--o{ PRODUCT : "có"
+    TENANT ||--o{ CATEGORY : "có"
+    TENANT ||--o{ MEMBERSHIP_PLAN : "có"
     TENANT ||--o{ SUPPLIER : "có"
-    TENANT ||--o{ VOUCHER : "có"
+    TENANT ||--o{ PROMOTION : "có"
 
     BRANCH ||--o{ WAREHOUSE : "thuộc"
+    BRANCH ||--o{ SHIFT_CONFIG : "có"
     BRANCH ||--o{ SHIFT : "có"
-    BRANCH ||--o{ ORDER : "có"
-    BRANCH ||--o{ STOCK_MOVEMENT : "có"
+    BRANCH ||--o{ INVOICE : "có"
 
+    USER }o--|| DEPARTMENT : "thuộc"
     USER }o--o{ ROLE : "được gán"
     USER }o--o{ BRANCH : "được phép"
     ROLE ||--o{ PERMISSION : "có"
-    USER ||--o{ SHIFT : "mở/đóng"
 
-    CUSTOMER ||--o| LOYALTY_POINT : "ví điểm"
-    CUSTOMER ||--o{ ORDER : "mua"
-    CUSTOMER ||--o{ VOUCHER : "sở hữu"
+    CUSTOMER ||--o{ CUSTOMER_EXTRA_INFO : "có"
+    CUSTOMER ||--o{ CARD : "giữ"
+    CUSTOMER ||--o| LOYALTY_WALLET : "có"
+    CUSTOMER ||--o{ CHECKIN_LOG : "có"
+    CUSTOMER ||--o{ INVOICE : "mua"
 
-    PRODUCT ||--o{ VARIANT : "có"
-    PRODUCT }o--|| CATEGORY : "thuộc"
-    VARIANT ||--o{ ORDER_ITEM : "bán trong"
-    VARIANT ||--o{ STOCK_MOVEMENT_ITEM : "trong"
+    CATEGORY ||--o{ PRODUCT : "chứa"
+    PRODUCT ||--o{ PRODUCT_VARIANT : "có"
+    MEMBERSHIP_PLAN ||--o{ PLAN_SERVICE : "gồm"
+    PLAN_SERVICE }o--|| PRODUCT : "tham chiếu"
 
-    WAREHOUSE ||--o{ STOCK_MOVEMENT : "nguồn/đích"
-    WAREHOUSE ||--o{ STOCK_BALANCE : "chứa tồn"
-    STOCK_MOVEMENT ||--o{ STOCK_MOVEMENT_ITEM : "gồm"
+    INVOICE ||--o{ INVOICE_ITEM : "gồm"
+    INVOICE_ITEM }o--|| PRODUCT : "ref"
+    INVOICE }o--|| SHIFT : "thuộc"
+    INVOICE }o--o| PROMOTION : "áp dụng"
 
-    ORDER ||--o{ ORDER_ITEM : "gồm"
-    ORDER ||--o{ PAYMENT : "thanh toán"
-    ORDER }o--|| SHIFT : "thuộc"
-    ORDER }o--o| VOUCHER : "áp dụng"
-    ORDER ||--o| SHIPMENT : "giao"
+    SUPPLIER ||--o{ MATERIAL : "cung cấp"
+    SUPPLIER ||--o{ STOCK_RECEIPT : "nhập"
+    WAREHOUSE ||--o{ STOCK_RECEIPT : "nhận"
+    WAREHOUSE ||--o{ STOCK_ISSUE : "xuất"
 
-    SUPPLIER ||--o{ PURCHASE_ORDER : "cung cấp"
-    PURCHASE_ORDER ||--o{ PURCHASE_ORDER_ITEM : "gồm"
-    PURCHASE_ORDER ||--o{ STOCK_MOVEMENT : "phát sinh nhập"
-
-    CASHBOOK }o--o| ORDER : "ref đơn"
-    CASHBOOK }o--o| PURCHASE_ORDER : "ref PO"
+    CASHBOOK }o--|| FUND : "gắn quỹ"
+    CASHBOOK }o--|| FINANCE_CATEGORY : "phân loại"
+    CASHBOOK }o--o| INVOICE : "ref đơn"
 
     TENANT {
         bigint id PK
         string name
         string mst
+        string logo
     }
     BRANCH {
         bigint id PK
@@ -61,66 +63,26 @@ erDiagram
         string phone UK
         string email
         string password_hash
+        string status
     }
     CUSTOMER {
         bigint id PK
         bigint tenantId FK
+        bigint branchId FK
         string name
         string phone
         string email
-        string segment
+        int gender
     }
-    PRODUCT {
-        bigint id PK
-        bigint tenantId FK
-        bigint categoryId FK
-        string sku UK
-        string name
-        decimal basePrice
-    }
-    VARIANT {
-        bigint id PK
-        bigint productId FK
-        string sku UK
-        string attrs
-        decimal price
-    }
-    WAREHOUSE {
-        bigint id PK
-        bigint branchId FK
-        string name
-        string type
-    }
-    STOCK_MOVEMENT {
-        bigint id PK
-        bigint branchId FK
-        string type
-        string status
-        bigint fromWhId FK
-        bigint toWhId FK
-    }
-    ORDER {
+    INVOICE {
         bigint id PK
         bigint tenantId FK
         bigint branchId FK
         bigint customerId FK
         bigint shiftId FK
-        decimal total
+        decimal totalAmount
         string status
-    }
-    ORDER_ITEM {
-        bigint id PK
-        bigint orderId FK
-        bigint variantId FK
-        int qty
-        decimal price
-    }
-    PAYMENT {
-        bigint id PK
-        bigint orderId FK
-        string method
-        decimal amount
-        string status
+        timestamp createdAt
     }
     SHIFT {
         bigint id PK
@@ -128,34 +90,13 @@ erDiagram
         bigint userId FK
         decimal openingCash
         decimal closingCash
+        timestamp openedAt
+        timestamp closedAt
     }
-    SUPPLIER {
+    PRODUCT {
         bigint id PK
-        bigint tenantId FK
+        bigint categoryId FK
         string name
-        string phone
-    }
-    PURCHASE_ORDER {
-        bigint id PK
-        bigint supplierId FK
-        string status
-        decimal total
-    }
-    SHIPMENT {
-        bigint id PK
-        bigint orderId FK
-        string carrier
-        string trackingNo
-        string status
-    }
-    VOUCHER {
-        bigint id PK
-        string code UK
+        decimal price
         string type
-        decimal value
-    }
-    LOYALTY_POINT {
-        bigint id PK
-        bigint customerId FK
-        int balance
     }

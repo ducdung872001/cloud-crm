@@ -17,7 +17,7 @@ import Checkbox from "components/checkbox/checkbox";
 import ModalExport from "./partials/ModalExport/ModalExport";
 import ModalImport from "./partials/ModalImport";
 import { PHONE_REGEX, EMAIL_REGEX, PHONE_REGEX_NEW } from "utils/constant";
-import _, { set } from "lodash";
+
 import ModalAddColumn from "./partials/ModalAddColumn/ModalAddColumn";
 import SelectLookup from "./partials/SelectLookup/SelectLookup";
 import GridService from "services/GridService";
@@ -128,7 +128,7 @@ export default function GridFormNew(props: Record<string, unknown>) {
 
   const getDetailHsmt = async (nodeId, fieldName, potId, workId) => {
     setListColumn(headerHsmt);
-    const dataRowOrigin: Record<string, unknown> = await getDetailRow(nodeId, fieldName, potId, workId, headerHsmt);
+    let dataRowOrigin: Record<string, unknown> = await getDetailRow(nodeId, fieldName, potId, workId, headerHsmt);
     if (dataRowOrigin && dataRowOrigin.length && dataRowOrigin[0].length) {
       // Nếu có dữ liệu hồ sơ mời thầu rồi thì hiển thị dữ liệu
       setDataRow(dataRowOrigin);
@@ -145,7 +145,7 @@ export default function GridFormNew(props: Record<string, unknown>) {
           if (index == 0) {
             return item;
           } else {
-            const uuid = uuidv4();
+            let uuid = uuidv4();
             if (item?.length) {
               return item.map((field) => {
                 return {
@@ -276,7 +276,7 @@ export default function GridFormNew(props: Record<string, unknown>) {
     setBaseRow(baseRowFist);
 
     if (dataRow.length > 0 && dataRow[0].length > 0) {
-      const dataRowNew = dataRow.map((item) => {
+      let dataRowNew = dataRow.map((item) => {
         if (item.length) {
           return listColumn.map((col) => {
             if (item.find((el) => el.key == col.key)) {
@@ -312,9 +312,9 @@ export default function GridFormNew(props: Record<string, unknown>) {
           return item;
         }
       });
-      const listMapKeyValue = [];
+      let listMapKeyValue = [];
       dataRowNew.map((item) => {
-        const mapKeyValue = {};
+        let mapKeyValue = {};
         if (item?.length) {
           item.map((field) => {
             mapKeyValue[field.key] = field.value;
@@ -337,12 +337,12 @@ export default function GridFormNew(props: Record<string, unknown>) {
               value: result,
             };
           } else if (field.type == "time_range" && field?.timeRange) {
-            const timeRange = JSON.parse(field.timeRange);
+            let timeRange = JSON.parse(field.timeRange);
             const startDate = new Date(new Date(listMapKeyValue[rIdx][timeRange.startDate]), "MM/DD/YYYY");
             const endDate = new Date(new Date(listMapKeyValue[rIdx][timeRange.endDate]), "MM/DD/YYYY");
 
             let count = 0;
-            const currentDate = startDate.clone();
+            let currentDate = startDate.clone();
 
             while (currentDate.isSameOrBefore(endDate)) {
               const dayOfWeek = currentDate.day();
@@ -406,7 +406,7 @@ export default function GridFormNew(props: Record<string, unknown>) {
   }, [listLoadBindingField]);
 
   const setListLoading = (data) => {
-    const _listLoadBindingField = [];
+    let _listLoadBindingField = [];
     data.map((item, index) => {
       if (index != 0) {
         if (item.length) {
@@ -517,10 +517,10 @@ export default function GridFormNew(props: Record<string, unknown>) {
               if (field.key.includes("_NguoiLienHe")) {
                 const firstKey = Object.keys(value).find((key) => key.includes("NguoiLienHe_"));
                 if (firstKey) {
-                  const listContact = JSON.parse(value[firstKey]);
+                  let listContact = JSON.parse(value[firstKey]);
                   if (listContact.length) {
-                    const defaultContact = listContact.find((el) => el.isDefault);
-                    const valueKey =
+                    let defaultContact = listContact.find((el) => el.isDefault);
+                    let valueKey =
                       field.key == "SoDienThoai_NguoiLienHe"
                         ? defaultContact?.phone
                         : field.key == "Email_NguoiLienHe"
@@ -566,11 +566,11 @@ export default function GridFormNew(props: Record<string, unknown>) {
           ? value
           : value.target.value;
       let check_required = false;
-      const listMapKeyValue = [];
+      let listMapKeyValue = [];
       const updatedData = dataRow.map((row, rIdx) => {
         const mapKeyValue = {};
         if (rIdx === rowIndex) {
-          const rowMapReturn = row.map((field, fIdx) => {
+          let rowMapReturn = row.map((field, fIdx) => {
             mapKeyValue[field.key] = fIdx === fieldIndex ? valueData : field.value;
             if (field?.required && !valueData) {
               check_required = true;
@@ -600,7 +600,7 @@ export default function GridFormNew(props: Record<string, unknown>) {
           if (row.type == "title") {
             return row;
           }
-          const rowMapReturn = row.map((field) => {
+          let rowMapReturn = row.map((field) => {
             mapKeyValue[field.key] = field.value;
             if (rIdx != 0) {
               if (field?.required && !field.value) {
@@ -634,12 +634,12 @@ export default function GridFormNew(props: Record<string, unknown>) {
               value: result,
             };
           } else if (field.type == "time_range" && field?.timeRange) {
-            const timeRange = JSON.parse(field.timeRange);
+            let timeRange = JSON.parse(field.timeRange);
             const startDate = new Date(new Date(listMapKeyValue[rIdx][timeRange.startDate]), "MM/DD/YYYY");
             const endDate = new Date(new Date(listMapKeyValue[rIdx][timeRange.endDate]), "MM/DD/YYYY");
 
             let count = 0;
-            const currentDate = startDate.clone();
+            let currentDate = startDate.clone();
 
             while (currentDate.isSameOrBefore(endDate)) {
               const dayOfWeek = currentDate.day();
@@ -769,7 +769,7 @@ export default function GridFormNew(props: Record<string, unknown>) {
   };
 
   const addColumn = async (list_column) => {
-    const dataSubmit = {
+    let dataSubmit = {
       nodeId: params?.nodeId || "Activity_0n3i8dv",
       processId: params?.processId || 380,
       fieldName: params?.fieldName || "boq",
@@ -858,33 +858,33 @@ export default function GridFormNew(props: Record<string, unknown>) {
   }, [caclData]);
 
   function excelDateToJSDate(serial) {
-    const utc_days = Math.floor(serial - 25569);
-    const utc_value = utc_days * 86400;
-    const date_info = new Date(utc_value * 1000);
+    var utc_days = Math.floor(serial - 25569);
+    var utc_value = utc_days * 86400;
+    var date_info = new Date(utc_value * 1000);
 
     return new Date(date_info.getFullYear(), date_info.getMonth(), date_info.getDate());
   }
 
   async function caclImportData() {
-    const newDataRow = [dataRow[0]];
+    let newDataRow = [dataRow[0]];
     let index = 0;
     for (const element of dataExcel.slice(lineStart)) {
       index++;
 
       // Tạo 1 row mới
-      const uuid = uuidv4();
-      const _baseRow = baseRow.map((field) => ({
+      let uuid = uuidv4();
+      let _baseRow = baseRow.map((field) => ({
         ...field,
         rowKey: uuid,
       }));
 
-      const new_field: Record<string, unknown> = [];
-      const listIgnoreField = [];
+      let new_field: Record<string, unknown> = [];
+      let listIgnoreField = [];
 
       if (index == 1) {
         let isRowSpecial = true;
-        for (const field of _baseRow) {
-          const value = element[field.name];
+        for (let field of _baseRow) {
+          let value = element[field.name];
           if (value) {
             isRowSpecial = false;
             break;
@@ -895,8 +895,8 @@ export default function GridFormNew(props: Record<string, unknown>) {
         }
       }
 
-      for (const field of _baseRow) {
-        const value = element[field.name];
+      for (let field of _baseRow) {
+        let value = element[field.name];
 
         if (field.type == "binding" && element[field.name]) {
           let _value = null;
@@ -918,8 +918,8 @@ export default function GridFormNew(props: Record<string, unknown>) {
               field.listBindingField.map((bindingField) => {
                 if (bindingField.key.includes("NguoiLienHe_")) {
                   listIgnoreField.push(bindingField.key);
-                  const fieldBinding = _baseRow.find((el) => el.key == bindingField.key);
-                  const listContact = JSON.parse(_value[bindingField.key] ? _value[bindingField.key] : "[]");
+                  let fieldBinding = _baseRow.find((el) => el.key == bindingField.key);
+                  let listContact = JSON.parse(_value[bindingField.key] ? _value[bindingField.key] : "[]");
                   new_field.push({
                     ...fieldBinding,
                     value: _value?.options_value ? _value?.options_value.find((el) => el.isDefault)?.value : "",
@@ -928,10 +928,10 @@ export default function GridFormNew(props: Record<string, unknown>) {
                   fieldBinding.listBindingField.map((bindingFieldContactCheck) => {
                     if (bindingFieldContactCheck.key.includes("_NguoiLienHe")) {
                       listIgnoreField.push(bindingFieldContactCheck.key);
-                      const fieldBindingContact = _baseRow.find((e_l) => e_l.key == bindingFieldContactCheck.key);
+                      let fieldBindingContact = _baseRow.find((e_l) => e_l.key == bindingFieldContactCheck.key);
                       if (listContact.length) {
-                        const defaultContact = listContact.find((e_ll) => e_ll.isDefault);
-                        const valueKey =
+                        let defaultContact = listContact.find((e_ll) => e_ll.isDefault);
+                        let valueKey =
                           bindingFieldContactCheck.key == "SoDienThoai_NguoiLienHe"
                             ? defaultContact?.phone
                             : bindingFieldContactCheck.key == "Email_NguoiLienHe"
@@ -953,7 +953,7 @@ export default function GridFormNew(props: Record<string, unknown>) {
                   });
                 } else {
                   listIgnoreField.push(bindingField.key);
-                  const fieldBinding = _baseRow.find((el) => el.key == bindingField.key);
+                  let fieldBinding = _baseRow.find((el) => el.key == bindingField.key);
                   new_field.push({
                     ...fieldBinding,
                     value: _value[bindingField.key],
@@ -979,7 +979,7 @@ export default function GridFormNew(props: Record<string, unknown>) {
 
           let count = 0;
           if (startDate && endDate) {
-            const currentDate = startDate.clone();
+            let currentDate = startDate.clone();
 
             while (currentDate.isSameOrBefore(endDate)) {
               const dayOfWeek = currentDate.day();
@@ -1069,7 +1069,7 @@ export default function GridFormNew(props: Record<string, unknown>) {
 
     if (response.code === 0 && response.result) {
       const dataDetailLookup = response.result;
-      const data_lookup = {
+      let data_lookup = {
         value: dataDetailLookup?.id,
         label:
           lookup == "reason"
@@ -1108,7 +1108,7 @@ export default function GridFormNew(props: Record<string, unknown>) {
   // ---------------Start Import Backend-------------------
   useEffect(() => {
     if (dataImport) {
-      const dataImportNew = [];
+      let dataImportNew = [];
       for (const key in dataImport) {
         if (dataImport.hasOwnProperty(key)) {
           dataImportNew.push({
@@ -1152,7 +1152,7 @@ export default function GridFormNew(props: Record<string, unknown>) {
         bindingField: item?.bindingField || "",
         readOnly: item?.readOnly == 1 ? true : false,
       }));
-      const list_data_new: Record<string, unknown> = dataImportNew.map((item) => {
+      let list_data_new: Record<string, unknown> = dataImportNew.map((item) => {
         baseRowFist.map((field) => {
           item = {
             //Thêm các trường không có trong listColumn cũ
@@ -1204,23 +1204,23 @@ export default function GridFormNew(props: Record<string, unknown>) {
   useOnClickOutside(refColumn, () => setShowPopoverStatus(showPopoverStatus.map((item) => false)), ["index"]);
 
   const handleActionRow = (detailAction) => {
-    const uuid = uuidv4();
+    let uuid = uuidv4();
     switch (detailAction.action) {
       case "insert":
-        const _baseRow = baseRow.map((field) => {
+        let _baseRow = baseRow.map((field) => {
           return {
             ...field,
             rowKey: uuid,
           };
         });
         if (detailAction?.rowIndex !== undefined) {
-          const _dataRow = [...dataRow];
+          let _dataRow = [...dataRow];
           _dataRow.splice(detailAction?.position == "top" ? detailAction.rowIndex : detailAction.rowIndex + 1, 0, _baseRow);
           setDataRow(_dataRow);
         }
         break;
       case "insertTitle":
-        const titleRow = {
+        let titleRow = {
           rowKey: uuid,
           style: "title-" + detailAction?.stype,
           content: "",
@@ -1229,7 +1229,7 @@ export default function GridFormNew(props: Record<string, unknown>) {
           isShowEdit: true,
         };
         if (detailAction?.rowIndex !== undefined) {
-          const _dataRow = [...dataRow];
+          let _dataRow = [...dataRow];
           _dataRow.splice(detailAction?.position == "top" ? detailAction.rowIndex : detailAction.rowIndex + 1, 0, titleRow);
           setDataRow(_dataRow);
         }
@@ -1306,12 +1306,12 @@ export default function GridFormNew(props: Record<string, unknown>) {
           : item
       )
     );
-    const newListColumn = listColumn.map((item, index) => {
+    let newListColumn = listColumn.map((item, index) => {
       return index == fieldIndex ? { ...item, position: editColumn[fieldIndex]?.newPosition } : item;
     });
     newListColumn.sort((a, b) => a.position - b.position);
 
-    const dataSubmit = {
+    let dataSubmit = {
       nodeId: params?.nodeId || "Activity_0n3i8dv",
       processId: params?.processId || 380,
       fieldName: params?.fieldName || "boq",
@@ -1330,15 +1330,15 @@ export default function GridFormNew(props: Record<string, unknown>) {
 
   const hanhdleDeleteColumn = async (field) => {
     if (field.type == "binding") {
-      const listDeleteField = [field.key];
+      let listDeleteField = [field.key];
       if (field?.listBindingField && field.listBindingField?.length) {
         field.listBindingField.map((bindingField) => {
-          const fieldBinding = listColumn.find((el) => el.key == bindingField.key);
+          let fieldBinding = listColumn.find((el) => el.key == bindingField.key);
           if (fieldBinding) {
             listDeleteField.push(bindingField.key);
             if (fieldBinding?.listBindingField && fieldBinding.listBindingField?.length) {
               fieldBinding.listBindingField.map((bindingFieldContact) => {
-                const fieldBindingContact = listColumn.find((el) => el.key == bindingFieldContact.key);
+                let fieldBindingContact = listColumn.find((el) => el.key == bindingFieldContact.key);
                 if (fieldBindingContact) {
                   listDeleteField.push(bindingFieldContact.key);
                 }
@@ -1612,7 +1612,7 @@ export default function GridFormNew(props: Record<string, unknown>) {
                                       value={editColumn[fieldIndex]?.newPosition}
                                       autoFocus={true}
                                       onValueChange={(e) => {
-                                        const newEditColumn = editColumn.map((item, index) => {
+                                        let newEditColumn = editColumn.map((item, index) => {
                                           return index == fieldIndex ? { ...item, newPosition: e.floatValue } : item;
                                         });
                                         setEditColumn(newEditColumn);
@@ -1862,8 +1862,8 @@ export default function GridFormNew(props: Record<string, unknown>) {
             <Button
               color="secondary"
               onClick={() => {
-                const uuid = uuidv4();
-                const _baseRow = baseRow.map((field) => {
+                let uuid = uuidv4();
+                let _baseRow = baseRow.map((field) => {
                   return {
                     ...field,
                     rowKey: uuid,

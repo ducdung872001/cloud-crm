@@ -3,24 +3,6 @@ import path from "path";
 import { defineConfig, loadEnv } from "vite";
 import svgr from "vite-plugin-svgr";
 
-// Strip all moment.js locales except Vietnamese (~250KB savings)
-function momentLocaleStrip() {
-  return {
-    name: "moment-locale-strip",
-    resolveId(source: string) {
-      if (source === "moment") return null; // let Vite handle the main module
-      return null;
-    },
-    transform(code: string, id: string) {
-      // Remove all locale files except vi
-      if (/node_modules\/moment\/locale\/(?!vi\.)/.test(id.replace(/\\/g, "/"))) {
-        return { code: "export default {};", map: null };
-      }
-      return null;
-    },
-  };
-}
-
 export default defineConfig(({ mode }) => {
   // Load env file based on `mode` in the current working directory.
   // Set the third parameter to '' to load all env regardless of the `VITE_` prefix.
@@ -45,25 +27,11 @@ export default defineConfig(({ mode }) => {
       "APP_CONNECT_URL",
       "APP_UPLOAD_URL",
       "APP_ATHENA_URL",
-      "APP_CUSTOMER_API_URL",
-    ];
-
-    // Production fallback values (khi CI/CD không có .env.production)
-    const productionDefaults: Record<string, string> = (mode === "production" || mode === "prod") ? {
-      APP_ENV: "prod",
-      APP_API_URL: "https://cloud.reborn.vn",
-      APP_ADMIN_URL: "https://cloud.reborn.vn",
-      APP_BPM_URL: "https://bpm.reborn.vn",
-      APP_AUTHENTICATOR_URL: "https://reborn.vn",
-      APP_SSO_LINK: "https://sso.reborn.vn",
-      APP_DOMAIN: "reborn.vn",
-      APP_CUSTOMER_API_URL: "https://biz.reborn.vn",
-    } : {};
+      "APP_CUSTOMER_API_URL",];
 
     // Add all required environment variables
     requiredEnvVars.forEach((varName) => {
-      const value = envVars[varName] || productionDefaults[varName] || "";
-      definitions[`process.env.${varName}`] = JSON.stringify(value);
+      definitions[`process.env.${varName}`] = JSON.stringify(envVars[varName] || "");
     });
 
     // Add NODE_ENV for development/production checks
@@ -73,9 +41,7 @@ export default defineConfig(({ mode }) => {
   };
 
   return {
-    base: "/crm/",
     plugins: [
-      momentLocaleStrip(),
       react({
         // Cấu hình cho React
         include: "**/*.{jsx,tsx}",
@@ -216,15 +182,18 @@ export default defineConfig(({ mode }) => {
       },
     }),
 
-    ...((mode === "production" || mode === "prod") && {
+    ...(mode === "production" && {
       build: {
         outDir: "bundle",
         emptyOutDir: true,
         sourcemap: false,
-        minify: "esbuild",
-      },
-      esbuild: {
-        drop: ["console", "debugger"],
+        minify: "terser",
+        terserOptions: {
+          compress: {
+            drop_console: true,
+            drop_debugger: true,
+          },
+        },
       },
     }),
   };

@@ -93,28 +93,9 @@ interface ShareSheetProps {
 }
 
 function ShareSheet({ dataUrl, debtName, amount, onClose }: ShareSheetProps) {
-  const textPlain = `Vui lòng quét mã QR để thanh toán ${amount.toLocaleString("vi")} VND cho ${debtName}`;
-  const text = encodeURIComponent(textPlain);
-
-  // Thử share file QR qua Web Share API (mobile): user chọn app Zalo/Messenger/…
-  async function tryNativeShareFile(): Promise<boolean> {
-    if (!navigator.share) return false;
-    try {
-      const blob = await (await fetch(dataUrl)).blob();
-      const file = new File([blob], `qr-thu-no-${debtName}.png`, { type: "image/png" });
-      if (navigator.canShare?.({ files: [file] })) {
-        await navigator.share({
-          title: `QR Thu nợ — ${debtName}`,
-          text: textPlain,
-          files: [file],
-        });
-        return true;
-      }
-    } catch (err: unknown) {
-      if (err?.name === "AbortError") return true;
-    }
-    return false;
-  }
+  const text = encodeURIComponent(
+    `Vui lòng quét mã QR để thanh toán ${amount.toLocaleString("vi")} VND cho ${debtName}`
+  );
 
   const channels = [
     {
@@ -122,14 +103,11 @@ function ShareSheet({ dataUrl, debtName, amount, onClose }: ShareSheetProps) {
       label: "Zalo",
       icon: "💬",
       color: "#0068ff",
-      onClick: async () => {
-        if (await tryNativeShareFile()) return;
-        // Desktop: tải ảnh + copy text, user dán vào Zalo
-        downloadQr(dataUrl, debtName);
-        try { await navigator.clipboard.writeText(textPlain); } catch { /* ignore */ }
+      // Zalo deep link share: mở app Zalo với message, user tự chọn contact
+      onClick: () => {
+        // Thử mở Zalo share URL (hoạt động trong Zalo browser)
         const zaloUrl = `https://zalo.me/share?text=${text}`;
         window.open(zaloUrl, "_blank", "noopener");
-        showToast("Đã tải ảnh QR và sao chép nội dung. Mở Zalo → gửi ảnh cho khách.", "success");
       },
     },
     {
@@ -137,12 +115,14 @@ function ShareSheet({ dataUrl, debtName, amount, onClose }: ShareSheetProps) {
       label: "Messenger",
       icon: "📨",
       color: "#0084ff",
-      onClick: async () => {
-        if (await tryNativeShareFile()) return;
-        downloadQr(dataUrl, debtName);
-        try { await navigator.clipboard.writeText(textPlain); } catch { /* ignore */ }
-        window.open("https://www.messenger.com/", "_blank", "noopener");
-        showToast("Đã tải ảnh QR và sao chép nội dung. Mở Messenger → gửi ảnh cho khách.", "success");
+      onClick: () => {
+        // Facebook Messenger share dialog (cần app_id nếu trên web)
+        const fbUrl = `https://www.facebook.com/dialog/send?link=${encodeURIComponent(window.location.href)}&app_id=&redirect_uri=${encodeURIComponent(window.location.href)}`;
+        window.open(`fb-messenger://share?text=${text}`, "_blank");
+        // Fallback nếu không có app
+        setTimeout(() => {
+          window.open(`https://m.me/`, "_blank", "noopener");
+        }, 1500);
       },
     },
     {
@@ -150,42 +130,26 @@ function ShareSheet({ dataUrl, debtName, amount, onClose }: ShareSheetProps) {
       label: "Facebook",
       icon: "📘",
       color: "#1877f2",
-      onClick: async () => {
-        if (await tryNativeShareFile()) return;
-        downloadQr(dataUrl, debtName);
-        try { await navigator.clipboard.writeText(textPlain); } catch { /* ignore */ }
+      onClick: () => {
         window.open(
-          `https://www.facebook.com/sharer/sharer.php?quote=${text}&u=${encodeURIComponent(window.location.href)}`,
+          `https://www.facebook.com/sharer/sharer.php?quote=${text}`,
           "_blank",
           "width=600,height=400,noopener"
         );
-        showToast("Đã tải ảnh QR. Đính kèm ảnh vào bài đăng Facebook.", "success");
       },
     },
     {
       id: "copy",
-      label: "Sao chép ảnh QR",
-      icon: "📋",
+      label: "Sao chép link",
+      icon: "🔗",
       color: "#5c7282",
       onClick: async () => {
-        // Ưu tiên copy ảnh QR vào clipboard (dán thẳng vào Zalo/Messenger),
-        // fallback sang copy text nếu trình duyệt không hỗ trợ ClipboardItem.
-        try {
-          const blob = await (await fetch(dataUrl)).blob();
-          const ClipboardItemCtor = (window as unknown as { ClipboardItem?: typeof ClipboardItem }).ClipboardItem;
-          if (ClipboardItemCtor && navigator.clipboard?.write) {
-            await navigator.clipboard.write([
-              new ClipboardItemCtor({ [blob.type]: blob }),
-            ]);
-            showToast("Đã sao chép ảnh QR — dán vào Zalo/Messenger để gửi cho khách", "success");
-            return;
-          }
-        } catch { /* fallback xuống text */ }
         try {
           await navigator.clipboard.writeText(
-            `QR Thu nợ - ${debtName}: ${amount.toLocaleString("vi")} VND`
+            `QR Thu nợ - ${debtName}: ${amount.toLocaleString("vi")} VND
+(Ảnh QR đã được tải về máy)`
           );
-          showToast("Trình duyệt không hỗ trợ copy ảnh. Đã sao chép nội dung văn bản.", "success");
+          showToast("Đã sao chép nội dung", "success");
         } catch {
           showToast("Trình duyệt không hỗ trợ copy", "error");
         }
@@ -202,6 +166,26 @@ function ShareSheet({ dataUrl, debtName, amount, onClose }: ShareSheetProps) {
       },
     },
   ];
+
+  // Native share nếu available (mobile)
+  async function handleNativeShare() {
+    if (!navigator.share) return false;
+    try {
+      const blob = await (await fetch(dataUrl)).blob();
+      const file = new File([blob], "qr-thu-no.png", { type: "image/png" });
+      if (navigator.canShare?.({ files: [file] })) {
+        await navigator.share({
+          title: `QR Thu nợ — ${debtName}`,
+          text: `Vui lòng quét mã QR để thanh toán ${amount.toLocaleString("vi")} VND`,
+          files: [file],
+        });
+        return true;
+      }
+    } catch (err: unknown) {
+      if (err?.name === "AbortError") return true;
+    }
+    return false;
+  }
 
   return (
     <div

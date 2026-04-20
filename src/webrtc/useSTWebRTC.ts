@@ -37,7 +37,9 @@ export function useSTWebRTC(options: UseSTWebRTCOptions) {
         key: pbxCustomerCode,
       },
       callbacks: {
-        embed_success_handle: () => { /* noop */ },
+        embed_success_handle: () => {
+          /* noop */
+        },
 
         embed_error_handle: (data: Record<string, unknown>) => {
           // Xử lý lỗi nhúng

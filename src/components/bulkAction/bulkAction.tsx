@@ -51,7 +51,7 @@ function BulkAction(props: BulkActionProps) {
                   {/* <div className="base-bulk-action__popover"> */}
                   <ul ref={refLiAction}>
                     {bulkActionItems.map((item, index) => (
-                      <li key={index} onClick={item.callback}>
+                      <li key={item.id ?? index} onClick={item.callback}>
                         <span className="item-li" onClick={() => setShowBulkAction(false)}>
                           {item.title}
                         </span>

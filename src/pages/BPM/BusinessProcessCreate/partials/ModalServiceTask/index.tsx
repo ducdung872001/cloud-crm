@@ -102,7 +102,7 @@ export default function ModalServiceTask({ onShow, onHide, dataNode, processId, 
     if (response.code == 0) {
       const result = response.result;
       const authentication = (result?.authentication && JSON.parse(result.authentication)) || null;
-      const authentication_config = authentication?.config ? { ...authentication.config, keyType: authentication?.config?.keyType || 1 } : null;
+      let authentication_config = authentication?.config ? { ...authentication.config, keyType: authentication?.config?.keyType || 1 } : null;
       setAuthenticationData(authentication_config);
       setValueKey(authentication_config?.token ? { value: authentication_config.token, label: authentication_config.token } : null);
 
@@ -557,7 +557,7 @@ export default function ModalServiceTask({ onShow, onHide, dataNode, processId, 
 
     if (response.code === 0) {
       const dataOption = response.result?.items;
-      const listVar = [];
+      let listVar = [];
       dataOption &&
         dataOption.length > 0 &&
         dataOption.map((item) => {
@@ -604,7 +604,7 @@ export default function ModalServiceTask({ onShow, onHide, dataNode, processId, 
 
     if (response.code === 0) {
       const dataOption = response.result?.filter((el) => el.code) || [];
-      const listForm = [];
+      let listForm = [];
       dataOption &&
         dataOption.length > 0 &&
         dataOption.map((item) => {
@@ -1213,7 +1213,7 @@ export default function ModalServiceTask({ onShow, onHide, dataNode, processId, 
                 </div>
                 {listInputVar && listInputVar.length > 0
                   ? listInputVar.map((item, index) => (
-                      <div key={index} className="list-item-inputVar">
+                      <div key={item.id ?? index} className="list-item-inputVar">
                         <div className="item-inputVar">
                           <Input
                             id="nameInput"
@@ -1440,7 +1440,7 @@ export default function ModalServiceTask({ onShow, onHide, dataNode, processId, 
                 </div>
                 {listOutVar && listOutVar.length > 0
                   ? listOutVar.map((item, index) => (
-                      <div key={index} className="list-item-outVar">
+                      <div key={item.id ?? index} className="list-item-outVar">
                         <div className="item-outVar">
                           <Input
                             id="name"

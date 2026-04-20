@@ -1,285 +1,594 @@
 # Part 10 — Security Architecture
 
-> **Executive Summary**: Reborn Retail CRM dùng mô hình **auth tập trung qua SSO Reborn** (cookie token tại `.reborn.vn`), **authZ theo permission code** (mảng permission lưu `localStorage`), **multi-tenant isolation** qua header `Hostname` + filter `tenantId` ở BE. Mitigation OWASP Top 10 quan sát được: DOMPurify cho XSS trong RebornEditor, cookie HttpOnly (cần xác nhận), HTTPS only. Điểm yếu lớn: không có 2FA rõ ràng, hardcode `Hostname` lúc dev, localStorage permissions có thể bị giả mạo nếu BE không verify lại. Tuân thủ NĐ 13/2023 về dữ liệu cá nhân và TT78 về hoá đơn điện tử là bắt buộc khi deploy prod.
+## Executive Summary
 
-## 1. Authentication
-
-### 1.1. Flow SSO
-
-🟢 Xem [Part 06 §6](part-06-service-api.md#6-authentication-flow).
-
-Cookie sau khi login thành công:
-
-| Cookie | Scope | Flags (kỳ vọng) |
-|--------|-------|-----------------|
-| `token` | `.reborn.vn` | `HttpOnly`, `Secure`, `SameSite=Lax` |
-| `user`  | `.reborn.vn` | `HttpOnly`, `Secure` |
-
-🔴 **Quan sát ngược**: `fetchConfig.ts` đọc `getCookie("token")` trong JS → chứng tỏ cookie **KHÔNG HttpOnly** (vì JS đọc được). Điều này đi ngược best practice — token có thể bị XSS đánh cắp.
-
-**Khuyến nghị**: chuyển sang `HttpOnly` cookie + BE tự gắn `Authorization` qua gateway, hoặc dùng `sessionStorage` có MutationObserver + CSP rất chặt.
-
-### 1.2. JWT vs session
-
-🟡 Không rõ token là JWT hay opaque session ID. Interceptor gửi `Bearer <token>` nên format chấp nhận cả hai.
-
-### 1.3. 2FA
-
-🔴 **Thấp** — không thấy UI 2FA trong codebase (không có `OtpModal`, `TwoFactorSetup`). Có thể BE hỗ trợ ở tầng SSO nhưng chưa integrate FE.
-
-**Gợi ý**: TOTP (Google Authenticator) hoặc OTP SMS cho user role cao.
-
-### 1.4. Role switching
-
-🟢 `SelectedRole` lưu `localStorage`. Request gắn header `Selectedrole`. BE phải **verify** user thực sự có role này — không được tin client.
-
-## 2. Authorization — RBAC
-
-### 2.1. Permission code
-
-🟢 `localStorage.permissions` chứa mảng mã như:
-
-```
-EVENTS_VIEW
-EVENTS_CREATE
-POS_CREATE_ORDER
-CUSTOMER_EXPORT
-INVENTORY_ADJUSTMENT
-BILLING_CASHBOOK_VIEW
-...
-```
-
-Component check:
-
-```ts
-const canCreateOrder = permissions.includes("POS_CREATE_ORDER");
-```
-
-### 2.2. Rủi ro quan sát
-
-⚠️ **User có thể mở devtools, sửa localStorage để thêm permission**. Điều này chỉ ảnh hưởng UI — nhưng BE **BẮT BUỘC** phải verify lại permission trên mọi endpoint, không tin client.
-
-🔴 **Cần BE xác nhận**: mỗi endpoint có annotation / filter kiểm tra permission không?
-
-### 2.3. Hierarchical role
-
-🟡 Từ cấu trúc `department_employee` (dept_empId làm `Selectedrole`), suy luận có mô hình:
-
-```
-Tenant
-  └── Department
-        └── Employee
-              └── Role (set of permissions)
-```
-
-## 3. Multi-tenant isolation
-
-### 3.1. Cơ chế
-
-🟢 **Cao** — [Part 01 §4](part-01-kien-truc-tong-the.md#4-chiến-lược-multi-tenant-frontend-view):
-
-1. Header `Hostname: <tenant>.reborn.vn` gửi kèm mọi request.
-2. BE resolve `tenantId` từ `Hostname`.
-3. Mọi query thêm `WHERE tenant_id = :tenantId` (row-level security).
-
-### 3.2. Rủi ro
-
-| Rủi ro | Mức | Mitigation |
-|--------|-----|------------|
-| **Header spoofing** — user tự set `Hostname` khác để đọc data tenant khác | 🔴 **Critical** | Gateway phải xác thực `Hostname` khớp với domain origin request, KHÔNG tin header từ client |
-| **Hardcode dev** `"kcn.reborn.vn"` còn trong code | 🔴 | CI check, env var gate trước prod build |
-| **Missing tenant filter** — dev quên thêm `WHERE tenant_id` | 🔴 | Row-level security PostgreSQL hoặc ORM global filter |
-
-### 3.3. Khuyến nghị mạnh
-
-Chuyển từ **soft isolation** (row filter) sang **PostgreSQL RLS policy**:
-
-```sql
-ALTER TABLE orders ENABLE ROW LEVEL SECURITY;
-CREATE POLICY tenant_isolation ON orders
-  USING (tenant_id = current_setting('app.tenant_id')::bigint);
-```
-
-Gateway set `SET app.tenant_id = <id>` đầu mỗi connection.
-
-## 4. OWASP Top 10 mitigation
-
-| OWASP | Biện pháp quan sát | Trạng thái |
-|-------|---------------------|------------|
-| **A01 Broken access control** | RBAC permission code | 🟡 FE ok, BE cần verify |
-| **A02 Crypto failures** | HTTPS (kỳ vọng), bcrypt password (🔴) | 🟡 |
-| **A03 Injection** | ORM ở BE (🔴), React auto-escape HTML | 🟡 |
-| **A04 Insecure design** | Hardcode Hostname, localStorage perms | 🔴 |
-| **A05 Security misconfig** | Env var, CSP header chưa quan sát | 🔴 |
-| **A06 Vuln components** | `npm audit` — có vài advisory cũ | 🟡 |
-| **A07 Auth failures** | SSO ok, nhưng cookie không HttpOnly | 🔴 |
-| **A08 Data integrity** | Không có SRI cho CDN assets (🔴) | 🔴 |
-| **A09 Logging & monitoring** | Không có Sentry/Datadog integration | 🔴 |
-| **A10 SSRF** | BE responsibility | 🔴 |
-
-### 4.1. XSS
-
-🟢 **Mitigation**: React tự escape JSX. RebornEditor dùng Slate (không `dangerouslySetInnerHTML` trực tiếp). **Điểm nguy hiểm**: nếu có chỗ render HTML từ API (vd: mô tả sản phẩm có `<img>`), phải dùng **DOMPurify**.
-
-Grep khuyến nghị:
-
-```bash
-grep -r "dangerouslySetInnerHTML" src/
-```
-
-Mọi match phải có DOMPurify bọc ngoài.
-
-### 4.2. CSRF
-
-🟡 Nếu cookie `token` dùng `SameSite=Lax` + BE chấp nhận `Authorization: Bearer`, CSRF tự động bị chặn (vì fetch cross-origin phải add header, trigger preflight).
-
-### 4.3. SQL Injection
-
-🔴 BE responsibility — kỳ vọng dùng ORM (JPA/Hibernate/TypeORM/GORM) với prepared statement.
-
-## 5. Data at rest
-
-### 5.1. Password hash
-
-🔴 BE — khuyến nghị **bcrypt cost 12** hoặc **argon2id**. Không bao giờ SHA-256 trần.
-
-### 5.2. DB encryption
-
-🟡 PostgreSQL + TDE (transparent data encryption) hoặc cloud managed DB (AWS RDS encryption, GCP CloudSQL encryption).
-
-### 5.3. PII masking
-
-FE hiển thị SĐT/CMND đã che (vd `0901***567`) cho vai trò không có quyền `CUSTOMER_VIEW_PII`. 🔴 Cần implement nếu chưa có.
-
-### 5.4. Backup encryption
-
-Backup pg_dump phải encrypt (GPG hoặc cloud KMS) trước khi upload object store.
-
-## 6. Data in transit
-
-| Yêu cầu | Trạng thái |
-|---------|------------|
-| HTTPS only | 🟢 (prod) |
-| TLS 1.2+ | 🟡 kỳ vọng |
-| HSTS header | 🔴 chưa xác nhận |
-| Certificate pinning | N/A (web) |
-| WSS cho WebRTC signaling | 🟡 cần xác nhận |
-
-**HSTS**:
-```
-Strict-Transport-Security: max-age=31536000; includeSubDomains; preload
-```
-
-## 7. Secrets management
-
-### 7.1. Frontend
-
-🟢 Env var Vite `APP_API_URL`, `APP_BIZ_URL` — **không chứa secret**, chỉ URL.
-
-⚠️ **Cảnh báo**: Firebase API key, FCM VAPID public key nhúng trong bundle — chấp nhận được vì đó là public key.
-
-### 7.2. Backend
-
-🔴 Khuyến nghị:
-
-- **Vault**: HashiCorp Vault hoặc AWS Secrets Manager / GCP Secret Manager.
-- **Kubernetes secret** + external-secrets operator.
-- KHÔNG commit `.env` vào git (có thể đã OK vì `.gitignore`).
-- Rotate database password định kỳ 90 ngày.
-
-## 8. Audit log
-
-🔴 **Thấp** — không thấy `AuditLogService` FE. BE kỳ vọng có bảng `audit_log`:
-
-```
-id | tenant_id | user_id | action | resource_type | resource_id | old_value | new_value | ip | user_agent | at
-```
-
-### Events nên log
-
-- Login success/fail
-- Role switch
-- Create/update/delete nghiệp vụ nhạy cảm (xoá đơn, điều chỉnh tồn, đóng sổ quỹ)
-- Export data (customer list, invoice list)
-- Permission grant/revoke
-- Config change
-
-### Retention
-
-- Audit log: **2 năm** tối thiểu (theo TT78 cho hoá đơn).
-- Access log: **6 tháng**.
-
-## 9. Session management
-
-| Yêu cầu | Giá trị khuyến nghị |
-|---------|---------------------|
-| Idle timeout | 30 phút |
-| Absolute timeout | 12 giờ |
-| Concurrent sessions | 1 per user (hoặc cho phép N với list) |
-| Logout everywhere | Invalidate tất cả token của user |
-
-🔴 **Chưa quan sát** FE có xử lý idle timeout không — chỉ redirect khi 401. Nên thêm `IdleTimerProvider`.
-
-## 10. Compliance
-
-### 10.1. NĐ 13/2023 — Bảo vệ dữ liệu cá nhân VN
-
-Bắt buộc:
-
-- **Thông báo xử lý PII**: trang chính sách riêng tư.
-- **Đồng ý rõ ràng**: checkbox khi tạo customer.
-- **Quyền của chủ thể**: export, xoá, sửa dữ liệu cá nhân.
-- **Đánh giá tác động (DPIA)**: cho tenant xử lý > 10.000 người.
-- **DPO**: bổ nhiệm người phụ trách nếu đạt ngưỡng.
-- **Báo cáo vi phạm**: 72h cho Cục An ninh mạng.
-
-### 10.2. TT78/2021 + TT32/2011 — Hoá đơn điện tử
-
-- Hoá đơn phải ký số.
-- Lưu trữ **10 năm**.
-- Truyền nhận với cơ quan thuế qua gateway GDT.
-
-### 10.3. Audit retention
-
-- Audit log: 2 năm.
-- Financial record: 10 năm (Luật kế toán).
-- User action log: 1 năm.
-
-## 11. Incident response
-
-🔴 Khuyến nghị xây runbook:
-
-1. **Detection**: alert từ SIEM (vd login fail 100 lần/10 phút → alert).
-2. **Triage**: on-call SRE đánh giá severity.
-3. **Containment**: block IP, disable user, rotate secret.
-4. **Eradication**: patch lỗi, clean backdoor.
-5. **Recovery**: restore từ backup sạch.
-6. **Post-mortem**: RCA + action item.
-
-## 12. Security checklist trước prod
-
-- [ ] Cookie `token` đặt `HttpOnly`, `Secure`, `SameSite=Lax`.
-- [ ] Xoá hardcode `"kcn.reborn.vn"` trong `fetchConfig.ts`.
-- [ ] CSP header strict.
-- [ ] HSTS enabled.
-- [ ] Bcrypt/argon2 cho password hash.
-- [ ] PostgreSQL RLS enabled.
-- [ ] Audit log bật cho nghiệp vụ nhạy cảm.
-- [ ] Rate limit trên gateway (IP + user).
-- [ ] Pen test 1 lần trước GA.
-- [ ] Dependency scan (Snyk / Dependabot) bật.
-- [ ] SAST (SonarQube / Semgrep) trong CI.
-
-## Tham chiếu
-
-- Files:
-  - `src/configs/fetchConfig.ts`
-  - `src/App.tsx`
-  - `src/utils/navigate.ts`
-- [Part 06 — Service & API §6](part-06-service-api.md#6-authentication-flow)
-- [Part 01 §4 Multi-tenant](part-01-kien-truc-tong-the.md)
-- [ADR-04](part-13-adr.md#adr-04) Multi-tenant Hostname
-- [ADR-06](part-13-adr.md#adr-06) SSO centralized
+Bảo mật Reborn CRM xây trên 6 trụ cột: **(1) Authentication** qua SSO Reborn (OAuth/OIDC); **(2) Authorization** RBAC theo cây quyền chi tiết với `Selectedrole` header; **(3) Multi-tenant isolation** qua header `Hostname` + cột `tenantId`/`branchId` mọi entity; **(4) Encryption** in-transit (TLS) + at-rest (AES-256 cho secret, bcrypt cho password); **(5) Audit trail** mọi thao tác nhạy cảm; **(6) OWASP defenses** chống XSS/CSRF/SQLi/SSRF. Có một số **gap đã quan sát được** cần fix sớm.
 
 ---
-*Hết Part 10. Xem tiếp [Part 11 — Cross-cutting concerns](part-11-cross-cutting.md).*
+
+## 1. Threat model
+
+### 1.1. Tài sản cần bảo vệ
+
+| Asset | Sensitivity | Lý do |
+|-------|-------------|-------|
+| **Mật khẩu user** | Critical | Truy cập tài khoản |
+| **Token phiên** | Critical | Bypass auth |
+| **Credentials tích hợp** (API key payment, e-invoice) | Critical | Tài chính |
+| **Chữ ký số CA** | Critical | Pháp lý + tài chính |
+| **Dữ liệu khách hàng** (SĐT, email, CMND) | High | PII, tuân thủ NĐ 13 |
+| **Dữ liệu giao dịch** (đơn, hóa đơn) | High | Pháp luật + audit |
+| **Dữ liệu tài chính** (tiền, công nợ) | High | Trực tiếp tài chính |
+| **Audit log** | High | Bằng chứng pháp lý |
+| **Mã nguồn** | Med | Lộ logic + lỗ hổng |
+| **Backup** | High | Phải mã hóa |
+
+### 1.2. Đối tượng tấn công (threat actors)
+
+| Actor | Động cơ | Khả năng |
+|-------|---------|----------|
+| **External attacker** | Tài chính (ransomware), reputation | Cao — nhiều tool tự động |
+| **Disgruntled employee (nhân viên cũ)** | Trả thù, ăn cắp data | Medium — biết hệ thống |
+| **Competitor** | Lấy data khách hàng | Medium |
+| **Tenant A → Tenant B** | Đọc data tenant khác | Low (nếu RLS đúng), High (nếu lỗi) |
+| **Insider (admin Reborn)** | Lạm dụng quyền | Medium — cần audit |
+
+### 1.3. Threat scenarios chính
+
+| Scenario | Nguy cơ | Đối phó hiện tại |
+|----------|---------|------------------|
+| Brute force đăng nhập | Đột nhập tài khoản | ⚠️ Chưa có rate limit explicit |
+| SQL Injection | Đọc data tùy ý | ✓ ORM/parameterized query (giả định) |
+| XSS qua input khách hàng | Chiếm session admin | ⚠️ Cần escape mọi user input render |
+| CSRF | Thay mặt user thực hiện action | ✓ Bearer token (không dùng cookie session) |
+| IDOR (Insecure Direct Object Reference) | Đọc/sửa entity của user khác | ⚠️ Cần check ownership ở mọi endpoint |
+| Tenant leak | Đọc data tenant khác | ⚠️ Phụ thuộc backend implement RLS đúng |
+| Stolen token | Dùng token người khác | Cookie HttpOnly + Secure + SameSite |
+| Replay webhook | Gọi 2 lần action | Idempotency key |
+| Credential leak (commit token vào git) | Lộ key | ✓ Env var + .gitignore + secret scan (đề xuất) |
+
+---
+
+## 2. Authentication
+
+### 2.1. Cơ chế
+
+> Đã mô tả ở [Part 08 §7](part-08-backend-architecture.md#7-authentication-chi-tiết).
+
+Tóm tắt: **OAuth 2.0 Authorization Code** qua SSO Reborn, frontend lưu access_token trong cookie, gửi mỗi request qua header `Authorization: Bearer`.
+
+### 2.2. Mật khẩu
+
+- **Lưu trữ**: bcrypt hash (cost factor ≥ 10)
+- **Validation**: ≥ 8 ký tự, có hoa + thường + số (URD NFR-SEC-02)
+- **History**: không trùng 5 mật khẩu gần nhất
+- **Lockout**: sai 5 lần → khóa 15 phút (URD NFR-SEC-03)
+
+### 2.3. 2FA (Two-Factor Authentication)
+
+- **Optional cho user thường**, **bắt buộc cho admin tenant** (đề xuất)
+- **TOTP** qua Google Authenticator / Authy
+- **Backup codes** 10 mã
+
+### 2.4. Token lifecycle
+
+| Token | Lifetime | Rotation |
+|-------|----------|----------|
+| **Access token** | 1 giờ | Mỗi lần refresh |
+| **Refresh token** | 30 ngày (Ghi nhớ) hoặc 7 ngày | Rotate khi dùng |
+| **Session cookie** | Cùng access token | — |
+
+> ⚠️ **Quan sát**: Frontend interceptor hiện tại **chưa có refresh token logic**. Khi access token hết hạn → 401 → logout. Cần thêm refresh logic.
+
+### 2.5. Logout
+
+- Xóa cookie `token`, `user`
+- Clear `localStorage`: `permissions`, `user.root`, `SelectedRole`
+- (Tốt hơn) Gọi API `/oauth/logout` để invalidate token ở server
+
+---
+
+## 3. Authorization (RBAC)
+
+### 3.1. Mô hình
+
+```
+User
+  └─ Has many → Role
+                  └─ Has many → Permission
+
+Permission là chuỗi định danh: 'CUSTOMER', 'INVOICE.CREATE', 'SHIFT.OPEN', ...
+```
+
+### 3.2. Cây quyền (suy luận từ codebase)
+
+```
+.
+├── CUSTOMER
+│   ├── CUSTOMER.VIEW
+│   ├── CUSTOMER.CREATE
+│   ├── CUSTOMER.UPDATE
+│   ├── CUSTOMER.DELETE
+│   ├── CUSTOMER.VIEW_PHONE        ← nhạy cảm
+│   ├── CUSTOMER.VIEW_EMAIL        ← nhạy cảm
+│   └── CUSTOMER.IMPORT
+├── INVOICE
+│   ├── INVOICE.VIEW
+│   ├── INVOICE.CREATE
+│   ├── INVOICE.CANCEL
+│   ├── INVOICE.REFUND             ← nhạy cảm
+│   └── INVOICE.VAT
+├── SHIFT
+│   ├── SHIFT.OPEN
+│   ├── SHIFT.CLOSE
+│   └── SHIFT.VIEW_ALL
+├── FINANCE
+│   ├── FINANCE.VIEW
+│   ├── FINANCE.CREATE_RECEIPT
+│   ├── FINANCE.CREATE_PAYMENT
+│   ├── FINANCE.CANCEL
+│   └── FINANCE.RECONCILIATION
+├── INVENTORY
+│   └── ...
+├── MARKETING
+│   ├── MARKETING.CAMPAIGN
+│   └── MARKETING.PROMOTION
+├── REPORT
+│   ├── REPORT.SALES
+│   ├── REPORT.MEMBER
+│   └── REPORT.FINANCE
+├── SETTING
+│   ├── SETTING.TENANT             ← chỉ Tenant Admin
+│   ├── SETTING.PERMISSION         ← chỉ Tenant Admin
+│   └── SETTING.INTEGRATION
+└── ADMIN_TENANT (super)
+```
+
+### 3.3. Frontend permission check
+
+```ts
+// userContext có permissions: string[]
+const { permissions } = useContext(UserContext);
+
+// Component-level guard
+{permissions.includes('CUSTOMER.CREATE') && <Button>Thêm khách</Button>}
+
+// Page-level guard
+function CustomerPersonList() {
+  const { permissions } = useContext(UserContext);
+  if (!permissions.includes('CUSTOMER')) {
+    return <Forbidden403 />;
+  }
+  // ...
+}
+
+// Sidebar filter
+filterMenuByPermission(menu, permissions)  // ẩn item user không có quyền
+```
+
+### 3.4. Backend permission check (bắt buộc!)
+
+> ⚠️ **Critical**: Frontend permission check **chỉ là UX** — không thay được backend check. Backend phải verify quyền ở mỗi endpoint. Nếu chỉ frontend → user có thể bypass bằng cách type URL hoặc gọi API trực tiếp qua Postman.
+
+```python
+# pseudocode middleware
+@require_permission('CUSTOMER.DELETE')
+def delete_customer(request, customer_id):
+    customer = Customer.objects.get(id=customer_id, tenant_id=request.tenant_id)
+    customer.soft_delete()
+```
+
+### 3.5. Selectedrole header
+
+Header `Selectedrole` cho phép user có nhiều role chọn role nào dùng trong phiên hiện tại. Backend dùng để limit permission.
+
+```
+User có roles: ['admin_branch_a', 'staff_branch_b']
+                     ↓
+Selectedrole: 'admin_branch_a'
+                     ↓
+Backend chỉ áp permission của 'admin_branch_a' (không phải union)
+```
+
+---
+
+## 4. Multi-tenant isolation
+
+### 4.1. Layer 1 — HTTP header
+
+Mọi request gửi `Hostname: <tenant_domain>`:
+
+```
+Hostname: kcn.reborn.vn       → tenant KCN
+Hostname: viettelstore.reborn.vn  → tenant Viettel Store
+```
+
+> ⚠️ **Critical bug:** [`fetchConfig.ts:42`](../../src/configs/fetchConfig.ts#L42) hardcode `Hostname = "kcn.reborn.vn"`. Cần fix lấy từ `location.hostname` trước khi production.
+
+### 4.2. Layer 2 — Backend middleware
+
+```python
+def tenant_middleware(request):
+    hostname = request.headers.get("Hostname")
+    tenant = Tenant.lookup_by_domain(hostname)
+    if not tenant:
+        return 404
+    request.tenant_id = tenant.id
+```
+
+### 4.3. Layer 3 — Database query
+
+```sql
+-- Mọi query phải có:
+WHERE tenant_id = :current_tenant_id
+```
+
+Cách enforce:
+
+| Cách | Mô tả | Mức an toàn |
+|------|-------|-------------|
+| **Code review** | Dev tự đảm bảo | Thấp |
+| **ORM scope** | Override default scope | Trung bình |
+| **Row Level Security** (PostgreSQL) | DB tự inject filter | Cao |
+| **Database per tenant** | Tách hoàn toàn | Tuyệt đối |
+
+> **Đề xuất**: dùng PostgreSQL RLS — đặt connection-level `SET app.current_tenant = X` mỗi request. Mọi query không cần `WHERE tenant_id` nữa, DB tự lo.
+
+### 4.4. Test isolation
+
+E2E test bắt buộc:
+
+```
+Test "tenant_isolation":
+  1. Create tenant A, tenant B
+  2. Tạo khách trong tenant A (id=1)
+  3. Login user của tenant B
+  4. GET /api/customer/detail?id=1
+  5. Assert: 404 (không tìm thấy)
+  6. Assert: NOT 200 với data của A
+```
+
+---
+
+## 5. Encryption
+
+### 5.1. In transit
+
+| Hop | Encryption |
+|-----|------------|
+| **Browser ↔ CDN** | TLS 1.2+ (managed by CDN) |
+| **CDN ↔ LB** | TLS 1.2+ |
+| **LB ↔ API** | TLS in production (mTLS đề xuất) |
+| **API ↔ DB** | TLS bắt buộc, không trust internal network |
+| **API ↔ external (payment, e-invoice)** | TLS + (đôi khi) mTLS |
+| **API ↔ Redis** | TLS hoặc VPN |
+
+### 5.2. At rest
+
+| Data | Method |
+|------|--------|
+| **Database disk** | LUKS / cloud provider encryption |
+| **Backup** | AES-256 trước khi đẩy lên S3 |
+| **S3 bucket** | SSE-S3 hoặc SSE-KMS |
+| **Sensitive columns** (api_key, refresh_token) | Column-level AES-256 |
+| **Password** | bcrypt (one-way hash) |
+| **Webhook secret** | AES-256 |
+| **Certificate (PFX)** | HSM hoặc Vault |
+
+### 5.3. Key management
+
+Đề xuất dùng **AWS KMS** / **HashiCorp Vault** / **Azure Key Vault**:
+
+- Mỗi tenant có encryption key riêng (envelope encryption)
+- Rotation định kỳ (mỗi 90 ngày)
+- Audit truy cập key
+
+---
+
+## 6. Sensitive data masking
+
+### 6.1. Nguyên tắc
+
+Dữ liệu nhạy cảm (SĐT, email, CMND, STK) **mặc định ẩn**, chỉ hiện cho user có quyền.
+
+### 6.2. Backend implementation
+
+```python
+def serialize_customer(customer, user):
+    data = {...}
+    if not user.has_permission('CUSTOMER.VIEW_PHONE'):
+        data['phone'] = mask_phone(customer.phone)  # "090***1234"
+    if not user.has_permission('CUSTOMER.VIEW_EMAIL'):
+        data['email'] = mask_email(customer.email)
+    return data
+```
+
+### 6.3. Frontend hiển thị
+
+```tsx
+// Field "Số điện thoại" có icon con mắt
+// Bấm con mắt → gọi API customer/viewPhone với id
+// API check quyền → trả về số đầy đủ hoặc lỗi 403
+
+const handleShowPhone = async (id) => {
+  const res = await CustomerService.viewPhone(id);
+  if (res.code === 0) {
+    setFormData({...formData, phone: res.result});
+  } else if (res.code === 400) {
+    showToast("Bạn không có quyền xem số điện thoại !", "error");
+  }
+};
+```
+
+> Pattern này quan sát được trong [`AddCustomerPersonModal.tsx`](../../src/pages/CustomerPerson/partials/AddCustomerPersonModal.tsx).
+
+### 6.4. Audit khi xem
+
+Mỗi lần user bấm "xem SĐT đầy đủ" → ghi audit log: ai, khi nào, xem khách nào. Để truy vết khi nghi ngờ ăn cắp data.
+
+---
+
+## 7. OWASP Top 10 defenses
+
+### 7.1. A01: Broken Access Control
+
+| Mitigation |
+|-----------|
+| RBAC + Selectedrole header |
+| Backend check ownership ở mọi endpoint (IDOR prevention) |
+| Test isolation tenant tự động |
+
+### 7.2. A02: Cryptographic Failures
+
+| Mitigation |
+|-----------|
+| TLS bắt buộc |
+| Bcrypt cho password |
+| AES-256 cho secret |
+| Không log mật khẩu, token |
+
+### 7.3. A03: Injection
+
+| Mitigation |
+|-----------|
+| ORM hoặc parameterized query (cấm string concat) |
+| Validate + sanitize input ở mọi entry point |
+| Escape output (XSS) |
+
+### 7.4. A04: Insecure Design
+
+| Mitigation |
+|-----------|
+| Threat modeling từ đầu (Part này) |
+| ADR cho các quyết định bảo mật |
+| Code review checklist |
+
+### 7.5. A05: Security Misconfiguration
+
+| Mitigation |
+|-----------|
+| Disable debug mode production |
+| Tắt directory listing |
+| Header bảo mật: HSTS, CSP, X-Frame-Options |
+| Rotate default credentials |
+
+### 7.6. A06: Vulnerable & Outdated Components
+
+| Mitigation |
+|-----------|
+| Dependabot / Snyk scan dependencies |
+| Update dependency định kỳ |
+| Remove unused dependencies |
+
+> ⚠️ **Quan sát**: React 17 (đã ra React 19), nhiều dependency phiên bản cũ. Cần audit định kỳ.
+
+### 7.7. A07: Identification & Authentication Failures
+
+| Mitigation |
+|-----------|
+| Strong password policy |
+| 2FA optional + bắt buộc cho admin |
+| Lockout sau N lần sai |
+| Session timeout |
+
+### 7.8. A08: Software & Data Integrity Failures
+
+| Mitigation |
+|-----------|
+| Verify chữ ký webhook (HMAC) |
+| Signed releases |
+| SBOM (Software Bill of Materials) |
+| CI/CD pipeline có code signing |
+
+### 7.9. A09: Security Logging & Monitoring Failures
+
+| Mitigation |
+|-----------|
+| Centralized logging |
+| Alert khi có pattern khả nghi (login failed nhiều) |
+| Audit log truy cập sensitive data |
+
+### 7.10. A10: SSRF (Server-Side Request Forgery)
+
+| Mitigation |
+|-----------|
+| Whitelist URL khi user nhập (vd webhook URL) |
+| Block private IP range (10.x, 192.168.x, 169.254.x) |
+| Egress firewall |
+
+---
+
+## 8. Header bảo mật HTTP
+
+### 8.1. Content-Security-Policy (CSP)
+
+```
+Content-Security-Policy: 
+  default-src 'self';
+  script-src 'self' 'unsafe-inline' https://cdn.reborn.vn;
+  style-src 'self' 'unsafe-inline';
+  img-src 'self' data: https:;
+  connect-src 'self' https://api.reborn.vn https://sso.reborn.vn;
+  frame-ancestors 'none';
+```
+
+### 8.2. Other headers
+
+```
+Strict-Transport-Security: max-age=63072000; includeSubDomains; preload
+X-Content-Type-Options: nosniff
+X-Frame-Options: DENY
+Referrer-Policy: strict-origin-when-cross-origin
+Permissions-Policy: geolocation=(), microphone=(), camera=()
+```
+
+> **Đề xuất**: Setup ở nginx hoặc CDN/WAF level để áp cho mọi response.
+
+---
+
+## 9. Rate limiting
+
+### 9.1. Cần có ở các endpoint:
+
+| Endpoint | Limit |
+|----------|-------|
+| `/oauth/token` (login) | 10/phút/IP |
+| `/oauth/forgot-password` | 5/giờ/email |
+| Public API endpoint | 100/phút/API key |
+| Authenticated API | 600/phút/user |
+| Webhook receiver | 1000/phút/source |
+| Mass marketing send | tùy gateway throttle |
+
+### 9.2. Implementation
+
+- **Nginx limit_req** module
+- **Cloud provider WAF**
+- **Application-level**: Redis-based counter (vd `express-rate-limit`)
+
+---
+
+## 10. Audit log chi tiết
+
+> Đã mô tả ở [Part 07 §4](part-07-data-architecture.md#4-audit-trail).
+
+### 10.1. Quy ước event
+
+```json
+{
+  "tenant_id": 123,
+  "user_id": 456,
+  "action": "INVOICE.REFUND",
+  "entity_type": "invoice",
+  "entity_id": 789,
+  "before": { "status": "paid", "amount": 500000 },
+  "after": { "status": "refunded", "amount": 500000 },
+  "ip": "1.2.3.4",
+  "user_agent": "Mozilla/...",
+  "timestamp": "2026-04-14T10:23:45Z",
+  "request_id": "uuid-..."
+}
+```
+
+### 10.2. Storage
+
+- **Hot storage**: 90 ngày trong PostgreSQL (query nhanh)
+- **Cold storage**: > 90 ngày archive sang S3 + Athena cho query
+- **Total retention**: ≥ 2 năm (≥ 5 năm cho audit tài chính)
+
+### 10.3. Tamper-resistance
+
+- **Append-only**: không UPDATE / DELETE
+- **Hash chain** (optional): mỗi entry chứa hash của entry trước → phát hiện tampering
+- **External backup** đến storage không có quyền ghi
+
+---
+
+## 11. Secret management
+
+### 11.1. Cấm
+
+- ❌ Commit secret vào git
+- ❌ Lưu secret trong code source
+- ❌ Lưu secret trong env file commit lên repo (.env.example OK, .env không OK)
+- ❌ Hardcode secret trong frontend (đi vào bundle public)
+
+### 11.2. Đề xuất
+
+- ✅ Vault (HashiCorp / cloud KMS)
+- ✅ Env var inject lúc deploy
+- ✅ Rotate định kỳ
+- ✅ Audit truy cập
+
+### 11.3. Secret scanning
+
+Pre-commit hook + CI scan với:
+
+- **git-secrets** (AWS Labs)
+- **truffleHog**
+- **GitGuardian**
+
+---
+
+## 12. Compliance
+
+### 12.1. Luật An ninh mạng VN 2018
+
+- Dữ liệu công dân VN lưu tại VN
+- Có cơ chế cung cấp data cho cơ quan chức năng khi yêu cầu
+- Lưu nhật ký đăng nhập tối thiểu 12 tháng
+
+### 12.2. Nghị định 13/2023/NĐ-CP (Bảo vệ DLCN)
+
+- Có cam kết bảo mật dữ liệu cho khách
+- Cho khách yêu cầu xem/sửa/xóa data của họ
+- Thông báo khi thu thập data
+- Đăng ký xử lý DLCN (đối với organization)
+
+### 12.3. TT78/2021/TT-BTC (Hóa đơn điện tử)
+
+- Phát hành đúng quy định
+- Lưu trữ ≥ 10 năm
+- Có chữ ký số CA hợp lệ
+
+### 12.4. TT06/2017/TT-BVHTTDL (Lưu trú)
+
+- Lưu CMND/CCCD ít nhất 5 năm
+- Báo cáo cho công an khi yêu cầu
+
+---
+
+## 13. Security gaps quan sát được
+
+| ID | Gap | Mức nghiêm trọng | Action |
+|----|-----|:---------------:|--------|
+| SG-01 | Hardcode `Hostname` trong fetchConfig | 🔴 **Critical** | Fix ngay trước production |
+| SG-02 | Không có refresh token logic — user bị logout giữa chừng | 🟡 Medium | Implement refresh + queue retry |
+| SG-03 | Không có explicit `PrivateRoute` wrapper — user có thể bypass URL | 🟡 Medium | Add route guard |
+| SG-04 | React 17 + nhiều dep cũ — có CVE chưa patch | 🟡 Medium | Audit + upgrade |
+| SG-05 | Không có CSP/HSTS header (giả định) | 🟡 Medium | Setup ở nginx/CDN |
+| SG-06 | Không có rate limit explicit ở frontend (chống click spam) | 🟢 Low | Debounce button submit |
+| SG-07 | Sensitive log (vd console.log token) | 🟡 Medium | Audit code, drop_console production (đã có) |
+| SG-08 | Không có security test trong CI | 🟡 Medium | Add Snyk/Dependabot |
+
+> Chi tiết action plan ở [Part 14](part-14-quality-risks.md).
+
+---
+
+## 14. Security checklist cho dev
+
+Trước khi merge PR, dev tự check:
+
+- [ ] Endpoint mới có check authentication?
+- [ ] Endpoint mới có check authorization (permission)?
+- [ ] Query DB có scope theo `tenant_id`?
+- [ ] Input có validate + sanitize?
+- [ ] Output có escape (XSS)?
+- [ ] Không log token/password?
+- [ ] Không hardcode secret?
+- [ ] Action nhạy cảm có audit log?
+- [ ] Có test cho authorization?
+- [ ] Dependencies mới có audit security?
+
+---
+
+*Hết Part 10.*

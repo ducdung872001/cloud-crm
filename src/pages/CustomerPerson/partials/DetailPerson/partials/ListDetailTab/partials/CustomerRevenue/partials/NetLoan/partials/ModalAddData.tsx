@@ -113,7 +113,7 @@ export default function ModalAddData({ onShow, onHide, dataProps, customerId }) 
       ...(data ? { id: data?.id } : {}),
       ...(formData.values as Record<string, unknown>),
       customerId,
-      transactionDate: formatDateCustom(formData.values.transactionDate, "yyyy-MM-dd'T'HH:mm:ss"),
+      transactionDate: formatDateCustom(formData.values.transactionDate, "yyyy-MM-EEEEEETHH:mm:ss"),
     };
 
     const response = null;
@@ -226,7 +226,7 @@ export default function ModalAddData({ onShow, onHide, dataProps, customerId }) 
             <div className="list-form-group">
               {listField.map((field, index) => (
                 <FieldCustomize
-                  key={index}
+                  key={field.name || index}
                   field={field}
                   handleUpdate={(value) => handleChangeValidate(value, field, formData, validations, listField, setFormData)}
                   formData={formData}

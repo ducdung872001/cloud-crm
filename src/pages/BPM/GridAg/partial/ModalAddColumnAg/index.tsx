@@ -706,7 +706,7 @@ export default function ModalAddColumnAg(props: Record<string, unknown>) {
       });
     }
 
-    const dataSubmit = {
+    let dataSubmit = {
       nodeId: params?.nodeId || "Activity_0n3i8dv",
       processId: params?.processId || 380,
       fieldName: params?.fieldName || "boq",
@@ -872,7 +872,7 @@ export default function ModalAddColumnAg(props: Record<string, unknown>) {
   const [listOptionDate, setlistOptionDate] = useState<IOption[]>([]);
 
   useEffect(() => {
-    const _listOptionDate = [];
+    let _listOptionDate = [];
     listColumn.map((item) => {
       if (item.type == "date") {
         _listOptionDate.push({
@@ -909,7 +909,7 @@ export default function ModalAddColumnAg(props: Record<string, unknown>) {
             <div className="list-form-group">
               {listFieldFirst.map((field, index) => (
                 <FieldCustomize
-                  key={index}
+                  key={field.name || index}
                   field={field}
                   handleUpdate={(value) => handleChangeValidate(value, field, formData, validations, listFieldFirst, setFormData)}
                   formData={formData}
@@ -1325,7 +1325,7 @@ export default function ModalAddColumnAg(props: Record<string, unknown>) {
 
               {listFieldSecond.map((field, index) => (
                 <FieldCustomize
-                  key={index}
+                  key={field.name || index}
                   field={field}
                   handleUpdate={(value) => handleChangeValidate(value, field, formData, validations, listFieldSecond, setFormData)}
                   formData={formData}

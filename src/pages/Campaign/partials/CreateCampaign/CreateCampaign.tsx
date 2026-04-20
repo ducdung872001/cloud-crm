@@ -54,9 +54,9 @@ import ViolationWarning from "./ViolationWarning";
 import MarketingAutomationService from "services/MarketingAutomationService";
 import KpiContact from "./KpiContact";
 import SettingPineline from "./SettingPipeline/SettingPineline";
-import { set } from "lodash";
 import BusinessProcessService from "services/BusinessProcessService";
-import moment from "moment";
+import { format } from "date-fns";
+import { isValidDate, formatDate as formatDateUtil } from "utils/dateUtils";
 import { useBranchHierarchy, useSalesAllocation, useKpiConfig, useScoringSystem, useActionSettings, useModalState } from "./hooks";
 
 interface IDataApproach {
@@ -307,7 +307,7 @@ export default function CreateCampaign() {
 
    const formatDate = (date) => {
       if (!date) return "";
-      return moment(date).isValid() ? moment(date).format("DD/MM/yyyy") : "";
+      return isValidDate(date) ? formatDateUtil(date) : "";
     };
 
   const [isOptionRank, setIsOptionRank] = useState<boolean>(false);
@@ -428,19 +428,19 @@ export default function CreateCampaign() {
         const branches4 = dataBranch?.branches4 || [];
         const dataBranchList = result.lstBranch;
 
-        const listBranchLevel0 = branches0.map((item) => {
+        let listBranchLevel0 = branches0.map((item) => {
           return { value: item.id, label: item.name };
         });
-        const listBranchLevel1 = branches1.map((item) => {
+        let listBranchLevel1 = branches1.map((item) => {
           return { value: item.id, label: item.name };
         });
-        const listBranchLevel2 = branches2.map((item) => {
+        let listBranchLevel2 = branches2.map((item) => {
           return { value: item.id, label: item.name };
         });
-        const listBranchLevel3 = branches3.map((item) => {
+        let listBranchLevel3 = branches3.map((item) => {
           return { value: item.id, label: item.name };
         });
-        const listBranchLevel4 = branches4.map((item) => {
+        let listBranchLevel4 = branches4.map((item) => {
           return { value: item.id, label: item.name };
         });
 
@@ -1175,7 +1175,7 @@ export default function CreateCampaign() {
       return item.value;
     });
 
-    const newArr = [...dataSourceProvider];
+    let newArr = [...dataSourceProvider];
     const index = dataSourceProvider.findIndex((el) => el.type === "ma");
     if (index !== -1) {
       newArr[index] = {
@@ -1227,7 +1227,7 @@ export default function CreateCampaign() {
       return item.value;
     });
 
-    const newArr = [...dataSourceProvider];
+    let newArr = [...dataSourceProvider];
     const index = dataSourceProvider.findIndex((el) => el.type === "filter");
     if (index !== -1) {
       newArr[index] = {
@@ -1510,7 +1510,7 @@ export default function CreateCampaign() {
     if (listBranchDeleted0 && listBranchDeleted0.length > 0 && listBranchValue.length >= 2) {
       let newlistBranch1 = [...listBranchValue[1].value];
 
-      const newListBranchDeleted1 = [];
+      let newListBranchDeleted1 = [];
       if (listBranchValue[1].value.length > 0) {
         listBranchDeleted0.map((item) => {
           const array = newlistBranch1.filter((el) => el.parentId !== item) || [];
@@ -1548,7 +1548,7 @@ export default function CreateCampaign() {
     if (listBranchDeleted1 && listBranchDeleted1.length > 0 && listBranchValue.length >= 3) {
       let newlistBranch2 = [...listBranchValue[2].value];
 
-      const newListBranchDeleted2 = [];
+      let newListBranchDeleted2 = [];
       if (listBranchValue[2].value.length > 0) {
         listBranchDeleted1.map((item) => {
           const array = newlistBranch2.filter((el) => el.parentId !== item) || [];
@@ -1592,7 +1592,7 @@ export default function CreateCampaign() {
   useEffect(() => {
     if (listBranchDeleted2 && listBranchDeleted2.length > 0 && listBranchValue.length >= 4) {
       let newlistBranch3 = [...listBranchValue[3].value];
-      const newListBranchDeleted3 = [];
+      let newListBranchDeleted3 = [];
       if (listBranchValue[3].value.length > 0) {
         listBranchDeleted2.map((item) => {
           const array = newlistBranch3.filter((el) => el.parentId !== item) || [];
@@ -2044,11 +2044,11 @@ export default function CreateCampaign() {
     const body: ICampaignRequestModel = {
       ...(data || campaignId ? { id: data?.id || campaignId } : {}),
       ...(formData?.values as ICampaignRequestModel),
-      startDate: formData.values.startDate && moment(formData.values.startDate).isValid() 
-        ? moment(formData.values.startDate).format("YYYY-MM-DDTHH:mm:ss") 
+      startDate: formData.values.startDate && isValidDate(formData.values.startDate)
+        ? format(new Date(formData.values.startDate), "yyyy-MM-dd'T'HH:mm:ss")
         : "",
-      endDate: formData.values.endDate && moment(formData.values.endDate).isValid() 
-        ? moment(formData.values.endDate).format("YYYY-MM-DDTHH:mm:ss") 
+      endDate: formData.values.endDate && isValidDate(formData.values.endDate)
+        ? format(new Date(formData.values.endDate), "yyyy-MM-dd'T'HH:mm:ss")
         : "",
     };
 
@@ -2218,7 +2218,7 @@ export default function CreateCampaign() {
     setCheckFieldApproach(false);
 
     const value = e.target.value;
-    const item: ICampaignApproachRequestModel = {};
+    let item: ICampaignApproachRequestModel = {};
 
     if (value) {
       listApproach.map((obj, index) => {
@@ -2260,7 +2260,7 @@ export default function CreateCampaign() {
 
   const handleChangeValueActivity = (activities, idx) => {
     activities = JSON.stringify(activities.split(","));
-    const item: ICampaignApproachRequestModel = {};
+    let item: ICampaignApproachRequestModel = {};
     listApproach.map((obj, index) => {
       if (index === idx) {
         item.id = obj.id;
@@ -2737,8 +2737,6 @@ export default function CreateCampaign() {
         let hasAInteraction = 0;
         let hasASuccessOppertunity = 0;
 
-        const moment = require("moment");
-
         result?.criteria.map((item) => {
           if (item.name === "hasAOpportunity") {
             hasAOpportunity = item.value * -1 || 0;
@@ -2768,11 +2766,23 @@ export default function CreateCampaign() {
           }
         });
 
-        const expireContact = overdueInteraction;
-        const diffExpireContact = new moment.duration(expireContact * 1000);
+        // Convert seconds to duration components (replaces moment.duration)
+        const toDuration = (seconds: number) => {
+          const totalMinutes = Math.floor(seconds / 60);
+          const totalHours = Math.floor(seconds / 3600);
+          const totalDays = Math.floor(seconds / 86400);
+          return {
+            asDays: () => totalDays,
+            asHours: () => totalHours,
+            asMinutes: () => totalMinutes,
+          };
+        };
 
-        const expireFinish = expiredDeadline;
-        const diffExpireFinish = new moment.duration(expireFinish * 1000);
+        let expireContact = overdueInteraction;
+        var diffExpireContact = toDuration(expireContact);
+
+        let expireFinish = expiredDeadline;
+        var diffExpireFinish = toDuration(expireFinish);
 
         setMinusPoints({
           getLead: hasAOpportunity,
@@ -4139,7 +4149,7 @@ export default function CreateCampaign() {
               </div>
             </div>
             {listApproach.map((item, index) => (
-              <div key={index} className="container_approach_sale">
+              <div key={item.id ?? index} className="container_approach_sale">
                 <div style={{ width: "63%" }}>
                   <Input
                     fill={true}
@@ -4366,7 +4376,7 @@ export default function CreateCampaign() {
                 <span style={{ fontSize: 16, fontWeight: "500" }}>Zalo</span>
                 <div style={{ marginTop: 10 }}>
                   {settingZalo.map((item, index) => (
-                    <div key={index} className="setting">
+                    <div key={item.id ?? index} className="setting">
                       <div style={{ width: "30%" }}>
                         <SelectCustom
                           id=""
@@ -4488,7 +4498,7 @@ export default function CreateCampaign() {
                 <span style={{ fontSize: 16, fontWeight: "500" }}>SMS</span>
                 <div style={{ marginTop: 10 }}>
                   {settingSms.map((item, index) => (
-                    <div key={index} className="setting">
+                    <div key={item.id ?? index} className="setting">
                       <div style={{ width: "30%" }}>
                         <SelectCustom
                           id=""
@@ -4624,7 +4634,7 @@ export default function CreateCampaign() {
                 <span style={{ fontSize: 16, fontWeight: "500" }}>Call</span>
                 <div style={{ marginTop: 10 }}>
                   {settingCall.map((item, index) => (
-                    <div key={index} className="setting">
+                    <div key={item.id ?? index} className="setting">
                       <div style={{ width: "30%" }}>
                         <SelectCustom
                           id=""
@@ -4811,7 +4821,7 @@ export default function CreateCampaign() {
                   <div className="container-kpi-goal">
                     {dataKpiGoal && dataKpiGoal.length > 0
                       ? dataKpiGoal.map((item, index) => (
-                          <div key={index} style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+                          <div key={item.id ?? index} style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
                             <div className="box-kpi-goal">
                               <div className="name-kpi-goal">
                                 <span style={{ fontSize: 14, fontWeight: "400" }}>{item.label}</span>

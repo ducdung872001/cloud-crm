@@ -82,7 +82,7 @@ export default function PaymentImportInvoices(props: PaymentImportInvoicesProps)
     if (listInventory.length > 0) return;
 
     setIsLoadingInventory(true);
-    const response = await InventoryService.list();
+    const response = await InventoryService.list({ page: 1, limit: 200 });
 
     if (response.code === 0) {
       const dataOption = Array.isArray(response.result)
@@ -99,7 +99,7 @@ export default function PaymentImportInvoices(props: PaymentImportInvoicesProps)
         }))
       );
     } else {
-      showToast(response.error ?? response.message ?? "Không lấy được danh sách kho", "error");
+      showToast(response.message ?? "Không lấy được danh sách kho", "error");
     }
 
     setIsLoadingInventory(false);
@@ -154,7 +154,7 @@ export default function PaymentImportInvoices(props: PaymentImportInvoicesProps)
       } else {
         setFormData((prev) => ({ ...prev, inventoryId: previousInventoryId }));
         onInventoryChanged?.(previousInventoryId);
-        showToast(response.error ?? response.message ?? "Cập nhật kho hàng thất bại", "error");
+        showToast(response.message ?? "Cập nhật kho hàng thất bại", "error");
       }
 
       setIsUpdatingInventory(false);
@@ -172,15 +172,31 @@ export default function PaymentImportInvoices(props: PaymentImportInvoicesProps)
   const handleCreateInvoice = async (e) => {
     e.preventDefault();
 
+    // ── UI validation trước submit (theo chuẩn reborn-retail VALIDATION_AUDIT) ──
+    // Required: inventoryId, receiptDate
+    let hasError = false;
     if (formData?.inventoryId == null) {
       setValidateInventory(true);
-      return;
+      hasError = true;
     }
-
     if (!formData?.receiptDate) {
       setValidateReceiptDate(true);
-      return;
+      hasError = true;
     }
+    // Ngày nhập không được là ngày tương lai (đã có isMaxDate trên DatePicker nhưng double-check)
+    if (formData?.receiptDate) {
+      const d = new Date(formData.receiptDate);
+      if (isNaN(d.getTime())) {
+        showToast("Ngày nhập không hợp lệ", "error");
+        setValidateReceiptDate(true);
+        hasError = true;
+      } else if (d.getTime() > Date.now() + 60 * 1000) {
+        showToast("Ngày nhập không được là ngày tương lai", "error");
+        setValidateReceiptDate(true);
+        hasError = true;
+      }
+    }
+    if (hasError) return;
 
     setIsSubmit(true);
 
@@ -191,17 +207,23 @@ export default function PaymentImportInvoices(props: PaymentImportInvoicesProps)
       receiptDate: formatDateCustom(formData.receiptDate, "yyyy-MM-dd'T'HH:mm:ss"),
     };
 
-    const response = await InvoiceService.importUpdate(body);
-    const invoice = getInvoiceFromResponse(response);
+    try {
+      const response = await InvoiceService.importUpdate(body);
+      const invoice = getInvoiceFromResponse(response);
 
-    if (response.code === 0 && invoice?.id) {
-      showToast(formData?.id ? "Cập nhật phiếu nhập thành công" : "Tạo phiếu nhập thành công", "success");
-      onInvoiceCreated?.(invoice);
-    } else {
-      showToast(response.error ?? response.message ?? "Có lỗi xảy ra. Vui lòng thử lại sau", "error");
+      if (response?.code === 0 && invoice?.id) {
+        showToast(formData?.id ? "Cập nhật phiếu nhập thành công" : "Tạo phiếu nhập thành công", "success");
+        onInvoiceCreated?.(invoice);
+      } else {
+        // Đọc cả response.message + response.error (BE community-hub dùng cả 2 key)
+        const errMsg = response?.message ?? response?.error ?? "Có lỗi xảy ra. Vui lòng thử lại sau";
+        showToast(errMsg, "error");
+      }
+    } catch (err) {
+      showToast((err as Error)?.message ?? "Lỗi kết nối khi tạo phiếu nhập", "error");
+    } finally {
+      setIsSubmit(false);
     }
-
-    setIsSubmit(false);
   };
 
   const handleApproveInvoice = async () => {
@@ -216,16 +238,20 @@ export default function PaymentImportInvoices(props: PaymentImportInvoicesProps)
     }
 
     setIsSubmit(true);
-    const response = await InvoiceService.importApprove(data.id);
-
-    if (response.code === 0) {
-      showToast("Duyệt phiếu nhập thành công", "success");
-      onInvoiceApproved?.({ ...(data as IInvoiceCreateResponse), status: 1 });
-    } else {
-      showToast(response.error ?? response.message ?? "Duyệt phiếu nhập thất bại", "error");
+    try {
+      const response = await InvoiceService.importApprove(data.id);
+      if (response?.code === 0) {
+        showToast("Duyệt phiếu nhập thành công", "success");
+        onInvoiceApproved?.({ ...(data as IInvoiceCreateResponse), status: 1 });
+      } else {
+        const errMsg = response?.message ?? response?.error ?? "Duyệt phiếu nhập thất bại";
+        showToast(errMsg, "error");
+      }
+    } catch (err) {
+      showToast((err as Error)?.message ?? "Lỗi kết nối khi duyệt phiếu nhập", "error");
+    } finally {
+      setIsSubmit(false);
     }
-
-    setIsSubmit(false);
   };
 
   return (

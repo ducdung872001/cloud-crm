@@ -561,12 +561,12 @@ export default function AddObject(props: IAddObjectProps) {
   };
 
   const updateCustomerMultiselectAttribute = (attributeId, e) => {
-    const attributeValue = e ? e.split(",") : [];
+    let attributeValue = e ? e.split(",") : [];
     updateCustomerAttribute(attributeId, JSON.stringify(attributeValue));
   };
 
   const updateCustomerAttribute = (attributeId, attributeValue) => {
-    const objectId = data?.id || 0;
+    let objectId = data?.id || 0;
 
     let found = false;
     (objectExtraInfos || []).map((item, idx) => {
@@ -578,7 +578,7 @@ export default function AddObject(props: IAddObjectProps) {
     });
 
     if (!found) {
-      const item: Record<string, unknown> = {};
+      let item: Record<string, unknown> = {};
       item.attributeId = attributeId;
       item.attributeValue = attributeValue;
       item.objectId = objectId;
@@ -602,7 +602,7 @@ export default function AddObject(props: IAddObjectProps) {
 
   const getDecimalScale = (attributes) => {
     attributes = attributes ? JSON.parse(attributes) : {};
-    const numberFormat = attributes?.numberFormat || "";
+    let numberFormat = attributes?.numberFormat || "";
     if (numberFormat.endsWith(".#")) {
       return 1;
     }
@@ -656,8 +656,8 @@ export default function AddObject(props: IAddObjectProps) {
    * @param isFormula
    */
   const getCustomerAttributeFormula = (attributes) => {
-    const attributeValue = attributes ? JSON.parse(attributes)?.formula : "";
-    const attrObj = {};
+    let attributeValue = attributes ? JSON.parse(attributes)?.formula : "";
+    let attrObj = {};
     (objectExtraInfos || []).map((item, idx) => {
       if (item.datatype == "number") {
         attrObj["customerAttribute_" + convertToId(item.attributeName)] = +item.attributeValue;
@@ -711,7 +711,7 @@ export default function AddObject(props: IAddObjectProps) {
             decimalScale={getDecimalScale(customerAttribute.attributes)}
             onChange={(e) => {
               const value = e.target.value;
-              const valueNum = value?.replace(/,/g, "");
+              let valueNum = value?.replace(/,/g, "");
               updateCustomerAttribute(customerAttribute.id, valueNum);
             }}
           />
@@ -737,7 +737,7 @@ export default function AddObject(props: IAddObjectProps) {
         );
         break;
       case "multiselect":
-        const attris = getCustomerAttributeValue(customerAttribute.id);
+        let attris = getCustomerAttributeValue(customerAttribute.id);
         CustomControl = (
           <CheckboxList
             title={customerAttribute.name}
@@ -798,7 +798,7 @@ export default function AddObject(props: IAddObjectProps) {
         );
         break;
       case "lookup":
-        const attrs = customerAttribute.attributes ? JSON.parse(customerAttribute.attributes) : {};
+        let attrs = customerAttribute.attributes ? JSON.parse(customerAttribute.attributes) : {};
 
         //1. Trường hợp là customer (khách hàng)
         //2. Trường hợp là employee (nhân viên)
@@ -998,7 +998,7 @@ export default function AddObject(props: IAddObjectProps) {
                     {Object.entries(mapObjectAttribute).map((lstEformAttribute: Record<string, unknown>, key: number) => (
                       <Fragment key={key}>
                         {(lstEformAttribute[1] || []).map((eformAttribute, index: number) => (
-                          <Fragment key={index}>
+                          <Fragment key={eformAttribute.name || index}>
                             {/* {!eformAttribute.parentId ? (
                               <label className="label-title" key={`parent_${key}`}>
                                 {eformAttribute.name}

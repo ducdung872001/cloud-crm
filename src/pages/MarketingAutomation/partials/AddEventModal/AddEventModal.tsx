@@ -421,7 +421,7 @@ export default function AddEventModal(props: Record<string, unknown>) {
 
   //! xóa đi 1 item email
   const handleRemoveItemEmail = (idx) => {
-    const result = [...addFieldEmail];
+    let result = [...addFieldEmail];
     result.splice(idx, 1);
 
     if (result.length > 0 && addFieldEmail[idx].isPrimary === 1) {
@@ -458,7 +458,7 @@ export default function AddEventModal(props: Record<string, unknown>) {
   }, [checkKeyDown]);
 
   const handleSelectPrimaryEmail = (idx) => {
-    const newArray = [...addFieldEmail];
+    let newArray = [...addFieldEmail];
     const index = addFieldEmail.findIndex((el) => el.isPrimary === 1);
 
     if (index !== -1) {
@@ -477,7 +477,7 @@ export default function AddEventModal(props: Record<string, unknown>) {
   };
 
   const handleSelectPrimaryCustomer = (idx) => {
-    const newArray = [...addFieldCustomer];
+    let newArray = [...addFieldCustomer];
     const index = addFieldCustomer.findIndex((el) => el.isPrimary === 1);
 
     if (index !== -1) {
@@ -525,7 +525,7 @@ export default function AddEventModal(props: Record<string, unknown>) {
               {listField.map((field, index) =>
                 field.label === "Tên liên hệ" || field.label === "Số điện thoại" ? (
                   <FieldCustomize
-                    key={index}
+                    key={field.name || index}
                     field={field}
                     handleUpdate={(value) => handleChangeValidate(value, field, formData, validations, listField, setFormData)}
                     formData={formData}
@@ -620,7 +620,7 @@ export default function AddEventModal(props: Record<string, unknown>) {
               {listField.map((field, index) =>
                 field.label === "Tên liên hệ" || field.label === "Số điện thoại" ? null : (
                   <FieldCustomize
-                    key={index}
+                    key={field.name || index}
                     field={field}
                     handleUpdate={(value) => handleChangeValidate(value, field, formData, validations, listField, setFormData)}
                     formData={formData}

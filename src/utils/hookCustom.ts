@@ -35,11 +35,7 @@ export const useOnClickOutside = (ref: React.RefObject<HTMLElement>, handler: (e
     if (
       ref.current &&
       !ref.current.contains(event.target) &&
-      event.composedPath().filter((i) => {
-        if (!i.classList) return false;
-        const classStr = i.className?.toString?.() ?? "";
-        return classList.some((clas) => i.classList.contains(clas) || classStr.includes(clas));
-      }).length === 0
+      event.composedPath().filter((i) => i.classList && classList.some((clas) => i.classList.contains(clas))).length === 0
     ) {
       handler(event);
       return;

@@ -1,10 +1,11 @@
-#!/usr/bin/env node
 /**
- * Login 1 lan — Luu cookies/token ra file de dung lai.
+ * login-save.mjs — đăng nhập 1 lần, lưu storageState để tất cả test scripts dùng chung.
  *
- * Chay: node tests/login-save.mjs
- * Token duoc luu tai: tests/.auth-cookies.json
- * Cac test script se tu dong doc file nay thay vi login lai.
+ * Flow: truy cập /crm/login → SSO redirect → fill credentials → app redirect về /crm/*
+ *       → App.tsx tự pick role "Ban giám đốc" (đã sửa tạm) → lưu cookies + localStorage.
+ *
+ * Usage:  node tests/login-save.mjs
+ * Output: tests/.auth-state.json  (dùng bởi helpers.mjs + các test scripts)
  */
 import { chromium } from "playwright";
 import fs from "fs";
@@ -13,84 +14,66 @@ import { fileURLToPath } from "url";
 import { CONFIG } from "./config.mjs";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
-const COOKIE_FILE = path.join(__dirname, ".auth-cookies.json");
+const STATE_PATH = path.join(__dirname, ".auth-state.json");
 
-async function main() {
-  console.log("🔐 Dang nhap SSO de lay token...\n");
+const APP_URL = CONFIG.BASE_URL; // http://localhost:4000/crm
+const USER = CONFIG.USERNAME;
+const PASS = CONFIG.PASSWORD;
 
-  const browser = await chromium.launch({ headless: false });
-  const context = await browser.newContext({ viewport: { width: 1440, height: 900 } });
-  const page = await context.newPage();
+console.log(`[login] BASE_URL=${APP_URL}  user=${USER}`);
 
-  // Go to CRM → redirect to SSO
-  await page.goto(`${CONFIG.BASE_URL}/login`, { waitUntil: "load", timeout: 30000 }).catch(() => {});
-  await page.waitForTimeout(6000);
+const browser = await chromium.launch({ headless: CONFIG.HEADLESS });
+const context = await browser.newContext({ viewport: CONFIG.VIEWPORT });
+const page = await context.newPage();
 
-  const ssoUrl = page.url();
-  console.log(`   SSO: ${ssoUrl.split("?")[0]}`);
+try {
+  await page.goto(`${APP_URL}/login`, { waitUntil: "domcontentloaded", timeout: 30000 });
 
-  if (ssoUrl.includes("8080") || ssoUrl.includes("sso")) {
-    // Fill SSO form
-    // Vue needs native input events
-    await page.evaluate((user) => {
-      const el = document.querySelector('input[type="text"]');
-      const setter = Object.getOwnPropertyDescriptor(window.HTMLInputElement.prototype, "value").set;
-      setter.call(el, user);
-      el.dispatchEvent(new Event("input", { bubbles: true }));
-    }, CONFIG.USERNAME);
+  // chờ redirect sang SSO
+  await page.waitForURL(/localhost:8080|sso\./, { timeout: 15000 });
+  console.log("[login] đã chuyển sang SSO:", page.url());
 
-    await page.evaluate((pass) => {
-      const el = document.querySelector('input[type="password"]');
-      const setter = Object.getOwnPropertyDescriptor(window.HTMLInputElement.prototype, "value").set;
-      setter.call(el, pass);
-      el.dispatchEvent(new Event("input", { bubbles: true }));
-    }, CONFIG.PASSWORD);
+  // điền form SSO (placeholder VI)
+  await page.locator('input[placeholder*="email"], input[placeholder*="số điện thoại"]').first().fill(USER);
+  await page.locator('input[type="password"]').first().fill(PASS);
+  await page.getByRole("button", { name: /đăng nhập/i }).first().click();
 
-    await page.waitForTimeout(500);
-    await page.click("button.btn-submit-form");
-    console.log("   ⏳ Cho SSO xu ly...");
-    await page.waitForTimeout(10000);
+  // chờ quay lại app
+  await page.waitForURL(/localhost:4000\/crm/, { timeout: 20000 });
+  console.log("[login] đã redirect về app:", page.url());
+
+  // chờ app xử lý token, gọi /user/me, takeRoles, auto-pick role
+  await page.waitForLoadState("networkidle", { timeout: 20000 }).catch(() => {});
+  // đợi thêm cho chắc role được set vào localStorage
+  await page.waitForFunction(() => !!localStorage.getItem("permissions"), null, { timeout: 20000 });
+  const selectedRole = await page.evaluate(() => localStorage.getItem("SelectedRole"));
+  console.log("[login] SelectedRole =", selectedRole);
+
+  if (!selectedRole) {
+    console.warn("[login] ⚠ Chưa có SelectedRole. Nếu user chỉ có 1 role, bỏ qua. Nếu > 1 role, kiểm tra auto-pick.");
   }
 
-  // Handle role modal
-  try {
-    await page.waitForSelector('text=Chọn vai trò', { timeout: 8000 });
-    console.log("   👤 Chon vai tro → Xac nhan");
-    await page.click('button:has-text("Xác nhận")').catch(() => {});
-    await page.waitForTimeout(5000);
-  } catch {
-    await page.waitForTimeout(2000);
-  }
+  // Mark all onboarding tours as done để tránh welcome tour chặn UI test
+  const markedTours = await page.evaluate(() => {
+    const uid = JSON.parse(localStorage.getItem("user.root") || "0") || 0;
+    const tours = ["login", "shift", "pos", "barcode_print"];
+    const now = new Date().toISOString();
+    tours.forEach((t) => {
+      localStorage.setItem(`reborn_onboarding_${uid}_${t}`, now);
+      // cũng set cho uid=0 phòng khi user.root trống
+      localStorage.setItem(`reborn_onboarding_0_${t}`, now);
+    });
+    return { uid, tours };
+  });
+  console.log(`[login] Đã mark onboarding tours done (uid=${markedTours.uid}):`, markedTours.tours.join(", "));
 
-  // Luu SelectedRole vao localStorage de khong bi hoi lai role
-  await page.evaluate(() => {
-    const role = localStorage.getItem("SelectedRole");
-    if (!role) localStorage.setItem("SelectedRole", "1");
-  }).catch(() => {});
-
-  // Save cookies
-  const cookies = await context.cookies();
-  const tokenCookie = cookies.find((c) => c.name === "token");
-
-  if (tokenCookie) {
-    fs.writeFileSync(COOKIE_FILE, JSON.stringify(cookies, null, 2));
-    console.log(`\n✅ Token luu tai: ${COOKIE_FILE}`);
-    console.log(`   Token: ${tokenCookie.value.slice(0, 30)}...`);
-    console.log(`   Expires: ${new Date(tokenCookie.expires * 1000).toLocaleString()}`);
-    console.log(`   Cookies: ${cookies.length} entries\n`);
-    console.log("   Gio chay test binh thuong:");
-    console.log("   node tests/test-inventory-full.mjs");
-  } else {
-    console.log("\n❌ Khong tim thay token cookie!");
-    console.log(`   URL hien tai: ${page.url()}`);
-    console.log("   Co the login that bai. Thu lai.\n");
-
-    // Show all cookies for debug
-    console.log("   Cookies hien co:");
-    cookies.forEach((c) => console.log(`     ${c.name} = ${c.value.slice(0, 20)}...`));
-  }
-
+  // save storage state
+  await context.storageState({ path: STATE_PATH });
+  console.log(`[login] ✅ Đã lưu storageState → ${STATE_PATH}`);
+} catch (err) {
+  console.error("[login] ❌ Thất bại:", err.message);
+  await page.screenshot({ path: path.join(__dirname, "screenshots", "login-failed.png") }).catch(() => {});
+  process.exitCode = 1;
+} finally {
   await browser.close();
 }
-
-main();

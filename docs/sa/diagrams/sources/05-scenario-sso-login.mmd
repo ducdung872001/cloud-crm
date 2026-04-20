@@ -1,32 +1,31 @@
 %%{init: {'theme':'base','themeVariables':{'fontFamily':'Calibri','fontSize':'18px'}}}%%
 sequenceDiagram
     autonumber
-    actor USER as 👤 Cashier / Staff
-    participant BR as Browser
-    participant SPA as CRM Frontend SPA
-    participant SSO as SSO Reborn<br/>(OAuth/OIDC)
-    participant AUTH as Auth Service
-    participant CFG as Config / Tenant API
+    actor U as 👤 User
+    participant B as Browser
+    participant CRM as CRM SPA
+    participant SSO as SSO Reborn
+    participant API as Main API
+    participant DB as Database
 
-    USER->>BR: Truy cập crm.reborn.vn
-    BR->>SPA: GET / (index.html)
-    SPA->>SPA: Check cookie token
-    alt Chưa có token
-      SPA->>SSO: Redirect /oauth/authorize<br/>client_id, redirect_uri
-      SSO->>USER: Hiển thị form đăng nhập
-      USER->>SSO: Nhập email + password
-      SSO->>SSO: Xác thực + 2FA (nếu có)
-      SSO-->>BR: Redirect callback?code=xxx
-      BR->>SPA: /callback?code=xxx
-      SPA->>AUTH: POST /authenticator/token<br/>{ code }
-      AUTH->>SSO: Exchange code → access_token
-      SSO-->>AUTH: access_token + refresh_token
-      AUTH-->>SPA: Set cookie token + user info
-    end
-    SPA->>CFG: GET /api/user/profile
-    CFG-->>SPA: { user, roles, tenants }
-    SPA->>CFG: GET /api/tenant/config
-    CFG-->>SPA: { features, permissions }
-    SPA->>SPA: Init AuthContext + TenantContext
-    SPA->>BR: Redirect /create_sale_add<br/>(POS default cho retail)
-    BR->>USER: Hiển thị màn hình POS
+    U->>B: Mở hub.reborn.vn/crm/
+    B->>CRM: Load index.html + JS
+    CRM->>CRM: Check token cookie
+    Note over CRM: Không có token
+    CRM->>SSO: Redirect /oauth/authorize<br/>?client_id=crm&redirect_uri=...
+    SSO-->>U: Hiển thị form login
+    U->>SSO: Nhập email + password
+    SSO->>SSO: Verify credentials
+    SSO->>U: Redirect crm/login?code=xxx&state=yyy
+    U->>CRM: Browser load /crm/login?code=...
+    CRM->>SSO: POST /oauth/token với code
+    SSO-->>CRM: { access_token, refresh_token, expires_in }
+    CRM->>CRM: Lưu vào cookie token
+    CRM->>SSO: GET /oauth/userinfo (Bearer)
+    SSO-->>CRM: { id, name, email, roles, ... }
+    CRM->>API: GET /api/permissions/me (Bearer)
+    API->>DB: Lookup permissions
+    DB-->>API: [CUSTOMER, INVOICE, ...]
+    API-->>CRM: permissions array
+    CRM->>CRM: setUserContext()
+    CRM->>U: Render Dashboard

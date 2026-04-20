@@ -57,7 +57,7 @@ export default function AddCategoryProductModal(props: IAddCategoryServiceModelP
   const validations: IValidation[] = [
     {
       name: "name",
-      rules: "required|max:100",
+      rules: "required",
     },
     {
       name: "position",
@@ -73,7 +73,7 @@ export default function AddCategoryProductModal(props: IAddCategoryServiceModelP
       fill: true,
       required: true,
       placeholder: "Nhập tên mẫu báo giá",
-      maxLength: 100,
+      maxLength: 300,
     },
     {
       label: "Thứ tự hiển thị",
@@ -250,7 +250,7 @@ export default function AddCategoryProductModal(props: IAddCategoryServiceModelP
             <div className="list-form-group">
               {listField.map((field, index) => (
                 <FieldCustomize
-                  key={index}
+                  key={field.name || index}
                   field={field}
                   handleUpdate={(value) => handleChangeValidate(value, field, formData, validations, listField, setFormData)}
                   formData={formData}

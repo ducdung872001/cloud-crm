@@ -21,7 +21,7 @@ export default function ObjectInfo({ data }) {
 
   useEffect(() => {
     if (data) {
-      const idGroupId = data?.processedObject?.groupId || null;
+      let idGroupId = data?.processedObject?.groupId || null;
       setIsLoading(true);
       getOjectGroup(idGroupId);
       // BE phải xử lý data trả về objectInfo để chứa thông tin hồ sơ trả vào formviewer, orderRequest ở đây chỉ là lấy tạm ở quy trình invoice để test
@@ -66,7 +66,7 @@ export default function ObjectInfo({ data }) {
               procurementTypeId: "",
             }}
             showOnRejectModal={false}
-            setDataSchemaDraft={() => { /* noop */ }}
+            setDataSchemaDraft={(data) => { /* noop */ }}
             isLoading={isLoading}
             setIsLoading={setIsLoading}
           />

@@ -281,7 +281,7 @@ export default function AddFunctionalManagementModal(props: IAddFunctionalManage
             <div className="list-form-group">
               {listFieldBasic.map((field, index) => (
                 <FieldCustomize
-                  key={index}
+                  key={field.name || index}
                   field={field}
                   handleUpdate={(value) => handleChangeValidate(value, field, formData, validations, listFieldBasic, setFormData)}
                   formData={formData}
@@ -297,7 +297,7 @@ export default function AddFunctionalManagementModal(props: IAddFunctionalManage
 
                     return (
                       <Checkbox
-                        key={index}
+                        key={item.id ?? index}
                         label={item.name}
                         checked={isChecked}
                         onChange={(e) => handleChangeValueAction(item.name, e.target.checked)}
@@ -309,7 +309,7 @@ export default function AddFunctionalManagementModal(props: IAddFunctionalManage
 
               {listFieldAdvanced.map((field, index) => (
                 <FieldCustomize
-                  key={index}
+                  key={field.name || index}
                   field={field}
                   handleUpdate={(value) => handleChangeValidate(value, field, formData, validations, listFieldAdvanced, setFormData)}
                   formData={formData}

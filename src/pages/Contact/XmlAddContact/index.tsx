@@ -10,7 +10,7 @@ import Tippy from "@tippyjs/react";
 import ContactService from "services/ContactService";
 import ContactExtraInfoService from "services/ContactExtraInfoService";
 import ContactAttributeService from "services/ContactAttributeService";
-import _, { forEach } from "lodash";
+import forEach from "lodash/forEach";
 import Button from "components/button/button";
 import Loading from "components/loading";
 import FormViewerComponent from "pages/BPM/BpmForm/FormViewer";

@@ -103,7 +103,7 @@ export default function ViettelAnalytics() {
     const titles = ["Thời gian", "Dịch vụ", "Loại đồng bộ", "Dữ liệu", "Trạng thái", "Thời gian xử lý"];
     const dataFormat = ["", "", "", "", "text-center", "text-center"];
 
-    const dataMappingArray = (item) => [
+    const dataMappingArray = (item, index) => [
         item.time,
         <Badge key={`svc-${item.id}`} text={`${item.serviceIcon} ${item.service}`} variant={item.serviceColor} />,
         item.type,

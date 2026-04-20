@@ -1,66 +1,60 @@
 %%{init: {'theme':'base','themeVariables':{'fontFamily':'Calibri','fontSize':'18px'}}}%%
 flowchart TB
-    subgraph CLIENT["Client Tier"]
-      direction LR
-      POS[POS Terminal<br/>Chrome/Edge + máy in bill]
-      BROWSER[Admin/Sales Browser]
-      MOB[Mobile Web<br/>nhân viên kho]
-    end
-
-    subgraph EDGE["Edge / CDN Tier"]
-      CF[Cloudflare / CDN<br/>static cache]
-      WAF[WAF + DDoS]
-    end
-
-    subgraph LB["Load Balancer Tier"]
-      ALB[Application Load Balancer<br/>TLS termination]
-    end
-
-    subgraph APP["Application Tier — Kubernetes"]
-      direction TB
-      SPA[Frontend SPA<br/>Nginx static]
-      GW[API Gateway<br/>URL prefix routing]
-      subgraph MS["Microservices (Pods)"]
-        direction LR
-        P_SALES[sales-svc]
-        P_INV[inventory-svc]
-        P_WH[warehouse-svc]
-        P_PUR[purchase-svc]
-        P_FIN[finance-svc]
-        P_BILL[billing-svc]
-        P_MKT[market-svc]
-        P_NOTIF[notification-svc]
-        P_AUTH[auth-svc]
+    INTERNET((Internet))
+    subgraph CLOUD["Cloud Provider"]
+      subgraph PUB["Public Subnet"]
+        CDN[CDN — CloudFlare]
+        WAF[WAF]
+        LB[Load Balancer<br/>2× HA]
+        NAT[NAT Gateway]
+      end
+      subgraph PRIV_APP["Private Subnet — App tier"]
+        K8S["Kubernetes cluster"]
+        BASTION[Bastion / SSH]
+      end
+      subgraph PRIV_DATA["Private Subnet — Data tier"]
+        PG_M[(PostgreSQL<br/>Master)]
+        PG_R1[(Replica 1)]
+        PG_R2[(Replica 2)]
+        PG_R3[(Replica 3 — reports)]
+        REDIS_C[(Redis Cluster<br/>3 nodes)]
+        S3_INT[(Object Storage)]
       end
     end
 
-    subgraph DATA["Data Tier"]
-      direction LR
-      PG[(PostgreSQL<br/>primary + replica)]
-      REDIS[(Redis cluster<br/>cache + session)]
-      S3[(S3 / MinIO<br/>file, image, bill PDF)]
-      MQ[(RabbitMQ / Kafka)]
+    subgraph EXT["External"]
+      SSO[SSO Reborn]
+      VAT[E-invoice]
+      PAY[Payment Gateway]
+      SMS[SMS / Email / Zalo]
     end
 
-    POS --> CF
-    BROWSER --> CF
-    MOB --> CF
-    CF --> WAF
-    WAF --> ALB
-    ALB --> SPA
-    ALB --> GW
-    GW --> MS
-    MS --> PG
-    MS --> REDIS
-    MS --> S3
-    MS --> MQ
+    INTERNET --> CDN
+    CDN --> WAF
+    WAF --> LB
+    LB --> K8S
+    K8S --> PG_M
+    K8S --> PG_R1
+    K8S --> PG_R2
+    K8S --> PG_R3
+    K8S --> REDIS_C
+    K8S --> S3_INT
+    K8S --> NAT
+    NAT --> SSO
+    NAT --> VAT
+    NAT --> PAY
+    NAT --> SMS
+    BASTION -.SSH.-> K8S
+    PG_M -.replication.-> PG_R1
+    PG_M -.replication.-> PG_R2
+    PG_M -.replication.-> PG_R3
 
-    classDef client fill:#1F3A68,stroke:#1F3A68,color:#fff
-    classDef edge fill:#D97706,stroke:#7C2D12,color:#fff
-    classDef app fill:#2C7A7B,stroke:#0F4C44,color:#fff
+    classDef ext fill:#FEF3C7,stroke:#F59E0B,color:#78350F
+    classDef pub fill:#E1F5EE,stroke:#2C7A7B,color:#0F4C44
+    classDef app fill:#1F3A68,stroke:#1F3A68,color:#fff
     classDef data fill:#FAEEDA,stroke:#D97706,color:#7C2D12
 
-    class POS,BROWSER,MOB client
-    class CF,WAF,ALB edge
-    class SPA,GW,P_SALES,P_INV,P_WH,P_PUR,P_FIN,P_BILL,P_MKT,P_NOTIF,P_AUTH app
-    class PG,REDIS,S3,MQ data
+    class INTERNET,SSO,VAT,PAY,SMS ext
+    class CDN,WAF,LB,NAT pub
+    class K8S,BASTION app
+    class PG_M,PG_R1,PG_R2,PG_R3,REDIS_C,S3_INT data

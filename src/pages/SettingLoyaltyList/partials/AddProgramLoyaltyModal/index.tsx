@@ -146,7 +146,7 @@ export default function AddProgramLoyaltyModal(props: AddProgramRoyaltyModalProp
     );
   };
   const handleChangeValueBranch = (e) => {
-    const lastPick = e[e.length - 1];
+    let lastPick = e[e.length - 1];
 
     if (lastPick?.isShowModal) {
       setShowModalBranch(true);
@@ -592,7 +592,7 @@ export default function AddProgramLoyaltyModal(props: AddProgramRoyaltyModalProp
             <div className="list-form-group">
               {listField.map((field, index) => (
                 <FieldCustomize
-                  key={index}
+                  key={field.name || index}
                   field={field}
                   handleUpdate={(value) => {
                     handleChangeValidate(value, field, formData, validations, listField, setFormData);

@@ -36,7 +36,7 @@ export default function AddStoreModal(props: AddStoreModalProps) {
       setIsLoadingStore(true);
       const dataOption = await SelectOptionData("beautyBranch");
       if (dataOption) {
-        // Lọc bỏ cửa hàng hiện tại khi đang chỉnh sửa để tránh tự tham chiếu
+        // Lọc bỏ cơ sở hiện tại khi đang chỉnh sửa để tránh tự tham chiếu
         const filteredData = data?.id ? dataOption.filter((item) => item.value !== data.id) : dataOption;
         setListStore(filteredData.length > 0 ? filteredData : []);
       }
@@ -112,36 +112,36 @@ export default function AddStoreModal(props: AddStoreModalProps) {
           isLoading: isLoadingStore,
         },
         {
-          label: "Cửa hàng cha",
+          label: "Cơ sở cha",
           name: "storeId",
           type: "select",
           fill: true,
           required: false,
           options: [
             {
-              value: "Cửa Hàng Vật Tư Công Nghiệp Minh Phát",
-              label: "Cửa Hàng Vật Tư Công Nghiệp Minh Phát",
+              value: "Cơ Sở Vật Tư Công Nghiệp Minh Phát",
+              label: "Cơ Sở Vật Tư Công Nghiệp Minh Phát",
             },
             {
-              value: "Cửa Hàng Nguyên Liệu Thành Công",
-              label: "Cửa Hàng Nguyên Liệu Thành Công",
+              value: "Cơ Sở Nguyên Liệu Thành Công",
+              label: "Cơ Sở Nguyên Liệu Thành Công",
             },
              {
-              value: "Cửa Hàng Thiết Bị Kỹ Thuật Hoàng Gia",
-              label: "Cửa Hàng Thiết Bị Kỹ Thuật Hoàng Gia",
+              value: "Cơ Sở Thiết Bị Kỹ Thuật Hoàng Gia",
+              label: "Cơ Sở Thiết Bị Kỹ Thuật Hoàng Gia",
              },
              {
-              value: "Cửa Hàng Kim Khí Nam Việt",
-              label: "Cửa Hàng Kim Khí Nam Việt",
+              value: "Cơ Sở Kim Khí Nam Việt",
+              label: "Cơ Sở Kim Khí Nam Việt",
              }, 
              {
-              value: "Cửa Hàng Hóa Chất Đại Nam",
-              label: "Cửa Hàng Hóa Chất Đại Nam",
+              value: "Cơ Sở Hóa Chất Đại Nam",
+              label: "Cơ Sở Hóa Chất Đại Nam",
              },
             ],
         },
         {
-          label: "Tên cửa hàng",
+          label: "Tên cơ sở",
           name: "name",
           type: "text",
           fill: true,
@@ -155,12 +155,12 @@ export default function AddStoreModal(props: AddStoreModalProps) {
           required: true,
           options: [
             {
-              value: "Cửa hàng bán lẻ",
-              label: "Cửa hàng bán lẻ",
+              value: "Cơ sở bán lẻ",
+              label: "Cơ sở bán lẻ",
             },
             {
-              value: "Cửa hàng bán buôn",
-              label: "Cửa hàng bán buôn",
+              value: "Cơ sở bán buôn",
+              label: "Cơ sở bán buôn",
             },
              {
               value: "Thương mại điện tử",
@@ -186,7 +186,7 @@ export default function AddStoreModal(props: AddStoreModalProps) {
           messageErrorRegex: "Số điện thoại không đúng định dạng",
         },
         {
-          label: "Địa chỉ cửa hàng",
+          label: "Địa chỉ cơ sở",
           name: "address",
           type: "text",
           fill: true,
@@ -198,7 +198,7 @@ export default function AddStoreModal(props: AddStoreModalProps) {
 
   const listFieldAdvanced: IFieldCustomize[] = [
     {
-      label: "Mã cửa hàng",
+      label: "Mã cơ sở",
       name: "code",
       type: "text",
       fill: true,
@@ -251,9 +251,9 @@ export default function AddStoreModal(props: AddStoreModalProps) {
       return;
     }
 
-    // Kiểm tra không cho phép chọn chính cửa hàng hiện tại làm cửa hàng cha (khi chỉnh sửa)
+    // Kiểm tra không cho phép chọn chính cơ sở hiện tại làm cơ sở cha (khi chỉnh sửa)
     if (data?.id && formData.values.parentId && formData.values.parentId === data.id) {
-      showToast("Không thể chọn chính cửa hàng hiện tại làm cửa hàng cha", "error");
+      showToast("Không thể chọn chính cơ sở hiện tại làm cơ sở cha", "error");
       return;
     }
 
@@ -265,7 +265,7 @@ export default function AddStoreModal(props: AddStoreModalProps) {
     const response = await BeautyBranchService.update(body);
 
     if (response.code === 0) {
-      showToast(`${data ? "Cập nhật" : "Thêm mới"} cửa hàng thành công`, "success");
+      showToast(`${data ? "Cập nhật" : "Thêm mới"} cơ sở thành công`, "success");
       onHide(true);
     } else {
       showToast(response.message ?? "Có lỗi xảy ra. Vui lòng thử lại sau", "error");
@@ -359,13 +359,13 @@ export default function AddStoreModal(props: AddStoreModalProps) {
         className="modal-add-branch"
       >
         <form className="form-branch-group" onSubmit={(e) => onSubmit(e)}>
-          <ModalHeader title={`${data ? "Chỉnh sửa" : "Thêm mới"} cửa hàng`} toggle={() => !isSubmit && onHide(false)} />
+          <ModalHeader title={`${data ? "Chỉnh sửa" : "Thêm mới"} cơ sở`} toggle={() => !isSubmit && onHide(false)} />
           <ModalBody>
             <div className="list-form-group">
               <div className="form-basic-info-branch">
                 {listFieldBasic.map((field, index) =>
                   field.name === "address" ? (
-                    <div key={index} className="address-with-map">
+                    <div key={field.name || index} className="address-with-map">
                       <div className="address-with-map__input">
                         <FieldCustomize
                           field={field}
@@ -379,7 +379,7 @@ export default function AddStoreModal(props: AddStoreModalProps) {
                     </div>
                   ) : (
                     <FieldCustomize
-                      key={index}
+                      key={field.name || index}
                       field={field}
                       handleUpdate={(value) => handleChangeValidate(value, field, formData, validations, listFieldBasic, setFormData)}
                       formData={formData}
@@ -426,7 +426,7 @@ export default function AddStoreModal(props: AddStoreModalProps) {
                 </div>
                 {listFieldAdvanced.map((field, index) => (
                   <FieldCustomize
-                    key={index}
+                    key={field.name || index}
                     field={field}
                     handleUpdate={(value) => handleChangeValidate(value, field, formData, validations, listFieldAdvanced, setFormData)}
                     formData={formData}
@@ -437,7 +437,7 @@ export default function AddStoreModal(props: AddStoreModalProps) {
                 <FileUpload type="avatar" label="Ảnh đại diện" formData={formData} setFormData={setFormData} />
                 {listFieldDescription.map((field, index) => (
                   <FieldCustomize
-                    key={index}
+                    key={field.name || index}
                     field={field}
                     handleUpdate={(value) => handleChangeValidate(value, field, formData, validations, listFieldDescription, setFormData)}
                     formData={formData}

@@ -7,8 +7,9 @@ import TicketList from "../Ticket/TicketList";
 import CareHistory from "../CareHistory";
 import CareAutomationPage from "../CareAutomation/CareAutomationPage";
 
+// [CH] Community Hub — đồng bộ nhãn "khách hàng" → "thành viên"
 export default function CustomerCarePage() {
-  document.title = "Chăm sóc khách hàng";
+  document.title = "Chăm sóc thành viên";
 
   const [tab, setTab]           = useState<number>(null);
   const [isDetail, setIsDetail] = useState<boolean>(false);
@@ -19,28 +20,28 @@ export default function CustomerCarePage() {
       tab: 1,
       backgroundColor: "#E6F1FB",
       icon: "ReceiveTicketCSKH",
-      des: "Quản lý toàn bộ phiếu hỗ trợ từ khách hàng, theo dõi trạng thái xử lý và phân công bộ phận",
+      des: "Quản lý toàn bộ phiếu hỗ trợ từ thành viên, theo dõi trạng thái xử lý và phân công bộ phận",
     },
     {
       title: "Lịch sử chăm sóc",
       tab: 2,
       backgroundColor: "#E1F5EE",
       icon: "CareHistory",
-      des: "Xem lại toàn bộ tương tác, cuộc gọi và lịch sử chăm sóc của từng khách hàng",
+      des: "Xem lại toàn bộ tương tác, cuộc gọi và lịch sử chăm sóc của từng thành viên",
     },
     {
-      title: "Cuộc gọi CSKH",
+      title: "Cuộc gọi CSTV",
       tab: 3,
       backgroundColor: "#FAEEDA",
       icon: "CallCenter",
-      des: "Quản lý các cuộc gọi chăm sóc khách hàng, ghi chú và phân loại kết quả cuộc gọi",
+      des: "Quản lý các cuộc gọi chăm sóc thành viên, ghi chú và phân loại kết quả cuộc gọi",
     },
     {
       title: "Kịch bản chăm sóc",
       tab: 4,
       backgroundColor: "#EAF3DE",
-      icon: "BellMenu",   // BellMenu đang được dùng trong AppNotification — icon tồn tại
-      des: "Thiết lập kịch bản tự động: nhắc sinh nhật, follow-up sau mua, cảnh báo khách hàng VIP",
+      icon: "BellMenu",
+      des: "Thiết lập kịch bản tự động: nhắc sinh nhật, follow-up sau sử dụng, cảnh báo thành viên VIP",
     },
   ];
 
@@ -48,7 +49,7 @@ export default function CustomerCarePage() {
 
   return (
     <div className="page-content">
-      {!isDetail && <TitleAction title="Chăm sóc khách hàng" />}
+      {!isDetail && <TitleAction title="Chăm sóc thành viên" />}
 
       <div className="d-flex flex-column">
         {!isDetail && (

@@ -83,7 +83,7 @@ export default function AddMaModal(props: IAddMaModalProps) {
     const response = await CustomerService.addCustomerMA(body);
 
     if (response.code === 0) {
-      showToast("Thêm khách hàng vào chương trình MA thành công", "success");
+      showToast("Thêm thành viên vào chương trình MA thành công", "success");
       handleClearForm(true);
     } else {
       showToast("Có lỗi xảy ra. Vui lòng thử lại sau!", "error");

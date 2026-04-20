@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
-import moment from "moment";
-import { addDays, subDays } from "date-fns";
+import { format, startOfWeek, endOfWeek, startOfMonth, endOfMonth, startOfYear, endOfYear, subWeeks, subDays, subMonths, addDays } from "date-fns";
+import { formatDate } from "utils/dateUtils";
 import DatePickerCustom from "components/datepickerCustom/datepickerCustom";
 import Button from "components/button/button";
 import Icon from "components/icon";
@@ -107,67 +107,50 @@ export default function AdvancedDateFilter(props: IAdvancedDateFilterProps) {
   }, [defaultKey]);
 
   const dateCalculation = (type) => {
+    const now = new Date();
+    const fmt = "dd/MM/yyyy";
     switch (type) {
       case "1": {
-        const startOfWeek = moment().startOf("week").format("DD/MM/yyyy");
-
-        const currentDate = moment().endOf("week").format("DD/MM/yyyy");
-
-        updateParams(startOfWeek, currentDate, "thisWeek");
+        const start = format(startOfWeek(now, { weekStartsOn: 1 }), fmt);
+        const end = format(endOfWeek(now, { weekStartsOn: 1 }), fmt);
+        updateParams(start, end, "thisWeek");
         break;
       }
 
       case "2": {
-        const startOfLastWeek = moment().subtract(1, "week").startOf("week").format("DD/MM/yyyy");
-
-        const endOfLastWeek = moment().subtract(1, "week").endOf("week").format("DD/MM/yyyy");
-
-        updateParams(startOfLastWeek, endOfLastWeek, "lastWeek");
-
+        const lastWeek = subWeeks(now, 1);
+        const start = format(startOfWeek(lastWeek, { weekStartsOn: 1 }), fmt);
+        const end = format(endOfWeek(lastWeek, { weekStartsOn: 1 }), fmt);
+        updateParams(start, end, "lastWeek");
         break;
       }
 
       case "3": {
-        const startOfMonth = moment().startOf("month").format("DD/MM/yyyy");
-
-        const endOfMonth = moment().endOf("month").format("DD/MM/yyyy");
-
-        updateParams(startOfMonth, endOfMonth, "thisMonth");
-
+        const start = format(startOfMonth(now), fmt);
+        const end = format(endOfMonth(now), fmt);
+        updateParams(start, end, "thisMonth");
         break;
       }
 
       case "4": {
-        const currentDate = moment();
-
-        const previousMonth = currentDate.subtract(1, "month");
-
-        const startOfPreviousMonth = previousMonth.startOf("month").format("DD/MM/yyyy");
-
-        const endOfPreviousMonth = previousMonth.endOf("month").format("DD/MM/yyyy");
-
-        updateParams(startOfPreviousMonth, endOfPreviousMonth, "lastMonth");
-
+        const prevMonth = subMonths(now, 1);
+        const start = format(startOfMonth(prevMonth), fmt);
+        const end = format(endOfMonth(prevMonth), fmt);
+        updateParams(start, end, "lastMonth");
         break;
       }
 
       case "5": {
-        const currentDate = moment().format("DD/MM/yyyy");
-
-        const sevenDaysAgo = moment().subtract(6, "days").format("DD/MM/yyyy");
-
+        const currentDate = format(now, fmt);
+        const sevenDaysAgo = format(subDays(now, 6), fmt);
         updateParams(sevenDaysAgo, currentDate, "last7Days");
-
         break;
       }
 
       case "6": {
-        const currentDate = moment().format("DD/MM/yyyy");
-
-        const thirtyDaysAgo = moment().subtract(30, "days").format("DD/MM/yyyy");
-
+        const currentDate = format(now, fmt);
+        const thirtyDaysAgo = format(subDays(now, 30), fmt);
         updateParams(thirtyDaysAgo, currentDate, "last30Days");
-
         break;
       }
 
@@ -179,31 +162,22 @@ export default function AdvancedDateFilter(props: IAdvancedDateFilterProps) {
       }
 
       case "8": {
-        const startOfMonth = moment().startOf("year").format("DD/MM/yyyy");
-
-        const endOfMonth = moment().endOf("year").format("DD/MM/yyyy");
-
-        updateParams(startOfMonth, endOfMonth, "thisYear");
-
+        const start = format(startOfYear(now), fmt);
+        const end = format(endOfYear(now), fmt);
+        updateParams(start, end, "thisYear");
         break;
       }
       case "9": {
-        const startOfMonth = moment().startOf("year").format("DD/MM/yyyy");
-
-        const endOfMonth = moment().endOf("year").format("DD/MM/yyyy");
-
-        updateParams(startOfMonth, endOfMonth, "startYearToNow");
-
+        const start = format(startOfYear(now), fmt);
+        const end = format(endOfYear(now), fmt);
+        updateParams(start, end, "startYearToNow");
         break;
       }
 
       default: {
-        const currentDate = moment().format("DD/MM/yyyy");
-
-        const sevenDaysAgo = moment().subtract(6, "days").format("DD/MM/yyyy");
-
+        const currentDate = format(now, fmt);
+        const sevenDaysAgo = format(subDays(now, 6), fmt);
         updateParams(sevenDaysAgo, currentDate, "last7Days");
-
         break;
       }
     }
@@ -218,16 +192,16 @@ export default function AdvancedDateFilter(props: IAdvancedDateFilterProps) {
 
   useEffect(() => {
     if (valueOption?.value == "7" && (fromTime || toTime) && !isCustom) {
-      valueOption.label = `${fromTime && moment(fromTime).format("DD/MM/yyyy")} ${toTime ? "-" : ""} ${
-        toTime && moment(toTime).format("DD/MM/yyyy")
+      valueOption.label = `${fromTime && formatDate(fromTime)} ${toTime ? "-" : ""} ${
+        toTime && formatDate(toTime)
       }`;
     }
   }, [valueOption, fromTime, toTime, isCustom]);
 
   const handSearchDate = () => {
     if (fromTime && toTime) {
-      const since = moment(fromTime).format("DD/MM/yyyy");
-      const toData = moment(toTime).format("DD/MM/yyyy");
+      const since = formatDate(fromTime);
+      const toData = formatDate(toTime);
       updateParams(since, toData, "custom");
     }
 

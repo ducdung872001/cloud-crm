@@ -1,10 +1,11 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import Highcharts from "highcharts";
 import HighchartsReact from "highcharts-react-official";
-import moment from "moment";
+import { format, startOfMonth, endOfMonth, startOfQuarter, endOfQuarter, getQuarter, getYear } from "date-fns";
 import WarehouseReportService, {
   IXntDailyPoint,
   IXntReportData,
+  IXntSummary,
   IXntWarehouseRatio,
 } from "services/WarehouseReportService";
 
@@ -13,27 +14,21 @@ import WarehouseReportService, {
 type PeriodKey = "month" | "quarter" | "custom";
 
 function getPeriodRange(key: PeriodKey, custom?: [string, string]): [string, string] {
+  const now = new Date();
+  const fmt = "dd/MM/yyyy";
   if (key === "month") {
-    return [
-      moment().startOf("month").format("DD/MM/YYYY"),
-      moment().endOf("month").format("DD/MM/YYYY"),
-    ];
+    return [format(startOfMonth(now), fmt), format(endOfMonth(now), fmt)];
   }
   if (key === "quarter") {
-    return [
-      moment().startOf("quarter").format("DD/MM/YYYY"),
-      moment().endOf("quarter").format("DD/MM/YYYY"),
-    ];
+    return [format(startOfQuarter(now), fmt), format(endOfQuarter(now), fmt)];
   }
-  return custom ?? [
-    moment().startOf("month").format("DD/MM/YYYY"),
-    moment().endOf("month").format("DD/MM/YYYY"),
-  ];
+  return custom ?? [format(startOfMonth(now), fmt), format(endOfMonth(now), fmt)];
 }
 
 function getPeriodLabel(key: PeriodKey): string {
-  if (key === "month")   return `Tháng ${moment().format("M/YYYY")}`;
-  if (key === "quarter") return `Quý ${moment().quarter()}/${moment().year()}`;
+  const now = new Date();
+  if (key === "month")   return `Tháng ${format(now, "M/yyyy")}`;
+  if (key === "quarter") return `Quý ${getQuarter(now)}/${getYear(now)}`;
   return "Tùy chỉnh";
 }
 
@@ -198,7 +193,7 @@ export default function WarehouseReportXntView() {
       <div className="filter-bar">
         <span className="filter-label">Kỳ:</span>
         <div className="filter-group">
-          {(["month", "quarter", "custom"] as PeriodKey[]).map((key) => (
+          {(["month", "quarter", "custom"] as PeriodKey[]).map((key, i) => (
             <button
               key={key}
               className={`f-btn${periodKey === key ? " on" : ""}`}

@@ -21,7 +21,6 @@ import TourOverlay from "components/tourOverlay/TourOverlay";
 import RebornEditor from "components/editor/reborn";
 import { serialize } from "utils/editor";
 import ProductUnitService, { IProductUnit } from "services/ProductUnitService";
-import BarcodeScanner from "@/components/barcodeScanner/BarcodeScanner";
 
 type PageTab = "info" | "variants";
 
@@ -67,22 +66,6 @@ const DEFAULT_FORM = {
   showCategory: true,
   hideWhenOutOfStock: true,
 };
-
-const readWebsiteSettingFlag = (value: unknown, fallback: boolean) =>
-  value === undefined || value === null ? fallback : value === 1 || value === true;
-
-const WEBSITE_SETTING_FIELD_MAP = {
-  showOnWeb: "showOnWebsite",
-  showImage: "showImage",
-  showUnit: "showUnit",
-  showDesc: "showDescription",
-  showPromoPrice: "showPromotionPrice",
-  showWholesalePrice: "showWholesalePrice",
-  showStock: "showInventory",
-  showBarcode: "showBarcode",
-  showCategory: "showVariant",
-  hideWhenOutOfStock: "hideWhenOutOfStock",
-} as const;
 
 // ── VARIANT TYPES ──
 interface VariantAttribute {
@@ -196,7 +179,120 @@ const buildCombinations = (attrs: VariantAttribute[]): VariantCombination[] => {
   }));
 };
 
-// BarcodeScannerModal đã extract sang @/components/barcodeScanner/BarcodeScanner.tsx
+// ── Barcode Scanner Modal — dùng ZXing UMD (hỗ trợ mọi trình duyệt) ──
+// ZXing được load qua <script> tag động, không cần cài npm
+const ZXING_CDN = "https://cdn.jsdelivr.net/npm/@zxing/browser@0.1.5/umd/index.min.js";
+
+function loadZXingScript(): Promise<void> {
+  return new Promise((resolve, reject) => {
+    if ((window as Record<string, unknown>).ZXingBrowser) { resolve(); return; }
+    const existing = document.querySelector(`script[src="${ZXING_CDN}"]`);
+    if (existing) {
+      existing.addEventListener("load", () => resolve());
+      existing.addEventListener("error", reject);
+      return;
+    }
+    const script = document.createElement("script");
+    script.src = ZXING_CDN;
+    script.async = true;
+    script.onload = () => resolve();
+    script.onerror = () => reject(new Error("Không tải được thư viện quét mã vạch. Vui lòng kiểm tra kết nối mạng."));
+    document.head.appendChild(script);
+  });
+}
+
+function BarcodeScannerModal({ onScan, onClose }: { onScan: (barcode: string) => void; onClose: () => void }) {
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const readerRef = useRef<Record<string, unknown>>(null);
+  const [error, setError] = useState<string>("");
+  const [status, setStatus] = useState<"loading" | "ready" | "error">("loading");
+
+  useEffect(() => {
+    let cancelled = false;
+
+    const start = async () => {
+      try {
+        setStatus("loading");
+        await loadZXingScript();
+        if (cancelled) return;
+
+        const ZXing = (window as Record<string, unknown>).ZXingBrowser;
+        if (!ZXing?.BrowserMultiFormatReader) {
+          throw new Error("Thư viện ZXing chưa sẵn sàng, vui lòng thử lại.");
+        }
+
+        const reader = new ZXing.BrowserMultiFormatReader();
+        readerRef.current = reader;
+        if (cancelled) return;
+
+        setStatus("ready");
+        await reader.decodeFromVideoDevice(
+          undefined,
+          videoRef.current,
+          (result: Record<string, unknown>, err: Record<string, unknown>) => {
+            if (cancelled || !result) return;
+            reader.reset();
+            onScan(result.getText());
+          }
+        );
+      } catch (err: unknown) {
+        if (cancelled) return;
+        const msg = err?.message || String(err);
+        if (msg.includes("NotAllowed") || msg.includes("Permission")) {
+          setError("Bạn chưa cấp quyền camera. Vui lòng cho phép trong cài đặt trình duyệt rồi thử lại.");
+        } else if (msg.includes("NotFound") || msg.includes("No camera")) {
+          setError("Không tìm thấy camera. Vui lòng kết nối camera và thử lại.");
+        } else {
+          setError(msg);
+        }
+        setStatus("error");
+      }
+    };
+
+    start();
+    return () => {
+      cancelled = true;
+      try { readerRef.current?.reset(); } catch (_) {}
+    };
+  }, []);
+
+  return (
+    <div className="bs-overlay" onClick={onClose}>
+      <div className="bs-modal" onClick={(e) => e.stopPropagation()}>
+        <div className="bs-modal__header">
+          <span className="bs-modal__title">Quét mã vạch</span>
+          <button type="button" className="bs-modal__close" onClick={onClose}>✕</button>
+        </div>
+        <div className="bs-modal__body">
+          {status === "error" ? (
+            <div className="bs-modal__error">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <circle cx="12" cy="12" r="10" />
+                <line x1="12" y1="8" x2="12" y2="12" />
+                <line x1="12" y1="16" x2="12.01" y2="16" />
+              </svg>
+              <p>{error}</p>
+            </div>
+          ) : (
+            <div className="bs-modal__video-wrap">
+              <video ref={videoRef} className="bs-modal__video" playsInline muted />
+              <div className="bs-modal__reticle">
+                <span className="bs-modal__reticle-corner bs-modal__reticle-corner--tl" />
+                <span className="bs-modal__reticle-corner bs-modal__reticle-corner--tr" />
+                <span className="bs-modal__reticle-corner bs-modal__reticle-corner--bl" />
+                <span className="bs-modal__reticle-corner bs-modal__reticle-corner--br" />
+                <div className="bs-modal__scan-line" />
+              </div>
+              <p className="bs-modal__hint">
+                {status === "loading" ? "Đang tải thư viện quét..." : "Đưa mã vạch vào khung để quét tự động"}
+              </p>
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}
 
 // ── Multi-image picker cho variant (upload lên CDN, reorder bằng nút ◀▶) ──
 const MAX_VARIANT_IMAGES = 7;
@@ -338,7 +434,6 @@ export default function AddProductPage({ idProduct, data, onBack, preFillBarcode
   const [contentHtml, setContentHtml] = useState<string>("");        // HTML → lưu vào content
   const [contentDelta, setContentDelta] = useState<string>("");      // JSON → lưu vào contentDelta
   const [isSavingContent, setIsSavingContent] = useState(false);
-  const [savingWebsiteSettingKeys, setSavingWebsiteSettingKeys] = useState<string[]>([]);
 
   // ── Tags ──
   const [availableTags, setAvailableTags] = useState<{ id: number; name: string }[]>([]);
@@ -366,32 +461,6 @@ export default function AddProductPage({ idProduct, data, onBack, preFillBarcode
   const [scanningUnitKey, setScanningUnitKey] = useState<{ comboKey: string; tempId: string } | null>(null);
 
   const setField = (key: string, value: Record<string, unknown>) => setFormData((prev) => ({ ...prev, [key]: value }));
-
-  const handleWebsiteSettingToggle = async (key: keyof typeof WEBSITE_SETTING_FIELD_MAP, checked: boolean) => {
-    setFormData((prev) => ({ ...prev, [key]: checked }));
-
-    if (!idProduct) return;
-
-    const field = WEBSITE_SETTING_FIELD_MAP[key];
-    setSavingWebsiteSettingKeys((prev) => [...prev, key]);
-    try {
-      const res = await ProductService.wWebsiteSettingUpdateField(field, {
-        productId: idProduct,
-        value: checked ? 1 : 0,
-      });
-
-      if (res.code !== 0) {
-        setFormData((prev) => ({ ...prev, [key]: !checked }));
-        showToast(res.message ?? "Cập nhật cài đặt hiển thị thất bại", "error");
-        return;
-      }
-    } catch {
-      setFormData((prev) => ({ ...prev, [key]: !checked }));
-      showToast("Cập nhật cài đặt hiển thị thất bại", "error");
-    } finally {
-      setSavingWebsiteSettingKeys((prev) => prev.filter((item) => item !== key));
-    }
-  };
 
   const buildProductWebUrl = () => {
     const slug = formData.name
@@ -515,9 +584,7 @@ export default function AddProductPage({ idProduct, data, onBack, preFillBarcode
                   unitName: u.unitName ?? u.unit_name ?? "",
                   price: u.price ?? u.priceRetail ?? "",
                   priceWholesale: u.priceWholesale ?? u.price_wholesale ?? "",
-                  // Dùng `||` thay vì `??` để fallback cả khi BE trả "" (empty string).
-                  // Bug D.1.3: nếu `u.barcode = ""` thì `??` giữ rỗng, không rơi xuống `v.barcode`.
-                  barcode: u.barcode || u.barcodeCode || v.barcode || v.code || v.barcodeCode || "",
+                  barcode: u.barcode ?? u.barcodeCode ?? "",
                 }))
               : [
                   {
@@ -655,16 +722,16 @@ export default function AddProductPage({ idProduct, data, onBack, preFillBarcode
     if (!r) return;
     setFormData((prev) => ({
       ...prev,
-      showOnWeb:           readWebsiteSettingFlag(r.showOnWebsite, prev.showOnWeb),
-      showImage:           readWebsiteSettingFlag(r.showImage, prev.showImage),
-      showUnit:            readWebsiteSettingFlag(r.showUnit, prev.showUnit),
-      showDesc:            readWebsiteSettingFlag(r.showDescription, prev.showDesc),
-      showPromoPrice:      readWebsiteSettingFlag(r.showPromotionPrice, prev.showPromoPrice),
-      showWholesalePrice:  readWebsiteSettingFlag(r.showWholesalePrice, prev.showWholesalePrice),
-      showStock:           readWebsiteSettingFlag(r.showInventory, prev.showStock),
-      showBarcode:         readWebsiteSettingFlag(r.showBarcode, prev.showBarcode),
-      showCategory:        readWebsiteSettingFlag(r.showVariant, prev.showCategory),
-      hideWhenOutOfStock:  readWebsiteSettingFlag(r.hideWhenOutOfStock, prev.hideWhenOutOfStock),
+      showOnWeb:           r.showOnWebsite === 1,
+      showImage:           r.showImage === 1,
+      showUnit:            r.showUnit === 1,
+      showDesc:            r.showDescription === 1,
+      showPromoPrice:      r.showPromotionPrice === 1,
+      showWholesalePrice:  r.showWholesalePrice === 1,
+      showStock:           r.showInventory === 1,
+      showBarcode:         r.showBarcode === 1,
+      showCategory:        r.showVariant === 1,
+      hideWhenOutOfStock:  r.hideWhenOutOfStock === 1,
     }));
   };
 
@@ -742,32 +809,102 @@ export default function AddProductPage({ idProduct, data, onBack, preFillBarcode
   };
 
   const handleSubmit = async () => {
-    if (!formData.name.trim()) {
+    // ── UI validation trước submit (theo chuẩn reborn-retail VALIDATION_AUDIT) ──
+    // Rules: required, max:N, min:0, regex
+    // Nguồn tham khảo: docs/VALIDATION_AUDIT.md ở nhánh reborn-retail
+
+    // 1. Tên SP: required + max 255
+    const nameTrim = formData.name.trim();
+    if (!nameTrim) {
       showToast("Vui lòng nhập tên sản phẩm", "error");
+      setActiveTab("basic");
       return;
     }
-    if (formData.name.length > 100) {
-      showToast("Tên sản phẩm không được vượt quá 100 ký tự", "error");
+    if (nameTrim.length > 255) {
+      showToast("Tên sản phẩm không được vượt quá 255 ký tự", "error");
+      setActiveTab("basic");
       return;
     }
+
+    // 2. Mô tả: nullable + max 2000 (nếu có)
+    if (formData.description && formData.description.length > 2000) {
+      showToast("Mô tả sản phẩm không được vượt quá 2000 ký tự", "error");
+      setActiveTab("basic");
+      return;
+    }
+
+    // 3. Tồn kho: nullable + min 0 (không âm)
+    const stockNum = +(formData.stock ?? 0);
+    const minStockNum = +(formData.minStock ?? 0);
+    const maxStockNum = +(formData.maxStock ?? 0);
+    if (isNaN(stockNum) || stockNum < 0) {
+      showToast("Tồn kho ban đầu phải là số không âm", "error");
+      setActiveTab("basic");
+      return;
+    }
+    if (isNaN(minStockNum) || minStockNum < 0) {
+      showToast("Tồn kho tối thiểu phải là số không âm", "error");
+      setActiveTab("basic");
+      return;
+    }
+    if (isNaN(maxStockNum) || maxStockNum < 0) {
+      showToast("Tồn kho tối đa phải là số không âm", "error");
+      setActiveTab("basic");
+      return;
+    }
+    // min ≤ max (chỉ kiểm nếu cả 2 đều > 0)
+    if (minStockNum > 0 && maxStockNum > 0 && minStockNum > maxStockNum) {
+      showToast("Tồn kho tối thiểu không được lớn hơn tồn kho tối đa", "error");
+      setActiveTab("basic");
+      return;
+    }
+
+    // 4. Biến thể: ít nhất 1 combination
     if (combinations.length === 0) {
       showToast("Vui lòng thêm ít nhất 1 biến thể sản phẩm", "error");
       setActiveTab("variants");
       return;
     }
+
+    // 5. SKU biến thể: nullable + max 20 + regex (chỉ a-zA-Z0-9-_)
     const longSku = combinations.find((c) => c.sku && c.sku.length > 20);
     if (longSku) {
       showToast(`SKU biến thể "${longSku.label}" vượt quá 20 ký tự`, "error");
       setActiveTab("variants");
       return;
     }
+    const invalidSku = combinations.find((c) => c.sku && !/^[A-Za-z0-9_\-]+$/.test(c.sku));
+    if (invalidSku) {
+      showToast(`SKU biến thể "${invalidSku.label}" chỉ được chứa chữ, số, "-" và "_"`, "error");
+      setActiveTab("variants");
+      return;
+    }
+
+    // 6. Giá biến thể: required + min 0 (phải có ít nhất 1 variantPrice > 0)
     const missingPrice = combinations.find((c) => {
-      // Giá nằm trong variantPrices list (theo từng đơn vị)
       const hasPrice = c.variantPrices.some((vp) => vp.price && +vp.price > 0);
       return !hasPrice;
     });
     if (missingPrice) {
       showToast(`Biến thể "${missingPrice.label}" chưa có giá bán`, "error");
+      setActiveTab("variants");
+      return;
+    }
+    // Giá phải không âm (kể cả giá khuyến mãi, giá sỉ, giá vốn)
+    const negativePrice = combinations.find((c) => {
+      if ((c.costPrice != null && +c.costPrice < 0) || (c.priceWholesale != null && +c.priceWholesale < 0) || (c.pricePromo != null && +c.pricePromo < 0)) return true;
+      return c.variantPrices.some((vp) => vp.price != null && +vp.price < 0);
+    });
+    if (negativePrice) {
+      showToast(`Biến thể "${negativePrice.label}" có giá âm — giá phải >= 0`, "error");
+      setActiveTab("variants");
+      return;
+    }
+
+    // 7. Đơn vị biến thể: required
+    const missingUnit = combinations.find((c) => !c.unitId);
+    if (missingUnit) {
+      showToast(`Biến thể "${missingUnit.label}" chưa chọn đơn vị tính`, "error");
       setActiveTab("variants");
       return;
     }
@@ -810,15 +947,11 @@ export default function AddProductPage({ idProduct, data, onBack, preFillBarcode
         })
         .filter((id): id is number => id != null);
 
-      // Sync barcode về variant-level từ unit cơ bản đầu tiên.
-      // Lý do: UI chỉ cho gõ/sinh barcode ở unit-level (variantPrices[i].barcode).
-      // Nếu BE không persist unit-level barcode → variant.barcode rỗng → reload mất.
-      const fallbackBarcode = c.variantPrices?.find((u) => u.barcode)?.barcode || "";
       return {
         ...(c.id ? { id: c.id } : {}),
         label: c.label,
         sku: variantSku,
-        barcode: c.barcode || fallbackBarcode,
+        barcode: c.barcode || "",
         unitId: c.unitId ?? null,
         price: +(c.price ?? 0) || 0,
         taxRate: c.taxRate ?? 0,
@@ -889,22 +1022,22 @@ export default function AddProductPage({ idProduct, data, onBack, preFillBarcode
               ProductService.wTagUpdate({ productId: savedId, tagIds: selectedTagIds })
             );
           }
-          if (!isEdit) {
-            sideEffects.push(
-              ProductService.wWebsiteSettingUpdateMany(savedId, {
-                showOnWebsite: formData.showOnWeb ? 1 : 0,
-                showImage: formData.showImage ? 1 : 0,
-                showUnit: formData.showUnit ? 1 : 0,
-                showDescription: formData.showDesc ? 1 : 0,
-                showPromotionPrice: formData.showPromoPrice ? 1 : 0,
-                showWholesalePrice: formData.showWholesalePrice ? 1 : 0,
-                showInventory: formData.showStock ? 1 : 0,
-                showBarcode: formData.showBarcode ? 1 : 0,
-                showVariant: formData.showCategory ? 1 : 0,
-                hideWhenOutOfStock: formData.hideWhenOutOfStock ? 1 : 0,
-              })
-            );
-          }
+          // Luôn lưu website settings (kể cả khi tạo mới — ghi đè default)
+          sideEffects.push(
+            ProductService.wWebsiteSettingUpdate({
+              productId: savedId,
+              showOnWebsite:     formData.showOnWeb          ? 1 : 0,
+              showImage:         formData.showImage          ? 1 : 0,
+              showUnit:          formData.showUnit           ? 1 : 0,
+              showDescription:   formData.showDesc           ? 1 : 0,
+              showPromotionPrice:formData.showPromoPrice     ? 1 : 0,
+              showWholesalePrice:formData.showWholesalePrice ? 1 : 0,
+              showInventory:     formData.showStock          ? 1 : 0,
+              showBarcode:       formData.showBarcode        ? 1 : 0,
+              showVariant:       formData.showCategory       ? 1 : 0,
+              hideWhenOutOfStock:formData.hideWhenOutOfStock ? 1 : 0,
+            })
+          );
           if (sideEffects.length) await Promise.allSettled(sideEffects);
         }
         showToast(isEdit ? "Cập nhật sản phẩm thành công" : "Thêm sản phẩm thành công", "success");
@@ -1087,21 +1220,10 @@ export default function AddProductPage({ idProduct, data, onBack, preFillBarcode
           const idx = k.indexOf(":");
           return { name: k.slice(0, idx), value: k.slice(idx + 1) };
         });
-        const selectedOptions = activeAttrs.map((attr) => ({
-          groupName: attr.name,
-          label: keyParts.find((k) => k.name === attr.name)?.value ?? "",
-        }));
-        // Bug D.1.4: gửi `attributes` (name+value) để BE khớp biến thể với
-        // option mới tạo trong sản phẩm nhân bản. KHÔNG gửi `optionValueIds`
-        // vì đó là ID của option bên sản phẩm GỐC — không thuộc về sản phẩm
-        // mới, sẽ gây mismatch khi BE link variant → option.
-        const attributes = selectedOptions.map((o) => ({ name: o.groupName, value: o.label }));
-
-        const dupBarcode = generateEAN13();
         return {
           label: c.label,
           sku: variantSku,
-          barcode: dupBarcode,
+          barcode: generateEAN13(),   // sinh barcode mới hoàn toàn để tránh unique constraint
           unitId: c.unitId ?? null,
           price: +(c.price ?? 0) || 0,
           taxRate: c.taxRate ?? 0,
@@ -1110,15 +1232,17 @@ export default function AddProductPage({ idProduct, data, onBack, preFillBarcode
           pricePromo: +(c.pricePromo ?? 0) || 0,
           pricePromotion: +(c.pricePromo ?? 0) || 0,
           images: c.images || [],
-          attributes,
-          selectedOptions,
+          selectedOptions: activeAttrs.map((attr) => ({
+            groupName: attr.name,
+            label: keyParts.find((k) => k.name === attr.name)?.value ?? "",
+          })),
           variantPrices: c.variantPrices.map((u, ui) => ({
             sku: safeSku(`${variantSku}-${toSkuPart(u.unitName) || `U${ui + 1}`}`),
             unitId: u.unitId,
             unitName: u.unitName,
             price: +(u.price ?? 0) || 0,
             priceWholesale: +(u.priceWholesale ?? 0) || 0,
-            barcode: generateEAN13(),
+            barcode: generateEAN13(),  // sinh barcode mới cho từng unit khi duplicate
           })),
         };
       });
@@ -1129,16 +1253,12 @@ export default function AddProductPage({ idProduct, data, onBack, preFillBarcode
         position: 0,
         status: formData.status,
         categoryId: selectedCategory?.value ?? null,
-        // Bug D.1.4: bổ sung các field mà flow save thường gửi, nếu thiếu BE
-        // có thể persist không đúng variant-level state.
-        trackStock: formData.trackStock,
-        stock: +(formData.stock ?? 0) || 0,
         exchange: 1,
         otherUnits: detailProduct?.otherUnits ?? "",
         type: detailProduct?.type ? String(detailProduct.type) : "1",
         description: formData.description,
-        minStock: +(formData.minStock ?? 0) || 0,
-        maxStock: +(formData.maxStock ?? 0) || 0,
+        minStock: formData.minStock ?? null,
+        maxStock: formData.maxStock ?? null,
         variantGroups: dupVariantGroups,
         variants:
           dupVariants.length > 0
@@ -1359,7 +1479,7 @@ export default function AddProductPage({ idProduct, data, onBack, preFillBarcode
                   <label>
                     Tên sản phẩm <span className="required">*</span>
                   </label>
-                  <input type="text" value={formData.name} onChange={(e) => setField("name", e.target.value)} placeholder="Nhập tên sản phẩm..." />
+                  <input type="text" value={formData.name} onChange={(e) => setField("name", e.target.value)} placeholder="Nhập tên sản phẩm..." maxLength={255} />
                 </div>
                 <div className="add-prod-field add-prod-field--full" style={{ marginTop: 12 }}>
                   <label>Danh mục sản phẩm</label>
@@ -1664,12 +1784,7 @@ export default function AddProductPage({ idProduct, data, onBack, preFillBarcode
                       <div className="add-prod-toggle-row__sub">{sub}</div>
                     </div>
                     <label className="add-prod-toggle">
-                      <input
-                        type="checkbox"
-                        checked={!!formData[key]}
-                        disabled={savingWebsiteSettingKeys.includes(key)}
-                        onChange={(e) => handleWebsiteSettingToggle(key as keyof typeof WEBSITE_SETTING_FIELD_MAP, e.target.checked)}
-                      />
+                      <input type="checkbox" checked={!!formData[key]} onChange={(e) => setField(key, e.target.checked)} />
                       <span className="add-prod-toggle__slider" />
                     </label>
                   </div>
@@ -2067,7 +2182,7 @@ export default function AddProductPage({ idProduct, data, onBack, preFillBarcode
 
       {/* Barcode Scanner Modal — cho barcode theo từng đơn vị bán */}
       {scanningUnitKey && (
-        <BarcodeScanner
+        <BarcodeScannerModal
           onScan={(barcode) => {
             updateUnitPrice(scanningUnitKey.comboKey, scanningUnitKey.tempId, "barcode", barcode);
             setScanningUnitKey(null);
@@ -2212,8 +2327,8 @@ export default function AddProductPage({ idProduct, data, onBack, preFillBarcode
         </div>
       )}
 
-      {/* Tour hướng dẫn in mã vạch — tạm tắt để test */}
-      {/* <TourOverlay
+      {/* Tour hướng dẫn in mã vạch */}
+      <TourOverlay
         active={barcodeTour.active}
         step={barcodeTour.currentStep}
         stepIdx={barcodeTour.stepIdx}
@@ -2224,7 +2339,7 @@ export default function AddProductPage({ idProduct, data, onBack, preFillBarcode
         onNext={barcodeTour.next}
         onPrev={barcodeTour.prev}
         onSkip={barcodeTour.skip}
-      /> */}
+      />
 
       {/* Confirm xóa biến thể */}
       {confirmDeleteVariant && (

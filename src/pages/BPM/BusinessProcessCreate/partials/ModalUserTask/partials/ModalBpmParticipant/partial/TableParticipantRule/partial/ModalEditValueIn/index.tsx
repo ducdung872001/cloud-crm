@@ -10,7 +10,7 @@ import SelectCustom from "components/selectCustom/selectCustom";
 import Tippy from "@tippyjs/react";
 import Icon from "components/icon";
 import BusinessProcessService from "services/BusinessProcessService";
-import { set } from "lodash";
+import set from "lodash/set";
 
 export default function ModalEditValueIn({ onShow, onHide, dataFieldEdit, setDataRow }) {
   const [isSubmit, setIsSubmit] = useState<boolean>(false);
@@ -52,7 +52,7 @@ export default function ModalEditValueIn({ onShow, onHide, dataFieldEdit, setDat
             callback: async () => {
               setDataRow((current) => {
                 const result = [...current];
-                const dataNew = [];
+                let dataNew = [];
                 addFieldAttributes.forEach((item) => {
                   if (item.trim() !== "") {
                     dataNew.push(item);

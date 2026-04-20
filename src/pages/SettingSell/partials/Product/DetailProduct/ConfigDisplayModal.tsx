@@ -7,48 +7,34 @@ import Toggle from "@/components/toggle";
 import ProductService from "services/ProductService";
 import "./ConfigDisplayModal.scss";
 
+// Map từ key frontend → field name backend
 const WEBSITE_SETTING_CONFIG = [
-  { key: "showOnWebsite",     label: "Hiển thị sản phẩm trên website" },
   { key: "showImage",         label: "Hiển thị hình ảnh sản phẩm",    backendKey: "showImage"        },
   { key: "showUnit",          label: "Hiển thị đơn vị tính",          backendKey: "showUnit"         },
-  { key: "showDescription",   label: "Hiển thị mô tả chi tiết",       backendKey: "showDescription"  },
-  { key: "showPromotionPrice",label: "Hiển thị giá khuyến mãi",       backendKey: "showPromotionPrice"},
+  { key: "showDesc",          label: "Hiển thị mô tả chi tiết",       backendKey: "showDescription"  },
+  { key: "showPromoPrice",    label: "Hiển thị giá khuyến mãi",       backendKey: "showPromotionPrice"},
   { key: "showWholesalePrice",label: "Hiển thị giá sỉ",               backendKey: "showWholesalePrice"},
   { key: "showInventory",     label: "Hiển thị số lượng tồn kho",     backendKey: "showInventory"    },
   { key: "showBarcode",       label: "Hiển thị mã vạch / barcode",    backendKey: "showBarcode"      },
-  { key: "showVariant",       label: "Hiển thị phân loại / biến thể", backendKey: "showVariant"      },
-  { key: "hideWhenOutOfStock",label: "Tự động ẩn sản phẩm hết hàng",  backendKey: "hideWhenOutOfStock"},
+  { key: "showCategory",      label: "Hiển thị danh mục / nhóm",     backendKey: "showVariant"      },
+  { key: "showSoldCount",     label: "Hiển thị số lượng đã bán",      backendKey: "showSoldCount"    },
+  { key: "autoHideOutOfStock",label: "Tự động ẩn sản phẩm hết hàng", backendKey: "hideWhenOutOfStock"},
 ];
 
-const WEBSITE_SETTING_DEFAULTS: Record<string, boolean> = {
-  showOnWebsite: true,
-  showImage: true,
-  showUnit: true,
-  showDescription: true,
-  showPromotionPrice: false,
-  showWholesalePrice: false,
-  showInventory: true,
-  showBarcode: false,
-  showVariant: true,
-  hideWhenOutOfStock: true,
-};
-
-const readToggleValue = (value: unknown, fallback: boolean) =>
-  value === undefined || value === null ? fallback : value === 1 || value === true;
-
+// Convert response từ backend (Integer 0/1) sang state FE (boolean)
 function responseToState(res: Record<string, unknown>): Record<string, boolean> {
-  const state: Record<string, boolean> = { ...WEBSITE_SETTING_DEFAULTS };
+  const state: Record<string, boolean> = {};
   WEBSITE_SETTING_CONFIG.forEach(({ key, backendKey }) => {
-    const responseKey = backendKey ?? key;
-    state[key] = readToggleValue(res?.[responseKey], WEBSITE_SETTING_DEFAULTS[key]);
+    state[key] = res[backendKey] === 1 || res[backendKey] === true;
   });
   return state;
 }
 
+// Convert state FE sang body gửi backend
 function stateToBody(state: Record<string, boolean>): Record<string, number> {
   const body: Record<string, number> = {};
   WEBSITE_SETTING_CONFIG.forEach(({ key, backendKey }) => {
-    body[backendKey ?? key] = state[key] ? 1 : 0;
+    body[backendKey] = state[key] ? 1 : 0;
   });
   return body;
 }
@@ -66,7 +52,9 @@ export default function ConfigDisplayModal({ onShow, onHide }: ConfigDisplayModa
   const [settings, setSettings]           = useState<Record<string, boolean>>({});
   const [initialSettings, setInitialSettings] = useState<Record<string, boolean>>({});
 
+  // Load từ API khi mở modal
   useEffect(() => {
+    let isMounted = true;
     if (!onShow) return;
     setIsLoading(true);
     ProductService.wWebsiteSettingDefaultGet()
@@ -76,12 +64,18 @@ export default function ConfigDisplayModal({ onShow, onHide }: ConfigDisplayModa
           setSettings(state);
           setInitialSettings(state);
         } else {
-          setSettings({ ...WEBSITE_SETTING_DEFAULTS });
-          setInitialSettings({ ...WEBSITE_SETTING_DEFAULTS });
+          // Fallback defaults nếu chưa có record trong DB
+          const defaults: Record<string, boolean> = {};
+          WEBSITE_SETTING_CONFIG.forEach((cfg) => {
+            defaults[cfg.key] = ["showImage","showUnit","showDesc","showInventory","showCategory","autoHideOutOfStock"].includes(cfg.key);
+          });
+          setSettings(defaults);
+          setInitialSettings(defaults);
         }
       })
       .catch(() => showToast("Không thể tải cài đặt hiển thị", "error"))
       .finally(() => setIsLoading(false));
+    return () => { isMounted = false; };
   }, [onShow]);
 
   const hasChanges = JSON.stringify(settings) !== JSON.stringify(initialSettings);

@@ -1,5 +1,5 @@
 import React, { Fragment, useState, useEffect, useMemo, useCallback } from "react";
-import { formatDateCustom, isValidDate } from "utils/dateUtils";
+import { format, isValid } from "date-fns";
 
 import { IActionModal } from "model/OtherModel";
 import { IFieldCustomize, IFormData, IValidation } from "model/FormModel";
@@ -20,10 +20,10 @@ interface Props {
   onHide: (refresh?: boolean) => void;
 }
 
-function toISODate(val: Record<string, unknown>): string {
+function toISODate(val: unknown): string {
   if (!val) return "";
-  const m = moment.isMoment(val) ? val : new Date(val);
-  return m.isValid() ? m.format("YYYY-MM-DD") : "";
+  const d = val instanceof Date ? val : new Date(val as string | number);
+  return isValid(d) ? format(d, "yyyy-MM-dd") : "";
 }
 
 export default function AddPromoCodeModal({ onShow, data, onHide }: Props) {
@@ -44,16 +44,15 @@ export default function AddPromoCodeModal({ onShow, data, onHide }: Props) {
   }), [data, onShow]);
 
   const validations: IValidation[] = [
-    { name: "code",          rules: "required|max:50" },
-    { name: "discountValue", rules: "required|number|min_equal:0" },
+    { name: "code",          rules: "required" },
+    { name: "discountValue", rules: "required|number" },
     { name: "maxUses",       rules: "required|number" },
-    { name: "description",   rules: "nullable|max:500" },
   ];
 
   const listField: IFieldCustomize[] = [
     {
       label: "Mã giảm giá", name: "code", type: "text", fill: true, required: true,
-      maxLength: 50, placeholder: "VD: REBORN20, FREESHIP...",
+      placeholder: "VD: REBORN20, FREESHIP...",
     },
     {
       label: "Loại giảm giá", name: "discountType", type: "select", fill: true, required: true,
@@ -80,7 +79,7 @@ export default function AddPromoCodeModal({ onShow, data, onHide }: Props) {
     },
     {
       label: "Mô tả", name: "description", type: "textarea", fill: true,
-      maxLength: 500, placeholder: "Mô tả ngắn về mã giảm giá (không bắt buộc)",
+      placeholder: "Mô tả ngắn về mã giảm giá (không bắt buộc)",
     },
   ];
 
@@ -125,7 +124,7 @@ export default function AddPromoCodeModal({ onShow, data, onHide }: Props) {
       showToast(`${data ? "Cập nhật" : "Tạo"} mã giảm giá thành công`, "success");
       onHide(true);
     } else {
-      showToast(res?.message ?? res?.error ?? "Có lỗi xảy ra", "error");
+      showToast(res?.message ?? "Có lỗi xảy ra", "error");
       setIsSubmit(false);
     }
   };

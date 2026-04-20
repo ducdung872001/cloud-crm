@@ -14,13 +14,15 @@ const DEFAULT_SHIPPING_INFO: ShippingInfo = {
   receiverProvince: "", shippingFee: 0,
   shippingFeeBearer: "RECEIVER", codAmount: 0,
 };
+import OrderDetailModal from "./components/modals/OrderDetailModal";
 import PayModal from "./components/modals/PayModal";
 import ReceiptModal from "./components/modals/ReceiptModal";
 import QrScanModal from "./components/modals/QrScanModal";
 import SyncModal from "./components/modals/SyncModal";
 import CustomerModal from "./components/modals/CustomerModal";
 import BoughtProductService from "@/services/BoughtProductService";
-import LoyaltyService from "@/services/LoyaltyService";
+import BoughtServiceService from "@/services/BoughtServiceService";
+import BoughtCardService from "@/services/BoughtCardService";
 import { showToast } from "@/utils/common";
 import AddCustomerPersonModal from "../CustomerPerson/partials/AddCustomerPersonModal";
 import QrCodeProService from "@/services/QrCodeProService";
@@ -56,11 +58,9 @@ const CounterSales: React.FC = () => {
   const [invoiceId, setInvoiceId] = useState<number | null>(null);
   const [invoiceDraftToPaid, setInvoiceDraftToPaid] = useState<Record<string, unknown>>(null);
   const [activeDraftId, setActiveDraftId] = useState<string | null>(null);
-  /** Lưu paid/debt/cashGiven từ PayModal để truyền vào ReceiptModal */
+  /** Lưu paid/debt từ PayModal để truyền vào ReceiptModal → POST /invoice/create */
   const [paidAmount, setPaidAmount] = useState<number>(0);
   const [debtAmount, setDebtAmount] = useState<number>(0);
-  const [cashGivenAmount, setCashGivenAmount] = useState<number>(0);
-  const cashGivenRef = React.useRef<number>(0);
   /** Ref đánh dấu đang chuyển từ PayModal sang ReceiptModal — tránh reset invoiceId sớm */
   const transitioningToReceiptRef = React.useRef(false);
   const [method, setMethod] = useState<PayMethod>("cash");
@@ -137,6 +137,7 @@ const CounterSales: React.FC = () => {
   const [payModalOpen, setPayModalOpen] = useState(false);
   const [receiptModalOpen, setReceiptModalOpen] = useState(false);
   const [paymentSuccessCount, setPaymentSuccessCount] = useState(0);
+  const [orderDetailModalOpen, setOrderDetailModalOpen] = useState(false);
   const [qrScanModalOpen, setQrScanModalOpen] = useState(false);
   const [syncModalOpen, setSyncModalOpen] = useState(false);
   const [customerModalOpen, setCustomerModalOpen] = useState(false);
@@ -155,8 +156,6 @@ const CounterSales: React.FC = () => {
   // ── Fixed price lookup map ────────────────────────────────────────────────
   const [fixedPriceMap, setFixedPriceMap] = useState<Map<string, IFixedPriceEntry>>(new Map());
   const [couponDiscount, setCouponDiscount] = useState(0);
-  // Lưu code voucher để gửi kèm invoice/create cho audit trail (BE pending)
-  const [appliedCouponCode, setAppliedCouponCode] = useState<string | null>(null);
   const [manualDiscount, setManualDiscount] = useState(0);
   const [orderNote, setOrderNote] = useState("");
   const [promoDiscount, setPromoDiscount] = useState(0);
@@ -330,96 +329,87 @@ const CounterSales: React.FC = () => {
   // ── Payment flow ─────────────────────────────────────────────────────────
   // paid  = số tiền khách thực trả (do PayModal tính và truyền lên)
   // debt  = số tiền còn nợ = total - paid (0 nếu thanh toán đủ)
-  const handlePayConfirm = async (invoiceId: number | null, paid: number, debt: number, cashGiven?: number) => {
+  const handlePayConfirm = async (invoiceId: number | null, paid: number, debt: number) => {
     if (!invoiceId) return;
-    // Lưu lại paid/debt/cashGiven để ReceiptModal truyền vào POST /invoice/create
+    // Lưu lại paid/debt để ReceiptModal truyền vào POST /invoice/create
     setPaidAmount(paid);
     setDebtAmount(debt);
-    const givenVal = cashGiven ?? paid;
-    setCashGivenAmount(givenVal);
-    cashGivenRef.current = givenVal;
     // Đánh dấu đang chuyển sang ReceiptModal — không để onClose reset invoiceId
     transitioningToReceiptRef.current = true;
     try {
-      const body = cartItems.map((item: CartItem) => ({
+      // [CH] Tách items theo loại
+      const productItems = cartItems.filter((i: CartItem) => !i.itemType || i.itemType === "product");
+      const serviceItems = cartItems.filter((i: CartItem) => i.itemType === "service");
+      const membershipItems = cartItems.filter((i: CartItem) => i.itemType === "membership");
+
+      const loyaltyDiscount = promoDiscount + moneyFromPoints;
+      const extraParams = {
+        invoiceId,
+        ...(loyaltyDiscount > 0 ? { loyaltyDiscount } : {}),
+        paid,
+        debt,
+        ...(activePayConfig?.fundId ? { fundId: activePayConfig.fundId } : {}),
+      };
+
+      // Insert sản phẩm (hoặc mảng rỗng để finalize invoice)
+      const productBody = productItems.map((item: CartItem) => ({
         productId: Number(item.id),
         variantId: Number(item.variantId),
-        ...(item.unitId != null ? { unitId: Number(item.unitId) } : {}),
         price: item.price,
         customerId: customer?.id ?? -1,
-        quantity: item.qty,
+        qty: item.qty,
         name: item.name,
         avatar: item.avatar,
         unitName: item.unitName,
         ...(warehouseId ? { inventoryId: warehouseId } : {}),
       }));
 
-      const loyaltyDiscount = promoDiscount + moneyFromPoints;
+      const paidInvoice = await BoughtProductService.insert(productBody, extraParams);
 
-      const paidInvoice = await BoughtProductService.insert(body, {
-        invoiceId,
-        ...(loyaltyDiscount > 0 ? { loyaltyDiscount } : {}),
-        paid,    // ← tiền thực thu (có thể nhỏ hơn total nếu ghi nợ)
-        debt,    // ← tiền còn nợ (0 nếu thanh toán đủ)
-        // fundId từ PTTT KH đã chọn → billing ghi cashbook vào đúng quỹ
-        ...(activePayConfig?.fundId ? { fundId: activePayConfig.fundId } : {}),
-        // ── AUDIT TRAIL — pending BE: BACKEND-TASK-voucher-design-flaw.md ──
-        // FE đã gửi sẵn các field này, BE bỏ qua nếu chưa support → no-op
-        ...(appliedCouponCode ? { couponCode: appliedCouponCode } : {}),
-        ...(couponDiscount > 0 ? { couponDiscount } : {}),
-        ...(appliedPromo?.id ? { promotionId: Number(appliedPromo.id) } : {}),
-        ...(promoDiscount > 0 ? { promoDiscount } : {}),
-      });
+      // [CH] Insert dịch vụ
+      for (const svc of serviceItems) {
+        try {
+          await BoughtServiceService.addProductToInvoice({
+            invoiceId,
+            serviceId: Number(svc.id),
+            price: svc.price,
+            qty: svc.qty,
+            customerId: Number(customer?.id ?? -1),
+          } as any);
+        } catch { /* silent */ }
+      }
+
+      // [CH] Insert thẻ thành viên
+      for (const card of membershipItems) {
+        try {
+          await BoughtCardService.add({
+            invoiceId,
+            cardId: Number(card.id),
+            price: card.price,
+            qty: card.qty,
+            customerId: Number(customer?.id ?? -1),
+          } as any);
+        } catch { /* silent */ }
+      }
 
       if (paidInvoice.code == 0) {
         // ── Nếu là đơn ship → tạo shipment ────────────────────────────────
-        // Body shape NESTED theo BE spec (sender/receiver/parcel).
-        // Link về invoice gốc qua internalOrderId (BE sẽ map sang orderCode/orderId).
         if (orderType === "ship" && shippingInfo.receiverName) {
           try {
-            const invoiceCodeForShip =
-              (invoiceDraftToPaid as Record<string, unknown>)?.invoiceCode as string | undefined
-              ?? String(invoiceId);
-            const cartSubtotal = cartItems.reduce((s, c) => s + c.price * c.qty, 0);
-            const cartTotalWeightGram = cartItems.reduce(
-              (s, c) => s + (Number((c as Record<string, unknown>).weightGram ?? 0) || 0) * c.qty,
-              0
-            );
             await fetch(urlsApi.shipping.create, {
               method: "POST",
               headers: { "Content-Type": "application/json" },
               body: JSON.stringify({
-                internalOrderId: invoiceCodeForShip,
-                carrierCode: "GHTK",
-                sender: {
-                  name: "", phone: "", email: "",
-                  address: "", ward: "", district: "", province: "",
-                },
-                receiver: {
-                  name:     shippingInfo.receiverName,
-                  phone:    shippingInfo.receiverPhone,
-                  email:    "",
-                  address:  shippingInfo.receiverAddress,
-                  ward:     "",
-                  district: "",
-                  province: shippingInfo.receiverProvince ?? "",
-                },
-                parcel: {
-                  weightGram: cartTotalWeightGram > 0 ? cartTotalWeightGram : 500,
-                  lengthCm: 10, widthCm: 10, heightCm: 10,
-                },
-                codAmount: shippingInfo.codAmount,
-                declaredValue: cartSubtotal,
+                orderId: invoiceId,
+                orderCode: String(invoiceId),
+                receiverName: shippingInfo.receiverName,
+                receiverPhone: shippingInfo.receiverPhone,
+                receiverAddress: shippingInfo.receiverAddress,
                 shippingFee: shippingInfo.shippingFeeBearer === "RECEIVER" ? shippingInfo.shippingFee : 0,
+                codAmount: shippingInfo.codAmount,
+                noteForShipper: shippingInfo.noteForShipper ?? "",
                 shippingFeeBearer: shippingInfo.shippingFeeBearer,
-                items: cartItems.map((c) => ({
-                  name: c.name,
-                  quantity: c.qty,
-                  weightGram: Number((c as Record<string, unknown>).weightGram ?? 500) || 500,
-                  price: c.price,
-                })),
-                note: shippingInfo.noteForShipper ?? "",
-                status: "SUBMITTED",
+                totalAmount: cartItems.reduce((s, c) => s + c.price * c.qty, 0),
               }),
             });
           } catch { /* shipment tạo sau cũng được */ }
@@ -461,13 +451,15 @@ const CounterSales: React.FC = () => {
     }
   };
 
+  const handleConfirmOrder = useCallback(() => setOrderDetailModalOpen(false), []);
+
   const handleQrAddToCart = useCallback((item: {
-    id: string; variantId: string; unitId?: number; name: string;
+    id: string; variantId: string; name: string;
     price: number; priceLabel: string; unit: string;
     unitName: string; icon: string; qty: number;
   }) => {
     handleAddToCart({
-      id: item.id, variantId: item.variantId, unitId: item.unitId, name: item.name,
+      id: item.id, variantId: item.variantId, name: item.name,
       price: item.price, priceLabel: item.priceLabel,
       unit: item.unit, unitName: item.unitName, icon: item.icon, qty: 1,
     });
@@ -476,8 +468,8 @@ const CounterSales: React.FC = () => {
 
   return (
     <div className="counter-sales">
-      {/* ── Tour hướng dẫn POS — tạm tắt để test ── */}
-      {/* <TourOverlay
+      {/* ── Tour hướng dẫn POS ── */}
+      <TourOverlay
         active={posTour.active}
         step={posTour.currentStep}
         stepIdx={posTour.stepIdx}
@@ -488,7 +480,7 @@ const CounterSales: React.FC = () => {
         onNext={posTour.next}
         onPrev={posTour.prev}
         onSkip={posTour.skip}
-      /> */}
+      />
 
       <Sidebar />
 
@@ -538,7 +530,6 @@ const CounterSales: React.FC = () => {
                 onViewPromos={() => setPromoModalOpen(true)}
                 onRemovePromo={() => { setAppliedPromo(null); setPromoDiscount(0); }}
                 onCouponDiscountChange={setCouponDiscount}
-                onCouponCodeChange={setAppliedCouponCode}
                 onManualDiscountChange={setManualDiscount}
                 note={orderNote}
                 onNoteChange={setOrderNote}
@@ -562,31 +553,16 @@ const CounterSales: React.FC = () => {
                     setCartItems(cartItemsFromDraft);
                     setActiveDraftId(draftId ?? null);
                     // Khôi phục thông tin khách hàng từ đơn tạm
-                    if (custInfo && custInfo.customerId === -1) {
-                      // Khách vãng lai — khôi phục để không bị chặn ở bước tạo hóa đơn
+                    if (custInfo && custInfo.customerId && custInfo.customerId !== -1) {
                       setCustomer({
-                        id: "-1",
-                        name: "Khách vãng lai",
-                        initial: "👤",
-                        phone: "",
-                        points: 0,
-                        tier: "—",
-                        color: "#9ca3af",
-                      });
-                    } else if (custInfo && custInfo.customerId && custInfo.customerId > 0) {
-                      const restoredCustomer: Customer = {
                         id: String(custInfo.customerId),
                         name: custInfo.customerName || `KH #${custInfo.customerId}`,
                         initial: (custInfo.customerName || "K")[0].toUpperCase(),
-                        phone: custInfo.customerPhone || "",
+                        phone: "",
                         points: 0,
                         tier: "—",
                         color: "#6366f1",
-                      };
-                      setCustomer(restoredCustomer);
-                      fetchLoyaltyWallet(restoredCustomer.id);
-                    } else {
-                      setCustomer(null);
+                      });
                     }
                     showToast(`Đã tải ${cartItemsFromDraft.length} sản phẩm từ ${draftLabel}`, "success");
                   }
@@ -632,7 +608,7 @@ const CounterSales: React.FC = () => {
           }
           transitioningToReceiptRef.current = false;
         }}
-        onConfirm={(id, paid, debt, cashGiven) => handlePayConfirm(id, paid, debt, cashGiven)}
+        onConfirm={(id, paid, debt) => handlePayConfirm(id, paid, debt)}
         onConfigChange={setActivePayConfig}
         customerId={customer?.id}
         onRequestSelectCustomer={() => {
@@ -652,29 +628,10 @@ const CounterSales: React.FC = () => {
         note={orderNote}
         paidAmount={paidAmount}
         debtAmount={debtAmount}
-        cashGivenAmount={cashGivenAmount || cashGivenRef.current}
         customerName={customer?.name ?? ""}
         warehouseId={warehouseId}
-        shippingFee={shippingInfo.shippingFeeBearer === "RECEIVER" ? shippingInfo.shippingFee : 0}
         onPaymentSuccess={() => {
-          // Bug C.1.5: cộng điểm loyalty cho KH sau khi thanh toán thành công.
-          // Công thức: points = floor(subtotal / exchangeRate) — trừ đi phần
-          // đã redeem (moneyFromPoints). Chỉ cộng khi KH là loyalty member và
-          // invoiceId hợp lệ.
-          if (customer?.id && loyaltyWallet && invoiceId) {
-            const subtotal = cartItems.reduce((s, c) => s + c.price * c.qty, 0);
-            const netSpent = Math.max(0, subtotal - moneyFromPoints - promoDiscount - couponDiscount);
-            const earnedPoints = Math.floor(netSpent / (exchangeRate || 1000));
-            if (earnedPoints > 0) {
-              LoyaltyService.fluctuatePoint({
-                customerId: Number(customer.id),
-                point: earnedPoints,
-                description: `Cộng điểm đơn hàng #${invoiceId}`,
-              }).catch(() => undefined);
-            }
-          }
           setCouponDiscount(0);
-          setAppliedCouponCode(null);
           setPromoDiscount(0);
           setAppliedPromo(null);
           setManualDiscount(0);
@@ -703,6 +660,13 @@ const CounterSales: React.FC = () => {
           setShippingInfo(DEFAULT_SHIPPING_INFO);
           setOrderType("retail");
         }}
+      />
+
+      <OrderDetailModal
+        open={orderDetailModalOpen} onClose={() => setOrderDetailModalOpen(false)}
+        invoiceId={-1}
+        onPrint={() => { setOrderDetailModalOpen(false); setReceiptModalOpen(true); }}
+        onConfirm={handleConfirmOrder}
       />
 
       <QrScanModal open={qrScanModalOpen} onClose={() => setQrScanModalOpen(false)} onAddToCart={handleQrAddToCart} />

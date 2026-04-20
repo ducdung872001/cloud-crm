@@ -187,11 +187,11 @@ export default function AddCampaignModal(props: IAddCampaignModalProps) {
       const branches4 = JSON.parse(result.branches4);
       const dataBranchList = result.lstBranch;
 
-      const listBranchLevel0 = [];
-      const listBranchLevel1 = [];
-      const listBranchLevel2 = [];
-      const listBranchLevel3 = [];
-      const listBranchLevel4 = [];
+      let listBranchLevel0 = [];
+      let listBranchLevel1 = [];
+      let listBranchLevel2 = [];
+      let listBranchLevel3 = [];
+      let listBranchLevel4 = [];
 
       if (branches0.length > 0) {
         branches0.map((item) => {
@@ -359,7 +359,7 @@ export default function AddCampaignModal(props: IAddCampaignModalProps) {
   const validations: IValidation[] = [
     {
       name: "name",
-      rules: "required|max:100",
+      rules: "required",
     },
   ];
 
@@ -783,7 +783,7 @@ export default function AddCampaignModal(props: IAddCampaignModalProps) {
     if (listBranchDeleted0 && listBranchDeleted0.length > 0 && listBranchValue.length >= 2) {
       let newlistBranch1 = [...listBranchValue[1].value];
 
-      const newListBranchDeleted1 = [];
+      let newListBranchDeleted1 = [];
       if (listBranchValue[1].value.length > 0) {
         listBranchDeleted0.map((item) => {
           const array = newlistBranch1.filter((el) => el.parentId !== item) || [];
@@ -821,7 +821,7 @@ export default function AddCampaignModal(props: IAddCampaignModalProps) {
     if (listBranchDeleted1 && listBranchDeleted1.length > 0 && listBranchValue.length >= 3) {
       let newlistBranch2 = [...listBranchValue[2].value];
 
-      const newListBranchDeleted2 = [];
+      let newListBranchDeleted2 = [];
       if (listBranchValue[2].value.length > 0) {
         listBranchDeleted1.map((item) => {
           const array = newlistBranch2.filter((el) => el.parentId !== item) || [];
@@ -865,7 +865,7 @@ export default function AddCampaignModal(props: IAddCampaignModalProps) {
   useEffect(() => {
     if (listBranchDeleted2 && listBranchDeleted2.length > 0 && listBranchValue.length >= 4) {
       let newlistBranch3 = [...listBranchValue[3].value];
-      const newListBranchDeleted3 = [];
+      let newListBranchDeleted3 = [];
       if (listBranchValue[3].value.length > 0) {
         listBranchDeleted2.map((item) => {
           const array = newlistBranch3.filter((el) => el.parentId !== item) || [];
@@ -1184,7 +1184,7 @@ export default function AddCampaignModal(props: IAddCampaignModalProps) {
     setCheckFieldApproach(false);
 
     const value = e.target.value;
-    const item: ICampaignApproachRequestModel = {};
+    let item: ICampaignApproachRequestModel = {};
 
     if (value) {
       listApproach.map((obj, index) => {
@@ -1226,7 +1226,7 @@ export default function AddCampaignModal(props: IAddCampaignModalProps) {
 
   const handleChangeValueActivity = (activities, idx) => {
     activities = JSON.stringify(activities.split(","));
-    const item: ICampaignApproachRequestModel = {};
+    let item: ICampaignApproachRequestModel = {};
     listApproach.map((obj, index) => {
       if (index === idx) {
         item.id = obj.id;
@@ -1311,7 +1311,6 @@ export default function AddCampaignModal(props: IAddCampaignModalProps) {
           type: "text",
           fill: true,
           required: true,
-          maxLength: 100,
         },
         {
           label: "Mã chiến dịch",
@@ -1860,7 +1859,7 @@ export default function AddCampaignModal(props: IAddCampaignModalProps) {
       // setValueBranch([]);
       // setDataDepartment([])
     } else {
-      showToast(response.message ?? response.error ?? "Có lỗi xảy ra. Vui lòng thử lại sau", "error");
+      showToast(response.message ?? "Có lỗi xảy ra. Vui lòng thử lại sau", "error");
     }
 
     setIsSubmit(false);
@@ -1878,7 +1877,7 @@ export default function AddCampaignModal(props: IAddCampaignModalProps) {
     if (response.code == 0) {
       setListApproach(response.result);
     } else {
-      showToast(response.message ?? response.error ?? "Có lỗi xảy ra. Vui lòng thử lại sau", "error");
+      showToast(response.message ?? "Có lỗi xảy ra. Vui lòng thử lại sau", "error");
     }
   };
 
@@ -1899,7 +1898,7 @@ export default function AddCampaignModal(props: IAddCampaignModalProps) {
       //Lấy lại danh sách
       loadCampaignApproaches(campaignId);
     } else {
-      showToast(response.message ?? response.error ?? "Có lỗi xảy ra. Vui lòng thử lại sau", "error");
+      showToast(response.message ?? "Có lỗi xảy ra. Vui lòng thử lại sau", "error");
     }
   };
 
@@ -1912,7 +1911,7 @@ export default function AddCampaignModal(props: IAddCampaignModalProps) {
     if (response.code == 0) {
       loadCampaignApproaches(campaignId);
     } else {
-      showToast(response.message ?? response.error ?? "Có lỗi xảy ra. Vui lòng thử lại sau", "error");
+      showToast(response.message ?? "Có lỗi xảy ra. Vui lòng thử lại sau", "error");
     }
   };
 
@@ -1944,7 +1943,7 @@ export default function AddCampaignModal(props: IAddCampaignModalProps) {
     setListSales([]);
     setLstIdSale([]);
 
-    // showToast(response.message ?? response.error ?? "Có lỗi xảy ra. Vui lòng thử lại sau", "error");
+    // showToast(response.message ?? "Có lỗi xảy ra. Vui lòng thử lại sau", "error");
     // setIsSubmit(false);
   };
 
@@ -2168,7 +2167,7 @@ export default function AddCampaignModal(props: IAddCampaignModalProps) {
               {setupStep == 1
                 ? listField.map((field, index) => (
                     <FieldCustomize
-                      key={index}
+                      key={field.name || index}
                       field={field}
                       handleUpdate={(value) => handleChangeValidate(value, field, formData, validations, listField, setFormData)}
                       formData={formData}
@@ -2176,7 +2175,7 @@ export default function AddCampaignModal(props: IAddCampaignModalProps) {
                   ))
                 : listFieldMethods.map((field, index) => (
                     <FieldCustomize
-                      key={index}
+                      key={field.name || index}
                       field={field}
                       handleUpdate={(value) => handleChangeValidate(value, field, formData, validations, listFieldMethods, setFormData)}
                       formData={formData}

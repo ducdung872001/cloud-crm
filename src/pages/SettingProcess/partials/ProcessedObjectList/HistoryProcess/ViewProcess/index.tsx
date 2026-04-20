@@ -56,8 +56,8 @@ export default function ViewProcess(props) {
       const result = response.result;
       const configData = result?.configs;
       const nodeList = result?.nodes;
-      const nodeData = [];
-      const edgeData = [];
+      let nodeData = [];
+      let edgeData = [];
 
       if(nodeList && nodeList.length > 0){
         nodeList.map(item => {

@@ -1,0 +1,45 @@
+%%{init: {'theme':'base', 'themeVariables': {'fontFamily':'Calibri'}}}%%
+flowchart LR
+    STAFF(("👤<br/>Staff"))
+    ACC(("👤<br/>Accountant"))
+    REC(("👤<br/>Receptionist"))
+    EXT(("🌐<br/>E-invoice<br/>Provider"))
+    SHIP(("🌐<br/>Shipping<br/>Carrier"))
+
+    subgraph SYSTEM["Phân hệ Giao dịch"]
+        UC1((Tra cứu<br/>danh sách đơn))
+        UC2((Xem chi tiết<br/>đơn))
+        UC3((In/gửi lại<br/>hóa đơn))
+        UC4((Thu nợ<br/>còn lại))
+        UC5((Trả hàng<br/>hoàn đơn))
+        UC6((Hủy đơn))
+        UC7((Phát hành<br/>VAT))
+        UC8((Tra cứu<br/>VAT))
+        UC9((Tạo đơn<br/>vận chuyển))
+        UC10((Theo dõi<br/>vận chuyển))
+        UC11((Audit/Export<br/>đơn))
+    end
+
+    STAFF --> UC1
+    STAFF --> UC2
+    STAFF --> UC3
+    REC --> UC4
+    REC --> UC5
+    REC --> UC6
+    ACC --> UC7
+    ACC --> UC8
+    ACC --> UC11
+    REC --> UC9
+    REC --> UC10
+
+    UC7 <-.gọi API.-> EXT
+    UC9 <-.gọi API.-> SHIP
+    UC10 <-.webhook.-> SHIP
+
+    classDef actor fill:#1F3A68,stroke:#1F3A68,color:#fff
+    classDef ext fill:#FEF3C7,stroke:#F59E0B,color:#78350F
+    classDef uc fill:#E1F5EE,stroke:#2C7A7B,color:#0F4C44
+
+    class STAFF,ACC,REC actor
+    class EXT,SHIP ext
+    class UC1,UC2,UC3,UC4,UC5,UC6,UC7,UC8,UC9,UC10,UC11 uc

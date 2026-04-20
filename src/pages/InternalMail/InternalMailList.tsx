@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect, Fragment } from "react";
 import cloneDeep from "lodash/cloneDeep";
 
-import {  } from "utils/dateUtils";
+import { formatDistanceToNow, parse } from "date-fns";
 
 import Tippy from "@tippyjs/react";
 import HeadlessTippy from "@tippyjs/react/headless";
@@ -229,7 +229,7 @@ export default function InternalMailList() {
                   <span className="name-conversation">{item.title}</span>
                 </div>
                 <div className="conversation__item--action">
-                  <span className="time">{moment(item.createdTime, "HH:mm").fromNow()}</span>
+                  <span className="time">{formatDistanceToNow(parse(item.createdTime, "HH:mm", new Date()), { addSuffix: true })}</span>
                 </div>
 
                 <HeadlessTippy

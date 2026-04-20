@@ -282,7 +282,9 @@ async function main() {
     }
     await t.page.mouse.click(ctrlClicked.x, ctrlClicked.y);
     await t.page.waitForTimeout(1200);
-    // Click option "Kho hang mau" bang Playwright native (proper mouse events)
+    // Type để filter (dropdown phân trang, chỉ show 10 warehouse đầu)
+    await t.page.keyboard.type(SELLING_WAREHOUSE, { delay: 50 });
+    await t.page.waitForTimeout(1500);
     const whOpt = await t.page.$(`[class*="option"]:has-text("${SELLING_WAREHOUSE}")`);
     if (whOpt) {
       await whOpt.click({ force: true });
@@ -291,7 +293,7 @@ async function main() {
       const allOpts = await t.page.evaluate(() =>
         [...document.querySelectorAll('[class*="option"]')].map(o => o.innerText?.trim()).filter(Boolean)
       );
-      logUiBug("STEP2", "CRITICAL", `Dropdown khong co option "${SELLING_WAREHOUSE}"`, `Options: ${allOpts.join(" | ")}`);
+      logUiBug("STEP2", "CRITICAL", `Dropdown không có option "${SELLING_WAREHOUSE}" sau khi type filter`, `Options: ${allOpts.join(" | ")}`);
       throw new Error("STEP2 blocked");
     }
     await t.page.waitForTimeout(1000);

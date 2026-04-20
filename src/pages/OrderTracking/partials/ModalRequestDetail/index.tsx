@@ -102,7 +102,7 @@ export default function ModalRequestDetail(props: Record<string, unknown>) {
               </div>
             </div>
             {data?.map((item: Record<string, unknown>, index: number) => (
-              <div className="item-request" key={index}>
+              <div className="item-request" key={item.id ?? index}>
                 <div className="avatar">
                   <img loading="lazy" src={item.avatar || ImageThirdGender} alt={item.name} />
                   <div className="name">{item.name.length > 100 ? `${item.name.slice(0, 100)}...` : item.name}</div>

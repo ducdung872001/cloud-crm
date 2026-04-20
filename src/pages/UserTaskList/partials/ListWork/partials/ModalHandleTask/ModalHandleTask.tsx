@@ -657,12 +657,12 @@ export default function ModalHandleTask({ onShow, onHide, dataWork, isHandleTask
 
   const checkValidateForm = (config) => {
     // Check validate các bảng grid
-    const allGrid = findAllGrids(initFormSchema?.components);
-    const listKeyGrid = Object.keys(config) || [];
+    let allGrid = findAllGrids(initFormSchema?.components);
+    let listKeyGrid = Object.keys(config) || [];
     if (listKeyGrid.length > 0) {
       for (let i = 0; i < listKeyGrid.length; i++) {
-        const key = listKeyGrid[i];
-        const grid = allGrid.find((el) => el.key === key);
+        let key = listKeyGrid[i];
+        let grid = allGrid.find((el) => el.key === key);
         if (grid) {
           const isParsable = canParseJSON(config[key]);
           if (!isParsable) {
@@ -674,7 +674,7 @@ export default function ModalHandleTask({ onShow, onHide, dataWork, isHandleTask
           const headerTable = dataGrid?.headerTable || [];
           for (let index = 0; index < dataRows.length; index++) {
             const element = dataRows[index];
-            const rowNumber = index + 1;
+            let rowNumber = index + 1;
             for (let j = 0; j < headerTable.length; j++) {
               const field = headerTable[j];
               if (field?.required && !element[field.key]) {
@@ -699,7 +699,7 @@ export default function ModalHandleTask({ onShow, onHide, dataWork, isHandleTask
   };
 
   const onSubmit = async (config) => {
-    const checkValidate = checkValidateForm(config);
+    let checkValidate = checkValidateForm(config);
     // console.log("config", config);
     // console.log("config:formViewerRef", formViewerRef);
     // Object.keys(config).forEach((key) => {
@@ -918,7 +918,7 @@ export default function ModalHandleTask({ onShow, onHide, dataWork, isHandleTask
         const wbout = XLSX.write(wb, { bookType: "xlsx", type: "array" });
         const blob = new Blob([wbout], { type: "application/octet-stream" });
         // Tạo liên kết và tải xuống file
-        const code_name = convertToFileName(name);
+        let code_name = convertToFileName(name);
 
         download(blob, code_name + ".xlsx");
       }
@@ -948,7 +948,7 @@ export default function ModalHandleTask({ onShow, onHide, dataWork, isHandleTask
         const wbout = XLSX.write(wb, { bookType: "xlsx", type: "array" });
         const blob = new Blob([wbout], { type: "application/octet-stream" });
         // Tạo liên kết và tải xuống file
-        const code_name = convertToFileName(name);
+        let code_name = convertToFileName(name);
         download(blob, code_name + ".xlsx");
       }
 

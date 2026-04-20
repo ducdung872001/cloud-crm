@@ -86,173 +86,82 @@ export default function WarehouseListPage() {
     }
   };
 
-  /**
-   * FE check truoc: kho co ton kho → hien dialog "Ngung su dung"
-   *                  kho trang → hien dialog "Xoa vinh vien"
-   * BE check lai (defense in depth) khi goi API delete/deactivate
-   */
-  const checkWarehouseHasStock = async (warehouseId: number): Promise<boolean> => {
-    try {
-      const response = await WarehouseService.hasStock(warehouseId);
-      const items = response?.result?.items ?? response?.items ?? [];
-      return items.length > 0;
-    } catch {
-      return false;
-    }
-  };
-
-  /** Xoa cung kho trang */
-  const onHardDelete = async (id: number, name: string) => {
-    try {
-      const response = await WarehouseService.delete(id);
-      if (response.code === 0) {
-        showToast("Đã xóa kho hàng", "success");
-        getListWarehouse(params);
-      } else {
-        // BE reject (defense in depth) — hoi user ngung su dung
-        showToast(response.message, "warning");
-        setShowDialog(false);
-        setContentDialog(null);
-        showDeactivateDialog(id, name, response.message);
-        return;
-      }
-    } catch {
-      showToast("Không thể xóa kho hàng", "error");
-    }
+  const onDelete = async (id: number) => {
+    // TODO: gắn API xóa kho khi có endpoint
+    // const response = await WarehouseService.delete(id);
+    // if (response.code === 0) {
+    //   showToast("Xóa kho hàng thành công", "success");
+    //   getListWarehouse(params);
+    // } else {
+    //   showToast(response.message ?? "Có lỗi xảy ra. Vui lòng thử lại sau", "error");
+    // }
+    showToast("Tính năng xóa kho đang được phát triển", "warning");
     setShowDialog(false);
     setContentDialog(null);
   };
 
-  /** Ngung su dung kho co giao dich */
-  const onDeactivate = async (id: number) => {
-    try {
-      const res = await WarehouseService.deactivate(id);
-      if (res.code === 0) {
-        showToast("Đã chuyển kho sang Ngừng sử dụng", "success");
-        getListWarehouse(params);
-      } else {
-        showToast(res.message ?? "Có lỗi xảy ra", "error");
-      }
-    } catch {
-      showToast("Không thể cập nhật trạng thái kho", "error");
-    } finally {
-      setShowDialog(false);
-      setContentDialog(null);
-    }
+  const onDeleteAll = () => {
+    const selectedIds = listIdChecked || [];
+    if (!selectedIds.length) return;
+
+    // TODO: gắn API xóa nhiều kho khi có endpoint
+    // const arrPromises = selectedIds.map((id) => WarehouseService.delete(id));
+    // Promise.all(arrPromises).then((results) => {
+    //   const count = results.filter(Boolean)?.length || 0;
+    //   if (count > 0) {
+    //     showToast(`Xóa thành công ${count} kho hàng`, "success");
+    //     getListWarehouse(params);
+    //     setListIdChecked([]);
+    //   }
+    // }).finally(() => {
+    //   setShowDialog(false);
+    //   setContentDialog(null);
+    // });
+
+    showToast("Tính năng xóa kho đang được phát triển", "warning");
+    setShowDialog(false);
+    setContentDialog(null);
   };
 
-  /** Dialog hoi ngung su dung */
-  const showDeactivateDialog = (id: number, name: string, reason: string) => {
+  const showDialogConfirmDelete = (item?: IWarehouseResponse) => {
     const dialog: IContentDialog = {
-      color: "warning",
+      color: "error",
       className: "dialog-delete",
       isCentered: true,
       isLoading: true,
-      title: <Fragment>Ngừng sử dụng kho</Fragment>,
+      title: <Fragment>Xóa kho hàng</Fragment>,
       message: (
         <Fragment>
-          Kho <strong>{name}</strong> đã có giao dịch nên không thể xóa.
-          {reason && <><br /><small>{reason}</small></>}
-          <br /><br />
-          Bạn có muốn chuyển sang <strong>Ngừng sử dụng</strong>?
-          <br /><small>Dữ liệu lịch sử sẽ được giữ nguyên.</small>
+          Bạn có chắc chắn muốn xóa{" "}
+          {item ? (
+            <>
+              kho hàng <strong>{item.name}</strong>
+            </>
+          ) : (
+            `${listIdChecked.length} kho hàng đã chọn`
+          )}
+          ? Thao tác này không thể khôi phục.
         </Fragment>
       ),
       cancelText: "Hủy",
-      cancelAction: () => { setShowDialog(false); setContentDialog(null); },
-      defaultText: "Ngừng sử dụng",
-      defaultAction: () => onDeactivate(id),
+      cancelAction: () => {
+        setShowDialog(false);
+        setContentDialog(null);
+      },
+      defaultText: "Xóa",
+      defaultAction: () => {
+        if (item?.id) {
+          onDelete(item.id);
+          return;
+        }
+        if (listIdChecked.length > 0) {
+          onDeleteAll();
+          return;
+        }
+      },
     };
     setContentDialog(dialog);
     setShowDialog(true);
-  };
-
-  /** Xoa hang loat */
-  const onDeleteAll = async () => {
-    const selectedIds = listIdChecked || [];
-    if (!selectedIds.length) return;
-    try {
-      let deleted = 0, deactivated = 0;
-      for (const id of selectedIds) {
-        const hasStock = await checkWarehouseHasStock(id);
-        if (hasStock) {
-          await WarehouseService.deactivate(id).catch(() => {});
-          deactivated++;
-        } else {
-          const res = await WarehouseService.delete(id).catch(() => ({ code: -1 }));
-          if (res.code === 0) deleted++;
-          else { await WarehouseService.deactivate(id).catch(() => {}); deactivated++; }
-        }
-      }
-      const msgs: string[] = [];
-      if (deleted > 0) msgs.push(`Đã xóa ${deleted} kho`);
-      if (deactivated > 0) msgs.push(`Đã ngừng sử dụng ${deactivated} kho có giao dịch`);
-      showToast(msgs.join(". "), "success");
-      getListWarehouse(params);
-      setListIdChecked([]);
-    } catch {
-      showToast("Có lỗi xảy ra", "error");
-    } finally {
-      setShowDialog(false);
-      setContentDialog(null);
-    }
-  };
-
-  /** FE check truoc → hien dialog phu hop */
-  const showDialogConfirmDelete = async (item?: IWarehouseResponse) => {
-    if (!item) {
-      // Xoa hang loat
-      const dialog: IContentDialog = {
-        color: "error",
-        className: "dialog-delete",
-        isCentered: true,
-        isLoading: true,
-        title: <Fragment>Xóa kho hàng</Fragment>,
-        message: (
-          <Fragment>
-            Bạn có chắc chắn muốn xử lý <strong>{listIdChecked.length} kho hàng</strong> đã chọn?
-            <br /><br />
-            <small>• Kho trống sẽ bị xóa vĩnh viễn<br />• Kho có giao dịch sẽ chuyển sang Ngừng sử dụng</small>
-          </Fragment>
-        ),
-        cancelText: "Hủy",
-        cancelAction: () => { setShowDialog(false); setContentDialog(null); },
-        defaultText: "Xác nhận",
-        defaultAction: onDeleteAll,
-      };
-      setContentDialog(dialog);
-      setShowDialog(true);
-      return;
-    }
-
-    // FE check: kho co ton kho khong?
-    const hasStock = await checkWarehouseHasStock(item.id);
-
-    if (hasStock) {
-      // Kho CO giao dich → dialog "Ngung su dung"
-      showDeactivateDialog(item.id, item.name, "");
-    } else {
-      // Kho TRANG → dialog "Xoa vinh vien"
-      const dialog: IContentDialog = {
-        color: "error",
-        className: "dialog-delete",
-        isCentered: true,
-        isLoading: true,
-        title: <Fragment>Xóa kho hàng</Fragment>,
-        message: (
-          <Fragment>
-            Bạn có chắc chắn muốn xóa vĩnh viễn kho <strong>{item.name}</strong>?
-            <br /><small>Thao tác này không thể khôi phục.</small>
-          </Fragment>
-        ),
-        cancelText: "Hủy",
-        cancelAction: () => { setShowDialog(false); setContentDialog(null); },
-        defaultText: "Xóa vĩnh viễn",
-        defaultAction: () => onHardDelete(item.id, item.name),
-      };
-      setContentDialog(dialog);
-      setShowDialog(true);
-    }
   };
 
   // =====================

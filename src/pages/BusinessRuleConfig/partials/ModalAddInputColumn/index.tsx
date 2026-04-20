@@ -223,7 +223,7 @@ export default function ModalAddInputColumn(props: Record<string, unknown>) {
               <div className="list-field-item list-field-basic">
                 {listFieldBasic.map((field, index) => (
                   <FieldCustomize
-                    key={index}
+                    key={field.name || index}
                     field={field}
                     handleUpdate={(value) => handleChangeValidate(value, field, formData, validations, listFieldBasic, setFormData)}
                     formData={formData}

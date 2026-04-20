@@ -14,7 +14,7 @@ import GridService from "services/GridService";
 import { exportCustomExcel } from "./partials/exportExcel";
 import { v4 as uuidv4 } from "uuid";
 import { fetchDataLookup } from "../../Lookup";
-import moment from "moment";
+import { isValid, parse } from "date-fns";
 import { makeValidateField } from "utils/makeValidateField";
 import Button from "components/button/button";
 import { exportOlaExcel } from "../../exportOla";
@@ -121,8 +121,8 @@ export default function ModalImport(props: Record<string, unknown>) {
     }
 
     // Kiểm tra nếu giá trị là chuỗi ngày hợp lệ
-    const dateValue = moment(value, "DD/MM/YYYY", true);
-    return dateValue.isValid() ? dateValue.toDate() : null; // Trả về ngày hoặc null nếu không hợp lệ
+    const dateValue = parse(value as string, "dd/MM/yyyy", new Date());
+    return isValid(dateValue) ? dateValue : null; // Trả về ngày hoặc null nếu không hợp lệ
   }
 
   const listEqual = ["equal", ">=", "<=", ">", "<", "!="];
@@ -166,7 +166,7 @@ export default function ModalImport(props: Record<string, unknown>) {
         }
       }
 
-      const baseData: Record<string, unknown> = [];
+      let baseData: Record<string, unknown> = [];
       for (let index = 0; index < jsonData.length; index++) {
         const row = jsonData[index];
         if (index > 2) {
@@ -184,9 +184,9 @@ export default function ModalImport(props: Record<string, unknown>) {
       const validateField = makeValidateField(listColumn);
 
       if (baseData.length) {
-        const newDataRow = [];
+        let newDataRow = [];
         for (let index = 0; index < baseData.length; index++) {
-          const row = baseData[index];
+          let row = baseData[index];
           for (const rule of validateField) {
             let hasError = false; // Biến cờ để kiểm tra lỗi
             const value = row[rule.name];
@@ -214,9 +214,9 @@ export default function ModalImport(props: Record<string, unknown>) {
               continue; // Bỏ qua trường hiện tại (trường lỗi) và tiếp tục với trường tiếp theo
             }
           }
-          const uuid = uuidv4();
+          let uuid = uuidv4();
           // Thực hiện sao chép sâu baseRow
-          const newRow = JSON.parse(JSON.stringify(baseRow)); // Khởi tạo newRow từ baseRow
+          let newRow = JSON.parse(JSON.stringify(baseRow)); // Khởi tạo newRow từ baseRow
 
           newRow.map((field) => {
             if (
@@ -323,7 +323,7 @@ export default function ModalImport(props: Record<string, unknown>) {
       ...(formData as IAutoProcessModalProps),
     };
 
-    const response = await GridService.importFile(body);
+    let response = await GridService.importFile(body);
     if (response.code === 0) {
       setInfoFile(response.result);
       onHide(true);
@@ -472,7 +472,7 @@ export default function ModalImport(props: Record<string, unknown>) {
                       </div>
                       <ul>
                         {lstIndexErros.map((item, index) => (
-                          <li key={index}>
+                          <li key={item.id ?? index}>
                             STT {item.rowIndex} - Trường "{item.fieldName.replace(".", " - ")}": {item.errorMessage}
                           </li>
                         ))}

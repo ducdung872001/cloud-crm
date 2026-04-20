@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 
-import moment from "moment";
+import { startOfDay, endOfDay, format } from "date-fns";
 import Tippy from "@tippyjs/react";
 import { IOption } from "model/OtherModel";
 import Icon from "components/icon";
@@ -63,8 +63,8 @@ export default function RepeatTime(props: IRepeatTimeProps) {
 
   // Thời gian bắt đầu và kết thúc
   const intervalMinutes = 15;
-  const startTime = moment(new Date()).startOf("day");
-  const endTime = moment(new Date()).endOf("day");
+  const startTime = startOfDay(new Date());
+  const endTime = endOfDay(new Date());
 
   const timeSlots = listTimeSlots(startTime, endTime, intervalMinutes);
 
@@ -301,7 +301,7 @@ export default function RepeatTime(props: IRepeatTimeProps) {
                 name="the_day"
                 fill={true}
                 isFmtText={true}
-                value={moment(formData.endAt).format("DD/MM/YYYY")}
+                value={formData.endAt instanceof Date ? format(formData.endAt, "dd/MM/yyyy") : String(formData.endAt)}
                 onChange={(e) => setFormData({ ...formData, endAt: e })}
                 disabled={formData.never !== "1"}
                 placeholder="DD/MM/YYYY"

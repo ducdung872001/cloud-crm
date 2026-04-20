@@ -1,7 +1,7 @@
 export const filterData = (currentDataRow: Record<string, unknown>[], checkedMap, columns) => {
   try {
     // Your async logic here
-    const paramsFilter = {};
+    let paramsFilter = {};
     currentDataRow.map((row) => {
       if (!checkedMap[row.rowKey]) return;
       Object.keys(checkedMap[row.rowKey]).map((key) => {

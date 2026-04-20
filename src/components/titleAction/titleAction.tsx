@@ -86,7 +86,7 @@ function TitleAction(props: TitleActionProps) {
             ) : (
               <div className="actions-extra d-flex align-items-center">
                 {titleActions.actions_extra.map((a, idx) => (
-                  <Button key={idx} type="button" color="link" variant="outline" onClick={() => a.callback()}>
+                  <Button key={idx} type="button" color={a.color || "outline"} variant={a.variant || "outline"} disabled={a.disabled} onClick={() => a.callback()}>
                     {a.icon}
                     {a.title}
                   </Button>

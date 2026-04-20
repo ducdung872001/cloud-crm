@@ -1,14 +1,12 @@
 import React, { Fragment } from "react";
 import Icon from "components/icon";
 const Dashboard = React.lazy(() => import("pages/Dashboard/index"));
-// [Tax] Phân hệ thuế HKD/CNKD — portable module dùng chung đa nhánh
-const TaxModulePage = React.lazy(() => import("@/modules/tax/ui/TaxModule"));
 import { IMenuItem, IRouter } from "model/OtherModel";
 import urls from "./urls";
 
 const CustomerPersonList = React.lazy(() => import("pages/CustomerPerson/CustomerPersonList"));
 const ContactList = React.lazy(() => import("pages/Contact/ContactList"));
-// ScheduleNextList removed (non-retail treatment/spa)
+const ScheduleNextList = React.lazy(() => import("pages/Schedule/ScheduleNextList"));
 // Removed: TreatmentSchedule (non-retail beauty/spa)
 const TimeKeepingList = React.lazy(() => import("pages/Timekeeping/TimekeepingList"));
 const CashBookList = React.lazy(() => import("pages/CashBook/CashBookList"));
@@ -139,7 +137,7 @@ const SettingDashboard = React.lazy(() => import("pages/SettingDashboard/Setting
 const DetailProject = React.lazy(() => import("pages/ProjectList/DetailProject/DetailProject"));
 const SettingPromotionList = React.lazy(() => import("pages/SettingPromotion/SettingPromotionList"));
 const DetailPartner = React.lazy(() => import("pages/PartnerList/DetailPartner/DetailPartner"));
-// CxmSurveyList removed (non-retail)
+const CxmSurveyList = React.lazy(() => import("pages/CxmSurvey/CxmSurveyList/CxmSurveyList"));
 const ProcessSimulation = React.lazy(() => import("pages/ProcessSimulation/ProcessSimulation"));
 const BusinessProcessCreate = React.lazy(() => import("pages/BPM/BusinessProcessCreate"));
 const CampaignListParent = React.lazy(() => import("pages/Campaign/CampaignListParent"));
@@ -155,14 +153,14 @@ const Package = React.lazy(() => import("pages/Package"));
 const ExtensionList = React.lazy(() => import("pages/Extension/ExtensionList"));
 const UserList = React.lazy(() => import("pages/User/UserList"));
 const FieldMannagement = React.lazy(() => import("pages/FieldManagement/FieldManagement"));
-// ManageDefaultProcesses removed (non-retail BPM)
+const ManageDefaultProcesses = React.lazy(() => import("pages/ManageDefaultProcesses"));
 const ManagerWork = React.lazy(() => import("pages/ManagerWork"));
 const Fanpage = React.lazy(() => import("pages/Fanpage"));
 const TotalChat = React.lazy(() => import("pages/Fanpage/TotalChat"));
 const BusinessRule = React.lazy(() => import("pages/BusinessRule"));
 const BusinessRuleConfig = React.lazy(() => import("pages/BusinessRuleConfig"));
 const MultiChannelSales = React.lazy(() => import("@/pages/MultiChannelSales/MultiChannelSales"));
-const DashboardRetail = React.lazy(() => import("pages/DashboardRetail"));
+const DashboardCH = React.lazy(() => import("pages/DashboardCH"));
 const DashboardLoyalty = React.lazy(() => import("@/pages/DashboardLoyalty"));
 const SettingPaymentMethod = React.lazy(() => import("@/pages/SettingPaymentMethod"));
 const PromotionalProgram = React.lazy(() => import("@/pages/PromotionalProgram"));
@@ -196,573 +194,185 @@ const TaskProcessPage = React.lazy(() => import("@/pages/TaskProcessPage/TaskPro
 const FinanceCategoryManagement = React.lazy(() => import("pages/Finance/CategoryManagement"));
 const sourceDomain = getDomain(decodeURIComponent(document.location.href));
 
+// [CH] Community Hub pages
+const CHCheckinPage = React.lazy(() => import("@/pages/CommunityHub/Checkin"));
+const CHAccommodationPage = React.lazy(() => import("@/pages/CommunityHub/Accommodation"));
+const CHServiceBookingPage = React.lazy(() => import("@/pages/CommunityHub/ServiceBooking"));
+const CHCoursesPage = React.lazy(() => import("@/pages/CommunityHub/Courses"));
+const CHEventListPage = React.lazy(() => import("@/pages/CommunityHub/Events/EventListPage"));
+const CHEventFormPage = React.lazy(() => import("@/pages/CommunityHub/Events/EventFormPage"));
+const CHEventDetailPage = React.lazy(() => import("@/pages/CommunityHub/Events/EventDetailPage"));
+const CHPartnersPage = React.lazy(() => import("@/pages/CommunityHub/Partners"));
+const CHFeedbackPage = React.lazy(() => import("@/pages/CommunityHub/Feedback"));
+const CHReportRevenue = React.lazy(() => import("@/pages/CommunityHub/Reports/ReportRevenue"));
+const CHReportMembers = React.lazy(() => import("@/pages/CommunityHub/Reports/ReportMembers"));
+const CHReportCheckin = React.lazy(() => import("@/pages/CommunityHub/Reports/ReportCheckin"));
+const CHReportServices = React.lazy(() => import("@/pages/CommunityHub/Reports/ReportServices"));
+const CHReportPartners = React.lazy(() => import("@/pages/CommunityHub/Reports/ReportPartners"));
+const CHReportFinance = React.lazy(() => import("@/pages/CommunityHub/Reports/ReportFinance"));
+const CHMembershipPlanSettings = React.lazy(() => import("@/pages/CommunityHub/MembershipPlanSettings"));
+const CHServiceManagement = React.lazy(() => import("@/pages/CommunityHub/ServiceManagement"));
+const CHTenantConfig = React.lazy(() => import("@/pages/CommunityHub/TenantConfig"));
+
+// [Tax] Phân hệ thuế HKD/CNKD — portable module dùng chung đa nhánh
+const TaxModulePage = React.lazy(() => import("@/modules/tax/ui/TaxModule"));
+
+// [CH] Community Hub - Menu chính
+// Sắp xếp: dùng nhiều nhất ở trên → ít dùng ở dưới
 export const menu: IMenuItem[] = [
   {
-    title: "dashboard", // bảng điều khiển
+    title: "dashboard",
     path: urls.dashboard,
     icon: <Icon name="DashboardMenu" />,
     code: "DASHBOARD",
   },
+
+  // ═══ DÙNG HÀNG NGÀY (Lễ tân / Bán hàng) ══════════════════════════════
   {
-    title: "notification", // Thông báo
-    path: urls.notification,
-    icon: <Icon name="BellMenu" />,
+    title: "chReception", // Lễ tân
+    path: urls.create_sale_add,
+    icon: <Icon name="PosMenu" />,
     code: "",
-  },
-  {
-    title: "selling", // Bán hàng & Đơn hàng
-    path: urls.sell,
-    icon: <Icon name="SaleOrderMenu" />,
-    code: "MENU_SELL",
     children: [
-      {
-        title: "createSalesOrder", // Tạo đơn bán hàng
-        path: urls.create_sale_add,
-        icon: <Icon name="PosMenu" />,
-        code: "CREATE_SALE_ORDER",
-      },
-      {
-        title: "salesInvoice", // Danh sách đơn hàng
-        path: urls.sale_invoice,
-        icon: <Icon name="OrderListMenu" />,
-        code: "SALE_INVOICE",
-      },
-      {
-        title: "returnInvoice", // Khách trả hàng
-        path: urls.return_invoice,
-        icon: <Icon name="ReturnMenu" />,
-        code: "RETURN_INVOICE",
-      },
-      {
-        title: "multiChannelSales", // Bán hàng đa kênh
-        path: urls.multi_channel_sales,
-        icon: <Icon name="MultichannelMenu" />,
-        code: "",
-      },
-      {
-        title: "shipping", // Giao hàng & Vận chuyển
-        path: urls.shipping,
-        icon: <Icon name="DeliveryMenu" />,
-        code: "SALE_INVOICE",
-      },
-      // {
-      //   title: "addShipping", // Tạo đơn vận chuyển
-      //   path: urls.add_shipping,
-      //   icon: <Icon name="Invoice" />,
-      //   code: "SALE_INVOICE",
-      // },
-      // {
-      //   title: "shippingPartner", // Quản lý đơn vị vận chuyển
-      //   path: urls.shipping_parther,
-      //   icon: <Icon name="Invoice" />,
-      //   code: "SALE_INVOICE",
-      // },
-      // {
-      //   title: "shippingFeeConfig", // Quản lý phí vận chuyển
-      //   path: urls.shipping_fee_config,
-      //   icon: <Icon name="Invoice" />,
-      //   code: "SALE_INVOICE",
-      // },
-      {
-        title: "fanpage", // Hội thoại khách hàng
-        path: urls.fanpage,
-        icon: <Icon name="InteractionMenu" />,
-        code: "FANPAGE",
-      },
-      {
-        title: "shiftManagement", //Quản lý ca làm việc
-        path: urls.shift_management,
-        icon: <Icon name="ShiftManagement" />,
-        code: "",
-      },
-      {
-        title: "endOfShiftInventory", // Kiểm kê cuối ca
-        path: urls.finance_management_shift_inventory,
-        icon: <Icon name="EndShiftMenu" />,
-        code: "",
-      },
-      {
-        title: "soldProducts", // Sản phẩm đã bán
-        path: urls.products_sold,
-        icon: <Icon name="SoldMenu" />,
-        code: "",
-      },
-      // {
-      //   title: "paymentMethodSetting", // Quản lý phương thức thanh toán
-      //   path: urls.payment_mgt,
-      //   icon: <Icon name="ManageWork" />,
-      //   code: "",
-      // },
-      // {
-      //   title: "facebook",
-      //   path: urls.social_facebook_crm,
-      //   icon: <Icon name="FacebookFill" />,
-      //   code: "",
-      // },
-      // {
-      //   title: "zalo",
-      //   path: urls.social_zalo_crm,
-      //   icon: <Icon name="Zalo" />,
-      // },
-      // {
-      //   title: "settingSalesChannel", // Cài đặt kênh bán
-      //   path: urls.setting_social_crm,
-      //   icon: <Icon name="SettingSocial" />,
-      //   code: "MENU_SETUP_SOCIAL_CRM",
-      // },
+      { title: "createSalesOrder", path: urls.create_sale_add, icon: <Icon name="SaleOrderMenu" />, code: "CREATE_SALE_ORDER" },
+      { title: "chCheckin", path: "/ch_checkin", icon: <Icon name="OverviewMenu" />, code: "" },
+      { title: "chDeductQuota", path: "/ch_services", icon: <Icon name="EndShiftMenu" />, code: "" },
+      { title: "shiftManagement", path: urls.shift_management, icon: <Icon name="ShiftReportMenu" />, code: "" },
     ],
   },
   {
-    title: "warehouse", // Hàng hóa & Kho
+    title: "customer", // Thành viên
+    path: urls.customer,
+    icon: <Icon name="CustomersMenu" />,
+    code: "CUSTOMER",
+    children: [
+      { title: "customerList", path: urls.customer_list, icon: <Icon name="CustomerMenu" />, code: "CUSTOMER" },
+      { title: "settingCustomer", path: urls.setting_customer, icon: <Icon name="CustomerSettingMenu" />, code: "MENU_SETUP_CUSTOMER" },
+    ],
+  },
+  {
+    title: "chOrders", // Giao dịch
+    path: urls.sale_invoice,
+    icon: <Icon name="OrderListMenu" />,
+    code: "SALE_INVOICE",
+    children: [
+      { title: "salesInvoice", path: urls.sale_invoice, icon: <Icon name="OrderListMenu" />, code: "SALE_INVOICE" },
+      { title: "invoiceVAT", path: urls.invoiceVAT, icon: <Icon name="VatInvoiceMenu" />, code: "" },
+    ],
+  },
+  {
+    title: "chAccommodation", // Lưu trú
+    path: "/ch_accommodation",
+    icon: <Icon name="WarehouseListMenu" />,
+    code: "",
+  },
+
+  // ═══ DÙNG THƯỜNG XUYÊN (Tài chính / Cộng đồng) ═══════════════════════
+  {
+    title: "financeManagement", // Tài chính
+    path: urls.finance_management,
+    icon: <Icon name="FinanceMenu" />,
+    code: "",
+    children: [
+      { title: "financeDashboard", path: urls.finance_management_dashboard, icon: <Icon name="FinanceInfoMenu" />, code: "" },
+      { title: "financeCashbook", path: urls.finance_management_cashbook, icon: <Icon name="CashbookMenu" />, code: "" },
+      { title: "fundManagement", path: urls.finance_management_fund_management, icon: <Icon name="FundMenu" />, code: "" },
+      { title: "categoryManagement", path: urls.finance_management_category_management, icon: <Icon name="CashbookMenu" />, code: "" },
+      { title: "debtManagement", path: urls.finance_management_debt_management, icon: <Icon name="DebtMenu" />, code: "" },
+      { title: "paymentControl", path: urls.payment_control, icon: <Icon name="PaymentMethodMenu" />, code: "" },
+    ],
+  },
+  {
+    title: "chEvents", // Sự kiện
+    path: "/ch_events",
+    icon: <Icon name="EventMenu" />,
+    code: "",
+  },
+  {
+    title: "chPartners", // Đối tác
+    path: "/ch_partners",
+    icon: <Icon name="PartnerMenu" />,
+    code: "",
+  },
+  {
+    title: "chFeedback", // Phản hồi
+    path: "/ch_feedback",
+    icon: <Icon name="SupportSettingMenu" />,
+    code: "",
+  },
+  {
+    title: "chReports", // Báo cáo
+    path: "/ch_report_revenue",
+    icon: <Icon name="SalesReportMenu" />,
+    code: "",
+    children: [
+      { title: "chReportRevenue", path: "/ch_report_revenue", icon: <Icon name="FinanceInfoMenu" />, code: "" },
+      { title: "chReportMembers", path: "/ch_report_members", icon: <Icon name="CustomerMenu" />, code: "" },
+      { title: "chReportCheckin", path: "/ch_report_checkin", icon: <Icon name="OverviewMenu" />, code: "" },
+      { title: "chReportServices", path: "/ch_report_services", icon: <Icon name="MemberListMenu" />, code: "" },
+      { title: "chReportPartners", path: "/ch_report_partners", icon: <Icon name="PartnerMenu" />, code: "" },
+      { title: "chReportFinance", path: "/ch_report_finance", icon: <Icon name="CashbookMenu" />, code: "" },
+    ],
+  },
+
+  // ═══ TIẾP THỊ & CHĂM SÓC ════════════════════════════════════════════
+  {
+    title: "marketing", // Tiếp thị & Chăm sóc
+    path: urls.maketing,
+    icon: <Icon name="PromotionMenu" />,
+    code: "MARKETING",
+    children: [
+      { title: "promotionalProgram", path: urls.promotional_program, icon: <Icon name="PromotionMenu" />, code: "" },       // Khuyến mãi & Voucher
+      { title: "loyaltyPoints", path: urls.member_list, icon: <Icon name="LoyaltyMenu" />, code: "" },                      // Tích điểm hội viên (hub: DS TV + hạng + lịch sử + quy tắc + báo cáo)
+      { title: "marketingCampaign", path: urls.marketing_campaign, icon: <Icon name="BroadcastMenu" />, code: "MA" },        // Chiến dịch marketing
+      { title: "customerCare", path: urls.customer_care_page, icon: <Icon name="SupportMenu" />, code: "" },                 // Chăm sóc thành viên
+    ],
+  },
+
+  // ═══ ÍT DÙNG (Kho / Cài đặt) ═════════════════════════════════════════
+  {
+    title: "warehouse", // Kho & Nguyên vật liệu
     path: urls.product_import,
     icon: <Icon name="InventoryMenu" />,
-    code: "MENU_INVENTORY", //Tài nguyên cho show kho hàng hay không
+    code: "MENU_INVENTORY",
     children: [
+      { title: "managementMaterial", path: urls.material, icon: <Icon name="MaterialsMenu" />, code: "" },
+      { title: "supplierList", path: urls.supplier_list, icon: <Icon name="PartnerMenu" />, code: "CUSTOMER" },              // Nhà cung cấp
+      { title: "warehouseList", path: urls.warehouse, icon: <Icon name="WarehouseListMenu" />, code: "" },
+      { title: "warehouseManagement", path: urls.inventory, icon: <Icon name="LedgerMenu" />, code: "INVENTORY" },
+      { title: "warehouseChecking", path: urls.inventory_checking, icon: <Icon name="AuditMenu" />, code: "INVENTORY" },
+      { title: "reportWarhouse", path: urls.report_warehouse, icon: <Icon name="SalesReportMenu" />, code: "" },
+    ],
+  },
+
+  // ═══ HỆ THỐNG ═════════════════════════════════════════════════════════
+  {
+    title: "settings", // Cài đặt
+    path: urls.setting_common,
+    icon: <Icon name="SettingsMenu" />,
+    code: "",
+    children: [
+      // ── [CH] Cấu hình toàn cục (admin tenant) ────────────────────────
       {
-        title: "settingSales", // Cài đặt bán hàng
+        title: "chTenantConfig",
+        path: "/ch_tenant_config",
+        icon: <Icon name="GeneralConfigMenu" />,
+        code: "",
+      },
+      // ── [CH] Dịch vụ & Gói thành viên ────────────────────────────────
+      {
+        title: "chServiceCatalogSetting", // Danh mục dịch vụ → trang SettingSell (sản phẩm/dịch vụ đầy đủ)
         path: urls.setting_sell,
         icon: <Icon name="ProductCategoryMenu" />,
         code: "MENU_SETUP_SELL",
       },
       {
-        title: "managementMaterial", // Nguyên vật liệu
-        path: urls.material,
-        icon: <Icon name="MaterialsMenu" />,
+        title: "chMembershipPlans", // Cấu hình gói thành viên
+        path: "/ch_membership_plans",
+        icon: <Icon name="LoyaltyMenu" />,
         code: "",
       },
-      {
-        title: "warehouseList", // Danh sách kho
-        path: urls.warehouse,
-        icon: <Icon name="WarehouseListMenu" />,
-        code: "",
-      },
-      {
-        title: "warehouseManagement", // Sổ kho
-        path: urls.inventory,
-        icon: <Icon name="LedgerMenu" />,
-        code: "INVENTORY",
-      },
-
-      {
-        title: "warehouseChecking", // Quản lý kho
-        path: urls.inventory_checking,
-        icon: <Icon name="AuditMenu" />,
-        code: "INVENTORY",
-      },
-
-      {
-        title: "reportWarhouse", // Báo cáo kho
-        path: urls.report_warehouse,
-        icon: <Icon name="Report" />,
-        code: "",
-      },
-
-      // {
-      //   title: "createPurchaseOrder", // Tạo phiếu nhập kho
-      //   path: urls.create_invoice_add,
-      //   icon: <Icon name="ImportCoupon" />,
-      //   code: "",
-      // },
-      // {
-      //   title: "purchaseInvoice", // Hóa đơn nhập kho
-      //   path: urls.invoice_order,
-      //   icon: <Icon name="ImportBill" />,
-      //   code: "",
-      // },
-      // {
-      //   title: "createOutboundDelivery", // Tạo phiếu xuất kho
-      //   path: urls.create_outbound_delivery,
-      //   icon: <Icon name="ImportCoupon" />,
-      //   code: "",
-      // },
-      // {
-      //   title: "outboundInvoice", // Hóa đơn xuất kho
-      //   path: urls.outbound_invoice,
-      //   icon: <Icon name="ImportBill" />,
-      //   code: "",
-      // },
-      // {
-      //   title: "inventoryTransferDocument", // Phiếu điều chuyển kho
-      //   path: urls.inventory_transfer_document,
-      //   icon: <Icon name="WarehouseManagement" />,
-      //   code: "INVENTORY",
-      // },
-      // {
-      //   title: "stockAdjustmentVoucher", // Phiếu điều chỉnh kho
-      //   path: urls.adjustment_slip,
-      //   icon: <Icon name="File" />,
-      //   code: "",
-      // },
-    ],
-  },
-  {
-    title: "customer", // Khách hàng & Đối tác
-    path: urls.customer,
-    icon: <Icon name="CustomersMenu" />,
-    code: "CUSTOMER",
-    children: [
-      // {
-      //   title: "customerSegments", // Phân khúc khách hàng
-      //   path: urls.customer_segment,
-      //   icon: <Icon name="SegmentMenu" />,
-      // },
-      // {
-      //   title: "customerProfile", // Hồ sơ khách hàng
-      //   path: urls.customer,
-      //   icon: <Icon name="Profile" />,
-      //   code: "CUSTOMER",
-      // },
-      {
-        title: "customerList", // Danh sách khách hàng
-        path: urls.customer_list,
-        icon: <Icon name="CustomerMenu" />,
-        code: "CUSTOMER",
-      },
-
-      {
-        title: "supplierList", // Danh sách NCC
-        path: urls.supplier_list,
-        icon: <Icon name="Partner" />,
-        code: "CUSTOMER",
-      },
-      // {
-      //   title: "partnerProfile", // Hồ sơ đối tác
-      //   path: urls.partner,
-      //   icon: <Icon name="Profile" />,
-      //   code: "PARTNER",
-      // },
-      {
-        title: "settingCustomer", // Cài đặt khách hàng
-        path: urls.setting_customer,
-        icon: <Icon name="CustomerSettingMenu" />,
-        code: "MENU_SETUP_CUSTOMER",
-      },
-      // {
-      //   title: "reportCustomer", // Báo cáo khách hàng
-      //   path: urls.report_customer,
-      //   icon: <Icon name="CustomerMenu" />,
-      //   code: "",
-      // },
-    ],
-  },
-  {
-    title: "financeManagement", // Tài chính & Thanh toán
-    path: urls.finance_management,
-    icon: <Icon name="FinanceMenu" />,
-    code: "",
-    children: [
-      {
-        title: "financeDashboard", // Dashboard tài chính
-        path: urls.finance_management_dashboard,
-        icon: <Icon name="FinanceInfoMenu" />,
-        code: "",
-      },
-      {
-        title: "financeCashbook", // Sổ thu chi (Trong Sổ thu chi có tạo Phiếu thu/chi - Gộp làm 1)
-        path: urls.finance_management_cashbook,
-        icon: <Icon name="CashbookMenu" />,
-        code: "",
-      },
-      // Thu tiền nhanh QR Pro - Bổ sung thêm Menu này
-      // Đối soát ngân hàng - Chưa có
-      // {
-      //   title: "createFinanceTransaction", // Tạo phiếu thu/chi
-      //   path: urls.finance_management_cashbook_template,
-      //   icon: <Icon name="PlusCircleFill" />,
-      //   code: "",
-      // },
-      {
-        title: "invoiceVAT", // Xuất hóa đơn VAT
-        path: urls.invoiceVAT,
-        icon: <Icon name="VatInvoiceMenu" />,
-        code: "", //KPI_APPLY
-      },
-      {
-        title: "fundManagement", // Quản lý quỹ
-        path: urls.finance_management_fund_management,
-        icon: <Icon name="FundMenu" />,
-        code: "",
-      },
-      {
-        title: "categoryManagement",
-        path: urls.finance_management_category_management,
-        icon: <Icon name="CashbookMenu" />,
-        code: "",
-      },
-      {
-        title: "debtManagement", // Quản lý công nợ
-        path: urls.finance_management_debt_management,
-        icon: <Icon name="DebtMenu" />,
-        code: "",
-      },
-      // {
-      //   title: "createDebtTransaction", // Tạo giao dịch nợ
-      //   path: urls.finance_management_debt_transaction,
-      //   icon: <Icon name="DebtTransactionMenu" />,
-      //   code: "",
-      // },
-      {
-        title: "paymentControl", // đối soát thanh toán
-        path: urls.payment_control,
-        icon: <Icon name="PaymentControl" />,
-        code: "",
-      },
-    ],
-  },
-  {
-    title: "marketing", //Tiếp thị & Chăm sóc
-    path: urls.maketing,
-    icon: <Icon name="Marketing" />,
-    code: "MARKETING",
-    children: [
-      {
-        title: "promotionalProgram", // chương trình khuyến mãi
-        path: urls.promotional_program,
-        icon: <Icon name="PromotionMenu" />,
-        code: "", //Tài nguyên cho show quản lý đặt hàng hay không
-      },
-      {
-        title: "memberList", // Danh sách thành viên
-        path: urls.member_list,
-        icon: <Icon name="MemberListMenu" />,
-        code: "",
-      },
-      {
-        title: "marketingCampaign", // chiến dịch marketing
-        path: urls.marketing_campaign,
-        icon: <Icon name="Marketing" />,
-        code: "MA",
-      },
-      {
-        title: "customerCare", // Chăm sóc khách hàng
-        path: urls.customer_care_page,
-        icon: <Icon name="SupportMenu" />,
-        code: "",
-      },
-      {
-        title: "customerAnalysis", // phân tích khách hàng
-        path: urls.customer_analysis,
-        icon: <Icon name="AnalysisCustomer" />,
-        code: "",
-      },
-      // {
-      //   title: "emailMarketing",
-      //   path: urls.email_marketting,
-      //   icon: <Icon name="EmailFill" />,
-      //   code: "",
-      // },
-      // {
-      //   title: "smsMarketing",
-      //   path: urls.sms_marketting,
-      //   icon: <Icon name="SMS" />,
-      //   code: "",
-      // },
-      // {
-      //   title: "zaloMarketing",
-      //   path: urls.zalo_marketting,
-      //   icon: <Icon name="Zalo" />,
-      //   code: "",
-      // },
-      // {
-      //   title: "marketingAutomation",
-      //   path: urls.marketing_automation,
-      //   icon: <Icon name="Marketing" />,
-      //   code: "MA",
-      // },
-      // {
-      //   title: "loyaltyPoints", // tích điểm Loyalty
-      //   path: urls.dashboard_loyalty,
-      //   icon: <Icon name="LoyaltyMenu" />,
-      //   code: "",
-      // },
-      // {
-      //   title: "loyaltyPointLedger", // Lịch sử điểm
-      //   path: urls.loyalty_point_ledger,
-      //   icon: <Icon name="PointsLogMenu" />,
-      //   code: "",
-      // },
-
-      // {
-      //   title: "receiveTicket", // Phiếu hỗ trợ
-      //   path: urls.ticket,
-      //   icon: <Icon name="SupportMenu" />,
-      //   code: "TICKET",
-      // },
-      // {
-      //   title: "promotionalReport", // Báo cáo khuyến mãi
-      //   path: urls.promotional_report,
-      //   icon: <Icon name="PromoReportMenu" />,
-      //   code: "",
-      // },
-      // {
-      //   title: "customerCareEmail", // Email CSKH
-      //   path: urls.email,
-      //   icon: <Icon name="EmailFill" />,
-      //   code: "",
-      // },
-      // {
-      //   title: "receiveWarranty", // Tiếp nhận bảo hành
-      //   path: urls.warranty,
-      //   icon: <Icon name="ReceiveWarranty" />,
-      //   code: "WARRANTY",
-      // },
-      // {
-      //   title: "receiveWarrantyProcess", // Tiếp nhận bảo hành
-      //   path: urls.warranty_process,
-      //   icon: <Icon name="ReceiveWarranty" />,
-      //   code: "KANBAN_V2",
-      // },
-      // {
-      //   title: "receiveTicketProcess", // Phiếu hỗ trợ
-      //   path: urls.ticket_process,
-      //   icon: <Icon name="ReceiveTicket" />,
-      //   code: "KANBAN_V2",
-      // },
-      // ...(sourceDomain == "rebornjsc.reborn.vn" || sourceDomain == "localhost"
-      //   ? [
-      //     {
-      //       title: "feedbackEnhancement", // Góp ý cải tiến
-      //       path: urls.feedback_customer,
-      //       icon: <Icon name="Feedback" />,
-      //       code: "",
-      //     },
-      //   ]
-      //   : []),
-      // {
-      //   title: "customerSurvey", // Khảo sát khách hàng
-      //   path: urls.customer_survey,
-      //   icon: <Icon name="SpeakerNotes" />,
-      //   code: "",
-      // },
-      // {
-      //   title: "cxmSurvey", // Chiến dịch khảo sát
-      //   path: urls.cxmSurvey,
-      //   icon: <Icon name="Customer" />,
-      //   code: "CXM_SURVEY",
-      // },
-      // {
-      //   title: "settingWarranty", // Cài đặt bảo hành
-      //   path: urls.setting_warranty,
-      //   icon: <Icon name="SettingWarranty" />,
-      //   code: "",
-      // },
-      // {
-      //   title: "settingLoyalty", // Cài đặt hệ thống tích điểm
-      //   path: urls.setting_loyalty,
-      //   icon: <Icon name="PointsSettingMenu" />,
-      //   code: "",
-      // },
-    ],
-  },
-  {
-    title: "report", // Hệ thống báo cáo
-    path: urls.report,
-    icon: <Icon name="ReportFill" />,
-    code: "MENU_REPORT",
-    children: [
-      {
-        title: "reportRevenue", // Báo cáo Bán hàng
-        path: urls.report_common,
-        icon: <Icon name="SalesReportMenu" />,
-        code: "",
-      },
-      {
-        title: "cashbook", // Báo cáo Tài chính
-        path: urls.cashbook,
-        icon: <Icon name="FinanceReportMenu" />,
-        code: "CASHBOOK",
-      },
-      {
-        title: "customerReport", // Báo cáo khách hàng
-        path: urls.customer_report,
-        icon: <Icon name="CustomersMenu" />,
-        code: "",
-      },
-      {
-        title: "inventoryReport", // Báo cáo tồn kho
-        path: urls.inventory_report_modern,
-        icon: <Icon name="InventoryMenu" />,
-        code: "",
-      },
-      {
-        title: "marketingReport", // Báo cáo marketing
-        path: urls.marketing_report,
-        icon: <Icon name="MarketingReport" />,
-        code: "",
-      },
-      {
-        title: "dashboardShipping", // Báo cáo giao vận
-        path: urls.dashboard_shipping,
-        icon: <Icon name="ShippingReportMenu" />,
-        code: "",
-      },
-
-      {
-        title: "settingCashbook", // Cài đặt tài chính
-        path: urls.setting_cash_book,
-        icon: <Icon name="SettingCashbook" />,
-        code: "MENU_SETUP_CASHBOOK",
-      },
-    ],
-  },
-  {
-    title: "bpm", // Quản lý quy trình
-    path: urls.sell,
-    icon: <Icon name="WorkflowMenu" />,
-    code: "BPM",
-    children: [
-      {
-        title: "manageProcesses",
-        path: urls.manage_processes, //Danh sách quy trình > Tạo mới quy trình > Cấu hình quy trình (Nằm ở đây)
-        code: "BPM",
-        icon: <Icon name="ProcessMenu" />,
-      },
-      {
-        title: "processSimulation",
-        path: urls.process_simulation, //Mô phỏng quy trình
-        code: "PROCESS_SIMULATION",
-        icon: <Icon name="SimulateMenu" />,
-      },
-      {
-        title: "objectManage", // Quản lý hồ sơ
-        path: urls.object_manage,
-        code: "OBJECT_MANAGE",
-        icon: <Icon name="FileMgmtMenu" />,
-      },
-      {
-        title: "business_rule", // Loại luật nghiệp vụ
-        path: urls.business_rule,
-        icon: <Icon name="RulesMenu" />,
-        code: "",
-      },
-      // {
-      //   title: "userTaskList", // Xử lý hồ sơ
-      //   path: urls.user_task_list,
-      //   code: "WORK_MANAGEMENT",
-      //   icon: <Icon name="FileProcessMenu" />,
-      // },
-      {
-        title: "configBpm", // Cấu hình quy trình
-        path: urls.config_bpm,
-        icon: <Icon name="ProcessConfigMenu" />,
-        code: "",
-      },
-      {
-        title: "manageDefaultProcesses",
-        path: urls.manage_default_processes, //Danh sách quy trình > Tạo mới quy trình > Cấu hình quy trình (Nằm ở đây)
-        code: "BPM",
-        icon: <Icon name="DefaultProcessSetting" />,
-      },
-
-    ],
-  },
-  {
-    title: "settings", // Cài đặt & Nhân sự
-    path: urls.setting_common,
-    icon: <Icon name="SettingsMenu" />,
-    code: "",
-    children: [
-      // ── NHÓM 1: Vận hành cửa hàng ──────────────────────────────────
+      // ── NHÓM 1: Vận hành cơ sở ─────────────────────────────────────
       {
         title: "settingBasis", // Vận hành cửa hàng (cửa hàng, thanh toán, ca, cấu hình chung)
         path: urls.setting_basis,
@@ -819,53 +429,58 @@ export const menu: IMenuItem[] = [
       },
     ],
   },
-  {
-    title: "organizationalManagement",
-    path: urls.organization,
-    icon: <Icon name="Partner" />,
-    code: "RESOURCE",
-    children: [
-      {
-        title: "listOfOrganizations",
-        path: urls.organization,
-        icon: <Icon name="Partner" />,
-        code: "ORGANIZATION_MANAGEMENT",
-      },
-      {
-        title: "userAdministration",
-        path: urls.user,
-        icon: <Icon name="Customer" />,
-        code: "RESOURCE",
-      },
-      {
-        title: "servicePackageManagement",
-        path: urls.package_manage,
-        icon: <Icon name="Beauty" />,
-        code: "RESOURCE",
-      },
-      {
-        title: "renewalList",
-        path: urls.extension_list,
-        icon: <Icon name="Renewal" />,
-        code: "RENEWAL_LIST",
-      },
-      {
-        title: "fieldManagement",
-        path: urls.field_management,
-        icon: <Icon name="FieldMannagement" />,
-        code: "FIELD_MANAGEMENT",
-      },
-      {
-        title: "resourceManagement", // Quản trị tài nguyên
-        path: urls.resource_management,
-        icon: <Icon name="SettingJob" />,
-        code: "RESOURCE",
-      },
-    ],
-  },
+  // [CH] Giữ nguyên Cài đặt
 ];
 
 export const routes: IRouter[] = [
+  // [CH] Community Hub routes
+  {
+    path: "/ch_checkin",
+    component: <CHCheckinPage />,
+  },
+  {
+    path: "/ch_accommodation",
+    component: <CHAccommodationPage />,
+  },
+  {
+    path: "/ch_services",
+    component: <CHServiceBookingPage />,
+  },
+  {
+    path: "/ch_courses",
+    component: <CHCoursesPage />,
+  },
+  // [CH] Events — Quản lý sự kiện
+  { path: "/ch_events", component: <CHEventListPage /> },
+  { path: "/ch_events/create", component: <CHEventFormPage /> },
+  { path: "/ch_events/:id", component: <CHEventDetailPage /> },
+  { path: "/ch_events/:id/edit", component: <CHEventFormPage /> },
+  {
+    path: "/ch_partners",
+    component: <CHPartnersPage />,
+  },
+  {
+    path: "/ch_feedback",
+    component: <CHFeedbackPage />,
+  },
+  { path: "/ch_report_revenue", component: <CHReportRevenue /> },
+  { path: "/ch_report_members", component: <CHReportMembers /> },
+  { path: "/ch_report_checkin", component: <CHReportCheckin /> },
+  { path: "/ch_report_services", component: <CHReportServices /> },
+  { path: "/ch_report_partners", component: <CHReportPartners /> },
+  { path: "/ch_report_finance", component: <CHReportFinance /> },
+  {
+    path: "/ch_membership_plans",
+    component: <CHMembershipPlanSettings />,
+  },
+  {
+    path: "/ch_service_catalog",
+    component: <CHServiceManagement />,
+  },
+  {
+    path: "/ch_tenant_config",
+    component: <CHTenantConfig />,
+  },
   // [Tax] Phân hệ thuế HKD/CNKD — portable module
   { path: "/tax", component: <TaxModulePage /> },
   { path: "/tax/profile", component: <TaxModulePage /> },
@@ -877,8 +492,7 @@ export const routes: IRouter[] = [
   // Dashboard
   {
     path: "",
-    // component: <Dashboard />,
-    component: <DashboardRetail />,
+    component: <DashboardCH />,
   },
   {
     path: urls.notification,
@@ -889,7 +503,7 @@ export const routes: IRouter[] = [
     // component: <Dashboard />,
     component: (
       <Fragment>
-        <DashboardRetail />
+        <DashboardCH />
         {/* <Dashboard /> */}
       </Fragment>
     ),
@@ -930,6 +544,10 @@ export const routes: IRouter[] = [
   {
     path: urls.detail_project,
     component: <DetailProject />,
+  },
+  {
+    path: urls.schedule_next,
+    component: <ScheduleNextList />,
   },
   // Removed: TreatmentSchedule (non-retail beauty/spa)
   {
@@ -975,6 +593,10 @@ export const routes: IRouter[] = [
   {
     path: urls.finance_management_shift_inventory,
     component: <FinanceShiftInventory />,
+  },
+  {
+    path: urls.cxmSurvey, // Thông tin khảo sát
+    component: <CxmSurveyList />,
   },
   {
     path: urls.fanpage,
@@ -1505,6 +1127,10 @@ export const routes: IRouter[] = [
   {
     path: urls.manage_processes,
     component: <BusinessProcessList />,
+  },
+  {
+    path: urls.manage_default_processes,
+    component: <ManageDefaultProcesses />,
   },
   {
     path: urls.business_rule,

@@ -46,7 +46,7 @@ export default function AddCustomerAttributeModal(props: AddCustomerAttributeMod
 
   const [listLookup, setListLookup] = useState<IOption[]>([{
     value: "customer",
-    label: "Khách hàng"
+    label: "Thành viên"
   }, {
     value: "employee",
     label: "Nhân viên"
@@ -151,7 +151,7 @@ export default function AddCustomerAttributeModal(props: AddCustomerAttributeMod
   const getCustomerAttributes = async () => {
     const response = await CustomerAttributeService.listAll(formData?.values['custType']);
 
-    const arrField = [];
+    let arrField = [];
 
     if (response.code === 0) {
       const dataOption = response.result;
@@ -800,7 +800,7 @@ export default function AddCustomerAttributeModal(props: AddCustomerAttributeMod
             <div className="list-form-group">
               {/* {listField.map((field, index) => (
                 <FieldCustomize
-                  key={index}
+                  key={field.name || index}
                   field={field}
                   handleUpdate={(value) => handleChangeValidate(value, field, formData, validations, listField, setFormData)}
                   formData={formData}
@@ -808,7 +808,7 @@ export default function AddCustomerAttributeModal(props: AddCustomerAttributeMod
               ))} */}
               {listFieldFirst.map((field, index) => (
                 <FieldCustomize
-                  key={index}
+                  key={field.name || index}
                   field={field}
                   handleUpdate={(value) => handleChangeValidate(value, field, formData, validations, listFieldFirst, setFormData)}
                   formData={formData}
@@ -948,7 +948,7 @@ export default function AddCustomerAttributeModal(props: AddCustomerAttributeMod
 
               {listFieldSecond.map((field, index) => (
                 <FieldCustomize
-                  key={index}
+                  key={field.name || index}
                   field={field}
                   handleUpdate={(value) => handleChangeValidate(value, field, formData, validations, listFieldSecond, setFormData)}
                   formData={formData}

@@ -70,7 +70,7 @@ export default function CallHistory(props: ICallHistoryProps) {
         },
         {
           key: "customerId",
-          name: "Khách hàng",
+          name: "Thành viên",
           type: "select",
           is_featured: true,
           value: searchParams.get("customerId") ?? "",
@@ -165,7 +165,7 @@ export default function CallHistory(props: ICallHistoryProps) {
     }
   }, [params]);
 
-  const titles = ["STT", "Ảnh khách hàng", "Tên khách hàng", "Điện thoại", "Cuộc gọi", "Nhân viên chăm sóc", "Thời gian cuộc gọi", "Tạo cơ hội"];
+  const titles = ["STT", "Ảnh thành viên", "Tên thành viên", "Điện thoại", "Cuộc gọi", "Nhân viên chăm sóc", "Thời gian cuộc gọi", "Tạo cơ hội"];
 
   const dataFormat = ["text-center", "text-center", "", "text-center", "text-center", "", "text-center", "text-center"];
 
@@ -214,7 +214,7 @@ export default function CallHistory(props: ICallHistoryProps) {
         params={params}
         isFilter={true}
         listFilterItem={customerFilterList}
-        placeholderSearch="Tìm kiếm theo tên, số điện thoại, email khách hàng"
+        placeholderSearch="Tìm kiếm theo tên, số điện thoại, email thành viên"
         updateParams={(paramNew) => setParams(paramNew)}
       />
       {!isLoading && listHistory && listHistory.length > 0 ? (

@@ -31,9 +31,7 @@ export default function ChangeStatusCampaign(props: Record<string, unknown>) {
 
   const [formData, setFormData] = useState<IFormData>({ values: values });
 
-  const validations: IValidation[] = [
-    { name: "status", rules: "required" },
-  ];
+  const validations: IValidation[] = [];
 
   const listFieldBasic = useMemo(
     () =>
@@ -205,7 +203,7 @@ export default function ChangeStatusCampaign(props: Record<string, unknown>) {
               <div className="list-field-item list-field-basic">
                 {listFieldBasic.map((field, index) => (
                   <FieldCustomize
-                    key={index}
+                    key={field.name || index}
                     field={field}
                     handleUpdate={(value) => handleChangeValidate(value, field, formData, validations, listFieldBasic, setFormData)}
                     formData={formData}

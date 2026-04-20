@@ -621,14 +621,9 @@ export default function CreateReturnModal({
     setSubmitting(true);
     const pm = PAY_METHODS[payMethodIdx];
     try {
-      // Bug C.3.4: BE đã build chặn trùng server-side. Bỏ defensive re-check
-      // ở FE vì đang block cả legitimate return (key compare mismatch).
-      // Nếu BE reject thì sẽ trả code != 0 và FE show message bình thường.
-
       const retLines  = rowsToApiLines(retItems);
       const exchLines = rowsToApiLines(exchItems);
       const firstItem = retItems.find((r) => r.name.trim());
-      const validRetItems = retItems.filter((r) => r.name.trim() && r.qty > 0);
       const optimistic: ReturnProduct = {
         id: Date.now().toString(),
         code: `PTH-${String(totalExisting + 1).padStart(4, "0")}`,
@@ -643,12 +638,6 @@ export default function CreateReturnModal({
         staffName: "–",
         paymentMethod: pm.label,
         note,
-        items: validRetItems.map((r) => ({
-          id: r.id,
-          name: r.name,
-          qty: r.qty,
-          price: r.price,
-        })),
       };
       const invoiceBase = {
         referId:      autofill?.originalInvoiceId ?? 0,
@@ -715,7 +704,7 @@ export default function CreateReturnModal({
   }, [
     validate, seg, maGoc, customer, reason, note, payMethodIdx,
     retItems, exchItems, retTotal, exchTotal, grandTotal,
-    autofill, totalExisting, onCreate, resetForm, fetchReturnItems,
+    autofill, totalExisting, onCreate, resetForm,
   ]);
 
   const actions = useMemo<IActionModal>(() => ({

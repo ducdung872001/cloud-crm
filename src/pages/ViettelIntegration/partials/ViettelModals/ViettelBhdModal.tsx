@@ -74,7 +74,6 @@ export default function ViettelBhdModal({ isOpen, onClose }: ViettelBhdModalProp
                 ],
             },
         }),
-        // eslint-disable-next-line react-hooks/exhaustive-deps
         [onClose, formData, listFieldBhd]
     );
 
@@ -124,7 +123,7 @@ export default function ViettelBhdModal({ isOpen, onClose }: ViettelBhdModalProp
                 <div className="viettel-modal-field">
                     {listFieldBhd.map((field, index) => (
                         <FieldCustomize
-                            key={index}
+                            key={field.name || index}
                             field={field}
                             handleUpdate={(value) => handleChangeValidate(value, field, formData, validations, listFieldBhd, setFormData)}
                             formData={formData}

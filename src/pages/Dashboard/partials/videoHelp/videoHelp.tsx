@@ -38,7 +38,7 @@ export default function VideoHelp(props: VideoHelpProps) {
         <Fancybox>
           <ul>
             {videos.map((v, index) => (
-              <li key={index}>
+              <li key={v.id ?? index}>
                 <a data-fancybox="video" href={v.url}>
                   <span className="video-help--image">
                     <img loading="lazy" src={v.image} alt={v.title} />

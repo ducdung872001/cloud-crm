@@ -2,45 +2,50 @@ import React, { Component, ErrorInfo, ReactNode } from "react";
 
 interface Props {
   children: ReactNode;
-  fallback?: ReactNode;
 }
 
 interface State {
   hasError: boolean;
-  error: Error | null;
 }
 
-export default class ErrorBoundary extends Component<Props, State> {
-  state: State = { hasError: false, error: null };
-
-  static getDerivedStateFromError(error: Error): State {
-    return { hasError: true, error };
+class ErrorBoundary extends Component<Props, State> {
+  constructor(props: Props) {
+    super(props);
+    this.state = { hasError: false };
   }
 
-  componentDidCatch(error: Error, info: ErrorInfo) {
-    // TODO: gửi lên Sentry / error tracking khi tích hợp
-    console.error("ErrorBoundary caught:", error, info.componentStack);
+  static getDerivedStateFromError(_error: Error): State {
+    return { hasError: true };
+  }
+
+  componentDidCatch(error: Error, errorInfo: ErrorInfo): void {
+    // TODO: gửi lên Sentry khi tích hợp
+    console.error("ErrorBoundary caught an error:", error, errorInfo);
   }
 
   render() {
     if (this.state.hasError) {
-      if (this.props.fallback) return this.props.fallback;
-
       return (
-        <div style={{ padding: 40, textAlign: "center" }}>
+        <div
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            justifyContent: "center",
+            height: "100vh",
+            gap: "16px",
+          }}
+        >
           <h2>Đã xảy ra lỗi</h2>
-          <p style={{ color: "#666", marginTop: 8 }}>
-            Vui lòng tải lại trang hoặc liên hệ bộ phận kỹ thuật.
-          </p>
           <button
             onClick={() => window.location.reload()}
             style={{
-              marginTop: 16,
               padding: "8px 24px",
-              borderRadius: 6,
+              fontSize: "14px",
+              cursor: "pointer",
+              borderRadius: "4px",
               border: "1px solid #ccc",
               background: "#fff",
-              cursor: "pointer",
             }}
           >
             Tải lại trang
@@ -52,3 +57,5 @@ export default class ErrorBoundary extends Component<Props, State> {
     return this.props.children;
   }
 }
+
+export default ErrorBoundary;

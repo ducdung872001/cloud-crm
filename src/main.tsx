@@ -20,6 +20,7 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
 import { BrowserRouter } from "react-router-dom";
+import "whatwg-fetch";
 import { CookiesProvider } from "react-cookie";
 import { I18nextProvider } from "react-i18next";
 import i18n from "./i18n";

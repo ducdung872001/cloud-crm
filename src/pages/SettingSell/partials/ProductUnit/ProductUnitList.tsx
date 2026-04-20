@@ -11,7 +11,7 @@ import { SystemNotification } from "components/systemNotification/systemNotifica
 import Dialog, { IContentDialog } from "components/dialog/dialog";
 import { BulkActionItemModel } from "components/bulkAction/bulkAction";
 import { IAction, ISaveSearch } from "model/OtherModel";
-import { IUnitFilterRequest, IUnitRequest } from "model/unit/UnitRequestModel";
+import { IUnitFilterRequest } from "model/unit/UnitRequestModel";
 import { IUnitResponse } from "model/unit/UnitResponseModel";
 import { IProductUnitListProps } from "model/unit/PropsModel";
 import { showToast } from "utils/common";
@@ -196,148 +196,79 @@ export default function ProductUnitList(props: IProductUnitListProps) {
     ].filter((action) => action);
   };
 
-  /**
-   * Xoa don vi san pham:
-   * - DVT chua duoc dung (khong co SP/bien the nao tham chieu) → xoa cung
-   * - DVT dang duoc dung (co SP/bien the tham chieu) → backend reject, FE hoi chuyen "Ngung su dung"
-   * Validate 2 tang: FE goi API delete → BE kiem tra tham chieu → reject neu co
-   */
-  const onHardDelete = async (id: number, name: string) => {
-    try {
-      const response = await UnitService.delete(id);
-      if (response.code === 0) {
-        showToast("Xóa đơn vị sản phẩm thành công", "success");
-        getListUnit(params);
-      } else {
-        // Backend reject — DVT dang duoc su dung
-        showToast(response.message ?? response.error ?? "Không thể xóa", "warning");
-        setShowDialog(false);
-        setContentDialog(null);
-        showDialogDeactivateUnit(id, name, response.message ?? response.error ?? "");
-        return;
-      }
-    } catch {
-      showToast("Không thể xóa đơn vị sản phẩm", "error");
+  const onDelete = async (id: number) => {
+    const response = await UnitService.delete(id);
+
+    if (response.code === 0) {
+      showToast("Xóa đơn vị sản phẩm thành công", "success");
+      getListUnit(params);
+    } else {
+      showToast(response.message ?? "Có lỗi xảy ra. Vui lòng thử lại sau", "error");
     }
     setShowDialog(false);
     setContentDialog(null);
   };
 
-  const onDeactivateUnit = async (id: number) => {
-    try {
-      const response = await UnitService.update({ id, status: 0 } as IUnitRequest);
-      if (response.code === 0) {
-        showToast("Đã chuyển đơn vị sang Ngừng sử dụng", "success");
-        getListUnit(params);
-      } else {
-        showToast(response.message ?? response.error ?? "Có lỗi xảy ra", "error");
-      }
-    } catch {
-      showToast("Không thể cập nhật trạng thái", "error");
-    } finally {
-      setShowDialog(false);
-      setContentDialog(null);
-    }
-  };
-
-  const showDialogDeactivateUnit = (id: number, name: string, reason: string) => {
-    const dialog: IContentDialog = {
-      color: "warning",
-      className: "dialog-delete",
-      isCentered: true,
-      isLoading: true,
-      title: <Fragment>Không thể xóa đơn vị</Fragment>,
-      message: (
-        <Fragment>
-          {reason && <p>{reason}</p>}
-          <br />
-          Bạn có muốn chuyển đơn vị <strong>{name}</strong> sang trạng thái <strong>Ngừng sử dụng</strong>?
-          <br /><small>Các sản phẩm đang dùng đơn vị này sẽ không bị ảnh hưởng.</small>
-        </Fragment>
-      ),
-      cancelText: "Hủy",
-      cancelAction: () => { setShowDialog(false); setContentDialog(null); },
-      defaultText: "Ngừng sử dụng",
-      defaultAction: () => onDeactivateUnit(id),
-    };
-    setContentDialog(dialog);
-    setShowDialog(true);
-  };
-
-  const onDeleteAll = async () => {
+  const onDeleteAll = () => {
     const selectedIds = listIdChecked || [];
     if (!selectedIds.length) return;
 
-    let deleted = 0;
-    let deactivated = 0;
-
-    for (const selectedId of selectedIds) {
+    const arrPromises = selectedIds.map((selectedId) => {
       const found = listUnit.find((item) => item.id === selectedId);
-      if (!found?.id) continue;
-      const res = await UnitService.delete(found.id).catch(() => ({ code: -1 }));
-      if (res.code === 0) {
-        deleted++;
+      if (found?.id) {
+        return UnitService.delete(found.id);
       } else {
-        await UnitService.update({ id: found.id, status: 0 } as IUnitRequest).catch(() => {});
-        deactivated++;
+        return Promise.resolve(null);
       }
-    }
-
-    const msgs: string[] = [];
-    if (deleted > 0) msgs.push(`Đã xóa ${deleted} đơn vị`);
-    if (deactivated > 0) msgs.push(`Đã ngừng sử dụng ${deactivated} đơn vị đang được dùng`);
-    showToast(msgs.join(". ") || "Không có đơn vị nào được xử lý", deleted > 0 ? "success" : "warning");
-
-    getListUnit(params);
-    setListIdChecked([]);
-    setShowDialog(false);
-    setContentDialog(null);
+    });
+    Promise.all(arrPromises)
+      .then((results) => {
+        const checkbox = results.filter(Boolean)?.length || 0;
+        if (checkbox > 0) {
+          showToast(`Xóa thành công ${checkbox} đơn vị sản phẩm`, "success");
+          getListUnit(params);
+          setListIdChecked([]);
+        } else {
+          showToast("Không có đơn vị sản phẩm nào được xóa", "error");
+        }
+      })
+      .finally(() => {
+        setShowDialog(false);
+        setContentDialog(null);
+      });
   };
 
   const showDialogConfirmDelete = (item?: IUnitResponse) => {
-    if (!item) {
-      // Xoa hang loat
-      const dialog: IContentDialog = {
-        color: "error",
-        className: "dialog-delete",
-        isCentered: true,
-        isLoading: true,
-        title: <Fragment>Xóa đơn vị sản phẩm</Fragment>,
-        message: (
-          <Fragment>
-            Bạn có chắc chắn muốn xử lý <strong>{listIdChecked.length} đơn vị</strong> đã chọn?
-            <br /><br />
-            <small>• Đơn vị chưa được dùng sẽ bị xóa vĩnh viễn<br />• Đơn vị đang được dùng sẽ chuyển sang Ngừng sử dụng</small>
-          </Fragment>
-        ),
-        cancelText: "Hủy",
-        cancelAction: () => { setShowDialog(false); setContentDialog(null); },
-        defaultText: "Xác nhận",
-        defaultAction: onDeleteAll,
-      };
-      setContentDialog(dialog);
-      setShowDialog(true);
-      return;
-    }
-
-    // Xoa 1 DVT
-    const dialog: IContentDialog = {
+    const contentDialog: IContentDialog = {
       color: "error",
       className: "dialog-delete",
       isCentered: true,
       isLoading: true,
-      title: <Fragment>Xóa đơn vị sản phẩm</Fragment>,
+      title: <Fragment>Xóa...</Fragment>,
       message: (
         <Fragment>
-          Bạn có chắc chắn muốn xóa đơn vị <strong>{item.name}</strong>?
+          Bạn có chắc chắn muốn xóa {item ? "đơn vị sản phẩm " : `${listIdChecked.length} đơn vị sản phẩm đã chọn`}
+          {item ? <strong>{item.name}</strong> : ""}? Thao tác này không thể khôi phục.
         </Fragment>
       ),
       cancelText: "Hủy",
-      cancelAction: () => { setShowDialog(false); setContentDialog(null); },
+      cancelAction: () => {
+        setShowDialog(false);
+        setContentDialog(null);
+      },
       defaultText: "Xóa",
-      defaultAction: () => onHardDelete(item.id, item.name),
+      defaultAction: () => {
+        if (item?.id) {
+          onDelete(item.id);
+          return;
+        }
+        if (listIdChecked.length > 0) {
+          onDeleteAll();
+          return;
+        }
+      },
     };
-    setContentDialog(dialog);
+    setContentDialog(contentDialog);
     setShowDialog(true);
   };
 

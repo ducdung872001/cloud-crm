@@ -224,7 +224,7 @@ export default function ModalImport(props: Record<string, unknown>) {
       setInfoFile(data);
       setDataImportHeader(JSON.parse(data.headers));
       if (data?.requestId) {
-        let lookupDone = false;
+        let lookupDone: boolean = false;
         while (!lookupDone) {
           await new Promise((resolve) => setTimeout(resolve, 3000));
           lookupDone = await getDataRowsUpload(data?.requestId);
@@ -242,7 +242,7 @@ export default function ModalImport(props: Record<string, unknown>) {
 
   const getDataRowsUpload = async (requestId) => {
     let lookupDone = false;
-    const responseDataImport = await GridService.getRowsUpload({ requestId: requestId });
+    let responseDataImport = await GridService.getRowsUpload({ requestId: requestId });
     if (responseDataImport.code === 0) {
       if (responseDataImport?.result?.key == 1) {
         lookupDone = true;
@@ -276,7 +276,7 @@ export default function ModalImport(props: Record<string, unknown>) {
       ...(formData as IAutoProcessModalProps),
     };
 
-    const response = await GridService.importFile(body);
+    let response = await GridService.importFile(body);
     if (response.code === 0) {
       setInfoFile(response.result);
       onHide(true);
@@ -354,7 +354,7 @@ export default function ModalImport(props: Record<string, unknown>) {
     const blob = new Blob([wbout], { type: "application/octet-stream" });
 
     // Tạo liên kết và tải xuống file
-    const code_name = convertToFileName(name);
+    let code_name = convertToFileName(name);
     // return;
     await saveAs(blob, code_name + ".xlsx");
     setIsSubmit(false);
@@ -842,7 +842,7 @@ export default function ModalImport(props: Record<string, unknown>) {
                                                 : false;
                                             return (
                                               <Checkbox
-                                                key={index}
+                                                key={el.id ?? index}
                                                 checked={isCheckChildren}
                                                 label={el.name}
                                                 onChange={(e) => checkOneChildren(el, e.target.checked)}

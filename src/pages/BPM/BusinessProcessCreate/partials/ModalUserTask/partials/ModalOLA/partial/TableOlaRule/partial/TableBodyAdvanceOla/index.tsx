@@ -10,7 +10,7 @@ import ComponentInput from "../ComponentInput";
 import Dialog, { IContentDialog } from "components/dialog/dialog";
 import { useOnClickOutside } from "utils/hookCustom";
 import { DataRows } from "../../type";
-import { set } from "lodash";
+import set from "lodash/set";
 
 interface TableBodyAdvanceOlaProps {
   dataRow: DataRows;
@@ -98,7 +98,7 @@ const TableBodyAdvanceOla: React.FC<TableBodyAdvanceOlaProps> = ({
 
   const handleDeleteRow = (rowIndex) => {
     setDataRow((prevDataRow) => {
-      const _dataRow = [...prevDataRow];
+      let _dataRow = [...prevDataRow];
       _dataRow.splice(rowIndex, 1);
       return _dataRow;
     });
@@ -107,7 +107,7 @@ const TableBodyAdvanceOla: React.FC<TableBodyAdvanceOlaProps> = ({
   const handleActionRow = (detailAction) => {
     switch (detailAction.action) {
       case "insert":
-        const _baseRow = baseRow.map((field) => {
+        let _baseRow = baseRow.map((field) => {
           return {
             ...field,
             value: "",
@@ -115,7 +115,7 @@ const TableBodyAdvanceOla: React.FC<TableBodyAdvanceOlaProps> = ({
         });
         if (detailAction?.rowIndex !== undefined) {
           setDataRow((prevDataRow) => {
-            const _dataRow = [...prevDataRow];
+            let _dataRow = [...prevDataRow];
             _dataRow.splice(detailAction?.position == "top" ? detailAction.rowIndex : detailAction.rowIndex + 1, 0, _baseRow);
             return _dataRow;
           });
@@ -147,7 +147,7 @@ const TableBodyAdvanceOla: React.FC<TableBodyAdvanceOlaProps> = ({
         setDataRow((prevDataRow) =>
           prevDataRow.map((row, rIdx) => {
             if (rIdx === detailAction.rowIndex) {
-              const rowMapReturn = row.map((field, fIdx) => {
+              let rowMapReturn = row.map((field, fIdx) => {
                 if (fIdx === detailAction.fieldIndex) {
                   return {
                     ...field,
@@ -275,7 +275,7 @@ const TableBodyAdvanceOla: React.FC<TableBodyAdvanceOlaProps> = ({
                                 ) : (
                                   field.children.map((child, index) => {
                                     return (
-                                      <div key={index} className="field-child">
+                                      <div key={child.id ?? index} className="field-child">
                                         <div className="component">
                                           <OlaSlaInput
                                             child={child}

@@ -1,22 +1,57 @@
-import React, { useState, useEffect, useMemo, Fragment } from "react";
+import React, { useState, useEffect, useMemo, Fragment, useCallback } from "react";
 
-import { IFormData } from "model/FormModel";
+import { IActionModal } from "model/OtherModel";
+import { IFieldCustomize, IFormData, IValidation } from "model/FormModel";
 import { AddSchedulerModalProps } from "model/customer/PropsModel";
-import Modal, { ModalHeader } from "components/modal/modal";
+import { IEmployeeFilterRequest } from "model/employee/EmployeeRequestModel";
+import { ITreatmentHistoryRequestModel } from "model/treatmentHistory/TreatmentHistoryRequestModel";
+import Icon from "components/icon";
+import NummericInput from "components/input/numericInput";
+import CustomScrollbar from "components/customScrollbar";
+import FileUpload from "components/fileUpload/fileUpload";
+import SelectCustom from "components/selectCustom/selectCustom";
+import Dialog, { IContentDialog } from "components/dialog/dialog";
+import Modal, { ModalBody, ModalFooter, ModalHeader } from "components/modal/modal";
+import FieldCustomize from "components/fieldCustomize/fieldCustomize";
+import Validate, { handleChangeValidate } from "utils/validate";
+import { useActiveElement } from "utils/hookCustom";
+import { isDifferenceObj } from "reborn-util";
+import { showToast } from "utils/common";
+import ImageThirdGender from "assets/images/third-gender.png";
 import CustomerService from "services/CustomerService";
+import EmployeeService from "services/EmployeeService";
+import TreatmentHistoryService from "services/TreatmentHistoryService";
+import BoughtServiceService from "services/BoughtServiceService";
 import "./AddCustomerSchedulerModal.scss";
+
+interface IDataServiceOption {
+  value: number;
+  serviceId: number;
+  label: string;
+  avatar: string;
+  isCombo: number;
+  treatmentNum: number;
+  totalTreatment: number;
+  cardNumber: string;
+  serviceNumber: string;
+}
 
 export default function AddCustomerSchedulerModal(props: AddSchedulerModalProps) {
   const { onShow, onHide, dataCustomer } = props;
 
+  const focusedElement = useActiveElement();
+
   const [isSubmit, setIsSubmit] = useState<boolean>(false);
+  const [showDialog, setShowDialog] = useState<boolean>(false);
+  const [contentDialog, setContentDialog] = useState<IContentDialog>(null);
 
   const [detailCustomer, setDetailCustomer] = useState(null);
-  const [, setIsLoadingCustomer] = useState<boolean>(false);
+  const [isLoadingCustomer, setIsLoadingCustomer] = useState<boolean>(false);
 
-  const [, setDetailEmployee] = useState(null);
+  const [detailEmployee, setDetailEmployee] = useState(null);
+  const [isLoadingEmployee, setIsLoadingEmployee] = useState<boolean>(false);
 
-  const [, setDetailService] = useState(null);
+  const [detailService, setDetailService] = useState(null);
 
   const values = useMemo(
     () =>
@@ -35,8 +70,7 @@ export default function AddCustomerSchedulerModal(props: AddSchedulerModalProps)
         treatmentTh: detailCustomer?.treatmentTh + detailCustomer?.treatmentNum ?? 0,
         serviceNumber: detailCustomer?.serviceNumber ?? null,
         cardNumber: detailCustomer?.cardNumber ?? null,
-      }),
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+      } as ITreatmentHistoryRequestModel),
     [detailCustomer, onShow, detailCustomer?.phoneMasked]
   );
 
@@ -49,8 +83,18 @@ export default function AddCustomerSchedulerModal(props: AddSchedulerModalProps)
     return () => {
       setIsSubmit(false);
     };
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [values]);
+
+  const formatOptionLabelCustomer = ({ label, avatar }) => {
+    return (
+      <div className="selected--item">
+        <div className="avatar">
+          <img loading="lazy" src={avatar || ImageThirdGender} alt={label} />
+        </div>
+        {label}
+      </div>
+    );
+  };
 
   const getDetailCustomer = async () => {
     setIsLoadingCustomer(true);
@@ -77,8 +121,63 @@ export default function AddCustomerSchedulerModal(props: AddSchedulerModalProps)
     if (dataCustomer?.id && onShow) {
       getDetailCustomer();
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [dataCustomer?.id, onShow]);
+
+  const [listBuyService, setListBuyService] = useState<IDataServiceOption[]>([]);
+  const [isLoadingBuyService, setIsLoadingBuyService] = useState<boolean>(false);
+
+  //! đoạn này xử lý vấn đề lấy ra danh sách thẻ dịch vụ đã mua
+  const onSelectOpenBuyService = async (idCustomer?: number) => {
+    if (!idCustomer) return;
+
+    setIsLoadingBuyService(true);
+
+    const response = await BoughtServiceService.getByCustomerId(idCustomer);
+
+    if (response.code === 0) {
+      const dataOption = (response.result || []).filter((item) => item.totalTreatment <= item.treatmentNum);
+
+      setListBuyService([
+        ...(dataOption.length > 0
+          ? dataOption.map((item) => {
+              return {
+                value: item.id,
+                serviceId: item.serviceId,
+                label: item.serviceName,
+                avatar: item.serviceAvatar,
+                isCombo: item.isCombo,
+                treatmentNum: item.treatmentNum,
+                totalTreatment: item.totalTreatment,
+                serviceNumber: item.serviceNumber,
+                cardNumber: item.cardNumber,
+              };
+            })
+          : []),
+      ]);
+
+      // const takeDetailService = dataOption.find(
+      //   (item) =>
+      //     (item.serviceNumber && item.serviceNumber == dataCustomer?.serviceNumber) ||
+      //     (item.cardNumber && item.cardNumber == dataCustomer?.cardNumber)
+      // );
+
+      // if (takeDetailService?.isCombo >= 1) {
+      //   setDetailService({
+      //     value: takeDetailService?.id,
+      //     serviceId: takeDetailService?.serviceId,
+      //     label: takeDetailService.serviceName,
+      //     avatar: takeDetailService.serviceAvatar,
+      //     isCombo: takeDetailService.isCombo,
+      //     treatmentNum: takeDetailService.treatmentNum,
+      //     totalTreatment: takeDetailService.totalTreatment,
+      //     serviceNumber: dataCustomer?.serviceNumber ? dataCustomer?.serviceNumber : takeDetailService.serviceNumber,
+      //     cardNumber: dataCustomer?.cardNumber ? dataCustomer?.cardNumber : takeDetailService.cardNumber,
+      //   });
+      // }
+    }
+
+    setIsLoadingBuyService(false);
+  };
 
   const onSubmit = async (e) => {
     e && e.preventDefault();

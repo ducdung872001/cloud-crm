@@ -34,7 +34,6 @@ import TitleAction, { ITitleActions } from "components/titleAction/titleAction";
 import ShareLinkModal from "./partials/ShareLinkModal";
 import BarcodePrintModal from "./partials/BarcodePrintModal";
 import CategoryServiceService from "services/CategoryServiceService";
-import BarcodeScanner from "@/components/barcodeScanner/BarcodeScanner";
 
 // ---- Tab filter type ----
 type StatusTab = "all" | "active" | "paused" | "category" | "label" | "low_stock" | "on_web";
@@ -61,7 +60,6 @@ export default function ProductList(props: IProductListProps) {
   const [showModalConfig, setShowModalConfig] = useState<boolean>(false);
   // Scan QR modal
   const [showScanModal, setShowScanModal]         = useState(false);
-  const [showCameraScanner, setShowCameraScanner] = useState(false);
   const [scanInput, setScanInput]                 = useState("");
   const [scanSearching, setScanSearching]         = useState(false);
   const [scanFound, setScanFound]                 = useState<Record<string, unknown>>(null);
@@ -146,43 +144,30 @@ export default function ProductList(props: IProductListProps) {
     },
   });
 
-  const abortControllerRef = useRef<AbortController | null>(null);
+  const abortController = new AbortController();
 
   const getListProduct = async (paramsSearch: Record<string, unknown>) => {
     setIsLoading(true);
-    setIsNoItem(false);
-    setIsPermissions(false);
-    abortControllerRef.current?.abort();
-    const controller = new AbortController();
-    abortControllerRef.current = controller;
 
-    try {
-      const response = await ProductService.wList(paramsSearch, controller.signal);
+    const response = await ProductService.wList(paramsSearch, abortController.signal);
 
-      if (response.code === 0) {
-        const result = response.result;
-        setListProduct(result.items);
-        setPagination((prev) => ({
-          ...prev,
-          page: +result.page,
-          sizeLimit: paramsSearch.limit ?? DataPaginationDefault.sizeLimit,
-          totalItem: +result.total,
-          totalPage: Math.ceil(+result.total / +(paramsSearch.limit ?? DataPaginationDefault.sizeLimit)),
-        }));
-        if (+result.total === 0 && +result.page === 1) setIsNoItem(true);
-      } else if (response.code == 400) {
-        setIsPermissions(true);
-      } else {
-        showToast(response.message ?? "Có lỗi xảy ra. Vui lòng thử lại sau", "error");
-      }
-    } catch (error: unknown) {
-      if (error?.name === "AbortError") return;
-      showToast("Có lỗi xảy ra. Vui lòng thử lại sau", "error");
-    } finally {
-      if (abortControllerRef.current === controller) {
-        setIsLoading(false);
-      }
+    if (response.code === 0) {
+      const result = response.result;
+      setListProduct(result.items);
+      setPagination((prev) => ({
+        ...prev,
+        page: +result.page,
+        sizeLimit: paramsSearch.limit ?? DataPaginationDefault.sizeLimit,
+        totalItem: +result.total,
+        totalPage: Math.ceil(+result.total / +(paramsSearch.limit ?? DataPaginationDefault.sizeLimit)),
+      }));
+      if (+result.total === 0 && +result.page === 1) setIsNoItem(true);
+    } else if (response.code == 400) {
+      setIsPermissions(true);
+    } else {
+      showToast(response.message ?? "Có lỗi xảy ra. Vui lòng thử lại sau", "error");
     }
+    setIsLoading(false);
   };
 
   const fetchSummary = async () => {
@@ -204,7 +189,7 @@ export default function ProductList(props: IProductListProps) {
   useEffect(() => {
     getListProduct(params);
     return () => {
-      abortControllerRef.current?.abort();
+      abortController.abort();
     };
   }, [params]);
 
@@ -293,6 +278,7 @@ export default function ProductList(props: IProductListProps) {
     getListPartner();
   }, []);
 
+  // TODO: Implement QR scan handler
   const handleScanQR = () => {
     setScanInput(""); setScanFound(null); setScanNotFound(false); setScanCode("");
     setShowScanModal(true);
@@ -303,36 +289,13 @@ export default function ProductList(props: IProductListProps) {
     if (!q) return;
     setScanSearching(true); setScanFound(null); setScanNotFound(false); setScanCode(q);
     try {
-      // Thử wScan trước (Inventory microservice)
-      try {
-        const res = await ProductService.wScan(q);
-        if (res?.code === 0 && res.result?.id) {
-          setScanFound(res.result);
-          return;
-        }
-      } catch { /* rơi xuống fallback */ }
-
-      // Fallback 1: search bằng barcode/sku trong list API
-      try {
-        const listRes = await ProductService.wList({ keyword: q, page: 1, limit: 5 });
-        const items = listRes?.result?.items ?? listRes?.result?.pagedLst?.items ?? [];
-        const hit = items.find((p: Record<string, unknown>) =>
-          p.barcode === q || p.sku === q || p.code === q
-        ) ?? items[0];
-        if (hit) {
-          setScanFound({
-            id: hit.id,
-            productId: hit.id,
-            name: hit.name,
-            sku: hit.sku,
-            onHandQty: hit.stockQuantity ?? hit.onHandQty ?? 0,
-          });
-          return;
-        }
-      } catch { /* tiếp tục tới not-found */ }
-
-      // Cuối cùng: filter list bằng keyword để user thấy gợi ý + hiện not-found state
-      setParams((prev) => ({ ...prev, name: q, page: 1 }));
+      const res = await ProductService.wScan(q);
+      if (res.code === 0 && res.result?.id) {
+        setScanFound(res.result);
+      } else {
+        setScanNotFound(true);
+      }
+    } catch {
       setScanNotFound(true);
     } finally {
       setScanSearching(false);
@@ -406,10 +369,9 @@ export default function ProductList(props: IProductListProps) {
 
     patch(newValue);
 
-    const response = await ProductService.wWebsiteToggle({ productId: item.id, value: newValue ? 1 : 0 });
+    const response = await ProductService.wWebsiteToggle({ id: item.id, showOnWebsite: newValue ? 1 : 0 });
 
     if (isSuccessResponse(response)) {
-      fetchSummary();
       showToast(newValue ? "Đã đẩy sản phẩm lên website" : "Đã ẩn sản phẩm khỏi website", "success");
       return;
     }
@@ -418,104 +380,42 @@ export default function ProductList(props: IProductListProps) {
     showToast(response.message ?? "Có lỗi xảy ra. Vui lòng thử lại sau", "error");
   };
 
-  /**
-   * Xoa san pham:
-   * - SP moi (chua co bien the/giao dich) → xoa cung
-   * - SP co bien the nhung chua co GD → xoa cung (backend se kiem tra lai)
-   * - SP co giao dich → backend reject, FE hoi chuyen sang "Ngung hoat dong"
-   */
-  const onHardDelete = async (id: number, name: string) => {
-    try {
-      const response = await ProductService.wDelete(id);
-      if (response.code === 0) {
-        showToast("Xóa sản phẩm thành công", "success");
-        getListProduct(params);
-        fetchSummary();
-      } else {
-        // Backend reject — hoi user ngung hoat dong
-        showToast(response.message ?? response.error ?? "Không thể xóa", "warning");
-        showDialogDeactivateProduct(id, name, response.message ?? response.error ?? "");
-        return;
-      }
-    } catch {
-      showToast("Không thể xóa sản phẩm", "error");
+  const onDelete = async (id: number) => {
+    const response = await ProductService.wDelete(id);
+    if (response.code === 0) {
+      showToast("Xóa sản phẩm thành công", "success");
+      getListProduct(params);
+      fetchSummary();
+    } else {
+      showToast(response.message ?? "Có lỗi xảy ra. Vui lòng thử lại sau", "error");
     }
     setShowDialog(false);
     setContentDialog(null);
   };
 
-  const onDeactivateProduct = async (id: number) => {
-    try {
-      const response = await ProductService.wUpdateStatus({ id, status: 0 });
-      if (response.code === 0) {
-        showToast("Đã chuyển sản phẩm sang Ngừng hoạt động", "success");
-        getListProduct(params);
-        fetchSummary();
-      } else {
-        showToast(response.message ?? response.error ?? "Có lỗi xảy ra", "error");
-      }
-    } catch {
-      showToast("Không thể cập nhật trạng thái", "error");
-    } finally {
-      setShowDialog(false);
-      setContentDialog(null);
-    }
-  };
-
-  const showDialogDeactivateProduct = (id: number, name: string, reason: string) => {
-    const dialog: IContentDialog = {
-      color: "warning",
-      className: "dialog-delete",
-      isCentered: true,
-      isLoading: true,
-      title: <Fragment>Không thể xóa sản phẩm</Fragment>,
-      message: (
-        <Fragment>
-          {reason && <p>{reason}</p>}
-          <br />
-          Bạn có muốn chuyển sản phẩm <strong>{name}</strong> sang trạng thái <strong>Ngừng hoạt động</strong>?
-          <br /><small>Dữ liệu lịch sử sẽ được giữ nguyên.</small>
-        </Fragment>
-      ),
-      cancelText: "Hủy",
-      cancelAction: () => { setShowDialog(false); setContentDialog(null); },
-      defaultText: "Ngừng hoạt động",
-      defaultAction: () => onDeactivateProduct(id),
-    };
-    setContentDialog(dialog);
-    setShowDialog(true);
-  };
-
-  const onDeleteAll = async () => {
+  const onDeleteAll = () => {
     const selectedIds = listIdChecked || [];
     if (!selectedIds.length) return;
-
-    let deleted = 0;
-    let deactivated = 0;
-
-    for (const selectedId of selectedIds) {
+    const arrPromises = selectedIds.map((selectedId) => {
       const found = listProduct.find((item) => item.id === selectedId);
-      if (!found) continue;
-      const res = await ProductService.wDelete(found.id).catch(() => ({ code: -1 }));
-      if (res.code === 0) {
-        deleted++;
-      } else {
-        // Khong xoa duoc → chuyen ngung hoat dong
-        await ProductService.wUpdateStatus({ id: found.id, status: 0 }).catch(() => {});
-        deactivated++;
-      }
-    }
-
-    const msgs: string[] = [];
-    if (deleted > 0) msgs.push(`Đã xóa ${deleted} sản phẩm`);
-    if (deactivated > 0) msgs.push(`Đã ngừng hoạt động ${deactivated} sản phẩm có giao dịch`);
-    showToast(msgs.join(". ") || "Không có sản phẩm nào được xử lý", deleted > 0 ? "success" : "warning");
-
-    getListProduct(params);
-    fetchSummary();
-    setListIdChecked([]);
-    setShowDialog(false);
-    setContentDialog(null);
+      return found?.id ? ProductService.delete(found.id) : Promise.resolve(null);
+    });
+    Promise.all(arrPromises)
+      .then((results) => {
+        const count = results.filter(Boolean)?.length || 0;
+        if (count > 0) {
+          showToast(`Xóa thành công ${count} sản phẩm`, "success");
+          getListProduct(params);
+          fetchSummary();
+          setListIdChecked([]);
+        } else {
+          showToast("Không có sản phẩm nào được xóa", "error");
+        }
+      })
+      .finally(() => {
+        setShowDialog(false);
+        setContentDialog(null);
+      });
   };
 
   // ── Barcode Print handler ──
@@ -703,52 +603,36 @@ export default function ProductList(props: IProductListProps) {
   };
 
   const showDialogConfirmDelete = (item?: IProductResponse) => {
-    // Xoa hang loat
-    if (!item) {
-      const dialog: IContentDialog = {
-        color: "error",
-        className: "dialog-delete",
-        isCentered: true,
-        isLoading: true,
-        title: <Fragment>Xóa sản phẩm</Fragment>,
-        message: (
-          <Fragment>
-            Bạn có chắc chắn muốn xử lý <strong>{listIdChecked.length} sản phẩm</strong> đã chọn?
-            <br /><br />
-            <small>• Sản phẩm chưa có giao dịch sẽ bị xóa vĩnh viễn<br />• Sản phẩm đã có giao dịch sẽ chuyển sang Ngừng hoạt động</small>
-          </Fragment>
-        ),
-        cancelText: "Hủy",
-        cancelAction: () => { setShowDialog(false); setContentDialog(null); },
-        defaultText: "Xác nhận",
-        defaultAction: onDeleteAll,
-      };
-      setContentDialog(dialog);
-      setShowDialog(true);
-      return;
-    }
-
-    // Xoa 1 SP — goi API, backend se kiem tra
-    const dialog: IContentDialog = {
+    const contentDialog: IContentDialog = {
       color: "error",
       className: "dialog-delete",
       isCentered: true,
       isLoading: true,
-      title: <Fragment>Xóa sản phẩm</Fragment>,
+      title: <Fragment>Xóa...</Fragment>,
       message: (
         <Fragment>
-          Bạn có chắc chắn muốn xóa sản phẩm <strong>{item.name}</strong>?
-          {(item.variantCount ?? 0) > 0 && (
-            <><br /><small>Sản phẩm có {item.variantCount} biến thể.</small></>
-          )}
+          Bạn có chắc chắn muốn xóa {item ? "sản phẩm " : `${listIdChecked.length} sản phẩm đã chọn`}
+          {item ? <strong>{item.name}</strong> : ""}? Thao tác này không thể khôi phục.
         </Fragment>
       ),
       cancelText: "Hủy",
-      cancelAction: () => { setShowDialog(false); setContentDialog(null); },
+      cancelAction: () => {
+        setShowDialog(false);
+        setContentDialog(null);
+      },
       defaultText: "Xóa",
-      defaultAction: () => onHardDelete(item.id, item.name),
+      defaultAction: () => {
+        if (item?.id) {
+          onDelete(item.id);
+          return;
+        }
+        if (listIdChecked.length > 0) {
+          onDeleteAll();
+          return;
+        }
+      },
     };
-    setContentDialog(dialog);
+    setContentDialog(contentDialog);
     setShowDialog(true);
   };
 
@@ -1378,15 +1262,6 @@ export default function ProductList(props: IProductListProps) {
                 disabled={scanSearching}
               />
               <button
-                type="button"
-                className="btn btn--outline btn--sm"
-                title="Quét bằng camera"
-                onClick={() => setShowCameraScanner(true)}
-                disabled={scanSearching}
-              >
-                📷
-              </button>
-              <button
                 className="btn btn--primary btn--sm"
                 onClick={() => handleScanSearch()}
                 disabled={scanSearching || !scanInput.trim()}
@@ -1408,7 +1283,7 @@ export default function ProductList(props: IProductListProps) {
                 <button
                   className="btn btn--primary btn--sm"
                   onClick={() => {
-                    setIdProduct(scanFound.productId ?? scanFound.id);
+                    setIdProduct(scanFound.id);
                     setShowScanModal(false);
                     setShowProductPage(true);
                   }}
@@ -1435,19 +1310,6 @@ export default function ProductList(props: IProductListProps) {
             )}
           </div>
         </div>
-      )}
-
-      {/* ── Camera barcode scanner — mở từ scan modal ── */}
-      {showCameraScanner && (
-        <BarcodeScanner
-          title="Quét mã sản phẩm"
-          onScan={(code) => {
-            setShowCameraScanner(false);
-            setScanInput(code);
-            handleScanSearch(code);
-          }}
-          onClose={() => setShowCameraScanner(false)}
-        />
       )}
     </div>
   );

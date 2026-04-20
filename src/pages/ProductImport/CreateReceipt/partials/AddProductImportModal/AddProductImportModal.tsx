@@ -584,9 +584,9 @@ export default function AddProductImportModal(props: AddProductImportModalProps)
           />
           <ModalBody>
             <div className="list-form-group">
-              {listField.map((field) => (
+              {listField.map((field, index) => (
                 <FieldCustomize
-                  key={field.name ?? field.label}
+                  key={field.name || index}
                   field={field}
                   handleUpdate={(value) =>
                     handleChangeValidate(value, field, formData, validations, listField, setFormData)

@@ -80,7 +80,7 @@ export default function WebRtcPhoneModal(props: Record<string, unknown>) {
 
   const dataInfoBasicCustomer = [
     {
-      title: "Khách hàng",
+      title: "Thành viên",
       name: dataCustomer?.name,
       className: "outstanding-name",
     },

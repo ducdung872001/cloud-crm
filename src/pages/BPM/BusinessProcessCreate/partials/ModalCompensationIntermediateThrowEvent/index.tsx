@@ -305,7 +305,7 @@ export default function ModalCompensationIntermediateThrowEvent({ onShow, onHide
                 </div> */}
                 {listInputCompensation && listInputCompensation.length > 0
                   ? listInputCompensation.map((item, index) => (
-                      <div key={index} className="list-item-compensation">
+                      <div key={item.id ?? index} className="list-item-compensation">
                         <div className="item-compensation">
                           <Input
                             id={`step-${index}`}

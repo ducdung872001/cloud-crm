@@ -35,7 +35,7 @@ export default function AddUnitModal(props: AddUnitModalProps) {
   const validations: IValidation[] = [
     {
       name: "name",
-      rules: "required|max:100",
+      rules: "required",
     },
     {
       name: "position",
@@ -53,7 +53,6 @@ export default function AddUnitModal(props: AddUnitModalProps) {
       type: "text",
       fill: true,
       required: true,
-      maxLength: 100,
     },
     {
       label: "Thứ tự hiển thị",
@@ -198,7 +197,7 @@ export default function AddUnitModal(props: AddUnitModalProps) {
             <div className="list-form-group">
               {listField.map((field, index) => (
                 <FieldCustomize
-                  key={index}
+                  key={field.name || index}
                   field={field}
                   handleUpdate={(value) => handleChangeValidate(value, field, formData, validations, listField, setFormData)}
                   formData={formData}

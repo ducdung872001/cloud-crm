@@ -1,40 +1,38 @@
 %%{init: {'theme':'base','themeVariables':{'fontFamily':'Calibri','fontSize':'18px'}}}%%
-flowchart TB
-    IN["Cashier Input<br/>scan barcode / chọn SP"]
-    CART["Cart State (local React)<br/>items, qty, discount, total"]
-    SUBMIT["POST /bizapi/sales/order/create"]
-    ORD["sales_order<br/>{ id, code, total,<br/>customer_id, cashier_id,<br/>status=PAID }"]
-    OI["order_item × N<br/>{ sku, qty, price,<br/>discount, vat }"]
-    STK["inventory_stock<br/>UPDATE qty -= n"]
-    MV["stock_movement<br/>{ sku, type=OUT,<br/>qty, ref=orderId }"]
-    CB["cashbook_entry<br/>{ type=THU, amount,<br/>method=CASH/CARD,<br/>ref=orderId }"]
-    LP["loyalty_ledger<br/>{ customer_id,<br/>points=+n, ref }"]
-    EVT[["Event: order.created<br/>→ message queue"]]
-    NT["Notification Service<br/>Zalo/SMS cảm ơn"]
-    PR["Bill printer<br/>ESC/POS 58/80mm"]
-    RPT["Reporting DW<br/>daily sales fact"]
+flowchart LR
+    USER((Receptionist))
+    POS[POS Page]
+    SS[Sales Service]
+    INVS[Inventory Service]
+    FS[Finance Service]
+    CS[Care Service]
+    NOTIF[Notification Service]
 
-    IN --> CART
-    CART --> SUBMIT
-    SUBMIT --> ORD
-    ORD --> OI
-    ORD --> STK
-    STK --> MV
-    ORD --> CB
-    ORD --> LP
-    ORD --> EVT
-    EVT --> NT
-    EVT --> RPT
-    ORD --> PR
+    DB1[(invoice<br/>invoice_item)]
+    DB2[(warehouse_stock<br/>stock_issue)]
+    DB3[(cashbook)]
+    DB4[(loyalty_wallet)]
+    DB5[(audit_log)]
+    DB6[(shift)]
 
-    classDef input fill:#1F3A68,stroke:#1F3A68,color:#fff
-    classDef state fill:#7C3AED,stroke:#5B21B6,color:#fff
-    classDef data fill:#2C7A7B,stroke:#0F4C44,color:#fff
-    classDef event fill:#D97706,stroke:#7C2D12,color:#fff
-    classDef out fill:#FAEEDA,stroke:#D97706,color:#7C2D12
+    USER -->|click thanh toán| POS
+    POS -->|POST invoice/create| SS
+    SS -->|INSERT| DB1
+    SS -->|trừ tồn| INVS
+    INVS -->|UPDATE| DB2
+    SS -->|sinh phiếu thu| FS
+    FS -->|INSERT| DB3
+    SS -->|cộng điểm| CS
+    CS -->|UPDATE| DB4
+    SS -->|ghi audit| DB5
+    SS -->|cập nhật ca| DB6
+    SS -->|trigger event| NOTIF
+    NOTIF -.->|push notification| USER
 
-    class IN input
-    class CART,SUBMIT state
-    class ORD,OI,STK,MV,CB,LP data
-    class EVT event
-    class NT,PR,RPT out
+    classDef user fill:#1F3A68,stroke:#1F3A68,color:#fff
+    classDef svc fill:#2C7A7B,stroke:#0F4C44,color:#fff
+    classDef db fill:#FAEEDA,stroke:#D97706,color:#7C2D12
+
+    class USER,POS user
+    class SS,INVS,FS,CS,NOTIF svc
+    class DB1,DB2,DB3,DB4,DB5,DB6 db

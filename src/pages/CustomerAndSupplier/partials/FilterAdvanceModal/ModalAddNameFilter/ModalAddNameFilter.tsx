@@ -8,7 +8,8 @@ import Dialog, { IContentDialog } from "components/dialog/dialog";
 import { useActiveElement } from "utils/hookCustom";
 import { handleChangeValidate } from "utils/validate";
 import "./ModalAddNameFilter.scss";
-import _, { lowerCase } from "lodash";
+import isEqual from "lodash/isEqual";
+import lowerCase from "lodash/lowerCase";
 import { showToast } from "utils/common";
 
 export default function ModalAddNameFilter(props: Record<string, unknown>) {
@@ -71,11 +72,11 @@ export default function ModalAddNameFilter(props: Record<string, unknown>) {
   const onSubmit = (e) => {
     e && e.preventDefault();
     // setListFilterOption()
-    if(listFilterOption.filter(el => _.isEqual(lowerCase(el.name), lowerCase(formData?.values.name))).length > 0 ){
+    if(listFilterOption.filter(el => isEqual(lowerCase(el.name), lowerCase(formData?.values.name))).length > 0 ){
         showToast("Tên bộ lọc đã tồn tại trong hệ thống", "error");
         return;
     }
-    if(listFilterOption.filter(el => _.isEqual(el.data, dataFilter)).length > 0 ){
+    if(listFilterOption.filter(el => isEqual(el.data, dataFilter)).length > 0 ){
         showToast("Bộ lọc đã tồn tại trong hệ thống", "error");
         return;
     }
@@ -222,7 +223,7 @@ export default function ModalAddNameFilter(props: Record<string, unknown>) {
             <div className="list-form-group">
               {listField.map((field, index) => (
                 <FieldCustomize
-                  key={index}
+                  key={field.name || index}
                   field={field}
                   handleUpdate={(value) => handleChangeValidate(value, field, formData, validations, listField, setFormData)}
                   formData={formData}

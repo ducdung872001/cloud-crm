@@ -953,7 +953,7 @@ export default function ModalAddPartner(props: Record<string, unknown>) {
                     {listFieldInfoCustomer.map((field, index) => (
                       <FieldCustomize
                         field={field}
-                        key={index}
+                        key={field.name || index}
                         handleUpdate={(value) => handleChangeValidate(value, field, formData, validations, listFieldInfoCustomer, setFormData)}
                         formData={formData}
                       />
@@ -964,7 +964,7 @@ export default function ModalAddPartner(props: Record<string, unknown>) {
                 {listFieldInfoDetailCustomer.map((field, index) => (
                   <FieldCustomize
                     field={field}
-                    key={index}
+                    key={field.name || index}
                     handleUpdate={(value) => handleChangeValidate(value, field, formData, validations, listFieldInfoDetailCustomer, setFormData)}
                     formData={formData}
                   />
@@ -989,7 +989,7 @@ export default function ModalAddPartner(props: Record<string, unknown>) {
                   {bankAccountList &&
                     bankAccountList.length > 0 &&
                     bankAccountList.map((item, index) => (
-                      <div className="bank-account-item" key={index}>
+                      <div className="bank-account-item" key={item.id ?? index}>
                         <div className="form-accountNumber">
                           <NummericInput
                             label=""
@@ -1079,7 +1079,7 @@ export default function ModalAddPartner(props: Record<string, unknown>) {
                   {Object.entries(mapPartnerAttribute).map((lstCustomerAttribute: Record<string, unknown>, key: number) => (
                     <Fragment key={key}>
                       {(lstCustomerAttribute[1] || []).map((customerAttribute, index: number) => (
-                        <Fragment key={index}>
+                        <Fragment key={customerAttribute.name || index}>
                           {!customerAttribute.parentId ? (
                             <label className="label-title" key={`parent_${key}`}>
                               {customerAttribute.name}

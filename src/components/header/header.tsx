@@ -30,7 +30,6 @@ import "swiper/css/pagination";
 import Loading from "../loading";
 import NotificationService from "@/services/NotificationService";
 import { requestPermission } from "@/firebase-config";
-import ModalViewNoti from "@/pages/NotificationList/ModalViewNoti/ModalViewNoti";
 import CustomerService from "services/CustomerService";
 import ProductService from "services/ProductService";
 import InvoiceService from "services/InvoiceService";
@@ -233,8 +232,6 @@ function Header(props: HeaderProps) {
 
   const [detailNotification, setDetailNotification] = useState<INotificationItem>(null);
   const [showModalDetailNotification, setShowModalDetailNotification] = useState<boolean>(false);
-  const [isModalViewNoti, setIsModalViewNoti] = useState<boolean>(false);
-  const [dataNoti, setDataNoti] = useState<Record<string, unknown>>(null);
   const [isLoadingNotification, setIsLoadingNotification] = useState<boolean>(false);
   const [paramsNotification, setParamsNotification] = useState({
     per_page: 5,
@@ -604,19 +601,35 @@ function Header(props: HeaderProps) {
         navigate("/multi_channel_sales", { state: { tab: 2, orderRequestModalId: payload.orderId } });
         return;
       }
-      // Bug B.1: "Cảnh báo ngưỡng tồn kho" → màn Sản phẩm tồn kho
-      if (payload?.type === "INVENTORY_THRESHOLD_ALERT") {
-        navigate("/product_inventory", {
-          state: payload.productId ? { highlightProductId: payload.productId } : undefined,
-        });
-        return;
-      }
     }
 
-    // Fallback: mở modal hiển thị nội dung thông báo thay vì điều hướng tới
-    // route không tồn tại trong reborn-retail (gây 404).
-    setDataNoti(item as unknown as Record<string, unknown>);
-    setIsModalViewNoti(true);
+    if (item.targetLink) {
+      navigate(item.targetLink);
+      return;
+    }
+
+    if (item.payload && isJsonString(item.payload)) {
+      const payload = JSON.parse(item.payload);
+      switch (payload?.type) {
+        case "ORDER":
+        case "ORDER_REQUEST":
+          if (payload.orderId) navigate(`/orders/${payload.orderId}`);
+          break;
+        case "CAMPAIGN":
+          if (payload.campaignId) navigate(`/campaigns/${payload.campaignId}`);
+          break;
+        case "BID":
+          if (payload.packageId)
+            navigate("/bpm/bid_management", { state: { viewDetail: true, packageId: payload.packageId } });
+          break;
+        case "TASK":
+          if (payload.workId)
+            navigate("/bpm/task_assignment", { state: { viewDetail: true, workId: payload.workId } });
+          break;
+        default:
+          break;
+      }
+    }
   }, [navigate, onUnread]);
 
   const getNotificationIconName = (item: NotificationItem): string => {
@@ -697,7 +710,7 @@ function Header(props: HeaderProps) {
             ref={searchInputRef}
             className="gs-input"
             type="text"
-            placeholder="Tìm khách hàng, sản phẩm, đơn hàng..."
+            placeholder="Tìm thành viên, dịch vụ, đơn hàng..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             onFocus={() => { if (searchQuery.trim()) setSearchOpen(true); }}
@@ -921,7 +934,7 @@ function Header(props: HeaderProps) {
               <div className="notification__wrapper">
                 <ul>
                   {listNotification.list_noti.map((n, index) => (
-                    <li key={index} onClick={(e) => readNotification(e, n)} className={`notification-item${!n.is_read ? " unread" : ""}`}>
+                    <li key={n.id ?? index} onClick={(e) => readNotification(e, n)} className={`notification-item${!n.is_read ? " unread" : ""}`}>
                       {n.type === "order" ? (
                         <div className="notification-item__icon order">
                           <Icon name="Order" />
@@ -1084,14 +1097,6 @@ function Header(props: HeaderProps) {
         onShow={showModalChangeRole}
         onHide={() => setShowModalChangeRole(false)}
         data={localStorage.getItem("SelectedRole") || null}
-      />
-      <ModalViewNoti
-        onShow={isModalViewNoti}
-        data={dataNoti}
-        onHide={() => {
-          setIsModalViewNoti(false);
-          setDataNoti(null);
-        }}
       />
     </div>
   );

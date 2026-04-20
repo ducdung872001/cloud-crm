@@ -1,0 +1,165 @@
+// [CH] Community Hub - Quản lý dịch vụ styles
+.ch-service-mgmt {
+  padding: 2rem;
+
+  &__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 2rem;
+
+    h2 { font-size: 2rem; font-weight: 600; color: var(--ch-text, #1B2E2A); margin-bottom: 0.3rem; }
+    .subtitle { font-size: 1.3rem; color: var(--ch-text-muted, #6B8078); }
+    .btn-add {
+      display: flex; align-items: center; gap: 0.6rem;
+      padding: 1rem 2rem; background: var(--ch-primary, #2D6A5A); color: #fff;
+      border: none; border-radius: 0.8rem; font-size: 1.3rem; font-weight: 600;
+      cursor: pointer; white-space: nowrap;
+      svg { width: 1.6rem; height: 1.6rem; fill: currentColor; }
+      &:hover { opacity: 0.9; }
+    }
+  }
+
+  // ── Category tabs ──
+  &__categories {
+    display: flex; gap: 0.6rem; flex-wrap: wrap; margin-bottom: 2rem;
+
+    .cat-tab {
+      display: flex; align-items: center; gap: 0.5rem;
+      padding: 0.7rem 1.4rem; border: 1px solid #e0e0e0; background: #fff;
+      border-radius: 2rem; cursor: pointer; font-size: 1.2rem; color: var(--ch-text-muted, #6B8078);
+      transition: all 0.15s;
+
+      &.active { background: var(--ch-primary, #2D6A5A); color: #fff; border-color: var(--ch-primary, #2D6A5A); }
+      .cat-icon { font-size: 1.4rem; }
+      .count {
+        background: rgba(0,0,0,0.08); padding: 0.1rem 0.5rem; border-radius: 1rem; font-size: 1rem; font-weight: 600;
+      }
+      &.active .count { background: rgba(255,255,255,0.25); }
+    }
+  }
+
+  // ── Table ──
+  &__table {
+    background: var(--ch-surface, #fff); border-radius: 1.2rem;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.06); overflow: hidden;
+
+    table { width: 100%; border-collapse: collapse; }
+
+    th, td { padding: 1rem 1.4rem; text-align: left; font-size: 1.3rem; border-bottom: 1px solid #f3f3f3; }
+    th { font-weight: 600; color: var(--ch-text-muted, #6B8078); background: #fafaf8; font-size: 1.15rem; text-transform: uppercase; letter-spacing: 0.02em; }
+
+    .svc-name { font-weight: 600; color: var(--ch-text, #1B2E2A); margin-bottom: 0.2rem; }
+    .svc-desc { font-size: 1.15rem; color: var(--ch-text-muted, #6B8078); }
+
+    .cat-badge {
+      display: inline-flex; align-items: center; gap: 0.4rem;
+      padding: 0.2rem 0.8rem; background: #f0f0ec; border-radius: 0.4rem; font-size: 1.15rem;
+      .cat-badge-icon { font-size: 1.3rem; }
+    }
+
+    .free { color: var(--ch-success, #3D9E6A); font-weight: 500; }
+
+    .sell-badge {
+      padding: 0.2rem 0.6rem; border-radius: 0.4rem; font-size: 1.1rem; font-weight: 500;
+      &.yes { background: rgba(45,106,90,0.1); color: var(--ch-primary, #2D6A5A); }
+      &.no { background: #f5f5f5; color: var(--ch-text-muted, #6B8078); }
+    }
+
+    .status-dot {
+      display: inline-block; width: 0.7rem; height: 0.7rem; border-radius: 50%; margin-right: 0.5rem;
+      &.active { background: var(--ch-success, #3D9E6A); }
+      &.inactive { background: #ccc; }
+    }
+
+    .btn-action {
+      width: 3rem; height: 3rem; border: none; background: transparent; cursor: pointer;
+      border-radius: 0.4rem; color: var(--ch-text-muted, #6B8078);
+      svg { width: 1.4rem; height: 1.4rem; fill: currentColor; }
+      &:hover { background: #f5f5f5; }
+      &.toggle:hover { color: var(--ch-primary, #2D6A5A); }
+    }
+
+    .empty { padding: 4rem; text-align: center; color: var(--ch-text-muted, #6B8078); font-size: 1.3rem; }
+  }
+}
+
+// ── Modal Thêm / Sửa dịch vụ ──
+.svc-modal-overlay {
+  position: fixed; inset: 0; background: rgba(0,0,0,0.5);
+  display: flex; align-items: center; justify-content: center; z-index: 1000;
+}
+
+.svc-modal {
+  background: #fff; border-radius: 1.6rem; width: 44rem; max-width: 95vw; max-height: 90vh;
+  display: flex; flex-direction: column; box-shadow: 0 24px 64px rgba(0,0,0,0.18);
+
+  &__header {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 2rem 2.4rem; border-bottom: 1px solid #e8ebe9;
+    h3 { font-size: 1.7rem; font-weight: 700; margin: 0; color: var(--ch-text, #1B2E2A); }
+    .btn-close {
+      background: none; border: none; font-size: 2rem; cursor: pointer; color: #aaa;
+      width: 3.2rem; height: 3.2rem; border-radius: 0.6rem; display: flex; align-items: center; justify-content: center;
+      &:hover { background: #f5f5f5; color: #666; }
+    }
+  }
+
+  &__body {
+    padding: 2.4rem 2.4rem; overflow-y: auto; flex: 1;
+
+    .form-group {
+      margin-bottom: 1.8rem;
+
+      label {
+        display: block; font-size: 1.25rem; font-weight: 600; margin-bottom: 0.6rem;
+        color: var(--ch-text-muted, #6B8078); text-transform: uppercase; letter-spacing: 0.03em;
+        .req { color: var(--ch-danger, #D64B3A); text-transform: none; }
+      }
+
+      input, select, textarea {
+        width: 100%; padding: 1rem 1.2rem; border: 1px solid #e0e0e0; border-radius: 0.8rem;
+        font-size: 1.35rem; background: #fff; color: var(--ch-text, #1B2E2A);
+        transition: border-color 0.15s;
+        &:focus { outline: none; border-color: var(--ch-primary, #2D6A5A); box-shadow: 0 0 0 3px rgba(45,106,90,0.08); }
+        &::placeholder { color: #b0b0b0; }
+      }
+      select { cursor: pointer; appearance: auto; }
+      textarea { resize: vertical; min-height: 7rem; }
+    }
+
+    .form-row {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 1.6rem;
+      align-items: start;
+    }
+
+    .toggle-row {
+      margin-top: 0.6rem;
+      .toggle-label {
+        display: flex; align-items: center; gap: 1rem; cursor: pointer; font-size: 1.3rem;
+        padding: 0.8rem 1.2rem; border: 1px solid #e0e0e0; border-radius: 0.8rem;
+        transition: all 0.15s;
+        &:has(input:checked) { border-color: var(--ch-primary, #2D6A5A); background: rgba(45,106,90,0.04); }
+        input { accent-color: var(--ch-primary, #2D6A5A); width: 1.8rem; height: 1.8rem; flex-shrink: 0; }
+        span { line-height: 1.3; }
+      }
+    }
+  }
+
+  &__footer {
+    display: flex; justify-content: flex-end; gap: 1rem;
+    padding: 1.6rem 2.4rem; border-top: 1px solid #e8ebe9;
+
+    .btn-cancel {
+      padding: 1rem 2.4rem; border: 1px solid #ddd; background: #fff; border-radius: 0.8rem;
+      cursor: pointer; font-size: 1.3rem; font-weight: 500;
+      &:hover { background: #fafafa; }
+    }
+    .btn-save {
+      padding: 1rem 3rem; background: var(--ch-primary, #2D6A5A); color: #fff;
+      border: none; border-radius: 0.8rem; cursor: pointer; font-size: 1.3rem; font-weight: 600;
+      &:disabled { opacity: 0.4; cursor: not-allowed; }
+      &:not(:disabled):hover { background: #245a4c; }
+    }
+  }
+}

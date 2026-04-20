@@ -1,107 +1,73 @@
 %%{init: {'theme':'base', 'themeVariables': {'fontFamily':'Calibri'}}}%%
 flowchart TB
     subgraph CLIENT["💻 Client tier"]
-        POS[("POS Terminal<br/>+ Máy in nhiệt<br/>+ Scanner barcode")]
         WEB[("React SPA<br/>Browser")]
-        MOB[("Mobile<br/>Warehouse scanner")]
+        POS[("POS Terminal<br/>+ Máy in nhiệt<br/>+ Quét mã vạch<br/>+ Đầu đọc thẻ")]
     end
 
-    subgraph EDGE["🛡️ Edge"]
-        CDN[("CDN<br/>static assets")]
+    subgraph EDGE["🛡️ Edge / CDN"]
+        CDN[("CDN<br/>(static assets)")]
         WAF[("WAF<br/>+ Rate limit")]
-        GW[("API Gateway<br/>URL prefix routing")]
     end
 
-    subgraph APP["⚙️ Microservices (stateless)"]
-        SALES_S[("Sales / POS")]
-        INV_S[("Inventory")]
-        WH_S[("Warehouse")]
-        FIN_S[("Finance")]
-        PUR_S[("Purchase")]
-        LOG_S[("Logistics")]
-        CARE_S[("Customer Care")]
-        BILL_S[("Billing / VAT")]
-        MKT_S[("Marketing")]
-        NOTIF_S[("Notification")]
-        AUTH_S[("Auth / IAM")]
-        BPM_S[("BPM / Workflow")]
-        WORKER[("Workers<br/>jobs + cron")]
+    subgraph APP["⚙️ Application tier"]
+        LB[("Load Balancer")]
+        API1[("API Server #1<br/>(stateless)")]
+        API2[("API Server #2<br/>(stateless)")]
+        API3[("API Server #N<br/>(stateless)")]
+        WORKER[("Background<br/>Workers<br/>(jobs/cron)")]
     end
 
     subgraph DATA["💾 Data tier"]
         DB_M[("PostgreSQL<br/>Master")]
         DB_R[("Read Replicas")]
         REDIS[("Redis<br/>cache + queue")]
-        S3[("S3 Object<br/>Storage")]
-        ES[("Elasticsearch<br/>search + logs")]
+        S3[("S3 / Object<br/>Storage<br/>(files, ảnh)")]
     end
 
     subgraph EXT["🌐 External Services"]
         SSO_X[("SSO Reborn")]
-        VAT_X[("VNPT/MISA<br/>E-invoice")]
-        PAY_X[("VNPay/MoMo<br/>ZaloPay")]
-        SHIP_X[("GHN/GHTK<br/>J&T/VNPost")]
-        MKP_X[("Shopee/Lazada<br/>TikTok Shop")]
-        COMM_X[("SMS/Email<br/>Zalo/FB")]
+        VAT_X[("E-invoice")]
+        PAY_X[("Payment GW")]
+        SMS_X[("SMS / Email<br/>/ Zalo / FB")]
+        SHIP_X[("Shipping API")]
     end
 
     subgraph OBS["📊 Observability"]
-        LOG[("Loki<br/>logs")]
+        LOG[("ELK / Loki<br/>logs")]
         METRIC[("Prometheus<br/>+ Grafana")]
-        ALERT[("Alertmanager")]
+        ALERT[("Alertmanager<br/>→ Slack/Email")]
     end
 
-    POS --> CDN
     WEB --> CDN
-    MOB --> CDN
+    POS --> CDN
     CDN --> WAF
-    WAF --> GW
+    WAF --> LB
+    LB --> API1
+    LB --> API2
+    LB --> API3
 
-    GW --> SALES_S
-    GW --> INV_S
-    GW --> WH_S
-    GW --> FIN_S
-    GW --> PUR_S
-    GW --> LOG_S
-    GW --> CARE_S
-    GW --> BILL_S
-    GW --> MKT_S
-    GW --> NOTIF_S
-    GW --> AUTH_S
-    GW --> BPM_S
-
-    SALES_S --> DB_M
-    INV_S --> DB_M
-    WH_S --> DB_M
-    FIN_S --> DB_M
-    PUR_S --> DB_M
-    CARE_S --> DB_R
-    MKT_S --> DB_R
-    AUTH_S --> DB_R
-
-    SALES_S --> REDIS
-    INV_S --> REDIS
-    NOTIF_S --> REDIS
-    SALES_S --> ES
-    CARE_S --> ES
-    WH_S --> S3
-    BILL_S --> S3
+    API1 --> DB_M
+    API2 --> DB_R
+    API3 --> DB_R
+    API1 --> REDIS
+    API2 --> REDIS
+    API3 --> REDIS
+    API1 --> S3
 
     WORKER --> DB_M
     WORKER --> REDIS
-    WORKER --> NOTIF_S
+    WORKER --> SMS_X
 
-    AUTH_S <--> SSO_X
-    BILL_S --> VAT_X
-    SALES_S <--> PAY_X
-    LOG_S <--> SHIP_X
-    SALES_S <--> MKP_X
-    NOTIF_S --> COMM_X
+    API1 <--> SSO_X
+    API1 --> VAT_X
+    API1 <--> PAY_X
+    API1 --> SHIP_X
 
-    SALES_S --> LOG
-    INV_S --> LOG
-    FIN_S --> LOG
-    LOG --> METRIC
+    API1 --> LOG
+    API2 --> LOG
+    API3 --> LOG
+    API1 --> METRIC
     METRIC --> ALERT
 
     classDef client fill:#E1F5EE,stroke:#2C7A7B,color:#0F4C44
@@ -111,9 +77,9 @@ flowchart TB
     classDef ext fill:#E0E7FF,stroke:#6366F1,color:#3730A3
     classDef obs fill:#F3E8FF,stroke:#A855F7,color:#6B21A8
 
-    class POS,WEB,MOB client
-    class CDN,WAF,GW edge
-    class SALES_S,INV_S,WH_S,FIN_S,PUR_S,LOG_S,CARE_S,BILL_S,MKT_S,NOTIF_S,AUTH_S,BPM_S,WORKER app
-    class DB_M,DB_R,REDIS,S3,ES data
-    class SSO_X,VAT_X,PAY_X,SHIP_X,MKP_X,COMM_X ext
+    class WEB,POS client
+    class CDN,WAF edge
+    class LB,API1,API2,API3,WORKER app
+    class DB_M,DB_R,REDIS,S3 data
+    class SSO_X,VAT_X,PAY_X,SMS_X,SHIP_X ext
     class LOG,METRIC,ALERT obs

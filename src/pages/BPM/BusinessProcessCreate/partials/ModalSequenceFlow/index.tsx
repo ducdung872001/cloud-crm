@@ -295,7 +295,7 @@ export default function ModalSequenceFlow(props: Record<string, unknown>) {
 
     if (response.code === 0) {
       const dataOption = response.result?.items;
-      const listVar = [];
+      let listVar = [];
       dataOption &&
         dataOption.length > 0 &&
         dataOption.map((item) => {
@@ -344,7 +344,7 @@ export default function ModalSequenceFlow(props: Record<string, unknown>) {
 
     if (response.code === 0) {
       const dataOption = response.result?.filter((el) => el.code) || [];
-      const listForm = [];
+      let listForm = [];
       dataOption &&
         dataOption.length > 0 &&
         dataOption.map((item) => {
@@ -1073,7 +1073,7 @@ export default function ModalSequenceFlow(props: Record<string, unknown>) {
   const handlePushRuleChildrenBlock = (data, ids, idx, lstData) => {
     if (!data) return;
 
-    const mergeData = [];
+    let mergeData = [];
 
     const changeData = {
       ...data,
@@ -2084,7 +2084,7 @@ export default function ModalSequenceFlow(props: Record<string, unknown>) {
                                       item.rule.length > 0 &&
                                       item.rule.map((el, index) => {
                                         return (
-                                          <Fragment key={index}>
+                                          <Fragment key={el.id ?? index}>
                                             <div className="item__rule">
                                               <div className="lst__info--rule">
                                                 <div className="info-item" style={!el.fieldName ? { width: "100%" } : {}}>

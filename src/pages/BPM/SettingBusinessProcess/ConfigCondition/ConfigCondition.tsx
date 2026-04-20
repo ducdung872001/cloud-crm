@@ -1825,7 +1825,7 @@ export default function ConfigCondition(props: Record<string, unknown>) {
                                 })
                                 .map((ol, index) => {
                                   return (
-                                    <li key={index} className="item__field--drop" onClick={() => handlePushRule(ol, formData.rule)}>
+                                    <li key={ol.id ?? index} className="item__field--drop" onClick={() => handlePushRule(ol, formData.rule)}>
                                       {ol.name}
                                     </li>
                                   );
@@ -1882,7 +1882,7 @@ export default function ConfigCondition(props: Record<string, unknown>) {
                                       .map((ol, index) => {
                                         return (
                                           <li
-                                            key={index}
+                                            key={ol.id ?? index}
                                             className="item__field--drop"
                                             onClick={() => {
                                               if (formData.dataEform) {
@@ -2165,7 +2165,7 @@ export default function ConfigCondition(props: Record<string, unknown>) {
                                             ? item.listEformAttribute?.map((ol, index) => {
                                                 return (
                                                   <li
-                                                    key={index}
+                                                    key={ol.id ?? index}
                                                     className="item__field--drop"
                                                     onClick={() => {
                                                       if (item.dataEform) {
@@ -2189,7 +2189,7 @@ export default function ConfigCondition(props: Record<string, unknown>) {
                                       item.rule.length > 0 &&
                                       item.rule.map((el, index) => {
                                         return (
-                                          <Fragment key={index}>
+                                          <Fragment key={el.id ?? index}>
                                             <div className="item__rule">
                                               <div className="lst__info--rule">
                                                 <div className="info-item">

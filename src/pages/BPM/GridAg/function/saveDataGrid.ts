@@ -18,11 +18,11 @@ const defaultNote = {
 export const saveDataGrid = async (columnsConfig: Record<string, unknown>[], currentDataRow: Record<string, unknown>[], params, checkedMap): Promise<{ code; message } | undefined> => {
   try {
     // Your async logic here
-    const dataRow = currentDataRow.map((row) => {
+    let dataRow = currentDataRow.map((row) => {
       if (row.isFullWidthRow) {
         return row;
       } else {
-        const newRow = {}; // Tạo bản sao của row hiện tại
+        let newRow = {}; // Tạo bản sao của row hiện tại
         columnsConfig.forEach((col) => {
           // Bỏ giá trị nếu column không tồn tại trong row
           newRow[col.key] = row[col.key] !== undefined ? row[col.key] : null;

@@ -23,7 +23,7 @@ import Image from "components/image";
 import Loading from "components/loading";
 import Radio from "components/radio/radio";
 import Input from "components/input/input";
-import moment from "moment";
+import { format } from "date-fns";
 import NummericInput from "components/input/numericInput";
 import Checkbox from "components/checkbox/checkbox";
 import CustomScrollbar from "components/customScrollbar";
@@ -342,9 +342,7 @@ export default function AddEditSendEmail(props: ISendEmail) {
     [listIdCustomerProps, onShow, data, idSendEmail, customerIdList]
   );
 
-  const validations: IValidation[] = [
-    { name: "title", rules: "required|max:100" },
-  ];
+  const validations: IValidation[] = [];
 
   const [formData, setFormData] = useState<IFormData>({ values: values });
 
@@ -640,7 +638,12 @@ export default function AddEditSendEmail(props: ISendEmail) {
   const isTimeAtBeforeNow = useMemo(() => {
     try {
       if (!formData?.values?.timeAt || formData?.values?.timeType !== "2") return false;
-      return moment(formData.values.timeAt).isSameOrBefore(moment(), 'minute');  // Kiểm tra đến phút
+      const timeAtDate = new Date(formData.values.timeAt);
+      const now = new Date();
+      // Truncate to minute precision for comparison
+      timeAtDate.setSeconds(0, 0);
+      now.setSeconds(0, 0);
+      return timeAtDate.getTime() <= now.getTime();  // Kiểm tra đến phút
     } catch (e) {
       return false;
     }
@@ -681,7 +684,7 @@ export default function AddEditSendEmail(props: ISendEmail) {
                 hasSelectTime: true,
                 placeholder: "Chọn thời gian gửi mong muốn",
                 isMinDate: true,
-                minDate: moment().toDate(),
+                minDate: new Date(),
                 isWarning: isTimeAtBeforeNow,
                 messageWarning: "Thời gian gửi phải lớn hơn thời gian hiện tại",
               },
@@ -1305,10 +1308,12 @@ export default function AddEditSendEmail(props: ISendEmail) {
     }
 
     if (formData?.values?.timeType === "2" && formData?.values?.timeAt) {
-      const timeAtMoment = moment(formData.values.timeAt);
-      const now = moment();
-      
-      if (timeAtMoment.isSameOrBefore(now, 'minute')) {
+      const timeAtDate = new Date(formData.values.timeAt);
+      const now = new Date();
+      timeAtDate.setSeconds(0, 0);
+      now.setSeconds(0, 0);
+
+      if (timeAtDate.getTime() <= now.getTime()) {
         const newErrors = { 
           ...(formData.errors || {}), 
           timeAt: "Thời gian gửi phải lớn hơn thời gian hiện tại" 
@@ -1330,7 +1335,7 @@ export default function AddEditSendEmail(props: ISendEmail) {
     const body: ISendEmailRequestModel = {
       ...(result as ISendEmailRequestModel),
       ...(data ? { id: data?.id } : {}),
-      timeAt: moment(newFormData.timeAt).format("YYYY-MM-DD HH:mm:ss"),
+      timeAt: newFormData.timeAt ? format(new Date(newFormData.timeAt), "yyyy-MM-dd HH:mm:ss") : "",
     };
 
     const response = await SendEmailService.sendEmail(body);
@@ -1992,7 +1997,7 @@ export default function AddEditSendEmail(props: ISendEmail) {
                           {listFieldSetupEmail.map((field, index) => (
                             <FieldCustomize
                               field={field}
-                              key={index}
+                              key={field.name || index}
                               handleUpdate={(value) => handleChangeValidate(value, field, formData, validations, listFieldSetupEmail, setFormData)}
                               formData={formData}
                             />

@@ -148,17 +148,17 @@ export async function exportOlaExcel(listColumns: Record<string, unknown>[], dat
 
   // Gán dữ liệu từ dataRow vào các dòng từ row 4 trở đi
   for (let i = 0; i < dataRow.length; i++) {
-    const rowData = dataRow[i];
-    const excelRow = worksheet.getRow(i + 4);
+    let rowData = dataRow[i];
+    let excelRow = worksheet.getRow(i + 4);
 
     let currentCol = 1;
     colMap.forEach((col) => {
       if (col.children && col.children.length > 0) {
         // Nếu là các column có children
 
-        const cellData = rowData[col.key] || {};
+        let cellData = rowData[col.key] || {};
         col.children.forEach((child, idx) => {
-          const value = cellData[child.key] ?? cellData[child.name] ?? "";
+          let value = cellData[child.key] ?? cellData[child.name] ?? "";
           excelRow.getCell(currentCol + idx).value = value;
         });
         currentCol += col.colSpan;

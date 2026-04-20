@@ -8,6 +8,7 @@ import { IWarrantyCategoryFilterRequest } from "model/warrantyCategory/WarrantyC
 import Icon from "components/icon";
 import { formatDateCustom } from "utils/dateUtils";
 
+import SelectCustom from "components/selectCustom/selectCustom";
 import Dialog, { IContentDialog } from "components/dialog/dialog";
 import Modal, { ModalBody, ModalFooter, ModalHeader } from "components/modal/modal";
 import FieldCustomize from "components/fieldCustomize/fieldCustomize";
@@ -39,14 +40,36 @@ export default function AddWarrantyModal(props: IAddWarrantyModelProps) {
   const [listCustomer, setListCustomer] = useState<IOption[]>(null);
   const [isLoadingCustomer, setIsLoadingCustomer] = useState<boolean>(false);
 
-  const [listDepartment] = useState<IOption[]>(null);
-  const [isLoadingDepartment] = useState<boolean>(false);
+  const [listDepartment, setListDepartment] = useState<IOption[]>(null);
+  const [isLoadingDepartment, setIsLoadingDepartment] = useState<boolean>(false);
 
   const [listService, setListService] = useState<IOption[]>(null);
   const [isLoadingService, setIsLoadingService] = useState<boolean>(false);
 
   const [listImageWarranty, setListImageWarranty] = useState([]);
 
+  // Chọn phòng ban tiếp nhận
+  const onSelectOpenDepartment = async () => {
+    if (!listDepartment || listDepartment.length === 0) {
+      setIsLoadingDepartment(true);
+      const dataOption = await SelectOptionData("departmentId");
+      if (dataOption) {
+        setListDepartment([...(dataOption.length > 0 ? dataOption : [])]);
+      }
+      setIsLoadingDepartment(false);
+    }
+  };
+
+  // useEffect(() => {
+  let isMounted = true;
+  //   if (data?.departmentId) {
+  //     onSelectOpenDepartment();
+  //   }
+
+  //   if (data?.departmentId === null) {
+  //     setListDepartment([]);
+  //   }
+  // }, [data]);
 
   // Chọn lý do bảo hành
   const onSelectOpenReason = async () => {
@@ -82,7 +105,7 @@ export default function AddWarrantyModal(props: IAddWarrantyModelProps) {
     if (data?.reasonId === null) {
       setListReason([]);
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+  return () => { isMounted = false; };
   }, [data]);
 
   // Chọn khách hàng cần bảo hành
@@ -105,7 +128,6 @@ export default function AddWarrantyModal(props: IAddWarrantyModelProps) {
     if (data?.customerId === null) {
       setListCustomer([]);
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [data, idCustomer]);
 
   // Chọn dịch vụ được bảo hành
@@ -128,7 +150,6 @@ export default function AddWarrantyModal(props: IAddWarrantyModelProps) {
     if (data?.serviceId === null) {
       setListService([]);
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [data]);
 
   const values = useMemo(
@@ -146,7 +167,6 @@ export default function AddWarrantyModal(props: IAddWarrantyModelProps) {
       note: data?.note ?? "",
       statusId: data?.statusId ?? null,
     } as IWarrantyRequestModel),
-    // eslint-disable-next-line react-hooks/exhaustive-deps
     [onShow, data]
   );
 
@@ -170,14 +190,6 @@ export default function AddWarrantyModal(props: IAddWarrantyModelProps) {
     {
       name: "serviceId",
       rules: "required",
-    },
-    {
-      name: "solution",
-      rules: "nullable|max:500",
-    },
-    {
-      name: "note",
-      rules: "nullable|max:500",
     },
   ];
 
@@ -220,13 +232,11 @@ export default function AddWarrantyModal(props: IAddWarrantyModelProps) {
           isLoading: isLoadingReason,
         },
       ] as IFieldCustomize[],
-    // eslint-disable-next-line react-hooks/exhaustive-deps
     [listReason, isLoadingReason, listCustomer, isLoadingCustomer, listService, isLoadingService]
   );
 
   const [changeValueExecutor, setChangeValueExecutor] = useState(null);
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const loadedOptionExecutor = async (search, loadedOptions, { page }) => {
     const param: IEmployeeFilterRequest = {
       name: search,
@@ -262,7 +272,6 @@ export default function AddWarrantyModal(props: IAddWarrantyModelProps) {
     return { options: [], hasMore: false };
   };
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const formatOptionLabelExecutor = ({ label, avatar }) => {
     return (
       <div className="selected--item">
@@ -275,7 +284,6 @@ export default function AddWarrantyModal(props: IAddWarrantyModelProps) {
   };
 
   // change value executor
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const handleChangeValueExecutor = (e) => {
     setChangeValueExecutor(e);
 
@@ -348,17 +356,14 @@ export default function AddWarrantyModal(props: IAddWarrantyModelProps) {
           name: "solution",
           type: "textarea",
           fill: true,
-          maxLength: 500,
         },
         {
           label: "Ghi chú",
           name: "note",
           type: "textarea",
           fill: true,
-          maxLength: 500,
         },
       ] as IFieldCustomize[],
-    // eslint-disable-next-line react-hooks/exhaustive-deps
     [listDepartment, isLoadingDepartment, formData?.values, changeValueExecutor]
   );
 
@@ -374,7 +379,6 @@ export default function AddWarrantyModal(props: IAddWarrantyModelProps) {
     return () => {
       setIsSubmit(false);
     };
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [values]);
 
   const onSubmit = async (e) => {
@@ -404,7 +408,7 @@ export default function AddWarrantyModal(props: IAddWarrantyModelProps) {
       onHide(true);
       setChangeValueExecutor(null);
     } else {
-      showToast(response.message ?? response.error ?? "Có lỗi xảy ra. Vui lòng thử lại sau", "error");
+      showToast(response.message ?? "Có lỗi xảy ra. Vui lòng thử lại sau", "error");
       setIsSubmit(false);
     }
   };
@@ -432,7 +436,6 @@ export default function AddWarrantyModal(props: IAddWarrantyModelProps) {
         ],
       },
     }),
-    // eslint-disable-next-line react-hooks/exhaustive-deps
     [formData, values, isSubmit]
   );
 
@@ -474,7 +477,6 @@ export default function AddWarrantyModal(props: IAddWarrantyModelProps) {
         }
       }
     },
-    // eslint-disable-next-line react-hooks/exhaustive-deps
     [formData]
   );
 
@@ -505,7 +507,6 @@ export default function AddWarrantyModal(props: IAddWarrantyModelProps) {
     }
   };
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const showImage = (url, filekey) => {
     setListImageWarranty([...listImageWarranty, url]);
   };
@@ -527,7 +528,6 @@ export default function AddWarrantyModal(props: IAddWarrantyModelProps) {
       };
     });
     setFormData({ ...formData, values: { ...formData.values, docLink: JSON.stringify(merge) } });
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [listImageWarranty]);
 
   const handleRemoveImageItem = (idx) => {
@@ -554,7 +554,7 @@ export default function AddWarrantyModal(props: IAddWarrantyModelProps) {
                 <div className="list-field">
                   {listFieldWarrantyService.map((field, index) => (
                     <FieldCustomize
-                      key={index}
+                      key={field.name || index}
                       field={field}
                       handleUpdate={(value) => handleChangeValidate(value, field, formData, validations, listFieldWarrantyService, setFormData)}
                       formData={formData}
@@ -601,7 +601,7 @@ export default function AddWarrantyModal(props: IAddWarrantyModelProps) {
               <div className="wrapper-field-reception-department">
                 {listFieldReceptionDepartment.map((field, index) => (
                   <FieldCustomize
-                    key={index}
+                    key={field.name || index}
                     field={field}
                     handleUpdate={(value) => handleChangeValidate(value, field, formData, validations, listFieldReceptionDepartment, setFormData)}
                     formData={formData}

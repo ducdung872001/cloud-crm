@@ -191,7 +191,7 @@ export default function HistoryModal(props: Record<string, unknown>) {
     ]
     
 
-    const titlesCall = ["STT", "Ảnh khách hàng", "Tên khách hàng", "Điện thoại", "Cuộc gọi", "Nhân viên chăm sóc", "Thời gian cuộc gọi"];
+    const titlesCall = ["STT", "Ảnh thành viên", "Tên thành viên", "Điện thoại", "Cuộc gọi", "Nhân viên chăm sóc", "Thời gian cuộc gọi"];
     const dataFormatCall = ["text-center", "text-center", "", "text-center", "text-center", "", "text-center"];
 
     const dataMappingArray = (item: Record<string, unknown>, index: number) => [

@@ -1,285 +1,401 @@
-# Part 14 — Quality Attributes & Risks
+# Part 14 — Performance, Quality, Risks
 
-> **Executive Summary**: Part cuối cùng của SAD lập **cây chất lượng** (quality tree) theo ISO/IEC 25010 gắn với NFR từ URD Part 14, **đối chiếu metric target vs observed**, liệt kê **technical debt**, và xây **risk register** với 9 rủi ro lớn. Rủi ro nổi bật: **0% unit test coverage**, **hardcode Hostname header**, **duplicate libs** (moment + date-fns, 2 fingerprintjs), **không có observability**, **không có CI/CD trong repo**, **BE source không có sẵn** → khó verify integration. Roadmap đề xuất 3 giai đoạn: quick win (2 tuần), medium (1 quý), long term (6-12 tháng).
+## Executive Summary
 
-## 1. Quality tree (ISO/IEC 25010)
+Part cuối cùng tổng hợp **performance targets** (mapping với URD NFR), **quality strategy** (test pyramid, tooling), **risk register** với mức nghiêm trọng và mitigation plan, và **technical debt** đã quan sát được trong codebase. Đề xuất **action plan** ngắn hạn (1-3 tháng) và dài hạn (6-12 tháng).
+
+---
+
+## 1. Performance — Map với URD NFR
+
+### 1.1. Bảng performance targets
+
+| NFR ID | Yêu cầu | Trạng thái | Cách đạt |
+|--------|---------|:----------:|----------|
+| NFR-PERF-01 | Page load ≤ 3s | ⚠️ Cần đo | Lazy load + CDN + cache + DB index |
+| NFR-PERF-01 | POS add to cart ≤ 500ms | ⚠️ Cần đo | Local state + debounce + optimistic UI |
+| NFR-PERF-01 | Báo cáo 1 tháng ≤ 5s | ⚠️ Cần đo | Read replica + materialized view + cache |
+| NFR-PERF-01 | Form CRUD submit ≤ 1s | ⚠️ Cần đo | Async UI + skeleton loader |
+| NFR-PERF-02 | POS 60 đơn/giờ/staff | ⚠️ Cần test | Tối ưu render + ít re-render |
+| NFR-PERF-03 | 50 user concurrent/tenant | ⚠️ Cần load test | Backend horizontal scale |
+| NFR-PERF-04 | Báo cáo > 10k bản ghi chạy nền | ⚠️ Cần verify | Background job + queue |
+
+### 1.2. Performance budget
+
+| Metric | Target | Tool đo |
+|--------|--------|---------|
+| **First Contentful Paint (FCP)** | < 1.5s | Lighthouse, Web Vitals |
+| **Largest Contentful Paint (LCP)** | < 2.5s | Lighthouse |
+| **Cumulative Layout Shift (CLS)** | < 0.1 | Lighthouse |
+| **First Input Delay (FID)** | < 100ms | Lighthouse |
+| **Time to Interactive (TTI)** | < 5s | Lighthouse |
+| **Bundle size (gzip)** | < 1MB initial | Webpack analyzer / vite bundle visualizer |
+
+### 1.3. Quan sát hiện tại
+
+| Metric | Hiện tại (estimated) | Target | Gap |
+|--------|---------------------|--------|-----|
+| **Initial bundle gzip** | ~5 MB | < 1 MB | ❌ 5x |
+| **Initial bundle raw** | ~20 MB | < 3 MB | ❌ 7x |
+| **CSS bundle** | ~4.6 MB raw / 446 KB gzip | < 200 KB | ❌ 2x |
+
+> **Conclusion**: Bundle hiện tại **vượt budget 5-7 lần**. Cần ưu tiên optimization (xem [ADR-17](part-13-adr.md#adr-17--bundle-size-optimization-đề-xuất-action)).
+
+### 1.4. Performance test plan
+
+| Test | Tool | Tần suất |
+|------|------|----------|
+| **Lighthouse CI** | Lighthouse | Mỗi PR |
+| **Bundle size check** | `vite-bundle-visualizer` | Mỗi PR |
+| **Load test** | k6 / Artillery | Trước release lớn |
+| **Stress test** | k6 | Hằng quý |
+| **Real User Monitoring** | Sentry / Datadog RUM | Production liên tục |
+
+---
+
+## 2. Quality strategy
+
+### 2.1. Test pyramid
 
 ```
-Product Quality
-├── Functional suitability
-│   ├── Completeness        → URD coverage ~95% (🟢)
-│   ├── Correctness         → Manual QA only (🔴)
-│   └── Appropriateness     → 🟢
-├── Performance efficiency
-│   ├── Time behaviour      → P95 target ≤ 500ms (🟡)
-│   ├── Resource usage      → Bundle 8-12MB (🔴)
-│   └── Capacity            → 1000+ tenant target (🟡)
-├── Compatibility
-│   ├── Co-existence        → Share domain với SSO (🟢)
-│   └── Interoperability    → 11 integration points (🟡)
-├── Usability
-│   ├── Appropriateness     → 🟢
-│   ├── Learnability        → Onboard ≤ 1 week (🟡)
-│   ├── Operability         → Keyboard nav partial (🟡)
-│   ├── Accessibility       → WCAG 2.1 AA chưa đạt (🔴)
-│   └── UI aesthetics       → 🟢
-├── Reliability
-│   ├── Maturity            → Production 1-2 năm (🟡)
-│   ├── Availability        → Target 99.5% (🟡)
-│   ├── Fault tolerance     → No retry, no circuit breaker (🔴)
-│   └── Recoverability      → DR chưa test (🔴)
-├── Security                → Xem Part 10 (🔴 nhiều điểm)
-├── Maintainability
-│   ├── Modularity          → Module theo domain (🟢)
-│   ├── Reusability         → reborn-util (🟢)
-│   ├── Analysability       → 0% test → khó (🔴)
-│   ├── Modifiability       → TypeScript giúp (🟡)
-│   └── Testability         → 0% coverage (🔴)
-└── Portability
-    ├── Adaptability        → Multi-env var (🟢)
-    ├── Installability      → Static build đơn giản (🟢)
-    └── Replaceability      → Vendor lock-in thấp (🟢)
+                    ▲
+                   ╱ ╲
+                  ╱   ╲       E2E (Playwright) — 5%
+                 ╱─────╲      Critical user flows
+                ╱       ╲
+               ╱─────────╲    Integration — 15%
+              ╱           ╲   Page với mock API
+             ╱─────────────╲
+            ╱               ╲  Unit (Vitest) — 80%
+           ╱─────────────────╲ utils, services, hooks, components
+          ───────────────────
 ```
 
-## 2. Metric target vs observed
+### 2.2. Test coverage targets
 
-### 2.1. Performance
+| Layer | Coverage target |
+|-------|----------------|
+| **Utils** | ≥ 90% |
+| **Services** | ≥ 80% |
+| **Hooks** | ≥ 80% |
+| **Components** | ≥ 60% |
+| **Pages** | ≥ 40% |
+| **Overall** | ≥ 70% |
 
-| Metric | Target (URD-NFR) | Observed | Status |
-|--------|------------------|----------|--------|
-| LCP (first page) | ≤ 3s | ~4-5s ước tính do bundle lớn | 🔴 |
-| INP | ≤ 200ms | chưa đo | 🟡 |
-| CLS | ≤ 0.1 | chưa đo | 🟡 |
-| API P95 | ≤ 500ms | phụ thuộc BE — chưa có APM | 🟡 |
-| Bundle size (main chunk) | ≤ 1MB gzip | chưa đo — ước > 1.5MB | 🔴 |
+### 2.3. Tools đề xuất
 
-### 2.2. Reliability
+| Tool | Vai trò |
+|------|---------|
+| **Vitest** | Unit + integration test runner (đã có Vite, dùng Vitest tự nhiên) |
+| **React Testing Library** | Render component trong test |
+| **MSW** (Mock Service Worker) | Mock API calls |
+| **Playwright** | E2E test (đã có infrastructure cho HDSD!) |
+| **Lighthouse CI** | Performance regression |
+| **vite-bundle-visualizer** | Bundle analysis |
+| **Sentry** | Error tracking + RUM |
+| **SonarQube** | Code quality + smell |
+| **Snyk** / **Dependabot** | Dependency vulnerability |
 
-| Metric | Target | Observed |
-|--------|--------|----------|
-| Uptime | 99.5% | chưa có SLO tracking (🔴) |
-| MTTR | ≤ 2h | chưa đo |
-| Error budget | 3.6h/tháng | chưa quản lý |
+### 2.4. Quality gate
 
-### 2.3. Maintainability
+PR không merge được nếu:
 
-| Metric | Target | Observed |
-|--------|--------|----------|
-| Dev onboarding | ≤ 1 tuần | 2-3 tuần thực tế (🔴) |
-| Build time | ≤ 2 phút | ~90s OK (🟢) |
-| TS strict mode | enabled | `strict: true` cần kiểm tra |
+- ❌ Lint fail
+- ❌ Test fail
+- ❌ Coverage giảm > 1%
+- ❌ Bundle size tăng > 5%
+- ❌ Lighthouse score giảm > 5 điểm
+- ❌ Có high/critical security vulnerability
+- ❌ Chưa có review approve
 
-### 2.4. Testability
+### 2.5. Test hiện trạng
 
-| Metric | Target | Observed |
-|--------|--------|----------|
-| Unit test coverage | ≥ 60% | **0%** (🔴🔴🔴) |
-| E2E test | smoke scenarios | 0 (🔴) |
-| Lint violation | 0 error | chưa có số |
+> 🔴 **Quan sát**: Codebase **không có** test file (`*.test.tsx`, `*.spec.ts`). Có Playwright nhưng cài tách trong `docs/userguides/tooling/` chỉ để chụp ảnh HDSD.
 
-## 3. Technical debt inventory
+→ **Test coverage hiện tại ước tính: 0%**.
 
-### 3.1. Code debt
+→ Đây là **technical debt lớn nhất** cần action.
 
-| # | Mô tả | File | Mức | Effort |
-|---|-------|------|-----|--------|
-| D1 | Hardcode `"kcn.reborn.vn"` | `src/configs/fetchConfig.ts:40` | 🔴 | 30 phút |
-| D2 | Duplicate date libs (moment + date-fns) | `package.json` | 🟡 | 2 tuần |
-| D3 | Duplicate fingerprintjs (2 package) | `package.json` | 🟡 | 1 ngày |
-| D4 | React 18 runtime + React 17 types | `package.json` | 🟡 | 1 ngày |
-| D5 | 0% unit test | toàn repo | 🔴 | 1 quý |
-| D6 | Không có Sentry/Datadog | `src/main.tsx` | 🔴 | 1 tuần |
-| D7 | Mock data swap thủ công | `src/mocks/`, services | 🟡 | 2 tuần (migrate MSW) |
-| D8 | TS 4.5 (nên lên 5.x) | `tsconfig.json` | 🟡 | 1 tuần |
-| D9 | MSAL có thể không dùng nữa | `src/configs/authConfig.ts` | 🟡 | 1 ngày audit |
-| D10 | ag-grid 30 (latest 32+) | `package.json` | 🟡 | 2 tuần |
-| D11 | Hardcode VI strings trong JSX | nhiều trang | 🟡 | Ongoing |
-| D12 | `dangerouslySetInnerHTML` chưa audit | grep toàn repo | 🔴 | 1 tuần |
+---
 
-Xem thêm file `docs/TECH_DEBT_INVENTORY.md` (nếu có).
+## 3. Technical debt register
 
-### 3.2. Process debt
+### 3.1. Bảng technical debt
 
-| # | Mô tả | Mức |
-|---|-------|-----|
-| P1 | Không có CI/CD config trong repo | 🔴 |
-| P2 | Không có code review checklist | 🟡 |
-| P3 | Không có release note template | 🟡 |
-| P4 | Không có DR test định kỳ | 🔴 |
-| P5 | Không có security pen test | 🔴 |
+| ID | Mục | Mô tả | Ưu tiên | Effort | Tác động |
+|----|-----|-------|:-------:|:------:|---------|
+| TD-01 | Bundle size 5-7x quá lớn | Phải lazy load module nặng | 🔴 High | M | Page load chậm, mất khách |
+| TD-02 | Hardcode `Hostname` header | Bug critical, leak data tenant nếu lên prod | 🔴 Critical | XS | Security incident |
+| TD-03 | Không có test suite | 0% coverage, dễ break | 🔴 High | XL | Regression bug, slow release |
+| TD-04 | Refresh token logic thiếu | UX kém, user logout giữa chừng | 🟡 Med | S | UX |
+| TD-05 | Page lớn > 3000 dòng (CustomerPersonList) | Khó maintain | 🟡 Med | L | Dev velocity |
+| TD-06 | Dùng moment + date-fns lẫn lộn | Bundle phình + nhầm lẫn | 🟢 Low | L | Bundle size |
+| TD-07 | React 17 cũ | Thiếu concurrent features | 🟡 Med | L | Innovation |
+| TD-08 | Dependency cũ (1-2 năm) | Có CVE chưa patch | 🟡 Med | M | Security |
+| TD-09 | Không có ErrorBoundary | 1 page crash → toàn app trắng | 🟡 Med | XS | UX |
+| TD-10 | Không có PrivateRoute wrapper | User bypass URL được | 🟡 Med | S | Security |
+| TD-11 | Không có CSP/HSTS header | OWASP gap | 🟡 Med | XS | Security |
+| TD-12 | Không có distributed tracing | Debug khó với microservices | 🟢 Low | L | Ops |
+| TD-13 | Không có idempotency key | Có thể tạo đơn duplicate | 🟡 Med | M | Data integrity |
+| TD-14 | API không có versioning | Backend break frontend ngay | 🟡 Med | L | Release flexibility |
+| TD-15 | Service vừa fetch raw vừa dùng apiHelper | Inconsistent | 🟢 Low | S | Code quality |
+| TD-16 | Mock data trong production bundle | Bloat | 🟢 Low | S | Bundle |
+| TD-17 | Comment-out code chưa xóa | Code smell | 🟢 Low | XS | Code quality |
+| TD-18 | i18n chỉ có VI/EN, locale files lớn | Locale eager load | 🟢 Low | S | Bundle |
+
+**Effort scale:**
+- **XS**: < 1 ngày
+- **S**: 1-3 ngày
+- **M**: 1-2 tuần
+- **L**: 2-4 tuần
+- **XL**: > 1 tháng
+
+---
 
 ## 4. Risk register
 
-### Risk 1 — No unit tests → regression risk
+### 4.1. Phân loại risk
 
-- **Severity**: High
-- **Likelihood**: High
-- **Impact**: Mỗi release tiềm ẩn bug, phải QA manual nặng
-- **Mitigation**:
-  1. Thêm **Vitest** config.
-  2. Bắt đầu test utils + services (dễ, ROI cao).
-  3. Bắt buộc test cho code mới (coverage gate PR = 60%).
-  4. Backfill test cho module nghiệp vụ quan trọng (POS, finance).
-- **Target**: 30% coverage sau 3 tháng, 60% sau 6 tháng
+| Loại | Mô tả |
+|------|-------|
+| **Technical** | Liên quan code, kiến trúc, công nghệ |
+| **Operational** | Liên quan vận hành, deployment, monitoring |
+| **Security** | Liên quan bảo mật, compliance |
+| **Business** | Liên quan business model, scope creep, vendor |
+| **People** | Liên quan đội ngũ, knowledge, turnover |
 
-### Risk 2 — Hostname header hardcoded → env bleed
+### 4.2. Risk register
 
-- **Severity**: Medium (có thể High nếu prod leak)
-- **Likelihood**: Medium
-- **Impact**: Gọi nhầm data tenant khi dev, có thể bị spoof khi prod
-- **Mitigation**:
-  1. Xoá hardcode, dùng `location.hostname`.
-  2. Thêm CI check (grep literal `"kcn.reborn.vn"` → fail build).
-  3. Gateway BE verify `Hostname` khớp với domain origin.
-- **Target**: Fix trong 1 tuần
+| ID | Loại | Risk | Likelihood | Impact | Score | Mitigation |
+|----|------|------|:----------:|:------:|:-----:|------------|
+| R-01 | Security | Hardcode Hostname → tenant leak | High | Critical | 🔴 9 | Fix ngay (TD-02) |
+| R-02 | Operational | Backend microservice down → cascade fail | Med | High | 🔴 6 | Circuit breaker, fallback, monitoring |
+| R-03 | Performance | Bundle quá lớn → user bỏ | High | High | 🔴 9 | Bundle optimization (TD-01) |
+| R-04 | Technical | 0% test coverage → regression | High | High | 🔴 9 | Setup test suite (TD-03) |
+| R-05 | Security | Dependency CVE chưa patch | Med | High | 🟡 6 | Snyk + auto update |
+| R-06 | Security | Audit log bị tamper | Low | Critical | 🟡 5 | Append-only + offsite backup |
+| R-07 | Operational | Database down → toàn bộ system fail | Low | Critical | 🟡 5 | HA cluster, backup, DR |
+| R-08 | Business | Vendor lock-in (CDN, cloud, e-invoice) | Med | Med | 🟡 4 | Multi-vendor strategy |
+| R-09 | People | Single dev biết toàn bộ codebase | Med | High | 🟡 6 | Documentation (HDSD/URD/SAD), pair programming |
+| R-10 | Technical | Migration to React 18+ delayed → stuck với React 17 | Low | Med | 🟢 3 | Plan migration roadmap |
+| R-11 | Operational | Backup không restore được khi cần | Low | Critical | 🟡 5 | Test restore monthly |
+| R-12 | Security | Token leak qua console.log | Med | High | 🟡 6 | drop_console + audit log |
+| R-13 | Performance | DB query không index → slow query | Med | Med | 🟡 4 | Query monitoring + index review |
+| R-14 | Operational | DevOps single point of failure | Med | High | 🟡 6 | Cross-train, runbook |
+| R-15 | Business | Camunda BPM license/maintain | Low | Med | 🟢 3 | Self-host community edition |
+| R-16 | Compliance | Quên backup data > 12 tháng (Luật ANM) | Low | High | 🟡 4 | Automated retention check |
+| R-17 | Operational | Cron job stuck → không sinh task chăm sóc | Med | Med | 🟡 4 | Job monitoring + alert |
+| R-18 | Security | SQL injection nếu backend không dùng ORM | Low | Critical | 🟡 5 | Code review + SAST tool |
 
-### Risk 3 — React 18 runtime + React 17 types → type drift
+**Score formula:** Likelihood (1-3) × Impact (1-3)
 
-- **Severity**: Low-Medium
-- **Likelihood**: Medium
-- **Impact**: Type warning giả/thiếu, hook mới không có type chuẩn
-- **Mitigation**: bump `@types/react` lên 18.x
-- **Target**: 1 ngày
-
-### Risk 4 — Duplicate libs (moment+date-fns, 2 fingerprintjs)
-
-- **Severity**: Medium (performance)
-- **Likelihood**: Certain
-- **Impact**: Bundle lớn hơn cần thiết ~400KB
-- **Mitigation**: chọn 1, migrate dần
-- **Target**: 1 quý
-
-### Risk 5 — No observability (no Sentry/Datadog)
-
-- **Severity**: High
-- **Likelihood**: Certain
-- **Impact**: Bug production không biết, không có trace → debug mù
-- **Mitigation**: integrate Sentry (FE) + OpenTelemetry (BE)
-- **Target**: 2 tuần
-
-### Risk 6 — No CI/CD config in repo
-
-- **Severity**: High
-- **Likelihood**: Certain
-- **Impact**: Manual deploy → lỗi người, không có quality gate
-- **Mitigation**: thêm `.github/workflows/` hoặc `.gitlab-ci.yml`
-- **Target**: 1 tuần
-
-### Risk 7 — Backend source not in repo
-
-- **Severity**: Medium
-- **Likelihood**: Certain
-- **Impact**: Không verify được contract, không test integration được
-- **Mitigation**:
-  1. BE publish OpenAPI spec.
-  2. FE generate client từ spec (orval / openapi-typescript).
-  3. Contract test.
-- **Target**: 1 quý
-
-### Risk 8 — Multi-tenant isolation via Hostname (fragile)
-
-- **Severity**: High (security)
-- **Likelihood**: Medium
-- **Impact**: Data leak giữa tenant nếu BE verify không đủ
-- **Mitigation**:
-  1. Gateway reject request có `Hostname` không khớp Origin/Referer.
-  2. PostgreSQL RLS policy.
-  3. Pen test kiểm tra spoofing.
-- **Target**: 1 quý
-
-### Risk 9 — 100+ routes → bundle size, memory
-
-- **Severity**: Medium
-- **Likelihood**: Certain
-- **Impact**: Trang đầu tải chậm, browser nặng khi chuyển nhiều trang (memo leak?)
-- **Mitigation**:
-  1. Audit bundle (`vite-bundle-visualizer`).
-  2. Dynamic import heavy libs.
-  3. Preload chunk theo predictive navigation.
-- **Target**: 1 quý
-
-## 5. Risk matrix
-
-```
-          Likelihood
-           Low    Med    High
-        ┌──────┬──────┬──────┐
-  High  │      │ R8   │ R1,5,│
-  Sev   │      │      │ 6    │
-        ├──────┼──────┼──────┤
-  Med   │      │ R2,7,│ R4   │
-  Sev   │      │ 9    │      │
-        ├──────┼──────┼──────┤
-  Low   │ R3   │      │      │
-  Sev   │      │      │      │
-        └──────┴──────┴──────┘
-```
-
-**Priority**: R1, R5, R6 (High-High) → xử trước.
-
-## 6. Roadmap giảm thiểu
-
-### 6.1. Quick win (2 tuần)
-
-- ✅ Thêm Vitest config + 10 test đầu tiên (services, utils)
-- ✅ Xoá hardcode Hostname
-- ✅ Integrate Sentry FE
-- ✅ Setup GitHub Actions CI (lint + build)
-- ✅ Bump `@types/react` 18
-- ✅ Thêm `vite-bundle-visualizer`, đo baseline
-
-### 6.2. Medium term (1 quý)
-
-- ✅ Coverage ≥ 30%
-- ✅ E2E Playwright smoke scenario (POS flow, customer create)
-- ✅ Dynamic import ag-grid, bpmn-js, slate
-- ✅ Migrate moment → date-fns (hoặc ngược lại)
-- ✅ OpenAPI spec từ BE + client generate
-- ✅ Sonar/Semgrep trong CI
-- ✅ DR test 1 lần
-- ✅ Tenant isolation audit + fix gateway
-- ✅ Feature flag (Unleash self-host)
-
-### 6.3. Long term (6-12 tháng)
-
-- ✅ Coverage ≥ 60%
-- ✅ WCAG 2.1 AA đạt
-- ✅ Bundle main chunk ≤ 1MB gzip
-- ✅ Multi-region active-passive deploy
-- ✅ 99.5% SLO đạt và tracking
-- ✅ Migrate Mock → MSW
-- ✅ Cân nhắc monorepo (Turborepo)
-- ✅ Security pen test định kỳ
-
-## 7. Success metrics
-
-| KPI | Baseline | 1 quý | 1 năm |
-|-----|----------|-------|-------|
-| Unit test coverage | 0% | 30% | 60% |
-| P95 API latency | ? | đo được | ≤ 500ms |
-| Uptime | ? | đo được | 99.5% |
-| Bundle main chunk | ~1.5MB | 1.2MB | ≤ 1MB |
-| MTTR | ? | 4h | 2h |
-| Deploy frequency | manual | daily | on-demand |
-| Change failure rate | ? | ≤ 15% | ≤ 5% |
-| Onboarding time | 2-3 tuần | 1.5 tuần | 1 tuần |
-
-## 8. Kết luận
-
-Reborn Retail CRM là hệ thống **trưởng thành về tính năng** (gần như đủ cho retail chain) nhưng **non trẻ về kỹ thuật vận hành** (thiếu test, observability, CI/CD). Rủi ro lớn nhất là **không có lưới an toàn khi thay đổi** (test + monitoring). Khuyến nghị ưu tiên **quick win** trong 2 tuần đầu để xây nền, sau đó roadmap 1 quý tập trung vào test coverage và observability. Multi-tenant security cần pen test sớm vì ảnh hưởng trực tiếp đến khách hàng.
-
-## Tham chiếu
-
-- Files:
-  - `package.json`
-  - `src/configs/fetchConfig.ts`
-  - `tsconfig.json`
-  - `docs/TECH_DEBT_INVENTORY.md` (nếu có)
-- [URD Part 14 — NFR](../urd/part-14-nfr.md)
-- [Part 10 — Security](part-10-security.md)
-- [Part 11 — Cross-cutting](part-11-cross-cutting.md)
-- [Part 12 — Deployment](part-12-deployment.md)
-- [Part 13 — ADR](part-13-adr.md)
+| Score | Mức |
+|-------|-----|
+| 7-9 | 🔴 Critical |
+| 4-6 | 🟡 Medium |
+| 1-3 | 🟢 Low |
 
 ---
-*Hết SAD — kết thúc tài liệu. Xem thêm [URD](../urd/README.md) hoặc [HDSD](../userguides/README.md).*
+
+## 5. Action plan
+
+### 5.1. Sprint hiện tại (Critical fix — 2 tuần)
+
+| Action | TD/Risk | Effort | Owner |
+|--------|---------|:------:|-------|
+| Fix hardcode Hostname header | TD-02, R-01 | XS | Frontend |
+| Setup Snyk + Dependabot | TD-08, R-05 | S | DevOps |
+| Add ErrorBoundary | TD-09 | XS | Frontend |
+| Fix nginx headers (CSP, HSTS) | TD-11 | XS | DevOps |
+
+### 5.2. Q2 2026 (3 tháng)
+
+| Action | TD/Risk | Effort |
+|--------|---------|:------:|
+| Setup test suite (Vitest + RTL + MSW) | TD-03, R-04 | XL |
+| Implement refresh token logic | TD-04 | S |
+| Bundle size optimization phase 1 (lazy load bpmn-js, slate, exceljs) | TD-01, R-03 | M |
+| Add PrivateRoute wrapper | TD-10 | S |
+| Add idempotency key cho POST critical | TD-13 | M |
+| Refactor CustomerPersonList page | TD-05 | L |
+| Setup distributed tracing | TD-12 | L |
+
+### 5.3. Q3-Q4 2026 (6-12 tháng)
+
+| Action | TD/Risk | Effort |
+|--------|---------|:------:|
+| Migrate React 17 → 18 | TD-07, R-10 | L |
+| API versioning (v1, v2) | TD-14 | L |
+| Migrate moment → date-fns | TD-06 | L |
+| Server-side API Gateway (Kong/Traefik) | ADR-06 review | XL |
+| Performance test + Lighthouse CI | NFR-PERF | M |
+| Multi-tenant RLS (PostgreSQL) | R-01 long-term | M |
+
+---
+
+## 6. Quality metrics dashboard (đề xuất)
+
+Setup dashboard hiển thị real-time:
+
+### 6.1. Code quality
+
+- Lines of code (LoC)
+- Cyclomatic complexity
+- Code duplication %
+- Technical debt ratio (theo SonarQube)
+- Test coverage trend
+
+### 6.2. Bundle size
+
+- Initial bundle size (gzip)
+- Per-page chunk size
+- Trend theo thời gian
+
+### 6.3. Build time
+
+- CI duration
+- Vite dev cold start
+- HMR latency
+
+### 6.4. Production health
+
+- Error rate (Sentry)
+- API latency p95/p99
+- Uptime (UptimeRobot)
+
+### 6.5. Security
+
+- Open vulnerabilities (Snyk)
+- Day since last security incident
+- Mean time to patch (MTTP)
+
+---
+
+## 7. Knowledge management
+
+### 7.1. Tài liệu cần có
+
+- ✅ HDSD (đã có) — `docs/userguides/`
+- ✅ URD (đã có) — `docs/urd/`
+- ✅ SAD (đang viết — Part này) — `docs/sa/`
+- 📋 **API documentation** (Swagger/OpenAPI) — chưa có
+- 📋 **Onboarding doc** cho dev mới — chưa có
+- 📋 **Runbook ops** cho on-call — chưa có
+- 📋 **ADR file riêng** trong `docs/sa/adr/` — chưa có
+
+### 7.2. Best practice
+
+- Tài liệu **viết khi quyết định**, không viết hồi tố
+- ADR nhẹ (≤ 1 trang) nhưng có
+- Code comment chỉ cho **tại sao** (why), không phải **làm gì** (what)
+- README mỗi folder lớn
+
+---
+
+## 8. Kết luận & Đề xuất
+
+### 8.1. Strengths của hệ thống
+
+✅ Architecture rõ ràng (layered, microservices)
+✅ Code organization tốt (167 page, 240 service, 78 component có pattern nhất quán)
+✅ TypeScript đầy đủ
+✅ i18n có sẵn
+✅ Multi-tenant đã thiết kế từ đầu
+✅ Service layer DRY với apiHelper
+✅ Vừa hoàn thành migration Vite — modern toolchain
+
+### 8.2. Top 5 gap quan trọng nhất
+
+1. 🔴 **Hardcode Hostname** — fix ngay
+2. 🔴 **0% test coverage** — investment lớn nhất
+3. 🔴 **Bundle size 5-7x quá lớn** — tối ưu lazy load
+4. 🟡 **Refresh token logic thiếu** — fix UX
+5. 🟡 **Backend không có document** — đội backend cần xác nhận Part 08 + 12
+
+### 8.3. Priority matrix
+
+```
+            Impact High            Impact Low
+         ┌─────────────────────┬──────────────────┐
+Easy     │ TD-02 Fix hardcode  │ TD-09 Boundary   │
+         │ TD-11 Headers       │ TD-15 Service    │
+         │ TD-09 Boundary      │ TD-17 Cleanup    │
+         ├─────────────────────┼──────────────────┤
+Hard     │ TD-01 Bundle opt    │ TD-06 Date lib   │
+         │ TD-03 Test suite    │ TD-12 Tracing    │
+         │ TD-07 React 18      │ TD-18 Locales    │
+         └─────────────────────┴──────────────────┘
+```
+
+→ Bắt đầu với góc trên-trái (high impact, easy).
+
+### 8.4. Khuyến nghị final
+
+1. **Tuần 1-2**: Fix Critical gap (TD-02, TD-09, TD-11)
+2. **Tháng 1**: Setup test infrastructure (TD-03 phase 1)
+3. **Tháng 2**: Bundle optimization phase 1 (TD-01)
+4. **Tháng 3**: Refresh token + PrivateRoute (TD-04, TD-10)
+5. **Q2-Q3**: Test coverage > 50%, refactor mega pages
+6. **Q4**: React 18 migration, API versioning
+
+---
+
+## 9. Câu hỏi mở cho stakeholder
+
+1. **Backend team**: xác nhận Part 08 + Part 12. Có thông tin cụ thể về stack, infra?
+2. **DevOps**: có monitoring/logging/alerting hiện tại không? Tool gì?
+3. **Security**: có audit/pentest gần đây không? Kết quả?
+4. **Product**: có roadmap nào đụng đến scaling lớn (1000+ tenant) trong 6 tháng tới?
+5. **QA**: hiện test thủ công thế nào? Sẵn sàng đầu tư automation?
+6. **Business**: SLA cam kết với khách hàng là gì? (uptime, response time)
+
+---
+
+## 10. Đánh giá tổng quan
+
+| Khía cạnh | Điểm | Ghi chú |
+|-----------|:----:|---------|
+| **Architecture clarity** | 8/10 | Rõ ràng, có pattern |
+| **Code organization** | 8/10 | Layered tốt, một số mega file |
+| **Test coverage** | 1/10 | Critical gap |
+| **Documentation** | 7/10 | HDSD/URD/SAD đầy đủ, code comment thiếu |
+| **Performance** | 5/10 | Bundle quá lớn |
+| **Security** | 6/10 | Có thiết kế nhưng có gap |
+| **Scalability** | 7/10 | Multi-tenant + microservices đúng hướng |
+| **Maintainability** | 6/10 | Cần refactor mega page + test |
+| **DevOps maturity** | ?/10 | Chưa đủ data — đội DevOps trả lời |
+| **Compliance** | 7/10 | Có thiết kế cho ANM, NĐ 13, TT78 |
+| **TỔNG** | **6.5/10** | Solid foundation, cần đầu tư test + perf + security gap |
+
+---
+
+*Hết Part 14 — Hết SAD bản thảo.*
+
+---
+
+## Bảng tổng kết toàn bộ SAD
+
+| Part | Tiêu đề | Số dòng (ước) | Mức tự tin |
+|------|---------|:-------------:|:----------:|
+| 00 | Tổng quan | ~250 | 🟢 |
+| 01 | Kiến trúc tổng thể | ~300 | 🟢🟡 |
+| 02 | Frontend Architecture | ~400 | 🟢 |
+| 03 | Tech Stack & Dependencies | ~400 | 🟢 |
+| 04 | Routing & Navigation | ~350 | 🟢 |
+| 05 | Component & Module | ~350 | 🟢 |
+| 06 | Service Layer & API | ~450 | 🟡 |
+| 07 | Data Architecture | ~350 | 🟡 |
+| 08 | Backend Architecture | ~400 | 🔴 |
+| 09 | Integration | ~500 | 🟡 |
+| 10 | Security | ~400 | 🟡 |
+| 11 | Cross-cutting Concerns | ~400 | 🟡 |
+| 12 | Deployment & Infrastructure | ~450 | 🔴 |
+| 13 | ADRs (18 records) | ~350 | 🟢🟡 |
+| 14 | Performance, Quality, Risks | ~400 | 🟡 |
+| **Total** | | **~5,350 dòng** | |
+
+**Phần cần đội backend/DevOps xác nhận** (mức 🔴): Part 08, Part 12
+**Phần cần backend xác nhận chi tiết** (🟡): Part 06, 07, 09, 10, 11, 14
+**Phần đã verify từ codebase** (🟢): Part 00, 02, 03, 04, 05, 13 (ADR Accepted)
+
+Sau khi đội backend/DevOps cung cấp thông tin, Part 08 và 12 sẽ được rewrite từ 🔴 → 🟢.

@@ -130,7 +130,7 @@ const NoCellMenu = ({ position, onClose, rowKey, callBack }) => {
               <div
                 className="item-action"
                 onClick={() => {
-                  const newList = [...listTypeTitle];
+                  let newList = [...listTypeTitle];
                   newList.map((item) => {
                     item.isShow = false;
                   });

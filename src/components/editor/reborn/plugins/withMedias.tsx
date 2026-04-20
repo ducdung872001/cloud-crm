@@ -1,5 +1,5 @@
 import isUrl from "is-url";
-import { ImageElement, VideoElement } from "../../custom-types";
+import { ImageElement, LinkElement, VideoElement } from "../../custom-types";
 import { Transforms } from "slate";
 import imageApi from "services/ImageService";
 import { uploadVideoFromFiles } from "utils/videoBlob";
@@ -33,7 +33,8 @@ const withMedias = (editor) => {
               (imageLink) => {
                 insertImage(editor, imageLink);
               },
-              () => { /* progress */ }
+              (percent) => {
+              }
             );
           });
 
@@ -46,8 +47,7 @@ const withMedias = (editor) => {
             (videoLink) => {
               insertVideo(editor, videoLink, thumbnail);
             },
-            () => {
-              // progress callback placeholder
+            (percent) => {
             },
             (imageLink) => {
               thumbnail = imageLink;
@@ -85,13 +85,12 @@ const uploadImageFromDirect = (data, callback, showStatus) => {
         showStatus(percent);
       }
     },
-    onError: () => {
-      showToast("Có lỗi xảy ra trong quá trình upload ảnh");
+    onError: (error) => {
+      showToast("Có lỗi xảy ra trong quá trình upload ảnh", "error");
     },
   });
 };
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const insertVideo = (editor, url, thumbnail) => {
   const text = { text: "" };
   const video: VideoElement = { type: "video", url, children: [text] };
@@ -129,7 +128,7 @@ const insertImage = (editor, url) => {
  * @param point
  */
 const updateImage = (editor, url, newUrl, link, width, height, desc, align, point) => {
-  const imgObj = {
+  let imgObj = {
     type: "image",
     url: newUrl,
     alt: `${desc}`,

@@ -10,7 +10,7 @@ import { IAction, IOption, ISaveSearch } from "model/OtherModel";
 import { IContractPipelineResponse } from "model/contractPipeline/ContractPipelineResponseModel";
 import { showToast } from "utils/common";
 import { getPageOffset, isDifferenceObj } from "reborn-util";
-import _, { set } from "lodash";
+import cloneDeep from "lodash/cloneDeep";
 import HeaderFilter from "components/HeaderFilter/HeaderFilter";
 import { ContextType, UserContext } from "contexts/userContext";
 import Tippy from "@tippyjs/react";
@@ -130,7 +130,7 @@ export default function NotificationList(props: Record<string, unknown>) {
   };
 
   useEffect(() => {
-    const paramsTemp = _.cloneDeep(params);
+    const paramsTemp = cloneDeep(params);
     setParams((prevParams) => ({ ...prevParams, ...paramsTemp }));
   }, []);
 
@@ -142,7 +142,7 @@ export default function NotificationList(props: Record<string, unknown>) {
 
     if (isMounted.current === true) {
       getListNotify(params);
-      const paramsTemp = _.cloneDeep(params);
+      const paramsTemp = cloneDeep(params);
       if (paramsTemp.limit === 10) {
         delete paramsTemp["limit"];
       }
@@ -431,19 +431,34 @@ export default function NotificationList(props: Record<string, unknown>) {
         navigate("/multi_channel_sales", { state: { tab: 2, orderRequestModalId: payload.orderId } });
         return;
       }
-      // Bug B.1: "Cảnh báo ngưỡng tồn kho" → màn Sản phẩm tồn kho
-      if (payload?.type === "INVENTORY_THRESHOLD_ALERT") {
-        navigate("/product_inventory", {
-          state: payload.productId ? { highlightProductId: payload.productId } : undefined,
-        });
-        return;
-      }
     }
 
-    // Fallback: mở modal hiển thị nội dung thông báo thay vì điều hướng
-    // tới route không tồn tại trong reborn-retail (gây 404).
-    setDataNoti(item);
-    setIsModalViewNoti(true);
+    if (item.targetLink) {
+      navigate(item.targetLink);
+      return;
+    }
+    if (item.payload && isJsonString(item.payload)) {
+      const payload = JSON.parse(item.payload);
+      switch (payload?.type) {
+        case "ORDER":
+        case "ORDER_REQUEST":
+          if (payload.orderId) navigate(`/orders/${payload.orderId}`);
+          break;
+        case "CAMPAIGN":
+          if (payload.campaignId) navigate(`/campaigns/${payload.campaignId}`);
+          break;
+        case "BID":
+          if (payload.packageId)
+            navigate("/bpm/bid_management", { state: { viewDetail: true, packageId: payload.packageId } });
+          break;
+        case "TASK":
+          if (payload.workId)
+            navigate("/bpm/task_assignment", { state: { viewDetail: true, workId: payload.workId } });
+          break;
+        default:
+          break;
+      }
+    }
   };
 
   const getNotificationIconName = (item: Record<string, unknown>): string => {

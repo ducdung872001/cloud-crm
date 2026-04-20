@@ -417,7 +417,7 @@ export default function AddBranchModal(props: AddBeautyBranchModalProps) {
               <div className="form-basic-info-branch">
                 {listFieldBasic.map((field, index) => (
                   <FieldCustomize
-                    key={index}
+                    key={field.name || index}
                     field={field}
                     handleUpdate={(value) => handleChangeValidate(value, field, formData, validations, listFieldBasic, setFormData)}
                     formData={formData}
@@ -461,7 +461,7 @@ export default function AddBranchModal(props: AddBeautyBranchModalProps) {
               <div className="form-advanced">
                 {listFieldAdvanced.map((field, index) => (
                   <FieldCustomize
-                    key={index}
+                    key={field.name || index}
                     field={field}
                     handleUpdate={(value) => handleChangeValidate(value, field, formData, validations, listFieldAdvanced, setFormData)}
                     formData={formData}
@@ -472,7 +472,7 @@ export default function AddBranchModal(props: AddBeautyBranchModalProps) {
                 <FileUpload type="avatar" label="Ảnh đại diện" formData={formData} setFormData={setFormData} />
                 {listFieldDescription.map((field, index) => (
                   <FieldCustomize
-                    key={index}
+                    key={field.name || index}
                     field={field}
                     handleUpdate={(value) => handleChangeValidate(value, field, formData, validations, listFieldDescription, setFormData)}
                     formData={formData}

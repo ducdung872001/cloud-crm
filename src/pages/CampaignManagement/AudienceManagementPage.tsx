@@ -1,7 +1,8 @@
 import React, { useState } from "react";
 import HeaderTabMenu from "@/components/HeaderTabMenu/HeaderTabMenu";
 import { ITitleActions } from "components/titleAction/titleAction";
-import { showToast } from "utils/common";
+import Badge from "components/badge/badge";
+import { showToast } from "@/utils/common";
 import "./CampaignManagementPage.scss";
 
 interface Audience {
@@ -119,7 +120,7 @@ export default function AudienceManagementPage({ onBackProps }: { onBackProps: (
           <button className="cm-add-condition" onClick={addCondition}>+ Thêm điều kiện</button>
           <div className="cm-form-actions">
             <button className="cm-btn cm-btn--secondary" onClick={() => setShowCreate(false)}>Hủy</button>
-            <button className="cm-btn cm-btn--primary" onClick={() => { showToast("Đã tạo đối tượng", "success"); setShowCreate(false); }}>Lưu đối tượng</button>
+            <button className="cm-btn cm-btn--primary" onClick={() => { showToast("Đã tạo đối tượng (demo)", "info"); setShowCreate(false); }}>Lưu đối tượng</button>
           </div>
         </div>
       )}
@@ -155,7 +156,7 @@ export default function AudienceManagementPage({ onBackProps }: { onBackProps: (
               <button className="cm-btn cm-btn--secondary cm-btn--sm">Chỉnh sửa</button>
               <button
                 className="cm-btn cm-btn--primary cm-btn--sm"
-                onClick={() => showToast(`Tạo chiến dịch cho "${a.name}"`, "info")}
+                onClick={() => showToast(`Tạo chiến dịch cho "${a.name}" (demo)`, "info")}
               >
                 🚀 Tạo chiến dịch
               </button>

@@ -168,7 +168,7 @@ export default function AddServiceAttributeModal(props: Record<string, unknown>)
   const getAttributes = async () => {
     const response = await ServiceAttributeService.listAll();
 
-    const arrField = [];
+    let arrField = [];
 
     if (response.code === 0) {
       const dataOption = response.result;
@@ -791,7 +791,7 @@ export default function AddServiceAttributeModal(props: Record<string, unknown>)
             <div className="list-form-group">
               {/* {listField.map((field, index) => (
                 <FieldCustomize
-                  key={index}
+                  key={field.name || index}
                   field={field}
                   handleUpdate={(value) => handleChangeValidate(value, field, formData, validations, listField, setFormData)}
                   formData={formData}
@@ -799,7 +799,7 @@ export default function AddServiceAttributeModal(props: Record<string, unknown>)
               ))} */}
               {listFieldFirst.map((field, index) => (
                 <FieldCustomize
-                  key={index}
+                  key={field.name || index}
                   field={field}
                   handleUpdate={(value) => handleChangeValidate(value, field, formData, validations, listFieldFirst, setFormData)}
                   formData={formData}
@@ -939,7 +939,7 @@ export default function AddServiceAttributeModal(props: Record<string, unknown>)
 
               {listFieldSecond.map((field, index) => (
                 <FieldCustomize
-                  key={index}
+                  key={field.name || index}
                   field={field}
                   handleUpdate={(value) => handleChangeValidate(value, field, formData, validations, listFieldSecond, setFormData)}
                   formData={formData}

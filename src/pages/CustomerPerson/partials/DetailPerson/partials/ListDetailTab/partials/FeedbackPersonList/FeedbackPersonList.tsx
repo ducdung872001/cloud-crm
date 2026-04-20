@@ -263,7 +263,7 @@ export default function FeedbackPersonList(props: IFeedbackPersonListProps) {
 
           {!isLoading && listFeedback.length === 0 && (
             <div className="message-notification">
-              <h2>Bạn chưa có ý kiến khách hàng nào!</h2>
+              <h2>Bạn chưa có ý kiến thành viên nào!</h2>
             </div>
           )}
         </div>

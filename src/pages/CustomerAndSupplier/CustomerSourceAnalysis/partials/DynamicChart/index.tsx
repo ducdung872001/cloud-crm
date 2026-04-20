@@ -1199,7 +1199,7 @@ export default function DynamicChart({ lstChartDynamic, callBack }) {
                       <div className="lst-item lst__column">
                         {item.fields.map((ol, index) => {
                           return (
-                            <div key={index} className="item-item item-column">
+                            <div key={ol.id ?? index} className="item-item item-column">
                               <div className="info-column">
                                 <div className="form-column">
                                   <SelectCustom

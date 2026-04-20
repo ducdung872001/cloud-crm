@@ -50,9 +50,7 @@ export default function PushCampaignModal(props: Record<string, unknown>) {
     [onShow, data]
   );
 
-  const validations: IValidation[] = [
-    { name: "campaignId", rules: "required" },
-  ];
+  const validations: IValidation[] = [];
 
   const [formData, setFormData] = useState<IFormData>({ values: values });
 
@@ -405,7 +403,7 @@ export default function PushCampaignModal(props: Record<string, unknown>) {
             <div className="list-form-group-push-campaign">
               {listField.map((field, index) => (
                 <FieldCustomize
-                  key={index}
+                  key={field.name || index}
                   field={field}
                   handleUpdate={(value) => handleChangeValidate(value, field, formData, validations, listField, setFormData)}
                   formData={formData}

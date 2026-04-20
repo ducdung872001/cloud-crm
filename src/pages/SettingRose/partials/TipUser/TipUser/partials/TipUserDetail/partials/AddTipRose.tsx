@@ -552,7 +552,7 @@ export default function AddTipRose(props: IAddTipRoseProps) {
                                 <ul className="menu__option--rate" ref={refOptionRate}>
                                   {dataRate.map((el, index) => (
                                     <li
-                                      key={index}
+                                      key={el.id ?? index}
                                       className={`item--rate ${item?.type === el.type ? "active__item--rate" : ""}`}
                                       onClick={(e) => {
                                         e.preventDefault();
@@ -827,7 +827,7 @@ export default function AddTipRose(props: IAddTipRoseProps) {
                                     <ul className="menu__option--rate" ref={refOptionRate}>
                                       {dataRate.map((el, index) => (
                                         <li
-                                          key={index}
+                                          key={el.id ?? index}
                                           className={`item--rate ${item?.type === el.type ? "active__item--rate" : ""}`}
                                           onClick={(e) => {
                                             e.preventDefault();
@@ -926,7 +926,7 @@ export default function AddTipRose(props: IAddTipRoseProps) {
                                     <ul className="menu__option--rate" ref={refOptionRate}>
                                       {dataRate.map((el, index) => (
                                         <li
-                                          key={index}
+                                          key={el.id ?? index}
                                           className={`item--rate ${item?.type === el.type ? "active__item--rate" : ""}`}
                                           onClick={(e) => {
                                             e.preventDefault();
@@ -1025,7 +1025,7 @@ export default function AddTipRose(props: IAddTipRoseProps) {
                                     <ul className="menu__option--rate" ref={refOptionRate}>
                                       {dataRate.map((el, index) => (
                                         <li
-                                          key={index}
+                                          key={el.id ?? index}
                                           className={`item--rate ${item?.type === el.type ? "active__item--rate" : ""}`}
                                           onClick={(e) => {
                                             e.preventDefault();
@@ -1257,7 +1257,7 @@ export default function AddTipRose(props: IAddTipRoseProps) {
             <div className="list-form-group">
               {listField.map((field, index) => (
                 <FieldCustomize
-                  key={index}
+                  key={field.name || index}
                   field={field}
                   handleUpdate={(value) => handleChangeValidate(value, field, formData, validations, listField, setFormData)}
                   formData={formData}

@@ -309,7 +309,7 @@ export default function ManagementSale() {
     if (response.code === 0) {
       const result = response.result;
 
-      const newDataOfApproach = [...dataOfApproach];
+      let newDataOfApproach = [...dataOfApproach];
 
       const indexApproach = dataOfApproach.findIndex((el) => el.approachId === param.approachId);
 
@@ -699,7 +699,7 @@ ${dataRows.join("\n")}
       limit: 10,
     };
     const response = await SaleFlowService.list(param);
-    const optionSaleflow =
+    let optionSaleflow =
       page === 1
         ? [
             {
@@ -759,7 +759,7 @@ ${dataRows.join("\n")}
         limit: 1000,
       };
       const response = await SaleFlowService.list(param);
-      const optionSaleflow = [];
+      let optionSaleflow = [];
 
       if (response.code === 0) {
         const dataOption = response.result.items;
@@ -838,8 +838,8 @@ ${dataRows.join("\n")}
 
   useEffect(() => {
     if (invoiceIdList && invoiceIdList.length > 0) {
-      const checkCustomerList = [];
-      const checkDataCustomerList = [];
+      let checkCustomerList = [];
+      let checkDataCustomerList = [];
       invoiceIdList.map((item) => {
         if (checkCustomerList.length === 0) {
           checkCustomerList.push(item.customerId);

@@ -250,7 +250,7 @@ export default function ModalAddFilter(props: Record<string, unknown>) {
 
     if (response.code === 0) {
       const dataOption = response.result?.items;
-      const listVar = []
+      let listVar = []
       dataOption && dataOption.length > 0 && dataOption.map(item => {
         const body = item.body && JSON.parse(item.body) || [];
         body.map(el => {
@@ -299,7 +299,7 @@ export default function ModalAddFilter(props: Record<string, unknown>) {
     if (response.code === 0) {
       const dataOption = response.result;
 
-      const listData = [];      
+      let listData = [];      
 
       if (dataOption) {
         Object.entries(dataOption).map((lstEformAttribute: Record<string, unknown>, key: number) => {
@@ -824,7 +824,7 @@ export default function ModalAddFilter(props: Record<string, unknown>) {
   };
 
   const handChangeValueTypeItemEmployee = (e, idx) => {
-    const value = e.value;
+    let value = e.value;
 
     setFormDataEmployee({
       ...formDataEmployee,
@@ -1413,7 +1413,7 @@ export default function ModalAddFilter(props: Record<string, unknown>) {
                                       item.rule.length > 0 &&
                                       item.rule.map((el, index) => {
                                         return (
-                                          <Fragment key={index}>
+                                          <Fragment key={el.id ?? index}>
                                             <div className="item__rule">
                                               <div className="lst__info--rule">
                                                 <div className="info-item" style={!el.fieldName ? {width: '100%' } : {}}>
@@ -1945,7 +1945,7 @@ export default function ModalAddFilter(props: Record<string, unknown>) {
                                       item.rule.length > 0 &&
                                       item.rule.map((el, index) => {
                                         return (
-                                          <Fragment key={index}>
+                                          <Fragment key={el.id ?? index}>
                                             <div className="item__rule">
                                               <div className="lst__info--rule">
                                                 <div className="info-item" style={!el.fieldName ? {width: '100%' } : {}}>

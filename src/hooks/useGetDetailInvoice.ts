@@ -145,40 +145,50 @@ const MOCK_DETAIL_INVOICE = {
   ],
 };
 const mappedDataInvoice = (invoiceDataApi) => {
-  const cus = invoiceDataApi.customer || {};
-  const inv = invoiceDataApi.invoice || {};
-  const cusName = cus.name || cus.fullName || inv.customerName || "";
-  const cusPhone = cus.phone || cus.number_phone || cus.phoneNumber || inv.customerPhone || "";
-  const cusPoints = cus.points ?? cus.totalPoint ?? cus.loyaltyPoint ?? 0;
-  const cusRank = cus.tier || cus.rank || cus.rankName || cus.memberRank || "";
   return {
     id: invoiceDataApi.invoiceId,
-    code: inv.invoiceCode,
-    source: "offline",
+    code: invoiceDataApi.invoice.invoiceCode,
+    source: "offline", // Cần map từ invoiceType hoặc một trường nào đó trong invoiceDataApi
     customer: {
-      id: inv.customerId,
-      name: cusName,
-      phone: cusPhone,
-      points: cusPoints,
-      tier: cusRank,
-      color: "#2563eb",
-      rank: cusRank,
+      id: invoiceDataApi.invoice.customerId,
+      name: "Tên khách hàng", // Cần map từ một trường nào đó trong invoiceDataApi
+      phone: "Số điện thoại", // Cần map từ một trường nào đó trong invoiceDataApi
+      points: 0, // Cần map từ một trường nào đó trong invoiceDataApi
+      tier: "", // Cần map từ một trường nào đó trong invoiceDataApi
+      color: "#d97706", // Cần map từ một trường nào đó trong invoiceDataApi
+      rank: "Bạc", // Cần map từ một trường nào đó trong invoiceDataApi
     },
-    paymentMethod: inv.paymentType === 1 ? "Tiền mặt" : "Phương thức khác",
-    createdTime: inv.createdTime,
-    status: inv.status === 1 ? "pending" : inv.status === 2 ? "success" : "cancelled",
-    items: (invoiceDataApi.products || []).map((product) => ({
-      icon: "📦",
-      image: product?.productAvatar || "",
-      name: product.name,
-      detail: `${product.qty} × ${formatCurrency(product.price)}`,
-      total: `${product.qty * product.price}`,
-    })),
+    paymentMethod: invoiceDataApi.invoice.paymentType === 1 ? "Tiền mặt" : "Phương thức khác", // Cần map từ paymentType
+    createdTime: invoiceDataApi.invoice.createdTime,
+    status: invoiceDataApi.invoice.status === 1 ? "pending" : invoiceDataApi.invoice.status === 2 ? "success" : "cancelled", // Cần map từ status
+    items: [
+      ...(invoiceDataApi.products ?? []).map((product) => ({
+        icon: "📦",
+        image: product?.productAvatar || "",
+        name: product.name,
+        detail: `${product.qty} × ${formatCurrency(product.price)}`,
+        total: `${product.qty * product.price}`,
+      })),
+      ...(invoiceDataApi.services ?? []).map((service) => ({
+        icon: "💆",
+        image: service?.serviceAvatar || "",
+        name: service.serviceName || service.name,
+        detail: `${service.qty ?? service.quantity ?? 1} × ${formatCurrency(service.price ?? service.mainCost ?? service.amount ?? 0)}`,
+        total: `${(service.qty ?? service.quantity ?? 1) * (service.price ?? service.mainCost ?? service.amount ?? 0)}`,
+      })),
+      ...(invoiceDataApi.boughtCards ?? []).map((card) => ({
+        icon: "💳",
+        image: "",
+        name: card.cardName || card.name || "Thẻ thành viên",
+        detail: `${card.qty ?? 1} × ${formatCurrency(card.price ?? card.amount ?? 0)}`,
+        total: `${(card.qty ?? 1) * (card.price ?? card.amount ?? 0)}`,
+      })),
+    ],
     timeLine: [
       { icon: "✅", label: "Tạo đơn", done: true, active: false },
-      { icon: "⏳", label: "Chờ xử lý", done: inv.status === 1, active: inv.status === 1 },
-      { icon: "🚚", label: "Đang giao", done: inv.status === 2, active: inv.status === 2 },
-      { icon: "✅", label: "Hoàn thành", done: inv.status === 2, active: inv.status === 2 },
+      { icon: "⏳", label: "Chờ xử lý", done: invoiceDataApi.invoice.status === 1, active: invoiceDataApi.invoice.status === 1 },
+      { icon: "🚚", label: "Đang giao", done: invoiceDataApi.invoice.status === 2, active: invoiceDataApi.invoice.status === 2 },
+      { icon: "✅", label: "Hoàn thành", done: invoiceDataApi.invoice.status === 2, active: invoiceDataApi.invoice.status === 2 },
     ],
   };
 };

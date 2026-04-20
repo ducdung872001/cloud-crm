@@ -26,119 +26,15 @@ import {
 } from "model/customer/CustomerRequestModel";
 import { convertParamsToString } from "reborn-util";
 
-// Bug E.1.1: BE filter chỉ lọc theo tên qua `keyword`, KHÔNG lọc SĐT/email.
-// Workaround FE:
-// - Keyword là email (chứa "@")  → fetch rộng rồi filter client-side theo email
-// - Keyword là số điện thoại (toàn số, ≥6 ký tự) → gửi thêm field `phone` +
-//   filter client-side khi BE trả về (phòng khi BE không đọc field `phone`)
-// - Keyword thường (tên)         → pass-through qua BE
-function isEmailLike(s: string) {
-  return /@/.test(s);
-}
-function isPhoneLike(s: string) {
-  return /^[0-9+][0-9\s.-]{5,}$/.test(s);
-}
-
-// Adapter: FE convention là page 1-based + `limit`; list_paid/basic của BE
-// dùng page 0-based + `size` và yêu cầu cả 2 param (thiếu → 400). Chuyển đổi
-// request/response để call site và consumer (useCustomerList, pagination
-// component) không phải biết khác biệt này.
-function toBePaging(params?: Record<string, unknown>) {
-  const src = params ?? {};
-  const { page, limit, ...rest } = src;
-  const pageFE = page !== undefined && page !== null ? Number(page) : 1;
-  const limitFE = limit !== undefined && limit !== null ? Number(limit) : 20;
-  return {
-    ...rest,
-    page: Math.max(pageFE - 1, 0),
-    size: limitFE,
-  };
-}
-
-function fromBePaging(res: unknown) {
-  if (!res || typeof res !== "object") return res;
-  const r = res as Record<string, unknown>;
-  const result = r.result as Record<string, unknown> | undefined;
-  if (!result) return res;
-  const normalized: Record<string, unknown> = { ...result };
-  if (result.page !== undefined && result.page !== null) {
-    normalized.page = Number(result.page) + 1;
-  }
-  if (result.size !== undefined && normalized.limit === undefined) {
-    normalized.limit = result.size;
-  }
-  return { ...r, result: normalized };
-}
-
-async function filterCustomerSmart(
-  endpoint: string,
-  params?: ICustomerFilterRequest,
-  signal?: AbortSignal
-) {
-  const kw = String(params?.keyword ?? "").trim();
-  if (!kw) return fromBePaging(await apiGet(endpoint, toBePaging(params), signal));
-
-  const email = isEmailLike(kw);
-  const phone = !email && isPhoneLike(kw);
-  if (!email && !phone) {
-    // Tên bình thường — gửi thẳng
-    return fromBePaging(await apiGet(endpoint, toBePaging(params), signal));
-  }
-
-  // Fetch rộng (bỏ keyword, nâng limit) rồi lọc client-side.
-  const broadParams: Record<string, unknown> = {
-    ...params,
-    keyword: "",
-    limit: Math.max(Number(params?.limit ?? 20), 200),
-    page: 1,
-  };
-  if (phone) broadParams.phone = kw.replace(/[^0-9+]/g, ""); // BE nếu có support sẽ filter sẵn
-  if (email) broadParams.email = kw;
-
-  const res = fromBePaging(await apiGet(endpoint, toBePaging(broadParams), signal));
-  if (res?.code !== 0 || !res?.result?.items) return res;
-
-  const kwLower = kw.toLowerCase();
-  const normalizedPhone = kw.replace(/[^0-9+]/g, "");
-  const filtered = (res.result.items as Record<string, unknown>[]).filter((c) => {
-    if (email) {
-      const emails: string[] = [
-        String(c.email ?? ""),
-        String(c.customerEmail ?? ""),
-        String(c.emailAddress ?? ""),
-      ];
-      return emails.some((e) => e.toLowerCase().includes(kwLower));
-    }
-    // phone
-    const phones: string[] = [
-      String(c.phone ?? ""),
-      String(c.number_phone ?? ""),
-      String(c.phoneNumber ?? ""),
-      String(c.customerPhone ?? ""),
-    ].map((p) => p.replace(/[^0-9+]/g, ""));
-    return phones.some((p) => p && p.includes(normalizedPhone));
-  });
-
-  return {
-    ...res,
-    result: {
-      ...res.result,
-      items: filtered,
-      total: filtered.length,
-      loadMoreAble: false,
-    },
-  };
-}
-
 export default {
   //? thêm mới, cập nhập, xem, xem chi tiết khách hàng
   filter: (params?: ICustomerFilterRequest, signal?: AbortSignal) => {
-    return filterCustomerSmart(urlsApi.customer.filter, params, signal);
+    return apiGet(urlsApi.customer.filter, params, signal);
   },
 
   ///list khách hàng của đối tác
   listshared: (params?: ICustomerFilterRequest, signal?: AbortSignal) => {
-    return filterCustomerSmart(urlsApi.customer.listshared, params, signal);
+    return apiGet(urlsApi.customer.listshared, params, signal);
   },
 
   detail: (id: number) => {

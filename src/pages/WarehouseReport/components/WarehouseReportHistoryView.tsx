@@ -1,7 +1,8 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import Highcharts from "highcharts";
 import HighchartsReact from "highcharts-react-official";
-import moment from "moment";
+import { format, startOfMonth, endOfMonth, startOfQuarter, endOfQuarter, startOfYear, endOfYear, subMonths } from "date-fns";
+import { formatDate } from "utils/dateUtils";
 import { urlsApi } from "configs/urls";
 import InventoryService from "services/InventoryService";
 
@@ -51,11 +52,12 @@ const PERIODS: { label: string; key: PeriodKey }[] = [
 ];
 
 function getPeriodRange(key: PeriodKey): [string, string] {
-  const fmt = "DD/MM/YYYY";
-  if (key === "month")   return [moment().startOf("month").format(fmt), moment().endOf("month").format(fmt)];
-  if (key === "quarter") return [moment().startOf("quarter").format(fmt), moment().endOf("quarter").format(fmt)];
-  if (key === "half")    return [moment().subtract(6,"months").startOf("month").format(fmt), moment().endOf("month").format(fmt)];
-  return [moment().startOf("year").format(fmt), moment().endOf("year").format(fmt)];
+  const now = new Date();
+  const fmt = "dd/MM/yyyy";
+  if (key === "month")   return [format(startOfMonth(now), fmt), format(endOfMonth(now), fmt)];
+  if (key === "quarter") return [format(startOfQuarter(now), fmt), format(endOfQuarter(now), fmt)];
+  if (key === "half")    return [format(startOfMonth(subMonths(now, 6)), fmt), format(endOfMonth(now), fmt)];
+  return [format(startOfYear(now), fmt), format(endOfYear(now), fmt)];
 }
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────
@@ -81,7 +83,6 @@ function Skeleton({ h = 20, w = "100%" }: { h?: number; w?: string }) {
   }} />;
 }
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 function buildQuery(p: Record<string, any>) {
   const e = Object.entries(p).filter(([,v]) => v !== undefined && v !== "" && v !== 0).map(([k,v]) => [k, String(v)]);
   return e.length ? "?" + new URLSearchParams(e).toString() : "";
@@ -89,7 +90,6 @@ function buildQuery(p: Record<string, any>) {
 
 // ─── Chart builders ───────────────────────────────────────────────────────────
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 function buildStockLineOptions(daily: IDailyPoint[], productName: string): Highcharts.Options {
   return {
     chart: { type: "areaspline", height: 240, backgroundColor: "transparent" },
@@ -149,7 +149,7 @@ export default function WarehouseReportHistoryView() {
       const arr = Array.isArray(r.result) ? r.result
         : Array.isArray(r.result?.items) ? r.result.items : [];
       setWarehouseList(arr.map((i: Record<string, unknown>) => ({ value: i.id, label: i.name })));
-    }).catch(() => { /* noop */ });
+    }).catch(() => {});
   }, []);
 
   // Product search debounce
@@ -206,18 +206,15 @@ export default function WarehouseReportHistoryView() {
   useEffect(() => {
     if (selectedProduct) { fetchHistory(selectedProduct); fetchLedger(selectedProduct); }
     return () => { abortRef.current?.abort(); ledgerAbort.current?.abort(); };
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedProduct, period, warehouseId]);
 
   const info     = histData?.productInfo;
   const daily    = histData?.dailyStock  ?? [];
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   const weekly   = histData?.weeklyFlow  ?? [];
+  const [from, to] = getPeriodRange(period);
   const periodLabel = PERIODS.find(p => p.key === period)?.label ?? "";
 
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   const stockLineOpts = useMemo(() => buildStockLineOptions(daily, info?.productName ?? ""), [daily]);
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   const weeklyOpts    = useMemo(() => buildWeeklyFlowOptions(weekly), [weekly]);
 
   return (
@@ -423,7 +420,7 @@ export default function WarehouseReportHistoryView() {
                       : row.warehouseName ?? "—";
                     return (
                       <tr key={row.id}>
-                        <td>{row.createdTime ? moment(row.createdTime).format("DD/MM/YYYY") : "—"}</td>
+                        <td>{row.createdTime ? formatDate(row.createdTime) : "—"}</td>
                         <td><span className={`badge ${badgeCls}`}>{typeName}</span></td>
                         <td className="vb">{code}</td>
                         <td className="r vg">{isImport ? `+${qty.toLocaleString("vi-VN")}` : "—"}</td>

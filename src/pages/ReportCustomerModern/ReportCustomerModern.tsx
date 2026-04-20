@@ -3,7 +3,7 @@ import TitleAction from "components/titleAction/titleAction";
 import ReportPanel from "components/reportShared/ReportPanel";
 import Highcharts from "highcharts";
 import HighchartsReact from "highcharts-react-official";
-import moment from "moment";
+import { format, startOfMonth, endOfMonth } from "date-fns";
 import { TIER_DATA } from "./mockData";
 import { createGrowthOptions, createRegionOptions, createReturnOptions, createTierOptions } from "./chartOptions";
 import CustomerFilterBar from "./components/CustomerFilterBar";
@@ -17,8 +17,8 @@ export default function ReportCustomerModern() {
   const [activeRange, setActiveRange] = useState("today");
   const [source, setSource] = useState("all");
   const [dateRange, setDateRange] = useState<[string, string]>([
-    moment().startOf("month").format("YYYY-MM-DD"),
-    moment().endOf("month").format("YYYY-MM-DD"),
+    format(startOfMonth(new Date()), "yyyy-MM-dd"),
+    format(endOfMonth(new Date()), "yyyy-MM-dd"),
   ]);
 
   const growthOptions = useMemo<Highcharts.Options>(() => createGrowthOptions(), [activeRange]);

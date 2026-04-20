@@ -25,7 +25,7 @@ import Radio from "components/radio/radio";
 import DatePickerCustom from "components/datepickerCustom/datepickerCustom";
 import { formatDate } from "utils/dateUtils";
 
-import { before } from "lodash";
+import before from "lodash/before";
 import CustomerSourceService from "services/CustomerSourceService";
 import CustomerService from "services/CustomerService";
 import { IListWarehouseProductFilterRequest } from "model/warehouse/WarehouseRequestModel";

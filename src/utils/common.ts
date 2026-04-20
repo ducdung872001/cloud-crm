@@ -3,7 +3,9 @@ import { json } from "react-router-dom";
 import { toast } from "react-toastify";
 import Cookies from "universal-cookie";
 import { getDomain } from "reborn-util";
-import { isArray, isObject, transform } from "lodash";
+import isArray from "lodash/isArray";
+import isObject from "lodash/isObject";
+import transform from "lodash/transform";
 import { formatDate, formatDateCustom, isValidDate } from "utils/dateUtils";
 
 const cookies = new Cookies();

@@ -294,7 +294,7 @@ export default function ImportInvoiceList() {
   const dataMappingArray = (item: IInvoiceResponse, index: number) => [
     getPageOffset(params) + index + 1,
     <span
-      key={`inv-${item.id}`}
+      key={index}
       style={{ cursor: "pointer" }}
       onClick={() => {
         setIdImportInvoice(item.id);

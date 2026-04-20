@@ -5,7 +5,8 @@ import { isDifferenceObj } from "reborn-util";
 import { IActionModal } from "model/OtherModel";
 import { IFieldCustomize, IFormData, IValidation } from "model/FormModel";
 import Icon from "components/icon";
-import moment from "moment";
+import { isAfter, isBefore, startOfDay } from "date-fns";
+import { isValidDate, formatDateCustom } from "utils/dateUtils";
 import FieldCustomize from "components/fieldCustomize/fieldCustomize";
 import Modal, { ModalBody, ModalFooter, ModalHeader } from "components/modal/modal";
 import Dialog, { IContentDialog } from "components/dialog/dialog";
@@ -77,14 +78,14 @@ export default function ModalAddData({ onShow, onHide, dataProps, customerId }) 
   }, [values]);
 
   // Logic validate thời gian - dùng useMemo để tối ưu
-  const openingMoment = useMemo(() => moment(formData.values.openingDate), [formData.values.openingDate]);
-  const dueMoment = useMemo(() => moment(formData.values.dateDue), [formData.values.dateDue]);
-  const badDebtMoment = useMemo(() => moment(formData.values.badDebtDate), [formData.values.badDebtDate]);
-  const today = moment().startOf("day");
+  const openingDate = useMemo(() => formData.values.openingDate ? new Date(formData.values.openingDate) : null, [formData.values.openingDate]);
+  const dueDate = useMemo(() => formData.values.dateDue ? new Date(formData.values.dateDue) : null, [formData.values.dateDue]);
+  const badDebtDate = useMemo(() => formData.values.badDebtDate ? new Date(formData.values.badDebtDate) : null, [formData.values.badDebtDate]);
+  const today = startOfDay(new Date());
 
-  const isOpeningAfterToday = openingMoment.isValid() && openingMoment.isAfter(today, "day");
-  const isOpeningNotBeforeDue = openingMoment.isValid() && dueMoment.isValid() && !openingMoment.isBefore(dueMoment, "day");
-  const isDueNotBeforeBadDebt = dueMoment.isValid() && badDebtMoment.isValid() && !dueMoment.isBefore(badDebtMoment, "day");
+  const isOpeningAfterToday = isValidDate(openingDate) && isAfter(openingDate, today);
+  const isOpeningNotBeforeDue = isValidDate(openingDate) && isValidDate(dueDate) && !isBefore(openingDate, dueDate);
+  const isDueNotBeforeBadDebt = isValidDate(dueDate) && isValidDate(badDebtDate) && !isBefore(dueDate, badDebtDate);
 
   // Áp dụng warning trực tiếp lên field
   useEffect(() => {
@@ -356,9 +357,9 @@ export default function ModalAddData({ onShow, onHide, dataProps, customerId }) 
     const body: Record<string, unknown> = {
       ...(dataProps ? { id: dataProps?.id } : {}),
       ...(formData.values as Record<string, unknown>),
-      openingDate: moment(formData.values.openingDate).format("YYYY-MM-DD[T]HH:mm:ss"),
-      dateDue: moment(formData.values.dateDue).format("YYYY-MM-DD[T]HH:mm:ss"),
-      badDebtDate: moment(formData.values.badDebtDate).format("YYYY-MM-DD[T]HH:mm:ss"),
+      openingDate: formatDateCustom(formData.values.openingDate, "yyyy-MM-dd'T'HH:mm:ss"),
+      dateDue: formatDateCustom(formData.values.dateDue, "yyyy-MM-dd'T'HH:mm:ss"),
+      badDebtDate: formatDateCustom(formData.values.badDebtDate, "yyyy-MM-dd'T'HH:mm:ss"),
       customerId
     };
 
@@ -477,7 +478,7 @@ export default function ModalAddData({ onShow, onHide, dataProps, customerId }) 
             <div className="list-form-group">
               {listField.map((field, index) => (
                 <FieldCustomize
-                  key={index}
+                  key={field.name || index}
                   field={field}
                   handleUpdate={(value) => handleChangeValidate(value, field, formData, validations, listField, setFormData)}
                   formData={formData}

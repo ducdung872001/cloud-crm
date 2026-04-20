@@ -185,7 +185,7 @@ const deserialize = (el: ChildNode, markAttributes = {} as Record<string, boolea
     case "BR":
       return "\n";
     case "P":
-      const pClassName = el.getAttribute("class");
+      let pClassName = el.getAttribute("class");
 
       //Sẽ không deserialize mô tả của ảnh
       if (pClassName == "img-desc") {
@@ -226,11 +226,8 @@ const deserialize = (el: ChildNode, markAttributes = {} as Record<string, boolea
     case "VIDEO":
       let url = "";
       if (el.innerHTML) {
-        // eslint-disable-next-line prefer-const
-        let div = document.createElement("div");
-        div.innerHTML = el.innerHTML;
-        // eslint-disable-next-line prefer-const
-        let sourceTag: Element | null = div.firstChild as Element | null;
+        const parsed = new DOMParser().parseFromString(el.innerHTML, "text/html");
+        const sourceTag = parsed.body.firstElementChild;
         url = sourceTag ? sourceTag.getAttribute("src") : "";
       }
 

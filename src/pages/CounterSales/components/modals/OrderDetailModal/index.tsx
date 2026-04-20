@@ -7,31 +7,40 @@ import { formatDateCustom } from "utils/dateUtils";
 
 import { formatCurrency } from "reborn-util";
 
-interface OrderCustomerInfo {
-  name?: string;
-  phone?: string;
-  points?: number;
-  tier?: string;
-}
-
 interface OrderDetailModalProps {
   open: boolean;
   onClose: () => void;
   onPrint: () => void;
   onConfirm: () => void;
   invoiceId: number | null;
-  customerInfo?: OrderCustomerInfo;
 }
 
-const EMPTY_INVOICE = {
-  id: 0,
-  code: "",
+const TIMELINE = [
+  { icon: "✅", label: "Tạo đơn", done: true, active: false },
+  { icon: "⏳", label: "Chờ XL", done: false, active: true },
+  { icon: "🚚", label: "Đang giao", done: false, active: false },
+  { icon: "✅", label: "Hoàn thành", done: false, active: false },
+];
+
+const ORDER_ITEMS = [
+  { icon: "🥛", name: "Sữa TH True Milk 1L", detail: "2 hộp × 32,000 ₫", total: "64,000 ₫" },
+  { icon: "🍜", name: "Mì Hảo Hảo Tôm Chua", detail: "5 gói × 4,500 ₫", total: "22,500 ₫" },
+  { icon: "🥤", name: "Pepsi 330ml", detail: "3 lon × 12,000 ₫", total: "36,000 ₫" },
+];
+
+const MOCK_DETAIL_INVOICE = {
+  id: 123,
+  code: "#DH-20231021-0042",
   source: "offline",
-  customer: { id: "", name: "", phone: "", points: 0, tier: "", color: "#2563eb", rank: "" },
-  paymentMethod: "",
-  createdTime: "",
+  customer: { id: "1", name: "Nguyễn Thị Hoa", phone: "0901 234 567", points: 2450, tier: "Bạc", color: "#d97706", rank: "Bạc" },
+  paymentMethod: "Tiền mặt",
+  createdTime: "2023-10-21T09:45:00",
   status: "pending",
-  items: [],
+  items: [
+    { icon: "🥛", name: "Sữa TH True Milk 1L", detail: "2 hộp × 32,000 ₫", total: "64,000 ₫" },
+    { icon: "🍜", name: "Mì Hảo Hảo Tôm Chua", detail: "5 gói × 4,500 ₫", total: "22,500 ₫" },
+    { icon: "🥤", name: "Pepsi 330ml", detail: "3 lon × 12,000 ₫", total: "36,000 ₫" },
+  ],
   timeLine: [
     { icon: "✅", label: "Tạo đơn", done: true, active: false },
     { icon: "⏳", label: "Chờ xử lý", done: false, active: true },
@@ -40,27 +49,13 @@ const EMPTY_INVOICE = {
   ],
 };
 
-export default function OrderDetailModal({ open, onClose, onPrint, onConfirm, invoiceId, customerInfo }: OrderDetailModalProps) {
+export default function OrderDetailModal({ open, onClose, onPrint, onConfirm, invoiceId }: OrderDetailModalProps) {
   const { dataInvoice: dataInvoiceApi, isLoading } = useGetDetailInvoice({
     invoiceId: invoiceId ?? undefined,
     enabled: invoiceId && invoiceId > 0 ? true : false,
   });
 
-  // Ưu tiên data từ API; fallback sang customerInfo (từ row danh sách) cho
-  // các field BE chưa trả về (SĐT, điểm loyalty, hạng thành viên).
-  const dataInvoice = useMemo(() => {
-    const base = dataInvoiceApi ?? EMPTY_INVOICE;
-    return {
-      ...base,
-      customer: {
-        ...base.customer,
-        name: base.customer?.name || customerInfo?.name || "Khách vãng lai",
-        phone: base.customer?.phone || customerInfo?.phone || "",
-        points: base.customer?.points || customerInfo?.points || 0,
-        rank: base.customer?.rank || customerInfo?.tier || "",
-      },
-    };
-  }, [dataInvoiceApi, customerInfo]);
+  const dataInvoice = dataInvoiceApi ?? MOCK_DETAIL_INVOICE;
   const actions = useMemo<IActionModal>(
     () => ({
       actions_right: {
@@ -138,14 +133,10 @@ export default function OrderDetailModal({ open, onClose, onPrint, onConfirm, in
               <div className="od-panel">
                 <div className="od-panel__title">Khách hàng</div>
                 <div className="od-panel__name">{dataInvoice.customer.name}</div>
-                {dataInvoice.customer.phone && (
-                  <div className="od-panel__sub">{dataInvoice.customer.phone}</div>
-                )}
-                {(dataInvoice.customer.points > 0 || dataInvoice.customer.rank) && (
-                  <div className="od-panel__sub">
-                    ⭐ {dataInvoice.customer.points} điểm{dataInvoice.customer.rank ? ` · Hạng ${dataInvoice.customer.rank}` : ""}
-                  </div>
-                )}
+                <div className="od-panel__sub">{dataInvoice.customer.phone}</div>
+                <div className="od-panel__sub">
+                  ⭐ {dataInvoice.customer.points} điểm · Hạng {dataInvoice.customer.rank}
+                </div>
               </div>
               <div className="od-panel">
                 <div className="od-panel__title">Thông tin đơn</div>

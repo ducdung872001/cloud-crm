@@ -74,38 +74,8 @@ export default {
       method: "GET",
     }).then((res) => res.json());
   },
-  create: async (body: IInvoiceCreateRequest) => {
-    // Bug "Xác nhận thanh toán → /sales/invoice/create 404":
-    // Một số tenant BE không còn phục vụ POST /invoice/create (bị bỏ/đổi tên).
-    // Flow thực tế là UPDATE draft (body có `id`) → fallback sang các endpoint
-    // thay thế khi gặp 404.
-    const primary = await apiPost(urlsApi.invoice.create, body);
-    const code = (primary as Record<string, unknown>)?.code;
-    const status = (primary as Record<string, unknown>)?.status;
-    const is404 =
-      code === 404 ||
-      status === 404 ||
-      /404/.test(String((primary as Record<string, unknown>)?.message ?? "")) ||
-      /not\s*found/i.test(String((primary as Record<string, unknown>)?.message ?? ""));
-    if (!is404) return primary;
-
-    // Fallback 1: endpoint update (nếu BE tách CREATE/UPDATE)
-    try {
-      const fallback = await apiPost(`${urlsApi.invoice.create}/update`, body);
-      const fc = (fallback as Record<string, unknown>)?.code;
-      if (fc === 0) return fallback;
-    } catch { /* thử fallback tiếp */ }
-
-    // Fallback 2: endpoint draft/confirm
-    try {
-      const fallback2 = await apiPost(
-        urlsApi.invoice.createInvoice.replace("/create", "/confirm"),
-        body
-      );
-      return fallback2;
-    } catch { /* rơi xuống primary */ }
-
-    return primary;
+  create: (body: IInvoiceCreateRequest) => {
+    return apiPost(urlsApi.invoice.create, body);
   },
   cardService: (id: number) => {
     return fetch(`${urlsApi.invoice.cardService}?customerId=${id}`, {

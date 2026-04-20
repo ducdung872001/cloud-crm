@@ -45,12 +45,13 @@ export default function RegisterFetch() {
         config.headers["Hostname"] = isLocal ? "kcn.reborn.vn" : realHost;
       }
 
+
       if (!url.startsWith("http")) {
         if (url.indexOf(".hot-update.json") === -1) {
           if (url.startsWith(prefixBiz)) {
             url = process.env.APP_BIZ_URL + url.replace(prefixBiz, "");
           } else if (url.startsWith(prefixAdmin) || url.startsWith(prefixApi)) {
-            const rootDomain = getRootDomain(location.hostname || "");
+            let rootDomain = getRootDomain(location.hostname || "");
             if (rootDomain == "localhost") {
               if (url.startsWith(prefixAdmin)) {
                 url = process.env.APP_ADMIN_URL + url;

@@ -55,7 +55,7 @@ export default function ProductCategoryList(props: Record<string, unknown>) {
     setIsLoading(true);
 
     setTimeout(() => {
-      const filtered = MOCK_PRODUCT_CATEGORIES.filter((item) =>
+      let filtered = MOCK_PRODUCT_CATEGORIES.filter((item) =>
         item.name.toLowerCase().includes((paramsSearch.name ?? "").toLowerCase())
       );
 

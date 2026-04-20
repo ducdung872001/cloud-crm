@@ -213,12 +213,12 @@ export default function WarehouseBookList() {
   const [filterList, setFilterList] = useState<IFilterItem[]>([
     {
       key: "warehouseId", name: "Kho hàng", type: "select",
-      is_featured: true, is_render: true, value: searchParams.get("warehouseId") ?? "",
+      is_featured: true, value: searchParams.get("warehouseId") ?? "",
       list: [],
     },
     {
       key: "time_range", name: "Khoảng thời gian", type: "date-two",
-      param_name: ["fromTime", "toTime"], is_featured: true, is_render: true,
+      param_name: ["fromTime", "toTime"], is_featured: true,
       value: searchParams.get("fromTime") ?? "",
       value_extra: searchParams.get("toTime") ?? "",
       is_fmt_text: true,

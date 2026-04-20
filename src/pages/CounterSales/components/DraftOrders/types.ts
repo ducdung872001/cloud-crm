@@ -16,7 +16,6 @@ export type DraftOrder = {
   nhanVien: string;
   khachHang: string;
   customerId: number;
-  customerPhone: string;
   sanPhams: DraftProduct[];
   // CartItem shape để preload lại vào giỏ hàng khi "Tiếp tục xử lý"
   cartItems?: CartItemForDraft[];
@@ -26,7 +25,6 @@ export type DraftOrder = {
 export type CartItemForDraft = {
   id: string;
   variantId: string;
-  unitId?: number;
   name: string;
   icon: string;
   avatar: string;
@@ -103,7 +101,6 @@ export function mapRawToDraftOrder(raw: RawInvoiceDetail): DraftOrder {
   const cartItems: CartItemForDraft[] = (raw.products ?? []).map((p) => ({
     id:       String(p.productId),
     variantId: String(p.variantId ?? p.productId),
-    ...(p.unitId != null ? { unitId: Number(p.unitId) } : {}),
     name:     p.productName || p.name || "Sản phẩm",
     icon:     "📦",
     avatar:   p.productAvatar ?? "",
@@ -122,7 +119,6 @@ export function mapRawToDraftOrder(raw: RawInvoiceDetail): DraftOrder {
     nhanVien:   inv.employeeName ?? "—",
     khachHang:  inv.customerName ?? "Khách lẻ",
     customerId: inv.customerId ?? -1,
-    customerPhone: inv.customerPhone ?? "",
     sanPhams,
     cartItems,
   };

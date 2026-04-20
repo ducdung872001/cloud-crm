@@ -171,7 +171,7 @@ export default function AddWorkRatingModal(props: IAddWorkRatingModalProps) {
                             <div className="value">
                               {[...Array(item.mark)].map((el, index) => {
                                 return (
-                                  <span key={index} className="number-rating">
+                                  <span key={el.id ?? index} className="number-rating">
                                     <Icon name="Star" />
                                   </span>
                                 );
@@ -250,7 +250,7 @@ export default function AddWorkRatingModal(props: IAddWorkRatingModalProps) {
                                   <div className="value">
                                     {[...Array(item.mark)].map((el, index) => {
                                       return (
-                                        <span key={index} className="number-rating">
+                                        <span key={el.id ?? index} className="number-rating">
                                           <Icon name="Star" />
                                         </span>
                                       );

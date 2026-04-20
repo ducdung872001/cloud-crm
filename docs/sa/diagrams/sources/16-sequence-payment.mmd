@@ -1,35 +1,30 @@
 %%{init: {'theme':'base','themeVariables':{'fontFamily':'Calibri','fontSize':'18px'}}}%%
 sequenceDiagram
     autonumber
-    actor CASH as 👤 Cashier
-    actor CUST as 👤 Customer
+    actor U as 👤 Customer
     participant POS as POS Page
     participant SS as Sales Service
-    participant VP as VNPay Gateway
-    participant WH as Webhook Handler
-    participant DB as sales_db
-    participant NS as Notification Service
+    participant FS as Finance Service
+    participant PG as Payment Gateway<br/>(VNPay/MoMo/...)
+    participant DB as Database
 
-    CASH->>POS: Chốt đơn — chọn VNPay QR
-    POS->>SS: POST /bizapi/sales/order/create<br/>{ items, payment: VNPAY }
-    SS->>DB: INSERT sales_order status=PENDING
-    SS->>VP: POST /payment/createUrl<br/>{ orderId, amount, returnUrl }
-    VP-->>SS: { paymentUrl, qrCode }
-    SS-->>POS: { orderId, qrCode }
-    POS->>CUST: Hiển thị QR code<br/>trên màn hình phụ
-    CUST->>VP: Quét QR + xác nhận<br/>trong app banking
-    VP->>VP: Trừ tiền + clearing
-    VP-->>CUST: Giao dịch thành công
-    VP->>WH: POST /bizapi/sales/vnpay/ipn<br/>{ orderId, txnRef, amount, signature }
-    activate WH
-    WH->>WH: Verify HMAC signature
-    WH->>DB: SELECT order FOR UPDATE
-    WH->>DB: UPDATE status=PAID<br/>+ payment_ref
-    WH->>DB: INSERT cashbook entry
-    WH->>NS: Emit order.paid event
-    WH-->>VP: 200 OK (ack)
-    deactivate WH
-    POS->>SS: Poll GET /order/{id}/status
-    SS-->>POS: { status: PAID }
-    POS->>CASH: Báo đã thanh toán<br/>→ trừ tồn + in bill
-    NS->>CUST: SMS/Zalo xác nhận đơn
+    POS->>SS: createPayment(orderId, amount, method)
+    SS->>PG: createTransaction(orderId, amount, returnUrl)
+    PG-->>SS: { paymentUrl, txnId }
+    SS-->>POS: { paymentUrl, txnId }
+    POS->>U: Hiển thị QR / redirect tới paymentUrl
+    U->>PG: Nhập thông tin thanh toán
+    PG->>PG: Process payment
+    PG-->>U: Redirect về returnUrl với status
+
+    Note over PG,SS: Async IPN (Instant Payment Notification)
+    PG->>SS: POST /webhook/payment/<gw><br/>{ orderId, amount, status, signature }
+    SS->>SS: Verify HMAC signature
+    SS->>SS: Verify timestamp (anti-replay)
+    SS->>DB: Lookup order
+    SS->>DB: UPDATE invoice SET status=paid
+    SS->>FS: Sinh phiếu thu cashbook
+    FS->>DB: INSERT cashbook
+    SS-->>PG: 200 OK
+    SS->>POS: WebSocket / poll → notify success
+    POS->>U: ✅ Thanh toán thành công

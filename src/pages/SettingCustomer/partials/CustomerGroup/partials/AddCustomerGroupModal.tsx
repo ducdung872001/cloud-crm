@@ -35,11 +35,11 @@ export default function AddCustomerGroupModal(props: AddCustomerGroupModalProps)
   const validations: IValidation[] = [
     {
       name: "code",
-      rules: "required|max:50",
+      rules: "required",
     },
     {
       name: "name",
-      rules: "required|max:100",
+      rules: "required",
     },
   ];
 
@@ -50,7 +50,6 @@ export default function AddCustomerGroupModal(props: AddCustomerGroupModalProps)
       type: "text",
       fill: true,
       required: true,
-      maxLength: 100,
     },
     {
       label: "Mã nhóm",
@@ -58,7 +57,6 @@ export default function AddCustomerGroupModal(props: AddCustomerGroupModalProps)
       type: "text",
       fill: true,
       required: true,
-      maxLength: 50,
     },
     {
       label: "Thứ tự hiển thị",
@@ -196,7 +194,7 @@ export default function AddCustomerGroupModal(props: AddCustomerGroupModalProps)
             <div className="list-form-group">
               {listField.map((field, index) => (
                 <FieldCustomize
-                  key={index}
+                  key={field.name || index}
                   field={field}
                   handleUpdate={(value) => handleChangeValidate(value, field, formData, validations, listField, setFormData)}
                   formData={formData}

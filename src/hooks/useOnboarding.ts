@@ -267,13 +267,12 @@ export function useOnboarding({ userId, tourId, autoStart = true }: Options) {
   }, [active, measureTarget]);
 
   // Auto-start lần đầu
-  // TODO: Tạm tắt tour để test — bật lại khi deploy production
   useEffect(() => {
     if (!autoStart || !userId) return;
-    // if (!isTourDone(userId, tourId)) {
-    //   const t = setTimeout(() => { setActive(true); setStepIdx(0); }, 900);
-    //   return () => clearTimeout(t);
-    // }
+    if (!isTourDone(userId, tourId)) {
+      const t = setTimeout(() => { setActive(true); setStepIdx(0); }, 900);
+      return () => clearTimeout(t);
+    }
   }, [userId, tourId, autoStart]);
 
   const start = useCallback(() => { setStepIdx(0); setActive(true); }, []);

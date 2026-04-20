@@ -112,7 +112,7 @@ export default function AddFanpageModal(props: AddFanpageModalProps) {
 
                       return (
                         <tr
-                          key={index}
+                          key={item.id ?? index}
                           onClick={() => {
                             checkOne(item._fanpage_id, !isChecked, item);
                           }}

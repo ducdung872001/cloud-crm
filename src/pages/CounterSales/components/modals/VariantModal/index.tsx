@@ -5,14 +5,12 @@ import { IActionModal } from "model/OtherModel";
 import { CartItem } from "../../../types";
 import "./index.scss";
 import { ProductVariant, useGetDetailProduct, VariantProduct } from "@/hooks/useGetDetailProduct";
-import { showToast } from "utils/common";
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 
 interface VariantModalProps {
   open: boolean;
   productData: Record<string, unknown>;
-  branchId?: number;
   onClose: () => void;
   onAddToCart: (item: Omit<CartItem, "qty"> & { qty: number }) => void;
 }
@@ -70,12 +68,11 @@ export const MOCK_IPHONE: VariantProduct = {
 
 // ── Component ─────────────────────────────────────────────────────────────────
 
-export default function VariantModal({ open, productData, branchId, onClose, onAddToCart }: VariantModalProps) {
+export default function VariantModal({ open, productData, onClose, onAddToCart }: VariantModalProps) {
   const { t } = useTranslation();
   // selected: { groupId → optionId }
   const [selected, setSelected] = useState<Record<string, string>>({});
   const [qty, setQty] = useState(1);
-  const [qtyInput, setQtyInput] = useState("1");
   const [product, setProduct] = useState<VariantProduct | null>(MOCK_IPHONE);
 
   const fmt = (n?: number) => (n || 0).toLocaleString("vi") + " ₫";
@@ -83,7 +80,6 @@ export default function VariantModal({ open, productData, branchId, onClose, onA
   const { isLoading, dataProduct } = useGetDetailProduct({
     productId: Number(productData?.id) || 0,
     enabled: open,
-    branchId,
   });
   useEffect(() => {
     if (dataProduct) {
@@ -128,16 +124,11 @@ export default function VariantModal({ open, productData, branchId, onClose, onA
       return { ...prev, [groupId]: optionId };
     });
     setQty(1); // reset qty khi đổi variant
-    setQtyInput("1");
   };
 
   const handleQty = (delta: number) => {
     if (!matchedVariant) return;
-    setQty((prev) => {
-      const next = Math.min(Math.max(1, prev + delta), matchedVariant.stock);
-      setQtyInput(String(next));
-      return next;
-    });
+    setQty((prev) => Math.min(Math.max(1, prev + delta), matchedVariant.stock));
   };
 
   const handleAddToCart = () => {
@@ -156,7 +147,6 @@ export default function VariantModal({ open, productData, branchId, onClose, onA
     onAddToCart({
       id: product.id,
       variantId: matchedVariant.id,
-      unitId: matchedVariant.unitId != null ? Number(matchedVariant.unitId) : product.unitId != null ? Number(product.unitId) : undefined,
       image: matchedVariant.images?.[0] || product.avatar || "", // ưu tiên ảnh của biến thể, fallback sang ảnh chung của sản phẩm
       icon: product.icon ?? "📦",
       name: `${product.name} (${variantLabel})`,
@@ -164,17 +154,12 @@ export default function VariantModal({ open, productData, branchId, onClose, onA
       price: matchedPrice,
       unit: product.unit,
       qty,
-      taxRate: matchedVariant.taxRate,
     });
-    // Reset qty về 1 sau khi thêm vào giỏ
-    setQty(1);
-    setQtyInput("1");
     onClose();
   };
 
   const isAllSelected = product ? Object.keys(selected).length === product.variantGroups.length : false;
-  const isOverStock = !!matchedVariant && qty > matchedVariant.stock;
-  const canAdd = isAllSelected && !!matchedVariant && matchedVariant.stock > 0 && !isOverStock && qty >= 1;
+  const canAdd = isAllSelected && !!matchedVariant && matchedVariant.stock > 0;
   const selectedCount = Object.keys(selected).length;
   const totalGroupCount = product?.variantGroups.length ?? 0;
 
@@ -285,40 +270,21 @@ export default function VariantModal({ open, productData, branchId, onClose, onA
             <div className="variant-modal__qty-row">
               <span className="variant-modal__qty-label">{t("pageCounterSales.variantQuantity")}</span>
               <div className="variant-modal__qty">
-                <button type="button" className="vqb" onClick={() => handleQty(-1)} disabled={!isAllSelected || qty <= 1}>
+                <button type="button" className="vqb" onClick={() => handleQty(-1)} disabled={qty <= 1}>
                   −
                 </button>
                 <input
-                  type="text"
-                  inputMode="numeric"
+                  type="number"
                   className="vqi"
-                  value={qtyInput}
-                  disabled={!isAllSelected}
+                  value={qty}
+                  min={1}
+                  max={matchedVariant?.stock ?? 1}
                   onChange={(e) => {
-                    const raw = e.target.value.replace(/[^0-9]/g, "");
-                    setQtyInput(raw);
-                    const num = Number(raw);
-                    if (raw !== "" && num >= 1) {
-                      setQty(num);
-                    }
-                  }}
-                  onBlur={() => {
-                    const num = Number(qtyInput);
-                    const maxStock = matchedVariant?.stock ?? 1;
-                    if (!qtyInput || num < 1) {
-                      setQty(1);
-                      setQtyInput("1");
-                    } else if (num > maxStock) {
-                      setQty(maxStock);
-                      setQtyInput(String(maxStock));
-                      showToast(t("pageCounterSales.qtyExceedStock") || `Số lượng tối đa: ${maxStock}`, "warning");
-                    } else {
-                      setQty(num);
-                      setQtyInput(String(num));
-                    }
+                    const v = Math.min(Math.max(1, Number(e.target.value)), matchedVariant?.stock ?? 1);
+                    setQty(v);
                   }}
                 />
-                <button type="button" className="vqb" onClick={() => handleQty(1)} disabled={!isAllSelected || !matchedVariant || qty >= matchedVariant.stock}>
+                <button type="button" className="vqb" onClick={() => handleQty(1)} disabled={!matchedVariant || qty >= matchedVariant.stock}>
                   +
                 </button>
               </div>
@@ -328,11 +294,6 @@ export default function VariantModal({ open, productData, branchId, onClose, onA
                 </span>
               )}
             </div>
-            {isOverStock && (
-              <div className="variant-modal__qty-warning">
-                Số lượng không được vượt quá số lượng sản phẩm trong kho
-              </div>
-            )}
 
             {/* Tổng tiền */}
             {matchedVariant && matchedVariant.stock > 0 && (
