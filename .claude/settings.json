@@ -76,7 +76,12 @@
       "Bash(curl -s -o /dev/null -w \"cloud.reborn.vn/authenticator/user/me: %{http_code}\\\\n\" https://cloud.reborn.vn/authenticator/user/me)",
       "Bash(curl -s -o /dev/null -w \"biz.reborn.vn/authenticator/user/me: %{http_code}\\\\n\" https://biz.reborn.vn/authenticator/user/me)",
       "Bash(node d:/tmp/migrate-contact.mjs)",
-      "Bash(curl -sI \"https://api.github.com/repos/ducdung872001/cloud-crm\")"
+      "Bash(curl -sI \"https://api.github.com/repos/ducdung872001/cloud-crm\")",
+      "Bash(HEADLESS=true node tests/test-customer-list-basic.mjs)",
+      "Bash(node -e \"console.log\\(JSON.parse\\(require\\('fs'\\).readFileSync\\('tests/.auth-cookies.json','utf8'\\)\\).find\\(c=>c.name==='token'\\).value\\)\")",
+      "Bash(curl -sS -k -w '\\\\nHTTP %{http_code}\\\\n' 'https://biz.reborn.vn/customer/customer/list_paid/basic?keyword=&contactType=-1&branchId=23&page=0&size=20' -H 'Authorization: Bearer __TRACKED_VAR__' -H 'Hostname: kcn.reborn.vn' -H 'Content-Type: application/json' -H 'Accept: application/json')",
+      "Bash(curl -sS -k -w '\\\\nHTTP %{http_code}\\\\n' 'https://biz.reborn.vn/customer/customer/list_paid/basic?keyword=&page=0&size=20' -H 'Authorization: Bearer __TRACKED_VAR__' -H 'Hostname: kcn.reborn.vn' -H 'Content-Type: application/json' -H 'Accept: application/json')",
+      "Bash(node -e ' *)"
     ],
     "additionalDirectories": [
       "\\tmp",

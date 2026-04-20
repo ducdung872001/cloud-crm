@@ -39,19 +39,50 @@ function isPhoneLike(s: string) {
   return /^[0-9+][0-9\s.-]{5,}$/.test(s);
 }
 
+// Adapter: FE convention là page 1-based + `limit`; list_paid/basic của BE
+// dùng page 0-based + `size` và yêu cầu cả 2 param (thiếu → 400). Chuyển đổi
+// request/response để call site và consumer (useCustomerList, pagination
+// component) không phải biết khác biệt này.
+function toBePaging(params?: Record<string, unknown>) {
+  const src = params ?? {};
+  const { page, limit, ...rest } = src;
+  const pageFE = page !== undefined && page !== null ? Number(page) : 1;
+  const limitFE = limit !== undefined && limit !== null ? Number(limit) : 20;
+  return {
+    ...rest,
+    page: Math.max(pageFE - 1, 0),
+    size: limitFE,
+  };
+}
+
+function fromBePaging(res: unknown) {
+  if (!res || typeof res !== "object") return res;
+  const r = res as Record<string, unknown>;
+  const result = r.result as Record<string, unknown> | undefined;
+  if (!result) return res;
+  const normalized: Record<string, unknown> = { ...result };
+  if (result.page !== undefined && result.page !== null) {
+    normalized.page = Number(result.page) + 1;
+  }
+  if (result.size !== undefined && normalized.limit === undefined) {
+    normalized.limit = result.size;
+  }
+  return { ...r, result: normalized };
+}
+
 async function filterCustomerSmart(
   endpoint: string,
   params?: ICustomerFilterRequest,
   signal?: AbortSignal
 ) {
   const kw = String(params?.keyword ?? "").trim();
-  if (!kw) return apiGet(endpoint, params, signal);
+  if (!kw) return fromBePaging(await apiGet(endpoint, toBePaging(params), signal));
 
   const email = isEmailLike(kw);
   const phone = !email && isPhoneLike(kw);
   if (!email && !phone) {
     // Tên bình thường — gửi thẳng
-    return apiGet(endpoint, params, signal);
+    return fromBePaging(await apiGet(endpoint, toBePaging(params), signal));
   }
 
   // Fetch rộng (bỏ keyword, nâng limit) rồi lọc client-side.
@@ -64,7 +95,7 @@ async function filterCustomerSmart(
   if (phone) broadParams.phone = kw.replace(/[^0-9+]/g, ""); // BE nếu có support sẽ filter sẵn
   if (email) broadParams.email = kw;
 
-  const res = await apiGet(endpoint, broadParams, signal);
+  const res = fromBePaging(await apiGet(endpoint, toBePaging(broadParams), signal));
   if (res?.code !== 0 || !res?.result?.items) return res;
 
   const kwLower = kw.toLowerCase();
