@@ -59,7 +59,18 @@
       "Bash(python docs/bugs/upgrade-readme-12ms.py docs/backend-tasks/README.md)",
       "Bash(cp \"d:/Git/reborn/reborn-cloud/cloud-ver2/cloud-crm/docs/bugs/upgrade-readme-12ms.py\" \"d:/Git/reborn/reborn-cloud/cloud-ver2/cloud-crm-tnpm/upgrade-readme-12ms.py\")",
       "Bash(python upgrade-readme-12ms.py docs/backend-tasks/README.md)",
-      "Bash(rm upgrade-readme-12ms.py)"
+      "Bash(rm upgrade-readme-12ms.py)",
+      "Bash(git checkout *)",
+      "Bash(node d:/tmp/migrate-urls.mjs)",
+      "Bash(git stash *)",
+      "Bash(git commit -m ' *)",
+      "Bash(npm test *)",
+      "Bash(NODE_OPTIONS=\"--max-old-space-size=8192\" npx vite build)",
+      "Bash(grep -oE '\"[^\"]{20,60}cloud\\\\.reborn\\\\.vn[^\"]{0,40}\"' bundle/assets/index-gXE8CkTw.js)",
+      "Bash(grep -oE '\"[^\"]{0,30}cloud\\\\.reborn\\\\.vn[^\"]{0,30}\"' bundle/assets/index-gXE8CkTw.js)",
+      "Bash(grep -oE '.{10}open\\\\\\(\"POST\",[^\\)]{0,80}' bundle/assets/index-gXE8CkTw.js)",
+      "Bash(xargs -I{} grep -l 'adminapi/customer/import' bundle/assets/{})",
+      "Bash(awk -F: '{print $2}')"
     ],
     "additionalDirectories": [
       "\\tmp",
