@@ -98,8 +98,11 @@ export const urlsApi = {
   },
 
   customer: {
-    filter: prefixCustomer + "/customer/list_paid",
-    listshared: prefixCustomer + "/customer/list_paid/shared",
+    // TẠM ĐỔI (2026-04-20): list_paid trỏ sang ES trên server cũ chạy local (không
+    // public ra ngoài), nên dùng /customer/list thường tới khi backend chuyển
+    // ES-index sang biz.reborn.vn. Khi backend sẵn sàng → revert về list_paid.
+    filter: prefixCustomer + "/customer/list",
+    listshared: prefixCustomer + "/customer/list/shared",
     update: prefixCustomer + "/customer/update",
     telesaleCallList: prefixCare + "/telesaleCall/list",
     telesaleCallUpdate: prefixCare + "/telesaleCall/update",
