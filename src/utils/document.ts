@@ -48,6 +48,7 @@ export const uploadDocumentFormData = (
 
     let xhr = new XMLHttpRequest();
     const linkUpload = process.env.APP_API_URL;
+    const customerApiBase = process.env.APP_CUSTOMER_API_URL || "https://biz.reborn.vn";
     const importBPM = process.env.APP_BPM_URL;
 
     xhr.open(
@@ -55,7 +56,7 @@ export const uploadDocumentFormData = (
       `${
         type
           ? type === "customer"
-            ? `${linkUpload}/adminapi/customer/import/uploadFile?custType=${parmas}`
+            ? `${customerApiBase}/customer/customer/import/uploadFile?custType=${parmas}`
             : type === "contact"
             ? `${linkUpload}/adminapi/contact/import/uploadFile`
             : type === "partner"
@@ -145,7 +146,8 @@ export const uploadDocumentDirectFormData = (data, onSuccess, onError, onProgres
     let formData = new FormData();
     formData.append("file", data);
     let xhr = new XMLHttpRequest();
-    xhr.open("POST", `https://cloud.reborn.vn/adminapi/customer/import`); //Không test ở local
+    const customerApiBase = process.env.APP_CUSTOMER_API_URL || "https://biz.reborn.vn";
+    xhr.open("POST", `${customerApiBase}/customer/customer/import`); //Không test ở local
     xhr.setRequestHeader("Authorization", getToken());
     xhr.setRequestHeader("Hostname", location.hostname || "");
 
