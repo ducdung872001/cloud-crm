@@ -1,4 +1,7 @@
 const prefixAdmin = "/adminapi";
+// Đầu API mới cho Customer/Employee/Department/Role/Permission
+// Prod mặc định: https://biz.reborn.vn/customer; override bằng env APP_CUSTOMER_API_URL.
+const prefixCustomer = (process.env.APP_CUSTOMER_API_URL || "https://biz.reborn.vn") + "/customer";
 const prefixBiz = "/bizapi";
 // const prefixBpm = process.env.APP_BPM_URL + "/bpmapi";
 const prefixBpm = process.env.APP_BPM_URL + "/bpmapi";
@@ -95,143 +98,143 @@ export const urlsApi = {
   },
 
   customer: {
-    filter: prefixAdmin + "/customer/list_paid",
-    listshared: prefixAdmin + "/customer/list_paid/shared",
-    update: prefixAdmin + "/customer/update",
+    filter: prefixCustomer + "/customer/list_paid",
+    listshared: prefixCustomer + "/customer/list_paid/shared",
+    update: prefixCustomer + "/customer/update",
     telesaleCallList: prefixCare + "/telesaleCall/list",
     telesaleCallUpdate: prefixCare + "/telesaleCall/update",
-    updateByField: prefixAdmin + "/customer/update/byField",
-    delete: prefixAdmin + "/customer/delete",
-    deleteAll: prefixAdmin + "/customer/delete",
-    checkInProcess: prefixAdmin + "/customer/checkInProcess",
-    link: prefixAdmin + "/customer/link_user",
-    detail: prefixAdmin + "/customer/get",
+    updateByField: prefixCustomer + "/customer/update/byField",
+    delete: prefixCustomer + "/customer/delete",
+    deleteAll: prefixCustomer + "/customer/delete",
+    checkInProcess: prefixCustomer + "/customer/checkInProcess",
+    link: prefixCustomer + "/customer/link_user",
+    detail: prefixCustomer + "/customer/get",
     area: prefixRebornVn + "/area/child",
 
     // api lấy ra thông tin khách hàng dựa theo id
-    listById: prefixAdmin + "/customer/list_by_id",
+    listById: prefixCustomer + "/customer/list_by_id",
     // Cập nhập hàng loạt
-    updateCustomerGroup: prefixAdmin + "/customer/update_batch/customer_group",
-    updateOneRelationship: prefixAdmin + "/customer/update/relationship",
-    updateCustomeRelationship: prefixAdmin + "/customer/update_batch/relationship",
-    updateCustomerSource: prefixAdmin + "/customer/update_batch/customer_source",
-    updateCustomerEmployee: prefixAdmin + "/customer/update_batch/employee",
+    updateCustomerGroup: prefixCustomer + "/customer/update_batch/customer_group",
+    updateOneRelationship: prefixCustomer + "/customer/update/relationship",
+    updateCustomeRelationship: prefixCustomer + "/customer/update_batch/relationship",
+    updateCustomerSource: prefixCustomer + "/customer/update_batch/customer_source",
+    updateCustomerEmployee: prefixCustomer + "/customer/update_batch/employee",
     // Lịch điều trị
-    updateScheduler: prefixAdmin + "/customerScheduler/update",
-    filterScheduler: prefixAdmin + "/customerScheduler/list",
-    cancelScheduler: prefixAdmin + "/customerScheduler/cancel",
-    detailScheduler: prefixAdmin + "/customerScheduler/get",
+    updateScheduler: prefixCustomer + "/customerScheduler/update",
+    filterScheduler: prefixCustomer + "/customerScheduler/list",
+    cancelScheduler: prefixCustomer + "/customerScheduler/cancel",
+    detailScheduler: prefixCustomer + "/customerScheduler/get",
     // Trao đổi
-    customerExchangeList: prefixAdmin + "/customerExchange/list",
-    customerExchangeUpdate: prefixAdmin + "/customerExchange/update",
-    customerExchangeDelete: prefixAdmin + "/customerExchange/delete",
+    customerExchangeList: prefixCustomer + "/customerExchange/list",
+    customerExchangeUpdate: prefixCustomer + "/customerExchange/update",
+    customerExchangeDelete: prefixCustomer + "/customerExchange/delete",
     // gửi sms, gửi email, gửi zalo
-    customerSendSMS: prefixAdmin + "/customer/send/sms",
-    customerSendEmail: prefixAdmin + "/customer/send/email",
-    customerSendZalo: prefixAdmin + "/customer/send/zalo",
+    customerSendSMS: prefixCustomer + "/customer/send/sms",
+    customerSendEmail: prefixCustomer + "/customer/send/email",
+    customerSendZalo: prefixCustomer + "/customer/send/zalo",
 
-    parserSms: prefixAdmin + "/customer/send/sms/parser",
-    parserEmail: prefixAdmin + "/customer/send/email/parser",
-    parserZalo: prefixAdmin + "/customer/send/zalo/parser",
+    parserSms: prefixCustomer + "/customer/send/sms/parser",
+    parserEmail: prefixCustomer + "/customer/send/email/parser",
+    parserZalo: prefixCustomer + "/customer/send/zalo/parser",
     // lấy số điện thoại khi bị che
-    viewPhone: prefixAdmin + "/customer/get/phone",
-    viewFullPhone: prefixAdmin + "/customer/get/phones",
+    viewPhone: prefixCustomer + "/customer/get/phone",
+    viewFullPhone: prefixCustomer + "/customer/get/phones",
     // lấy email khi bị che
-    viewEmail: prefixAdmin + "/customer/get/email",
+    viewEmail: prefixCustomer + "/customer/get/email",
 
-    addOther: prefixAdmin + "/customerViewer/update",
+    addOther: prefixCustomer + "/customerViewer/update",
     // thêm mới nhiều người xem cho 1 khách hàng
-    addCustomerViewer: prefixAdmin + "/customerViewer/update",
+    addCustomerViewer: prefixCustomer + "/customerViewer/update",
     // lấy về danh sách người xem
-    lstCustomerViewer: prefixAdmin + "/customerViewer/list",
+    lstCustomerViewer: prefixCustomer + "/customerViewer/list",
     // xóa đi 1 người xem
-    deleteCustomerViewer: prefixAdmin + "/customerViewer/delete",
+    deleteCustomerViewer: prefixCustomer + "/customerViewer/delete",
     // thêm khách hàng vào chương trình MA
-    addCustomerMA: prefixAdmin + "/maCustomer/insertList",
+    addCustomerMA: prefixCustomer + "/maCustomer/insertList",
     // điền số lượng bản ghi muốn hiển thị
-    numberFieldCustomer: prefixAdmin + "/customer/export/randomCustomers",
+    numberFieldCustomer: prefixCustomer + "/customer/export/randomCustomers",
     // import khách hàng b2
-    autoProcess: prefixAdmin + "/customer/import/autoProcess",
+    autoProcess: prefixCustomer + "/customer/import/autoProcess",
     // import khách hàng b3
-    manualProcess: prefixAdmin + "/customer/import/manualProcess",
+    manualProcess: prefixCustomer + "/customer/import/manualProcess",
     // tải file lỗi trong quá trình upload
-    downloadFile: prefixAdmin + "/customer/import",
+    downloadFile: prefixCustomer + "/customer/import",
     // tương tác khách hàng
-    customerReport: prefixAdmin + "/customerReport/summaryAction",
+    customerReport: prefixCustomer + "/customerReport/summaryAction",
     // chi tiết tương tác khách hàng
-    detailCustomerReport: prefixAdmin + "/customerReport/summaryAction/detail",
+    detailCustomerReport: prefixCustomer + "/customerReport/summaryAction/detail",
     // danh sách các file đã tải
-    lstAttachments: prefixAdmin + "/customerExchange/attachment/list",
+    lstAttachments: prefixCustomer + "/customerExchange/attachment/list",
     // chi tiết tương tác từng khách hàng trong màn hình chi tiết khách hàng
-    descCustomerReport: prefixAdmin + "/customerReport/action/list",
+    descCustomerReport: prefixCustomer + "/customerReport/action/list",
     // khách hàng đã theo dõi tk zalo nào
-    customerZaloOA: prefixAdmin + "/customer/zalo/oa",
+    customerZaloOA: prefixCustomer + "/customer/zalo/oa",
     // đoạn này là api bộ lọc nâng cao
-    filterAdvanced: prefixAdmin + "/filter-setting/list",
-    createFilterAdvanced: prefixAdmin + "/filter-setting/update",
-    deleteFilterAdvanced: prefixAdmin + "/filter-setting/delete",
-    customerAttributes: prefixAdmin + "/filter-setting/customers/attributes",
-    filterLstCustomer: prefixAdmin + "/filter-setting",
+    filterAdvanced: prefixCustomer + "/filter-setting/list",
+    createFilterAdvanced: prefixCustomer + "/filter-setting/update",
+    deleteFilterAdvanced: prefixCustomer + "/filter-setting/delete",
+    customerAttributes: prefixCustomer + "/filter-setting/customers/attributes",
+    filterLstCustomer: prefixCustomer + "/filter-setting",
     // lấy thuộc tính để placeholder Email
-    // businessPartner: prefixAdmin + "/businessPartner/attributes",
-    // emailAttributes: prefixAdmin + "/businessPartner/attributes",
+    // businessPartner: prefixCustomer + "/businessPartner/attributes",
+    // emailAttributes: prefixCustomer + "/businessPartner/attributes",
     // lấy thuộc tính vào bảng filter
-    filterTable: prefixAdmin + "/customerAttribute/listFilter",
+    filterTable: prefixCustomer + "/customerAttribute/listFilter",
     // lấy ra các trường, để tải dữ liệu mẫu về
-    exAttributes: prefixAdmin + "/customer/export/attributes",
+    exAttributes: prefixCustomer + "/customer/export/attributes",
     // đoạn này tạo cơ hội cho khách hàng doanh nghiệp
-    createOpportunity: prefixAdmin + "/opportunity/update",
-    lstOpportunity: prefixAdmin + "/opportunity/list",
-    deleteOpportunity: prefixAdmin + "/opportunity/delete",
-    detailOpportunity: prefixAdmin + "/opportunity/get",
+    createOpportunity: prefixCustomer + "/opportunity/update",
+    lstOpportunity: prefixCustomer + "/opportunity/list",
+    deleteOpportunity: prefixCustomer + "/opportunity/delete",
+    detailOpportunity: prefixCustomer + "/opportunity/get",
 
     // danh sách upload
-    lstUpload: prefixAdmin + "/customerUpload/list",
+    lstUpload: prefixCustomer + "/customerUpload/list",
 
     // api phân tích chân dung khách hàng
-    classifyAge: prefixAdmin + "/api/v1/customer/classify/age",
-    classifyGender: prefixAdmin + "/api/v1/customer/classify/gender",
-    classifyIdentify: prefixAdmin + "/api/v1/customer/classify/identify",
-    classifyTopRevenue: prefixAdmin + "/api/v1/customer/classify/topRevenue",
-    classifyTopBought: prefixAdmin + "/api/v1/customer/classify/topBought",
-    classifyTopValueInvoice: prefixAdmin + "/api/v1/customer/classify/topValueInvoice",
-    classifyNotInteractDay: prefixAdmin + "/api/v1/customer/classify/notInteractDay",
-    classifyTopInteract: prefixAdmin + "/api/v1/customer/classify/topInteract",
-    classifyCampaignJoined: prefixAdmin + "/api/v1/customer/classify/campaignJoined",
-    classifyCustType: prefixAdmin + "/api/v1/customer/classify/custType",
-    classifyCustGroup: prefixAdmin + "/api/v1/customer/classify/custGroup",
-    classifyCustSource: prefixAdmin + "/api/v1/customer/classify/custSource",
-    classifyCustCareer: prefixAdmin + "/api/v1/customer/classify/custCareer",
-    classifyCustArea: prefixAdmin + "/api/v1/customer/classify/custArea",
-    classifyCustomerCard: prefixAdmin + "/api/v1/customer/classify/customerCard",
-    classifyInteractTimes: prefixAdmin + "/api/v1/customer/classify/interactTimes",
+    classifyAge: prefixCustomer + "/api/v1/customer/classify/age",
+    classifyGender: prefixCustomer + "/api/v1/customer/classify/gender",
+    classifyIdentify: prefixCustomer + "/api/v1/customer/classify/identify",
+    classifyTopRevenue: prefixCustomer + "/api/v1/customer/classify/topRevenue",
+    classifyTopBought: prefixCustomer + "/api/v1/customer/classify/topBought",
+    classifyTopValueInvoice: prefixCustomer + "/api/v1/customer/classify/topValueInvoice",
+    classifyNotInteractDay: prefixCustomer + "/api/v1/customer/classify/notInteractDay",
+    classifyTopInteract: prefixCustomer + "/api/v1/customer/classify/topInteract",
+    classifyCampaignJoined: prefixCustomer + "/api/v1/customer/classify/campaignJoined",
+    classifyCustType: prefixCustomer + "/api/v1/customer/classify/custType",
+    classifyCustGroup: prefixCustomer + "/api/v1/customer/classify/custGroup",
+    classifyCustSource: prefixCustomer + "/api/v1/customer/classify/custSource",
+    classifyCustCareer: prefixCustomer + "/api/v1/customer/classify/custCareer",
+    classifyCustArea: prefixCustomer + "/api/v1/customer/classify/custArea",
+    classifyCustomerCard: prefixCustomer + "/api/v1/customer/classify/customerCard",
+    classifyInteractTimes: prefixCustomer + "/api/v1/customer/classify/interactTimes",
 
     // gợi ý các sản phẩm/dịch vụ cho khách hàng
-    serviceSuggestions: prefixAdmin + "/customerObject/list",
+    serviceSuggestions: prefixCustomer + "/customerObject/list",
     // api khác để làm
-    serviceSuggestionsv2: prefixAdmin + "/customerObject/getTop",
+    serviceSuggestionsv2: prefixCustomer + "/customerObject/getTop",
 
     // lấy ra các field động view nên chart
-    fieldChart: prefixAdmin + "/customer/dashboard/fields",
-    lstChartDynamicChart: prefixAdmin + "/customer/dashboard/list",
-    updateChartDynamicChart: prefixAdmin + "/customer/dashboard/update",
-    deleteChartDynamicChart: prefixAdmin + "/customer/dashboard/delete",
-    detailChartDynamicChart: prefixAdmin + "/customer/dashboard/get",
-    viewChartDynamicChart: prefixAdmin + "/customer/dashboard/fetchData",
+    fieldChart: prefixCustomer + "/customer/dashboard/fields",
+    lstChartDynamicChart: prefixCustomer + "/customer/dashboard/list",
+    updateChartDynamicChart: prefixCustomer + "/customer/dashboard/update",
+    deleteChartDynamicChart: prefixCustomer + "/customer/dashboard/delete",
+    detailChartDynamicChart: prefixCustomer + "/customer/dashboard/get",
+    viewChartDynamicChart: prefixCustomer + "/customer/dashboard/fetchData",
 
     //export multi
-    exportMulti: prefixAdmin + "/customer/export/multi",
+    exportMulti: prefixCustomer + "/customer/export/multi",
 
     //create call tnex-athena
     loginAccountAthena: prefixAthena + "/api/v1/account/login",
     createCall: prefixAthena + "/api/v1/call-history/create-call",
 
     //lấy tài khoản tổng đài
-    getAccountCall: prefixAdmin + "/employeeAgent/employeeId",
-    reloadData: prefixAdmin + "/customer/moveToEs",
+    getAccountCall: prefixCustomer + "/employeeAgent/employeeId",
+    reloadData: prefixCustomer + "/customer/moveToEs",
 
     // chia data khách hàng Tnex
-    customerAssign: prefixAdmin + "/customer/assign",
+    customerAssign: prefixCustomer + "/customer/assign",
   },
 
   careScenario: {
@@ -297,9 +300,9 @@ export const urlsApi = {
 
 
   historySend: {
-    historySendSMS: prefixAdmin + "/customerSms/list",
-    historySendEmail: prefixAdmin + "/customerEmail/list",
-    historySendZalo: prefixAdmin + "/customerZalo/list",
+    historySendSMS: prefixCustomer + "/customerSms/list",
+    historySendEmail: prefixCustomer + "/customerEmail/list",
+    historySendZalo: prefixCustomer + "/customerZalo/list",
   },
   sendSMS: {
     // thêm, sửa, xóa danh sách gửi sms
@@ -629,40 +632,40 @@ export const urlsApi = {
   },
 
   employee: {
-    list: prefixAdmin + "/employee/list",
-    update: prefixAdmin + "/employee/update",
-    detail: prefixAdmin + "/employee/get",
-    delete: prefixAdmin + "/employee/delete",
-    linkEmployeeUser: prefixAdmin + "/employee/link_user",
-    init: prefixAdmin + "/employee/init",
-    info: prefixAdmin + "/employee/info",
-    takeRoles: prefixAdmin + "/employee/roles",
-    listExTip: prefixAdmin + "/employee/listExTip",
-    generateRandomPass: prefixAdmin + "/employee/random_pass",
-    list_department: prefixAdmin + "/employee/list/department",
-    updateToken: prefixAdmin + "/employee/update_token", //Cập nhật token của Outlook Mail
-    checkEmailConnection: prefixAdmin + "/employee/check_email_connection",
-    disconnectEmail: prefixAdmin + "/employee/disconnect_email",
-    updateRole: prefixAdmin + "/roleEmployee/insert-batch",
-    getListRoleEmployee: prefixAdmin + "/roleEmployee/list",
-    deleteRole: prefixAdmin + "/roleEmployee/delete",
+    list: prefixCustomer + "/employee/list",
+    update: prefixCustomer + "/employee/update",
+    detail: prefixCustomer + "/employee/get",
+    delete: prefixCustomer + "/employee/delete",
+    linkEmployeeUser: prefixCustomer + "/employee/link_user",
+    init: prefixCustomer + "/employee/init",
+    info: prefixCustomer + "/employee/info",
+    takeRoles: prefixCustomer + "/employee/roles",
+    listExTip: prefixCustomer + "/employee/listExTip",
+    generateRandomPass: prefixCustomer + "/employee/random_pass",
+    list_department: prefixCustomer + "/employee/list/department",
+    updateToken: prefixCustomer + "/employee/update_token", //Cập nhật token của Outlook Mail
+    checkEmailConnection: prefixCustomer + "/employee/check_email_connection",
+    disconnectEmail: prefixCustomer + "/employee/disconnect_email",
+    updateRole: prefixCustomer + "/roleEmployee/insert-batch",
+    getListRoleEmployee: prefixCustomer + "/roleEmployee/list",
+    deleteRole: prefixCustomer + "/roleEmployee/delete",
   },
   employeeAgent: {
-    list: prefixAdmin + "/employeeAgent/list",
-    update: prefixAdmin + "/employeeAgent/update",
-    delete: prefixAdmin + "/employeeAgent/delete",
-    listAthena: prefixAdmin + "/athena/account-info",
+    list: prefixCustomer + "/employeeAgent/list",
+    update: prefixCustomer + "/employeeAgent/update",
+    delete: prefixCustomer + "/employeeAgent/delete",
+    listAthena: prefixCustomer + "/athena/account-info",
   },
 
   teamEmployee: {
-    list: prefixAdmin + "/group/list",
-    detail: prefixAdmin + "/group/get",
-    update: prefixAdmin + "/group/update",
-    delete: prefixAdmin + "/group/delete",
+    list: prefixCustomer + "/group/list",
+    detail: prefixCustomer + "/group/get",
+    update: prefixCustomer + "/group/update",
+    delete: prefixCustomer + "/group/delete",
 
-    listEmployee: prefixAdmin + "/groupEmployee/list",
-    updateEmployee: prefixAdmin + "/groupEmployee/update",
-    deleteEmployee: prefixAdmin + "/groupEmployee/delete",
+    listEmployee: prefixCustomer + "/groupEmployee/list",
+    updateEmployee: prefixCustomer + "/groupEmployee/update",
+    deleteEmployee: prefixCustomer + "/groupEmployee/delete",
   },
 
   scheduleCommon: {
@@ -1004,22 +1007,22 @@ export const urlsApi = {
     delete: prefixAdmin + "/reportTemplate/delete",
   },
   department: {
-    list: prefixAdmin + "/department/list",
-    update: prefixAdmin + "/department/update",
-    detail: prefixAdmin + "/department/get",
-    delete: prefixAdmin + "/department/delete",
-    list_branch: prefixAdmin + "/department/list/branch",
+    list: prefixCustomer + "/department/list",
+    update: prefixCustomer + "/department/update",
+    detail: prefixCustomer + "/department/get",
+    delete: prefixCustomer + "/department/delete",
+    list_branch: prefixCustomer + "/department/list/branch",
 
-    updateParent: prefixAdmin + "/department/update/parent",
+    updateParent: prefixCustomer + "/department/update/parent",
   },
   role: {
-    list: prefixAdmin + "/role/list",
-    update: prefixAdmin + "/role/update",
-    detail: prefixAdmin + "/role/get",
-    delete: prefixAdmin + "/role/delete",
-    list_branch: prefixAdmin + "/role/list/branch",
+    list: prefixCustomer + "/role/list",
+    update: prefixCustomer + "/role/update",
+    detail: prefixCustomer + "/role/get",
+    delete: prefixCustomer + "/role/delete",
+    list_branch: prefixCustomer + "/role/list/branch",
 
-    updateParent: prefixAdmin + "/role/update/parent",
+    updateParent: prefixCustomer + "/role/update/parent",
   },
   productIdApi: {
     list: prefixRebornVn + "/product/list",
@@ -1357,24 +1360,24 @@ export const urlsApi = {
     logValues: prefixAdmin + "/contract/logValues",
   },
   customerGroup: {
-    list: prefixAdmin + "/customerGroup/list",
-    update: prefixAdmin + "/customerGroup/update",
-    delete: prefixAdmin + "/customerGroup/delete",
+    list: prefixCustomer + "/customerGroup/list",
+    update: prefixCustomer + "/customerGroup/update",
+    delete: prefixCustomer + "/customerGroup/delete",
   },
   customerSource: {
-    list: prefixAdmin + "/customerSource/list",
-    update: prefixAdmin + "/customerSource/update",
-    delete: prefixAdmin + "/customerSource/delete",
+    list: prefixCustomer + "/customerSource/list",
+    update: prefixCustomer + "/customerSource/update",
+    delete: prefixCustomer + "/customerSource/delete",
   },
   customerMarketingLead: {
-    list: prefixAdmin + "/marketingSource/list",
-    update: prefixAdmin + "/marketingSource/update",
-    delete: prefixAdmin + "/marketingSource/delete",
+    list: prefixCustomer + "/marketingSource/list",
+    update: prefixCustomer + "/marketingSource/update",
+    delete: prefixCustomer + "/marketingSource/delete",
   },
   customerView: {
-    list: prefixAdmin + "/customerView/list",
-    update: prefixAdmin + "/customerView/update",
-    delete: prefixAdmin + "/customerView/delete",
+    list: prefixCustomer + "/customerView/list",
+    update: prefixCustomer + "/customerView/update",
+    delete: prefixCustomer + "/customerView/delete",
   },
 
   reportChart: {
@@ -1412,15 +1415,15 @@ export const urlsApi = {
   },
   // Báo cáo khách hàng
   reportCustomer: {
-    totalCurentCustomer: prefixAdmin + "/customer/dashboard/getTotal",
+    totalCurentCustomer: prefixCustomer + "/customer/dashboard/getTotal",
     totalContract: prefixAdmin + "/contract/total/dashboard",
     totalRevenue: prefixAdmin + "/contract/revenue/dashboard",
-    externalOrnot: prefixAdmin + "/customer/dashboard/externalOrnot",
-    relationShip: prefixAdmin + "/customer/dashboard/relationShip",
+    externalOrnot: prefixCustomer + "/customer/dashboard/externalOrnot",
+    relationShip: prefixCustomer + "/customer/dashboard/relationShip",
     pipeline: prefixAdmin + "/contract/dashboard/pipeline",
     notInTimePipeline: prefixAdmin + "/contract/dashboard/notInTime/pipeline",
     // Chi tiết tổng số khách hàng
-    totalCurentCustomerDetail: prefixAdmin + "/customer/dashboard/getTotal/detail",
+    totalCurentCustomerDetail: prefixCustomer + "/customer/dashboard/getTotal/detail",
     // Chi tiết tổng số hợp đồng theo pipeline
     totalContractSignerDetail: prefixAdmin + "/contract/dashboard/notInTime/pipeline/detail",
     // Doanh thu còn phải thu trong kì
@@ -1442,19 +1445,19 @@ export const urlsApi = {
   },
 
   customerField: {
-    list: prefixAdmin + "/customerField/list",
-    update: prefixAdmin + "/customerField/update",
-    delete: prefixAdmin + "/customerField/delete",
+    list: prefixCustomer + "/customerField/list",
+    update: prefixCustomer + "/customerField/update",
+    delete: prefixCustomer + "/customerField/delete",
   },
   customerAttribute: {
-    list: prefixAdmin + "/customerAttribute/list",
-    update: prefixAdmin + "/customerAttribute/update",
-    delete: prefixAdmin + "/customerAttribute/delete",
-    listAll: prefixAdmin + "/customerAttribute/listAll",
-    checkDuplicated: prefixAdmin + "/customerAttribute/checkDuplicated",
+    list: prefixCustomer + "/customerAttribute/list",
+    update: prefixCustomer + "/customerAttribute/update",
+    delete: prefixCustomer + "/customerAttribute/delete",
+    listAll: prefixCustomer + "/customerAttribute/listAll",
+    checkDuplicated: prefixCustomer + "/customerAttribute/checkDuplicated",
   },
   customerExtraInfo: {
-    list: prefixAdmin + "/customerExtraInfo/list",
+    list: prefixCustomer + "/customerExtraInfo/list",
   },
   contractAttribute: {
     list: prefixAdmin + "/contractAttribute/list",
@@ -2110,68 +2113,68 @@ export const urlsApi = {
     freeResource: prefixAdmin + "/resource/list_ex",
   },
   permission: {
-    getPermissionResources: prefixAdmin + "/permission/resource",
+    getPermissionResources: prefixCustomer + "/permission/resource",
     //API phân quyền theo phòng ban
-    permissionDepartment: prefixAdmin + "/permission/info",
+    permissionDepartment: prefixCustomer + "/permission/info",
     //API phân quyền theo nhóm quyền
-    rolePermission: prefixAdmin + "/rolePermission/info",
+    rolePermission: prefixCustomer + "/rolePermission/info",
     //API thêm quyền cho phòng ban
-    permissionDepartmentAdd: prefixAdmin + "/permission/add",
+    permissionDepartmentAdd: prefixCustomer + "/permission/add",
     //API thêm quyền cho nhóm quyền
-    permissionRoleAdd: prefixAdmin + "/rolePermission/add",
+    permissionRoleAdd: prefixCustomer + "/rolePermission/add",
     //API xóa quyền được cấp
-    permissionDepartmentDelete: prefixAdmin + "/permission/remove",
+    permissionDepartmentDelete: prefixCustomer + "/permission/remove",
     //API lấy danh sách quyền trước đó cho một đối tượng muốn sao chép
-    permissionClone: prefixAdmin + "/permission/clone",
+    permissionClone: prefixCustomer + "/permission/clone",
 
     //danh sách yêu cầu xin quyền truy cập (mình xin quyền)
-    requestPermissionSource: prefixAdmin + "/requestPermission/list/source",
+    requestPermissionSource: prefixCustomer + "/requestPermission/list/source",
     //gửi yêu cầu xin phê duyệt
-    updateRequestPermission: prefixAdmin + "/requestPermission/update",
+    updateRequestPermission: prefixCustomer + "/requestPermission/update",
 
     //xoá yêu cầu xin phê duyệt
-    deleteRequestPermission: prefixAdmin + "/requestPermission/delete",
+    deleteRequestPermission: prefixCustomer + "/requestPermission/delete",
 
     //danh sách cấp quyền truy cập (đối tác xin quyền)
-    requestPermissionTarget: prefixAdmin + "/requestPermission/list/target",
+    requestPermissionTarget: prefixCustomer + "/requestPermission/list/target",
 
     //phê duyệt quyền truy cập
-    updateApprovePermission: prefixAdmin + "/requestPermission/update/approved ",
+    updateApprovePermission: prefixCustomer + "/requestPermission/update/approved ",
 
     //từ chối quyền truy cập
-    updateRejectPermission: prefixAdmin + "/requestPermission/update/rejected ",
+    updateRejectPermission: prefixCustomer + "/requestPermission/update/rejected ",
   },
   rolePermission: {
-    getPermissionResources: prefixAdmin + "/permission/resource",
+    getPermissionResources: prefixCustomer + "/permission/resource",
     //API phân quyền theo nhóm quyền
-    rolePermission: prefixAdmin + "/rolePermission/info",
+    rolePermission: prefixCustomer + "/rolePermission/info",
     //API phân quyền theo gói
-    packagePermission: prefixAdmin + "/packagePermission/info",
+    packagePermission: prefixCustomer + "/packagePermission/info",
     //API thêm quyền cho nhóm quyền
-    packagePermissionAdd: prefixAdmin + "/packagePermission/add",
+    packagePermissionAdd: prefixCustomer + "/packagePermission/add",
     //API thêm quyền cho nhóm quyền
-    permissionRoleAdd: prefixAdmin + "/rolePermission/add",
+    permissionRoleAdd: prefixCustomer + "/rolePermission/add",
     //API xóa quyền được cấp
-    permissionRoleDelete: prefixAdmin + "/rolePermission/remove",
+    permissionRoleDelete: prefixCustomer + "/rolePermission/remove",
     //API lấy danh sách quyền trước đó cho một đối tượng muốn sao chép
-    permissionClone: prefixAdmin + "/permission/clone",
+    permissionClone: prefixCustomer + "/permission/clone",
 
     //danh sách yêu cầu xin quyền truy cập (mình xin quyền)
-    requestPermissionSource: prefixAdmin + "/requestPermission/list/source",
+    requestPermissionSource: prefixCustomer + "/requestPermission/list/source",
     //gửi yêu cầu xin phê duyệt
-    updateRequestPermission: prefixAdmin + "/requestPermission/update",
+    updateRequestPermission: prefixCustomer + "/requestPermission/update",
 
     //xoá yêu cầu xin phê duyệt
-    deleteRequestPermission: prefixAdmin + "/requestPermission/delete",
+    deleteRequestPermission: prefixCustomer + "/requestPermission/delete",
 
     //danh sách cấp quyền truy cập (đối tác xin quyền)
-    requestPermissionTarget: prefixAdmin + "/requestPermission/list/target",
+    requestPermissionTarget: prefixCustomer + "/requestPermission/list/target",
 
     //phê duyệt quyền truy cập
-    updateApprovePermission: prefixAdmin + "/requestPermission/update/approved ",
+    updateApprovePermission: prefixCustomer + "/requestPermission/update/approved ",
 
     //từ chối quyền truy cập
-    updateRejectPermission: prefixAdmin + "/requestPermission/update/rejected ",
+    updateRejectPermission: prefixCustomer + "/requestPermission/update/rejected ",
   },
   //API tổng đài
   callCenter: {

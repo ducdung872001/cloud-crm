@@ -45,6 +45,7 @@ export default defineConfig(({ mode }) => {
       "APP_CONNECT_URL",
       "APP_UPLOAD_URL",
       "APP_ATHENA_URL",
+      "APP_CUSTOMER_API_URL",
     ];
 
     // Production fallback values (khi CI/CD không có .env.production)
@@ -56,6 +57,7 @@ export default defineConfig(({ mode }) => {
       APP_AUTHENTICATOR_URL: "https://reborn.vn",
       APP_SSO_LINK: "https://sso.reborn.vn",
       APP_DOMAIN: "reborn.vn",
+      APP_CUSTOMER_API_URL: "https://biz.reborn.vn",
     } : {};
 
     // Add all required environment variables
