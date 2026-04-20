@@ -2,14 +2,16 @@
 
 **Ngày tạo:** 2026-04-20
 **Nhánh gốc áp dụng đầu tiên:** `hotfix/migrate-customer-api-biz-reborn` (từ `reborn-retail`)
-**Commit gốc:** `460ecb59`
+**Commit gốc:** `460ecb59` (4 module) + `5cc54d78` (fix upload URL) + commit contact bổ sung
 **Nhánh cần áp dụng sau:** `community-hub`, `reborn-loyalty`, `reborn-fitpro`, `reborn-retail` (merge back từ hotfix), các nhánh CRM tenant khác dùng chung `cloud-crm`.
 
 ---
 
 ## 1. Mục tiêu
 
-Chuyển 4 module **Khách hàng / Phân quyền / Nhân viên / Phòng ban** từ đầu API cũ `https://cloud.reborn.vn/adminapi/*` sang đầu API mới `https://biz.reborn.vn/customer/*`. Các module khác giữ nguyên.
+Chuyển 5 module **Khách hàng / Người liên hệ / Phân quyền / Nhân viên / Phòng ban** từ đầu API cũ `https://cloud.reborn.vn/adminapi/*` sang đầu API mới `https://biz.reborn.vn/customer/*`. Các module khác giữ nguyên.
+
+> **Cập nhật 2026-04-20**: Module **Người liên hệ (contact)** bổ sung sau, +27 endpoint trong 5 block `contact`, `contactPipeline`, `contactStatus`, `contactAttribute`, `contactExtraInfo`. Script dưới đây đã bao gồm.
 
 ---
 
@@ -40,6 +42,9 @@ const targets = [
   {key:'reportCustomer', filter: /"\/customer\//},
   {key:'customerField'}, {key:'customerAttribute'}, {key:'customerExtraInfo'},
   {key:'permission'}, {key:'rolePermission'},
+  // Bổ sung 2026-04-20: module contact
+  {key:'contact'}, {key:'contactPipeline'}, {key:'contactStatus'},
+  {key:'contactAttribute'}, {key:'contactExtraInfo'},
 ];
 function findBlock(k){const re=new RegExp('^  '+k+':\\\\s*\\\\{');const s=lines.findIndex(l=>re.test(l));if(s<0)return null;let d=0;for(let i=s;i<lines.length;i++){for(const c of lines[i]){if(c==='{')d++;else if(c==='}'){d--;if(d===0)return{s,e:i}}}}return null}
 let total=0;
@@ -49,7 +54,7 @@ console.log('TOTAL: '+total);
 JS
 )"
 ```
-Trên nhánh gốc cho output `TOTAL: 181`. Nếu nhánh khác cho số khác → đối chiếu cụ thể.
+Trên nhánh gốc (sau khi thêm contact) cho output `TOTAL: 208` (181 + 27). Nếu nhánh khác cho số khác → đối chiếu cụ thể.
 
 ### 2.2 `vite.config.ts`
 Thêm `APP_CUSTOMER_API_URL` vào 2 chỗ: mảng `requiredEnvVars` và object `productionDefaults`:
