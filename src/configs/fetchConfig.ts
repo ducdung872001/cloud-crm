@@ -33,14 +33,23 @@ export default function RegisterFetch() {
         config.headers["Content-Type"] = "application/json";
       }
       config.headers["Hostname"] = location.hostname || "";
-      // config.headers["Hostname"] = "rebornjsc.reborn.vn";
-      // config.headers["Hostname"] = "kcn.reborn.vn";
-      // config.headers["Hostname"] = "boutique2shop.reborn.vn";
-      // https://ducnang24.reborn.vn/crm/setting_account
-
-      // if (urlsFormData.filter((urlForm) => url.indexOf(urlForm) !== -1).length > 0) {
-      //   delete config.headers["Content-Type"];
-      // }
+      //
+      // Hostname gửi tới BE = domain user đang truy cập. Khi chạy dev local
+      // (localhost / 127.0.0.1) không có domain tenant thật → dùng override
+      // qua localStorage.devHostname, fallback "kcn.reborn.vn" để không phá
+      // environment test hiện tại. QA đổi tenant bằng:
+      //   localStorage.setItem("devHostname", "boutique2shop.reborn.vn")
+      {
+        const realHost = location.hostname || "";
+        const isLocal = realHost === "localhost" || realHost === "127.0.0.1" || realHost === "";
+        let devHost = "";
+        try {
+          devHost = (typeof localStorage !== "undefined" && localStorage.getItem("devHostname")) || "";
+        } catch {
+          /* SSR / sandbox */
+        }
+        config.headers["Hostname"] = isLocal ? (devHost || "kcn.reborn.vn") : realHost;
+      }
       if (!url.startsWith("http")) {
         if (!url.startsWith("/")) {
           url = `/${url}`;
