@@ -56,7 +56,8 @@
       "Bash(taskkill //PID 19796 //F)",
       "Bash(taskkill //PID 9408 //F //T)",
       "Bash(ls -la /d/Git/reborn/reborn-cloud/cloud-ver2/cloud-crm/src/utils/image*)",
-      "Bash(node d:/tmp/apply-api-migration.mjs)"
+      "Bash(node d:/tmp/apply-api-migration.mjs)",
+      "Bash(git push *)"
     ]
   }
 }
