@@ -642,14 +642,14 @@ export default function CustomerAndSupplier(props: Record<string, unknown>) {
       customerId: customerId,
     };
 
-    const response = await CustomerService.lstOpportunity(param);
-
-    if (response.code === 0) {
-      const result = response.result.items;
-      return result;
-    } else {
-      return [];
+    try {
+      const response = await CustomerService.lstOpportunity(param);
+      if (response?.code === 0) return response.result.items;
+    } catch {
+      // BE có thể chưa expose /opportunity/list trên service mới — swallow để
+      // 1 row B2B lỗi không phá Promise.all khiến toàn bộ list rỗng.
     }
+    return [];
   };
 
   useEffect(() => {
@@ -1486,13 +1486,6 @@ export default function CustomerAndSupplier(props: Record<string, unknown>) {
               <div>
                 <div className="num">200</div>
                 <div className="lbl">Khách hàng</div>
-              </div>
-            </div>
-            <div className="stat-pill">
-              <div className="dot" style={{ background: "#8b5cf6" }}></div>
-              <div>
-                <div className="num">35</div>
-                <div className="lbl">NCC</div>
               </div>
             </div>
             <div className="stat-pill">

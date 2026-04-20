@@ -81,7 +81,8 @@
       "Bash(node -e \"console.log\\(JSON.parse\\(require\\('fs'\\).readFileSync\\('tests/.auth-cookies.json','utf8'\\)\\).find\\(c=>c.name==='token'\\).value\\)\")",
       "Bash(curl -sS -k -w '\\\\nHTTP %{http_code}\\\\n' 'https://biz.reborn.vn/customer/customer/list_paid/basic?keyword=&contactType=-1&branchId=23&page=0&size=20' -H 'Authorization: Bearer __TRACKED_VAR__' -H 'Hostname: kcn.reborn.vn' -H 'Content-Type: application/json' -H 'Accept: application/json')",
       "Bash(curl -sS -k -w '\\\\nHTTP %{http_code}\\\\n' 'https://biz.reborn.vn/customer/customer/list_paid/basic?keyword=&page=0&size=20' -H 'Authorization: Bearer __TRACKED_VAR__' -H 'Hostname: kcn.reborn.vn' -H 'Content-Type: application/json' -H 'Accept: application/json')",
-      "Bash(node -e ' *)"
+      "Bash(node -e ' *)",
+      "Bash(curl -sS -k -w '\\\\nHTTP %{http_code}\\\\n' 'https://biz.reborn.vn/customer/opportunity/list?customerId=1060550' -H 'Authorization: Bearer __TRACKED_VAR__' -H 'Hostname: kcn.reborn.vn' -H 'Accept: application/json')"
     ],
     "additionalDirectories": [
       "\\tmp",

@@ -1746,14 +1746,14 @@ export default function CustomerPersonList() {
       customerId: customerId,
     };
 
-    const response = await CustomerService.lstOpportunity(param);
-
-    if (response.code === 0) {
-      const result = response.result.items;
-      return result;
-    } else {
-      return [];
+    try {
+      const response = await CustomerService.lstOpportunity(param);
+      if (response?.code === 0) return response.result.items;
+    } catch {
+      // BE có thể chưa expose /opportunity/list trên service mới — swallow để
+      // 1 row B2B lỗi không phá Promise.all khiến toàn bộ list rỗng.
     }
+    return [];
   };
 
   useEffect(() => {
