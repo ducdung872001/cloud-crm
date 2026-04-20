@@ -70,7 +70,13 @@
       "Bash(grep -oE '\"[^\"]{0,30}cloud\\\\.reborn\\\\.vn[^\"]{0,30}\"' bundle/assets/index-gXE8CkTw.js)",
       "Bash(grep -oE '.{10}open\\\\\\(\"POST\",[^\\)]{0,80}' bundle/assets/index-gXE8CkTw.js)",
       "Bash(xargs -I{} grep -l 'adminapi/customer/import' bundle/assets/{})",
-      "Bash(awk -F: '{print $2}')"
+      "Bash(awk -F: '{print $2}')",
+      "Bash(curl -s -o /dev/null -w \"reborn.vn/authenticator/user/me: %{http_code}\\\\n\" https://reborn.vn/authenticator/user/me)",
+      "Bash(curl -s -o /dev/null -w \"sso.reborn.vn/authenticator/user/me: %{http_code}\\\\n\" https://sso.reborn.vn/authenticator/user/me)",
+      "Bash(curl -s -o /dev/null -w \"cloud.reborn.vn/authenticator/user/me: %{http_code}\\\\n\" https://cloud.reborn.vn/authenticator/user/me)",
+      "Bash(curl -s -o /dev/null -w \"biz.reborn.vn/authenticator/user/me: %{http_code}\\\\n\" https://biz.reborn.vn/authenticator/user/me)",
+      "Bash(node d:/tmp/migrate-contact.mjs)",
+      "Bash(curl -sI \"https://api.github.com/repos/ducdung872001/cloud-crm\")"
     ],
     "additionalDirectories": [
       "\\tmp",
