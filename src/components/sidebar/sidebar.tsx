@@ -56,12 +56,7 @@ function Sidebar() {
         <div className="sidebar-logo d-flex align-items-center justify-content-between">
           <Link to="/" className="logo">
             {/* {logoOrganization ? <img loading="lazy" src={logoOrganization} style={style_height_width} /> : <LogoMenu />} */}
-            {(() => {
-              // Tạm ẩn logo trong ngày 21/4/2026; từ 22/4/2026 tự động hiện lại.
-              const now = new Date();
-              const today = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}-${String(now.getDate()).padStart(2, "0")}`;
-              return today === "2026-04-21" ? null : <LogoMenu />;
-            })()}
+            <LogoMenu />
           </Link>
           {isMouseOver || !isCollapsedSidebar ? (
             <Button
