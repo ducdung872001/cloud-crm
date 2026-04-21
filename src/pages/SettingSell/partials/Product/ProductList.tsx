@@ -1,5 +1,5 @@
 import React, { Fragment, useState, useEffect, useRef } from "react";
-import { useSearchParams } from "react-router-dom";
+import { useLocation, useSearchParams } from "react-router-dom";
 
 import Icon from "components/icon";
 import Image from "components/image";
@@ -37,7 +37,7 @@ import CategoryServiceService from "services/CategoryServiceService";
 import BarcodeScanner from "@/components/barcodeScanner/BarcodeScanner";
 
 // ---- Tab filter type ----
-type StatusTab = "all" | "active" | "paused" | "category" | "label" | "low_stock" | "on_web";
+type StatusTab = "all" | "active" | "paused" | "category" | "label" | "low_stock" | "on_web" | "out_stock";
 
 const isSuccessResponse = (response: Record<string, unknown>) => response?.code === 0 || response?.status === 1;
 
@@ -112,6 +112,7 @@ export default function ProductList(props: IProductListProps) {
 
   // Đọc ?productId từ URL (từ Global Search) → tự mở trang chi tiết sản phẩm
   const [searchParams] = useSearchParams();
+  const location = useLocation();
   useEffect(() => {
     const pid = searchParams.get("productId");
     if (pid) {
@@ -396,6 +397,18 @@ export default function ProductList(props: IProductListProps) {
       }
     });
   };
+
+  const statusParam = searchParams.get("status") as StatusTab | null;
+  const locationState = location.state as { productStatusFilter?: StatusTab; notificationClickAt?: number } | null;
+  const notificationProductStatusFilter = locationState?.productStatusFilter;
+  const notificationClickAt = locationState?.notificationClickAt;
+
+  useEffect(() => {
+    if (statusParam === "low_stock" || notificationProductStatusFilter === "low_stock") {
+      handleTabChange("low_stock");
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [notificationClickAt, notificationProductStatusFilter, statusParam]);
 
   const handleToggleWebDisplay = async (item: IProductResponse, newValue: boolean) => {
     const previousValue = getProductWebState(item);

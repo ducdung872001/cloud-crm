@@ -431,10 +431,10 @@ export default function NotificationList(props: Record<string, unknown>) {
         navigate("/multi_channel_sales", { state: { tab: 2, orderRequestModalId: payload.orderId } });
         return;
       }
-      // Bug B.1: "Cảnh báo ngưỡng tồn kho" → màn Sản phẩm tồn kho
+      // Inventory threshold alert opens product settings with the low-stock filter.
       if (payload?.type === "INVENTORY_THRESHOLD_ALERT") {
-        navigate("/product_inventory", {
-          state: payload.productId ? { highlightProductId: payload.productId } : undefined,
+        navigate("/setting_sell?tab=product_tab_one&status=low_stock", {
+          state: { productStatusFilter: "low_stock", notificationClickAt: Date.now() },
         });
         return;
       }
