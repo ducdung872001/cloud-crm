@@ -1,5 +1,7 @@
 # Backend Tasks — Phân theo Microservice
 
+> 🚀 **Prompts cho Claude Code CLI:** [prompts.md](./prompts.md) — paste trực tiếp vào phiên Claude Code của repo BE tương ứng.
+
 Tài liệu được tổ chức theo **ranh giới DDD** — mỗi microservice tự quản task domain của mình. Backend là **code dùng chung** cho mọi ngành (retail, community-hub, tech, reborn-tnpm, reborn-fitpro, banking, …), mỗi fix phải **neutral theo ngành**: không hardcode business rule của một ngành cụ thể, phải config hóa qua tenant setting hoặc feature flag.
 
 ## 🔑 Quy tắc phân task theo URL prefix
