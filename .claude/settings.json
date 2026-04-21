@@ -58,7 +58,12 @@
       "Bash(ls -la /d/Git/reborn/reborn-cloud/cloud-ver2/cloud-crm/src/utils/image*)",
       "Bash(node d:/tmp/apply-api-migration.mjs)",
       "Bash(yarn type-check *)",
-      "Bash(python -c ' *)"
+      "Bash(python -c ' *)",
+      "Bash(git -C d:/Git/reborn/reborn-cloud/cloud-ver2/cloud-crm remote -v)",
+      "Bash(git -C d:/Git/reborn/reborn-cloud/cloud-ver2/cloud-crm branch --show-current)",
+      "Bash(git -C d:/Git/reborn/reborn-cloud/cloud-ver2/cloud-crm rev-parse HEAD)",
+      "Bash(curl -s -o /tmp/inv-resp.json -w 'HTTP %{http_code}\\\\n' 'https://biz.reborn.vn/inventory/stockTransfer/list?page=0&size=20' -H 'Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJleHAiOjE3OTIzMTgwNzMsInVzZXIiOiJ7XCJpZFwiOjIyNjUsXCJ1c2VybmFtZVwiOlwiMDg5ODM0ODM0OFwiLFwibmFtZVwiOlwiVy1Ib3VzZSBBZG1pblwiLFwicm9sZXNcIjpbXCJtb2RcIl0sXCJtYXBCZWF1dHlTYWxvblwiOntcImh1Yi5yZWJvcm4udm5cIjozMzZ9fSJ9.jXP8LHM-lCBQyHot2-jW084y2Acnuf_3qYXEXYkpYwg' -H 'Hostname: hub.reborn.vn' -H 'Accept: application/json' -H 'Content-Type: application/json')",
+      "Bash(curl -sk -o /tmp/inv-resp.json -w 'HTTP %{http_code}\\\\n' 'https://biz.reborn.vn/inventory/stockTransfer/list?page=0&size=20' -H 'Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJleHAiOjE3OTIzMTgwNzMsInVzZXIiOiJ7XCJpZFwiOjIyNjUsXCJ1c2VybmFtZVwiOlwiMDg5ODM0ODM0OFwiLFwibmFtZVwiOlwiVy1Ib3VzZSBBZG1pblwiLFwicm9sZXNcIjpbXCJtb2RcIl0sXCJtYXBCZWF1dHlTYWxvblwiOntcImh1Yi5yZWJvcm4udm5cIjozMzZ9fSJ9.jXP8LHM-lCBQyHot2-jW084y2Acnuf_3qYXEXYkpYwg' -H 'Hostname: hub.reborn.vn' -H 'Accept: application/json')"
     ]
   }
 }
