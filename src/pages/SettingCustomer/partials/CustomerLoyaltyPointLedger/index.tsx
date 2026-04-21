@@ -28,7 +28,7 @@ import { formatDateTime } from "utils/dateUtils";
 
 
 export default function CustomerLoyaltyPointLedger(props: ICustomerRoyaltyPointListProps) {
-  document.title = "Lịch sử điểm tích lũy của khách hàng";
+  document.title = "Lịch sử điểm tích lũy của thành viên";
 
   const { onBackProps } = props;
 
@@ -52,14 +52,14 @@ export default function CustomerLoyaltyPointLedger(props: ICustomerRoyaltyPointL
   const [listSaveSearch] = useState<ISaveSearch[]>([
     {
       key: "all",
-      name: "Danh sách lịch sử điểm tích lũy của khách hàng",
+      name: "Danh sách lịch sử điểm tích lũy của thành viên",
       is_active: true,
     },
   ]);
 
   const [pagination, setPagination] = useState<PaginationProps>({
     ...DataPaginationDefault,
-    name: "Lịch sử điểm tích lũy của khách hàng",
+    name: "Lịch sử điểm tích lũy của thành viên",
     isChooseSizeLimit: true,
     setPage: (page) => {
       setParams((prevParams) => ({ ...prevParams, page: page }));
@@ -126,7 +126,7 @@ export default function CustomerLoyaltyPointLedger(props: ICustomerRoyaltyPointL
     };
   }, [params]);
 
-  const titles = ["STT", "Tên khách hàng", "Mã thẻ", "Ngày tạo", "Điểm tích lũy", "Nội dung", ];
+  const titles = ["STT", "Tên thành viên", "Mã thẻ", "Ngày tạo", "Điểm tích lũy", "Nội dung", ];
 
   const dataFormat = ["text-center", "","text-center","text-center","text-center", ""];
 
@@ -152,7 +152,7 @@ export default function CustomerLoyaltyPointLedger(props: ICustomerRoyaltyPointL
             className="title-first"
             title="Quay lại"
           >
-            Cài đặt khách hàng
+            Cài đặt thành viên
           </h1>
           <Icon
             name="ChevronRight"
@@ -160,13 +160,13 @@ export default function CustomerLoyaltyPointLedger(props: ICustomerRoyaltyPointL
               onBackProps(true);
             }}
           />
-          <h1 className="title-last">Danh sách lịch sử điểm tích lũy của khách hàng</h1>
+          <h1 className="title-last">Danh sách lịch sử điểm tích lũy của thành viên</h1>
         </div>
       </div>
 
       <div className="card-box d-flex flex-column">
         <SearchBox
-          name="Lịch sử điểm tích lũy của khách hàng"
+          name="Lịch sử điểm tích lũy của thành viên"
           params={params}
           isSaveSearch={true}
           listSaveSearch={listSaveSearch}
@@ -174,7 +174,7 @@ export default function CustomerLoyaltyPointLedger(props: ICustomerRoyaltyPointL
         />
         {!isLoading && listRoyaltyPoint && listRoyaltyPoint.length > 0 ? (
           <BoxTable
-            name="Lịch sử điểm tích lũy của khách hàng"
+            name="Lịch sử điểm tích lũy của thành viên"
             titles={titles}
             items={listRoyaltyPoint}
             isPagination={true}
@@ -197,12 +197,12 @@ export default function CustomerLoyaltyPointLedger(props: ICustomerRoyaltyPointL
               <SystemNotification
                 description={
                   <span>
-                    Hiện tại chưa lịch sử điểm tích lũy của khách hàng nào. <br />
-                    Hãy thêm mới lịch sử điểm tích lũy của khách hàng đầu tiên nhé!
+                    Hiện tại chưa lịch sử điểm tích lũy của thành viên nào. <br />
+                    Hãy thêm mới lịch sử điểm tích lũy của thành viên đầu tiên nhé!
                   </span>
                 }
                 type="no-item"
-                titleButton="Thêm mới lịch sử điểm tích lũy của khách hàng"
+                titleButton="Thêm mới lịch sử điểm tích lũy của thành viên"
                 action={() => {
                   setDataRoyaltyPoint(null);
                   setShowModalAdd(true);

@@ -95,7 +95,7 @@ export default function AddCustomerGroupModal(props: AddCustomerGroupModalProps)
     const response = await CustomerGroupService.update(body);
 
     if (response.code === 0) {
-      showToast(`${data ? "Cập nhật" : "Thêm mới"} nhóm khách hàng thành công`, "success");
+      showToast(`${data ? "Cập nhật" : "Thêm mới"} nhóm thành viên thành công`, "success");
       onHide(true);
     } else {
       showToast(response.message ?? "Có lỗi xảy ra. Vui lòng thử lại sau", "error");
@@ -189,7 +189,7 @@ export default function AddCustomerGroupModal(props: AddCustomerGroupModalProps)
         className="modal-add-customer-group"
       >
         <form className="form-customer-group" onSubmit={(e) => onSubmit(e)}>
-          <ModalHeader title={`${data ? "Chỉnh sửa" : "Thêm mới"} nhóm khách hàng`} toggle={() => !isSubmit && onHide(false)} />
+          <ModalHeader title={`${data ? "Chỉnh sửa" : "Thêm mới"} nhóm thành viên`} toggle={() => !isSubmit && onHide(false)} />
           <ModalBody>
             <div className="list-form-group">
               {listField.map((field, index) => (

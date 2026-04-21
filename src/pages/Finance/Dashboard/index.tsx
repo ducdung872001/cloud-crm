@@ -10,7 +10,6 @@ import FinanceDashboardService, {
 import {
   CashbookSlideOver,
   FinanceBadge,
-  FinanceEmptyState,
   FinanceLoadMoreIndicator,
   FinanceMiniBarChart,
   FinancePageShell,
@@ -19,6 +18,7 @@ import {
   formatDateTime,
   useFinanceProgressiveList,
 } from "../shared";
+import EmptyState from "@/components/EmptyState";
 import DebtManagementService, { IDebtItem } from "services/DebtManagementService";
 import "./index.scss";
 
@@ -200,7 +200,7 @@ export default function FinanceDashboard() {
                   expenseData={expenseChart}
                 />
               ) : (
-                <FinanceEmptyState
+                <EmptyState
                   icon="📊"
                   title="Chưa có dữ liệu biểu đồ trong kỳ này"
                   description="Khi có phiếu thu hoặc phiếu chi trong 30 ngày gần nhất, biểu đồ sẽ hiển thị tại đây."
@@ -229,7 +229,7 @@ export default function FinanceDashboard() {
               <div className="finance-scroll-panel" onScroll={onTxnScroll}>
                 <div className="finance-list">
                   {visibleTxns.length === 0 ? (
-                    <FinanceEmptyState
+                    <EmptyState
                       icon="📝"
                       title="Chưa có giao dịch nào"
                       description="Ghi nhận phiếu thu/chi đầu tiên để theo dõi dòng tiền ra vào hàng ngày."
@@ -284,7 +284,8 @@ export default function FinanceDashboard() {
               </div>
               <div className="finance-scroll-panel" onScroll={onDebtScroll}>
                 {visibleDebts.length === 0 ? (
-                  <FinanceEmptyState
+                  <EmptyState
+                    variant="success-empty"
                     icon="✅"
                     title="Không có công nợ cần cảnh báo"
                     description="Tuyệt vời! Hiện chưa có khoản phải thu/phải trả nào quá hạn hoặc sắp đến hạn."

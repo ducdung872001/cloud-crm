@@ -111,7 +111,7 @@ export default function AddRelationShipModal(props: AddRelationShipModalProps) {
     const response = await RelationShipService.update(body);
 
     if (response.code === 0) {
-      showToast(`${data ? "Cập nhật" : "Thêm mới"} mối quan hệ khách hàng thành công`, "success");
+      showToast(`${data ? "Cập nhật" : "Thêm mới"} mối quan hệ thành viên thành công`, "success");
       onHide(true);
       setBackgroundColor("");
     } else {
@@ -206,7 +206,7 @@ export default function AddRelationShipModal(props: AddRelationShipModalProps) {
         className="modal-add-relation-ship"
       >
         <form className="form-relation-ship" onSubmit={(e) => onSubmit(e)}>
-          <ModalHeader title={`${data ? "Chỉnh sửa" : "Thêm mới"} mối quan hệ khách hàng`} toggle={() => !isSubmit && onHide(false)} />
+          <ModalHeader title={`${data ? "Chỉnh sửa" : "Thêm mới"} mối quan hệ thành viên`} toggle={() => !isSubmit && onHide(false)} />
           <ModalBody>
             <div className="list-form-group">
               {listField.map((field, index) => (

@@ -201,11 +201,11 @@ export default function CustomerMarketingLead(props: Record<string, unknown>) {
     .then((results) => {
       const checkbox = results.filter (Boolean)?.length ||0;
       if (checkbox > 0) {
-        showToast(`Xóa thành công ${checkbox} nguồn khách hàng`, "success");
+        showToast(`Xóa thành công ${checkbox} nguồn thành viên`, "success");
         getListCustomerSource(params);
         setListIdChecked([]);
       } else {
-        showToast("Không có nguồn khách hàng nào được xóa", "error");
+        showToast("Không có nguồn thành viên nào được xóa", "error");
       }
    })
     .finally(() => {
@@ -266,7 +266,7 @@ export default function CustomerMarketingLead(props: Record<string, unknown>) {
             className="title-first"
             title="Quay lại"
           >
-            Cài đặt khách hàng
+            Cài đặt thành viên
           </h1>
           <Icon
             name="ChevronRight"
@@ -319,7 +319,7 @@ export default function CustomerMarketingLead(props: Record<string, unknown>) {
                   </span>
                 }
                 type="no-item"
-                titleButton="Thêm mới nguồn khách hàng"
+                titleButton="Thêm mới nguồn thành viên"
                 action={() => {
                   setListCustomerSource(null);
                   setShowModalAdd(true);

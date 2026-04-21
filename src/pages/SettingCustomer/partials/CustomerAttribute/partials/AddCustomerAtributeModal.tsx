@@ -37,7 +37,7 @@ export default function AddCustomerAttributeModal(props: AddCustomerAttributeMod
   const [detailLookup, setDetailLookup] = useState<Record<string, unknown>>("contract");
   const [numberFormat, setNumberFormat] = useState<Record<string, unknown>>('');
 
-  //Cần đổi lại thành khách hàng
+  //Cần đổi lại thành thành viên
   const [customerAttributeFields, setCustomerAttributeFields] = useState<Record<string, unknown>>(null); //Khởi tạo null là quan trọng
   const [showFields, setShowFields] = useState<boolean>(false);
   const [selectedFormula, setSelectedFormula] = useState<string>("");
@@ -686,7 +686,7 @@ export default function AddCustomerAttributeModal(props: AddCustomerAttributeMod
     const response = await CustomerAttributeService.update(body);
 
     if (response.code === 0) {
-      showToast(`${data ? "Cập nhật" : "Thêm mới"} trường thông tin khách hàng thành công`, "success");
+      showToast(`${data ? "Cập nhật" : "Thêm mới"} trường thông tin thành viên thành công`, "success");
       handleClearForm(true);
     } else {
       showToast(response.message ?? "Có lỗi xảy ra. Vui lòng thử lại sau", "error");
@@ -795,7 +795,7 @@ export default function AddCustomerAttributeModal(props: AddCustomerAttributeMod
         size="lg"
       >
         <form className="form-customer-attribute-source" onSubmit={(e) => onSubmit(e)}>
-          <ModalHeader title={`${data ? "Chỉnh sửa" : "Thêm mới"} trường thông tin khách hàng`} toggle={() => !isSubmit && handleClearForm(false)} />
+          <ModalHeader title={`${data ? "Chỉnh sửa" : "Thêm mới"} trường thông tin thành viên`} toggle={() => !isSubmit && handleClearForm(false)} />
           <ModalBody>
             <div className="list-form-group">
               {/* {listField.map((field, index) => (

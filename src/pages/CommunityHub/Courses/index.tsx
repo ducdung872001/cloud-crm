@@ -1,15 +1,44 @@
 // [CH] Community Hub - Khóa học & CLB module
+// TODO: wire up real API. Mock chỉ seed khi bật "Xem trước".
 import React, { useState } from "react";
 import { MOCK_COURSES, MOCK_CLUBS } from "@/mocks/community-hub/courses";
 import { formatCurrency } from "reborn-util";
+import { ComingSoonBlock, PreviewBanner } from "../_shared/ComingSoon";
+import { showToast } from "@/utils/common";
 import "./index.scss";
 
 export default function CoursesPage() {
   document.title = "Khóa học & CLB";
   const [activeTab, setActiveTab] = useState<"courses" | "clubs">("courses");
+  const [isPreview, setIsPreview] = useState(false);
+
+  const enterPreview = () => {
+    setIsPreview(true);
+    showToast("Đang ở chế độ xem trước với dữ liệu demo", "info");
+  };
+  const exitPreview = () => setIsPreview(false);
+
+  const courses = isPreview ? MOCK_COURSES : [];
+  const clubs = isPreview ? MOCK_CLUBS : [];
+
+  if (!isPreview) {
+    return (
+      <div className="ch-courses-page">
+        <div className="ch-courses-page__header">
+          <h2>Khóa học & CLB</h2>
+        </div>
+        <ComingSoonBlock
+          title="Chưa có khóa học hay câu lạc bộ nào"
+          description="Tạo khóa học/CLB đầu tiên để thành viên đăng ký tham gia."
+          onPreview={enterPreview}
+        />
+      </div>
+    );
+  }
 
   return (
     <div className="ch-courses-page">
+      <PreviewBanner onExit={exitPreview} />
       <div className="ch-courses-page__header">
         <h2>Khóa học & CLB</h2>
         <div className="tab-switch">
@@ -24,7 +53,7 @@ export default function CoursesPage() {
 
       {activeTab === "courses" && (
         <div className="ch-courses-page__grid">
-          {MOCK_COURSES.map((course) => (
+          {courses.map((course) => (
             <div key={course.id} className="course-card">
               <div className="course-card__image">
                 <div className="course-placeholder">{course.title.charAt(0)}</div>

@@ -231,11 +231,11 @@ export default function CustomerCareerList(props: ICustomerCareerListProps) {
     .then((results) => {
       const checkbox = results.filter (Boolean)?.length ||0;
       if (checkbox > 0) {
-        showToast(`Xóa thành công ${checkbox} nghề nghiệp khách hàng`, "success");
+        showToast(`Xóa thành công ${checkbox} nghề nghiệp thành viên`, "success");
         getListCareerCustomer(params);
         setListIdChecked([]);
       } else {
-        showToast("Không có nghề nghiệp khách hàng nào được xóa", "error");
+        showToast("Không có nghề nghiệp thành viên nào được xóa", "error");
       }
    })
     .finally(() => {
@@ -280,7 +280,7 @@ export default function CustomerCareerList(props: ICustomerCareerListProps) {
 
   const bulkActionList: BulkActionItemModel[] = [
     permissions["CAREER_DELETE"] == 1 && {
-      title: "Xóa nghề nghiệp khách hàng",
+      title: "Xóa nghề nghiệp thành viên",
       callback: () => showDialogConfirmDelete(),
     },
   ];
@@ -296,7 +296,7 @@ export default function CustomerCareerList(props: ICustomerCareerListProps) {
             className="title-first"
             title="Quay lại"
           >
-            Cài đặt khách hàng
+            Cài đặt thành viên
           </h1>
           <Icon
             name="ChevronRight"
@@ -304,7 +304,7 @@ export default function CustomerCareerList(props: ICustomerCareerListProps) {
               onBackProps(true);
             }}
           />
-          <h1 className="title-last">Danh sách nghề nghiệp khách hàng</h1>
+          <h1 className="title-last">Danh sách nghề nghiệp thành viên</h1>
         </div>
         <TitleAction title="" titleActions={titleActions} />
       </div>
@@ -338,7 +338,7 @@ export default function CustomerCareerList(props: ICustomerCareerListProps) {
         
         {!isLoading && listCareerCustomer && listCareerCustomer.length > 0 ? (
           <BoxTable
-            name="Nghề nghiệp khách hàng"
+            name="Nghề nghiệp thành viên"
             titles={tab === 'tab_one' ? titles : titlesCompany}
             items={listCareerCustomer}
             isPagination={true}
@@ -363,12 +363,12 @@ export default function CustomerCareerList(props: ICustomerCareerListProps) {
               <SystemNotification
                 description={
                   <span>
-                    Hiện tại chưa có nghề nghiệp khách hàng nào. <br />
-                    Hãy thêm mới nghề nghiệp khách hàng đầu tiên nhé!
+                    Hiện tại chưa có nghề nghiệp thành viên nào. <br />
+                    Hãy thêm mới nghề nghiệp thành viên đầu tiên nhé!
                   </span>
                 }
                 type="no-item"
-                titleButton="Thêm mới nghề nghiệp khách hàng"
+                titleButton="Thêm mới nghề nghiệp thành viên"
                 action={() => {
                   setListCareerCustomer(null);
                   setShowModalAdd(true);

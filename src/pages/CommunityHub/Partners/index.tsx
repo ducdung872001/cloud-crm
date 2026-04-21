@@ -1,8 +1,10 @@
 // [CH] Community Hub - Đối tác KOL/KOC/PO module
-import React, { useState } from "react";
+// TODO: wire up real API. Mock chỉ seed khi bật "Xem trước".
+import React, { useState, useEffect } from "react";
 import { MOCK_PARTNERS } from "@/mocks/community-hub/partners";
 import { formatCurrency } from "reborn-util";
 import { showToast } from "@/utils/common";
+import { ComingSoonBlock, PreviewBanner } from "../_shared/ComingSoon";
 import "./index.scss";
 
 type Partner = (typeof MOCK_PARTNERS)[number];
@@ -14,10 +16,22 @@ export default function PartnersPage() {
   const [payPartner, setPayPartner] = useState<Partner | null>(null);
   const [payAmount, setPayAmount] = useState("");
   const [payNote, setPayNote] = useState("");
+  const [partners, setPartners] = useState<Partner[]>([]);
+  const [isPreview, setIsPreview] = useState(false);
+
+  useEffect(() => {
+    setPartners(isPreview ? MOCK_PARTNERS : []);
+  }, [isPreview]);
+
+  const enterPreview = () => {
+    setIsPreview(true);
+    showToast("Đang ở chế độ xem trước với dữ liệu demo", "info");
+  };
+  const exitPreview = () => setIsPreview(false);
 
   const filteredPartners = activeTab === "all"
-    ? MOCK_PARTNERS
-    : MOCK_PARTNERS.filter((p) => p.role === activeTab);
+    ? partners
+    : partners.filter((p) => p.role === activeTab);
 
   const handlePay = () => {
     if (payPartner) {
@@ -28,8 +42,24 @@ export default function PartnersPage() {
     }
   };
 
+  if (!isPreview && partners.length === 0) {
+    return (
+      <div className="ch-partners-page">
+        <div className="ch-partners-page__header">
+          <h2>Đối tác</h2>
+        </div>
+        <ComingSoonBlock
+          title="Chưa có đối tác nào"
+          description="Thêm KOL/KOC/PO đầu tiên để theo dõi hiệu quả quảng bá và chi hoa hồng."
+          onPreview={enterPreview}
+        />
+      </div>
+    );
+  }
+
   return (
     <div className="ch-partners-page">
+      {isPreview && <PreviewBanner onExit={exitPreview} />}
       <div className="ch-partners-page__header">
         <h2>Đối tác</h2>
         <div className="tab-switch">

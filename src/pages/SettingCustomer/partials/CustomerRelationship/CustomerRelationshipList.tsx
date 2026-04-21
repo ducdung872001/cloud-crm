@@ -23,7 +23,7 @@ import { getPageOffset } from 'reborn-util';
 import "./CustomerRelationshipList.scss";
 
 export default function CustomerRelationshipList(props: ICustomerRelationshipListProps) {
-  document.title = "Danh sách mối quan hệ khách hàng";
+  document.title = "Danh sách mối quan hệ thành viên";
 
   const { onBackProps } = props;
 
@@ -47,14 +47,14 @@ export default function CustomerRelationshipList(props: ICustomerRelationshipLis
   const [listSaveSearch] = useState<ISaveSearch[]>([
     {
       key: "all",
-      name: "Danh sách mối quan hệ khách hàng",
+      name: "Danh sách mối quan hệ thành viên",
       is_active: true,
     },
   ]);
 
   const [pagination, setPagination] = useState<PaginationProps>({
     ...DataPaginationDefault,
-    name: "Mối quan hệ khách hàng",
+    name: "Mối quan hệ thành viên",
     isChooseSizeLimit: true,
     setPage: (page) => {
       setParams((prevParams) => ({ ...prevParams, page: page }));
@@ -175,7 +175,7 @@ export default function CustomerRelationshipList(props: ICustomerRelationshipLis
     const response = await RelationShipService.delete(id);
 
     if (response.code === 0) {
-      showToast("Xóa mối quan hệ khách hàng thành công", "success");
+      showToast("Xóa mối quan hệ thành viên thành công", "success");
       getListRelationShip(params);
     } else {
       showToast(response.message ?? "Có lỗi xảy ra. Vui lòng thử lại sau", "error");
@@ -200,11 +200,11 @@ export default function CustomerRelationshipList(props: ICustomerRelationshipLis
     .then((results) => {
       const checkbox = results.filter (Boolean)?.length ||0;
       if (checkbox > 0) {
-        showToast(`Xóa thành công ${checkbox} mối quan hệ khách hàng`, "success");
+        showToast(`Xóa thành công ${checkbox} mối quan hệ thành viên`, "success");
         getListRelationShip(params);
         setListIdChecked([]);
       } else {
-        showToast("Không có mối quan hệ khách hàng nào được xóa", "error");
+        showToast("Không có mối quan hệ thành viên nào được xóa", "error");
       }
    })
     .finally(() => {
@@ -249,7 +249,7 @@ export default function CustomerRelationshipList(props: ICustomerRelationshipLis
 
   const bulkActionList: BulkActionItemModel[] = [
     permissions["RELATIONSHIP_DELETE"] == 1 && {
-      title: "Xóa mối quan hệ khách hàng",
+      title: "Xóa mối quan hệ thành viên",
       callback: () => showDialogConfirmDelete(),
     },
   ];
@@ -265,7 +265,7 @@ export default function CustomerRelationshipList(props: ICustomerRelationshipLis
             className="title-first"
             title="Quay lại"
           >
-            Cài đặt khách hàng
+            Cài đặt thành viên
           </h1>
           <Icon
             name="ChevronRight"
@@ -273,14 +273,14 @@ export default function CustomerRelationshipList(props: ICustomerRelationshipLis
               onBackProps(true);
             }}
           />
-          <h1 className="title-last">Danh sách mối quan hệ khách hàng</h1>
+          <h1 className="title-last">Danh sách mối quan hệ thành viên</h1>
         </div>
         <TitleAction title="" titleActions={titleActions} />
       </div>
 
       <div className="card-box d-flex flex-column">
         <SearchBox
-          name="Tên mối quan hệ khách hàng"
+          name="Tên mối quan hệ thành viên"
           params={params}
           isSaveSearch={true}
           listSaveSearch={listSaveSearch}
@@ -288,7 +288,7 @@ export default function CustomerRelationshipList(props: ICustomerRelationshipLis
         />
         {!isLoading && listRelationShip && listRelationShip.length > 0 ? (
           <BoxTable
-            name="Mối quan hệ khách hàng"
+            name="Mối quan hệ thành viên"
             titles={titles}
             items={listRelationShip}
             isPagination={true}
@@ -313,12 +313,12 @@ export default function CustomerRelationshipList(props: ICustomerRelationshipLis
               <SystemNotification
                 description={
                   <span>
-                    Hiện tại chưa định nghĩa mối quan hệ khách hàng nào. <br />
-                    Hãy thêm mới mối quan hệ khách hàng đầu tiên nhé!
+                    Hiện tại chưa định nghĩa mối quan hệ thành viên nào. <br />
+                    Hãy thêm mới mối quan hệ thành viên đầu tiên nhé!
                   </span>
                 }
                 type="no-item"
-                titleButton="Thêm mới mối quan hệ khách hàng"
+                titleButton="Thêm mới mối quan hệ thành viên"
                 action={() => {
                   setDataRelationShip(null);
                   setShowModalAdd(true);

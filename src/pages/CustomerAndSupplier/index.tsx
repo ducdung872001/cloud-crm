@@ -1456,38 +1456,40 @@ export default function CustomerAndSupplier(props: Record<string, unknown>) {
               <button className="filter-chip">📅 Mới</button>
             </div>
           </div>
-          <div className="stats-row">
-            <div className="stat-pill">
-              <div className="dot" style={{ background: "#5b6af0" }}></div>
-              <div>
-                <div className="num">20</div>
-                <div className="lbl">Tổng đối tác</div>
-              </div>
-            </div>
-            <div className="stat-pill">
-              <div className="dot" style={{ background: "#10b981" }}></div>
-              <div>
-                <div className="num">200</div>
-                <div className="lbl">Thành viên</div>
-              </div>
-            </div>
-            <div className="stat-pill">
-              <div className="dot" style={{ background: "#ef4444" }}></div>
-              <div>
-                <div className="num" style={{ color: "#ef4444" }}>
-                  28,500,000 ₫
+          {/* Stats KPIs: ẩn khi chưa có dữ liệu thật (BE chưa trả) — tránh hiện mock
+              gây hiểu lầm là đã có data. TODO: wire vào API summary khi BE sẵn sàng. */}
+          {!isLoading && listCustomer && listCustomer.length > 0 && (
+            <div className="stats-row">
+              <div className="stat-pill">
+                <div className="dot" style={{ background: "#5b6af0" }}></div>
+                <div>
+                  <div className="num">—</div>
+                  <div className="lbl">Tổng đối tác</div>
                 </div>
-                <div className="lbl">Tổng công nợ</div>
+              </div>
+              <div className="stat-pill">
+                <div className="dot" style={{ background: "#10b981" }}></div>
+                <div>
+                  <div className="num">{listCustomer.length}</div>
+                  <div className="lbl">Thành viên</div>
+                </div>
+              </div>
+              <div className="stat-pill">
+                <div className="dot" style={{ background: "#ef4444" }}></div>
+                <div>
+                  <div className="num" style={{ color: "#ef4444" }}>—</div>
+                  <div className="lbl">Tổng công nợ</div>
+                </div>
+              </div>
+              <div className="stat-pill">
+                <div className="dot" style={{ background: "#f59e0b" }}></div>
+                <div>
+                  <div className="num">—</div>
+                  <div className="lbl">Có nợ quá hạn</div>
+                </div>
               </div>
             </div>
-            <div className="stat-pill">
-              <div className="dot" style={{ background: "#f59e0b" }}></div>
-              <div>
-                <div className="num">12</div>
-                <div className="lbl">Có nợ quá hạn</div>
-              </div>
-            </div>
-          </div>
+          )}
 
           {!isLoading && listCustomer && listCustomer.length > 0 ? (
             <BoxTableAdvanced

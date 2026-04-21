@@ -332,7 +332,7 @@ export default function AddCustomerCardModal(props: AddCardModalProps) {
     const response = await CardService.update(body);
 
     if (response.code === 0) {
-      showToast(`${data ? "Cập nhật" : "Thêm mới"} thẻ khách hàng thành công`, "success");
+      showToast(`${data ? "Cập nhật" : "Thêm mới"} thẻ thành viên thành công`, "success");
       onHide(true);
     } else {
       showToast(response.message ?? response.error ?? "Có lỗi xảy ra. Vui lòng thử lại sau", "error");
@@ -439,7 +439,7 @@ export default function AddCustomerCardModal(props: AddCardModalProps) {
         className="modal-add-card-customer"
       >
         <form className="form-card-customer" onSubmit={(e) => onSubmit(e)}>
-          <ModalHeader title={`${data ? "Chỉnh sửa" : "Thêm mới"} thẻ khách hàng`} toggle={() => !isSubmit && onHide(false)} />
+          <ModalHeader title={`${data ? "Chỉnh sửa" : "Thêm mới"} thẻ thành viên`} toggle={() => !isSubmit && onHide(false)} />
           <ModalBody>
             <div className="list-form-group">
               {listField.map((field, index) => (

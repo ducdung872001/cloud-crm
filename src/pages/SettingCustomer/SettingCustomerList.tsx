@@ -22,7 +22,7 @@ export default function SettingCustomerList() {
   const [tab, setTab] = useState<string>("");
   const [isDetail, setIsDetail] = useState<boolean>(false);
 
-  // [CH] Community Hub — đổi thuật ngữ "khách hàng" → "thành viên"
+  // [CH] Community Hub — đổi thuật ngữ "thành viên" → "thành viên"
   const listTab = [
     {
       title: "Danh sách thẻ thành viên",

@@ -23,7 +23,7 @@ import { getPageOffset } from 'reborn-util';
 import "./CustomerGroupList.scss";
 
 export default function CustomerGroupList(props: ICustomerGroupListProps) {
-  document.title = "Danh sách nhóm khách hàng";
+  document.title = "Danh sách nhóm thành viên";
 
   const { onBackProps } = props;
 
@@ -48,14 +48,14 @@ export default function CustomerGroupList(props: ICustomerGroupListProps) {
   const [listSaveSearch] = useState<ISaveSearch[]>([
     {
       key: "all",
-      name: "Danh sách nhóm khách hàng",
+      name: "Danh sách nhóm thành viên",
       is_active: true,
     },
   ]);
 
   const [pagination, setPagination] = useState<PaginationProps>({
     ...DataPaginationDefault,
-    name: "Nhóm khách hàng",
+    name: "Nhóm thành viên",
     isChooseSizeLimit: true,
     setPage: (page) => {
       setParams((prevParams) => ({ ...prevParams, page: page }));
@@ -176,7 +176,7 @@ export default function CustomerGroupList(props: ICustomerGroupListProps) {
     const response = await CustomerGroupService.delete(id);
 
     if (response.code === 0) {
-      showToast("Xóa nhóm khách hàng thành công", "success");
+      showToast("Xóa nhóm thành viên thành công", "success");
       getListCustomerGroup(params);
     } else {
       showToast(response.message ?? "Có lỗi xảy ra. Vui lòng thử lại sau", "error");
@@ -201,11 +201,11 @@ export default function CustomerGroupList(props: ICustomerGroupListProps) {
       .then((results) => {
         const checkbox = results.filter (Boolean)?.length ||0;
         if (checkbox > 0) {
-          showToast(`Xóa thành công ${checkbox} nhóm khách hàng`, "success");
+          showToast(`Xóa thành công ${checkbox} nhóm thành viên`, "success");
           getListCustomerGroup(params);
           setListIdChecked([]);
         } else {
-          showToast("Không có nhóm khách hàng nào được xóa", "error");
+          showToast("Không có nhóm thành viên nào được xóa", "error");
         }
      })
       .finally(() => {
@@ -223,7 +223,7 @@ export default function CustomerGroupList(props: ICustomerGroupListProps) {
       title: <Fragment>Xóa...</Fragment>,
       message: (
         <Fragment>
-          Bạn có chắc chắn muốn xóa {item ? "nhóm khách hàng " : `${listIdChecked.length} nhóm khách hàng đã chọn`}
+          Bạn có chắc chắn muốn xóa {item ? "nhóm thành viên " : `${listIdChecked.length} nhóm thành viên đã chọn`}
           {item ? <strong>{item.name}</strong> : ""}? Thao tác này không thể khôi phục.
         </Fragment>
       ),
@@ -250,7 +250,7 @@ export default function CustomerGroupList(props: ICustomerGroupListProps) {
 
   const bulkActionList: BulkActionItemModel[] = [
     permissions["CUSTOMER_GROUP_DELETE"] == 1 && {
-      title: "Xóa nhóm khách hàng",
+      title: "Xóa nhóm thành viên",
       callback: () => showDialogConfirmDelete(),
     },
   ];
@@ -266,7 +266,7 @@ export default function CustomerGroupList(props: ICustomerGroupListProps) {
             className="title-first"
             title="Quay lại"
           >
-            Cài đặt khách hàng
+            Cài đặt thành viên
           </h1>
           <Icon
             name="ChevronRight"
@@ -274,14 +274,14 @@ export default function CustomerGroupList(props: ICustomerGroupListProps) {
               onBackProps(true);
             }}
           />
-          <h1 className="title-last">Danh sách nhóm khách hàng</h1>
+          <h1 className="title-last">Danh sách nhóm thành viên</h1>
         </div>
         <TitleAction title="" titleActions={titleActions} />
       </div>
 
       <div className="card-box d-flex flex-column">
         <SearchBox
-          name="Tên nhóm khách hàng"
+          name="Tên nhóm thành viên"
           params={params}
           isSaveSearch={true}
           listSaveSearch={listSaveSearch}
@@ -289,7 +289,7 @@ export default function CustomerGroupList(props: ICustomerGroupListProps) {
         />
         {!isLoading && listCustomerGroup && listCustomerGroup.length > 0 ? (
           <BoxTable
-            name="Nhóm khách hàng"
+            name="Nhóm thành viên"
             titles={titles}
             items={listCustomerGroup}
             isPagination={true}
@@ -314,12 +314,12 @@ export default function CustomerGroupList(props: ICustomerGroupListProps) {
               <SystemNotification
                 description={
                   <span>
-                    Hiện tại chưa có nhóm khách hàng nào. <br />
-                    Hãy thêm mới nhóm khách hàng đầu tiên nhé!
+                    Hiện tại chưa có nhóm thành viên nào. <br />
+                    Hãy thêm mới nhóm thành viên đầu tiên nhé!
                   </span>
                 }
                 type="no-item"
-                titleButton="Thêm mới nhóm khách hàng"
+                titleButton="Thêm mới nhóm thành viên"
                 action={() => {
                   setListCustomerGroup(null);
                   setShowModalAdd(true);

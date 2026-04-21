@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Order } from "../../types";
 import Icon from "components/icon";
+import EmptyState from "@/components/EmptyState";
 import { showToast } from "utils/common";
 import "./index.scss";
 
@@ -241,11 +242,59 @@ const OrderList: React.FC<OrderListProps> = ({
 
       {/* Order cards */}
       <div className="ol-wrap">
-        {listOrder.length === 0 && (
-          <div style={{ textAlign: "center", padding: "40px 0", color: "#9ca3af", fontSize: 13 }}>
-            Không có đơn hàng nào.
-          </div>
-        )}
+        {listOrder.length === 0 && (() => {
+          const isFiltered = Boolean(
+            (searchText && searchText.trim()) || (fromDate && toDate),
+          );
+
+          if (isFiltered) {
+            return (
+              <EmptyState
+                variant="no-results"
+                size="lg"
+                title="Không tìm thấy đơn hàng phù hợp"
+                description="Thử xóa từ khóa tìm kiếm hoặc mở rộng khoảng ngày để xem thêm kết quả."
+                action={
+                  <button
+                    className="btn btn--outline btn--sm"
+                    onClick={() => {
+                      handleSearchChange("");
+                      handleFromDateChange("");
+                      handleToDateChange("");
+                      handleSearch();
+                    }}
+                  >
+                    Xóa bộ lọc
+                  </button>
+                }
+              />
+            );
+          }
+
+          const EMPTY_BY_FILTER: Record<StatusFilter, { icon: string; title: string; desc: string; variant?: "no-data" | "success-empty" }> = {
+            all:       { icon: "📦", title: "Chưa có đơn hàng nào", desc: "Khi bắt đầu bán tại quầy hoặc tạo đơn mới, chúng sẽ xuất hiện tại đây." },
+            pending:   { icon: "⏳", title: "Không có đơn chờ xử lý", desc: "Tốt quá — không có đơn nào đang chờ xử lý lúc này.", variant: "success-empty" },
+            shipping:  { icon: "🚚", title: "Không có đơn đang giao", desc: "Chưa có đơn hàng nào đang trên đường giao đến khách." },
+            success:   { icon: "✅", title: "Chưa có đơn hoàn thành", desc: "Các đơn đã giao thành công sẽ hiển thị ở đây." },
+            cancelled: { icon: "🕊️", title: "Không có đơn bị hủy", desc: "Tuyệt! Tất cả đơn đang trôi chảy — chưa có đơn nào bị hủy.", variant: "success-empty" },
+          };
+
+          const cfg = EMPTY_BY_FILTER[activeFilter] ?? EMPTY_BY_FILTER.all;
+          return (
+            <EmptyState
+              variant={cfg.variant ?? "no-data"}
+              size="lg"
+              icon={cfg.icon}
+              title={cfg.title}
+              description={cfg.desc}
+              action={activeFilter === "all" ? (
+                <button className="btn btn--primary btn--sm" onClick={() => navigate("/create_sale_add")}>
+                  + Tạo đơn mới
+                </button>
+              ) : undefined}
+            />
+          );
+        })()}
         {listOrder.map((order) => (
           <div
             key={order.id}

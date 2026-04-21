@@ -11,63 +11,6 @@
     }
   }
 
-  // Preview banner — chỉ xuất hiện khi bật chế độ Xem trước
-  .ch-preview-banner {
-    display: flex;
-    align-items: center;
-    gap: 1.2rem;
-    flex-wrap: wrap;
-    padding: 1rem 1.4rem;
-    margin-bottom: 1.6rem;
-    border-radius: 0.8rem;
-    background: linear-gradient(90deg, #fff8e6 0%, #fdf0d0 100%);
-    border: 1px solid #f0d89c;
-    color: #6b4e11;
-
-    &__badge {
-      font-size: 1.25rem;
-      font-weight: 700;
-      padding: 0.3rem 0.8rem;
-      background: #f2b84a;
-      color: #fff;
-      border-radius: 0.4rem;
-      white-space: nowrap;
-    }
-
-    &__text {
-      flex: 1;
-      min-width: 20rem;
-      font-size: 1.3rem;
-      line-height: 1.5;
-    }
-
-    &__close {
-      padding: 0.6rem 1.2rem;
-      font-size: 1.2rem;
-      font-weight: 600;
-      color: #6b4e11;
-      background: #fff;
-      border: 1px solid #e0c98a;
-      border-radius: 0.5rem;
-      cursor: pointer;
-      transition: background 0.15s ease;
-      white-space: nowrap;
-
-      &:hover {
-        background: #fff5dc;
-      }
-    }
-  }
-
-  // Subtle visual cue khi toàn trang đang ở chế độ preview
-  &--preview {
-    .ch-checkin-page__scanner,
-    .ch-checkin-page__recent {
-      outline: 1px dashed #f0d89c;
-      outline-offset: -2px;
-    }
-  }
-
   &__scanner {
     background: var(--ch-surface, #fff);
     border-radius: 1.2rem;

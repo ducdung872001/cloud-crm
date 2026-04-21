@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { CartItem } from "../../types";
+import EmptyState from "@/components/EmptyState";
 import "./index.scss";
 import { useProductCategory } from "./useProductCategory";
 import { IProductListParams, useProductList } from "./useProductList";
@@ -176,25 +177,25 @@ const ProductGrid: React.FC<ProductGridProps> = ({ onAddToCart, onQrScan, wareho
             {isLoading && listProduct.length === 0 ? (
               <div className="pg-loading">Đang tải sản phẩm…</div>
             ) : listProduct.length === 0 ? (
-              <div className="pg-empty">
-                <div className="pg-empty__icon">{search ? "🔍" : "📦"}</div>
-                <div className="pg-empty__title">
-                  {search ? `Không tìm thấy "${search}"` : "Chưa có sản phẩm nào"}
-                </div>
-                <div className="pg-empty__desc">
-                  {search
-                    ? "Thử từ khóa khác, quét mã QR, hoặc thêm nhanh sản phẩm vào đơn."
-                    : "Bắt đầu bằng cách thêm sản phẩm đầu tiên vào danh mục, hoặc thêm nhanh ngay cho đơn này."}
-                </div>
-                <div className="pg-empty__actions">
+              <EmptyState
+                variant={search ? "no-results" : "no-data"}
+                size="md"
+                icon={search ? "🔍" : "📦"}
+                title={search ? `Không tìm thấy "${search}"` : "Chưa có sản phẩm nào"}
+                description={search
+                  ? "Thử từ khóa khác, quét mã QR, hoặc thêm nhanh sản phẩm vào đơn."
+                  : "Bắt đầu bằng cách thêm sản phẩm đầu tiên vào danh mục, hoặc thêm nhanh ngay cho đơn này."}
+                action={
                   <button className="btn btn--primary btn--sm" onClick={() => setQuickAddOpen(true)}>
                     ⚡ Thêm nhanh SP
                   </button>
+                }
+                secondaryAction={
                   <button className="btn btn--outline btn--sm" onClick={onQrScan}>
                     📷 Quét QR
                   </button>
-                </div>
-              </div>
+                }
+              />
             ) : (
               listProduct.map((prod) => (
                 <div
@@ -288,7 +289,12 @@ const ProductGrid: React.FC<ProductGridProps> = ({ onAddToCart, onQrScan, wareho
                 ))
             )}
             {!isLoadingServices && serviceList.length === 0 && (
-              <div className="pg-loading">Chưa có dịch vụ nào. Thêm dịch vụ trong Cài đặt → Danh mục dịch vụ</div>
+              <EmptyState
+                size="md"
+                icon="💆"
+                title="Chưa có dịch vụ nào"
+                description="Thêm dịch vụ trong Cài đặt → Danh mục dịch vụ để chúng xuất hiện tại đây."
+              />
             )}
           </div>
         </>

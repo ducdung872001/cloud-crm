@@ -19,7 +19,6 @@ import { toApiDateFormat } from "utils/common";
 import {
   CashbookSlideOver,
   FinanceBadge,
-  FinanceEmptyState,
   FinanceLoadMoreIndicator,
   FinancePageShell,
   FinanceStatCard,
@@ -28,6 +27,7 @@ import {
   useFinanceProgressiveList,
   useFinanceToast,
 } from "../shared";
+import EmptyState from "@/components/EmptyState";
 import "./index.scss";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
@@ -341,7 +341,8 @@ export default function FinanceCashBook() {
         ) : (
           <div className="finance-scroll-panel" onScroll={handleScroll}>
             {allTxns.length === 0 ? (
-              <FinanceEmptyState
+              <EmptyState
+                variant="no-results"
                 title="Chưa có giao dịch phù hợp"
                 description="Hãy thay đổi bộ lọc hoặc tạo thêm phiếu thu/chi."
               />

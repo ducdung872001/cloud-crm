@@ -24,7 +24,7 @@ import { useSearchParams } from "react-router-dom";
 import "./CustomerAttributeList.scss";
 
 export default function CustomerAttributeList(props: ICustomerAttributeListProps) {
-  document.title = "Định nghĩa trường thông tin bổ sung khách hàng";
+  document.title = "Định nghĩa trường thông tin bổ sung thành viên";
 
   const { onBackProps } = props;
 
@@ -58,7 +58,7 @@ export default function CustomerAttributeList(props: ICustomerAttributeListProps
     () => [
       {
         key: "custType", 
-        name: "Loại khách hàng",
+        name: "Loại thành viên",
         type: "select",
         is_featured: true,
         value: searchParams.get("custType") ?? "",
@@ -155,7 +155,7 @@ export default function CustomerAttributeList(props: ICustomerAttributeListProps
     ],
   };
 
-  const titles = ["STT", "Loại khách hàng", "Tên trường thông tin", "Kiểu dữ liệu", "Bắt buộc", "Thứ tự hiển thị", "Thuộc nhóm"];
+  const titles = ["STT", "Loại thành viên", "Tên trường thông tin", "Kiểu dữ liệu", "Bắt buộc", "Thứ tự hiển thị", "Thuộc nhóm"];
 
   const dataFormat = ["text-center", "", "", "text-center", "text-center", ""];
 
@@ -211,7 +211,7 @@ export default function CustomerAttributeList(props: ICustomerAttributeListProps
     const response = await CustomerAttributeService.delete(id);
 
     if (response.code === 0) {
-      showToast("Xóa trường thông tin khách hàng thành công", "success");
+      showToast("Xóa trường thông tin thành viên thành công", "success");
       getListCustomerAttribute(params);
     } else {
       showToast(response.message ?? "Có lỗi xảy ra. Vui lòng thử lại sau", "error");
@@ -236,11 +236,11 @@ export default function CustomerAttributeList(props: ICustomerAttributeListProps
     .then((results) => {
       const checkbox = results.filter (Boolean)?.length ||0;
       if (checkbox > 0) {
-        showToast(`Xóa thành công ${checkbox} trường thông tin khách hàng`, "success");
+        showToast(`Xóa thành công ${checkbox} trường thông tin thành viên`, "success");
         getListCustomerAttribute(params);
         setListIdChecked([]);
       } else {
-        showToast("Không có trường thông tin khách hàng nào được xóa", "error");
+        showToast("Không có trường thông tin thành viên nào được xóa", "error");
       }
    })
     .finally(() => {
@@ -258,7 +258,7 @@ export default function CustomerAttributeList(props: ICustomerAttributeListProps
       title: <Fragment>Xóa...</Fragment>,
       message: (
         <Fragment>
-          Bạn có chắc chắn muốn xóa {item ? "trường thông tin khách hàng " : `${listIdChecked.length} trường thông tin khách hàng đã chọn`}
+          Bạn có chắc chắn muốn xóa {item ? "trường thông tin thành viên " : `${listIdChecked.length} trường thông tin thành viên đã chọn`}
           {item ? <strong>{item.name}</strong> : ""}? Thao tác này không thể khôi phục.
         </Fragment>
       ),
@@ -285,7 +285,7 @@ export default function CustomerAttributeList(props: ICustomerAttributeListProps
 
   const bulkActionList: BulkActionItemModel[] = [
     permissions["CUSTOMER_ATTRIBUTE_DELETE"] == 1 && {
-      title: "Xóa trường thông tin khách hàng",
+      title: "Xóa trường thông tin thành viên",
       callback: () => showDialogConfirmDelete(),
     },
   ];
@@ -301,7 +301,7 @@ export default function CustomerAttributeList(props: ICustomerAttributeListProps
             className="title-first"
             title="Quay lại"
           >
-            Cài đặt khách hàng
+            Cài đặt thành viên
           </h1>
           <Icon
             name="ChevronRight"
@@ -325,7 +325,7 @@ export default function CustomerAttributeList(props: ICustomerAttributeListProps
         />
         {!isLoading && listCustomerAttribute && listCustomerAttribute.length > 0 ? (
           <BoxTable
-            name="Trường thông tin khách hàng"
+            name="Trường thông tin thành viên"
             titles={titles}
             items={listCustomerAttribute}
             isPagination={true}
@@ -355,7 +355,7 @@ export default function CustomerAttributeList(props: ICustomerAttributeListProps
                   </span>
                 }
                 type="no-item"
-                titleButton="Thêm mới trường thông tin bổ sung khách hàng"
+                titleButton="Thêm mới trường thông tin bổ sung thành viên"
                 action={() => {
                   setListCustomerAttribute(null);
                   setShowModalAdd(true);

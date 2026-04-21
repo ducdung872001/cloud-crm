@@ -23,7 +23,7 @@ import AddCustomerCardModal from "./partials/AddCustomerCardModal";
 import "./CustomerCardList.scss";
 
 export default function CustomerCardList(props: ICustomerCardListProps) {
-  document.title = "Danh sách thẻ khách hàng";
+  document.title = "Danh sách thẻ thành viên";
 
   const { onBackProps } = props;
 
@@ -47,14 +47,14 @@ export default function CustomerCardList(props: ICustomerCardListProps) {
   const [listSaveSearch] = useState<ISaveSearch[]>([
     {
       key: "all",
-      name: "Danh sách thẻ khách hàng",
+      name: "Danh sách thẻ thành viên",
       is_active: true,
     },
   ]);
 
   const [pagination, setPagination] = useState<PaginationProps>({
     ...DataPaginationDefault,
-    name: "Thẻ khách hàng",
+    name: "Thẻ thành viên",
     isChooseSizeLimit: true,
     setPage: (page) => {
       setParams((prevParams) => ({ ...prevParams, page: page }));
@@ -179,7 +179,7 @@ export default function CustomerCardList(props: ICustomerCardListProps) {
   const onDelete = async (id: number) => {
     const response = await CardService.delete(id);
     if (response.code === 0) {
-      showToast("Xóa thẻ khách hàng thành công", "success");
+      showToast("Xóa thẻ thành viên thành công", "success");
       getListCard(params);
     } else {
       showToast(response.message ?? "Có lỗi xảy ra. Vui lòng thử lại sau", "error");
@@ -204,11 +204,11 @@ export default function CustomerCardList(props: ICustomerCardListProps) {
     .then((results) => {
       const checkbox = results.filter (Boolean)?.length ||0;
       if (checkbox > 0) {
-        showToast(`Xóa thành công ${checkbox} thẻ khách hàng`, "success");
+        showToast(`Xóa thành công ${checkbox} thẻ thành viên`, "success");
         getListCard(params);
         setListIdChecked([]);
       } else {
-        showToast("Không có thẻ khách hàng nào được xóa", "error");
+        showToast("Không có thẻ thành viên nào được xóa", "error");
       }
    })
     .finally(() => {
@@ -226,7 +226,7 @@ export default function CustomerCardList(props: ICustomerCardListProps) {
       title: <Fragment>Xóa...</Fragment>,
       message: (
         <Fragment>
-          Bạn có chắc chắn muốn xóa {item ? "thẻ khách hàng " : `${listIdChecked.length} thẻ khách hàng đã chọn`}
+          Bạn có chắc chắn muốn xóa {item ? "thẻ thành viên " : `${listIdChecked.length} thẻ thành viên đã chọn`}
           {item ? <strong>{item.name}</strong> : ""}? Thao tác này không thể khôi phục.
         </Fragment>
       ),
@@ -253,7 +253,7 @@ export default function CustomerCardList(props: ICustomerCardListProps) {
 
   const bulkActionList: BulkActionItemModel[] = [
     permissions["CARD_DELETE"] == 1 && {
-      title: "Xóa thẻ khách hàng",
+      title: "Xóa thẻ thành viên",
       callback: () => showDialogConfirmDelete(),
     },
   ];
@@ -269,7 +269,7 @@ export default function CustomerCardList(props: ICustomerCardListProps) {
             className="title-first"
             title="Quay lại"
           >
-            Cài đặt khách hàng
+            Cài đặt thành viên
           </h1>
           <Icon
             name="ChevronRight"
@@ -277,14 +277,14 @@ export default function CustomerCardList(props: ICustomerCardListProps) {
               onBackProps(true);
             }}
           />
-          <h1 className="title-last">Danh sách thẻ khách hàng</h1>
+          <h1 className="title-last">Danh sách thẻ thành viên</h1>
         </div>
         <TitleAction title="" titleActions={titleActions} />
       </div>
 
       <div className="card-box d-flex flex-column">
         <SearchBox
-          name="Tên thẻ khách hàng"
+          name="Tên thẻ thành viên"
           params={params}
           isSaveSearch={true}
           listSaveSearch={listSaveSearch}
@@ -292,7 +292,7 @@ export default function CustomerCardList(props: ICustomerCardListProps) {
         />
         {!isLoading && listCard && listCard.length > 0 ? (
           <BoxTable
-            name="Thẻ khách hàng"
+            name="Thẻ thành viên"
             titles={titles}
             items={listCard}
             isPagination={true}
@@ -317,12 +317,12 @@ export default function CustomerCardList(props: ICustomerCardListProps) {
               <SystemNotification
                 description={
                   <span>
-                    Hiện tại chưa có thẻ khách hàng nào. <br />
-                    Hãy thêm mới thẻ khách hàng đầu tiên nhé!
+                    Hiện tại chưa có thẻ thành viên nào. <br />
+                    Hãy thêm mới thẻ thành viên đầu tiên nhé!
                   </span>
                 }
                 type="no-item"
-                titleButton="Thêm mới thẻ khách hàng"
+                titleButton="Thêm mới thẻ thành viên"
                 action={() => {
                   setDataCard(null);
                   setShowModalAdd(true);

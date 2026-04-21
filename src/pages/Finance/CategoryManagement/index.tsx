@@ -3,10 +3,10 @@ import CategoryService from "services/CategoryService";
 import {
   FinancePageShell,
   FinanceBadge,
-  FinanceEmptyState,
   FinanceSlideOver,
   useFinanceToast,
 } from "../shared";
+import EmptyState from "@/components/EmptyState";
 import "./index.scss";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
@@ -367,7 +367,7 @@ export default function FinanceCategoryManagement() {
             <span>Đang tải danh sách...</span>
           </div>
         ) : displayed.length === 0 ? (
-          <FinanceEmptyState
+          <EmptyState
             title={`Chưa có khoản mục ${activeTab === 1 ? "thu" : "chi"}`}
             description='Nhấn "+ Thêm khoản mục" để tạo mới.'
           />

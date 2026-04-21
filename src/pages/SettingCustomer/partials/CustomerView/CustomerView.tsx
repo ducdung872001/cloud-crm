@@ -207,11 +207,11 @@ export default function CustomerView(props: Record<string, unknown>) {
     .then((results) => {
       const checkbox = results.filter (Boolean)?.length ||0;
       if (checkbox > 0) {
-        showToast(`Xóa thành công ${checkbox} cấu trúc xem thông tin khách hàng`, "success");
+        showToast(`Xóa thành công ${checkbox} cấu trúc xem thông tin thành viên`, "success");
         getListCustomerView(params);
         setListIdChecked([]);
       } else {
-        showToast("Không có cấu trúc xem thông tin khách hàng nào được xóa", "error");
+        showToast("Không có cấu trúc xem thông tin thành viên nào được xóa", "error");
       }
    })
     .finally(() => {
@@ -272,7 +272,7 @@ export default function CustomerView(props: Record<string, unknown>) {
             className="title-first"
             title="Quay lại"
           >
-            Cài đặt khách hàng
+            Cài đặt thành viên
           </h1>
           <Icon
             name="ChevronRight"

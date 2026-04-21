@@ -1,8 +1,11 @@
 // [CH] Community Hub - Quản lý dịch vụ tập trung
-import React, { useState } from "react";
+// TODO: wire up real API. Mock chỉ seed khi bật "Xem trước" để minh hoạ UI.
+import React, { useState, useEffect } from "react";
 import { MOCK_SERVICE_CATALOG, SERVICE_CATEGORIES, type ServiceCategory, type IServiceItem } from "@/mocks/community-hub/service-catalog";
 import { formatCurrency } from "reborn-util";
 import Icon from "@/components/icon";
+import { ComingSoonBlock, PreviewBanner } from "../_shared/ComingSoon";
+import { showToast } from "@/utils/common";
 import "./index.scss";
 
 const EMPTY_SERVICE: IServiceItem = {
@@ -19,9 +22,21 @@ const EMPTY_SERVICE: IServiceItem = {
 export default function ServiceManagement() {
   document.title = "Quản lý dịch vụ";
   const [activeCategory, setActiveCategory] = useState<ServiceCategory | "all">("all");
-  const [services, setServices] = useState(MOCK_SERVICE_CATALOG);
+  const [services, setServices] = useState<IServiceItem[]>([]);
   const [showForm, setShowForm] = useState(false);
   const [editingService, setEditingService] = useState<IServiceItem | null>(null);
+  const [isPreview, setIsPreview] = useState(false);
+
+  // Seed mock khi bật preview; clear khi tắt
+  useEffect(() => {
+    setServices(isPreview ? MOCK_SERVICE_CATALOG : []);
+  }, [isPreview]);
+
+  const enterPreview = () => {
+    setIsPreview(true);
+    showToast("Đang ở chế độ xem trước với dữ liệu demo", "info");
+  };
+  const exitPreview = () => setIsPreview(false);
 
   const filtered = activeCategory === "all"
     ? services
@@ -60,8 +75,27 @@ export default function ServiceManagement() {
     setEditingService(null);
   };
 
+  if (!isPreview && services.length === 0) {
+    return (
+      <div className="ch-service-mgmt">
+        <div className="ch-service-mgmt__header">
+          <div>
+            <h2>Quản lý dịch vụ</h2>
+            <p className="subtitle">Danh mục tất cả dịch vụ của Hub</p>
+          </div>
+        </div>
+        <ComingSoonBlock
+          title="Chưa có dịch vụ nào"
+          description="Chưa có dịch vụ được khai báo. Thêm dịch vụ đầu tiên để dùng ở POS và gói thành viên."
+          onPreview={enterPreview}
+        />
+      </div>
+    );
+  }
+
   return (
     <div className="ch-service-mgmt">
+      {isPreview && <PreviewBanner onExit={exitPreview} />}
       <div className="ch-service-mgmt__header">
         <div>
           <h2>Quản lý dịch vụ</h2>

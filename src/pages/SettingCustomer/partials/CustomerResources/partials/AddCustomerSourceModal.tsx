@@ -45,7 +45,7 @@ export default function AddCustomerSourceModal(props: AddCustomerSourceModalProp
 
   const listField: IFieldCustomize[] = [
     {
-      label: "Tên nguồn khách hàng",
+      label: "Tên nguồn thành viên",
       name: "name",
       type: "text",
       fill: true,
@@ -105,7 +105,7 @@ export default function AddCustomerSourceModal(props: AddCustomerSourceModalProp
     const response = await CustomerSourceService.update(body);
 
     if (response.code === 0) {
-      showToast(`${data ? "Cập nhật" : "Thêm mới"} nguồn khách hàng thành công`, "success");
+      showToast(`${data ? "Cập nhật" : "Thêm mới"} nguồn thành viên thành công`, "success");
       onHide(true);
     } else {
       showToast(response.message ?? "Có lỗi xảy ra. Vui lòng thử lại sau", "error");
@@ -199,7 +199,7 @@ export default function AddCustomerSourceModal(props: AddCustomerSourceModalProp
         className="modal-add-customer-source"
       >
         <form className="form-customer-source" onSubmit={(e) => onSubmit(e)}>
-          <ModalHeader title={`${data ? "Chỉnh sửa" : "Thêm mới"} nguồn khách hàng`} toggle={() => !isSubmit && onHide(false)} />
+          <ModalHeader title={`${data ? "Chỉnh sửa" : "Thêm mới"} nguồn thành viên`} toggle={() => !isSubmit && onHide(false)} />
           <ModalBody>
             <div className="list-form-group">
               {listField.map((field, index) => (

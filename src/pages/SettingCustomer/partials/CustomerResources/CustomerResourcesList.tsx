@@ -23,7 +23,7 @@ import { getPageOffset } from 'reborn-util';
 import "./CustomerResources.scss";
 
 export default function CustomerResourcesList(props: ICustomerResourcesListProps) {
-  document.title = "Danh sách nguồn khách hàng";
+  document.title = "Danh sách nguồn thành viên";
 
   const { onBackProps } = props;
 
@@ -48,14 +48,14 @@ export default function CustomerResourcesList(props: ICustomerResourcesListProps
   const [listSaveSearch] = useState<ISaveSearch[]>([
     {
       key: "all",
-      name: "Danh sách nguồn khách hàng",
+      name: "Danh sách nguồn thành viên",
       is_active: true,
     },
   ]);
 
   const [pagination, setPagination] = useState<PaginationProps>({
     ...DataPaginationDefault,
-    name: "Nguồn khách hàng",
+    name: "Nguồn thành viên",
     isChooseSizeLimit: true,
     setPage: (page) => {
       setParams((prevParams) => ({ ...prevParams, page: page }));
@@ -176,7 +176,7 @@ export default function CustomerResourcesList(props: ICustomerResourcesListProps
     const response = await CustomerSourceService.delete(id);
 
     if (response.code === 0) {
-      showToast("Xóa nguồn khách hàng thành công", "success");
+      showToast("Xóa nguồn thành viên thành công", "success");
       getListCustomerSource(params);
     } else {
       showToast(response.message ?? "Có lỗi xảy ra. Vui lòng thử lại sau", "error");
@@ -200,11 +200,11 @@ export default function CustomerResourcesList(props: ICustomerResourcesListProps
     .then((results) => {
       const checkbox = results.filter (Boolean)?.length ||0;
       if (checkbox > 0) {
-        showToast(`Xóa thành công ${checkbox} nguồn khách hàng`, "success");
+        showToast(`Xóa thành công ${checkbox} nguồn thành viên`, "success");
         getListCustomerSource(params);
         setListIdChecked([]);
       } else {
-        showToast("Không có nguồn khách hàng nào được xóa", "error");
+        showToast("Không có nguồn thành viên nào được xóa", "error");
       }
    })
     .finally(() => {
@@ -222,7 +222,7 @@ export default function CustomerResourcesList(props: ICustomerResourcesListProps
       title: <Fragment>Xóa...</Fragment>,
       message: (
         <Fragment>
-          Bạn có chắc chắn muốn xóa {item ? "nguồn khách hàng " : `${listIdChecked.length} nguồn khách hàng đã chọn`}
+          Bạn có chắc chắn muốn xóa {item ? "nguồn thành viên " : `${listIdChecked.length} nguồn thành viên đã chọn`}
           {item ? <strong>{item.name}</strong> : ""}? Thao tác này không thể khôi phục.
         </Fragment>
       ),
@@ -249,7 +249,7 @@ export default function CustomerResourcesList(props: ICustomerResourcesListProps
 
   const bulkActionList: BulkActionItemModel[] = [
     permissions["CUSTOMER_SOURCE_DELETE"] == 1 && {
-      title: "Xóa nguồn khách hàng",
+      title: "Xóa nguồn thành viên",
       callback: () => showDialogConfirmDelete(),
     },
   ];
@@ -265,7 +265,7 @@ export default function CustomerResourcesList(props: ICustomerResourcesListProps
             className="title-first"
             title="Quay lại"
           >
-            Cài đặt khách hàng
+            Cài đặt thành viên
           </h1>
           <Icon
             name="ChevronRight"
@@ -273,14 +273,14 @@ export default function CustomerResourcesList(props: ICustomerResourcesListProps
               onBackProps(true);
             }}
           />
-          <h1 className="title-last">Danh sách nguồn khách hàng</h1>
+          <h1 className="title-last">Danh sách nguồn thành viên</h1>
         </div>
         <TitleAction title="" titleActions={titleActions} />
       </div>
 
       <div className="card-box d-flex flex-column">
         <SearchBox
-          name="Tên nguồn khách hàng"
+          name="Tên nguồn thành viên"
           params={params}
           isSaveSearch={true}
           listSaveSearch={listSaveSearch}
@@ -288,7 +288,7 @@ export default function CustomerResourcesList(props: ICustomerResourcesListProps
         />
         {!isLoading && listCustomerSource && listCustomerSource.length > 0 ? (
           <BoxTable
-            name="Nguồn khách hàng"
+            name="Nguồn thành viên"
             titles={titles}
             items={listCustomerSource}
             isPagination={true}
@@ -313,12 +313,12 @@ export default function CustomerResourcesList(props: ICustomerResourcesListProps
               <SystemNotification
                 description={
                   <span>
-                    Hiện tại chưa có nguồn khách hàng nào. <br />
-                    Hãy thêm mới nguồn khách hàng đầu tiên nhé!
+                    Hiện tại chưa có nguồn thành viên nào. <br />
+                    Hãy thêm mới nguồn thành viên đầu tiên nhé!
                   </span>
                 }
                 type="no-item"
-                titleButton="Thêm mới nguồn khách hàng"
+                titleButton="Thêm mới nguồn thành viên"
                 action={() => {
                   setListCustomerSource(null);
                   setShowModalAdd(true);
