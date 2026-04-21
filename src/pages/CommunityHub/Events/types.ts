@@ -19,8 +19,18 @@ export interface EventVenue {
   address: string;
   city?: string;
   mapUrl?: string; // Google Maps share link
+  latitude?: number;  // Toạ độ WGS84 — để embed Google Maps iframe
+  longitude?: number;
+  venueImages?: string[]; // URLs ảnh địa điểm (tách khỏi galleryImageUrls là ảnh hoạt động)
   isOnline?: boolean;
   onlineUrl?: string; // Zoom/Meet link
+}
+
+export interface EventBankAccount {
+  holder: string;       // Tên chủ tài khoản
+  bank: string;         // Tên ngân hàng hoặc viết tắt (VCB, TCB, MB, …)
+  accountNumber: string;
+  phone?: string;       // SĐT đối chiếu
 }
 
 export interface EventContactPerson {
@@ -61,6 +71,7 @@ export interface EventAddOnItem {
   unit: string; // "lần", "suất", "cái"...
   maxQty?: number; // giới hạn mỗi người (để trống = không giới hạn)
   imageUrl?: string; // ảnh minh hoạ (data URL / URL)
+  group?: string; // Nhóm hiển thị trên Registration tab multi-level header, VD "Cư trú 09/05"
 }
 
 // ── Payment Proof — bằng chứng thanh toán ─────────────────────────────────
@@ -138,6 +149,7 @@ export interface EventEntity {
   galleryImageUrls?: string[]; // ảnh giới thiệu hoạt động
   requirePaymentProof?: boolean; // bắt buộc upload bằng chứng thanh toán
   selectableDates?: string[]; // multi-day: ngày khách có thể chọn (YYYY-MM-DD)
+  bankAccountOverride?: EventBankAccount; // override tenant default cho QR thanh toán
 }
 
 export interface EventRegistration {
@@ -172,9 +184,14 @@ export interface EventRegistration {
   dynamicFieldValues?: Record<string, string>; // fieldId → giá trị
   selectedAddOns?: SelectedAddOn[]; // sản phẩm/dịch vụ đã chọn
   totalAmount?: number; // tổng tiền (vé + add-on)
-  paymentProof?: PaymentProof; // bằng chứng thanh toán
+  paymentProof?: PaymentProof; // [legacy single-proof] — giữ để backward compat
+  paymentProofs?: PaymentProof[]; // [mới] — hỗ trợ tối đa 4 ảnh bill (theo yêu cầu W-House)
   selectedDates?: string[]; // ngày tham gia (multi-day)
   checkInOutRecords?: CheckInOutRecord[]; // lịch sử check-in/out (thay thế checkedInAt đơn giản)
+
+  // Custom attributes từ customer service (join sẵn khi list)
+  customerAttributes?: Record<string, string>; // { mentorCode: "5021", houseNumber: "255" }
+  customerGroup?: { id: string | number; name: string }; // Mentor7 / Khác / ...
 }
 
 // Helper type cho form create/edit

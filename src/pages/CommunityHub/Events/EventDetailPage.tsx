@@ -380,21 +380,80 @@ export default function EventDetailPage() {
 // Info tab
 // ═══════════════════════════════════════════════════════════════════════
 function InfoTab({ event }: { event: EventEntity }) {
+  const hasCoordinates = event.venue.latitude != null && event.venue.longitude != null;
+  const venueImages = event.venue.venueImages ?? [];
+  const bank = event.bankAccountOverride;
+  // QR VietQR động: reuse endpoint /billing/vietqr/api/generate_qr khi thanh toán thật.
+  // Hiện hiển thị link Google Chart QR tạm (tránh phụ thuộc backend cho preview).
+  const qrPayload = bank && event.ticketPrice
+    ? `${bank.bank}|${bank.accountNumber}|${event.ticketPrice}|EVENT-${event.slug}`
+    : null;
+  const qrImgSrc = qrPayload
+    ? `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(qrPayload)}`
+    : null;
+
   return (
     <div style={{ display: "grid", gridTemplateColumns: "2fr 1fr", gap: 14 }}>
-      <Card title="📝 Nội dung chi tiết">
-        <div
-          style={{
-            fontSize: 13,
-            lineHeight: 1.6,
-            color: THEME.textMain,
-          }}
-          dangerouslySetInnerHTML={{
-            __html:
-              event.content || "<em style='color: #999'>(Chưa có nội dung)</em>",
-          }}
-        />
-      </Card>
+      <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+        <Card title="📝 Nội dung chi tiết">
+          <div
+            style={{
+              fontSize: 13,
+              lineHeight: 1.6,
+              color: THEME.textMain,
+            }}
+            dangerouslySetInnerHTML={{
+              __html:
+                event.content || "<em style='color: #999'>(Chưa có nội dung)</em>",
+            }}
+          />
+        </Card>
+        {!event.venue.isOnline && hasCoordinates && (
+          <Card title="🗺️ Bản đồ">
+            <iframe
+              title="Google Maps"
+              src={`https://www.google.com/maps?q=${event.venue.latitude},${event.venue.longitude}&z=16&output=embed`}
+              style={{ border: 0, width: "100%", height: 280, borderRadius: 6 }}
+              loading="lazy"
+              referrerPolicy="no-referrer-when-downgrade"
+            />
+            <a
+              href={`https://www.google.com/maps/dir/?api=1&destination=${event.venue.latitude},${event.venue.longitude}`}
+              target="_blank"
+              rel="noreferrer"
+              style={{
+                display: "inline-block",
+                marginTop: 10,
+                padding: "6px 12px",
+                background: THEME.primary,
+                color: "#fff",
+                borderRadius: 4,
+                fontSize: 12,
+                textDecoration: "none",
+                fontWeight: 500,
+              }}
+            >
+              📍 Chỉ đường tới đây
+            </a>
+          </Card>
+        )}
+        {venueImages.length > 0 && (
+          <Card title="📷 Ảnh địa điểm">
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(140px, 1fr))", gap: 8 }}>
+              {venueImages.map((url, i) => (
+                <img
+                  key={i}
+                  loading="lazy"
+                  src={url}
+                  alt={`Ảnh địa điểm ${i + 1}`}
+                  style={{ width: "100%", height: 100, objectFit: "cover", borderRadius: 4, cursor: "pointer" }}
+                  onClick={() => window.open(url, "_blank")}
+                />
+              ))}
+            </div>
+          </Card>
+        )}
+      </div>
       <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
         <Card title="📍 Địa điểm">
           {event.venue.isOnline ? (
@@ -421,9 +480,51 @@ function InfoTab({ event }: { event: EventEntity }) {
               {event.venue.city && (
                 <Row label="Thành phố" value={event.venue.city} />
               )}
+              {event.venue.mapUrl && (
+                <Row
+                  label="Map"
+                  value={
+                    <a
+                      href={event.venue.mapUrl}
+                      target="_blank"
+                      rel="noreferrer"
+                      style={{ color: THEME.primary, wordBreak: "break-all" }}
+                    >
+                      Xem Google Maps ↗
+                    </a>
+                  }
+                />
+              )}
             </>
           )}
         </Card>
+        {bank && (
+          <Card title="💳 Thanh toán qua QR">
+            <div style={{ textAlign: "center" }}>
+              {qrImgSrc ? (
+                <img
+                  src={qrImgSrc}
+                  alt="QR chuyển khoản"
+                  style={{ width: 160, height: 160, margin: "6px auto", display: "block", border: `1px solid ${THEME.border}`, borderRadius: 4 }}
+                />
+              ) : (
+                <div style={{ fontSize: 11, color: THEME.textMuted, fontStyle: "italic", padding: "20px 0" }}>
+                  (QR chỉ sinh khi sự kiện có giá vé &gt; 0)
+                </div>
+              )}
+            </div>
+            <Row label="Ngân hàng" value={bank.bank} />
+            <Row label="Chủ TK" value={bank.holder} />
+            <Row label="Số TK" value={<strong>{bank.accountNumber}</strong>} />
+            {bank.phone && <Row label="SĐT" value={bank.phone} />}
+            {event.ticketPrice ? (
+              <Row label="Số tiền" value={<strong style={{ color: THEME.primary }}>{formatVND(event.ticketPrice)} đ</strong>} />
+            ) : null}
+            <div style={{ marginTop: 8, fontSize: 11, color: THEME.textMuted, fontStyle: "italic" }}>
+              Khi tham gia có add-on, tổng tiền cuối sẽ tự tính theo các dịch vụ đã chọn.
+            </div>
+          </Card>
+        )}
         <Card title="📞 Người liên hệ">
           <Row label="Họ tên" value={event.contactPerson.name} />
           {event.contactPerson.role && (
@@ -540,10 +641,19 @@ function RegistrantsTab({
     onRefresh();
   };
 
+  const handleExportExcel = async () => {
+    try {
+      await exportRegistrationsToExcel(event, filtered);
+    } catch (err) {
+      alert(`Không thể xuất Excel: ${err instanceof Error ? err.message : "lỗi không xác định"}`);
+    }
+  };
+
   return (
     <Card title={`Danh sách người đăng ký (${registrations.length})`}>
-      {/* Filter chips */}
-      <div style={{ display: "flex", gap: 6, marginBottom: 10, flexWrap: "wrap" }}>
+      {/* Toolbar: filter chips + Export button */}
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 10, gap: 10, flexWrap: "wrap" }}>
+        <div style={{ display: "flex", gap: 6, flexWrap: "wrap" }}>
         {(["all", "pending", "confirmed", "checked_in", "cancelled"] as const).map(
           (s) => {
             const active = filter === s;
@@ -575,6 +685,25 @@ function RegistrantsTab({
             );
           }
         )}
+        </div>
+        <button
+          onClick={handleExportExcel}
+          disabled={filtered.length === 0}
+          style={{
+            padding: "6px 14px",
+            background: filtered.length === 0 ? THEME.border : THEME.primary,
+            color: "#fff",
+            border: "none",
+            borderRadius: 4,
+            fontSize: 12,
+            fontWeight: 600,
+            cursor: filtered.length === 0 ? "not-allowed" : "pointer",
+            opacity: filtered.length === 0 ? 0.6 : 1,
+          }}
+          title="Xuất Excel bảng tổng hợp đăng ký (multi-column theo add-on)"
+        >
+          📥 Xuất Excel tổng hợp
+        </button>
       </div>
 
       {filtered.length === 0 ? (
@@ -1053,4 +1182,141 @@ function smallBtn(bg: string, color: string): React.CSSProperties {
     fontSize: 10,
     fontWeight: 700,
   };
+}
+
+// ═══════════════════════════════════════════════════════════════════════
+// Excel Export: Bảng tổng hợp đăng ký (multi-column header theo add-on group)
+// Match format Excel khách hàng W-House cung cấp ở docs/requirements/other.jpg
+// ═══════════════════════════════════════════════════════════════════════
+async function exportRegistrationsToExcel(
+  event: EventEntity,
+  registrations: EventRegistration[]
+): Promise<void> {
+  const ExcelJS = (await import("exceljs")).default;
+  const { saveAs } = await import("file-saver");
+
+  const wb = new ExcelJS.Workbook();
+  const ws = wb.addWorksheet(event.title.slice(0, 31) || "Đăng ký");
+
+  const addOns = event.addOnItems ?? [];
+  // Group add-ons theo field `group` (undefined → "Khác")
+  const addOnsByGroup = addOns.reduce<Record<string, typeof addOns>>((acc, a) => {
+    const key = a.group ?? "Khác";
+    (acc[key] ??= []).push(a);
+    return acc;
+  }, {});
+  const groupEntries = Object.entries(addOnsByGroup);
+  const totalAddOnCols = addOns.length;
+
+  // ── Title banner (rows 1-2) ──
+  ws.mergeCells(1, 1, 2, 4 + totalAddOnCols + 2);
+  const titleCell = ws.getCell(1, 1);
+  titleCell.value = `W-HOUSE — ${event.title.toUpperCase()}\nNGÀY ${formatDateTime(event.startDate)}`;
+  titleCell.alignment = { horizontal: "center", vertical: "middle", wrapText: true };
+  titleCell.font = { size: 14, bold: true, color: { argb: "FF8B0000" } };
+  titleCell.fill = { type: "pattern", pattern: "solid", fgColor: { argb: "FFFFF8E6" } };
+
+  // ── Row 3: Group headers + fixed left/right ──
+  const fixedLeft = ["STT", "Họ và tên", "Mã số", "Số nhà"];
+  let col = 1;
+  fixedLeft.forEach((label) => {
+    const c = ws.getCell(3, col);
+    c.value = label;
+    ws.mergeCells(3, col, 4, col);
+    col++;
+  });
+  // Group cells with colspan
+  groupEntries.forEach(([groupName, items]) => {
+    ws.mergeCells(3, col, 3, col + items.length - 1);
+    const c = ws.getCell(3, col);
+    c.value = groupName;
+    col += items.length;
+  });
+  const totalCol = col;
+  ws.getCell(3, totalCol).value = "Tổng tiền đăng ký";
+  ws.mergeCells(3, totalCol, 4, totalCol);
+  const proofCol = totalCol + 1;
+  ws.getCell(3, proofCol).value = "Ảnh chuyển khoản";
+  ws.mergeCells(3, proofCol, 4, proofCol);
+
+  // ── Row 4: Detail headers under each group ──
+  col = fixedLeft.length + 1;
+  groupEntries.forEach(([, items]) => {
+    items.forEach((a) => {
+      const c = ws.getCell(4, col);
+      c.value = `${a.name}\n${formatVND(a.unitPrice)}đ`;
+      c.alignment = { wrapText: true, horizontal: "center", vertical: "middle" };
+      col++;
+    });
+  });
+
+  // Style all header rows 3-4
+  [3, 4].forEach((r) => {
+    ws.getRow(r).eachCell((c) => {
+      c.font = { bold: true, size: 10 };
+      c.alignment = { ...c.alignment, horizontal: "center", vertical: "middle", wrapText: true };
+      c.fill = { type: "pattern", pattern: "solid", fgColor: { argb: "FFFDF3D0" } };
+      c.border = {
+        top:    { style: "thin" },
+        left:   { style: "thin" },
+        bottom: { style: "thin" },
+        right:  { style: "thin" },
+      };
+    });
+  });
+
+  // ── Data rows (from row 5) ──
+  registrations.forEach((r, i) => {
+    const rowValues: (string | number)[] = [
+      i + 1,
+      r.customerAttributes?.name ?? r.fullName,
+      r.customerAttributes?.mentorCode ?? "",
+      r.customerAttributes?.houseNumber ?? "",
+    ];
+    groupEntries.forEach(([, items]) => {
+      items.forEach((a) => {
+        const sel = r.selectedAddOns?.find((s) => s.addOnId === a.id);
+        rowValues.push(sel ? (sel.qty > 1 ? `✓ x${sel.qty}` : "✓") : "");
+      });
+    });
+    rowValues.push(formatVND(r.totalAmount ?? 0) + "đ");
+    // Payment proofs: lấy proofs array (hoặc legacy single proof)
+    const proofs = r.paymentProofs ?? (r.paymentProof ? [r.paymentProof] : []);
+    rowValues.push(proofs.map((p) => p.imageUrl).join("\n"));
+
+    ws.addRow(rowValues);
+    const row = ws.getRow(4 + i + 1);
+    row.eachCell((c, colIdx) => {
+      c.border = {
+        top:    { style: "thin", color: { argb: "FFEEEEEE" } },
+        left:   { style: "thin", color: { argb: "FFEEEEEE" } },
+        bottom: { style: "thin", color: { argb: "FFEEEEEE" } },
+        right:  { style: "thin", color: { argb: "FFEEEEEE" } },
+      };
+      if (colIdx === 1 || colIdx === totalCol || colIdx === proofCol) {
+        c.alignment = { horizontal: "center", vertical: "middle" };
+      } else {
+        c.alignment = { vertical: "middle", wrapText: true };
+      }
+    });
+  });
+
+  // ── Column widths ──
+  ws.columns.forEach((c, i) => {
+    if (i === 0) c.width = 5;         // STT
+    else if (i === 1) c.width = 22;   // Họ tên
+    else if (i === 2) c.width = 10;   // Mã
+    else if (i === 3) c.width = 8;    // Nhà
+    else if (i === totalCol - 1) c.width = 18;  // Tổng
+    else if (i === proofCol - 1) c.width = 30;  // Proof
+    else c.width = 13;                // Add-on cols
+  });
+
+  // Frozen panes: freeze first 4 cols + header
+  ws.views = [{ state: "frozen", xSplit: 4, ySplit: 4 }];
+
+  // Download
+  const buf = await wb.xlsx.writeBuffer();
+  const filename = `${event.slug || "event"}-dang-ky-${new Date().toISOString().slice(0, 10)}.xlsx`;
+  saveAs(new Blob([buf], { type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" }), filename);
 }
