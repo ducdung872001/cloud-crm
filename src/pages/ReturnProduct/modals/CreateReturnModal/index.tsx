@@ -10,6 +10,7 @@ import {
   IAutofillState,
   IReturnableProduct,
   IInvoiceReturnItemResponse,
+  IReturnProductLine,
 } from "../../../../types/returnProduct";
 import ReturnInvoiceService from "services/ReturnInvoiceService";
 import ProductService from "services/ProductService";
@@ -43,18 +44,18 @@ interface ProductRow {
   price: number;
   productId?: number;
   variantId?: number;
+  unitId?: number;
   inventoryId?: number;
+  priceDiscount?: number;
+  discount?: number;
+  discountUnit?: number;
+  vat?: number;
+  customerId?: number;
+  batchNo?: string | null;
   fromApi?: boolean;
 }
 
 /** Suggestion từ ProductService.list({name}) */
-interface ProductSuggestion {
-  id: number;      // productId
-  name: string;
-  avatar?: string;
-}
-
-
 type LookupStatus = "idle" | "loading" | "found" | "notfound" | "error";
 
 interface CreateReturnModalProps {
@@ -79,6 +80,13 @@ function nowStr() {
   return `${pad2(d.getDate())}/${pad2(d.getMonth() + 1)}/${d.getFullYear()} ${pad2(d.getHours())}:${pad2(d.getMinutes())}`;
 }
 
+function getLineFee(row: ProductRow) {
+  const quantity = Number(row.qty || 0);
+  const price = Number(row.price || 0);
+  const priceDiscount = Number(row.priceDiscount || 0);
+  return Math.max(price - priceDiscount, 0) * quantity;
+}
+
 function apiProductToRow(p: IReturnableProduct): ProductRow {
   return {
     id:          Math.random().toString(36).slice(2),
@@ -88,23 +96,34 @@ function apiProductToRow(p: IReturnableProduct): ProductRow {
     price:       p.price,
     productId:   p.productId,
     variantId:   p.variantId,
+    unitId:      p.unitId,
     inventoryId: p.inventoryId,
+    priceDiscount: p.priceDiscount ?? 0,
+    discount:    p.discount ?? 0,
+    discountUnit: p.discountUnit ?? 2,
+    vat:         p.vat ?? 0,
+    batchNo:     p.batchNo ?? null,
     fromApi:     true,
   };
 }
 
-function rowsToApiLines(rows: ProductRow[]) {
+function rowsToApiLines(rows: ProductRow[], options: { customerId?: number; note?: string }): IReturnProductLine[] {
   return rows
     .filter((r) => r.name.trim() && r.qty > 0)
     .map((r) => ({
-      productId:   r.productId,
-      variantId:   r.variantId,
-      qty:         r.qty,
+      productId:   r.productId as number,
+      variantId:   r.variantId as number,
+      unitId:      r.unitId as number,
+      quantity:    r.qty,
       price:       r.price,
-      fee:         r.qty * r.price,
-      discount:    0,
-      discountUnit: 2,
-      inventoryId: r.inventoryId,
+      priceDiscount: r.priceDiscount ?? 0,
+      fee:         getLineFee(r),
+      discount:    r.discount ?? 0,
+      discountUnit: r.discountUnit ?? 2,
+      vat:         r.vat ?? 0,
+      customerId:  r.customerId ?? options.customerId,
+      batchNo:     r.batchNo ?? null,
+      note:        options.note,
     }));
 }
 
@@ -457,18 +476,18 @@ export default function CreateReturnModal({
   const lookupAbort = useRef<AbortController | null>(null);
   const debounceRef = useRef<ReturnType<typeof setTimeout>>();
 
-  const retTotal   = retItems.reduce((s, r)  => s + r.qty * r.price, 0);
-  const exchTotal  = exchItems.reduce((s, r) => s + r.qty * r.price, 0);
+  const retTotal   = retItems.reduce((s, r)  => s + getLineFee(r), 0);
+  const exchTotal  = exchItems.reduce((s, r) => s + getLineFee(r), 0);
   const grandTotal = seg === "exchange" ? Math.abs(retTotal - exchTotal) : retTotal;
 
   // ── Autofill ───────────────────────────────────────────────────
-  const fetchReturnItems = useCallback(async (invoiceId: number, signal: AbortSignal) => {
+  const fetchReturnItems = useCallback(async (invoiceId: number, signal: AbortSignal): Promise<IAutofillState | null> => {
     const res2 = await ReturnInvoiceService.getReturnItems(invoiceId, signal);
-    if (signal.aborted) return;
+    if (signal.aborted) return null;
     if (res2?.code !== 0 || !res2?.result) {
       setLookupStatus("error");
       setLookupMsg("Không thể tải thông tin hóa đơn. Thử lại sau.");
-      return;
+      return null;
     }
     const data: IInvoiceReturnItemResponse = res2.result;
     const inv = data.invoice;
@@ -481,7 +500,7 @@ export default function CreateReturnModal({
       setLookupMsg(hadItems
         ? "Hóa đơn này đã được hoàn trả toàn bộ, không thể tạo thêm phiếu."
         : "Hóa đơn này không có mặt hàng nào có thể trả.");
-      return;
+      return null;
     }
 
     const af: IAutofillState = {
@@ -492,6 +511,7 @@ export default function CreateReturnModal({
       products:      availableProducts,
       services:      availableServices,
       originalFee:   inv.fee,
+      inventoryId:   inv.inventoryId ?? availableProducts.find((p) => p.inventoryId)?.inventoryId,
     };
     setAutofill(af);
     const customerDisplay = [inv.customerName, inv.customerPhone].filter(Boolean).join(" – ");
@@ -510,13 +530,14 @@ export default function CreateReturnModal({
       ` — ${af.products.length} sản phẩm${partialNote}` +
       (af.services.length > 0 ? `, ${af.services.length} dịch vụ` : "")
     );
+    return af;
   }, []);
 
-  const lookupInvoice = useCallback(async (code: string) => {
+  const lookupInvoice = useCallback(async (code: string): Promise<IAutofillState | null> => {
     const trimmed = code.trim();
     if (!trimmed) {
       setLookupStatus("idle"); setLookupMsg(""); setAutofill(null);
-      setCustomer(""); setRetItems([mkRow()]); return;
+      setCustomer(""); setRetItems([mkRow()]); return null;
     }
     lookupAbort.current?.abort();
     const ctrl = new AbortController();
@@ -524,7 +545,7 @@ export default function CreateReturnModal({
     setLookupStatus("loading"); setLookupMsg("");
     try {
       const res1 = await ReturnInvoiceService.findByCode(trimmed, ctrl.signal);
-      if (ctrl.signal.aborted) return;
+      if (ctrl.signal.aborted) return null;
       let invoiceId: number | null = null;
       const items = res1?.result?.pagedLst?.items;
       if (Array.isArray(items) && items.length > 0) {
@@ -533,13 +554,14 @@ export default function CreateReturnModal({
       if (!invoiceId) {
         setLookupStatus("notfound");
         setLookupMsg(`Không tìm thấy hóa đơn "${trimmed}". Kiểm tra lại mã.`);
-        return;
+        return null;
       }
-      await fetchReturnItems(invoiceId, ctrl.signal);
+      return await fetchReturnItems(invoiceId, ctrl.signal);
     } catch (e: unknown) {
-      if (e?.name === "AbortError") return;
+      if (e?.name === "AbortError") return null;
       setLookupStatus("error");
       setLookupMsg("Lỗi kết nối. Kiểm tra lại mạng và thử lại.");
+      return null;
     }
   }, [fetchReturnItems]);
 
@@ -604,36 +626,61 @@ export default function CreateReturnModal({
   }, []);
 
   // ── Validation ─────────────────────────────────────────────────
-  const validate = useCallback((): string | null => {
+  const validate = useCallback((
+    currentAutofill: IAutofillState | null = autofill,
+    currentLookupStatus: LookupStatus = lookupStatus
+  ): string | null => {
     if (!maGoc.trim()) return "Vui lòng nhập mã đơn hàng gốc.";
-    if (lookupStatus === "loading") return "Đang tải thông tin hóa đơn, vui lòng chờ.";
-    if (lookupStatus === "notfound") return "Hóa đơn gốc không tồn tại hoặc không còn hàng để trả.";
+    if (currentLookupStatus === "loading") return "Đang tải thông tin hóa đơn, vui lòng chờ.";
+    if (currentLookupStatus === "notfound") return "Hóa đơn gốc không tồn tại hoặc không còn hàng để trả.";
+    if (!currentAutofill) return "Vui lòng chọn hóa đơn gốc hợp lệ trước khi tạo phiếu.";
     if (retItems.filter((r) => r.name.trim()).length === 0) return "Vui lòng nhập ít nhất 1 sản phẩm trả lại.";
+    const invalidReturnItem = retItems
+      .filter((r) => r.name.trim() && r.qty > 0)
+      .find((r) => !r.productId || !r.variantId || !r.unitId);
+    if (invalidReturnItem) return "Sản phẩm trả thiếu productId/variantId/unitId. Vui lòng kiểm tra lại hóa đơn gốc.";
+    const invalidQuantityItem = retItems
+      .filter((r) => r.name.trim())
+      .find((r) => r.qty <= 0 || r.qty > r.maxQty);
+    if (invalidQuantityItem) return "Số lượng trả phải lớn hơn 0 và không vượt quá số lượng còn được trả.";
     if (seg === "exchange" && exchItems.filter((r) => r.name.trim()).length === 0)
       return "Vui lòng nhập ít nhất 1 sản phẩm đổi mới.";
     return null;
-  }, [maGoc, lookupStatus, retItems, exchItems, seg]);
+  }, [autofill, maGoc, lookupStatus, retItems, exchItems, seg]);
 
   // ── Submit ─────────────────────────────────────────────────────
   const handleCreate = useCallback(async () => {
-    const err = validate();
-    if (err) { showToast(err, "error"); return; }
+    if (submitting) return;
     setSubmitting(true);
     const pm = PAY_METHODS[payMethodIdx];
     try {
+      let currentAutofill = autofill;
+      let currentLookupStatus = lookupStatus;
+      if (maGoc.trim() && (!currentAutofill || currentLookupStatus === "loading")) {
+        currentAutofill = await lookupInvoice(maGoc);
+        currentLookupStatus = currentAutofill ? "found" : "notfound";
+      }
+
+      const err = validate(currentAutofill, currentLookupStatus);
+      if (err) { showToast(err, "error"); return; }
+
       // Bug C.3.4: BE đã build chặn trùng server-side. Bỏ defensive re-check
       // ở FE vì đang block cả legitimate return (key compare mismatch).
       // Nếu BE reject thì sẽ trả code != 0 và FE show message bình thường.
 
-      const retLines  = rowsToApiLines(retItems);
-      const exchLines = rowsToApiLines(exchItems);
+      const lineOptions = {
+        customerId: currentAutofill?.customerId,
+        note: note || reason,
+      };
+      const retLines  = rowsToApiLines(retItems, lineOptions);
+      const exchLines = rowsToApiLines(exchItems, lineOptions);
       const firstItem = retItems.find((r) => r.name.trim());
       const validRetItems = retItems.filter((r) => r.name.trim() && r.qty > 0);
       const optimistic: ReturnProduct = {
         id: Date.now().toString(),
         code: `PTH-${String(totalExisting + 1).padStart(4, "0")}`,
         time: nowStr(),
-        customerName: autofill?.customerName || customer || "Khách vãng lai",
+        customerName: currentAutofill?.customerName || customer || "Khách vãng lai",
         originalOrderCode: maGoc,
         type: seg,
         productSummary: firstItem ? `${firstItem.name} (x${firstItem.qty})` : "Sản phẩm (x1)",
@@ -651,18 +698,19 @@ export default function CreateReturnModal({
         })),
       };
       const invoiceBase = {
-        referId:      autofill?.originalInvoiceId ?? 0,
-        customerId:   autofill?.customerId,
+        referId:      currentAutofill?.originalInvoiceId ?? 0,
+        customerId:   currentAutofill?.customerId,
         amount:       retTotal,
         fee:          retTotal,
         paid:         retTotal,
         debt:         0,
         discount:     0,
+        vat:          0,
         vatAmount:    0,
         paymentType:  pm.paymentType,
         reason,
         refundMethod: pm.refundMethod,
-        note:         note || undefined,
+        note:         note || reason,
       };
 
       let res: Record<string, unknown>;
@@ -670,24 +718,25 @@ export default function CreateReturnModal({
         const body: ICreateReturnRequest = {
           invoice:          invoiceBase,
           lstBoughtProduct: retLines,
-          lstService:       [],
-          lstCardService:   [],
+          lstBoughtService: [],
+          lstBoughtCardService: [],
         };
         res = await ReturnInvoiceService.createReturn(body);
       } else {
         const body: ICreateExchangeRequest = {
           invoice:          invoiceBase,
           lstBoughtProduct: retLines,
-          lstService:       [],
-          lstCardService:   [],
+          lstBoughtService: [],
+          lstBoughtCardService: [],
           ...(exchLines.length > 0 && {
             exchangeInvoice: {
-              customerId:  autofill?.customerId,
+              customerId:  currentAutofill?.customerId,
               amount:      exchTotal,
               fee:         exchTotal,
               paid:        grandTotal,
               debt:        0,
               discount:    0,
+              vat:         0,
               vatAmount:   0,
               paymentType: pm.paymentType,
             },
@@ -703,6 +752,8 @@ export default function CreateReturnModal({
       }
       if (res?.result?.invoiceCode) optimistic.code = res.result.invoiceCode;
       if (res?.result?.id)          optimistic.id   = String(res.result.id);
+      if (res?.result?.invoice?.invoiceCode) optimistic.code = res.result.invoice.invoiceCode;
+      if (res?.result?.invoice?.id)          optimistic.id   = String(res.result.invoice.id);
 
       showToast(seg === "return" ? "Tạo phiếu trả hàng thành công!" : "Tạo phiếu đổi hàng thành công!", "success");
       onCreate(optimistic);
@@ -713,9 +764,9 @@ export default function CreateReturnModal({
       setSubmitting(false);
     }
   }, [
-    validate, seg, maGoc, customer, reason, note, payMethodIdx,
+    submitting, validate, seg, maGoc, customer, reason, note, payMethodIdx,
     retItems, exchItems, retTotal, exchTotal, grandTotal,
-    autofill, totalExisting, onCreate, resetForm, fetchReturnItems,
+    autofill, lookupStatus, lookupInvoice, totalExisting, onCreate, resetForm,
   ]);
 
   const actions = useMemo<IActionModal>(() => ({
