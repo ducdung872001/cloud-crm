@@ -1,42 +1,91 @@
 // [CH] Community Hub - Check-in / Cửa vào
+// TODO: wire up real API khi BE sẵn sàng (/customer/checkin, /operation/checkin/*)
+// Tạm thời hiển thị "Sắp ra mắt" + chế độ Xem trước (teaser) dùng MOCK_DATA để minh hoạ
+// giao diện khi chạy thật. State preview không persist — đóng/refresh sẽ quay về "Sắp ra mắt".
 import React, { useState, useCallback } from "react";
 import { MOCK_SCAN_RESULT, MOCK_RECENT_CHECKINS } from "@/mocks/community-hub/checkin";
 import Icon from "@/components/icon";
 import { showToast } from "@/utils/common";
 import "./index.scss";
 
+interface RecentCheckinItem {
+  id: string | number;
+  timestamp: string;
+  name: string;
+  direction: "in" | "out";
+  area: string;
+}
+
 type ScanResult = typeof MOCK_SCAN_RESULT | null;
 
 export default function CheckinPage() {
   document.title = "Check-in / Cửa vào";
-  const [searchText, setSearchText] = useState("");
-  const [scanResult, setScanResult] = useState<ScanResult>(null);
-  const [showPopup, setShowPopup] = useState(false);
+  const [searchText, setSearchText]   = useState("");
+  const [scanResult, setScanResult]   = useState<ScanResult>(null);
+  const [showPopup, setShowPopup]     = useState(false);
+  // Chế độ "Xem trước" — khi bật, các tương tác chạy với MOCK_DATA như đã có thật.
+  // Không persist sang localStorage: refresh/back lại = "Sắp ra mắt".
+  const [isPreview, setIsPreview]     = useState(false);
+
+  // Nguồn dữ liệu recent list: preview → mock, ngược lại → rỗng (chờ API).
+  const recentCheckins: RecentCheckinItem[] = isPreview
+    ? (MOCK_RECENT_CHECKINS as unknown as RecentCheckinItem[])
+    : [];
 
   const handleSearch = useCallback(() => {
-    // [CH] Mock: simulate scan/search result
-    if (searchText.trim()) {
-      setScanResult(MOCK_SCAN_RESULT);
-      setShowPopup(true);
+    if (!searchText.trim()) return;
+    if (!isPreview) {
+      showToast("Tính năng check-in sắp ra mắt. Bấm \"Xem trước\" để xem demo.", "info");
+      return;
     }
-  }, [searchText]);
-
-  const handleSimulateScan = useCallback(() => {
     setScanResult(MOCK_SCAN_RESULT);
     setShowPopup(true);
-  }, []);
+  }, [searchText, isPreview]);
+
+  const handleSimulateScan = useCallback(() => {
+    if (!isPreview) {
+      showToast("Tính năng quét thẻ/QR sắp ra mắt. Bấm \"Xem trước\" để xem demo.", "info");
+      return;
+    }
+    setScanResult(MOCK_SCAN_RESULT);
+    setShowPopup(true);
+  }, [isPreview]);
 
   const handleCheckin = useCallback((area: string) => {
-    showToast(`Check-in thành công vào ${area}!`, "success");
+    showToast(`Check-in thành công vào ${area}! (dữ liệu demo)`, "success");
+    setShowPopup(false);
+    setScanResult(null);
+  }, []);
+
+  const enterPreview = useCallback(() => {
+    setIsPreview(true);
+    showToast("Đang ở chế độ xem trước với dữ liệu demo", "info");
+  }, []);
+
+  const exitPreview = useCallback(() => {
+    setIsPreview(false);
     setShowPopup(false);
     setScanResult(null);
   }, []);
 
   return (
-    <div className="ch-checkin-page">
+    <div className={`ch-checkin-page${isPreview ? " ch-checkin-page--preview" : ""}`}>
       <div className="ch-checkin-page__header">
         <h2>Check-in / Cửa vào</h2>
       </div>
+
+      {/* Preview banner — chỉ xuất hiện khi ở chế độ Xem trước */}
+      {isPreview && (
+        <div className="ch-preview-banner">
+          <span className="ch-preview-banner__badge">👁️ Xem trước</span>
+          <span className="ch-preview-banner__text">
+            Bạn đang xem giao diện demo với dữ liệu mẫu. Khi BE sẵn sàng, dữ liệu thật sẽ thay thế chỗ này.
+          </span>
+          <button className="ch-preview-banner__close" onClick={exitPreview}>
+            Thoát xem trước ✕
+          </button>
+        </div>
+      )}
 
       {/* Scanner area */}
       <div className="ch-checkin-page__scanner">
@@ -48,7 +97,9 @@ export default function CheckinPage() {
             </div>
             <div className="scanner-pulse" />
           </div>
-          <p className="scanner-hint">Nhấn để giả lập quét thẻ</p>
+          <p className="scanner-hint">
+            {isPreview ? "Nhấn để giả lập quét thẻ (demo)" : "Nhấn để giả lập quét thẻ"}
+          </p>
         </div>
 
         <div className="scanner-manual">
@@ -69,18 +120,38 @@ export default function CheckinPage() {
       {/* Recent checkins */}
       <div className="ch-checkin-page__recent">
         <h3>Check-in gần đây</h3>
-        <div className="recent-list">
-          {MOCK_RECENT_CHECKINS.slice(0, 15).map((item) => (
-            <div key={item.id} className="recent-item">
-              <span className="recent-time">{item.timestamp.split(" ")[1]}</span>
-              <span className="recent-name">{item.name}</span>
-              <span className={`recent-direction ${item.direction}`}>
-                {item.direction === "in" ? "▶ Vào" : "◀ Ra"}
-              </span>
-              <span className="recent-area">{item.area}</span>
+        {recentCheckins.length === 0 ? (
+          <div className="recent-coming-soon">
+            <div className="recent-coming-soon__icon">🚧</div>
+            <div className="recent-coming-soon__title">Sắp ra mắt</div>
+            <div className="recent-coming-soon__desc">
+              Danh sách check-in/check-out theo thời gian thực sẽ được cập nhật khi module vận hành cổng vào đi vào hoạt động.
             </div>
-          ))}
-        </div>
+            <button
+              type="button"
+              className="recent-coming-soon__preview-btn"
+              onClick={enterPreview}
+            >
+              👁️ Xem trước giao diện
+            </button>
+            <div className="recent-coming-soon__hint">
+              Dùng dữ liệu mẫu để hình dung khi chạy thật. Đóng hoặc tải lại trang sẽ quay về trạng thái này.
+            </div>
+          </div>
+        ) : (
+          <div className="recent-list">
+            {recentCheckins.slice(0, 15).map((item) => (
+              <div key={item.id} className="recent-item">
+                <span className="recent-time">{item.timestamp.split(" ")[1]}</span>
+                <span className="recent-name">{item.name}</span>
+                <span className={`recent-direction ${item.direction}`}>
+                  {item.direction === "in" ? "▶ Vào" : "◀ Ra"}
+                </span>
+                <span className="recent-area">{item.area}</span>
+              </div>
+            ))}
+          </div>
+        )}
       </div>
 
       {/* Scan result popup */}

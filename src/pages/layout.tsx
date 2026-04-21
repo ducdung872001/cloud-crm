@@ -309,7 +309,12 @@ export default function Layout() {
             <Fragment>
               <div
                 className={`notification__warning--package ${
-                  dataExpired && (dataExpired.numDay <= 14 && dataExpired.numDay > 6 ? isAlmostExpired : isExpired) ? "" : "d-none"
+                  dataExpired &&
+                  dataExpired.numDay != null &&
+                  dataExpired.period <= 36 &&
+                  (dataExpired.numDay <= 14 && dataExpired.numDay > 6 ? isAlmostExpired : isExpired)
+                    ? ""
+                    : "d-none"
                 } ${checkPathUrl == "/crm/link_survey" ? "d-none" : ""}`}
               >
                 {dataExpired && dataExpired.period <= 36 && (

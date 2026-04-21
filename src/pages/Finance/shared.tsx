@@ -66,14 +66,24 @@ export function FinanceBadge(props: {
   return <span className={`finance-badge finance-badge--${tone}`}>{children}</span>;
 }
 
-export function FinanceEmptyState(props: { title: string; description: string }) {
-  const { title, description } = props;
+export function FinanceEmptyState(props: {
+  title: string;
+  description: string;
+  icon?: React.ReactNode;
+  action?: React.ReactNode;
+}) {
+  const { title, description, icon, action } = props;
 
   return (
     <div className="finance-empty-state">
-      <Icon name="CashBook" />
+      {icon !== undefined ? (
+        typeof icon === "string" ? <span className="finance-empty-state__emoji">{icon}</span> : icon
+      ) : (
+        <Icon name="CashBook" />
+      )}
       <strong>{title}</strong>
       <p>{description}</p>
+      {action && <div className="finance-empty-state__action">{action}</div>}
     </div>
   );
 }

@@ -122,8 +122,7 @@ function Navigation(props: NavigationProps) {
             className={`level-1${isActive ? " active" : ""}${item.is_show_children ? " show-children" : ""}${
               (item.permission &&
                 permissions.filter((per) => item.permission?.includes(per)).length === 0) ||
-              (item.children?.length > 0 && disabledChildrenCount === item.children.length) ||
-              (dataExpired && dataExpired.numDay <= 0)
+              (item.children?.length > 0 && disabledChildrenCount === item.children.length)
                 ? " disabled"
                 : ""
             }`}
@@ -133,10 +132,8 @@ function Navigation(props: NavigationProps) {
               <a
                 className="d-flex align-items-center"
                 onClick={() => {
-                  if (dataExpired && dataExpired.numDay > 0) {
-                    handShowChildren(item);
-                    setShowChildren(idx);
-                  }
+                  handShowChildren(item);
+                  setShowChildren(idx);
                 }}
                 title={t(`sidebar.${item.title}`)}
                 target={item.target}
@@ -157,10 +154,8 @@ function Navigation(props: NavigationProps) {
                 title={t(`sidebar.${item.title}`)}
                 target={item.target}
                 onClick={() => {
-                  if (dataExpired && dataExpired.numDay > 0) {
-                    handShowChildren(item);
-                    closeAllChildren(); // ← đóng tất cả submenu
-                  }
+                  handShowChildren(item);
+                  closeAllChildren(); // ← đóng tất cả submenu
                 }}
               >
                 {item.icon}
@@ -185,9 +180,8 @@ function Navigation(props: NavigationProps) {
                   <li
                     key={idxChild}
                     className={`level-2${childrenItem.path === location.pathname ? " active" : ""}${
-                      (childrenItem.permission &&
-                        permissions.filter((per) => childrenItem.permission?.includes(per)).length === 0) ||
-                      (dataExpired && dataExpired.numDay <= 0)
+                      childrenItem.permission &&
+                      permissions.filter((per) => childrenItem.permission?.includes(per)).length === 0
                         ? " disabled"
                         : ""
                     }`}

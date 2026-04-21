@@ -40,7 +40,7 @@
     align-items: center;
     justify-content: center;
     gap: 0.8rem;
-    height: 12rem;
+    min-height: 100%; // fill toàn bộ cart__items — tránh dải trống phía dưới
     color: var(--muted2);
     font-size: 1.3rem;
 

@@ -7,6 +7,13 @@ const prefixAdmin = "/adminapi";
 const prefixApi = "/api";
 const prefixBiz = "/bizapi";
 
+// 12 microservice prefix — route sang biz.reborn.vn (không qua reborn.vn)
+const BIZ_MICROSERVICE_PREFIXES = [
+  "/billing/", "/care/", "/contract/", "/customer/",
+  "/finance/", "/integration/", "/inventory/", "/logistics/",
+  "/market/", "/notification/", "/operation/", "/sales/",
+];
+
 const takeSelectedRole = localStorage.getItem("SelectedRole");
 
 export default function RegisterFetch() {
@@ -61,6 +68,8 @@ export default function RegisterFetch() {
             } else {
               url = process.env.APP_API_URL + url;
             }
+          } else if (BIZ_MICROSERVICE_PREFIXES.some((p) => url.startsWith(p))) {
+            url = (process.env.APP_BIZ_URL || "https://biz.reborn.vn") + url;
           } else {
             url = (process.env.APP_AUTHENTICATOR_URL || "https://reborn.vn") + url;
           }

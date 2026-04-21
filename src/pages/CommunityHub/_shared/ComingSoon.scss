@@ -1,0 +1,119 @@
+// [CH] Community Hub — Shared "Coming soon + Preview" styles
+
+.ch-coming-soon {
+  padding: 5rem 2rem 4rem;
+  text-align: center;
+  border: 1px dashed #d8cfc2;
+  border-radius: 1rem;
+  background: #faf7f2;
+
+  &__icon {
+    font-size: 5.6rem;
+    line-height: 1;
+    margin-bottom: 1.2rem;
+    opacity: 0.9;
+  }
+
+  &__title {
+    font-size: 1.7rem;
+    font-weight: 600;
+    color: var(--ch-text, #2C2318);
+    margin-bottom: 0.6rem;
+  }
+
+  &__desc {
+    font-size: 1.3rem;
+    color: var(--ch-text-muted, #7A6B5A);
+    max-width: 48rem;
+    margin: 0 auto 1.8rem;
+    line-height: 1.55;
+  }
+
+  &__btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+    padding: 0.9rem 1.8rem;
+    font-size: 1.3rem;
+    font-weight: 600;
+    color: #fff;
+    background: var(--ch-primary, #2D6A5A);
+    border: 0;
+    border-radius: 0.6rem;
+    cursor: pointer;
+    transition: background 0.15s ease;
+
+    &:hover {
+      background: #24594c;
+    }
+  }
+
+  &__hint {
+    margin-top: 1rem;
+    font-size: 1.15rem;
+    color: #9a8b79;
+    font-style: italic;
+    max-width: 48rem;
+    margin-left: auto;
+    margin-right: auto;
+  }
+}
+
+.ch-preview-banner {
+  display: flex;
+  align-items: center;
+  gap: 1.2rem;
+  flex-wrap: wrap;
+  padding: 1rem 1.4rem;
+  margin-bottom: 1.6rem;
+  border-radius: 0.8rem;
+  background: linear-gradient(90deg, #fff8e6 0%, #fdf0d0 100%);
+  border: 1px solid #f0d89c;
+  color: #6b4e11;
+
+  &__badge {
+    font-size: 1.25rem;
+    font-weight: 700;
+    padding: 0.3rem 0.8rem;
+    background: #f2b84a;
+    color: #fff;
+    border-radius: 0.4rem;
+    white-space: nowrap;
+  }
+
+  &__text {
+    flex: 1;
+    min-width: 20rem;
+    font-size: 1.3rem;
+    line-height: 1.5;
+  }
+
+  &__close {
+    padding: 0.6rem 1.2rem;
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: #6b4e11;
+    background: #fff;
+    border: 1px solid #e0c98a;
+    border-radius: 0.5rem;
+    cursor: pointer;
+    transition: background 0.15s ease;
+    white-space: nowrap;
+
+    &:hover {
+      background: #fff5dc;
+    }
+  }
+}
+
+// Subtle visual cue khi toàn page ở chế độ preview
+.ch-page--preview {
+  .ch-checkin-page__scanner,
+  .ch-checkin-page__recent,
+  .ch-service-page__sell-card,
+  .ch-service-page__deduct,
+  .ch-service-page__booking {
+    outline: 1px dashed #f0d89c;
+    outline-offset: -2px;
+  }
+}

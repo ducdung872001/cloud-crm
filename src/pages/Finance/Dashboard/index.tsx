@@ -10,6 +10,7 @@ import FinanceDashboardService, {
 import {
   CashbookSlideOver,
   FinanceBadge,
+  FinanceEmptyState,
   FinanceLoadMoreIndicator,
   FinanceMiniBarChart,
   FinancePageShell,
@@ -199,16 +200,19 @@ export default function FinanceDashboard() {
                   expenseData={expenseChart}
                 />
               ) : (
-                <div style={{
-                  textAlign: "center",
-                  padding: "3rem",
-                  color: "#6f8494",
-                  fontSize: "1.3rem",
-                  background: "#f8fbfd",
-                  borderRadius: "1rem",
-                }}>
-                  Chưa có dữ liệu biểu đồ trong kỳ này
-                </div>
+                <FinanceEmptyState
+                  icon="📊"
+                  title="Chưa có dữ liệu biểu đồ trong kỳ này"
+                  description="Khi có phiếu thu hoặc phiếu chi trong 30 ngày gần nhất, biểu đồ sẽ hiển thị tại đây."
+                  action={
+                    <button
+                      className="finance-action-btn finance-action-btn--primary"
+                      onClick={() => setShowCreate(true)}
+                    >
+                      + Tạo phiếu nhanh
+                    </button>
+                  }
+                />
               )}
             </section>
           </div>
@@ -225,9 +229,19 @@ export default function FinanceDashboard() {
               <div className="finance-scroll-panel" onScroll={onTxnScroll}>
                 <div className="finance-list">
                   {visibleTxns.length === 0 ? (
-                    <div style={{ textAlign: "center", padding: "2.4rem", color: "#6f8494", fontSize: "1.3rem" }}>
-                      Chưa có giao dịch nào
-                    </div>
+                    <FinanceEmptyState
+                      icon="📝"
+                      title="Chưa có giao dịch nào"
+                      description="Ghi nhận phiếu thu/chi đầu tiên để theo dõi dòng tiền ra vào hàng ngày."
+                      action={
+                        <button
+                          className="finance-action-btn finance-action-btn--primary"
+                          onClick={() => setShowCreate(true)}
+                        >
+                          + Tạo phiếu nhanh
+                        </button>
+                      }
+                    />
                   ) : visibleTxns.map(item => {
                     const isIncome = item.type === 1;
                     return (
@@ -269,27 +283,37 @@ export default function FinanceDashboard() {
                 </Link>
               </div>
               <div className="finance-scroll-panel" onScroll={onDebtScroll}>
-                <div className="finance-summary-list">
-                  {visibleDebts.map(item => (
-                    <div key={item.id} className="finance-summary-list__item">
-                      <div>
-                        <strong>{item.name}</strong>
-                        <div className="finance-muted">
-                          {item.kind === "receivable" ? "Phải thu" : "Phải trả"}
+                {visibleDebts.length === 0 ? (
+                  <FinanceEmptyState
+                    icon="✅"
+                    title="Không có công nợ cần cảnh báo"
+                    description="Tuyệt vời! Hiện chưa có khoản phải thu/phải trả nào quá hạn hoặc sắp đến hạn."
+                  />
+                ) : (
+                  <>
+                    <div className="finance-summary-list">
+                      {visibleDebts.map(item => (
+                        <div key={item.id} className="finance-summary-list__item">
+                          <div>
+                            <strong>{item.name}</strong>
+                            <div className="finance-muted">
+                              {item.kind === "receivable" ? "Phải thu" : "Phải trả"}
+                            </div>
+                          </div>
+                          <div style={{ textAlign: "right" }}>
+                            <FinanceBadge tone={item.status === "overdue" ? "danger" : "warning"}>
+                              {item.status === "overdue" ? "Quá hạn" : "Sắp đến hạn"}
+                            </FinanceBadge>
+                            <div style={{ marginTop: "0.6rem", fontWeight: 700 }}>
+                              {formatCurrency(item.amount)}
+                            </div>
+                          </div>
                         </div>
-                      </div>
-                      <div style={{ textAlign: "right" }}>
-                        <FinanceBadge tone={item.status === "overdue" ? "danger" : "warning"}>
-                          {item.status === "overdue" ? "Quá hạn" : "Sắp đến hạn"}
-                        </FinanceBadge>
-                        <div style={{ marginTop: "0.6rem", fontWeight: 700 }}>
-                          {formatCurrency(item.amount)}
-                        </div>
-                      </div>
+                      ))}
                     </div>
-                  ))}
-                </div>
-                <FinanceLoadMoreIndicator loading={debtLoading} hasMore={debtHasMore} />
+                    <FinanceLoadMoreIndicator loading={debtLoading} hasMore={debtHasMore} />
+                  </>
+                )}
               </div>
             </section>
           </div>

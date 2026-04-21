@@ -173,51 +173,79 @@ const ProductGrid: React.FC<ProductGridProps> = ({ onAddToCart, onQrScan, wareho
           </div>
 
           <div className="pg-grid">
-            {listProduct.map((prod) => (
-              <div
-                key={prod.id}
-                className={`pg-card${prod.lowStock ? " pg-card--low" : ""}`}
-                onClick={() => handleOpenVariant(prod)}
-              >
-                <div className="pg-card__icon">
-                  {prod.avatar ? (
-                    <img loading="lazy" src={prod.avatar} alt={prod.name}
-                      onError={(e) => {
-                        (e.target as HTMLImageElement).style.display = "none";
-                        const parent = (e.target as HTMLImageElement).parentElement;
-                        if (parent && !parent.querySelector(".pg-img-fallback")) {
-                          const fb = document.createElement("span");
-                          fb.className = "pg-img-fallback";
-                          fb.style.fontSize = "3.2rem";
-                          fb.textContent = prod.icon || "📦";
-                          parent.appendChild(fb);
-                        }
-                      }}
-                    />
-                  ) : (
-                    <span style={{ fontSize: "3.2rem" }}>{prod.icon || "📦"}</span>
-                  )}
+            {isLoading && listProduct.length === 0 ? (
+              <div className="pg-loading">Đang tải sản phẩm…</div>
+            ) : listProduct.length === 0 ? (
+              <div className="pg-empty">
+                <div className="pg-empty__icon">{search ? "🔍" : "📦"}</div>
+                <div className="pg-empty__title">
+                  {search ? `Không tìm thấy "${search}"` : "Chưa có sản phẩm nào"}
                 </div>
-                <div className="pg-card__name">{prod.name}</div>
-                <div className="pg-card__price">{prod.priceLabel}</div>
-                <div className={`pg-card__stock${prod.lowStock ? " pg-card__stock--warn" : ""}`}>
-                  Tồn: {prod.minQuantity} {prod.unitName || prod.unit} {prod.lowStock ? "⚠️" : ""}
+                <div className="pg-empty__desc">
+                  {search
+                    ? "Thử từ khóa khác, quét mã QR, hoặc thêm nhanh sản phẩm vào đơn."
+                    : "Bắt đầu bằng cách thêm sản phẩm đầu tiên vào danh mục, hoặc thêm nhanh ngay cho đơn này."}
                 </div>
-                <button className="pg-card__add" onClick={(e) => { e.stopPropagation(); handleOpenVariant(prod); }}>+</button>
+                <div className="pg-empty__actions">
+                  <button className="btn btn--primary btn--sm" onClick={() => setQuickAddOpen(true)}>
+                    ⚡ Thêm nhanh SP
+                  </button>
+                  <button className="btn btn--outline btn--sm" onClick={onQrScan}>
+                    📷 Quét QR
+                  </button>
+                </div>
               </div>
-            ))}
+            ) : (
+              listProduct.map((prod) => (
+                <div
+                  key={prod.id}
+                  className={`pg-card${prod.lowStock ? " pg-card--low" : ""}`}
+                  onClick={() => handleOpenVariant(prod)}
+                >
+                  <div className="pg-card__icon">
+                    {prod.avatar ? (
+                      <img loading="lazy" src={prod.avatar} alt={prod.name}
+                        onError={(e) => {
+                          (e.target as HTMLImageElement).style.display = "none";
+                          const parent = (e.target as HTMLImageElement).parentElement;
+                          if (parent && !parent.querySelector(".pg-img-fallback")) {
+                            const fb = document.createElement("span");
+                            fb.className = "pg-img-fallback";
+                            fb.style.fontSize = "3.2rem";
+                            fb.textContent = prod.icon || "📦";
+                            parent.appendChild(fb);
+                          }
+                        }}
+                      />
+                    ) : (
+                      <span style={{ fontSize: "3.2rem" }}>{prod.icon || "📦"}</span>
+                    )}
+                  </div>
+                  <div className="pg-card__name">{prod.name}</div>
+                  <div className="pg-card__price">{prod.priceLabel}</div>
+                  <div className={`pg-card__stock${prod.lowStock ? " pg-card__stock--warn" : ""}`}>
+                    Tồn: {prod.minQuantity} {prod.unitName || prod.unit} {prod.lowStock ? "⚠️" : ""}
+                  </div>
+                  <button className="pg-card__add" onClick={(e) => { e.stopPropagation(); handleOpenVariant(prod); }}>+</button>
+                </div>
+              ))
+            )}
           </div>
 
-          <button className="btn btn--outline btn--sm pg-loadmore">
-            {listProduct.length}/{pagination.totalItem} sản phẩm
-          </button>
-          <button
-            className="btn btn--outline btn--sm pg-loadmore"
-            disabled={isLoading || listProduct.length >= pagination.totalItem}
-            onClick={() => setParams((prev) => ({ ...prev, page: Number(prev.page ?? 1) + 1 }))}
-          >
-            {isLoading ? <div>Đang tải...</div> : <>Hiển thị thêm</>}
-          </button>
+          {listProduct.length > 0 && (
+            <>
+              <button className="btn btn--outline btn--sm pg-loadmore">
+                {listProduct.length}/{pagination.totalItem} sản phẩm
+              </button>
+              <button
+                className="btn btn--outline btn--sm pg-loadmore"
+                disabled={isLoading || listProduct.length >= pagination.totalItem}
+                onClick={() => setParams((prev) => ({ ...prev, page: Number(prev.page ?? 1) + 1 }))}
+              >
+                {isLoading ? <div>Đang tải...</div> : <>Hiển thị thêm</>}
+              </button>
+            </>
+          )}
         </>
       )}
 
