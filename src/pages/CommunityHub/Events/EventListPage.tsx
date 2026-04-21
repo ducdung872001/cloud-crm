@@ -1,10 +1,16 @@
 // CH Events — Danh sách sự kiện trong CRM (community-hub).
 // Route: /ch_events
+//
+// TODO: wire up real API (EventService). Mock chỉ inject vào React state khi
+// user bấm "Xem trước" — KHÔNG ghi localStorage để tránh ô nhiễm data tenant thật.
 
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { eventStorage } from "./storage";
+import { MOCK_EVENTS } from "@/mocks/community-hub/events";
 import type { EventEntity, EventStatus } from "./types";
+import { ComingSoonBlock, PreviewBanner } from "../_shared/ComingSoon";
+import { showToast } from "@/utils/common";
 import {
   THEME,
   EVENT_STATUS_LABELS,
@@ -21,6 +27,7 @@ export default function EventListPage() {
   const [filterStatus, setFilterStatus] = useState<EventStatus | "all">("all");
   const [search, setSearch] = useState("");
   const [regCounts, setRegCounts] = useState<Record<string, number>>({});
+  const [isPreview, setIsPreview] = useState(false);
 
   const loadEvents = useCallback(async () => {
     setLoading(true);
@@ -40,7 +47,23 @@ export default function EventListPage() {
     setLoading(false);
   }, []);
 
-  useEffect(() => { loadEvents(); }, [loadEvents]);
+  useEffect(() => { if (!isPreview) loadEvents(); }, [loadEvents, isPreview]);
+
+  const enterPreview = () => {
+    setIsPreview(true);
+    setEvents(MOCK_EVENTS as EventEntity[]);
+    // Fake reg counts cho demo — 0 hoặc số nhỏ
+    const counts: Record<string, number> = {};
+    (MOCK_EVENTS as EventEntity[]).forEach((e) => { counts[e.id] = 0; });
+    setRegCounts(counts);
+    setLoading(false);
+    showToast("Đang ở chế độ xem trước với dữ liệu demo", "info");
+  };
+
+  const exitPreview = () => {
+    setIsPreview(false);
+    // useEffect sẽ tự gọi lại loadEvents() vì isPreview đổi
+  };
 
   const filtered = useMemo(() => {
     let list = [...events];
@@ -93,8 +116,44 @@ export default function EventListPage() {
     loadEvents();
   };
 
+  // Empty state khi chưa preview VÀ chưa có sự kiện nào
+  if (!isPreview && !loading && events.length === 0) {
+    return (
+      <div style={{ padding: 20, background: THEME.bg, minHeight: "calc(100vh - 60px)" }}>
+        <div style={{ marginBottom: 16 }}>
+          <h2 style={{ margin: 0, color: THEME.primaryDark }}>🎟️ Quản lý sự kiện</h2>
+          <p style={{ fontSize: 13, color: THEME.textMuted, marginTop: 4 }}>
+            Tạo sự kiện, công bố công khai và thu lead thành hội viên
+          </p>
+        </div>
+        <ComingSoonBlock
+          title="Chưa có sự kiện nào"
+          description="Tạo sự kiện đầu tiên để công bố công khai, nhận đăng ký và theo dõi check-in của thành viên."
+          onPreview={enterPreview}
+        />
+        <div style={{ marginTop: 16, textAlign: "center" }}>
+          <button
+            onClick={() => navigate("/ch_events/create")}
+            style={{
+              padding: "10px 18px",
+              background: THEME.primary,
+              color: "#fff",
+              border: 0,
+              borderRadius: 6,
+              cursor: "pointer",
+              fontWeight: 600,
+            }}
+          >
+            + Tạo sự kiện mới
+          </button>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div style={{ padding: 20, background: THEME.bg, minHeight: "calc(100vh - 60px)" }}>
+      {isPreview && <PreviewBanner onExit={exitPreview} />}
       {/* Header */}
       <div
         style={{

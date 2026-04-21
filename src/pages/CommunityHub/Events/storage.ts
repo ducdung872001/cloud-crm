@@ -61,11 +61,14 @@ function generateTicketCode(eventSlug: string): string {
   return `${eventSlug.slice(0, 8).toUpperCase()}-${rand}`;
 }
 
+/**
+ * Trước đây auto-seed MOCK_EVENTS khi localStorage rỗng — gây hiểu lầm
+ * tenant mới đã có sẵn sự kiện. Bây giờ KHÔNG auto-seed: tenant mới = rỗng.
+ * Khi user muốn xem giao diện có data → dùng chế độ "Xem trước" (tạm inject
+ * MOCK vào React state, không ghi localStorage).
+ */
 function ensureSeed(): void {
-  const existing = readLS<EventEntity[] | null>(KEY_EVENTS, null);
-  if (!existing) {
-    writeLS(KEY_EVENTS, MOCK_EVENTS);
-  }
+  // no-op — giữ hàm để tương thích call site cũ, nhưng không làm gì.
 }
 
 /** Kiểm tra response API hợp lệ (code === 0 hoặc có result) */
@@ -171,10 +174,21 @@ export const eventStorage = {
     return this.listEvents();
   },
 
-  /** Sync version — dùng localStorage (backward-compatible với code hiện tại) */
+  /** Sync version — dùng localStorage (backward-compatible với code hiện tại).
+   * Nếu phát hiện localStorage đúng là MOCK_EVENTS auto-seed trước đây
+   * (IDs match hoàn toàn với MOCK_EVENTS) → dọn sạch để tenant mới không
+   * thấy data ảo. User-created events được giữ nguyên. */
   listEvents(): EventEntity[] {
-    ensureSeed();
-    return readLS<EventEntity[]>(KEY_EVENTS, []);
+    const existing = readLS<EventEntity[]>(KEY_EVENTS, []);
+    if (existing.length > 0 && existing.length === MOCK_EVENTS.length) {
+      const existingIds = new Set(existing.map((e) => e.id));
+      const allFromMock = MOCK_EVENTS.every((m) => existingIds.has(m.id));
+      if (allFromMock) {
+        writeLS<EventEntity[]>(KEY_EVENTS, []);
+        return [];
+      }
+    }
+    return existing;
   },
 
   async getEventAsync(id: string): Promise<EventEntity | null> {
