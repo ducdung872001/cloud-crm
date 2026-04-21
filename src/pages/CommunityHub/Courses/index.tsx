@@ -89,7 +89,7 @@ export default function CoursesPage() {
 
       {activeTab === "clubs" && (
         <div className="ch-courses-page__clubs">
-          {MOCK_CLUBS.map((club) => (
+          {clubs.map((club) => (
             <div key={club.id} className="club-card">
               <div className="club-card__header">
                 <h3>{club.name}</h3>

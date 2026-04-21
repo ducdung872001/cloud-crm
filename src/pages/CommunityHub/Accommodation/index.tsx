@@ -1,6 +1,9 @@
 // [CH] Community Hub - Lưu trú module
+// TODO: wire up real API. Mock chỉ seed khi bật "Xem trước".
 import React, { useState } from "react";
 import { MOCK_ROOMS } from "@/mocks/community-hub/accommodation";
+import { ComingSoonBlock, PreviewBanner } from "../_shared/ComingSoon";
+import { showToast } from "@/utils/common";
 import "./index.scss";
 
 type Room = (typeof MOCK_ROOMS)[number];
@@ -10,18 +13,42 @@ export default function AccommodationPage() {
   document.title = "Lưu trú";
   const [selectedRoom, setSelectedRoom] = useState<Room | null>(null);
   const [selectedBed, setSelectedBed] = useState<Bed | null>(null);
+  const [isPreview, setIsPreview] = useState(false);
 
+  const enterPreview = () => {
+    setIsPreview(true);
+    showToast("Đang ở chế độ xem trước với dữ liệu demo", "info");
+  };
+  const exitPreview = () => { setIsPreview(false); setSelectedRoom(null); setSelectedBed(null); };
+
+  const rooms = isPreview ? MOCK_ROOMS : [];
   const getOccupiedCount = (room: Room) => room.beds.filter((b) => b.status === "occupied").length;
+
+  if (!isPreview) {
+    return (
+      <div className="ch-accommodation-page">
+        <div className="ch-accommodation-page__header">
+          <h2>Quản lý lưu trú</h2>
+        </div>
+        <ComingSoonBlock
+          title="Chưa có phòng lưu trú nào"
+          description="Khai báo phòng và giường để bắt đầu quản lý ở lại qua đêm cho thành viên."
+          onPreview={enterPreview}
+        />
+      </div>
+    );
+  }
 
   return (
     <div className="ch-accommodation-page">
+      <PreviewBanner onExit={exitPreview} />
       <div className="ch-accommodation-page__header">
         <h2>Quản lý lưu trú</h2>
       </div>
 
       {/* Room overview grid */}
       <div className="ch-accommodation-page__rooms">
-        {MOCK_ROOMS.map((room) => {
+        {rooms.map((room) => {
           const occupied = getOccupiedCount(room);
           const occupancyRate = Math.round((occupied / room.capacity) * 100);
           return (
