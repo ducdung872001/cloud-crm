@@ -40,20 +40,23 @@ export function FinancePageShell(props: {
   );
 }
 
+// Wrapper gọn quanh shared <StatCard> — giữ API cũ để không break callers.
+import SharedStatCard from "@/components/StatCard";
+import Spinner, { LoadingBlock } from "@/components/Spinner";
 export function FinanceStatCard(props: {
   label: string;
   value: string;
   helper?: string;
   tone?: "neutral" | "success" | "danger" | "warning";
 }) {
-  const { label, value, helper, tone = "neutral" } = props;
-
   return (
-    <div className={`finance-stat-card finance-stat-card--${tone}`}>
-      <span className="finance-stat-card__label">{label}</span>
-      <strong className="finance-stat-card__value">{value}</strong>
-      {helper ? <span className="finance-stat-card__helper">{helper}</span> : null}
-    </div>
+    <SharedStatCard
+      variant="default"
+      label={props.label}
+      value={props.value}
+      helper={props.helper}
+      tone={props.tone ?? "neutral"}
+    />
   );
 }
 
@@ -400,7 +403,7 @@ function QuickCreateCategory({ type, onCreated, onCancel }: QuickCreateCategoryP
           onClick={handleSave}
           disabled={saving || !name.trim()}
         >
-          {saving ? <span className="finance-spinner finance-spinner--sm" /> : "Lưu"}
+          {saving ? <Spinner size="sm" tone="light" /> : "Lưu"}
         </button>
         <button
           type="button"
@@ -569,7 +572,7 @@ export function CashbookSlideOver({ open, onClose, onSuccess }: CashbookSlideOve
               className="finance-action-btn finance-action-btn--primary"
               disabled={submitting}
             >
-              {submitting ? <span className="finance-spinner" /> : "Lưu phiếu"}
+              {submitting ? <Spinner tone="light" /> : "Lưu phiếu"}
             </button>
             <button
               type="button"
@@ -583,9 +586,7 @@ export function CashbookSlideOver({ open, onClose, onSuccess }: CashbookSlideOve
         }
       >
         {dropdownLoading ? (
-          <div style={{ display: "flex", justifyContent: "center", padding: "4rem 0" }}>
-            <span className="finance-spinner" />
-          </div>
+          <LoadingBlock minHeight="8rem" />
         ) : (
           <form id="cashbook-slide-form" className="finance-form" onSubmit={handleSubmit}>
 

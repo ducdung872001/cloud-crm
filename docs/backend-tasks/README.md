@@ -59,6 +59,7 @@ Tất cả các nhánh CRM (reborn-retail, reborn-tnpm, reborn-fitpro, community
 
 | File | Severity | Tóm tắt |
 |------|----------|---------|
+| [tenant-isolation-audit.md](./inventory/tenant-isolation-audit.md) | 🔴 CRITICAL | 7 endpoint `/inventory/*/list` trả data cross-tenant (tenant mới vẫn thấy kho/phiếu chuyển kho của tenant khác) |
 | [warehouse-emoji-strip.md](./inventory/warehouse-emoji-strip.md) | 🟡 MEDIUM | Tên kho có emoji bị strip sau save (utf8mb4 hoặc sanitizer) |
 | [warehouse-misc.md](./inventory/warehouse-misc.md) | 🟠 HIGH | Cho phép trùng tên + HTTP 500 cho business error (`isSelling` conflict) |
 | [error-input-wrong-vague.md](./inventory/error-input-wrong-vague.md) | 🟡 MEDIUM | Error `"Input wrong"` quá mơ hồ — không nói field nào sai (cross-cutting) |
@@ -74,10 +75,17 @@ Tất cả các nhánh CRM (reborn-retail, reborn-tnpm, reborn-fitpro, community
 | File | Severity | Tóm tắt |
 |------|----------|---------|
 | [finance-dashboard-500.md](./billing/finance-dashboard-500.md) | 🟠 HIGH | Finance Dashboard API (`financeDashboard.full`/`chart`) trả 500 |
+| [reconciliation-tenant-isolation.md](./billing/reconciliation-tenant-isolation.md) | 🔴 CRITICAL | `/billing/reconciliation/list` trả data cross-tenant (tenant mới vẫn thấy giao dịch từ tenant khác) |
+
+### [notification/](./notification/) — `cloud-notification-master`
+
+| File | Severity | Tóm tắt |
+|------|----------|---------|
+| [feedback-history-count-400.md](./notification/feedback-history-count-400.md) | 🟠 HIGH | `/notification/feedbackHistory/count` trả HTTP 400 body rỗng — FE crash khi `res.json()` |
 
 ### Các microservice chưa có task
 
-- [care/](./care/) · [contract/](./contract/) · [finance/](./finance/) · [logistics/](./logistics/) · [market/](./market/) · [notification/](./notification/) · [operation/](./operation/) · [sales/](./sales/)
+- [care/](./care/) · [contract/](./contract/) · [finance/](./finance/) · [logistics/](./logistics/) · [market/](./market/) · [operation/](./operation/) · [sales/](./sales/)
 
 ---
 

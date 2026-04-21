@@ -98,14 +98,7 @@
     padding: 0 !important; // override finance-panel padding, use row padding instead
 }
 
-.catmgmt-loading {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-    padding: 3rem;
-    color: #5c7282;
-    font-size: 1.4rem;
-}
+// .catmgmt-loading đã chuyển sang shared @/components/Spinner (LoadingBlock)
 
 .catmgmt-list {
     display: flex;

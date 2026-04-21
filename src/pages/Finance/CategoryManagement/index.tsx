@@ -7,6 +7,7 @@ import {
   useFinanceToast,
 } from "../shared";
 import EmptyState from "@/components/EmptyState";
+import Spinner, { LoadingBlock } from "@/components/Spinner";
 import "./index.scss";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
@@ -115,7 +116,7 @@ function CategorySlideOver({ open, type, editItem, onClose, onSaved }: CategoryS
             onClick={handleSave}
             disabled={saving}
           >
-            {saving ? <span className="finance-spinner" /> : (isEdit ? "Lưu thay đổi" : "Thêm khoản mục")}
+            {saving ? <Spinner tone="light" /> : (isEdit ? "Lưu thay đổi" : "Thêm khoản mục")}
           </button>
           <button
             type="button"
@@ -233,7 +234,7 @@ function DeleteConfirm({ item, onConfirm, onCancel }: DeleteConfirmProps) {
             onClick={handleConfirm}
             disabled={loading}
           >
-            {loading ? <span className="finance-spinner finance-spinner--sm" /> : "Xóa khoản mục"}
+            {loading ? <Spinner size="sm" tone="light" /> : "Xóa khoản mục"}
           </button>
           <button
             type="button"
@@ -362,10 +363,7 @@ export default function FinanceCategoryManagement() {
       {/* List */}
       <section className="finance-panel catmgmt-panel">
         {loading ? (
-          <div className="catmgmt-loading">
-            <span className="finance-spinner" />
-            <span>Đang tải danh sách...</span>
-          </div>
+          <LoadingBlock label="Đang tải danh sách..." />
         ) : displayed.length === 0 ? (
           <EmptyState
             title={`Chưa có khoản mục ${activeTab === 1 ? "thu" : "chi"}`}

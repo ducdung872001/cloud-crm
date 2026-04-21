@@ -225,7 +225,7 @@ function Filter(props: FilterProps) {
                 }
                 return (
                   <FilterFeatured
-                    key={filter.value}
+                    key={filter.key}
                     handleChangeFilter={(filterItem) => changeValueFilter(filterItem)}
                     filterItem={filter}
                     onChangeFilter={() => submitFilter()}
@@ -264,14 +264,14 @@ function Filter(props: FilterProps) {
             }
             return listFilterItem.length > 4 ? (
               <FilterFeatured
-                key={filter.value}
+                key={filter.key}
                 handleChangeFilter={(filterItem) => changeValueFilter(filterItem)}
                 filterItem={filter}
                 onChangeFilter={() => submitFilter()}
               ></FilterFeatured>
             ) : (
               <FilterFeatured
-                key={filter.value}
+                key={filter.key}
                 handleChangeFilter={(filterItem) => changeValueFilter(filterItem)}
                 filterItem={filter}
                 onChangeFilter={() => submitFilter()}

@@ -6,6 +6,7 @@ import { formatCurrency } from "reborn-util";
 import urls from "configs/urls";
 import { UserContext, ContextType } from "contexts/userContext";
 import Icon from "@/components/icon";
+import StatCard, { type StatCardTone } from "@/components/StatCard";
 import { MOCK_DASHBOARD } from "@/mocks/community-hub/dashboard";
 
 export default function DashboardCH() {
@@ -26,47 +27,31 @@ export default function DashboardCH() {
     <div className="ch-dashboard">
       {/* STAT CARDS ROW - [CH] Community Hub metrics */}
       <div className="stat-cards-row">
-        {[
-          {
-            label: "Thành viên",
-            icon: <Icon name="Customer" />,
-            value: `Active: ${data.members.active}/${data.members.total_slots}`,
-            color: "primary",
-          },
-          {
-            label: "Check-in hôm nay",
-            icon: <Icon name="Barchart" />,
-            value: `${data.checkins_today} lượt`,
-            color: "accent",
-          },
-          {
-            label: "Hết hạn 7 ngày",
-            icon: <Icon name="WarningCircle" />,
-            value: `${data.members.expiring_soon} thành viên`,
-            color: "warning",
-          },
+        {([
+          { label: "Thành viên",       icon: <Icon name="Customer" />,       value: `Active: ${data.members.active}/${data.members.total_slots}`, tone: "primary" as StatCardTone },
+          { label: "Check-in hôm nay", icon: <Icon name="Barchart" />,       value: `${data.checkins_today} lượt`,                                tone: "accent"  as StatCardTone },
+          { label: "Hết hạn 7 ngày",   icon: <Icon name="WarningCircle" />,  value: `${data.members.expiring_soon} thành viên`,                   tone: "warning" as StatCardTone },
           {
             label: "MRR (tháng này)",
             icon: <Icon name="MoneyFill" />,
             value: masked ? "••••••••••" : `~${formatCurrency(data.mrr_vnd, ".", "")}đ`,
-            color: "success",
-            canMask: true,
+            tone: "success" as StatCardTone,
+            action: (
+              <button type="button" className="ch-stat-toggle" onClick={() => setMasked(!masked)} aria-label="Ẩn/hiện doanh thu">
+                {masked ? <Icon name="EyeSlash" /> : <Icon name="Eye" />}
+              </button>
+            ),
           },
-        ].map((card, i) => (
-          <div key={i} className={`stat-card stat-card--${card.color}`}>
-            <div className={`stat-card-icon ${card.color}`}>{card.icon}</div>
-            <div className="stat-card-content">
-              <div className="stat-card-label">{card.label}</div>
-              <div className="stat-card-value-container">
-                <span className="stat-card-value">{card.value}</span>
-                {card.canMask && (
-                  <button onClick={() => setMasked(!masked)} className="stat-card-toggle">
-                    {masked ? <Icon name="EyeSlash" /> : <Icon name="Eye" />}
-                  </button>
-                )}
-              </div>
-            </div>
-          </div>
+        ]).map((card, i) => (
+          <StatCard
+            key={i}
+            variant="icon"
+            tone={card.tone}
+            icon={card.icon}
+            label={card.label}
+            value={card.value}
+            action={(card as { action?: React.ReactNode }).action}
+          />
         ))}
       </div>
 

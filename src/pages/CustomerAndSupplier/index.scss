@@ -319,32 +319,10 @@ $letters: A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q, R, S, T, U, V, W, X
       margin-top: 1.2rem;
       border-top: 1px solid $border;
       border-bottom: 1px solid $border;
-      .stat-pill {
-        min-width: 14rem;
-        display: flex;
-        align-items: center;
-        gap: 8px;
-        background: $bg;
-        border-radius: 10px;
-        padding: 8px 14px;
-        .dot {
-          width: 8px;
-          height: 8px;
-          border-radius: 50%;
-        }
-        .num {
-          font-size: 15px;
-          font-weight: 800;
-        }
-        .lbl {
-          font-size: 11px;
-          color: $muted;
-          font-weight: 600;
-        }
-      }
+      // .stat-pill đã chuyển sang shared @/components/StatCard (variant="pill")
       @media (max-width: 1000px) {
         display: block;
-        .stat-pill {
+        .stat-card--pill {
           width: 100%;
           margin-bottom: 1.2rem;
         }

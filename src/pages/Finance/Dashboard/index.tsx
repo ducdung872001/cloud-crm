@@ -19,6 +19,7 @@ import {
   useFinanceProgressiveList,
 } from "../shared";
 import EmptyState from "@/components/EmptyState";
+import { LoadingBlock } from "@/components/Spinner";
 import DebtManagementService, { IDebtItem } from "services/DebtManagementService";
 import "./index.scss";
 
@@ -143,9 +144,7 @@ export default function FinanceDashboard() {
       </div>
 
       {loading ? (
-        <div className="finance-loading-center">
-          <span className="finance-spinner" />
-        </div>
+        <LoadingBlock size="lg" />
       ) : (
         <div className="finance-grid">
 
@@ -191,9 +190,7 @@ export default function FinanceDashboard() {
                 <span>{getDaysAgoParam(30)} – {getTodayParam()}</span>
               </div>
               {chartLoading ? (
-                <div className="finance-loading-center" style={{ minHeight: "14rem" }}>
-                  <span className="finance-spinner" />
-                </div>
+                <LoadingBlock minHeight="14rem" />
               ) : (incomeChart.length > 0 || expenseChart.length > 0) ? (
                 <FinanceMiniBarChart
                   incomeData={incomeChart}

@@ -28,6 +28,7 @@ import {
   useFinanceToast,
 } from "../shared";
 import EmptyState from "@/components/EmptyState";
+import { LoadingBlock } from "@/components/Spinner";
 import "./index.scss";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
@@ -335,9 +336,7 @@ export default function FinanceCashBook() {
 
         {/* Transaction list */}
         {txLoading ? (
-          <div className="finance-loading-center">
-            <span className="finance-spinner" />
-          </div>
+          <LoadingBlock />
         ) : (
           <div className="finance-scroll-panel" onScroll={handleScroll}>
             {allTxns.length === 0 ? (

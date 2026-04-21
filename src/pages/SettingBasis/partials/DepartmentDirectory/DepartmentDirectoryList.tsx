@@ -262,7 +262,7 @@ export default function DepartmentDirectoryList(props: IDepartmentDirectoryListP
       Xem thêm
     </a>,
     <Badge key={item.id} text={item.status === 1 ? "Đang hoạt động" : "Tạm dừng hoạt động"} variant={item.status === 1 ? "success" : "error"} />,
-    item.note.length > 0 ? (
+    item.note && item.note.length > 0 ? (
       <Tippy key={item.id} content={item.note} delay={[120, 100]} animation="scale">
         <p className="content">{trimContent(item.note, 100, true, true)}</p>
       </Tippy>

@@ -8,6 +8,7 @@ import Tippy from "@tippyjs/react";
 import { getSearchParameters, getPageOffset, getDomain } from "reborn-util";
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import Icon from "components/icon";
+import StatCard from "@/components/StatCard";
 import Loading from "components/loading";
 import { ExportExcel } from "exports";
 import Dialog, { IContentDialog } from "components/dialog/dialog";
@@ -1456,38 +1457,13 @@ export default function CustomerAndSupplier(props: Record<string, unknown>) {
               <button className="filter-chip">📅 Mới</button>
             </div>
           </div>
-          {/* Stats KPIs: ẩn khi chưa có dữ liệu thật (BE chưa trả) — tránh hiện mock
-              gây hiểu lầm là đã có data. TODO: wire vào API summary khi BE sẵn sàng. */}
+          {/* Stats KPIs: ẩn khi chưa có dữ liệu thật (BE chưa trả). TODO: wire API summary */}
           {!isLoading && listCustomer && listCustomer.length > 0 && (
             <div className="stats-row">
-              <div className="stat-pill">
-                <div className="dot" style={{ background: "#5b6af0" }}></div>
-                <div>
-                  <div className="num">—</div>
-                  <div className="lbl">Tổng đối tác</div>
-                </div>
-              </div>
-              <div className="stat-pill">
-                <div className="dot" style={{ background: "#10b981" }}></div>
-                <div>
-                  <div className="num">{listCustomer.length}</div>
-                  <div className="lbl">Thành viên</div>
-                </div>
-              </div>
-              <div className="stat-pill">
-                <div className="dot" style={{ background: "#ef4444" }}></div>
-                <div>
-                  <div className="num" style={{ color: "#ef4444" }}>—</div>
-                  <div className="lbl">Tổng công nợ</div>
-                </div>
-              </div>
-              <div className="stat-pill">
-                <div className="dot" style={{ background: "#f59e0b" }}></div>
-                <div>
-                  <div className="num">—</div>
-                  <div className="lbl">Có nợ quá hạn</div>
-                </div>
-              </div>
+              <StatCard variant="pill" dotColor="#5b6af0" label="Tổng đối tác" value="—" />
+              <StatCard variant="pill" dotColor="#10b981" label="Thành viên"   value={listCustomer.length} />
+              <StatCard variant="pill" dotColor="#ef4444" label="Tổng công nợ" value="—" tone="danger" />
+              <StatCard variant="pill" dotColor="#f59e0b" label="Có nợ quá hạn" value="—" />
             </div>
           )}
 

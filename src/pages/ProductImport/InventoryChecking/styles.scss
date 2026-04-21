@@ -1,10 +1,10 @@
 // InventoryManagement.scss
 .page-inventory-management {
 
-  // Summary
+  // Summary — auto-fit cho phép 4 hoặc 5 card cùng 1 hàng tuỳ số lượng card của tab
   .inventory__summary {
     display: grid;
-    grid-template-columns: repeat(4, 1fr);
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
     gap: 12px;
     margin-bottom: 16px;
 

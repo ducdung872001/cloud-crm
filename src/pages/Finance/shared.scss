@@ -113,46 +113,7 @@
   color: #6a7f8e;
 }
 
-.finance-stat-card {
-  border-radius: 1.2rem;
-  padding: 1.4rem;
-  border: 1px solid #e4ebf1;
-  background: #ffffff;
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-}
-
-.finance-stat-card--success {
-  background: #f2fcf6;
-  border-color: #ccefd8;
-}
-
-.finance-stat-card--danger {
-  background: #fff4f2;
-  border-color: #f5d2cc;
-}
-
-.finance-stat-card--warning {
-  background: #fff9ee;
-  border-color: #f3dfb1;
-}
-
-.finance-stat-card__label {
-  font-size: 1.3rem;
-  color: #698090;
-}
-
-.finance-stat-card__value {
-  font-size: 2rem;
-  line-height: 1.3;
-  color: #17384a;
-}
-
-.finance-stat-card__helper {
-  font-size: 1.2rem;
-  color: #7e919f;
-}
+// .finance-stat-card đã chuyển sang shared @/components/StatCard
 
 .finance-link-button {
   display: inline-flex;
@@ -840,31 +801,7 @@
   margin-bottom: 1rem;
 }
 
-/* ── Loading spinner ─────────────────────────────────────────────────────── */
-.finance-spinner {
-  display: inline-block;
-  width: 1.8rem;
-  height: 1.8rem;
-  border-radius: 50%;
-  border: 2.5px solid #d0e4ee;
-  border-top-color: #133042;
-  animation: finance-spin 0.7s linear infinite;
-  vertical-align: middle;
-}
-
-@keyframes finance-spin {
-  to {
-    transform: rotate(360deg);
-  }
-}
-
-.finance-loading-center {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  padding: 4rem;
-  min-height: 12rem;
-}
+// Loading spinner + loading-center đã chuyển sang shared @/components/Spinner
 
 /* ── Toast ───────────────────────────────────────────────────────────────── */
 .finance-toast {

@@ -22,70 +22,21 @@
     }
   }
 
-  .stat-card {
-    background: var(--ch-surface, #fff);
-    border-radius: 1.2rem;
-    padding: 1.6rem 2rem;
-    display: flex;
-    align-items: flex-start;
-    gap: 1.4rem;
+  // .stat-card đã chuyển sang shared @/components/StatCard
+  // Chỉ giữ style toggle button (custom cho MRR mask)
+  .ch-stat-toggle {
     border: none;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+    background: none;
+    cursor: pointer;
+    color: #94a3b8;
+    padding: 0;
+    display: inline-flex;
+    align-items: center;
 
-    &--primary .stat-card-icon { background: rgba(45, 106, 90, 0.1); color: var(--ch-primary, #2D6A5A); }
-    &--accent .stat-card-icon { background: rgba(212, 165, 116, 0.15); color: var(--ch-accent, #D4A574); }
-    &--warning .stat-card-icon { background: rgba(232, 146, 42, 0.1); color: var(--ch-warning, #E8922A); }
-    &--success .stat-card-icon { background: rgba(61, 158, 106, 0.1); color: var(--ch-success, #3D9E6A); }
-
-    &-icon {
-      width: 4.6rem;
-      height: 4.6rem;
-      border-radius: 1.2rem;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      flex-shrink: 0;
-
-      svg {
-        width: 2.4rem;
-        height: 2.4rem;
-        fill: currentColor;
-      }
-    }
-
-    &-content {
-      flex: 1;
-    }
-
-    &-label {
-      font-size: 1.2rem;
-      color: var(--ch-text-muted, #7A6B5A);
-      margin-bottom: 0.4rem;
-    }
-
-    &-value-container {
-      display: flex;
-      align-items: center;
-      gap: 0.8rem;
-    }
-
-    &-value {
-      font-size: 1.6rem;
-      font-weight: 700;
-      color: var(--ch-text, #2C2318);
-    }
-
-    &-toggle {
-      border: none;
-      background: none;
-      cursor: pointer;
-      color: #94a3b8;
-      padding: 0;
-      svg {
-        width: 1.6rem;
-        height: 1.6rem;
-        fill: currentColor;
-      }
+    svg {
+      width: 1.6rem;
+      height: 1.6rem;
+      fill: currentColor;
     }
   }
 
