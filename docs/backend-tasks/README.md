@@ -83,9 +83,22 @@ Tất cả các nhánh CRM (reborn-retail, reborn-tnpm, reborn-fitpro, community
 |------|----------|---------|
 | [feedback-history-count-400.md](./notification/feedback-history-count-400.md) | 🟠 HIGH | `/notification/feedbackHistory/count` trả HTTP 400 body rỗng — FE crash khi `res.json()` |
 
+### [market/](./market/) — `cloud-market-master`
+
+| File | Severity | Tóm tắt |
+|------|----------|---------|
+| [events.md](./market/events.md) | 🟠 HIGH | Event Management (Sự kiện) — FE prototype xong, BE chưa triển khai API |
+| [fixed-price-promotion.md](./market/fixed-price-promotion.md) | 🟠 HIGH | `/market/fixedPrice/*` (4 endpoint) trả nginx 404 — BE chưa implement module Đồng giá |
+
+### [customer/](./customer/) — `cloud-customer-master`
+
+| File | Severity | Tóm tắt |
+|------|----------|---------|
+| [attribute-seed-mentor.md](./customer/attribute-seed-mentor.md) | 🟢 LOW | Seed 2 custom attribute `mentorCode` + `houseNumber` cho tenant community-hub (W-House) |
+
 ### Các microservice chưa có task
 
-- [care/](./care/) · [contract/](./contract/) · [finance/](./finance/) · [logistics/](./logistics/) · [market/](./market/) · [operation/](./operation/) · [sales/](./sales/)
+- [care/](./care/) · [contract/](./contract/) · [finance/](./finance/) · [logistics/](./logistics/) · [operation/](./operation/) · [sales/](./sales/)
 
 ---
 

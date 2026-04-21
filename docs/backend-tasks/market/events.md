@@ -452,3 +452,170 @@ Bổ sung vào permission system:
 - Khi BE deploy: FE tự detect API available và ngừng dùng localStorage
 - Response format: `{ code: 0, result: {...} }` — FE unwrap qua `res.result`
 - Auth: fetchConfig.ts tự inject JWT + Hostname header
+
+---
+
+## ADDENDUM 2026-04-21 — Yêu cầu mới từ khách hàng W-House
+
+Khách hàng cung cấp 3 tài liệu (xem [docs/requirements/analysis.md](../../requirements/analysis.md)):
+- `event.jpg` — QR + Google Maps + ảnh địa điểm
+- `other.jpg` — Excel tổng hợp với multi-column header (add-ons grouped)
+- Excel Google Form responses — đăng ký Squat Mentor (32 rows)
+
+Phát sinh **5 gap mới** so với schema hiện tại. Chi tiết:
+
+### Gap 1 — Venue coordinates + images tách riêng
+
+**Hiện tại:** `venue_map_url` (share link string).
+**Cần thêm:** `venue_latitude`, `venue_longitude`, `venue_images` để FE embed Google Maps iframe và gallery ảnh địa điểm riêng (tách khỏi `gallery_image_urls` là ảnh hoạt động).
+
+```sql
+ALTER TABLE marketing_events
+  ADD COLUMN venue_latitude  DECIMAL(10, 7) DEFAULT NULL COMMENT 'Toạ độ lat (WGS84)',
+  ADD COLUMN venue_longitude DECIMAL(10, 7) DEFAULT NULL COMMENT 'Toạ độ lng (WGS84)',
+  ADD COLUMN venue_images    JSON DEFAULT NULL COMMENT '["url1","url2",...] ảnh địa điểm';
+```
+
+Response JSON extend `venue`:
+```json
+{
+  "venue": {
+    "name": "Vườn Thực Vật Hà Nội",
+    "address": "...",
+    "mapUrl": "https://goo.gl/...",
+    "latitude": 21.0285,
+    "longitude": 105.8542,
+    "venueImages": ["https://.../cong-thuc-vat-1.jpg", "..."]
+  }
+}
+```
+
+### Gap 2 — Tenant-level bank account + per-event override
+
+QR VietQR đã reuse endpoint billing có sẵn. Cần **nguồn tài khoản nhận tiền**:
+
+**Default — tenant-level config** (bảng `tenant_config` hoặc `operation` microservice):
+```json
+{
+  "bankAccount": {
+    "holder": "Nguyễn Trọng Thế Anh",
+    "phone": "0886699931",
+    "bank": "VCB",
+    "accountNumber": "1234567890"
+  }
+}
+```
+
+**Override per-event** (optional, nếu sự kiện có TK riêng):
+```sql
+ALTER TABLE marketing_events
+  ADD COLUMN bank_account_override JSON DEFAULT NULL
+  COMMENT '{"holder","bank","accountNumber","phone"} — override tenant default';
+```
+
+Logic FE/BE khi tạo QR: `event.bankAccountOverride ?? tenant.bankAccount`.
+
+### Gap 3 — Add-on grouping (multi-level header cho Excel other.jpg)
+
+**Hiện tại:** `add_on_items` JSON lưu array flat các add-on.
+**Cần thêm:** Field `group` trong từng add-on để FE render **multi-level table header** khớp `other.jpg`:
+
+```json
+{
+  "add_on_items": [
+    { "id": "a1", "group": "Cư trú W-House 09/05", "name": "Ăn trưa",  "unitPrice": 50000, "unit": "suất" },
+    { "id": "a2", "group": "Cư trú W-House 09/05", "name": "Ăn tối",   "unitPrice": 50000, "unit": "suất" },
+    { "id": "a3", "group": "Cư trú W-House 09/05", "name": "Cư trú",   "unitPrice": 100000,"unit": "đêm"  },
+    { "id": "a4", "group": "Cư trú W-House 09/05", "name": "Xe di chuyển", "unitPrice": 100000, "unit": "lượt" },
+    { "id": "a5", "group": "Phí tham gia 10/05",   "name": "Phí tham gia", "unitPrice": 300000, "unit": "lần" },
+    { "id": "a6", "group": "Phí tham gia 10/05",   "name": "Ăn full 7h-2h", "unitPrice": 100000, "unit": "suất" }
+  ]
+}
+```
+
+**Lưu ý BE:** `group` chỉ là metadata cho UI rendering, không cần bảng riêng. Validate `group` là string ≤100 ký tự.
+
+### Gap 4 — Multiple payment proofs (Excel có "Ảnh bill 1-4")
+
+**Hiện tại:** `EventRegistration.paymentProof` single object.
+**Cần đổi thành:** `paymentProofs` array (tối đa 4 ảnh — theo Excel gốc).
+
+```sql
+ALTER TABLE marketing_event_registrations
+  DROP COLUMN payment_proof_image_url,
+  DROP COLUMN payment_proof_submitted_at,
+  DROP COLUMN payment_proof_status,
+  DROP COLUMN payment_proof_reviewed_at,
+  DROP COLUMN payment_proof_reviewed_by,
+  DROP COLUMN payment_proof_reject_reason,
+  ADD COLUMN payment_proofs JSON DEFAULT NULL
+    COMMENT '[{imageUrl, submittedAt, status, reviewedAt, reviewedBy, rejectReason}, ...] max 4';
+```
+
+**Backward compat:** Nếu DB đã deploy với cột single, migration:
+```sql
+UPDATE marketing_event_registrations
+SET payment_proofs = JSON_ARRAY(JSON_OBJECT(
+  'imageUrl', payment_proof_image_url,
+  'submittedAt', payment_proof_submitted_at,
+  'status', payment_proof_status,
+  'reviewedAt', payment_proof_reviewed_at,
+  'reviewedBy', payment_proof_reviewed_by,
+  'rejectReason', payment_proof_reject_reason
+))
+WHERE payment_proof_image_url IS NOT NULL;
+```
+
+FE type update (tương ứng):
+```ts
+// EventRegistration
+paymentProofs?: PaymentProof[];   // thay cho paymentProof?: PaymentProof
+```
+
+### Gap 5 — Pipeline register → auto-link customer (quan trọng)
+
+Hiện tại `event_registration` có `converted_to_customer_id` nhưng chưa có flow auto-link. Cần bổ sung:
+
+**Endpoint:** `POST /market/events/{slug}/register` — FE public registration form gửi về.
+
+**Logic BE:**
+
+```
+1. Extract fullName, phone, customerGroupKey, mentorCode, houseNumber từ body.
+
+2. Tìm customer theo (tenant_id, phone):
+   a. Nếu tồn tại → customerId = đã có; UPDATE customer.name nếu đang trống;
+      UPDATE customer_group nếu đang trống; UPDATE 2 attribute mentorCode+houseNumber nếu đang trống.
+   b. Nếu không → INSERT customer mới với:
+      - status = 'lead'
+      - customer_group_id = lookup theo customerGroupKey
+      - Sau đó INSERT 2 customer_attribute_value cho mentorCode + houseNumber.
+
+3. INSERT event_registration:
+   - event_id, customer_id (từ bước 2), selectedDates, selectedAddOns, dynamicFieldValues, paymentProofs
+   - total_amount = event.ticket_price + sum(addOn.unitPrice × qty)
+   - status = 'pending' hoặc 'confirmed' (tuỳ event.require_payment_proof)
+   - ticket_code = gen nếu status='confirmed'
+
+4. Response:
+   {
+     code: 0,
+     result: {
+       registration: {...},
+       qrPayload: { qrDataUrl, amount, addInfo }  // để FE render QR ngay trên thank-you page
+     }
+   }
+```
+
+**Liên quan task khác:**
+- Customer group `Mentor7 / Hậu master k01 / Khác / Thấu hiểu nội tâm` → cần seed hoặc admin tự tạo qua UI
+- Customer attribute `mentorCode` + `houseNumber` → xem [customer/attribute-seed-mentor.md](../customer/attribute-seed-mentor.md)
+
+### Updated acceptance criteria (bổ sung)
+
+- [ ] Migration 5 gaps trên apply thành công
+- [ ] `GET /market/events/{slug}` trả `venue.latitude/longitude/venueImages`, `bankAccountOverride`, add-ons có `group`
+- [ ] `POST /market/events/{slug}/register` tự tạo/link customer theo SĐT, áp dụng customer_group + 2 custom attributes
+- [ ] Tenant chỉ thấy events/registrations của mình (tenant isolation)
+- [ ] QR VietQR generate nhận `accountNumber/accountName/amount/addInfo` từ flow mới
+- [ ] `paymentProofs` accept tối đa 4 ảnh, mỗi ảnh có status riêng
