@@ -266,6 +266,7 @@ export default function App() {
   useEffect(() => {
     requestPermission(cookies.token);
 
+    if (!messaging) return;
     onMessage(messaging, (payload) => {
       showToast(payload.notification?.title || "Bạn có thông báo mới", "success");
       getCountUnread();

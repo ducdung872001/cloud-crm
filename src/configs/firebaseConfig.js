@@ -10,10 +10,12 @@ var firebaseConfig = {
   appId:             import.meta.env.VITE_FIREBASE_APP_ID,
 };
 
-const firebaseApp = initializeApp(firebaseConfig);
-const messaging = getMessaging(firebaseApp);
+const isFirebaseConfigured = Boolean(firebaseConfig.projectId && firebaseConfig.apiKey && firebaseConfig.appId);
+const firebaseApp = isFirebaseConfigured ? initializeApp(firebaseConfig) : null;
+const messaging = firebaseApp ? getMessaging(firebaseApp) : null;
 
 export const fetchToken = () => {
+  if (!messaging) return Promise.resolve(undefined);
   return getToken(messaging, {
     vapidKey: import.meta.env.VITE_FIREBASE_VAPID_KEY,
   })
@@ -32,6 +34,7 @@ export const fetchToken = () => {
 
 export const onMessageListener = () =>
   new Promise((resolve) => {
+    if (!messaging) return;
     onMessage(messaging, (payload) => {
       resolve(payload);
     });

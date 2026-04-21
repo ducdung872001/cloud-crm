@@ -41,9 +41,10 @@ const firebaseConfig = {
   appId:             import.meta.env.VITE_FIREBASE_APP_ID,
 };
 
-// Khởi tạo Firebase
-const app = initializeApp(firebaseConfig);
-const messaging = getMessaging(app);
+// Chỉ khởi tạo Firebase khi có đủ config (tránh vỡ app ở môi trường không cấu hình push)
+const isFirebaseConfigured = Boolean(firebaseConfig.projectId && firebaseConfig.apiKey && firebaseConfig.appId);
+const app = isFirebaseConfigured ? initializeApp(firebaseConfig) : null;
+const messaging = app ? getMessaging(app) : null;
 
 const saveFCM = async (token, deviceId, employeeId, userId) => {
   const params = {
@@ -62,6 +63,9 @@ const saveFCM = async (token, deviceId, employeeId, userId) => {
 };
 
 export const requestPermission = async (jwtToken) => {
+  if (!messaging) {
+    return;
+  }
   if (!("Notification" in window)) {
     console.error("Trình duyệt không hỗ trợ Notifications.");
     return;
