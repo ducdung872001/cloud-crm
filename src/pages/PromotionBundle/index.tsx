@@ -1,19 +1,16 @@
 import React, { useState } from "react";
-import { getPermissions } from "utils/common";
+import { getPermissions, showToast } from "utils/common";
 import AddPromotionBundleModal from "./AddPromotionBundleModal";
 import { ITitleActions } from "components/titleAction/titleAction";
 import HeaderTabMenu from "@/components/HeaderTabMenu/HeaderTabMenu";
 import Icon from "components/icon";
+import EmptyState, { PreviewBanner } from "@/components/EmptyState";
+import { MOCK_COMBOS, MOCK_COMBO_STATS, type IComboItem } from "@/mocks/community-hub/combos";
 
 import "./index.scss";
 
-// Mock Data
-const mockCombos = [
-  { id: 1, name: "Combo Gia đình", products: ["Sản phẩm A", "Sản phẩm B", "Sản phẩm C"], orig: "450.000", sale: "350.000", pct: "22%", sold: 78, status: "active" },
-  { id: 2, name: "Combo Tiết kiệm", products: ["Sản phẩm X", "Sản phẩm Y"], orig: "280.000", sale: "220.000", pct: "21%", sold: 134, status: "active" },
-  { id: 3, name: "Combo VIP Premium", products: ["SP Premium", "SP Gold", "SP Luxury", "SP Ultra"], orig: "800.000", sale: "580.000", pct: "27%", sold: 45, status: "active" },
-  { id: 4, name: "Combo Mùa hè 2026", products: ["SP Mùa hè", "SP Phiên bản mới"], orig: "320.000", sale: "250.000", pct: "22%", sold: 0, status: "pending" },
-];
+// TODO: wire up real API khi BE có endpoint combo.
+// Hiện tại: tenant mới = combo rỗng. User bấm "Xem trước" để seed mock demo.
 
 interface StatCardProps {
   title: string;
@@ -37,6 +34,11 @@ export default function PromotionBundle(props: Record<string, unknown>) {
   const [permissions] = useState(getPermissions());
   const [showModalAdd, setShowModalAdd] = useState(false);
   const [dataCategoryService, setDataCategoryService] = useState<Record<string, unknown>>(null);
+  // Chế độ "Xem trước" — không persist, refresh = về rỗng
+  const [isPreview, setIsPreview] = useState(false);
+  // TODO: replace bằng state từ API khi BE có endpoint combo
+  const combos: IComboItem[] = isPreview ? MOCK_COMBOS : [];
+  const stats = isPreview ? MOCK_COMBO_STATS : null;
 
   const titleActions: ITitleActions = {
     actions: [
@@ -77,15 +79,52 @@ const StatCard: React.FC<StatCardProps> = ({ title, value, sub, icon, color, tre
         onBackProps={onBackProps}
       />
 
-      <div className="promo-stats-grid">
-        <StatCard title="Combo đang bán" value="28" icon={<Icon name="Gift" />} color="blue" />
-        <StatCard title="Đã bán tháng này" value="1,245" icon={<Icon name="ShoppingBagOpen" />} color="green" />
-        <StatCard title="Doanh thu Combo" value="458tr" icon={<Icon name="MoneyFill" />} color="purple" trend={8} />
-        <StatCard title="Combo hiệu quả nhất" value="Gia đình" sub="850 lượt mua" icon={<Icon name="Star" />} color="orange" />
-      </div>
+      {isPreview && <PreviewBanner onExit={() => setIsPreview(false)} />}
+
+      {/* Stats — chỉ hiện khi có data (preview hoặc real) */}
+      {stats && (
+        <div className="promo-stats-grid">
+          <StatCard title="Combo đang bán"       value={String(stats.active)}       icon={<Icon name="Gift" />}            color="blue" />
+          <StatCard title="Đã bán tháng này"     value={stats.soldThisMonth.toLocaleString("vi")} icon={<Icon name="ShoppingBagOpen" />} color="green" />
+          <StatCard title="Doanh thu Combo"      value={stats.revenueVnd}           icon={<Icon name="MoneyFill" />}       color="purple" trend={stats.revenueTrendPct} />
+          <StatCard title="Combo hiệu quả nhất"  value={stats.topComboName}         sub={`${stats.topComboSold} lượt mua`} icon={<Icon name="Star" />} color="orange" />
+        </div>
+      )}
+
+      {/* Empty state khi chưa có combo nào */}
+      {combos.length === 0 && !isPreview ? (
+        <EmptyState
+          variant="coming-soon"
+          icon="🎁"
+          title="Chưa có combo khuyến mãi nào"
+          description="Tạo combo đầu tiên để bán nhiều sản phẩm với giá ưu đãi — tăng giá trị đơn hàng trung bình. Hoặc xem trước giao diện với 4 combo mẫu."
+          action={
+            <button
+              type="button"
+              className="btn btn--primary btn--sm"
+              onClick={() => { setDataCategoryService(null); setShowModalAdd(true); }}
+            >
+              + Tạo combo mới
+            </button>
+          }
+          secondaryAction={
+            <button
+              type="button"
+              className="btn btn--outline btn--sm"
+              onClick={() => {
+                setIsPreview(true);
+                showToast("Đang ở chế độ xem trước với dữ liệu demo", "info");
+              }}
+            >
+              👁️ Xem trước giao diện
+            </button>
+          }
+          hint="Xem trước dùng 4 combo mẫu + số liệu mẫu. Đóng hoặc tải lại trang sẽ quay về trạng thái này."
+        />
+      ) : null}
 
       <div className="combo-grid">
-        {mockCombos.map((c) => {
+        {combos.map((c) => {
           const badge = statusMap[c.status] || statusMap.pending;
           return (
             <div key={c.id} className="combo-card">
@@ -121,10 +160,18 @@ const StatCard: React.FC<StatCardProps> = ({ title, value, sub, icon, color, tre
                 </div>
                 <div className="combo-card__actions">
                   <button className="combo-card__btn combo-card__btn--outline" onClick={() => {
+                    if (isPreview) {
+                      showToast("Đây là combo demo — thoát xem trước để chỉnh sửa combo thật.", "warning");
+                      return;
+                    }
                     setDataCategoryService(c);
                     setShowModalAdd(true);
                   }}>Sửa</button>
                   <button className="combo-card__btn combo-card__btn--solid" onClick={() => {
+                    if (isPreview) {
+                      showToast("Đây là combo demo — thoát xem trước để xem combo thật.", "warning");
+                      return;
+                    }
                     setDataCategoryService(c);
                     setShowModalAdd(true);
                   }}>Xem</button>

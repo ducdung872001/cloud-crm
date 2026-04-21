@@ -6,7 +6,9 @@ import Icon from "components/icon";
 import AddPromoCodeModal from "./AddPromoCodeModal";
 import { ITitleActions } from "components/titleAction/titleAction";
 import HeaderTabMenu from "@/components/HeaderTabMenu/HeaderTabMenu";
+import EmptyState, { PreviewBanner } from "@/components/EmptyState";
 import CouponService from "services/CouponService";
+import { MOCK_COUPONS } from "@/mocks/community-hub/coupons";
 import {
   ICoupon,
   DISCOUNT_TYPE_LABELS,
@@ -60,6 +62,10 @@ export default function PromoCode(props: Record<string, unknown>) {
   // ── Data ──────────────────────────────────────────────────────────
   const [listData, setListData]   = useState<ICoupon[]>([]);
   const [isLoading, setIsLoading] = useState(false);
+  // Chế độ "Xem trước" — khi tenant chưa có dữ liệu thật, user có thể preview
+  // giao diện với MOCK_COUPONS. Không persist — refresh = về trạng thái rỗng.
+  const [isPreview, setIsPreview] = useState(false);
+  const displayData: ICoupon[]    = isPreview ? MOCK_COUPONS : listData;
   const [stats, setStats]         = useState({ active: 0, used: 0, pending: 0, total: 0 });
   const [statsLoading, setStatsLoading] = useState(true);
   const [page, setPage]           = useState(1);
@@ -133,6 +139,11 @@ export default function PromoCode(props: Record<string, unknown>) {
 
   // ── Delete ────────────────────────────────────────────────────────
   const handleDelete = async (id: number) => {
+    if (isPreview) {
+      showToast("Đây là dữ liệu demo — không thể xoá. Thoát xem trước để thao tác thật.", "warning");
+      setShowDialog(false); setContentDialog(null);
+      return;
+    }
     setShowDialog(false); setContentDialog(null);
     const res = await CouponService.delete(id);
     if (res?.code === 0) {
@@ -154,6 +165,11 @@ export default function PromoCode(props: Record<string, unknown>) {
 
   // ── Update status ─────────────────────────────────────────────────
   const handleUpdateStatus = async (id: number, status: number) => {
+    if (isPreview) {
+      showToast("Đây là dữ liệu demo — không thể đổi trạng thái. Thoát xem trước để thao tác thật.", "warning");
+      setStatusMenu(null);
+      return;
+    }
     setStatusMenu(null);
     const res = await CouponService.updateStatus(id, status);
     if (res?.code === 0) {
@@ -223,17 +239,44 @@ export default function PromoCode(props: Record<string, unknown>) {
         </select>
       </div>
 
+      {/* Preview banner — chỉ xuất hiện khi đang xem mock */}
+      {isPreview && <PreviewBanner onExit={() => setIsPreview(false)} />}
+
       {/* Grid */}
       {isLoading ? (
         <div className="coupon-loading">Đang tải...</div>
-      ) : listData.length === 0 ? (
-        <div className="coupon-empty">
-          <Icon name="Tag" />
-          <p>Chưa có mã giảm giá nào</p>
-        </div>
+      ) : displayData.length === 0 ? (
+        <EmptyState
+          variant="coming-soon"
+          icon="🎫"
+          title="Chưa có mã giảm giá nào"
+          description="Tạo mã coupon đầu tiên để áp dụng giảm giá cho khách tại quầy hoặc đơn online. Hoặc xem trước giao diện với mã mẫu."
+          action={
+            <button
+              type="button"
+              className="btn btn--primary btn--sm"
+              onClick={() => { setSelectedItem(null); setShowModalAdd(true); }}
+            >
+              + Tạo mã mới
+            </button>
+          }
+          secondaryAction={
+            <button
+              type="button"
+              className="btn btn--outline btn--sm"
+              onClick={() => {
+                setIsPreview(true);
+                showToast("Đang ở chế độ xem trước với dữ liệu demo", "info");
+              }}
+            >
+              👁️ Xem trước giao diện
+            </button>
+          }
+          hint="Xem trước dùng 5 mã coupon mẫu để minh hoạ. Đóng hoặc tải lại trang sẽ quay về trạng thái này."
+        />
       ) : (
         <div className="coupon-grid">
-          {listData.map(c => {
+          {displayData.map(c => {
             const st = c.status ?? 0;
             const statusInfo = COUPON_STATUS_MAP[st] ?? COUPON_STATUS_MAP[0];
             const transitions = COUPON_STATUS_TRANSITIONS[st] ?? [];
@@ -315,7 +358,13 @@ export default function PromoCode(props: Record<string, unknown>) {
                         🔗
                       </button>
                       <button className="c-card-footer__btn c-card-footer__btn--edit"
-                        onClick={() => { setSelectedItem(c); setShowModalAdd(true); }}>
+                        onClick={() => {
+                          if (isPreview) {
+                            showToast("Đây là mã demo — thoát xem trước để chỉnh sửa mã thật.", "warning");
+                            return;
+                          }
+                          setSelectedItem(c); setShowModalAdd(true);
+                        }}>
                         Sửa
                       </button>
                       <button className="c-card-footer__btn c-card-footer__btn--del"
