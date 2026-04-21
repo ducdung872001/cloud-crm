@@ -1101,7 +1101,7 @@ export const urlsApi = {
     detail: prefixCustomer + "/beautyBranch/get",
     update: prefixCustomer + "/beautyBranch/update",
     delete: prefixCustomer + "/beautyBranch/delete",
-    getByBeauty: `${process.env.APP_AUTHENTICATOR_URL}/api/beautySalon/get_bydomain`,
+    getByBeauty: `${process.env.APP_AUTHENTICATOR_URL || "https://reborn.vn"}/api/beautySalon/get_bydomain`,
 
     //tìm đối tác theo mã
     getBeautyBranchByCode: prefixCustomer + "/beautyBranch/get/byCode",

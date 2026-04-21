@@ -37,12 +37,12 @@ export default function RegisterFetch() {
       } else if (!config.headers["Content-Type"]) {
         config.headers["Content-Type"] = "application/json";
       }
-      // Local (localhost / 127.0.0.1) → luôn "kcn.reborn.vn" (env test mặc định).
+      // Local (localhost / 127.0.0.1) → luôn "hub.reborn.vn" (env test mặc định cho nhánh community-hub).
       // Live (prod/staging) → location.hostname thật của tenant user đang truy cập.
       {
         const realHost = location.hostname || "";
         const isLocal = realHost === "localhost" || realHost === "127.0.0.1" || realHost === "";
-        config.headers["Hostname"] = isLocal ? "kcn.reborn.vn" : realHost;
+        config.headers["Hostname"] = isLocal ? "hub.reborn.vn" : realHost;
       }
 
 
@@ -62,7 +62,7 @@ export default function RegisterFetch() {
               url = process.env.APP_API_URL + url;
             }
           } else {
-            url = process.env.APP_AUTHENTICATOR_URL + url;
+            url = (process.env.APP_AUTHENTICATOR_URL || "https://reborn.vn") + url;
           }
         }
       }

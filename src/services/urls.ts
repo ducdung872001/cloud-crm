@@ -723,7 +723,7 @@ export const urlsApi = {
     detail: prefixAdmin + "/beautyBranch/get",
     update: prefixAdmin + "/beautyBranch/update",
     delete: prefixAdmin + "/beautyBranch/delete",
-    getByBeauty: `${process.env.APP_AUTHENTICATOR_URL}/api/beautySalon/get_bydomain`,
+    getByBeauty: `${process.env.APP_AUTHENTICATOR_URL || "https://reborn.vn"}/api/beautySalon/get_bydomain`,
 
     //tìm đối tác theo mã
     getBeautyBranchByCode: prefixAdmin + "/beautyBranch/get/byCode",
