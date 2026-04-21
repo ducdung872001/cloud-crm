@@ -1,0 +1,81 @@
+{
+  "module": "API-MIGRATE",
+  "name": "Customer list_paid/basic",
+  "runId": "798xjw",
+  "timestamp": "2026-04-20T13:53:43.225Z",
+  "durationMs": 40540,
+  "baseUrl": "http://localhost:4000/crm",
+  "total": 11,
+  "passed": 4,
+  "failed": 7,
+  "passRate": "36%",
+  "results": [
+    {
+      "testId": "LOGIN",
+      "status": "PASS",
+      "detail": "Dang nhap bang token da luu",
+      "ts": "2026-04-20T13:53:27.022Z"
+    },
+    {
+      "testId": "LP-001",
+      "status": "PASS",
+      "detail": "Có request tới /customer/list_paid/basic: https://biz.reborn.vn/customer/customer/list_paid/basic?keyword=&contactType=-1&branchId=23",
+      "ts": "2026-04-20T13:53:43.141Z"
+    },
+    {
+      "testId": "LP-002",
+      "status": "PASS",
+      "detail": "URL đúng host biz.reborn.vn/customer: https://biz.reborn.vn/customer/customer/list_paid/basic",
+      "ts": "2026-04-20T13:53:43.141Z"
+    },
+    {
+      "testId": "LP-003",
+      "status": "FAIL",
+      "detail": "Query có page + size: page=null, size=null",
+      "ts": "2026-04-20T13:53:43.142Z"
+    },
+    {
+      "testId": "LP-004",
+      "status": "PASS",
+      "detail": "Query KHÔNG còn 'limit' (adapter đã chuyển đổi): limit=(absent)",
+      "ts": "2026-04-20T13:53:43.143Z"
+    },
+    {
+      "testId": "LP-005",
+      "status": "FAIL",
+      "detail": "page value hợp lệ (0-based expected 0 cho trang đầu): null",
+      "ts": "2026-04-20T13:53:43.143Z"
+    },
+    {
+      "testId": "LP-006",
+      "status": "FAIL",
+      "detail": "HTTP status = 200: 400",
+      "ts": "2026-04-20T13:53:43.143Z"
+    },
+    {
+      "testId": "LP-007",
+      "status": "FAIL",
+      "detail": "Response code = 0 (success): undefined — msg=\"undefined\"",
+      "ts": "2026-04-20T13:53:43.143Z"
+    },
+    {
+      "testId": "LP-008",
+      "status": "FAIL",
+      "detail": "result.items là array: undefined",
+      "ts": "2026-04-20T13:53:43.143Z"
+    },
+    {
+      "testId": "LP-009",
+      "status": "FAIL",
+      "detail": "result.total là number: undefined",
+      "ts": "2026-04-20T13:53:43.143Z"
+    },
+    {
+      "testId": "LP-011",
+      "status": "FAIL",
+      "detail": "UI render bảng: false",
+      "ts": "2026-04-20T13:53:43.147Z"
+    }
+  ],
+  "apiCalls": 20
+}

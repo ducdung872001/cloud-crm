@@ -1,0 +1,87 @@
+{
+  "module": "API-MIGRATE",
+  "name": "Customer list_paid/basic",
+  "runId": "7b1hod",
+  "timestamp": "2026-04-20T14:43:52.026Z",
+  "durationMs": 37276,
+  "baseUrl": "http://localhost:4000/crm",
+  "total": 12,
+  "passed": 12,
+  "failed": 0,
+  "passRate": "100%",
+  "results": [
+    {
+      "testId": "LOGIN",
+      "status": "PASS",
+      "detail": "Dang nhap bang token da luu",
+      "ts": "2026-04-20T14:43:35.028Z"
+    },
+    {
+      "testId": "LP-001",
+      "status": "PASS",
+      "detail": "Có request tới /customer/list_paid/basic: https://biz.reborn.vn/customer/customer/list_paid/basic?keyword=&contactType=-1&branchId=23&page=0&size=20",
+      "ts": "2026-04-20T14:43:51.830Z"
+    },
+    {
+      "testId": "LP-002",
+      "status": "PASS",
+      "detail": "URL đúng host biz.reborn.vn/customer: https://biz.reborn.vn/customer/customer/list_paid/basic",
+      "ts": "2026-04-20T14:43:51.830Z"
+    },
+    {
+      "testId": "LP-003",
+      "status": "PASS",
+      "detail": "Query có page + size: page=0, size=20",
+      "ts": "2026-04-20T14:43:51.834Z"
+    },
+    {
+      "testId": "LP-004",
+      "status": "PASS",
+      "detail": "Query KHÔNG còn 'limit' (adapter đã chuyển đổi): limit=(absent)",
+      "ts": "2026-04-20T14:43:51.834Z"
+    },
+    {
+      "testId": "LP-005",
+      "status": "PASS",
+      "detail": "page value hợp lệ (0-based expected 0 cho trang đầu): 0",
+      "ts": "2026-04-20T14:43:51.834Z"
+    },
+    {
+      "testId": "LP-006",
+      "status": "PASS",
+      "detail": "HTTP status = 200: 200",
+      "ts": "2026-04-20T14:43:51.834Z"
+    },
+    {
+      "testId": "LP-007",
+      "status": "PASS",
+      "detail": "Response code = 0 (success): 0 — msg=\"OK\"",
+      "ts": "2026-04-20T14:43:51.834Z"
+    },
+    {
+      "testId": "LP-008",
+      "status": "PASS",
+      "detail": "result.items là array: length=5",
+      "ts": "2026-04-20T14:43:51.834Z"
+    },
+    {
+      "testId": "LP-009",
+      "status": "PASS",
+      "detail": "result.total là number: 5",
+      "ts": "2026-04-20T14:43:51.835Z"
+    },
+    {
+      "testId": "LP-010",
+      "status": "PASS",
+      "detail": "Item[0] có field tối thiểu (id, name): OK",
+      "ts": "2026-04-20T14:43:51.835Z"
+    },
+    {
+      "testId": "LP-011",
+      "status": "PASS",
+      "detail": "UI render bảng: true",
+      "ts": "2026-04-20T14:43:51.884Z"
+    }
+  ],
+  "apiCalls": 3
+}

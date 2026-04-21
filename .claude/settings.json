@@ -4,7 +4,11 @@
       "Bash(python -c \"import sys; from pypdf import PdfReader; r=PdfReader\\(r'd:/Git/reborn/reborn-cloud/cloud-ver2/cloud-crm/docs/urd/TNPM_HLD_v2.pdf'\\); print\\('PAGES:', len\\(r.pages\\)\\);[print\\(f'\\\\n===PAGE {i+1}===\\\\n', r.pages[i].extract_text\\(\\)\\) for i in range\\(len\\(r.pages\\)\\)]\")",
       "Bash(pip install:*)",
       "Bash(python -m pip show pypdf)",
-      "Bash(python -m pip install pypdf)"
+      "Bash(python -m pip install pypdf)",
+      "Bash(python -c \"import openpyxl; wb = openpyxl.load_workbook\\('docs/roadmap/CRM_Kế hoạch triển khai.xlsx', data_only=False\\); [print\\(f'=== Sheet: {s} ==='\\) or print\\('\\\\n'.join\\([' | '.join\\([str\\(c.value\\) if c.value is not None else '' for c in row]\\) for row in wb[s].iter_rows\\(\\)]\\)\\) for s in wb.sheetnames]\")",
+      "Bash(python -c ' *)",
+      "Bash(PYTHONIOENCODING=utf-8 python d:/tmp/build_roadmap.py)",
+      "Bash(PYTHONIOENCODING=utf-8 python d:/tmp/patch_dates.py)"
     ],
     "additionalDirectories": [
       "\\tmp"
