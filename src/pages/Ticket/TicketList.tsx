@@ -232,6 +232,7 @@ export default function TicketList(props) {
     "Mã phiếu",
     "Tên khách hàng",
     "Danh mục hỗ trợ",
+    "Mức độ",
     "Ngày tiếp nhận",
     "Ngày dự kiến xong",
     "Người tạo phiếu",
@@ -239,9 +240,9 @@ export default function TicketList(props) {
     "Trạng thái xử lý",
   ];
 
-  const dataFormat = ["text-center", "", "", "", "text-center", "text-center", "", "text-center", "text-center"];
+  const dataFormat = ["text-center", "", "", "", "text-center", "text-center", "text-center", "", "text-center", "text-center"];
 
-  const dataSize = ["auto", "auto", "auto", "auto", 20, "auto", "auto", 16, "auto"];
+  const dataSize = ["auto", "auto", "auto", "auto", 10, 20, "auto", "auto", 16, "auto"];
 
   const dataMappingArray = (item: ITicketResponseModel, index: number) => [
     getPageOffset(params) + index + 1,
@@ -256,6 +257,24 @@ export default function TicketList(props) {
       {item.customerName}
     </span>,
     item.supportName,
+    item.severity ? (
+      <Badge
+        key={`sev-${item.id}`}
+        text={
+          item.severity === "critical" ? "Nghiêm trọng"
+            : item.severity === "high" ? "Cao"
+            : item.severity === "medium" ? "Trung bình"
+            : item.severity === "low" ? "Thấp"
+            : (item.severityName ?? "—")
+        }
+        variant={
+          item.severity === "critical" ? "error"
+            : item.severity === "high" ? "warning"
+            : item.severity === "medium" ? "primary"
+            : "secondary"
+        }
+      />
+    ) : "—",
     item.startDate ? formatDateTime(item.startDate) : "",
     item.endDate ? formatDateTime(item.endDate) : "",
     item.creatorName,

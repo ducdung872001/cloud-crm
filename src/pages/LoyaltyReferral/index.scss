@@ -1,0 +1,209 @@
+.referral-page {
+  min-height: 100vh;
+
+  .referral-tab-nav {
+    display: flex;
+    gap: 8px;
+    padding: 12px 16px 0;
+    border-bottom: 1px solid #E2E8F0;
+    margin-bottom: 12px;
+
+    .referral-tab-btn {
+      background: none;
+      border: none;
+      padding: 8px 14px;
+      font-size: 13px;
+      font-weight: 500;
+      color: #64748B;
+      cursor: pointer;
+      border-bottom: 2px solid transparent;
+      transition: all .15s;
+
+      &:hover { color: #334155; }
+
+      &.active {
+        color: #6366F1;
+        border-bottom-color: #6366F1;
+        font-weight: 600;
+      }
+    }
+  }
+
+  .referral-stats {
+    padding: 0 16px;
+    margin-bottom: 16px;
+  }
+
+  .referral-empty {
+    padding: 60px 16px;
+    text-align: center;
+
+    h3 { font-size: 16px; color: #6B7280; margin-bottom: 6px; }
+    p { font-size: 13px; color: #9CA3AF; }
+  }
+
+  .referral-table-wrap {
+    padding: 0 16px 16px;
+    background: #fff;
+  }
+
+  .referral-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+
+    thead th {
+      background: #F8FAFC;
+      padding: 10px 8px;
+      text-align: left;
+      font-weight: 600;
+      color: #475569;
+      border-bottom: 1px solid #E2E8F0;
+      font-size: 12px;
+    }
+
+    tbody td {
+      padding: 10px 8px;
+      border-bottom: 1px solid #F1F5F9;
+      vertical-align: top;
+    }
+
+    tbody tr:hover { background: #FAFAFA; }
+
+    .cell-name {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+
+      strong { color: #111827; font-size: 13px; }
+      .phone { color: #6B7280; font-size: 11px; }
+    }
+
+    .muted { color: #9CA3AF; font-style: italic; font-size: 12px; }
+
+    .referral-code {
+      background: #EEF2FF;
+      color: #4338CA;
+      padding: 2px 8px;
+      border-radius: 4px;
+      font-family: ui-monospace, monospace;
+      font-size: 12px;
+      font-weight: 500;
+    }
+
+    .status-badge {
+      display: inline-block;
+      padding: 2px 8px;
+      border: 1px solid;
+      border-radius: 10px;
+      font-size: 11px;
+      font-weight: 500;
+      background: #fff;
+    }
+  }
+
+  .referral-pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 12px;
+    padding: 16px 0;
+
+    button {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 6px 12px;
+      border: 1px solid #D1D5DB;
+      background: #fff;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 13px;
+      color: #374151;
+
+      &:hover:not(:disabled) { background: #F3F4F6; }
+      &:disabled { opacity: 0.5; cursor: not-allowed; }
+
+      svg { width: 14px; height: 14px; }
+    }
+
+    span { font-size: 13px; color: #6B7280; }
+  }
+
+  .referral-rule {
+    padding: 16px;
+  }
+
+  .rule-form {
+    background: #fff;
+    border: 1px solid #E5E7EB;
+    border-radius: 8px;
+    padding: 20px;
+    max-width: 800px;
+  }
+
+  .rule-row--enable {
+    padding-bottom: 16px;
+    margin-bottom: 16px;
+    border-bottom: 1px solid #F1F5F9;
+
+    label {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      cursor: pointer;
+      font-weight: 600;
+      color: #111827;
+
+      input { width: 16px; height: 16px; cursor: pointer; }
+    }
+  }
+
+  .rule-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+  }
+
+  .rule-field {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+
+    &--full { grid-column: 1 / -1; }
+
+    label { font-size: 12px; color: #6B7280; font-weight: 500; }
+
+    input, select {
+      padding: 8px 10px;
+      border: 1px solid #D1D5DB;
+      border-radius: 4px;
+      font-size: 13px;
+
+      &:focus { outline: none; border-color: #6366F1; box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1); }
+      &:disabled { background: #F3F4F6; cursor: not-allowed; }
+    }
+  }
+
+  .rule-actions {
+    margin-top: 20px;
+    padding-top: 16px;
+    border-top: 1px solid #F1F5F9;
+    display: flex;
+    justify-content: flex-end;
+
+    .btn-save {
+      padding: 8px 20px;
+      border: none;
+      background: #6366F1;
+      color: #fff;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 13px;
+      font-weight: 500;
+
+      &:hover:not(:disabled) { background: #4F46E5; }
+      &:disabled { opacity: 0.6; cursor: not-allowed; }
+    }
+  }
+}

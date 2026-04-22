@@ -6,8 +6,31 @@ import { IViewInfoTicketProps } from "model/ticket/PropsModel";
 import AddTransferVotes from "pages/Common/AddTransferVotes";
 import "./ViewInfoTicket.scss";
 
+const CATEGORY_LABEL: Record<string, string> = {
+  product: "Chất lượng sản phẩm",
+  service: "Thái độ phục vụ",
+  delivery: "Giao nhận / xuất kho",
+  price: "Giá / khuyến mãi",
+  other: "Khác",
+};
+
+const SEVERITY_LABEL: Record<string, string> = {
+  low: "Thấp",
+  medium: "Trung bình",
+  high: "Cao",
+  critical: "Nghiêm trọng",
+};
+
 export default function ViewInfoTicket(props: IViewInfoTicketProps) {
   const { data, takeBlockRight, infoApproved, onReload } = props;
+
+  // GAP #3 — khiếu nại fields
+  const complaintRows = [
+    { title: "Đơn vị tiếp nhận",    name: data?.receivingUnitName ?? "" },
+    { title: "Tính chất khiếu nại", name: data?.complaintCategoryName ?? (data?.complaintCategory ? CATEGORY_LABEL[data.complaintCategory] : "") },
+    { title: "Mức độ",              name: data?.severityName ?? (data?.severity ? SEVERITY_LABEL[data.severity] : "") },
+    { title: "Kết quả giải quyết",  name: data?.resolution ?? "" },
+  ].filter(r => r.name);
 
   const detailReceptionDepartment = [
     {
@@ -75,6 +98,20 @@ export default function ViewInfoTicket(props: IViewInfoTicketProps) {
               ))}
             </div>
           </div>
+
+          {complaintRows.length > 0 && (
+            <div className="basic-infor">
+              <div className="title-info">Thông tin khiếu nại</div>
+              <div className="detail-reception-department">
+                {complaintRows.map((item, idx) => (
+                  <div key={idx} className="item">
+                    <h4 className="title">{item.title}</h4>
+                    <h4 className="name">{item.name}</h4>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
 
           {!infoApproved && (
             <div className="action__item" onClick={() => setShowModalTransferVotes(true)}>

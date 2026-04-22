@@ -18,6 +18,7 @@ import FileService from "services/FileService";
 import TicketService from "services/TicketService";
 import TicketCategoryService from "services/TicketCategoryService";
 import CustomerService from "services/CustomerService";
+import BeautyBranchService from "services/BeautyBranchService";
 import { EMAIL_REGEX, PHONE_REGEX, PHONE_REGEX_NEW } from "utils/constant";
 import { UserContext, ContextType } from "contexts/userContext";
 import "./AddTicketModal.scss";
@@ -39,6 +40,25 @@ export default function AddTicketModal(props: IAddTicketModalProps) {
 
   const [listSupport, setListSupport] = useState<IOption[]>(null);
   const [isLoadingSupport, setIsLoadingSupport] = useState<boolean>(false);
+
+  // GAP #3 — Khiếu nại (thay Supporter)
+  const [listReceivingUnit, setListReceivingUnit] = useState<IOption[]>(null);
+  const [isLoadingReceivingUnit, setIsLoadingReceivingUnit] = useState<boolean>(false);
+
+  const COMPLAINT_CATEGORY_OPTIONS: IOption[] = [
+    { value: "product",  label: "Chất lượng sản phẩm" },
+    { value: "service",  label: "Thái độ phục vụ" },
+    { value: "delivery", label: "Giao nhận / xuất kho" },
+    { value: "price",    label: "Giá / khuyến mãi" },
+    { value: "other",    label: "Khác" },
+  ];
+
+  const SEVERITY_OPTIONS: IOption[] = [
+    { value: "low",      label: "Thấp" },
+    { value: "medium",   label: "Trung bình" },
+    { value: "high",     label: "Cao" },
+    { value: "critical", label: "Nghiêm trọng" },
+  ];
 
   const [listImageTicket, setListImageTicket] = useState([]);
 
@@ -78,6 +98,24 @@ export default function AddTicketModal(props: IAddTicketModalProps) {
     }
   }, [data]);
 
+  // GAP #3 — Load danh sách đơn vị tiếp nhận khiếu nại (siêu thị/chi nhánh)
+  const onSelectOpenReceivingUnit = async () => {
+    if (listReceivingUnit && listReceivingUnit.length > 0) return;
+    setIsLoadingReceivingUnit(true);
+    const response = await BeautyBranchService.list({});
+    if (response?.code === 0) {
+      const items = response.result?.items ?? [];
+      setListReceivingUnit(
+        items.map((b: { id: number; name: string }) => ({ value: b.id, label: b.name })),
+      );
+    }
+    setIsLoadingReceivingUnit(false);
+  };
+
+  useEffect(() => {
+    if (data?.receivingUnitId) onSelectOpenReceivingUnit();
+  }, [data?.receivingUnitId]);
+
   const values = useMemo(
     () =>
       ({
@@ -93,6 +131,11 @@ export default function AddTicketModal(props: IAddTicketModalProps) {
         content: data?.content ?? "",
         docLink: data?.docLink ?? "[]",
         statusId: data?.statusId ?? null,
+        // GAP #3 — khiếu nại
+        receivingUnitId: data?.receivingUnitId ?? null,
+        complaintCategory: data?.complaintCategory ?? null,
+        severity: data?.severity ?? null,
+        resolution: data?.resolution ?? "",
       } as ITicketRequestModel),
     [onShow, data, idCustomer]
   );
@@ -393,7 +436,38 @@ export default function AddTicketModal(props: IAddTicketModalProps) {
       required: true,
       maxLength: 500,
     },
-  ], [listSupport, isLoadingSupport, detailCustomer, idCustomer, isLoadingCustomer, data?.customerId, formData?.values?.customerId, isShowPhone, loadingPhone, idCustomer, data?.customerId]);
+    // GAP #3 — 4 trường nghiệp vụ khiếu nại
+    {
+      label: "Đơn vị tiếp nhận",
+      name: "receivingUnitId",
+      type: "select",
+      fill: true,
+      options: listReceivingUnit,
+      onMenuOpen: onSelectOpenReceivingUnit,
+      isLoading: isLoadingReceivingUnit,
+    },
+    {
+      label: "Tính chất khiếu nại",
+      name: "complaintCategory",
+      type: "select",
+      fill: true,
+      options: COMPLAINT_CATEGORY_OPTIONS,
+    },
+    {
+      label: "Mức độ",
+      name: "severity",
+      type: "select",
+      fill: true,
+      options: SEVERITY_OPTIONS,
+    },
+    {
+      label: "Kết quả giải quyết",
+      name: "resolution",
+      type: "textarea",
+      fill: true,
+      maxLength: 500,
+    },
+  ], [listSupport, isLoadingSupport, detailCustomer, idCustomer, isLoadingCustomer, data?.customerId, formData?.values?.customerId, isShowPhone, loadingPhone, idCustomer, data?.customerId, listReceivingUnit, isLoadingReceivingUnit]);
 
   const listFieldDate: IFieldCustomize[] = useMemo(() => {
     const startDate = formData?.values?.startDate ? new Date(formData.values.startDate) : null;

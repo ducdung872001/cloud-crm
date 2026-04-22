@@ -209,6 +209,8 @@ const en = {
     loyaltyPointLedger: "Points history",
     memberList: "Member customers",
     settingLoyalty: "Loyalty settings",
+    loyaltyReferral: "Referral program",
+    loyaltyLeaderboard: "Leaderboard",
     settingSales: "Product catalog",
     multiChannelCommunication: "Communication channels",
     settingContract: "Contract settings",

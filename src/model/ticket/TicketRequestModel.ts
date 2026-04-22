@@ -26,6 +26,11 @@ export interface ITicketRequestModel {
   customerName: string;
   customerPhone: string;
   customerEmail: string;
+  // 4 trường nghiệp vụ khiếu nại (thay thế Supporter)
+  receivingUnitId?: number;   // Đơn vị tiếp nhận khiếu nại (siêu thị/chi nhánh)
+  complaintCategory?: string; // Tính chất khiếu nại: product / service / delivery / price / other
+  severity?: string;          // Mức độ: low / medium / high / critical
+  resolution?: string;        // Kết quả giải quyết (mô tả)
 }
 
 export interface ITicketStatusRequestModel {

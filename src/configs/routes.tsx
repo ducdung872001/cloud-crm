@@ -165,6 +165,8 @@ const BusinessRuleConfig = React.lazy(() => import("pages/BusinessRuleConfig"));
 const MultiChannelSales = React.lazy(() => import("@/pages/MultiChannelSales/MultiChannelSales"));
 const DashboardRetail = React.lazy(() => import("pages/DashboardRetail"));
 const DashboardLoyalty = React.lazy(() => import("@/pages/DashboardLoyalty"));
+const LoyaltyReferral = React.lazy(() => import("@/pages/LoyaltyReferral"));
+const LoyaltyLeaderboard = React.lazy(() => import("@/pages/LoyaltyLeaderboard"));
 const SettingPaymentMethod = React.lazy(() => import("@/pages/SettingPaymentMethod"));
 const PromotionalProgram = React.lazy(() => import("@/pages/PromotionalProgram"));
 const PromotionalReport = React.lazy(() => import("@/pages/PromotionalReport"));
@@ -539,6 +541,18 @@ export const menu: IMenuItem[] = [
         title: "promotionalProgram", // Khuyến mãi
         path: urls.promotional_program,
         icon: <Icon name="PromotionMenu" />,
+        code: "",
+      },
+      {
+        title: "loyaltyReferral", // Giới thiệu bạn bè
+        path: urls.loyalty_referral,
+        icon: <Icon name="Share" />,
+        code: "",
+      },
+      {
+        title: "loyaltyLeaderboard", // Bảng xếp hạng
+        path: urls.loyalty_leaderboard,
+        icon: <Icon name="Star" />,
         code: "",
       },
       {
@@ -1189,6 +1203,14 @@ export const routes: IRouter[] = [
   {
     path: urls.dashboard_loyalty,
     component: <DashboardLoyalty />,
+  },
+  {
+    path: urls.loyalty_referral,
+    component: <LoyaltyReferral />,
+  },
+  {
+    path: urls.loyalty_leaderboard,
+    component: <LoyaltyLeaderboard />,
   },
   {
     path: urls.dashboard_shipping,

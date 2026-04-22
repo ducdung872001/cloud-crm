@@ -210,6 +210,8 @@ const vi = {
     memberList: "Hội viên",
     settingLoyalty: "Cấu hình Loyalty",
     loyaltyIntegration: "Tích hợp & API",
+    loyaltyReferral: "Giới thiệu bạn bè",
+    loyaltyLeaderboard: "Bảng xếp hạng",
     settingSales: "Danh mục sản phẩm",
     multiChannelCommunication: "Kênh liên lạc",
     settingContract: "Cài đặt hợp đồng",

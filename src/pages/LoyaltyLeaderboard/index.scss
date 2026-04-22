@@ -1,0 +1,238 @@
+.leaderboard-page {
+  min-height: 100vh;
+
+  .lb-tab-nav {
+    display: flex;
+    gap: 8px;
+    padding: 12px 16px 0;
+    border-bottom: 1px solid #E2E8F0;
+    margin-bottom: 12px;
+
+    .lb-tab-btn {
+      background: none;
+      border: none;
+      padding: 8px 14px;
+      font-size: 13px;
+      font-weight: 500;
+      color: #64748B;
+      cursor: pointer;
+      border-bottom: 2px solid transparent;
+
+      &:hover { color: #334155; }
+
+      &.active {
+        color: #6366F1;
+        border-bottom-color: #6366F1;
+        font-weight: 600;
+      }
+    }
+  }
+
+  .lb-section { padding: 0 16px 16px; }
+
+  .lb-period-filter {
+    display: flex;
+    gap: 6px;
+    padding: 8px 0 16px;
+  }
+
+  .lb-period-btn {
+    padding: 6px 12px;
+    border: 1px solid #D1D5DB;
+    background: #fff;
+    border-radius: 16px;
+    font-size: 12px;
+    color: #374151;
+    cursor: pointer;
+
+    &:hover { background: #F3F4F6; }
+
+    &.active {
+      background: #6366F1;
+      color: #fff;
+      border-color: #6366F1;
+    }
+  }
+
+  .lb-empty {
+    padding: 60px 16px;
+    text-align: center;
+    color: #9CA3AF;
+    font-size: 13px;
+  }
+
+  .lb-podium {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 12px;
+    padding: 12px 0 20px;
+    margin-bottom: 16px;
+    border-bottom: 1px solid #F1F5F9;
+
+    .podium-card {
+      background: #fff;
+      border-radius: 8px;
+      padding: 16px;
+      text-align: center;
+      box-shadow: 0 1px 3px rgba(0,0,0,.06);
+      transition: transform .15s;
+
+      &:hover { transform: translateY(-2px); }
+
+      &.podium-1 { order: 2; border-top: 4px solid #F59E0B; transform: scale(1.05); }
+      &.podium-2 { order: 1; border-top: 4px solid #94A3B8; }
+      &.podium-3 { order: 3; border-top: 4px solid #B45309; }
+    }
+
+    .podium-rank { font-size: 28px; }
+
+    .podium-avatar {
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
+      font-weight: 600;
+      margin: 8px auto;
+    }
+
+    .podium-name { font-weight: 600; font-size: 14px; color: #111827; }
+    .podium-tier { font-size: 11px; font-weight: 500; margin: 2px 0; }
+    .podium-points { font-size: 12px; color: #6B7280; margin-top: 6px; }
+  }
+
+  .lb-table {
+    width: 100%;
+    background: #fff;
+    border-collapse: collapse;
+    font-size: 13px;
+
+    thead th {
+      background: #F8FAFC;
+      padding: 10px 12px;
+      text-align: left;
+      color: #475569;
+      border-bottom: 1px solid #E2E8F0;
+      font-weight: 600;
+      font-size: 12px;
+    }
+
+    tbody td {
+      padding: 10px 12px;
+      border-bottom: 1px solid #F1F5F9;
+      vertical-align: middle;
+    }
+
+    tbody tr.highlight { background: #FEFCE8; }
+    tbody tr:hover { background: #F9FAFB; }
+
+    .rank-decor { font-size: 18px; }
+    .rank-num { color: #9CA3AF; font-weight: 500; }
+  }
+
+  .lb-customer {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+
+    .avatar {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      font-weight: 600;
+    }
+
+    strong { color: #111827; }
+  }
+
+  .tier-badge {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 10px;
+    color: #fff;
+    font-size: 11px;
+    font-weight: 500;
+  }
+
+  .badges-inline {
+    display: flex;
+    gap: 4px;
+    flex-wrap: wrap;
+
+    .badge-pill {
+      background: #EDE9FE;
+      color: #5B21B6;
+      font-size: 10px;
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-weight: 500;
+    }
+
+    .badge-more {
+      color: #9CA3AF;
+      font-size: 10px;
+      padding: 2px 4px;
+    }
+  }
+
+  .badges-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 12px;
+    padding: 12px 0;
+  }
+
+  .badge-card {
+    background: #fff;
+    border: 1px solid #E5E7EB;
+    border-top: 4px solid;
+    border-radius: 8px;
+    padding: 16px;
+    text-align: center;
+    transition: transform .15s;
+
+    &:hover { transform: translateY(-2px); box-shadow: 0 2px 8px rgba(0,0,0,.08); }
+
+    .badge-icon {
+      width: 56px;
+      height: 56px;
+      border-radius: 50%;
+      margin: 0 auto 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #fff;
+
+      svg { width: 28px; height: 28px; }
+    }
+
+    .badge-name {
+      font-weight: 600;
+      font-size: 14px;
+      color: #111827;
+      margin-bottom: 4px;
+    }
+
+    .badge-desc {
+      font-size: 12px;
+      color: #6B7280;
+      min-height: 32px;
+      margin-bottom: 8px;
+    }
+
+    .badge-count {
+      font-size: 11px;
+      color: #9CA3AF;
+      padding-top: 8px;
+      border-top: 1px solid #F1F5F9;
+    }
+  }
+}

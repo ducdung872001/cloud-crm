@@ -1,0 +1,138 @@
+.wrapper__changelog--customer {
+  overflow-y: auto;
+  max-height: 100%;
+  padding: 12px 16px;
+
+  .changelog__head {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 4px 12px;
+    border-bottom: 1px solid #F1F5F9;
+
+    .changelog__total {
+      font-size: 12px;
+      color: #6B7280;
+      font-weight: 500;
+    }
+  }
+
+  .changelog__list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    padding-top: 12px;
+  }
+
+  .changelog__item {
+    display: flex;
+    gap: 10px;
+    padding: 10px 12px;
+    border: 1px solid #E5E7EB;
+    border-radius: 6px;
+    background: #FAFAFA;
+    transition: background .15s;
+
+    &:hover { background: #F5F5F5; }
+
+    .changelog__item--icon {
+      width: 28px; height: 28px;
+      border-radius: 50%;
+      background: #E0E7FF;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #6366F1;
+      flex-shrink: 0;
+
+      svg { width: 16px; height: 16px; }
+    }
+
+    .changelog__item--body {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .changelog__item--field {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+
+      .label {
+        font-weight: 600;
+        font-size: 13px;
+        color: #111827;
+      }
+
+      .source-badge {
+        font-size: 10px;
+        padding: 1px 6px;
+        border: 1px solid;
+        border-radius: 8px;
+        line-height: 1.5;
+        background: #fff;
+      }
+    }
+
+    .changelog__item--values {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+      font-size: 12px;
+
+      .old {
+        color: #DC2626;
+        text-decoration: line-through;
+        background: #FEF2F2;
+        padding: 1px 6px;
+        border-radius: 3px;
+        max-width: 260px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+
+      .new {
+        color: #059669;
+        background: #ECFDF5;
+        padding: 1px 6px;
+        border-radius: 3px;
+        font-weight: 500;
+        max-width: 260px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+
+      svg { width: 12px; height: 12px; color: #9CA3AF; }
+    }
+
+    .changelog__item--meta {
+      display: flex;
+      gap: 12px;
+      font-size: 11px;
+      color: #6B7280;
+
+      .by { font-weight: 500; }
+    }
+  }
+
+  .changelog__empty {
+    padding: 40px 16px;
+    text-align: center;
+
+    h2 {
+      font-size: 15px;
+      color: #6B7280;
+      margin-bottom: 4px;
+    }
+
+    p {
+      font-size: 12px;
+      color: #9CA3AF;
+    }
+  }
+}

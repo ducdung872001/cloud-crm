@@ -189,6 +189,9 @@ export const urlsApi = {
     // danh sách upload
     lstUpload: prefixCustomer + "/customerUpload/list",
 
+    // Change-log hồ sơ KHTV — audit trail từng trường
+    changeLog: prefixCustomer + "/customerChangeLog/list",
+
     // api phân tích chân dung khách hàng
     classifyAge: prefixCustomer + "/api/v1/customer/classify/age",
     classifyGender: prefixCustomer + "/api/v1/customer/classify/gender",
@@ -2429,6 +2432,19 @@ export const urlsApi = {
     updateLoyaltyReward: prefixBiz + "/market/loyaltyReward/update",
     deleteLoyaltyReward: prefixBiz + "/market/loyaltyReward/delete",
     loyaltyReportSummary: prefixBiz + "/market/loyaltyReport/summary",
+    loyaltyReportRfm:     prefixBiz + "/market/loyaltyReport/rfm",
+
+    // GAP #4 — Referral / giới thiệu bạn bè
+    referralList:   prefixBiz + "/market/referral/list",
+    referralUpdate: prefixBiz + "/market/referral/update",
+    referralRule:   prefixBiz + "/market/referralRule/get",
+    referralRuleUpdate: prefixBiz + "/market/referralRule/update",
+    referralStats:  prefixBiz + "/market/referral/stats",
+
+    // GAP #7 — Gamification
+    gamificationLeaderboard: prefixBiz + "/market/gamification/leaderboard",
+    gamificationBadges:      prefixBiz + "/market/gamification/badges",
+    gamificationCustomer:    prefixBiz + "/market/gamification/customer",
     //phân hạng hội viên
     listLoyaltySegment: prefixBiz + "/market/loyaltySegment/list",
     updateLoyaltySegment: prefixBiz + "/market/loyaltySegment/update",
@@ -3465,6 +3481,10 @@ export const urls = {
   inventory_report_modern: "/inventory_report_modern",
   marketing_report: "/marketing_report",
   dashboard_loyalty: "/dashboard_loyalty",
+  // Chương trình giới thiệu bạn bè (refer-a-friend)
+  loyalty_referral: "/loyalty_referral",
+  // Gamification — bảng xếp hạng, huy hiệu
+  loyalty_leaderboard: "/loyalty_leaderboard",
   setting_report: "/setting_report",
   //Giám sát tích hợp
   integrated_monitoring: "/integrated_monitoring",

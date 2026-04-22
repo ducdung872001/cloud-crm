@@ -387,6 +387,11 @@ export default {
     return apiGet(urlsApi.customer.lstUpload, params);
   },
 
+  // Lịch sử chỉnh sửa hồ sơ KHTV — audit log từng trường
+  changeLog: (params: { customerId: number; page?: number; limit?: number }, signal?: AbortSignal) => {
+    return apiGet(urlsApi.customer.changeLog, params, signal);
+  },
+
   // api phân tích chân dung khách hàng
   classifyAge: (params) => {
     return apiGet(urlsApi.customer.classifyAge, params);

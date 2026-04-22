@@ -33,6 +33,14 @@ export interface ITicketResponseModel {
   status: number;
   executorId: number;
   processId: number;
+  // 4 trường nghiệp vụ khiếu nại (thay thế Supporter)
+  receivingUnitId?: number;
+  receivingUnitName?: string;
+  complaintCategory?: string;   // product / service / delivery / price / other
+  complaintCategoryName?: string;
+  severity?: string;            // low / medium / high / critical
+  severityName?: string;
+  resolution?: string;
 }
 
 export interface IViewStatusTicketResponseModel {

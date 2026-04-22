@@ -5,6 +5,7 @@ import WarrantyPersonList from "./partials/WarrantyPersonList/WarrantyPersonList
 import TicketPersonList from "./partials/TicketPersonList/TicketPersonList";
 import OrderList from "./partials/OrderList/OrderList";
 import InteractList from "./partials/InteractList";
+import CustomerChangeLog from "./partials/CustomerChangeLog/CustomerChangeLog";
 import "./ListDetailTab.scss";
 
 export default function ListDetailTab(props: IListTabDetailProps) {
@@ -18,6 +19,7 @@ export default function ListDetailTab(props: IListTabDetailProps) {
     { title: "Lịch sử tương tác",    key: "tab_interact" },
     { title: "Bảo hành",             key: "tab_warranty" },
     { title: "Hỗ trợ",               key: "tab_ticket"   },
+    { title: "Lịch sử chỉnh sửa",    key: "tab_changelog" },
   ];
 
   return (
@@ -37,10 +39,11 @@ export default function ListDetailTab(props: IListTabDetailProps) {
       </div>
 
       <div className="details-tab">
-        {tab === "tab_invoice"  && <OrderList />}
-        {tab === "tab_interact" && <InteractList data={data} />}
-        {tab === "tab_warranty" && <WarrantyPersonList idCustomer={data.id} />}
-        {tab === "tab_ticket"   && <TicketPersonList   idCustomer={data.id} />}
+        {tab === "tab_invoice"   && <OrderList />}
+        {tab === "tab_interact"  && <InteractList data={data} />}
+        {tab === "tab_warranty"  && <WarrantyPersonList idCustomer={data.id} />}
+        {tab === "tab_ticket"    && <TicketPersonList   idCustomer={data.id} />}
+        {tab === "tab_changelog" && <CustomerChangeLog  idCustomer={data.id} />}
       </div>
     </div>
   );

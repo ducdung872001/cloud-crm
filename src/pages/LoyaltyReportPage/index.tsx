@@ -143,13 +143,107 @@ function ClvChart({ data }: { data: SegmentClv[] }) {
   );
 }
 
+// ── RFM Types ─────────────────────────────────────────────────────────────
+interface RfmCell { r: number; f: number; count: number; avgMonetary: number; }
+interface RfmSegment {
+  key: string;
+  name: string;
+  color: string;
+  count: number;
+  description: string;
+}
+interface RfmReport {
+  matrix: RfmCell[];   // 25 cells (R 1..5 × F 1..5) — avgMonetary = M
+  segments: RfmSegment[];
+  totalCustomers: number;
+}
+
+// RFM segment — tên chuẩn ngành bán lẻ
+const RFM_SEGMENT_META: Record<string, { name: string; color: string; description: string }> = {
+  champions:         { name: "Champions",             color: "#10B981", description: "Mua gần đây, thường xuyên, giá trị cao" },
+  loyal:             { name: "Khách trung thành",     color: "#3B82F6", description: "Mua thường xuyên, giá trị khá" },
+  potential_loyalty: { name: "Tiềm năng trung thành", color: "#06B6D4", description: "Mua gần đây, tần suất đang tăng" },
+  new_customer:      { name: "Khách mới",             color: "#8B5CF6", description: "Mua gần đây, ít giao dịch" },
+  promising:         { name: "Có triển vọng",         color: "#A78BFA", description: "Mua gần đây, giá trị trung bình" },
+  need_attention:    { name: "Cần chú ý",             color: "#F59E0B", description: "Đang giảm tần suất mua" },
+  about_to_sleep:    { name: "Sắp ngủ đông",          color: "#F97316", description: "Đã lâu không quay lại" },
+  at_risk:           { name: "Nguy cơ rời bỏ",        color: "#EF4444", description: "Từng mua nhiều nhưng lâu không quay lại" },
+  cant_lose:         { name: "Không thể để mất",      color: "#DC2626", description: "Khách giá trị cao đang rời đi" },
+  hibernating:       { name: "Ngủ đông",              color: "#6B7280", description: "Đã lâu không tương tác, giá trị thấp" },
+  lost:              { name: "Đã mất",                color: "#4B5563", description: "Không còn hoạt động" },
+};
+
+// Mapping 25 cell → segment key (R x F) — cell layout R:row, F:col
+function segmentOfCell(r: number, f: number): string {
+  if (r >= 4 && f >= 4) return "champions";
+  if (r >= 3 && f >= 4) return "loyal";
+  if (r >= 4 && f === 3) return "potential_loyalty";
+  if (r === 5 && f <= 2) return "new_customer";
+  if (r === 4 && f <= 2) return "promising";
+  if (r === 3 && f === 3) return "need_attention";
+  if (r === 3 && f <= 2) return "about_to_sleep";
+  if (r === 2 && f >= 4) return "at_risk";
+  if (r === 1 && f >= 4) return "cant_lose";
+  if (r === 2 && f <= 3) return "hibernating";
+  return "lost";
+}
+
+// ── RFM Heatmap ───────────────────────────────────────────────────────────
+function RfmHeatmap({ matrix, onCellClick }: {
+  matrix: RfmCell[];
+  onCellClick?: (c: RfmCell) => void;
+}) {
+  const byKey = new Map<string, RfmCell>();
+  matrix.forEach(c => byKey.set(`${c.r}-${c.f}`, c));
+  const maxCount = Math.max(...matrix.map(c => c.count), 1);
+
+  const cells: React.ReactElement[] = [];
+  for (let r = 5; r >= 1; r--) {
+    for (let f = 1; f <= 5; f++) {
+      const cell = byKey.get(`${r}-${f}`) ?? { r, f, count: 0, avgMonetary: 0 };
+      const segKey = segmentOfCell(r, f);
+      const meta = RFM_SEGMENT_META[segKey];
+      const opacity = 0.25 + 0.75 * (cell.count / maxCount);
+      cells.push(
+        <div
+          key={`${r}-${f}`}
+          className="rfm-cell"
+          style={{ background: meta.color, opacity: cell.count > 0 ? opacity : 0.12 }}
+          onClick={() => cell.count > 0 && onCellClick?.(cell)}
+          title={`R=${r} F=${f} — ${meta.name}\n${cell.count.toLocaleString("vi-VN")} khách\nM trung bình: ${fmtClv(cell.avgMonetary)}`}
+        >
+          <span className="rfm-cell-count">{cell.count > 0 ? cell.count.toLocaleString("vi-VN") : ""}</span>
+        </div>
+      );
+    }
+  }
+
+  return (
+    <div className="rfm-heatmap-wrap">
+      <div className="rfm-heatmap">
+        <div className="rfm-axis-y">R (Recency)<br/>gần đây ↑</div>
+        <div className="rfm-grid">{cells}</div>
+      </div>
+      <div className="rfm-axis-x">F (Frequency) — tần suất mua →</div>
+    </div>
+  );
+}
+
 // ── Main Page ─────────────────────────────────────────────────────────────
 export default function LoyaltyReportPage({ onBackProps }: { onBackProps: (v: boolean) => void }) {
   document.title = "Báo cáo thành viên";
 
+  const [activeTab, setActiveTab] = useState<"overview" | "rfm">("overview");
+
   const [data, setData]       = useState<ReportSummary | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError]     = useState<string | null>(null);
+
+  // RFM state
+  const [rfmData, setRfmData] = useState<RfmReport | null>(null);
+  const [rfmLoading, setRfmLoading] = useState(false);
+  const [rfmError, setRfmError] = useState<string | null>(null);
+  const [rfmLoaded, setRfmLoaded] = useState(false);
 
   useEffect(() => {
     const ctrl = new AbortController();
@@ -174,6 +268,34 @@ export default function LoyaltyReportPage({ onBackProps }: { onBackProps: (v: bo
     })();
     return () => ctrl.abort();
   }, []);
+
+  // Lazy-load RFM khi bấm tab RFM lần đầu
+  useEffect(() => {
+    if (activeTab !== "rfm" || rfmLoaded) return;
+    const ctrl = new AbortController();
+    (async () => {
+      setRfmLoading(true);
+      setRfmError(null);
+      try {
+        const res = await fetch(urlsApi.ma.loyaltyReportRfm, {
+          signal: ctrl.signal,
+          method: "GET",
+        }).then(r => r.json());
+
+        if (res?.code === 0) {
+          setRfmData(res.result);
+        } else {
+          setRfmError(res?.message ?? "Không thể tải RFM");
+        }
+      } catch (e: unknown) {
+        if (e?.name !== "AbortError") setRfmError("Lỗi kết nối máy chủ");
+      } finally {
+        setRfmLoading(false);
+        setRfmLoaded(true);
+      }
+    })();
+    return () => ctrl.abort();
+  }, [activeTab, rfmLoaded]);
 
   // ── Stat cards ──────────────────────────────────────────────────────────
   const stats = [
@@ -207,64 +329,128 @@ export default function LoyaltyReportPage({ onBackProps }: { onBackProps: (v: bo
         onBackProps={onBackProps}
       />
 
-      {/* Stat cards */}
-      <div className="promo-stats-grid">
-        {stats.map(s => (
-          <div key={s.label} className={`promo-stat-card promo-stat-card--${s.color}`}>
-            <div className="promo-stat-card__body">
-              <div className="promo-stat-card__content">
-                <p className="promo-stat-card__label">{s.label}</p>
-                <p className={`promo-stat-card__value${isLoading ? " lrp-skeleton" : ""}`}>
-                  {s.value}
-                </p>
+      {/* Tab nav */}
+      <div className="lrp-tab-nav">
+        <button
+          className={`lrp-tab-btn${activeTab === "overview" ? " active" : ""}`}
+          onClick={() => setActiveTab("overview")}
+        >
+          Tổng quan
+        </button>
+        <button
+          className={`lrp-tab-btn${activeTab === "rfm" ? " active" : ""}`}
+          onClick={() => setActiveTab("rfm")}
+        >
+          Phân tích RFM
+        </button>
+      </div>
+
+      {activeTab === "overview" && (
+        <>
+          {/* Stat cards */}
+          <div className="promo-stats-grid">
+            {stats.map(s => (
+              <div key={s.label} className={`promo-stat-card promo-stat-card--${s.color}`}>
+                <div className="promo-stat-card__body">
+                  <div className="promo-stat-card__content">
+                    <p className="promo-stat-card__label">{s.label}</p>
+                    <p className={`promo-stat-card__value${isLoading ? " lrp-skeleton" : ""}`}>
+                      {s.value}
+                    </p>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          {error && (
+            <div className="lrp-error">
+              <Icon name="CloseCircle" style={{ width: 20 }} />
+              <span>{error}</span>
+              <button onClick={() => window.location.reload()}>Thử lại</button>
+            </div>
+          )}
+
+          <div className="mcp-charts-row">
+            <div className="mcp-chart-card">
+              <div className="mcp-chart-title">Tỷ lệ Giữ Chân — Loyalty vs Non-Loyalty</div>
+              <div className="mcp-chart-subtitle">
+                Số lượng khách hàng theo tháng — {new Date().getFullYear()}
+              </div>
+
+              {isLoading ? (
+                <div className="lrp-chart-skeleton" />
+              ) : (
+                <RetentionChart data={data?.retentionChart ?? []} />
+              )}
+
+              <div className="mcp-chart-legend">
+                <span style={{ color: "#F97316" }}>● Loyalty</span>
+                <span style={{ color: "#3B82F6" }}>● Tổng giao dịch</span>
               </div>
             </div>
-          </div>
-        ))}
-      </div>
 
-      {/* Error state */}
-      {error && (
-        <div className="lrp-error">
-          <Icon name="CloseCircle" style={{ width: 20 }} />
-          <span>{error}</span>
-          <button onClick={() => window.location.reload()}>Thử lại</button>
-        </div>
+            <div className="mcp-chart-card">
+              <div className="mcp-chart-title">CLV trung bình theo hạng</div>
+              <div className="mcp-chart-subtitle">Điểm tích lũy trung bình (avg total_earn)</div>
+
+              {isLoading ? (
+                <div className="lrp-chart-skeleton" />
+              ) : (
+                <ClvChart data={data?.clvBySegment ?? []} />
+              )}
+            </div>
+          </div>
+        </>
       )}
 
-      {/* Charts */}
-      <div className="mcp-charts-row">
-        {/* Retention chart */}
-        <div className="mcp-chart-card">
-          <div className="mcp-chart-title">Tỷ lệ Giữ Chân — Loyalty vs Non-Loyalty</div>
-          <div className="mcp-chart-subtitle">
-            Số lượng khách hàng theo tháng — {new Date().getFullYear()}
-          </div>
-
-          {isLoading ? (
-            <div className="lrp-chart-skeleton" />
-          ) : (
-            <RetentionChart data={data?.retentionChart ?? []} />
+      {activeTab === "rfm" && (
+        <div className="lrp-rfm-section">
+          {rfmError && (
+            <div className="lrp-error">
+              <Icon name="CloseCircle" style={{ width: 20 }} />
+              <span>{rfmError}</span>
+              <button onClick={() => { setRfmLoaded(false); }}>Thử lại</button>
+            </div>
           )}
 
-          <div className="mcp-chart-legend">
-            <span style={{ color: "#F97316" }}>● Loyalty</span>
-            <span style={{ color: "#3B82F6" }}>● Tổng giao dịch</span>
-          </div>
-        </div>
+          {rfmLoading && <div className="lrp-chart-skeleton" style={{ height: 300 }} />}
 
-        {/* CLV by segment */}
-        <div className="mcp-chart-card">
-          <div className="mcp-chart-title">CLV trung bình theo hạng</div>
-          <div className="mcp-chart-subtitle">Điểm tích lũy trung bình (avg total_earn)</div>
+          {!rfmLoading && !rfmError && rfmData && (
+            <div className="mcp-charts-row">
+              <div className="mcp-chart-card">
+                <div className="mcp-chart-title">Ma trận RFM (R × F) — tô theo số lượng</div>
+                <div className="mcp-chart-subtitle">
+                  {rfmData.totalCustomers.toLocaleString("vi-VN")} khách — M (giá trị trung bình) hiển thị khi hover
+                </div>
+                <RfmHeatmap matrix={rfmData.matrix} />
+              </div>
 
-          {isLoading ? (
-            <div className="lrp-chart-skeleton" />
-          ) : (
-            <ClvChart data={data?.clvBySegment ?? []} />
+              <div className="mcp-chart-card">
+                <div className="mcp-chart-title">Phân khúc tự động ({rfmData.segments.length})</div>
+                <div className="mcp-chart-subtitle">Mỗi phân khúc = 1 nhóm ô trên ma trận</div>
+                <div className="rfm-seg-list">
+                  {rfmData.segments.map(s => {
+                    const meta = RFM_SEGMENT_META[s.key];
+                    return (
+                      <div key={s.key} className="rfm-seg-item">
+                        <span className="rfm-seg-dot" style={{ background: meta?.color ?? s.color }} />
+                        <div className="rfm-seg-body">
+                          <div className="rfm-seg-name">
+                            {meta?.name ?? s.name}
+                            <span className="rfm-seg-count">{s.count.toLocaleString("vi-VN")}</span>
+                          </div>
+                          <div className="rfm-seg-desc">{meta?.description ?? s.description}</div>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            </div>
           )}
         </div>
-      </div>
+      )}
     </div>
   );
 }

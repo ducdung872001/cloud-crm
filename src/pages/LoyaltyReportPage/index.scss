@@ -103,3 +103,146 @@
   font-size: 13px;
   font-style: italic;
 }
+
+// ── Tab nav ─────────────────────────────────────────────────────────────────
+.lrp-tab-nav {
+  display: flex;
+  gap: 8px;
+  padding: 12px 16px 0;
+  border-bottom: 1px solid #E2E8F0;
+  margin-bottom: 12px;
+
+  .lrp-tab-btn {
+    background: none;
+    border: none;
+    padding: 8px 14px;
+    font-size: 13px;
+    font-weight: 500;
+    color: #64748B;
+    cursor: pointer;
+    border-bottom: 2px solid transparent;
+    transition: all .15s;
+
+    &:hover { color: #334155; }
+
+    &.active {
+      color: #6366F1;
+      border-bottom-color: #6366F1;
+      font-weight: 600;
+    }
+  }
+}
+
+// ── RFM section ─────────────────────────────────────────────────────────────
+.lrp-rfm-section {
+  padding: 0 16px 16px;
+}
+
+.rfm-heatmap-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 12px 8px;
+}
+
+.rfm-heatmap {
+  display: flex;
+  gap: 8px;
+}
+
+.rfm-axis-y {
+  writing-mode: vertical-rl;
+  transform: rotate(180deg);
+  font-size: 10px;
+  color: #94A3B8;
+  text-align: center;
+  padding: 4px 0;
+  min-width: 16px;
+}
+
+.rfm-axis-x {
+  font-size: 10px;
+  color: #94A3B8;
+  text-align: center;
+  padding: 4px 0;
+  margin-left: 24px;
+}
+
+.rfm-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 4px;
+  flex: 1;
+}
+
+.rfm-cell {
+  aspect-ratio: 1;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: transform .1s;
+  min-height: 44px;
+
+  &:hover { transform: scale(1.03); box-shadow: 0 2px 6px rgba(0,0,0,.15); }
+
+  .rfm-cell-count {
+    font-size: 11px;
+    font-weight: 600;
+    color: #fff;
+    text-shadow: 0 1px 1px rgba(0,0,0,.25);
+  }
+}
+
+.rfm-seg-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 8px 4px;
+  max-height: 380px;
+  overflow-y: auto;
+}
+
+.rfm-seg-item {
+  display: flex;
+  gap: 10px;
+  padding: 8px 10px;
+  border: 1px solid #E5E7EB;
+  border-radius: 6px;
+  background: #FAFAFA;
+
+  .rfm-seg-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    margin-top: 5px;
+    flex-shrink: 0;
+  }
+
+  .rfm-seg-body { flex: 1; }
+
+  .rfm-seg-name {
+    font-size: 13px;
+    font-weight: 600;
+    color: #111827;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    .rfm-seg-count {
+      background: #E5E7EB;
+      color: #374151;
+      font-size: 11px;
+      padding: 1px 7px;
+      border-radius: 8px;
+      font-weight: 500;
+    }
+  }
+
+  .rfm-seg-desc {
+    font-size: 11px;
+    color: #6B7280;
+    margin-top: 2px;
+  }
+}
