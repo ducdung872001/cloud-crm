@@ -87,6 +87,17 @@ export default function ShareEventPage() {
     })();
   }, [slug]);
 
+  // activeCount state + effect phải khai BEFORE early returns — tránh React error #310
+  // (hooks order mismatch khi event từ null → object làm render path đi qua nhiều hook hơn).
+  const [activeCount, setActiveCount] = useState(0);
+  useEffect(() => {
+    if (!event) return;
+    (async () => {
+      const regs = await eventStorage.listRegistrationsByEventAsync(event.id);
+      setActiveCount(regs.filter((r) => r.status !== "cancelled").length);
+    })();
+  }, [event]);
+
   if (notFound) {
     return (
       <div
@@ -127,15 +138,6 @@ export default function ShareEventPage() {
       </div>
     );
   }
-
-  const [activeCount, setActiveCount] = useState(0);
-  useEffect(() => {
-    if (!event) return;
-    (async () => {
-      const regs = await eventStorage.listRegistrationsByEventAsync(event.id);
-      setActiveCount(regs.filter((r) => r.status !== "cancelled").length);
-    })();
-  }, [event]);
 
   const now = new Date();
   const regOpen = new Date(event.registrationOpenDate);
