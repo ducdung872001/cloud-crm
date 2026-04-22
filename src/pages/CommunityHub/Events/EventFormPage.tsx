@@ -4,12 +4,26 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import RebornEditor from "components/editor/reborn";
+import DatePickerCustom from "components/datepickerCustom/datepickerCustom";
 import { serialize } from "utils/editor";
 import { eventStorage } from "./storage";
 import type { EventEntity, DynamicFieldDefinition, EventAddOnItem } from "./types";
 import { THEME, formatVND } from "./shared";
 import DynamicFieldsBuilder from "./components/DynamicFieldsBuilder";
 import ServiceCatalogPicker from "./components/ServiceCatalogPicker";
+
+// Form state dùng "YYYY-MM-DDTHH:mm" (tương thích datetime-local cũ).
+// DatePickerCustom làm việc với Date → cần adapter 2 chiều.
+function localToDate(s: string): Date | null {
+  if (!s) return null;
+  const d = new Date(s);
+  return isNaN(d.getTime()) ? null : d;
+}
+function dateToLocal(d: Date | null | undefined): string {
+  if (!d) return "";
+  const pad = (n: number) => String(n).padStart(2, "0");
+  return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`;
+}
 
 type FormState = {
   title: string;
@@ -234,14 +248,21 @@ export default function EventFormPage() {
       selectableDates: form.selectableDates.length ? form.selectableDates : undefined,
     };
 
-    if (isEdit && id) {
-      await eventStorage.updateEventAsync(id, payload);
-      navigate(`/ch_events/${id}`);
-    } else {
-      const created = await eventStorage.createEventAsync(payload);
-      navigate(`/ch_events/${created.id}`);
+    try {
+      if (isEdit && id) {
+        await eventStorage.updateEventAsync(id, payload);
+        navigate(`/ch_events/${id}`);
+      } else {
+        const created = await eventStorage.createEventAsync(payload);
+        navigate(`/ch_events/${created.id}`);
+      }
+    } catch (e) {
+      const msg = e instanceof Error ? e.message : String(e);
+      setError(`Lưu thất bại: ${msg}`);
+      window.scrollTo(0, 0);
+    } finally {
+      setSaving(false);
     }
-    setSaving(false);
   };
 
   return (
@@ -349,35 +370,35 @@ export default function EventFormPage() {
           <Section title="3. Thời gian">
             <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
               <Field label="Bắt đầu" required>
-                <input
-                  type="datetime-local"
-                  style={inputStyle}
-                  value={form.startDate}
-                  onChange={(e) => update("startDate", e.target.value)}
+                <DatePickerCustom
+                  hasSelectTime
+                  value={localToDate(form.startDate) ?? ""}
+                  placeholder="dd/mm/yyyy hh:mm"
+                  onChange={(v) => update("startDate", v instanceof Date ? dateToLocal(v) : "")}
                 />
               </Field>
               <Field label="Kết thúc" required>
-                <input
-                  type="datetime-local"
-                  style={inputStyle}
-                  value={form.endDate}
-                  onChange={(e) => update("endDate", e.target.value)}
+                <DatePickerCustom
+                  hasSelectTime
+                  value={localToDate(form.endDate) ?? ""}
+                  placeholder="dd/mm/yyyy hh:mm"
+                  onChange={(v) => update("endDate", v instanceof Date ? dateToLocal(v) : "")}
                 />
               </Field>
               <Field label="Mở đăng ký" required>
-                <input
-                  type="datetime-local"
-                  style={inputStyle}
-                  value={form.registrationOpenDate}
-                  onChange={(e) => update("registrationOpenDate", e.target.value)}
+                <DatePickerCustom
+                  hasSelectTime
+                  value={localToDate(form.registrationOpenDate) ?? ""}
+                  placeholder="dd/mm/yyyy hh:mm"
+                  onChange={(v) => update("registrationOpenDate", v instanceof Date ? dateToLocal(v) : "")}
                 />
               </Field>
               <Field label="Đóng đăng ký" required>
-                <input
-                  type="datetime-local"
-                  style={inputStyle}
-                  value={form.registrationCloseDate}
-                  onChange={(e) => update("registrationCloseDate", e.target.value)}
+                <DatePickerCustom
+                  hasSelectTime
+                  value={localToDate(form.registrationCloseDate) ?? ""}
+                  placeholder="dd/mm/yyyy hh:mm"
+                  onChange={(v) => update("registrationCloseDate", v instanceof Date ? dateToLocal(v) : "")}
                 />
               </Field>
             </div>

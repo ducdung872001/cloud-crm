@@ -233,13 +233,19 @@ export const eventStorage = {
   async createEventAsync(
     data: Omit<EventEntity, "id" | "slug" | "createdAt" | "updatedAt">,
   ): Promise<EventEntity> {
+    let beErrorMsg: string | null = null;
     try {
       const res = await EventService.create(data as any);
       if (isApiOk(res)) {
         apiAvailable = true;
         return normalizeEvent(unwrap<any>(res));
       }
-    } catch { /* fallback */ }
+      // BE trả response có nội dung lỗi → ném lên để UI báo rõ, không fallback ngầm.
+      beErrorMsg = (res && (res.error || res.message)) || null;
+    } catch { /* true network error → fallback localStorage bên dưới */ }
+    if (beErrorMsg) {
+      throw new Error(beErrorMsg);
+    }
     return this.createEvent(data);
   },
 
@@ -255,13 +261,18 @@ export const eventStorage = {
   },
 
   async updateEventAsync(id: string, patch: Partial<EventEntity>): Promise<EventEntity | null> {
+    let beErrorMsg: string | null = null;
     try {
       const res = await EventService.update(id, patch as any);
       if (isApiOk(res)) {
         apiAvailable = true;
         return normalizeEvent(unwrap<any>(res));
       }
-    } catch { /* fallback */ }
+      beErrorMsg = (res && (res.error || res.message)) || null;
+    } catch { /* network fallback */ }
+    if (beErrorMsg) {
+      throw new Error(beErrorMsg);
+    }
     return this.updateEvent(id, patch);
   },
 

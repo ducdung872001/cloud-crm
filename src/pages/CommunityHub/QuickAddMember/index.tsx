@@ -39,6 +39,25 @@ export default function QuickAddMember({ isOpen, onClose }: QuickAddMemberProps)
       return;
     }
 
+    // branchId là bắt buộc cho BE. UserContext type khai boolean nhưng runtime là object.
+    // Fallback: đọc localStorage "valueBranch" đã được layout.tsx set.
+    const branchFromCtx = (dataBranch as unknown as { value?: number; id?: number } | null)?.value
+      ?? (dataBranch as unknown as { id?: number } | null)?.id;
+    let branchId: number | undefined = typeof branchFromCtx === "number" ? branchFromCtx : undefined;
+    if (branchId == null) {
+      try {
+        const raw = localStorage.getItem("valueBranch");
+        if (raw) {
+          const parsed = JSON.parse(raw);
+          branchId = parsed?.value ?? parsed?.id;
+        }
+      } catch { /* ignore */ }
+    }
+    if (branchId == null) {
+      showToast("Chưa chọn chi nhánh — vui lòng chọn chi nhánh ở thanh menu trên", "error");
+      return;
+    }
+
     setIsSubmitting(true);
     try {
       const body = {
@@ -48,7 +67,7 @@ export default function QuickAddMember({ isOpen, onClose }: QuickAddMemberProps)
         gender: formData.type === "personal" ? (formData.gender === "male" ? "1" : formData.gender === "female" ? "2" : "3") : undefined,
         custType: formData.type === "personal" ? 0 : 1,
         note: formData.note || undefined,
-        branchId: dataBranch?.value || dataBranch?.id || undefined,
+        branchId,
         avatar: "",
         firstCall: "",
         height: "",
@@ -63,10 +82,12 @@ export default function QuickAddMember({ isOpen, onClose }: QuickAddMemberProps)
         setFormData({ name: "", phone: "", email: "", type: "personal", gender: "male", note: "" });
         onClose(true);
       } else {
-        showToast(response?.message || "Tạo thành viên thất bại. Vui lòng thử lại", "error");
+        const errMsg = response?.message ?? response?.error ?? "Tạo thành viên thất bại. Vui lòng thử lại";
+        showToast(errMsg, "error");
       }
-    } catch {
-      showToast("Có lỗi xảy ra. Vui lòng thử lại", "error");
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : "Có lỗi xảy ra. Vui lòng thử lại";
+      showToast(msg, "error");
     } finally {
       setIsSubmitting(false);
     }

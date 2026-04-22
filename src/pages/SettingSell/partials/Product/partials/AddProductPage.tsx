@@ -695,12 +695,15 @@ export default function AddProductPage({ idProduct, data, onBack, preFillBarcode
     const res = await CategoryServiceService.list({ page: 1, limit: 100 });
     if (res.code === 0) {
       const items = Array.isArray(res.result) ? res.result : res.result?.items || [];
-      setListCategory(
-        items.map((i: Record<string, unknown>) => ({
-          value: i.id ?? i.groupId,
-          label: i.name ?? i.groupName,
-        }))
-      );
+      // Filter ra option thiếu value (id/groupId đều null) để tránh "chọn ra null".
+      const mapped = items
+        .map((i: Record<string, unknown>) => {
+          const rawValue = (i.id ?? i.groupId ?? i.categoryId) as number | string | undefined;
+          const rawLabel = (i.name ?? i.groupName ?? i.categoryName ?? "") as string;
+          return rawValue != null ? { value: rawValue, label: String(rawLabel) } : null;
+        })
+        .filter(Boolean);
+      setListCategory(mapped);
     }
   };
 

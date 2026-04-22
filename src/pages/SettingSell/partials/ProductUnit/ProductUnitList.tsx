@@ -1,5 +1,4 @@
 import React, { Fragment, useState, useEffect, useRef } from "react";
-import cloneDeep from "lodash/cloneDeep";
 
 import Icon from "components/icon";
 import Loading from "components/loading";
@@ -64,61 +63,48 @@ export default function ProductUnitList(props: IProductUnitListProps) {
     },
   });
 
-  const abortController = new AbortController();
-
-  const getListUnit = async (paramsSearch: IUnitFilterRequest) => {
+  const getListUnit = async (paramsSearch: IUnitFilterRequest, signal: AbortSignal) => {
     setIsLoading(true);
+    try {
+      const response = await UnitService.list(paramsSearch, signal);
 
-    const response = await UnitService.list(paramsSearch, abortController.signal);
+      if (response.code === 0) {
+        const result = response.result;
+        setListUnit(result?.items ?? result);
 
-    if (response.code === 0) {
-      const result = response.result;
-      setListUnit(result?.items ?? result);
+        setPagination((prev) => ({
+          ...prev,
+          page: +result.page,
+          sizeLimit: paramsSearch.limit ?? DataPaginationDefault.sizeLimit,
+          totalItem: +result.total,
+          totalPage: Math.ceil(+result.total / +(paramsSearch.limit ?? DataPaginationDefault.sizeLimit)),
+        }));
 
-      setPagination({
-        ...pagination,
-        page: +result.page,
-        sizeLimit: params.limit ?? DataPaginationDefault.sizeLimit,
-        totalItem: +result.total,
-        totalPage: Math.ceil(+result.total / +(params.limit ?? DataPaginationDefault.sizeLimit)),
-      });
-
-      if (+result.total === 0 && +result.page === 1) {
-        setIsNoItem(true);
+        if (+result.total === 0 && +result.page === 1) {
+          setIsNoItem(true);
+        }
+      } else if (response.code == 400) {
+        setIsPermissions(true);
+      } else {
+        showToast(response.message ?? "Có lỗi xảy ra. Vui lòng thử lại sau", "error");
       }
-    } else if (response.code == 400) {
-      setIsPermissions(true);
-    } else {
-      showToast(response.message ?? "Có lỗi xảy ra. Vui lòng thử lại sau", "error");
+    } catch (err) {
+      // AbortError khi cleanup — bỏ qua, không show toast
+      const name = (err as { name?: string })?.name;
+      if (name !== "AbortError") {
+        showToast("Có lỗi xảy ra. Vui lòng thử lại sau", "error");
+      }
+    } finally {
+      if (!signal.aborted) setIsLoading(false);
     }
-    setIsLoading(false);
   };
 
   useEffect(() => {
-    const paramsTemp = cloneDeep(params);
-    setParams((prevParams) => ({ ...prevParams, ...paramsTemp }));
-  }, []);
-
-  useEffect(() => {
-    if (!isMounted.current) {
-      isMounted.current = true;
-      return;
-    }
-
-    if (isMounted.current === true) {
-      getListUnit(params);
-      const paramsTemp = cloneDeep(params);
-      if (paramsTemp.limit === 10) {
-        delete paramsTemp["limit"];
-      }
-      Object.keys(paramsTemp).map(function (key) {
-        paramsTemp[key] === "" ? delete paramsTemp[key] : null;
-      });
-    }
-
-    return () => {
-      abortController.abort();
-    };
+    // Tạo controller MỚI mỗi lần params đổi; cleanup chỉ abort controller của effect này.
+    const controller = new AbortController();
+    getListUnit(params, controller.signal);
+    isMounted.current = true;
+    return () => controller.abort();
   }, [params]);
 
   const titleActions: ITitleActions = {

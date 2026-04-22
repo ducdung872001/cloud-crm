@@ -68,7 +68,17 @@
       "Read(//d/Git/reborn/reborn-cloud/cloud-ver2/cloud-crm/**)",
       "Bash(awk '{print $NF}')",
       "WebFetch(domain:docs.google.com)",
-      "Read(//c/Users/HP/AppData/Local/Temp/claude/d--Git-reborn-reborn-cloud-cloud-ver2-cloud-crm/7dfc6f4c-bf12-4769-9e93-ccb06fb59e95/tasks/**)"
+      "Read(//c/Users/HP/AppData/Local/Temp/claude/d--Git-reborn-reborn-cloud-cloud-ver2-cloud-crm/7dfc6f4c-bf12-4769-9e93-ccb06fb59e95/tasks/**)",
+      "Bash(TEST_USER=0898348348 TEST_PASS='Reborn@12345' node tests/login-save.mjs)",
+      "Bash(TEST_USER=0898348348 TEST_PASS='Reborn@12345' HEADLESS=true node tests/test-events-create-from-mock.mjs)",
+      "Bash(HEADLESS=true node tests/probe-events-api.mjs)",
+      "WebFetch(domain:doc-00-18-docstext.googleusercontent.com)",
+      "Bash(HEADLESS=true node tests/probe-events-paths.mjs)",
+      "Bash(HEADLESS=true node tests/probe-events-minimal.mjs)",
+      "Bash(HEADLESS=true node tests/test-events-create-from-mock.mjs)",
+      "Read(//d/Git/reborn/reborn-cloud/cloud-ver2/cloud-crm/src/**)",
+      "Read(//d/Git/reborn/reborn-cloud/cloud-ver2/cloud-crm/src/pages/SettingSell/partials/Product/partials/**)",
+      "Bash(grep -v \"test\\\\|scss\\\\|^$\")"
     ]
   }
 }
