@@ -37,13 +37,9 @@ export default function RegisterFetch() {
       } else if (!config.headers["Content-Type"]) {
         config.headers["Content-Type"] = "application/json";
       }
-      // Local (localhost / 127.0.0.1) → luôn "kcn.reborn.vn" (env test mặc định).
-      // Live (prod/staging) → location.hostname thật của tenant user đang truy cập.
-      {
-        const realHost = location.hostname || "";
-        const isLocal = realHost === "localhost" || realHost === "127.0.0.1" || realHost === "";
-        config.headers["Hostname"] = isLocal ? "kcn.reborn.vn" : realHost;
-      }
+      // TẠM FIX (nhánh reborn-loyalty): luôn gửi Hostname=kcn.reborn.vn ở mọi môi trường
+      // (local + build prod của nhánh này). Sẽ tách sau khi demo loyalty xong.
+      config.headers["Hostname"] = "kcn.reborn.vn";
 
 
       if (!url.startsWith("http")) {

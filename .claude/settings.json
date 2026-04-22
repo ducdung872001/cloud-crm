@@ -75,7 +75,8 @@
       "Bash(node tests/verify-member-list.mjs)",
       "Bash(taskkill //PID 19476 //F)",
       "Bash(taskkill //PID 4760 //F)",
-      "Bash(NODE_OPTIONS=\"--max-old-space-size=8192\" npm run build)"
+      "Bash(NODE_OPTIONS=\"--max-old-space-size=8192\" npm run build)",
+      "Bash(node docs/proposal/generate-pptx.mjs)"
     ],
     "additionalDirectories": [
       "\\tmp",

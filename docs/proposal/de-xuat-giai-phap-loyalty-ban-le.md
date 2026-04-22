@@ -533,6 +533,27 @@ Rollout ra toàn bộ ~300 cửa hàng, bật dần các module nâng cao (marke
 
 ---
 
-**Reborn JSC** cam kết đồng hành cùng Quý khách xây dựng hệ thống Loyalty thống nhất, nâng cao trải nghiệm 3 triệu khách hàng trên toàn chuỗi.
+---
+
+## 11. PHỤ LỤC B: ĐỐI CHIẾU Q&A KHẢO SÁT
+
+Dưới đây là tổng hợp 10 câu trả lời từ buổi khảo sát gần nhất của Quý khách và cách đề xuất giải pháp đáp ứng từng nội dung.
+
+| # | Câu hỏi | Trả lời của khách hàng | Đề xuất của Reborn đáp ứng |
+|---|---------|------------------------|---------------------------|
+| 1 | Hệ thống POS, e-commerce, mobile app đang dùng? | **Goldmem** (KHTV, đăng ký, quyền lợi sinh nhật, lịch sử mua, khiếu nại); **MS Access** (tổng hợp quyền lợi, tích luỹ); **MS Excel** (tổng hợp, dashboard KHTV); **Supporter** (khiếu nại) | §6.4 — ETL migration từ cả 4 hệ thống, hợp nhất về 1 hồ sơ KH 360°. §1 — nhấn mạnh "thay thế Goldmem/Access/Excel" |
+| 2 | Dữ liệu KH tập trung hay phân tán? | **Rời rạc tại nhiều phần mềm, liên kết thủ công, phụ thuộc kỹ năng nhân sự** | §2.1 — ghi nhận chi tiết vấn đề; §3.2 — nguyên tắc "Hợp nhất dữ liệu về 1 nguồn" + "Tự động hoá tối đa" |
+| 3 | Đã có CRM/CDP/loyalty? Hạn chế lớn nhất? | Có loyalty tại tất cả điểm bán + website + app. Hạn chế: **dữ liệu rải rác, CNTT chưa cao, dịch vụ thủ công, thiếu hấp dẫn** | §3.2 — "Cấu hình, không code" cho team nghiệp vụ; §5.8 — chế độ hoạt động linh hoạt; §7 Phase 3 — marketing automation nội bộ nâng trải nghiệm |
+| 4 | Các hệ thống có API / real-time? | Có, tuỳ chức năng | §4.3 — API-first, JWT + API Key; §6.1 — luồng tích điểm realtime qua POS API |
+| 5 | Số KH và giao dịch TB/ngày? | **~3 triệu KHTV**, 70–80% có mua, **~150.000 giao dịch/ngày** | §2.2 + §9.1 — thiết kế SLA theo số liệu thực: 3M import < 2 giờ, 200ms/txn |
+| 6 | Peak sale/lễ tăng bao nhiêu? | **Gấp đôi** (~300.000 giao dịch/ngày) | §9.1 — cam kết chịu tải ≥ 500 txn/giây, dự phòng 2–3 lần peak |
+| 7 | POS real-time hay batch? | Phòng CNTT&CĐS nắm | §8.1 — ghi rõ cần thông tin từ Phòng CNTT&CĐS. Kiến trúc hỗ trợ cả 2 mode |
+| 8 | Có dùng marketing automation? | Có, chủ yếu **thuê agency ngoài** | §1 — marketing automation nội bộ; §7 Phase 3 T17–18 — kích hoạt Email/SMS/Push/Zalo OA tự vận hành, giảm phụ thuộc agency |
+| 9 | Hạ tầng on-prem / cloud / DW? | Phòng CNTT&CĐS nắm | §8.2 — 3 phương án (Cloud / On-prem / Hybrid) cho khách chọn sau khi xác nhận |
+| 10 | Kế hoạch mở rộng 1–3 năm? | **1.000–1.500 điểm bán**, mở rộng online + đối tác + hệ sinh thái | §3.2 — "Đa thương hiệu + đa chi nhánh native"; §7 — lộ trình mở rộng 3 năm theo milestone 300 → 800 → 1.500 store |
+
+---
+
+**Reborn JSC** cam kết đồng hành cùng Quý khách xây dựng hệ thống Loyalty thống nhất, hợp nhất 4 công cụ hiện tại (Goldmem/Access/Excel/Supporter) thành 1 nền tảng, sẵn sàng mở rộng đến 1.500 điểm bán và nâng cao trải nghiệm cho 3 triệu khách hàng trên toàn chuỗi.
 
 *Mọi thắc mắc xin liên hệ: ceo@reborn.vn*
