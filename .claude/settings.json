@@ -70,7 +70,9 @@
       "Bash(ps -W)",
       "Bash(tasklist //FI \"IMAGENAME eq node.exe\")",
       "Bash(awk '{print $5}')",
-      "Bash(taskkill //PID 8028 //F)"
+      "Bash(taskkill //PID 8028 //F)",
+      "Bash(node d:/tmp/verify-member-list.mjs)",
+      "Bash(node tests/verify-member-list.mjs)"
     ],
     "additionalDirectories": [
       "\\tmp",
