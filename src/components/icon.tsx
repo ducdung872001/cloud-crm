@@ -450,6 +450,7 @@ import IcLoginMenu from "assets/icons-menu/ic-login.svg";
 import IcBellMenu from "assets/icons-menu/ic-bell.svg";
 import IcCustomerGroup from "assets/icons-menu/ic-customer-group.svg";
 import IcRelationship from "assets/icons-menu/ic-relationship.svg";
+import IcReferral from "assets/icons-menu/ic-referral.svg";
 import IcIndustry from "assets/icons-menu/ic-industry.svg";
 import IcPointsHistory from "assets/icons-menu/ic-points-history.svg";
 import IcCardList from "assets/icons-menu/ic-card-list.svg";
@@ -950,6 +951,7 @@ const iconTypes = {
   BellMenu: IcBellMenu,
   CustomerGroup: IcCustomerGroup,
   Relationship: IcRelationship,
+  ReferralMenu: IcReferral,
   Industry: IcIndustry,
   PointsHistory: IcPointsHistory,
   CardList: IcCardList,

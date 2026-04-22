@@ -50,8 +50,7 @@ export default function LoyaltyIntegration() {
               style={{
                 padding: "10px 14px",
                 background: tab === t.key ? "#fff" : "transparent",
-                border: tab === t.key ? `1px solid ${C.border}` : "1px solid transparent",
-                borderRight: tab === t.key ? "none" : undefined,
+                border: "none",
                 borderRadius: "8px 0 0 8px",
                 textAlign: "left",
                 cursor: "pointer",

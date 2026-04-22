@@ -546,7 +546,7 @@ export const menu: IMenuItem[] = [
       {
         title: "loyaltyReferral", // Giới thiệu bạn bè
         path: urls.loyalty_referral,
-        icon: <Icon name="Share" />,
+        icon: <Icon name="ReferralMenu" />,
         code: "",
       },
       {

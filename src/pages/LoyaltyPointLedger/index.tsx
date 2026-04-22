@@ -43,6 +43,7 @@ export default function LoyaltyPointLedger(props: Props) {
   const [isExporting, setIsExporting]     = useState<boolean>(false);
 
   const [params, setParams] = useState<ILoyaltyPointLedgerRequest>({
+    description: "",
     limit: 10,
     ...(initialCustomerId ? { customerId: initialCustomerId } : {}),
   });

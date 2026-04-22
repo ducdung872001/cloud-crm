@@ -98,7 +98,8 @@
       "Bash(rm _u.py)",
       "Bash(cp \"d:/Git/reborn/reborn-cloud/cloud-ver2/cloud-crm/docs/bugs/upgrade-readme-12ms.py\" \"d:/Git/reborn/reborn-cloud/cloud-ver2/cloud-crm-chub/_u.py\")",
       "Bash(cp \"d:/Git/reborn/reborn-cloud/cloud-ver2/cloud-crm/docs/bugs/upgrade-readme-12ms.py\" \"d:/Git/reborn/reborn-cloud/cloud-ver2/crm-banking/_u.py\")",
-      "Bash(git fetch *)"
+      "Bash(git fetch *)",
+      "Bash(node -e ' *)"
     ]
   }
 }

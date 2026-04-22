@@ -73,7 +73,9 @@
       "Bash(taskkill //PID 8028 //F)",
       "Bash(node d:/tmp/verify-member-list.mjs)",
       "Bash(node tests/verify-member-list.mjs)",
-      "Bash(taskkill //PID 19476 //F)"
+      "Bash(taskkill //PID 19476 //F)",
+      "Bash(taskkill //PID 4760 //F)",
+      "Bash(NODE_OPTIONS=\"--max-old-space-size=8192\" npm run build)"
     ],
     "additionalDirectories": [
       "\\tmp",
