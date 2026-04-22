@@ -40,6 +40,7 @@ import CollectWarranty from "pages/Warranty/partials/CollectWarranty";
 import SharePromoPage from "pages/SharePromoPage";
 import ShareCouponPage from "pages/ShareCouponPage";
 import ShareEventPage from "pages/ShareEventPage";
+import PublicEventsPage from "pages/PublicEvents";
 import GridFormNew from "pages/BPM/GridForm";
 import { onMessage } from "firebase/messaging";
 import NotificationService from "services/NotificationService";
@@ -436,6 +437,9 @@ export default function App() {
           {location.pathname == "/share_promo" && <Route path="/share_promo" element={<SharePromoPage />} />}
           {location.pathname == "/share_coupon" && <Route path="/share_coupon" element={<ShareCouponPage />} />}
           {location.pathname == "/share_event" && <Route path="/share_event" element={<ShareEventPage />} />}
+          {/* Public Events Portal — SEO-friendly URLs */}
+          {location.pathname == "/events" && <Route path="/events" element={<PublicEventsPage />} />}
+          {location.pathname.startsWith("/events/") && <Route path="/events/:slug" element={<ShareEventPage />} />}
           <Route path="/login" element={<Login />} />
         </Routes>
         <ChooseRole onShow={chooseRoleInit} onHide={() => setChooseRoleInit(false)} lstRole={lstRole} />

@@ -132,20 +132,33 @@ export default function DynamicFieldsBuilder({ fields, onChange }: Props) {
           </button>
 
           {/* Options row for select type */}
-          {f.type === "select" && (
-            <div style={{ gridColumn: "1 / -1", marginTop: 4 }}>
-              <input
-                value={(f.options ?? []).join(", ")}
-                onChange={(e) =>
-                  updateField(idx, {
-                    options: e.target.value.split(",").map((s) => s.trim()).filter(Boolean),
-                  })
-                }
-                placeholder="Các lựa chọn, cách nhau bởi dấu phẩy (VD: S, M, L, XL)"
-                style={{ ...inputStyle, width: "100%" }}
-              />
-            </div>
-          )}
+          {f.type === "select" && (() => {
+            const hasOptions = (f.options ?? []).length > 0;
+            return (
+              <div style={{ gridColumn: "1 / -1", marginTop: 4 }}>
+                <input
+                  value={(f.options ?? []).join(", ")}
+                  onChange={(e) =>
+                    updateField(idx, {
+                      options: e.target.value.split(",").map((s) => s.trim()).filter(Boolean),
+                    })
+                  }
+                  placeholder="Các lựa chọn, cách nhau bởi dấu phẩy (VD: S, M, L, XL)"
+                  style={{
+                    ...inputStyle,
+                    width: "100%",
+                    borderColor: hasOptions ? inputStyle.border?.toString().split(" ").pop() : "#DC2626",
+                    background: hasOptions ? undefined : "#FEF2F2",
+                  }}
+                />
+                {!hasOptions && (
+                  <div style={{ fontSize: 11, color: "#B91C1C", marginTop: 4, fontWeight: 500 }}>
+                    ⚠ Bắt buộc: select phải có ít nhất 1 tuỳ chọn — nếu không người đăng ký sẽ không chọn được gì
+                  </div>
+                )}
+              </div>
+            );
+          })()}
         </div>
       ))}
 

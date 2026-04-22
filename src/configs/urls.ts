@@ -2499,6 +2499,7 @@ export const urlsApi = {
   events: {
     // Public (no auth)
     getPublic: prefixMarket + "/events/public",        // GET  ?slug={slug}
+    listPublic: prefixMarket + "/events/public/list",  // GET  ?q=&category=&status=&page=&limit=
     registerPublic: prefixMarket + "/events/public/register", // POST ?slug={slug}
     checkTicket: prefixMarket + "/events/public/check-ticket", // POST ?slug={slug}
     // Admin (JWT)

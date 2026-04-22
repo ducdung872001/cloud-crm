@@ -43,18 +43,39 @@ export default function DynamicFieldsRenderer({ fields, values, onChange }: Prop
                 style={{ ...inputStyle, resize: "vertical" }}
               />
             ) : f.type === "select" ? (
-              <select
-                value={val}
-                onChange={(e) => update(f.id, e.target.value)}
-                style={inputStyle}
-              >
-                <option value="">-- Chọn --</option>
-                {(f.options ?? []).map((opt) => (
-                  <option key={opt} value={opt}>
-                    {opt}
-                  </option>
-                ))}
-              </select>
+              (() => {
+                const opts = f.options ?? [];
+                if (opts.length === 0) {
+                  return (
+                    <>
+                      <select
+                        value=""
+                        disabled
+                        style={{ ...inputStyle, background: "#FEF2F2", borderColor: "#FCA5A5", color: "#991B1B", cursor: "not-allowed" }}
+                      >
+                        <option value="">— Chưa có tuỳ chọn —</option>
+                      </select>
+                      <div style={{ fontSize: 11, color: "#B91C1C", marginTop: 4 }}>
+                        Trường này chưa được cấu hình. Vui lòng liên hệ BTC.
+                      </div>
+                    </>
+                  );
+                }
+                return (
+                  <select
+                    value={val}
+                    onChange={(e) => update(f.id, e.target.value)}
+                    style={inputStyle}
+                  >
+                    <option value="">-- Chọn --</option>
+                    {opts.map((opt) => (
+                      <option key={opt} value={opt}>
+                        {opt}
+                      </option>
+                    ))}
+                  </select>
+                );
+              })()
             ) : f.type === "checkbox" ? (
               <label style={{ fontSize: 13, display: "flex", alignItems: "center", gap: 6 }}>
                 <input

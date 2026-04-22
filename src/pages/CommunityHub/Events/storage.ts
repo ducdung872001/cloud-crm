@@ -369,17 +369,39 @@ export const eventStorage = {
       paymentProof?: PaymentProof;
     },
   ): Promise<{ ok: boolean; registration?: EventRegistration; error?: string }> {
+    // Chuẩn hoá dynamicFieldValues: lọc bỏ key rỗng, trim, không gửi object rỗng
+    const cleanDynamic = data.dynamicFieldValues
+      ? Object.fromEntries(
+          Object.entries(data.dynamicFieldValues).filter(([, v]) => v !== undefined && v !== null && String(v).trim() !== ""),
+        )
+      : undefined;
+    const payload = {
+      ...data,
+      dynamicFieldValues: cleanDynamic && Object.keys(cleanDynamic).length > 0 ? cleanDynamic : undefined,
+    };
+
+    // Gọi BE. Lỗi BE (HTTP non-2xx / code !== 0) phải báo cho user,
+    // KHÔNG silent-fallback localStorage — nếu không tester sẽ nhận ticket ảo mà BE chưa lưu.
     try {
-      const res = await EventService.registerPublic(eventSlug, data as any);
+      const res = await EventService.registerPublic(eventSlug, payload as any);
       if (isApiOk(res)) {
         apiAvailable = true;
         return { ok: true, registration: normalizeReg(unwrap<any>(res)) };
       }
-      if (res?.error || res?.message) {
-        return { ok: false, error: res.error ?? res.message };
+      // Response parse được nhưng không OK → đẩy error thật của BE lên UI
+      apiAvailable = true;
+      const errMsg = res?.error || res?.message || res?.errorMessage || "Đăng ký thất bại, vui lòng thử lại";
+      console.warn("[registerPublic] BE rejected:", res);
+      return { ok: false, error: String(errMsg) };
+    } catch (err) {
+      // Thực sự không tới được BE (network error / CORS / HTML non-JSON)
+      console.warn("[registerPublic] network/parse error:", err);
+      // Chỉ fallback localStorage khi API CHƯA BAO GIỜ thành công (dev/prototype)
+      if (!apiAvailable) {
+        return this.registerForEvent(eventSlug, payload);
       }
-    } catch { /* fallback */ }
-    return this.registerForEvent(eventSlug, data);
+      return { ok: false, error: "Máy chủ đang bận, vui lòng thử lại sau ít phút" };
+    }
   },
 
   registerForEvent(

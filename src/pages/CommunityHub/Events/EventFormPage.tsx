@@ -193,6 +193,12 @@ export default function EventFormPage() {
     }
     if (!form.contactName.trim() || !form.contactPhone.trim())
       return "Vui lòng nhập thông tin người liên hệ";
+    // Dynamic fields — select phải có ít nhất 1 option
+    for (const f of form.dynamicFields) {
+      if (f.type === "select" && (!f.options || f.options.length === 0)) {
+        return `Trường "${f.label || "(chưa đặt tên)"}" là kiểu "Chọn 1" nhưng chưa có tuỳ chọn nào. Vui lòng nhập các tuỳ chọn cách nhau bằng dấu phẩy.`;
+      }
+    }
     return null;
   };
 

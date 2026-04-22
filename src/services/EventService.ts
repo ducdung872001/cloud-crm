@@ -10,6 +10,11 @@ export default {
     return apiGet(urlsApi.events.getPublic, { slug }, signal);
   },
 
+  // Public list — không cần auth, tự động bỏ token header (vì URL chứa /public/)
+  listPublic: (params?: Record<string, unknown>, signal?: AbortSignal) => {
+    return apiGet(urlsApi.events.listPublic, params, signal);
+  },
+
   registerPublic: (slug: string, body: Record<string, unknown>) => {
     return apiPost(`${urlsApi.events.registerPublic}?slug=${slug}`, body);
   },

@@ -6,11 +6,36 @@
 //   POST /marketing/events/public/{slug}/register
 
 import React, { useEffect, useMemo, useState } from "react";
+import { useParams } from "react-router-dom";
 import { eventStorage } from "@/pages/CommunityHub/Events/storage";
 import type { EventEntity, SelectedAddOn, PaymentProof } from "@/pages/CommunityHub/Events/types";
 import DynamicFieldsRenderer from "@/pages/CommunityHub/Events/components/DynamicFieldsRenderer";
 import AddOnItemsSelector from "@/pages/CommunityHub/Events/components/AddOnItemsSelector";
 import PaymentProofUpload from "@/pages/CommunityHub/Events/components/PaymentProofUpload";
+
+// Set SEO meta cho trang detail
+function setEventSeo(e: EventEntity) {
+  const title = `${e.title} — Đăng ký tham gia`;
+  const desc = (e.description || "").slice(0, 180);
+  document.title = title;
+  const setMeta = (name: string, content: string, prop = false) => {
+    const attr = prop ? "property" : "name";
+    let m = document.querySelector(`meta[${attr}="${name}"]`) as HTMLMetaElement | null;
+    if (!m) {
+      m = document.createElement("meta");
+      m.setAttribute(attr, name);
+      document.head.appendChild(m);
+    }
+    m.setAttribute("content", content);
+  };
+  setMeta("description", desc);
+  setMeta("og:title", title, true);
+  setMeta("og:description", desc, true);
+  setMeta("og:type", "event", true);
+  if (e.coverImageUrl) setMeta("og:image", e.coverImageUrl, true);
+  setMeta("og:url", window.location.href, true);
+  setMeta("twitter:card", "summary_large_image");
+}
 
 const THEME = {
   primary: "#00C9A7",
@@ -63,13 +88,17 @@ export default function ShareEventPage() {
   const [error, setError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
 
+  const routeParams = useParams<{ slug?: string }>();
   const { slug, heroStyle } = useMemo(() => {
     const params = new URLSearchParams(window.location.search);
+    // Ưu tiên slug trong URL path (/events/:slug — SEO friendly)
+    // Fallback query ?slug={slug} để backward compat với /share_event
+    const slugFromPath = routeParams.slug ? decodeURIComponent(routeParams.slug) : "";
     return {
-      slug: params.get("slug") ?? "",
+      slug: slugFromPath || params.get("slug") || "",
       heroStyle: (params.get("layout") ?? "card") as "card" | "cover",
     };
-  }, []);
+  }, [routeParams.slug]);
 
   useEffect(() => {
     if (!slug) {
@@ -82,7 +111,7 @@ export default function ShareEventPage() {
         setNotFound(true);
       } else {
         setEvent(e);
-        document.title = `${e.title} — Đăng ký ngay`;
+        setEventSeo(e);
       }
     })();
   }, [slug]);

@@ -92,7 +92,27 @@
       "Bash(curl -sSk -w '\\\\nHTTP: %{http_code}\\\\n' 'https://biz.reborn.vn/market/events/list?page=1&limit=10' -H 'Authorization: Bearer __TRACKED_VAR__' -H 'Hostname: hub.reborn.vn' -H 'Selectedrole: 431_41113' -H 'Accept: application/json')",
       "Bash(HEADLESS=true node tests/test-events-create-real.mjs)",
       "Bash(HEADLESS=true node tests/probe-share-event.mjs)",
-      "Bash(grep -E \"^\\(commit|[a-f0-9]{7,}|\\\\+.*activeCount|\\\\-.*activeCount\\)\")"
+      "Bash(grep -E \"^\\(commit|[a-f0-9]{7,}|\\\\+.*activeCount|\\\\-.*activeCount\\)\")",
+      "Bash(awk '{print $5}')",
+      "Bash(taskkill //PID 13032 //F)",
+      "WebFetch(domain:doc-0g-18-docstext.googleusercontent.com)",
+      "Bash(echo \"exit=$?\")",
+      "Bash(curl -s -w '\\\\n---HTTP_STATUS:%{http_code}\\\\nCONTENT_TYPE:%{content_type}\\\\n' -X POST 'https://biz.reborn.vn/market/events/public/register?slug=workshop-cho-b-17b4' -H 'Content-Type: application/json' -H 'Hostname: hub.reborn.vn' -H 'Origin: https://hub.reborn.vn' --data-raw '{\"fullName\":\"Test QA\",\"phone\":\"0000000000\",\"email\":\"test@example.com\",\"source\":\"public_portal\"}')",
+      "Bash(curl -sSv -o /dev/null -w 'STATUS:%{http_code}\\\\n' 'https://biz.reborn.vn/market/events/public/register?slug=workshop-cho-b-17b4')",
+      "Bash(curl -sk -w '\\\\nSTATUS:%{http_code}\\\\nCT:%{content_type}\\\\n' -X POST 'https://biz.reborn.vn/market/events/public/register?slug=workshop-cho-b-17b4' -H 'Content-Type: application/json' -H 'Hostname: hub.reborn.vn' -H 'Origin: https://hub.reborn.vn' --data-raw '{\"fullName\":\"Test QA\",\"phone\":\"0000000000\",\"source\":\"public_portal\"}')",
+      "Bash(curl -sk -w '\\\\nSTATUS:%{http_code}\\\\nCT:%{content_type}\\\\n' -X POST 'https://biz.reborn.vn/market/events/public/register?slug=cm-hoa-4y8' -H 'Content-Type: application/json' -H 'Hostname: hub.reborn.vn' -H 'Origin: https://hub.reborn.vn' --data-raw '{\"fullName\":\"Test QA2\",\"phone\":\"0000000001\",\"source\":\"public_portal\",\"dynamicFieldValues\":{\"df-1776871791355-fz8\":\"true\"}}')",
+      "Bash(curl -sk -w '\\\\nSTATUS:%{http_code}\\\\n' 'https://biz.reborn.vn/market/events/public?slug=cm-hoa-4y8' -H 'Hostname: hub.reborn.vn')",
+      "Bash(curl -sk -w '\\\\nSTATUS:%{http_code}\\\\n' -X POST 'https://biz.reborn.vn/market/events/public/register?slug=cm-hoa-4y8' -H 'Content-Type: application/json' -H 'Hostname: hub.reborn.vn' -H 'Origin: https://hub.reborn.vn' --data-raw '{\"fullName\":\"Test NoDyn\",\"phone\":\"0000000002\",\"source\":\"public_portal\"}')",
+      "Read(//d//**)",
+      "Bash(curl -sk 'https://biz.reborn.vn/market/events/public?slug=m-khp-v-squat-a9s' -H 'Hostname: hub.reborn.vn')",
+      "Bash(curl -sk -w '\\\\nSTATUS:%{http_code}\\\\n' -X POST 'https://biz.reborn.vn/market/events/public/register?slug=m-khp-v-squat-a9s' -H 'Content-Type: application/json' -H 'Hostname: hub.reborn.vn' -H 'Origin: https://hub.reborn.vn' --data-raw '{\"fullName\":\"Test Select\",\"phone\":\"0000000003\",\"source\":\"public_portal\"}')",
+      "Bash(curl -sk -w '\\\\nSTATUS:%{http_code}\\\\n' -X POST 'https://biz.reborn.vn/market/events/public/register?slug=m-khp-v-squat-a9s' -H 'Content-Type: application/json' -H 'Hostname: hub.reborn.vn' -H 'Origin: https://hub.reborn.vn' --data-raw '{\"fullName\":\"Test Dyn\",\"phone\":\"0000000004\",\"source\":\"public_portal\",\"dynamicFieldValues\":{\"df-1776868195054-xvu\":\"Nguyen A\",\"df-1776868208904-bhe\":\"0999\"}}')",
+      "Bash(tee /tmp/ts2.log)",
+      "Bash(curl -sk 'https://biz.reborn.vn/market/events/public/list' -H 'Hostname: hub.reborn.vn')",
+      "Bash(python -c \"import sys, json; d = json.loads\\(sys.stdin.read\\(\\)\\); items = d.get\\('result', {}\\).get\\('items', []\\) if isinstance\\(d.get\\('result'\\), dict\\) else d.get\\('result', []\\); print\\(f'Total: {len\\(items\\)}'\\); [print\\(f'  {i.get\\(\\\\\"slug\\\\\"\\)} — status={i.get\\(\\\\\"status\\\\\"\\)}'\\) for i in items]\")"
+    ],
+    "additionalDirectories": [
+      "\\tmp"
     ]
   }
 }
