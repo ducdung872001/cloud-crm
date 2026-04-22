@@ -88,30 +88,30 @@ export default function App() {
     if (response.code === 0) {
       const result = response.result;
 
-      if (result.length > 1) {
+      if (result.length >= 1) {
+        // SelectedRole format BE yêu cầu: "<depId>_<jteId>".
+        // API takeRoles hiện trả {id, departmentId} (semantic: id=jteId, departmentId=depId).
+        // Dùng tên mới nếu BE cập nhật response, fallback tên cũ.
         const changeResult = result.map((item) => {
+          const depId = item.depId ?? item.departmentId;
+          const jteId = item.jteId ?? item.id;
           return {
-            role: `${item.departmentId}_${item.id}`,
+            role: `${depId}_${jteId}`,
             name: item.title,
             departmentName: item.departmentName,
           };
         });
 
         setLstRole(changeResult);
-        // TEST-MODE: auto-pick role "Ban giám đốc" để tránh modal chọn role spam suốt quá trình chạy test suite.
-        // Revert bằng cách khôi phục dòng `!takeSelectedRole && setChooseRoleInit(true);` bên dưới.
-        if (!takeSelectedRole) {
-          const preferred =
-            changeResult.find((r) => r.name === "Ban giám đốc") ||
-            changeResult.find((r) => (r.name || "").toLowerCase().includes("giám đốc")) ||
-            changeResult[0];
-          if (preferred) {
-            localStorage.setItem("SelectedRole", preferred.role);
-          } else {
-            setChooseRoleInit(true);
-          }
+        // Luôn ghi đè SelectedRole bằng giá trị hợp lệ từ server để tránh kế thừa giá trị cũ
+        // (user 1-role trước đây không được set → header Selectedrole rỗng → BE 403).
+        const preferred =
+          changeResult.find((r) => r.name === "Ban giám đốc") ||
+          changeResult.find((r) => (r.name || "").toLowerCase().includes("giám đốc")) ||
+          changeResult[0];
+        if (preferred) {
+          localStorage.setItem("SelectedRole", preferred.role);
         }
-        // !takeSelectedRole && setChooseRoleInit(true);
       }
     }
   };

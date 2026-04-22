@@ -14,6 +14,15 @@ const BIZ_MICROSERVICE_PREFIXES = [
   "/market/", "/notification/", "/operation/", "/sales/",
 ];
 
+// Migration 1-lần: dọn SelectedRole rác (các phiên bản cũ từng ghi string không đúng format
+// "<departmentId>_<id>", gây header Selectedrole invalid → BE 403). Chạy trước khi đọc snapshot.
+{
+  const cur = typeof localStorage !== "undefined" ? localStorage.getItem("SelectedRole") : null;
+  if (cur && !/^\d+_\d+$/.test(cur)) {
+    localStorage.removeItem("SelectedRole");
+  }
+}
+
 const takeSelectedRole = localStorage.getItem("SelectedRole");
 
 export default function RegisterFetch() {
