@@ -109,7 +109,8 @@
       "Bash(curl -sk -w '\\\\nSTATUS:%{http_code}\\\\n' -X POST 'https://biz.reborn.vn/market/events/public/register?slug=m-khp-v-squat-a9s' -H 'Content-Type: application/json' -H 'Hostname: hub.reborn.vn' -H 'Origin: https://hub.reborn.vn' --data-raw '{\"fullName\":\"Test Dyn\",\"phone\":\"0000000004\",\"source\":\"public_portal\",\"dynamicFieldValues\":{\"df-1776868195054-xvu\":\"Nguyen A\",\"df-1776868208904-bhe\":\"0999\"}}')",
       "Bash(tee /tmp/ts2.log)",
       "Bash(curl -sk 'https://biz.reborn.vn/market/events/public/list' -H 'Hostname: hub.reborn.vn')",
-      "Bash(python -c \"import sys, json; d = json.loads\\(sys.stdin.read\\(\\)\\); items = d.get\\('result', {}\\).get\\('items', []\\) if isinstance\\(d.get\\('result'\\), dict\\) else d.get\\('result', []\\); print\\(f'Total: {len\\(items\\)}'\\); [print\\(f'  {i.get\\(\\\\\"slug\\\\\"\\)} — status={i.get\\(\\\\\"status\\\\\"\\)}'\\) for i in items]\")"
+      "Bash(python -c \"import sys, json; d = json.loads\\(sys.stdin.read\\(\\)\\); items = d.get\\('result', {}\\).get\\('items', []\\) if isinstance\\(d.get\\('result'\\), dict\\) else d.get\\('result', []\\); print\\(f'Total: {len\\(items\\)}'\\); [print\\(f'  {i.get\\(\\\\\"slug\\\\\"\\)} — status={i.get\\(\\\\\"status\\\\\"\\)}'\\) for i in items]\")",
+      "Bash(curl -sk 'https://biz.reborn.vn/market/events/public/list?limit=50' -H 'Hostname: hub.reborn.vn')"
     ],
     "additionalDirectories": [
       "\\tmp"

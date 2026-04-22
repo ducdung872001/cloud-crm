@@ -207,9 +207,9 @@ export default function ShareEventPage() {
         }
       }
     }
-    // Validate payment proof
-    if (event.requirePaymentProof && grandTotal > 0 && !paymentProofUrl) {
-      setError("Vui lòng upload bằng chứng thanh toán");
+    // Validate payment proof — yêu cầu bất cứ khi nào admin tick requirePaymentProof
+    if (event.requirePaymentProof && !paymentProofUrl) {
+      setError("Vui lòng upload ảnh bằng chứng thanh toán");
       return;
     }
 
@@ -255,7 +255,18 @@ export default function ShareEventPage() {
   const hasMultiDay = (event.selectableDates ?? []).length > 0;
   // BE trả int 0/1 cho requirePaymentProof → coerce về boolean, tránh render thẳng số "0"
   // khi dùng trong pattern {needsPayment && <JSX />} (React render number literal 0).
-  const needsPayment = !!event.requirePaymentProof && grandTotal > 0;
+  // Hiện upload bằng chứng BẤT CỨ KHI NÀO admin tick requirePaymentProof,
+  // kể cả event giá 0 (phí ngoài, deposit, phí riêng cho từng tuỳ chọn...).
+  const needsPayment = !!event.requirePaymentProof;
+
+  // QR thanh toán — nếu admin có cấu hình bankAccountOverride
+  const bank = event.bankAccountOverride;
+  const qrPayload = bank
+    ? `${bank.bank}|${bank.accountNumber}|${grandTotal || ""}|EVENT-${event.slug}`
+    : null;
+  const qrImgSrc = qrPayload
+    ? `https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=${encodeURIComponent(qrPayload)}`
+    : null;
 
   return (
     <div style={{ minHeight: "100vh", background: THEME.bg, color: THEME.textMain }}>
@@ -633,13 +644,73 @@ export default function ShareEventPage() {
                   </div>
                 )}
 
-                {/* ── 6. Upload bằng chứng thanh toán ── */}
+                {/* ── 6a. QR chuyển khoản ── */}
+                {needsPayment && bank && (
+                  <div
+                    style={{
+                      marginTop: 14,
+                      padding: 14,
+                      background: "#fff",
+                      borderRadius: 8,
+                      border: `1px solid ${THEME.border}`,
+                    }}
+                  >
+                    <div style={{ fontSize: 13, fontWeight: 700, color: THEME.primaryDark, marginBottom: 10 }}>
+                      💳 Quét mã chuyển khoản
+                    </div>
+                    <div style={{ display: "flex", gap: 14, alignItems: "flex-start", flexWrap: "wrap" }}>
+                      {qrImgSrc && (
+                        <img
+                          src={qrImgSrc}
+                          alt="QR chuyển khoản"
+                          width={180}
+                          height={180}
+                          style={{ border: `1px solid ${THEME.border}`, borderRadius: 6, background: "#fff" }}
+                        />
+                      )}
+                      <div style={{ flex: 1, minWidth: 200, fontSize: 13, lineHeight: 1.7 }}>
+                        <div><strong>Ngân hàng:</strong> {bank.bank}</div>
+                        <div><strong>Chủ TK:</strong> {bank.holder}</div>
+                        <div><strong>Số TK:</strong>{" "}
+                          <span style={{ fontFamily: "ui-monospace,monospace", fontWeight: 600 }}>
+                            {bank.accountNumber}
+                          </span>
+                        </div>
+                        {grandTotal > 0 && (
+                          <div><strong>Số tiền:</strong>{" "}
+                            <span style={{ color: THEME.accent, fontWeight: 700 }}>
+                              {formatVND(grandTotal)} đ
+                            </span>
+                          </div>
+                        )}
+                        <div style={{ marginTop: 6 }}>
+                          <strong>Nội dung:</strong>{" "}
+                          <span style={{ fontFamily: "ui-monospace,monospace" }}>
+                            EVENT-{event.slug}
+                          </span>
+                        </div>
+                        {bank.phone && (
+                          <div style={{ fontSize: 11, color: THEME.textMuted, marginTop: 6 }}>
+                            Hỗ trợ: {bank.phone}
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                {/* ── 6b. Upload bằng chứng thanh toán ── */}
                 {needsPayment && (
                   <div style={{ marginTop: 14 }}>
                     <PaymentProofUpload
                       imageUrl={paymentProofUrl}
                       onChange={setPaymentProofUrl}
                     />
+                    {!bank && (
+                      <div style={{ fontSize: 11, color: THEME.textMuted, marginTop: 6 }}>
+                        Nếu có phí phát sinh, vui lòng liên hệ BTC để nhận thông tin chuyển khoản trước khi upload biên lai.
+                      </div>
+                    )}
                   </div>
                 )}
 
@@ -758,7 +829,47 @@ export default function ShareEventPage() {
                   <div style={{ fontSize: 13, fontWeight: 600 }}>{event.venue.name}</div>
                   <div style={{ fontSize: 12, color: THEME.textMuted, marginTop: 2 }}>
                     {event.venue.address}
+                    {event.venue.city && <> · {event.venue.city}</>}
                   </div>
+                  {(() => {
+                    const lat = event.venue.latitude;
+                    const lng = event.venue.longitude;
+                    const hasCoords = lat != null && lng != null;
+                    const mapQuery = hasCoords
+                      ? `${lat},${lng}`
+                      : encodeURIComponent(
+                          [event.venue.name, event.venue.address, event.venue.city].filter(Boolean).join(", "),
+                        );
+                    return (
+                      <div style={{ marginTop: 10 }}>
+                        <iframe
+                          title="Bản đồ địa điểm"
+                          src={`https://www.google.com/maps?q=${mapQuery}&z=16&output=embed`}
+                          style={{ border: 0, width: "100%", height: 180, borderRadius: 8 }}
+                          loading="lazy"
+                          referrerPolicy="no-referrer-when-downgrade"
+                        />
+                        <a
+                          href={
+                            hasCoords
+                              ? `https://www.google.com/maps/dir/?api=1&destination=${lat},${lng}`
+                              : `https://www.google.com/maps/search/?api=1&query=${mapQuery}`
+                          }
+                          target="_blank"
+                          rel="noreferrer"
+                          style={{
+                            display: "inline-flex", alignItems: "center", gap: 4,
+                            marginTop: 8, padding: "6px 12px",
+                            background: THEME.primary, color: "#fff",
+                            borderRadius: 6, fontSize: 12, fontWeight: 600,
+                            textDecoration: "none",
+                          }}
+                        >
+                          🧭 Chỉ đường
+                        </a>
+                      </div>
+                    );
+                  })()}
                 </>
               )}
             </Card>

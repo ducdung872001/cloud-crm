@@ -37,6 +37,8 @@ type FormState = {
   venueName: string;
   venueAddress: string;
   venueCity: string;
+  venueLatitude: string;
+  venueLongitude: string;
   venueIsOnline: boolean;
   venueOnlineUrl: string;
   contactName: string;
@@ -52,6 +54,10 @@ type FormState = {
   addOnItems: EventAddOnItem[];
   galleryImageUrls: string[];
   requirePaymentProof: boolean;
+  bankName: string;
+  bankHolder: string;
+  bankAccountNumber: string;
+  bankPhone: string;
   selectableDates: string[];
 };
 
@@ -67,6 +73,8 @@ const EMPTY: FormState = {
   venueName: "",
   venueAddress: "",
   venueCity: "",
+  venueLatitude: "",
+  venueLongitude: "",
   venueIsOnline: false,
   venueOnlineUrl: "",
   contactName: "",
@@ -81,6 +89,10 @@ const EMPTY: FormState = {
   addOnItems: [],
   galleryImageUrls: [],
   requirePaymentProof: false,
+  bankName: "",
+  bankHolder: "",
+  bankAccountNumber: "",
+  bankPhone: "",
   selectableDates: [],
 };
 
@@ -112,6 +124,8 @@ function entityToForm(e: EventEntity): FormState {
     venueName: e.venue.name,
     venueAddress: e.venue.address,
     venueCity: e.venue.city ?? "",
+    venueLatitude: e.venue.latitude != null ? String(e.venue.latitude) : "",
+    venueLongitude: e.venue.longitude != null ? String(e.venue.longitude) : "",
     venueIsOnline: e.venue.isOnline ?? false,
     venueOnlineUrl: e.venue.onlineUrl ?? "",
     contactName: e.contactPerson.name,
@@ -126,6 +140,10 @@ function entityToForm(e: EventEntity): FormState {
     addOnItems: e.addOnItems ?? [],
     galleryImageUrls: e.galleryImageUrls ?? [],
     requirePaymentProof: e.requirePaymentProof ?? false,
+    bankName: e.bankAccountOverride?.bank ?? "",
+    bankHolder: e.bankAccountOverride?.holder ?? "",
+    bankAccountNumber: e.bankAccountOverride?.accountNumber ?? "",
+    bankPhone: e.bankAccountOverride?.phone ?? "",
     selectableDates: e.selectableDates ?? [],
   };
 }
@@ -223,6 +241,8 @@ export default function EventFormPage() {
         name: form.venueName.trim(),
         address: form.venueAddress.trim(),
         city: form.venueCity.trim() || undefined,
+        latitude: form.venueLatitude.trim() ? Number(form.venueLatitude.trim()) : undefined,
+        longitude: form.venueLongitude.trim() ? Number(form.venueLongitude.trim()) : undefined,
         isOnline: form.venueIsOnline,
         onlineUrl: form.venueIsOnline ? form.venueOnlineUrl.trim() : undefined,
       },
@@ -251,6 +271,15 @@ export default function EventFormPage() {
       addOnItems: form.addOnItems.length ? form.addOnItems : undefined,
       galleryImageUrls: form.galleryImageUrls.length ? form.galleryImageUrls : undefined,
       requirePaymentProof: form.requirePaymentProof || undefined,
+      // Bank account override — chỉ gửi khi requirePaymentProof bật + ít nhất số TK
+      bankAccountOverride: (form.requirePaymentProof && form.bankAccountNumber.trim())
+        ? {
+            bank: form.bankName.trim(),
+            holder: form.bankHolder.trim(),
+            accountNumber: form.bankAccountNumber.trim(),
+            phone: form.bankPhone.trim() || undefined,
+          }
+        : undefined,
       selectableDates: form.selectableDates.length ? form.selectableDates : undefined,
     };
 
@@ -455,6 +484,84 @@ export default function EventFormPage() {
                       placeholder="TP.HCM"
                     />
                   </Field>
+                </div>
+
+                {/* Map coordinates */}
+                <div style={{
+                  marginTop: 12, padding: 12,
+                  background: THEME.bg, border: `1px solid ${THEME.border}`, borderRadius: 6,
+                }}>
+                  <div style={{ fontSize: 12, fontWeight: 600, color: THEME.primaryDark, marginBottom: 8 }}>
+                    🗺️ Toạ độ Google Maps (để hiện bản đồ cho người đăng ký)
+                  </div>
+                  <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 2fr", gap: 8, alignItems: "flex-end" }}>
+                    <div>
+                      <label style={miniLabel}>Vĩ độ (latitude)</label>
+                      <input
+                        value={form.venueLatitude}
+                        onChange={(e) => update("venueLatitude", e.target.value)}
+                        placeholder="21.028511"
+                        style={inputStyle}
+                      />
+                    </div>
+                    <div>
+                      <label style={miniLabel}>Kinh độ (longitude)</label>
+                      <input
+                        value={form.venueLongitude}
+                        onChange={(e) => update("venueLongitude", e.target.value)}
+                        placeholder="105.804817"
+                        style={inputStyle}
+                      />
+                    </div>
+                    <div>
+                      <label style={miniLabel}>Dán URL Google Maps</label>
+                      <input
+                        placeholder="Dán link rồi nhấn ra ngoài để auto parse"
+                        style={inputStyle}
+                        onBlur={(e) => {
+                          const v = e.target.value.trim();
+                          if (!v) return;
+                          // Try parse @lat,lng từ URL Google Maps (vd: /@21.028,105.804,15z)
+                          const m1 = v.match(/@(-?\d+\.\d+),(-?\d+\.\d+)/);
+                          // Hoặc ?q=lat,lng
+                          const m2 = v.match(/[?&]q=(-?\d+\.\d+),(-?\d+\.\d+)/);
+                          // Hoặc !3d..!4d..
+                          const m3 = v.match(/!3d(-?\d+\.\d+)!4d(-?\d+\.\d+)/);
+                          const match = m1 || m3 || m2;
+                          if (match) {
+                            update("venueLatitude", match[1]);
+                            update("venueLongitude", match[2]);
+                            e.target.value = "";
+                          } else {
+                            alert("Không trích được toạ độ từ URL — vui lòng nhập thủ công lat/lng.");
+                          }
+                        }}
+                      />
+                    </div>
+                  </div>
+
+                  {(() => {
+                    const lat = form.venueLatitude.trim();
+                    const lng = form.venueLongitude.trim();
+                    const ok = lat && lng && !isNaN(Number(lat)) && !isNaN(Number(lng));
+                    if (!ok) return (
+                      <p style={{ fontSize: 11, color: THEME.textMuted, margin: "8px 0 0" }}>
+                        💡 Tip: mở <a href="https://www.google.com/maps" target="_blank" rel="noreferrer" style={{ color: THEME.primary }}>Google Maps</a>,
+                        chuột phải vào vị trí → bấm toạ độ (dạng 21.02, 105.80) → nó copy sẵn — paste vào 2 ô trên hoặc dán URL vào ô thứ 3.
+                      </p>
+                    );
+                    return (
+                      <div style={{ marginTop: 10 }}>
+                        <iframe
+                          title="Map preview"
+                          src={`https://www.google.com/maps?q=${lat},${lng}&z=16&output=embed`}
+                          style={{ border: 0, width: "100%", height: 220, borderRadius: 6 }}
+                          loading="lazy"
+                          referrerPolicy="no-referrer-when-downgrade"
+                        />
+                      </div>
+                    );
+                  })()}
                 </div>
               </>
             )}
@@ -699,6 +806,62 @@ export default function EventFormPage() {
             <p style={{ fontSize: 11, color: THEME.textMuted, margin: "6px 0 0" }}>
               Khi bật, người đăng ký sẽ cần upload ảnh hoá đơn chuyển khoản.
             </p>
+
+            {form.requirePaymentProof && (
+              <div style={{
+                marginTop: 12,
+                padding: 12,
+                background: THEME.bg,
+                border: `1px solid ${THEME.border}`,
+                borderRadius: 6,
+                display: "grid",
+                gridTemplateColumns: "1fr 1fr",
+                gap: 8,
+              }}>
+                <div style={{ gridColumn: "1 / -1", fontSize: 12, fontWeight: 600, color: THEME.primaryDark }}>
+                  Thông tin chuyển khoản (hiển thị QR cho người đăng ký)
+                </div>
+                <div>
+                  <label style={miniLabel}>Ngân hàng *</label>
+                  <input
+                    value={form.bankName}
+                    onChange={e => setForm(f => ({ ...f, bankName: e.target.value }))}
+                    placeholder="VD: VCB, TCB, MB..."
+                    style={inputStyle}
+                  />
+                </div>
+                <div>
+                  <label style={miniLabel}>Chủ tài khoản *</label>
+                  <input
+                    value={form.bankHolder}
+                    onChange={e => setForm(f => ({ ...f, bankHolder: e.target.value }))}
+                    placeholder="VD: NGUYEN VAN A"
+                    style={inputStyle}
+                  />
+                </div>
+                <div>
+                  <label style={miniLabel}>Số tài khoản *</label>
+                  <input
+                    value={form.bankAccountNumber}
+                    onChange={e => setForm(f => ({ ...f, bankAccountNumber: e.target.value }))}
+                    placeholder="VD: 0123456789"
+                    style={inputStyle}
+                  />
+                </div>
+                <div>
+                  <label style={miniLabel}>SĐT đối chiếu (không bắt buộc)</label>
+                  <input
+                    value={form.bankPhone}
+                    onChange={e => setForm(f => ({ ...f, bankPhone: e.target.value }))}
+                    placeholder="VD: 0987654321"
+                    style={inputStyle}
+                  />
+                </div>
+                <p style={{ gridColumn: "1 / -1", fontSize: 11, color: THEME.textMuted, margin: 0 }}>
+                  Để trống → form đăng ký chỉ hiện upload biên lai, không có QR. Điền đủ 3 trường bắt buộc để FE tự sinh QR VietQR.
+                </p>
+              </div>
+            )}
           </Section>
 
           {/* ── CHUNG: Multi-day dates ── */}
@@ -983,6 +1146,14 @@ const inputStyle: React.CSSProperties = {
   color: THEME.textMain,
   outline: "none",
   boxSizing: "border-box",
+};
+
+const miniLabel: React.CSSProperties = {
+  display: "block",
+  fontSize: 11,
+  fontWeight: 600,
+  color: THEME.textMuted,
+  marginBottom: 3,
 };
 
 function Section({ title, children }: { title: string; children: React.ReactNode }) {

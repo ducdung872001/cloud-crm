@@ -1,7 +1,63 @@
 // CHUNG: Admin builder — cấu hình trường tùy biến trên form đăng ký.
-import React from "react";
+import React, { useEffect, useState } from "react";
 import type { DynamicFieldDefinition, DynamicFieldType } from "../types";
 import { THEME } from "../shared";
+
+// Input riêng cho options select — giữ raw string local để user gõ được dấu phẩy,
+// parse thành options[] chỉ khi user blur hoặc split-điểm (đã có nội dung sau dấu phẩy).
+function OptionsInput({
+  value,
+  invalid,
+  onChange,
+}: {
+  value: string[];
+  invalid: boolean;
+  onChange: (opts: string[]) => void;
+}) {
+  // Canonical từ options → chuỗi "S, M, L"
+  const canonical = (value ?? []).join(", ");
+  const [raw, setRaw] = useState(canonical);
+
+  // Đồng bộ nếu parent thay đổi options từ ngoài (VD load event từ BE)
+  useEffect(() => {
+    if (raw.trim() === "") {
+      setRaw(canonical);
+      return;
+    }
+    // Chỉ sync nếu canonical khác hẳn với raw đã parse (tránh ghi đè khi user đang gõ)
+    const parsed = raw.split(",").map(s => s.trim()).filter(Boolean);
+    if (parsed.join("|") !== (value ?? []).join("|")) {
+      setRaw(canonical);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [canonical]);
+
+  const commit = (text: string) => {
+    const opts = text.split(",").map(s => s.trim()).filter(Boolean);
+    onChange(opts);
+  };
+
+  return (
+    <input
+      value={raw}
+      onChange={e => {
+        setRaw(e.target.value);
+        commit(e.target.value);
+      }}
+      onBlur={() => {
+        // Normalize lại hiển thị sau khi rời focus
+        setRaw((value ?? []).join(", "));
+      }}
+      placeholder="Các lựa chọn, cách nhau bởi dấu phẩy (VD: S, M, L, XL)"
+      style={{
+        ...inputStyle,
+        width: "100%",
+        borderColor: invalid ? "#DC2626" : THEME.border,
+        background: invalid ? "#FEF2F2" : undefined,
+      }}
+    />
+  );
+}
 
 const FIELD_TYPES: { value: DynamicFieldType; label: string }[] = [
   { value: "text", label: "Văn bản" },
@@ -136,20 +192,10 @@ export default function DynamicFieldsBuilder({ fields, onChange }: Props) {
             const hasOptions = (f.options ?? []).length > 0;
             return (
               <div style={{ gridColumn: "1 / -1", marginTop: 4 }}>
-                <input
-                  value={(f.options ?? []).join(", ")}
-                  onChange={(e) =>
-                    updateField(idx, {
-                      options: e.target.value.split(",").map((s) => s.trim()).filter(Boolean),
-                    })
-                  }
-                  placeholder="Các lựa chọn, cách nhau bởi dấu phẩy (VD: S, M, L, XL)"
-                  style={{
-                    ...inputStyle,
-                    width: "100%",
-                    borderColor: hasOptions ? inputStyle.border?.toString().split(" ").pop() : "#DC2626",
-                    background: hasOptions ? undefined : "#FEF2F2",
-                  }}
+                <OptionsInput
+                  value={f.options ?? []}
+                  invalid={!hasOptions}
+                  onChange={(opts) => updateField(idx, { options: opts })}
                 />
                 {!hasOptions && (
                   <div style={{ fontSize: 11, color: "#B91C1C", marginTop: 4, fontWeight: 500 }}>
