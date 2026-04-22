@@ -224,7 +224,9 @@ export default function ShareEventPage() {
   const hasDynamicFields = (event.dynamicFields ?? []).length > 0;
   const hasAddOns = (event.addOnItems ?? []).length > 0;
   const hasMultiDay = (event.selectableDates ?? []).length > 0;
-  const needsPayment = event.requirePaymentProof && grandTotal > 0;
+  // BE trả int 0/1 cho requirePaymentProof → coerce về boolean, tránh render thẳng số "0"
+  // khi dùng trong pattern {needsPayment && <JSX />} (React render number literal 0).
+  const needsPayment = !!event.requirePaymentProof && grandTotal > 0;
 
   return (
     <div style={{ minHeight: "100vh", background: THEME.bg, color: THEME.textMain }}>

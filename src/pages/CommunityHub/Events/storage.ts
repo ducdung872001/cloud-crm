@@ -120,7 +120,8 @@ function normalizeEvent(e: any): EventEntity {
     createdAt: e.createdAt ?? e.created_at,
     updatedAt: e.updatedAt ?? e.updated_at,
     createdBy: e.createdBy ?? e.created_by,
-    requirePaymentProof: e.requirePaymentProof ?? e.require_payment_proof ?? false,
+    // BE trả int 0/1 → coerce về boolean để dùng đúng trong {X && <JSX />}.
+    requirePaymentProof: Boolean(e.requirePaymentProof ?? e.require_payment_proof ?? false),
   } as EventEntity;
 }
 
