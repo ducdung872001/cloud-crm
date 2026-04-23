@@ -76,7 +76,13 @@
       "Bash(taskkill //PID 19476 //F)",
       "Bash(taskkill //PID 4760 //F)",
       "Bash(NODE_OPTIONS=\"--max-old-space-size=8192\" npm run build)",
-      "Bash(node docs/proposal/generate-pptx.mjs)"
+      "Bash(node docs/proposal/generate-pptx.mjs)",
+      "Bash(node -e ' *)",
+      "Bash(node docs/survey/generate-survey-loyalty.mjs)",
+      "Bash(node docs/proposal/bao-gia/generate-bao-gia-docx.mjs)",
+      "Bash(unzip -p d:/Git/reborn/reborn-cloud/cloud-ver2/cloud-crm/docs/proposal/bao-gia/Bao-gia-Loyalty-Platform.docx word/document.xml)",
+      "Bash(node docs/proposal/bao-gia/generate-phan-tich-docx.mjs)",
+      "Bash(unzip -p d:/Git/reborn/reborn-cloud/cloud-ver2/cloud-crm/docs/proposal/bao-gia/Phan-tich-Chi-phi-Margin-INTERNAL.docx word/document.xml)"
     ],
     "additionalDirectories": [
       "\\tmp",
