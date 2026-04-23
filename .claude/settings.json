@@ -124,7 +124,8 @@
       "Bash(export PYTHONIOENCODING=utf-8)",
       "Bash(python -)",
       "Bash(curl -sS -k -X POST 'https://biz.reborn.vn/market/events/update?id=21' -H 'Authorization: Bearer __TRACKED_VAR__' -H 'Content-Type: application/json' -H 'Hostname: hub.reborn.vn' -H 'Selectedrole: 431_41113' --data-binary @d:/tmp/evt21_no_venues.json)",
-      "Bash(python -c \"import json,sys; d=json.loads\\(sys.stdin.read\\(\\)\\); print\\('code:',d.get\\('code'\\),'msg:',d.get\\('message'\\) or d.get\\('error'\\)\\)\")"
+      "Bash(python -c \"import json,sys; d=json.loads\\(sys.stdin.read\\(\\)\\); print\\('code:',d.get\\('code'\\),'msg:',d.get\\('message'\\) or d.get\\('error'\\)\\)\")",
+      "Read(//c/Users/HP/AppData/Local/Temp/claude/d--Git-reborn-reborn-cloud-cloud-ver2-cloud-crm/5fd7243d-30a3-4a4d-b945-19dacb559d97/tasks/**)"
     ],
     "additionalDirectories": [
       "\\tmp"
