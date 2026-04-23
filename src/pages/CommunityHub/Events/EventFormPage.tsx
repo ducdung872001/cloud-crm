@@ -6,6 +6,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import RebornEditor from "components/editor/reborn";
 import DatePickerCustom from "components/datepickerCustom/datepickerCustom";
 import { serialize } from "utils/editor";
+import { uploadImageFromFiles } from "utils/image";
 import { eventStorage } from "./storage";
 import type { EventEntity, DynamicFieldDefinition, EventAddOnItem } from "./types";
 import { THEME, formatVND } from "./shared";
@@ -181,14 +182,17 @@ export default function EventFormPage() {
   };
 
   const handleCoverUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-    // Prototype: đọc file thành data URL. BE thật sẽ upload file rồi trả URL.
-    const reader = new FileReader();
-    reader.onload = () => {
-      update("coverImageUrl", String(reader.result));
-    };
-    reader.readAsDataURL(file);
+    const files = e.target.files;
+    if (!files || !files[0]) return;
+    // Upload lên image server trả về URL thật, KHÔNG nhét data URL base64 vào form:
+    // payload base64 ~MB sẽ vượt giới hạn BE → save event fail 500.
+    uploadImageFromFiles(
+      files,
+      (url: string) => update("coverImageUrl", url),
+      false,
+    );
+    // Reset input để user có thể chọn lại cùng file
+    e.target.value = "";
   };
 
   const validate = (): string | null => {
@@ -775,16 +779,19 @@ export default function EventFormPage() {
                 multiple
                 style={{ display: "none" }}
                 onChange={(e) => {
-                  const files = Array.from(e.target.files ?? []);
-                  files.forEach((file) => {
-                    const reader = new FileReader();
-                    reader.onload = () =>
+                  const files = e.target.files;
+                  if (!files || files.length === 0) return;
+                  // Upload từng file lên image server (giống cover) — tránh nhét data URL
+                  // base64 vào state, khi save event BE sẽ fail 500 vì payload quá lớn.
+                  uploadImageFromFiles(
+                    files,
+                    (url: string) =>
                       setForm((f) => ({
                         ...f,
-                        galleryImageUrls: [...f.galleryImageUrls, String(reader.result)],
-                      }));
-                    reader.readAsDataURL(file);
-                  });
+                        galleryImageUrls: [...f.galleryImageUrls, url],
+                      })),
+                    false,
+                  );
                   e.target.value = "";
                 }}
               />

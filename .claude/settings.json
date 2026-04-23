@@ -112,7 +112,19 @@
       "Bash(python -c \"import sys, json; d = json.loads\\(sys.stdin.read\\(\\)\\); items = d.get\\('result', {}\\).get\\('items', []\\) if isinstance\\(d.get\\('result'\\), dict\\) else d.get\\('result', []\\); print\\(f'Total: {len\\(items\\)}'\\); [print\\(f'  {i.get\\(\\\\\"slug\\\\\"\\)} — status={i.get\\(\\\\\"status\\\\\"\\)}'\\) for i in items]\")",
       "Bash(curl -sk 'https://biz.reborn.vn/market/events/public/list?limit=50' -H 'Hostname: hub.reborn.vn')",
       "Read(//d/d/**)",
-      "Bash(wait)"
+      "Bash(wait)",
+      "Bash(wait bib5yyh4b *)",
+      "Bash(python -c \"import json,sys; d=json.load\\(sys.stdin\\); print\\('origins:', [o['origin'] for o in d.get\\('origins',[]\\)]\\); print\\('cookies hosts:', list\\(set\\(c['domain'] for c in d.get\\('cookies',[]\\)\\)\\)\\)\")",
+      "Bash(curl -sS -k 'https://biz.reborn.vn/market/events/registrations/list?limit=10' -H 'Authorization: Bearer __TRACKED_VAR__' -H 'Hostname: hub.reborn.vn' -H 'Selectedrole: 431_41113')",
+      "Bash(curl -sS -k 'https://biz.reborn.vn/market/events/list?limit=5' -H 'Authorization: Bearer __TRACKED_VAR__' -H 'Hostname: hub.reborn.vn' -H 'Selectedrole: 431_41113')",
+      "Bash(curl -sS -k 'https://biz.reborn.vn/market/events/get?id=21' -H 'Authorization: Bearer __TRACKED_VAR__' -H 'Hostname: hub.reborn.vn' -H 'Selectedrole: 431_41113')",
+      "Bash(python -c \"import json,sys; d=json.load\\(sys.stdin\\); r=d.get\\('result'\\) or {}; print\\('restored to:', r.get\\('status'\\) if isinstance\\(r,dict\\) else d.get\\('code'\\)\\)\")",
+      "Bash(curl -sS -k -X POST 'https://biz.reborn.vn/market/events/update?id=21' -H 'Authorization: Bearer __TRACKED_VAR__' -H 'Content-Type: application/json' -H 'Hostname: hub.reborn.vn' -H 'Selectedrole: 431_41113' --data-raw '{ *)",
+      "Bash(python -c \"import json,sys; d=json.load\\(sys.stdin\\); print\\('cleanup code:', d.get\\('code'\\)\\)\")",
+      "Bash(export PYTHONIOENCODING=utf-8)",
+      "Bash(python -)",
+      "Bash(curl -sS -k -X POST 'https://biz.reborn.vn/market/events/update?id=21' -H 'Authorization: Bearer __TRACKED_VAR__' -H 'Content-Type: application/json' -H 'Hostname: hub.reborn.vn' -H 'Selectedrole: 431_41113' --data-binary @d:/tmp/evt21_no_venues.json)",
+      "Bash(python -c \"import json,sys; d=json.loads\\(sys.stdin.read\\(\\)\\); print\\('code:',d.get\\('code'\\),'msg:',d.get\\('message'\\) or d.get\\('error'\\)\\)\")"
     ],
     "additionalDirectories": [
       "\\tmp"

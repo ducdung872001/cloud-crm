@@ -149,14 +149,39 @@ function normalizeReg(r: any): EventRegistration {
     convertedAt: r.convertedAt ?? r.converted_at,
     utmSource: r.utmSource ?? r.utm_source,
     utmCampaign: r.utmCampaign ?? r.utm_campaign,
-    paymentProof: r.paymentProof ?? (r.payment_proof_status && r.payment_proof_status !== "not_required" ? {
-      imageUrl: r.payment_proof_url ?? "",
-      submittedAt: r.payment_proof_submitted_at ?? "",
-      status: r.payment_proof_status,
-      reviewedAt: r.payment_proof_reviewed_at,
-      reviewedBy: r.payment_proof_reviewed_by,
-      rejectReason: r.payment_proof_reject_reason,
-    } : r.paymentProof),
+    // BE thực tế trả field tên `paymentProofs` (số nhiều, array) — 1 reg có thể
+    // có nhiều lần upload. Fallback cho các shape khác:
+    //  1) `paymentProofs` array (BE hiện tại) → lấy phần tử cuối (mới nhất)
+    //  2) `paymentProof` / `payment_proof` object hoặc JSON string
+    //  3) Flatten fields (`payment_proof_url`, `payment_proof_status`, ...)
+    // Nếu chỉ có URL mà status null/empty → coi là "submitted" để cột
+    // "Thanh toán" không báo sai là "Chưa upload".
+    paymentProofs: parseJson(r.paymentProofs ?? r.payment_proofs),
+    paymentProof: (() => {
+      const list = parseJson(r.paymentProofs ?? r.payment_proofs);
+      if (Array.isArray(list) && list.length > 0) {
+        const last = list[list.length - 1];
+        return typeof last === "object" ? last : undefined;
+      }
+      const parsedObj = parseJson(r.paymentProof ?? r.payment_proof);
+      if (parsedObj && typeof parsedObj === "object") return parsedObj;
+      const url = r.payment_proof_url ?? r.paymentProofUrl;
+      const status = r.payment_proof_status ?? r.paymentProofStatus;
+      if (status && status !== "not_required") {
+        return {
+          imageUrl: url ?? "",
+          submittedAt: r.payment_proof_submitted_at ?? "",
+          status,
+          reviewedAt: r.payment_proof_reviewed_at,
+          reviewedBy: r.payment_proof_reviewed_by,
+          rejectReason: r.payment_proof_reject_reason,
+        };
+      }
+      if (url) {
+        return { imageUrl: url, submittedAt: r.payment_proof_submitted_at ?? "", status: "submitted" };
+      }
+      return undefined;
+    })(),
   } as EventRegistration;
 }
 
