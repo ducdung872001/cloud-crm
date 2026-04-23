@@ -160,7 +160,8 @@ export default function App() {
       }
     };
 
-    if (location.pathname !== "/send_email_confirm" && location.pathname !== "/voucher_confirm") {
+    const isPublicEventsPage = location.pathname === "/events" || location.pathname.startsWith("/events/");
+    if (location.pathname !== "/send_email_confirm" && location.pathname !== "/voucher_confirm" && !isPublicEventsPage) {
       checkEmployeeStatus();
     }
   }, [cookies.user, location]);
