@@ -82,7 +82,10 @@
       "Bash(node docs/proposal/bao-gia/generate-bao-gia-docx.mjs)",
       "Bash(unzip -p d:/Git/reborn/reborn-cloud/cloud-ver2/cloud-crm/docs/proposal/bao-gia/Bao-gia-Loyalty-Platform.docx word/document.xml)",
       "Bash(node docs/proposal/bao-gia/generate-phan-tich-docx.mjs)",
-      "Bash(unzip -p d:/Git/reborn/reborn-cloud/cloud-ver2/cloud-crm/docs/proposal/bao-gia/Phan-tich-Chi-phi-Margin-INTERNAL.docx word/document.xml)"
+      "Bash(unzip -p d:/Git/reborn/reborn-cloud/cloud-ver2/cloud-crm/docs/proposal/bao-gia/Phan-tich-Chi-phi-Margin-INTERNAL.docx word/document.xml)",
+      "Bash(node docs/proposal/bao-gia/generate-capex-docx.mjs)",
+      "Bash(unzip -p d:/Git/reborn/reborn-cloud/cloud-ver2/cloud-crm/docs/proposal/bao-gia/Phan-tich-CAPEX-Allocation-INTERNAL.docx word/document.xml)",
+      "Bash(unzip -p d:/Git/reborn/reborn-cloud/cloud-ver2/cloud-crm/docs/proposal/bao-gia/dukien/Bao-gia-Loyalty-Platform.docx word/document.xml)"
     ],
     "additionalDirectories": [
       "\\tmp",
