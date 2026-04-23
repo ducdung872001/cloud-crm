@@ -82,7 +82,7 @@ function unwrap<T>(res: any): T {
 }
 
 /** Normalize event từ API — parse JSON string fields nếu BE trả string thay vì object */
-function normalizeEvent(e: any): EventEntity {
+export function normalizeEvent(e: any): EventEntity {
   if (!e) return e;
   const parseJson = (v: any) => {
     if (typeof v === "string") try { return JSON.parse(v); } catch { return v; }

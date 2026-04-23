@@ -8,6 +8,7 @@ import React, { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import EventService from "services/EventService";
 import type { EventEntity } from "@/pages/CommunityHub/Events/types";
+import { normalizeEvent } from "@/pages/CommunityHub/Events/storage";
 import "./index.scss";
 
 // ── Theme (đồng bộ ShareEventPage) ─────────────────────────────────────────
@@ -272,7 +273,10 @@ export default function PublicEventsPage() {
         const res = await EventService.listPublic({ limit: 100 }, ctrl.signal);
         if (res?.code === 0) {
           const raw = res.result?.items ?? res.result ?? [];
-          const items: EventEntity[] = Array.isArray(raw) ? raw : [];
+          // BE trả một số field (galleryImageUrls, tags, dynamicFields, addOnItems, venue…)
+          // dạng JSON string — phải normalize trước khi render, nếu không EventCard sẽ
+          // crash ở gallery.map vì .slice trên string trả về string (không có .map).
+          const items: EventEntity[] = (Array.isArray(raw) ? raw : []).map(normalizeEvent);
           // Chỉ giữ published + ongoing (không show draft/ended/cancelled cho public)
           const visible = items.filter(e => e.status === "published" || e.status === "ongoing");
           setEvents(visible);
