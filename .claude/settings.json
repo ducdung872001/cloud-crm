@@ -59,7 +59,15 @@
       "Bash(python docs/bugs/upgrade-readme-12ms.py docs/backend-tasks/README.md)",
       "Bash(cp \"d:/Git/reborn/reborn-cloud/cloud-ver2/cloud-crm/docs/bugs/upgrade-readme-12ms.py\" \"d:/Git/reborn/reborn-cloud/cloud-ver2/cloud-crm-tnpm/upgrade-readme-12ms.py\")",
       "Bash(python upgrade-readme-12ms.py docs/backend-tasks/README.md)",
-      "Bash(rm upgrade-readme-12ms.py)"
+      "Bash(rm upgrade-readme-12ms.py)",
+      "PowerShell(python --version 2>&1)",
+      "PowerShell(python -c \"import pptx; print\\('python-pptx:', pptx.__version__\\)\" 2>&1)",
+      "PowerShell(python -c \"import PIL; print\\('PIL:', PIL.__version__\\)\" 2>&1)",
+      "PowerShell(Get-ChildItem \"C:\\\\Users\\\\HP\\\\AppData\\\\Local\\\\Temp\\\\claude\" -Recurse -File -ErrorAction SilentlyContinue | Where-Object { $_.LastWriteTime -gt \\(Get-Date\\).AddMinutes\\(-10\\) -and $_.Extension -in '.png','.jpg','.jpeg' } | Select-Object FullName, Length, LastWriteTime | Format-Table -AutoSize; Write-Output \"---\"; Get-ChildItem \"$env:TEMP\" -File -ErrorAction SilentlyContinue | Where-Object { $_.LastWriteTime -gt \\(Get-Date\\).AddMinutes\\(-10\\) -and $_.Extension -in '.png','.jpg','.jpeg' } | Select-Object FullName, Length | Format-Table -AutoSize)",
+      "PowerShell(python 'd:\\\\Git\\\\reborn\\\\reborn-cloud\\\\cloud-ver2\\\\cloud-crm\\\\docs\\\\proposals\\\\slides\\\\build_pptx.py' 2>&1)",
+      "Bash(python docs/proposals/slides/_verify.py)",
+      "Bash(PYTHONIOENCODING=utf-8 python docs/proposals/slides/_verify.py)",
+      "Bash(python docs/proposals/slides/build_pptx.py)"
     ],
     "additionalDirectories": [
       "\\tmp",

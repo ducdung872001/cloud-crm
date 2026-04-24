@@ -97,7 +97,14 @@
       "Bash(python _u.py docs/backend-tasks/README.md)",
       "Bash(rm _u.py)",
       "Bash(cp \"d:/Git/reborn/reborn-cloud/cloud-ver2/cloud-crm/docs/bugs/upgrade-readme-12ms.py\" \"d:/Git/reborn/reborn-cloud/cloud-ver2/cloud-crm-chub/_u.py\")",
-      "Bash(cp \"d:/Git/reborn/reborn-cloud/cloud-ver2/cloud-crm/docs/bugs/upgrade-readme-12ms.py\" \"d:/Git/reborn/reborn-cloud/cloud-ver2/crm-banking/_u.py\")"
+      "Bash(cp \"d:/Git/reborn/reborn-cloud/cloud-ver2/cloud-crm/docs/bugs/upgrade-readme-12ms.py\" \"d:/Git/reborn/reborn-cloud/cloud-ver2/crm-banking/_u.py\")",
+      "Bash(pandoc --version)",
+      "PowerShell(Get-Command pandoc -ErrorAction SilentlyContinue)",
+      "PowerShell(if \\(-not $?\\) { \"PANDOC_NOT_FOUND_IN_PATH\" })",
+      "PowerShell($paths = @\\('C:\\\\Program Files\\\\Pandoc\\\\pandoc.exe', 'C:\\\\Users\\\\HP\\\\AppData\\\\Local\\\\Pandoc\\\\pandoc.exe', 'C:\\\\ProgramData\\\\chocolatey\\\\bin\\\\pandoc.exe'\\); $found = $paths | Where-Object { Test-Path $_ }; if \\($found\\) { $found } else { \"NOT_FOUND\" }; winget --version 2>&1 | Select-Object -First 1)",
+      "PowerShell(winget install --id JohnMacFarlane.Pandoc --silent --accept-package-agreements --accept-source-agreements --scope user 2>&1)",
+      "PowerShell(Get-ChildItem -Path \"$env:LOCALAPPDATA\\\\Microsoft\\\\WinGet\\\\Packages\" -Filter \"pandoc.exe\" -Recurse -ErrorAction SilentlyContinue | Select-Object -ExpandProperty FullName; Get-ChildItem -Path \"C:\\\\Program Files\" -Filter \"pandoc.exe\" -Recurse -ErrorAction SilentlyContinue -Depth 3 | Select-Object -ExpandProperty FullName)",
+      "PowerShell(Get-ChildItem -Path \"$env:LOCALAPPDATA\" -Filter \"pandoc.exe\" -Recurse -ErrorAction SilentlyContinue -Force | Select-Object -ExpandProperty FullName -First 5; Get-ChildItem -Path \"C:\\\\Users\\\\HP\" -Filter \"pandoc.exe\" -Recurse -ErrorAction SilentlyContinue -Force -Depth 5 | Select-Object -ExpandProperty FullName -First 5)"
     ]
   }
 }
