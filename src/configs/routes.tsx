@@ -214,6 +214,9 @@ const CHTenantConfig = React.lazy(() => import("@/pages/CommunityHub/TenantConfi
 const FPNetworkTreePage = React.lazy(() => import("@/pages/CommunityHub/NetworkTree"));
 const FPJourneyTrackerPage = React.lazy(() => import("@/pages/CommunityHub/JourneyTracker"));
 const FPModulesPage = React.lazy(() => import("@/pages/CommunityHub/FitProModules"));
+// [FitPro] Phase 2 additions — Money-Back Guarantee + EGIFT
+const FPMoneyBackGuaranteePage = React.lazy(() => import("@/pages/CommunityHub/MoneyBackGuarantee"));
+const FPEGiftPage = React.lazy(() => import("@/pages/CommunityHub/EGift"));
 
 // [Tax] Phân hệ thuế HKD/CNKD — portable module
 const TaxModulePage = React.lazy(() => import("@/modules/tax/ui/TaxModule"));
@@ -296,6 +299,9 @@ export const menu: IMenuItem[] = [
       { title: "fpMarketingFunnel", path: "/fp_funnel", icon: <Icon name="SalesReportMenu" />, code: "" },
       { title: "fpTaxStation", path: "/fp_tax", icon: <Icon name="CashbookMenu" />, code: "" },
       { title: "fpMF7Onboarding", path: "/fp_mf7", icon: <Icon name="SettingsMenu" />, code: "" },
+      // ── Phase 2 additions ──
+      { title: "fpMoneyBackGuarantee", path: "/fp_mbg", icon: <Icon name="DebtMenu" />, code: "" },
+      { title: "fpEGift", path: "/fp_egift", icon: <Icon name="PromotionMenu" />, code: "" },
     ],
   },
 
@@ -515,6 +521,9 @@ export const routes: IRouter[] = [
   { path: "/fp_funnel", component: <FPModulesPage /> },
   { path: "/fp_tax", component: <TaxModulePage /> },
   { path: "/fp_mf7", component: <FPModulesPage /> },
+  // [FitPro] Phase 2 routes
+  { path: "/fp_mbg", component: <FPMoneyBackGuaranteePage /> },
+  { path: "/fp_egift", component: <FPEGiftPage /> },
   // [Tax] Phân hệ thuế HKD/CNKD — portable module, dùng chung qua mọi nhánh
   { path: "/tax", component: <TaxModulePage /> },
   { path: "/tax/profile", component: <TaxModulePage /> },

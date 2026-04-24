@@ -1,5 +1,5 @@
-// [FitPro] Business Owners — 4 profiles (Office/Entrepreneur/Trainer/Ambassador)
-// Thay thế page Partners KOL/KOC/PO bằng BO network hierarchy
+// [FitPro] Business Owners — 5 profiles (Office/Entrepreneur/Trainer/Ambassador/Gym-Partner)
+// Profile thứ 5 (gym_partner) = chủ gym/yoga đồng ý cấy plugin FitPro INSIDE.
 import React, { useState } from "react";
 import { MOCK_PARTNERS } from "@/mocks/community-hub/partners";
 import { formatCurrency } from "reborn-util";
@@ -7,13 +7,14 @@ import { showToast } from "@/utils/common";
 import "./index.scss";
 
 type Partner = (typeof MOCK_PARTNERS)[number];
-type RoleKey = "office" | "entrepreneur" | "trainer" | "ambassador";
+type RoleKey = "office" | "entrepreneur" | "trainer" | "ambassador" | "gym_partner";
 
 const ROLE_META: Record<RoleKey, { label: string; icon: string; color: string }> = {
   office: { label: "Dân VP", icon: "💼", color: "#00C9A7" },
   entrepreneur: { label: "Chủ DN", icon: "🚀", color: "#FF8C42" },
   trainer: { label: "PT/Yoga", icon: "🏋️", color: "#722ed1" },
   ambassador: { label: "Đại sứ lối sống", icon: "💚", color: "#E8473B" },
+  gym_partner: { label: "Chủ Gym Partner", icon: "🏋️‍♂️", color: "#2563EB" },
 };
 
 export default function PartnersPage() {
@@ -83,11 +84,11 @@ export default function PartnersPage() {
         <div>
           <h2>Business Owners (BO)</h2>
           <p style={{ fontSize: 13, color: "#6B8A85", marginTop: 4 }}>
-            Mạng lưới chủ trạm MF7 — 4 profiles từ Dân VP đến Đại sứ lối sống khỏe
+            Mạng lưới chủ trạm MF7 — 5 profiles: Dân VP, Chủ DN, PT/Yoga, Đại sứ lối sống, Chủ Gym Partner (INSIDE)
           </p>
         </div>
         <div className="tab-switch">
-          {(["all", "office", "entrepreneur", "trainer", "ambassador"] as const).map((tab) => (
+          {(["all", "office", "entrepreneur", "trainer", "ambassador", "gym_partner"] as const).map((tab) => (
             <button
               key={tab}
               className={activeTab === tab ? "active" : ""}

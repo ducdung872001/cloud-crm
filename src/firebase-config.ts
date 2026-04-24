@@ -41,9 +41,21 @@ const firebaseConfig = {
   appId:             import.meta.env.VITE_FIREBASE_APP_ID,
 };
 
-// Khởi tạo Firebase
-const app = initializeApp(firebaseConfig);
-const messaging = getMessaging(app);
+// Khởi tạo Firebase — nhưng chỉ khi có đủ config.
+// Ở môi trường dev local, .env.devlocal chưa điền VITE_FIREBASE_* →
+// initializeApp sẽ throw "Missing App configuration value: projectId" + làm trắng màn hình.
+// Guard này cho phép app chạy được mà không có push notification ở local.
+let messaging: ReturnType<typeof getMessaging> | null = null;
+if (firebaseConfig.projectId) {
+  try {
+    const app = initializeApp(firebaseConfig);
+    messaging = getMessaging(app);
+  } catch (e) {
+    console.warn("[firebase-config] Không khởi tạo được Firebase Messaging:", e);
+  }
+} else {
+  console.warn("[firebase-config] Bỏ qua Firebase Messaging — thiếu VITE_FIREBASE_PROJECT_ID (dev local).");
+}
 
 const saveFCM = async (token, deviceId, employeeId, userId) => {
   const params = {
@@ -64,6 +76,10 @@ const saveFCM = async (token, deviceId, employeeId, userId) => {
 export const requestPermission = async (jwtToken) => {
   if (!("Notification" in window)) {
     console.error("Trình duyệt không hỗ trợ Notifications.");
+    return;
+  }
+  if (!messaging) {
+    // Firebase chưa init — bỏ qua để không spam lỗi ở dev local
     return;
   }
 

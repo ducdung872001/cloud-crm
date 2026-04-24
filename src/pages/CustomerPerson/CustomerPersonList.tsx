@@ -1461,6 +1461,8 @@ export default function CustomerPersonList() {
       field: "phoneMasked",
       cellRenderer: PhoneToAction,
       cellRendererParams: { isShowPhone, valueShowPhone, idCustomer },
+      cellStyle: { display: "flex", justifyContent: "center" },
+      headerClass: "header-center",
     },
 
     ...(checkSubdomainTNEX
@@ -1573,11 +1575,11 @@ export default function CustomerPersonList() {
       cellRenderer: PhoneToAction,
       cellRendererParams: { isShowPhone, valueShowPhone, idCustomer },
     },
-    { headerName: "Facebook", width: 130, field: "profileLink", cellRenderer: SocialToAction },
-    { headerName: "Ngày mua cuối", width: 140, field: "lastBoughtDate" },
-    { headerName: "Tổng doanh số", width: 140, field: "fee", type: "rightAligned" },
-    { headerName: "Tổng doanh thu", width: 145, field: "paid", type: "rightAligned" },
-    { headerName: "Công nợ", width: 100, field: "debt", type: "rightAligned", cellRenderer: DeptToAction },
+    { headerName: "Facebook", width: 130, field: "profileLink", cellRenderer: SocialToAction, headerClass: "header-left" },
+    { headerName: "Ngày mua cuối", width: 140, field: "lastBoughtDate", headerClass: "header-center", cellStyle: { display: "flex", justifyContent: "center" } },
+    { headerName: "Tổng doanh số", width: 140, field: "fee", type: "rightAligned", headerClass: "header-right", cellStyle: { display: "flex", justifyContent: "flex-end" } },
+    { headerName: "Tổng doanh thu", width: 145, field: "paid", type: "rightAligned", headerClass: "header-right", cellStyle: { display: "flex", justifyContent: "flex-end" } },
+    { headerName: "Công nợ", width: 100, field: "debt", type: "rightAligned", cellRenderer: DeptToAction, headerClass: "header-right", cellStyle: { display: "flex", justifyContent: "flex-end" } },
   ];
 
   const [columnDefs, setColumnDefs] = useState<Record<string, unknown>>(defaultValueColumnDefs);

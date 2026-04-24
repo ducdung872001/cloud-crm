@@ -520,18 +520,21 @@ export default function ProjectList() {
       field: "startTime",
       cellRenderer: RendererStartTime,
       headerClass: "header-center",
+      cellStyle: { display: "flex", justifyContent: "center" },
     },
     {
       headerName: "Ngày hết hạn",
       field: "endTime",
       cellRenderer: RendererEndTime,
       headerClass: "header-center",
+      cellStyle: { display: "flex", justifyContent: "center" },
     },
     {
       headerName: "Báo cáo dự án",
       field: "report",
       cellRenderer: LinkToReport,
       headerClass: "header-center",
+      cellStyle: { display: "flex", justifyContent: "center" },
     },
 
     {
@@ -540,6 +543,8 @@ export default function ProjectList() {
       field: "action",
       cellRendererParams: { params },
       cellRenderer: ActionRenderer,
+      headerClass: "header-center",
+      cellStyle: { display: "flex", justifyContent: "center" },
     },
     // {
     //   headerName: "",

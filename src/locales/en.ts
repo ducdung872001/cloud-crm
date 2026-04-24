@@ -105,6 +105,8 @@ const en = {
     fpMarketingFunnel: "Marketing Funnel",
     fpTaxStation: "Tax per Station",
     fpMF7Onboarding: "MF7 Onboarding",
+    fpMoneyBackGuarantee: "30-Day Money-Back Guarantee",
+    fpEGift: "EGIFT — Phygital Rewards",
     internalMail: "Internal mail",
     document: "Documents",
     createKPIFramework: "Create KPIs",

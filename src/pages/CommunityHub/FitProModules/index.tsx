@@ -29,7 +29,7 @@ export default function FitProModulesPage() {
   React.useEffect(() => {
     if (pathTab) setTab(pathTab.key);
   }, [pathTab?.key]);
-  const [createStationType, setCreateStationType] = useState<"home" | "coworking" | null>(null);
+  const [createStationType, setCreateStationType] = useState<"home" | "center" | "inside" | null>(null);
   const [shareContent, setShareContent] = useState<{ title: string; type: string } | null>(null);
   const [stationForm, setStationForm] = useState({
     name: "",
@@ -44,7 +44,10 @@ export default function FitProModulesPage() {
   const handleCreateStation = () => {
     if (!stationForm.name.trim()) { alert("Vui lòng nhập tên trạm"); return; }
     if (!stationForm.code.trim()) { alert("Vui lòng nhập mã trạm"); return; }
-    alert(`✓ Đã tạo ${createStationType === "home" ? "Home FitPro" : "Co-Working FitPro"}: ${stationForm.name} (${stationForm.code})\nSetup 72h sẽ bắt đầu.`);
+    const typeLabel = createStationType === "home" ? "Home FitPro"
+      : createStationType === "center" ? "FitPro CENTER"
+      : "FitPro INSIDE";
+    alert(`✓ Đã tạo ${typeLabel}: ${stationForm.name} (${stationForm.code})\nSetup 72h sẽ bắt đầu.`);
     setCreateStationType(null);
     setStationForm({ name: "", code: "", address: "", city: "Hà Nội", total_mats: 5, owner_name: "", opening_date: new Date().toISOString().split("T")[0] });
   };
@@ -87,30 +90,41 @@ export default function FitProModulesPage() {
       )}
 
       <div style={{ background: "#fff", borderRadius: 12, padding: 24, boxShadow: "0 2px 12px rgba(11,46,42,.06)", minHeight: 400 }}>
-        {/* F2: Station Type config */}
+        {/* F2: Station Type config — 3 loại: HOME / CENTER / INSIDE */}
         {tab === "f2-station-type" && (
           <div>
-            <h3 style={{ marginTop: 0 }}>🏠 Cấu hình loại trạm (Home vs Co-Working)</h3>
-            <p style={{ fontSize: 13, color: "#6B8A85" }}>Định nghĩa cấu hình mặc định cho 2 loại trạm theo slide 7</p>
+            <h3 style={{ marginTop: 0 }}>🏠 Cấu hình loại trạm (3 mô hình Phygital)</h3>
+            <p style={{ fontSize: 13, color: "#6B8A85" }}>
+              Theo định vị của Reborn JSC trong tài liệu chiến lược "Kiến tạo hạ tầng sức khỏe cho 100 triệu người Việt": 3 loại trạm tương ứng 3 mô hình triển khai khác nhau — từ nhà tại gia, hub cộng đồng, đến plugin cấy vào gym/yoga có sẵn.
+            </p>
             <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: 16, marginTop: 20 }}>
               {[
                 {
                   type: "home", label: "Home FitPro", color: "#4DE4C4", icon: "🏠",
-                  desc: "Riêng tư tuyệt đối — 100% khách VIP là người thân quen, tận dụng không gian sống",
+                  desc: "Mạch máu — biến ngôi nhà thành điểm kinh doanh qua mạng lưới quan hệ thân quen",
                   mats: "3-7 thảm",
-                  investment: "Tối thiểu — chỉ cần thảm",
+                  investment: "CapEx gần bằng 0 — chỉ cần thảm",
                   hours: "6:00 - 9:00",
                   customers: "Gia đình, thân quen",
                   setup_cost: "< 10 triệu",
                 },
                 {
-                  type: "coworking", label: "Co-Working FitPro", color: "#FF8C42", icon: "🏢",
-                  desc: "Tối ưu chi phí — 5-7 BO thuê chung, phân bổ cost siêu rẻ 2-3tr/người/tháng",
-                  mats: "5-20 thảm",
-                  investment: "Chia sẻ với BO khác",
+                  type: "center", label: "FitPro CENTER", color: "#FF8C42", icon: "🏢",
+                  desc: "Hub cộng đồng — điểm tập chuyên nghiệp địa phương, loại bỏ máy móc hạng nặng, tối ưu ROI trên m²",
+                  mats: "10-20 thảm",
+                  investment: "Chia sẻ với 5-7 BO khác",
                   hours: "6:00 - 9:00",
                   customers: "Vãng lai + thân quen",
                   setup_cost: "~30-50 triệu (chia 5-7 BO)",
+                },
+                {
+                  type: "inside", label: "FitPro INSIDE", color: "#2563EB", icon: "🔌",
+                  desc: "Cánh tay nối dài — plugin hệ điều hành Phygital cấy vào Gym/Yoga có sẵn. Tích hợp 0 đồng, cộng hưởng lưu lượng khách, chuẩn hóa dinh dưỡng cho thị trường cũ",
+                  mats: "Dùng thảm của gym chủ",
+                  investment: "0 đồng OpEx — hợp tác liên minh",
+                  hours: "Theo giờ gym chủ",
+                  customers: "Toàn bộ hội viên gym chủ",
+                  setup_cost: "0 đồng (chia sẻ doanh thu digital)",
                 },
               ].map((s) => (
                 <div key={s.type} style={{ padding: 18, borderRadius: 12, border: `2px solid ${s.color}`, background: `${s.color}11` }}>
@@ -126,8 +140,12 @@ export default function FitProModulesPage() {
                   </div>
                   <button
                     onClick={() => {
-                      setCreateStationType(s.type as "home" | "coworking");
-                      setStationForm({ ...stationForm, total_mats: s.type === "home" ? 5 : 12 });
+                      const typ = s.type as "home" | "center" | "inside";
+                      setCreateStationType(typ);
+                      setStationForm({
+                        ...stationForm,
+                        total_mats: typ === "home" ? 5 : typ === "center" ? 12 : 0,
+                      });
                     }}
                     style={{ marginTop: 12, width: "100%", padding: "8px 14px", background: s.color, color: "#fff", border: "none", borderRadius: 6, fontWeight: 600, cursor: "pointer" }}
                   >
@@ -200,6 +218,20 @@ export default function FitProModulesPage() {
                   <h4 style={{ marginTop: 0, fontSize: 13 }}>🎯 Đánh giá</h4>
                   <div style={{ fontSize: 11, color: "#6B8A85" }}>
                     Thành viên đang đạt <strong style={{ color: "#00C9A7" }}>71% target</strong>, có khả năng cao hoàn thành 90 ngày với kết quả tốt. Khuyến nghị nhắc BO review kế hoạch dinh dưỡng.
+                  </div>
+                </div>
+
+                {/* ── Phase 2.3 — AI Nutrition Engine recommendation ── */}
+                <div style={{ marginTop: 12, padding: 14, background: "#EEF3FF", borderRadius: 10, border: "1px solid #B8C9E8" }}>
+                  <h4 style={{ marginTop: 0, fontSize: 13, color: "#1E3A8A" }}>🤖 AI Nutrition Engine — gợi ý khẩu phần sau buổi tập</h4>
+                  <div style={{ fontSize: 11, color: "#1E3A8A", lineHeight: 1.7 }}>
+                    Dựa trên dữ liệu Medlatec + cân nặng + mục tiêu → gợi ý tự động sau mỗi check-out:<br/>
+                    🥤 <strong>35g Whey Protein</strong> (Herbalife F1 Nutritional Shake)<br/>
+                    🍽️ <strong>450 kcal</strong> bữa chính — ưu tiên rau xanh + gà/cá + tinh bột phức hợp<br/>
+                    💊 Bổ sung <strong>Magnesium 400mg</strong> (hỗ trợ phục hồi cơ)<br/>
+                    <div style={{ marginTop: 8, fontSize: 10, color: "#6B7280" }}>
+                      → Push notification tới app hội viên trong 5 phút sau check-out. (UR-FITPRO-AI-NUT)
+                    </div>
                   </div>
                 </div>
               </div>
@@ -533,12 +565,12 @@ export default function FitProModulesPage() {
               <thead>
                 <tr style={{ background: "#E4F7F3" }}>
                   <th style={{ padding: 10, textAlign: "left" }}>Trạm</th>
-                  <th style={{ padding: 10 }}>MST HKD</th>
-                  <th style={{ padding: 10 }}>DT tháng 03</th>
-                  <th style={{ padding: 10 }}>Thuế khoán (1.5%)</th>
-                  <th style={{ padding: 10 }}>Trạng thái nộp</th>
-                  <th style={{ padding: 10 }}>Hạn nộp</th>
-                  <th style={{ padding: 10 }}>Hành động</th>
+                  <th style={{ padding: 10, textAlign: "center" }}>MST HKD</th>
+                  <th style={{ padding: 10, textAlign: "right" }}>DT tháng 03</th>
+                  <th style={{ padding: 10, textAlign: "right" }}>Thuế khoán (1.5%)</th>
+                  <th style={{ padding: 10, textAlign: "center" }}>Trạng thái nộp</th>
+                  <th style={{ padding: 10, textAlign: "center" }}>Hạn nộp</th>
+                  <th style={{ padding: 10, textAlign: "center" }}>Hành động</th>
                 </tr>
               </thead>
               <tbody>
@@ -550,7 +582,7 @@ export default function FitProModulesPage() {
                   return (
                     <tr key={s.id} style={{ borderBottom: "1px solid #E0E8E5" }}>
                       <td style={{ padding: 10 }}><strong>{s.code}</strong><br /><span style={{ fontSize: 10, color: "#6B8A85" }}>{s.owner_name}</span></td>
-                      <td style={{ padding: 10, fontFamily: "monospace", fontSize: 11 }}>HKD-{String(i + 1).padStart(4, "0")}</td>
+                      <td style={{ padding: 10, fontFamily: "monospace", fontSize: 11, textAlign: "center" }}>HKD-{String(i + 1).padStart(4, "0")}</td>
                       <td style={{ padding: 10, textAlign: "right" }}>{formatCurrency(s.month_revenue_vnd, ".", "")}đ</td>
                       <td style={{ padding: 10, textAlign: "right", color: "#FF8C42", fontWeight: 600 }}>
                         {formatCurrency(taxAmount, ".", "")}đ
@@ -762,11 +794,15 @@ export default function FitProModulesPage() {
               alignItems: "center",
               background: createStationType === "home"
                 ? "linear-gradient(135deg, #E4F7F3 0%, #fff 100%)"
-                : "linear-gradient(135deg, #FFF0E3 0%, #fff 100%)",
+                : createStationType === "center"
+                ? "linear-gradient(135deg, #FFF0E3 0%, #fff 100%)"
+                : "linear-gradient(135deg, #E0EBFF 0%, #fff 100%)",
               borderRadius: "14px 14px 0 0",
             }}>
               <h3 style={{ margin: 0, color: "#0B2E2A" }}>
-                {createStationType === "home" ? "🏠 Tạo Home FitPro" : "🏢 Tạo Co-Working FitPro"}
+                {createStationType === "home" ? "🏠 Tạo Home FitPro"
+                  : createStationType === "center" ? "🏢 Tạo FitPro CENTER"
+                  : "🔌 Tạo FitPro INSIDE (plugin cấy vào gym có sẵn)"}
               </h3>
               <button
                 onClick={() => setCreateStationType(null)}
@@ -777,9 +813,15 @@ export default function FitProModulesPage() {
             </div>
             <div style={{ padding: 24 }}>
               <div style={{ padding: 12, background: "#F5F9F8", borderRadius: 8, marginBottom: 16, fontSize: 12, color: "#6B8A85" }}>
-                ⏰ Giờ vận hành: <strong>6:00 - 9:00</strong> sáng ·
-                🧘 Số thảm: <strong>{createStationType === "home" ? "3-7" : "5-20"}</strong> ·
-                ⚡ Sẵn sàng đón khách sau <strong>72 giờ</strong> setup
+                {createStationType === "inside" ? (
+                  <>🔌 <strong>Model INSIDE:</strong> plugin cấy vào gym/yoga có sẵn · 0 đồng đầu tư · chia sẻ doanh thu digital với chủ gym partner</>
+                ) : (
+                  <>
+                    ⏰ Giờ vận hành: <strong>6:00 - 9:00</strong> sáng ·
+                    🧘 Số thảm: <strong>{createStationType === "home" ? "3-7" : "10-20"}</strong> ·
+                    ⚡ Sẵn sàng đón khách sau <strong>72 giờ</strong> setup
+                  </>
+                )}
               </div>
 
               <div style={{ marginBottom: 14 }}>
@@ -789,7 +831,11 @@ export default function FitProModulesPage() {
                   type="text"
                   value={stationForm.name}
                   onChange={(e) => setStationForm({ ...stationForm, name: e.target.value })}
-                  placeholder={createStationType === "home" ? "VD: Trạm Nguyễn Văn A (Hà Đông)" : "VD: Trạm Cầu Giấy Co-Work"}
+                  placeholder={
+                    createStationType === "home" ? "VD: Trạm Nguyễn Văn A (Hà Đông)"
+                    : createStationType === "center" ? "VD: Trạm Cầu Giấy CENTER"
+                    : "VD: FitPro INSIDE @ California Gym Mỹ Đình"
+                  }
                   style={{ width: "100%", padding: "10px 14px", borderRadius: 8, border: "1px solid #d9e0de", fontSize: 14 }}
                 />
               </div>
@@ -828,21 +874,25 @@ export default function FitProModulesPage() {
               </div>
 
               <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12, marginBottom: 14 }}>
+                {createStationType !== "inside" && (
+                  <div>
+                    <label style={{ fontSize: 12, color: "#6B8A85", marginBottom: 4, display: "block" }}>
+                      Số thảm tập ({createStationType === "home" ? "3-7" : "10-20"})
+                    </label>
+                    <input
+                      type="number"
+                      min={createStationType === "home" ? 3 : 10}
+                      max={createStationType === "home" ? 7 : 20}
+                      value={stationForm.total_mats}
+                      onChange={(e) => setStationForm({ ...stationForm, total_mats: Number(e.target.value) })}
+                      style={{ width: "100%", padding: "10px 14px", borderRadius: 8, border: "1px solid #d9e0de", fontSize: 14 }}
+                    />
+                  </div>
+                )}
                 <div>
                   <label style={{ fontSize: 12, color: "#6B8A85", marginBottom: 4, display: "block" }}>
-                    Số thảm tập ({createStationType === "home" ? "3-7" : "5-20"})
+                    {createStationType === "inside" ? "Ngày deploy plugin" : "Ngày khai trương"}
                   </label>
-                  <input
-                    type="number"
-                    min={createStationType === "home" ? 3 : 5}
-                    max={createStationType === "home" ? 7 : 20}
-                    value={stationForm.total_mats}
-                    onChange={(e) => setStationForm({ ...stationForm, total_mats: Number(e.target.value) })}
-                    style={{ width: "100%", padding: "10px 14px", borderRadius: 8, border: "1px solid #d9e0de", fontSize: 14 }}
-                  />
-                </div>
-                <div>
-                  <label style={{ fontSize: 12, color: "#6B8A85", marginBottom: 4, display: "block" }}>Ngày khai trương</label>
                   <input
                     type="date"
                     value={stationForm.opening_date}
@@ -852,13 +902,70 @@ export default function FitProModulesPage() {
                 </div>
               </div>
 
+              {/* Fields đặc thù cho INSIDE — gym chủ + % share */}
+              {createStationType === "inside" && (
+                <div style={{
+                  padding: 14, background: "#EEF3FF", borderRadius: 10,
+                  border: "1px solid #B8C9E8", marginBottom: 14,
+                }}>
+                  <div style={{ fontSize: 12, fontWeight: 700, color: "#1E3A8A", marginBottom: 10 }}>
+                    🔌 Thông tin Gym chủ nhà (host brand)
+                  </div>
+                  <div style={{ marginBottom: 10 }}>
+                    <label style={{ fontSize: 12, color: "#4B5563", marginBottom: 4, display: "block" }}>
+                      Tên thương hiệu gym chủ *
+                    </label>
+                    <input
+                      type="text"
+                      value={(stationForm as any).host_brand_name || ""}
+                      onChange={(e) => setStationForm({ ...stationForm, host_brand_name: e.target.value } as any)}
+                      placeholder="VD: California Gym, Fit24, Elite Yoga..."
+                      style={{ width: "100%", padding: "10px 14px", borderRadius: 8, border: "1px solid #B8C9E8", fontSize: 14 }}
+                    />
+                  </div>
+                  <div style={{ display: "grid", gridTemplateColumns: "2fr 1fr", gap: 10 }}>
+                    <div>
+                      <label style={{ fontSize: 12, color: "#4B5563", marginBottom: 4, display: "block" }}>
+                        BO partner (Chủ gym phụ trách — profile "Chủ Gym Partner")
+                      </label>
+                      <input
+                        type="text"
+                        value={(stationForm as any).host_partner_bo_id || ""}
+                        onChange={(e) => setStationForm({ ...stationForm, host_partner_bo_id: e.target.value } as any)}
+                        placeholder="Chọn BO profile=gym_partner..."
+                        style={{ width: "100%", padding: "10px 14px", borderRadius: 8, border: "1px solid #B8C9E8", fontSize: 14 }}
+                      />
+                    </div>
+                    <div>
+                      <label style={{ fontSize: 12, color: "#4B5563", marginBottom: 4, display: "block" }}>
+                        % chia doanh thu digital (0-100)
+                      </label>
+                      <input
+                        type="number"
+                        min={0}
+                        max={100}
+                        defaultValue={20}
+                        value={(stationForm as any).revenue_share_digital ?? 20}
+                        onChange={(e) => setStationForm({ ...stationForm, revenue_share_digital: Number(e.target.value) } as any)}
+                        style={{ width: "100%", padding: "10px 14px", borderRadius: 8, border: "1px solid #B8C9E8", fontSize: 14 }}
+                      />
+                    </div>
+                  </div>
+                  <div style={{ marginTop: 10, fontSize: 11, color: "#6B7280" }}>
+                    💡 BO partner sẽ nhận % doanh thu digital (subscription, nutrition) để bù chi phí chia sẻ không gian + khách hàng. Mặc định 20%.
+                  </div>
+                </div>
+              )}
+
               <div style={{ marginBottom: 14 }}>
-                <label style={{ fontSize: 12, color: "#6B8A85", marginBottom: 4, display: "block" }}>Chủ trạm (BO phụ trách)</label>
+                <label style={{ fontSize: 12, color: "#6B8A85", marginBottom: 4, display: "block" }}>
+                  {createStationType === "inside" ? "BO FitPro quản lý plugin" : "Chủ trạm (BO phụ trách)"}
+                </label>
                 <input
                   type="text"
                   value={stationForm.owner_name}
                   onChange={(e) => setStationForm({ ...stationForm, owner_name: e.target.value })}
-                  placeholder="Tên BO chịu trách nhiệm..."
+                  placeholder={createStationType === "inside" ? "Tên BO FitPro chăm sóc plugin này..." : "Tên BO chịu trách nhiệm..."}
                   style={{ width: "100%", padding: "10px 14px", borderRadius: 8, border: "1px solid #d9e0de", fontSize: 14 }}
                 />
               </div>
@@ -878,12 +985,14 @@ export default function FitProModulesPage() {
                 disabled={!stationForm.name.trim() || !stationForm.code.trim()}
                 style={{
                   padding: "10px 20px", borderRadius: 8, border: "none",
-                  background: createStationType === "home" ? "#4DE4C4" : "#FF8C42",
+                  background: createStationType === "home" ? "#4DE4C4"
+                    : createStationType === "center" ? "#FF8C42"
+                    : "#2563EB",
                   color: "#fff", fontWeight: 700, cursor: "pointer",
                   opacity: !stationForm.name.trim() || !stationForm.code.trim() ? 0.5 : 1,
                 }}
               >
-                ✓ Tạo trạm & Bắt đầu setup 72h
+                {createStationType === "inside" ? "✓ Cấy plugin & Kích hoạt" : "✓ Tạo trạm & Bắt đầu setup 72h"}
               </button>
             </div>
           </div>

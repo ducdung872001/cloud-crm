@@ -1,10 +1,23 @@
 // [FitPro] Mock data for Station Layout module
-// Thay thế accommodation (phòng/giường) bằng trạm FitPro với thảm tập
-// Home FitPro: 3-7 thảm | Co-working FitPro: 5-20 thảm
-
-export type StationType = "home" | "coworking";
+// 3 loại trạm FitPro — phân chia theo PDF "Kiến tạo hạ tầng sức khỏe cho 100 triệu người Việt":
+//   home:   Home FitPro      — 3-7 thảm tại gia (BO tự sở hữu)
+//   center: FitPro CENTER    — 10-20 thảm, Hub cộng đồng địa phương (BO góp vốn)
+//   inside: FitPro INSIDE    — Plugin cấy vào Gym/Yoga có sẵn (hợp tác liên minh, không sở hữu)
+//
+// Migration: các record cũ có `type="coworking"` tự map sang `type="center"` khi load.
+export type StationType = "home" | "center" | "inside";
 export type MatStatus = "available" | "occupied" | "maintenance";
 export type MatSlot = "6-7h" | "7-8h" | "8-9h";
+
+// Metadata đặc thù của trạm INSIDE — gắn với chủ gym/yoga partner
+export interface InsidePluginMeta {
+  hostBrandName: string;          // VD "Gym Fit24", "Yoga California"
+  hostBrandLogoUrl?: string;
+  hostPartnerBoId?: string;        // Link tới BO profile=gym_partner
+  revenueShareDigital: number;     // % BO partner nhận từ digital/nutrition (0-100)
+  pluginDeployDate?: string;       // ISO — ngày cấy plugin
+  pluginStatus?: "pending" | "deployed" | "paused";
+}
 
 export interface IFitProMat {
   mat_no: number;
@@ -37,6 +50,22 @@ export interface IFitProStation {
   today_sessions: number;     // số buổi tập hôm nay
   month_revenue_vnd: number;
   parent_station_id?: string; // trạm cấp trên (tầng trên)
+  insidePlugin?: InsidePluginMeta; // chỉ có khi type="inside"
+}
+
+// Helper resolve type cũ ("coworking") → mới ("center") cho backward compat
+export function normalizeStationType(raw: string | undefined): StationType {
+  if (raw === "coworking" || raw === "co_working") return "center";
+  if (raw === "home" || raw === "center" || raw === "inside") return raw;
+  return "home"; // fallback
+}
+
+export function getStationTypeLabel(type: StationType): string {
+  switch (type) {
+    case "home": return "Home FitPro";
+    case "center": return "FitPro CENTER";
+    case "inside": return "FitPro INSIDE";
+  }
 }
 
 const makeMat = (n: number, status: MatStatus = "available", session: IFitProMat["session"] = null): IFitProMat => ({
@@ -74,8 +103,8 @@ export const MOCK_FITPRO_STATIONS: IFitProStation[] = [
     id: "ST-002",
     code: "FP-HN-002",
     name: "Trạm Cầu Giấy Co-Work",
-    type: "coworking",
-    typeLabel: "Co-Working FitPro",
+    type: "center",
+    typeLabel: "FitPro CENTER",
     owner_name: "Trần Văn B",
     owner_tier: 1,
     address: "Tầng 2, Tòa Indochina, Cầu Giấy",
@@ -131,8 +160,8 @@ export const MOCK_FITPRO_STATIONS: IFitProStation[] = [
     id: "ST-004",
     code: "FP-DN-001",
     name: "Trạm Hải Châu Đà Nẵng",
-    type: "coworking",
-    typeLabel: "Co-Working FitPro",
+    type: "center",
+    typeLabel: "FitPro CENTER",
     owner_name: "Lê Thị D",
     owner_tier: 2,
     parent_station_id: "ST-001",
@@ -160,6 +189,33 @@ export const MOCK_FITPRO_STATIONS: IFitProStation[] = [
           : null
       );
     }),
+  },
+  {
+    id: "ST-006",
+    code: "FP-INS-001",
+    name: "FitPro INSIDE @ California Gym Mỹ Đình",
+    type: "inside",
+    typeLabel: "FitPro INSIDE",
+    owner_name: "Hoàng Văn K",
+    owner_tier: 2,
+    parent_station_id: "ST-002",
+    address: "The Manor, Mỹ Đình 1, Nam Từ Liêm",
+    city: "Hà Nội",
+    total_mats: 0, // INSIDE tận dụng thảm của gym chủ
+    operating_hours: "6:00 - 21:00 (theo giờ gym chủ)",
+    opened_date: "2026-03-15",
+    status: "active",
+    today_sessions: 18,
+    month_revenue_vnd: 58000000,
+    mats: [],
+    insidePlugin: {
+      hostBrandName: "California Gym",
+      hostBrandLogoUrl: "/assets/brands/california-gym.png",
+      hostPartnerBoId: "BO-PARTNER-001",
+      revenueShareDigital: 20, // BO partner nhận 20% doanh thu digital/nutrition
+      pluginDeployDate: "2026-03-10",
+      pluginStatus: "deployed",
+    },
   },
   {
     id: "ST-005",

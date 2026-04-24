@@ -1,5 +1,8 @@
-// [FitPro] Business Owner profiles — 4 loại BO theo slide 5 của pptx
-// Office / Entrepreneur / Trainer / Lifestyle Ambassador
+// [FitPro] Business Owner profiles — 5 loại BO
+// Office / Entrepreneur / Trainer / Lifestyle Ambassador / Gym Partner
+//
+// Profile thứ 5 (gym_partner) dành cho chủ gym/yoga đồng ý cấy plugin FitPro INSIDE
+// (xem docs/urd/part-15-fitpro-phygital-roadmap.md#ur-fitpro-02)
 export const MOCK_PARTNERS = [
   {
     id: "BO-001",
@@ -91,6 +94,25 @@ export const MOCK_PARTNERS = [
     problem: "Bán sức lấy tiền theo giờ, thu nhập bị giới hạn",
     solution: "Nhân bản thu nhập không phụ thuộc máy móc",
   },
+  // ── Profile thứ 5: Chủ Gym Partner (INSIDE model) ──
+  {
+    id: "BO-PARTNER-001",
+    name: "Nguyễn Minh F",
+    role: "gym_partner" as const,
+    roleLabel: "Chủ Gym Partner (California Gym)",
+    area: "Hà Nội",
+    avatar: null,
+    tier: 1,
+    stations_owned: 1, // 1 trạm INSIDE tại gym của họ
+    stations_downline: 0,
+    total_members_served: 240, // hội viên sẵn có của gym chủ
+    commission_this_month_vnd: 12000000, // 20% doanh thu digital
+    commission_rate: 0.2, // 20% — cho INSIDE model
+    referrals: 0,
+    joined_date: "2026-03-10",
+    problem: "Phòng gym có sẵn cơ sở vật chất nhưng thiếu giải pháp digital + dinh dưỡng để tăng ARPU",
+    solution: "Cấy plugin FitPro INSIDE 0 đồng, chia sẻ doanh thu digital 20%, giữ nguyên thương hiệu gốc",
+  },
 ];
 
-export type PartnerRole = "office" | "entrepreneur" | "trainer" | "ambassador";
+export type PartnerRole = "office" | "entrepreneur" | "trainer" | "ambassador" | "gym_partner";

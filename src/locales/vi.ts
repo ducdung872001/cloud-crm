@@ -105,6 +105,8 @@ const vi = {
     fpMarketingFunnel: "Phễu marketing",
     fpTaxStation: "Khai thuế từng trạm",
     fpMF7Onboarding: "Onboarding MF7",
+    fpMoneyBackGuarantee: "Cam kết hoàn tiền 30 ngày",
+    fpEGift: "EGIFT — Quà tặng Phygital",
     internalMail: "Thư nội bộ",
     document: "Tài liệu",
     createKPIFramework: "Tạo bộ KPI",

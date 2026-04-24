@@ -81,7 +81,13 @@
       "Bash(python docs/userguides/tooling/gen-hdsd-full.py)",
       "Bash(python md_to_docx.py ../HDSD-full.md ../HDSD-Reborn-CRM-v0.6.docx --title \"Reborn CRM — FitPro\" --subtitle \"Tài liệu hướng dẫn sử dụng — Chuỗi trạm FitPro 6-9h\" --header \"Hướng dẫn sử dụng Reborn CRM — FitPro v0.6\" --cover-label \"HƯỚNG DẪN SỬ DỤNG v0.6\")",
       "Bash(python -c ' *)",
-      "Bash(python md_to_docx.py ../HDSD-full.md ../HDSD-Reborn-CRM-v0.6.docx --title \"FitPro\" --subtitle \"Nền tảng quản lý chuỗi trạm tập 6-9h\" --header \"Hướng dẫn sử dụng FitPro v0.6\" --cover-label \"HƯỚNG DẪN SỬ DỤNG v0.6\" --logo \"../images/_branding/reborn-logo.png\" --vendor \"Reborn JSC — Công ty Cổ phần Công nghệ và Truyền thông Reborn\" --version \"Phiên bản 0.6 · 24/04/2026\")"
+      "Bash(python md_to_docx.py ../HDSD-full.md ../HDSD-Reborn-CRM-v0.6.docx --title \"FitPro\" --subtitle \"Nền tảng quản lý chuỗi trạm tập 6-9h\" --header \"Hướng dẫn sử dụng FitPro v0.6\" --cover-label \"HƯỚNG DẪN SỬ DỤNG v0.6\" --logo \"../images/_branding/reborn-logo.png\" --vendor \"Reborn JSC — Công ty Cổ phần Công nghệ và Truyền thông Reborn\" --version \"Phiên bản 0.6 · 24/04/2026\")",
+      "Bash(python -c \"import pypdf; print\\(pypdf.__version__\\)\")",
+      "Bash(pdftotext -layout \"docs/fitpro/info/FitPro_Health_Infrastructure.pdf\" /tmp/fitpro-health.txt)",
+      "Bash(pdftotext \"docs/fitpro/info/FitPro_Health_Infrastructure.pdf\" /tmp/fitpro-health.txt)",
+      "Bash(python -c \"import fitz; print\\(fitz.version\\)\")",
+      "Bash(python d:/tmp/pdf-to-pages.py docs/fitpro/info/FitPro_Health_Infrastructure.pdf d:/tmp/pdf-health 100)",
+      "Bash(python d:/tmp/pdf-to-pages.py docs/fitpro/info/FitPro_Inside_Phygital_Evolution.pdf d:/tmp/pdf-phygital 100)"
     ],
     "additionalDirectories": [
       "\\tmp"
