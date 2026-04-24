@@ -108,8 +108,8 @@ const apiToInput = (s: string): string => {
 
 // ─── Channel emoji map ───────────────────────────────────────────────────────
 const CHANNEL_ICONS: Record<string, string> = {
-  "Tại quầy (Offline)": "🏪",
-  "Tại quầy (POS)":     "🏪",
+  "Tại trạm (Offline)": "🏪",
+  "Tại trạm (POS)":     "🏪",
   "Website bán hàng":   "🛒",
   "Fanpage / Zalo OA":  "💬",
   "Sàn thương mại điện tử": "🛍️",

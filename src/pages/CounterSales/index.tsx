@@ -42,7 +42,7 @@ import { IFixedPriceEntry } from "model/promotion/PromotionModel";
 const INITIAL_CART: CartItem[] = [];
 
 const CounterSales: React.FC = () => {
-  document.title = "Bán hàng tại quầy";
+  document.title = "Bán hàng tại trạm";
   const location = useLocation();
   const { dataBranch, id: userId } = React.useContext(UserContext) as ContextType;
 

@@ -39,7 +39,7 @@ export const TOURS: Record<TourId, TourStep[]> = {
       selector: ".level-1:nth-child(3)",   // Mục "Bán hàng & Đơn hàng"
       position: "right",
       title:    "🛒 Bán hàng & Đơn hàng",
-      content:  "Khu vực chính để bán hàng tại quầy (POS), quản lý đơn hàng, đổi/trả hàng và đồng bộ đơn online.",
+      content:  "Khu vực chính để bán hàng tại trạm (POS), quản lý đơn hàng, đổi/trả hàng và đồng bộ đơn online.",
       scrollIntoView: true,
     },
     {
@@ -100,17 +100,17 @@ export const TOURS: Record<TourId, TourStep[]> = {
       selector: null,
       position: "center",
       title:    "✅ Xong! Hãy vào ca ngay",
-      content:  "Tab \"Chưa vào ca\" → chọn ca của bạn → bấm \"Vào ca\". Sau đó vào Bán hàng tại quầy để bắt đầu!",
+      content:  "Tab \"Chưa vào ca\" → chọn ca của bạn → bấm \"Vào ca\". Sau đó vào Bán hàng tại trạm để bắt đầu!",
     },
   ],
 
-  // ── Tour 3: Trang Bán hàng tại quầy (POS) ─────────────────────────────────
+  // ── Tour 3: Trang Bán hàng tại trạm (POS) ─────────────────────────────────
   pos: [
     {
       selector: null,
       position: "center",
-      title:    "🛒 Hướng dẫn Bán hàng tại quầy",
-      content:  "Đây là màn hình POS — nơi bạn tạo đơn hàng nhanh chóng cho khách đến trực tiếp.",
+      title:    "🛒 Hướng dẫn Bán hàng tại trạm",
+      content:  "Đây là màn hình POS — nơi bạn tạo đơn hàng nhanh chóng cho hội viên đến trực tiếp tại trạm.",
     },
     {
       selector: ".counter-sales__search input, .search-bar input",

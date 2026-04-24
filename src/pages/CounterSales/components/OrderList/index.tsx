@@ -8,7 +8,7 @@ import "./index.scss";
 // ─── Mock orders (only used when listOrder not passed) ───────────────────────
 const ORDERS: Order[] = [
   {
-    id: "1", code: "#DH-20231021-0042", source: "offline", sourceLabel: "🏪 Tại quầy",
+    id: "1", code: "#DH-20231021-0042", source: "offline", sourceLabel: "🏪 Tại trạm",
     status: "pending", statusLabel: "⏳ Chờ xử lý", time: "21/10 · 09:45",
     customer: { id: "1", name: "Nguyễn Thị Hoa", initial: "N", phone: "0901 234 567", points: 2450, tier: "Bạc", color: "#7c3aed" },
     items: "3 sản phẩm: Sữa TH, Mì Hảo Hảo, Pepsi...", total: 122500,

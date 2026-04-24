@@ -160,7 +160,7 @@ const vi = {
     promotionalReport: "Báo cáo khuyến mãi",
     promotionalProgram: "Khuyến mãi & Voucher",
     opportunity: "Cơ hội bán hàng",
-    createSalesOrder: "Bán hàng tại quầy",
+    createSalesOrder: "Bán hàng tại trạm",
     salesInvoice: "Danh sách đơn",
     shipping: "Giao hàng & Vận chuyển",
     shippingFeeConfig: "Quản lý phí vận chuyển",
@@ -394,7 +394,7 @@ const vi = {
   },
 
   pageCounterSales: {
-    title: "Bán hàng tại quầy",
+    title: "Bán hàng tại trạm",
     pos: "Bán hàng (POS)",
     draftOrders: "Đơn tạm",
     orders: "Đơn hàng",

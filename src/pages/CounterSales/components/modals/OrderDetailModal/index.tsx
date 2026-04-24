@@ -141,7 +141,7 @@ export default function OrderDetailModal({ open, onClose, onPrint, onConfirm, in
               <div className="od-panel">
                 <div className="od-panel__title">Thông tin đơn</div>
                 <div className="od-panel__sub">
-                  Nguồn: <b>🏪 Tại quầy</b>
+                  Nguồn: <b>🏪 Tại trạm</b>
                 </div>
                 <div className="od-panel__sub">
                   TT: <b>💵 Tiền mặt</b>
