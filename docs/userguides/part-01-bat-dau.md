@@ -10,7 +10,7 @@ Phần này hướng dẫn bạn những thao tác đầu tiên khi mở ứng d
 
 **FitPro** là nền tảng quản lý chuỗi trạm tập 6-9h dành cho mô hình nhượng quyền phi chính thức (Master BO → Business Owner → downline). Sản phẩm bao gồm các phân hệ chuyên biệt cho vận hành trạm, theo dõi hội viên theo chu kỳ 90 ngày, mạng lưới BO 7×7×7, và 9 module FitPro đặc thù (cấu hình loại trạm, thẻ liên thông, chỉ số cơ thể + Medlatec, tuân thủ SOP, hoa hồng hệ thống, v.v.).
 
-FitPro được phát triển và vận hành bởi **Reborn JSC** — **Công ty Cổ phần Công nghệ và Truyền thông Reborn** — trên nền tảng CRM đa ngành của Reborn. Để được hỗ trợ kỹ thuật hoặc liên hệ triển khai, xem thông tin ở Phần [Hỗ trợ](part-12-cai-dat-nang-cao.md) hoặc website [reborn.vn](https://reborn.vn).
+FitPro được phát triển và vận hành bởi **Reborn JSC** — **Công ty Cổ phần Công nghệ và Truyền thông Reborn** — trên nền tảng CRM đa ngành của Reborn. Để được hỗ trợ kỹ thuật hoặc liên hệ triển khai, xem thông tin ở Phần [Hỗ trợ](part-12-cai-dat-nang-cao.md) hoặc website công ty [ecosystem.reborn.vn](https://ecosystem.reborn.vn).
 
 ### Thông tin truy cập bản demo
 

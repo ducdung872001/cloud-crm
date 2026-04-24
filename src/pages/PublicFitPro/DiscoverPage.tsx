@@ -39,71 +39,135 @@ export default function DiscoverPage() {
 
   return (
     <div style={{ minHeight: "100vh", background: THEME.bg, color: THEME.text }}>
+      {/* Responsive CSS */}
+      <style
+        dangerouslySetInnerHTML={{
+          __html: `
+            .fp-header { padding: 20px 0; }
+            .fp-header__inner { max-width: 1200px; margin: 0 auto; padding: 0 24px; display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+            .fp-header__brand { display: flex; align-items: center; gap: 12px; min-width: 0; }
+            .fp-header__name { font-weight: 800; font-size: 20px; line-height: 1.2; }
+            .fp-header__tagline { font-size: 11px; opacity: 0.85; line-height: 1.3; }
+            .fp-header__login { color: #fff; font-size: 13px; text-decoration: underline; white-space: nowrap; flex-shrink: 0; }
+            .fp-header__login-short { display: none; }
+
+            @media (max-width: 768px) {
+              .fp-header { padding: 14px 0; }
+              .fp-header__inner { padding: 0 16px; }
+              .fp-header__name { font-size: 18px; }
+              .fp-header__tagline { font-size: 10px; }
+            }
+            @media (max-width: 520px) {
+              .fp-header__tagline { display: none; }
+              .fp-header__login-long { display: none; }
+              .fp-header__login-short { display: inline; }
+            }
+
+            .fp-hero { background: #fff; padding: 50px 24px; text-align: center; }
+            .fp-hero__title { margin: 0; font-size: clamp(22px, 5vw, 40px); color: ${THEME.primaryDark}; line-height: 1.2; }
+            .fp-hero__sub { font-size: clamp(13px, 2.5vw, 16px); color: ${THEME.textMuted}; margin-top: 10px; line-height: 1.5; }
+            @media (max-width: 600px) { .fp-hero { padding: 28px 14px; } }
+
+            .fp-search { max-width: 680px; margin: 24px auto 0; display: flex; gap: 8px; flex-wrap: wrap; justify-content: center; }
+            .fp-search__input { flex: 1; min-width: 240px; padding: 14px 18px; border-radius: 10px; border: 1px solid ${THEME.border}; font-size: 15px; box-shadow: 0 2px 8px rgba(11,46,42,.06); box-sizing: border-box; }
+            .fp-search__btn { padding: 14px 20px; background: ${THEME.primary}; color: #fff; border: none; border-radius: 10px; cursor: pointer; font-size: 14px; font-weight: 700; white-space: nowrap; }
+            @media (max-width: 480px) {
+              .fp-search { gap: 8px; margin-top: 16px; }
+              .fp-search__input { min-width: 100%; padding: 12px 14px; font-size: 14px; }
+              .fp-search__btn { width: 100%; padding: 12px 14px; }
+            }
+
+            .fp-filters { margin-top: 18px; display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; }
+            .fp-filter-chip { padding: 8px 14px; border-radius: 999px; background: #fff; color: ${THEME.textMuted}; font-size: 12px; font-weight: 700; cursor: pointer; border: 1px solid ${THEME.border}; transition: all .15s; }
+            .fp-filter-chip.active { border: 2px solid ${THEME.primary}; background: ${THEME.primarySoft}; color: ${THEME.primaryDark}; }
+            @media (max-width: 480px) {
+              .fp-filters { margin-top: 14px; gap: 6px; }
+              .fp-filter-chip { padding: 6px 10px; font-size: 11px; }
+            }
+
+            .fp-list-wrap { max-width: 1200px; margin: 0 auto; padding: 30px 24px; }
+            .fp-list-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; gap: 12px; flex-wrap: wrap; }
+            .fp-list-head h2 { margin: 0; font-size: clamp(18px, 3vw, 24px); color: ${THEME.primaryDark}; }
+            .fp-list-head__hint { font-size: 12px; color: ${THEME.textMuted}; }
+            @media (max-width: 600px) { .fp-list-wrap { padding: 20px 14px; } .fp-list-head__hint { font-size: 11px; } }
+
+            .fp-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 16px; }
+            @media (max-width: 420px) { .fp-grid { gap: 12px; } }
+
+            .fp-card { background: #fff; border-radius: 12px; padding: 18px; border: 1px solid ${THEME.border}; box-shadow: 0 2px 12px rgba(11,46,42,.05); }
+            @media (max-width: 420px) { .fp-card { padding: 14px; } }
+            .fp-card h3 { margin: 0; color: ${THEME.primaryDark}; font-size: 16px; line-height: 1.3; }
+
+            .fp-footer { background: ${THEME.primaryDark}; color: #fff; padding: 30px 24px; margin-top: 40px; }
+            .fp-footer__inner { max-width: 1200px; margin: 0 auto; display: flex; justify-content: space-between; flex-wrap: wrap; gap: 20px; }
+            .fp-footer__meta { font-size: 12px; opacity: 0.85; text-align: right; min-width: 200px; }
+            @media (max-width: 600px) {
+              .fp-footer { padding: 20px 14px; }
+              .fp-footer__meta { text-align: left; min-width: 100%; }
+            }
+
+            /* Booking modal mobile */
+            .fp-modal-overlay { position: fixed; inset: 0; background: rgba(11,46,42,.6); display: flex; align-items: center; justify-content: center; z-index: 1000; padding: 20px; }
+            .fp-modal { background: #fff; border-radius: 14px; width: 480px; max-width: 100%; max-height: 90vh; overflow: auto; display: flex; flex-direction: column; }
+            @media (max-width: 480px) {
+              .fp-modal-overlay { padding: 10px; align-items: flex-end; }
+              .fp-modal { border-radius: 14px 14px 0 0; }
+            }
+          `,
+        }}
+      />
+
       {/* Public header */}
-      <div style={{ background: `linear-gradient(135deg, ${THEME.primaryDark} 0%, ${THEME.primary} 100%)`, color: "#fff", padding: "20px 0" }}>
-        <div style={{ maxWidth: 1200, margin: "0 auto", padding: "0 24px", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-          <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
-            <span style={{ fontSize: 28 }}>🌱</span>
-            <div>
-              <div style={{ fontWeight: 800, fontSize: 20 }}>FitPro</div>
-              <div style={{ fontSize: 11, opacity: 0.85 }}>Reborn JSC · Kiến tạo hạ tầng sức khỏe cho 100 triệu người Việt</div>
+      <div className="fp-header" style={{ background: `linear-gradient(135deg, ${THEME.primaryDark} 0%, ${THEME.primary} 100%)`, color: "#fff" }}>
+        <div className="fp-header__inner">
+          <div className="fp-header__brand">
+            <span style={{ fontSize: 28, flexShrink: 0 }}>🌱</span>
+            <div style={{ minWidth: 0 }}>
+              <div className="fp-header__name">FitPro</div>
+              <div className="fp-header__tagline">Reborn JSC · Kiến tạo hạ tầng sức khỏe cho 100 triệu người Việt</div>
             </div>
           </div>
-          <a href="/crm/login" style={{ color: "#fff", fontSize: 13, textDecoration: "underline" }}>Đăng nhập quản trị</a>
+          <a href="/crm/login" className="fp-header__login">
+            <span className="fp-header__login-long">Đăng nhập quản trị</span>
+            <span className="fp-header__login-short">🔐</span>
+          </a>
         </div>
       </div>
 
       {/* Hero */}
-      <div style={{ background: "#fff", padding: "50px 24px", textAlign: "center" }}>
-        <h1 style={{ margin: 0, fontSize: "clamp(24px, 5vw, 40px)", color: THEME.primaryDark }}>
-          Tìm Trạm FitPro gần bạn
-        </h1>
-        <p style={{ fontSize: 16, color: THEME.textMuted, marginTop: 10 }}>
-          Khung giờ 6-9h sáng · Không cần đăng ký · Đặt buổi thử miễn phí chỉ qua SĐT
-        </p>
+      <div className="fp-hero">
+        <h1 className="fp-hero__title">Tìm Trạm FitPro gần bạn</h1>
+        <p className="fp-hero__sub">Khung giờ 6-9h sáng · Không cần đăng ký · Đặt buổi thử miễn phí chỉ qua SĐT</p>
+
         {/* Search bar */}
-        <div style={{ maxWidth: 680, margin: "24px auto 0", display: "flex", gap: 8, flexWrap: "wrap", justifyContent: "center" }}>
+        <div className="fp-search">
           <input
             type="text"
             placeholder="🔍 Nhập địa chỉ, quận/huyện hoặc thành phố..."
             value={query}
             onChange={(e) => setQuery(e.target.value)}
-            style={{
-              flex: 1, minWidth: 280,
-              padding: "14px 18px", borderRadius: 10,
-              border: `1px solid ${THEME.border}`, fontSize: 15,
-              boxShadow: "0 2px 8px rgba(11,46,42,.06)",
-            }}
+            className="fp-search__input"
           />
           <button
             onClick={() => alert("📍 Yêu cầu quyền truy cập vị trí trình duyệt. Sẽ tìm 10 trạm gần nhất quanh bạn.")}
-            style={{
-              padding: "14px 20px", background: THEME.primary, color: "#fff",
-              border: "none", borderRadius: 10, cursor: "pointer", fontSize: 14, fontWeight: 700,
-            }}
+            className="fp-search__btn"
           >
             📍 Dùng vị trí hiện tại
           </button>
         </div>
 
         {/* Type filter */}
-        <div style={{ marginTop: 18, display: "flex", gap: 8, justifyContent: "center", flexWrap: "wrap" }}>
+        <div className="fp-filters">
           {[
             { key: "all", label: "Tất cả", icon: "🔎" },
             { key: "home", label: "Home FitPro", icon: "🏠" },
             { key: "center", label: "FitPro CENTER", icon: "🏢" },
-            { key: "inside", label: "FitPro INSIDE (Gym partner)", icon: "🔌" },
+            { key: "inside", label: "FitPro INSIDE", icon: "🔌" },
           ].map((t) => (
             <button
               key={t.key}
               onClick={() => setSelectedType(t.key as any)}
-              style={{
-                padding: "8px 14px", borderRadius: 999,
-                border: selectedType === t.key ? `2px solid ${THEME.primary}` : `1px solid ${THEME.border}`,
-                background: selectedType === t.key ? THEME.primarySoft : "#fff",
-                color: selectedType === t.key ? THEME.primaryDark : THEME.textMuted,
-                fontSize: 12, fontWeight: 700, cursor: "pointer",
-              }}
+              className={`fp-filter-chip ${selectedType === t.key ? "active" : ""}`}
             >
               {t.icon} {t.label}
             </button>
@@ -112,12 +176,10 @@ export default function DiscoverPage() {
       </div>
 
       {/* Station list */}
-      <div style={{ maxWidth: 1200, margin: "0 auto", padding: "30px 24px" }}>
-        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 16 }}>
-          <h2 style={{ margin: 0, color: THEME.primaryDark }}>
-            {filteredStations.length} trạm đang hoạt động
-          </h2>
-          <div style={{ fontSize: 12, color: THEME.textMuted }}>
+      <div className="fp-list-wrap">
+        <div className="fp-list-head">
+          <h2>{filteredStations.length} trạm đang hoạt động</h2>
+          <div className="fp-list-head__hint">
             Đã hiển thị theo khoảng cách (mock) · Thực tế dùng geolocation
           </div>
         </div>
@@ -127,19 +189,12 @@ export default function DiscoverPage() {
             Không tìm thấy trạm phù hợp. Thử đổi từ khóa hoặc chọn "Tất cả".
           </div>
         ) : (
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(320px, 1fr))", gap: 16 }}>
+          <div className="fp-grid">
             {filteredStations.map((s) => {
               const typeColor = s.type === "home" ? "#4DE4C4" : s.type === "center" ? "#FF8C42" : "#2563EB";
               const typeIcon = s.type === "home" ? "🏠" : s.type === "center" ? "🏢" : "🔌";
               return (
-                <div
-                  key={s.id}
-                  style={{
-                    background: "#fff", borderRadius: 12, padding: 18,
-                    border: `1px solid ${THEME.border}`,
-                    boxShadow: "0 2px 12px rgba(11,46,42,.05)",
-                  }}
-                >
+                <div key={s.id} className="fp-card">
                   <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 8 }}>
                     <span style={{ fontSize: 22 }}>{typeIcon}</span>
                     <div style={{
@@ -150,7 +205,7 @@ export default function DiscoverPage() {
                       {getStationTypeLabel(s.type)}
                     </div>
                   </div>
-                  <h3 style={{ margin: 0, color: THEME.primaryDark, fontSize: 16 }}>{s.name}</h3>
+                  <h3>{s.name}</h3>
                   <div style={{ fontSize: 12, color: THEME.textMuted, marginTop: 4 }}>📍 {s.address}, {s.city}</div>
                   <div style={{ fontSize: 12, color: THEME.textMuted, marginTop: 4 }}>⏰ {s.operating_hours}</div>
                   {s.type !== "inside" && (
@@ -186,17 +241,17 @@ export default function DiscoverPage() {
       )}
 
       {/* Footer */}
-      <div style={{ background: THEME.primaryDark, color: "#fff", padding: "30px 24px", marginTop: 40 }}>
-        <div style={{ maxWidth: 1200, margin: "0 auto", display: "flex", justifyContent: "space-between", flexWrap: "wrap", gap: 20 }}>
-          <div style={{ flex: 1, minWidth: 250 }}>
+      <div className="fp-footer">
+        <div className="fp-footer__inner">
+          <div style={{ flex: 1, minWidth: 220 }}>
             <div style={{ fontWeight: 800, fontSize: 18, marginBottom: 6 }}>FitPro</div>
-            <div style={{ fontSize: 12, opacity: 0.85 }}>
+            <div style={{ fontSize: 12, opacity: 0.85, lineHeight: 1.6 }}>
               Sản phẩm của <strong>Reborn JSC</strong><br />
               Công ty Cổ phần Công nghệ và Truyền thông Reborn<br />
-              <a href="https://reborn.vn" style={{ color: "#4DE4C4" }}>reborn.vn</a>
+              <a href="https://ecosystem.reborn.vn" style={{ color: "#4DE4C4" }}>ecosystem.reborn.vn</a>
             </div>
           </div>
-          <div style={{ fontSize: 12, opacity: 0.85, textAlign: "right", minWidth: 200 }}>
+          <div className="fp-footer__meta">
             © 2026 Reborn JSC · FitPro v0.7<br />
             Phygital Health Infrastructure
           </div>
@@ -212,8 +267,8 @@ function BookingModal({ station, onClose }: { station: typeof MOCK_FITPRO_STATIO
   const [otp, setOtp] = useState("");
 
   return (
-    <div onClick={onClose} style={{ position: "fixed", inset: 0, background: "rgba(11,46,42,.6)", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 1000, padding: 20 }}>
-      <div onClick={(e) => e.stopPropagation()} style={{ background: "#fff", borderRadius: 14, width: 480, maxWidth: "100%", overflow: "hidden" }}>
+    <div onClick={onClose} className="fp-modal-overlay">
+      <div onClick={(e) => e.stopPropagation()} className="fp-modal">
         <div style={{ background: "#0B2E2A", color: "#fff", padding: "18px 22px" }}>
           <div style={{ fontSize: 11, opacity: 0.8, textTransform: "uppercase" }}>Đặt buổi thử miễn phí</div>
           <div style={{ fontSize: 17, fontWeight: 800, marginTop: 3 }}>{station.name}</div>
