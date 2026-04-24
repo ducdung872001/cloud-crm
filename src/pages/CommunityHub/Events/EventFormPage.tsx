@@ -6,7 +6,8 @@ import { useNavigate, useParams } from "react-router-dom";
 import RebornEditor from "components/editor/reborn";
 import DatePickerCustom from "components/datepickerCustom/datepickerCustom";
 import { serialize } from "utils/editor";
-import { uploadImageFromFiles } from "utils/image";
+import { uploadDocumentFormData } from "utils/document";
+import { showToast } from "utils/common";
 import { eventStorage } from "./storage";
 import type { EventEntity, DynamicFieldDefinition, EventAddOnItem } from "./types";
 import { THEME, formatVND } from "./shared";
@@ -156,6 +157,7 @@ export default function EventFormPage() {
   const [form, setForm] = useState<FormState>(EMPTY);
   const [error, setError] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
+  const [coverUploading, setCoverUploading] = useState(false);
   // editorKey để force remount RebornEditor khi load dữ liệu edit
   const [editorKey, setEditorKey] = useState(0);
 
@@ -184,14 +186,25 @@ export default function EventFormPage() {
   const handleCoverUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
     if (!files || !files[0]) return;
-    // Upload lên image server trả về URL thật, KHÔNG nhét data URL base64 vào form:
-    // payload base64 ~MB sẽ vượt giới hạn BE → save event fail 500.
-    uploadImageFromFiles(
-      files,
-      (url: string) => update("coverImageUrl", url),
-      false,
+    // Upload lên CDN reborn (https://reborn.vn/api/upload/file) → response.result.fileUrl.
+    // Dùng FormData multipart thay vì JSON base64 để tránh payload quá lớn.
+    setCoverUploading(true);
+    uploadDocumentFormData(
+      files[0],
+      (data: any) => {
+        const url = data?.fileUrl ?? data?.url;
+        if (url) {
+          update("coverImageUrl", url);
+        } else {
+          showToast("Upload thành công nhưng không nhận được URL", "error");
+        }
+        setCoverUploading(false);
+      },
+      () => {
+        showToast("Có lỗi xảy ra trong quá trình upload ảnh", "error");
+        setCoverUploading(false);
+      },
     );
-    // Reset input để user có thể chọn lại cùng file
     e.target.value = "";
   };
 
@@ -644,7 +657,7 @@ export default function EventFormPage() {
                 border: `1px dashed ${THEME.border}`,
               }}
             >
-              {!form.coverImageUrl && "Chưa có ảnh"}
+              {!form.coverImageUrl && (coverUploading ? "Đang tải ảnh lên..." : "Chưa có ảnh")}
             </div>
             <label
               style={{
@@ -654,16 +667,18 @@ export default function EventFormPage() {
                 color: THEME.primaryDark,
                 borderRadius: 6,
                 textAlign: "center",
-                cursor: "pointer",
+                cursor: coverUploading ? "not-allowed" : "pointer",
                 fontSize: 12,
                 fontWeight: 600,
+                opacity: coverUploading ? 0.6 : 1,
               }}
             >
-              📤 Chọn ảnh
+              {coverUploading ? "⏳ Đang tải..." : "📤 Chọn ảnh"}
               <input
                 type="file"
                 accept="image/*"
                 style={{ display: "none" }}
+                disabled={coverUploading}
                 onChange={handleCoverUpload}
               />
             </label>
@@ -781,17 +796,22 @@ export default function EventFormPage() {
                 onChange={(e) => {
                   const files = e.target.files;
                   if (!files || files.length === 0) return;
-                  // Upload từng file lên image server (giống cover) — tránh nhét data URL
-                  // base64 vào state, khi save event BE sẽ fail 500 vì payload quá lớn.
-                  uploadImageFromFiles(
-                    files,
-                    (url: string) =>
-                      setForm((f) => ({
-                        ...f,
-                        galleryImageUrls: [...f.galleryImageUrls, url],
-                      })),
-                    false,
-                  );
+                  // Upload từng file lên CDN reborn; BE trả về fileUrl → push vào gallery.
+                  Array.from(files).forEach((file) => {
+                    uploadDocumentFormData(
+                      file,
+                      (data: any) => {
+                        const url = data?.fileUrl ?? data?.url;
+                        if (url) {
+                          setForm((f) => ({
+                            ...f,
+                            galleryImageUrls: [...f.galleryImageUrls, url],
+                          }));
+                        }
+                      },
+                      () => showToast("Có lỗi khi upload ảnh", "error"),
+                    );
+                  });
                   e.target.value = "";
                 }}
               />
