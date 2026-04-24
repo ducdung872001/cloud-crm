@@ -69,7 +69,8 @@
       "Bash(python -m pip install --upgrade pip)",
       "Bash(python -m pip install pymupdf)",
       "Read(//d//**)",
-      "Bash(wait %1)"
+      "Bash(wait %1)",
+      "Bash(git diff *)"
     ]
   }
 }
