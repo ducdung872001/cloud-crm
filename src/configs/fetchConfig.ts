@@ -37,13 +37,10 @@ export default function RegisterFetch() {
       } else if (!config.headers["Content-Type"]) {
         config.headers["Content-Type"] = "application/json";
       }
-      // Local (localhost / 127.0.0.1) → luôn "kcn.reborn.vn" (env test mặc định).
-      // Live (prod/staging) → location.hostname thật của tenant user đang truy cập.
-      {
-        const realHost = location.hostname || "";
-        const isLocal = realHost === "localhost" || realHost === "127.0.0.1" || realHost === "";
-        config.headers["Hostname"] = isLocal ? "kcn.reborn.vn" : realHost;
-      }
+      // ⚠️ TEMP TEST — ép Hostname = kcn.reborn.vn cho CẢ local lẫn live theo yêu cầu test.
+      // Phải revert về logic isLocal ? "kcn.reborn.vn" : realHost trước khi merge prod,
+      // nếu không mọi tenant sẽ load data của tenant kcn (tenant leak — Critical).
+      config.headers["Hostname"] = "kcn.reborn.vn";
 
 
       if (!url.startsWith("http")) {
