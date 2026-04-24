@@ -783,6 +783,7 @@ export default function FitProModulesPage() {
             onClick={(e) => e.stopPropagation()}
             style={{
               background: "#fff", borderRadius: 14, width: 560, maxWidth: "90vw",
+              maxHeight: "90vh", display: "flex", flexDirection: "column",
               boxShadow: "0 20px 60px rgba(11,46,42,.3)",
             }}
           >
@@ -798,6 +799,7 @@ export default function FitProModulesPage() {
                 ? "linear-gradient(135deg, #FFF0E3 0%, #fff 100%)"
                 : "linear-gradient(135deg, #E0EBFF 0%, #fff 100%)",
               borderRadius: "14px 14px 0 0",
+              flexShrink: 0,
             }}>
               <h3 style={{ margin: 0, color: "#0B2E2A" }}>
                 {createStationType === "home" ? "🏠 Tạo Home FitPro"
@@ -811,7 +813,7 @@ export default function FitProModulesPage() {
                 ✕
               </button>
             </div>
-            <div style={{ padding: 24 }}>
+            <div style={{ padding: 24, overflowY: "auto", flex: 1 }}>
               <div style={{ padding: 12, background: "#F5F9F8", borderRadius: 8, marginBottom: 16, fontSize: 12, color: "#6B8A85" }}>
                 {createStationType === "inside" ? (
                   <>🔌 <strong>Model INSIDE:</strong> plugin cấy vào gym/yoga có sẵn · 0 đồng đầu tư · chia sẻ doanh thu digital với chủ gym partner</>
@@ -970,7 +972,7 @@ export default function FitProModulesPage() {
                 />
               </div>
             </div>
-            <div style={{ padding: "16px 24px", borderTop: "1px solid #E0E8E5", display: "flex", gap: 10, justifyContent: "flex-end" }}>
+            <div style={{ padding: "16px 24px", borderTop: "1px solid #E0E8E5", display: "flex", gap: 10, justifyContent: "flex-end", flexShrink: 0, background: "#fff", borderRadius: "0 0 14px 14px" }}>
               <button
                 onClick={() => setCreateStationType(null)}
                 style={{
