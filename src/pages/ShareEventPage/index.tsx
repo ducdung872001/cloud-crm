@@ -273,7 +273,49 @@ export default function ShareEventPage() {
       <style
         dangerouslySetInnerHTML={{
           __html: `
+            /* ── Responsive grids & layout ── */
+            .se-info-grid { display: grid; grid-template-columns: 2fr 1fr; gap: 16px; }
+            @media (max-width: 900px) { .se-info-grid { grid-template-columns: 1fr; gap: 14px; } }
+            .se-form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+            @media (max-width: 560px) { .se-form-grid { grid-template-columns: 1fr; gap: 10px; } }
+            .se-container { max-width: 900px; margin: 0 auto 40px; padding: 20px 20px 0; }
+            @media (max-width: 600px) { .se-container { margin: 0 auto 24px; padding: 14px 12px 0; } }
+            .se-brand-bar { padding: 12px 20px; }
+            @media (max-width: 480px) { .se-brand-bar { padding: 10px 14px; } }
+            .se-hero-cover { padding: 60px 20px 80px; }
+            @media (max-width: 600px) { .se-hero-cover { padding: 40px 14px 48px; } }
+            .se-hero-default { padding: 28px 20px 32px; }
+            @media (max-width: 600px) { .se-hero-default { padding: 20px 14px 24px; } }
+            .se-hero-title { margin: 0; font-size: clamp(22px, 5.2vw, 32px); line-height: 1.2; color: #fff; }
+            .se-hero-sub { font-size: clamp(13px, 2.5vw, 16px); margin-top: 10px; opacity: 0.9; }
+            .se-meta-row { display: flex; gap: 20px; justify-content: center; flex-wrap: wrap; font-size: 13px; margin-top: 16px; }
+            @media (max-width: 480px) { .se-meta-row { gap: 10px 14px; font-size: 12px; margin-top: 12px; } }
+            .se-cta-card { padding: 24px; }
+            @media (max-width: 480px) { .se-cta-card { padding: 16px; } }
+            .se-content-header { padding: 18px 22px; gap: 14px; }
+            @media (max-width: 480px) { .se-content-header { padding: 14px 16px; gap: 10px; } }
+            .se-content-body { padding: 22px 24px 24px; }
+            @media (max-width: 480px) { .se-content-body { padding: 16px 16px 18px; } }
+            .se-qr-row { display: flex; gap: 14px; align-items: flex-start; flex-wrap: wrap; }
+            @media (max-width: 520px) {
+              .se-qr-row { justify-content: center; text-align: center; }
+              .se-qr-row img { margin: 0 auto; }
+            }
+            .se-actions-row { display: flex; gap: 8px; margin-top: 14px; }
+            @media (max-width: 380px) { .se-actions-row { flex-direction: column-reverse; } }
+            .se-footer { padding: 20px; text-align: center; font-size: 11px; }
+            @media (max-width: 480px) { .se-footer { padding: 16px 12px; } }
+            .se-gallery-img { height: 140px; }
+            @media (max-width: 480px) { .se-gallery-img { height: 100px !important; } }
+
+            /* ── Prose (rich content from editor) ── */
             .event-prose { font-size: 15px; line-height: 1.78; color: ${THEME.textMain}; word-break: break-word; }
+            @media (max-width: 480px) {
+              .event-prose { font-size: 14px; line-height: 1.72; }
+              .event-prose h1 { font-size: 22px !important; }
+              .event-prose h2 { font-size: 18px !important; }
+              .event-prose h3 { font-size: 16px !important; }
+            }
             .event-prose > *:first-child { margin-top: 0; }
             .event-prose > *:last-child { margin-bottom: 0; }
             .event-prose h1, .event-prose h2, .event-prose h3, .event-prose h4 {
@@ -336,10 +378,10 @@ export default function ShareEventPage() {
       />
       {/* Top brand bar */}
       <div
+        className="se-brand-bar"
         style={{
           background: THEME.primaryDark,
           color: "#fff",
-          padding: "12px 20px",
           display: "flex",
           alignItems: "center",
           justifyContent: "space-between",
@@ -355,12 +397,12 @@ export default function ShareEventPage() {
       {heroStyle === "cover" ? (
         /* ── Layout A: ảnh cover full-width, text overlay ── */
         <div
+          className="se-hero-cover"
           style={{
             background: event.coverImageUrl
               ? `linear-gradient(180deg, rgba(11,46,42,0.45), rgba(11,46,42,0.85)), url(${event.coverImageUrl}) center/cover`
               : `linear-gradient(135deg, ${THEME.primarySoft}, ${THEME.primary})`,
             color: "#fff",
-            padding: "60px 20px 80px",
             textAlign: "center",
           }}
         >
@@ -370,9 +412,9 @@ export default function ShareEventPage() {
                 {event.category}
               </span>
             )}
-            <h1 style={{ margin: 0, fontSize: 32, lineHeight: 1.2, color: "#fff" }}>{event.title}</h1>
-            <p style={{ fontSize: 16, marginTop: 12, opacity: 0.95 }}>{event.description}</p>
-            <div style={{ marginTop: 20, display: "flex", gap: 20, justifyContent: "center", flexWrap: "wrap", fontSize: 13 }}>
+            <h1 className="se-hero-title">{event.title}</h1>
+            <p className="se-hero-sub">{event.description}</p>
+            <div className="se-meta-row">
               <div>🕐 {formatDateTime(event.startDate)}</div>
               <div>📍 {event.venue.isOnline ? "Online" : event.venue.name}</div>
               <div>💰 {event.ticketPrice ? `${formatVND(event.ticketPrice)} đ` : "Miễn phí"}</div>
@@ -382,10 +424,10 @@ export default function ShareEventPage() {
       ) : (
         /* ── Layout B (mặc định): ảnh + title card nền solid ── */
         <div
+          className="se-hero-default"
           style={{
             background: THEME.primaryDark,
             color: "#fff",
-            padding: "28px 20px 32px",
             textAlign: "center",
           }}
         >
@@ -404,9 +446,9 @@ export default function ShareEventPage() {
                 {event.category}
               </span>
             )}
-            <h1 style={{ margin: 0, fontSize: 32, lineHeight: 1.2, color: "#fff" }}>{event.title}</h1>
-            <p style={{ fontSize: 15, marginTop: 10, opacity: 0.85 }}>{event.description}</p>
-            <div style={{ marginTop: 16, display: "flex", gap: 20, justifyContent: "center", flexWrap: "wrap", fontSize: 13, opacity: 0.9 }}>
+            <h1 className="se-hero-title">{event.title}</h1>
+            <p className="se-hero-sub">{event.description}</p>
+            <div className="se-meta-row">
               <div>🕐 {formatDateTime(event.startDate)}</div>
               <div>📍 {event.venue.isOnline ? "Online" : event.venue.name}</div>
               <div>💰 {event.ticketPrice ? `${formatVND(event.ticketPrice)} đ` : "Miễn phí"}</div>
@@ -415,7 +457,7 @@ export default function ShareEventPage() {
         </div>
       )}
 
-      <div style={{ maxWidth: 900, margin: "0 auto 40px", padding: "20px 20px 0" }}>
+      <div className="se-container">
         {/* ── Gallery ảnh hoạt động ── */}
         {hasGallery && (
           <div
@@ -432,8 +474,8 @@ export default function ShareEventPage() {
                 key={i}
                 src={url}
                 alt={`Hoạt động ${i + 1}`}
+                className="se-gallery-img"
                 style={{
-                  height: 140,
                   borderRadius: 10,
                   objectFit: "cover",
                   border: `2px solid #fff`,
@@ -487,10 +529,10 @@ export default function ShareEventPage() {
         {/* CTA card */}
         {!submitted && (
           <div
+            className="se-cta-card"
             style={{
               background: "#fff",
               borderRadius: 12,
-              padding: 24,
               marginBottom: 20,
               boxShadow: "0 4px 16px rgba(11,46,42,0.08)",
               textAlign: "center",
@@ -574,13 +616,7 @@ export default function ShareEventPage() {
                 )}
 
                 {/* ── 2. Thông tin cá nhân ── */}
-                <div
-                  style={{
-                    display: "grid",
-                    gridTemplateColumns: "1fr 1fr",
-                    gap: 12,
-                  }}
-                >
+                <div className="se-form-grid">
                   <FieldP label="Họ tên" required>
                     <input
                       style={inputStyle}
@@ -722,7 +758,7 @@ export default function ShareEventPage() {
                     <div style={{ fontSize: 13, fontWeight: 700, color: THEME.primaryDark, marginBottom: 10 }}>
                       💳 Quét mã chuyển khoản
                     </div>
-                    <div style={{ display: "flex", gap: 14, alignItems: "flex-start", flexWrap: "wrap" }}>
+                    <div className="se-qr-row">
                       {qrImgSrc && (
                         <img
                           src={qrImgSrc}
@@ -779,7 +815,7 @@ export default function ShareEventPage() {
                 )}
 
                 {/* ── Actions ── */}
-                <div style={{ display: "flex", gap: 8, marginTop: 14 }}>
+                <div className="se-actions-row">
                   <button
                     onClick={() => {
                       setShowRegisterForm(false);
@@ -860,13 +896,7 @@ export default function ShareEventPage() {
         )}
 
         {/* Info grid */}
-        <div
-          style={{
-            display: "grid",
-            gridTemplateColumns: "2fr 1fr",
-            gap: 16,
-          }}
-        >
+        <div className="se-info-grid">
           <div
             style={{
               background: "#fff",
@@ -877,13 +907,12 @@ export default function ShareEventPage() {
             }}
           >
             <div
+              className="se-content-header"
               style={{
                 background: `linear-gradient(135deg, ${THEME.primarySoft} 0%, #fff 85%)`,
-                padding: "18px 22px",
                 borderBottom: `1px solid ${THEME.border}`,
                 display: "flex",
                 alignItems: "center",
-                gap: 14,
               }}
             >
               <div
@@ -922,8 +951,7 @@ export default function ShareEventPage() {
               </div>
             </div>
             <div
-              className="event-prose"
-              style={{ padding: "22px 24px 24px" }}
+              className="event-prose se-content-body"
               dangerouslySetInnerHTML={{
                 __html:
                   event.content ||
@@ -1046,10 +1074,8 @@ export default function ShareEventPage() {
 
       {/* Footer */}
       <div
+        className="se-footer"
         style={{
-          padding: 20,
-          textAlign: "center",
-          fontSize: 11,
           color: THEME.textMuted,
           borderTop: `1px solid ${THEME.border}`,
         }}
