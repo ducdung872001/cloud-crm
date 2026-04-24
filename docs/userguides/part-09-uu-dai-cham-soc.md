@@ -1,8 +1,10 @@
 # Part 09 — Ưu đãi & Chăm sóc
 
-*Phiên bản: Cửa hàng & Spa — Tenant "Viettel Store"*
+*Phiên bản 0.6 — Tenant "FitPro"*
 
-Phân hệ **Ưu đãi & Chăm sóc** là công cụ để bạn **giữ chân khách hàng** và **kéo khách mới**. Đây là nơi tạo ra các hoạt động "tấn công chủ động" thay vì chỉ ngồi đợi khách đến quầy.
+> 🔜 **Part áp dụng trong tương lai.** Tenant FitPro hiện tại **chưa bật** phân hệ Ưu đãi & Chăm sóc (khuyến mãi, voucher, chiến dịch marketing, chăm sóc hội viên tự động). Part này giữ trong tài liệu để bạn tham khảo khi kích hoạt ở các giai đoạn sau.
+
+Phân hệ **Ưu đãi & Chăm sóc** là công cụ để bạn **giữ chân hội viên** và **kéo hội viên mới**. Đây là nơi tạo ra các hoạt động "tấn công chủ động" thay vì chỉ ngồi đợi hội viên đến trạm.
 
 Sidebar có **4 mục con**:
 

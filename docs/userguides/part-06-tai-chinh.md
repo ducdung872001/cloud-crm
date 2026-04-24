@@ -1,6 +1,6 @@
 # Part 06 — Tài chính & Thanh toán
 
-*Phiên bản: Cửa hàng & Spa — Tenant "Viettel Store"*
+*Phiên bản 0.6 — Tenant "FitPro"*
 
 **Tài chính & Thanh toán** là phân hệ theo dõi **dòng tiền** của cơ sở bạn: tiền đã thu (doanh thu), tiền đã chi (chi phí), tiền còn trong quỹ, công nợ với khách và nhà cung cấp, đối soát với các kênh thanh toán online.
 

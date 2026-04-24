@@ -70,7 +70,21 @@
       "Bash(python -m pip install pymupdf)",
       "Read(//d//**)",
       "Bash(wait %1)",
-      "Bash(git diff *)"
+      "Bash(git diff *)",
+      "Bash(BASE_URL=https://fitpro.reborn.vn/crm node explore-sidebar.js)",
+      "Bash(BASE_URL=https://fitpro.reborn.vn/crm node capture-fitpro-parts.js)",
+      "Bash(BASE_URL=https://fitpro.reborn.vn/crm node reshoot-part13.js)",
+      "Bash(BASE_URL=https://fitpro.reborn.vn/crm node reshoot-part15-08.js)",
+      "Bash(pandoc --version)",
+      "Bash(python -c \"import docx; print\\(docx.__version__\\)\")",
+      "Bash(python gen-hdsd-full.py)",
+      "Bash(python docs/userguides/tooling/gen-hdsd-full.py)",
+      "Bash(python md_to_docx.py ../HDSD-full.md ../HDSD-Reborn-CRM-v0.6.docx --title \"Reborn CRM — FitPro\" --subtitle \"Tài liệu hướng dẫn sử dụng — Chuỗi trạm FitPro 6-9h\" --header \"Hướng dẫn sử dụng Reborn CRM — FitPro v0.6\" --cover-label \"HƯỚNG DẪN SỬ DỤNG v0.6\")",
+      "Bash(python -c ' *)",
+      "Bash(python md_to_docx.py ../HDSD-full.md ../HDSD-Reborn-CRM-v0.6.docx --title \"FitPro\" --subtitle \"Nền tảng quản lý chuỗi trạm tập 6-9h\" --header \"Hướng dẫn sử dụng FitPro v0.6\" --cover-label \"HƯỚNG DẪN SỬ DỤNG v0.6\" --logo \"../images/_branding/reborn-logo.png\" --vendor \"Reborn JSC — Công ty Cổ phần Công nghệ và Truyền thông Reborn\" --version \"Phiên bản 0.6 · 24/04/2026\")"
+    ],
+    "additionalDirectories": [
+      "\\tmp"
     ]
   }
 }

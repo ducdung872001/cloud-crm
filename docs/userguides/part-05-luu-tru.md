@@ -1,8 +1,10 @@
 # Part 05 — Lưu trú
 
-*Phiên bản: Cửa hàng & Spa — Tenant "Viettel Store"*
+*Phiên bản 0.6 — Tenant "FitPro"*
 
-Phân hệ **Lưu trú** chỉ áp dụng khi cửa hàng / cơ sở của bạn có loại hình dịch vụ **lưu trú qua đêm** như phòng riêng, phòng ngủ, căn hộ dịch vụ, homestay, co-living... Nếu cơ sở chỉ bán lẻ hoặc spa theo giờ, bạn có thể bỏ qua Part này.
+> 🔜 **Part áp dụng trong tương lai.** Tenant FitPro hiện tại (chuỗi trạm tập 6-9h) **chưa bật** phân hệ Lưu trú. Part này giữ trong tài liệu để bạn hình dung khả năng mở rộng nếu mô hình sau này có lưu trú kèm gói tập (VD: Wellness Retreat).
+
+Phân hệ **Lưu trú** chỉ áp dụng khi cơ sở của bạn có loại hình dịch vụ **lưu trú qua đêm** như phòng riêng, phòng ngủ, căn hộ dịch vụ, homestay, co-living...
 
 **Đường dẫn:** Sidebar → **Lưu trú**
 **URL:** `/crm/ch_accommodation`

@@ -1,6 +1,6 @@
 # Part 12 — Cài đặt nâng cao
 
-*Phiên bản: Cửa hàng & Spa — Tenant "Viettel Store"*
+*Phiên bản 0.6 — Tenant "FitPro"*
 
 Part 12 bao phủ 5 mục cài đặt còn lại — **dành cho admin tenant** và các **cấu hình kỹ thuật**:
 
@@ -357,6 +357,17 @@ Vào **Tích hợp** → kiểm tra có tích hợp **Google Drive** / **Dropbox
 ### F.4. Giám sát webhook
 
 Nếu bạn có app ngoài kết nối với CRM, hãy vào **Giám sát webhook** định kỳ. Webhook thất bại nhiều = dữ liệu sẽ lệch.
+
+---
+
+## G. Liên hệ nhà cung cấp
+
+Sản phẩm **FitPro** được phát triển và vận hành bởi:
+
+> **Reborn JSC** — Công ty Cổ phần Công nghệ và Truyền thông Reborn
+> Website: [https://reborn.vn](https://reborn.vn)
+
+Khi cần hỗ trợ vượt ngoài phạm vi tự vận hành của tenant (cấu hình deep integration, tuỳ biến sâu phân hệ, khôi phục dữ liệu, audit bảo mật, hợp đồng SLA…), admin tenant liên hệ đội triển khai của Reborn JSC. Các yêu cầu thông thường (đổi mật khẩu, cấp tài khoản, điều chỉnh cài đặt tenant) có thể tự xử lý qua các phân hệ trong Part 11 và Part 12.
 
 ---
 

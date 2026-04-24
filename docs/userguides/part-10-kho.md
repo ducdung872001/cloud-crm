@@ -1,11 +1,13 @@
 # Part 10 — Kho & Nguyên vật liệu
 
-*Phiên bản: Cửa hàng & Spa — Tenant "Viettel Store"*
+*Phiên bản 0.6 — Tenant "FitPro"*
 
-Phân hệ **Kho & Nguyên vật liệu** quản lý toàn bộ **nguyên liệu / sản phẩm vật lý** của cửa hàng — từ nhập kho, xuất kho, kiểm kê, đến báo cáo tồn kho. Dù cơ sở bạn chủ yếu bán **dịch vụ**, phần này vẫn cần thiết để quản lý:
+> 🔜 **Part áp dụng trong tương lai.** Tenant FitPro hiện tại **chưa bật** phân hệ Kho. Part này giữ trong tài liệu để bạn tham khảo khi trạm bắt đầu bán kèm NVL / sản phẩm phụ trợ (nước uống, thực phẩm bổ sung, phụ kiện tập luyện…).
 
-- Nguyên vật liệu cho dịch vụ (dầu massage, sản phẩm skincare, kim tiêm, găng tay…).
-- Sản phẩm bán kèm (thực phẩm chức năng, mỹ phẩm, đồ lưu niệm…).
+Phân hệ **Kho & Nguyên vật liệu** quản lý toàn bộ **nguyên liệu / sản phẩm vật lý** của trạm — từ nhập kho, xuất kho, kiểm kê, đến báo cáo tồn kho. Ví dụ sử dụng với trạm FitPro:
+
+- Nguyên vật liệu pha chế (whey, BCAA, nước điện giải…).
+- Sản phẩm bán kèm (thực phẩm chức năng, phụ kiện tập, áo đồng phục…).
 - Vật tư tiêu hao (khăn, nến, cồn, giấy in…).
 
 Sidebar có **6 mục con**:

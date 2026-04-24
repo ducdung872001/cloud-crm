@@ -1,10 +1,27 @@
-# Part 01 — Bắt đầu sử dụng Reborn CRM
+# Part 01 — Bắt đầu sử dụng FitPro
 
-*Phiên bản: Cửa hàng & Spa — Tenant "Viettel Store"*
+*Phiên bản 0.6 — sản phẩm FitPro do Reborn JSC phát triển*
 
 Phần này hướng dẫn bạn những thao tác đầu tiên khi mở ứng dụng: đăng nhập, làm quen với giao diện, nhận diện các khu vực chính trên màn hình, và biết cách đi tới từng phân hệ công việc.
 
 > **Đối tượng đọc:** Người dùng mới hoặc quản lý vừa nhận tài khoản. Sau khi đọc xong, bạn sẽ tự tin đăng nhập, di chuyển giữa các mục, và biết "vào đâu để làm gì".
+
+### Về sản phẩm FitPro
+
+**FitPro** là nền tảng quản lý chuỗi trạm tập 6-9h dành cho mô hình nhượng quyền phi chính thức (Master BO → Business Owner → downline). Sản phẩm bao gồm các phân hệ chuyên biệt cho vận hành trạm, theo dõi hội viên theo chu kỳ 90 ngày, mạng lưới BO 7×7×7, và 9 module FitPro đặc thù (cấu hình loại trạm, thẻ liên thông, chỉ số cơ thể + Medlatec, tuân thủ SOP, hoa hồng hệ thống, v.v.).
+
+FitPro được phát triển và vận hành bởi **Reborn JSC** — **Công ty Cổ phần Công nghệ và Truyền thông Reborn** — trên nền tảng CRM đa ngành của Reborn. Để được hỗ trợ kỹ thuật hoặc liên hệ triển khai, xem thông tin ở Phần [Hỗ trợ](part-12-cai-dat-nang-cao.md) hoặc website [reborn.vn](https://reborn.vn).
+
+### Thông tin truy cập bản demo
+
+| Mục | Giá trị |
+|------|---------|
+| Link đăng nhập lần đầu | [https://fitpro.reborn.vn/crm/login](https://fitpro.reborn.vn/crm/login) |
+| Tài khoản dùng thử | `0971234599` |
+| Mật khẩu | `Reborn@12345` |
+| Vai trò đề nghị khi đăng nhập | **Ban giám đốc** (có toàn quyền xem-sửa để trải nghiệm) |
+
+> **Mẹo:** Lưu link `fitpro.reborn.vn/crm/login` vào bookmark trình duyệt để những lần sau truy cập nhanh.
 
 ---
 
@@ -12,10 +29,10 @@ Phần này hướng dẫn bạn những thao tác đầu tiên khi mở ứng d
 
 ### 1.1. Mở trang đăng nhập
 
-Mở trình duyệt (khuyên dùng **Google Chrome** hoặc **Microsoft Edge** phiên bản mới), nhập địa chỉ hệ thống mà đơn vị cung cấp cho bạn. Ví dụ:
+Mở trình duyệt (khuyên dùng **Google Chrome** hoặc **Microsoft Edge** phiên bản mới), nhập địa chỉ hệ thống:
 
 ```
-https://<ten-mien-cua-ban>/crm/
+https://fitpro.reborn.vn/crm/login
 ```
 
 Khi vào lần đầu, hệ thống sẽ tự chuyển sang trang đăng nhập thống nhất (Single Sign-On).
@@ -86,12 +103,12 @@ Từ trái sang phải:
    Bấm vào biểu tượng `«` để **thu gọn** thanh bên trái (còn lại các icon nhỏ), giúp có nhiều diện tích hơn cho vùng nội dung. Bấm lại để mở rộng.
 
 2. **Tên gói đang dùng**
-   Ví dụ hiển thị *"Viettel - Sử dụng gói vàng"*. Đây là tên tenant (đơn vị) và gói dịch vụ bạn đang thuê.
+   Ví dụ hiển thị *"FitPro - Sử dụng gói vàng"*. Đây là tên tenant (đơn vị) và gói dịch vụ bạn đang thuê.
 
 3. **Thanh tìm kiếm toàn cục**
    Gõ tên thành viên, dịch vụ hoặc mã đơn hàng để tìm nhanh mà không cần vào từng phân hệ.
 
-4. **Tên cơ sở (ví dụ: Viettel Store)**
+4. **Tên cơ sở (ví dụ: Trạm FitPro Trung tâm)**
    Nếu đơn vị bạn có nhiều cơ sở / cửa hàng, bấm vào đây để chuyển đổi cơ sở làm việc. Mọi số liệu hiển thị sau đó sẽ theo cơ sở bạn vừa chọn.
 
 5. **Chọn ngôn ngữ (Tiếng Việt / English)**

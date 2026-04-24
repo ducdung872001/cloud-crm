@@ -238,9 +238,23 @@ def setup_document_styles(doc: Document):
 
 
 # ─── Cover page ────────────────────────────────────────────────────────────
-def add_cover(doc: Document, title: str, subtitle: str, cover_label: str = "HƯỚNG DẪN SỬ DỤNG"):
+def add_cover(doc: Document, title: str, subtitle: str, cover_label: str = "HƯỚNG DẪN SỬ DỤNG",
+              logo_path: str = None, vendor_text: str = None, version_text: str = None):
     # Spacer
-    for _ in range(6):
+    for _ in range(3):
+        doc.add_paragraph()
+
+    # Logo (optional)
+    if logo_path and os.path.exists(logo_path):
+        p = doc.add_paragraph()
+        p.alignment = WD_ALIGN_PARAGRAPH.CENTER
+        r = p.add_run()
+        try:
+            r.add_picture(logo_path, width=Cm(3.5))
+        except Exception as e:
+            print(f"[WARN] Could not embed logo {logo_path}: {e}")
+
+    for _ in range(2):
         doc.add_paragraph()
 
     p = doc.add_paragraph()
@@ -274,7 +288,25 @@ def add_cover(doc: Document, title: str, subtitle: str, cover_label: str = "HƯ�
     r.font.color.rgb = TEAL
     r.font.size = Pt(11)
 
-    for _ in range(8):
+    for _ in range(6):
+        doc.add_paragraph()
+
+    # Vendor (company) block
+    if vendor_text:
+        p = doc.add_paragraph()
+        p.alignment = WD_ALIGN_PARAGRAPH.CENTER
+        r = p.add_run("Phát triển & vận hành bởi")
+        r.font.size = Pt(11)
+        r.font.color.rgb = RGBColor(0x6B, 0x72, 0x80)
+
+        p = doc.add_paragraph()
+        p.alignment = WD_ALIGN_PARAGRAPH.CENTER
+        r = p.add_run(vendor_text)
+        r.font.size = Pt(13)
+        r.font.color.rgb = NAVY
+        r.font.bold = True
+
+    for _ in range(2):
         doc.add_paragraph()
 
     p = doc.add_paragraph()
@@ -285,7 +317,7 @@ def add_cover(doc: Document, title: str, subtitle: str, cover_label: str = "HƯ�
 
     p = doc.add_paragraph()
     p.alignment = WD_ALIGN_PARAGRAPH.CENTER
-    r = p.add_run(f"Phiên bản: {datetime.now().strftime('%d/%m/%Y')}")
+    r = p.add_run(version_text or f"Xuất bản: {datetime.now().strftime('%d/%m/%Y')}")
     r.font.size = Pt(11)
     r.font.color.rgb = RGBColor(0x6B, 0x72, 0x80)
 
@@ -682,7 +714,10 @@ def convert(md_path, docx_path,
             subtitle="Tài liệu hướng dẫn sử dụng — Cửa hàng & Spa",
             header_text="Hướng dẫn sử dụng Reborn CRM",
             cover_label="HƯỚNG DẪN SỬ DỤNG",
-            start_markers=("Part 01", "Bắt đầu sử dụng", "Part 00")):
+            start_markers=("Part 01", "Bắt đầu sử dụng", "Part 00"),
+            logo_path=None,
+            vendor_text=None,
+            version_text=None):
     base_dir = os.path.dirname(os.path.abspath(md_path))
     with open(md_path, "r", encoding="utf-8") as f:
         md_text = f.read()
@@ -694,7 +729,8 @@ def convert(md_path, docx_path,
     setup_document_styles(doc)
     setup_header_footer(doc, header_text)
 
-    add_cover(doc, title=title, subtitle=subtitle, cover_label=cover_label)
+    add_cover(doc, title=title, subtitle=subtitle, cover_label=cover_label,
+              logo_path=logo_path, vendor_text=vendor_text, version_text=version_text)
 
     # Find first H1 that matches one of the start markers (skip cover content above)
     start_idx = 0
@@ -723,6 +759,9 @@ if __name__ == "__main__":
     ap.add_argument("--cover-label", default="HƯỚNG DẪN SỬ DỤNG")
     ap.add_argument("--start-marker", default=None,
                     help="Heading text fragment that marks the first 'real' content H1 (skip cover/index above)")
+    ap.add_argument("--logo", default=None, help="Path to cover-page logo image (PNG)")
+    ap.add_argument("--vendor", default=None, help="Vendor / publisher text shown on cover page")
+    ap.add_argument("--version", default=None, help="Version / date text shown at bottom of cover")
     args = ap.parse_args()
 
     markers = (args.start_marker,) if args.start_marker else ("Part 01", "Bắt đầu sử dụng", "Part 00")
@@ -731,5 +770,8 @@ if __name__ == "__main__":
                   subtitle=args.subtitle,
                   header_text=args.header,
                   cover_label=args.cover_label,
-                  start_markers=markers)
+                  start_markers=markers,
+                  logo_path=args.logo,
+                  vendor_text=args.vendor,
+                  version_text=args.version)
     print(f"Done: {out}")

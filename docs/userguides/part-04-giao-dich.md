@@ -1,6 +1,6 @@
 # Part 04 — Giao dịch
 
-*Phiên bản: Cửa hàng & Spa — Tenant "Viettel Store"*
+*Phiên bản 0.6 — Tenant "FitPro"*
 
 **Giao dịch** là nơi bạn tra cứu, quản lý **các đơn hàng / hóa đơn đã tạo**. Khác với Part 02 (bán hàng — tạo đơn mới), phần này tập trung vào **xem lại và xử lý** đơn đã có: tra cứu, trả hàng, đổi hàng, xuất hóa đơn VAT, theo dõi trạng thái giao hàng.
 

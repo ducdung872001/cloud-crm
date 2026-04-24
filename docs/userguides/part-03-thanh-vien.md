@@ -1,6 +1,6 @@
 # Part 03 — Thành viên
 
-*Phiên bản: Cửa hàng & Spa — Tenant "Viettel Store"*
+*Phiên bản 0.6 — Tenant "FitPro"*
 
 Phân hệ **Thành viên** là nơi bạn quản lý "trái tim" của hệ thống — **danh sách khách hàng hội viên** và **cấu hình các danh mục liên quan** (thẻ, nhóm, nguồn, nghề nghiệp, mối quan hệ, trường tùy chỉnh, cấu trúc hiển thị).
 
