@@ -92,7 +92,8 @@ export function getEffectiveStatus(
 }
 
 export function getShareUrl(slug: string): string {
-  if (typeof window === "undefined") return `/share_event?slug=${slug}`;
+  const path = `/crm/events/${encodeURIComponent(slug)}`;
+  if (typeof window === "undefined") return path;
   const base = window.location.origin + window.location.pathname.split("/crm")[0];
-  return `${base}/crm/share_event?slug=${slug}`;
+  return `${base}${path}`;
 }

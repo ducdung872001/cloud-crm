@@ -718,7 +718,7 @@ function RegistrantsTab({
           Chưa có ai đăng ký hoặc không có kết quả khớp bộ lọc.
           <br />
           <a
-            href={`/crm/share_event?slug=${event.slug}`}
+            href={`/crm/events/${encodeURIComponent(event.slug)}`}
             target="_blank"
             rel="noreferrer"
             style={{ color: THEME.primary, fontSize: 12 }}

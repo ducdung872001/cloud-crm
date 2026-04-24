@@ -270,6 +270,70 @@ export default function ShareEventPage() {
 
   return (
     <div style={{ minHeight: "100vh", background: THEME.bg, color: THEME.textMain }}>
+      <style
+        dangerouslySetInnerHTML={{
+          __html: `
+            .event-prose { font-size: 15px; line-height: 1.78; color: ${THEME.textMain}; word-break: break-word; }
+            .event-prose > *:first-child { margin-top: 0; }
+            .event-prose > *:last-child { margin-bottom: 0; }
+            .event-prose h1, .event-prose h2, .event-prose h3, .event-prose h4 {
+              color: ${THEME.primaryDark}; font-weight: 800; letter-spacing: -0.3px;
+            }
+            .event-prose h1 { font-size: 26px; margin: 22px 0 12px; }
+            .event-prose h2 {
+              font-size: 21px; margin: 22px 0 12px; padding-bottom: 6px;
+              border-bottom: 2px solid ${THEME.primarySoft};
+              position: relative;
+            }
+            .event-prose h2::before {
+              content: ""; position: absolute; left: 0; bottom: -2px;
+              width: 56px; height: 2px; background: ${THEME.primary};
+            }
+            .event-prose h3 { font-size: 17px; color: ${THEME.primary}; margin: 18px 0 8px; font-weight: 700; }
+            .event-prose h4 { font-size: 15px; margin: 14px 0 6px; font-weight: 700; }
+            .event-prose p { margin: 0 0 12px; }
+            .event-prose strong, .event-prose b { color: ${THEME.primaryDark}; font-weight: 700; }
+            .event-prose em, .event-prose i { color: ${THEME.textMuted}; }
+            .event-prose a { color: ${THEME.primary}; text-decoration: underline; text-underline-offset: 3px; font-weight: 600; }
+            .event-prose a:hover { color: ${THEME.primaryDark}; }
+            .event-prose ul, .event-prose ol { padding-left: 22px; margin: 10px 0 14px; }
+            .event-prose li { margin-bottom: 6px; line-height: 1.75; }
+            .event-prose ul li::marker { color: ${THEME.primary}; }
+            .event-prose ol li::marker { color: ${THEME.primary}; font-weight: 700; }
+            .event-prose blockquote {
+              border-left: 4px solid ${THEME.primary}; background: ${THEME.primarySoft};
+              padding: 12px 16px; margin: 14px 0; border-radius: 0 8px 8px 0;
+              color: ${THEME.primaryDark}; font-style: italic;
+            }
+            .event-prose blockquote p:last-child { margin-bottom: 0; }
+            .event-prose hr { border: none; border-top: 1px dashed ${THEME.border}; margin: 22px 0; }
+            .event-prose img {
+              max-width: 100%; height: auto; border-radius: 10px; margin: 12px 0;
+              box-shadow: 0 4px 16px rgba(11,46,42,0.1);
+            }
+            .event-prose code {
+              background: ${THEME.primarySoft}; color: ${THEME.primaryDark};
+              padding: 2px 7px; border-radius: 4px; font-size: 13px;
+              font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+            }
+            .event-prose pre {
+              background: ${THEME.primaryDark}; color: #fff; padding: 14px 16px;
+              border-radius: 8px; overflow-x: auto; margin: 14px 0; font-size: 13px;
+            }
+            .event-prose pre code { background: transparent; color: inherit; padding: 0; }
+            .event-prose table {
+              width: 100%; border-collapse: collapse; margin: 14px 0;
+              font-size: 14px; border-radius: 8px; overflow: hidden;
+              border: 1px solid ${THEME.border};
+            }
+            .event-prose th, .event-prose td {
+              border-bottom: 1px solid ${THEME.border}; padding: 10px 12px; text-align: left;
+            }
+            .event-prose th { background: ${THEME.primarySoft}; color: ${THEME.primaryDark}; font-weight: 700; }
+            .event-prose tr:last-child td { border-bottom: none; }
+          `,
+        }}
+      />
       {/* Top brand bar */}
       <div
         style={{
@@ -803,15 +867,70 @@ export default function ShareEventPage() {
             gap: 16,
           }}
         >
-          <Card>
-            <h3 style={{ margin: "0 0 12px 0", color: THEME.primaryDark }}>
-              📝 Nội dung chi tiết
-            </h3>
+          <div
+            style={{
+              background: "#fff",
+              borderRadius: 14,
+              border: `1px solid ${THEME.border}`,
+              overflow: "hidden",
+              boxShadow: "0 6px 24px rgba(11,46,42,0.07)",
+            }}
+          >
             <div
-              style={{ fontSize: 14, lineHeight: 1.65, color: THEME.textMain }}
-              dangerouslySetInnerHTML={{ __html: event.content || "<em>(Chưa có)</em>" }}
+              style={{
+                background: `linear-gradient(135deg, ${THEME.primarySoft} 0%, #fff 85%)`,
+                padding: "18px 22px",
+                borderBottom: `1px solid ${THEME.border}`,
+                display: "flex",
+                alignItems: "center",
+                gap: 14,
+              }}
+            >
+              <div
+                style={{
+                  width: 44,
+                  height: 44,
+                  borderRadius: 12,
+                  background: `linear-gradient(135deg, ${THEME.primary}, #00A68A)`,
+                  color: "#fff",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  fontSize: 22,
+                  boxShadow: "0 6px 16px rgba(0,201,167,0.35)",
+                  flexShrink: 0,
+                }}
+              >
+                📝
+              </div>
+              <div style={{ flex: 1, minWidth: 0 }}>
+                <h3
+                  style={{
+                    margin: 0,
+                    fontSize: 18,
+                    color: THEME.primaryDark,
+                    fontWeight: 800,
+                    letterSpacing: -0.3,
+                    lineHeight: 1.3,
+                  }}
+                >
+                  Nội dung chi tiết
+                </h3>
+                <div style={{ fontSize: 11, color: THEME.textMuted, marginTop: 3, letterSpacing: 0.3 }}>
+                  Thông tin chương trình & lịch trình sự kiện
+                </div>
+              </div>
+            </div>
+            <div
+              className="event-prose"
+              style={{ padding: "22px 24px 24px" }}
+              dangerouslySetInnerHTML={{
+                __html:
+                  event.content ||
+                  `<em style="color:${THEME.textMuted}">(Chưa có nội dung)</em>`,
+              }}
             />
-          </Card>
+          </div>
           <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
             <Card>
               <h4 style={{ margin: "0 0 8px 0", color: THEME.primaryDark, fontSize: 14 }}>

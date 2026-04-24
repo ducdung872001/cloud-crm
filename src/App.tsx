@@ -160,8 +160,20 @@ export default function App() {
       }
     };
 
+    const PUBLIC_PATHS = [
+      "/send_email_confirm",
+      "/voucher_confirm",
+      "/link_survey",
+      "/share_event",
+      "/share_promo",
+      "/share_coupon",
+      "/collect_warranty",
+      "/collect_ticket",
+      "/upload_document",
+    ];
     const isPublicEventsPage = location.pathname === "/events" || location.pathname.startsWith("/events/");
-    if (location.pathname !== "/send_email_confirm" && location.pathname !== "/voucher_confirm" && !isPublicEventsPage) {
+    const isPublic = PUBLIC_PATHS.includes(location.pathname) || isPublicEventsPage;
+    if (!isPublic) {
       checkEmployeeStatus();
     }
   }, [cookies.user, location]);
