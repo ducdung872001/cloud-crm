@@ -24,6 +24,9 @@ export interface EventVenue {
   venueImages?: string[]; // URLs ảnh địa điểm (tách khỏi galleryImageUrls là ảnh hoạt động)
   isOnline?: boolean;
   onlineUrl?: string; // Zoom/Meet link
+  // Nhãn điểm đến — chỉ dùng cho additionalVenues[] (bãi đỗ xe, chỗ chờ, lễ tân…).
+  // Venue chính (EventEntity.venue) để trống, UI tự hiểu là "Địa điểm tổ chức".
+  label?: string;
 }
 
 export interface EventBankAccount {
@@ -125,7 +128,8 @@ export interface EventEntity {
   registrationCloseDate: string;
 
   // Địa điểm + liên hệ
-  venue: EventVenue;
+  venue: EventVenue; // Địa điểm chính (nơi tổ chức)
+  additionalVenues?: EventVenue[]; // Các địa điểm phụ: bãi đỗ xe, chỗ chờ, lễ tân… (mỗi cái kèm label + toạ độ map)
   contactPerson: EventContactPerson;
 
   // Sức chứa + giá vé
@@ -204,17 +208,21 @@ export type EventFormData = Omit<
 
 // Stat tổng quan cho dashboard event
 export interface EventStats {
-  totalRegistrations: number;
+  totalRegistrations: number; // TẤT CẢ đăng ký, bao gồm cả đã huỷ
+  activeRegistrations: number; // đăng ký còn hiệu lực (khác "cancelled")
   pendingCount: number;
   confirmedCount: number;
   checkedInCount: number;
   cancelledCount: number;
   convertedToMemberCount: number;
-  fillRate: number; // 0..1, so với maxAttendees
-  conversionRate: number; // members / registrations
+  fillRate: number; // 0..1, so với maxAttendees — dùng activeRegistrations
+  conversionRate: number; // members / totalRegistrations
 
   // ── CHUNG: Mở rộng ────────────────────────────────
-  totalRevenue: number; // tổng tiền từ đăng ký không bị huỷ
-  paymentPendingCount: number; // chờ duyệt thanh toán
+  expectedRevenue: number; // dự thu: tổng tiền của đăng ký còn hiệu lực (khác "cancelled")
+  collectedRevenue: number; // đã thu: chỉ tính reg có paymentProof.status === "approved"
+  /** @deprecated dùng collectedRevenue hoặc expectedRevenue */
+  totalRevenue: number;
+  paymentPendingCount: number; // chờ duyệt thanh toán (submitted)
   paymentApprovedCount: number; // đã duyệt thanh toán
 }

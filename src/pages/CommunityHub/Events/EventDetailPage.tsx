@@ -17,6 +17,7 @@ import {
   getShareUrl,
 } from "./shared";
 import PaymentProofReview from "./components/PaymentProofReview";
+import RegistrationDetailModal from "./components/RegistrationDetailModal";
 import CheckinBoard from "./components/CheckinBoard";
 import CheckinServiceTracker from "./components/CheckinServiceTracker";
 
@@ -268,7 +269,14 @@ export default function EventDetailPage() {
             marginBottom: 14,
           }}
         >
-          <MiniStat label="Tổng đăng ký" value={stats.totalRegistrations} />
+          <MiniStat
+            label="Đăng ký hiệu lực"
+            value={
+              stats.cancelledCount > 0
+                ? `${stats.activeRegistrations} / ${stats.totalRegistrations}`
+                : stats.activeRegistrations
+            }
+          />
           <MiniStat
             label="Chờ xác nhận"
             value={stats.pendingCount}
@@ -294,11 +302,18 @@ export default function EventDetailPage() {
             value={`${Math.round(stats.fillRate * 100)}%`}
             tone="primary"
           />
-          {stats.totalRevenue > 0 && (
+          {stats.collectedRevenue > 0 && (
             <MiniStat
-              label="Tổng doanh thu"
-              value={`${formatVND(stats.totalRevenue)}đ`}
+              label="Đã thu (đã duyệt)"
+              value={`${formatVND(stats.collectedRevenue)}đ`}
               tone="success"
+            />
+          )}
+          {stats.expectedRevenue > stats.collectedRevenue && (
+            <MiniStat
+              label="Dự thu còn lại"
+              value={`${formatVND(stats.expectedRevenue - stats.collectedRevenue)}đ`}
+              tone="warning"
             />
           )}
           {stats.paymentPendingCount > 0 && (
@@ -599,9 +614,35 @@ function RegistrantsTab({
   onRefresh: () => void;
 }) {
   const [filter, setFilter] = useState<RegistrationStatus | "all">("all");
+  const [detailReg, setDetailReg] = useState<EventRegistration | null>(null);
 
   const filtered =
     filter === "all" ? registrations : registrations.filter((r) => r.status === filter);
+
+  // Thống kê add-on — số người đăng ký + tổng SL + doanh thu cho mỗi add-on.
+  // Chỉ tính đăng ký còn hiệu lực (bỏ cancelled) để con số phản ánh thực tế BTC cần chuẩn bị.
+  const addOnStats = useMemo(() => {
+    const items = event.addOnItems ?? [];
+    if (items.length === 0) return [];
+    const activeRegs = registrations.filter((r) => r.status !== "cancelled");
+    return items.map((item) => {
+      let peopleCount = 0;
+      let totalQty = 0;
+      for (const r of activeRegs) {
+        const sel = (r.selectedAddOns ?? []).find((s) => s.addOnId === item.id);
+        if (sel && sel.qty > 0) {
+          peopleCount += 1;
+          totalQty += sel.qty;
+        }
+      }
+      return {
+        item,
+        peopleCount,
+        totalQty,
+        revenue: totalQty * item.unitPrice,
+      };
+    }).filter((s) => s.peopleCount > 0);
+  }, [event, registrations]);
 
   const handleStatusChange = async (reg: EventRegistration, status: RegistrationStatus) => {
     await eventStorage.updateRegistrationStatusAsync(reg.id, status);
@@ -651,6 +692,75 @@ function RegistrantsTab({
 
   return (
     <Card title={`Danh sách người đăng ký (${registrations.length})`}>
+      {/* Panel thống kê Add-on — mỗi dịch vụ/sản phẩm: số người đăng ký, tổng SL, doanh thu */}
+      {addOnStats.length > 0 && (
+        <div
+          style={{
+            marginBottom: 14,
+            padding: 12,
+            background: "#fff",
+            border: `1px solid ${THEME.border}`,
+            borderRadius: 10,
+          }}
+        >
+          <div
+            style={{
+              fontSize: 12,
+              fontWeight: 700,
+              color: THEME.primaryDark,
+              marginBottom: 8,
+              display: "flex",
+              alignItems: "center",
+              gap: 6,
+            }}
+          >
+            🛍️ Thống kê sản phẩm / dịch vụ đăng ký
+            <span style={{ fontSize: 10, fontWeight: 500, color: THEME.textMuted }}>
+              (bỏ qua đăng ký đã huỷ)
+            </span>
+          </div>
+          <div style={{ overflowX: "auto" }}>
+            <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 12 }}>
+              <thead>
+                <tr style={{ background: THEME.primarySoft, textAlign: "left" }}>
+                  <th style={thStyle}>Sản phẩm / dịch vụ</th>
+                  <th style={{ ...thStyle, textAlign: "center" }}>Số người đăng ký</th>
+                  <th style={{ ...thStyle, textAlign: "center" }}>Tổng SL</th>
+                  <th style={{ ...thStyle, textAlign: "right" }}>Đơn giá</th>
+                  <th style={{ ...thStyle, textAlign: "right" }}>Doanh thu dự kiến</th>
+                </tr>
+              </thead>
+              <tbody>
+                {addOnStats.map((s) => (
+                  <tr key={s.item.id} style={{ borderTop: `1px solid ${THEME.border}` }}>
+                    <td style={tdStyle}>
+                      <div style={{ fontWeight: 600, color: THEME.primaryDark }}>{s.item.name}</div>
+                      {s.item.group && (
+                        <div style={{ fontSize: 10, color: THEME.textMuted, marginTop: 2 }}>
+                          {s.item.group}
+                        </div>
+                      )}
+                    </td>
+                    <td style={{ ...tdStyle, textAlign: "center", fontWeight: 700, color: THEME.primary }}>
+                      {s.peopleCount}
+                    </td>
+                    <td style={{ ...tdStyle, textAlign: "center" }}>
+                      {s.totalQty} {s.item.unit}
+                    </td>
+                    <td style={{ ...tdStyle, textAlign: "right", color: THEME.textMuted }}>
+                      {formatVND(s.item.unitPrice)}đ
+                    </td>
+                    <td style={{ ...tdStyle, textAlign: "right", fontWeight: 700, color: THEME.primaryDark }}>
+                      {formatVND(s.revenue)}đ
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      )}
+
       {/* Toolbar: filter chips + Export button */}
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 10, gap: 10, flexWrap: "wrap" }}>
         <div style={{ display: "flex", gap: 6, flexWrap: "wrap" }}>
@@ -872,6 +982,13 @@ function RegistrantsTab({
                   </td>
                   <td style={tdStyle}>
                     <div style={{ display: "flex", gap: 4, flexWrap: "wrap" }}>
+                      <button
+                        onClick={() => setDetailReg(r)}
+                        style={smallBtn("#fff", THEME.primaryDark, THEME.border)}
+                        title="Xem toàn bộ thông tin đăng ký"
+                      >
+                        👁 Chi tiết
+                      </button>
                       {!r.ticketCode && (
                         <button
                           onClick={() => handleIssueTicket(r)}
@@ -897,6 +1014,13 @@ function RegistrantsTab({
             </tbody>
           </table>
         </div>
+      )}
+      {detailReg && (
+        <RegistrationDetailModal
+          event={event}
+          registration={detailReg}
+          onClose={() => setDetailReg(null)}
+        />
       )}
     </Card>
   );
@@ -1171,12 +1295,12 @@ const tdStyle: React.CSSProperties = {
   verticalAlign: "top",
 };
 
-function smallBtn(bg: string, color: string): React.CSSProperties {
+function smallBtn(bg: string, color: string, borderColor?: string): React.CSSProperties {
   return {
     padding: "4px 8px",
     background: bg,
     color: color,
-    border: "none",
+    border: borderColor ? `1px solid ${borderColor}` : "none",
     borderRadius: 4,
     cursor: "pointer",
     fontSize: 10,

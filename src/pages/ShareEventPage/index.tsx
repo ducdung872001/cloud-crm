@@ -1020,6 +1020,59 @@ export default function ShareEventPage() {
                 </>
               )}
             </Card>
+            {(event.additionalVenues ?? []).length > 0 && (event.additionalVenues ?? []).map((av, i) => {
+              const lat = av.latitude;
+              const lng = av.longitude;
+              const hasCoords = lat != null && lng != null;
+              const mapQuery = hasCoords
+                ? `${lat},${lng}`
+                : encodeURIComponent([av.name, av.address, av.city].filter(Boolean).join(", "));
+              return (
+                <Card key={i}>
+                  <h4 style={{ margin: "0 0 8px 0", color: THEME.primaryDark, fontSize: 14 }}>
+                    🧭 {av.label || "Địa điểm phụ"}
+                  </h4>
+                  {av.name && (
+                    <div style={{ fontSize: 13, fontWeight: 600 }}>{av.name}</div>
+                  )}
+                  {(av.address || av.city) && (
+                    <div style={{ fontSize: 12, color: THEME.textMuted, marginTop: 2 }}>
+                      {av.address}
+                      {av.city && <> · {av.city}</>}
+                    </div>
+                  )}
+                  {(hasCoords || av.name || av.address) && (
+                    <div style={{ marginTop: 10 }}>
+                      <iframe
+                        title={`Bản đồ ${av.label || i}`}
+                        src={`https://www.google.com/maps?q=${mapQuery}&z=16&output=embed`}
+                        style={{ border: 0, width: "100%", height: 160, borderRadius: 8 }}
+                        loading="lazy"
+                        referrerPolicy="no-referrer-when-downgrade"
+                      />
+                      <a
+                        href={
+                          hasCoords
+                            ? `https://www.google.com/maps/dir/?api=1&destination=${lat},${lng}`
+                            : `https://www.google.com/maps/search/?api=1&query=${mapQuery}`
+                        }
+                        target="_blank"
+                        rel="noreferrer"
+                        style={{
+                          display: "inline-flex", alignItems: "center", gap: 4,
+                          marginTop: 8, padding: "6px 12px",
+                          background: THEME.primary, color: "#fff",
+                          borderRadius: 6, fontSize: 12, fontWeight: 600,
+                          textDecoration: "none",
+                        }}
+                      >
+                        🧭 Chỉ đường
+                      </a>
+                    </div>
+                  )}
+                </Card>
+              );
+            })}
             <Card>
               <h4 style={{ margin: "0 0 8px 0", color: THEME.primaryDark, fontSize: 14 }}>
                 📞 Liên hệ

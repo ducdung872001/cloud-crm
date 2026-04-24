@@ -102,6 +102,7 @@ export function normalizeEvent(e: any): EventEntity {
       isOnline: e.venueIsOnline ?? e.venue_is_online ?? false,
       onlineUrl: e.venueOnlineUrl ?? e.venue_online_url,
     }),
+    additionalVenues: parseJson(e.additionalVenues ?? e.additional_venues),
     contactPerson: typeof e.contactPerson === "string" ? JSON.parse(e.contactPerson) : (e.contactPerson ?? {
       name: e.contactName ?? e.contact_name ?? "",
       phone: e.contactPhone ?? e.contact_phone ?? "",
@@ -644,16 +645,24 @@ export const eventStorage = {
     const checkedIn = regs.filter((r) => r.status === "checked_in").length;
     const cancelled = regs.filter((r) => r.status === "cancelled").length;
     const converted = regs.filter((r) => r.convertedToCustomerId).length;
-    const activeCount = regs.filter((r) => r.status !== "cancelled").length;
+    const activeRegs = regs.filter((r) => r.status !== "cancelled");
+    const activeCount = activeRegs.length;
     const fillRate = event?.maxAttendees ? Math.min(1, activeCount / event.maxAttendees) : 0;
     const conversionRate = regs.length ? converted / regs.length : 0;
-    const activeRegs = regs.filter((r) => r.status !== "cancelled");
-    const totalRevenue = activeRegs.reduce((s, r) => s + (r.totalAmount ?? 0), 0);
+
+    // Dự thu: tổng tiền của đăng ký chưa huỷ (bao gồm pending chưa duyệt thanh toán).
+    const expectedRevenue = activeRegs.reduce((s, r) => s + (r.totalAmount ?? 0), 0);
+    // Đã thu: chỉ tính reg có bằng chứng thanh toán đã duyệt. Đây là con số phản ánh
+    // thực tế BTC đã cầm tiền — thay cho totalRevenue cũ tính cả chưa thu.
+    const collectedRevenue = activeRegs
+      .filter((r) => r.paymentProof?.status === "approved")
+      .reduce((s, r) => s + (r.totalAmount ?? 0), 0);
     const paymentPendingCount = regs.filter((r) => r.paymentProof?.status === "submitted").length;
     const paymentApprovedCount = regs.filter((r) => r.paymentProof?.status === "approved").length;
 
     return {
       totalRegistrations: regs.length,
+      activeRegistrations: activeCount,
       pendingCount: pending,
       confirmedCount: confirmed,
       checkedInCount: checkedIn,
@@ -661,7 +670,9 @@ export const eventStorage = {
       convertedToMemberCount: converted,
       fillRate,
       conversionRate,
-      totalRevenue,
+      expectedRevenue,
+      collectedRevenue,
+      totalRevenue: collectedRevenue, // legacy alias
       paymentPendingCount,
       paymentApprovedCount,
     };

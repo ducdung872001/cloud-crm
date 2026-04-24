@@ -9,7 +9,7 @@ import { serialize } from "utils/editor";
 import { uploadDocumentFormData } from "utils/document";
 import { showToast } from "utils/common";
 import { eventStorage } from "./storage";
-import type { EventEntity, DynamicFieldDefinition, EventAddOnItem } from "./types";
+import type { EventEntity, DynamicFieldDefinition, EventAddOnItem, EventVenue } from "./types";
 import { THEME, formatVND } from "./shared";
 import DynamicFieldsBuilder from "./components/DynamicFieldsBuilder";
 import ServiceCatalogPicker from "./components/ServiceCatalogPicker";
@@ -43,6 +43,15 @@ type FormState = {
   venueLongitude: string;
   venueIsOnline: boolean;
   venueOnlineUrl: string;
+  // Địa điểm phụ — danh sách động, mỗi cái kèm label (VD "Bãi đỗ xe", "Chỗ chờ")
+  additionalVenues: Array<{
+    label: string;
+    name: string;
+    address: string;
+    city: string;
+    latitude: string;
+    longitude: string;
+  }>;
   contactName: string;
   contactPhone: string;
   contactEmail: string;
@@ -79,6 +88,7 @@ const EMPTY: FormState = {
   venueLongitude: "",
   venueIsOnline: false,
   venueOnlineUrl: "",
+  additionalVenues: [],
   contactName: "",
   contactPhone: "",
   contactEmail: "",
@@ -130,6 +140,14 @@ function entityToForm(e: EventEntity): FormState {
     venueLongitude: e.venue.longitude != null ? String(e.venue.longitude) : "",
     venueIsOnline: e.venue.isOnline ?? false,
     venueOnlineUrl: e.venue.onlineUrl ?? "",
+    additionalVenues: (e.additionalVenues ?? []).map((v) => ({
+      label: v.label ?? "",
+      name: v.name ?? "",
+      address: v.address ?? "",
+      city: v.city ?? "",
+      latitude: v.latitude != null ? String(v.latitude) : "",
+      longitude: v.longitude != null ? String(v.longitude) : "",
+    })),
     contactName: e.contactPerson.name,
     contactPhone: e.contactPerson.phone,
     contactEmail: e.contactPerson.email ?? "",
@@ -263,6 +281,18 @@ export default function EventFormPage() {
         isOnline: form.venueIsOnline,
         onlineUrl: form.venueIsOnline ? form.venueOnlineUrl.trim() : undefined,
       },
+      additionalVenues: form.additionalVenues.length
+        ? (form.additionalVenues
+            .map<EventVenue>((v) => ({
+              label: v.label.trim() || undefined,
+              name: v.name.trim(),
+              address: v.address.trim(),
+              city: v.city.trim() || undefined,
+              latitude: v.latitude.trim() ? Number(v.latitude.trim()) : undefined,
+              longitude: v.longitude.trim() ? Number(v.longitude.trim()) : undefined,
+            }))
+            .filter((v) => v.name || v.address))
+        : undefined,
       contactPerson: {
         name: form.contactName.trim(),
         phone: form.contactPhone.trim(),
@@ -579,6 +609,167 @@ export default function EventFormPage() {
                       </div>
                     );
                   })()}
+                </div>
+
+                {/* Địa điểm phụ — bãi đỗ xe, chỗ chờ, lễ tân… */}
+                <div style={{ marginTop: 16 }}>
+                  <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 8 }}>
+                    <div>
+                      <div style={{ fontSize: 13, fontWeight: 700, color: THEME.primaryDark }}>
+                        📍 Địa điểm phụ
+                      </div>
+                      <div style={{ fontSize: 11, color: THEME.textMuted, marginTop: 2 }}>
+                        Hướng dẫn chi tiết: bãi đỗ xe, chỗ chờ, quầy lễ tân, phòng họp... Mỗi địa điểm có map riêng trên trang public.
+                      </div>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => update("additionalVenues", [
+                        ...form.additionalVenues,
+                        { label: "", name: "", address: "", city: "", latitude: "", longitude: "" },
+                      ])}
+                      style={{
+                        padding: "6px 14px",
+                        background: THEME.primary,
+                        color: "#fff",
+                        border: "none",
+                        borderRadius: 6,
+                        cursor: "pointer",
+                        fontSize: 12,
+                        fontWeight: 700,
+                        whiteSpace: "nowrap",
+                      }}
+                    >
+                      + Thêm địa điểm
+                    </button>
+                  </div>
+
+                  {form.additionalVenues.length === 0 && (
+                    <div style={{ padding: 12, background: THEME.bg, borderRadius: 6, border: `1px dashed ${THEME.border}`, fontSize: 12, color: THEME.textMuted, textAlign: "center" }}>
+                      Chưa có địa điểm phụ nào. Bấm "+ Thêm địa điểm" để chỉ dẫn khách đến từng khu.
+                    </div>
+                  )}
+
+                  {form.additionalVenues.map((av, idx) => (
+                    <div
+                      key={idx}
+                      style={{
+                        marginTop: idx === 0 ? 0 : 10,
+                        padding: 12,
+                        background: "#fff",
+                        border: `1px solid ${THEME.border}`,
+                        borderRadius: 8,
+                      }}
+                    >
+                      <div style={{ display: "flex", gap: 8, alignItems: "center", marginBottom: 10 }}>
+                        <input
+                          style={{ ...inputStyle, flex: 1 }}
+                          value={av.label}
+                          placeholder="Nhãn (VD: Bãi đỗ xe / Chỗ chờ / Lễ tân)"
+                          onChange={(e) => {
+                            const next = [...form.additionalVenues];
+                            next[idx] = { ...av, label: e.target.value };
+                            update("additionalVenues", next);
+                          }}
+                        />
+                        <button
+                          type="button"
+                          onClick={() => {
+                            const next = form.additionalVenues.filter((_, i) => i !== idx);
+                            update("additionalVenues", next);
+                          }}
+                          style={{
+                            padding: "8px 12px",
+                            background: "#fff",
+                            color: THEME.danger,
+                            border: `1px solid ${THEME.danger}`,
+                            borderRadius: 6,
+                            cursor: "pointer",
+                            fontSize: 12,
+                            fontWeight: 700,
+                          }}
+                          title="Xoá địa điểm"
+                        >
+                          🗑 Xoá
+                        </button>
+                      </div>
+                      <div style={{ display: "grid", gridTemplateColumns: "2fr 1fr", gap: 8, marginBottom: 8 }}>
+                        <input
+                          style={inputStyle}
+                          value={av.address}
+                          placeholder="Địa chỉ"
+                          onChange={(e) => {
+                            const next = [...form.additionalVenues];
+                            next[idx] = { ...av, address: e.target.value };
+                            update("additionalVenues", next);
+                          }}
+                        />
+                        <input
+                          style={inputStyle}
+                          value={av.city}
+                          placeholder="Thành phố"
+                          onChange={(e) => {
+                            const next = [...form.additionalVenues];
+                            next[idx] = { ...av, city: e.target.value };
+                            update("additionalVenues", next);
+                          }}
+                        />
+                      </div>
+                      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 2fr", gap: 8 }}>
+                        <input
+                          style={inputStyle}
+                          value={av.latitude}
+                          placeholder="Vĩ độ"
+                          onChange={(e) => {
+                            const next = [...form.additionalVenues];
+                            next[idx] = { ...av, latitude: e.target.value };
+                            update("additionalVenues", next);
+                          }}
+                        />
+                        <input
+                          style={inputStyle}
+                          value={av.longitude}
+                          placeholder="Kinh độ"
+                          onChange={(e) => {
+                            const next = [...form.additionalVenues];
+                            next[idx] = { ...av, longitude: e.target.value };
+                            update("additionalVenues", next);
+                          }}
+                        />
+                        <input
+                          style={inputStyle}
+                          placeholder="Dán URL Google Maps để auto parse toạ độ"
+                          onBlur={(e) => {
+                            const v = e.target.value.trim();
+                            if (!v) return;
+                            const m1 = v.match(/@(-?\d+\.\d+),(-?\d+\.\d+)/);
+                            const m2 = v.match(/[?&]q=(-?\d+\.\d+),(-?\d+\.\d+)/);
+                            const m3 = v.match(/!3d(-?\d+\.\d+)!4d(-?\d+\.\d+)/);
+                            const match = m1 || m3 || m2;
+                            if (match) {
+                              const next = [...form.additionalVenues];
+                              next[idx] = { ...av, latitude: match[1], longitude: match[2] };
+                              update("additionalVenues", next);
+                              e.target.value = "";
+                            } else {
+                              alert("Không trích được toạ độ từ URL — vui lòng nhập thủ công.");
+                            }
+                          }}
+                        />
+                      </div>
+                      {av.latitude.trim() && av.longitude.trim() && !isNaN(Number(av.latitude)) && !isNaN(Number(av.longitude)) && (
+                        <div style={{ marginTop: 8 }}>
+                          <iframe
+                            title={`Map ${idx}`}
+                            src={`https://www.google.com/maps?q=${av.latitude},${av.longitude}&z=16&output=embed`}
+                            style={{ border: 0, width: "100%", height: 160, borderRadius: 6 }}
+                            loading="lazy"
+                            referrerPolicy="no-referrer-when-downgrade"
+                          />
+                        </div>
+                      )}
+                    </div>
+                  ))}
                 </div>
               </>
             )}
