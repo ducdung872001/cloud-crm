@@ -116,6 +116,7 @@ export interface IReturnableProduct {
   fee: number;
   discount?: number;
   discountUnit?: number;
+  vat?: number;
   unitId?: number;
   unitName?: string;
   inventoryId?: number;
@@ -149,6 +150,7 @@ export interface IInvoiceReturnItemResponse {
     paid: number;
     debt: number;
     discount: number;
+    inventoryId?: number;
     receiptDate: string;
     status: number;
   };
@@ -165,19 +167,24 @@ export interface IAutofillState {
   products: IReturnableProduct[];
   services: IReturnableService[];
   originalFee: number;
+  inventoryId?: number;
 }
 
 // ─── Create requests ──────────────────────────────────────────────────────────
 
 export interface IReturnProductLine {
-  productId?: number;
-  variantId?: number;
-  qty: number;
+  productId: number;
+  variantId: number;
+  unitId: number;
+  quantity: number;
   price: number;
+  priceDiscount?: number;
   fee: number;
   discount?: number;
   discountUnit?: number;
-  inventoryId?: number;
+  vat?: number;
+  customerId?: number;
+  batchNo?: string | null;
   note?: string;
 }
 
@@ -191,15 +198,17 @@ export interface ICreateReturnRequest {
     paid: number;
     debt: number;
     discount: number;
+    vat?: number;
     vatAmount: number;
     paymentType: number;
     reason: string;
     refundMethod: number;
+    paymentFundId?: number;
     note?: string;
   };
   lstBoughtProduct: IReturnProductLine[];
-  lstService?: Record<string, unknown>[];
-  lstCardService?: Record<string, unknown>[];
+  lstBoughtService?: Record<string, unknown>[];
+  lstBoughtCardService?: Record<string, unknown>[];
 }
 
 export interface ICreateExchangeRequest extends ICreateReturnRequest {
@@ -211,6 +220,7 @@ export interface ICreateExchangeRequest extends ICreateReturnRequest {
     paid: number;
     debt: number;
     discount: number;
+    vat?: number;
     vatAmount: number;
     paymentType: number;
   };
