@@ -144,7 +144,8 @@
       "Bash(node scripts/verify-sidebar.cjs)",
       "Bash(node scripts/verify-all.cjs)",
       "Bash(curl -s -o /dev/null -w \"HTTP %{http_code}\\\\n\" http://localhost:4000/crm/portal/mentors)",
-      "Bash(node scripts/test-create-course-link.cjs)"
+      "Bash(node scripts/test-create-course-link.cjs)",
+      "Bash(yarn build:prod)"
     ],
     "additionalDirectories": [
       "\\tmp"

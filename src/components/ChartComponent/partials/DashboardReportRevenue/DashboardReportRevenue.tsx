@@ -18,8 +18,6 @@ import BeautyBranchService from "services/BeautyBranchService";
 import { showToast } from "utils/common";
 import { ContextType, UserContext } from "contexts/userContext";
 import "./DashboardReportRevenue.scss";
-import ReportCustomer from "pages/CustomerPerson/partials/ReportCustomer";
-import ReportPartner from "pages/PartnerList/partials/ReportPartner";
 import { stringify } from "uuid";
 
 interface ReportRevenueProps {
@@ -558,14 +556,6 @@ export default function DashboardReportRevenue(props: ReportRevenueProps) {
             <HighchartsReact highcharts={Highcharts} allowChartUpdate={true} options={chartRevenue} />
           </div>
         </div>
-      ) : activeTitleHeader === 3 ? (
-        <>
-          <ReportCustomer />
-        </>
-      ) : activeTitleHeader === 4 ? (
-        <>
-          <ReportPartner />
-        </>
       ) : null}
     </>
   );
