@@ -34,6 +34,7 @@ export interface EventBankAccount {
   bank: string;         // Tên ngân hàng hoặc viết tắt (VCB, TCB, MB, …)
   accountNumber: string;
   phone?: string;       // SĐT đối chiếu
+  qrImageUrl?: string;  // QR ảnh tự upload (cho tenant chưa dùng VietQR auto-gen)
 }
 
 export interface EventContactPerson {

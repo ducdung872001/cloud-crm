@@ -69,6 +69,7 @@ type FormState = {
   bankHolder: string;
   bankAccountNumber: string;
   bankPhone: string;
+  bankQrImageUrl: string; // QR ảnh upload (tenant chưa có VietQR)
   selectableDates: string[];
 };
 
@@ -105,6 +106,7 @@ const EMPTY: FormState = {
   bankHolder: "",
   bankAccountNumber: "",
   bankPhone: "",
+  bankQrImageUrl: "",
   selectableDates: [],
 };
 
@@ -164,6 +166,7 @@ function entityToForm(e: EventEntity): FormState {
     bankHolder: e.bankAccountOverride?.holder ?? "",
     bankAccountNumber: e.bankAccountOverride?.accountNumber ?? "",
     bankPhone: e.bankAccountOverride?.phone ?? "",
+    bankQrImageUrl: e.bankAccountOverride?.qrImageUrl ?? "",
     selectableDates: e.selectableDates ?? [],
   };
 }
@@ -176,6 +179,7 @@ export default function EventFormPage() {
   const [error, setError] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
   const [coverUploading, setCoverUploading] = useState(false);
+  const [qrUploading, setQrUploading] = useState(false);
   // editorKey để force remount RebornEditor khi load dữ liệu edit
   const [editorKey, setEditorKey] = useState(0);
 
@@ -221,6 +225,29 @@ export default function EventFormPage() {
       () => {
         showToast("Có lỗi xảy ra trong quá trình upload ảnh", "error");
         setCoverUploading(false);
+      },
+    );
+    e.target.value = "";
+  };
+
+  const handleQrUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    if (!files || !files[0]) return;
+    setQrUploading(true);
+    uploadDocumentFormData(
+      files[0],
+      (data: any) => {
+        const url = data?.fileUrl ?? data?.url;
+        if (url) {
+          update("bankQrImageUrl", url);
+        } else {
+          showToast("Upload thành công nhưng không nhận được URL", "error");
+        }
+        setQrUploading(false);
+      },
+      () => {
+        showToast("Có lỗi xảy ra trong quá trình upload QR", "error");
+        setQrUploading(false);
       },
     );
     e.target.value = "";
@@ -319,12 +346,13 @@ export default function EventFormPage() {
       galleryImageUrls: form.galleryImageUrls.length ? form.galleryImageUrls : undefined,
       requirePaymentProof: form.requirePaymentProof || undefined,
       // Bank account override — chỉ gửi khi requirePaymentProof bật + ít nhất số TK
-      bankAccountOverride: (form.requirePaymentProof && form.bankAccountNumber.trim())
+      bankAccountOverride: (form.requirePaymentProof && (form.bankAccountNumber.trim() || form.bankQrImageUrl.trim()))
         ? {
             bank: form.bankName.trim(),
             holder: form.bankHolder.trim(),
             accountNumber: form.bankAccountNumber.trim(),
             phone: form.bankPhone.trim() || undefined,
+            qrImageUrl: form.bankQrImageUrl.trim() || undefined,
           }
         : undefined,
       selectableDates: form.selectableDates.length ? form.selectableDates : undefined,
@@ -1078,6 +1106,75 @@ export default function EventFormPage() {
                 <p style={{ gridColumn: "1 / -1", fontSize: 11, color: THEME.textMuted, margin: 0 }}>
                   Để trống → form đăng ký chỉ hiện upload biên lai, không có QR. Điền đủ 3 trường bắt buộc để FE tự sinh QR VietQR.
                 </p>
+
+                {/* Upload QR ảnh — cho tenant chưa dùng VietQR */}
+                <div style={{ gridColumn: "1 / -1", marginTop: 6, paddingTop: 10, borderTop: `1px dashed ${THEME.border}` }}>
+                  <label style={{ ...miniLabel, display: "block", marginBottom: 6 }}>
+                    Mã QR ngân hàng (ảnh) — tuỳ chọn
+                  </label>
+                  <p style={{ fontSize: 11, color: THEME.textMuted, margin: "0 0 8px" }}>
+                    Nếu tenant chưa dùng VietQR, upload ảnh QR thủ công ở đây. Khi có ảnh QR upload, hệ thống sẽ ưu tiên hiển thị QR này thay vì auto-gen.
+                  </p>
+                  <div style={{ display: "flex", gap: 12, alignItems: "flex-start", flexWrap: "wrap" }}>
+                    {form.bankQrImageUrl && (
+                      <img
+                        src={form.bankQrImageUrl}
+                        alt="QR ngân hàng"
+                        style={{
+                          width: 120,
+                          height: 120,
+                          objectFit: "contain",
+                          border: `1px solid ${THEME.border}`,
+                          borderRadius: 6,
+                          background: "#fff",
+                        }}
+                      />
+                    )}
+                    <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
+                      <label
+                        style={{
+                          display: "inline-block",
+                          padding: "8px 14px",
+                          background: THEME.primary,
+                          color: "#fff",
+                          borderRadius: 4,
+                          fontSize: 12,
+                          fontWeight: 600,
+                          cursor: qrUploading ? "wait" : "pointer",
+                          opacity: qrUploading ? 0.6 : 1,
+                          alignSelf: "flex-start",
+                        }}
+                      >
+                        {qrUploading ? "Đang tải..." : form.bankQrImageUrl ? "Thay ảnh QR" : "Tải lên ảnh QR"}
+                        <input
+                          type="file"
+                          accept="image/*"
+                          onChange={handleQrUpload}
+                          disabled={qrUploading}
+                          style={{ display: "none" }}
+                        />
+                      </label>
+                      {form.bankQrImageUrl && (
+                        <button
+                          type="button"
+                          onClick={() => update("bankQrImageUrl", "")}
+                          style={{
+                            padding: "6px 10px",
+                            background: "#fff",
+                            color: THEME.danger,
+                            border: `1px solid ${THEME.danger}`,
+                            borderRadius: 4,
+                            fontSize: 11,
+                            cursor: "pointer",
+                            alignSelf: "flex-start",
+                          }}
+                        >
+                          Xoá QR
+                        </button>
+                      )}
+                    </div>
+                  </div>
+                </div>
               </div>
             )}
           </Section>

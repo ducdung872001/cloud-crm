@@ -260,13 +260,16 @@ export default function ShareEventPage() {
   const needsPayment = !!event.requirePaymentProof;
 
   // QR thanh toán — nếu admin có cấu hình bankAccountOverride
+  // Ưu tiên QR ảnh upload (cho tenant chưa dùng VietQR), fallback sinh tự động.
   const bank = event.bankAccountOverride;
-  const qrPayload = bank
+  const qrPayload = bank && bank.bank && bank.accountNumber
     ? `${bank.bank}|${bank.accountNumber}|${grandTotal || ""}|EVENT-${event.slug}`
     : null;
-  const qrImgSrc = qrPayload
-    ? `https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=${encodeURIComponent(qrPayload)}`
-    : null;
+  const qrImgSrc = bank?.qrImageUrl
+    ? bank.qrImageUrl
+    : qrPayload
+      ? `https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=${encodeURIComponent(qrPayload)}`
+      : null;
 
   return (
     <div style={{ minHeight: "100vh", background: THEME.bg, color: THEME.textMain }}>
@@ -765,17 +768,20 @@ export default function ShareEventPage() {
                           alt="QR chuyển khoản"
                           width={180}
                           height={180}
-                          style={{ border: `1px solid ${THEME.border}`, borderRadius: 6, background: "#fff" }}
+                          style={{ border: `1px solid ${THEME.border}`, borderRadius: 6, background: "#fff", objectFit: "contain" }}
                         />
                       )}
                       <div style={{ flex: 1, minWidth: 200, fontSize: 13, lineHeight: 1.7 }}>
-                        <div><strong>Ngân hàng:</strong> {bank.bank}</div>
-                        <div><strong>Chủ TK:</strong> {bank.holder}</div>
-                        <div><strong>Số TK:</strong>{" "}
-                          <span style={{ fontFamily: "ui-monospace,monospace", fontWeight: 600 }}>
-                            {bank.accountNumber}
-                          </span>
-                        </div>
+                        {bank.bank && <div><strong>Ngân hàng:</strong> {bank.bank}</div>}
+                        {bank.holder && <div><strong>Chủ TK:</strong> {bank.holder}</div>}
+                        {bank.accountNumber && (
+                          <div>
+                            <strong>Số TK:</strong>{" "}
+                            <span style={{ fontFamily: "ui-monospace,monospace", fontWeight: 600 }}>
+                              {bank.accountNumber}
+                            </span>
+                          </div>
+                        )}
                         {grandTotal > 0 && (
                           <div><strong>Số tiền:</strong>{" "}
                             <span style={{ color: THEME.accent, fontWeight: 700 }}>

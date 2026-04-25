@@ -76,6 +76,22 @@ function isApiOk(res: any): boolean {
   return res && (res.code === 0 || res.result !== undefined || res.ok === true);
 }
 
+/** Chuẩn hoá datetime từ BE: thêm `Z` (UTC) nếu BE trả naive ISO không có TZ
+ *  marker — tránh JS coi là local time và lệch giờ khi hiển thị.
+ *  - "2026-04-25T07:00:00.000Z"  → giữ nguyên
+ *  - "2026-04-25T07:00:00+07:00" → giữ nguyên
+ *  - "2026-04-25T07:00:00"       → "2026-04-25T07:00:00Z" (assume UTC, vì FE gửi `.toISOString()`)
+ *  - "2026-04-25 07:00:00"       → "2026-04-25T07:00:00Z"
+ */
+function normalizeBeDate<T extends string | undefined | null>(s: T): T {
+  if (!s || typeof s !== "string") return s;
+  // Đã có TZ marker (Z hoặc +/-HH:MM offset)
+  if (/[Zz]$|[+-]\d{2}:?\d{2}$/.test(s)) return s as T;
+  // Phải có dạng datetime (chữ T hoặc dấu cách giữa date và time)
+  if (!/\d{4}-\d{2}-\d{2}[T ]\d{2}:\d{2}/.test(s)) return s as T;
+  return (s.replace(" ", "T") + "Z") as T;
+}
+
 /** Trích result từ API response */
 function unwrap<T>(res: any): T {
   return res.result ?? res.data ?? res;
@@ -111,15 +127,15 @@ export function normalizeEvent(e: any): EventEntity {
     }),
     // snake_case → camelCase fallback
     coverImageUrl: e.coverImageUrl ?? e.cover_image_url,
-    startDate: e.startDate ?? e.start_date,
-    endDate: e.endDate ?? e.end_date,
-    registrationOpenDate: e.registrationOpenDate ?? e.registration_open_date,
-    registrationCloseDate: e.registrationCloseDate ?? e.registration_close_date,
+    startDate: normalizeBeDate(e.startDate ?? e.start_date),
+    endDate: normalizeBeDate(e.endDate ?? e.end_date),
+    registrationOpenDate: normalizeBeDate(e.registrationOpenDate ?? e.registration_open_date),
+    registrationCloseDate: normalizeBeDate(e.registrationCloseDate ?? e.registration_close_date),
     maxAttendees: e.maxAttendees ?? e.max_attendees,
     ticketPrice: e.ticketPrice ?? e.ticket_price ?? 0,
-    publishedAt: e.publishedAt ?? e.published_at,
-    createdAt: e.createdAt ?? e.created_at,
-    updatedAt: e.updatedAt ?? e.updated_at,
+    publishedAt: normalizeBeDate(e.publishedAt ?? e.published_at),
+    createdAt: normalizeBeDate(e.createdAt ?? e.created_at),
+    updatedAt: normalizeBeDate(e.updatedAt ?? e.updated_at),
     createdBy: e.createdBy ?? e.created_by,
     // BE trả int 0/1 → coerce về boolean để dùng đúng trong {X && <JSX />}.
     requirePaymentProof: Boolean(e.requirePaymentProof ?? e.require_payment_proof ?? false),
@@ -132,22 +148,46 @@ function normalizeReg(r: any): EventRegistration {
     if (typeof v === "string") try { return JSON.parse(v); } catch { return v; }
     return v;
   };
+  // checkInOutRecords có 2 field datetime nested → normalize sau khi parse JSON
+  const rawCheckInOut = parseJson(r.checkInOutRecords ?? r.check_in_out_records);
+  const checkInOutRecords = Array.isArray(rawCheckInOut)
+    ? rawCheckInOut.map((rec: any) => ({
+        ...rec,
+        checkedInAt: normalizeBeDate(rec?.checkedInAt),
+        checkedOutAt: normalizeBeDate(rec?.checkedOutAt),
+      }))
+    : rawCheckInOut;
+
+  // paymentProofs cũng có submittedAt + reviewedAt → normalize
+  const rawProofs = parseJson(r.paymentProofs ?? r.payment_proofs);
+  const paymentProofs = Array.isArray(rawProofs)
+    ? rawProofs.map((p: any) =>
+        p && typeof p === "object"
+          ? {
+              ...p,
+              submittedAt: normalizeBeDate(p.submittedAt),
+              reviewedAt: normalizeBeDate(p.reviewedAt),
+            }
+          : p,
+      )
+    : rawProofs;
+
   return {
     ...r,
     dynamicFieldValues: parseJson(r.dynamicFieldValues ?? r.dynamic_field_values),
     selectedAddOns: parseJson(r.selectedAddOns ?? r.selected_add_ons),
     selectedDates: parseJson(r.selectedDates ?? r.selected_dates),
-    checkInOutRecords: parseJson(r.checkInOutRecords ?? r.check_in_out_records),
+    checkInOutRecords,
     totalAmount: r.totalAmount ?? r.total_amount,
     eventSlug: r.eventSlug ?? r.event_slug,
     eventId: r.eventId ?? r.event_id,
     fullName: r.fullName ?? r.full_name,
-    registeredAt: r.registeredAt ?? r.registered_at ?? r.created_at,
-    confirmedAt: r.confirmedAt ?? r.confirmed_at,
-    checkedInAt: r.checkedInAt ?? r.checked_in_at,
+    registeredAt: normalizeBeDate(r.registeredAt ?? r.registered_at ?? r.created_at),
+    confirmedAt: normalizeBeDate(r.confirmedAt ?? r.confirmed_at),
+    checkedInAt: normalizeBeDate(r.checkedInAt ?? r.checked_in_at),
     ticketCode: r.ticketCode ?? r.ticket_code,
     convertedToCustomerId: r.convertedToCustomerId ?? r.converted_to_customer_id,
-    convertedAt: r.convertedAt ?? r.converted_at,
+    convertedAt: normalizeBeDate(r.convertedAt ?? r.converted_at),
     utmSource: r.utmSource ?? r.utm_source,
     utmCampaign: r.utmCampaign ?? r.utm_campaign,
     // BE thực tế trả field tên `paymentProofs` (số nhiều, array) — 1 reg có thể
@@ -157,29 +197,38 @@ function normalizeReg(r: any): EventRegistration {
     //  3) Flatten fields (`payment_proof_url`, `payment_proof_status`, ...)
     // Nếu chỉ có URL mà status null/empty → coi là "submitted" để cột
     // "Thanh toán" không báo sai là "Chưa upload".
-    paymentProofs: parseJson(r.paymentProofs ?? r.payment_proofs),
+    paymentProofs,
     paymentProof: (() => {
-      const list = parseJson(r.paymentProofs ?? r.payment_proofs);
-      if (Array.isArray(list) && list.length > 0) {
-        const last = list[list.length - 1];
+      if (Array.isArray(paymentProofs) && paymentProofs.length > 0) {
+        const last = paymentProofs[paymentProofs.length - 1];
         return typeof last === "object" ? last : undefined;
       }
       const parsedObj = parseJson(r.paymentProof ?? r.payment_proof);
-      if (parsedObj && typeof parsedObj === "object") return parsedObj;
+      if (parsedObj && typeof parsedObj === "object") {
+        return {
+          ...parsedObj,
+          submittedAt: normalizeBeDate(parsedObj.submittedAt),
+          reviewedAt: normalizeBeDate(parsedObj.reviewedAt),
+        };
+      }
       const url = r.payment_proof_url ?? r.paymentProofUrl;
       const status = r.payment_proof_status ?? r.paymentProofStatus;
       if (status && status !== "not_required") {
         return {
           imageUrl: url ?? "",
-          submittedAt: r.payment_proof_submitted_at ?? "",
+          submittedAt: normalizeBeDate(r.payment_proof_submitted_at ?? ""),
           status,
-          reviewedAt: r.payment_proof_reviewed_at,
+          reviewedAt: normalizeBeDate(r.payment_proof_reviewed_at),
           reviewedBy: r.payment_proof_reviewed_by,
           rejectReason: r.payment_proof_reject_reason,
         };
       }
       if (url) {
-        return { imageUrl: url, submittedAt: r.payment_proof_submitted_at ?? "", status: "submitted" };
+        return {
+          imageUrl: url,
+          submittedAt: normalizeBeDate(r.payment_proof_submitted_at ?? ""),
+          status: "submitted",
+        };
       }
       return undefined;
     })(),
@@ -637,9 +686,14 @@ export const eventStorage = {
   },
 
   // ═══ Stats ════════════════════════════════════════════════════════════
-  getEventStats(eventId: string): EventStats {
-    const event = this.getEvent(eventId);
-    const regs = this.listRegistrationsByEvent(eventId);
+  /** Tính stats từ regs + event đã có sẵn (ưu tiên data API caller vừa fetch).
+   *  Nếu không truyền tham số → fallback đọc localStorage (backward-compat).
+   *  Lý do tách: trước đây fn đọc thẳng localStorage trong khi caller đang
+   *  hiển thị data từ API → con số stats KHÔNG khớp data thực tế trên màn hình.
+   */
+  getEventStats(eventId: string, opts?: { regs?: EventRegistration[]; event?: EventEntity | null }): EventStats {
+    const event = opts?.event ?? this.getEvent(eventId);
+    const regs = opts?.regs ?? this.listRegistrationsByEvent(eventId);
     const pending = regs.filter((r) => r.status === "pending").length;
     const confirmed = regs.filter((r) => r.status === "confirmed").length;
     const checkedIn = regs.filter((r) => r.status === "checked_in").length;
@@ -650,13 +704,25 @@ export const eventStorage = {
     const fillRate = event?.maxAttendees ? Math.min(1, activeCount / event.maxAttendees) : 0;
     const conversionRate = regs.length ? converted / regs.length : 0;
 
+    // Helper: lấy totalAmount đáng tin — nếu BE không trả, fallback compute từ
+    // ticketPrice + sum(addOns × qty) để stats không lệch về 0.
+    const totalOf = (r: EventRegistration): number => {
+      if (typeof r.totalAmount === "number" && r.totalAmount > 0) return r.totalAmount;
+      if (!event) return 0;
+      const ticket = event.ticketPrice ?? 0;
+      const addons = (r.selectedAddOns ?? []).reduce((acc, sel) => {
+        const item = (event.addOnItems ?? []).find((i) => i.id === sel.addOnId);
+        return acc + (item ? item.unitPrice * sel.qty : 0);
+      }, 0);
+      return ticket + addons;
+    };
+
     // Dự thu: tổng tiền của đăng ký chưa huỷ (bao gồm pending chưa duyệt thanh toán).
-    const expectedRevenue = activeRegs.reduce((s, r) => s + (r.totalAmount ?? 0), 0);
-    // Đã thu: chỉ tính reg có bằng chứng thanh toán đã duyệt. Đây là con số phản ánh
-    // thực tế BTC đã cầm tiền — thay cho totalRevenue cũ tính cả chưa thu.
+    const expectedRevenue = activeRegs.reduce((s, r) => s + totalOf(r), 0);
+    // Đã thu: chỉ tính reg có bằng chứng thanh toán đã duyệt.
     const collectedRevenue = activeRegs
       .filter((r) => r.paymentProof?.status === "approved")
-      .reduce((s, r) => s + (r.totalAmount ?? 0), 0);
+      .reduce((s, r) => s + totalOf(r), 0);
     const paymentPendingCount = regs.filter((r) => r.paymentProof?.status === "submitted").length;
     const paymentApprovedCount = regs.filter((r) => r.paymentProof?.status === "approved").length;
 

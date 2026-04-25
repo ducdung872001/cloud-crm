@@ -308,8 +308,7 @@ async function exportRegistrationsToExcel(event: EventEntity, registrations: Reg
 ## Phụ thuộc BE (blockers)
 
 Trước khi FE bắt đầu, cần BE làm xong:
-- [market/events.md](../backend-tasks/market/events.md) Gap 3 (addOn.group) + Gap 4 (paymentProofs array)
-- [market/events.md](../backend-tasks/market/events.md) Gap 5 (auto-link customer khi register)
+- Gap 5 (auto-link customer khi register)
 - [customer/attribute-seed-mentor.md](../backend-tasks/customer/attribute-seed-mentor.md) (seed 2 attribute)
 - Endpoint `GET /market/events/:id/registrations` trả về `EventRegistration[]` với `customer` joined (name, phone, customerGroup, attributes)
 

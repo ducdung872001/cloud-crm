@@ -15,6 +15,7 @@ import {
   formatVND,
   getEffectiveStatus,
   getShareUrl,
+  computeRegistrationTotal,
 } from "./shared";
 import PaymentProofReview from "./components/PaymentProofReview";
 import RegistrationDetailModal from "./components/RegistrationDetailModal";
@@ -42,12 +43,15 @@ export default function EventDetailPage() {
       ]);
       setEvent(evt);
       setRegistrations(regs);
-      // Stats vẫn tính local từ regs (hoặc API nếu có)
-      setStats(eventStorage.getEventStats(id));
+      // Stats tính từ chính regs/event vừa fetch (KHÔNG đọc localStorage)
+      // — đảm bảo con số luôn khớp với data đang render.
+      setStats(eventStorage.getEventStats(id, { regs, event: evt }));
     } catch {
-      setEvent(eventStorage.getEvent(id));
-      setRegistrations(eventStorage.listRegistrationsByEvent(id));
-      setStats(eventStorage.getEventStats(id));
+      const evt = eventStorage.getEvent(id);
+      const regs = eventStorage.listRegistrationsByEvent(id);
+      setEvent(evt);
+      setRegistrations(regs);
+      setStats(eventStorage.getEventStats(id, { regs, event: evt }));
     }
     setLoading(false);
   }, [id]);
@@ -945,15 +949,18 @@ function RegistrantsTab({
                       <span style={{ color: THEME.textMuted, fontSize: 10 }}>—</span>
                     )}
                   </td>
-                  {/* Tổng tiền */}
+                  {/* Tổng tiền (fallback compute nếu BE không trả) */}
                   <td style={tdStyle}>
-                    {r.totalAmount ? (
-                      <span style={{ fontWeight: 700, fontSize: 11, color: THEME.primaryDark }}>
-                        {formatVND(r.totalAmount)}đ
-                      </span>
-                    ) : (
-                      <span style={{ color: THEME.textMuted, fontSize: 10 }}>—</span>
-                    )}
+                    {(() => {
+                      const total = computeRegistrationTotal(r, event);
+                      return total > 0 ? (
+                        <span style={{ fontWeight: 700, fontSize: 11, color: THEME.primaryDark }}>
+                          {formatVND(total)}đ
+                        </span>
+                      ) : (
+                        <span style={{ color: THEME.textMuted, fontSize: 10 }}>—</span>
+                      );
+                    })()}
                   </td>
                   <td style={tdStyle}>
                     {r.ticketCode ? (

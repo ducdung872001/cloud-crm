@@ -2,7 +2,7 @@
 // thông tin cá nhân, dynamic fields, add-on, multi-day, payment proof, check-in history.
 import React from "react";
 import type { EventEntity, EventRegistration } from "../types";
-import { THEME, formatVND } from "../shared";
+import { THEME, formatVND, computeRegistrationTotal } from "../shared";
 
 const STATUS_LABELS: Record<string, string> = {
   pending: "Chờ xác nhận",
@@ -202,29 +202,33 @@ export default function RegistrationDetailModal({
             </Section>
           )}
 
-          {/* 5. Tổng tiền */}
-          {typeof r.totalAmount === "number" && r.totalAmount > 0 && (
-            <Section title="💰 Tổng tiền">
-              <div
-                style={{
-                  display: "flex",
-                  justifyContent: "space-between",
-                  alignItems: "center",
-                  padding: "12px 14px",
-                  background: THEME.primarySoft,
-                  borderRadius: 8,
-                  border: `1px solid ${THEME.primary}`,
-                }}
-              >
-                <span style={{ fontSize: 13, color: THEME.primaryDark, fontWeight: 700 }}>
-                  Tổng cộng
-                </span>
-                <span style={{ fontSize: 18, color: THEME.primaryDark, fontWeight: 800 }}>
-                  {formatVND(r.totalAmount)} đ
-                </span>
-              </div>
-            </Section>
-          )}
+          {/* 5. Tổng tiền (fallback compute từ ticket + add-ons nếu BE không trả) */}
+          {(() => {
+            const total = computeRegistrationTotal(r, event);
+            if (total <= 0) return null;
+            return (
+              <Section title="💰 Tổng tiền">
+                <div
+                  style={{
+                    display: "flex",
+                    justifyContent: "space-between",
+                    alignItems: "center",
+                    padding: "12px 14px",
+                    background: THEME.primarySoft,
+                    borderRadius: 8,
+                    border: `1px solid ${THEME.primary}`,
+                  }}
+                >
+                  <span style={{ fontSize: 13, color: THEME.primaryDark, fontWeight: 700 }}>
+                    Tổng cộng
+                  </span>
+                  <span style={{ fontSize: 18, color: THEME.primaryDark, fontWeight: 800 }}>
+                    {formatVND(total)} đ
+                  </span>
+                </div>
+              </Section>
+            );
+          })()}
 
           {/* 6. Thanh toán */}
           {proofs.length > 0 && (

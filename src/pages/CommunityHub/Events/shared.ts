@@ -1,6 +1,8 @@
 // Shared constants + helpers cho module Events.
 
 import type {
+  EventEntity,
+  EventRegistration,
   EventStatus,
   RegistrationStatus,
 } from "./types";
@@ -89,6 +91,23 @@ export function getEffectiveStatus(
   if (now > end) return "ended";
   if (now >= start) return "ongoing";
   return "published";
+}
+
+/** Tính tổng tiền 1 đăng ký = ticketPrice (event) + sum(addOn × qty).
+ *  Fallback khi BE không trả `totalAmount` (trường hợp Jackson drop hoặc
+ *  endpoint cũ). Nếu reg.totalAmount đã có → dùng luôn.
+ */
+export function computeRegistrationTotal(
+  r: EventRegistration,
+  event: EventEntity,
+): number {
+  if (typeof r.totalAmount === "number" && r.totalAmount > 0) return r.totalAmount;
+  const ticket = event.ticketPrice ?? 0;
+  const addons = (r.selectedAddOns ?? []).reduce((acc, sel) => {
+    const item = (event.addOnItems ?? []).find((i) => i.id === sel.addOnId);
+    return acc + (item ? item.unitPrice * sel.qty : 0);
+  }, 0);
+  return ticket + addons;
 }
 
 export function getShareUrl(slug: string): string {
