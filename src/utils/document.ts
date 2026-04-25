@@ -77,7 +77,11 @@ export const uploadDocumentFormData = (
     //   'multipart/form-data;boundary=----WebKitFormBoundary7MA4YWxkTrZu0gW'
     // );
     xhr.setRequestHeader("Authorization", getToken());
-    xhr.setRequestHeader("Hostname", location.hostname || "");
+    {
+      const realHost = location.hostname || "";
+      const isLocal = realHost === "localhost" || realHost === "127.0.0.1" || realHost === "";
+      xhr.setRequestHeader("Hostname", isLocal ? "hub.reborn.vn" : realHost);
+    }
 
     let percent = 0;
     xhr.onload = () => {
@@ -148,7 +152,11 @@ export const uploadDocumentDirectFormData = (data, onSuccess, onError, onProgres
     const customerApiBase = process.env.APP_CUSTOMER_API_URL || "https://biz.reborn.vn";
     xhr.open("POST", `${customerApiBase}/customer/customer/import`); //Không test ở local
     xhr.setRequestHeader("Authorization", getToken());
-    xhr.setRequestHeader("Hostname", location.hostname || "");
+    {
+      const realHost = location.hostname || "";
+      const isLocal = realHost === "localhost" || realHost === "127.0.0.1" || realHost === "";
+      xhr.setRequestHeader("Hostname", isLocal ? "hub.reborn.vn" : realHost);
+    }
 
     let percent = 0;
     xhr.onload = () => {

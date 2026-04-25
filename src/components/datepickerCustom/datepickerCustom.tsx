@@ -156,13 +156,15 @@ function DatePickerCustom(props: DatePickerCustomProps) {
             />
           }
           selected={
-            value &&
-            value.length !== 0 &&
-            (() => {
-              const fmt = hasSelectTime ? "HH:mm dd/MM/yyyy" : "dd/MM/yyyy";
-              const parsed = parse(String(value), fmt, new Date());
-              return isValid(parsed) ? parsed : null;
-            })()
+            value instanceof Date
+              ? (isValid(value) ? value : null)
+              : value && value.length !== 0
+                ? (() => {
+                    const fmt = hasSelectTime ? "HH:mm dd/MM/yyyy" : "dd/MM/yyyy";
+                    const parsed = parse(String(value), fmt, new Date());
+                    return isValid(parsed) ? parsed : null;
+                  })()
+                : null
           }
           // value={value ? (isFmtText ? value : moment(value).format(fmtValue)) : ""}
           value={value ? (isFmtText ? value : (() => { const d = parseDateString(value); return d ? format(d, fmtValue) : ""; })()) : ""}

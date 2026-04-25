@@ -179,6 +179,29 @@ export default defineConfig(({ mode }) => {
         open: true,
         host: true,
         hmr: true,
+        // Proxy BE endpoints to localhost:8080 (SSO + authenticator + microservices)
+        // → tránh CORS khi FE ở 4000 gọi BE ở 8080.
+        // Mỗi prefix dưới đây khớp với nhánh xử lý trong fetchConfig.ts line 65-86.
+        proxy: Object.fromEntries(
+          [
+            "/authenticator",
+            "/adminapi",
+            "/api",
+            "/bizapi",
+            "/billing",
+            "/care",
+            "/contract",
+            "/customer",
+            "/finance",
+            "/integration",
+            "/inventory",
+            "/logistics",
+            "/market",
+            "/notification",
+            "/operation",
+            "/sales",
+          ].map((p) => [p, { target: "http://localhost:8080", changeOrigin: true }])
+        ),
       },
     }),
 

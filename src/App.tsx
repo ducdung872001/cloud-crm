@@ -39,7 +39,21 @@ import CollectTicket from "pages/Ticket/partials/CollectTicket";
 import CollectWarranty from "pages/Warranty/partials/CollectWarranty";
 import SharePromoPage from "pages/SharePromoPage";
 import ShareCouponPage from "pages/ShareCouponPage";
-import DiscoverPage from "pages/PublicFitPro/DiscoverPage";
+import ShareEventPage from "pages/ShareEventPage";
+import PublicEventsPage from "pages/PublicEvents";
+import PortalHome from "pages/Portal/Home";
+import PortalCourseDetail from "pages/Portal/CourseDetail";
+import PortalRegister from "pages/Portal/Register";
+import PortalRegisterSuccess from "pages/Portal/RegisterSuccess";
+import PortalFeedback from "pages/Portal/Feedback";
+import PortalMentors from "pages/Portal/Mentors";
+import PortalMentorDetail from "pages/Portal/MentorDetail";
+import PortalAbout from "pages/Portal/About";
+import ZaloHome from "pages/Zalo/Home";
+import ZaloToday from "pages/Zalo/Today";
+import ZaloTickets from "pages/Zalo/Tickets";
+import ZaloStudents from "pages/Zalo/Students";
+import ZaloMore from "pages/Zalo/More";
 import GridFormNew from "pages/BPM/GridForm";
 import { onMessage } from "firebase/messaging";
 import NotificationService from "services/NotificationService";
@@ -48,6 +62,8 @@ import ringtone from "assets/sounds/call_in_sound.wav";
 import { useSTWebRTC } from "./webrtc/useSTWebRTC";
 import { messaging, requestPermission } from "./firebase-config";
 import ErrorBoundary from "./components/ErrorBoundary/ErrorBoundary";
+import SubscriptionBanner from "./components/subscriptionBanner/SubscriptionBanner";
+import SubscriptionGate from "./components/subscriptionGate/SubscriptionGate";
 
 // ─────────────────────────────────────────────────────────────────────────────
 
@@ -77,7 +93,7 @@ export default function App() {
   const [lstRole, setLstRole] = useState([]);
 
   const takeSelectedRole = localStorage.getItem("SelectedRole");
-  const defaultRedirectRef = useRef<string>("/create_sale_add");
+  const defaultRedirectRef = useRef<string>("/mh/courses");
 
 
   const handleGetRoles = async (token: string) => {
@@ -88,30 +104,30 @@ export default function App() {
     if (response.code === 0) {
       const result = response.result;
 
-      if (result.length > 1) {
+      if (result.length >= 1) {
+        // SelectedRole format BE yêu cầu: "<depId>_<jteId>".
+        // API takeRoles hiện trả {id, departmentId} (semantic: id=jteId, departmentId=depId).
+        // Dùng tên mới nếu BE cập nhật response, fallback tên cũ.
         const changeResult = result.map((item) => {
+          const depId = item.depId ?? item.departmentId;
+          const jteId = item.jteId ?? item.id;
           return {
-            role: `${item.departmentId}_${item.id}`,
+            role: `${depId}_${jteId}`,
             name: item.title,
             departmentName: item.departmentName,
           };
         });
 
         setLstRole(changeResult);
-        // TEST-MODE: auto-pick role "Ban giám đốc" để tránh modal chọn role spam suốt quá trình chạy test suite.
-        // Revert bằng cách khôi phục dòng `!takeSelectedRole && setChooseRoleInit(true);` bên dưới.
-        if (!takeSelectedRole) {
-          const preferred =
-            changeResult.find((r) => r.name === "Ban giám đốc") ||
-            changeResult.find((r) => (r.name || "").toLowerCase().includes("giám đốc")) ||
-            changeResult[0];
-          if (preferred) {
-            localStorage.setItem("SelectedRole", preferred.role);
-          } else {
-            setChooseRoleInit(true);
-          }
+        // Luôn ghi đè SelectedRole bằng giá trị hợp lệ từ server để tránh kế thừa giá trị cũ
+        // (user 1-role trước đây không được set → header Selectedrole rỗng → BE 403).
+        const preferred =
+          changeResult.find((r) => r.name === "Ban giám đốc") ||
+          changeResult.find((r) => (r.name || "").toLowerCase().includes("giám đốc")) ||
+          changeResult[0];
+        if (preferred) {
+          localStorage.setItem("SelectedRole", preferred.role);
         }
-        // !takeSelectedRole && setChooseRoleInit(true);
       }
     }
   };
@@ -125,7 +141,7 @@ export default function App() {
           setIsLogin(true);
           if (location.pathname === "/" || location.pathname === "/login") {
             if (cookies.user) {
-              const target = returnUrl || defaultRedirectRef.current || "/create_sale_add";
+              const target = returnUrl || defaultRedirectRef.current || "/mh/courses";
               navigate(target);
             }
           }
@@ -142,7 +158,7 @@ export default function App() {
 
             if (location.pathname === "/" || location.pathname === "/login") {
               if (cookies.user) {
-                const target = returnUrl || defaultRedirectRef.current || "/create_sale_add";
+                const target = returnUrl || defaultRedirectRef.current || "/mh/courses";
                 navigate(target);
               }
             }
@@ -159,14 +175,10 @@ export default function App() {
       }
     };
 
-    // Public paths — bypass auth (FitPro Phase 4.2 Discover & Book + các legacy public routes)
-    const PUBLIC_PATHS = [
-      "/send_email_confirm",
-      "/voucher_confirm",
-      "/fp_discover",   // FitPro Public Discover page
-      "/discover",       // Alias
-    ];
-    if (!PUBLIC_PATHS.includes(location.pathname)) {
+    const isPublicEventsPage = location.pathname === "/events" || location.pathname.startsWith("/events/");
+    const isPublicPortalPage = location.pathname === "/portal" || location.pathname.startsWith("/portal/");
+    const isZaloMiniAppPage = location.pathname === "/zalo" || location.pathname.startsWith("/zalo/");
+    if (location.pathname !== "/send_email_confirm" && location.pathname !== "/voucher_confirm" && !isPublicEventsPage && !isPublicPortalPage && !isZaloMiniAppPage) {
       checkEmployeeStatus();
     }
   }, [cookies.user, location]);
@@ -202,7 +214,7 @@ export default function App() {
           const changeResult = result.lstOrgApp[0];
 
           const defaultRedirect = result?.defaultRedirect;
-          defaultRedirectRef.current = defaultRedirect || "/create_sale_add";
+          defaultRedirectRef.current = defaultRedirect || "/mh/courses";
 
           const endDate = new Date(changeResult?.endDate);
           const currentDate = new Date();
@@ -273,13 +285,12 @@ export default function App() {
   useEffect(() => {
     requestPermission(cookies.token);
 
-    if (messaging) {
-      onMessage(messaging, (payload) => {
-        showToast(payload.notification?.title || "Bạn có thông báo mới", "success");
-        getCountUnread();
-        setNewNotificationPayload(payload);
-      });
-    }
+    if (!messaging) return;
+    onMessage(messaging, (payload) => {
+      showToast(payload.notification?.title || "Bạn có thông báo mới", "success");
+      getCountUnread();
+      setNewNotificationPayload(payload);
+    });
   }, []);
 
   // Khởi tạo tổng đài
@@ -434,8 +445,9 @@ export default function App() {
           pauseOnHover
           theme="colored"
         />
+        {isLogin && <SubscriptionBanner />}
         <Routes>
-          {isLogin && <Route path="*" element={<LayoutPage />} />}
+          {isLogin && <Route path="*" element={<SubscriptionGate><LayoutPage /></SubscriptionGate>} />}
           {location.pathname == "/grid_form" && <Route path="/grid_form" element={<GridFormNew />} />}
           {location.pathname == "/link_survey" && <Route path="/link_survey" element={<LinkSurvey />} />}
           {location.pathname == "/upload_document" && <Route path="/upload_document" element={<UploadDocument />} />}
@@ -443,8 +455,25 @@ export default function App() {
           {location.pathname == "/collect_warranty" && <Route path="/collect_warranty" element={<CollectWarranty />} />}
           {location.pathname == "/share_promo" && <Route path="/share_promo" element={<SharePromoPage />} />}
           {location.pathname == "/share_coupon" && <Route path="/share_coupon" element={<ShareCouponPage />} />}
-          {location.pathname == "/fp_discover" && <Route path="/fp_discover" element={<DiscoverPage />} />}
-          {location.pathname == "/discover" && <Route path="/discover" element={<DiscoverPage />} />}
+          {location.pathname == "/share_event" && <Route path="/share_event" element={<ShareEventPage />} />}
+          {/* Public Events Portal — SEO-friendly URLs */}
+          {location.pathname == "/events" && <Route path="/events" element={<PublicEventsPage />} />}
+          {location.pathname.startsWith("/events/") && <Route path="/events/:slug" element={<ShareEventPage />} />}
+          {/* [MH] Public MentorHub Portal — student-facing, no login required */}
+          {location.pathname === "/portal" && <Route path="/portal" element={<PortalHome />} />}
+          {location.pathname.match(/^\/portal\/courses\/[^/]+$/) && <Route path="/portal/courses/:id" element={<PortalCourseDetail />} />}
+          {location.pathname.match(/^\/portal\/register\/[^/]+$/) && <Route path="/portal/register/:courseId" element={<PortalRegister />} />}
+          {location.pathname === "/portal/register/success" && <Route path="/portal/register/success" element={<PortalRegisterSuccess />} />}
+          {location.pathname.match(/^\/portal\/feedback\/[^/]+$/) && <Route path="/portal/feedback/:sessionId" element={<PortalFeedback />} />}
+          {location.pathname === "/portal/mentors" && <Route path="/portal/mentors" element={<PortalMentors />} />}
+          {location.pathname.match(/^\/portal\/mentors\/[^/]+$/) && <Route path="/portal/mentors/:id" element={<PortalMentorDetail />} />}
+          {location.pathname === "/portal/about" && <Route path="/portal/about" element={<PortalAbout />} />}
+          {/* [ZMP] Zalo Mini App — public, no CRM login; auth qua Zalo OAuth nếu cần */}
+          {location.pathname === "/zalo" && <Route path="/zalo" element={<ZaloHome />} />}
+          {location.pathname === "/zalo/today" && <Route path="/zalo/today" element={<ZaloToday />} />}
+          {location.pathname === "/zalo/tickets" && <Route path="/zalo/tickets" element={<ZaloTickets />} />}
+          {location.pathname === "/zalo/students" && <Route path="/zalo/students" element={<ZaloStudents />} />}
+          {location.pathname === "/zalo/more" && <Route path="/zalo/more" element={<ZaloMore />} />}
           <Route path="/login" element={<Login />} />
         </Routes>
         <ChooseRole onShow={chooseRoleInit} onHide={() => setChooseRoleInit(false)} lstRole={lstRole} />

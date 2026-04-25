@@ -337,6 +337,10 @@ export const getRootDomain = (sourceDomain: string) => {
 };
 
 export const getAppSSOLink = (rootDomain: string) => {
+  if (process.env.APP_SSO_LINK) {
+    return process.env.APP_SSO_LINK;
+  }
+
   if (!rootDomain || rootDomain == "localhost") {
     return "http://localhost:8080";
   }

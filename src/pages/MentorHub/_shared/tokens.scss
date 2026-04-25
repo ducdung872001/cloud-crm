@@ -1,0 +1,115 @@
+// MentorHub design tokens
+// Ported from prototype (Editorial + Refined aesthetic)
+
+// Colors
+$mh-ivory: #FAF7F2;
+$mh-ivory-2: #F4EFE6;
+$mh-ivory-3: #EAE3D4;
+$mh-ink: #0E1713;
+$mh-ink-2: #1C2B24;
+$mh-ink-soft: #6B7A72;
+$mh-muted: #6B7A72;
+$mh-line: #E0D8C8;
+$mh-line-2: #CFC5B0;
+
+$mh-teal: #0F766E;
+$mh-teal-deep: #134E4A;
+$mh-teal-light: #5EEAD4;
+$mh-amber: #B45309;
+$mh-amber-light: #F59E0B;
+$mh-amber-cream: #FFF9ED;
+$mh-red: #B91C1C;
+$mh-green: #15803D;
+$mh-blue: #1E40AF;
+
+// Typography
+$mh-font-display: "Fraunces", "Times New Roman", serif;
+$mh-font-body: "Geist", -apple-system, sans-serif;
+$mh-font-mono: "Geist Mono", "SF Mono", monospace;
+
+// Layout
+$mh-container: 1240px;
+$mh-radius: 14px;
+$mh-radius-sm: 8px;
+$mh-radius-lg: 20px;
+
+// CSS vars (for inline usage)
+:root {
+  --mh-ivory: #{$mh-ivory};
+  --mh-ink: #{$mh-ink};
+  --mh-ink-soft: #{$mh-ink-soft};
+  --mh-line: #{$mh-line};
+  --mh-teal: #{$mh-teal};
+  --mh-teal-deep: #{$mh-teal-deep};
+  --mh-amber: #{$mh-amber};
+  --mh-amber-cream: #{$mh-amber-cream};
+}
+
+// Utility: Fraunces italic accent word
+.mh-accent-italic {
+  font-style: italic;
+  color: var(--mh-teal);
+}
+
+// Shared AI card styling
+.mh-ai-card {
+  background: $mh-amber-cream;
+  border: 1px solid rgba(180, 88, 9, 0.2);
+  border-radius: 14px;
+  padding: 20px;
+
+  .mh-ai-label {
+    font-family: $mh-font-mono;
+    font-size: 10px;
+    letter-spacing: 0.12em;
+    color: $mh-amber;
+    margin-bottom: 8px;
+  }
+}
+
+// Shared KPI card
+.mh-kpi {
+  background: #fff;
+  border: 1px solid $mh-line;
+  border-radius: $mh-radius;
+  padding: 20px;
+
+  .mh-kpi-label {
+    font-family: $mh-font-mono;
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    color: $mh-ink-soft;
+    margin-bottom: 8px;
+  }
+  .mh-kpi-value {
+    font-family: $mh-font-display;
+    font-size: 30px;
+    font-weight: 400;
+    color: $mh-ink;
+    letter-spacing: -0.02em;
+  }
+  .mh-kpi-delta {
+    font-family: $mh-font-mono;
+    font-size: 11px;
+    margin-top: 4px;
+    &.up { color: $mh-green; }
+    &.down { color: $mh-red; }
+  }
+}
+
+// Status pills
+.mh-pill {
+  display: inline-block;
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-family: $mh-font-mono;
+  font-size: 10px;
+  letter-spacing: 0.05em;
+  font-weight: 600;
+
+  &--live { background: #FEE2E2; color: #991B1B; }
+  &--upcoming { background: #DBEAFE; color: #1E40AF; }
+  &--draft { background: #F3F4F6; color: #374151; }
+  &--ended { background: #E5E7EB; color: #4B5563; }
+  &--active { background: #D1FAE5; color: #065F46; }
+}

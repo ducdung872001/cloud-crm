@@ -1,80 +1,99 @@
-# Hướng dẫn sử dụng
+# Reborn MentorHub — Frontend
 
-1. Cài đặt các gói thư viện
+Mentor-facing admin + public portal for the MentorHub platform.
+Forked from `cloud-crm` (community-hub branch) and rebranded.
 
-   `npm install`
+## Tech stack
 
-2. Chạy project
+- React 18 + TypeScript
+- Vite 7 (build)
+- SCSS (+ tokens in `src/pages/MentorHub/_shared/tokens.scss`)
+- React Router
+- i18next, AG Grid, Highcharts, BPMN.io (inherited from cloud-crm — safe to remove if not needed)
 
-   `npm start`
+## Quick start
 
-# Các thành phần trong project
-
-- [Hướng dẫn sử dụng](#hướng-dẫn-sử-dụng)
-- [Các thành phần trong project](#các-thành-phần-trong-project)
-  - [1. _CSS Variable_](#1-css-variable)
-  - [2. _Utils_](#2-utils)
-    - [commons.ts](#commonsts)
-
-## 1. _CSS Variable_
-
-- Sửa các màu mặc định tại: shared/assets/styles/\_variable.scss
-- List các màu mặc định:
-
-```scss
-$background: ;
-$white-color: ;
-$white-color-extra: ;
-$silver-color: ;
-$green-color: ;
-$red-color: ;
-$orange-color: ;
-$yellow-color: ;
-$blue-color: ;
-$text-color-primary: ;
-$text-color-secondary: ;
-$line-color: ;
-$line-color-extra: ;
+```bash
+yarn install
+yarn dev           # starts on http://localhost:5173 (default Vite)
+# or specific mode:
+yarn build:dev
+yarn build:prod
 ```
 
-- Các biến màu có thể gọi từ :root:
+## Project structure (MentorHub-specific)
 
-```scss
---background
---white-color
---white-color-extra
---silver-color
---green-color
---red-color
---red-color-opacity-#{opacity}
---orange-color
---orange-color-opacity-#{opacity}
---yellow-color
---yellow-color-opacity-#{opacity}
---blue-color
---blue-color-opacity-#{opacity}
---text-color-primary
---text-color-primary-60
---text-color-secondary
---line-color
---line-color-extra
-
-#{opacity} là các giá trị trong dải sau: 10 | 20 | 30 | 40 | 50 | 60 | 70 | 80 | 90
+```
+src/
+├── pages/MentorHub/           # New module for this platform
+│   ├── _shared/
+│   │   ├── tokens.scss         # Design tokens (Fraunces + Geist, ivory/teal/amber)
+│   │   ├── MHLayout.tsx        # Shell with sidebar
+│   │   └── MHSidebar.tsx       # 6-group admin nav
+│   ├── Dashboard/              # Implemented: KPI hero + next session + top courses + AI cross-sell
+│   ├── Courses/                # Implemented: status tabs + course grid + create tile
+│   ├── SessionReview/          # Implemented: signature AI meeting notes page
+│   ├── CourseEdit/             # Scaffolded (coming-soon + preview)
+│   ├── LiveSession/            # Scaffolded
+│   ├── Students/               # Scaffolded
+│   ├── CRM/                    # Scaffolded
+│   ├── Tickets/                # Scaffolded
+│   ├── Chat/                   # Scaffolded
+│   ├── Feedback/               # Scaffolded
+│   ├── Revenue/                # Scaffolded
+│   ├── Marketing/              # Scaffolded
+│   ├── Calendar/               # Scaffolded
+│   └── Settings/               # Scaffolded
+├── mocks/mentorhub/           # Sample data (6 mentors, 9 students, 4 courses)
+└── configs/routes.tsx         # Routes registered at /mh/*
 ```
 
-- Cách sử dụng các biến màu từ :root
+## Routes
 
-```scss
-background: var(--background);
-border-color: var(--line-color);
-...
-```
+All MentorHub pages live under `/mh/*`:
 
-## 2. _Utils_
+| Path | Component |
+|---|---|
+| `/mh`, `/mh/dashboard` | Dashboard |
+| `/mh/courses` | Course list |
+| `/mh/courses/new`, `/mh/courses/:id/edit` | Course editor |
+| `/mh/session-review/:id` | AI meeting notes |
+| `/mh/live-session` | Live teaching UI |
+| `/mh/students`, `/mh/crm`, `/mh/tickets`, `/mh/chat` | Student-facing |
+| `/mh/feedback`, `/mh/revenue`, `/mh/marketing`, `/mh/calendar`, `/mh/settings` | Others |
 
-- [commons.ts](#commonsts)
-- [validate.ts](#validatets)
-- [function.ts](#functionts)
-- [dateFormat.ts](#dateFormatts)
+## Design system
 
-### commons.ts
+All styling comes from `src/pages/MentorHub/_shared/tokens.scss`:
+
+- **Fonts**: Fraunces (display serif, italic accent word) + Geist (body) + Geist Mono (labels/metrics)
+- **Palette**: Ivory `#FAF7F2`, Teal `#0F766E`/`#134E4A`, Amber `#B45309`, Ink `#0E1713`
+- **Patterns**:
+  - `.mh-ai-card` — amber/cream background for AI feature blocks
+  - `.mh-kpi` — metric card with mono label + serif value
+  - `.mh-pill`, `.mh-pill--live`, `.mh-pill--upcoming`, etc. — status pills
+  - `h1 em` — italic teal accent word in display headlines
+
+## What the scaffolded pages look like
+
+Each scaffolded page renders a "Coming soon + Xem trước" block (same pattern as the community-hub branch). Click Preview to see a placeholder preview. Dev team (or Claude Code CLI) can then port the full UI from the HTML prototype (located in `/docs/prototype/` — see backend repo for the original HTMLs).
+
+## Porting remaining pages
+
+For each scaffolded page, the HTML prototype contains the complete layout. Claude Code CLI workflow:
+
+1. Open the matching HTML file (e.g. `admin-students.html`)
+2. Replace the template in `src/pages/MentorHub/Students/index.tsx` with the ported JSX
+3. Move CSS from the HTML file's `<style>` block into `index.scss` (use design tokens from `_shared/tokens.scss`)
+4. Replace sample data references with types from `src/mocks/mentorhub/index.ts`
+5. Test routes at `/mh/students`
+
+## Notes
+
+- Keep `src/pages/CommunityHub/*` as reference for patterns (ComingSoon, PreviewBanner, shared storage module, mock data structure).
+- Firebase, AG Grid, BPMN.io are currently inherited — safe to audit & remove if not needed for MentorHub to reduce bundle size.
+- Icons-menu and menu structure come from `src/configs/adminMenu.tsx` (may need a MentorHub-specific menu variant if you want sidebar visible in the CH/CRM admin layout too).
+
+## License
+
+Proprietary — © 2026 Reborn JSC. All rights reserved.

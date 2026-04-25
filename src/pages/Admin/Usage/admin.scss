@@ -1,0 +1,9 @@
+// Admin usage page overrides
+.admin-usage {
+  background: #FAFAF9;
+
+  .mh__card {
+    // Slightly tighter cards for data-heavy view
+    padding: 20px;
+  }
+}

@@ -1,12 +1,28 @@
-// [CH] Community Hub - Phản hồi khách hàng module
-import React, { useState } from "react";
+// [CH] Community Hub - Phản hồi thành viên module
+// TODO: wire up real API. Mock chỉ seed khi bật "Xem trước".
+import React, { useState, useEffect } from "react";
 import { MOCK_FEEDBACKS } from "@/mocks/community-hub/feedback";
+import { ComingSoonBlock, PreviewBanner } from "../_shared/ComingSoon";
+import { showToast } from "@/utils/common";
 import "./index.scss";
+
+type FeedbackItem = typeof MOCK_FEEDBACKS[number];
 
 export default function FeedbackPage() {
   document.title = "Phản hồi thành viên";
   const [filter, setFilter] = useState<"all" | "open" | "in_progress" | "resolved">("all");
-  const [feedbacks, setFeedbacks] = useState(MOCK_FEEDBACKS);
+  const [feedbacks, setFeedbacks] = useState<FeedbackItem[]>([]);
+  const [isPreview, setIsPreview] = useState(false);
+
+  useEffect(() => {
+    setFeedbacks(isPreview ? MOCK_FEEDBACKS : []);
+  }, [isPreview]);
+
+  const enterPreview = () => {
+    setIsPreview(true);
+    showToast("Đang ở chế độ xem trước với dữ liệu demo", "info");
+  };
+  const exitPreview = () => setIsPreview(false);
 
   const filtered = filter === "all" ? feedbacks : feedbacks.filter((f) => f.status === filter);
 
@@ -33,8 +49,24 @@ export default function FeedbackPage() {
     return `${Math.floor(hours / 24)} ngày trước`;
   };
 
+  if (!isPreview && feedbacks.length === 0) {
+    return (
+      <div className="ch-feedback-page">
+        <div className="ch-feedback-page__header">
+          <h2>Phản hồi thành viên</h2>
+        </div>
+        <ComingSoonBlock
+          title="Chưa có phản hồi nào"
+          description="Khi thành viên gửi phản hồi qua app/web, chúng sẽ được tập hợp về đây để xử lý."
+          onPreview={enterPreview}
+        />
+      </div>
+    );
+  }
+
   return (
     <div className="ch-feedback-page">
+      {isPreview && <PreviewBanner onExit={exitPreview} />}
       <div className="ch-feedback-page__header">
         <h2>Phản hồi thành viên</h2>
         <div className="filter-tabs">

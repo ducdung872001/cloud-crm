@@ -1,0 +1,47 @@
+// Shared Spinner styles — ring rotation với tông tuỳ biến
+
+.spinner {
+  display: inline-block;
+  border-radius: 50%;
+  border-style: solid;
+  animation: spinner-spin 0.8s linear infinite;
+  flex-shrink: 0;
+
+  &--sm { width: 1.4rem; height: 1.4rem; border-width: 2px; }
+  &--md { width: 1.8rem; height: 1.8rem; border-width: 2.5px; }
+  &--lg { width: 2.8rem; height: 2.8rem; border-width: 3px; }
+
+  &--default {
+    border-color: #d0e4ee;
+    border-top-color: #133042;
+  }
+
+  &--light {
+    border-color: rgba(255, 255, 255, 0.35);
+    border-top-color: #ffffff;
+  }
+
+  &--muted {
+    border-color: #e5ebf0;
+    border-top-color: #6a7f8e;
+  }
+}
+
+@keyframes spinner-spin {
+  to { transform: rotate(360deg); }
+}
+
+// ─── Loading block: spinner + label centered ─────────────────────────────────
+.loading-block {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  padding: 2rem;
+  color: #6a7f8e;
+
+  &__label {
+    font-size: 1.3rem;
+  }
+}

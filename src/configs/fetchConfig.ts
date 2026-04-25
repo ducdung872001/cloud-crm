@@ -7,6 +7,22 @@ const prefixAdmin = "/adminapi";
 const prefixApi = "/api";
 const prefixBiz = "/bizapi";
 
+// 12 microservice prefix — route sang biz.reborn.vn (không qua reborn.vn)
+const BIZ_MICROSERVICE_PREFIXES = [
+  "/billing/", "/care/", "/contract/", "/customer/",
+  "/finance/", "/integration/", "/inventory/", "/logistics/",
+  "/market/", "/notification/", "/operation/", "/sales/",
+];
+
+// Migration 1-lần: dọn SelectedRole rác (các phiên bản cũ từng ghi string không đúng format
+// "<departmentId>_<id>", gây header Selectedrole invalid → BE 403). Chạy trước khi đọc snapshot.
+{
+  const cur = typeof localStorage !== "undefined" ? localStorage.getItem("SelectedRole") : null;
+  if (cur && !/^\d+_\d+$/.test(cur)) {
+    localStorage.removeItem("SelectedRole");
+  }
+}
+
 const takeSelectedRole = localStorage.getItem("SelectedRole");
 
 export default function RegisterFetch() {
@@ -37,10 +53,13 @@ export default function RegisterFetch() {
       } else if (!config.headers["Content-Type"]) {
         config.headers["Content-Type"] = "application/json";
       }
-      // ⚠️ TEMP TEST — ép Hostname = kcn.reborn.vn cho CẢ local lẫn live theo yêu cầu test.
-      // Phải revert về logic isLocal ? "kcn.reborn.vn" : realHost trước khi merge prod,
-      // nếu không mọi tenant sẽ load data của tenant kcn (tenant leak — Critical).
-      config.headers["Hostname"] = "kcn.reborn.vn";
+      // Local (localhost / 127.0.0.1) → luôn "kcn.reborn.vn" (env test mặc định cho nhánh mentorhub).
+      // Live (prod/staging) → location.hostname thật của tenant user đang truy cập.
+      {
+        const realHost = location.hostname || "";
+        const isLocal = realHost === "localhost" || realHost === "127.0.0.1" || realHost === "";
+        config.headers["Hostname"] = isLocal ? "kcn.reborn.vn" : realHost;
+      }
 
 
       if (!url.startsWith("http")) {
@@ -58,8 +77,10 @@ export default function RegisterFetch() {
             } else {
               url = process.env.APP_API_URL + url;
             }
+          } else if (BIZ_MICROSERVICE_PREFIXES.some((p) => url.startsWith(p))) {
+            url = (process.env.APP_BIZ_URL || "https://biz.reborn.vn") + url;
           } else {
-            url = process.env.APP_AUTHENTICATOR_URL + url;
+            url = (process.env.APP_AUTHENTICATOR_URL || "https://reborn.vn") + url;
           }
         }
       }

@@ -24,7 +24,7 @@ import {
 // ║ BRANCH CONFIG — 1 dòng duy nhất cần sửa khi port sang nhánh khác.     ║
 // ║ Giá trị hợp lệ: "fitpro" | "community" | "retail" | "mock"            ║
 // ╚═══════════════════════════════════════════════════════════════════════╝
-const ACTIVE_BRANCH: "fitpro" | "community" | "retail" | "mock" = "fitpro";
+const ACTIVE_BRANCH: "fitpro" | "community" | "retail" | "mock" = "community";
 
 // Đăng ký adapter — an toàn nếu gọi nhiều lần vì Map sẽ overwrite.
 registerDataSourceAdapter(mockAdapter);

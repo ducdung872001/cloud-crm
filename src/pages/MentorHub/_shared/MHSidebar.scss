@@ -1,0 +1,141 @@
+@import "./tokens.scss";
+
+.mh-sidebar {
+  width: 260px;
+  min-height: 100vh;
+  background: $mh-ivory;
+  border-right: 1px solid $mh-line;
+  padding: 24px 0;
+  display: flex;
+  flex-direction: column;
+  font-family: $mh-font-body;
+  position: sticky;
+  top: 0;
+  max-height: 100vh;
+  overflow-y: auto;
+
+  &__brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 0 24px 24px;
+    border-bottom: 1px solid $mh-line;
+  }
+  &__mark {
+    font-size: 24px;
+    color: $mh-teal-deep;
+  }
+  &__wordmark {
+    font-family: $mh-font-display;
+    font-size: 22px;
+    font-weight: 500;
+    letter-spacing: -0.01em;
+    color: $mh-ink;
+  }
+
+  &__mentor {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 20px 24px;
+    border-bottom: 1px solid $mh-line;
+  }
+  &__avatar {
+    width: 40px; height: 40px;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    color: #fff;
+    font-family: $mh-font-display;
+    font-size: 15px;
+    flex-shrink: 0;
+  }
+  &__name {
+    font-size: 14px;
+    font-weight: 600;
+    color: $mh-ink;
+  }
+  &__role {
+    font-family: $mh-font-mono;
+    font-size: 10px;
+    color: $mh-ink-soft;
+    letter-spacing: 0.02em;
+    margin-top: 2px;
+  }
+
+  &__nav {
+    flex: 1;
+    padding: 16px 0;
+  }
+  &__group {
+    margin-bottom: 20px;
+  }
+  &__group-title {
+    font-family: $mh-font-mono;
+    font-size: 10px;
+    letter-spacing: 0.12em;
+    color: $mh-ink-soft;
+    padding: 8px 24px;
+    margin-bottom: 4px;
+  }
+
+  &__link {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 24px;
+    font-size: 14px;
+    color: $mh-ink;
+    text-decoration: none;
+    transition: background 0.15s, color 0.15s;
+    position: relative;
+
+    &:hover { background: rgba(15, 118, 110, 0.05); }
+    &--active {
+      color: $mh-teal-deep;
+      font-weight: 600;
+      background: rgba(15, 118, 110, 0.08);
+      &::before {
+        content: "";
+        position: absolute;
+        left: 0; top: 0; bottom: 0;
+        width: 3px;
+        background: $mh-teal-deep;
+      }
+    }
+  }
+
+  &__icon {
+    width: 20px;
+    text-align: center;
+    font-size: 14px;
+    color: $mh-teal-deep;
+  }
+  &__label { flex: 1; }
+
+  &__badge {
+    font-family: $mh-font-mono;
+    font-size: 10px;
+    font-weight: 600;
+    padding: 2px 8px;
+    border-radius: 999px;
+    background: rgba(15, 118, 110, 0.12);
+    color: $mh-teal-deep;
+
+    &.is-danger {
+      background: #FEE2E2;
+      color: #991B1B;
+    }
+  }
+
+  &__foot {
+    padding: 16px 24px;
+    border-top: 1px solid $mh-line;
+  }
+  &__foot-line {
+    font-family: $mh-font-mono;
+    font-size: 10px;
+    color: $mh-ink-soft;
+    letter-spacing: 0.05em;
+    line-height: 1.8;
+  }
+}

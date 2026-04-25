@@ -1,0 +1,87 @@
+// Global subscription banner — hiện phía trên content, dưới header
+.mh-sub-banner {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  font-family: 'Geist', -apple-system, sans-serif;
+  font-size: 14px;
+  line-height: 1.5;
+  animation: mhBannerSlide .3s ease-out;
+
+  &--critical {
+    background: linear-gradient(90deg, #B91C1C, #DC2626);
+    color: #fff;
+  }
+  &--warning {
+    background: linear-gradient(90deg, #B45309, #D97706);
+    color: #fff;
+  }
+  &--info {
+    background: linear-gradient(90deg, #0F766E, #14B8A6);
+    color: #fff;
+  }
+
+  &__inner {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 12px 24px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    flex-wrap: wrap;
+  }
+
+  &__icon {
+    font-size: 18px;
+    font-weight: 700;
+    flex-shrink: 0;
+  }
+
+  &__text {
+    flex: 1;
+    min-width: 260px;
+
+    strong { font-weight: 700; }
+  }
+
+  &__cta {
+    padding: 7px 16px;
+    background: rgba(255, 255, 255, 0.18);
+    border: 1px solid rgba(255, 255, 255, 0.4);
+    border-radius: 8px;
+    color: #fff;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 13px;
+    white-space: nowrap;
+    transition: background .15s;
+
+    &:hover { background: rgba(255, 255, 255, 0.3); color: #fff; }
+  }
+
+  &__close {
+    background: transparent;
+    border: 0;
+    color: rgba(255, 255, 255, 0.8);
+    cursor: pointer;
+    font-size: 16px;
+    padding: 4px 8px;
+    line-height: 1;
+    transition: color .15s;
+
+    &:hover { color: #fff; }
+  }
+}
+
+@keyframes mhBannerSlide {
+  from { opacity: 0; transform: translateY(-8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@media (max-width: 640px) {
+  .mh-sub-banner__inner { padding: 10px 16px; gap: 10px; }
+  .mh-sub-banner__text { min-width: 100%; order: 1; }
+  .mh-sub-banner__icon { order: 0; }
+  .mh-sub-banner__cta { order: 2; margin-left: auto; }
+  .mh-sub-banner__close { order: 3; }
+}

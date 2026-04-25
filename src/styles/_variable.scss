@@ -171,28 +171,18 @@ $page-padding-large: 2.4rem 3.2rem 4rem;
   --sh2: 0 4px 16px rgba(10, 15, 30, 0.09);
   --sh3: 0 20px 60px rgba(10, 15, 30, 0.18);
 
-  // [FitPro] — "Fresh Energy" palette (fitness + health + energy)
-  // Teal xanh sức khỏe + Orange năng lượng = năng động, motivational
-  --ch-primary: #00C9A7;        // FitPro teal — sức khỏe, trẻ trung
-  --ch-primary-light: #4DE4C4;  // teal highlight
-  --ch-accent: #FF8C42;         // orange — năng lượng, 6h sunrise
-  --ch-bg: #F5F9F8;             // light mint-white nền trang
+  // [CH] Community Hub — "Warm Sage" palette
+  // Xanh rừng ấm, phù hợp wellness / co-living / community space
+  --ch-primary: #2D6A5A;        // earthy teal — màu chủ đạo
+  --ch-primary-light: #7ECBB5;  // sage highlight
+  --ch-accent: #D4A574;         // terracotta / sand — điểm nhấn ấm
+  --ch-bg: #F7F5F2;             // warm off-white nền trang
   --ch-surface: #FFFFFF;        // card / panel
-  --ch-text: #0B2E2A;           // deep dark teal — dễ đọc
-  --ch-text-muted: #6B8A85;     // xám xanh
-  --ch-danger: #E8473B;
-  --ch-warning: #FFB340;
-  --ch-success: #00C9A7;        // reuse primary
-  --ch-sidebar-bg: #0B2E2A;     // deep dark teal
-  --ch-sidebar-active: #00C9A7; // FitPro teal active item
-
-  // [FitPro] Specific semantic tokens
-  --fp-station-home: #4DE4C4;   // Home FitPro (trạm tại nhà)
-  --fp-station-coworking: #FF8C42; // Co-working FitPro
-  --fp-tier-basic: #8E9BAE;
-  --fp-tier-plus: #4DE4C4;
-  --fp-tier-pro: #00C9A7;
-  --fp-tier-vip: #FF8C42;
-  --fp-tier-super: #E8473B;
-  --fp-mf7-gradient: linear-gradient(135deg, #00C9A7 0%, #FF8C42 100%);
+  --ch-text: #1B2E2A;           // gần đen xanh — dễ đọc
+  --ch-text-muted: #6B8078;     // xám xanh nhạt
+  --ch-danger: #D64B3A;
+  --ch-warning: #E8922A;
+  --ch-success: #3D9E6A;
+  --ch-sidebar-bg: #1B2E2A;     // deep forest green
+  --ch-sidebar-active: #2D6A5A; // teal active item
 }

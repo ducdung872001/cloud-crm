@@ -1,4 +1,4 @@
-// [FitPro] Dashboard trạm — Tổng quan hoạt động chuỗi 6-9h sáng
+// [CH] Community Hub - Dashboard
 import React, { useState, useContext } from "react";
 import "./index.scss";
 import { useNavigate } from "react-router-dom";
@@ -6,11 +6,12 @@ import { formatCurrency } from "reborn-util";
 import urls from "configs/urls";
 import { UserContext, ContextType } from "contexts/userContext";
 import Icon from "@/components/icon";
+import StatCard, { type StatCardTone } from "@/components/StatCard";
 import { MOCK_DASHBOARD } from "@/mocks/community-hub/dashboard";
 
 export default function DashboardCH() {
-  // [FitPro] Tổng quan trạm
-  document.title = "FitPro - Tổng quan trạm";
+  // [CH] Community Hub - Tổng quan
+  document.title = "Community Hub - Tổng quan";
   const navigate = useNavigate();
   const { dataBranch } = useContext(UserContext) as ContextType;
 
@@ -26,57 +27,41 @@ export default function DashboardCH() {
     <div className="ch-dashboard">
       {/* STAT CARDS ROW - [CH] Community Hub metrics */}
       <div className="stat-cards-row">
-        {[
+        {([
+          { label: "Thành viên",       icon: <Icon name="Customer" />,       value: `Active: ${data.members.active}/${data.members.total_slots}`, tone: "primary" as StatCardTone },
+          { label: "Check-in hôm nay", icon: <Icon name="Barchart" />,       value: `${data.checkins_today} lượt`,                                tone: "accent"  as StatCardTone },
+          { label: "Hết hạn 7 ngày",   icon: <Icon name="WarningCircle" />,  value: `${data.members.expiring_soon} thành viên`,                   tone: "warning" as StatCardTone },
           {
-            label: "Thành viên tập luyện",
-            icon: <Icon name="Customer" />,
-            value: `Đang tập: ${data.members.active}/${data.members.total_slots}`,
-            color: "primary",
-          },
-          {
-            label: "Buổi tập hôm nay (6-9h)",
-            icon: <Icon name="Barchart" />,
-            value: `${data.checkins_today} buổi`,
-            color: "accent",
-          },
-          {
-            label: "Cần gia hạn (≤15 ngày)",
-            icon: <Icon name="WarningCircle" />,
-            value: `${data.members.expiring_soon} thành viên`,
-            color: "warning",
-          },
-          {
-            label: "Doanh thu trạm tháng này",
+            label: "MRR (tháng này)",
             icon: <Icon name="MoneyFill" />,
             value: masked ? "••••••••••" : `~${formatCurrency(data.mrr_vnd, ".", "")}đ`,
-            color: "success",
-            canMask: true,
+            tone: "success" as StatCardTone,
+            action: (
+              <button type="button" className="ch-stat-toggle" onClick={() => setMasked(!masked)} aria-label="Ẩn/hiện doanh thu">
+                {masked ? <Icon name="EyeSlash" /> : <Icon name="Eye" />}
+              </button>
+            ),
           },
-        ].map((card, i) => (
-          <div key={i} className={`stat-card stat-card--${card.color}`}>
-            <div className={`stat-card-icon ${card.color}`}>{card.icon}</div>
-            <div className="stat-card-content">
-              <div className="stat-card-label">{card.label}</div>
-              <div className="stat-card-value-container">
-                <span className="stat-card-value">{card.value}</span>
-                {card.canMask && (
-                  <button onClick={() => setMasked(!masked)} className="stat-card-toggle">
-                    {masked ? <Icon name="EyeSlash" /> : <Icon name="Eye" />}
-                  </button>
-                )}
-              </div>
-            </div>
-          </div>
+        ]).map((card, i) => (
+          <StatCard
+            key={i}
+            variant="icon"
+            tone={card.tone}
+            icon={card.icon}
+            label={card.label}
+            value={card.value}
+            action={(card as { action?: React.ReactNode }).action}
+          />
         ))}
       </div>
 
       {/* MIDDLE ROW */}
       <div className="middle-row">
-        {/* [FitPro] Station Layout Widget */}
+        {/* [CH] Building Map Widget */}
         <div className="ch-widget ch-building-map">
           <div className="ch-widget__title">
             <Icon name="Buildings" />
-            <span>Trạng thái thảm tập theo khu vực</span>
+            <span>Bản đồ tòa nhà</span>
           </div>
           <div className="building-areas">
             {data.building_map.map((area) => {
@@ -99,11 +84,11 @@ export default function DashboardCH() {
           </div>
         </div>
 
-        {/* [FitPro] Quota Alert — buổi tập còn lại */}
+        {/* [CH] Quota Alert Feed */}
         <div className="ch-widget ch-quota-alerts">
           <div className="ch-widget__title">
             <Icon name="WarningCircle" />
-            <span>Cảnh báo buổi tập còn lại</span>
+            <span>Cảnh báo Quota</span>
           </div>
           <div className="alert-list">
             {data.quota_alerts.map((alert) => (
@@ -123,11 +108,11 @@ export default function DashboardCH() {
 
       {/* BOTTOM ROW */}
       <div className="bottom-row">
-        {/* [FitPro] Upcoming events — buổi tập/workshop */}
+        {/* [CH] Upcoming Events */}
         <div className="ch-widget ch-events">
           <div className="ch-widget__title">
             <Icon name="CalendarFill" />
-            <span>Buổi tập / sự kiện sắp tới</span>
+            <span>Sự kiện sắp tới</span>
           </div>
           <div className="event-list">
             {data.upcoming_events.map((event) => (
@@ -153,12 +138,12 @@ export default function DashboardCH() {
           </div>
           <div className="quick-access-grid">
             {[
-              { label: "Check-in trạm", icon: <Icon name="Barchart" />, path: "/ch_checkin" },
+              { label: "Check-in", icon: <Icon name="Barchart" />, path: "/ch_checkin" },
               { label: "Thành viên", icon: <Icon name="Customer" />, path: urls.customer_list },
-              { label: "Đặt buổi tập", icon: <Icon name="Beauty" />, path: "/ch_services" },
-              { label: "Sơ đồ thảm", icon: <Icon name="Buildings" />, path: "/ch_accommodation" },
-              { label: "Giáo trình", icon: <Icon name="ManageWork" />, path: "/ch_courses" },
-              { label: "Business Owner", icon: <Icon name="Partner" />, path: "/ch_partners" },
+              { label: "Dịch vụ", icon: <Icon name="Beauty" />, path: "/ch_services" },
+              { label: "Lưu trú", icon: <Icon name="Buildings" />, path: "/ch_accommodation" },
+              { label: "Khóa học", icon: <Icon name="ManageWork" />, path: "/ch_courses" },
+              { label: "Đối tác", icon: <Icon name="Partner" />, path: "/ch_partners" },
             ].map((item) => (
               <div key={item.label} className="quick-item" onClick={() => navTo(item.path)}>
                 <div className="quick-item__icon">{item.icon}</div>

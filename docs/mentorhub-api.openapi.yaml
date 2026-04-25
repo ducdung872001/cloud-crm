@@ -1,0 +1,684 @@
+openapi: 3.0.3
+info:
+  title: MentorHub API
+  version: 0.1.0
+  description: |
+    Contract BE ↔ FE cho MentorHub.
+    Bao gồm: Zoom OAuth + Webhook, AI Meeting Notes pipeline (Whisper + Claude),
+    Subscription/Billing, Usage tracking.
+
+    Base URL production: https://api.mentorhub.vn/v1
+    Base URL dev:        http://localhost:8080/api/v1
+  contact:
+    name: Reborn JSC
+    email: tech@reborn.vn
+
+servers:
+  - url: https://api.mentorhub.vn/v1
+    description: Production
+  - url: http://localhost:8080/api/v1
+    description: Local dev
+
+tags:
+  - name: Zoom
+    description: OAuth + webhook nhận recording
+  - name: MeetingNotes
+    description: Pipeline transcribe + AI summary
+  - name: Subscription
+    description: Gói đăng ký, billing, gia hạn
+  - name: Usage
+    description: Tracking quota + cost per mentor
+  - name: Admin
+    description: Reborn internal monitoring
+
+# ─────────────────────────────────────────────────────────────────────────────
+paths:
+
+  # ───── Zoom Integration ─────────────────────────────────────────────────────
+  /zoom/oauth/status:
+    get:
+      tags: [Zoom]
+      summary: Trạng thái kết nối Zoom của mentor
+      parameters:
+        - $ref: '#/components/parameters/MentorId'
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ZoomStatus'
+
+  /zoom/oauth/authorize:
+    get:
+      tags: [Zoom]
+      summary: Khởi tạo OAuth flow — BE trả về authorizeUrl để FE redirect tới Zoom
+      parameters:
+        - $ref: '#/components/parameters/MentorId'
+        - in: query
+          name: redirectAfter
+          required: true
+          schema: { type: string, format: uri }
+          description: URL FE muốn user quay về sau khi OAuth hoàn tất
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [authorizeUrl]
+                properties:
+                  authorizeUrl:
+                    type: string
+                    format: uri
+                    example: https://zoom.us/oauth/authorize?response_type=code&client_id=...&redirect_uri=...&state=...
+
+  /zoom/oauth/callback:
+    get:
+      tags: [Zoom]
+      summary: Callback từ Zoom sau khi user authorize (BE xử lý, redirect về FE)
+      parameters:
+        - in: query
+          name: code
+          required: true
+          schema: { type: string }
+        - in: query
+          name: state
+          required: true
+          schema: { type: string }
+      responses:
+        "302":
+          description: Redirect về FE với query zoom=connected|error
+
+  /zoom/oauth/disconnect:
+    delete:
+      tags: [Zoom]
+      summary: Ngắt kết nối Zoom
+      parameters:
+        - $ref: '#/components/parameters/MentorId'
+      responses:
+        "204": { description: Ngắt kết nối thành công }
+
+  /webhook/zoom:
+    post:
+      tags: [Zoom]
+      summary: Webhook nhận event từ Zoom (recording.completed, meeting.started/ended)
+      description: |
+        Đăng ký URL này trong Zoom App settings.
+        Validate signature bằng `ZOOM_WEBHOOK_SECRET_TOKEN`.
+        Event `recording.completed` trigger job download recording + transcribe.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              oneOf:
+                - $ref: '#/components/schemas/ZoomEventRecordingCompleted'
+                - $ref: '#/components/schemas/ZoomEventMeetingStarted'
+                - $ref: '#/components/schemas/ZoomEventEndpointValidation'
+      responses:
+        "200": { description: Event acked }
+
+  # ───── Meeting Notes Pipeline ───────────────────────────────────────────────
+  /meeting-notes:
+    get:
+      tags: [MeetingNotes]
+      summary: Danh sách meeting notes của mentor
+      parameters:
+        - $ref: '#/components/parameters/MentorId'
+        - in: query
+          name: courseId
+          schema: { type: string }
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items: { $ref: '#/components/schemas/MeetingNote' }
+
+  /meeting-notes/{id}:
+    get:
+      tags: [MeetingNotes]
+      summary: Chi tiết 1 meeting note (transcript + summary + Q&A + action items)
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: string }
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/MeetingNoteDetail' }
+
+  /meeting-notes/{id}/generate:
+    post:
+      tags: [MeetingNotes]
+      summary: Trigger pipeline tạo AI note từ recording (manual trigger; auto trigger khi webhook recording.completed đến)
+      description: |
+        Pipeline các bước:
+        1. Download recording MP4 từ Zoom (dùng download_token còn hạn 7 ngày)
+        2. ffmpeg extract audio 16kHz mono → WAV
+        3. ffmpeg silencedetect → chunk WAV thành segments ≤20 phút (overlap 5s)
+        4. Parallel gọi Whisper API (Groq large-v3-turbo hoặc OpenAI large-v3)
+        5. Merge transcripts với timestamp offset + dedupe từ ở overlap
+        6. Gọi Claude API (Haiku 4.5 default, Sonnet nếu plan=unlimited) với system prompt + transcript
+        7. Parse JSON: summary, keyPoints[], questions[], actionItems[]
+        8. Lưu DB + emit webhook `meeting-notes.ready` tới FE
+        9. Tăng usage counter + cost log
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: string }
+      responses:
+        "202":
+          description: Pipeline đã queue
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  jobId: { type: string }
+                  estimatedReadyAt: { type: string, format: date-time }
+
+  /meeting-notes/{id}/send:
+    post:
+      tags: [MeetingNotes]
+      summary: Gửi meeting note tới danh sách học viên qua Email/Zalo
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: string }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [studentIds, channels, subject]
+              properties:
+                studentIds:
+                  type: array
+                  items: { type: string }
+                channels:
+                  type: array
+                  items: { type: string, enum: [email, zalo, inapp] }
+                subject: { type: string }
+                includeRecording: { type: boolean, default: true }
+                includeActionItems: { type: boolean, default: true }
+      responses:
+        "200":
+          description: Đã queue gửi
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  sent: { type: integer, example: 26 }
+                  skipped: { type: integer, example: 0 }
+
+  /meeting-notes/{id}/share-link:
+    post:
+      tags: [MeetingNotes]
+      summary: Tạo link công khai chia sẻ meeting note
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: string }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [expiresIn]
+              properties:
+                expiresIn:
+                  type: string
+                  enum: [7d, 30d, forever]
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  url: { type: string, format: uri }
+                  expiresAt: { type: string, format: date-time, nullable: true }
+
+  # ───── Subscription ─────────────────────────────────────────────────────────
+  /subscription/plans:
+    get:
+      tags: [Subscription]
+      summary: Danh sách các gói + feature
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items: { $ref: '#/components/schemas/Plan' }
+
+  /subscription/mentor/{mentorId}:
+    get:
+      tags: [Subscription]
+      summary: Subscription hiện tại của mentor (plan, trial, usage, next billing)
+      parameters:
+        - in: path
+          name: mentorId
+          required: true
+          schema: { type: string }
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/MentorSubscription' }
+
+  /subscription/mentor/{mentorId}/upgrade:
+    post:
+      tags: [Subscription]
+      summary: Nâng cấp / đổi gói + tạo invoice + VNPay URL
+      parameters:
+        - in: path
+          name: mentorId
+          required: true
+          schema: { type: string }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [plan, cycle]
+              properties:
+                plan: { type: string, enum: [starter, pro, unlimited] }
+                cycle: { type: string, enum: [monthly, quarterly, semiannual, yearly] }
+                paymentMethod:
+                  type: string
+                  enum: [vnpay, bank_transfer, credit_card]
+                  default: vnpay
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  invoice: { $ref: '#/components/schemas/Invoice' }
+                  paymentRedirectUrl:
+                    type: string
+                    format: uri
+                    description: URL VNPay/card checkout — FE redirect user tới đây
+
+  /subscription/mentor/{mentorId}/cancel-renewal:
+    post:
+      tags: [Subscription]
+      summary: Huỷ auto-renew (gói vẫn hoạt động tới hết chu kỳ hiện tại)
+      parameters:
+        - in: path
+          name: mentorId
+          required: true
+          schema: { type: string }
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/MentorSubscription' }
+
+  /subscription/mentor/{mentorId}/resume-renewal:
+    post:
+      tags: [Subscription]
+      summary: Bật lại auto-renew
+      parameters:
+        - in: path
+          name: mentorId
+          required: true
+          schema: { type: string }
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/MentorSubscription' }
+
+  /subscription/mentor/{mentorId}/invoices:
+    get:
+      tags: [Subscription]
+      summary: Lịch sử hoá đơn
+      parameters:
+        - in: path
+          name: mentorId
+          required: true
+          schema: { type: string }
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items: { $ref: '#/components/schemas/Invoice' }
+
+  /subscription/webhook/vnpay:
+    post:
+      tags: [Subscription]
+      summary: Webhook VNPay — cập nhật invoice status sau thanh toán
+      responses:
+        "200": { description: OK }
+
+  # ───── Usage tracking ───────────────────────────────────────────────────────
+  /usage/mentor/{mentorId}:
+    get:
+      tags: [Usage]
+      summary: Usage của 1 mentor trong chu kỳ hiện tại
+      parameters:
+        - in: path
+          name: mentorId
+          required: true
+          schema: { type: string }
+        - in: query
+          name: period
+          schema: { type: string, enum: [current, last_month, ytd] }
+          description: Mặc định current
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/UsageSummary' }
+
+  # ───── Admin (Reborn internal) ──────────────────────────────────────────────
+  /admin/usage/platform:
+    get:
+      tags: [Admin]
+      summary: Tổng hợp cost + revenue toàn platform
+      parameters:
+        - in: query
+          name: month
+          schema: { type: string, example: 2026-04 }
+        - in: query
+          name: plan
+          schema: { type: string, enum: [trial, starter, pro, unlimited] }
+      security:
+        - AdminBearer: []
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  summary:
+                    type: object
+                    properties:
+                      totalMentors: { type: integer }
+                      activeMentors: { type: integer }
+                      trialMentors: { type: integer }
+                      totalSessions: { type: integer }
+                      totalCostUSD: { type: number }
+                      totalRevenueVND: { type: integer }
+                      grossMarginPct: { type: number }
+                  byMentor:
+                    type: array
+                    items: { $ref: '#/components/schemas/MentorUsageEntry' }
+
+  /admin/alerts:
+    get:
+      tags: [Admin]
+      summary: Mentor sắp vượt quota hoặc sắp hết trial
+      security:
+        - AdminBearer: []
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items: { $ref: '#/components/schemas/AdminAlert' }
+
+# ─────────────────────────────────────────────────────────────────────────────
+components:
+  parameters:
+    MentorId:
+      in: query
+      name: mentorId
+      required: true
+      schema: { type: string }
+
+  securitySchemes:
+    MentorBearer:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+    AdminBearer:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  schemas:
+    ZoomStatus:
+      type: object
+      properties:
+        connected: { type: boolean }
+        status: { type: string, enum: [active, expired, revoked, error] }
+        zoomEmail: { type: string, nullable: true }
+        zoomDisplayName: { type: string, nullable: true }
+        zoomAccountType: { type: string, enum: [basic, licensed, on_prem], nullable: true }
+        connectedAt: { type: string, format: date-time, nullable: true }
+
+    ZoomEventRecordingCompleted:
+      type: object
+      required: [event, payload]
+      properties:
+        event:
+          type: string
+          enum: [recording.completed]
+        payload:
+          type: object
+          properties:
+            account_id: { type: string }
+            object:
+              type: object
+              properties:
+                id: { type: integer, format: int64, description: meeting_id }
+                uuid: { type: string }
+                host_id: { type: string, description: zoomUserId → map tới mentorId }
+                topic: { type: string }
+                duration: { type: integer, description: phút }
+                recording_files:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      id: { type: string }
+                      file_type: { type: string, example: MP4 }
+                      download_url: { type: string, format: uri }
+                      file_size: { type: integer }
+                      recording_start: { type: string, format: date-time }
+                      recording_end: { type: string, format: date-time }
+            download_token:
+              type: string
+              description: Token có hiệu lực 7 ngày, dùng download recording
+
+    ZoomEventMeetingStarted:
+      type: object
+      properties:
+        event: { type: string, enum: [meeting.started, meeting.ended] }
+        payload: { type: object }
+
+    ZoomEventEndpointValidation:
+      type: object
+      description: Zoom gửi challenge khi đăng ký webhook URL
+      properties:
+        event: { type: string, enum: [endpoint.url_validation] }
+        payload:
+          type: object
+          properties:
+            plainToken: { type: string }
+
+    MeetingNote:
+      type: object
+      properties:
+        id: { type: string }
+        courseId: { type: string }
+        sessionNumber: { type: integer }
+        sessionTitle: { type: string }
+        date: { type: string, format: date }
+        status:
+          type: string
+          enum: [processing, ready, failed]
+        summary: { type: string, nullable: true }
+
+    MeetingNoteDetail:
+      allOf:
+        - $ref: '#/components/schemas/MeetingNote'
+        - type: object
+          properties:
+            duration: { type: string, example: "1h 58m" }
+            attendance:
+              type: object
+              properties:
+                present: { type: integer }
+                late: { type: integer }
+                absent: { type: integer }
+                total: { type: integer }
+            sentiment:
+              type: object
+              properties:
+                positive: { type: integer }
+                neutral: { type: integer }
+                negative: { type: integer }
+            transcript: { type: string, description: Full transcript }
+            keyPoints:
+              type: array
+              items:
+                type: object
+                properties:
+                  time: { type: string, example: "02:14" }
+                  text: { type: string }
+            questions:
+              type: array
+              items:
+                type: object
+                properties:
+                  time: { type: string }
+                  student: { type: string }
+                  q: { type: string }
+                  a: { type: string }
+            actionItems:
+              type: array
+              items: { type: string }
+            recordingUrl: { type: string, format: uri, nullable: true }
+
+    Plan:
+      type: object
+      properties:
+        id: { type: string, enum: [starter, pro, unlimited] }
+        name: { type: string }
+        tagline: { type: string }
+        monthlyPriceVND: { type: integer }
+        popular: { type: boolean }
+        highlights:
+          type: array
+          items: { type: string }
+        features:
+          type: object
+          properties:
+            aiSessions: { type: integer, description: -1 = unlimited }
+            zaloMessages: { type: integer }
+            storageGB: { type: integer }
+            coursesLimit: { type: integer }
+            studentsLimit: { type: integer }
+            aiModel: { type: string, enum: [haiku, sonnet] }
+            customBranding: { type: boolean }
+            apiAccess: { type: boolean }
+            prioritySupport: { type: boolean }
+
+    MentorSubscription:
+      type: object
+      properties:
+        mentorId: { type: string }
+        plan: { type: string, enum: [trial, starter, pro, unlimited] }
+        status: { type: string, enum: [trial, active, canceled_at_period_end, expired, past_due] }
+        cycle: { type: string, enum: [monthly, quarterly, semiannual, yearly] }
+        trialStartedAt: { type: string, format: date-time, nullable: true }
+        trialEndsAt: { type: string, format: date-time, nullable: true }
+        currentPeriodStart: { type: string, format: date-time }
+        currentPeriodEnd: { type: string, format: date-time }
+        nextBillingAt: { type: string, format: date-time, nullable: true }
+        nextBillingAmountVND: { type: integer, nullable: true }
+        autoRenew: { type: boolean }
+        usage: { $ref: '#/components/schemas/UsageSummary' }
+
+    Invoice:
+      type: object
+      properties:
+        id: { type: string }
+        issuedAt: { type: string, format: date }
+        periodLabel: { type: string }
+        plan: { type: string }
+        cycle: { type: string }
+        amountVND: { type: integer }
+        status: { type: string, enum: [paid, pending, failed, refunded] }
+        method: { type: string, enum: [VNPay, Bank transfer, Credit card, Trial] }
+        downloadUrl: { type: string, format: uri, nullable: true }
+
+    UsageSummary:
+      type: object
+      properties:
+        aiSessionsUsed: { type: integer }
+        aiSessionsQuota: { type: integer, description: -1 = unlimited }
+        zaloSent: { type: integer }
+        zaloQuota: { type: integer }
+        storageUsedMB: { type: integer }
+        storageQuotaMB: { type: integer }
+        coursesActive: { type: integer }
+        coursesLimit: { type: integer }
+        studentsActive: { type: integer }
+        studentsLimit: { type: integer }
+
+    MentorUsageEntry:
+      type: object
+      properties:
+        mentorId: { type: string }
+        mentorName: { type: string }
+        plan: { type: string }
+        sessions: { type: integer }
+        whisperCostUSD: { type: number }
+        claudeCostUSD: { type: number }
+        storageUSD: { type: number }
+        totalCostUSD: { type: number }
+        revenueVND: { type: integer }
+        marginPct: { type: number }
+        status: { type: string }
+
+    AdminAlert:
+      type: object
+      properties:
+        type: { type: string, enum: [quota_near, quota_exceeded, trial_ending, payment_failed] }
+        mentorId: { type: string }
+        mentorName: { type: string }
+        severity: { type: string, enum: [info, warning, critical] }
+        message: { type: string }
+        action:
+          type: object
+          properties:
+            label: { type: string }
+            url: { type: string }
+
+security:
+  - MentorBearer: []

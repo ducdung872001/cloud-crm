@@ -125,6 +125,62 @@
       color: var(--ch-text, #2C2318);
     }
 
+    .recent-coming-soon {
+      padding: 4rem 2rem;
+      text-align: center;
+      border: 1px dashed #d8cfc2;
+      border-radius: 1rem;
+      background: #faf7f2;
+
+      &__icon {
+        font-size: 4.8rem;
+        line-height: 1;
+        margin-bottom: 1.2rem;
+        opacity: 0.9;
+      }
+
+      &__title {
+        font-size: 1.6rem;
+        font-weight: 600;
+        color: var(--ch-text, #2C2318);
+        margin-bottom: 0.6rem;
+      }
+
+      &__desc {
+        font-size: 1.3rem;
+        color: var(--ch-text-muted, #7A6B5A);
+        max-width: 44rem;
+        margin: 0 auto 1.6rem;
+        line-height: 1.55;
+      }
+
+      &__preview-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.6rem;
+        padding: 0.9rem 1.8rem;
+        font-size: 1.3rem;
+        font-weight: 600;
+        color: #fff;
+        background: var(--ch-primary, #2D6A5A);
+        border: 0;
+        border-radius: 0.6rem;
+        cursor: pointer;
+        transition: background 0.15s ease;
+
+        &:hover {
+          background: #24594c;
+        }
+      }
+
+      &__hint {
+        margin-top: 0.8rem;
+        font-size: 1.15rem;
+        color: #9a8b79;
+        font-style: italic;
+      }
+    }
+
     .recent-list {
       .recent-item {
         display: flex;

@@ -1,0 +1,149 @@
+// Shared EmptyState — scoped by BEM class, dùng app-wide
+
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  gap: 0.6rem;
+  border-radius: 1rem;
+  border: 1px dashed #d7e0e6;
+  background: linear-gradient(180deg, #fafcfd 0%, #f2f6f8 100%);
+  color: #5d7484;
+
+  &__icon {
+    line-height: 1;
+    margin-bottom: 0.6rem;
+    opacity: 0.9;
+
+    > span {
+      display: inline-block;
+      animation: empty-state-float 3s ease-in-out infinite;
+    }
+  }
+
+  &__title {
+    font-weight: 600;
+    color: #1f3a4a;
+    margin: 0;
+  }
+
+  &__desc {
+    max-width: 42rem;
+    line-height: 1.55;
+    color: #6a7f8e;
+    margin: 0 auto;
+  }
+
+  &__actions {
+    margin-top: 1.2rem;
+    display: flex;
+    gap: 0.8rem;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  &__hint {
+    margin-top: 0.8rem;
+    font-size: 1.15rem;
+    color: #9a8b79;
+    font-style: italic;
+    max-width: 48rem;
+  }
+
+  // ── Sizes ───────────────────────────────────────────────────────────────
+  &--sm {
+    padding: 2.4rem 1.6rem;
+    .empty-state__icon   { font-size: 3.6rem; }
+    .empty-state__title  { font-size: 1.4rem; }
+    .empty-state__desc   { font-size: 1.2rem; }
+  }
+  &--md {
+    padding: 4rem 2rem;
+    .empty-state__icon   { font-size: 4.8rem; }
+    .empty-state__title  { font-size: 1.6rem; }
+    .empty-state__desc   { font-size: 1.3rem; }
+  }
+  &--lg {
+    padding: 6rem 2rem 5rem;
+    .empty-state__icon   { font-size: 5.6rem; }
+    .empty-state__title  { font-size: 1.8rem; }
+    .empty-state__desc   { font-size: 1.35rem; }
+  }
+
+  // ── Variants ────────────────────────────────────────────────────────────
+  &--no-results {
+    background: linear-gradient(180deg, #fafcff 0%, #eff5fb 100%);
+    border-color: #d5e1ef;
+  }
+
+  &--coming-soon {
+    background: #faf7f2;
+    border-color: #d8cfc2;
+
+    .empty-state__title { color: #2C2318; }
+    .empty-state__desc  { color: #7A6B5A; }
+  }
+
+  &--success-empty {
+    background: linear-gradient(180deg, #f4faf6 0%, #e9f4ed 100%);
+    border-color: #cfe5d6;
+
+    .empty-state__title { color: #1f6b43; }
+    .empty-state__desc  { color: #4d7a5e; }
+  }
+}
+
+@keyframes empty-state-float {
+  0%, 100% { transform: translateY(0); }
+  50%      { transform: translateY(-4px); }
+}
+
+// ── Preview banner ────────────────────────────────────────────────────────────
+.preview-banner {
+  display: flex;
+  align-items: center;
+  gap: 1.2rem;
+  flex-wrap: wrap;
+  padding: 1rem 1.4rem;
+  margin-bottom: 1.6rem;
+  border-radius: 0.8rem;
+  background: linear-gradient(90deg, #fff8e6 0%, #fdf0d0 100%);
+  border: 1px solid #f0d89c;
+  color: #6b4e11;
+
+  &__badge {
+    font-size: 1.25rem;
+    font-weight: 700;
+    padding: 0.3rem 0.8rem;
+    background: #f2b84a;
+    color: #fff;
+    border-radius: 0.4rem;
+    white-space: nowrap;
+  }
+
+  &__text {
+    flex: 1;
+    min-width: 20rem;
+    font-size: 1.3rem;
+    line-height: 1.5;
+  }
+
+  &__close {
+    padding: 0.6rem 1.2rem;
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: #6b4e11;
+    background: #fff;
+    border: 1px solid #e0c98a;
+    border-radius: 0.5rem;
+    cursor: pointer;
+    transition: background 0.15s ease;
+    white-space: nowrap;
+
+    &:hover {
+      background: #fff5dc;
+    }
+  }
+}

@@ -1,59 +1,9 @@
-import React, { Fragment, useState } from "react";
-import CustomerGrowth from "./partials/CustomerGrowth";
-import CustomerOverview from "./partials/CustomerOverview";
-import TopCampaignsCustomer from "./partials/TopCampaignsCustomer";
-import CustomerDistribution from "./partials/CustomerDistribution";
-import NumberCustomerCampaign from "./partials/NumberCustomerCampaign";
-import ReportInteractCustomer from "./partials/ReportInteractCustomer";
-import ReportInteractCustomerTable from "./partials/ReportInteractCustomerTable";
-import AdvancedDateFilter from "components/advancedDateFilter/advancedDateFilter";
-import "./ReportCustomer.scss";
+import React from "react";
 
-export default function ReportCustomer() {
-  document.title = "Báo cáo khách hàng";
-
-  const [params, setParams] = useState({
-    startTime: "",
-    endTime: "",
-  });
-
-  const takeFromTimeAndToTime = (fromTime, toTime) => {
-    if (fromTime && toTime) {
-      setParams({ ...params, startTime: fromTime, endTime: toTime });
-    }
-  };
-
-  // console.log("params : ", params);
-
+export default function ReportCustomer(_props: Record<string, unknown>) {
   return (
-    <div className="page-content page__report--customer">
-      <div>
-        <Fragment>
-          <div className="card-box choose__time--report">
-            <div className="__left">
-              <h2 className="name-common">Chọn thời gian</h2>
-            </div>
-            <div className="__right">
-              <div className="form-group">
-                <AdvancedDateFilter updateParams={takeFromTimeAndToTime} defaultKey="thisWeek" />
-              </div>
-            </div>
-          </div>
-          <ReportInteractCustomer paramsProps={params} />
-          <CustomerGrowth paramsProps={params} />
-          <CustomerOverview paramsProps={params} />
-          <div className="box__merge--campaign">
-            <div className="chart__pie">
-              <NumberCustomerCampaign paramsProps={params} />
-            </div>
-            <div className="chart__top">
-              <TopCampaignsCustomer paramsProps={params} />
-            </div>
-          </div>
-          <CustomerDistribution paramsProps={params} />
-          <ReportInteractCustomerTable />
-        </Fragment>
-      </div>
+    <div style={{ padding: 24, fontFamily: "monospace", color: "#b45309", background: "#fffbeb", borderRadius: 8, margin: 16 }}>
+      [stub] page not ported: pages/ReportCustomer/ReportCustomer
     </div>
   );
 }

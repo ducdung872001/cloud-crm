@@ -1,0 +1,21 @@
+// [CH] ComingSoon - styling riêng cho nút preview (button context CH)
+// EmptyState + banner style đã chuyển về @/components/EmptyState/EmptyState.scss.
+
+.ch-preview-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.9rem 1.8rem;
+  font-size: 1.3rem;
+  font-weight: 600;
+  color: #fff;
+  background: var(--ch-primary, #2D6A5A);
+  border: 0;
+  border-radius: 0.6rem;
+  cursor: pointer;
+  transition: background 0.15s ease;
+
+  &:hover {
+    background: #24594c;
+  }
+}

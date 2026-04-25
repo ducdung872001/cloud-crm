@@ -1,0 +1,148 @@
+.mh-gate {
+  &__dimmed {
+    pointer-events: none;
+    user-select: none;
+    filter: blur(3px) grayscale(0.3);
+    opacity: 0.4;
+    overflow: hidden;
+    max-height: 100vh;
+  }
+
+  &__overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 500;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    background: rgba(14, 23, 19, 0.55);
+    backdrop-filter: blur(6px);
+    animation: mhGateFadeIn .2s ease-out;
+  }
+
+  &__card {
+    max-width: 560px;
+    width: 100%;
+    background: #fff;
+    border-radius: 18px;
+    padding: 40px 36px;
+    text-align: center;
+    box-shadow: 0 30px 80px -20px rgba(0, 0, 0, 0.35);
+    font-family: 'Geist', -apple-system, sans-serif;
+    color: #0E1713;
+    max-height: 92vh;
+    overflow-y: auto;
+    animation: mhGateSlideUp .25s ease-out;
+  }
+
+  &__icon-wrap {
+    width: 72px; height: 72px;
+    margin: 0 auto 20px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #B91C1C, #DC2626);
+    display: flex; align-items: center; justify-content: center;
+    box-shadow: 0 10px 24px -10px rgba(185, 28, 28, 0.6);
+  }
+  &__icon { font-size: 36px; }
+
+  &__eyebrow {
+    font-family: 'Geist Mono', monospace;
+    font-size: 11px;
+    letter-spacing: .14em;
+    text-transform: uppercase;
+    color: #B45309;
+    margin-bottom: 10px;
+  }
+
+  &__title {
+    font-family: 'Fraunces', serif;
+    font-size: 32px;
+    font-weight: 400;
+    line-height: 1.15;
+    margin: 0 0 14px;
+  }
+
+  &__desc {
+    font-size: 15px;
+    color: #6B7A72;
+    line-height: 1.6;
+    margin: 0 0 24px;
+  }
+
+  &__locked-list {
+    text-align: left;
+    background: #FEF2F2;
+    border: 1px solid #FCA5A5;
+    border-radius: 12px;
+    padding: 16px 20px;
+    margin-bottom: 20px;
+  }
+  &__locked-item {
+    font-size: 13px;
+    color: #991B1B;
+    padding: 4px 0;
+    line-height: 1.5;
+  }
+
+  &__keep {
+    background: #F0FDF4;
+    border: 1px solid #86EFAC;
+    border-radius: 10px;
+    padding: 14px 16px;
+    font-size: 13px;
+    color: #166534;
+    line-height: 1.55;
+    margin-bottom: 24px;
+    text-align: left;
+    strong { color: #15803D; }
+  }
+
+  &__actions {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-bottom: 20px;
+  }
+  &__cta {
+    display: inline-block;
+    padding: 14px 32px;
+    background: linear-gradient(135deg, #0F766E, #134E4A);
+    color: #fff;
+    border-radius: 12px;
+    font-size: 15px;
+    font-weight: 600;
+    text-decoration: none;
+    transition: transform .15s, box-shadow .15s;
+    box-shadow: 0 8px 20px -6px rgba(15, 118, 110, 0.5);
+
+    &:hover { transform: translateY(-1px); box-shadow: 0 12px 28px -8px rgba(15, 118, 110, 0.6); }
+  }
+  &__secondary {
+    display: inline-block;
+    padding: 10px 20px;
+    color: #6B7A72;
+    font-size: 13px;
+    text-decoration: none;
+
+    &:hover { color: #0E1713; text-decoration: underline; }
+  }
+
+  &__help {
+    font-size: 12px;
+    color: #6B7A72;
+    padding-top: 14px;
+    border-top: 1px solid #E0D8C8;
+    line-height: 1.6;
+    a { color: #0F766E; text-decoration: none; }
+    a:hover { text-decoration: underline; }
+  }
+}
+
+@keyframes mhGateFadeIn { from { opacity: 0; } to { opacity: 1; } }
+@keyframes mhGateSlideUp { from { opacity: 0; transform: translateY(20px) scale(0.96); } to { opacity: 1; transform: translateY(0) scale(1); } }
+
+@media (max-width: 640px) {
+  .mh-gate__card { padding: 28px 22px; }
+  .mh-gate__title { font-size: 26px; }
+}

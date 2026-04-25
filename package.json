@@ -1,7 +1,7 @@
 {
-  "name": "reborn-crm",
+  "name": "reborn-mentorhub-fe",
   "version": "0.0.1",
-  "description": "Reborn CRM",
+  "description": "Reborn MentorHub — Frontend (React 18 + TypeScript + Vite)",
   "author": "Reborn JSC",
   "license": "ISC",
   "scripts": {

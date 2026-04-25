@@ -1,0 +1,215 @@
+// Zalo Mini App design system — compact mobile, 375px viewport
+.zmp {
+  --zmp-bg: #F5F7FA;
+  --zmp-surface: #fff;
+  --zmp-ink: #0E1713;
+  --zmp-ink-soft: #6B7A72;
+  --zmp-line: #E5EAF0;
+  --zmp-accent: #0068FF; // Zalo blue
+  --zmp-teal: #0F766E;
+  --zmp-amber: #B45309;
+  --zmp-red: #DC2626;
+  --zmp-green: #16A34A;
+
+  min-height: 100vh;
+  background: linear-gradient(135deg, #1E293B, #0F172A);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  font-family: 'Geist', -apple-system, sans-serif;
+  color: var(--zmp-ink);
+
+  // Frame simulating phone — 375x812 (iPhone 14)
+  &__frame {
+    width: 375px;
+    max-width: 100%;
+    height: 812px;
+    max-height: calc(100vh - 40px);
+    background: var(--zmp-bg);
+    border-radius: 36px;
+    box-shadow: 0 0 0 10px #1E293B, 0 0 0 12px #0F172A, 0 30px 80px rgba(0, 0, 0, 0.6);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+  }
+
+  &__statusbar {
+    height: 44px;
+    background: var(--zmp-bg);
+    color: var(--zmp-ink);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 20px;
+    font-family: 'Geist Mono', monospace;
+    font-size: 11px;
+    font-weight: 600;
+    flex-shrink: 0;
+
+    &-time { }
+    &-brand { color: var(--zmp-teal); font-size: 13px; }
+    &-icons { opacity: 0.6; letter-spacing: .05em; }
+  }
+
+  &__header {
+    padding: 12px 20px 16px;
+    background: var(--zmp-bg);
+    flex-shrink: 0;
+    &-title { font-family: 'Fraunces', serif; font-size: 24px; font-weight: 400; margin: 0; letter-spacing: -.01em; }
+  }
+
+  &__content {
+    flex: 1;
+    overflow-y: auto;
+    padding: 0 16px 16px;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  &__tabbar {
+    height: 72px;
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    background: var(--zmp-surface);
+    border-top: 1px solid var(--zmp-line);
+    flex-shrink: 0;
+    padding-bottom: env(safe-area-inset-bottom, 0);
+  }
+  &__tab {
+    display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px;
+    padding: 8px 4px;
+    color: var(--zmp-ink-soft);
+    text-decoration: none;
+    font-size: 10px;
+    transition: color .15s;
+
+    &-icon { font-size: 22px; line-height: 1; }
+    &-label { font-family: 'Geist Mono', monospace; font-size: 10px; letter-spacing: .04em; font-weight: 500; }
+
+    &:active &-icon { transform: scale(0.9); }
+    &.is-active { color: var(--zmp-teal); }
+    &.is-active &-icon { transform: scale(1.05); }
+  }
+
+  // ── Preview chrome (chỉ hiện khi chạy ngoài Zalo) ─────────────────────────
+  &__preview-chrome {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    max-width: 260px;
+    background: rgba(255, 255, 255, 0.95);
+    color: var(--zmp-ink);
+    padding: 14px 16px;
+    border-radius: 12px;
+    font-size: 11px;
+    line-height: 1.55;
+    z-index: 10;
+
+    code { background: #F4EFE6; padding: 1px 5px; border-radius: 4px; font-size: 10px; }
+  }
+  &__preview-badge {
+    font-family: 'Geist Mono', monospace;
+    font-size: 10px;
+    letter-spacing: .08em;
+    color: var(--zmp-accent);
+    margin-bottom: 6px;
+    font-weight: 600;
+  }
+  &__preview-note { color: var(--zmp-ink-soft); }
+
+  // ── Reusable components ───────────────────────────────────────────────────
+  &-kpi {
+    background: var(--zmp-surface);
+    border-radius: 14px;
+    padding: 14px;
+    border: 1px solid var(--zmp-line);
+
+    &__label { font-family: 'Geist Mono', monospace; font-size: 10px; letter-spacing: .06em; color: var(--zmp-ink-soft); text-transform: uppercase; margin-bottom: 6px; }
+    &__value { font-family: 'Fraunces', serif; font-size: 24px; line-height: 1.1; }
+    &__delta { font-family: 'Geist Mono', monospace; font-size: 10px; color: var(--zmp-teal); margin-top: 4px; }
+  }
+
+  &-card {
+    background: var(--zmp-surface);
+    border-radius: 14px;
+    padding: 16px;
+    border: 1px solid var(--zmp-line);
+    margin-bottom: 12px;
+  }
+
+  &-btn {
+    display: inline-flex; align-items: center; justify-content: center; gap: 6px;
+    padding: 11px 16px;
+    min-height: 44px;
+    border-radius: 12px;
+    border: 1px solid var(--zmp-line);
+    background: var(--zmp-surface);
+    color: var(--zmp-ink);
+    font-family: inherit;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    text-decoration: none;
+    transition: transform .1s;
+
+    &:active { transform: scale(0.97); }
+
+    &--primary { background: var(--zmp-teal); color: #fff; border-color: var(--zmp-teal); }
+    &--zalo { background: var(--zmp-accent); color: #fff; border-color: var(--zmp-accent); }
+    &--amber { background: var(--zmp-amber); color: #fff; border-color: var(--zmp-amber); }
+    &--full { width: 100%; }
+  }
+
+  &-pill {
+    display: inline-block;
+    padding: 3px 8px;
+    border-radius: 999px;
+    font-family: 'Geist Mono', monospace;
+    font-size: 9px;
+    letter-spacing: .05em;
+    font-weight: 700;
+    text-transform: uppercase;
+    &--live { background: #FEE2E2; color: #991B1B; }
+    &--upcoming { background: #DBEAFE; color: #1E40AF; }
+    &--green { background: #DCFCE7; color: #166534; }
+    &--amber { background: #FEF3C7; color: #92400E; }
+    &--red { background: #FEE2E2; color: #991B1B; }
+  }
+
+  &-row {
+    display: flex; align-items: center; gap: 10px;
+    padding: 10px 0;
+    border-bottom: 1px solid var(--zmp-line);
+    &:last-child { border-bottom: 0; }
+  }
+
+  &-avatar {
+    width: 36px; height: 36px;
+    border-radius: 50%;
+    display: inline-flex; align-items: center; justify-content: center;
+    color: #fff; font-weight: 600; font-family: 'Fraunces', serif; font-size: 13px;
+    flex-shrink: 0;
+  }
+
+  &-kicker { font-family: 'Geist Mono', monospace; font-size: 10px; letter-spacing: .08em; color: var(--zmp-ink-soft); text-transform: uppercase; }
+  &-mono { font-family: 'Geist Mono', monospace; }
+  &-h3 { font-family: 'Fraunces', serif; font-size: 18px; margin: 0; font-weight: 500; }
+
+  @media (max-width: 420px) {
+    padding: 0;
+    background: var(--zmp-bg);
+    .zmp__frame {
+      width: 100%;
+      height: 100vh;
+      max-height: none;
+      border-radius: 0;
+      box-shadow: none;
+    }
+    .zmp__preview-chrome { display: none; }
+  }
+
+  @media (max-width: 900px) and (min-width: 421px) {
+    .zmp__preview-chrome { position: static; margin-top: 16px; max-width: 375px; }
+  }
+}

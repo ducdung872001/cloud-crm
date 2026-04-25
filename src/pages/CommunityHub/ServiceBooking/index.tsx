@@ -1,10 +1,14 @@
 // [CH] Community Hub - Dịch vụ & Booking module (bao gồm Bán thẻ thành viên)
+// TODO: wire up real API khi BE sẵn sàng.
+// Mặc định hiển thị "Chưa có dữ liệu" + chế độ Xem trước (teaser) dùng MOCK_DATA để minh hoạ.
+// State preview không persist — đóng/refresh sẽ quay về "Chưa có dữ liệu".
 import React, { useState, useMemo } from "react";
 import { MOCK_SERVICES, MOCK_BOOKING_SLOTS } from "@/mocks/community-hub/services";
 import { MOCK_SCAN_RESULT } from "@/mocks/community-hub/checkin";
 import { MOCK_MEMBERSHIP_PLANS, MOCK_PAYMENT_METHODS } from "@/mocks/community-hub/membership-plans";
 import { formatCurrency } from "reborn-util";
 import { showToast } from "@/utils/common";
+import { ComingSoonBlock, PreviewBanner } from "../_shared/ComingSoon";
 import "./index.scss";
 
 type ActiveTab = "sell-card" | "deduct" | "booking";
@@ -12,6 +16,9 @@ type ActiveTab = "sell-card" | "deduct" | "booking";
 export default function ServiceBookingPage() {
   document.title = "Dịch vụ & Booking";
   const [activeTab, setActiveTab] = useState<ActiveTab>("sell-card");
+
+  // Chế độ Xem trước — teaser dùng MOCK_DATA. Không persist.
+  const [isPreview, setIsPreview] = useState(false);
 
   // ── Bán thẻ state ──
   const [memberSearch, setMemberSearch] = useState("");
@@ -29,16 +36,32 @@ export default function ServiceBookingPage() {
     [selectedPlan],
   );
 
+  const enterPreview = () => {
+    setIsPreview(true);
+    showToast("Đang ở chế độ xem trước với dữ liệu demo", "info");
+  };
+
+  const exitPreview = () => {
+    setIsPreview(false);
+    // Reset mọi state đã chọn trong preview
+    setMemberSearch("");
+    setMemberSelected(false);
+    setSelectedPlan(null);
+    setSelectedPayment(null);
+    setShowConfirm(false);
+    setSelectedService(null);
+    setServiceSearch("");
+  };
+
   const handleSelectMember = () => {
     if (memberSearch.trim()) setMemberSelected(true);
   };
 
   const handleConfirmSell = () => {
     showToast(
-      `Đã bán thẻ "${plan?.name}" cho ${MOCK_SCAN_RESULT.name} — Giá: ${formatCurrency(plan?.price ?? 0, ".", "")}đ — Thời hạn: ${plan?.duration_months} tháng`,
+      `Đã bán thẻ "${plan?.name}" cho ${MOCK_SCAN_RESULT.name} — Giá: ${formatCurrency(plan?.price ?? 0, ".", "")}đ — Thời hạn: ${plan?.duration_months} tháng (dữ liệu demo)`,
       "info",
     );
-    // Reset
     setSelectedPlan(null);
     setSelectedPayment(null);
     setMemberSearch("");
@@ -48,14 +71,29 @@ export default function ServiceBookingPage() {
 
   const handleDeductQuota = () => {
     if (selectedService && serviceSearch) {
-      showToast("Đã trừ quota dịch vụ cho thành viên!", "info");
+      showToast("Đã trừ quota dịch vụ cho thành viên! (dữ liệu demo)", "info");
       setSelectedService(null);
       setServiceSearch("");
     }
   };
 
+  const comingSoonByTab: Record<ActiveTab, { title: string; description: string }> = {
+    "sell-card": {
+      title: "Chưa có dữ liệu bán thẻ",
+      description: "Module bán thẻ thành viên chưa sẵn sàng. Dữ liệu gói, thành viên, giao dịch sẽ xuất hiện khi hệ thống đi vào vận hành.",
+    },
+    deduct: {
+      title: "Chưa có dữ liệu trừ quota",
+      description: "Chưa có thành viên và dịch vụ nào được đăng ký. Khi có dữ liệu thật, bạn có thể trừ lượt/quota tại đây.",
+    },
+    booking: {
+      title: "Chưa có lịch đặt",
+      description: "Các khung giờ booking và trạng thái phòng/dịch vụ sẽ hiển thị tại đây khi module đặt lịch được kích hoạt.",
+    },
+  };
+
   return (
-    <div className="ch-service-page">
+    <div className={`ch-service-page${isPreview ? " ch-page--preview" : ""}`}>
       {/* ── Header + Tabs ── */}
       <div className="ch-service-page__header">
         <h2>Dịch vụ & Booking</h2>
@@ -72,8 +110,20 @@ export default function ServiceBookingPage() {
         </div>
       </div>
 
+      {/* Preview banner — chỉ xuất hiện khi ở chế độ Xem trước */}
+      {isPreview && <PreviewBanner onExit={exitPreview} />}
+
+      {/* ═══════════════ Khi chưa preview: show "Chưa có dữ liệu" ═══════════════ */}
+      {!isPreview && (
+        <ComingSoonBlock
+          title={comingSoonByTab[activeTab].title}
+          description={comingSoonByTab[activeTab].description}
+          onPreview={enterPreview}
+        />
+      )}
+
       {/* ═══════════════ TAB: BÁN THẺ THÀNH VIÊN (POS-style) ═══════════════ */}
-      {activeTab === "sell-card" && (
+      {isPreview && activeTab === "sell-card" && (
         <div className="ch-service-page__sell-card">
           <div className="sell-card-layout">
             {/* ── Bên trái: Danh sách gói ── */}
@@ -233,7 +283,7 @@ export default function ServiceBookingPage() {
       )}
 
       {/* ═══════════════ TAB: TRỪ QUOTA ═══════════════ */}
-      {activeTab === "deduct" && (
+      {isPreview && activeTab === "deduct" && (
         <div className="ch-service-page__deduct">
           <div className="deduct-step">
             <h3>1. Chọn thành viên</h3>
@@ -288,7 +338,7 @@ export default function ServiceBookingPage() {
       )}
 
       {/* ═══════════════ TAB: ĐẶT LỊCH ═══════════════ */}
-      {activeTab === "booking" && (
+      {isPreview && activeTab === "booking" && (
         <div className="ch-service-page__booking">
           <div className="booking-info">
             <h3>Đặt lịch: Massage 60 phút</h3>

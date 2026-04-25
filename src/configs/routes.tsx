@@ -196,9 +196,31 @@ const sourceDomain = getDomain(decodeURIComponent(document.location.href));
 
 // [CH] Community Hub pages
 const CHCheckinPage = React.lazy(() => import("@/pages/CommunityHub/Checkin"));
+
+// [MH] MentorHub module — mentor admin pages
+const MHDashboard = React.lazy(() => import("@/pages/MentorHub/Dashboard"));
+const MHCourses = React.lazy(() => import("@/pages/MentorHub/Courses"));
+const MHCourseEdit = React.lazy(() => import("@/pages/MentorHub/CourseEdit"));
+const MHSessionReview = React.lazy(() => import("@/pages/MentorHub/SessionReview"));
+const MHLiveSession = React.lazy(() => import("@/pages/MentorHub/LiveSession"));
+const MHStudents = React.lazy(() => import("@/pages/MentorHub/Students"));
+const MHCRM = React.lazy(() => import("@/pages/MentorHub/CRM"));
+const MHTickets = React.lazy(() => import("@/pages/MentorHub/Tickets"));
+const MHChat = React.lazy(() => import("@/pages/MentorHub/Chat"));
+const MHFeedback = React.lazy(() => import("@/pages/MentorHub/Feedback"));
+const MHRevenue = React.lazy(() => import("@/pages/MentorHub/Revenue"));
+const MHMarketing = React.lazy(() => import("@/pages/MentorHub/Marketing"));
+const MHCalendar = React.lazy(() => import("@/pages/MentorHub/Calendar"));
+const MHSettings = React.lazy(() => import("@/pages/MentorHub/Settings"));
+
+// [Admin] Reborn internal — platform monitoring
+const AdminUsage = React.lazy(() => import("@/pages/Admin/Usage"));
 const CHAccommodationPage = React.lazy(() => import("@/pages/CommunityHub/Accommodation"));
 const CHServiceBookingPage = React.lazy(() => import("@/pages/CommunityHub/ServiceBooking"));
 const CHCoursesPage = React.lazy(() => import("@/pages/CommunityHub/Courses"));
+const CHEventListPage = React.lazy(() => import("@/pages/CommunityHub/Events/EventListPage"));
+const CHEventFormPage = React.lazy(() => import("@/pages/CommunityHub/Events/EventFormPage"));
+const CHEventDetailPage = React.lazy(() => import("@/pages/CommunityHub/Events/EventDetailPage"));
 const CHPartnersPage = React.lazy(() => import("@/pages/CommunityHub/Partners"));
 const CHFeedbackPage = React.lazy(() => import("@/pages/CommunityHub/Feedback"));
 const CHReportRevenue = React.lazy(() => import("@/pages/CommunityHub/Reports/ReportRevenue"));
@@ -210,261 +232,100 @@ const CHReportFinance = React.lazy(() => import("@/pages/CommunityHub/Reports/Re
 const CHMembershipPlanSettings = React.lazy(() => import("@/pages/CommunityHub/MembershipPlanSettings"));
 const CHServiceManagement = React.lazy(() => import("@/pages/CommunityHub/ServiceManagement"));
 const CHTenantConfig = React.lazy(() => import("@/pages/CommunityHub/TenantConfig"));
-// [FitPro] Phase 3 prototypes
-const FPNetworkTreePage = React.lazy(() => import("@/pages/CommunityHub/NetworkTree"));
-const FPJourneyTrackerPage = React.lazy(() => import("@/pages/CommunityHub/JourneyTracker"));
-const FPModulesPage = React.lazy(() => import("@/pages/CommunityHub/FitProModules"));
-// [FitPro] Phase 2 additions — Money-Back Guarantee + EGIFT
-const FPMoneyBackGuaranteePage = React.lazy(() => import("@/pages/CommunityHub/MoneyBackGuarantee"));
-const FPEGiftPage = React.lazy(() => import("@/pages/CommunityHub/EGift"));
 
-// [Tax] Phân hệ thuế HKD/CNKD — portable module
+// [Tax] Phân hệ thuế HKD/CNKD — portable module dùng chung đa nhánh
 const TaxModulePage = React.lazy(() => import("@/modules/tax/ui/TaxModule"));
 
-// [FitPro] Menu chính (rebranded from Community Hub)
-// Sắp xếp: dùng nhiều nhất ở trên → ít dùng ở dưới
+// [MH] MentorHub — Menu chính (sidebar trái)
+// Tập trung paint point Mentor: tự tạo khoá → học viên đăng ký qua portal → giảng live →
+// AI meeting note sau buổi → feedback NPS → chăm sóc & cross-sell.
+// Các mục CRM/CommunityHub legacy (Lưu trú, Kho, Tài chính chuỗi, Lễ tân, v.v.) đã loại khỏi menu.
+// Routes cũ vẫn giữ trong `routes` để không break deep link, nhưng không expose lên sidebar.
 export const menu: IMenuItem[] = [
   {
-    title: "dashboard",
-    path: urls.dashboard,
+    title: "mhDashboard",
+    path: "/mh/dashboard",
     icon: <Icon name="DashboardMenu" />,
-    code: "DASHBOARD",
+    code: "",
   },
-
-  // ═══ DÙNG HÀNG NGÀY (Lễ tân / Bán hàng) ══════════════════════════════
   {
-    title: "chReception", // Lễ tân
-    path: urls.create_sale_add,
-    icon: <Icon name="PosMenu" />,
+    title: "mhCoursesGroup",
+    path: "/mh/courses",
+    icon: <Icon name="PromotionMenu" />,
     code: "",
     children: [
-      { title: "createSalesOrder", path: urls.create_sale_add, icon: <Icon name="SaleOrderMenu" />, code: "CREATE_SALE_ORDER" },
-      { title: "chCheckin", path: "/ch_checkin", icon: <Icon name="OverviewMenu" />, code: "" },
-      { title: "chDeductQuota", path: "/ch_services", icon: <Icon name="EndShiftMenu" />, code: "" },
-      { title: "shiftManagement", path: urls.shift_management, icon: <Icon name="ShiftReportMenu" />, code: "" },
+      { title: "mhCoursesList", path: "/mh/courses", icon: <Icon name="OrderListMenu" />, code: "" },
+      { title: "mhCourseCreate", path: "/mh/courses/new", icon: <Icon name="SaleOrderMenu" />, code: "" },
     ],
   },
   {
-    title: "customer", // Thành viên
-    path: urls.customer,
+    title: "mhCalendar",
+    path: "/mh/calendar",
+    icon: <Icon name="EventMenu" />,
+    code: "",
+  },
+  {
+    title: "mhStudentsGroup",
+    path: "/mh/students",
     icon: <Icon name="CustomersMenu" />,
-    code: "CUSTOMER",
+    code: "",
     children: [
-      { title: "customerList", path: urls.customer_list, icon: <Icon name="CustomerMenu" />, code: "CUSTOMER" },
-      { title: "settingCustomer", path: urls.setting_customer, icon: <Icon name="CustomerSettingMenu" />, code: "MENU_SETUP_CUSTOMER" },
+      { title: "mhStudentsList", path: "/mh/students", icon: <Icon name="CustomerMenu" />, code: "" },
+      { title: "mhChat", path: "/mh/chat", icon: <Icon name="InteractionMenu" />, code: "" },
+      { title: "mhTickets", path: "/mh/tickets", icon: <Icon name="SupportSettingMenu" />, code: "" },
     ],
   },
   {
-    title: "chOrders", // Giao dịch
-    path: urls.sale_invoice,
-    icon: <Icon name="OrderListMenu" />,
-    code: "SALE_INVOICE",
+    title: "mhAfterClass",
+    path: "/mh/session-review",
+    icon: <Icon name="InteractionMenu" />,
+    code: "",
     children: [
-      { title: "salesInvoice", path: urls.sale_invoice, icon: <Icon name="OrderListMenu" />, code: "SALE_INVOICE" },
-      { title: "invoiceVAT", path: urls.invoiceVAT, icon: <Icon name="VatInvoiceMenu" />, code: "" },
+      { title: "mhMeetingNote", path: "/mh/session-review", icon: <Icon name="InteractionMenu" />, code: "" },
+      { title: "mhFeedbackNPS", path: "/mh/feedback", icon: <Icon name="LoyaltyMenu" />, code: "" },
     ],
   },
   {
-    title: "chAccommodation", // Sơ đồ thảm tập
-    path: "/ch_accommodation",
-    icon: <Icon name="WarehouseListMenu" />,
-    code: "",
-  },
-
-  // ═══ [FitPro] MẠNG LƯỚI & HÀNH TRÌNH ═════════════════════════════════
-  {
-    title: "fpNetworkTree", // Mạng lưới 7×7×7
-    path: "/fp_network_tree",
-    icon: <Icon name="PartnerMenu" />,
-    code: "",
-  },
-  {
-    title: "fpJourney", // Hành trình 90 ngày
-    path: "/fp_journey",
-    icon: <Icon name="OverviewMenu" />,
-    code: "",
-  },
-  {
-    title: "fpModules", // FitPro modules hub (F2, F4-F11 prototypes) — parent menu with 9 children
-    path: "/fp_modules",
-    icon: <Icon name="SettingsMenu" />,
-    code: "",
-    children: [
-      { title: "fpStationType", path: "/fp_station_type", icon: <Icon name="WarehouseListMenu" />, code: "" },
-      { title: "fpCrossCard", path: "/fp_cross_card", icon: <Icon name="PartnerMenu" />, code: "" },
-      { title: "fpBodyMetrics", path: "/fp_body_metrics", icon: <Icon name="OverviewMenu" />, code: "" },
-      { title: "fpSOPCompliance", path: "/fp_sop", icon: <Icon name="SupportSettingMenu" />, code: "" },
-      { title: "fpStationFinder", path: "/fp_finder", icon: <Icon name="PartnerMenu" />, code: "" },
-      { title: "fpCommission", path: "/fp_commission", icon: <Icon name="FinanceMenu" />, code: "" },
-      { title: "fpMarketingFunnel", path: "/fp_funnel", icon: <Icon name="SalesReportMenu" />, code: "" },
-      { title: "fpTaxStation", path: "/fp_tax", icon: <Icon name="CashbookMenu" />, code: "" },
-      { title: "fpMF7Onboarding", path: "/fp_mf7", icon: <Icon name="SettingsMenu" />, code: "" },
-      // ── Phase 2 additions ──
-      { title: "fpMoneyBackGuarantee", path: "/fp_mbg", icon: <Icon name="DebtMenu" />, code: "" },
-      { title: "fpEGift", path: "/fp_egift", icon: <Icon name="PromotionMenu" />, code: "" },
-    ],
-  },
-
-  // ═══ DÙNG THƯỜNG XUYÊN (Tài chính / Cộng đồng) ═══════════════════════
-  {
-    title: "financeManagement", // Tài chính
-    path: urls.finance_management,
+    title: "mhGrowth",
+    path: "/mh/revenue",
     icon: <Icon name="FinanceMenu" />,
     code: "",
     children: [
-      { title: "financeDashboard", path: urls.finance_management_dashboard, icon: <Icon name="FinanceInfoMenu" />, code: "" },
-      { title: "financeCashbook", path: urls.finance_management_cashbook, icon: <Icon name="CashbookMenu" />, code: "" },
-      { title: "fundManagement", path: urls.finance_management_fund_management, icon: <Icon name="FundMenu" />, code: "" },
-      { title: "categoryManagement", path: urls.finance_management_category_management, icon: <Icon name="CashbookMenu" />, code: "" },
-      { title: "debtManagement", path: urls.finance_management_debt_management, icon: <Icon name="DebtMenu" />, code: "" },
-      { title: "paymentControl", path: urls.payment_control, icon: <Icon name="PaymentMethodMenu" />, code: "" },
+      { title: "mhRevenue", path: "/mh/revenue", icon: <Icon name="FinanceInfoMenu" />, code: "" },
+      { title: "mhMarketing", path: "/mh/marketing", icon: <Icon name="BroadcastMenu" />, code: "" },
     ],
   },
   {
-    title: "chPartners", // Đối tác
-    path: "/ch_partners",
-    icon: <Icon name="PartnerMenu" />,
-    code: "",
-  },
-  {
-    title: "chFeedback", // Phản hồi
-    path: "/ch_feedback",
-    icon: <Icon name="SupportSettingMenu" />,
-    code: "",
-  },
-  {
-    title: "chReports", // Báo cáo
-    path: "/ch_report_revenue",
-    icon: <Icon name="SalesReportMenu" />,
-    code: "",
-    children: [
-      { title: "chReportRevenue", path: "/ch_report_revenue", icon: <Icon name="FinanceInfoMenu" />, code: "" },
-      { title: "chReportMembers", path: "/ch_report_members", icon: <Icon name="CustomerMenu" />, code: "" },
-      { title: "chReportCheckin", path: "/ch_report_checkin", icon: <Icon name="OverviewMenu" />, code: "" },
-      { title: "chReportServices", path: "/ch_report_services", icon: <Icon name="MemberListMenu" />, code: "" },
-      { title: "chReportPartners", path: "/ch_report_partners", icon: <Icon name="PartnerMenu" />, code: "" },
-      { title: "chReportFinance", path: "/ch_report_finance", icon: <Icon name="CashbookMenu" />, code: "" },
-    ],
-  },
-
-  // ═══ TIẾP THỊ & CHĂM SÓC ════════════════════════════════════════════
-  {
-    title: "marketing", // Tiếp thị & Chăm sóc
-    path: urls.maketing,
-    icon: <Icon name="PromotionMenu" />,
-    code: "MARKETING",
-    children: [
-      { title: "promotionalProgram", path: urls.promotional_program, icon: <Icon name="PromotionMenu" />, code: "" },       // Khuyến mãi & Voucher
-      { title: "loyaltyPoints", path: urls.member_list, icon: <Icon name="LoyaltyMenu" />, code: "" },                      // Tích điểm hội viên (hub: DS TV + hạng + lịch sử + quy tắc + báo cáo)
-      { title: "marketingCampaign", path: urls.marketing_campaign, icon: <Icon name="BroadcastMenu" />, code: "MA" },        // Chiến dịch marketing
-      { title: "customerCare", path: urls.customer_care_page, icon: <Icon name="SupportMenu" />, code: "" },                 // Chăm sóc thành viên
-    ],
-  },
-
-  // ═══ ÍT DÙNG (Kho / Cài đặt) ═════════════════════════════════════════
-  {
-    title: "warehouse", // Kho & Nguyên vật liệu
-    path: urls.product_import,
-    icon: <Icon name="InventoryMenu" />,
-    code: "MENU_INVENTORY",
-    children: [
-      { title: "managementMaterial", path: urls.material, icon: <Icon name="MaterialsMenu" />, code: "" },
-      { title: "supplierList", path: urls.supplier_list, icon: <Icon name="PartnerMenu" />, code: "CUSTOMER" },              // Nhà cung cấp
-      { title: "warehouseList", path: urls.warehouse, icon: <Icon name="WarehouseListMenu" />, code: "" },
-      { title: "warehouseManagement", path: urls.inventory, icon: <Icon name="LedgerMenu" />, code: "INVENTORY" },
-      { title: "warehouseChecking", path: urls.inventory_checking, icon: <Icon name="AuditMenu" />, code: "INVENTORY" },
-      { title: "reportWarhouse", path: urls.report_warehouse, icon: <Icon name="SalesReportMenu" />, code: "" },
-    ],
-  },
-
-  // ═══ HỆ THỐNG ═════════════════════════════════════════════════════════
-  {
-    title: "settings", // Cài đặt
-    path: urls.setting_common,
+    title: "mhSettings",
+    path: "/mh/settings",
     icon: <Icon name="SettingsMenu" />,
     code: "",
-    children: [
-      // ── [CH] Cấu hình toàn cục (admin tenant) ────────────────────────
-      {
-        title: "chTenantConfig",
-        path: "/ch_tenant_config",
-        icon: <Icon name="GeneralConfigMenu" />,
-        code: "",
-      },
-      // ── [CH] Dịch vụ & Gói thành viên ────────────────────────────────
-      {
-        title: "chServiceCatalogSetting", // Danh mục dịch vụ → trang SettingSell (sản phẩm/dịch vụ đầy đủ)
-        path: urls.setting_sell,
-        icon: <Icon name="ProductCategoryMenu" />,
-        code: "MENU_SETUP_SELL",
-      },
-      {
-        title: "chMembershipPlans", // Cấu hình gói thành viên
-        path: "/ch_membership_plans",
-        icon: <Icon name="LoyaltyMenu" />,
-        code: "",
-      },
-      // ── NHÓM 1: Vận hành cơ sở ─────────────────────────────────────
-      {
-        title: "settingBasis", // Vận hành cửa hàng (cửa hàng, thanh toán, ca, cấu hình chung)
-        path: urls.setting_basis,
-        icon: <Icon name="BaseSettingsMenu" />,
-        code: "MENU_SETUP_BASIC",
-      },
-
-      // ── NHÓM 2: Tổ chức & phân quyền ───────────────────────────────
-      {
-        title: "settingOrg", // Tổ chức & phân quyền (phòng ban, nhóm quyền, nhân viên)
-        path: urls.setting_org,
-        icon: <Icon name="PersonalMenu" />,
-        code: "",
-      },
-
-      // ── NHÓM 2: Kênh liên lạc (1 trang / 4 tabs) ─────────────────
-      {
-        title: "multiChannelCommunication", // Kênh liên lạc khách hàng
-        path: urls.setting_channels, // Landing page gộp 4 kênh
-        icon: <Icon name="SmsMenu" />,
-        code: "MENU_SETUP_SMS",
-        // sub-tabs: SMS, Email, Zalo, Tổng đài
-        // (Hiện tại giữ 4 route riêng để không breaking change,
-        //  có thể gộp thành 1 page sau khi refactor)
-      },
-      // -- Giữ lại để routing hoạt động, ẩn khỏi menu chính --
-      // settingSMS     → /setting_sms
-      // settingEmail   → /setting_email
-      // settingZalo    → /setting_zalo
-      // settingCall    → /setting_call
-
-      // ── NHÓM 3: Tích hợp & kết nối ───────────────────────────────
-      {
-        title: "settingIntegrations", // Viettel + Ứng dụng + Giám sát webhook
-        path: urls.setting_integrations,
-        icon: <Icon name="IntegrationViettelMenu" />,
-        code: "",
-      },
-
-      // ── NHÓM 4: Tài khoản & bảo mật ──────────────────────────────
-      {
-        title: "settingPersonal", // Tài khoản & bảo mật (cá nhân, kết nối, gói DV, nhật ký)
-        path: urls.setting_account,
-        icon: <Icon name="PersonalMenu" />,
-        code: "",
-      },
-
-      // ── NHÓM 5: Hỗ trợ khách hàng ────────────────────────────────
-      {
-        title: "settingTicket", // Cài đặt hỗ trợ & QR Code
-        path: urls.setting_ticket,
-        icon: <Icon name="SupportSettingMenu" />,
-        code: "",
-      },
-    ],
   },
-  // [CH] Giữ nguyên Cài đặt
 ];
 
 export const routes: IRouter[] = [
+  // [MH] MentorHub routes - mentor dashboard
+  { path: "/mh", component: <MHDashboard /> },
+  { path: "/mh/dashboard", component: <MHDashboard /> },
+  { path: "/mh/courses", component: <MHCourses /> },
+  { path: "/mh/courses/new", component: <MHCourseEdit /> },
+  { path: "/mh/courses/:id/edit", component: <MHCourseEdit /> },
+  { path: "/mh/session-review", component: <MHSessionReview /> },
+  { path: "/mh/session-review/:id", component: <MHSessionReview /> },
+  { path: "/mh/live-session", component: <MHLiveSession /> },
+  { path: "/mh/students", component: <MHStudents /> },
+  { path: "/mh/crm", component: <MHCRM /> },
+  { path: "/mh/tickets", component: <MHTickets /> },
+  { path: "/mh/chat", component: <MHChat /> },
+  { path: "/mh/feedback", component: <MHFeedback /> },
+  { path: "/mh/revenue", component: <MHRevenue /> },
+  { path: "/mh/marketing", component: <MHMarketing /> },
+  { path: "/mh/calendar", component: <MHCalendar /> },
+  { path: "/mh/settings", component: <MHSettings /> },
+
+  // [Admin] Reborn internal routes
+  { path: "/admin/usage", component: <AdminUsage /> },
+
   // [CH] Community Hub routes
   {
     path: "/ch_checkin",
@@ -482,6 +343,11 @@ export const routes: IRouter[] = [
     path: "/ch_courses",
     component: <CHCoursesPage />,
   },
+  // [CH] Events — Quản lý sự kiện
+  { path: "/ch_events", component: <CHEventListPage /> },
+  { path: "/ch_events/create", component: <CHEventFormPage /> },
+  { path: "/ch_events/:id", component: <CHEventDetailPage /> },
+  { path: "/ch_events/:id/edit", component: <CHEventFormPage /> },
   {
     path: "/ch_partners",
     component: <CHPartnersPage />,
@@ -508,23 +374,7 @@ export const routes: IRouter[] = [
     path: "/ch_tenant_config",
     component: <CHTenantConfig />,
   },
-  // [FitPro] Phase 3 routes
-  { path: "/fp_network_tree", component: <FPNetworkTreePage /> },
-  { path: "/fp_journey", component: <FPJourneyTrackerPage /> },
-  { path: "/fp_modules", component: <FPModulesPage /> },
-  { path: "/fp_station_type", component: <FPModulesPage /> },
-  { path: "/fp_cross_card", component: <FPModulesPage /> },
-  { path: "/fp_body_metrics", component: <FPModulesPage /> },
-  { path: "/fp_sop", component: <FPModulesPage /> },
-  { path: "/fp_finder", component: <FPModulesPage /> },
-  { path: "/fp_commission", component: <FPModulesPage /> },
-  { path: "/fp_funnel", component: <FPModulesPage /> },
-  { path: "/fp_tax", component: <TaxModulePage /> },
-  { path: "/fp_mf7", component: <FPModulesPage /> },
-  // [FitPro] Phase 2 routes
-  { path: "/fp_mbg", component: <FPMoneyBackGuaranteePage /> },
-  { path: "/fp_egift", component: <FPEGiftPage /> },
-  // [Tax] Phân hệ thuế HKD/CNKD — portable module, dùng chung qua mọi nhánh
+  // [Tax] Phân hệ thuế HKD/CNKD — portable module
   { path: "/tax", component: <TaxModulePage /> },
   { path: "/tax/profile", component: <TaxModulePage /> },
   { path: "/tax/book", component: <TaxModulePage /> },

@@ -1,0 +1,195 @@
+// [MH] MentorHub shared design tokens
+// Editorial aesthetic: serif display (Fraunces) + sans body (Geist) + ivory/teal/amber palette
+
+.mh {
+  --mh-ivory: #FAF7F2;
+  --mh-ivory-2: #F4EFE6;
+  --mh-ink: #0E1713;
+  --mh-ink-soft: #6B7A72;
+  --mh-line: #E0D8C8;
+  --mh-teal: #0F766E;
+  --mh-teal-d: #134E4A;
+  --mh-amber: #B45309;
+  --mh-amber-soft: #FFF9ED;
+  --mh-red: #B91C1C;
+  --mh-green: #15803D;
+
+  font-family: 'Geist', -apple-system, 'Segoe UI', sans-serif;
+  color: var(--mh-ink);
+  background: var(--mh-ivory);
+  min-height: 100vh;
+  padding: 32px;
+
+  h1, h2, h3, h4 { font-family: 'Fraunces', 'Times New Roman', serif; font-weight: 400; letter-spacing: -.01em; margin: 0; }
+  h1 { font-size: 36px; line-height: 1.1; }
+  h2 { font-size: 26px; }
+  h3 { font-size: 20px; }
+  em { color: var(--mh-teal); font-style: italic; }
+
+  &__kicker { font-family: 'Geist Mono', monospace; font-size: 11px; letter-spacing: .12em; color: var(--mh-ink-soft); text-transform: uppercase; margin-bottom: 8px; }
+
+  &__hero { padding: 20px 0 32px; border-bottom: 1px solid var(--mh-line); margin-bottom: 32px; }
+
+  &__card { background: #fff; border: 1px solid var(--mh-line); border-radius: 14px; padding: 24px; }
+  &__card--amber { background: var(--mh-amber-soft); border-color: rgba(180, 88, 9, 0.2); }
+  &__card--dark { background: var(--mh-teal-d); color: #fff; }
+
+  &__grid { display: grid; gap: 16px; }
+  &__grid--4 { grid-template-columns: repeat(4, 1fr); }
+  &__grid--3 { grid-template-columns: repeat(3, 1fr); }
+  &__grid--2 { grid-template-columns: repeat(2, 1fr); }
+
+  &__kpi { background: #fff; border: 1px solid var(--mh-line); border-radius: 14px; padding: 20px; }
+  &__kpi-label { font-family: 'Geist Mono', monospace; font-size: 11px; letter-spacing: .08em; color: var(--mh-ink-soft); text-transform: uppercase; margin-bottom: 8px; }
+  &__kpi-value { font-family: 'Fraunces', serif; font-size: 32px; font-weight: 400; line-height: 1; }
+  &__kpi-delta { font-family: 'Geist Mono', monospace; font-size: 12px; margin-top: 8px; color: var(--mh-teal); }
+  &__kpi-delta--down { color: var(--mh-red); }
+
+  &__pill { display: inline-block; padding: 4px 10px; border-radius: 999px; font-family: 'Geist Mono', monospace; font-size: 10px; letter-spacing: .05em; font-weight: 600; text-transform: uppercase; }
+  &__pill--live { background: #FEE2E2; color: #991B1B; }
+  &__pill--upcoming { background: #DBEAFE; color: #1E40AF; }
+  &__pill--draft { background: #F3F4F6; color: #374151; }
+  &__pill--ended { background: #E0E7FF; color: #4338CA; }
+  &__pill--green { background: #DCFCE7; color: #166534; }
+  &__pill--amber { background: #FEF3C7; color: #92400E; }
+  &__pill--red { background: #FEE2E2; color: #991B1B; }
+
+  &__btn { display: inline-flex; align-items: center; gap: 8px; padding: 10px 20px; border-radius: 10px; font-size: 14px; font-weight: 500; cursor: pointer; border: 1px solid var(--mh-line); background: #fff; color: var(--mh-ink); transition: all .15s; text-decoration: none; }
+  &__btn:hover:not(:disabled) { border-color: var(--mh-teal); }
+  &__btn:disabled { opacity: .5; cursor: not-allowed; }
+  &__btn--primary { background: var(--mh-teal); color: #fff; border-color: var(--mh-teal); }
+  &__btn--primary:hover:not(:disabled) { background: var(--mh-teal-d); border-color: var(--mh-teal-d); }
+  &__btn--amber { background: var(--mh-amber); color: #fff; border-color: var(--mh-amber); }
+  &__btn--ghost { background: transparent; border-color: transparent; }
+  &__btn--danger { background: #fff; color: var(--mh-red); border-color: #FCA5A5; }
+
+  &__mono { font-family: 'Geist Mono', monospace; }
+
+  &__avatar { width: 36px; height: 36px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; color: #fff; font-size: 13px; font-weight: 600; font-family: 'Fraunces', serif; flex-shrink: 0; }
+  &__avatar--sm { width: 24px; height: 24px; font-size: 10px; }
+  &__avatar--lg { width: 56px; height: 56px; font-size: 18px; }
+
+  &__ai-card { background: var(--mh-amber-soft); border: 1px solid rgba(180, 88, 9, 0.2); border-radius: 14px; padding: 20px; }
+  &__ai-card h4 { color: var(--mh-amber); display: flex; align-items: center; gap: 8px; margin-bottom: 10px; }
+  &__ai-card::before { content: '✦'; }
+
+  &__progress { height: 6px; background: rgba(15, 118, 110, 0.12); border-radius: 3px; overflow: hidden; }
+  &__progress-fill { height: 100%; background: var(--mh-teal); border-radius: 3px; }
+
+  // ── Form controls (used across Create-Course, Register, Feedback forms) ─────
+  &__field { margin-bottom: 18px; }
+  &__label { display: block; font-family: 'Geist Mono', monospace; font-size: 11px; letter-spacing: .08em; color: var(--mh-ink-soft); text-transform: uppercase; margin-bottom: 6px; }
+  &__label--req::after { content: " *"; color: var(--mh-red); }
+  &__input, &__textarea, &__select { width: 100%; padding: 10px 14px; border-radius: 10px; border: 1px solid var(--mh-line); background: #fff; font-family: inherit; font-size: 14px; color: var(--mh-ink); transition: border-color .15s, box-shadow .15s; }
+  &__input:focus, &__textarea:focus, &__select:focus { outline: none; border-color: var(--mh-teal); box-shadow: 0 0 0 3px rgba(15, 118, 110, 0.12); }
+  &__textarea { min-height: 96px; resize: vertical; font-family: inherit; }
+  &__input--error { border-color: var(--mh-red); }
+  &__input--error:focus { box-shadow: 0 0 0 3px rgba(185, 28, 28, 0.12); }
+  &__hint { font-size: 12px; color: var(--mh-ink-soft); margin-top: 4px; }
+  &__error { font-size: 12px; color: var(--mh-red); margin-top: 4px; font-family: 'Geist Mono', monospace; }
+  &__row { display: grid; gap: 16px; }
+  &__row--2 { grid-template-columns: 1fr 1fr; }
+  &__row--3 { grid-template-columns: 1fr 1fr 1fr; }
+
+  // ── Tables ──────────────────────────────────────────────────────────────────
+  &__table { width: 100%; border-collapse: collapse; background: #fff; border: 1px solid var(--mh-line); border-radius: 14px; overflow: hidden; }
+  &__table th, &__table td { padding: 12px 16px; text-align: left; border-bottom: 1px solid var(--mh-line); font-size: 14px; }
+  &__table th { background: var(--mh-ivory-2); font-family: 'Geist Mono', monospace; font-size: 11px; letter-spacing: .08em; color: var(--mh-ink-soft); text-transform: uppercase; font-weight: 600; }
+  &__table tbody tr:hover { background: var(--mh-ivory-2); }
+  &__table tbody tr:last-child td { border-bottom: none; }
+
+  // ── Modal ───────────────────────────────────────────────────────────────────
+  &__modal-backdrop { position: fixed; inset: 0; background: rgba(14, 23, 19, 0.45); z-index: 200; display: flex; align-items: center; justify-content: center; padding: 20px; }
+  &__modal { background: #fff; border-radius: 16px; max-width: 560px; width: 100%; max-height: 90vh; overflow-y: auto; padding: 28px; }
+
+  // ── Chat ────────────────────────────────────────────────────────────────────
+  &__chat-bubble { padding: 10px 14px; border-radius: 14px; max-width: 70%; font-size: 14px; line-height: 1.45; }
+  &__chat-bubble--me { background: var(--mh-teal); color: #fff; align-self: flex-end; border-bottom-right-radius: 4px; }
+  &__chat-bubble--them { background: var(--mh-ivory-2); color: var(--mh-ink); align-self: flex-start; border-bottom-left-radius: 4px; }
+
+  // ── Zalo integration — pricing-style plan cards ─────────────────────────────
+  .mh-zalo-plans {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 14px;
+  }
+  .mh-zalo-plan {
+    position: relative;
+    padding: 24px 20px 20px;
+    border: 2px solid var(--mh-line);
+    border-radius: 14px;
+    cursor: pointer;
+    transition: border-color .15s, transform .15s, box-shadow .15s;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    overflow: hidden;
+
+    &:hover { transform: translateY(-2px); box-shadow: 0 8px 24px -10px rgba(14, 23, 19, 0.15); }
+    &.is-selected { border-width: 2px; }
+    &.is-active { box-shadow: 0 0 0 4px rgba(15, 118, 110, 0.15); }
+
+    &__ribbon {
+      position: absolute; top: 0; right: 0;
+      padding: 4px 12px;
+      color: #fff;
+      font-family: 'Geist Mono', monospace;
+      font-size: 9px; letter-spacing: .1em; font-weight: 700;
+      border-radius: 0 12px 0 8px;
+    }
+    &__active-badge {
+      position: absolute; top: 14px; left: 14px;
+      padding: 4px 10px; border-radius: 999px;
+      background: var(--mh-green); color: #fff;
+      font-family: 'Geist Mono', monospace;
+      font-size: 10px; letter-spacing: .06em; font-weight: 700;
+    }
+
+    &__head { display: flex; gap: 12px; align-items: flex-start; margin-top: 16px; }
+    &__icon {
+      width: 44px; height: 44px; border-radius: 10px;
+      color: #fff; font-size: 22px;
+      display: flex; align-items: center; justify-content: center;
+      font-family: 'Fraunces', serif;
+      flex-shrink: 0;
+    }
+
+    &__price { padding: 12px 0; border-top: 1px dashed var(--mh-line); border-bottom: 1px dashed var(--mh-line); }
+    &__price-big { font-family: 'Fraunces', serif; font-size: 28px; font-weight: 400; line-height: 1; }
+    &__price-sub { font-family: 'Geist Mono', monospace; font-size: 11px; color: var(--mh-ink-soft); margin-top: 6px; }
+
+    &__whofor { font-size: 12px; line-height: 1.5; }
+    &__whofor .mh__kicker { margin-bottom: 4px; }
+
+    &__pros { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 8px; }
+    &__pros li { display: grid; grid-template-columns: 20px 1fr; gap: 6px; font-size: 13px; line-height: 1.45; }
+    &__check { font-weight: 700; }
+
+    &__cons { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 6px; padding-top: 10px; border-top: 1px solid var(--mh-line); }
+    &__cons li { display: grid; grid-template-columns: 20px 1fr; gap: 6px; font-size: 12px; color: var(--mh-ink-soft); line-height: 1.45; }
+    &__cons li span { color: var(--mh-ink-soft); }
+  }
+  @media (max-width: 1200px) {
+    .mh-zalo-plans { grid-template-columns: 1fr; }
+    .mh-zalo-plan { padding-right: 20px; }
+  }
+
+  // ── Responsive (mobile-first cascades) ──────────────────────────────────────
+  @media (max-width: 1200px) {
+    &__grid--4 { grid-template-columns: repeat(2, 1fr); }
+    &__grid--3 { grid-template-columns: repeat(2, 1fr); }
+  }
+  @media (max-width: 768px) {
+    padding: 20px 16px;
+    h1 { font-size: 28px; }
+    h2 { font-size: 22px; }
+    &__grid--4, &__grid--3, &__grid--2 { grid-template-columns: 1fr; }
+    &__row--2, &__row--3 { grid-template-columns: 1fr; }
+    &__hero { padding: 12px 0 20px; margin-bottom: 20px; }
+    &__card { padding: 16px; }
+    &__kpi { padding: 16px; }
+    &__kpi-value { font-size: 24px; }
+    &__btn { padding: 8px 14px; font-size: 13px; }
+    &__table th, &__table td { padding: 8px 10px; font-size: 12px; }
+  }
+}

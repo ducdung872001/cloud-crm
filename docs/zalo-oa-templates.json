@@ -1,0 +1,241 @@
+{
+  "$schema": "./zalo-oa-templates.schema.json",
+  "version": "1.0.0",
+  "generatedAt": "2026-04-24",
+  "oaAccount": {
+    "oaId": "TBD_AFTER_REGISTRATION",
+    "oaName": "MentorHub · Học cùng chuyên gia",
+    "contact": "tech@reborn.vn"
+  },
+  "notes": [
+    "Mỗi template phải được ĐĂNG KÝ & DUYỆT tại Zalo OA Console (oa.zalo.me) trước khi dùng qua API transactional message.",
+    "Sau khi Zalo duyệt, `template_id` thật sẽ cấp → thay giá trị `TBD_*` trong file này.",
+    "Dùng Transaction Message endpoint: POST https://openapi.zalo.me/v3.0/oa/message/transaction",
+    "Giới hạn: 500 tin/tháng free, vượt tính 300đ/tin. Xem Zalo OA Pricing.",
+    "Character limits: title ≤ 80, subtitle ≤ 100, button label ≤ 25. Dài hơn sẽ bị Zalo từ chối duyệt."
+  ],
+  "templates": [
+    {
+      "key": "new_enrollment",
+      "templateId": "TBD_NEW_ENROLLMENT",
+      "displayName": "Học viên mới đăng ký khoá",
+      "useCase": "Trigger khi /portal/register thành công → push mentor",
+      "preview": "⚡ Phạm Thu Hà vừa đăng ký 'Microservices'. 23/30 HV.",
+      "params": {
+        "studentName": { "type": "string", "example": "Phạm Thu Hà" },
+        "courseName": { "type": "string", "example": "Kiến trúc Microservices" },
+        "registered": { "type": "integer", "example": 23 },
+        "capacity": { "type": "integer", "example": 30 },
+        "studentCompany": { "type": "string", "example": "TPBank" },
+        "detailUrl": { "type": "string", "example": "https://zalo.me/s/APP_ID/mentorhub?screen=students&id=S-002" }
+      },
+      "template": {
+        "template_type": "transaction_activity",
+        "language": "VI",
+        "elements": [
+          { "type": "header", "content": "⚡ Học viên mới", "align": "left" },
+          { "type": "text", "align": "left", "content": "{{studentName}} ({{studentCompany}}) vừa đăng ký khoá **{{courseName}}**." },
+          { "type": "table", "content": [
+            { "key": "Khoá học", "value": "{{courseName}}" },
+            { "key": "Học viên", "value": "{{studentName}}" },
+            { "key": "Công ty", "value": "{{studentCompany}}" },
+            { "key": "Sĩ số", "value": "{{registered}}/{{capacity}} HV" }
+          ]}
+        ],
+        "buttons": [
+          { "title": "Xem hồ sơ HV", "image_icon": "👤", "action": { "type": "oa.open.url", "url": "{{detailUrl}}" } }
+        ]
+      }
+    },
+
+    {
+      "key": "payment_received",
+      "templateId": "TBD_PAYMENT_RECEIVED",
+      "displayName": "Thanh toán học phí thành công",
+      "useCase": "VNPay webhook callback confirm payment → push mentor",
+      "preview": "💰 +2.400.000đ từ Trần Văn Đức. Tổng tháng: 18.2M.",
+      "params": {
+        "amountVND": { "type": "string", "example": "2.400.000đ" },
+        "studentName": { "type": "string", "example": "Trần Văn Đức" },
+        "courseName": { "type": "string", "example": "Microservices" },
+        "monthTotal": { "type": "string", "example": "18.200.000đ" },
+        "paymentMethod": { "type": "string", "example": "VNPay QR" },
+        "detailUrl": { "type": "string" }
+      },
+      "template": {
+        "template_type": "transaction_activity",
+        "language": "VI",
+        "elements": [
+          { "type": "header", "content": "💰 Thanh toán mới", "align": "left" },
+          { "type": "text", "align": "center", "content": "+{{amountVND}}", "font_size": "xxl" },
+          { "type": "text", "align": "center", "content": "từ {{studentName}}" },
+          { "type": "table", "content": [
+            { "key": "Khoá học", "value": "{{courseName}}" },
+            { "key": "Phương thức", "value": "{{paymentMethod}}" },
+            { "key": "Tổng tháng", "value": "{{monthTotal}}" }
+          ]}
+        ],
+        "buttons": [
+          { "title": "Xem doanh thu", "image_icon": "₫", "action": { "type": "oa.open.url", "url": "{{detailUrl}}" } }
+        ]
+      }
+    },
+
+    {
+      "key": "session_reminder",
+      "templateId": "TBD_SESSION_REMINDER",
+      "displayName": "Nhắc buổi học (30 phút trước)",
+      "useCase": "Cron job chạy mỗi phút → check sessions trong 30p tới",
+      "preview": "🎥 Buổi 5 Service Mesh bắt đầu 30 phút nữa. 23 HV.",
+      "params": {
+        "sessionNumber": { "type": "integer", "example": 5 },
+        "sessionTitle": { "type": "string", "example": "Service Mesh & Istio" },
+        "courseName": { "type": "string", "example": "Microservices" },
+        "startTime": { "type": "string", "example": "20:00" },
+        "registered": { "type": "integer", "example": 23 },
+        "capacity": { "type": "integer", "example": 30 },
+        "zoomUrl": { "type": "string", "example": "https://zoom.us/j/8924731028" }
+      },
+      "template": {
+        "template_type": "transaction_activity",
+        "language": "VI",
+        "elements": [
+          { "type": "header", "content": "🎥 Buổi học sắp bắt đầu", "align": "left" },
+          { "type": "text", "content": "**Buổi {{sessionNumber}}: {{sessionTitle}}**" },
+          { "type": "text", "content": "Khoá: {{courseName}}" },
+          { "type": "table", "content": [
+            { "key": "Bắt đầu", "value": "{{startTime}} (còn 30 phút)" },
+            { "key": "Học viên", "value": "{{registered}}/{{capacity}} đã đăng ký" }
+          ]}
+        ],
+        "buttons": [
+          { "title": "Mở phòng Zoom", "image_icon": "🎥", "action": { "type": "oa.open.url", "url": "{{zoomUrl}}" } }
+        ]
+      }
+    },
+
+    {
+      "key": "ai_note_ready",
+      "templateId": "TBD_AI_NOTE_READY",
+      "displayName": "AI meeting note sẵn sàng",
+      "useCase": "Trigger sau khi pipeline Whisper+Claude hoàn tất",
+      "preview": "✦ AI note buổi 4 ready. 5 key points, 3 Q&A.",
+      "params": {
+        "sessionNumber": { "type": "integer", "example": 4 },
+        "courseName": { "type": "string", "example": "Microservices" },
+        "keyPointsCount": { "type": "integer", "example": 5 },
+        "qaCount": { "type": "integer", "example": 3 },
+        "actionItemsCount": { "type": "integer", "example": 4 },
+        "duration": { "type": "string", "example": "1h 58m" },
+        "noteUrl": { "type": "string", "example": "https://zalo.me/s/APP_ID/mentorhub?screen=note&id=MN-001" }
+      },
+      "template": {
+        "template_type": "transaction_activity",
+        "language": "VI",
+        "elements": [
+          { "type": "header", "content": "✦ AI ghi chú sẵn sàng", "align": "left" },
+          { "type": "text", "content": "**Buổi {{sessionNumber}} — {{courseName}}**" },
+          { "type": "text", "content": "Thời lượng: {{duration}}" },
+          { "type": "table", "content": [
+            { "key": "Điểm chính", "value": "{{keyPointsCount}}" },
+            { "key": "Q&A trích xuất", "value": "{{qaCount}}" },
+            { "key": "Action items", "value": "{{actionItemsCount}}" }
+          ]}
+        ],
+        "buttons": [
+          { "title": "Xem ghi chú", "image_icon": "📄", "action": { "type": "oa.open.url", "url": "{{noteUrl}}" } },
+          { "title": "Gửi học viên", "image_icon": "📧", "action": { "type": "oa.open.url", "url": "{{noteUrl}}&action=send" } }
+        ]
+      }
+    },
+
+    {
+      "key": "new_5star_review",
+      "templateId": "TBD_REVIEW_5STAR",
+      "displayName": "Đánh giá 5 sao mới",
+      "useCase": "Sau khi HV submit rating form và rating === 5",
+      "preview": "⭐ Trần Văn Đức: 5★ 'Recording + AI note giúp ôn lại rất nhanh'",
+      "params": {
+        "studentName": { "type": "string", "example": "Trần Văn Đức" },
+        "courseName": { "type": "string", "example": "Microservices" },
+        "comment": { "type": "string", "example": "Recording và AI summary giúp ôn lại rất nhanh." },
+        "replyUrl": { "type": "string" },
+        "shareUrl": { "type": "string" }
+      },
+      "template": {
+        "template_type": "transaction_activity",
+        "language": "VI",
+        "elements": [
+          { "type": "header", "content": "⭐ Đánh giá 5 sao mới!", "align": "left" },
+          { "type": "text", "content": "**{{studentName}}** vừa đánh giá khoá {{courseName}}:" },
+          { "type": "text", "content": "\"{{comment}}\"", "font_style": "italic" }
+        ],
+        "buttons": [
+          { "title": "Phản hồi", "image_icon": "💬", "action": { "type": "oa.open.url", "url": "{{replyUrl}}" } },
+          { "title": "Chia sẻ testimonial", "image_icon": "↗", "action": { "type": "oa.open.url", "url": "{{shareUrl}}" } }
+        ]
+      }
+    },
+
+    {
+      "key": "ticket_urgent",
+      "templateId": "TBD_TICKET_URGENT",
+      "displayName": "Ticket khẩn / quá SLA",
+      "useCase": "Cron check SLA mỗi 30p, push khi còn ≤2h hoặc quá SLA",
+      "preview": "🚨 Ticket TK-2341 từ Đặng Thuỳ Linh quá SLA 2h",
+      "params": {
+        "ticketId": { "type": "string", "example": "TK-2341" },
+        "studentName": { "type": "string", "example": "Đặng Thuỳ Linh" },
+        "subject": { "type": "string", "example": "Không nhận được link Zoom buổi 3" },
+        "slaStatus": { "type": "string", "example": "quá SLA 2h" },
+        "priority": { "type": "string", "example": "high" },
+        "replyUrl": { "type": "string" }
+      },
+      "template": {
+        "template_type": "transaction_activity",
+        "language": "VI",
+        "elements": [
+          { "type": "header", "content": "🚨 Ticket cần xử lý gấp", "align": "left" },
+          { "type": "text", "content": "**{{ticketId}}** · {{slaStatus}}" },
+          { "type": "text", "content": "Từ **{{studentName}}**: {{subject}}" }
+        ],
+        "buttons": [
+          { "title": "Trả lời ngay", "image_icon": "✉", "action": { "type": "oa.open.url", "url": "{{replyUrl}}" } }
+        ]
+      }
+    },
+
+    {
+      "key": "trial_ending",
+      "templateId": "TBD_TRIAL_ENDING",
+      "displayName": "Trial sắp hết hạn",
+      "useCase": "Cron daily lúc 9AM, push khi trial còn 7/3/1 ngày",
+      "preview": "⚠ Trial còn 3 ngày. Nâng cấp tiết kiệm 20% chu kỳ năm",
+      "params": {
+        "daysLeft": { "type": "integer", "example": 3 },
+        "trialEndDate": { "type": "string", "example": "16/05/2026" },
+        "recommendedPlan": { "type": "string", "example": "Pro" },
+        "monthlyPrice": { "type": "string", "example": "239.200đ/tháng" },
+        "yearlyDiscount": { "type": "string", "example": "20%" },
+        "upgradeUrl": { "type": "string" }
+      },
+      "template": {
+        "template_type": "transaction_activity",
+        "language": "VI",
+        "elements": [
+          { "type": "header", "content": "⚠ Trial sắp hết hạn", "align": "left" },
+          { "type": "text", "content": "Bản dùng thử của bạn còn **{{daysLeft}} ngày** (hết ngày {{trialEndDate}})." },
+          { "type": "table", "content": [
+            { "key": "Gói đề xuất", "value": "{{recommendedPlan}}" },
+            { "key": "Giá chu kỳ năm", "value": "{{monthlyPrice}}" },
+            { "key": "Tiết kiệm", "value": "{{yearlyDiscount}}" }
+          ]}
+        ],
+        "buttons": [
+          { "title": "Nâng cấp ngay", "image_icon": "⚡", "action": { "type": "oa.open.url", "url": "{{upgradeUrl}}" } },
+          { "title": "Xem các gói", "image_icon": "📋", "action": { "type": "oa.open.url", "url": "{{upgradeUrl}}&view=plans" } }
+        ]
+      }
+    }
+  ]
+}

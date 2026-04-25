@@ -1,0 +1,182 @@
+@import "../_shared/tokens.scss";
+
+.mh-courses-toolbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 28px;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.mh-tabs {
+  display: flex;
+  gap: 4px;
+  background: #fff;
+  border: 1px solid $mh-line;
+  border-radius: 10px;
+  padding: 4px;
+}
+.mh-tab {
+  padding: 8px 16px;
+  font-family: $mh-font-body;
+  font-size: 13px;
+  background: transparent;
+  border: none;
+  border-radius: 7px;
+  cursor: pointer;
+  color: $mh-ink-soft;
+  font-weight: 500;
+
+  &.is-active {
+    background: $mh-ink;
+    color: #fff;
+  }
+}
+
+.mh-btn-create {
+  background: $mh-teal-deep;
+  color: #fff;
+  padding: 11px 20px;
+  border: none;
+  border-radius: 10px;
+  font-family: $mh-font-body;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+
+  &:hover { background: $mh-teal; }
+}
+
+.mh-course-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 20px;
+}
+
+.mh-course-card {
+  background: #fff;
+  border: 1px solid $mh-line;
+  border-radius: 16px;
+  overflow: hidden;
+  transition: all 0.2s;
+
+  &:hover {
+    border-color: $mh-teal-deep;
+    box-shadow: 0 12px 28px rgba(15, 118, 110, 0.1);
+    transform: translateY(-2px);
+  }
+
+  &__cover {
+    aspect-ratio: 2 / 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    font-family: $mh-font-display;
+    font-size: 64px;
+    position: relative;
+
+    .mh-pill {
+      position: absolute;
+      top: 14px;
+      right: 14px;
+    }
+  }
+
+  &__body {
+    padding: 20px;
+  }
+
+  h3 {
+    font-family: $mh-font-display;
+    font-size: 18px;
+    font-weight: 500;
+    margin: 0 0 6px;
+    line-height: 1.25;
+    color: $mh-ink;
+  }
+
+  &__sub {
+    font-size: 13px;
+    color: $mh-ink-soft;
+    margin: 0 0 18px;
+    line-height: 1.5;
+  }
+
+  &__stats {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+    padding-bottom: 14px;
+    border-bottom: 1px solid $mh-line;
+    margin-bottom: 12px;
+  }
+
+  &__progress {
+    height: 6px;
+    background: rgba(15, 118, 110, 0.1);
+    border-radius: 3px;
+    overflow: hidden;
+  }
+  &__progress-fill {
+    height: 100%;
+    background: $mh-teal-deep;
+    border-radius: 3px;
+  }
+
+  &--new {
+    border: 2px dashed $mh-line-2;
+    background: transparent;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 320px;
+    cursor: pointer;
+    text-align: center;
+
+    &__inner {
+      padding: 24px;
+      text-align: center;
+    }
+
+    &:hover {
+      border-color: $mh-teal-deep;
+      background: rgba(15, 118, 110, 0.03);
+    }
+
+    .mh-plus {
+      font-size: 48px;
+      color: $mh-teal-deep;
+      font-weight: 200;
+      line-height: 1;
+      margin-bottom: 10px;
+    }
+    h4 {
+      font-family: $mh-font-display;
+      font-weight: 500;
+      font-size: 18px;
+      margin: 0 0 6px;
+      color: $mh-ink;
+    }
+    p {
+      font-size: 12px;
+      color: $mh-ink-soft;
+      margin: 0;
+    }
+  }
+}
+
+.mh-stat-label {
+  font-family: $mh-font-mono;
+  font-size: 9px;
+  letter-spacing: 0.1em;
+  color: $mh-ink-soft;
+  margin-bottom: 4px;
+}
+.mh-stat-value {
+  font-family: $mh-font-mono;
+  font-size: 13px;
+  font-weight: 600;
+  color: $mh-ink;
+}

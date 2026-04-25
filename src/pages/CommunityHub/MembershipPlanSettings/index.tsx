@@ -1,9 +1,12 @@
-// [FitPro] Quản lý gói FitPro 90 ngày (Cơ bản → Super VIP)
-import React, { useState } from "react";
+// [CH] Community Hub - Quản lý gói thành viên (Cài đặt)
+// TODO: wire up real API. Mock chỉ seed khi bật "Xem trước".
+import React, { useState, useEffect } from "react";
 import { MOCK_MEMBERSHIP_PLANS } from "@/mocks/community-hub/membership-plans";
 import { MOCK_SERVICE_CATALOG } from "@/mocks/community-hub/service-catalog";
 import { formatCurrency } from "reborn-util";
 import Icon from "@/components/icon";
+import { ComingSoonBlock, PreviewBanner } from "../_shared/ComingSoon";
+import { showToast } from "@/utils/common";
 import "./index.scss";
 
 // [CH] Danh sách dịch vụ để chọn vào gói — sau này thay bằng API ServiceService.list()
@@ -35,15 +38,26 @@ const EMPTY_PLAN: PlanForm = {
   includes: [{ service: "", quota: null, unit: "" }],
 };
 
-const COLORS = ["#8E9BAE", "#4DE4C4", "#00C9A7", "#FF8C42", "#E8473B", "#722ed1"];
+const COLORS = ["#2D6A5A", "#D4A574", "#6B8078", "#3D9E6A", "#E8922A", "#D64B3A"];
 
 export default function MembershipPlanSettings() {
-  document.title = "Gói FitPro 90 ngày";
+  document.title = "Quản lý gói thành viên";
 
-  const [plans, setPlans] = useState(MOCK_MEMBERSHIP_PLANS);
+  const [plans, setPlans] = useState<typeof MOCK_MEMBERSHIP_PLANS>([]);
   const [showForm, setShowForm] = useState(false);
   const [editingPlan, setEditingPlan] = useState<PlanForm | null>(null);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState<string | null>(null);
+  const [isPreview, setIsPreview] = useState(false);
+
+  useEffect(() => {
+    setPlans(isPreview ? MOCK_MEMBERSHIP_PLANS : []);
+  }, [isPreview]);
+
+  const enterPreview = () => {
+    setIsPreview(true);
+    showToast("Đang ở chế độ xem trước với dữ liệu demo", "info");
+  };
+  const exitPreview = () => setIsPreview(false);
 
   // ── Mở form thêm mới ──
   const handleAdd = () => {
@@ -124,13 +138,32 @@ export default function MembershipPlanSettings() {
     setEditingPlan({ ...editingPlan, includes: next });
   };
 
+  if (!isPreview && plans.length === 0) {
+    return (
+      <div className="ch-plan-settings">
+        <div className="ch-plan-settings__header">
+          <div>
+            <h2>Quản lý gói thành viên</h2>
+            <p className="subtitle">Định nghĩa các gói thẻ thành viên</p>
+          </div>
+        </div>
+        <ComingSoonBlock
+          title="Chưa có gói thành viên nào"
+          description="Tạo gói thành viên đầu tiên (tên, giá, thời hạn, dịch vụ bao gồm) để bắt đầu bán thẻ."
+          onPreview={enterPreview}
+        />
+      </div>
+    );
+  }
+
   return (
     <div className="ch-plan-settings">
+      {isPreview && <PreviewBanner onExit={exitPreview} />}
       {/* ── Header ── */}
       <div className="ch-plan-settings__header">
         <div>
-          <h2>Gói FitPro 90 ngày</h2>
-          <p className="subtitle">5 gói trải nghiệm: Cơ bản → Plus → Pro → VIP → Super VIP. Giá theo trần quy định của hãng (slide 9)</p>
+          <h2>Quản lý gói thành viên</h2>
+          <p className="subtitle">Định nghĩa các gói thẻ thành viên, giá, thời hạn và dịch vụ bao gồm</p>
         </div>
         <button className="btn-add" onClick={handleAdd}>
           <Icon name="PlusCircleFill" />
