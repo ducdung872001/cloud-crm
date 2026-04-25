@@ -53,13 +53,8 @@ export default function RegisterFetch() {
       } else if (!config.headers["Content-Type"]) {
         config.headers["Content-Type"] = "application/json";
       }
-      // Local (localhost / 127.0.0.1) → luôn "kcn.reborn.vn" (env test mặc định cho nhánh mentorhub).
-      // Live (prod/staging) → location.hostname thật của tenant user đang truy cập.
-      {
-        const realHost = location.hostname || "";
-        const isLocal = realHost === "localhost" || realHost === "127.0.0.1" || realHost === "";
-        config.headers["Hostname"] = isLocal ? "kcn.reborn.vn" : realHost;
-      }
+      // Tạm fix cứng "kcn.reborn.vn" cho cả local lẫn production (nhánh mentorhub).
+      config.headers["Hostname"] = "kcn.reborn.vn";
 
 
       if (!url.startsWith("http")) {
