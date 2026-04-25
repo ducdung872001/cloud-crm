@@ -76,6 +76,72 @@
   &__progress { height: 6px; background: rgba(15, 118, 110, 0.12); border-radius: 3px; overflow: hidden; }
   &__progress-fill { height: 100%; background: var(--mh-teal); border-radius: 3px; }
 
+  // ── Public marketplace URL strip ───────────────────────────────────────────
+  .mh-public-link {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 12px 16px;
+    background: var(--mh-ivory-2);
+    border: 1px dashed var(--mh-line);
+    border-radius: 12px;
+    margin: -8px 0 24px;
+
+    &__left {
+      display: flex; align-items: center; gap: 12px;
+      min-width: 0; flex: 1;
+    }
+    &__kicker {
+      font-family: 'Geist Mono', monospace;
+      font-size: 10px;
+      letter-spacing: .1em;
+      color: var(--mh-ink-soft);
+      text-transform: uppercase;
+      flex-shrink: 0;
+    }
+    &__url {
+      font-family: 'Geist Mono', monospace;
+      font-size: 13px;
+      color: var(--mh-teal);
+      text-decoration: none;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      min-width: 0;
+      &:hover { text-decoration: underline; }
+    }
+    &__right { display: flex; gap: 8px; flex-shrink: 0; }
+    &__btn {
+      display: inline-flex; align-items: center; gap: 4px;
+      padding: 6px 12px;
+      font-size: 12px;
+      font-family: 'Geist Mono', monospace;
+      letter-spacing: .03em;
+      border: 1px solid var(--mh-line);
+      background: #fff;
+      color: var(--mh-ink-soft);
+      border-radius: 8px;
+      cursor: pointer;
+      text-decoration: none;
+      transition: all .15s;
+      &:hover { border-color: var(--mh-teal); color: var(--mh-teal); }
+      &--primary {
+        background: var(--mh-teal);
+        color: #fff;
+        border-color: var(--mh-teal);
+        &:hover { background: var(--mh-teal-d); border-color: var(--mh-teal-d); color: #fff; }
+      }
+    }
+
+    @media (max-width: 768px) {
+      flex-direction: column;
+      align-items: stretch;
+      gap: 10px;
+      &__right { justify-content: flex-end; }
+    }
+  }
+
   // ── Form controls (used across Create-Course, Register, Feedback forms) ─────
   &__field { margin-bottom: 18px; }
   &__label { display: block; font-family: 'Geist Mono', monospace; font-size: 11px; letter-spacing: .08em; color: var(--mh-ink-soft); text-transform: uppercase; margin-bottom: 6px; }

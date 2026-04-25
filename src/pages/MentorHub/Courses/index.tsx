@@ -1,7 +1,7 @@
 // [MH] MentorHub - Danh sách khoá học của mentor
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
-import { MOCK_COURSES } from "@/mocks/mentorhub";
+import { MOCK_COURSES, MOCK_MENTOR } from "@/mocks/mentorhub";
 import "../_shared/styles.scss";
 
 const formatVND = (n: number) => new Intl.NumberFormat("vi-VN").format(n) + "₫";
@@ -10,7 +10,22 @@ type Status = "all" | "live" | "upcoming" | "draft" | "ended";
 export default function MentorHubCoursesPage() {
   document.title = "MentorHub · Khoá học";
   const [filter, setFilter] = useState<Status>("all");
+  const [copied, setCopied] = useState(false);
   const filtered = filter === "all" ? MOCK_COURSES : MOCK_COURSES.filter((c) => c.status === filter);
+
+  // Trang public của mentor — danh sách khoá học khách thấy được
+  const publicPath = `/crm/portal/mentors/${MOCK_MENTOR.id}`;
+  const publicUrl = (typeof window !== "undefined" ? window.location.origin : "") + publicPath;
+
+  const copyPublicUrl = async () => {
+    try {
+      await navigator.clipboard.writeText(publicUrl);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 1800);
+    } catch {
+      /* clipboard unavailable */
+    }
+  };
 
   return (
     <div className="mh">
@@ -21,6 +36,35 @@ export default function MentorHubCoursesPage() {
           <p style={{ color: "var(--mh-ink-soft)", marginTop: 8 }}>{MOCK_COURSES.length} khoá · {MOCK_COURSES.filter((c) => c.status === "live").length} đang diễn ra</p>
         </div>
         <Link to="/mh/courses/new" className="mh__btn mh__btn--primary">+ Tạo khoá mới</Link>
+      </div>
+
+      {/* Public marketplace link — mentor hay quên URL public */}
+      <div className="mh-public-link">
+        <div className="mh-public-link__left">
+          <span className="mh-public-link__kicker">TRANG PUBLIC</span>
+          <a
+            href={publicPath}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="mh-public-link__url"
+            title={publicUrl}
+          >
+            {publicPath}
+          </a>
+        </div>
+        <div className="mh-public-link__right">
+          <button type="button" className="mh-public-link__btn" onClick={copyPublicUrl}>
+            {copied ? "✓ Đã copy" : "📋 Copy link"}
+          </button>
+          <a
+            href={publicPath}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="mh-public-link__btn mh-public-link__btn--primary"
+          >
+            Mở trang public ↗
+          </a>
+        </div>
       </div>
 
       <div style={{ display: "flex", gap: 8, marginBottom: 24 }}>
@@ -50,7 +94,19 @@ export default function MentorHubCoursesPage() {
               </div>
               <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
                 <div className="mh__mono" style={{ fontSize: 13, color: "var(--mh-teal)", fontWeight: 600 }}>{formatVND(c.revenue)}</div>
-                <Link to={`/mh/courses/${c.id}/edit`} className="mh__btn" style={{ padding: "6px 14px", fontSize: 13 }}>Sửa</Link>
+                <div style={{ display: "flex", gap: 6 }}>
+                  <a
+                    href={publicPath}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="mh__btn"
+                    style={{ padding: "6px 10px", fontSize: 13 }}
+                    title="Xem trên trang public"
+                  >
+                    ↗
+                  </a>
+                  <Link to={`/mh/courses/${c.id}/edit`} className="mh__btn" style={{ padding: "6px 14px", fontSize: 13 }}>Sửa</Link>
+                </div>
               </div>
             </div>
           </div>
