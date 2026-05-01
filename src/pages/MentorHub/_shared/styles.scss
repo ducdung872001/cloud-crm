@@ -1,6 +1,8 @@
 // [MH] MentorHub shared design tokens
 // Editorial aesthetic: serif display (Fraunces) + sans body (Geist) + ivory/teal/amber palette
 
+@import "./form.scss";
+
 // MH routes ẩn CRM Header (giữ Sidebar) — reset margin-top, giữ margin-left cho sidebar
 .page-wrapper--mh {
   .main-content {

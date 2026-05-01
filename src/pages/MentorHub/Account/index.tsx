@@ -4,6 +4,7 @@ import { Link } from "react-router-dom";
 import { UserContext, ContextType } from "contexts/userContext";
 import UserService from "services/UserService";
 import { showToast } from "utils/common";
+import "../_shared/styles.scss";
 import "./index.scss";
 
 export default function MentorHubAccount() {
