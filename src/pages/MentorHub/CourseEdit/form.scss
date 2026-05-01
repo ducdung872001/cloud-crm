@@ -51,6 +51,8 @@
     grid-template-columns: minmax(0, 1fr) 320px;
     gap: 24px;
     align-items: start;
+    // Buộc grid items shrink, không cho min-content đẩy parent rộng ra
+    > * { min-width: 0; }
   }
 
   &__preview {
@@ -98,7 +100,7 @@
   }
 
   @media (max-width: 1024px) {
-    &__layout { grid-template-columns: 1fr; }
+    &__layout { grid-template-columns: minmax(0, 1fr); }
     &__preview { position: static; order: -1; }
   }
   @media (max-width: 640px) {
@@ -393,11 +395,20 @@
   flex-direction: column;
   gap: 12px;
   width: 100%;
+  min-width: 0;
+  overflow: hidden;
 
   &.is-large { max-width: 360px; padding: 24px; gap: 16px; }
 
   &__head {
     display: flex; justify-content: space-between; align-items: center;
+    gap: 8px; flex-wrap: wrap;
+    .mh__pill {
+      max-width: 60%;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
   }
   &__icon {
     width: 44px; height: 44px;
