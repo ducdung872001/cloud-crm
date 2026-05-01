@@ -161,12 +161,12 @@
 
   h3 { margin-bottom: 24px; }
 
-  &__row { margin-bottom: 20px; }
+  &__row { margin-bottom: 20px; min-width: 0; }
 
   &__grid-2 {
-    display: grid; grid-template-columns: 1fr 1fr; gap: 16px;
+    display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 16px;
     margin-bottom: 20px;
-    > .mh-form__row { margin-bottom: 0; }
+    > .mh-form__row { margin-bottom: 0; min-width: 0; }
 
     // Icon picker rộng + select chuyên mục hẹp (Step 1)
     &--lopsided { grid-template-columns: minmax(0, 1fr) 220px; }
@@ -483,6 +483,11 @@
   overflow-x: auto;
   padding: 1px; // chừa chỗ cho focus ring không bị crop
   scrollbar-width: thin;
+  // Buộc picker không vượt parent width (10 icons × 44px = 440px > 390px viewport
+  // → nếu không có min-width:0 + max-width:100%, picker đẩy parent .mh-form__row rộng ra)
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
 
   &__item {
     flex: 0 0 auto;
@@ -570,7 +575,7 @@
 }
 
 @media (max-width: 768px) {
-  .mh-form__grid-2 { grid-template-columns: 1fr; }
-  .mh-form__review-row { grid-template-columns: 1fr; gap: 4px; }
+  .mh-form__grid-2 { grid-template-columns: minmax(0, 1fr); }
+  .mh-form__review-row { grid-template-columns: minmax(0, 1fr); gap: 4px; }
   .mh-wizard__label { display: none; }
 }
