@@ -27,6 +27,7 @@ export default function Layout() {
   const {
     id: userId,
     isCollapsedSidebar,
+    setIsCollapsedSidebar,
     setDataBranch,
     isShowFeedback,
     setIsShowFeedback,
@@ -269,9 +270,26 @@ export default function Layout() {
   });
 
   const checkPathUrl = window.location.pathname;
-  // MentorHub routes có UI riêng (mh-* design system, header riêng) — bỏ CRM shell.
+  // MentorHub routes có UI riêng (mh-* design system, header riêng) — ẩn CRM Header
+  // (Viettel banner, branch dropdown, language) nhưng GIỮ Sidebar để user vẫn navigate được.
   const isMentorHubPath = checkPathUrl.startsWith("/crm/mh/") || checkPathUrl === "/crm/mh";
-  const hideCrmShell = checkPathUrl === "/crm/link_survey" || isMentorHubPath;
+  const hideCrmHeader = checkPathUrl === "/crm/link_survey" || isMentorHubPath;
+  const hideCrmSidebar = checkPathUrl === "/crm/link_survey";
+
+  const toggleMobileSidebar = () => {
+    const overlay = document.querySelector(".overlay-sidebar__mobile") as HTMLElement | null;
+    const body = document.body;
+    if (overlay) {
+      if (isCollapsedSidebar) {
+        overlay.style.display = "none";
+        body.style.overflow = "";
+      } else {
+        overlay.style.display = "block";
+        body.style.overflow = "hidden";
+      }
+    }
+    setIsCollapsedSidebar(!isCollapsedSidebar);
+  };
 
   useEffect(() => {
     setLastShowModalPayment(isPackage);
@@ -280,7 +298,7 @@ export default function Layout() {
   return (
     <div id="container">
       {/* ── Onboarding Tour Overlay (ẩn trên MH paths — tour này dành cho CRM) ── */}
-      {!hideCrmShell && (
+      {!hideCrmHeader && (
         <TourOverlay
           active={loginTour.active}
           step={loginTour.currentStep}
@@ -295,10 +313,24 @@ export default function Layout() {
         />
       )}
 
+      {/* ── MentorHub mobile menu trigger — fixed top-left, mở Sidebar drawer ── */}
+      {isMentorHubPath && (
+        <button
+          type="button"
+          className="mh-mobile-menu-trigger"
+          aria-label="Mở menu điều hướng"
+          onClick={toggleMobileSidebar}
+        >
+          <span />
+          <span />
+          <span />
+        </button>
+      )}
+
       <div className={`page-wrapper${isCollapsedSidebar ? " page-wrapper--collapsed-sidebar" : ""}${isMentorHubPath ? " page-wrapper--mh" : ""} d-flex align-items-start justify-content-between`}>
-        {!hideCrmShell && <Sidebar />}
+        {!hideCrmSidebar && <Sidebar />}
         <div className="main-content">
-          {!hideCrmShell && (
+          {!hideCrmHeader && (
             <Header
               listBranch={listBranch}
               newListBranch={newListBranch}
@@ -310,7 +342,7 @@ export default function Layout() {
             />
           )}
 
-          <CustomScrollbar width="100%" height={hideCrmShell ? height : height - 57} autoHide={true}>
+          <CustomScrollbar width="100%" height={hideCrmHeader ? height : height - 57} autoHide={true}>
             <Fragment>
               <div
                 className={`notification__warning--package ${
@@ -320,7 +352,7 @@ export default function Layout() {
                   (dataExpired.numDay <= 14 && dataExpired.numDay > 6 ? isAlmostExpired : isExpired)
                     ? ""
                     : "d-none"
-                } ${hideCrmShell ? "d-none" : ""}`}
+                } ${hideCrmHeader ? "d-none" : ""}`}
               >
                 {dataExpired && dataExpired.period <= 36 && (
                   <div className={`box__warning--notify ${isExpired ? "bg__error" : isAlmostExpired ? "bg__warning" : ""}`}>

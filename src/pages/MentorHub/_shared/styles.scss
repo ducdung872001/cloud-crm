@@ -1,15 +1,65 @@
 // [MH] MentorHub shared design tokens
 // Editorial aesthetic: serif display (Fraunces) + sans body (Geist) + ivory/teal/amber palette
 
-// MH routes ẩn CRM shell — reset offset sidebar/header
+// MH routes ẩn CRM Header (giữ Sidebar) — reset margin-top, giữ margin-left cho sidebar
 .page-wrapper--mh {
-  margin-left: 0 !important;
   .main-content {
     margin-top: 0 !important;
     height: auto !important;
   }
   .main-content__wrapper {
     padding: 0 !important;
+  }
+  // Mobile (≤767px): sidebar dạng overlay, không còn lề trái cố định
+  @media (max-width: 767px) {
+    margin-left: 0 !important;
+  }
+}
+
+// MH mobile hamburger menu trigger — chỉ hiện trên mobile, fixed top-left
+.mh-mobile-menu-trigger {
+  display: none;
+  position: fixed;
+  top: max(12px, env(safe-area-inset-top));
+  left: 12px;
+  z-index: 90;
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  border: 1px solid #E0D8C8;
+  background: rgba(255, 255, 255, .96);
+  backdrop-filter: saturate(140%) blur(8px);
+  cursor: pointer;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  gap: 4px;
+  padding: 0;
+  transition: border-color .15s, background .15s;
+
+  span {
+    display: block;
+    width: 18px;
+    height: 2px;
+    background: #0E1713;
+    border-radius: 2px;
+  }
+
+  &:hover, &:focus-visible {
+    border-color: #0F766E;
+    outline: none;
+  }
+
+  @media (max-width: 1199px) {
+    display: flex;
+  }
+}
+
+// Khi MH mobile menu hiện, đẩy nội dung MH topbar xuống chừa chỗ cho hamburger
+@media (max-width: 1199px) {
+  .page-wrapper--mh .mh-course-edit__topbar,
+  .page-wrapper--mh .mh__hero {
+    padding-left: 56px; // 44px button + 12px gap
   }
 }
 
