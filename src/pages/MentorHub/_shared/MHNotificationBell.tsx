@@ -10,13 +10,10 @@ import "./MHNotificationBell.scss";
 
 interface NotificationItem {
   id: number;
-  title?: string;
-  content?: string;
-  is_read?: boolean;
-  read?: boolean;
-  isRead?: boolean;
-  createdAt?: string;
-  created_at?: string;
+  messageTitle?: string;
+  messageText?: string;
+  sentAt?: string;
+  unread?: number | null; // 0/null = chưa đọc, 1 = đã đọc
   type?: string;
   [key: string]: unknown;
 }
@@ -67,7 +64,7 @@ export default function MHNotificationBell() {
     try {
       const res = await NotificationService.updateReadAll({});
       if (res?.code === 0) {
-        setItems((arr) => arr.map((n) => ({ ...n, is_read: true })));
+        setItems((arr) => arr.map((n) => ({ ...n, unread: 1 })));
         setCountUnread(0);
       } else {
         showToast(res?.message ?? "Không đánh dấu được", "error");
@@ -77,8 +74,8 @@ export default function MHNotificationBell() {
     }
   };
 
-  const isUnread = (n: NotificationItem) => !(n.is_read ?? n.read ?? n.isRead);
-  const ts = (n: NotificationItem) => n.createdAt || n.created_at || "";
+  // unread: 0 hoặc null = chưa đọc, 1 = đã đọc (theo convention BE)
+  const isUnread = (n: NotificationItem) => n.unread === 0 || n.unread === null || n.unread === undefined;
 
   return (
     <>
@@ -120,11 +117,11 @@ export default function MHNotificationBell() {
                 <ul>
                   {items.map((n) => (
                     <li key={n.id} className={"mh-notif-item" + (isUnread(n) ? " is-unread" : "")}>
-                      <div className="mh-notif-item__title">{n.title || "(Không tiêu đề)"}</div>
-                      {n.content && <div className="mh-notif-item__content">{n.content}</div>}
-                      {ts(n) && (
+                      <div className="mh-notif-item__title">{n.messageTitle || "Thông báo"}</div>
+                      {n.messageText && <div className="mh-notif-item__content">{n.messageText}</div>}
+                      {n.sentAt && (
                         <time className="mh-notif-item__time">
-                          {formatDateCustom(ts(n) as string, "H:mm · dd/MM/yyyy")}
+                          {formatDateCustom(n.sentAt, "H:mm · dd/MM/yyyy")}
                         </time>
                       )}
                     </li>
