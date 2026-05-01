@@ -279,19 +279,21 @@ export default function Layout() {
 
   return (
     <div id="container">
-      {/* ── Onboarding Tour Overlay ── */}
-      <TourOverlay
-        active={loginTour.active}
-        step={loginTour.currentStep}
-        stepIdx={loginTour.stepIdx}
-        totalSteps={loginTour.totalSteps}
-        target={loginTour.target}
-        isFirst={loginTour.isFirst}
-        isLast={loginTour.isLast}
-        onNext={loginTour.next}
-        onPrev={loginTour.prev}
-        onSkip={loginTour.skip}
-      />
+      {/* ── Onboarding Tour Overlay (ẩn trên MH paths — tour này dành cho CRM) ── */}
+      {!hideCrmShell && (
+        <TourOverlay
+          active={loginTour.active}
+          step={loginTour.currentStep}
+          stepIdx={loginTour.stepIdx}
+          totalSteps={loginTour.totalSteps}
+          target={loginTour.target}
+          isFirst={loginTour.isFirst}
+          isLast={loginTour.isLast}
+          onNext={loginTour.next}
+          onPrev={loginTour.prev}
+          onSkip={loginTour.skip}
+        />
+      )}
 
       <div className={`page-wrapper${isCollapsedSidebar ? " page-wrapper--collapsed-sidebar" : ""}${isMentorHubPath ? " page-wrapper--mh" : ""} d-flex align-items-start justify-content-between`}>
         {!hideCrmShell && <Sidebar />}
