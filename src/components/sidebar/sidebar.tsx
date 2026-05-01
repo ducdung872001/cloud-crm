@@ -11,6 +11,7 @@ import { useLocation } from "react-router-dom";
 import { fadeIn, fadeOut } from "reborn-util";
 import { useWindowDimensions } from "utils/hookCustom";
 import { getDomain } from "reborn-util";
+import { logout } from "utils/common";
 import "./sidebar.scss";
 
 
@@ -70,9 +71,20 @@ function Sidebar() {
             </Button>
           ) : null}
         </div>
-        <CustomScrollbar className="sidebar-menu d-flex flex-column" width="100%" height={height - 57} autoHide={true}>
+        <CustomScrollbar className="sidebar-menu d-flex flex-column" width="100%" height={height - 57 - 56} autoHide={true}>
           <Navigation menuItemList={menu} />
         </CustomScrollbar>
+
+        <button
+          type="button"
+          className="sidebar-logout-btn"
+          onClick={() => {
+            if (window.confirm("Đăng xuất khỏi hệ thống?")) logout();
+          }}
+        >
+          <Icon name="Logout" />
+          <span>Đăng xuất</span>
+        </button>
 
         {/* <div
           className={`sidebar__option${isCollapsedSidebar ? " sidebar__option--show" : ""}${
