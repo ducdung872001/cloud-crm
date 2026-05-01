@@ -12,6 +12,7 @@ import { fadeIn, fadeOut } from "reborn-util";
 import { useWindowDimensions } from "utils/hookCustom";
 import { getDomain } from "reborn-util";
 import { logout } from "utils/common";
+import ShowModalChangeRole from "pages/Common/ShowModalChangeRole";
 import "./sidebar.scss";
 
 
@@ -19,8 +20,10 @@ const style_height_width: React.CSSProperties = { height: "100%", width: "auto" 
 function Sidebar() {
   const location = useLocation();
   const [isMouseOver, setIsMouseOver] = useState<boolean>(false);
-  const { isCollapsedSidebar, setIsCollapsedSidebar, dataBeauty } = useContext(UserContext) as ContextType;
+  const [showModalChangeRole, setShowModalChangeRole] = useState<boolean>(false);
+  const { isCollapsedSidebar, setIsCollapsedSidebar, dataBeauty, lstRole } = useContext(UserContext) as ContextType;
   const { width, height } = useWindowDimensions();
+  const hasMultipleRoles = Array.isArray(lstRole) && lstRole.length > 1;
 
   const [logoOrganization, setLogoOrganization] = useState(() => {
     return localStorage.getItem("logoOrganization") || "";
@@ -71,11 +74,24 @@ function Sidebar() {
             </Button>
           ) : null}
         </div>
-        <CustomScrollbar className="sidebar-menu d-flex flex-column" width="100%" height={height - 57 - 112} autoHide={true}>
+        <CustomScrollbar className="sidebar-menu d-flex flex-column" width="100%" height={height - 57 - (hasMultipleRoles ? 168 : 112)} autoHide={true}>
           <Navigation menuItemList={menu} />
         </CustomScrollbar>
 
         <div className="sidebar-footer">
+          {hasMultipleRoles && (
+            <button
+              type="button"
+              className="sidebar-footer__btn"
+              onClick={() => {
+                setShowModalChangeRole(true);
+                if (width < 1200) showMenuMobile();
+              }}
+            >
+              <Icon name="SwitchAccount" />
+              <span>Chuyển vai trò</span>
+            </button>
+          )}
           <Link to="/setting_account" className="sidebar-footer__btn" onClick={() => width < 1200 && showMenuMobile()}>
             <Icon name="AccountCircle" />
             <span>Tài khoản &amp; mật khẩu</span>
@@ -108,6 +124,12 @@ function Sidebar() {
           </Link>
         </div> */}
       </div>
+      <ShowModalChangeRole
+        lstData={lstRole || []}
+        onShow={showModalChangeRole}
+        onHide={() => setShowModalChangeRole(false)}
+        data={localStorage.getItem("SelectedRole") || null}
+      />
       {width < 1200 && (
         <div className="overlay-sidebar__mobile" onClick={() => showMenuMobile()}>
           <Button type="button" color="transparent" className="btn-close-sidebar" onlyIcon={true}>

@@ -352,7 +352,7 @@ export default function Layout() {
                   (dataExpired.numDay <= 14 && dataExpired.numDay > 6 ? isAlmostExpired : isExpired)
                     ? ""
                     : "d-none"
-                } ${hideCrmHeader ? "d-none" : ""}`}
+                } ${checkPathUrl === "/crm/link_survey" ? "d-none" : ""}`}
               >
                 {dataExpired && dataExpired.period <= 36 && (
                   <div className={`box__warning--notify ${isExpired ? "bg__error" : isAlmostExpired ? "bg__warning" : ""}`}>
