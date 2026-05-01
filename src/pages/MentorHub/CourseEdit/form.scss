@@ -1,7 +1,7 @@
 // CourseEdit wizard + form styles
 .mh-course-edit {
-  // Để chừa chỗ cho sticky action bar dưới đáy (cộng safe-area iOS)
-  padding-bottom: calc(100px + env(safe-area-inset-bottom));
+  // Để chừa chỗ cho sticky action bar dưới đáy (cộng safe-area iOS + URL bar buffer)
+  padding-bottom: calc(100px + env(safe-area-inset-bottom) + 44px);
 
   &__topbar {
     display: flex;
@@ -103,7 +103,9 @@
   }
   @media (max-width: 640px) {
     &__topbar { flex-wrap: wrap; gap: 6px; }
-    &__actionbar { padding: 10px 14px calc(10px + env(safe-area-inset-bottom)) 14px; }
+    // iOS Safari compact URL bar che thêm ~50px ngoài safe-area-inset-bottom (~34px)
+    // → cộng buffer 44px để button luôn nằm trên URL bar
+    &__actionbar { padding: 10px 14px calc(10px + env(safe-area-inset-bottom) + 44px) 14px; }
     &__actionbar-step { display: none; }
   }
 }
