@@ -269,6 +269,9 @@ export default function Layout() {
   });
 
   const checkPathUrl = window.location.pathname;
+  // MentorHub routes có UI riêng (mh-* design system, header riêng) — bỏ CRM shell.
+  const isMentorHubPath = checkPathUrl.startsWith("/crm/mh/") || checkPathUrl === "/crm/mh";
+  const hideCrmShell = checkPathUrl === "/crm/link_survey" || isMentorHubPath;
 
   useEffect(() => {
     setLastShowModalPayment(isPackage);
@@ -290,10 +293,10 @@ export default function Layout() {
         onSkip={loginTour.skip}
       />
 
-      <div className={`page-wrapper${isCollapsedSidebar ? " page-wrapper--collapsed-sidebar" : ""} d-flex align-items-start justify-content-between`}>
-        {checkPathUrl !== "/crm/link_survey" && <Sidebar />}
+      <div className={`page-wrapper${isCollapsedSidebar ? " page-wrapper--collapsed-sidebar" : ""}${isMentorHubPath ? " page-wrapper--mh" : ""} d-flex align-items-start justify-content-between`}>
+        {!hideCrmShell && <Sidebar />}
         <div className="main-content">
-          {checkPathUrl !== "/crm/link_survey" && (
+          {!hideCrmShell && (
             <Header
               listBranch={listBranch}
               newListBranch={newListBranch}
@@ -305,7 +308,7 @@ export default function Layout() {
             />
           )}
 
-          <CustomScrollbar width="100%" height={height - 57} autoHide={true}>
+          <CustomScrollbar width="100%" height={hideCrmShell ? height : height - 57} autoHide={true}>
             <Fragment>
               <div
                 className={`notification__warning--package ${
@@ -315,7 +318,7 @@ export default function Layout() {
                   (dataExpired.numDay <= 14 && dataExpired.numDay > 6 ? isAlmostExpired : isExpired)
                     ? ""
                     : "d-none"
-                } ${checkPathUrl == "/crm/link_survey" ? "d-none" : ""}`}
+                } ${hideCrmShell ? "d-none" : ""}`}
               >
                 {dataExpired && dataExpired.period <= 36 && (
                   <div className={`box__warning--notify ${isExpired ? "bg__error" : isAlmostExpired ? "bg__warning" : ""}`}>

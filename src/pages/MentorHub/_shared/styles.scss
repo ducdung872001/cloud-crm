@@ -1,6 +1,18 @@
 // [MH] MentorHub shared design tokens
 // Editorial aesthetic: serif display (Fraunces) + sans body (Geist) + ivory/teal/amber palette
 
+// MH routes ẩn CRM shell — reset offset sidebar/header
+.page-wrapper--mh {
+  margin-left: 0 !important;
+  .main-content {
+    margin-top: 0 !important;
+    height: auto !important;
+  }
+  .main-content__wrapper {
+    padding: 0 !important;
+  }
+}
+
 .mh {
   --mh-ivory: #FAF7F2;
   --mh-ivory-2: #F4EFE6;
