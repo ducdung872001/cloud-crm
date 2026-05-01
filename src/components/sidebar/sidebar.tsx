@@ -71,20 +71,26 @@ function Sidebar() {
             </Button>
           ) : null}
         </div>
-        <CustomScrollbar className="sidebar-menu d-flex flex-column" width="100%" height={height - 57 - 56} autoHide={true}>
+        <CustomScrollbar className="sidebar-menu d-flex flex-column" width="100%" height={height - 57 - 112} autoHide={true}>
           <Navigation menuItemList={menu} />
         </CustomScrollbar>
 
-        <button
-          type="button"
-          className="sidebar-logout-btn"
-          onClick={() => {
-            if (window.confirm("Đăng xuất khỏi hệ thống?")) logout();
-          }}
-        >
-          <Icon name="Logout" />
-          <span>Đăng xuất</span>
-        </button>
+        <div className="sidebar-footer">
+          <Link to="/setting_account" className="sidebar-footer__btn" onClick={() => width < 1200 && showMenuMobile()}>
+            <Icon name="AccountCircle" />
+            <span>Tài khoản &amp; mật khẩu</span>
+          </Link>
+          <button
+            type="button"
+            className="sidebar-footer__btn sidebar-footer__btn--logout"
+            onClick={() => {
+              if (window.confirm("Đăng xuất khỏi hệ thống?")) logout();
+            }}
+          >
+            <Icon name="Logout" />
+            <span>Đăng xuất</span>
+          </button>
+        </div>
 
         {/* <div
           className={`sidebar__option${isCollapsedSidebar ? " sidebar__option--show" : ""}${
