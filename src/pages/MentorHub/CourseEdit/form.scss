@@ -1,7 +1,7 @@
 // CourseEdit wizard + form styles
 .mh-course-edit {
-  // Để chừa chỗ cho sticky action bar dưới đáy
-  padding-bottom: 100px;
+  // Để chừa chỗ cho sticky action bar dưới đáy (cộng safe-area iOS)
+  padding-bottom: calc(100px + env(safe-area-inset-bottom));
 
   &__topbar {
     display: flex;
@@ -80,7 +80,7 @@
     backdrop-filter: saturate(140%) blur(8px);
     border-top: 1px solid var(--mh-line);
     z-index: 100;
-    padding: 12px 24px;
+    padding: 12px 24px calc(12px + env(safe-area-inset-bottom)) 24px;
   }
   &__actionbar-inner {
     max-width: 1200px;
@@ -103,7 +103,7 @@
   }
   @media (max-width: 640px) {
     &__topbar { flex-wrap: wrap; gap: 6px; }
-    &__actionbar { padding: 10px 14px; }
+    &__actionbar { padding: 10px 14px calc(10px + env(safe-area-inset-bottom)) 14px; }
     &__actionbar-step { display: none; }
   }
 }
