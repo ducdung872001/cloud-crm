@@ -76,7 +76,7 @@ function Sidebar() {
 
         {/* User info — avatar + tên + phone (ẩn khi sidebar collapsed) */}
         {(name || phone) && (
-          <Link to="/setting_account" className="sidebar-user" onClick={() => width < 1200 && showMenuMobile()}>
+          <Link to="/mh/account" className="sidebar-user" onClick={() => width < 1200 && showMenuMobile()}>
             <div className="sidebar-user__avatar">
               {avatar ? <img src={avatar} alt={name || "avatar"} /> : <Icon name="AccountCircle" />}
             </div>
@@ -115,7 +115,7 @@ function Sidebar() {
               <span>Chuyển vai trò</span>
             </button>
           )}
-          <Link to="/setting_account" className="sidebar-footer__btn" onClick={() => width < 1200 && showMenuMobile()}>
+          <Link to="/mh/account" className="sidebar-footer__btn" onClick={() => width < 1200 && showMenuMobile()}>
             <Icon name="AccountCircle" />
             <span>Tài khoản &amp; mật khẩu</span>
           </Link>

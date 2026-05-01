@@ -1,0 +1,47 @@
+.mh-account {
+  &__section {
+    margin-bottom: 24px;
+    h3 { margin-bottom: 16px; }
+  }
+
+  &__hint {
+    color: var(--mh-ink-soft);
+    font-size: 13px;
+    margin: -8px 0 16px;
+  }
+
+  &__actions {
+    display: flex;
+    gap: 12px;
+    justify-content: flex-end;
+    margin-top: 8px;
+    padding-top: 16px;
+    border-top: 1px dashed var(--mh-line);
+  }
+
+  &__pwd-wrap {
+    position: relative;
+    display: flex;
+    align-items: center;
+
+    .mh-form__input { padding-right: 60px; }
+  }
+
+  &__pwd-toggle {
+    position: absolute;
+    right: 8px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: transparent;
+    border: 0;
+    padding: 6px 10px;
+    font-family: 'Geist Mono', monospace;
+    font-size: 11px;
+    letter-spacing: .04em;
+    color: var(--mh-ink-soft);
+    cursor: pointer;
+    border-radius: 6px;
+
+    &:hover { color: var(--mh-teal); background: var(--mh-ivory-2); }
+  }
+}

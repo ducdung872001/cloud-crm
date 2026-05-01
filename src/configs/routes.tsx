@@ -212,6 +212,7 @@ const MHRevenue = React.lazy(() => import("@/pages/MentorHub/Revenue"));
 const MHMarketing = React.lazy(() => import("@/pages/MentorHub/Marketing"));
 const MHCalendar = React.lazy(() => import("@/pages/MentorHub/Calendar"));
 const MHSettings = React.lazy(() => import("@/pages/MentorHub/Settings"));
+const MHAccount = React.lazy(() => import("@/pages/MentorHub/Account"));
 
 // [Admin] Reborn internal — platform monitoring
 const AdminUsage = React.lazy(() => import("@/pages/Admin/Usage"));
@@ -322,6 +323,7 @@ export const routes: IRouter[] = [
   { path: "/mh/marketing", component: <MHMarketing /> },
   { path: "/mh/calendar", component: <MHCalendar /> },
   { path: "/mh/settings", component: <MHSettings /> },
+  { path: "/mh/account", component: <MHAccount /> },
 
   // [Admin] Reborn internal routes
   { path: "/admin/usage", component: <AdminUsage /> },
