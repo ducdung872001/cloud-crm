@@ -55,11 +55,12 @@
   }
 }
 
-// Khi MH mobile menu hiện, đẩy nội dung MH topbar xuống chừa chỗ cho hamburger
+// Khi MH mobile menu hiện, đẩy nội dung topbar/hero chừa chỗ cho hamburger (trái) + bell (phải)
 @media (max-width: 1199px) {
   .page-wrapper--mh .mh-course-edit__topbar,
   .page-wrapper--mh .mh__hero {
-    padding-left: 56px; // 44px button + 12px gap
+    padding-left: 56px; // 44px hamburger + 12px gap
+    padding-right: 56px; // 44px bell + 12px gap
   }
 }
 

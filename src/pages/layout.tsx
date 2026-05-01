@@ -21,6 +21,7 @@ import Chatbot from "./ChatBot";
 import { getDomain } from "reborn-util";
 import { useOnboarding, resetAllTours } from "hooks/useOnboarding";
 import TourOverlay from "components/tourOverlay/TourOverlay";
+import MHNotificationBell from "pages/MentorHub/_shared/MHNotificationBell";
 // import { SystemNotification } from "components/systemNotification/systemNotification";
 
 export default function Layout() {
@@ -313,18 +314,21 @@ export default function Layout() {
         />
       )}
 
-      {/* ── MentorHub mobile menu trigger — fixed top-left, mở Sidebar drawer ── */}
+      {/* ── MentorHub mobile menu trigger (hamburger) + notification bell ── */}
       {isMentorHubPath && (
-        <button
-          type="button"
-          className="mh-mobile-menu-trigger"
-          aria-label="Mở menu điều hướng"
-          onClick={toggleMobileSidebar}
-        >
-          <span />
-          <span />
-          <span />
-        </button>
+        <>
+          <button
+            type="button"
+            className="mh-mobile-menu-trigger"
+            aria-label="Mở menu điều hướng"
+            onClick={toggleMobileSidebar}
+          >
+            <span />
+            <span />
+            <span />
+          </button>
+          <MHNotificationBell />
+        </>
       )}
 
       <div className={`page-wrapper${isCollapsedSidebar ? " page-wrapper--collapsed-sidebar" : ""}${isMentorHubPath ? " page-wrapper--mh" : ""} d-flex align-items-start justify-content-between`}>

@@ -21,7 +21,7 @@ function Sidebar() {
   const location = useLocation();
   const [isMouseOver, setIsMouseOver] = useState<boolean>(false);
   const [showModalChangeRole, setShowModalChangeRole] = useState<boolean>(false);
-  const { isCollapsedSidebar, setIsCollapsedSidebar, dataBeauty, lstRole } = useContext(UserContext) as ContextType;
+  const { isCollapsedSidebar, setIsCollapsedSidebar, dataBeauty, lstRole, name, avatar, phone, setIsShowChatBot } = useContext(UserContext) as ContextType;
   const { width, height } = useWindowDimensions();
   const hasMultipleRoles = Array.isArray(lstRole) && lstRole.length > 1;
 
@@ -59,7 +59,6 @@ function Sidebar() {
       >
         <div className="sidebar-logo d-flex align-items-center justify-content-between">
           <Link to="/" className="logo">
-            {/* {logoOrganization ? <img loading="lazy" src={logoOrganization} style={style_height_width} /> : <LogoMenu />} */}
             <LogoMenu />
           </Link>
           {isMouseOver || !isCollapsedSidebar ? (
@@ -74,7 +73,31 @@ function Sidebar() {
             </Button>
           ) : null}
         </div>
-        <CustomScrollbar className="sidebar-menu d-flex flex-column" width="100%" height={height - 57 - (hasMultipleRoles ? 168 : 112)} autoHide={true}>
+
+        {/* User info — avatar + tên + phone (ẩn khi sidebar collapsed) */}
+        {(name || phone) && (
+          <Link to="/setting_account" className="sidebar-user" onClick={() => width < 1200 && showMenuMobile()}>
+            <div className="sidebar-user__avatar">
+              {avatar ? <img src={avatar} alt={name || "avatar"} /> : <Icon name="AccountCircle" />}
+            </div>
+            <div className="sidebar-user__info">
+              {name && <div className="sidebar-user__name">{name}</div>}
+              {phone && <div className="sidebar-user__phone">{phone}</div>}
+            </div>
+          </Link>
+        )}
+        <CustomScrollbar
+          className="sidebar-menu d-flex flex-column"
+          width="100%"
+          height={
+            height
+            - 57 // logo header
+            - 76 // user info section (avatar + 2 lines)
+            - 56 * 3 // Tài khoản + Hỗ trợ + Đăng xuất
+            - (hasMultipleRoles ? 56 : 0) // Chuyển vai trò
+          }
+          autoHide={true}
+        >
           <Navigation menuItemList={menu} />
         </CustomScrollbar>
 
@@ -96,6 +119,17 @@ function Sidebar() {
             <Icon name="AccountCircle" />
             <span>Tài khoản &amp; mật khẩu</span>
           </Link>
+          <button
+            type="button"
+            className="sidebar-footer__btn"
+            onClick={() => {
+              setIsShowChatBot(true);
+              if (width < 1200) showMenuMobile();
+            }}
+          >
+            <Icon name="CustomerSupport" />
+            <span>Hỗ trợ &amp; chatbot</span>
+          </button>
           <button
             type="button"
             className="sidebar-footer__btn sidebar-footer__btn--logout"
