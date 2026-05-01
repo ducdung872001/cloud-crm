@@ -249,7 +249,8 @@
     &__grid--3 { grid-template-columns: repeat(2, 1fr); }
   }
   @media (max-width: 768px) {
-    padding: 20px 16px;
+    // Top padding tôn trọng safe-area iOS (notch) + phòng banner ISP inject
+    padding: max(20px, env(safe-area-inset-top)) 16px 20px 16px;
     h1 { font-size: 28px; }
     h2 { font-size: 22px; }
     &__grid--4, &__grid--3, &__grid--2 { grid-template-columns: 1fr; }

@@ -8,7 +8,9 @@
     justify-content: space-between;
     align-items: center;
     margin-bottom: 12px;
+    padding-top: 8px;
     font-size: 13px;
+    line-height: 1.5;
   }
 
   &__back {
@@ -17,6 +19,9 @@
     font-family: 'Geist Mono', monospace;
     font-size: 12px;
     letter-spacing: .04em;
+    line-height: 1.6;
+    padding: 4px 0;
+    display: inline-block;
     transition: color .15s;
     &:hover { color: var(--mh-teal); }
   }
