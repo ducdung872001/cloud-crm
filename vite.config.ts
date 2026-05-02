@@ -200,7 +200,7 @@ export default defineConfig(({ mode }) => {
             "/notification",
             "/operation",
             "/sales",
-          ].map((p) => [p, { target: "http://localhost:8080", changeOrigin: true }])
+          ].map((p) => [p, { target: process.env.VITE_BE_PROXY || "http://localhost:8080", changeOrigin: true, secure: false }])
         ),
       },
     }),

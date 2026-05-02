@@ -22,7 +22,7 @@ import BpmnModals from "./BpmModals/BpmModals";
  * @returns
  */
 const BusinessProcessCreate = () => {
-  const takeUrlProcessLocalStorage = JSON.parse(localStorage.getItem("backUpUrlProcess") || "");
+  const takeUrlProcessLocalStorage = JSON.parse(localStorage.getItem("backUpUrlProcess") || "{}");
 
   const modelerRef = useRef(null);
   const bpmnModeler = useRef(null);
