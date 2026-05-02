@@ -904,6 +904,11 @@ export const urlsApi = {
   salesServiceExtraInfo: {
     list: prefixSales + "/serviceExtraInfo/list",
   },
+  // Public student enrollment (no JWT, HMAC-SHA256). Reply: cloud-crm#210, sales commit 5749210.
+  salesPublic: {
+    orderRegister: prefixSales + "/public/order/register",
+    orderStatus: prefixSales + "/public/order/status",
+  },
   //khu vực trải nghiệm khách hàng
   cxmSurvey: {
     list: prefixCustomer + "/cxmSurvey/list",

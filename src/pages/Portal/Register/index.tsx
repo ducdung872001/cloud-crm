@@ -3,7 +3,7 @@ import React, { useEffect, useMemo, useState } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
 import PortalLayout from "../_shared/PortalLayout";
 import SalesServiceClient, { SalesService } from "services/SalesServiceClient";
-import CustomerService from "services/CustomerService";
+import SalesPublicClient, { PublicOrderRegisterResult } from "services/SalesPublicClient";
 import { MOCK_MENTOR } from "@/mocks/mentorhub";
 
 const formatVND = (n: number) => new Intl.NumberFormat("vi-VN").format(n) + "₫";
@@ -117,6 +117,51 @@ export default function PortalRegister() {
       .finally(() => setLoadingCourse(false));
   }, [numId]);
 
+  // Migration: drain localStorage pending enrollments → call new endpoint.
+  // Idempotent (BE dedup by customerId+courseId; nếu fail thì giữ lại).
+  useEffect(() => {
+    let cancelled = false;
+    async function drain() {
+      try {
+        const raw = localStorage.getItem(PENDING_KEY);
+        if (!raw) return;
+        const list: PendingEnrollment[] = JSON.parse(raw);
+        if (!Array.isArray(list) || list.length === 0) return;
+        const remaining: PendingEnrollment[] = [];
+        for (const item of list) {
+          if (cancelled) break;
+          try {
+            const res = await SalesPublicClient.register({
+              courseId: item.courseId,
+              studentName: item.name,
+              studentEmail: item.email,
+              studentPhone: item.phone,
+              studentCompany: item.company,
+              studentRole: item.role,
+              goal: item.goal,
+              hearAbout: item.hearAbout,
+            });
+            if (res?.code !== 0) remaining.push(item);
+          } catch {
+            remaining.push(item);
+          }
+        }
+        if (cancelled) return;
+        if (remaining.length === 0) {
+          localStorage.removeItem(PENDING_KEY);
+        } else {
+          localStorage.setItem(PENDING_KEY, JSON.stringify(remaining));
+        }
+      } catch {
+        /* ignore */
+      }
+    }
+    drain();
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
   const set = <K extends keyof Form>(k: K, v: Form[K]) => {
     setForm((p) => ({ ...p, [k]: v }));
     if (errors[k]) setErrors((p) => ({ ...p, [k]: undefined }));
@@ -143,61 +188,91 @@ export default function PortalRegister() {
     setSubmitting(true);
     setSubmitError(null);
 
-    let customerId: number | null = null;
     try {
-      const customerRes = (await CustomerService.update({
-        id: 0,
+      const res = await SalesPublicClient.register({
+        courseId: course.id,
+        studentName: form.name.trim(),
+        studentEmail: form.email.trim(),
+        studentPhone: form.phone.replace(/\s/g, ""),
+        studentCompany: form.company.trim() || undefined,
+        studentRole: form.role.trim() || undefined,
+        goal: form.goal.trim() || undefined,
+        hearAbout: form.hearAbout || undefined,
+        subscribe: form.subscribe,
+        utmSource: new URLSearchParams(window.location.search).get("utm_source") || undefined,
+      });
+
+      if (res?.code !== 0) {
+        // Map BE error codes to user-friendly messages
+        const msg = res?.message || "Đăng ký không thành công";
+        if (msg.includes("INVALID_SIGNATURE") || /signature|HMAC/i.test(msg)) {
+          setSubmitError("Lỗi cấu hình bảo mật cổng đăng ký — đã ghi nhận, mentor sẽ liên hệ.");
+          // Fallback: lưu pending để không mất data
+          pushPending({
+            courseId: course.id,
+            courseTitle: course.title,
+            customerId: null,
+            name: form.name.trim(),
+            phone: form.phone.replace(/\s/g, ""),
+            email: form.email.trim(),
+            company: form.company.trim() || undefined,
+            role: form.role.trim() || undefined,
+            goal: form.goal.trim() || undefined,
+            hearAbout: form.hearAbout || undefined,
+            amount: course.price,
+            createdAt: new Date().toISOString(),
+          });
+          setTimeout(() => {
+            navigate(
+              `/portal/register/success?course=${course.id}&name=${encodeURIComponent(form.name)}`,
+            );
+          }, 800);
+          return;
+        }
+        setSubmitError(msg);
+        setSubmitting(false);
+        return;
+      }
+
+      const result = res.result as PublicOrderRegisterResult | undefined;
+      if (!result) {
+        setSubmitError("BE không trả về kết quả đơn hàng — vui lòng thử lại");
+        setSubmitting(false);
+        return;
+      }
+
+      // Phase 2: paid course → redirect payment provider
+      if (result.status === "PENDING_PAYMENT" && result.paymentUrl) {
+        window.location.href = result.paymentUrl;
+        return;
+      }
+
+      // Free course → workflow triggered → success page
+      navigate(
+        `/portal/register/success?course=${course.id}&name=${encodeURIComponent(form.name)}` +
+          `&orderCode=${encodeURIComponent(result.orderCode)}` +
+          (result.workflowTriggered ? "&triggered=1" : ""),
+      );
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : "Lỗi mạng — thử lại";
+      setSubmitError(msg);
+      // Fallback pending để không mất form data
+      pushPending({
+        courseId: course.id,
+        courseTitle: course.title,
+        customerId: null,
         name: form.name.trim(),
         phone: form.phone.replace(/\s/g, ""),
         email: form.email.trim(),
-        branchId: 23,
-        managerId: 54,
-        careerId: 0,
-        avatar: "",
-        firstCall: "",
-        height: "0",
-        weight: "0",
-        custType: 0,
-        trademark: "",
-        taxCode: "",
-        address: "",
-      } as never)) as { code?: number; message?: string; result?: { id?: number } };
-      if (customerRes?.code === 0 && customerRes.result?.id) {
-        customerId = customerRes.result.id;
-      } else if (customerRes?.code !== 0) {
-        // KHÔNG fail toàn bộ — vẫn lưu pending để mentor xử lý tay
-        // (tenant có thể chặn duplicate phone, hoặc validation khác)
-        setSubmitError(
-          customerRes?.message
-            ? `Lưu khách hàng: ${customerRes.message} — yêu cầu vẫn được ghi nhận, mentor sẽ liên hệ.`
-            : null,
-        );
-      }
-    } catch {
-      /* network error — fall through to pending enrollment */
+        company: form.company.trim() || undefined,
+        role: form.role.trim() || undefined,
+        goal: form.goal.trim() || undefined,
+        hearAbout: form.hearAbout || undefined,
+        amount: course.price,
+        createdAt: new Date().toISOString(),
+      });
+      setSubmitting(false);
     }
-
-    // Ghi pending enrollment local — mentor admin có thể đọc list này (ở MH/Courses tương lai)
-    // hoặc BE notification sẽ pickup khi handoff hoàn tất.
-    pushPending({
-      courseId: course.id,
-      courseTitle: course.title,
-      customerId,
-      name: form.name.trim(),
-      phone: form.phone.replace(/\s/g, ""),
-      email: form.email.trim(),
-      company: form.company.trim() || undefined,
-      role: form.role.trim() || undefined,
-      goal: form.goal.trim() || undefined,
-      hearAbout: form.hearAbout || undefined,
-      amount: course.price,
-      createdAt: new Date().toISOString(),
-    });
-
-    setSubmitting(false);
-    navigate(
-      `/portal/register/success?course=${course.id}&name=${encodeURIComponent(form.name)}`,
-    );
   };
 
   if (loadingCourse) {
