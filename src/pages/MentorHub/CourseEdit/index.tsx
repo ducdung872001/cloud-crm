@@ -5,6 +5,7 @@ import type { Descendant } from "slate";
 import RebornEditor from "components/editor/reborn";
 import { UserContext, ContextType } from "contexts/userContext";
 import SalesServiceClient, { SalesService } from "services/SalesServiceClient";
+import FileService from "services/FileService";
 import { apiGet } from "services/apiHelper";
 import { urlsApi } from "configs/urls";
 import "../_shared/styles.scss";
@@ -32,6 +33,7 @@ type AgendaItem = { id: string; title: string; description: string; durationMin:
 type FormData = {
   title: string;
   icon: string;
+  avatar: string;
   description: string;
   category: string;
   content: Descendant[];
@@ -74,6 +76,7 @@ const newAgendaItem = (idx: number): AgendaItem => ({
 const defaultForm = (): FormData => ({
   title: "",
   icon: "⎈",
+  avatar: "",
   description: "",
   category: CATEGORIES[0],
   content: EMPTY_RICH,
@@ -149,6 +152,7 @@ export default function MHCourseEdit() {
         setForm({
           title: svc.name || "",
           icon: typeof meta.icon === "string" ? (meta.icon as string) : "⎈",
+          avatar: svc.avatar || "",
           description: svc.intro || "",
           category: typeof meta.category === "string" ? (meta.category as string) : CATEGORIES[0],
           content: parsedContent,
@@ -350,7 +354,7 @@ export default function MHCourseEdit() {
       intro: form.description.trim(),
       content: JSON.stringify(form.content),
       contentType: 0,
-      avatar: PLACEHOLDER_AVATAR,
+      avatar: form.avatar || PLACEHOLDER_AVATAR,
       type: "COURSE_LIVE",
       status: publish ? "ACTIVE" : "DRAFT",
       active: 1,
@@ -634,6 +638,118 @@ type StepCommon = {
   set: <K extends keyof FormData>(key: K, value: FormData[K]) => void;
 };
 
+function AvatarUpload({
+  value,
+  onChange,
+}: {
+  value: string;
+  onChange: (url: string) => void;
+}) {
+  const [uploading, setUploading] = useState(false);
+  const [progress, setProgress] = useState(0);
+  const [error, setError] = useState<string | null>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  const handleFile = (file: File) => {
+    if (!file.type.startsWith("image/")) {
+      setError("Chỉ chấp nhận file ảnh");
+      return;
+    }
+    if (file.size > 5 * 1024 * 1024) {
+      setError("File quá 5MB — nén lại trước khi upload");
+      return;
+    }
+    setError(null);
+    setUploading(true);
+    setProgress(0);
+    FileService.uploadFile({
+      data: file,
+      onProgress: (p: number) => setProgress(p),
+      onSuccess: (result: { url?: string; src?: string } | string) => {
+        const url =
+          typeof result === "string"
+            ? result
+            : result?.url || result?.src || "";
+        if (url) {
+          onChange(url);
+        } else {
+          setError("Upload xong nhưng không nhận được URL");
+        }
+        setUploading(false);
+      },
+      onError: (err: { message?: string } | Error) => {
+        setUploading(false);
+        const msg = err instanceof Error ? err.message : err?.message || "Upload thất bại";
+        setError(msg);
+      },
+    });
+  };
+
+  return (
+    <div className="mh-form__row">
+      <label className="mh-form__label">Ảnh đại diện khoá</label>
+      <div style={{ display: "flex", gap: 16, alignItems: "center" }}>
+        <div
+          style={{
+            width: 96,
+            height: 96,
+            borderRadius: 12,
+            background: value
+              ? `url(${value}) center/cover`
+              : "var(--mh-ivory-2)",
+            border: "1px solid var(--mh-line)",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            color: "var(--mh-ink-soft)",
+            fontSize: 11,
+            flexShrink: 0,
+          }}
+        >
+          {!value && "Chưa có ảnh"}
+        </div>
+        <div style={{ flex: 1 }}>
+          <input
+            type="file"
+            accept="image/*"
+            ref={inputRef}
+            style={{ display: "none" }}
+            onChange={(e) => {
+              const file = e.target.files?.[0];
+              if (file) handleFile(file);
+            }}
+          />
+          <button
+            type="button"
+            className="mh__btn"
+            onClick={() => inputRef.current?.click()}
+            disabled={uploading}
+          >
+            {uploading ? `Đang upload ${Math.round(progress)}%…` : value ? "Đổi ảnh" : "Chọn ảnh từ máy"}
+          </button>
+          {value && !uploading && (
+            <button
+              type="button"
+              className="mh__btn"
+              style={{ marginLeft: 8, color: "#991b1b" }}
+              onClick={() => onChange("")}
+            >
+              Xoá
+            </button>
+          )}
+          <div className="mh-form__hint" style={{ marginTop: 6 }}>
+            {error ? (
+              <span className="mh-form__error">⚠ {error}</span>
+            ) : (
+              <span>Tỉ lệ 16:9, ≤5MB. Nếu để trống dùng ảnh placeholder.</span>
+            )}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 function Step1({ form, errors, set }: StepCommon) {
   const tagLen = form.description.trim().length;
   const tagPct = Math.min(100, Math.round((tagLen / 50) * 100));
@@ -641,6 +757,7 @@ function Step1({ form, errors, set }: StepCommon) {
   return (
     <>
       <h3>1. Thông tin cơ bản</h3>
+      <AvatarUpload value={form.avatar} onChange={(url) => set("avatar", url)} />
       <div className="mh-form__row">
         <label className="mh-form__label" htmlFor="course-title">
           Tên khoá học <span className="mh-form__req">*</span>

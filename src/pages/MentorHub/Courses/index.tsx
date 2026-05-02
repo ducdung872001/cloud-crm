@@ -3,8 +3,39 @@ import React, { useContext, useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import { UserContext, ContextType } from "contexts/userContext";
 import SalesServiceClient, { SalesService } from "services/SalesServiceClient";
+import SalesOrderService from "services/SalesOrderService";
 import { MOCK_COURSES, MOCK_MENTOR } from "@/mocks/mentorhub";
 import "../_shared/styles.scss";
+
+type OrderForCount = { id?: number; totalAmount?: number; total?: number; amount?: number };
+type OrderListResult =
+  | { items?: OrderForCount[]; total?: number }
+  | OrderForCount[];
+
+// Aggregate registered/revenue cho 1 khoá từ /sales/order/list?productId=...&status=PAID
+async function fetchCourseStats(
+  productId: number,
+  signal?: AbortSignal,
+): Promise<{ registered: number; revenue: number }> {
+  try {
+    const res = (await SalesOrderService.list(
+      { productId, status: "PAID", orderType: "COURSE_ENROLLMENT", page: 1, limit: 200 },
+      signal,
+    )) as { result?: OrderListResult };
+    const result = res?.result ?? [];
+    const items: OrderForCount[] = Array.isArray(result)
+      ? (result as OrderForCount[])
+      : ((result as { items?: OrderForCount[] }).items ?? []);
+    const registered = items.length;
+    const revenue = items.reduce(
+      (s, o) => s + Number(o.totalAmount ?? o.total ?? o.amount ?? 0),
+      0,
+    );
+    return { registered, revenue };
+  } catch {
+    return { registered: 0, revenue: 0 };
+  }
+}
 
 const formatVND = (n: number) => new Intl.NumberFormat("vi-VN").format(n) + "₫";
 
@@ -75,9 +106,11 @@ export default function MentorHubCoursesPage() {
   const [filter, setFilter] = useState<Filter>("all");
   const [copied, setCopied] = useState(false);
   const [courses, setCourses] = useState<UiCourse[] | null>(null);
+  const [rawCourses, setRawCourses] = useState<SalesService[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [usingMock, setUsingMock] = useState(false);
+  const [bumpingId, setBumpingId] = useState<number | null>(null);
 
   useEffect(() => {
     if (!employeeId) {
@@ -94,7 +127,7 @@ export default function MentorHubCoursesPage() {
       { type: "COURSE_LIVE", supplierId: employeeId, page: 1, limit: 50 },
       ctrl.signal,
     )
-      .then((res: { code?: number; result?: { items?: SalesService[] } | SalesService[] }) => {
+      .then(async (res: { code?: number; result?: { items?: SalesService[] } | SalesService[] }) => {
         const result = res?.result ?? [];
         const items: SalesService[] = Array.isArray(result)
           ? (result as SalesService[])
@@ -103,10 +136,28 @@ export default function MentorHubCoursesPage() {
           // BE chưa có khoá nào — empty state, không fallback mock
           setCourses([]);
           setUsingMock(false);
-        } else {
-          setCourses(items.map(adaptService));
-          setUsingMock(false);
+          return;
         }
+        // Render ngay với registered/revenue=0 (từ metadata fallback) để UI không chờ dài.
+        const adapted = items.map(adaptService);
+        setCourses(adapted);
+        setRawCourses(items);
+        setUsingMock(false);
+        // Sau đó parallel fetch /sales/order/list mỗi khoá để compute counter thật.
+        const stats = await Promise.all(
+          items.map((svc) =>
+            typeof svc.id === "number"
+              ? fetchCourseStats(svc.id, ctrl.signal)
+              : Promise.resolve({ registered: 0, revenue: 0 }),
+          ),
+        );
+        setCourses(
+          adapted.map((c, i) => ({
+            ...c,
+            registered: stats[i].registered,
+            revenue: stats[i].revenue,
+          })),
+        );
       })
       .catch((err: Error) => {
         if (err.name === "AbortError") return;
@@ -122,6 +173,64 @@ export default function MentorHubCoursesPage() {
   const list = courses ?? [];
   const filtered = filter === "all" ? list : list.filter((c) => c.status === filter);
   const liveCount = list.filter((c) => c.status === "live").length;
+
+  // Mark 1 session as done — bump metadata.sessionsDone++, POST full payload back
+  const bumpSessionsDone = async (courseId: number | string) => {
+    const numId = typeof courseId === "number" ? courseId : Number(courseId);
+    if (!Number.isFinite(numId) || numId <= 0) return;
+    const idx = (courses ?? []).findIndex((c) => c.id === courseId);
+    if (idx < 0) return;
+    const raw = rawCourses[idx];
+    if (!raw) return;
+    const meta = (raw.metadata as Record<string, unknown>) || {};
+    const currentDone = Number(meta.sessionsDone ?? 0);
+    const total = Number(meta.sessions ?? raw.total_time ?? 0);
+    if (total > 0 && currentDone >= total) {
+      window.alert("Khoá đã hoàn tất tất cả buổi.");
+      return;
+    }
+    if (!window.confirm(`Đánh dấu buổi ${currentDone + 1}/${total || "?"} đã xong?`)) return;
+    setBumpingId(numId);
+    // Optimistic UI update
+    const newDone = currentDone + 1;
+    setCourses((prev) =>
+      (prev ?? []).map((c, i) =>
+        i === idx
+          ? {
+              ...c,
+              sessionsDone: newDone,
+              status:
+                total > 0 && newDone >= total
+                  ? "ended"
+                  : newDone === 0
+                  ? "upcoming"
+                  : "live",
+            }
+          : c,
+      ),
+    );
+    // Full payload back (sales BE require non-null avatar/categoryId/name)
+    const newMeta = { ...meta, sessionsDone: newDone };
+    const payload: Partial<SalesService> = {
+      ...raw,
+      metadata: newMeta,
+    };
+    try {
+      const res = (await SalesServiceClient.update(payload)) as { code?: number; message?: string };
+      if (res?.code !== 0) throw new Error(res?.message || "Update thất bại");
+      // Update raw cache so subsequent bumps work
+      setRawCourses((prev) => prev.map((s, i) => (i === idx ? { ...s, metadata: newMeta } : s)));
+    } catch (err) {
+      // Revert optimistic on error
+      setCourses((prev) =>
+        (prev ?? []).map((c, i) => (i === idx ? { ...c, sessionsDone: currentDone } : c)),
+      );
+      const msg = err instanceof Error ? err.message : "Cập nhật thất bại";
+      window.alert(`Không cập nhật được: ${msg}`);
+    } finally {
+      setBumpingId(null);
+    }
+  };
 
   // Trang public của mentor — danh sách khoá học khách thấy được
   const publicPath = `/crm/portal/mentors/${MOCK_MENTOR.id}`;
@@ -224,6 +333,18 @@ export default function MentorHubCoursesPage() {
               <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
                 <div className="mh__mono" style={{ fontSize: 13, color: "var(--mh-teal)", fontWeight: 600 }}>{formatVND(c.revenue)}</div>
                 <div style={{ display: "flex", gap: 6 }}>
+                  {(c.status === "live" || c.status === "upcoming") && typeof c.id === "number" && (
+                    <button
+                      type="button"
+                      className="mh__btn"
+                      style={{ padding: "6px 10px", fontSize: 12, color: "var(--mh-teal)" }}
+                      title="Đánh dấu 1 buổi đã xong"
+                      onClick={() => bumpSessionsDone(c.id)}
+                      disabled={bumpingId === c.id}
+                    >
+                      {bumpingId === c.id ? "…" : "✓ +1 buổi"}
+                    </button>
+                  )}
                   <a
                     href={publicPath}
                     target="_blank"
