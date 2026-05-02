@@ -1,0 +1,46 @@
+.custom-cell-no-render {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  height: 100%;
+  .text-truncate {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    text-align: start;
+    padding-left: 10px;
+    width: calc(100% - 15px);
+  }
+  .icon-popover {
+    visibility: hidden;
+    cursor: pointer;
+
+    .button-menu {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 15px;
+      height: 24px;
+      border: none;
+      background: transparent;
+      font-size: 18px;
+      font-weight: bold;
+      border-radius: 3px;
+      &:hover {
+        opacity: 1;
+        background: rgba(0, 0, 0, 0.1);
+      }
+      .button-content {
+        padding-bottom: 4px;
+      }
+    }
+  }
+}
+.custom-cell-no-render:hover .icon-popover {
+  visibility: visible;
+}
+.content-cell-render-end {
+  display: flex;
+  justify-content: flex-end;
+}

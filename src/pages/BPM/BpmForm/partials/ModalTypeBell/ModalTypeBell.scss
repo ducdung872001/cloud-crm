@@ -1,0 +1,47 @@
+.modal-add-type-bell {
+  .form-add-bell-type-group {
+    .list-form-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.6rem 3.2rem;
+
+      .form-group {
+        width: 100%;
+
+        .radio-list {
+          .form-group {
+            display: flex;
+            align-items: center;
+            gap: 0 2.2rem;
+
+            .base-checkbox {
+              margin-top: 0;
+            }
+          }
+        }
+      }
+
+      .merge-form {
+        width: 100%;
+        display: flex;
+        align-items: flex-start;
+        gap: 0 1rem;
+        margin-bottom: 1rem;
+
+        .form-group {
+          flex: 1;
+
+          .base-select {
+            .select-custom {
+              div[class*="-menu"] {
+                & > div {
+                  max-height: 15rem;
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

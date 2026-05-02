@@ -1,0 +1,197 @@
+
+.condtion-sidebar {
+    transition: all 0.5s ease-in-out;
+  //   border: 1px solid;
+    
+    border-radius: 10px;
+    margin-bottom:  10px;
+  
+    .title-click {
+      display: flex;
+      align-items: center;
+      cursor: pointer;
+      justify-content: space-between;
+      // padding-bottom: 1.2rem;
+      border: 1px solid #E0E0E0;
+      padding: 1rem;
+  
+      .name {
+        color: #10519f;
+        font-weight: 500;
+        font-size: 18px;
+      }
+  
+      .icon-up-down {
+        svg {
+          width: 2rem;
+          height: 2rem;
+          fill: var(--primary-color);
+        }
+      }
+    }
+  
+    .list-condition{
+      border: 1px solid #E0E0E0;
+      padding: 1rem;
+      align-items: center;
+      justify-content: center;
+  
+      .condition-title {
+          font-size: 14px;
+          font-weight: 500;
+      }
+
+      .action_start {
+        border: 1px solid #E0E0E0;
+        margin-bottom: 20px;
+        border-radius: 50rem;
+        align-items: center ;
+        justify-content: center;
+        display: flex;
+        height: 8rem;
+        width: 8rem;
+        cursor: pointer;
+        
+        .condition-label {
+            font-size: 14px;
+            font-weight: 500;
+        }
+        &:hover{
+          background-color: var(--extra-color-20);
+        }
+      }
+
+      .action-do {
+        border: 1px solid #E0E0E0;
+        // padding-top: 0.5rem;
+        // padding-bottom: 0.5rem;
+        // padding-left: 1rem;
+        margin-bottom: 20px;
+        // border-radius: 5px;
+        align-items: center ;
+        width: 100%;
+        justify-content: center;
+        display: flex;
+        height: 5rem;
+        cursor: pointer;
+        
+        .condition-label {
+            font-size: 14px;
+            font-weight: 500;
+        }
+        &:hover{
+          background-color: var(--extra-color-20);
+        }
+      }
+      
+
+      .action-condition {
+        border: 1px solid #E0E0E0;
+        // margin-bottom: 20px;
+        // border-radius: 50rem;
+        align-items: center ;
+        justify-content: center;
+        display: flex;
+        height: 8rem;
+        width: 8rem;
+        // transform: rotate(45deg); 
+        cursor: pointer;
+        
+        .condition-label {
+            font-size: 14px;
+            font-weight: 500;
+            // transform: rotate(-45deg);
+        }
+        &:hover{
+          background-color: var(--extra-color-20);
+        }
+        
+      }
+
+      .action-done {
+        border: 1px solid #E0E0E0;
+        margin-top: 20px;
+        border-radius: 50rem;
+        align-items: center ;
+        justify-content: center;
+        display: flex;
+        height: 8rem;
+        width: 8rem;
+        cursor: pointer;
+        
+        .condition-label {
+            font-size: 14px;
+            font-weight: 500;
+        }
+        &:hover{
+          background-color: var(--extra-color-20);
+        }
+        
+      }
+  
+      .conditon-child {
+          border: 1px solid #E0E0E0;
+          padding-top: 0.1rem;
+          padding-bottom: 0.1rem;
+          padding-left: 0.8rem;
+          margin-bottom: 10px;
+          border-radius: 5px;
+          align-items: center ;
+          border-left: 3px solid #4169E1;
+          
+          .condition-label {
+              font-size: 14px;
+              font-weight: 500;
+          }
+      }
+      .conditon-child-disable {
+        border: 1px solid #E0E0E0;
+        background-color: var(--extra-color-20);
+        padding-top: 0.1rem;
+        padding-bottom: 0.1rem;
+        padding-left: 0.8rem;
+        margin-bottom: 10px;
+        border-radius: 5px;
+        align-items: center ;
+        border-left: 3px solid #4169E1;
+        
+        .condition-label {
+            font-size: 14px;
+            font-weight: 500;
+        }
+    }
+  
+      .action-child {
+        border: 1px solid #E0E0E0;
+        padding-top: 0.1rem;
+        padding-bottom: 0.1rem;
+        padding-left: 0.8rem;
+        margin-bottom: 10px;
+        border-radius: 5px;
+        align-items: center ;
+        border-left: 3px solid #00CC33;
+        
+        .action-label {
+            font-size: 14px;
+            font-weight: 500;
+        }
+      }
+
+      .action-child-disable {
+        border: 1px solid #E0E0E0;
+        background-color: var(--extra-color-20);
+        padding-top: 0.1rem;
+        padding-bottom: 0.1rem;
+        padding-left: 0.8rem;
+        margin-bottom: 10px;
+        border-radius: 5px;
+        align-items: center ;
+        border-left: 3px solid #00CC33;
+        
+        .action-label {
+            font-size: 14px;
+            font-weight: 500;
+        }
+      }
+    }
+  }

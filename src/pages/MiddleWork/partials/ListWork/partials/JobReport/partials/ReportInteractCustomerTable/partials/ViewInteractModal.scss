@@ -1,0 +1,40 @@
+.modal-view--interact {
+  .box-view--interact {
+    .modal-body {
+      padding: 0;
+    }
+
+    .lst__interact {
+      max-height: 42rem;
+      overflow: auto;
+
+      .box-table {
+        margin-top: 1.2rem;
+
+        tbody {
+          tr {
+            td {
+              border-bottom: 1px solid transparent;
+            }
+          }
+        }
+
+        .box-table__wrapper {
+          .view__content--interact {
+            display: flex;
+            align-items: flex-start;
+            gap: 0 0.8rem;
+
+            .icon-interact {
+              svg {
+                width: 1.8rem;
+                height: 1.8rem;
+                fill: var(--primary-color-90);
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

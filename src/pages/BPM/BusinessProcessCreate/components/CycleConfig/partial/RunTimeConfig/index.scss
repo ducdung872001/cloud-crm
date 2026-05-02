@@ -1,0 +1,94 @@
+.run-time-config {
+  // display: flex;
+  // align-items: center;
+  // margin-top: 0rem;
+  width: 100%;
+  // overflow: scroll;
+
+  .title-container {
+    display: flex;
+    align-items: center;
+    justify-content: start;
+    width: 7rem;
+    .title_time {
+      font-size: 1.4rem;
+      font-weight: 600;
+      width: 13rem;
+      //   border: 1px solid;
+    }
+  }
+
+  .box_setting_time {
+    display: grid;
+    // Thêm dòng này để hiển thị 2 cột
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem 2rem; // Khoảng cách giữa các ô
+
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    padding: 10px;
+    border: 1px dashed var(--border-color);
+    border-radius: 8px;
+    margin-bottom: 1rem;
+    // margin-top: -9px;
+    position: relative;
+    .icon-delete {
+      position: absolute;
+      width: 1.8rem;
+      height: 1.8rem;
+      top: 0px;
+      right: 4px;
+      cursor: pointer;
+      svg {
+        fill: rgb(238, 194, 194);
+      }
+      &:hover {
+        svg {
+          fill: red;
+        }
+        transition: all 0.3s ease-in-out;
+      }
+    }
+    .box_time {
+      display: flex;
+      align-items: center;
+      gap: 0 0.5rem;
+      .form-time {
+        margin-bottom: 0;
+        // border: 1px solid;
+        // flex: 1;
+        width: calc(100% - 15rem);
+        // margin-left: 10px;
+        .base-input {
+          .base-input__input {
+            input {
+              padding-left: 0.8rem;
+              padding-right: 0.8rem;
+              line-height: 1rem;
+              //   margin-top: 1.2rem;
+              font-size: 1.4rem;
+              text-align: center;
+              border: 1px solid #eeeeef;
+              border-radius: 10px;
+            }
+          }
+        }
+      }
+
+      .title_time {
+        font-size: 1.4rem;
+        font-weight: 400;
+      }
+    }
+  }
+  .btn_add_time {
+    border: none;
+    border-radius: 2px;
+    padding: 0.5rem 1rem;
+    font-size: 14px;
+    color: blue;
+    outline: none; // Bỏ viền khi click
+    box-shadow: none; // Bỏ hiệu ứng bóng khi click
+  }
+}

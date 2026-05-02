@@ -1,0 +1,23 @@
+.modal-overlap-OLA {
+  .form-overlap-OLA {
+    .modal-body {
+      overflow: auto;
+      padding: 0;
+    }
+    .list-overlap-OLA {
+      padding: 16px;
+      max-height: calc(100vh - 200px);
+      overflow-y: auto;
+      .item-overlap-OLA {
+        margin-top: 0;
+        padding: 5px;
+        border-bottom: 1px solid #e0e0e0;
+        .text-overlap-OLA {
+          font-size: 14px;
+          color: red;
+          font-weight: 500;
+        }
+      }
+    }
+  }
+}

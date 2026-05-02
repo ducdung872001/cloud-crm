@@ -1,0 +1,341 @@
+.table-participant-rule {
+  padding-left: 1.6rem;
+  // height: calc(100% - 21rem);
+  display: flex;
+  flex-direction: column;
+
+  .no-data {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    gap: 1rem;
+    height: 20rem;
+    font-size: 1.6rem;
+    font-weight: 400;
+    color: var(--extra-color-50);
+  }
+  .action-field-add {
+    display: flex;
+    padding: 1rem 0;
+    gap: 0.8rem;
+  }
+  .table-container {
+    max-width: 100%;
+    // max-height: calc(100% - 120px);
+    // height: calc(100% - 120px);
+    min-height: 35rem;
+    // height: 100%;
+    // overflow: auto;
+    // display: flex;
+    // flex-direction: column;
+    // align-items: start;
+    // justify-content: start;
+    // box-shadow: inset 0 4px 6px rgba(0.1, 0.1, 0.1, 0.1);
+    // border-top: 1px solid var(--border-color);
+    // border-bottom: 1px solid var(--border-color);
+    .styled-table {
+      border-collapse: collapse;
+      //   width: 100%;
+      table-layout: fixed;
+      th {
+        position: relative;
+        padding: 1rem;
+        min-width: 16rem;
+        min-height: 5rem;
+        .form-field__header {
+          display: flex;
+          align-items: center;
+          .popover--alignment-left {
+            left: -30px;
+            top: -10px;
+          }
+          .edit-position {
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+          }
+          .column-stt-name {
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+          }
+          .column-name {
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+          }
+          .edit-position-column {
+            display: none;
+            bottom: 0;
+            width: 100%;
+            z-index: 2;
+            cursor: pointer;
+
+            svg {
+              width: 2rem;
+              height: 2rem;
+              fill: blue;
+            }
+          }
+          .delete-column {
+            position: absolute;
+            top: 0px;
+            right: 0px;
+            display: none;
+            width: 3rem;
+            align-items: center;
+            z-index: 2;
+            cursor: pointer;
+            background-color: var(--primary-color-10);
+            padding-left: 0.4rem;
+
+            svg {
+              width: 2rem;
+              height: 2rem;
+              fill: red;
+            }
+          }
+          .edit-column {
+            position: absolute;
+            top: 0px;
+            right: 0px;
+            display: none;
+            width: 2rem;
+            align-items: center;
+            z-index: 2;
+            cursor: pointer;
+            background-color: var(--primary-color-10);
+            padding-left: 0.4rem;
+
+            svg {
+              width: 1.5rem;
+              height: 1.5rem;
+              fill: blue;
+            }
+          }
+        }
+        &:hover {
+          .edit-position-column {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            color: blue;
+          }
+          .delete-column {
+            display: flex;
+          }
+          .edit-column {
+            display: flex;
+          }
+          .column-name {
+            display: none;
+          }
+          background: #bec3c9;
+        }
+      }
+      .column-stt {
+        min-width: 5rem;
+        max-width: 5rem;
+      }
+      .column-condition {
+      }
+      .column-decision {
+        background-color: #d6dfe9;
+      }
+      .column-body-stt {
+        .popover--alignment-left {
+          left: -7px;
+          top: -10px;
+        }
+        .index--number {
+          cursor: pointer;
+        }
+        .icon--gear {
+          display: none;
+        }
+        &:hover {
+          background: #bec3c9;
+          .index--number {
+            display: none;
+          }
+          .icon--gear {
+            // padding-left: 2rem;
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            svg {
+              width: 2rem;
+              height: 2rem;
+              fill: blue;
+            }
+          }
+        }
+      }
+      .column-body-condition {
+        .icon--pen {
+          display: none;
+        }
+        &:hover {
+          border: 1px solid blue;
+          .icon--pen {
+            background: #bec3c9;
+            position: absolute;
+            top: 0px;
+            right: 0px;
+            width: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            padding: 1px;
+            border-radius: 2px;
+            z-index: 9;
+            svg {
+              width: 2rem;
+              height: 100%;
+              fill: blue;
+            }
+          }
+        }
+      }
+      td {
+        .popover--alignment-left {
+          left: 193px;
+          top: -27px;
+        }
+        .select-field {
+          .select-custom {
+            width: 100%;
+            min-width: 22rem;
+          }
+        }
+      }
+      // Áp dụng màu đan xen cho các hàng
+      // tr:nth-child(odd) {
+      //   background-color: #cccbcb; // Màu cho hàng lẻ
+      // }
+
+      // tr:nth-child(even) {
+      //   background-color: #ffffff; // Màu cho hàng chẵn
+      // }
+    }
+    .styled-table th,
+    .styled-table td {
+      position: relative;
+      border: 1px solid #ccc;
+      text-align: center;
+      .td-multil-child {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        //   display: grid;
+        //   grid-template-rows: 1fr; /* 1 hàng */
+        //   grid-template-columns: repeat(var(--columns), 1fr); /* Số cột dựa trên giá trị biến */
+        .field-child {
+          width: 100%;
+          height: 46px;
+          // border: 1px solid red;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          border-right: 1px solid var(--extra-color-20);
+          &:last-child {
+            border-right: 0;
+          }
+        }
+      }
+      .comtainer-compare-in {
+        width: 100%;
+        display: flex;
+        gap: 1rem;
+        align-items: center;
+        justify-content: start;
+        .base-select {
+          width: 82px;
+        }
+      }
+      .component,
+      .component_special {
+        min-width: 24rem;
+        padding: 8px;
+        .base-textarea {
+          width: 100%;
+          padding: 0;
+          padding-top: 0.8rem;
+
+          .base-textarea-row {
+            min-height: 46px;
+          }
+          label {
+            textarea {
+              border: none !important;
+              padding: 0;
+              resize: none;
+              max-height: none;
+            }
+          }
+        }
+        .base-input {
+          width: 100%;
+          padding-left: 1rem;
+          .base-input__input {
+            // width: 100%;
+            input {
+              border-bottom: 0;
+            }
+          }
+        }
+        .italic-text {
+          font-style: italic;
+        }
+        .component-compare-in {
+          width: 100%;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          gap: 1rem;
+          max-width: 40rem;
+          // flex-wrap: wrap;
+          overflow: scroll;
+          .value-compare-in {
+            padding: 2px 5px;
+            border: 1px solid var(--border-color);
+            background: linear-gradient(to bottom, var(--white-color), var(--extra-color-5));
+            border-radius: 2px;
+            white-space: nowrap;
+          }
+          .add-value-compare-in {
+            cursor: pointer;
+          }
+        }
+      }
+      .component {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 1rem;
+        .base-select {
+          .select-custom {
+            width: 82px;
+          }
+        }
+      }
+      .component_special {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 3rem;
+        .base-select {
+          width: 70%;
+        }
+      }
+    }
+  }
+}

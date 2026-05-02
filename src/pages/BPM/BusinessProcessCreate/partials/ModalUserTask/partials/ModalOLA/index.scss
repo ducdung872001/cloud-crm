@@ -1,0 +1,107 @@
+.modal-setting-OLA {
+  .form-setting-OLA {
+    .form-switch-type {
+      max-height: 48rem;
+      overflow: auto;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+
+      .form-group {
+        // width: 100%;
+
+        .radio-list {
+          width: 100%;
+          display: flex;
+          align-items: center;
+          .radio-list__title {
+            width: 12rem;
+          }
+          .form-group {
+            width: 100%;
+            display: flex;
+            align-items: center;
+            flex-wrap: wrap;
+            justify-content: flex-start;
+            gap: 0 2rem;
+            margin-top: 0rem;
+
+            .base-radio {
+              margin: 0;
+            }
+          }
+        }
+      }
+
+      .history-ola{
+        font-size: 14px;
+        font-weight: 500;
+        color: #ED1B34;
+        cursor: pointer;
+        &:hover {
+          text-decoration: underline;
+        }
+      }
+    }
+    .setting-OLA {
+      .box_line_date {
+        display: flex;
+        align-items: center;
+        margin-top: 0rem;
+
+        .title_time {
+          font-size: 1.4rem;
+          font-weight: 600;
+          width: 13rem;
+          //   border: 1px solid;
+        }
+
+        .box_setting_time {
+          display: flex;
+          align-items: center;
+          gap: 0 1rem;
+          .box_time {
+            display: flex;
+            align-items: center;
+            gap: 0 1rem;
+            .form-group {
+              // border: 1px solid;
+              // flex: 1;
+              width: 6rem;
+              // margin-left: 10px;
+              .base-input {
+                .base-input__input {
+                  input {
+                    padding-left: 0.8rem;
+                    padding-right: 0.8rem;
+                    line-height: 1rem;
+                    margin-top: 1.2rem;
+                    font-size: 1.4rem;
+                    text-align: center;
+                    border: 1px solid #eeeeef;
+                    border-radius: 10px;
+                  }
+                }
+              }
+            }
+
+            .title_time {
+              font-size: 1.4rem;
+              font-weight: 400;
+            }
+          }
+        }
+      }
+
+      .violation_sla {
+        .title_violation {
+          font-size: 1.4rem;
+          font-weight: 600;
+        }
+
+        .box_violation {
+        }
+      }
+    }
+  }
+}

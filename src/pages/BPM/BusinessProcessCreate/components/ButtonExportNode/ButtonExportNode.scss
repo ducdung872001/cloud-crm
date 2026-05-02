@@ -1,0 +1,21 @@
+.button-export-node {
+    .btn-setting {
+        opacity: 0.5;
+        margin-right: 10px;
+        svg {
+          fill: var(--black-color);
+          color: var(--black-color);
+          width: 2.1rem;
+          height: 2.1rem;
+        }
+        &:hover,
+        &:focus {
+          opacity: 0.75;
+          background: none;
+          box-shadow: none;
+          svg{
+            fill: var(--primary-color);
+          }
+        }
+    }
+}

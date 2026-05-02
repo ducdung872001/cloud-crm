@@ -1,0 +1,23 @@
+.modal-list-grid {
+    .form-list-grid {
+      .box-table{
+        margin-top: 1rem;
+        margin-bottom: 0rem;
+        .pagination{
+          justify-content: center;
+        }
+        .count-item{
+          display: none;
+        }
+        .display-item{
+          display: none !important;
+        }
+      }
+      .modal-body {
+        padding: 0;
+      }
+  
+   
+    }
+  }
+  

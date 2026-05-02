@@ -1,0 +1,21 @@
+.modal-add-level {
+  .form-level-group {
+    .list-form-group {
+      .form-group {
+        .radio-list {
+          .form-group {
+            display: flex;
+            align-items: center;
+            gap: 0 2rem;
+
+            .base-radio {
+              & + .base-radio {
+                margin-top: 0;
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

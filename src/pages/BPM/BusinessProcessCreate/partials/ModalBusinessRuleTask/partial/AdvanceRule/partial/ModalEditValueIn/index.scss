@@ -1,0 +1,229 @@
+.modal-edit-value-in {
+  .form-mapping {
+    .modal-body {
+      max-height: calc(100vh - 20rem);
+      padding: 0;
+      overflow-y: auto;
+    }
+
+    .container-header {
+      display: flex;
+      flex-shrink: 0;
+      align-items: center;
+      justify-content: space-between;
+      padding: 1.6rem;
+      border-bottom: 1px solid var(--border-color);
+      border-top-left-radius: 0.3rem;
+      border-top-right-radius: 0.3rem;
+      .box-title {
+        display: flex;
+        align-items: center;
+        gap: 0 1rem;
+      }
+
+      .container-button {
+        display: flex;
+        align-items: center;
+      }
+      h4 {
+        font-size: 1.8rem;
+        margin: 0;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        overflow: hidden;
+        // width: calc(100% - 3rem);
+        font-weight: 700;
+        span {
+          font-weight: 400;
+        }
+      }
+      .btn-close {
+        opacity: 0.5;
+        svg {
+          fill: var(--black-color);
+          color: var(--black-color);
+        }
+        &:hover,
+        &:focus {
+          opacity: 0.75;
+          background: none;
+          box-shadow: none;
+        }
+      }
+      .btn-setting {
+        opacity: 0.5;
+        margin-right: 10px;
+        svg {
+          fill: var(--black-color);
+          color: var(--black-color);
+          width: 2.1rem;
+          height: 2.1rem;
+        }
+        &:hover,
+        &:focus {
+          opacity: 0.75;
+          background: none;
+          box-shadow: none;
+          svg {
+            fill: var(--primary-color);
+          }
+        }
+      }
+    }
+
+    .list-form-group {
+      //Lưới 2 cột
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 2rem;
+      padding: 2rem;
+      .form-group {
+        width: 100%;
+        margin-bottom: 0;
+        .input-key {
+          label {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: var(--text-color);
+            margin-bottom: 0;
+            span {
+              color: var(--error-color);
+            }
+          }
+          .container-select-mapping {
+            width: 100%;
+            display: flex;
+            align-items: center;
+            border: 1px solid var(--border-color);
+            padding: 0 1rem;
+            border-radius: 5px;
+
+            .input-text {
+              width: 100%;
+              .base-input__input {
+                input {
+                  border-bottom: 0;
+                }
+              }
+            }
+
+            .select-mapping {
+              width: 100%;
+              background-color: #f3f3f3;
+              .base-select {
+                .select-custom {
+                  .css-16xfy0z-control {
+                    border-bottom: 0;
+                  }
+                  .css-s70ol2-control {
+                    border-bottom: 0;
+                  }
+                }
+              }
+            }
+            .icon-change-select {
+              cursor: pointer;
+              svg {
+                width: 1.8rem;
+                height: 1.8rem;
+                fill: var(--warning-color);
+              }
+            }
+          }
+        }
+      }
+      .form-group-full {
+        width: 100%;
+        margin-bottom: 0;
+        //Phần tử này chiếm 2 cột
+        grid-column: span 2;
+        .options__attribute,
+        .attribute__item {
+          width: 100%;
+          display: flex;
+          align-items: center;
+          gap: 0 0.8rem;
+          align-items: center;
+
+          .attribute__default,
+          .list-field-attribute {
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            gap: 0 0.8rem;
+
+            .form-group {
+              // width: 100%;
+              width: calc(100% - 1.6rem);
+            }
+          }
+
+          .add-attribute,
+          .remove-attribute {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            .icon-add,
+            .icon-remove {
+              cursor: pointer;
+
+              svg {
+                width: 2rem;
+                height: 2rem;
+                fill: var(--success-color);
+              }
+            }
+          }
+        }
+        .list__attribute {
+          width: 100%;
+          display: flex;
+          flex-direction: column;
+          gap: 1.2rem 0;
+          border: 1px dashed var(--border-color);
+          border-radius: 5px;
+          padding: 1rem;
+
+          .attribute__item {
+            .remove-attribute {
+              .icon-remove {
+                svg {
+                  fill: var(--error-color);
+                }
+              }
+            }
+          }
+        }
+        .add-value {
+          cursor: pointer;
+          margin-top: 1rem;
+          border: 1px solid var(--border-color);
+          border-radius: 5px;
+          padding: 0.5rem;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          background-color: var(--border-color);
+          .icon-add {
+            cursor: pointer;
+
+            svg {
+              width: 2.2rem;
+              height: 2.2rem;
+              fill: var(--success-color);
+            }
+          }
+          &:hover {
+            background-color: var(--primary-color);
+            .icon-add {
+              svg {
+                fill: var(--white-color);
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

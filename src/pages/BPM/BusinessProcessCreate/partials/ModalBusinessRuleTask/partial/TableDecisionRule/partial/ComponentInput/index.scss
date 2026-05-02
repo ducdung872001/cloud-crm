@@ -1,0 +1,84 @@
+.component {
+  min-width: 24rem;
+  padding: 8px;
+  .base-textarea {
+    width: 100%;
+    padding: 0;
+    padding-top: 0.8rem;
+
+    .base-textarea-row {
+      min-height: 46px;
+    }
+    label {
+      textarea {
+        border: none !important;
+        padding: 0;
+        resize: none;
+        max-height: none;
+      }
+    }
+  }
+  .base-input {
+    width: 100%;
+    padding-left: 1rem;
+    .base-input__input {
+      // width: 100%;
+      input {
+        border-bottom: 0;
+      }
+    }
+  }
+  .base-datepicker {
+    .react-datepicker__input-container {
+      input {
+        border: none;
+      }
+    }
+  }
+  .select-field {
+    .base-select {
+      .select-custom {
+        div[class*="-control"] {
+          border: none;
+        }
+      }
+    }
+  }
+  .italic-text {
+    font-style: italic;
+  }
+  .component-compare-in {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 1rem;
+    max-width: 40rem;
+    // flex-wrap: wrap;
+    overflow: scroll;
+    .value-compare-in {
+      padding: 2px 5px;
+      border: 1px solid var(--border-color);
+      background: linear-gradient(to bottom, var(--white-color), var(--extra-color-5));
+      border-radius: 2px;
+      white-space: nowrap;
+    }
+    .add-value-compare-in {
+      cursor: pointer;
+    }
+  }
+}
+.component {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  .base-select {
+    .select-custom {
+      width: 82px;
+    }
+  }
+}
+.component-compare-in-lookup {
+  width: 40rem;
+}

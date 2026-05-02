@@ -1,0 +1,32 @@
+.field-range-error {
+  //   border: 2px solid red;
+  .component {
+    .base-datepicker {
+      margin-top: 5px;
+      .has-error {
+        font-size: 12px;
+        font-weight: 400;
+        text-align: start;
+      }
+    }
+    .base-input__input {
+      margin-top: 5px;
+      .has-error {
+        font-size: 12px;
+        font-weight: 400;
+        text-align: start;
+      }
+    }
+  }
+}
+.field-child {
+  .component {
+    .base-datepicker {
+      .react-datepicker__input-container {
+        input {
+          border: none;
+        }
+      }
+    }
+  }
+}
