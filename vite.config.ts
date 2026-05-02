@@ -182,26 +182,31 @@ export default defineConfig(({ mode }) => {
         // Proxy BE endpoints to localhost:8080 (SSO + authenticator + microservices)
         // → tránh CORS khi FE ở 4000 gọi BE ở 8080.
         // Mỗi prefix dưới đây khớp với nhánh xử lý trong fetchConfig.ts line 65-86.
-        proxy: Object.fromEntries(
-          [
-            "/authenticator",
-            "/adminapi",
-            "/api",
-            "/bizapi",
-            "/billing",
-            "/care",
-            "/contract",
-            "/customer",
-            "/finance",
-            "/integration",
-            "/inventory",
-            "/logistics",
-            "/market",
-            "/notification",
-            "/operation",
-            "/sales",
-          ].map((p) => [p, { target: process.env.VITE_BE_PROXY || "http://localhost:8080", changeOrigin: true, secure: false }])
-        ),
+        proxy: (() => {
+          const defaultTarget = process.env.VITE_BE_PROXY || "http://localhost:8080";
+          const bpmTarget = process.env.VITE_BPM_PROXY || defaultTarget;
+          const bizTarget = process.env.VITE_BIZ_PROXY || defaultTarget;
+          const opt = (target) => ({ target, changeOrigin: true, secure: false });
+          return {
+            "/bpmapi": opt(bpmTarget),
+            "/billing": opt(bizTarget),
+            "/care": opt(bizTarget),
+            "/contract": opt(bizTarget),
+            "/customer": opt(bizTarget),
+            "/finance": opt(bizTarget),
+            "/integration": opt(bizTarget),
+            "/inventory": opt(bizTarget),
+            "/logistics": opt(bizTarget),
+            "/market": opt(bizTarget),
+            "/notification": opt(bizTarget),
+            "/operation": opt(bizTarget),
+            "/sales": opt(bizTarget),
+            "/authenticator": opt(defaultTarget),
+            "/adminapi": opt(defaultTarget),
+            "/api": opt(defaultTarget),
+            "/bizapi": opt(defaultTarget),
+          };
+        })(),
       },
     }),
 
