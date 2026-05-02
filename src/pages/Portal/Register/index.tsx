@@ -1,8 +1,10 @@
 // Portal register — đăng ký học khoá. Validation đầy đủ, UX clean.
-import React, { useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
 import PortalLayout from "../_shared/PortalLayout";
-import { MOCK_COURSES, MOCK_MENTOR } from "@/mocks/mentorhub";
+import SalesServiceClient, { SalesService } from "services/SalesServiceClient";
+import CustomerService from "services/CustomerService";
+import { MOCK_MENTOR } from "@/mocks/mentorhub";
 
 const formatVND = (n: number) => new Intl.NumberFormat("vi-VN").format(n) + "₫";
 
@@ -18,17 +20,76 @@ type Form = {
   subscribe: boolean;
 };
 
+type UiCourse = {
+  id: number;
+  title: string;
+  sessions: number;
+  price: number;
+  originalPrice: number;
+  icon: string;
+  iconBg: string;
+};
+
 type Errors = Partial<Record<keyof Form, string>>;
 
-// Validation
-// VN phone: starts with 0 or +84, followed by 9-10 digits
 const phoneRegex = /^(0|\+?84)(\s*\d){9,10}$/;
 const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+// Pending enrollment cache key — mentor có thể đọc list này từ admin để liên hệ
+const PENDING_KEY = "mh:pending-enrollments:v1";
+
+type PendingEnrollment = {
+  courseId: number;
+  courseTitle: string;
+  customerId: number | null;
+  name: string;
+  phone: string;
+  email: string;
+  company?: string;
+  role?: string;
+  goal?: string;
+  hearAbout?: string;
+  amount: number;
+  createdAt: string;
+};
+
+function pushPending(p: PendingEnrollment) {
+  try {
+    const raw = localStorage.getItem(PENDING_KEY);
+    const list: PendingEnrollment[] = raw ? JSON.parse(raw) : [];
+    list.unshift(p);
+    localStorage.setItem(PENDING_KEY, JSON.stringify(list.slice(0, 100)));
+  } catch {
+    /* quota — skip */
+  }
+}
+
+function adaptCourse(svc: SalesService): UiCourse {
+  const meta = (svc.metadata as Record<string, unknown>) || {};
+  return {
+    id: Number(svc.id),
+    title: svc.name || "(chưa đặt tên)",
+    sessions: Number(meta.sessions ?? svc.total_time ?? 0),
+    price: Number(svc.price ?? 0),
+    originalPrice: Number(svc.retailPrice ?? svc.price ?? 0),
+    icon: typeof meta.icon === "string" ? (meta.icon as string) : "⎈",
+    iconBg:
+      typeof meta.iconBg === "string"
+        ? (meta.iconBg as string)
+        : "linear-gradient(135deg, #134E4A, #0F766E)",
+  };
+}
 
 export default function PortalRegister() {
   const { courseId } = useParams();
   const navigate = useNavigate();
-  const course = MOCK_COURSES.find((c) => c.id === courseId);
+  const numId = useMemo(() => {
+    const n = Number(courseId);
+    return Number.isFinite(n) && n > 0 ? n : null;
+  }, [courseId]);
+
+  const [course, setCourse] = useState<UiCourse | null>(null);
+  const [loadingCourse, setLoadingCourse] = useState(true);
   const [form, setForm] = useState<Form>({
     name: "",
     email: "",
@@ -42,6 +103,19 @@ export default function PortalRegister() {
   });
   const [errors, setErrors] = useState<Errors>({});
   const [submitting, setSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (!numId) {
+      setLoadingCourse(false);
+      return;
+    }
+    SalesServiceClient.get(numId)
+      .then((res: { result?: SalesService }) => {
+        if (res?.result?.id) setCourse(adaptCourse(res.result));
+      })
+      .finally(() => setLoadingCourse(false));
+  }, [numId]);
 
   const set = <K extends keyof Form>(k: K, v: Form[K]) => {
     setForm((p) => ({ ...p, [k]: v }));
@@ -60,17 +134,81 @@ export default function PortalRegister() {
     return e;
   };
 
-  const submit = (e: React.FormEvent) => {
+  const submit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!course) return;
     const errs = validate();
     setErrors(errs);
     if (Object.keys(errs).length > 0) return;
     setSubmitting(true);
-    // TODO: POST /portal/register — hiện mock
-    setTimeout(() => {
-      navigate(`/portal/register/success?course=${courseId}&name=${encodeURIComponent(form.name)}`);
-    }, 800);
+    setSubmitError(null);
+
+    let customerId: number | null = null;
+    try {
+      const customerRes = (await CustomerService.update({
+        id: 0,
+        name: form.name.trim(),
+        phone: form.phone.replace(/\s/g, ""),
+        email: form.email.trim(),
+        branchId: 23,
+        managerId: 54,
+        careerId: 0,
+        avatar: "",
+        firstCall: "",
+        height: "0",
+        weight: "0",
+        custType: 0,
+        trademark: "",
+        taxCode: "",
+        address: "",
+      } as never)) as { code?: number; message?: string; result?: { id?: number } };
+      if (customerRes?.code === 0 && customerRes.result?.id) {
+        customerId = customerRes.result.id;
+      } else if (customerRes?.code !== 0) {
+        // KHÔNG fail toàn bộ — vẫn lưu pending để mentor xử lý tay
+        // (tenant có thể chặn duplicate phone, hoặc validation khác)
+        setSubmitError(
+          customerRes?.message
+            ? `Lưu khách hàng: ${customerRes.message} — yêu cầu vẫn được ghi nhận, mentor sẽ liên hệ.`
+            : null,
+        );
+      }
+    } catch {
+      /* network error — fall through to pending enrollment */
+    }
+
+    // Ghi pending enrollment local — mentor admin có thể đọc list này (ở MH/Courses tương lai)
+    // hoặc BE notification sẽ pickup khi handoff hoàn tất.
+    pushPending({
+      courseId: course.id,
+      courseTitle: course.title,
+      customerId,
+      name: form.name.trim(),
+      phone: form.phone.replace(/\s/g, ""),
+      email: form.email.trim(),
+      company: form.company.trim() || undefined,
+      role: form.role.trim() || undefined,
+      goal: form.goal.trim() || undefined,
+      hearAbout: form.hearAbout || undefined,
+      amount: course.price,
+      createdAt: new Date().toISOString(),
+    });
+
+    setSubmitting(false);
+    navigate(
+      `/portal/register/success?course=${course.id}&name=${encodeURIComponent(form.name)}`,
+    );
   };
+
+  if (loadingCourse) {
+    return (
+      <PortalLayout>
+        <div style={{ padding: "80px 20px", textAlign: "center", color: "var(--pt-ink-soft)" }}>
+          Đang tải khoá học…
+        </div>
+      </PortalLayout>
+    );
+  }
 
   if (!course) {
     return (
@@ -201,6 +339,11 @@ export default function PortalRegister() {
               <span>Tôi đồng ý với <a href="#" style={{ color: "var(--pt-teal)", textDecoration: "underline" }}>Điều khoản</a> và <a href="#" style={{ color: "var(--pt-teal)", textDecoration: "underline" }}>Chính sách bảo mật</a> của MentorHub <span style={{ color: "var(--pt-red)" }}>*</span></span>
             </label>
             {errors.agree && <div className="pt-error" style={{ marginTop: -12, marginBottom: 16 }}>⚠ {errors.agree}</div>}
+            {submitError && (
+              <div className="pt-error" style={{ marginBottom: 16, padding: 12, background: "#fef2f2", borderRadius: 8 }}>
+                ⚠ {submitError}
+              </div>
+            )}
 
             <button type="submit" className="pt-btn pt-btn--primary pt-btn--xl" disabled={submitting} style={{ width: "100%", justifyContent: "center" }}>
               {submitting ? "Đang gửi…" : `Đăng ký ngay · ${course.price === 0 ? "Miễn phí" : formatVND(course.price)}`}

@@ -1,20 +1,110 @@
 // Portal mentor detail — public mentor profile with their courses + share
-import React, { useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import PortalLayout from "../_shared/PortalLayout";
 import ShareBlock from "../_shared/ShareBlock";
+import SalesServiceClient, { SalesService } from "services/SalesServiceClient";
+import { apiGet } from "services/apiHelper";
+import { urlsApi } from "configs/urls";
 import { MENTORS } from "../Mentors";
-import { MOCK_COURSES, MOCK_REVIEWS } from "@/mocks/mentorhub";
+import { MOCK_REVIEWS } from "@/mocks/mentorhub";
 
 const formatVND = (n: number) => new Intl.NumberFormat("vi-VN").format(n) + "₫";
 const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const phoneRegex = /^(0|\+?84)(\s*\d){9,10}$/;
 
-type Mentor = (typeof MENTORS)[number];
+type MentorMock = (typeof MENTORS)[number];
+
+type EmployeeFromBE = {
+  id: number;
+  name?: string;
+  avatar?: string;
+  phone?: string;
+  email?: string;
+  title?: string;
+  branchName?: string;
+  departmentName?: string;
+};
+
+type MentorView = {
+  id: string;
+  name: string;
+  short: string;
+  title: string;
+  bio: string;
+  avatar?: string;
+  avatarBg: string;
+  tags: string[];
+  verified: boolean;
+  courses: number;
+  students: number;
+  nps: number;
+};
+
+type CourseCard = {
+  id: number;
+  title: string;
+  status: "live" | "upcoming" | "draft" | "ended";
+  sessions: number;
+  sessionsDone: number;
+  price: number;
+  originalPrice: number;
+  registered: number;
+  capacity: number;
+  icon: string;
+  iconBg: string;
+};
+
+function adaptCourseCard(svc: SalesService): CourseCard {
+  const meta = (svc.metadata as Record<string, unknown>) || {};
+  const status = (svc.status || "").toUpperCase();
+  const done = Number(meta.sessionsDone ?? 0);
+  const total = Number(meta.sessions ?? svc.total_time ?? 0);
+  let ui: CourseCard["status"] = "draft";
+  if (status === "ARCHIVED") ui = "ended";
+  else if (status === "DRAFT" || svc.active === 0) ui = "draft";
+  else if (total > 0 && done >= total) ui = "ended";
+  else if (done === 0) ui = "upcoming";
+  else ui = "live";
+  return {
+    id: Number(svc.id),
+    title: svc.name || "(chưa đặt tên)",
+    status: ui,
+    sessions: total,
+    sessionsDone: done,
+    price: Number(svc.price ?? 0),
+    originalPrice: Number(svc.retailPrice ?? svc.price ?? 0),
+    registered: Number(meta.registered ?? 0),
+    capacity: Number(meta.capacity ?? 0),
+    icon: typeof meta.icon === "string" ? (meta.icon as string) : "⎈",
+    iconBg:
+      typeof meta.iconBg === "string"
+        ? (meta.iconBg as string)
+        : "linear-gradient(135deg, #134E4A, #0F766E)",
+  };
+}
+
+function shortName(full: string): string {
+  return full
+    .split(/\s+/)
+    .filter(Boolean)
+    .map((w) => w[0])
+    .join("")
+    .toUpperCase()
+    .slice(0, 2);
+}
 
 export default function PortalMentorDetail() {
   const { id } = useParams();
-  const mentor = MENTORS.find((m) => m.id === id);
+  // route :id can be either mock format ("MT-001") OR numeric (real employeeId)
+  const numId = useMemo(() => {
+    const n = Number(id);
+    return Number.isFinite(n) && n > 0 ? n : null;
+  }, [id]);
+
+  const [mentor, setMentor] = useState<MentorView | null>(null);
+  const [courses, setCourses] = useState<CourseCard[]>([]);
+  const [loading, setLoading] = useState(true);
   const [showMessage, setShowMessage] = useState(false);
   const [showBooking, setShowBooking] = useState(false);
   const [toast, setToast] = useState<string | null>(null);
@@ -23,6 +113,97 @@ export default function PortalMentorDetail() {
     setToast(text);
     setTimeout(() => setToast(null), 4000);
   };
+
+  useEffect(() => {
+    let cancelled = false;
+    const ctrl = new AbortController();
+
+    async function load() {
+      setLoading(true);
+      // 1) Mock-format id → use mock data only (no real BE for fictional mentors)
+      if (!numId) {
+        const mock = MENTORS.find((m) => m.id === id);
+        if (cancelled) return;
+        if (!mock) {
+          setMentor(null);
+        } else {
+          setMentor({
+            id: mock.id,
+            name: mock.name,
+            short: mock.short,
+            title: mock.title,
+            bio: mock.bio,
+            avatarBg: mock.avatarBg,
+            tags: mock.tags,
+            verified: mock.verified,
+            courses: mock.courses,
+            students: mock.students,
+            nps: mock.nps,
+          });
+        }
+        setCourses([]);
+        setLoading(false);
+        return;
+      }
+      // 2) Numeric id → fetch real employee + their courses
+      const [empRes, svcRes] = await Promise.all([
+        apiGet(urlsApi.employee.detail, { id: numId }, ctrl.signal).catch(() => null),
+        SalesServiceClient.list(
+          { type: "COURSE_LIVE", supplierId: numId, status: "ACTIVE", page: 1, limit: 50 },
+          ctrl.signal,
+        ).catch(() => null),
+      ]);
+      if (cancelled) return;
+
+      const emp = (empRes as { result?: EmployeeFromBE })?.result;
+      const svcResult = (svcRes as { result?: { items?: SalesService[] } | SalesService[] })?.result ?? [];
+      const items: SalesService[] = Array.isArray(svcResult)
+        ? (svcResult as SalesService[])
+        : ((svcResult as { items?: SalesService[] }).items ?? []);
+      const cards = items.map(adaptCourseCard);
+
+      if (emp && emp.id) {
+        setMentor({
+          id: String(emp.id),
+          name: emp.name || `Mentor #${emp.id}`,
+          short: shortName(emp.name || "M"),
+          title: emp.title || emp.departmentName || "Mentor",
+          bio: emp.title
+            ? `${emp.title}${emp.branchName ? " · " + emp.branchName : ""}`
+            : "Mentor đang xây dựng hồ sơ giới thiệu.",
+          avatar: emp.avatar,
+          avatarBg: "#134E4A",
+          tags: [],
+          verified: false,
+          courses: cards.length,
+          students: cards.reduce((s, c) => s + c.registered, 0),
+          nps: 0,
+        });
+        setCourses(cards);
+      } else {
+        // Employee không tồn tại — fallback mock if matches, else null
+        setMentor(null);
+        setCourses([]);
+      }
+      setLoading(false);
+    }
+
+    load();
+    return () => {
+      cancelled = true;
+      ctrl.abort();
+    };
+  }, [id, numId]);
+
+  if (loading) {
+    return (
+      <PortalLayout>
+        <div style={{ padding: "80px 20px", textAlign: "center", color: "var(--pt-ink-soft)" }}>
+          Đang tải hồ sơ mentor…
+        </div>
+      </PortalLayout>
+    );
+  }
 
   if (!mentor) {
     return (
@@ -36,7 +217,6 @@ export default function PortalMentorDetail() {
   }
 
   document.title = `${mentor.name} · MentorHub`;
-  const courses = MOCK_COURSES.filter((c) => c.status !== "draft").slice(0, mentor.courses);
   const reviews = MOCK_REVIEWS.slice(0, 4);
   const shareUrl = `${location.origin}/crm/portal/mentors/${mentor.id}`;
 
@@ -131,7 +311,6 @@ export default function PortalMentorDetail() {
                 <div className="pt-ccard__title">{c.title}</div>
                 <div className="pt-ccard__meta">
                   <span>{c.sessions} buổi</span>
-                  {c.nps > 0 && <span>★ {c.nps}</span>}
                   <span>{c.registered}/{c.capacity} HV</span>
                 </div>
                 <div className="pt-ccard__foot">

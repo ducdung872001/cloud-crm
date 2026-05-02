@@ -1,10 +1,39 @@
 // Portal mentors list — public directory of mentors
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import PortalLayout from "../_shared/PortalLayout";
-import { MOCK_MENTOR } from "@/mocks/mentorhub";
+import SalesServiceClient, { SalesService } from "services/SalesServiceClient";
+import { apiGet } from "services/apiHelper";
+import { urlsApi } from "configs/urls";
 
-// Extended mentor directory — mock
+type RealMentor = {
+  id: string;
+  numericId: number;
+  name: string;
+  short: string;
+  title: string;
+  bio: string;
+  avatarBg: string;
+  courses: number;
+  students: number;
+  nps: number;
+  tags: string[];
+  verified: boolean;
+};
+
+function shortName(full: string): string {
+  return full
+    .split(/\s+/)
+    .filter(Boolean)
+    .map((w) => w[0])
+    .join("")
+    .toUpperCase()
+    .slice(0, 2);
+}
+
+const PALETTE_BG = ["#134E4A", "#B45309", "#166534", "#7C2D12", "#1E40AF", "#0F766E", "#991B1B"];
+
+// Extended mentor directory — mock fallback (cho những mentor chưa có data thật)
 const MENTORS = [
   { id: "MT-001", name: "Nguyễn Trọng Khoa", short: "NT", title: "Principal Engineer, Ex-Grab", bio: "12 năm kinh nghiệm hệ thống quy mô lớn. Dẫn dắt team 20+ engineers tại Grab Indonesia.", avatarBg: "#134E4A", courses: 3, students: 1240, nps: 4.92, tags: ["Microservices", "Distributed Systems", "K8s"], verified: true },
   { id: "MT-002", name: "Phạm Thu Hà", short: "PH", title: "Senior Product Manager · TPBank", bio: "10 năm product cho banking & fintech. Đã launch 12+ products phục vụ 5M users.", avatarBg: "#B45309", courses: 2, students: 450, nps: 4.88, tags: ["Product Strategy", "Fintech", "B2B SaaS"], verified: true },
@@ -22,8 +51,80 @@ export default function PortalMentors() {
   document.title = "Mentors · MentorHub";
   const [search, setSearch] = useState("");
   const [tag, setTag] = useState("all");
+  const [realMentors, setRealMentors] = useState<RealMentor[]>([]);
+  const [loading, setLoading] = useState(true);
 
-  const filtered = MENTORS.filter((m) => {
+  useEffect(() => {
+    const ctrl = new AbortController();
+    let cancelled = false;
+    async function load() {
+      setLoading(true);
+      // Step 1: fetch all active courses → extract unique supplierIds
+      const svcRes = (await SalesServiceClient.list(
+        { type: "COURSE_LIVE", status: "ACTIVE", page: 1, limit: 200 },
+        ctrl.signal,
+      ).catch(() => null)) as { result?: { items?: SalesService[] } | SalesService[] } | null;
+      const result = svcRes?.result ?? [];
+      const items: SalesService[] = Array.isArray(result)
+        ? (result as SalesService[])
+        : ((result as { items?: SalesService[] }).items ?? []);
+      const supplierMap = new Map<number, { courseCount: number; studentCount: number }>();
+      for (const s of items) {
+        const sid = Number(s.supplierId);
+        if (!sid || !Number.isFinite(sid) || sid <= 0) continue;
+        const meta = (s.metadata as Record<string, unknown>) || {};
+        const reg = Number(meta.registered ?? 0);
+        const cur = supplierMap.get(sid) ?? { courseCount: 0, studentCount: 0 };
+        supplierMap.set(sid, {
+          courseCount: cur.courseCount + 1,
+          studentCount: cur.studentCount + reg,
+        });
+      }
+      // Step 2: fetch each unique employee profile (parallel)
+      const ids = Array.from(supplierMap.keys());
+      const profiles = await Promise.all(
+        ids.map((id) =>
+          apiGet(urlsApi.employee.detail, { id }, ctrl.signal).catch(() => null),
+        ),
+      );
+      if (cancelled) return;
+      const real: RealMentor[] = [];
+      ids.forEach((id, i) => {
+        const empWrap = profiles[i] as { result?: { id?: number; name?: string; title?: string; departmentName?: string; branchName?: string; avatar?: string } } | null;
+        const emp = empWrap?.result;
+        if (!emp || !emp.id) return;
+        const stats = supplierMap.get(id)!;
+        real.push({
+          id: String(emp.id),
+          numericId: id,
+          name: emp.name || `Mentor #${id}`,
+          short: shortName(emp.name || "M"),
+          title: emp.title || emp.departmentName || "Mentor",
+          bio: emp.title
+            ? `${emp.title}${emp.branchName ? " · " + emp.branchName : ""}`
+            : "Mentor đang xây dựng hồ sơ giới thiệu.",
+          avatarBg: PALETTE_BG[i % PALETTE_BG.length],
+          courses: stats.courseCount,
+          students: stats.studentCount,
+          nps: 0,
+          tags: [],
+          verified: false,
+        });
+      });
+      setRealMentors(real);
+      setLoading(false);
+    }
+    load();
+    return () => {
+      cancelled = true;
+      ctrl.abort();
+    };
+  }, []);
+
+  // Hiển thị: real mentors trước, mock list sau (cho marketing showcase)
+  const combined = [...realMentors, ...MENTORS.filter((m) => !realMentors.some((r) => r.name === m.name))];
+
+  const filtered = combined.filter((m) => {
     if (search && !(m.name + m.title + m.bio + m.tags.join(" ")).toLowerCase().includes(search.toLowerCase())) return false;
     return true;
   });
@@ -31,7 +132,7 @@ export default function PortalMentors() {
   return (
     <PortalLayout>
       <section className="pt-hero" style={{ padding: "60px 0 40px" }}>
-        <div className="pt-hero__eyebrow">✦ {MENTORS.length}+ MENTOR ĐANG HOẠT ĐỘNG</div>
+        <div className="pt-hero__eyebrow">✦ {loading ? "Đang tải" : `${combined.length}`} MENTOR ĐANG HOẠT ĐỘNG{realMentors.length > 0 && ` · ${realMentors.length} mentor thật`}</div>
         <h1 style={{ fontSize: 52 }}>
           Gặp những <em>chuyên gia</em> đứng sau mỗi khoá học.
         </h1>

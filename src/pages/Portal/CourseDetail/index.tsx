@@ -1,45 +1,137 @@
 // Portal course detail — public, CONVERSION PAGE. Sticky CTA + share block.
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { Link, useParams, useNavigate } from "react-router-dom";
 import PortalLayout from "../_shared/PortalLayout";
 import ShareBlock from "../_shared/ShareBlock";
-import { MOCK_COURSES, MOCK_MENTOR, MOCK_REVIEWS } from "@/mocks/mentorhub";
+import SalesServiceClient, { SalesService } from "services/SalesServiceClient";
+import SalesOrderService from "services/SalesOrderService";
+import { MOCK_MENTOR, MOCK_REVIEWS } from "@/mocks/mentorhub";
 
 const formatVND = (n: number) => new Intl.NumberFormat("vi-VN").format(n) + "₫";
 
-// Mock syllabus/curriculum for demo
-const SYLLABUS = [
-  { title: "Kiến trúc Microservices căn bản", dur: "2h 30m", desc: "Service boundaries, bounded contexts, principles" },
-  { title: "Service Discovery & Load Balancing", dur: "2h", desc: "Eureka, Consul, client vs server-side discovery" },
-  { title: "API Gateway & Circuit Breakers", dur: "2h 15m", desc: "Spring Cloud Gateway, Resilience4j patterns" },
-  { title: "Event-Driven Communication", dur: "2h 30m", desc: "Kafka, async messaging, saga pattern" },
-  { title: "Service Mesh với Istio", dur: "2h", desc: "Traffic management, security, observability" },
-  { title: "Monitoring & Observability", dur: "1h 45m", desc: "Prometheus, Grafana, distributed tracing" },
-  { title: "Kubernetes deployment", dur: "2h", desc: "Helm, rolling updates, blue-green, canary" },
-  { title: "Case Study + Capstone", dur: "2h 30m", desc: "Full production system review + Q&A" },
-];
+type AgendaItem = { title?: string; description?: string; durationMin?: number };
+type UiCourse = {
+  id: number;
+  title: string;
+  sessions: number;
+  capacity: number;
+  registered: number;
+  price: number;
+  originalPrice: number;
+  intro: string;
+  icon: string;
+  iconBg: string;
+  agenda: AgendaItem[];
+};
+
+function adaptCourse(svc: SalesService): UiCourse {
+  const meta = (svc.metadata as Record<string, unknown>) || {};
+  return {
+    id: Number(svc.id),
+    title: svc.name || "(chưa đặt tên)",
+    sessions: Number(meta.sessions ?? svc.total_time ?? 0),
+    capacity: Number(meta.capacity ?? 0),
+    registered: 0, // sẽ compute on-read sau
+    price: Number(svc.price ?? 0),
+    originalPrice: Number(svc.retailPrice ?? svc.price ?? 0),
+    intro: svc.intro || "",
+    icon: typeof meta.icon === "string" ? (meta.icon as string) : "⎈",
+    iconBg:
+      typeof meta.iconBg === "string"
+        ? (meta.iconBg as string)
+        : "linear-gradient(135deg, #134E4A, #0F766E)",
+    agenda: Array.isArray(meta.agenda) ? (meta.agenda as AgendaItem[]) : [],
+  };
+}
+
+const formatDuration = (min: number): string => {
+  if (!min || min <= 0) return "—";
+  const h = Math.floor(min / 60);
+  const m = min % 60;
+  return h > 0 ? `${h}h${m > 0 ? ` ${m}m` : ""}` : `${m}m`;
+};
 
 export default function PortalCourseDetail() {
   const { id } = useParams();
   const navigate = useNavigate();
-  const course = MOCK_COURSES.find((c) => c.id === id);
+  const numId = useMemo(() => {
+    const n = Number(id);
+    return Number.isFinite(n) && n > 0 ? n : null;
+  }, [id]);
+
+  const [course, setCourse] = useState<UiCourse | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (!numId) {
+      setLoading(false);
+      setError("ID khoá học không hợp lệ");
+      return;
+    }
+    const ctrl = new AbortController();
+    setLoading(true);
+    setError(null);
+    SalesServiceClient.get(numId, ctrl.signal)
+      .then(async (res: { result?: SalesService }) => {
+        const svc = res?.result;
+        if (!svc || !svc.id) {
+          setError("Khoá học không tồn tại hoặc đã bị xoá");
+          return;
+        }
+        const adapted = adaptCourse(svc);
+        // Compute registered từ /sales/order/list (best-effort, không block)
+        try {
+          const orderRes = (await SalesOrderService.list(
+            { productId: numId, status: "PAID", orderType: "COURSE_ENROLLMENT", page: 1, limit: 200 },
+            ctrl.signal,
+          )) as { result?: { items?: unknown[] } | unknown[] };
+          const r = orderRes?.result ?? [];
+          const items = Array.isArray(r) ? r : (r as { items?: unknown[] }).items ?? [];
+          adapted.registered = items.length;
+        } catch {
+          /* compute fail OK, keep 0 */
+        }
+        setCourse(adapted);
+      })
+      .catch((err: Error) => {
+        if (err.name === "AbortError") return;
+        setError(err.message || "Không tải được khoá học");
+      })
+      .finally(() => setLoading(false));
+    return () => ctrl.abort();
+  }, [numId]);
 
   useEffect(() => {
     if (course) document.title = `${course.title} · MentorHub`;
   }, [course]);
+
+  if (loading) {
+    return (
+      <PortalLayout>
+        <div style={{ padding: "80px 20px", textAlign: "center", color: "var(--pt-ink-soft)" }}>
+          Đang tải khoá học…
+        </div>
+      </PortalLayout>
+    );
+  }
 
   if (!course) {
     return (
       <PortalLayout>
         <div style={{ padding: "80px 20px", textAlign: "center" }}>
           <h2>Không tìm thấy khoá học</h2>
+          {error && <p style={{ color: "var(--pt-ink-soft)", marginTop: 8 }}>{error}</p>}
           <Link to="/portal" className="pt-btn pt-btn--primary" style={{ marginTop: 20 }}>← Về trang khoá học</Link>
         </div>
       </PortalLayout>
     );
   }
 
-  const discount = course.originalPrice > course.price ? Math.round((1 - course.price / course.originalPrice) * 100) : 0;
+  const discount =
+    course.originalPrice > course.price && course.originalPrice > 0
+      ? Math.round((1 - course.price / course.originalPrice) * 100)
+      : 0;
   const reviewsForCourse = MOCK_REVIEWS.slice(0, 3);
   const avgRating = reviewsForCourse.reduce((s, r) => s + r.nps, 0) / reviewsForCourse.length;
   const shareUrl = `${location.origin}/crm/portal/courses/${course.id}`;
@@ -54,12 +146,11 @@ export default function PortalCourseDetail() {
         <div className="pt-detail__hero">
           <div>
             <div className="pt-kicker" style={{ marginBottom: 12 }}>
-              ★ {avgRating.toFixed(2)} · {reviewsForCourse.length * 42}+ đánh giá · {course.registered}/{course.capacity} đã đăng ký
+              {course.registered > 0 ? `${course.registered}/${course.capacity} đã đăng ký` : `Mở đăng ký · ${course.capacity} chỗ`}
             </div>
             <h1 className="pt-detail__title">{course.title}</h1>
             <p className="pt-detail__lead">
-              Khoá học {course.sessions} buổi dành cho engineer muốn thăng tiến lên Senior/Staff.
-              Học trực tiếp với {MOCK_MENTOR.name}, {MOCK_MENTOR.title}.
+              {course.intro || `Khoá học ${course.sessions} buổi với mentor.`}
             </p>
             <div className="pt-detail__chips">
               <span className="pt-detail__chip">⏱ {course.sessions} buổi · mỗi buổi 2h</span>
@@ -90,16 +181,26 @@ export default function PortalCourseDetail() {
 
             <div className="pt-detail__section">
               <div className="pt-detail__section-h">GIÁO TRÌNH · {course.sessions} BUỔI</div>
-              {SYLLABUS.slice(0, course.sessions).map((s, i) => (
-                <div key={i} className="pt-detail__syllabus-item">
-                  <div className="pt-detail__syllabus-num">{String(i + 1).padStart(2, "0")}</div>
-                  <div>
-                    <div style={{ fontWeight: 600, marginBottom: 4 }}>{s.title}</div>
-                    <div style={{ fontSize: 13, color: "var(--pt-ink-soft)" }}>{s.desc}</div>
+              {course.agenda.length === 0 ? (
+                <p style={{ color: "var(--pt-ink-soft)", fontSize: 14 }}>
+                  Mentor chưa cập nhật giáo trình chi tiết. Liên hệ trực tiếp để biết thêm.
+                </p>
+              ) : (
+                course.agenda.map((s, i) => (
+                  <div key={i} className="pt-detail__syllabus-item">
+                    <div className="pt-detail__syllabus-num">{String(i + 1).padStart(2, "0")}</div>
+                    <div>
+                      <div style={{ fontWeight: 600, marginBottom: 4 }}>{s.title || `Buổi ${i + 1}`}</div>
+                      {s.description && (
+                        <div style={{ fontSize: 13, color: "var(--pt-ink-soft)" }}>{s.description}</div>
+                      )}
+                    </div>
+                    <div className="pt-mono" style={{ fontSize: 12, color: "var(--pt-ink-soft)" }}>
+                      {formatDuration(s.durationMin || 0)}
+                    </div>
                   </div>
-                  <div className="pt-mono" style={{ fontSize: 12, color: "var(--pt-ink-soft)" }}>{s.dur}</div>
-                </div>
-              ))}
+                ))
+              )}
             </div>
 
             <div className="pt-detail__section">
