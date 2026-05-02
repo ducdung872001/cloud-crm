@@ -20,3 +20,6 @@ yarn-error.log
 tests/reports/
 tests/screenshots/
 tests/.auth-cookies.json
+
+# handoff audit logs (local only — never commit)
+.handoff/
