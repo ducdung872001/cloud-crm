@@ -1,13 +1,22 @@
 import React, { useContext, useEffect, useMemo, useState } from "react";
 import { UserContext, ContextType } from "contexts/userContext";
 import SalesOrderService from "services/SalesOrderService";
-import type { IRevenueSummary } from "@/types/order/commissionModel";
+import CommissionService from "services/CommissionService";
+import type { ICommission, CommissionStatus, IRevenueSummary } from "@/types/order/commissionModel";
 import { MOCK_COURSES, MOCK_KPI } from "@/mocks/mentorhub";
 import "../_shared/styles.scss";
 
 const formatVND = (n: number) => new Intl.NumberFormat("vi-VN").format(Math.round(n)) + "₫";
 
 const isoDate = (d: Date) => d.toISOString().slice(0, 10);
+
+const COMMISSION_PILL: Record<CommissionStatus, string> = {
+  PENDING: "mh__pill--draft",
+  CALCULATED: "mh__pill--upcoming",
+  APPROVED: "mh__pill--amber",
+  PAID: "mh__pill--green",
+  REVERSED: "mh__pill--red",
+};
 
 export default function MHRevenue() {
   document.title = "Doanh thu · MentorHub";
@@ -17,6 +26,8 @@ export default function MHRevenue() {
   const [summary, setSummary] = useState<IRevenueSummary | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [commissions, setCommissions] = useState<ICommission[] | null>(null);
+  const [commissionLoading, setCommissionLoading] = useState(true);
 
   const { from, to } = useMemo(() => {
     const today = new Date();
@@ -45,6 +56,29 @@ export default function MHRevenue() {
         if (err.name !== "AbortError") setError(err.message || "Không tải được dữ liệu doanh thu");
       })
       .finally(() => setLoading(false));
+    return () => ctrl.abort();
+  }, [employeeId, from, to]);
+
+  useEffect(() => {
+    if (!employeeId) {
+      setCommissionLoading(false);
+      return;
+    }
+    const ctrl = new AbortController();
+    setCommissionLoading(true);
+    CommissionService.list(
+      { employeeId, orderType: "COURSE_ENROLLMENT", fromDate: from, toDate: to },
+      ctrl.signal,
+    )
+      .then((res: { result?: ICommission[] | { content?: ICommission[] } } | ICommission[]) => {
+        const raw = (res as { result?: unknown }).result ?? res;
+        const list = Array.isArray(raw) ? raw : ((raw as { content?: ICommission[] })?.content ?? []);
+        setCommissions(list as ICommission[]);
+      })
+      .catch((err: Error) => {
+        if (err.name !== "AbortError") setCommissions([]);
+      })
+      .finally(() => setCommissionLoading(false));
     return () => ctrl.abort();
   }, [employeeId, from, to]);
 
@@ -141,6 +175,47 @@ export default function MHRevenue() {
                   <td className="mh__mono" style={{ textAlign: "right", color: "var(--mh-teal)", fontWeight: 600 }}>{formatVND(c.revenue)}</td>
                   <td className="mh__mono" style={{ textAlign: "right", color: "var(--mh-red)" }}>−{formatVND(c.revenue * 0.3)}</td>
                   <td className="mh__mono" style={{ textAlign: "right", fontWeight: 600 }}>{formatVND(c.revenue * 0.7)}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div className="mh__card" style={{ marginBottom: 24 }}>
+        <h3 style={{ marginBottom: 6 }}>Hoa hồng đã tính (BPM workflow)</h3>
+        <div style={{ fontSize: 12, color: "var(--mh-ink-soft)", marginBottom: 16 }}>
+          Nguồn: <span className="mh__mono">/sales/commission/list</span> · BPM workflow <span className="mh__mono">commission-mentor-v1</span> tính 70/30 và publish <span className="mh__mono">CommissionCalculatedEvent</span>.
+        </div>
+        <div style={{ overflowX: "auto" }}>
+          <table className="mh__table">
+            <thead>
+              <tr>
+                <th>Order</th>
+                <th>Loại</th>
+                <th style={{ textAlign: "right" }}>Gross</th>
+                <th style={{ textAlign: "right" }}>Phí</th>
+                <th style={{ textAlign: "right" }}>Net</th>
+                <th>Trạng thái</th>
+                <th>Tính lúc</th>
+              </tr>
+            </thead>
+            <tbody>
+              {commissionLoading ? (
+                <tr><td colSpan={7} style={{ textAlign: "center", color: "var(--mh-ink-soft)", padding: 24 }}>Đang tải…</td></tr>
+              ) : !commissions || commissions.length === 0 ? (
+                <tr><td colSpan={7} style={{ textAlign: "center", color: "var(--mh-ink-soft)", padding: 24 }}>
+                  Chưa có hoa hồng nào trong 30 ngày qua. Đang chờ BPM workflow <span className="mh__mono">commission-mentor-v1</span> lên — danh sách sẽ tự cập nhật khi có dữ liệu.
+                </td></tr>
+              ) : commissions.map((c) => (
+                <tr key={c.id}>
+                  <td className="mh__mono">#{c.orderId}</td>
+                  <td className="mh__mono" style={{ fontSize: 12 }}>{c.orderType}</td>
+                  <td className="mh__mono" style={{ textAlign: "right" }}>{formatVND(c.grossAmount)}</td>
+                  <td className="mh__mono" style={{ textAlign: "right", color: "var(--mh-red)" }}>−{formatVND(c.platformFee)}</td>
+                  <td className="mh__mono" style={{ textAlign: "right", color: "var(--mh-teal)", fontWeight: 600 }}>{formatVND(c.netAmount)}</td>
+                  <td><span className={`mh__pill ${COMMISSION_PILL[c.status] ?? "mh__pill--draft"}`}>{c.status}</span></td>
+                  <td className="mh__mono" style={{ fontSize: 12, color: "var(--mh-ink-soft)" }}>{c.calculatedAt ? c.calculatedAt.slice(0, 10) : "—"}</td>
                 </tr>
               ))}
             </tbody>
