@@ -1,10 +1,31 @@
 // [MH] CourseEdit — form tạo/sửa khoá học với validation, autosave, live preview, sticky actions
-import React, { useEffect, useMemo, useRef, useState } from "react";
+import React, { useContext, useEffect, useMemo, useRef, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import type { Descendant } from "slate";
 import RebornEditor from "components/editor/reborn";
+import { UserContext, ContextType } from "contexts/userContext";
+import SalesServiceClient, { SalesService } from "services/SalesServiceClient";
+import { apiGet } from "services/apiHelper";
+import { urlsApi } from "configs/urls";
 import "../_shared/styles.scss";
 import "./form.scss";
+
+// Default category bootstrap cho mentorhub tenant (bsnId=6).
+// Resolve dynamically qua /inventory/category/list?keyword=...
+const DEFAULT_CATEGORY_KEYWORD = "mentorhub";
+// BE require avatar non-empty; mentorhub chưa có upload UI → placeholder tạm.
+const PLACEHOLDER_AVATAR = "https://placeholder.reborn.vn/course-default.png";
+
+function parseSlateContent(s?: string | null): Descendant[] | null {
+  if (!s) return null;
+  try {
+    const parsed = JSON.parse(s);
+    if (Array.isArray(parsed)) return parsed as Descendant[];
+  } catch {
+    /* not JSON, fall through */
+  }
+  return [{ type: "paragraph", children: [{ text: s }] }] as Descendant[];
+}
 
 type AgendaItem = { id: string; title: string; description: string; durationMin: number };
 
@@ -75,14 +96,83 @@ export default function MHCourseEdit() {
   const navigate = useNavigate();
   document.title = (isEdit ? "Sửa" : "Tạo") + " khoá học · MentorHub";
 
+  const ctx = useContext(UserContext) as ContextType;
+  const supplierId = ctx?.idEmployee;
+
   const [step, setStep] = useState(1);
   const [maxStep, setMaxStep] = useState(1); // step xa nhất đã validated qua
   const [form, setForm] = useState<FormData>(defaultForm);
   const [errors, setErrors] = useState<Errors>({});
   const [submitted, setSubmitted] = useState(false);
   const [draftSavedAt, setDraftSavedAt] = useState<Date | null>(null);
+  const [resolvedCategoryId, setResolvedCategoryId] = useState<number | null>(null);
+  const [loadingDetail, setLoadingDetail] = useState(isEdit);
+  const [saving, setSaving] = useState(false);
+  const [saveError, setSaveError] = useState<string | null>(null);
+  const [archiving, setArchiving] = useState(false);
   const formCardRef = useRef<HTMLDivElement>(null);
   const skipNextSaveRef = useRef(true); // chặn save lần đầu (mount)
+
+  // Resolve default categoryId — bootstrap "Khoá học mentorhub" cho bsnId=6
+  useEffect(() => {
+    apiGet(urlsApi.categoryService.list, {
+      keyword: DEFAULT_CATEGORY_KEYWORD,
+      page: 1,
+      limit: 1,
+    })
+      .then((res: { result?: { items?: Array<{ id: number }> } }) => {
+        const items = res?.result?.items || [];
+        if (items.length > 0) setResolvedCategoryId(items[0].id);
+      })
+      .catch(() => {
+        /* sẽ rơi xuống fallback 0 lúc save → BE reject + show error */
+      });
+  }, []);
+
+  // Load existing course từ BE khi edit
+  useEffect(() => {
+    if (!isEdit || !id) return;
+    const numId = Number(id);
+    if (!Number.isFinite(numId) || numId <= 0) {
+      // id không phải số (vd 'CRS-01' từ mock) → bỏ qua, dùng form mặc định
+      setLoadingDetail(false);
+      return;
+    }
+    setLoadingDetail(true);
+    SalesServiceClient.get(numId)
+      .then((res: { result?: SalesService }) => {
+        const svc = res?.result;
+        if (!svc) return;
+        const meta = (svc.metadata as Record<string, unknown>) || {};
+        const agendaFromMeta = Array.isArray(meta.agenda) ? (meta.agenda as AgendaItem[]) : null;
+        const parsedContent = parseSlateContent(svc.content) ?? EMPTY_RICH;
+        setForm({
+          title: svc.name || "",
+          icon: typeof meta.icon === "string" ? (meta.icon as string) : "⎈",
+          description: svc.intro || "",
+          category: typeof meta.category === "string" ? (meta.category as string) : CATEGORIES[0],
+          content: parsedContent,
+          agenda: agendaFromMeta && agendaFromMeta.length > 0 ? agendaFromMeta : [newAgendaItem(0)],
+          sessions: typeof meta.sessions === "number" ? (meta.sessions as number) : "",
+          capacity: typeof meta.capacity === "number" ? (meta.capacity as number) : 30,
+          startDate: typeof meta.startDate === "string" ? (meta.startDate as string) : "",
+          price: typeof svc.price === "number" ? svc.price : "",
+          originalPrice: typeof svc.retailPrice === "number" ? svc.retailPrice : "",
+          zoomId: typeof meta.zoomId === "string" ? (meta.zoomId as string) : "",
+          reminderZalo: meta.reminderZalo !== false,
+          reminderEmail: meta.reminderEmail !== false,
+          autoFeedback: meta.autoFeedback !== false,
+          autoRecording: meta.autoRecording !== false,
+        });
+        // Form populated từ BE → bypass autosave-draft để khỏi đè lên BE state
+        skipNextSaveRef.current = true;
+        setMaxStep(6); // mở tất cả step khi edit existing
+      })
+      .catch(() => {
+        setSaveError("Không tải được khoá — kiểm tra lại id");
+      })
+      .finally(() => setLoadingDetail(false));
+  }, [isEdit, id]);
 
   // Khôi phục draft từ localStorage (chỉ khi tạo mới, không khi edit)
   useEffect(() => {
@@ -215,7 +305,7 @@ export default function MHCourseEdit() {
     if (target <= maxStep) setStep(target);
   };
 
-  const submit = (publish: boolean) => {
+  const submit = async (publish: boolean) => {
     const allErrors: Errors = {
       ...validateStep(1),
       ...validateStep(2),
@@ -239,15 +329,89 @@ export default function MHCourseEdit() {
       setMaxStep((m) => Math.max(m, firstStep));
       return;
     }
-    setSubmitted(true);
-    try {
-      localStorage.removeItem(DRAFT_KEY);
-    } catch {
-      /* ignore */
+
+    if (!supplierId) {
+      setSaveError("Chưa có session — đăng nhập lại để lưu khoá");
+      return;
     }
-    // eslint-disable-next-line no-console
-    console.log("[MOCK SUBMIT]", publish ? "PUBLISHED" : "DRAFT", form);
-    setTimeout(() => navigate("/mh/courses"), 1500);
+    if (!resolvedCategoryId) {
+      setSaveError("Chưa có category mặc định cho mentorhub — liên hệ admin");
+      return;
+    }
+
+    setSaving(true);
+    setSaveError(null);
+    const numId = Number(id);
+    const editingExisting = isEdit && Number.isFinite(numId) && numId > 0;
+
+    const payload = {
+      id: editingExisting ? numId : 0,
+      name: form.title.trim(),
+      intro: form.description.trim(),
+      content: JSON.stringify(form.content),
+      contentType: 0,
+      avatar: PLACEHOLDER_AVATAR,
+      type: "COURSE_LIVE",
+      status: publish ? "ACTIVE" : "DRAFT",
+      active: 1,
+      supplierId,
+      categoryId: resolvedCategoryId,
+      price: form.price === "" ? 0 : Number(form.price),
+      retailPrice: form.originalPrice === "" ? 0 : Number(form.originalPrice),
+      metadata: {
+        icon: form.icon,
+        category: form.category,
+        agenda: form.agenda,
+        sessions: form.sessions === "" ? 0 : Number(form.sessions),
+        sessionsDone: 0,
+        capacity: form.capacity === "" ? 0 : Number(form.capacity),
+        registered: 0,
+        startDate: form.startDate,
+        zoomId: form.zoomId,
+        reminderZalo: form.reminderZalo,
+        reminderEmail: form.reminderEmail,
+        autoFeedback: form.autoFeedback,
+        autoRecording: form.autoRecording,
+      },
+    };
+
+    try {
+      const res: { code?: number; message?: string; result?: { id?: number } } =
+        await SalesServiceClient.update(payload as Partial<SalesService>);
+      if (res?.code !== 0) {
+        throw new Error(res?.message || "Lưu thất bại");
+      }
+      try {
+        localStorage.removeItem(DRAFT_KEY);
+      } catch {
+        /* quota/private mode — ignore */
+      }
+      setSubmitted(true);
+      setTimeout(() => navigate("/mh/courses"), 1200);
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : "Lưu thất bại";
+      setSaveError(msg);
+      setSaving(false);
+    }
+  };
+
+  const handleArchive = async () => {
+    const numId = Number(id);
+    if (!isEdit || !Number.isFinite(numId) || numId <= 0) return;
+    if (!window.confirm("Lưu trữ khoá này? Khoá sẽ ẩn khỏi danh sách công khai (status=ARCHIVED) nhưng dữ liệu vẫn giữ lại.")) {
+      return;
+    }
+    setArchiving(true);
+    setSaveError(null);
+    try {
+      const res: { code?: number; message?: string } = await SalesServiceClient.archive(numId);
+      if (res?.code !== 0) throw new Error(res?.message || "Lưu trữ thất bại");
+      navigate("/mh/courses");
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : "Lưu trữ thất bại";
+      setSaveError(msg);
+      setArchiving(false);
+    }
   };
 
   if (submitted) {
@@ -386,27 +550,71 @@ export default function MHCourseEdit() {
         </aside>
       </div>
 
+      {saveError && (
+        <div
+          className="mh__card"
+          style={{
+            background: "#fef2f2",
+            borderColor: "#fecaca",
+            color: "#991b1b",
+            padding: 12,
+            marginBottom: 12,
+          }}
+          role="alert"
+        >
+          ⚠ {saveError}
+        </div>
+      )}
+
       {/* Sticky action bar */}
       <div className="mh-course-edit__actionbar">
         <div className="mh-course-edit__actionbar-inner">
-          <button className="mh__btn" onClick={() => step > 1 && setStep(step - 1)} disabled={step === 1}>
+          <button
+            className="mh__btn"
+            onClick={() => step > 1 && setStep(step - 1)}
+            disabled={step === 1 || saving || archiving}
+          >
             ← Quay lại
           </button>
           <span className="mh-course-edit__actionbar-step">
             Bước {step}/6 · {steps[step - 1]}
+            {loadingDetail ? " · Đang tải khoá…" : ""}
           </span>
           <div style={{ flex: 1 }} />
+          {isEdit && Number.isFinite(Number(id)) && Number(id) > 0 && (
+            <button
+              type="button"
+              className="mh__btn"
+              onClick={handleArchive}
+              disabled={saving || archiving}
+              style={{ borderColor: "#fca5a5", color: "#991b1b" }}
+            >
+              {archiving ? "Đang lưu trữ…" : "Lưu trữ khoá"}
+            </button>
+          )}
           {step < 6 ? (
-            <button className="mh__btn mh__btn--primary" onClick={next}>
+            <button
+              className="mh__btn mh__btn--primary"
+              onClick={next}
+              disabled={saving || archiving}
+            >
               Tiếp theo →
             </button>
           ) : (
             <>
-              <button className="mh__btn" onClick={() => submit(false)}>
-                Lưu nháp
+              <button
+                className="mh__btn"
+                onClick={() => submit(false)}
+                disabled={saving || archiving}
+              >
+                {saving ? "Đang lưu…" : "Lưu nháp"}
               </button>
-              <button className="mh__btn mh__btn--primary" onClick={() => submit(true)}>
-                Publish khoá học
+              <button
+                className="mh__btn mh__btn--primary"
+                onClick={() => submit(true)}
+                disabled={saving || archiving}
+              >
+                {saving ? "Đang publish…" : "Publish khoá học"}
               </button>
             </>
           )}
