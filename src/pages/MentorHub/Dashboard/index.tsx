@@ -1,15 +1,47 @@
 // [MH] MentorHub - Dashboard (home trang chủ cho mentor)
-// TODO: wire up real API. Mock được dùng cho giai đoạn prototype.
-import React from "react";
+import React, { useContext, useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
-import { MOCK_MENTOR, MOCK_KPI, MOCK_NEXT_SESSION, MOCK_REVENUE_30D, MOCK_COURSES } from "@/mocks/mentorhub";
+import { UserContext, ContextType } from "contexts/userContext";
+import SalesOrderService from "services/SalesOrderService";
+import type { IRevenueSummary } from "@/types/order/commissionModel";
+import { MOCK_MENTOR, MOCK_KPI, MOCK_NEXT_SESSION, MOCK_COURSES } from "@/mocks/mentorhub";
 import "../_shared/styles.scss";
 
-const formatVND = (n: number) => new Intl.NumberFormat("vi-VN").format(n) + "₫";
+const formatVND = (n: number) => new Intl.NumberFormat("vi-VN").format(Math.round(n)) + "₫";
+const isoDate = (d: Date) => d.toISOString().slice(0, 10);
 
 export default function MentorHubDashboardPage() {
   document.title = "MentorHub · Dashboard";
+  const ctx = useContext(UserContext) as ContextType;
+  const employeeId = ctx?.idEmployee;
+  const [summary, setSummary] = useState<IRevenueSummary | null>(null);
   const topCourses = MOCK_COURSES.filter((c) => c.status !== "draft").slice(0, 3);
+
+  const { from, to } = useMemo(() => {
+    const today = new Date();
+    const start = new Date();
+    start.setDate(today.getDate() - 29);
+    return { from: isoDate(start), to: isoDate(today) };
+  }, []);
+
+  useEffect(() => {
+    if (!employeeId) return;
+    const ctrl = new AbortController();
+    SalesOrderService.revenueSummary(
+      { employeeId, type: "COURSE_ENROLLMENT", from, to, groupBy: "day" },
+      ctrl.signal,
+    )
+      .then((res: { result?: IRevenueSummary } | IRevenueSummary) => {
+        const result = (res as { result?: IRevenueSummary }).result ?? (res as IRevenueSummary);
+        if (result) setSummary(result);
+      })
+      .catch(() => {});
+    return () => ctrl.abort();
+  }, [employeeId, from, to]);
+
+  const series = summary?.series ?? [];
+  const totalRevenue = summary?.totalRevenue ?? MOCK_KPI.revenueMonth;
+  const trend = summary?.trend ?? MOCK_KPI.revenueTrend;
 
   return (
     <div className="mh">
@@ -23,9 +55,9 @@ export default function MentorHubDashboardPage() {
 
       <div className="mh__grid mh__grid--4" style={{ marginBottom: 32 }}>
         <div className="mh__kpi">
-          <div className="mh__kpi-label">DOANH THU THÁNG</div>
-          <div className="mh__kpi-value">{formatVND(MOCK_KPI.revenueMonth)}</div>
-          <div className="mh__kpi-delta">↑ {MOCK_KPI.revenueTrend}% vs tháng trước</div>
+          <div className="mh__kpi-label">DOANH THU 30 NGÀY</div>
+          <div className="mh__kpi-value">{formatVND(totalRevenue)}</div>
+          <div className="mh__kpi-delta">{trend >= 0 ? "↑" : "↓"} {Math.abs(trend).toFixed(1)}% vs kỳ trước</div>
         </div>
         <div className="mh__kpi">
           <div className="mh__kpi-label">HỌC VIÊN ĐĂNG KÝ</div>
@@ -58,18 +90,24 @@ export default function MentorHubDashboardPage() {
       <div className="mh__grid mh__grid--2" style={{ gap: 24, marginBottom: 32 }}>
         <div className="mh__card">
           <h3 style={{ marginBottom: 20 }}>Doanh thu 30 ngày</h3>
-          <svg viewBox="0 0 300 100" style={{ width: "100%", height: 160 }} preserveAspectRatio="none">
-            {(() => {
-              const max = Math.max(...MOCK_REVENUE_30D);
-              const points = MOCK_REVENUE_30D.map((v, i) => `${(i / (MOCK_REVENUE_30D.length - 1)) * 300},${100 - (v / max) * 90}`).join(" ");
-              return (
-                <>
-                  <polyline fill="none" stroke="#0F766E" strokeWidth="2" points={points} />
-                  <polyline fill="rgba(15, 118, 110, 0.1)" stroke="none" points={`0,100 ${points} 300,100`} />
-                </>
-              );
-            })()}
-          </svg>
+          {series.length === 0 ? (
+            <div style={{ height: 160, display: "flex", alignItems: "center", justifyContent: "center", color: "var(--mh-ink-soft)", fontSize: 13 }}>
+              {summary === null ? "Đang tải…" : "Chưa có giao dịch trong 30 ngày qua"}
+            </div>
+          ) : (
+            <svg viewBox="0 0 300 100" style={{ width: "100%", height: 160 }} preserveAspectRatio="none">
+              {(() => {
+                const max = Math.max(1, ...series.map((p) => p.revenue));
+                const points = series.map((p, i) => `${(i / Math.max(1, series.length - 1)) * 300},${100 - (p.revenue / max) * 90}`).join(" ");
+                return (
+                  <>
+                    <polyline fill="rgba(15, 118, 110, 0.1)" stroke="none" points={`0,100 ${points} 300,100`} />
+                    <polyline fill="none" stroke="#0F766E" strokeWidth="2" points={points} />
+                  </>
+                );
+              })()}
+            </svg>
+          )}
         </div>
 
         <div className="mh__card mh__ai-card">

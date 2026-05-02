@@ -864,6 +864,18 @@ export const urlsApi = {
     export: prefixSales + "/order-request/export",
     detail: prefixSales + "/order-request/get",
   },
+  salesOrder: {
+    list: prefixSales + "/order/list",
+    get: prefixSales + "/order/get",
+    create: prefixSales + "/order/create",
+    update: prefixSales + "/order/update",
+    delete: prefixSales + "/order/delete",
+    revenueSummary: prefixSales + "/order/revenue-summary",
+  },
+  commission: {
+    list: prefixSales + "/commission/list",
+    recompute: prefixSales + "/commission/recompute",
+  },
   //khu vực trải nghiệm khách hàng
   cxmSurvey: {
     list: prefixCustomer + "/cxmSurvey/list",
