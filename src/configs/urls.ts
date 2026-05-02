@@ -876,6 +876,34 @@ export const urlsApi = {
     list: prefixSales + "/commission/list",
     recompute: prefixSales + "/commission/recompute",
   },
+  // Service catalog moved customer → sales (cloud-sales-master#13, V7 migration).
+  // Mentorhub course-catalog (type=COURSE_LIVE) wires here.
+  salesService: {
+    list: prefixSales + "/service/list",
+    get: prefixSales + "/service/get",
+    update: prefixSales + "/service/update",
+    archive: prefixSales + "/service/archive",
+    stats: prefixSales + "/service/stats",
+    delete: prefixSales + "/service/delete",
+    updateAvatar: prefixSales + "/service/update_avatar",
+    updateContent: prefixSales + "/service/update/content",
+    checkLink: prefixSales + "/service/check/link",
+    listByParent: prefixSales + "/service/list_byparent",
+    listById: prefixSales + "/service/list_by_id",
+    internalListById: prefixSales + "/service/internal/list_by_id",
+  },
+  salesServiceAttribute: {
+    list: prefixSales + "/serviceAttribute/list",
+    listFilter: prefixSales + "/serviceAttribute/listFilter",
+    listAll: prefixSales + "/serviceAttribute/listAll",
+    update: prefixSales + "/serviceAttribute/update",
+    delete: prefixSales + "/serviceAttribute/delete",
+    get: prefixSales + "/serviceAttribute/get",
+    checkDuplicated: prefixSales + "/serviceAttribute/checkDuplicated",
+  },
+  salesServiceExtraInfo: {
+    list: prefixSales + "/serviceExtraInfo/list",
+  },
   //khu vực trải nghiệm khách hàng
   cxmSurvey: {
     list: prefixCustomer + "/cxmSurvey/list",
