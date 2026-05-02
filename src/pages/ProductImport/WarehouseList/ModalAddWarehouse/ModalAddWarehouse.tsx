@@ -9,7 +9,7 @@ import Modal, { ModalBody, ModalFooter, ModalHeader } from "components/modal/mod
 import Dialog, { IContentDialog } from "components/dialog/dialog";
 import { useActiveElement } from "utils/hookCustom";
 import Validate, { handleChangeValidate } from "utils/validate";
-import { showToast } from "utils/common";
+import { showToast, parseApiError } from "utils/common";
 import { isDifferenceObj } from "reborn-util";
 import { SelectOptionData } from "utils/selectCommon";
 import "./ModalAddWarehouse.scss";
@@ -234,13 +234,22 @@ export default function ModalAddWarehouse(props: AddInventoryModalProps) {
       isSelling: formData?.values?.isSelling === "1" ? 1 : 0,
     };
 
-    const response = await InventoryService.update(body);
+    try {
+      const response = await InventoryService.update(body);
 
-    if (response.code === 0) {
-      showToast(`${data ? "Cập nhật" : "Thêm mới"} kho hàng thành công`, "success");
-      onHide(true);
-    } else {
-      showToast(response.message ?? "Có lỗi xảy ra. Vui lòng thử lại sau", "error");
+      if (response?.code === 0) {
+        showToast(`${data ? "Cập nhật" : "Thêm mới"} kho hàng thành công`, "success");
+        onHide(true);
+      } else {
+        const parsed = parseApiError(response);
+        if (parsed.isValidation && Object.keys(parsed.fieldErrors).length > 0) {
+          setFormData((prev) => ({ ...prev, errors: { ...(prev.errors ?? {}), ...parsed.fieldErrors } }));
+        }
+        showToast(parsed.message, "error");
+        setIsSubmit(false);
+      }
+    } catch (err: any) {
+      showToast(err?.message ?? "Lỗi kết nối, vui lòng thử lại", "error");
       setIsSubmit(false);
     }
   };

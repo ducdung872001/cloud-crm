@@ -13,6 +13,7 @@ import { IAction } from "model/OtherModel";
 import { showToast } from "utils/common";
 import { getPageOffset } from "reborn-util";
 import WarehouseService from "services/WarehouseService";
+import InventoryService from "services/InventoryService";
 import { ContextType, UserContext } from "contexts/userContext";
 import { IWarehouseResponse } from "model/warehouse/WarehouseResponseModel";
 import { urls } from "configs/urls";
@@ -87,40 +88,48 @@ export default function WarehouseListPage() {
   };
 
   const onDelete = async (id: number) => {
-    // TODO: gắn API xóa kho khi có endpoint
-    // const response = await WarehouseService.delete(id);
-    // if (response.code === 0) {
-    //   showToast("Xóa kho hàng thành công", "success");
-    //   getListWarehouse(params);
-    // } else {
-    //   showToast(response.message ?? "Có lỗi xảy ra. Vui lòng thử lại sau", "error");
-    // }
-    showToast("Tính năng xóa kho đang được phát triển", "warning");
-    setShowDialog(false);
-    setContentDialog(null);
+    try {
+      const response = await InventoryService.delete(id);
+      if (response?.code === 0) {
+        showToast("Xóa kho hàng thành công", "success");
+        getListWarehouse(params);
+      } else {
+        showToast(response?.error ?? response?.message ?? "Có lỗi xảy ra. Vui lòng thử lại sau", "error");
+      }
+    } catch (err: any) {
+      showToast(err?.message ?? "Lỗi kết nối, vui lòng thử lại", "error");
+    } finally {
+      setShowDialog(false);
+      setContentDialog(null);
+    }
   };
 
-  const onDeleteAll = () => {
+  const onDeleteAll = async () => {
     const selectedIds = listIdChecked || [];
     if (!selectedIds.length) return;
 
-    // TODO: gắn API xóa nhiều kho khi có endpoint
-    // const arrPromises = selectedIds.map((id) => WarehouseService.delete(id));
-    // Promise.all(arrPromises).then((results) => {
-    //   const count = results.filter(Boolean)?.length || 0;
-    //   if (count > 0) {
-    //     showToast(`Xóa thành công ${count} kho hàng`, "success");
-    //     getListWarehouse(params);
-    //     setListIdChecked([]);
-    //   }
-    // }).finally(() => {
-    //   setShowDialog(false);
-    //   setContentDialog(null);
-    // });
+    try {
+      const results = await Promise.all(selectedIds.map((id) => InventoryService.delete(id)));
+      const okCount = results.filter((r) => r?.code === 0).length;
+      const failed = results
+        .map((r, idx) => ({ r, id: selectedIds[idx] }))
+        .filter(({ r }) => r?.code !== 0);
 
-    showToast("Tính năng xóa kho đang được phát triển", "warning");
-    setShowDialog(false);
-    setContentDialog(null);
+      if (okCount > 0) {
+        showToast(`Xóa thành công ${okCount}/${selectedIds.length} kho hàng`, "success");
+        getListWarehouse(params);
+        setListIdChecked([]);
+      }
+      if (failed.length > 0) {
+        const firstErr = failed[0].r?.error ?? failed[0].r?.message ?? "Một số kho không thể xóa";
+        showToast(`${failed.length} kho thất bại: ${firstErr}`, "error");
+      }
+    } catch (err: any) {
+      showToast(err?.message ?? "Lỗi kết nối, vui lòng thử lại", "error");
+    } finally {
+      setShowDialog(false);
+      setContentDialog(null);
+    }
   };
 
   const showDialogConfirmDelete = (item?: IWarehouseResponse) => {

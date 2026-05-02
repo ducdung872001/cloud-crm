@@ -32,6 +32,42 @@ export const showToast = (mgs: string, type: "error" | "success" | "warning") =>
     setTimeout(logout, 5000);
   }
 };
+
+export interface IParsedApiError {
+  message: string;
+  fieldErrors: Record<string, string>;
+  originalError?: string;
+  isValidation: boolean;
+}
+
+// Phân tích envelope error từ BE.
+// Validation envelope mới (HTTP 400, BE inventory commit 1ac56e7+):
+//   { code: 400, error, message, errors: [{ field, code, message }] }
+// Binding fail (Jackson date parse, type mismatch...):
+//   { code: 400, error, originalError, errors: [] }
+// Legacy (business/permission/404/500):
+//   { code, message } hoặc { code, error }
+export const parseApiError = (response: any): IParsedApiError => {
+  const errorsArr = Array.isArray(response?.errors) ? response.errors : null;
+  const fieldErrors: Record<string, string> = {};
+  if (errorsArr) {
+    for (const e of errorsArr) {
+      if (e?.field && e?.message) fieldErrors[e.field] = e.message;
+    }
+  }
+  const firstFieldMsg = errorsArr?.[0]?.message;
+  const message =
+    firstFieldMsg ??
+    response?.error ??
+    response?.message ??
+    "Có lỗi xảy ra. Vui lòng thử lại sau";
+  return {
+    message,
+    fieldErrors,
+    originalError: response?.originalError,
+    isValidation: !!errorsArr,
+  };
+};
 /**
  * Kiểm tra 2 object có khác biệt nhau ko?
  * @param {*} orgObj

@@ -11,7 +11,7 @@ import Icon from "components/icon";
 import Button from "components/button/button";
 import SelectCustom from "components/selectCustom/selectCustom";
 import DatePickerCustom from "components/datepickerCustom/datepickerCustom";
-import { showToast } from "utils/common";
+import { showToast, parseApiError } from "utils/common";
 import urls from "@/configs/urls";
 import "./PaymentImportInvoices.scss";
 
@@ -154,7 +154,9 @@ export default function PaymentImportInvoices(props: PaymentImportInvoicesProps)
       } else {
         setFormData((prev) => ({ ...prev, inventoryId: previousInventoryId }));
         onInventoryChanged?.(previousInventoryId);
-        showToast(response.message ?? "Cập nhật kho hàng thất bại", "error");
+        const parsed = parseApiError(response);
+        if (parsed.originalError && import.meta.env?.DEV) console.warn("[importUpdate] originalError:", parsed.originalError);
+        showToast(parsed.message, "error");
       }
 
       setIsUpdatingInventory(false);
@@ -215,9 +217,11 @@ export default function PaymentImportInvoices(props: PaymentImportInvoicesProps)
         showToast(formData?.id ? "Cập nhật phiếu nhập thành công" : "Tạo phiếu nhập thành công", "success");
         onInvoiceCreated?.(invoice);
       } else {
-        // Đọc cả response.message + response.error (BE community-hub dùng cả 2 key)
-        const errMsg = response?.message ?? response?.error ?? "Có lỗi xảy ra. Vui lòng thử lại sau";
-        showToast(errMsg, "error");
+        const parsed = parseApiError(response);
+        if (parsed.originalError && import.meta.env?.DEV) console.warn("[importUpdate] originalError:", parsed.originalError);
+        if (parsed.fieldErrors?.receiptDate) setValidateReceiptDate(true);
+        if (parsed.fieldErrors?.inventoryId) setValidateInventory(true);
+        showToast(parsed.message, "error");
       }
     } catch (err) {
       showToast((err as Error)?.message ?? "Lỗi kết nối khi tạo phiếu nhập", "error");
