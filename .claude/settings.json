@@ -160,7 +160,26 @@
       "Bash(git -C \"d:/Git/reborn/reborn-cloud/cloud-ver2/cloud-crm\" diff --stat HEAD~1 HEAD)",
       "Bash(git -C \"d:/Git/reborn/reborn-cloud/cloud-ver2/cloud-crm\" log --oneline -3)",
       "Bash(git -C \"d:/Git/reborn/reborn-cloud/cloud-ver2/cloud-crm\" add src/bootMigration.ts src/main.tsx)",
-      "Bash(git -C d:/Git/reborn/reborn-cloud/cloud-ver2/cloud-crm commit -m ' *)"
+      "Bash(git -C d:/Git/reborn/reborn-cloud/cloud-ver2/cloud-crm commit -m ' *)",
+      "Bash(git -C \"d:/Git/reborn/reborn-cloud/cloud-ver2/cloud-crm\" show --stat 4b762735)",
+      "Bash(git -C \"d:/Git/reborn/reborn-cloud/cloud-ver2/cloud-crm\" show --stat d4ae396f)",
+      "Bash(grep -qE \"Local:|error\" \"C:\\\\\\\\Users\\\\\\\\HP\\\\\\\\AppData\\\\\\\\Local\\\\\\\\Temp\\\\\\\\claude\\\\\\\\d--Git-reborn-reborn-cloud-cloud-ver2-cloud-crm\\\\\\\\4c04ad10-9fd3-4bbe-9408-e99baecebfe9\\\\\\\\tasks\\\\\\\\blrumeh5e.output\")",
+      "Bash(tail -10 \"C:\\\\\\\\Users\\\\\\\\HP\\\\\\\\AppData\\\\\\\\Local\\\\\\\\Temp\\\\\\\\claude\\\\\\\\d--Git-reborn-reborn-cloud-cloud-ver2-cloud-crm\\\\\\\\4c04ad10-9fd3-4bbe-9408-e99baecebfe9\\\\\\\\tasks\\\\\\\\blrumeh5e.output\")",
+      "Bash(APP_BASE=http://localhost:4002 node verify-401-cleanup.mjs)",
+      "Bash(git -C \"d:/Git/reborn/reborn-cloud/cloud-ver2/cloud-crm\" diff src/configs/fetchConfig.ts)",
+      "Bash(git -C \"d:/Git/reborn/reborn-cloud/cloud-ver2/cloud-crm\" log --oneline -5)",
+      "Bash(git -C \"d:/Git/reborn/reborn-cloud/cloud-ver2/cloud-crm\" diff src/main.tsx)",
+      "Bash(git -C \"d:/Git/reborn/reborn-cloud/cloud-ver2/cloud-crm\" add src/configs/fetchConfig.ts src/main.tsx src/bootMigration.ts)",
+      "Bash(git -C \"d:/Git/reborn/reborn-cloud/cloud-ver2/cloud-crm\" push origin reborn-mentorhub)",
+      "Bash(git -C \"d:/Git/reborn/reborn-cloud/cloud-ver2/cloud-crm\" log --oneline origin/reborn-mentorhub -6)",
+      "Bash(grep -qE \"Local:|error\" \"C:\\\\\\\\Users\\\\\\\\HP\\\\\\\\AppData\\\\\\\\Local\\\\\\\\Temp\\\\\\\\claude\\\\\\\\d--Git-reborn-reborn-cloud-cloud-ver2-cloud-crm\\\\\\\\4c04ad10-9fd3-4bbe-9408-e99baecebfe9\\\\\\\\tasks\\\\\\\\b8oddkjwy.output\")",
+      "Bash(tail -8 \"C:\\\\\\\\Users\\\\\\\\HP\\\\\\\\AppData\\\\\\\\Local\\\\\\\\Temp\\\\\\\\claude\\\\\\\\d--Git-reborn-reborn-cloud-cloud-ver2-cloud-crm\\\\\\\\4c04ad10-9fd3-4bbe-9408-e99baecebfe9\\\\\\\\tasks\\\\\\\\b8oddkjwy.output\")",
+      "Bash(APP_BASE=http://localhost:4003 node verify-401-scoped.mjs)",
+      "Bash(git -C \"d:/Git/reborn/reborn-cloud/cloud-ver2/cloud-crm\" add src/configs/fetchConfig.ts)",
+      "Bash(git -C \"d:/Git/reborn/reborn-cloud/cloud-ver2/cloud-crm\" log --oneline @{u}..HEAD)",
+      "Bash(git -C \"d:/Git/reborn/reborn-cloud/cloud-ver2/cloud-crm\" diff .claude/settings.json)",
+      "Bash(git -C \"d:/Git/reborn/reborn-cloud/cloud-ver2/cloud-crm\" add .claude/settings.json)",
+      "Bash(git -C \"d:/Git/reborn/reborn-cloud/cloud-ver2/cloud-crm\" commit -m \"chore: update Claude Code settings allowlist từ session debug 401\")"
     ],
     "additionalDirectories": [
       "\\tmp"
