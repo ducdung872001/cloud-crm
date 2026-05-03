@@ -909,6 +909,16 @@ export const urlsApi = {
     orderRegister: prefixSales + "/public/order/register",
     orderStatus: prefixSales + "/public/order/status",
   },
+  // Notification bulk send (mentorhub-notifications-suite reply: cloud-crm#211, notihub commit 60e71b3)
+  notificationBulk: {
+    emailSendBulk: prefixNotification + "/email/sendBulk",
+    znsSendBulk: prefixNotification + "/zns/sendBulk",
+    inappSendBulk: prefixNotification + "/inapp/sendBulk",
+    emailStatus: prefixNotification + "/email/status",
+    znsStatus: prefixNotification + "/zns/status",
+    inappStatus: prefixNotification + "/inapp/status",
+    fcmSendToCustomer: prefixNotification + "/fcm/sendToCustomer",
+  },
   //khu vực trải nghiệm khách hàng
   cxmSurvey: {
     list: prefixCustomer + "/cxmSurvey/list",

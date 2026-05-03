@@ -1,6 +1,14 @@
 // [MH] Students — roster với filter, search, bulk actions, add modal, detail drawer
-import React, { useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { MOCK_STUDENTS, MOCK_COURSES } from "@/mocks/mentorhub";
+import NotificationBulkClient, {
+  BulkChannel,
+  BulkRecipient,
+  BulkSendResult,
+  RecipientStatus,
+  TERMINAL_STATUSES,
+  pollUntilDone,
+} from "services/NotificationBulkClient";
 import "../_shared/styles.scss";
 
 const formatVND = (n: number) => new Intl.NumberFormat("vi-VN").format(n) + "₫";
@@ -23,6 +31,7 @@ export default function MHStudents() {
   const [showAdd, setShowAdd] = useState(false);
   const [detailStudent, setDetailStudent] = useState<Student | null>(null);
   const [students, setStudents] = useState(MOCK_STUDENTS);
+  const [bulkChannel, setBulkChannel] = useState<BulkChannel | null>(null);
 
   const segments = ["all", "VIP", "Active", "Churn risk", "New"];
   const filtered = students.filter((s) => {
@@ -68,9 +77,27 @@ export default function MHStudents() {
       {selected.size > 0 && (
         <div style={{ display: "flex", gap: 8, alignItems: "center", padding: "10px 16px", background: "var(--mh-teal-d)", borderRadius: 10, marginBottom: 16, color: "#fff", flexWrap: "wrap" }}>
           <span className="mh__mono" style={{ fontSize: 13 }}>Đã chọn {selected.size}</span>
-          <button className="mh__btn" style={{ padding: "6px 12px", fontSize: 13 }}>📧 Gửi email</button>
-          <button className="mh__btn" style={{ padding: "6px 12px", fontSize: 13 }}>💬 Gửi Zalo</button>
-          <button className="mh__btn" style={{ padding: "6px 12px", fontSize: 13 }}>📊 Export CSV</button>
+          <button
+            className="mh__btn"
+            style={{ padding: "6px 12px", fontSize: 13 }}
+            onClick={() => setBulkChannel("email")}
+          >
+            📧 Gửi email
+          </button>
+          <button
+            className="mh__btn"
+            style={{ padding: "6px 12px", fontSize: 13 }}
+            onClick={() => setBulkChannel("zns")}
+          >
+            💬 Gửi Zalo
+          </button>
+          <button
+            className="mh__btn"
+            style={{ padding: "6px 12px", fontSize: 13 }}
+            onClick={() => exportCsv(students.filter((s) => selected.has(s.id)))}
+          >
+            📊 Export CSV
+          </button>
           <button className="mh__btn" style={{ padding: "6px 12px", fontSize: 13 }} onClick={() => setSelected(new Set())}>✕ Bỏ chọn</button>
         </div>
       )}
@@ -124,6 +151,239 @@ export default function MHStudents() {
 
       {showAdd && <AddStudentModal onClose={() => setShowAdd(false)} onAdd={(st) => { setStudents((prev) => [st, ...prev]); setShowAdd(false); }} />}
       {detailStudent && <StudentDetailDrawer student={detailStudent} onClose={() => setDetailStudent(null)} />}
+      {bulkChannel && (
+        <BulkComposeModal
+          channel={bulkChannel}
+          recipients={students.filter((s) => selected.has(s.id))}
+          onClose={() => setBulkChannel(null)}
+          onSent={() => {
+            setBulkChannel(null);
+            setSelected(new Set());
+          }}
+        />
+      )}
+    </div>
+  );
+}
+
+// ── Export CSV ─────────────────────────────────────────────────────────
+function exportCsv(students: Student[]) {
+  if (students.length === 0) return;
+  const header = ["Tên", "Email", "SĐT", "Công ty", "Vị trí", "LTV", "NPS", "Phân nhóm", "Số khoá"];
+  const rows = students.map((s) => [
+    s.name,
+    s.email,
+    s.phone,
+    s.company,
+    s.role,
+    String(s.ltv),
+    s.nps > 0 ? s.nps.toFixed(1) : "",
+    s.segment,
+    String(s.courses),
+  ]);
+  const csv = [header, ...rows]
+    .map((r) => r.map((c) => `"${String(c).replace(/"/g, '""')}"`).join(","))
+    .join("\n");
+  const blob = new Blob(["﻿" + csv], { type: "text/csv;charset=utf-8" });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = `students-${new Date().toISOString().slice(0, 10)}.csv`;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+}
+
+// ── Bulk Compose Modal ────────────────────────────────────────────────
+function BulkComposeModal({
+  channel,
+  recipients,
+  onClose,
+  onSent,
+}: {
+  channel: BulkChannel;
+  recipients: Student[];
+  onClose: () => void;
+  onSent: () => void;
+}) {
+  const [subject, setSubject] = useState("");
+  const [body, setBody] = useState("");
+  const [sending, setSending] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [batch, setBatch] = useState<BulkSendResult | null>(null);
+  const [statuses, setStatuses] = useState<RecipientStatus[]>([]);
+  const abortRef = useRef<AbortController | null>(null);
+
+  const channelLabel = channel === "email" ? "Email" : channel === "zns" ? "Zalo ZNS" : "In-app";
+  const requiresSubject = channel === "email";
+
+  useEffect(() => {
+    return () => abortRef.current?.abort();
+  }, []);
+
+  const send = async () => {
+    setError(null);
+    if (requiresSubject && !subject.trim()) {
+      setError("Nhập tiêu đề cho email");
+      return;
+    }
+    if (!body.trim()) {
+      setError("Nhập nội dung");
+      return;
+    }
+    setSending(true);
+
+    const apiRecipients: BulkRecipient[] = recipients.map((s) => {
+      const numId = Number(s.id.replace(/^S-/, ""));
+      return {
+        customerId: Number.isFinite(numId) && numId > 0 ? numId : 0,
+        targetAddress: channel === "email" ? s.email : channel === "zns" ? s.phone : undefined,
+        channel: [channel],
+        vars: {
+          name: s.name,
+          courseName: "",
+        },
+      };
+    });
+
+    try {
+      const res = await NotificationBulkClient.sendBulk(channel, {
+        templateId: "MH_ANNOUNCE_GENERIC",
+        recipients: apiRecipients,
+        subject: requiresSubject ? subject.trim() : undefined,
+        body: body.trim(),
+        metadata: { from: "mentorhub", source: "students-bulk-action" },
+      });
+      if (res?.code !== 0 || !res.result) {
+        setError(res?.message || "Không gửi được");
+        setSending(false);
+        return;
+      }
+      setBatch(res.result);
+
+      // Poll status until terminal hoặc timeout
+      const ctrl = new AbortController();
+      abortRef.current = ctrl;
+      try {
+        const final = await pollUntilDone(channel, res.result.batchId, {
+          intervalMs: 3000,
+          timeoutMs: 60000,
+          onTick: (items) => setStatuses(items),
+          signal: ctrl.signal,
+        });
+        setStatuses(final);
+      } catch {
+        /* aborted or timeout — keep last statuses */
+      }
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Lỗi mạng");
+    } finally {
+      setSending(false);
+    }
+  };
+
+  const sentCount = statuses.filter((s) => s.status === "SENT" || s.status === "DELIVERED").length;
+  const failedCount = statuses.filter((s) => s.status === "FAILED" || s.status === "BOUNCED").length;
+  const skippedCount = statuses.filter((s) => s.status === "SKIPPED").length;
+  const allDone = statuses.length > 0 && statuses.every((r) => TERMINAL_STATUSES.has(r.status));
+
+  return (
+    <div className="mh__modal-backdrop" onClick={!sending ? onClose : undefined}>
+      <div className="mh__modal" onClick={(e) => e.stopPropagation()} style={{ maxWidth: 640 }}>
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 16 }}>
+          <div>
+            <div className="mh__kicker">GỬI {channelLabel.toUpperCase()}</div>
+            <h3 style={{ marginTop: 4 }}>Soạn thông báo · {recipients.length} học viên</h3>
+          </div>
+          <button className="mh__btn mh__btn--ghost" onClick={onClose} style={{ padding: 4 }} disabled={sending}>✕</button>
+        </div>
+
+        {!batch && (
+          <>
+            {requiresSubject && (
+              <div className="mh__field">
+                <label className="mh__label mh__label--req">Tiêu đề</label>
+                <input
+                  className="mh__input"
+                  value={subject}
+                  onChange={(e) => setSubject(e.target.value)}
+                  maxLength={200}
+                  placeholder="VD: Cập nhật khoá Microservices buổi 4"
+                />
+              </div>
+            )}
+            <div className="mh__field">
+              <label className="mh__label mh__label--req">Nội dung</label>
+              <textarea
+                className="mh__input"
+                value={body}
+                onChange={(e) => setBody(e.target.value)}
+                rows={6}
+                placeholder={"Mustache: {{name}}, {{courseName}}\n\nChào {{name}}, ..."}
+                style={{ fontFamily: "inherit", resize: "vertical" }}
+              />
+              <div style={{ fontSize: 11, color: "var(--mh-ink-soft)", marginTop: 4 }}>
+                Hỗ trợ biến: <code>{"{{name}}"}</code>, <code>{"{{courseName}}"}</code>. Template: MH_ANNOUNCE_GENERIC.
+              </div>
+            </div>
+            {error && (
+              <div style={{ background: "#fef2f2", color: "#991b1b", padding: 10, borderRadius: 8, marginBottom: 12 }}>
+                ⚠ {error}
+              </div>
+            )}
+            <div style={{ display: "flex", gap: 8, justifyContent: "flex-end" }}>
+              <button className="mh__btn" onClick={onClose} disabled={sending}>Huỷ</button>
+              <button className="mh__btn mh__btn--primary" onClick={send} disabled={sending}>
+                {sending ? "Đang gửi…" : `Gửi tới ${recipients.length} học viên`}
+              </button>
+            </div>
+          </>
+        )}
+
+        {batch && (
+          <div>
+            <div style={{ fontSize: 14, marginBottom: 12 }}>
+              ✓ Đã queue <strong>{batch.queued}</strong> · scheduled <strong>{batch.scheduled}</strong>
+              <div className="mh__mono" style={{ fontSize: 11, color: "var(--mh-ink-soft)", marginTop: 4 }}>
+                batchId: {batch.batchId}
+              </div>
+            </div>
+            <div style={{ display: "flex", gap: 16, marginBottom: 12, fontSize: 13 }}>
+              <span style={{ color: "var(--mh-green)" }}>✓ Sent: {sentCount}</span>
+              <span style={{ color: "var(--mh-red)" }}>✗ Failed: {failedCount}</span>
+              <span style={{ color: "var(--mh-ink-soft)" }}>↷ Skipped: {skippedCount}</span>
+              <span>Tổng: {statuses.length}</span>
+            </div>
+            <div className="mh__progress" style={{ marginBottom: 16 }}>
+              <div
+                className="mh__progress-fill"
+                style={{
+                  width: `${statuses.length > 0 ? Math.round(((sentCount + failedCount + skippedCount) / statuses.length) * 100) : 0}%`,
+                }}
+              />
+            </div>
+            {statuses.length > 0 && (
+              <div style={{ maxHeight: 200, overflowY: "auto", border: "1px solid var(--mh-line)", borderRadius: 8, marginBottom: 12, fontSize: 12 }}>
+                {statuses.map((r, i) => (
+                  <div key={i} style={{ padding: "6px 10px", borderBottom: "1px solid var(--mh-line)", display: "flex", justifyContent: "space-between" }}>
+                    <span className="mh__mono">cust#{r.customerId}</span>
+                    <span style={{ color: r.status === "SENT" ? "var(--mh-green)" : r.status === "FAILED" ? "var(--mh-red)" : "var(--mh-ink-soft)" }}>
+                      {r.status}
+                      {r.errorMessage ? ` — ${r.errorMessage}` : ""}
+                    </span>
+                  </div>
+                ))}
+              </div>
+            )}
+            <div style={{ display: "flex", gap: 8, justifyContent: "flex-end" }}>
+              <button className="mh__btn mh__btn--primary" onClick={allDone ? onSent : onClose}>
+                {allDone ? "Hoàn tất" : "Đóng (chạy ngầm)"}
+              </button>
+            </div>
+          </div>
+        )}
+      </div>
     </div>
   );
 }
