@@ -1,13 +1,38 @@
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useEffect } from "react";
 import { MOCK_PROJECTS, PROJECT_TYPE_OPTIONS, STATUS_LABELS, STATUS_COLORS } from "assets/mock/TNPMData";
 import AddEditProjectModal from "./partials/AddEditProjectModal/AddEditProjectModal";
 import DetailProject from "./partials/DetailProject/DetailProject";
+import PropertyProjectService from "services/tnpm/PropertyProjectService";
 import "./PropertyProject.scss";
 
 export default function PropertyProjectList() {
   document.title = "Quản lý Dự án – TNPM";
 
   const [projects, setProjects] = useState(MOCK_PROJECTS);
+  const [usingMock, setUsingMock] = useState(true);
+
+  useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      try {
+        const res = await PropertyProjectService.list({ page: 0, size: 200 });
+        // BE envelope: { code: 0, message: "OK", data: Page<Project> }
+        // hoặc DfResponse: { code, message, data: { content: [...], totalElements } }
+        if (cancelled) return;
+        if (res?.code === 0 && res?.data) {
+          const list = Array.isArray(res.data) ? res.data : (res.data.content || []);
+          if (list.length > 0) {
+            setProjects(list);
+            setUsingMock(false);
+          }
+        }
+      } catch (e) {
+        // Giữ MOCK_PROJECTS làm fallback (BE chưa cấp permission hoặc network fail)
+        console.warn("[PropertyProject] BE not available, falling back to mock", e);
+      }
+    })();
+    return () => { cancelled = true; };
+  }, []);
   const [search, setSearch] = useState("");
   const [filterType, setFilterType] = useState("");
   const [showModal, setShowModal] = useState(false);
@@ -23,7 +48,8 @@ export default function PropertyProjectList() {
     });
   }, [projects, search, filterType]);
 
-  const handleSave = (data) => {
+  const handleSave = async (data) => {
+    // Optimistic update local + gọi BE (operation/project/update — INSERT khi id<=0)
     if (data.id) {
       setProjects((prev) => prev.map((p) => (p.id === data.id ? { ...p, ...data } : p)));
     } else {
@@ -31,11 +57,25 @@ export default function PropertyProjectList() {
     }
     setShowModal(false);
     setEditingProject(null);
+    if (!usingMock) {
+      try {
+        await PropertyProjectService.update(data);
+      } catch (e) {
+        console.warn("[PropertyProject] save failed", e);
+      }
+    }
   };
 
-  const handleDelete = (id: number) => {
+  const handleDelete = async (id: number) => {
     setProjects((prev) => prev.filter((p) => p.id !== id));
     setShowDeleteConfirm(null);
+    if (!usingMock && id > 0) {
+      try {
+        await PropertyProjectService.delete(id);
+      } catch (e) {
+        console.warn("[PropertyProject] delete failed", e);
+      }
+    }
   };
 
   const handleEdit = (p) => {

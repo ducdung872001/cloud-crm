@@ -1,5 +1,6 @@
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useEffect } from "react";
 import { MOCK_UNITS, MOCK_PROJECTS, STATUS_LABELS, STATUS_COLORS } from "assets/mock/TNPMData";
+import PropertyUnitService from "services/tnpm/PropertyUnitService";
 
 const fmtMoney = (n: number) =>
   n >= 1e6 ? `${(n / 1e6).toFixed(1)} tr đ` : `${(n || 0).toLocaleString("vi-VN")} đ`;
@@ -107,7 +108,28 @@ export default function PropertyUnitList() {
   document.title = "Quản lý Unit – TNPM";
 
   const [units, setUnits] = useState(MOCK_UNITS);
+  const [usingMock, setUsingMock] = useState(true);
   const [search, setSearch] = useState("");
+
+  useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      try {
+        const res = await PropertyUnitService.list({ page: 0, size: 500 });
+        if (cancelled) return;
+        if (res?.code === 0 && res?.data) {
+          const list = Array.isArray(res.data) ? res.data : (res.data.content || []);
+          if (list.length > 0) {
+            setUnits(list);
+            setUsingMock(false);
+          }
+        }
+      } catch (e) {
+        console.warn("[PropertyUnit] BE not available, falling back to mock", e);
+      }
+    })();
+    return () => { cancelled = true; };
+  }, []);
   const [filterProject, setFilterProject] = useState("");
   const [filterStatus, setFilterStatus] = useState("");
   const [filterType, setFilterType] = useState("");
@@ -126,10 +148,14 @@ export default function PropertyUnitList() {
     );
   }), [units, search, filterProject, filterStatus, filterType]);
 
-  const handleSave = (data: any) => {
+  const handleSave = async (data: any) => {
     if (data.id) setUnits((p) => p.map((u) => (u.id === data.id ? data : u)));
     else setUnits((p) => [...p, { ...data, id: Date.now() }]);
     setShowModal(false); setEditing(null);
+    if (!usingMock) {
+      try { await PropertyUnitService.update(data); }
+      catch (e) { console.warn("[PropertyUnit] save failed", e); }
+    }
   };
 
   const stats = {

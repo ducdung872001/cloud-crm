@@ -124,12 +124,28 @@ Trích từ overview docs của từng repo BE. Khi không chắc service nào, 
 - **API base path**: `/notification/email/*`, `/notification/fcm*/*`, `/notification/sms/*`, `/notification/zns/*`.
 
 ### `operation` ⭐ CORE cho tnpm
-- **Mục đích chính**: Vận hành toà nhà / dự án bất động sản.
-- **Scope chính**: Dự án/toà nhà/tầng, không gian (căn hộ), công tơ điện/nước, chỉ số, biểu giá, hoá đơn tiện ích, phí quản lý, phương tiện/bãi xe.
-- **KHÔNG thuộc scope**: Khách hàng hồ sơ (→ `customer`), hợp đồng (→ `contract`), thanh toán (→ `billing`), BPM.
-- **Tnpm use case**: **Service CHÍNH** của tnpm. Quản lý **Property Project / Building / Floor / Unit** (`PropertyProjectList`, `PropertyUnitList`), **Meter Reading** điện/nước định kỳ (`MeterReadingList`), biểu giá tiện ích, **Billing Engine** dùng meter reading để tính hoá đơn điện/nước/CAM, **Management Fee** per-unit, bãi xe & phương tiện cư dân, **CAM allocation** dùng tỷ trọng diện tích/đầu người để chia phí chung. Nhiều page tnpm bind trực tiếp xuống `operation.*`.
-- **Entity/bảng key**: `project`, `building`, `space`, `electric_meter`, `water_meter`, `electric_index`, `management_fee`, `vehicle`.
-- **API base path**: `/operation/project/*`, `/operation/space/*`.
+- **Mục đích chính**: Vận hành toà nhà / dự án bất động sản — quản lý dữ liệu vận hành cư dân, mặt bằng, tiện ích, thu phí ở tầng nghiệp vụ.
+- **Scope chính (7 domain — `prod_clouddb_operation` ~23 bảng)**:
+  1. **Dự án – Toà nhà – Tầng**: `project`, `building`, `building_floor` (cây phân cấp BĐS)
+  2. **Không gian (căn hộ / mặt bằng)**: `space`, `space_type`, `space_customer` (đơn vị + lịch sử thuê)
+  3. **Điện**: `electric_meter`, `meter_space`, `electric_index`, `electricity_rate`, `electric_fee`
+  4. **Nước**: `water_meter`, `water_meter_space`, `water_index`, `water_rate`, `water_fee`
+  5. **Phí quản lý + phí khác**: `management_fee`, `management_fee_rate`, `other_fee`
+  6. **Phương tiện / bãi xe**: `vehicle`, `vehicle_registration`, `parking_fee`
+  7. **Tiện ích tổng hợp**: `utility_reading`
+- **KHÔNG thuộc scope**: Hồ sơ cư dân/khách (→ `customer`), hợp đồng thuê (→ `contract`), phát hành invoice ra cổng + đối soát NH (→ `sales`/`billing`), BPM workflow (→ `bpm`), upload media, BI tổng hợp.
+- **Tnpm use case**: **Service CHÍNH** — `PropertyProjectList`, `PropertyUnitList`, `MeterReadingList`, `BillingEngineList` (line items lấy từ meter + management fee), CAM allocation, parking management. Mọi entity gắn `bsn_id` từ JWT (multi-tenant).
+- **Convention CRUD chuẩn (TẤT CẢ 23 resource đều theo pattern này)**:
+  - `GET  /operation/<resource>/list` — paged (`page`, `size`, `sort`, kèm filter `name`/`customerId`/...)
+  - `GET  /operation/<resource>/get?id=<int>` — 1 record theo id
+  - `POST /operation/<resource>/update` — body=entity; `id≤0` = INSERT, `id>0` = UPDATE
+  - `DELETE /operation/<resource>/delete?id=<int>`
+  - Response: `DfResponse<T>` (envelope `{code,message,data}`); list trả `DfResponse<Page<T>>`
+- **API base path**: `/operation/{project|building|buildingFloor|space|spaceType|spaceCustomer|electricMeter|meterSpace|electricIndex|electricityRate|electricFee|waterMeter|waterMeterSpace|waterIndex|waterRate|waterFee|managementFee|managementFeeRate|otherFee|utilityReading|vehicle|vehicleRegistration|parkingFee}/{list,get,update,delete}`
+- **Auth**: Bearer JWT (Authorization header). Service tự gọi `biz.reborn.vn/customer/employee/permission/checker` xác thực quyền theo `bsn_id` + `selectedRole`. Action ∈ `VIEW/ADD/UPDATE/DELETE`, URI `/management/`.
+- **Repo & docs**: `ducdung872001/cloud-operation-master` (default `master`). Docs: [SERVICE_OVERVIEW.md](https://github.com/ducdung872001/cloud-operation-master/blob/master/docs/SERVICE_OVERVIEW.md), [ERD.md](https://github.com/ducdung872001/cloud-operation-master/blob/master/docs/ERD.md), [erd.dbml](https://github.com/ducdung872001/cloud-operation-master/blob/master/docs/erd.dbml).
+- **Stack**: Spring Boot 3.2 + Vert.x + jOOQ + Kafka, Java 21, MySQL.
+- **Kafka topics phát đi**: `action-log`, `log-capture`, `upload-customer-api`, `upload-work-order`, `cloud-bpm-trigger`.
 
 ### `sales`
 - **Mục đích chính**: Bán hàng, hóa đơn, thanh toán, hoa hồng, đặt cọc, chiến dịch & cơ hội bán (opportunity).

@@ -1,5 +1,9 @@
 // Đã migrate: toàn bộ endpoint /adminapi/* → biz.reborn.vn/customer/*.
 const prefixCustomer = (process.env.APP_CUSTOMER_API_URL || "https://biz.reborn.vn") + "/customer";
+const bizGateway = process.env.APP_CUSTOMER_API_URL || "https://biz.reborn.vn";
+const prefixOperation = bizGateway + "/operation";
+const prefixContract = bizGateway + "/contract";
+const prefixCare = bizGateway + "/care";
 const prefixBiz = "/bizapi";
 // const prefixBpm = process.env.APP_BPM_URL + "/bpmapi";
 const prefixBpm = process.env.APP_BPM_URL + "/bpmapi";
@@ -3743,100 +3747,188 @@ export const urls = {
 export default urls;
 
 // ─── TNPM Property Management URLs ───────────────────────────────────────────
+// Tnpm endpoints — remap về đúng microservice. Convention BE operation:
+// /operation/<resource>/{list,get,update,delete}; update vừa là CREATE (id<=0) vừa là UPDATE (id>0).
+// Resource đặt theo camelCase đúng tài liệu SERVICE_OVERVIEW.md của cloud-operation-master.
+
+// Helper sinh CRUD theo convention operation BE
+const opCrud = (resource: string) => ({
+  list:   `${prefixOperation}/${resource}/list`,
+  get:    `${prefixOperation}/${resource}/get`,
+  detail: `${prefixOperation}/${resource}/get`,    // alias FE
+  update: `${prefixOperation}/${resource}/update`, // INSERT khi id<=0, UPDATE khi id>0
+  create: `${prefixOperation}/${resource}/update`, // alias FE
+  delete: `${prefixOperation}/${resource}/delete`,
+});
+
 export const tnpmUrls = {
-  portfolio: {
-    list: prefixCustomer + "/portfolio/list",
-    detail: prefixCustomer + "/portfolio/get",
-    create: prefixCustomer + "/portfolio/create",
-    update: prefixCustomer + "/portfolio/update",
-    delete: prefixCustomer + "/portfolio/delete",
-  },
-  project: {
-    list: prefixCustomer + "/property-project/list",
-    detail: prefixCustomer + "/property-project/get",
-    create: prefixCustomer + "/property-project/create",
-    update: prefixCustomer + "/property-project/update",
-    delete: prefixCustomer + "/property-project/delete",
-  },
-  unit: {
-    list: prefixCustomer + "/property-unit/list",
-    detail: prefixCustomer + "/property-unit/get",
-    create: prefixCustomer + "/property-unit/create",
-    update: prefixCustomer + "/property-unit/update",
-    delete: prefixCustomer + "/property-unit/delete",
-  },
+  // ── operation: project / building / floor / space (căn) ────────────────────
+  project:       opCrud("project"),
+  building:      opCrud("building"),
+  buildingFloor: opCrud("buildingFloor"),
+  unit:          opCrud("space"),         // FE gọi "unit", BE gọi "space"
+  spaceType:     opCrud("spaceType"),
+  spaceCustomer: opCrud("spaceCustomer"), // lịch sử khách thuê căn
+
+  // ── operation: điện ────────────────────────────────────────────────────────
+  electricMeter:   opCrud("electricMeter"),
+  meterSpace:      opCrud("meterSpace"),
+  electricIndex:   opCrud("electricIndex"),
+  electricityRate: opCrud("electricityRate"),
+  electricFee:     opCrud("electricFee"),
+
+  // ── operation: nước ────────────────────────────────────────────────────────
+  waterMeter:      opCrud("waterMeter"),
+  waterMeterSpace: opCrud("waterMeterSpace"),
+  waterIndex:      opCrud("waterIndex"),
+  waterRate:       opCrud("waterRate"),
+  waterFee:        opCrud("waterFee"),
+
+  // ── operation: phí quản lý + phí khác ──────────────────────────────────────
+  managementFee:     opCrud("managementFee"),
+  managementFeeRate: opCrud("managementFeeRate"),
+  otherFee:          opCrud("otherFee"),
+
+  // ── operation: phương tiện / bãi xe ────────────────────────────────────────
+  vehicle:             opCrud("vehicle"),
+  vehicleRegistration: opCrud("vehicleRegistration"),
+  parkingFee:          opCrud("parkingFee"),
+
+  // ── operation: tiện ích tổng hợp ───────────────────────────────────────────
+  utilityReading: opCrud("utilityReading"),
+
+  // ── contract: lease/service/vendor/partner contract ────────────────────────
+  // ⚠️ contract BE convention chưa verify thực tế — sẽ confirm qua handoff
   leaseContract: {
-    list: prefixCustomer + "/lease-contract/list",
-    detail: prefixCustomer + "/lease-contract/get",
-    create: prefixCustomer + "/lease-contract/create",
-    update: prefixCustomer + "/lease-contract/update",
-    delete: prefixCustomer + "/lease-contract/delete",
-    expiringSoon: prefixCustomer + "/lease-contract/expiring-soon",
+    list:   `${prefixContract}/contract/list?type=lease`,
+    get:    `${prefixContract}/contract/get`,
+    detail: `${prefixContract}/contract/get`,
+    update: `${prefixContract}/contract/update`,
+    create: `${prefixContract}/contract/update`,
+    delete: `${prefixContract}/contract/delete`,
   },
   serviceContract: {
-    list: prefixCustomer + "/service-contract/list",
-    create: prefixCustomer + "/service-contract/create",
-    update: prefixCustomer + "/service-contract/update",
-    delete: prefixCustomer + "/service-contract/delete",
-  },
-  billing: {
-    list: prefixCustomer + "/property-invoice/list",
-    detail: prefixCustomer + "/property-invoice/get",
-    create: prefixCustomer + "/property-invoice/create",
-    update: prefixCustomer + "/property-invoice/update",
-    delete: prefixCustomer + "/property-invoice/delete",
-    generateBulk: prefixCustomer + "/property-invoice/generate-bulk",
-    recordPayment: prefixCustomer + "/property-invoice/record-payment",
-  },
-  turnoverRent: {
-    list: prefixCustomer + "/turnover-rent/list",
-    submit: prefixCustomer + "/turnover-rent/submit",
-    verify: prefixCustomer + "/turnover-rent/verify",
-    create: prefixCustomer + "/turnover-rent/create",
-    update: prefixCustomer + "/turnover-rent/update",
-  },
-  vendor: {
-    list: prefixCustomer + "/vendor/list",
-    detail: prefixCustomer + "/vendor/get",
-    create: prefixCustomer + "/vendor/create",
-    update: prefixCustomer + "/vendor/update",
-    delete: prefixCustomer + "/vendor/delete",
-    kpiSummary: prefixCustomer + "/vendor/kpi-summary",
+    list:   `${prefixContract}/contract/list?type=service`,
+    get:    `${prefixContract}/contract/get`,
+    detail: `${prefixContract}/contract/get`,
+    update: `${prefixContract}/contract/update`,
+    create: `${prefixContract}/contract/update`,
+    delete: `${prefixContract}/contract/delete`,
   },
   vendorContract: {
-    list: prefixCustomer + "/vendor-contract/list",
-    create: prefixCustomer + "/vendor-contract/create",
-    update: prefixCustomer + "/vendor-contract/update",
-    delete: prefixCustomer + "/vendor-contract/delete",
+    list:   `${prefixContract}/contract/list?type=vendor`,
+    get:    `${prefixContract}/contract/get`,
+    detail: `${prefixContract}/contract/get`,
+    update: `${prefixContract}/contract/update`,
+    create: `${prefixContract}/contract/update`,
+    delete: `${prefixContract}/contract/delete`,
   },
-  vendorInvoice: {
-    list: prefixCustomer + "/vendor-invoice/list",
-    create: prefixCustomer + "/vendor-invoice/create",
-    update: prefixCustomer + "/vendor-invoice/update",
-    approve: prefixCustomer + "/vendor-invoice/approve",
-    reject: prefixCustomer + "/vendor-invoice/reject",
+  partnerContract: {
+    list:   `${prefixContract}/contract/list?type=partner`,
+    update: `${prefixContract}/contract/update`,
+    create: `${prefixContract}/contract/update`,
+    delete: `${prefixContract}/contract/delete`,
   },
-  serviceRequest: {
-    list: prefixCustomer + "/service-request/list",
-    detail: prefixCustomer + "/service-request/get",
-    create: prefixCustomer + "/service-request/create",
-    update: prefixCustomer + "/service-request/update",
-    delete: prefixCustomer + "/service-request/delete",
-    assign: prefixCustomer + "/service-request/assign",
-    resolve: prefixCustomer + "/service-request/resolve",
+
+  // ── sales: invoice / vendor invoice / opportunity ──────────────────────────
+  invoice: {
+    list:   `${prefixSales}/invoice/list`,
+    get:    `${prefixSales}/invoice/get`,
+    detail: `${prefixSales}/invoice/get`,
+    update: `${prefixSales}/invoice/update`,
+    create: `${prefixSales}/invoice/update`,
+    delete: `${prefixSales}/invoice/delete`,
+    generateBulk:  `${prefixSales}/invoice/generateBulk`,  // ⚠️ pending BE confirm
+    recordPayment: `${prefixSales}/invoice/recordPayment`, // ⚠️ pending BE confirm
   },
+  // Backward-compat alias cho service file BillingService cũ
+  billing: {
+    list:   `${prefixSales}/invoice/list`,
+    get:    `${prefixSales}/invoice/get`,
+    detail: `${prefixSales}/invoice/get`,
+    update: `${prefixSales}/invoice/update`,
+    create: `${prefixSales}/invoice/update`,
+    delete: `${prefixSales}/invoice/delete`,
+  },
+  vendorInvoice: { // 3-way match + 4-step approval (workflow qua bpm)
+    list:   `${prefixSales}/vendorInvoice/list`,
+    get:    `${prefixSales}/vendorInvoice/get`,
+    detail: `${prefixSales}/vendorInvoice/get`,
+    update: `${prefixSales}/vendorInvoice/update`,
+    create: `${prefixSales}/vendorInvoice/update`,
+    delete: `${prefixSales}/vendorInvoice/delete`,
+    approve: `${prefixSales}/vendorInvoice/approve`, // ⚠️ pending BE confirm — có thể nằm ở bpm
+    reject:  `${prefixSales}/vendorInvoice/reject`,
+  },
+  opportunity: {
+    list:   `${prefixSales}/opportunity/list`,
+    update: `${prefixSales}/opportunity/update`,
+    create: `${prefixSales}/opportunity/update`,
+    delete: `${prefixSales}/opportunity/delete`,
+  },
+  deposit: {
+    list:   `${prefixSales}/deposit/list`,
+    update: `${prefixSales}/deposit/update`,
+  },
+
+  // ── customer: vendor master + partner + employee schedule ──────────────────
+  vendor: { // vendor master nằm trong customer (extension)
+    list:   `${prefixCustomer}/vendor/list`,
+    get:    `${prefixCustomer}/vendor/get`,
+    detail: `${prefixCustomer}/vendor/get`,
+    update: `${prefixCustomer}/vendor/update`,
+    create: `${prefixCustomer}/vendor/update`,
+    delete: `${prefixCustomer}/vendor/delete`,
+  },
+  partner: {
+    list:   `${prefixCustomer}/partner/list`,
+    update: `${prefixCustomer}/partner/update`,
+    create: `${prefixCustomer}/partner/update`,
+    delete: `${prefixCustomer}/partner/delete`,
+  },
+  schedule: { // staff schedule
+    list:   `${prefixCustomer}/schedule/list`,
+    update: `${prefixCustomer}/schedule/update`,
+    create: `${prefixCustomer}/schedule/update`,
+    delete: `${prefixCustomer}/schedule/delete`,
+  },
+
+  // ── care: service request / complaint ticket ───────────────────────────────
+  serviceRequest: { // care.ticket extension
+    list:   `${prefixCare}/ticket/list?category=service_request`,
+    get:    `${prefixCare}/ticket/get`,
+    detail: `${prefixCare}/ticket/get`,
+    update: `${prefixCare}/ticket/update`,
+    create: `${prefixCare}/ticket/update`,
+    delete: `${prefixCare}/ticket/delete`,
+    assign:  `${prefixCare}/ticket/assign`,  // ⚠️ pending BE confirm
+    resolve: `${prefixCare}/ticket/resolve`, // ⚠️ pending BE confirm
+  },
+  complaintTicket: {
+    list:   `${prefixCare}/ticket/list?category=complaint`,
+    update: `${prefixCare}/ticket/update`,
+    delete: `${prefixCare}/ticket/delete`,
+  },
+
+  // ── PENDING — chưa có BE xác định, đang dùng MOCK_* trên FE ────────────────
+  // Khi BE confirm, sẽ điền URL thật. Hiện service file references vẫn cần keys
+  // tồn tại để compile; URL trỏ về placeholder sẽ trả 404 (intentional —
+  // báo hiệu cho dev rằng cần wire BE trước khi dùng).
   maintenancePlan: {
-    list: prefixCustomer + "/maintenance-plan/list",
-    detail: prefixCustomer + "/maintenance-plan/get",
-    create: prefixCustomer + "/maintenance-plan/create",
-    update: prefixCustomer + "/maintenance-plan/update",
-    delete: prefixCustomer + "/maintenance-plan/delete",
+    list:   `${prefixOperation}/maintenancePlan/list`,    // TODO BE
+    detail: `${prefixOperation}/maintenancePlan/get`,
+    update: `${prefixOperation}/maintenancePlan/update`,
+    create: `${prefixOperation}/maintenancePlan/update`,
+    delete: `${prefixOperation}/maintenancePlan/delete`,
   },
-  report: {
-    financialSummary: prefixCustomer + "/tnpm-report/financial-summary",
-    occupancy: prefixCustomer + "/tnpm-report/occupancy",
-    operationalKpi: prefixCustomer + "/tnpm-report/operational-kpi",
-    vendorPerformance: prefixCustomer + "/tnpm-report/vendor-performance",
-    portfolioPnl: prefixCustomer + "/tnpm-report/portfolio-pnl",
+  turnoverRent: {
+    list:   `${prefixSales}/turnoverRent/list`,           // TODO BE
+    detail: `${prefixSales}/turnoverRent/get`,
+    update: `${prefixSales}/turnoverRent/update`,
+    create: `${prefixSales}/turnoverRent/update`,
+    delete: `${prefixSales}/turnoverRent/delete`,
   },
+
+  // Reports / dashboards aggregates — chưa có BE, FE đang aggregate từ mock
+  // report: { ... } — bỏ hẳn, sẽ aggregate từ list endpoints khi cần
 };
