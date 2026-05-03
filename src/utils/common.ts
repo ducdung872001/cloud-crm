@@ -13,7 +13,11 @@ const cookies = new Cookies();
  * @param {string} type
  */
 export const showToast = (mgs: string, type: "error" | "success" | "warning") => {
-  toast[type](mgs == "un authenticated" ? "Đã hết phiên đăng nhập, đang chuyển hướng để đăng nhập lại!" : mgs, {
+  // Suppress: notification microservice trả "un authenticated" cho token hợp lệ
+  // (gateway chưa support token chung) — không phải lỗi user-facing.
+  if (mgs == "un authenticated") return;
+
+  toast[type](mgs, {
     position: "top-right",
     autoClose: 5000,
     hideProgressBar: false,
@@ -22,12 +26,6 @@ export const showToast = (mgs: string, type: "error" | "success" | "warning") =>
     draggable: true,
     progress: undefined,
   });
-
-  // Không auto-logout dựa trên message toast: notification microservice trả
-  // "un authenticated" cho token hợp lệ (gateway chưa hỗ trợ token chung) →
-  // khiến đá ngược user về SSO. Khi token thật sự expired thì
-  // fetchConfig.response sẽ wipe cookie cho 401 từ /authenticator/user/me,
-  // Login.tsx sẽ tự redirect về SSO.
 };
 /**
  * Kiểm tra 2 object có khác biệt nhau ko?
