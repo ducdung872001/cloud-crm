@@ -139,11 +139,12 @@ export default function App() {
 
         if (isEmployee) {
           setIsLogin(true);
+          // Navigate dựa vào BE xác nhận employee, KHÔNG gate bằng cookies.user:
+          // Login.tsx setCookie("user") ở cuối chain 4 await, closure stale ở
+          // effect lần đầu sẽ làm user kẹt /login.
           if (location.pathname === "/" || location.pathname === "/login") {
-            if (cookies.user) {
-              const target = returnUrl || defaultRedirectRef.current || "/mh/courses";
-              navigate(target);
-            }
+            const target = returnUrl || defaultRedirectRef.current || "/mh/courses";
+            navigate(target);
           }
 
           if (cookies.user?.id !== user?.id || cookies.token !== user?.token) {
@@ -154,13 +155,6 @@ export default function App() {
               const dateExpired = new Date(cookies.user.expired_cookie);
               let timeOut = dateExpired.getTime() - Date.now();
               timeOut = timeOut > 0 ? timeOut : 0;
-            }
-
-            if (location.pathname === "/" || location.pathname === "/login") {
-              if (cookies.user) {
-                const target = returnUrl || defaultRedirectRef.current || "/mh/courses";
-                navigate(target);
-              }
             }
           }
 
