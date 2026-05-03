@@ -37,13 +37,10 @@ export default function RegisterFetch() {
       } else if (!config.headers["Content-Type"]) {
         config.headers["Content-Type"] = "application/json";
       }
-      // Local (localhost / 127.0.0.1) → luôn "kcn.reborn.vn" (env test mặc định).
-      // Live (prod/staging) → location.hostname thật của tenant user đang truy cập.
-      {
-        const realHost = location.hostname || "";
-        const isLocal = realHost === "localhost" || realHost === "127.0.0.1" || realHost === "";
-        config.headers["Hostname"] = isLocal ? "kcn.reborn.vn" : realHost;
-      }
+      // Tnpm tạm dùng tenant "kcn.reborn.vn" cho mọi env (local + live tnpm.reborn.vn)
+      // — tenant tnpm.reborn.vn chưa cấu hình BE. Khi BE sẵn sàng, revert lại
+      // dùng location.hostname cho live.
+      config.headers["Hostname"] = "kcn.reborn.vn";
 
 
       if (!url.startsWith("http")) {
