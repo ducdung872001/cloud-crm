@@ -199,7 +199,7 @@ export default function App() {
     setIsChecking(true);
 
     try {
-      const response = await EmployeeService.info();
+      const response = await EmployeeService.info(cookies.token);
       if (response.code === 0) {
         const result = response.result;
         setDataInfoEmployee(result);

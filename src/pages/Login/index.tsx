@@ -47,7 +47,7 @@ export default function Index() {
 
     if (response.result && response.result.user) {
       //Khởi tạo thông tin ban đầu nếu lần đầu đăng nhập
-      const employeeRes = await EmployeeService.init();
+      const employeeRes = await EmployeeService.init(cookies.token);
       // console.log("employeeRes =>", employeeRes);
 
       //Kiểm tra người dùng này đã liên kết với nhân viên chưa
@@ -61,7 +61,7 @@ export default function Index() {
       localStorage.setItem("user.root", rootUser.toString());
 
       //Lấy và lưu thông tin quyền của người dùng
-      const permissionRes = await PermissionService.getPermissionResources();
+      const permissionRes = await PermissionService.getPermissionResources(cookies.token);
       let lstPermissionResource = permissionRes.result;
       let mapPermission = {};
       (lstPermissionResource || []).forEach((permissionResource: Record<string, unknown>) => {

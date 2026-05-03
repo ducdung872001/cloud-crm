@@ -4,9 +4,12 @@ import { IPermissionDepartmentAddRequest, IPermissionCloneRequest } from "model/
 
 
 export default {
-  getPermissionResources: () => {
+  // Truyền token tường minh trong post-SSO flow (Login.tsx getUserMe) để tránh phụ thuộc
+  // fetch-intercept getCookie — đôi khi cookie chưa visible ngay sau SSO redirect.
+  getPermissionResources: (token?: string) => {
     return fetch(`${urlsApi.permission.getPermissionResources}`, {
       method: "GET",
+      headers: token ? { Authorization: `Bearer ${token}` } : undefined,
     }).then((res) => res.json());
   },
   //API phân quyền theo phòng ban

@@ -31,12 +31,21 @@ export default {
     return apiPost(urlsApi.employee.linkEmployeeUser, body);
   },
   //Khởi tạo thông tin tài khoản owner thẩm mỹ viện, lần đầu đăng nhập vào Reborn CRM
-  init: () => {
+  // Truyền token tường minh trong post-SSO flow để tránh phụ thuộc fetch-intercept
+  // (cookie đôi khi chưa kịp visible cho getCookie sau redirect SSO).
+  init: (token?: string) => {
     return fetch(`${urlsApi.employee.init}`, {
       method: "GET",
+      headers: token ? { Authorization: `Bearer ${token}` } : undefined,
     }).then((res) => res.json());
   },
-  info: () => {
+  info: (token?: string) => {
+    if (token) {
+      return fetch(urlsApi.employee.info, {
+        method: "GET",
+        headers: { Authorization: `Bearer ${token}` },
+      }).then((res) => res.json());
+    }
     return apiGet(urlsApi.employee.info);
   },
   listExTip: (params?: IEmployeeFilterRequest, signal?: AbortSignal) => {
