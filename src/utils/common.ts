@@ -23,11 +23,11 @@ export const showToast = (mgs: string, type: "error" | "success" | "warning") =>
     progress: undefined,
   });
 
-  //Trường hợp là lỗi (type == 'error') và mgs là 'un authenticated' thì chuyển hướng về trang login
-  if (type == "error" && mgs == "un authenticated") {
-    //Chuyển hướng về trang login
-    setTimeout(logout, 5000);
-  }
+  // Không auto-logout dựa trên message toast: notification microservice trả
+  // "un authenticated" cho token hợp lệ (gateway chưa hỗ trợ token chung) →
+  // khiến đá ngược user về SSO. Khi token thật sự expired thì
+  // fetchConfig.response sẽ wipe cookie cho 401 từ /authenticator/user/me,
+  // Login.tsx sẽ tự redirect về SSO.
 };
 /**
  * Kiểm tra 2 object có khác biệt nhau ko?
