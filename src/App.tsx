@@ -178,7 +178,8 @@ export default function App() {
           const changeResult = result.lstOrgApp[0];
 
           const defaultRedirect = result?.defaultRedirect;
-          defaultRedirectRef.current = defaultRedirect || "/create_sale_add";
+          // tnpm fork không có route /create_sale_add → fallback /dashboard
+          defaultRedirectRef.current = defaultRedirect || "/dashboard";
 
           const endDate: any = new Date(changeResult?.endDate);
           const currentDate: any = new Date();

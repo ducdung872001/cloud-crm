@@ -72,18 +72,25 @@ export default function RegisterFetch() {
 
     response(response) {
       if (response.status === 401) {
-        // eslint-disable-next-line prefer-const
-        let rootDomain = getRootDomain(location.hostname || "");
+        // Chỉ wipe session khi 401 từ endpoint xác thực gốc (authenticator/user/me).
+        // Các microservice phụ (notification, ...) có thể trả 401 do chưa hỗ trợ
+        // token chung — không được làm logout user vì chuyện đó.
+        const url = (response as any).url || "";
+        const isAuthCheck = /\/authenticator\/user\/me(\?|$)/.test(url);
+        if (isAuthCheck) {
+          // eslint-disable-next-line prefer-const
+          let rootDomain = getRootDomain(location.hostname || "");
 
-        if (cookies.user) {
-          removeCookie("user", { path: "/", domain: rootDomain });
-        }
-        if (cookies.token) {
-          removeCookie("token", { path: "/", domain: rootDomain });
-        }
+          if (cookies.user) {
+            removeCookie("user", { path: "/", domain: rootDomain });
+          }
+          if (cookies.token) {
+            removeCookie("token", { path: "/", domain: rootDomain });
+          }
 
-        localStorage.removeItem("permissions");
-        localStorage.removeItem("user.root");
+          localStorage.removeItem("permissions");
+          localStorage.removeItem("user.root");
+        }
       }
       return response;
     },
