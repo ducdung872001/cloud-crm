@@ -16,3 +16,7 @@ yarn-error.log
 
 # handoff audit logs (local only — never commit)
 .handoff/
+
+# Playwright test artifacts (screenshots, traces, videos)
+e2e-tests/test-results/
+playwright-report/
