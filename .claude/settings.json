@@ -158,7 +158,9 @@
       "Bash(curl -s \"http://localhost:4001/src/main.tsx\")",
       "Bash(git -C \"d:/Git/reborn/reborn-cloud/cloud-ver2/cloud-crm\" status -s)",
       "Bash(git -C \"d:/Git/reborn/reborn-cloud/cloud-ver2/cloud-crm\" diff --stat HEAD~1 HEAD)",
-      "Bash(git -C \"d:/Git/reborn/reborn-cloud/cloud-ver2/cloud-crm\" log --oneline -3)"
+      "Bash(git -C \"d:/Git/reborn/reborn-cloud/cloud-ver2/cloud-crm\" log --oneline -3)",
+      "Bash(git -C \"d:/Git/reborn/reborn-cloud/cloud-ver2/cloud-crm\" add src/bootMigration.ts src/main.tsx)",
+      "Bash(git -C d:/Git/reborn/reborn-cloud/cloud-ver2/cloud-crm commit -m ' *)"
     ],
     "additionalDirectories": [
       "\\tmp"
