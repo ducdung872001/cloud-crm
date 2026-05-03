@@ -893,3 +893,147 @@ input[class*="base-input"],
   .retail-detail__action-btn span { display: none; }
   .retail-detail__action-btn { padding: 0 10px !important; }
 }
+
+
+// ============================================================
+// Mobile responsive (≤ 768px) — áp dụng chung cho mọi trang TNPM
+// ============================================================
+@media (max-width: 768px) {
+  // -- Page wrapper: nén padding ----------------------------------------------
+  .tnpm-list-page,
+  .detail-page {
+    padding: 12px !important;
+  }
+
+  // -- Page header: stack title trên, action buttons xuống dòng ----------------
+  .tnpm-list-page .page-header,
+  .detail-header {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 12px;
+  }
+
+  // Action buttons row của page-header (PropertyUnit dùng inline style — cover bằng :nth-child)
+  .tnpm-list-page .page-header > div:last-child {
+    flex-wrap: wrap;
+    width: 100%;
+
+    .btn {
+      flex: 1 1 auto;
+      min-width: 0;
+    }
+  }
+
+  .page-title {
+    font-size: 18px !important;
+    word-break: break-word;
+    overflow-wrap: anywhere;
+  }
+
+  // -- Stats strip: ép inline grid 3/4/5 cột về 2 cột ------------------------
+  .tnpm-list-page [style*="repeat(5, 1fr)"],
+  .tnpm-list-page [style*="repeat(4, 1fr)"],
+  .tnpm-list-page [style*="repeat(3, 1fr)"] {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  }
+
+  // -- Filter bar: full width inputs ------------------------------------------
+  .filter-bar {
+    gap: 8px;
+  }
+  .search-input {
+    min-width: 0 !important;
+    max-width: none !important;
+    width: 100%;
+    flex: 1 1 100%;
+  }
+  .filter-select {
+    min-width: 0 !important;
+    flex: 1 1 calc(50% - 4px);
+  }
+  .result-count {
+    margin-left: 0 !important;
+    flex-basis: 100%;
+  }
+
+  // -- Data table: bọc scroll ngang -------------------------------------------
+  .data-table {
+    display: block;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    white-space: nowrap;
+  }
+
+  // -- Modal: full-screen mobile ---------------------------------------------
+  .modal-overlay {
+    padding: 0 !important;
+    align-items: flex-end;
+  }
+  .modal-box,
+  .modal-box--wide,
+  .modal-box--narrow {
+    max-width: 100% !important;
+    max-height: 95vh !important;
+    border-radius: 12px 12px 0 0 !important;
+  }
+  .modal-header,
+  .modal-footer {
+    padding: 14px 16px !important;
+  }
+  .modal-body {
+    padding: 14px 16px !important;
+  }
+
+  // Form grid -> 1 cột
+  .form-grid,
+  .form-grid--3col {
+    grid-template-columns: 1fr !important;
+  }
+
+  // -- Project card stats: 2 cột thay vì 4 ------------------------------------
+  .project-card__stats {
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
+
+  // -- Detail page: tabs scroll ngang đã có sẵn ------------------------------
+  .info-grid {
+    grid-template-columns: 1fr !important;
+    padding: 14px !important;
+  }
+
+  // -- Card-box (TNPM-synced legacy): nén padding ----------------------------
+  .card-box .title-action {
+    padding: 14px 16px 12px !important;
+    flex-wrap: wrap;
+    gap: 10px;
+
+    h1 {
+      font-size: 17px !important;
+    }
+  }
+
+  // -- Page-customer & detail-person: bỏ margin ngang lớn --------------------
+  .page-detail-person .card-box {
+    margin: 0 12px 16px !important;
+  }
+  .retail-detail__header {
+    padding: 14px 12px 10px;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+  .retail-detail__page-title {
+    font-size: 17px;
+  }
+}
+
+// Phone hẹp (≤ 480px): stat strip về 1 cột để không vỡ chữ to
+@media (max-width: 480px) {
+  .tnpm-list-page [style*="repeat(5, 1fr)"],
+  .tnpm-list-page [style*="repeat(4, 1fr)"] {
+    grid-template-columns: 1fr !important;
+  }
+
+  .filter-select {
+    flex-basis: 100%;
+  }
+}
