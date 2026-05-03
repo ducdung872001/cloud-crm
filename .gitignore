@@ -13,3 +13,6 @@ dist/
 package-lock.json
 yarn.lock
 yarn-error.log
+
+# handoff audit logs (local only — never commit)
+.handoff/
