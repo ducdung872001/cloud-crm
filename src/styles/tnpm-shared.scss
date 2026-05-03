@@ -899,6 +899,29 @@ input[class*="base-input"],
 // Mobile responsive (≤ 768px) — áp dụng chung cho mọi trang TNPM
 // ============================================================
 @media (max-width: 768px) {
+  // -- Banner cảnh báo gói (gold package expiry): bỏ height cố định ---------
+  // Mặc định height 4.8rem cố định ở _common.scss → text 3 dòng tràn xuống đè H1
+  .notification__warning--package {
+    height: auto !important;
+    padding: 8px 12px !important;
+
+    .box__warning--notify {
+      flex-wrap: wrap;
+      gap: 8px;
+      padding: 8px 10px !important;
+    }
+
+    .content__notify--left .content {
+      font-size: 12px !important;
+      line-height: 1.35 !important;
+    }
+
+    .content__notify--right {
+      gap: 0 8px !important;
+      .base-button { padding: 4px 12px !important; font-size: 12px !important; }
+    }
+  }
+
   // -- Page wrapper: nén padding ----------------------------------------------
   .tnpm-list-page,
   .detail-page {
