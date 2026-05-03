@@ -91,15 +91,29 @@ export default function RegisterFetch() {
         // eslint-disable-next-line prefer-const
         let rootDomain = getRootDomain(location.hostname || "");
 
-        if (cookies.user) {
-          removeCookie("user", { path: "/", domain: rootDomain });
-        }
-        if (cookies.token) {
-          removeCookie("token", { path: "/", domain: rootDomain });
+        // Cookies auth — xoá trên cả root domain lẫn hostname hiện tại lẫn path-only
+        // (cookie đôi khi set domain khác, removeCookie 1 cấu hình duy nhất không trúng).
+        const expire = "expires=Thu, 01 Jan 1970 00:00:01 GMT";
+        for (const name of ["token", "user"]) {
+          if (cookies[name]) removeCookie(name, { path: "/", domain: rootDomain });
+          document.cookie = `${name}=; ${expire}; path=/; domain=.${rootDomain}`;
+          document.cookie = `${name}=; ${expire}; path=/; domain=${location.hostname}`;
+          document.cookie = `${name}=; ${expire}; path=/`;
         }
 
-        localStorage.removeItem("permissions");
-        localStorage.removeItem("user.root");
+        // localStorage stale — header Selectedrole/permissions/branch info từ tenant
+        // cũ kéo theo có thể là nguyên nhân BE trả 401. Dọn để SSO retry sạch.
+        for (const k of ["permissions", "user.root", "SelectedRole", "isBeauty", "logoOrganization", "valueBranch"]) {
+          localStorage.removeItem(k);
+        }
+
+        // Service workers (firebase-messaging-sw + bất kỳ SW cũ) — best-effort, không await.
+        if ("serviceWorker" in navigator) {
+          navigator.serviceWorker
+            .getRegistrations()
+            .then((regs) => regs.forEach((r) => r.unregister()))
+            .catch(() => {});
+        }
       }
       return response;
     },

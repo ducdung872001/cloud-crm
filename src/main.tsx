@@ -25,10 +25,6 @@ import { CookiesProvider } from "react-cookie";
 import { I18nextProvider } from "react-i18next";
 import i18n from "./i18n";
 import App from "./App";
-import { runBootMigration } from "./bootMigration";
-
-// Reset 1 lần/browser cho user kẹt 401 loop (cookie/SW cũ từ phiên trước).
-runBootMigration();
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 
