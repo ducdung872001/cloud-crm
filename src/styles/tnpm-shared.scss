@@ -1085,11 +1085,6 @@ input[class*="base-input"],
     grid-template-columns: 1fr !important;
   }
 
-  // Dashboard 480px: KPI strip cũng về 1 cột (chữ value 26px nên 2-col vẫn chật)
-  .tnpm-dashboard-page > div[style*="repeat(6, 1fr)"] {
-    grid-template-columns: 1fr !important;
-  }
-
   .filter-select {
     flex-basis: 100%;
   }
