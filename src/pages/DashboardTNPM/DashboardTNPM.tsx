@@ -81,7 +81,7 @@ export default function DashboardTNPM() {
   const maxRev = Math.max(...MOCK_REVENUE_CHART.map((d) => Math.max(d.revenue, d.target)));
 
   return (
-    <div style={{ padding: 24, background: "#f5f6fa", minHeight: "100vh" }}>
+    <div className="tnpm-dashboard-page" style={{ padding: 24, background: "#f5f6fa", minHeight: "100vh" }}>
 
       {/* HEADER */}
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 24 }}>

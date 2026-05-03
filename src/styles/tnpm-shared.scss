@@ -924,8 +924,37 @@ input[class*="base-input"],
 
   // -- Page wrapper: nén padding ----------------------------------------------
   .tnpm-list-page,
-  .detail-page {
+  .detail-page,
+  .tnpm-dashboard-page {
     padding: 12px !important;
+  }
+
+  // -- Dashboard mobile: KPI strip stack 2 cột, các row 2/3 cột → 1 cột ------
+  // Toàn bộ dashboard dùng inline style nên override bằng attribute selector
+  .tnpm-dashboard-page > div[style*="grid-template-columns"][style*="repeat(6, 1fr)"] {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  }
+  .tnpm-dashboard-page > div[style*="grid-template-columns"][style*="2fr 1fr"],
+  .tnpm-dashboard-page > div[style*="grid-template-columns"][style*="1fr 1fr 1fr"],
+  .tnpm-dashboard-page > div[style*="grid-template-columns"][style*="repeat(3, 1fr)"] {
+    grid-template-columns: 1fr !important;
+  }
+
+  // Header dashboard: stack title trên, action buttons xuống dòng
+  .tnpm-dashboard-page > div[style*="space-between"][style*="flex-start"]:first-of-type {
+    flex-direction: column !important;
+    align-items: stretch !important;
+    gap: 12px;
+
+    > div:last-child {
+      flex-wrap: wrap;
+      button { flex: 1 1 auto; min-width: 0; }
+    }
+  }
+
+  // Card padding gọn
+  .tnpm-dashboard-page [style*="padding: 20px 22px"] {
+    padding: 14px 16px !important;
   }
 
   // -- Page header: stack title trên, action buttons xuống dòng ----------------
@@ -1053,6 +1082,11 @@ input[class*="base-input"],
 @media (max-width: 480px) {
   .tnpm-list-page [style*="repeat(5, 1fr)"],
   .tnpm-list-page [style*="repeat(4, 1fr)"] {
+    grid-template-columns: 1fr !important;
+  }
+
+  // Dashboard 480px: KPI strip cũng về 1 cột (chữ value 26px nên 2-col vẫn chật)
+  .tnpm-dashboard-page > div[style*="repeat(6, 1fr)"] {
     grid-template-columns: 1fr !important;
   }
 
