@@ -88,31 +88,42 @@ export default function RegisterFetch() {
 
     response(response) {
       if (response.status === 401) {
-        // eslint-disable-next-line prefer-const
-        let rootDomain = getRootDomain(location.hostname || "");
+        // Scope: chỉ reset session khi 401 từ endpoint XÁC THỰC/KHỞI TẠO PHIÊN.
+        // 401 từ /notification/*, /sales/*, … là lỗi nghiệp vụ — không được logout user.
+        const url = response.url || "";
+        const isSessionEndpoint =
+          url.includes("/authenticator/user/me") ||
+          url.includes("/customer/employee/info") ||
+          url.includes("/customer/employee/init") ||
+          url.includes("/customer/permission/resource");
 
-        // Cookies auth — xoá trên cả root domain lẫn hostname hiện tại lẫn path-only
-        // (cookie đôi khi set domain khác, removeCookie 1 cấu hình duy nhất không trúng).
-        const expire = "expires=Thu, 01 Jan 1970 00:00:01 GMT";
-        for (const name of ["token", "user"]) {
-          if (cookies[name]) removeCookie(name, { path: "/", domain: rootDomain });
-          document.cookie = `${name}=; ${expire}; path=/; domain=.${rootDomain}`;
-          document.cookie = `${name}=; ${expire}; path=/; domain=${location.hostname}`;
-          document.cookie = `${name}=; ${expire}; path=/`;
-        }
+        if (isSessionEndpoint) {
+          // eslint-disable-next-line prefer-const
+          let rootDomain = getRootDomain(location.hostname || "");
 
-        // localStorage stale — header Selectedrole/permissions/branch info từ tenant
-        // cũ kéo theo có thể là nguyên nhân BE trả 401. Dọn để SSO retry sạch.
-        for (const k of ["permissions", "user.root", "SelectedRole", "isBeauty", "logoOrganization", "valueBranch"]) {
-          localStorage.removeItem(k);
-        }
+          // Cookies auth — xoá trên cả root domain lẫn hostname hiện tại lẫn path-only
+          // (cookie đôi khi set domain khác, removeCookie 1 cấu hình duy nhất không trúng).
+          const expire = "expires=Thu, 01 Jan 1970 00:00:01 GMT";
+          for (const name of ["token", "user"]) {
+            if (cookies[name]) removeCookie(name, { path: "/", domain: rootDomain });
+            document.cookie = `${name}=; ${expire}; path=/; domain=.${rootDomain}`;
+            document.cookie = `${name}=; ${expire}; path=/; domain=${location.hostname}`;
+            document.cookie = `${name}=; ${expire}; path=/`;
+          }
 
-        // Service workers (firebase-messaging-sw + bất kỳ SW cũ) — best-effort, không await.
-        if ("serviceWorker" in navigator) {
-          navigator.serviceWorker
-            .getRegistrations()
-            .then((regs) => regs.forEach((r) => r.unregister()))
-            .catch(() => {});
+          // localStorage stale — header Selectedrole/permissions/branch info từ tenant
+          // cũ kéo theo có thể là nguyên nhân BE trả 401. Dọn để SSO retry sạch.
+          for (const k of ["permissions", "user.root", "SelectedRole", "isBeauty", "logoOrganization", "valueBranch"]) {
+            localStorage.removeItem(k);
+          }
+
+          // Service workers (firebase-messaging-sw + bất kỳ SW cũ) — best-effort, không await.
+          if ("serviceWorker" in navigator) {
+            navigator.serviceWorker
+              .getRegistrations()
+              .then((regs) => regs.forEach((r) => r.unregister()))
+              .catch(() => {});
+          }
         }
       }
       return response;
