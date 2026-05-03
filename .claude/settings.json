@@ -145,7 +145,20 @@
       "Bash(node scripts/verify-all.cjs)",
       "Bash(curl -s -o /dev/null -w \"HTTP %{http_code}\\\\n\" http://localhost:4000/crm/portal/mentors)",
       "Bash(node scripts/test-create-course-link.cjs)",
-      "Bash(yarn build:prod)"
+      "Bash(yarn build:prod)",
+      "Bash(git log *)",
+      "Bash(grep -qE \"Local:|ready in|error\" \"C:\\\\\\\\Users\\\\\\\\HP\\\\\\\\AppData\\\\\\\\Local\\\\\\\\Temp\\\\\\\\claude\\\\\\\\d--Git-reborn-reborn-cloud-cloud-ver2-cloud-crm\\\\\\\\4c04ad10-9fd3-4bbe-9408-e99baecebfe9\\\\\\\\tasks\\\\\\\\bfd6yqxy0.output\")",
+      "Bash(tail -20 \"C:\\\\\\\\Users\\\\\\\\HP\\\\\\\\AppData\\\\\\\\Local\\\\\\\\Temp\\\\\\\\claude\\\\\\\\d--Git-reborn-reborn-cloud-cloud-ver2-cloud-crm\\\\\\\\4c04ad10-9fd3-4bbe-9408-e99baecebfe9\\\\\\\\tasks\\\\\\\\bfd6yqxy0.output\")",
+      "Bash(node verify-auth-header.mjs)",
+      "Bash(grep -qE \"Local:|error\" \"C:\\\\\\\\Users\\\\\\\\HP\\\\\\\\AppData\\\\\\\\Local\\\\\\\\Temp\\\\\\\\claude\\\\\\\\d--Git-reborn-reborn-cloud-cloud-ver2-cloud-crm\\\\\\\\4c04ad10-9fd3-4bbe-9408-e99baecebfe9\\\\\\\\tasks\\\\\\\\b5uec76x1.output\")",
+      "Bash(tail -20 \"C:\\\\\\\\Users\\\\\\\\HP\\\\\\\\AppData\\\\\\\\Local\\\\\\\\Temp\\\\\\\\claude\\\\\\\\d--Git-reborn-reborn-cloud-cloud-ver2-cloud-crm\\\\\\\\4c04ad10-9fd3-4bbe-9408-e99baecebfe9\\\\\\\\tasks\\\\\\\\b5uec76x1.output\")",
+      "Bash(APP_BASE=http://localhost:4001 node verify-boot-migration.mjs)",
+      "Bash(curl -s http://localhost:4001/crm/src/main.tsx)",
+      "Bash(curl -s http://localhost:4001/crm/)",
+      "Bash(curl -s \"http://localhost:4001/src/main.tsx\")",
+      "Bash(git -C \"d:/Git/reborn/reborn-cloud/cloud-ver2/cloud-crm\" status -s)",
+      "Bash(git -C \"d:/Git/reborn/reborn-cloud/cloud-ver2/cloud-crm\" diff --stat HEAD~1 HEAD)",
+      "Bash(git -C \"d:/Git/reborn/reborn-cloud/cloud-ver2/cloud-crm\" log --oneline -3)"
     ],
     "additionalDirectories": [
       "\\tmp"
