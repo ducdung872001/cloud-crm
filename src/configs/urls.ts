@@ -909,6 +909,15 @@ export const urlsApi = {
     orderRegister: prefixSales + "/public/order/register",
     orderStatus: prefixSales + "/public/order/status",
   },
+  // Zoom OAuth + meeting + webhook (zoom-oauth-meeting-recording reply: cloud-crm#212, integration commits b4a3712..c06175b)
+  integrationZoom: {
+    oauthAuthorize: prefixIntegration + "/zoom/oauth/authorize",
+    accountGet: prefixIntegration + "/zoom/account/get",
+    accountDisconnect: prefixIntegration + "/zoom/account/disconnect",
+    meetingCreate: prefixIntegration + "/zoom/meeting/create",
+    meetingGet: prefixIntegration + "/zoom/meeting/get",
+    meetingCancel: prefixIntegration + "/zoom/meeting/cancel",
+  },
   // Notification bulk send (mentorhub-notifications-suite reply: cloud-crm#211, notihub commit 60e71b3)
   notificationBulk: {
     emailSendBulk: prefixNotification + "/email/sendBulk",

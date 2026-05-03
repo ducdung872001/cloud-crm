@@ -5,6 +5,7 @@ import type { Descendant } from "slate";
 import RebornEditor from "components/editor/reborn";
 import { UserContext, ContextType } from "contexts/userContext";
 import SalesServiceClient, { SalesService } from "services/SalesServiceClient";
+import ZoomClientForCourseEdit from "services/ZoomClient";
 import FileService from "services/FileService";
 import { apiGet } from "services/apiHelper";
 import { urlsApi } from "configs/urls";
@@ -537,7 +538,17 @@ export default function MHCourseEdit() {
             <Step3 form={form} errors={errors} set={set} totalAgendaMin={totalAgendaMin} dateInfo={dateInfo} setStep={setStep} />
           )}
           {step === 4 && <Step4 form={form} errors={errors} set={set} discountPct={discountPct} />}
-          {step === 5 && <Step5 form={form} errors={errors} set={set} />}
+          {step === 5 && (
+            <Step5
+              form={form}
+              errors={errors}
+              set={set}
+              supplierId={supplierId}
+              courseTitle={form.title}
+              startDate={form.startDate}
+              totalDurationMin={form.agenda.reduce((s, a) => s + (a.durationMin || 0), 0)}
+            />
+          )}
           {step === 6 && <Step6 form={form} discountPct={discountPct} totalAgendaMin={totalAgendaMin} dateInfo={dateInfo} />}
         </div>
 
@@ -1160,7 +1171,64 @@ function Step4({ form, errors, set, discountPct }: Step4Props) {
   );
 }
 
-function Step5({ form, errors, set }: StepCommon) {
+type Step5Props = StepCommon & {
+  supplierId?: number;
+  courseTitle: string;
+  startDate: string;
+  totalDurationMin: number;
+};
+
+function Step5({ form, errors, set, supplierId, courseTitle, startDate, totalDurationMin }: Step5Props) {
+  const [creatingZoom, setCreatingZoom] = useState(false);
+  const [zoomError, setZoomError] = useState<string | null>(null);
+  const autoCreateZoom = async () => {
+    if (!supplierId) {
+      setZoomError("Chưa có session đăng nhập");
+      return;
+    }
+    if (!startDate) {
+      setZoomError("Đặt ngày bắt đầu (Bước 3) trước khi tạo Zoom");
+      return;
+    }
+    if (!courseTitle.trim()) {
+      setZoomError("Đặt tên khoá (Bước 1) trước khi tạo Zoom");
+      return;
+    }
+    setCreatingZoom(true);
+    setZoomError(null);
+    try {
+      const startAtIso = `${startDate}T19:00:00+07:00`; // 7pm VN default
+      const res = await ZoomClientForCourseEdit.meetingCreate({
+        mentorEmployeeId: supplierId,
+        topic: courseTitle.trim(),
+        agenda: `Tự động tạo từ MentorHub cho khoá: ${courseTitle.trim()}`,
+        startAt: startAtIso,
+        durationMin: Math.max(totalDurationMin, 60),
+        settings: {
+          autoRecord: "cloud",
+          joinBeforeHost: true,
+          muteOnEntry: true,
+          waitingRoom: false,
+        },
+        metadataCourseId: 0, // placeholder, BE store metadata
+        metadataSessionIndex: 0,
+      });
+      if (res?.code !== 0 || !res.result) {
+        const msg = res?.message || "Không tạo được Zoom meeting";
+        if (/403|forbidden|disabled|not.*linked/i.test(msg)) {
+          setZoomError("Chưa kết nối Zoom — vào trang Tài khoản để link Zoom trước");
+        } else {
+          setZoomError(msg);
+        }
+        return;
+      }
+      set("zoomId", res.result.zoomMeetingId);
+    } catch (err) {
+      setZoomError(err instanceof Error ? err.message : "Lỗi mạng");
+    } finally {
+      setCreatingZoom(false);
+    }
+  };
   return (
     <>
       <h3>5. Tự động hoá &amp; Tích hợp</h3>
@@ -1168,21 +1236,40 @@ function Step5({ form, errors, set }: StepCommon) {
         <label className="mh-form__label" htmlFor="course-zoom">
           Zoom Meeting ID <span className="mh-form__req">*</span>
         </label>
-        <input
-          id="course-zoom"
-          className={"mh-form__input" + (errors.zoomId ? " is-invalid" : "")}
-          aria-invalid={!!errors.zoomId}
-          value={form.zoomId}
-          onChange={(e) => set("zoomId", e.target.value)}
-          placeholder="892-4731-0028"
-        />
+        <div style={{ display: "flex", gap: 8, alignItems: "stretch" }}>
+          <input
+            id="course-zoom"
+            className={"mh-form__input" + (errors.zoomId ? " is-invalid" : "")}
+            aria-invalid={!!errors.zoomId}
+            value={form.zoomId}
+            onChange={(e) => set("zoomId", e.target.value)}
+            placeholder="892-4731-0028"
+            style={{ flex: 1 }}
+          />
+          <button
+            type="button"
+            className="mh__btn"
+            onClick={autoCreateZoom}
+            disabled={creatingZoom}
+            title="Tạo Zoom meeting từ tài khoản đã kết nối"
+            style={{ whiteSpace: "nowrap" }}
+          >
+            {creatingZoom ? "Đang tạo…" : "✨ Tạo tự động"}
+          </button>
+        </div>
         {errors.zoomId && <div className="mh-form__error">⚠ {errors.zoomId}</div>}
+        {zoomError && (
+          <div className="mh-form__error" style={{ background: "#fef3c7", color: "#92400e", padding: 8, borderRadius: 6, marginTop: 6 }}>
+            ⚠ {zoomError}
+          </div>
+        )}
         <div className="mh-form__hint">
-          Kết nối Zoom ở{" "}
-          <Link to="/mh/settings" className="mh-link">
-            Cài đặt → Tích hợp
-          </Link>{" "}
-          để lấy ID tự động.
+          Click <strong>Tạo tự động</strong> để hệ thống tạo Zoom meeting với recording cloud + auto-trigger AI summary sau buổi.
+          Hoặc paste tay Zoom Meeting ID nếu đã có. Kết nối Zoom ở{" "}
+          <Link to="/mh/account" className="mh-link">
+            Tài khoản → Tích hợp Zoom
+          </Link>
+          .
         </div>
       </div>
 

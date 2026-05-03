@@ -1,8 +1,9 @@
 // MentorHub Account — profile + đổi mật khẩu, thay thế stub /setting_account.
-import React, { useContext, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { UserContext, ContextType } from "contexts/userContext";
 import UserService from "services/UserService";
+import ZoomClient, { ZoomAccountStatus } from "services/ZoomClient";
 import { showToast } from "utils/common";
 import "../_shared/styles.scss";
 import "./index.scss";
@@ -20,6 +21,70 @@ export default function MentorHubAccount() {
   const [pwd, setPwd] = useState({ plainPassword: "", newPassword: "", retypeNewPassword: "" });
   const [savingPwd, setSavingPwd] = useState(false);
   const [showPwd, setShowPwd] = useState({ cur: false, n: false, c: false });
+
+  const [zoom, setZoom] = useState<ZoomAccountStatus | null>(null);
+  const [zoomLoading, setZoomLoading] = useState(true);
+  const [zoomError, setZoomError] = useState<string | null>(null);
+  const [zoomBusy, setZoomBusy] = useState(false);
+
+  const refreshZoom = async () => {
+    setZoomLoading(true);
+    setZoomError(null);
+    try {
+      const res = await ZoomClient.accountGet();
+      if (res?.code === 0 && res.result) {
+        setZoom(res.result);
+      } else {
+        // 403 = tenant chưa enable, 401 = chưa deploy/auth lỗi
+        setZoom({ linked: false });
+        setZoomError(res?.message || null);
+      }
+    } catch {
+      setZoom({ linked: false });
+      setZoomError("Không tải được trạng thái Zoom");
+    } finally {
+      setZoomLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    refreshZoom();
+    // After OAuth callback, FE có thể được redirect về với ?zoom_linked=1
+    const params = new URLSearchParams(window.location.search);
+    if (params.get("zoom_linked") === "1") {
+      showToast("Đã kết nối Zoom thành công", "success");
+      // Cleanup query param khỏi URL bar
+      window.history.replaceState(null, "", window.location.pathname);
+    } else if (params.get("zoom_linked") === "0") {
+      showToast("Kết nối Zoom thất bại — thử lại", "error");
+      window.history.replaceState(null, "", window.location.pathname);
+    }
+  }, []);
+
+  const connectZoom = () => {
+    const returnUrl = window.location.origin + window.location.pathname;
+    window.location.href = ZoomClient.oauthAuthorizeUrl(returnUrl);
+  };
+
+  const disconnectZoom = async () => {
+    if (!window.confirm("Ngắt kết nối Zoom? Các meeting đã tạo vẫn giữ nguyên nhưng không tạo mới được.")) {
+      return;
+    }
+    setZoomBusy(true);
+    try {
+      const res = await ZoomClient.accountDisconnect();
+      if (res?.code === 0) {
+        showToast("Đã ngắt kết nối Zoom", "success");
+        await refreshZoom();
+      } else {
+        showToast(res?.message || "Ngắt kết nối thất bại", "error");
+      }
+    } catch {
+      showToast("Có lỗi xảy ra", "error");
+    } finally {
+      setZoomBusy(false);
+    }
+  };
 
   const saveProfile = async () => {
     if (!profile.name.trim()) {
@@ -144,6 +209,66 @@ export default function MentorHubAccount() {
             {savingProfile ? "Đang lưu…" : "Lưu thông tin"}
           </button>
         </div>
+      </section>
+
+      {/* ZOOM INTEGRATION */}
+      <section className="mh__card mh-account__section">
+        <h3>Tích hợp Zoom</h3>
+        <p className="mh-account__hint">
+          Kết nối tài khoản Zoom để hệ thống tự tạo phòng họp cho mỗi buổi học, gửi link tự động qua email/Zalo, và xử lý recording sau buổi.
+        </p>
+
+        {zoomLoading && (
+          <div style={{ color: "var(--mh-ink-soft)", fontSize: 14 }}>Đang kiểm tra trạng thái Zoom…</div>
+        )}
+
+        {!zoomLoading && zoom?.linked && (
+          <div>
+            <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 12 }}>
+              <span style={{ fontSize: 24 }}>✓</span>
+              <div>
+                <div style={{ fontWeight: 600 }}>Đã kết nối: {zoom.zoomEmail || "(unknown email)"}</div>
+                <div className="mh__mono" style={{ fontSize: 12, color: "var(--mh-ink-soft)" }}>
+                  zoomUserId: {zoom.zoomUserId || "—"} · scope: {zoom.scope || "—"}
+                  {zoom.linkedAt && ` · linked ${new Date(zoom.linkedAt).toLocaleString("vi-VN")}`}
+                </div>
+              </div>
+            </div>
+            <div className="mh-account__actions">
+              <button
+                type="button"
+                className="mh__btn"
+                onClick={disconnectZoom}
+                disabled={zoomBusy}
+                style={{ borderColor: "#fca5a5", color: "#991b1b" }}
+              >
+                {zoomBusy ? "Đang ngắt…" : "Ngắt kết nối Zoom"}
+              </button>
+            </div>
+          </div>
+        )}
+
+        {!zoomLoading && !zoom?.linked && (
+          <div>
+            <p style={{ fontSize: 14, marginBottom: 12 }}>
+              Chưa kết nối. Click bên dưới để uỷ quyền với Zoom (cấp 3 quyền: tạo meeting, đọc recording, đọc thông tin user).
+            </p>
+            {zoomError && (
+              <div style={{ background: "#fef3c7", color: "#92400e", padding: 10, borderRadius: 8, marginBottom: 12, fontSize: 13 }}>
+                ⚠ {zoomError} (Có thể tenant chưa được bật Zoom hoặc backend chưa deploy)
+              </div>
+            )}
+            <div className="mh-account__actions">
+              <button
+                type="button"
+                className="mh__btn mh__btn--primary"
+                onClick={connectZoom}
+              >
+                Kết nối Zoom →
+              </button>
+            </div>
+          </div>
+        )}
       </section>
 
       {/* CHANGE PASSWORD */}
