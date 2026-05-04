@@ -16,7 +16,16 @@ const cookies = new Cookies();
  * @param {string} type
  */
 export const showToast = (mgs: string, type: "error" | "success" | "warning") => {
-  toast[type](mgs == "un authenticated" ? "Đã hết phiên đăng nhập, đang chuyển hướng để đăng nhập lại!" : mgs, {
+  // Suppress: notification/sales/inventory microservice trả "un authenticated"
+  // cho token hợp lệ (gateway chưa support token chung) — không phải lỗi
+  // user-facing. KHÔNG auto-logout dựa trên message toast: trước đây setTimeout
+  // logout 5s khiến user bị đá ngược về SSO dù token vẫn còn hiệu lực.
+  // Trường hợp token thật sự expired → fetchConfig.response handle 401 từ
+  // /authenticator/user/me, Login.tsx tự redirect SSO. (port mentorhub
+  // commits ed3d5248 + bee40e68)
+  if (mgs == "un authenticated") return;
+
+  toast[type](mgs, {
     position: "top-right",
     autoClose: 5000,
     hideProgressBar: false,
@@ -25,12 +34,6 @@ export const showToast = (mgs: string, type: "error" | "success" | "warning") =>
     draggable: true,
     progress: undefined,
   });
-
-  //Trường hợp là lỗi (type == 'error') và mgs là 'un authenticated' thì chuyển hướng về trang login
-  if (type == "error" && mgs == "un authenticated") {
-    //Chuyển hướng về trang login
-    setTimeout(logout, 5000);
-  }
 };
 /**
  * Kiểm tra 2 object có khác biệt nhau ko?
