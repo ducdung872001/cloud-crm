@@ -318,69 +318,16 @@ export default function App() {
     pbxCustomerCode: pbxCustomerCode,
   });
 
-  const RINGTONE_SRC = ringtone;
-  const audioRef = useRef<HTMLAudioElement | null>(null);
-  const unlockedRef = useRef<boolean>(false);
+  // Ringtone tổng đài đã tắt: phát blip khi user click lần đầu (do unlock-on-click)
+  // và rung mỗi cuộc gọi đến gây spam. Vẫn giữ useSTWebRTC để answer/hangup hoạt động.
+  // Khi nào cần bật lại: tham khảo lịch sử git commit này hoặc revert.
+  // const RINGTONE_SRC = ringtone;
+  // const audioRef = useRef<HTMLAudioElement | null>(null);
+  // const unlockedRef = useRef<boolean>(false);
 
   useEffect(() => {
-    const audio = new Audio(RINGTONE_SRC);
-    audio.loop = true;
-    audio.preload = "auto";
-    audioRef.current = audio;
-
-    const tryUnlock = async () => {
-      if (unlockedRef.current) return;
-      try {
-        await audioRef.current?.play();
-        audioRef.current?.pause();
-        audioRef.current!.currentTime = 0;
-        unlockedRef.current = true;
-      } catch (err) {
-        // vẫn bị chặn
-      } finally {
-        document.removeEventListener("click", tryUnlock, true);
-        document.removeEventListener("touchstart", tryUnlock, true);
-      }
-    };
-
-    document.addEventListener("click", tryUnlock, true);
-    document.addEventListener("touchstart", tryUnlock, true);
-
-    return () => {
-      try {
-        audioRef.current?.pause();
-        audioRef.current = null;
-      } catch (e) {}
-      document.removeEventListener("click", tryUnlock, true);
-      document.removeEventListener("touchstart", tryUnlock, true);
-    };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  useEffect(() => {
-    const audio = audioRef.current;
     if (callState == "incoming") {
       setShowModalCallIncome(true);
-
-      if (!audio) return;
-
-      (async () => {
-        try {
-          await audio.play();
-          unlockedRef.current = true;
-        } catch (err) {
-          showToast("Trình duyệt chặn phát âm thanh tự động. Vui lòng click/đụng vào trang để bật chuông.", "warning");
-        }
-      })();
-    } else {
-      try {
-        if (!audio.paused) {
-          audio.pause();
-          audio.currentTime = 0;
-        }
-      } catch (e) {
-        // ignore
-      }
     }
   }, [callState]);
 
