@@ -27,6 +27,7 @@ import { ToastContainer } from "react-toastify";
 import LayoutPage from "pages/layout";
 import { getAppSSOLink, showToast } from "utils/common";
 import EmployeeService from "services/EmployeeService";
+import UserService from "services/UserService";
 import { getDomain } from "reborn-util";
 import { getRootDomain } from "utils/common";
 import ChooseRole from "pages/Common/ChooseRole";
@@ -124,11 +125,12 @@ export default function App() {
 
         if (isEmployee) {
           setIsLogin(true);
+          // Navigate dựa vào BE xác nhận employee, KHÔNG gate bằng cookies.user:
+          // Login.tsx setCookie("user") ở cuối chain 4 await (profile→init→permission→beauty),
+          // closure stale ở effect lần đầu sẽ làm user kẹt /login. (port từ nhánh mentorhub)
           if (location.pathname === "/" || location.pathname === "/login") {
-            if (cookies.user) {
-              const target = returnUrl || defaultRedirectRef.current || "/create_sale_add";
-              navigate(target);
-            }
+            const target = returnUrl || defaultRedirectRef.current || "/create_sale_add";
+            navigate(target);
           }
 
           if (cookies.user?.id !== user?.id || cookies.token !== user?.token) {
@@ -139,13 +141,6 @@ export default function App() {
               const dateExpired = new Date(cookies.user.expired_cookie);
               let timeOut = dateExpired.getTime() - Date.now();
               timeOut = timeOut > 0 ? timeOut : 0;
-            }
-
-            if (location.pathname === "/" || location.pathname === "/login") {
-              if (cookies.user) {
-                const target = returnUrl || defaultRedirectRef.current || "/create_sale_add";
-                navigate(target);
-              }
             }
           }
 
@@ -232,6 +227,30 @@ export default function App() {
       console.error("Error fetching employee info:", error);
       setIsChecking(false);
       return false;
+    }
+
+    // Trước khi báo lỗi + đẩy về SSO (dễ vòng vô hạn nếu user vào sai subdomain),
+    // thử tìm subdomain tenant đúng từ /user/me và redirect sang đó. Cookie chia sẻ trên
+    // root domain (reborn.vn) nên token sẽ tự động đi theo.
+    try {
+      const meRes = await UserService.profile(cookies.token);
+      const lstSalon: { subdomain?: string }[] = Array.isArray(meRes?.result?.lstBeautySalon)
+        ? meRes.result.lstBeautySalon
+        : [];
+      const currentHost = (location.hostname || "").toLowerCase();
+      const isLocalHost = currentHost === "localhost" || currentHost === "127.0.0.1" || currentHost === "";
+      const salonSubdomains = lstSalon.map((s) => (s?.subdomain || "").toLowerCase()).filter(Boolean);
+      const matched = salonSubdomains.some((sd) => sd === currentHost);
+      if (!isLocalHost && salonSubdomains.length > 0 && !matched) {
+        const target = salonSubdomains[0];
+        const path = location.pathname && location.pathname !== "/login" ? location.pathname : "";
+        const qs = path ? `?returnUrl=${encodeURIComponent(path + location.search)}` : "";
+        document.location.href = `https://${target}/crm/login${qs}`;
+        setIsChecking(false);
+        return false;
+      }
+    } catch (e) {
+      // Không lấy được /user/me → fallback flow cũ.
     }
 
     showToast("Bạn không phải là nhân viên của tổ chức này!", "warning");

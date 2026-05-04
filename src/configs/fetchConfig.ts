@@ -93,18 +93,31 @@ export default function RegisterFetch() {
 
     response(response) {
       if (response.status === 401) {
-        // eslint-disable-next-line prefer-const
-        let rootDomain = getRootDomain(location.hostname || "");
+        // Scope: chỉ reset session khi 401 từ endpoint XÁC THỰC/KHỞI TẠO PHIÊN.
+        // 401 từ /sales/*, /inventory/*, /notification/*, … là lỗi nghiệp vụ
+        // (BE microservice down, query sai, …) — KHÔNG được logout user.
+        // (port từ nhánh mentorhub commit 58ae9b69)
+        const url = response.url || "";
+        const isSessionEndpoint =
+          url.includes("/authenticator/user/me") ||
+          url.includes("/employee/info") ||
+          url.includes("/employee/init") ||
+          url.includes("/permission/resource");
 
-        if (cookies.user) {
-          removeCookie("user", { path: "/", domain: rootDomain });
-        }
-        if (cookies.token) {
-          removeCookie("token", { path: "/", domain: rootDomain });
-        }
+        if (isSessionEndpoint) {
+          // eslint-disable-next-line prefer-const
+          let rootDomain = getRootDomain(location.hostname || "");
 
-        localStorage.removeItem("permissions");
-        localStorage.removeItem("user.root");
+          if (cookies.user) {
+            removeCookie("user", { path: "/", domain: rootDomain });
+          }
+          if (cookies.token) {
+            removeCookie("token", { path: "/", domain: rootDomain });
+          }
+
+          localStorage.removeItem("permissions");
+          localStorage.removeItem("user.root");
+        }
       }
       return response;
     },

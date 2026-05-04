@@ -1,5 +1,8 @@
-// Đã migrate: toàn bộ endpoint /adminapi/* → biz.reborn.vn/customer/*.
-const prefixCustomer = (process.env.APP_CUSTOMER_API_URL || "https://biz.reborn.vn") + "/customer";
+// Tạm rollback: BE biz.reborn.vn/customer/* hiện 502 (microservice customer down,
+// các microservice khác /sales /notification /inventory vẫn sống).
+// → Trỏ tạm về /adminapi (fetchConfig rewrite thành APP_API_URL = cloud.reborn.vn).
+// Khi BE biz/customer ổn định → đổi lại: (process.env.APP_CUSTOMER_API_URL || "https://biz.reborn.vn") + "/customer"
+const prefixCustomer = "/adminapi";
 const prefixBiz = "/bizapi";
 // const prefixBpm = process.env.APP_BPM_URL + "/bpmapi";
 const prefixBpm = process.env.APP_BPM_URL + "/bpmapi";
