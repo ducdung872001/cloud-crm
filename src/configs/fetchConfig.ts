@@ -7,11 +7,11 @@ const prefixAdmin = "/adminapi";
 const prefixApi = "/api";
 const prefixBiz = "/bizapi";
 
-// 12 microservice prefix — route sang biz.reborn.vn (không qua reborn.vn)
+// 13 microservice prefix — route sang biz.reborn.vn (không qua reborn.vn)
 const BIZ_MICROSERVICE_PREFIXES = [
   "/billing/", "/care/", "/contract/", "/customer/",
   "/finance/", "/integration/", "/inventory/", "/logistics/",
-  "/market/", "/notification/", "/operation/", "/sales/",
+  "/market/", "/notification/", "/operation/", "/org/", "/sales/",
 ];
 
 // Migration 1-lần: dọn SelectedRole rác (các phiên bản cũ từng ghi string không đúng format
