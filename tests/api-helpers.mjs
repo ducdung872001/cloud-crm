@@ -56,34 +56,65 @@ export async function createApiRunner(moduleCode, moduleName) {
     return ok;
   }
 
-  /** Gọi fetch trong context browser — hưởng URL rewrite + Hostname header từ fetchConfig. */
+  /** Gọi fetch QUA NODE (context.request) — KHÔNG qua browser fetch ⇒ bỏ qua CORS.
+   *  Kế thừa cookies từ storageState (token .reborn.vn). Tự thêm Hostname header để
+   *  match BE multi-tenant convention. URL `/bizapi/*` được pre-rewrite về biz.reborn.vn,
+   *  `/adminapi/*` về cloud.reborn.vn — đúng theo fetchConfig logic của FE.
+   *
+   *  Lý do bỏ browser fetch: BE production CORS chặn cross-origin POST/GET có
+   *  Authorization header (browser → preflight OPTIONS → fail). Node request không
+   *  bị CORS, gửi trực tiếp với cookie + headers. */
+  function expandUrl(url) {
+    if (typeof url !== "string") return url;
+    if (url.startsWith("/bizapi/")) {
+      return "https://biz.reborn.vn" + url.replace("/bizapi", "");
+    }
+    if (url.startsWith("/adminapi/")) {
+      return "https://cloud.reborn.vn" + url;
+    }
+    return url;
+  }
+
+  // Hostname header — match host của page sau khi auth (noname/hub/...).
+  const hostHeader = new URL(page.url()).host;
+  // JWT token từ cookie (do BE expect Authorization Bearer header, không phải cookie).
+  const cookies = await context.cookies();
+  const tokenCookie = cookies.find((c) => c.name === "token");
+  const authHeader = tokenCookie ? `Bearer ${tokenCookie.value}` : null;
+
   async function call(method, url, dataOrParams) {
-    const result = await page.evaluate(async ({ method, url, payload }) => {
-      const init = {
-        method,
-        headers: { "Content-Type": "application/json" },
-      };
-      let fullUrl = url;
-      if (method === "GET" && payload && typeof payload === "object") {
-        const qs = new URLSearchParams(
-          Object.entries(payload).filter(([, v]) => v !== undefined && v !== "")
-        ).toString();
-        if (qs) fullUrl = `${url}?${qs}`;
-      } else if (method !== "GET" && payload !== undefined) {
-        init.body = JSON.stringify(payload);
-      }
-      try {
-        const res = await fetch(fullUrl, init);
-        const text = await res.text();
-        let body;
-        try { body = JSON.parse(text); } catch { body = text; }
-        return { status: res.status, body };
-      } catch (e) {
-        return { status: -1, body: String(e) };
-      }
-    }, { method, url, payload: dataOrParams });
-    apiLogs.push({ method, url, status: result.status });
-    return { status: result.status, body: result.body, ...(typeof result.body === "object" ? result.body : {}) };
+    const expanded = expandUrl(url);
+    let finalUrl = expanded;
+    const headers = {
+      "Content-Type": "application/json",
+      "Hostname": hostHeader,
+      ...(authHeader && !expanded.includes("/public/") ? { Authorization: authHeader } : {}),
+    };
+    const opts = { method, headers };
+
+    if (method === "GET" && dataOrParams && typeof dataOrParams === "object") {
+      const qs = new URLSearchParams(
+        Object.entries(dataOrParams).filter(([, v]) => v !== undefined && v !== "")
+      ).toString();
+      if (qs) finalUrl = `${expanded}${expanded.includes("?") ? "&" : "?"}${qs}`;
+    } else if (method !== "GET" && dataOrParams !== undefined) {
+      opts.data = dataOrParams;
+    }
+    // Timeout 10s — BE prod admin endpoints có thể hang lâu (bug nghiêm trọng), không đợi quá lâu.
+    opts.timeout = 10000;
+
+    let status, body;
+    try {
+      const res = await context.request.fetch(finalUrl, opts);
+      status = res.status();
+      const text = await res.text();
+      try { body = JSON.parse(text); } catch { body = text; }
+    } catch (e) {
+      status = -1;
+      body = String(e);
+    }
+    apiLogs.push({ method, url, status });
+    return { status, body, ...(typeof body === "object" && body !== null ? body : {}) };
   }
 
   const get  = (url, params) => call("GET",    url, params);
