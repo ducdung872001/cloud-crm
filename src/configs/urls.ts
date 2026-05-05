@@ -1,5 +1,9 @@
-// Đã migrate: toàn bộ endpoint /adminapi/* → biz.reborn.vn/customer/*.
-const prefixCustomer = (process.env.APP_CUSTOMER_API_URL || "https://biz.reborn.vn") + "/customer";
+// cloud-customer microservice. fetchConfig route "/customer/" → APP_BIZ_URL || https://biz.reborn.vn.
+const prefixCustomer = "/customer";
+// org-domain (employee/permission/branch/role/department/group/jobTitle/processPermission/requestPermission)
+// đã tách khỏi cloud-customer thành microservice cloud-org (notice #214).
+// fetchConfig route "/org/" → APP_BIZ_URL || https://biz.reborn.vn.
+const prefixOrg = "/org";
 const prefixBiz = "/bizapi";
 // const prefixBpm = process.env.APP_BPM_URL + "/bpmapi";
 const prefixBpm = process.env.APP_BPM_URL + "/bpmapi";
@@ -719,20 +723,20 @@ export const urlsApi = {
   },
 
   employee: {
-    list: prefixCustomer + "/employee/list",
-    update: prefixCustomer + "/employee/update",
-    detail: prefixCustomer + "/employee/get",
-    delete: prefixCustomer + "/employee/delete",
-    linkEmployeeUser: prefixCustomer + "/employee/link_user",
-    init: prefixCustomer + "/employee/init",
-    info: prefixCustomer + "/employee/info",
-    takeRoles: prefixCustomer + "/employee/roles",
-    listExTip: prefixCustomer + "/employee/listExTip",
-    generateRandomPass: prefixCustomer + "/employee/random_pass",
-    list_department: prefixCustomer + "/employee/list/department",
-    updateToken: prefixCustomer + "/employee/update_token", //Cập nhật token của Outlook Mail
-    checkEmailConnection: prefixCustomer + "/employee/check_email_connection",
-    disconnectEmail: prefixCustomer + "/employee/disconnect_email",
+    list: prefixOrg + "/employee/list",
+    update: prefixOrg + "/employee/update",
+    detail: prefixOrg + "/employee/get",
+    delete: prefixOrg + "/employee/delete",
+    linkEmployeeUser: prefixOrg + "/employee/link_user",
+    init: prefixOrg + "/employee/init",
+    info: prefixOrg + "/employee/info",
+    takeRoles: prefixOrg + "/employee/roles",
+    listExTip: prefixOrg + "/employee/listExTip",
+    generateRandomPass: prefixOrg + "/employee/random_pass",
+    list_department: prefixOrg + "/employee/list/department",
+    updateToken: prefixOrg + "/employee/update_token", //Cập nhật token của Outlook Mail
+    checkEmailConnection: prefixOrg + "/employee/check_email_connection",
+    disconnectEmail: prefixOrg + "/employee/disconnect_email",
     updateRole: prefixCustomer + "/roleEmployee/insert-batch",
     getListRoleEmployee: prefixCustomer + "/roleEmployee/list",
     deleteRole: prefixCustomer + "/roleEmployee/delete",
@@ -745,10 +749,10 @@ export const urlsApi = {
   },
 
   teamEmployee: {
-    list: prefixCustomer + "/group/list",
-    detail: prefixCustomer + "/group/get",
-    update: prefixCustomer + "/group/update",
-    delete: prefixCustomer + "/group/delete",
+    list: prefixOrg + "/group/list",
+    detail: prefixOrg + "/group/get",
+    update: prefixOrg + "/group/update",
+    delete: prefixOrg + "/group/delete",
 
     listEmployee: prefixCustomer + "/groupEmployee/list",
     updateEmployee: prefixCustomer + "/groupEmployee/update",
@@ -1096,19 +1100,20 @@ export const urlsApi = {
   },
 
   beautyBranch: {
-    list: prefixCustomer + "/beautyBranch/list",
-    childList: prefixCustomer + "/beautyBranch/child",
-    detail: prefixCustomer + "/beautyBranch/get",
-    update: prefixCustomer + "/beautyBranch/update",
-    delete: prefixCustomer + "/beautyBranch/delete",
+    // BE rename /beautyBranch/* → /branch/* (notice #214); FE giữ object key beautyBranch để khỏi đụng nhiều file consumer.
+    list: prefixOrg + "/branch/list",
+    childList: prefixOrg + "/branch/child",
+    detail: prefixOrg + "/branch/get",
+    update: prefixOrg + "/branch/update",
+    delete: prefixOrg + "/branch/delete",
     getByBeauty: `${process.env.APP_AUTHENTICATOR_URL || "https://reborn.vn"}/api/beautySalon/get_bydomain`,
 
     //tìm đối tác theo mã
-    getBeautyBranchByCode: prefixCustomer + "/beautyBranch/get/byCode",
+    getBeautyBranchByCode: prefixOrg + "/branch/get/byCode",
 
     // thay đổi trạng thái chi nhánh
-    activate: prefixCustomer + "/beautyBranch/update/activate",
-    unActivate: prefixCustomer + "/beautyBranch/update/deactivate",
+    activate: prefixOrg + "/branch/update/activate",
+    unActivate: prefixOrg + "/branch/update/deactivate",
   },
 
   organization: {
@@ -1140,22 +1145,22 @@ export const urlsApi = {
     delete: prefixCustomer + "/reportTemplate/delete",
   },
   department: {
-    list: prefixCustomer + "/department/list",
-    update: prefixCustomer + "/department/update",
-    detail: prefixCustomer + "/department/get",
-    delete: prefixCustomer + "/department/delete",
-    list_branch: prefixCustomer + "/department/list/branch",
+    list: prefixOrg + "/department/list",
+    update: prefixOrg + "/department/update",
+    detail: prefixOrg + "/department/get",
+    delete: prefixOrg + "/department/delete",
+    list_branch: prefixOrg + "/department/list/branch",
 
-    updateParent: prefixCustomer + "/department/update/parent",
+    updateParent: prefixOrg + "/department/update/parent",
   },
   role: {
-    list: prefixCustomer + "/role/list",
-    update: prefixCustomer + "/role/update",
-    detail: prefixCustomer + "/role/get",
-    delete: prefixCustomer + "/role/delete",
-    list_branch: prefixCustomer + "/role/list/branch",
+    list: prefixOrg + "/role/list",
+    update: prefixOrg + "/role/update",
+    detail: prefixOrg + "/role/get",
+    delete: prefixOrg + "/role/delete",
+    list_branch: prefixOrg + "/role/list/branch",
 
-    updateParent: prefixCustomer + "/role/update/parent",
+    updateParent: prefixOrg + "/role/update/parent",
   },
   productIdApi: {
     list: prefixRebornVn + "/product/list",
@@ -1246,10 +1251,10 @@ export const urlsApi = {
   },
 
   manageDefaultProcesses: {
-    list: prefixCustomer + "/process-permission/list",
-    update: prefixCustomer + "/process-permission/update",
-    detail: prefixCustomer + "/process-permission/get",
-    delete: prefixCustomer + "/process-permission/delete",
+    list: prefixOrg + "/process-permission/list",
+    update: prefixOrg + "/process-permission/update",
+    detail: prefixOrg + "/process-permission/get",
+    delete: prefixOrg + "/process-permission/delete",
   },
 
   contractAttachment: {
@@ -2022,9 +2027,9 @@ export const urlsApi = {
     // Cập nhật trạng thái công việc
     updateStatus: prefixCustomer + "/workOrder/update/status",
     // Lấy danh sách người giao việc
-    employeeManagers: prefixCustomer + "/employee/managers",
+    employeeManagers: prefixOrg + "/employee/managers",
     // Lấy danh sách người nhận việc
-    employeeAssignees: prefixCustomer + "/employee/assignees",
+    employeeAssignees: prefixOrg + "/employee/assignees",
     // Lấy danh sách người nhận việc trong dự án
     projectEmployeeAssignees: prefixCustomer + "/workProject/getEmployees",
     // danh sách trao đổi trong công việc
@@ -2246,39 +2251,39 @@ export const urlsApi = {
     freeResource: prefixCustomer + "/resource/list_ex",
   },
   permission: {
-    getPermissionResources: prefixCustomer + "/permission/resource",
+    getPermissionResources: prefixOrg + "/permission/resource",
     //API phân quyền theo phòng ban
-    permissionDepartment: prefixCustomer + "/permission/info",
+    permissionDepartment: prefixOrg + "/permission/info",
     //API phân quyền theo nhóm quyền
     rolePermission: prefixCustomer + "/rolePermission/info",
     //API thêm quyền cho phòng ban
-    permissionDepartmentAdd: prefixCustomer + "/permission/add",
+    permissionDepartmentAdd: prefixOrg + "/permission/add",
     //API thêm quyền cho nhóm quyền
     permissionRoleAdd: prefixCustomer + "/rolePermission/add",
     //API xóa quyền được cấp
-    permissionDepartmentDelete: prefixCustomer + "/permission/remove",
+    permissionDepartmentDelete: prefixOrg + "/permission/remove",
     //API lấy danh sách quyền trước đó cho một đối tượng muốn sao chép
-    permissionClone: prefixCustomer + "/permission/clone",
+    permissionClone: prefixOrg + "/permission/clone",
 
     //danh sách yêu cầu xin quyền truy cập (mình xin quyền)
-    requestPermissionSource: prefixCustomer + "/requestPermission/list/source",
+    requestPermissionSource: prefixOrg + "/requestPermission/list/source",
     //gửi yêu cầu xin phê duyệt
-    updateRequestPermission: prefixCustomer + "/requestPermission/update",
+    updateRequestPermission: prefixOrg + "/requestPermission/update",
 
     //xoá yêu cầu xin phê duyệt
-    deleteRequestPermission: prefixCustomer + "/requestPermission/delete",
+    deleteRequestPermission: prefixOrg + "/requestPermission/delete",
 
     //danh sách cấp quyền truy cập (đối tác xin quyền)
-    requestPermissionTarget: prefixCustomer + "/requestPermission/list/target",
+    requestPermissionTarget: prefixOrg + "/requestPermission/list/target",
 
     //phê duyệt quyền truy cập
-    updateApprovePermission: prefixCustomer + "/requestPermission/update/approved ",
+    updateApprovePermission: prefixOrg + "/requestPermission/update/approved ",
 
     //từ chối quyền truy cập
-    updateRejectPermission: prefixCustomer + "/requestPermission/update/rejected ",
+    updateRejectPermission: prefixOrg + "/requestPermission/update/rejected ",
   },
   rolePermission: {
-    getPermissionResources: prefixCustomer + "/permission/resource",
+    getPermissionResources: prefixOrg + "/permission/resource",
     //API phân quyền theo nhóm quyền
     rolePermission: prefixCustomer + "/rolePermission/info",
     //API phân quyền theo gói
@@ -2290,24 +2295,24 @@ export const urlsApi = {
     //API xóa quyền được cấp
     permissionRoleDelete: prefixCustomer + "/rolePermission/remove",
     //API lấy danh sách quyền trước đó cho một đối tượng muốn sao chép
-    permissionClone: prefixCustomer + "/permission/clone",
+    permissionClone: prefixOrg + "/permission/clone",
 
     //danh sách yêu cầu xin quyền truy cập (mình xin quyền)
-    requestPermissionSource: prefixCustomer + "/requestPermission/list/source",
+    requestPermissionSource: prefixOrg + "/requestPermission/list/source",
     //gửi yêu cầu xin phê duyệt
-    updateRequestPermission: prefixCustomer + "/requestPermission/update",
+    updateRequestPermission: prefixOrg + "/requestPermission/update",
 
     //xoá yêu cầu xin phê duyệt
-    deleteRequestPermission: prefixCustomer + "/requestPermission/delete",
+    deleteRequestPermission: prefixOrg + "/requestPermission/delete",
 
     //danh sách cấp quyền truy cập (đối tác xin quyền)
-    requestPermissionTarget: prefixCustomer + "/requestPermission/list/target",
+    requestPermissionTarget: prefixOrg + "/requestPermission/list/target",
 
     //phê duyệt quyền truy cập
-    updateApprovePermission: prefixCustomer + "/requestPermission/update/approved ",
+    updateApprovePermission: prefixOrg + "/requestPermission/update/approved ",
 
     //từ chối quyền truy cập
-    updateRejectPermission: prefixCustomer + "/requestPermission/update/rejected ",
+    updateRejectPermission: prefixOrg + "/requestPermission/update/rejected ",
   },
   //API tổng đài
   callCenter: {

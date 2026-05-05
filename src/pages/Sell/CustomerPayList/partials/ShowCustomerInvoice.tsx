@@ -74,7 +74,7 @@ export default function ShowCustomerInvoice(props: IShowCustomerInvoiceProps) {
     }
     setIsSendingEmail(true);
     try {
-      const res = await fetch("/adminapi/outlookMail/sendEmail", {
+      const res = await fetch("/customer/outlookMail/sendEmail", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({

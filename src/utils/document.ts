@@ -47,7 +47,7 @@ export const uploadDocumentFormData = (
     }
 
     let xhr = new XMLHttpRequest();
-    const linkUpload = process.env.APP_API_URL;
+    const customerApiBase = process.env.APP_CUSTOMER_API_URL || "https://biz.reborn.vn";
     const importBPM = process.env.APP_BPM_URL;
 
     xhr.open(
@@ -55,17 +55,17 @@ export const uploadDocumentFormData = (
       `${
         type
           ? type === "customer"
-            ? `${linkUpload}/adminapi/customer/import/uploadFile?custType=${parmas}`
+            ? `${customerApiBase}/customer/customer/import/uploadFile?custType=${parmas}`
             : type === "contact"
-            ? `${linkUpload}/adminapi/contact/import/uploadFile`
+            ? `${customerApiBase}/customer/contact/import/uploadFile`
             : type === "partner"
-            ? `${linkUpload}/adminapi/businessPartner/import/uploadFile`
+            ? `${customerApiBase}/customer/businessPartner/import/uploadFile`
             : type === "contract"
-            ? `${linkUpload}/adminapi/contract/import/uploadFile?isCustomer=${parmas}`
+            ? `${customerApiBase}/customer/contract/import/uploadFile?isCustomer=${parmas}`
             : type === "guarantee"
-            ? `${linkUpload}/adminapi/guarantee/import/uploadFile`
+            ? `${customerApiBase}/customer/guarantee/import/uploadFile`
             : type === "contractWarranty"
-            ? `${linkUpload}/adminapi/contractWarranty/import/uploadFile`
+            ? `${customerApiBase}/customer/contractWarranty/import/uploadFile`
             : type === "processData"
             ? `${importBPM}/bpmapi/businessProcess/importExcel`
             : ""

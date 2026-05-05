@@ -46,6 +46,25 @@ export default function Index() {
     const response = await UserService.profile(cookies.token);
 
     if (response.result && response.result.user) {
+      // Trường hợp user đăng nhập vào sai subdomain tenant (ví dụ vào hub.reborn.vn
+      // trong khi tổ chức của họ là tnteco.reborn.vn) → /employee/info sẽ trả rỗng và
+      // App.tsx sẽ vòng vô hạn với toast "Bạn không phải là nhân viên của tổ chức này!".
+      // Dùng lstBeautySalon[].subdomain để chuyển hướng sang đúng subdomain trước.
+      const lstSalon: { subdomain?: string }[] = Array.isArray(response.result?.lstBeautySalon)
+        ? response.result.lstBeautySalon
+        : [];
+      const currentHost = (location.hostname || "").toLowerCase();
+      const isLocalHost = currentHost === "localhost" || currentHost === "127.0.0.1" || currentHost === "";
+      const salonSubdomains = lstSalon.map((s) => (s?.subdomain || "").toLowerCase()).filter(Boolean);
+      const matched = salonSubdomains.some((sd) => sd === currentHost);
+      if (!isLocalHost && salonSubdomains.length > 0 && !matched) {
+        const target = salonSubdomains[0];
+        const returnUrlQS = new URLSearchParams(location.search).get("returnUrl");
+        const qs = returnUrlQS ? `?returnUrl=${encodeURIComponent(returnUrlQS)}` : "";
+        document.location.href = `https://${target}/crm/login${qs}`;
+        return;
+      }
+
       //Khởi tạo thông tin ban đầu nếu lần đầu đăng nhập
       const employeeRes = await EmployeeService.init();
       // console.log("employeeRes =>", employeeRes);

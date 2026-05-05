@@ -38,8 +38,8 @@ try {
   await page.locator('input[type="password"]').first().fill(PASS);
   await page.getByRole("button", { name: /đăng nhập/i }).first().click();
 
-  // chờ quay lại app
-  await page.waitForURL(/localhost:4000\/crm/, { timeout: 20000 });
+  // chờ quay lại app — match cả localhost (dev) lẫn *.reborn.vn (prod, cookie share .reborn.vn)
+  await page.waitForURL(/localhost:4000\/crm|reborn\.vn\/crm/, { timeout: 20000 });
   console.log("[login] đã redirect về app:", page.url());
 
   // chờ app xử lý token, gọi /user/me, takeRoles, auto-pick role
