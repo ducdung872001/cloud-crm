@@ -13,6 +13,10 @@ import DynamicFieldsRenderer, { computeDynamicFieldsTotal } from "@/pages/Commun
 import AddOnItemsSelector from "@/pages/CommunityHub/Events/components/AddOnItemsSelector";
 import PaymentProofUpload from "@/pages/CommunityHub/Events/components/PaymentProofUpload";
 import { formatVNDateTime } from "@/pages/CommunityHub/Events/datetime";
+// Yc 5/5: bình luận + content blocks + 3 luồng đăng ký
+import EventComments from "@/pages/CommunityHub/Events/components/EventComments";
+import ContentBlocksRenderer from "@/pages/CommunityHub/Events/components/ContentBlocksRenderer";
+import RegistrationFlowSwitcher, { type FlowReadyState } from "@/pages/CommunityHub/Events/components/RegistrationFlowSwitcher";
 
 // Set SEO meta cho trang detail
 function setEventSeo(e: EventEntity) {
@@ -66,6 +70,8 @@ export default function ShareEventPage() {
     ticketCode?: string;
     registrationId?: string;
   } | null>(null);
+  // Yc 5/5: 3 luồng đăng ký A/B/C — track flow user đang chọn để prefill + đính kèm khi submit
+  const [flowState, setFlowState] = useState<FlowReadyState>({ flow: "guest" });
   const [form, setForm] = useState({
     fullName: "",
     phone: "",
@@ -101,7 +107,8 @@ export default function ShareEventPage() {
     }
     (async () => {
       const e = await eventStorage.getEventBySlugAsync(slug);
-      if (!e || (e.status !== "published" && e.status !== "ongoing")) {
+      // Yc 5/5: ẩn event isTest khỏi public (kèm draft/cancelled như cũ)
+      if (!e || (e.status !== "published" && e.status !== "ongoing") || e.isTest) {
         setNotFound(true);
       } else {
         setEvent(e);
@@ -230,7 +237,11 @@ export default function ShareEventPage() {
       totalAmount: grandTotal || undefined,
       selectedDates: selectedDates.length ? selectedDates : undefined,
       paymentProof,
-    });
+      // Yc 5/5: gửi kèm flow + memberCode cho BE phân biệt 3 luồng A/B/C
+      flow: flowState.flow,
+      memberCode: flowState.member?.memberCode,
+      memberSignupStatus: flowState.flow === "member_signup" ? "requested" : undefined,
+    } as any);
     setSubmitting(false);
     if (!result.ok) {
       setError(result.error ?? "Đăng ký thất bại");
@@ -564,6 +575,26 @@ export default function ShareEventPage() {
                 <h3 style={{ margin: "0 0 14px 0", color: THEME.primaryDark }}>
                   Điền thông tin đăng ký
                 </h3>
+
+                {/* Yc 5/5 mục 2: 3 luồng đăng ký — chỉ show khi event bật ≥ 2 luồng */}
+                {(event.registrationFlows?.length ?? 0) > 1 && (
+                  <RegistrationFlowSwitcher
+                    enabledFlows={event.registrationFlows!}
+                    onReady={(s) => {
+                      setFlowState(s);
+                      // Prefill form khi user login member-code (luồng C)
+                      if (s.flow === "member_login" && s.member) {
+                        setForm({
+                          fullName: s.member.fullName,
+                          phone: s.member.phone,
+                          email: s.member.email ?? "",
+                          company: s.member.occupation ?? "",
+                          note: "",
+                        });
+                      }
+                    }}
+                  />
+                )}
                 {error && (
                   <div
                     style={{
@@ -973,14 +1004,32 @@ export default function ShareEventPage() {
                 </div>
               </div>
             </div>
-            <div
-              className="event-prose se-content-body"
-              dangerouslySetInnerHTML={{
-                __html:
-                  event.content ||
-                  `<em style="color:${THEME.textMuted}">(Chưa có nội dung)</em>`,
-              }}
-            />
+            {/* Yc 5/5: nếu admin đã cấu hình contentBlocks → render block layout, fallback content HTML */}
+            {event.contentBlocks && event.contentBlocks.length > 0 ? (
+              <div className="event-prose se-content-body">
+                <ContentBlocksRenderer blocks={event.contentBlocks} />
+              </div>
+            ) : (
+              <div
+                className="event-prose se-content-body"
+                dangerouslySetInnerHTML={{
+                  __html:
+                    event.content ||
+                    `<em style="color:${THEME.textMuted}">(Chưa có nội dung)</em>`,
+                }}
+              />
+            )}
+
+            {/* Yc 5/5: bình luận (kênh CSKH, giữ vĩnh viễn) — chỉ render nếu admin bật */}
+            {event.commentsEnabled !== false && (
+              <div style={{ marginTop: 24 }}>
+                <EventComments
+                  eventId={event.id}
+                  canPost
+                  moderated={!!event.commentsModerated}
+                />
+              </div>
+            )}
           </div>
           <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
             <Card>

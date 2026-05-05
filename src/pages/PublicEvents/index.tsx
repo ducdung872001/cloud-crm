@@ -277,7 +277,8 @@ export default function PublicEventsPage() {
           // crash ở gallery.map vì .slice trên string trả về string (không có .map).
           const items: EventEntity[] = (Array.isArray(raw) ? raw : []).map(normalizeEvent);
           // Chỉ giữ published + ongoing (không show draft/ended/cancelled cho public)
-          const visible = items.filter(e => e.status === "published" || e.status === "ongoing");
+          // Yc 5/5: ẩn luôn các sự kiện đánh dấu isTest dù đã published.
+          const visible = items.filter(e => (e.status === "published" || e.status === "ongoing") && !e.isTest);
           setEvents(visible);
         } else {
           setError(res?.message ?? "Không thể tải danh sách sự kiện");

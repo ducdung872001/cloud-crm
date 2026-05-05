@@ -64,10 +64,18 @@ const FIELD_TYPES: { value: DynamicFieldType; label: string }[] = [
   { value: "textarea", label: "Văn bản dài" },
   { value: "number", label: "Số" },
   { value: "select", label: "Chọn 1" },
+  { value: "multi_select", label: "Chọn nhiều" }, // Yc 5/5: size áo / màu áo / multi-choice
   { value: "checkbox", label: "Checkbox" },
   { value: "date", label: "Ngày" },
   { value: "email", label: "Email" },
   { value: "phone", label: "Số điện thoại" },
+];
+
+// Preset gợi ý nhanh — admin click để fill options. Lấy từ yc 5/5 mockup khách.
+const QUICK_PRESETS: { key: string; label: string; type: DynamicFieldType; options: string[] }[] = [
+  { key: "size_ao", label: "Size áo (S/M/L/XL/XXL)", type: "select", options: ["S", "M", "L", "XL", "XXL"] },
+  { key: "mau_ao", label: "Màu áo (Đỏ/Xanh/Đen/Trắng)", type: "select", options: ["Đỏ", "Xanh", "Đen", "Trắng"] },
+  { key: "mon_an", label: "Chọn món (multi)", type: "multi_select", options: ["Cơm gà", "Phở bò", "Bánh mì", "Chay"] },
 ];
 
 interface Props {
@@ -187,8 +195,8 @@ export default function DynamicFieldsBuilder({ fields, onChange }: Props) {
             ✕
           </button>
 
-          {/* Options row for select type */}
-          {f.type === "select" && (() => {
+          {/* Options row cho select / multi_select */}
+          {(f.type === "select" || f.type === "multi_select") && (() => {
             const hasOptions = (f.options ?? []).length > 0;
             return (
               <div style={{ gridColumn: "1 / -1", marginTop: 4 }}>
@@ -262,21 +270,52 @@ export default function DynamicFieldsBuilder({ fields, onChange }: Props) {
         </div>
       ))}
 
-      <button
-        onClick={addField}
-        style={{
-          padding: "8px 14px",
-          background: THEME.primarySoft,
-          color: THEME.primaryDark,
-          border: `1px dashed ${THEME.primary}`,
-          borderRadius: 6,
-          cursor: "pointer",
-          fontSize: 12,
-          fontWeight: 600,
-        }}
-      >
-        + Thêm trường
-      </button>
+      <div style={{ display: "flex", gap: 6, flexWrap: "wrap", marginTop: 8 }}>
+        <button
+          onClick={addField}
+          style={{
+            padding: "8px 14px",
+            background: THEME.primarySoft,
+            color: THEME.primaryDark,
+            border: `1px dashed ${THEME.primary}`,
+            borderRadius: 6,
+            cursor: "pointer",
+            fontSize: 12,
+            fontWeight: 600,
+          }}
+        >
+          + Thêm trường
+        </button>
+        {QUICK_PRESETS.map((p) => (
+          <button
+            key={p.key}
+            type="button"
+            onClick={() => {
+              const next: DynamicFieldDefinition = {
+                id: `df-${Date.now()}-${Math.random().toString(36).slice(2, 5)}`,
+                label: p.label.split(" (")[0],
+                type: p.type,
+                required: false,
+                options: p.options,
+                order: fields.length,
+              };
+              onChange([...fields, next]);
+            }}
+            style={{
+              padding: "6px 10px",
+              background: "#fff",
+              color: THEME.primaryDark,
+              border: `1px dashed ${THEME.border}`,
+              borderRadius: 6,
+              cursor: "pointer",
+              fontSize: 11,
+            }}
+            title="Click để thêm nhanh"
+          >
+            ⚡ {p.label}
+          </button>
+        ))}
+      </div>
     </div>
   );
 }

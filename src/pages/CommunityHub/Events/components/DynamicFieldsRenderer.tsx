@@ -12,6 +12,9 @@ interface Props {
 /** Tính tổng tiền các option có giá đã được chọn. Dùng chung cho:
  *  - Hiển thị "+100k" inline khi tick
  *  - Tính grandTotal trên ShareEventPage
+ *
+ *  multi_select: value lưu dạng "opt1||opt2||opt3" (delimiter "||"). Mỗi option
+ *  có giá riêng → cộng dồn.
  */
 export function computeDynamicFieldsTotal(
   fields: DynamicFieldDefinition[] | undefined,
@@ -26,10 +29,16 @@ export function computeDynamicFieldsTotal(
       sum += f.price!;
     } else if (f.type === "select" && f.optionPrices && f.optionPrices[v]) {
       sum += f.optionPrices[v];
+    } else if (f.type === "multi_select" && f.optionPrices) {
+      for (const opt of v.split("||").filter(Boolean)) {
+        if (f.optionPrices[opt]) sum += f.optionPrices[opt];
+      }
     }
   }
   return sum;
 }
+
+const MULTI_SEP = "||";
 
 export default function DynamicFieldsRenderer({ fields, values, onChange }: Props) {
   if (!fields.length) return null;
@@ -104,6 +113,52 @@ export default function DynamicFieldsRenderer({ fields, values, onChange }: Prop
                       );
                     })}
                   </select>
+                );
+              })()
+            ) : f.type === "multi_select" ? (
+              (() => {
+                const opts = f.options ?? [];
+                if (opts.length === 0) {
+                  return (
+                    <div style={{ ...inputStyle, background: "#FEF2F2", borderColor: "#FCA5A5", color: "#991B1B" }}>
+                      — Chưa có tuỳ chọn —
+                    </div>
+                  );
+                }
+                const selected = new Set(val ? val.split(MULTI_SEP).filter(Boolean) : []);
+                const toggle = (opt: string) => {
+                  if (selected.has(opt)) selected.delete(opt);
+                  else selected.add(opt);
+                  update(f.id, Array.from(selected).join(MULTI_SEP));
+                };
+                return (
+                  <div style={{ display: "flex", flexWrap: "wrap", gap: 6, padding: 4 }}>
+                    {opts.map((opt) => {
+                      const isOn = selected.has(opt);
+                      const p = f.optionPrices?.[opt];
+                      return (
+                        <button
+                          type="button"
+                          key={opt}
+                          onClick={() => toggle(opt)}
+                          style={{
+                            padding: "6px 12px",
+                            border: `1.5px solid ${isOn ? THEME.primary : THEME.border}`,
+                            background: isOn ? THEME.primarySoft : "#fff",
+                            color: isOn ? THEME.primaryDark : "#333",
+                            borderRadius: 16,
+                            fontSize: 13,
+                            cursor: "pointer",
+                            fontWeight: isOn ? 600 : 400,
+                          }}
+                        >
+                          {isOn && "✓ "}
+                          {opt}
+                          {p && p > 0 ? <span style={{ marginLeft: 4, color: THEME.primary }}> +{formatVND(p)}đ</span> : null}
+                        </button>
+                      );
+                    })}
+                  </div>
                 );
               })()
             ) : f.type === "checkbox" ? (

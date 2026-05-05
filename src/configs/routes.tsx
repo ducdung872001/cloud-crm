@@ -202,6 +202,9 @@ const CHCoursesPage = React.lazy(() => import("@/pages/CommunityHub/Courses"));
 const CHEventListPage = React.lazy(() => import("@/pages/CommunityHub/Events/EventListPage"));
 const CHEventFormPage = React.lazy(() => import("@/pages/CommunityHub/Events/EventFormPage"));
 const CHEventDetailPage = React.lazy(() => import("@/pages/CommunityHub/Events/EventDetailPage"));
+// [CH] Members — yc 5/5: mã định danh + timeline lịch sử
+const CHMemberListPage = React.lazy(() => import("@/pages/CommunityHub/Members/MemberListPage"));
+const CHMemberDetailPage = React.lazy(() => import("@/pages/CommunityHub/Members/MemberDetailPage"));
 const CHPartnersPage = React.lazy(() => import("@/pages/CommunityHub/Partners"));
 const CHFeedbackPage = React.lazy(() => import("@/pages/CommunityHub/Feedback"));
 const CHReportRevenue = React.lazy(() => import("@/pages/CommunityHub/Reports/ReportRevenue"));
@@ -455,6 +458,9 @@ export const routes: IRouter[] = [
   { path: "/ch_events/create", component: <CHEventFormPage /> },
   { path: "/ch_events/:id", component: <CHEventDetailPage /> },
   { path: "/ch_events/:id/edit", component: <CHEventFormPage /> },
+  // [CH] Members — yc 5/5: mã định danh + timeline
+  { path: "/ch_members", component: <CHMemberListPage /> },
+  { path: "/ch_members/:id", component: <CHMemberDetailPage /> },
   {
     path: "/ch_partners",
     component: <CHPartnersPage />,

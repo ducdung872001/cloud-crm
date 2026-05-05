@@ -21,8 +21,9 @@ import PaymentProofReview from "./components/PaymentProofReview";
 import RegistrationDetailModal from "./components/RegistrationDetailModal";
 import CheckinBoard from "./components/CheckinBoard";
 import CheckinServiceTracker from "./components/CheckinServiceTracker";
+import EventComments from "./components/EventComments";
 
-type TabKey = "info" | "registrants" | "checkin" | "share";
+type TabKey = "info" | "registrants" | "checkin" | "comments" | "share";
 
 export default function EventDetailPage() {
   const navigate = useNavigate();
@@ -151,6 +152,13 @@ export default function EventDetailPage() {
           {event.status === "draft" ? "🚀 Công bố" : "⏸ Ẩn khỏi public"}
         </button>
       </div>
+
+      {/* Yc 5/5: cảnh báo sự kiện test */}
+      {event.isTest && (
+        <div style={{ background: "#FEF3C7", color: "#92400E", padding: "10px 14px", borderRadius: 6, marginBottom: 12, fontSize: 13, border: "1px solid #FDE68A" }}>
+          ⚠️ <b>Sự kiện này được đánh dấu là TEST</b> — sẽ KHÔNG hiển thị trên public portal dù đã công bố. Bỏ tích "Đây là sự kiện TEST" trong form Sửa nếu muốn public.
+        </div>
+      )}
 
       {/* Header card */}
       <div
@@ -340,6 +348,7 @@ export default function EventDetailPage() {
               label: `👥 Người đăng ký (${registrations.length})`,
             },
             { key: "checkin", label: "✅ Check-in" },
+            { key: "comments", label: "💬 Bình luận" },
             { key: "share", label: "🔗 Chia sẻ & công bố" },
           ] as { key: TabKey; label: string }[]
         ).map((t) => {
@@ -387,6 +396,17 @@ export default function EventDetailPage() {
           <CheckinServiceTracker
             registrations={registrations}
             onRefresh={refresh}
+          />
+        </Card>
+      )}
+      {tab === "comments" && (
+        <Card title="💬 Bình luận sự kiện (kênh CSKH)">
+          <EventComments
+            eventId={event.id}
+            canPost
+            isAdmin
+            moderated={!!event.commentsModerated}
+            defaultAuthor={{ name: "Admin", role: "admin" }}
           />
         </Card>
       )}

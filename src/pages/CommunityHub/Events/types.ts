@@ -50,6 +50,7 @@ export type DynamicFieldType =
   | "textarea"
   | "number"
   | "select"
+  | "multi_select" // Khách yc 5/5: "size áo / màu áo / multi-choice" — nhiều lựa chọn cùng lúc
   | "checkbox"
   | "date"
   | "email"
@@ -114,6 +115,58 @@ export interface SelectedAddOn {
   qty: number;
 }
 
+// ── Content Blocks — admin sửa giao diện trang sự kiện theo block ─────────
+// Yc 5/5 mục 1: layout block linh hoạt (ảnh + chữ, kéo thả, vô hạn block).
+// Mỗi block có thể là 1 trong các kiểu dưới; admin tự sắp xếp `order` để hiển
+// thị. BE chỉ cần lưu mảng JSON này nguyên dạng.
+export type ContentBlockType =
+  | "text" // Chỉ chữ (rich text HTML)
+  | "image" // Chỉ 1 ảnh full-width
+  | "image_text" // Ảnh + chữ (layout: ảnh trên/dưới/trái/phải tuỳ `imagePosition`)
+  | "gallery" // Lưới nhiều ảnh (carousel/grid)
+  | "banner_ad" // Banner quảng cáo có link click
+  | "embed" // iframe / video embed
+  | "divider"; // Đường phân cách
+
+export interface ContentBlock {
+  id: string;
+  type: ContentBlockType;
+  order: number;
+  // Content fields — chỉ dùng field tương ứng với type
+  text?: string; // HTML từ RebornEditor (cho "text", "image_text")
+  imageUrl?: string; // ảnh chính (cho "image", "image_text", "banner_ad")
+  imageUrls?: string[]; // nhiều ảnh (cho "gallery")
+  imagePosition?: "top" | "bottom" | "left" | "right"; // layout cho "image_text"
+  linkUrl?: string; // click vào ảnh / banner sẽ mở (cho "image", "banner_ad", "image_text")
+  linkLabel?: string; // text hiển thị nếu có link (cho "banner_ad")
+  embedUrl?: string; // iframe src (cho "embed", VD YouTube/Vimeo/Facebook video)
+  caption?: string; // chú thích nhỏ dưới ảnh
+}
+
+// ── Comments — kênh CSKH dưới mỗi sự kiện ─────────────────────────────────
+// Yc 5/5 mục 1: bình luận giữ vĩnh viễn, không trôi như Facebook. Là kênh CSKH:
+// khách hỏi → admin trả lời tại đây.
+export type CommentAuthorRole = "guest" | "member" | "admin" | "moderator";
+
+export interface EventComment {
+  id: string;
+  eventId: string;
+  parentId?: string; // null = comment gốc; có giá trị = reply của comment cha
+  authorName: string;
+  authorPhone?: string; // để admin liên hệ lại nếu cần
+  authorMemberCode?: string; // nếu user đã login bằng mã định danh
+  authorRole: CommentAuthorRole;
+  content: string; // plain text (escape HTML để chống XSS)
+  createdAt: string; // ISO
+  updatedAt?: string;
+  isHidden?: boolean; // admin có thể ẩn (nhưng không xoá — giữ vĩnh viễn)
+  hiddenReason?: string;
+  // Moderation: nếu portal cấu hình duyệt trước → status="pending" cho đến khi admin duyệt
+  status?: "pending" | "approved" | "rejected";
+  reviewedBy?: string;
+  reviewedAt?: string;
+}
+
 // ═══════════════════════════════════════════════════════════════════════════
 // EVENT ENTITY
 // ═══════════════════════════════════════════════════════════════════════════
@@ -160,6 +213,20 @@ export interface EventEntity {
   requirePaymentProof?: boolean; // bắt buộc upload bằng chứng thanh toán
   selectableDates?: string[]; // multi-day: ngày khách có thể chọn (YYYY-MM-DD)
   bankAccountOverride?: EventBankAccount; // override tenant default cho QR thanh toán
+
+  // ── Yc 5/5 ─────────────────────────────────────────
+  /** Block-based editor: ảnh + chữ kéo thả. Nếu non-empty → render thay cho `content` HTML cũ. */
+  contentBlocks?: ContentBlock[];
+  /** Đánh dấu là sự kiện test/nội bộ. Mặc định false. Khi true: ẩn khỏi public portal
+   *  ngay cả khi status=published — tránh khách thấy event test còn sót. */
+  isTest?: boolean;
+  /** Bật/tắt tính năng bình luận dưới sự kiện. */
+  commentsEnabled?: boolean;
+  /** Bình luận có cần admin duyệt trước khi public không. */
+  commentsModerated?: boolean;
+  /** 3 luồng đăng ký được bật: "guest" (A: tên+SĐT), "member_signup" (B: yêu cầu mã mới),
+   *  "member_login" (C: login mã+mật khẩu). Mặc định: ["guest"]. */
+  registrationFlows?: ("guest" | "member_signup" | "member_login")[];
 }
 
 export interface EventRegistration {
@@ -202,6 +269,16 @@ export interface EventRegistration {
   // Custom attributes từ customer service (join sẵn khi list)
   customerAttributes?: Record<string, string>; // { mentorCode: "5021", houseNumber: "255" }
   customerGroup?: { id: string | number; name: string }; // Mentor7 / Khác / ...
+
+  // ── Yc 5/5 mục 2: 3 luồng đăng ký ────────────────
+  /** Luồng đăng ký mà reg này dùng. Để BE phân biệt cách xử lý/follow-up. */
+  flow?: "guest" | "member_signup" | "member_login";
+  /** Mã định danh thành viên (nếu reg đến từ luồng C — đã login). */
+  memberCode?: string;
+  /** Trạng thái yêu cầu cấp mã (nếu reg đến từ luồng B). */
+  memberSignupStatus?: "requested" | "approved" | "rejected";
+  /** Mã đã được admin cấp sau khi approve (luồng B → C). */
+  issuedMemberCode?: string;
 }
 
 // Helper type cho form create/edit

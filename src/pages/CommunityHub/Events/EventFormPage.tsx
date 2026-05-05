@@ -12,6 +12,9 @@ import { eventStorage } from "./storage";
 import type { EventEntity, DynamicFieldDefinition, EventAddOnItem, EventVenue } from "./types";
 import { THEME, formatVND } from "./shared";
 import DynamicFieldsBuilder from "./components/DynamicFieldsBuilder";
+// Yc 5/5: block-based editor cho trang sự kiện
+import ContentBlocksBuilder from "./components/ContentBlocksBuilder";
+import type { ContentBlock } from "./types";
 import ServiceCatalogPicker from "./components/ServiceCatalogPicker";
 import {
   dateToVNLocalString,
@@ -69,6 +72,12 @@ type FormState = {
   bankPhone: string;
   bankQrImageUrl: string; // QR ảnh upload (tenant chưa có VietQR)
   selectableDates: string[];
+  // ── Yc 5/5 ──
+  contentBlocks: ContentBlock[];
+  isTest: boolean;
+  commentsEnabled: boolean;
+  commentsModerated: boolean;
+  registrationFlows: ("guest" | "member_signup" | "member_login")[];
 };
 
 const EMPTY: FormState = {
@@ -106,6 +115,11 @@ const EMPTY: FormState = {
   bankPhone: "",
   bankQrImageUrl: "",
   selectableDates: [],
+  contentBlocks: [],
+  isTest: false,
+  commentsEnabled: true,
+  commentsModerated: false,
+  registrationFlows: ["guest"],
 };
 
 // Convert ISO → "YYYY-MM-DDTHH:mm" giờ VN cho datetime-local input
@@ -157,6 +171,11 @@ function entityToForm(e: EventEntity): FormState {
     bankPhone: e.bankAccountOverride?.phone ?? "",
     bankQrImageUrl: e.bankAccountOverride?.qrImageUrl ?? "",
     selectableDates: e.selectableDates ?? [],
+    contentBlocks: e.contentBlocks ?? [],
+    isTest: e.isTest ?? false,
+    commentsEnabled: e.commentsEnabled !== false,
+    commentsModerated: e.commentsModerated ?? false,
+    registrationFlows: e.registrationFlows ?? ["guest"],
   };
 }
 
@@ -345,6 +364,12 @@ export default function EventFormPage() {
           }
         : undefined,
       selectableDates: form.selectableDates.length ? form.selectableDates : undefined,
+      // ── Yc 5/5 ──
+      contentBlocks: form.contentBlocks.length ? form.contentBlocks : undefined,
+      isTest: form.isTest || undefined,
+      commentsEnabled: form.commentsEnabled,
+      commentsModerated: form.commentsModerated || undefined,
+      registrationFlows: form.registrationFlows.length ? form.registrationFlows : ["guest"],
     };
 
     try {
@@ -835,6 +860,50 @@ export default function EventFormPage() {
               fields={form.dynamicFields}
               onChange={(fields) => setForm((f) => ({ ...f, dynamicFields: fields }))}
             />
+
+            {/* Yc 5/5: 3 luồng đăng ký A/B/C */}
+            <div style={{ marginTop: 16, padding: 12, background: "#FFFBEB", border: "1px solid #FDE68A", borderRadius: 6 }}>
+              <div style={{ fontSize: 13, fontWeight: 700, color: "#92400E", marginBottom: 8 }}>
+                🆔 Luồng đăng ký được phép
+              </div>
+              <p style={{ fontSize: 11, color: "#92400E", margin: "0 0 8px" }}>
+                Tích các luồng mà sự kiện này cho phép. Nếu chỉ bật "Đăng ký nhanh" thì user không thấy switcher.
+              </p>
+              {([
+                { key: "guest", label: "🎟️ Đăng ký nhanh — chỉ tên + SĐT (không cần mã)" },
+                { key: "member_signup", label: "🆔 Cho phép đăng ký mã thành viên mới (admin duyệt)" },
+                { key: "member_login", label: "🔑 Cho phép login bằng mã + mật khẩu (auto-fill)" },
+              ] as const).map((flow) => {
+                const checked = form.registrationFlows.includes(flow.key);
+                return (
+                  <label key={flow.key} style={{ display: "flex", alignItems: "center", gap: 6, fontSize: 12, padding: "3px 0" }}>
+                    <input
+                      type="checkbox"
+                      checked={checked}
+                      onChange={(e) => {
+                        const next = e.target.checked
+                          ? [...form.registrationFlows, flow.key]
+                          : form.registrationFlows.filter((x) => x !== flow.key);
+                        // Đảm bảo có ít nhất "guest"
+                        setForm((f) => ({ ...f, registrationFlows: next.length ? next : ["guest"] }));
+                      }}
+                    />
+                    {flow.label}
+                  </label>
+                );
+              })}
+            </div>
+          </Section>
+
+          {/* ── Yc 5/5: Section nội dung trang sự kiện block-based ── */}
+          <Section title="6b. Nội dung trang sự kiện (kéo-thả block)">
+            <p style={{ fontSize: 12, color: THEME.textMuted, margin: "0 0 8px" }}>
+              Sắp xếp các block ảnh + chữ + banner + nhúng video. Nếu để trống, FE sẽ fallback dùng nội dung HTML ở section 2.
+            </p>
+            <ContentBlocksBuilder
+              blocks={form.contentBlocks}
+              onChange={(blocks) => setForm((f) => ({ ...f, contentBlocks: blocks }))}
+            />
           </Section>
 
           {/* ── CHUNG + ĐẶC THÙ: Section 7 — Sản phẩm/dịch vụ bổ sung ── */}
@@ -907,6 +976,38 @@ export default function EventFormPage() {
               >
                 Xoá ảnh
               </button>
+            )}
+          </Section>
+
+          {/* Yc 5/5: cờ test event + cấu hình bình luận */}
+          <Section title="⚙️ Cờ hiển thị & bình luận">
+            <label style={{ display: "flex", alignItems: "center", gap: 6, fontSize: 13, marginBottom: 8 }}>
+              <input
+                type="checkbox"
+                checked={form.isTest}
+                onChange={(e) => update("isTest", e.target.checked)}
+              />
+              <span>
+                <b>Đây là sự kiện TEST</b> — sẽ <u>ẩn khỏi public portal</u> dù status = published
+              </span>
+            </label>
+            <label style={{ display: "flex", alignItems: "center", gap: 6, fontSize: 13, marginBottom: 6 }}>
+              <input
+                type="checkbox"
+                checked={form.commentsEnabled}
+                onChange={(e) => update("commentsEnabled", e.target.checked)}
+              />
+              Cho phép bình luận dưới sự kiện
+            </label>
+            {form.commentsEnabled && (
+              <label style={{ display: "flex", alignItems: "center", gap: 6, fontSize: 12, paddingLeft: 22, color: THEME.textMuted }}>
+                <input
+                  type="checkbox"
+                  checked={form.commentsModerated}
+                  onChange={(e) => update("commentsModerated", e.target.checked)}
+                />
+                Bắt admin duyệt trước khi public
+              </label>
             )}
           </Section>
 
