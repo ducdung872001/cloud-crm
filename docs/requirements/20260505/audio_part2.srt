@@ -1,0 +1,1112 @@
+1
+00:00:00,000 --> 00:00:08,000
+Đăng ký lúc đăng ký hoàn thành, đăng ký tên, số điện thoại, email, công việc hiện tại của khách hàng
+
+2
+00:00:08,000 --> 00:00:18,000
+Đây là lớp Mentor 7, đây là lớp đã lên thẻa VIP và thẻa vàng rồi
+
+3
+00:00:18,000 --> 00:00:22,000
+Còn đâu bình thường mình sẽ để cộng đồng ở đây là thẻa xanh
+
+4
+00:00:22,000 --> 00:00:38,290
+Đây là má số, đây là má số cá nhân, đây là số nhóm
+
+5
+00:00:38,290 --> 00:00:44,290
+Số đằng trước là cá nhân, đây là số nhóm, một nhóm có 20 người
+
+6
+00:00:44,290 --> 00:00:49,180
+Một nhóm gần nhau có 20 người, đây là số nhóm
+
+7
+00:00:49,180 --> 00:00:59,340
+Cái má này là số được cấp, nó sẽ được giữ nguyên cái phần đầu, về sau thay đổi thêm là sau
+
+8
+00:00:59,340 --> 00:01:04,340
+Đúng rồi, ví dụ như ở đây là 5, 9, 7, 1, 300
+
+9
+00:01:04,340 --> 00:01:06,340
+Cố định này không bao giờ thay đổi nha
+
+10
+00:01:06,340 --> 00:01:07,340
+Vâng
+
+11
+00:01:07,340 --> 00:01:10,340
+Thế nhưng mà về sau họ sẽ học thêm một cái lớp
+
+12
+00:01:10,340 --> 00:01:14,340
+Ví dụ như học thêm lớp nhà giáo dục gia đình đi
+
+13
+00:01:14,340 --> 00:01:15,340
+Vâng
+
+14
+00:01:15,340 --> 00:01:16,340
+Ở đây là nhà giáo dục gia đình
+
+15
+00:01:16,340 --> 00:01:19,340
+Ở đây nó sẽ có thêm một cái cọt
+
+16
+00:01:19,340 --> 00:01:20,340
+Đây
+
+17
+00:01:20,340 --> 00:01:22,540
+Nó sẽ là mentor 7
+
+18
+00:01:22,540 --> 00:01:26,540
+Nhưng mà ở đây nó sẽ có thêm một cọt là mentor nhà giáo dục gia đình
+
+19
+00:01:26,540 --> 00:01:28,540
+Và có cái mã số riêng
+
+20
+00:01:28,540 --> 00:01:31,050
+Đấy, hiểu không?
+
+21
+00:01:31,050 --> 00:01:32,110
+Ừ
+
+22
+00:01:32,110 --> 00:01:37,110
+Đấy, tức là hoặc là từ mentor này họ sẽ nâng cấp lên mentor ha
+
+23
+00:01:37,110 --> 00:01:46,110
+Đấy, tức là cấp rồi tiếp theo thì ở đây nó sẽ có thêm cái cọt mentor là nó có một cái mã số của cái giấy riêng
+
+24
+00:01:46,110 --> 00:01:51,110
+Đó, nhưng mà cái lớp này phải học 1, 2 năm hoặc là lửa năm nó mới được cấp
+
+25
+00:01:51,110 --> 00:01:53,110
+Là trong cuộc đời người ta cũng không có học nhiều đâu
+
+26
+00:01:53,110 --> 00:01:54,110
+Đấy
+
+27
+00:01:54,110 --> 00:01:58,110
+Học lắm là 10 cái cọt mã số là cũng không có nhiều đâu
+
+28
+00:01:58,110 --> 00:02:05,180
+À, tức là cứ thêm một lớp là cái chức vụ à
+
+29
+00:02:05,180 --> 00:02:06,180
+Cái này em gọi là chức vụ à
+
+30
+00:02:06,180 --> 00:02:08,180
+Mentor 7 này là chức vụ à
+
+31
+00:02:08,180 --> 00:02:09,180
+Đúng rồi
+
+32
+00:02:09,180 --> 00:02:12,180
+Cứ thêm một lớp thì cái chức vụ này sẽ thay đổi này
+
+33
+00:02:12,180 --> 00:02:13,180
+Đúng rồi
+
+34
+00:02:13,180 --> 00:02:15,180
+Và mã số này cũng thay đổi này
+
+35
+00:02:15,180 --> 00:02:18,180
+Không, mã số chỉ cấp thêm thôi chứ không thay đổi
+
+36
+00:02:18,180 --> 00:02:23,180
+Nhưng mà, à, tức là thêm một mã nữa hay là thêm một số nữa nối vào mã này ạ?
+
+37
+00:02:23,180 --> 00:02:27,180
+Bây giờ nha, bây giờ nha, bây giờ đơn giản là như thế này thôi
+
+38
+00:02:27,180 --> 00:02:35,180
+Khi mà người quản trị tìm thì người ta không tìm ở cái ví dụ như là
+
+39
+00:02:35,180 --> 00:02:37,180
+Đây là mentor, đây là port master đúng không?
+
+40
+00:02:37,180 --> 00:02:38,180
+Vâng
+
+41
+00:02:38,180 --> 00:02:41,180
+Nhưng mà người ta sẽ không tìm master mà người ta sẽ tìm cái số này trước
+
+42
+00:02:41,180 --> 00:02:45,180
+Sau khi người ta tìm cái số này thì người ta mới ấn vào cái mã số này
+
+43
+00:02:45,180 --> 00:02:49,180
+Và biết được là à, ông này sau khi ông này học cái này thì ông ấy sẽ học cái gì nữa khác nữa
+
+44
+00:02:49,180 --> 00:02:56,530
+Hoặc là sau khi ông này làm nhân viên rồi thì thời gian nào ông ấy làm cái chức vụ gì tiếp theo nữa
+
+45
+00:02:56,530 --> 00:02:58,530
+Thì nó sẽ hiện ra là sau lại
+
+46
+00:02:58,530 --> 00:03:02,170
+Mình điều tra là mình điều tra từ gốc chứ không điều tra từ ngọn
+
+47
+00:03:02,170 --> 00:03:03,170
+Hiểu không?
+
+48
+00:03:03,170 --> 00:03:04,170
+Vâng
+
+49
+00:03:04,170 --> 00:03:09,170
+Tức là các lớp tiếp theo tức là tôi không cần biết là bây giờ ông làm cái gì
+
+50
+00:03:09,170 --> 00:03:12,170
+Nhưng mà tôi phải điều tra từ ngày xưa ông nào, học cái gì, ông làm cái gì trước
+
+51
+00:03:12,170 --> 00:03:13,390
+Đấy
+
+52
+00:03:13,390 --> 00:03:17,420
+Tức là bây giờ ví dụ như là anh đến với em ấy
+
+53
+00:03:17,420 --> 00:03:22,420
+Thì anh làm giám đốc đi đúng không?
+
+54
+00:03:22,420 --> 00:03:23,420
+Vâng
+
+55
+00:03:23,420 --> 00:03:26,420
+Anh làm giám đốc thì anh giới thiệu là tôi là giám đốc của công ty này
+
+56
+00:03:26,420 --> 00:03:32,420
+Thế thì em chưa nói, hoặc là em đang giới thiệu là em là giám đốc của công ty này đi
+
+57
+00:03:32,420 --> 00:03:36,420
+Nhưng mà anh giới thiệu trong anh thì anh sẽ hỏi
+
+58
+00:03:36,420 --> 00:03:39,420
+Bây giờ anh không cần biết là em là giám đốc của công ty gì
+
+59
+00:03:39,420 --> 00:03:42,420
+Nhưng anh chỉ hỏi em là ngày xưa em làm bảo vệ
+
+60
+00:03:42,420 --> 00:03:43,650
+Đấy đúng không?
+
+61
+00:03:43,650 --> 00:03:47,650
+Em đã học được qua lớp bảo vệ và lớp nhân viên cơ bản
+
+62
+00:03:47,650 --> 00:03:51,650
+Nhân viên cơ bản và cái mã số nhân viên cơ bản của em trong công ty là gì
+
+63
+00:03:51,650 --> 00:03:56,650
+Vì cái công ty và cái khách hàng của con anh này
+
+64
+00:03:56,650 --> 00:04:00,650
+Bắt buộc phải đi từ nhân viên cơ bản xong mới bến giám đốc
+
+65
+00:04:00,650 --> 00:04:03,710
+Đúng một cái là anh không bao giờ nhắc nên giám đốc luôn, hiểu không?
+
+66
+00:04:03,710 --> 00:04:04,710
+Vâng
+
+67
+00:04:04,710 --> 00:04:06,710
+Kể cả anh xin làm giám đốc thì giám đốc
+
+68
+00:04:06,710 --> 00:04:08,710
+Anh vẫn phải học qua một cái quán nhân viên cơ bản
+
+69
+00:04:08,710 --> 00:04:09,870
+Đó
+
+70
+00:04:09,870 --> 00:04:12,870
+Để cho chúng ta hiểu nhau hơn, đúng không?
+
+71
+00:04:12,870 --> 00:04:13,870
+Vâng
+
+72
+00:04:13,870 --> 00:04:16,870
+Bây giờ mà anh không biết anh thuê em giám đốc bây giờ
+
+73
+00:04:16,870 --> 00:04:19,870
+Nhưng mà em chưa học qua lớp nhân viên cơ bản về công ty
+
+74
+00:04:19,870 --> 00:04:21,870
+Thì chúng ta cũng không có cái gì để nói chuyện với nhau cả
+
+75
+00:04:21,870 --> 00:04:22,870
+Đó
+
+76
+00:04:22,870 --> 00:04:25,870
+Thì anh phải hỏi em là em đã học qua cái lớp nhân viên cơ bản công ty chưa
+
+77
+00:04:25,870 --> 00:04:28,870
+Và cái mã số nhân viên cơ bản công ty, em học số bao nhiêu
+
+78
+00:04:28,870 --> 00:04:30,320
+Đó
+
+79
+00:04:30,320 --> 00:04:35,320
+Thì bắt đầu là khi em nói cái số 5971
+
+80
+00:04:35,320 --> 00:04:37,320
+Đấy bắt đầu anh mới sớp ra cái số đấy
+
+81
+00:04:37,320 --> 00:04:38,320
+Bắt đầu nó mới ra tên em
+
+82
+00:04:38,320 --> 00:04:41,320
+Em học được cái mã nhân viên cơ bản, học bao nhiêu ngày
+
+83
+00:04:41,320 --> 00:04:43,320
+Đấy được bao nhiêu điểm, đúng không?
+
+84
+00:04:43,320 --> 00:04:45,320
+Đấy được bao nhiêu điểm, được mấy sao
+
+85
+00:04:45,320 --> 00:04:46,320
+Đấy
+
+86
+00:04:46,320 --> 00:04:47,320
+Sau khi em học xong cái đấy
+
+87
+00:04:47,320 --> 00:04:50,320
+Thì em lại đi trải nghiệm thực tế được bao nhiêu ngày
+
+88
+00:04:50,320 --> 00:04:51,320
+Đấy được bao nhiêu điểm
+
+89
+00:04:51,320 --> 00:04:52,320
+Công ty nào chứng nhận đấy
+
+90
+00:04:52,320 --> 00:04:53,320
+Nôm nay là như thế
+
+91
+00:04:53,320 --> 00:04:54,320
+Vâng
+
+92
+00:04:54,320 --> 00:04:55,320
+Vâng
+
+93
+00:04:57,320 --> 00:04:58,320
+Vâng
+
+94
+00:04:58,320 --> 00:04:59,320
+Vâng
+
+95
+00:04:59,320 --> 00:05:00,320
+Vâng
+
+96
+00:05:00,320 --> 00:05:01,320
+Vâng
+
+97
+00:05:01,320 --> 00:05:02,320
+Vâng
+
+98
+00:05:02,320 --> 00:05:03,320
+Vâng
+
+99
+00:05:03,320 --> 00:05:04,320
+Vâng
+
+100
+00:05:04,320 --> 00:05:05,320
+Vâng
+
+101
+00:05:05,320 --> 00:05:06,320
+Vâng
+
+102
+00:05:06,320 --> 00:05:07,320
+Vâng
+
+103
+00:05:07,320 --> 00:05:08,320
+Vâng
+
+104
+00:05:08,320 --> 00:05:09,320
+Vâng
+
+105
+00:05:09,320 --> 00:05:10,320
+Vâng
+
+106
+00:05:10,320 --> 00:05:11,320
+Vâng
+
+107
+00:05:11,320 --> 00:05:12,320
+Vâng
+
+108
+00:05:12,320 --> 00:05:13,320
+Vâng
+
+109
+00:05:13,320 --> 00:05:14,320
+Vâng
+
+110
+00:05:14,320 --> 00:05:15,320
+Vâng
+
+111
+00:05:15,320 --> 00:05:16,350
+Vâng
+
+112
+00:05:16,350 --> 00:05:17,350
+Vâng
+
+113
+00:05:17,350 --> 00:05:18,350
+Vâng
+
+114
+00:05:18,350 --> 00:05:19,350
+Vâng
+
+115
+00:05:19,350 --> 00:05:20,350
+Vâng
+
+116
+00:05:20,350 --> 00:05:21,350
+Vâng
+
+117
+00:05:21,350 --> 00:05:22,350
+Vâng
+
+118
+00:05:22,350 --> 00:05:23,350
+Vâng
+
+119
+00:05:23,350 --> 00:05:24,350
+Vâng
+
+120
+00:05:24,350 --> 00:05:25,350
+Vâng
+
+121
+00:05:25,350 --> 00:05:26,350
+Vâng
+
+122
+00:05:26,350 --> 00:05:27,350
+Vâng
+
+123
+00:05:27,350 --> 00:05:28,350
+Vâng
+
+124
+00:05:28,350 --> 00:05:29,350
+Vâng
+
+125
+00:05:29,350 --> 00:05:30,350
+Vâng
+
+126
+00:05:30,350 --> 00:05:31,350
+Vâng
+
+127
+00:05:31,350 --> 00:05:32,350
+Vâng
+
+128
+00:05:32,350 --> 00:05:33,350
+Vâng
+
+129
+00:05:33,350 --> 00:05:34,350
+Vâng
+
+130
+00:05:34,350 --> 00:05:35,540
+Vâng
+
+131
+00:05:35,540 --> 00:05:36,670
+Vâng
+
+132
+00:05:36,670 --> 00:05:37,670
+Vâng
+
+133
+00:05:37,670 --> 00:05:38,670
+Vâng
+
+134
+00:05:38,670 --> 00:05:39,670
+Vâng
+
+135
+00:05:39,670 --> 00:05:40,670
+Vâng
+
+136
+00:05:40,670 --> 00:05:41,670
+Vâng
+
+137
+00:05:41,670 --> 00:05:42,670
+Vâng
+
+138
+00:05:42,670 --> 00:05:43,670
+Vâng
+
+139
+00:05:43,670 --> 00:05:44,670
+Vâng
+
+140
+00:05:44,670 --> 00:05:45,670
+Vâng
+
+141
+00:05:45,670 --> 00:05:51,670
+Thì khi em quẹp và phát, nó đã tự nhảy vào rồi, anh chỉ cần kích vào cái mã số này của em
+
+142
+00:05:51,670 --> 00:05:59,700
+Nó đã hiện ra lịch sử là ngày hôm qua ông ấy đã đến nhà tôi chơi, trải nghiệm dịch vụ, kiểu vậy
+
+143
+00:05:59,700 --> 00:06:08,080
+Tức là trong cái lúc mà học cái lớp, học cái khóa đấy thì trải nghiệm những dịch vụ gì cũng lưu hết vào cái mã số đấy thôi
+
+144
+00:06:08,080 --> 00:06:11,080
+Đúng rồi, lưu hết vào, tất cả nó lưu vào hết vào đấy
+
+145
+00:06:11,080 --> 00:06:17,080
+Ví dụ đến đây sử dụng nước uống, cà phê, cửa hàng nào đấy cũng lưu vào đấy
+
+146
+00:06:17,080 --> 00:06:24,080
+Đúng rồi, thậm chí là còn nạ cũng còn ghi luôn màu chứ, nhiều người quên diệt quyền, nạ là bình thường
+
+147
+00:06:24,080 --> 00:06:27,140
+Dạ vâng
+
+148
+00:06:27,140 --> 00:06:35,180
+Vậy thì cái đoạn mã số này thì em cũng hiểu vậy ạ
+
+149
+00:06:35,180 --> 00:06:39,250
+Đấy, hôm nay là như thế ha, mỗi người sẽ được cấp một cái mã số như vậy
+
+150
+00:06:39,250 --> 00:06:44,250
+Đấy là mã số khi tham gia giúp học, chứ còn là mã số định danh
+
+151
+00:06:44,250 --> 00:06:51,250
+Nó là mã số định danh cố định luôn đấy em, nó giống như là mã số định danh của trung binh nhân dân luôn
+
+152
+00:06:51,250 --> 00:06:54,250
+Vâng, nhưng mà đấy là theo từng lớp thôi ạ
+
+153
+00:06:54,250 --> 00:07:03,250
+Bây giờ nhé, tại giải thích này dễ hiểu hơn, cái mã số này, cái mã số này nó sẽ là cái mã số định danh cố định của thành viên
+
+154
+00:07:03,250 --> 00:07:08,250
+Sau khi em làm thành viên thì em sẽ có thêm cái mã số khác, giống như là mã số bằng máy xe máy này đúng không
+
+155
+00:07:08,250 --> 00:07:11,250
+Đấy, mã số bằng lái ô tô này đúng không
+
+156
+00:07:11,250 --> 00:07:17,250
+Đó, mã số giám đốc này, mã số dân dân, đấy, nó sẽ qua những mã số sau, nhưng mà tất cả nó sẽ link vào cái app
+
+157
+00:07:17,250 --> 00:07:20,250
+Nó chỉ dùng cái mã số này là cái mã số cố định
+
+158
+00:07:20,250 --> 00:07:26,300
+Đấy, hiểu chưa, nó giống như cái VNID của mình ấy, nghe không
+
+159
+00:07:26,300 --> 00:07:27,300
+Vâng
+
+160
+00:07:27,300 --> 00:07:32,300
+VNID của mình thì nó phải căn cứ vào cái mã số cố định của trung binh nhân dân chứ đúng không
+
+161
+00:07:32,300 --> 00:07:36,300
+Cắt cấp nhân dân chứ đúng không, thì ở đây ít nữa mình làm app cũng như vậy á
+
+162
+00:07:36,300 --> 00:07:37,300
+Vâng
+
+163
+00:07:37,300 --> 00:07:42,300
+Mình làm cái app cũng như VNID, thì nó sẽ căn cứ vào cái này luôn
+
+164
+00:07:42,300 --> 00:07:45,300
+Đấy, đăng nhập là đăng nhập bằng cái mã số này luôn
+
+165
+00:07:45,300 --> 00:07:50,300
+Vì từ cái mã số này vào trong ấy thì mình mới bắt đầu, mình mới check ra được
+
+166
+00:07:50,300 --> 00:07:54,300
+Ờ, ông này, ông ấy đã được cấp những cái bằng gì, bằng gì đó
+
+167
+00:07:54,300 --> 00:08:00,500
+Đấy, bằng gì, bằng gì và ông ấy cũng sử dụng những cái dịch vụ gì, dịch vụ gì, ngày bao nhiêu, tháng năm bao nhiêu
+
+168
+00:08:00,500 --> 00:08:04,500
+Và có tiến dụng đen hay không, nó kiểu vậy
+
+169
+00:08:04,500 --> 00:08:05,780
+Đúng không
+
+170
+00:08:05,780 --> 00:08:10,780
+Vâng, nhưng mà nếu như theo kiểu là cứ tham gia một khóa học khác thì được cấp một mã khác
+
+171
+00:08:10,780 --> 00:08:13,780
+Thì em đang hiểu là một người có thể có nhiều mã này mà
+
+172
+00:08:13,780 --> 00:08:21,300
+Không, một người là chỉ có một cái mã định danh cố định thôi, còn đâu những cái mã sau mà sẽ có nhiều
+
+173
+00:08:21,300 --> 00:08:29,300
+Định danh cố định đó là một mã khác, định danh con người là một mã, cái mã định danh cố định, định danh con người đấy là một mã riêng
+
+174
+00:08:29,300 --> 00:08:31,300
+Đúng rồi, một mã danh con người là một mã riêng
+
+175
+00:08:31,300 --> 00:08:35,300
+Và sau khi tham gia các lớp học sẽ có mã gọi là số báo danh riêng
+
+176
+00:08:35,300 --> 00:08:36,300
+Đúng rồi
+
+177
+00:08:36,300 --> 00:08:43,300
+Vâng, thì lịch sử mà tham gia các lớp học sẽ lưu vào cái mã gọi là số báo danh khi tham gia lớp học
+
+178
+00:08:43,300 --> 00:08:50,300
+Còn lịch sử của cái người này sẽ là cái mã gọi là mã ID và định danh đầu tiên lớn nhất này
+
+179
+00:08:50,300 --> 00:08:52,460
+Đây nhé, đây, đây
+
+180
+00:08:52,460 --> 00:09:09,180
+Anh chỉ dừng giá thôi là anh sẽ cho em cái này nó dễ hơn ha, thì nó sẽ dễ hơn
+
+181
+00:09:09,180 --> 00:09:37,080
+Đây nhé, bắt đầu từ cái cồn này trước này
+
+182
+00:09:37,080 --> 00:09:40,110
+Cái đấy anh đóng cái gì cũng được hả, không phải...
+
+183
+00:09:40,110 --> 00:09:43,110
+Không, để anh nào, để bọn em dễ hiểu hơn
+
+184
+00:09:43,110 --> 00:09:46,110
+Đây, cái này đã có tên rồi, đã có số điện thoại rồi ha
+
+185
+00:09:46,110 --> 00:09:47,110
+Vâng
+
+186
+00:09:47,110 --> 00:09:50,110
+Nhưng mà nó chưa có cái cồn báo định danh như ở bên này
+
+187
+00:09:51,850 --> 00:09:53,850
+Đây này, nó chưa có cái này
+
+188
+00:09:53,850 --> 00:09:55,200
+Đó
+
+189
+00:09:55,200 --> 00:09:58,740
+Nó chưa có cái này, thì hai cái này mới là quan trọng nhất
+
+190
+00:09:58,740 --> 00:10:00,740
+Còn cái tên với cái ấy thì nó lại không quan trọng ha
+
+191
+00:10:00,740 --> 00:10:01,740
+Vâng
+
+192
+00:10:01,740 --> 00:10:03,740
+Cái tên với số điện thoại thì nó lại không quan trọng
+
+193
+00:10:03,740 --> 00:10:05,740
+Tên thì thậm chí có thể sửa được
+
+194
+00:10:05,740 --> 00:10:08,740
+Nhưng mà hóa số điện thoại dị danh nó là quy định
+
+195
+00:10:08,740 --> 00:10:11,740
+Đấy, nó đi theo cái đấy nó mới là quy định
+
+196
+00:10:11,740 --> 00:10:16,740
+Tên thì ông có thể là ông ABC, ông chuyển thành cái gì đó, tôi không cần biết
+
+197
+00:10:16,740 --> 00:10:22,740
+Nhưng cái này, cái cồn này là cồn quy định
+
+198
+00:10:22,740 --> 00:10:25,740
+Thì ở đây nó đang thiếu cái cồn đấy này
+
+199
+00:10:25,740 --> 00:10:26,940
+Vâng
+
+200
+00:10:26,940 --> 00:10:28,940
+Nó đang thiếu cái cồn đấy này
+
+201
+00:10:30,610 --> 00:10:33,610
+Đây ví dụ như là cái này bắt đầu lịch sử
+
+202
+00:10:33,610 --> 00:10:37,610
+Bắt đầu là, nó có lịch sử là ông đăng ký
+
+203
+00:10:37,610 --> 00:10:42,610
+Ông đăng ký cái, ông trở thành cái thành viên có 3 số ấy từ lúc nào đúng không?
+
+204
+00:10:42,610 --> 00:10:43,610
+Vâng
+
+205
+00:10:43,610 --> 00:10:46,610
+Đấy, nó sẽ có cái trạng thái nào như vậy
+
+206
+00:10:46,610 --> 00:10:47,610
+Lịch sử thời gian
+
+207
+00:10:47,610 --> 00:10:48,610
+Đấy
+
+208
+00:10:48,610 --> 00:10:52,610
+Ông đăng ký vào cái lúc nào
+
+209
+00:10:52,610 --> 00:10:54,610
+Xong rồi nó có
+
+210
+00:10:54,610 --> 00:10:58,610
+Nó sẽ có một số những cái điểm đánh giá
+
+211
+00:10:58,610 --> 00:11:01,700
+Đấy, đánh giá tất tất tất tất về đây
+
+212
+00:11:01,700 --> 00:11:04,700
+Tất cả những cái này là đánh giá, nghiệp kê đằng sau đó
+
+213
+00:11:04,700 --> 00:11:06,700
+Thì mình sẽ có rất nhiều cột đấy
+
+214
+00:11:06,700 --> 00:11:12,700
+Ở lúc này là lâm lịch sử thời gian
+
+215
+00:11:12,700 --> 00:11:14,700
+Ngày tháng 5 này ông ấy đã check in ở đâu
+
+216
+00:11:14,700 --> 00:11:18,700
+Ông ấy đã làm cái gì, ông ấy đã học cái gì, ông ấy có được chứng nhận tốt hay không
+
+217
+00:11:18,700 --> 00:11:20,700
+Tất cả là nó thứng kê về sau ở đây hết
+
+218
+00:11:20,700 --> 00:11:21,700
+Vâng
+
+219
+00:11:21,700 --> 00:11:26,700
+Mình chỉ cần 4 cái kia là giữ nguyên đúng không, quy định nha
+
+220
+00:11:26,700 --> 00:11:29,700
+Ở những cái về sau nó sẽ check về sau hết
+
+221
+00:11:29,700 --> 00:11:32,700
+Nó rất là nhiều cột, thậm chí là có hàng trăm cột luôn
+
+222
+00:11:32,700 --> 00:11:35,250
+Dạ vâng
+
+223
+00:11:35,250 --> 00:11:40,250
+Có hàng trăm cột luôn, vì nó giữ dạo check thường truyên mà
+
+224
+00:11:40,250 --> 00:11:43,250
+Mật thẻ thường truyên mà, nó sẽ nhập vào đấy
+
+225
+00:11:43,250 --> 00:11:47,250
+Mình theo dõi được, ông ấy đã có những lịch sử gì
+
+226
+00:11:47,250 --> 00:11:50,660
+Nó đơn giản như vậy thôi
+
+227
+00:11:50,660 --> 00:11:55,750
+Vậy là cái mã định danh cho từng cá nhân riêng
+
+228
+00:11:55,750 --> 00:12:01,750
+Vâng, mình đang nói đến 2 loại mã, nãy giờ mình sẽ trao đổi là có 2 loại mã định danh cho từng cá nhân riêng là sẽ theo từ đầu đến cuối
+
+229
+00:12:01,750 --> 00:12:03,750
+Theo hết
+
+230
+00:12:03,750 --> 00:12:07,750
+Và cái mã như lúc đầu em nói là mã cứ tham gia lớp học nào sẽ lệ là muốn mã khác trong lớp học đấy
+
+231
+00:12:07,750 --> 00:12:09,750
+Đúng rồi, đúng rồi, tính chắc
+
+232
+00:12:09,750 --> 00:12:15,010
+Đây thì cái mã này nó sẽ là mã cố định nè
+
+233
+00:12:15,010 --> 00:12:19,010
+Ở đây nó sẽ có thêm 2 cột đấy là cố định nè
+
+234
+00:12:19,010 --> 00:12:21,580
+Sau cái mã đấy thì nó sẽ là
+
+235
+00:12:21,580 --> 00:12:25,580
+Ví dụ như là sang năm sau thì ông ấy sẽ được cấp thêm một cái mã khác
+
+236
+00:12:25,580 --> 00:12:27,580
+Nó sẽ là của này chứ nó không thể sửa cái cột trước được
+
+237
+00:12:27,580 --> 00:12:29,580
+Vâng, vâng
+
+238
+00:12:29,580 --> 00:12:33,580
+Sang năm sau ông tham gia khóa học khác thì ông ấy được cấp mã trong lớp khác
+
+239
+00:12:33,580 --> 00:12:37,580
+Còn mã gốc của ông ấy vẫn phải giữ nguyên tiêu đầu tới lúc đăng ký
+
+240
+00:12:37,580 --> 00:12:40,030
+Đúng rồi, chính xác
+
+241
+00:12:40,030 --> 00:12:46,030
+Thế thì anh cho em xin cái format đánh mã này được không? Cái cách đánh mã của các anh nghĩ ạ?
+
+242
+00:12:46,030 --> 00:12:49,450
+Cách đánh mã của anh thì đây nó như thế này nha
+
+243
+00:12:49,450 --> 00:12:50,450
+Vâng
+
+244
+00:12:50,450 --> 00:12:56,960
+Ví dụ như là đây là nó lên con số thành viên là số sáu nghìn nè
+
+245
+00:12:56,960 --> 00:12:57,960
+Vâng
+
+246
+00:12:57,960 --> 00:13:01,960
+Sáu nghìn 177, đấy là thành viên, đó đơn giản như vậy thôi
+
+247
+00:13:01,960 --> 00:13:02,960
+Vâng
+
+248
+00:13:02,960 --> 00:13:06,960
+Ở đây hiện tại là nó lên đầu sáu rồi
+
+249
+00:13:06,960 --> 00:13:07,960
+Vâng
+
+250
+00:13:07,960 --> 00:13:09,960
+Nó đang qua thành viên chính trước á
+
+251
+00:13:09,960 --> 00:13:10,960
+Vâng
+
+252
+00:13:10,960 --> 00:13:11,960
+Đấy là nó lên đầu sáu rồi
+
+253
+00:13:11,960 --> 00:13:14,960
+Còn cái phần đằng sau, cái phần kính ngang đằng sau ạ?
+
+254
+00:13:15,960 --> 00:13:19,960
+Ví dụ như là cái này của anh phân ra như ông này ở Hải Phòng trực hạn
+
+255
+00:13:19,960 --> 00:13:20,960
+Đúng không?
+
+256
+00:13:20,960 --> 00:13:21,960
+Vâng
+
+257
+00:13:21,960 --> 00:13:25,990
+Ông này ở Hải Phòng thì ông nghĩ là đầu 3, ông ở Hải Dương ông là đầu 4
+
+258
+00:13:25,990 --> 00:13:30,210
+Đầu 3, đầu...
+
+259
+00:13:30,210 --> 00:13:33,210
+Đâu, em xem lại ví dụ cái Hải Phòng vừa nãy anh vừa chỉ ra
+
+260
+00:13:33,210 --> 00:13:36,210
+Đây, đây ví dụ như này, đây ví dụ như này
+
+261
+00:13:36,210 --> 00:13:40,210
+Đây ví dụ như ông Hải Phòng là đầu 300
+
+262
+00:13:40,210 --> 00:13:41,210
+Vâng
+
+263
+00:13:41,210 --> 00:13:42,210
+Ê, ông Hàn Lội là đầu 200
+
+264
+00:13:42,210 --> 00:13:45,210
+Còn cái số đằng sau thì là số gì ạ?
+
+265
+00:13:45,210 --> 00:13:47,210
+Cái số của tỉnh đấy ạ?
+
+266
+00:13:47,210 --> 00:13:49,210
+Số thứ tự tăng dần của tỉnh đấy ạ?
+
+267
+00:13:49,210 --> 00:13:52,210
+Bây giờ nhé, không thì nói như này, nói như này dễ hơn này
+
+268
+00:13:54,210 --> 00:13:57,210
+Bây giờ ví dụ 1 nghìn người đằng trước đi
+
+269
+00:13:57,210 --> 00:13:58,210
+Vâng
+
+270
+00:13:58,210 --> 00:14:01,210
+1 nghìn người đằng trước thì cái số của bọn anh không phân theo khu vục
+
+271
+00:14:01,210 --> 00:14:03,210
+mà anh phải phân theo cái số này
+
+272
+00:14:03,210 --> 00:14:07,210
+1 nghìn người đằng trước thì anh phân ra làm...
+
+273
+00:14:07,210 --> 00:14:10,260
+làm...
+
+274
+00:14:10,260 --> 00:14:12,260
+4 nhóm đi, 4 nhóm
+
+275
+00:14:12,260 --> 00:14:15,260
+4 nhóm thì 4 nhóm có mát số từ...
+
+276
+00:14:17,460 --> 00:14:20,460
+4 nhóm là 50 người, hay 100 người đi
+
+277
+00:14:20,460 --> 00:14:25,150
+1 nghìn người đằng trước nhé, 1 nghìn người đằng trước thì...
+
+278
+00:14:25,150 --> 00:14:27,150
+200 người đi, 200 người 1 nhóm
+

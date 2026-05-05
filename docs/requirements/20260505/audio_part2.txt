@@ -1,0 +1,278 @@
+Đăng ký lúc đăng ký hoàn thành, đăng ký tên, số điện thoại, email, công việc hiện tại của khách hàng
+Đây là lớp Mentor 7, đây là lớp đã lên thẻa VIP và thẻa vàng rồi
+Còn đâu bình thường mình sẽ để cộng đồng ở đây là thẻa xanh
+Đây là má số, đây là má số cá nhân, đây là số nhóm
+Số đằng trước là cá nhân, đây là số nhóm, một nhóm có 20 người
+Một nhóm gần nhau có 20 người, đây là số nhóm
+Cái má này là số được cấp, nó sẽ được giữ nguyên cái phần đầu, về sau thay đổi thêm là sau
+Đúng rồi, ví dụ như ở đây là 5, 9, 7, 1, 300
+Cố định này không bao giờ thay đổi nha
+Vâng
+Thế nhưng mà về sau họ sẽ học thêm một cái lớp
+Ví dụ như học thêm lớp nhà giáo dục gia đình đi
+Vâng
+Ở đây là nhà giáo dục gia đình
+Ở đây nó sẽ có thêm một cái cọt
+Đây
+Nó sẽ là mentor 7
+Nhưng mà ở đây nó sẽ có thêm một cọt là mentor nhà giáo dục gia đình
+Và có cái mã số riêng
+Đấy, hiểu không?
+Ừ
+Đấy, tức là hoặc là từ mentor này họ sẽ nâng cấp lên mentor ha
+Đấy, tức là cấp rồi tiếp theo thì ở đây nó sẽ có thêm cái cọt mentor là nó có một cái mã số của cái giấy riêng
+Đó, nhưng mà cái lớp này phải học 1, 2 năm hoặc là lửa năm nó mới được cấp
+Là trong cuộc đời người ta cũng không có học nhiều đâu
+Đấy
+Học lắm là 10 cái cọt mã số là cũng không có nhiều đâu
+À, tức là cứ thêm một lớp là cái chức vụ à
+Cái này em gọi là chức vụ à
+Mentor 7 này là chức vụ à
+Đúng rồi
+Cứ thêm một lớp thì cái chức vụ này sẽ thay đổi này
+Đúng rồi
+Và mã số này cũng thay đổi này
+Không, mã số chỉ cấp thêm thôi chứ không thay đổi
+Nhưng mà, à, tức là thêm một mã nữa hay là thêm một số nữa nối vào mã này ạ?
+Bây giờ nha, bây giờ nha, bây giờ đơn giản là như thế này thôi
+Khi mà người quản trị tìm thì người ta không tìm ở cái ví dụ như là
+Đây là mentor, đây là port master đúng không?
+Vâng
+Nhưng mà người ta sẽ không tìm master mà người ta sẽ tìm cái số này trước
+Sau khi người ta tìm cái số này thì người ta mới ấn vào cái mã số này
+Và biết được là à, ông này sau khi ông này học cái này thì ông ấy sẽ học cái gì nữa khác nữa
+Hoặc là sau khi ông này làm nhân viên rồi thì thời gian nào ông ấy làm cái chức vụ gì tiếp theo nữa
+Thì nó sẽ hiện ra là sau lại
+Mình điều tra là mình điều tra từ gốc chứ không điều tra từ ngọn
+Hiểu không?
+Vâng
+Tức là các lớp tiếp theo tức là tôi không cần biết là bây giờ ông làm cái gì
+Nhưng mà tôi phải điều tra từ ngày xưa ông nào, học cái gì, ông làm cái gì trước
+Đấy
+Tức là bây giờ ví dụ như là anh đến với em ấy
+Thì anh làm giám đốc đi đúng không?
+Vâng
+Anh làm giám đốc thì anh giới thiệu là tôi là giám đốc của công ty này
+Thế thì em chưa nói, hoặc là em đang giới thiệu là em là giám đốc của công ty này đi
+Nhưng mà anh giới thiệu trong anh thì anh sẽ hỏi
+Bây giờ anh không cần biết là em là giám đốc của công ty gì
+Nhưng anh chỉ hỏi em là ngày xưa em làm bảo vệ
+Đấy đúng không?
+Em đã học được qua lớp bảo vệ và lớp nhân viên cơ bản
+Nhân viên cơ bản và cái mã số nhân viên cơ bản của em trong công ty là gì
+Vì cái công ty và cái khách hàng của con anh này
+Bắt buộc phải đi từ nhân viên cơ bản xong mới bến giám đốc
+Đúng một cái là anh không bao giờ nhắc nên giám đốc luôn, hiểu không?
+Vâng
+Kể cả anh xin làm giám đốc thì giám đốc
+Anh vẫn phải học qua một cái quán nhân viên cơ bản
+Đó
+Để cho chúng ta hiểu nhau hơn, đúng không?
+Vâng
+Bây giờ mà anh không biết anh thuê em giám đốc bây giờ
+Nhưng mà em chưa học qua lớp nhân viên cơ bản về công ty
+Thì chúng ta cũng không có cái gì để nói chuyện với nhau cả
+Đó
+Thì anh phải hỏi em là em đã học qua cái lớp nhân viên cơ bản công ty chưa
+Và cái mã số nhân viên cơ bản công ty, em học số bao nhiêu
+Đó
+Thì bắt đầu là khi em nói cái số 5971
+Đấy bắt đầu anh mới sớp ra cái số đấy
+Bắt đầu nó mới ra tên em
+Em học được cái mã nhân viên cơ bản, học bao nhiêu ngày
+Đấy được bao nhiêu điểm, đúng không?
+Đấy được bao nhiêu điểm, được mấy sao
+Đấy
+Sau khi em học xong cái đấy
+Thì em lại đi trải nghiệm thực tế được bao nhiêu ngày
+Đấy được bao nhiêu điểm
+Công ty nào chứng nhận đấy
+Nôm nay là như thế
+Vâng
+Vâng
+Vâng
+Vâng
+Vâng
+Vâng
+Vâng
+Vâng
+Vâng
+Vâng
+Vâng
+Vâng
+Vâng
+Vâng
+Vâng
+Vâng
+Vâng
+Vâng
+Vâng
+Vâng
+Vâng
+Vâng
+Vâng
+Vâng
+Vâng
+Vâng
+Vâng
+Vâng
+Vâng
+Vâng
+Vâng
+Vâng
+Vâng
+Vâng
+Vâng
+Vâng
+Vâng
+Vâng
+Vâng
+Vâng
+Vâng
+Vâng
+Vâng
+Vâng
+Vâng
+Vâng
+Vâng
+Vâng
+Vâng
+Vâng
+Thì khi em quẹp và phát, nó đã tự nhảy vào rồi, anh chỉ cần kích vào cái mã số này của em
+Nó đã hiện ra lịch sử là ngày hôm qua ông ấy đã đến nhà tôi chơi, trải nghiệm dịch vụ, kiểu vậy
+Tức là trong cái lúc mà học cái lớp, học cái khóa đấy thì trải nghiệm những dịch vụ gì cũng lưu hết vào cái mã số đấy thôi
+Đúng rồi, lưu hết vào, tất cả nó lưu vào hết vào đấy
+Ví dụ đến đây sử dụng nước uống, cà phê, cửa hàng nào đấy cũng lưu vào đấy
+Đúng rồi, thậm chí là còn nạ cũng còn ghi luôn màu chứ, nhiều người quên diệt quyền, nạ là bình thường
+Dạ vâng
+Vậy thì cái đoạn mã số này thì em cũng hiểu vậy ạ
+Đấy, hôm nay là như thế ha, mỗi người sẽ được cấp một cái mã số như vậy
+Đấy là mã số khi tham gia giúp học, chứ còn là mã số định danh
+Nó là mã số định danh cố định luôn đấy em, nó giống như là mã số định danh của trung binh nhân dân luôn
+Vâng, nhưng mà đấy là theo từng lớp thôi ạ
+Bây giờ nhé, tại giải thích này dễ hiểu hơn, cái mã số này, cái mã số này nó sẽ là cái mã số định danh cố định của thành viên
+Sau khi em làm thành viên thì em sẽ có thêm cái mã số khác, giống như là mã số bằng máy xe máy này đúng không
+Đấy, mã số bằng lái ô tô này đúng không
+Đó, mã số giám đốc này, mã số dân dân, đấy, nó sẽ qua những mã số sau, nhưng mà tất cả nó sẽ link vào cái app
+Nó chỉ dùng cái mã số này là cái mã số cố định
+Đấy, hiểu chưa, nó giống như cái VNID của mình ấy, nghe không
+Vâng
+VNID của mình thì nó phải căn cứ vào cái mã số cố định của trung binh nhân dân chứ đúng không
+Cắt cấp nhân dân chứ đúng không, thì ở đây ít nữa mình làm app cũng như vậy á
+Vâng
+Mình làm cái app cũng như VNID, thì nó sẽ căn cứ vào cái này luôn
+Đấy, đăng nhập là đăng nhập bằng cái mã số này luôn
+Vì từ cái mã số này vào trong ấy thì mình mới bắt đầu, mình mới check ra được
+Ờ, ông này, ông ấy đã được cấp những cái bằng gì, bằng gì đó
+Đấy, bằng gì, bằng gì và ông ấy cũng sử dụng những cái dịch vụ gì, dịch vụ gì, ngày bao nhiêu, tháng năm bao nhiêu
+Và có tiến dụng đen hay không, nó kiểu vậy
+Đúng không
+Vâng, nhưng mà nếu như theo kiểu là cứ tham gia một khóa học khác thì được cấp một mã khác
+Thì em đang hiểu là một người có thể có nhiều mã này mà
+Không, một người là chỉ có một cái mã định danh cố định thôi, còn đâu những cái mã sau mà sẽ có nhiều
+Định danh cố định đó là một mã khác, định danh con người là một mã, cái mã định danh cố định, định danh con người đấy là một mã riêng
+Đúng rồi, một mã danh con người là một mã riêng
+Và sau khi tham gia các lớp học sẽ có mã gọi là số báo danh riêng
+Đúng rồi
+Vâng, thì lịch sử mà tham gia các lớp học sẽ lưu vào cái mã gọi là số báo danh khi tham gia lớp học
+Còn lịch sử của cái người này sẽ là cái mã gọi là mã ID và định danh đầu tiên lớn nhất này
+Đây nhé, đây, đây
+Anh chỉ dừng giá thôi là anh sẽ cho em cái này nó dễ hơn ha, thì nó sẽ dễ hơn
+Đây nhé, bắt đầu từ cái cồn này trước này
+Cái đấy anh đóng cái gì cũng được hả, không phải...
+Không, để anh nào, để bọn em dễ hiểu hơn
+Đây, cái này đã có tên rồi, đã có số điện thoại rồi ha
+Vâng
+Nhưng mà nó chưa có cái cồn báo định danh như ở bên này
+Đây này, nó chưa có cái này
+Đó
+Nó chưa có cái này, thì hai cái này mới là quan trọng nhất
+Còn cái tên với cái ấy thì nó lại không quan trọng ha
+Vâng
+Cái tên với số điện thoại thì nó lại không quan trọng
+Tên thì thậm chí có thể sửa được
+Nhưng mà hóa số điện thoại dị danh nó là quy định
+Đấy, nó đi theo cái đấy nó mới là quy định
+Tên thì ông có thể là ông ABC, ông chuyển thành cái gì đó, tôi không cần biết
+Nhưng cái này, cái cồn này là cồn quy định
+Thì ở đây nó đang thiếu cái cồn đấy này
+Vâng
+Nó đang thiếu cái cồn đấy này
+Đây ví dụ như là cái này bắt đầu lịch sử
+Bắt đầu là, nó có lịch sử là ông đăng ký
+Ông đăng ký cái, ông trở thành cái thành viên có 3 số ấy từ lúc nào đúng không?
+Vâng
+Đấy, nó sẽ có cái trạng thái nào như vậy
+Lịch sử thời gian
+Đấy
+Ông đăng ký vào cái lúc nào
+Xong rồi nó có
+Nó sẽ có một số những cái điểm đánh giá
+Đấy, đánh giá tất tất tất tất về đây
+Tất cả những cái này là đánh giá, nghiệp kê đằng sau đó
+Thì mình sẽ có rất nhiều cột đấy
+Ở lúc này là lâm lịch sử thời gian
+Ngày tháng 5 này ông ấy đã check in ở đâu
+Ông ấy đã làm cái gì, ông ấy đã học cái gì, ông ấy có được chứng nhận tốt hay không
+Tất cả là nó thứng kê về sau ở đây hết
+Vâng
+Mình chỉ cần 4 cái kia là giữ nguyên đúng không, quy định nha
+Ở những cái về sau nó sẽ check về sau hết
+Nó rất là nhiều cột, thậm chí là có hàng trăm cột luôn
+Dạ vâng
+Có hàng trăm cột luôn, vì nó giữ dạo check thường truyên mà
+Mật thẻ thường truyên mà, nó sẽ nhập vào đấy
+Mình theo dõi được, ông ấy đã có những lịch sử gì
+Nó đơn giản như vậy thôi
+Vậy là cái mã định danh cho từng cá nhân riêng
+Vâng, mình đang nói đến 2 loại mã, nãy giờ mình sẽ trao đổi là có 2 loại mã định danh cho từng cá nhân riêng là sẽ theo từ đầu đến cuối
+Theo hết
+Và cái mã như lúc đầu em nói là mã cứ tham gia lớp học nào sẽ lệ là muốn mã khác trong lớp học đấy
+Đúng rồi, đúng rồi, tính chắc
+Đây thì cái mã này nó sẽ là mã cố định nè
+Ở đây nó sẽ có thêm 2 cột đấy là cố định nè
+Sau cái mã đấy thì nó sẽ là
+Ví dụ như là sang năm sau thì ông ấy sẽ được cấp thêm một cái mã khác
+Nó sẽ là của này chứ nó không thể sửa cái cột trước được
+Vâng, vâng
+Sang năm sau ông tham gia khóa học khác thì ông ấy được cấp mã trong lớp khác
+Còn mã gốc của ông ấy vẫn phải giữ nguyên tiêu đầu tới lúc đăng ký
+Đúng rồi, chính xác
+Thế thì anh cho em xin cái format đánh mã này được không? Cái cách đánh mã của các anh nghĩ ạ?
+Cách đánh mã của anh thì đây nó như thế này nha
+Vâng
+Ví dụ như là đây là nó lên con số thành viên là số sáu nghìn nè
+Vâng
+Sáu nghìn 177, đấy là thành viên, đó đơn giản như vậy thôi
+Vâng
+Ở đây hiện tại là nó lên đầu sáu rồi
+Vâng
+Nó đang qua thành viên chính trước á
+Vâng
+Đấy là nó lên đầu sáu rồi
+Còn cái phần đằng sau, cái phần kính ngang đằng sau ạ?
+Ví dụ như là cái này của anh phân ra như ông này ở Hải Phòng trực hạn
+Đúng không?
+Vâng
+Ông này ở Hải Phòng thì ông nghĩ là đầu 3, ông ở Hải Dương ông là đầu 4
+Đầu 3, đầu...
+Đâu, em xem lại ví dụ cái Hải Phòng vừa nãy anh vừa chỉ ra
+Đây, đây ví dụ như này, đây ví dụ như này
+Đây ví dụ như ông Hải Phòng là đầu 300
+Vâng
+Ê, ông Hàn Lội là đầu 200
+Còn cái số đằng sau thì là số gì ạ?
+Cái số của tỉnh đấy ạ?
+Số thứ tự tăng dần của tỉnh đấy ạ?
+Bây giờ nhé, không thì nói như này, nói như này dễ hơn này
+Bây giờ ví dụ 1 nghìn người đằng trước đi
+Vâng
+1 nghìn người đằng trước thì cái số của bọn anh không phân theo khu vục
+mà anh phải phân theo cái số này
+1 nghìn người đằng trước thì anh phân ra làm...
+làm...
+4 nhóm đi, 4 nhóm
+4 nhóm thì 4 nhóm có mát số từ...
+4 nhóm là 50 người, hay 100 người đi
+1 nghìn người đằng trước nhé, 1 nghìn người đằng trước thì...
+200 người đi, 200 người 1 nhóm

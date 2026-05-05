@@ -1,0 +1,406 @@
+Được nha, nó cũng đầu tiên mình bắt đầu làm từ cách đơn giản trước ha
+Vâng, từ cái form thu thập đăng ký sự kiện này
+Bây giờ bắt đầu từ cái này luôn
+Cái này mình nhìn thấy là cái event này thì có 2 cái này ở đây
+Mọi người nhìn thấy trên rồi, có 2 cái sự kiện ở đây, chắc là cái sự kiện này là của bên mình đúng không?
+Vâng
+Vâng, thế bây giờ đối với hình thức là bên đấy muốn cọng tác bên mình là như thế nào?
+Thức là muốn cọng tác theo cái chia sẻ hình thức là chia lợi nhuận hay như thế nào mình cũng chưa rõ
+Cái này thì chắc là các xếp nói chuyện với nhau chứ em cũng không nắm được cái này
+Em chỉ kiểu bên kỹ thuật để xem làm như thế nào để về cho các bạn làm
+Vâng, thế bây giờ mình trao đầu trước với các bạn nếu mà có tất cả những chương trình như thế này của bên các bạn
+Thứ nhất là phải để số điện thoại của bên mình
+Cái này để em nói lại đây là cái sự kiện bọn em test khi mà đang làm bọn em chưa kịp xóa để bọn em ẩn cái này đi
+Chứ còn bên anh thì chỉ có mỗi cái mà bên anh tự khai báo là mở khớp an toàn thôi ạ
+Vâng
+Vâng
+Vâng
+Vâng
+Vâng
+Vâng
+Vâng
+Vâng
+Vâng
+Vâng
+Vâng
+Vâng
+Thì mình nhất hết là mình nhất cần phải được phép chỉnh sửa ở chỗ này
+Nó rất đơn giản lắm chỗ này mình được chỉnh sửa ở chỗ này nhưng mà hiện tại mình chưa được chỉnh sửa
+Chưa được khấp admin chỉnh sửa cái khu này
+Vâng
+Hiểu không?
+Vâng
+Thứ nhất là chỉnh sửa cái khu này
+Cứ lại thì mới có chữ thôi
+Mình muốn là sẽ được cấp hình ảnh ở hai bên
+Hoặc là bên trên, hoặc là bên dưới
+Đó
+Đầu tiên là giao diện, đúng không?
+Giao diện chủ đạo là phải như thế
+Phải có tên, tuổi, công ty, rồi là cái gì đó
+Về dưới hình ảnh ra đây
+Ở bên dưới cũng như vậy
+Ở bên dưới nếu mà
+Nói chung là tất cả mọi cái chỉ cần
+Nếu mà đơn giản nhất
+Các bạn chỉ cần đưa cho mình các khung thôi
+Khung để mình ấp ảnh vào và có chữ vào
+Thế là xong
+Tức là mình đều cấp ấp ảnh vào đấy
+Và mình có chữ
+Ví dụ là mình sẽ...
+Như ở trên này nó cũng không cần phải lợi dụng hình nhiều
+Chỉ cần là mình ấp ảnh vào đây
+Và mình viết mấy cái chữ dòng bên dưới
+Thế là xong
+Đấy, bên dưới này sẽ là 1, 2, 3, 4 thôi
+Rất là đơn giản
+Đấy là cái giao diện đầu tiên
+Mà mình quét là mình muốn như vậy
+Dạ vâng
+Ừ
+Ví dụ là đơn giản như thế này
+Đấy, giống như thế này thôi
+Và mình sẽ được quyền
+Mình cho cái nào lên trước, cái nào lên sau ha
+Ừ
+Ví dụ như...
+Ở bên này mình sẽ được ấp ảnh vào đây
+Ừ
+Có thể là ấp nhiều ảnh thì càng tốt
+Ở bên dưới thì mình đánh chữ
+Rồi là mình gắn link nhanh nhất vào đây là tùy mình
+Ừ
+Nó sẽ rất là nhiều mục như vậy
+Đấy
+Vô hạn cũng được
+Đúng không?
+Vâng
+Ừ
+Đấy, đấy là một cái đơn giản nhất
+Rồi tiếp đến là khi mà bắt đầu
+Khi mà mình sẽ gắn tất cả những sự kiện phạt động
+Vào thì khi họ kích vào link ha
+Ví dụ như này
+Kích một cái link này
+Đó, đúng không?
+Kích vào cái link như này
+Thì đại loại là nó cũng như thế này thôi
+Đấy, trên là mình được ấp ảnh
+Đấy
+Trên là được ấp ảnh
+Dưới là mình sẽ ghi dòng chữ
+Nó cũng như thế này thôi
+Nó không có khác gì cả
+Đó
+Đấy
+Bên dưới thì
+Bên dưới là mình được phép
+Như này cũng treo nhiều banner khác
+Treo nhiều cái banner, treo nhiều cái link khác
+Cái này thì nó đang rất là ít ở khu nội dung
+Đúng không?
+Ví dụ như chỗ này nó chống rất là nhiều
+Mình được treo thêm ở đây rất là nhiều vào
+Đúng không? Để mình treo banner quảng cáo
+Vâng
+Rồi
+Thì bắt đầu
+Bắt đầu khi mà họa thấy cái chương trình của bên mình ở đây hấp dẫn
+Thì nó có 2 cái
+Ở đây nó sẽ có 2 cái hình thức để tham gia
+Ở đây nó có 2 cái hình thức tham gia
+Một là
+Một là đã đăng ký thành viên
+Đúng không?
+Vâng
+Một là 3 cái hình thức đi
+Một là thành viên đã có ma số đăng ký
+Đấy
+Thành viên đã có ma số đăng ký
+Hai là thành viên mới đăng ký ma số
+Đúng không?
+Ba là người chưa có ma số
+Vâng
+Thế anh cho em hỏi một chút là cái mới có và đã có thì nó khác nhau như thế nào ạ?
+Khác nhau hả?
+Đây bắt đầu là mình ví dụ
+Để mình xin lời
+Đây
+Ví dụ
+Đây bạn nhìn thấy cái nhóm giá lô của bên mình đây không?
+Vâng
+Bên mình đây đã có gần 700 thành viên rồi ha
+Vâng
+Đấy gần 700 thành viên rồi là tất cả những cái thành viên này của mình
+Mình đã được tất cả những cái này đã được cướp ma số rồi nha
+À
+À
+Đúng rồi
+Đã được cướp ma số rồi
+Vâng
+Và họ đã trải qua các lớp đào tạo của bên mình
+Tức là cái khách hàng rất là trung thành
+Đấy
+Trung thành gọi là thành viên không phải khách hàng nữa mà người ta
+Thành viên trung thành tuyệt đối mà không phải là
+Qua số nó không phải là ở 700 đâu
+Mà nó là lên đến vài nghìn và mười nghìn
+Đậm chí 20 nghìn rồi
+Vâng
+Đấy nhưng mà mình chưa cho vào thôi
+Nhưng họ đã được cướp cái ma số rồi
+Đấy
+Thì khi mà
+Khi mà họ được cướp cái ma số rồi ấy đúng không?
+Thì họ đăng ký thành viên rồi
+Thì họ nhấn vào đây
+Họ nhấn vào đăng ký thành viên
+Thì mình đăng cái tư duy cái phần này xem là
+Ở đây
+Ở đây chắc là họ sẽ đăng nhập vào cái ma số ấy
+Tức là mình sẽ cướp cho
+Mình sẽ cướp cho một cái người mà có ma số rồi
+Một cái tài khoản ấy
+Khi mà người ta
+Đăng nhập thì người ta chỉ cần gõ cái ma số của họ vào thôi
+Gõ cái ma số của họ vào thôi
+Và mình cướp cho họ cái mật khẩu
+Mình cướp cho họ cái mật khẩu hoặc là tự họ có mật khẩu
+Tức là cái mật khẩu đấy mình được quyền sửa đổi ha
+Và họ cũng có thể tự sửa đổi
+Ví dụ như là trường hợp
+Ví dụ như là có thành viên mà họ quên đúng không?
+Vâng
+Đấy
+Với trường hợp họ quên thì họ phải có cái phần
+Quên mật khẩu ở đây là IP ngay đến mình
+Mình check cho, mình cướp lại cho họ cái mật khẩu
+Dạ vâng
+Cái việc đăng ký ma số thành viên kia là cũng là do mình làm trước trên hệ thống đúng không ạ?
+Đúng rồi
+Đăng ký ma số thành viên trước trên hệ thống
+Bây giờ là như này
+Bây giờ là có một cái lứa
+Chắc là sẽ phải bắt đầu từ cái việc là
+Từ cái việc mà thành viên mà chưa có ma số đi
+Vâng
+Đấy đúng không?
+Trường hợp là đầu tiên là chưa
+Đầu tiên là chưa có ma số
+Chưa có ma số thì họ mới chỉ có tên và số điện thoại thôi
+Vâng
+Đấy đúng không?
+Trường hợp là họ đây là thành viên có một kết quả ở đây là họ chưa có tên và ma số điện thoại
+Thì lúc đó là khi mà họ
+Bây giờ mà họ đăng nhập bằng cái số điện thoại ấy
+Thì tin nhắn gửi về số điện thoại đấy cũng mất tiền không?
+Mình có mất tiền không?
+Mình có nhắn được không?
+Nhắn được ạ
+Hiện tại thì là
+Nếu mà để thử nghiệm thì cũng chưa mất phí đâu ạ
+Chưa mất phí ạ?
+Vâng
+Đấy thì khi mà họ đăng ký thì chắc chắn là
+Đầu tiên là xem nhưng mà đăng ký thì chắc chắn là họ phải cung cấp số điện thoại
+Để mình nhân ạc
+Đấy và mình gửi tin nhắn của họ
+Đúng không?
+Thì bản thân họ đã
+Khi mà họ cung cấp cái tên và số điện thoại của họ đây là họ đã là
+Nó giống như là
+Đồng ý
+Ờ thành viên demo ấy
+Vâng
+Đúng không?
+Giống như thành viên demo rồi nha
+Đó thành viên demo
+Và khi mà họ vào thì họ đọc cái điều lạ của mình
+Những sự kiện của mình họ đã có thể trả tiền cho mình rồi
+Vâng
+Đấy
+Họ đã có thể trả tiền cho mình rồi
+Tức là sau một lần họ trải nghiệm
+Sau họ một lần trải nghiệm thì họ chỉ việc lân cấp
+Lân cấp từ cái tài khoản demo ấy là đã có
+Tên và số điện thoại lên mã số
+Đúng không?
+Đấy mới đầu họ chưa có mã số đúng không?
+Vâng
+Đấy nên sau một lần
+Sau một lần trải nghiệm, hai lần trải nghiệm
+Thì họ sẽ được nghỉ cấp cho cái mã số
+Để cái mã số để làm thẻ thành viên
+Mình có thể làm thẻ từ bằng cái đấy
+Đó thì
+Thì đầu tiên là cái tên với cái
+Cái tên với số điện thoại là phải
+Mình phải có dữ liệu rồi đúng không?
+Vâng
+Đấy ngày sau đó là mình phải có dữ liệu là họ đã
+Đã dùng những cái dịch vụ sản phẩm gì của mình
+Đó
+Thì bắt đầu mình là người ban tổ chức thì mình mới căn cứ
+Vào những cái dịch vụ sản phẩm đó mình mới cấp cho họ một cái thẻ
+Đó
+Ví dụ như là hôm nay là tôi có một cái buổi trải nghiệm
+Làm ra mặt
+Đấy
+Làm ra mặt ở đây đi đúng không?
+Đấy họ đã đăng ký và họ có cái số điện thoại ở đấy rồi
+Thì họ đến là trải nghiệm
+Làm ra mặt ở đây
+Đấy
+Sau ngày mai thì họ lại có một cái buổi làm trải nghiệm ngâm trơn chẳng hạn
+Vâng
+Đúng cái số điện thoại như thế
+Đến bởi thứ 2 thì bắt đầu mình tư vấn bạn này đã trải qua
+Hai cái
+Hai cái
+Hai cái việc trải nghiệm như thế này rồi
+Thì bây giờ bạn có muốn nâng cấp lên thành VIP không?
+VIP không?
+Đấy
+Mua thẻ trải nghiệm thường xuyên không?
+Mua thẻ học không?
+Hay như thế nào đó không?
+Vâng
+Thì bắt đầu là
+Bắt đầu tôi cảm thấy rất là vui
+Tôi muốn trải nghiệm hoặc tôi muốn học
+Chẳng hạn hay nâng cấp lên
+Đấy bắt đầu lúc đấy họ sẽ mua cái thẻa của mình và
+Mình sẽ cấp cho họ cái má số
+Vâng
+Thì lúc đấy mình nhìn vào cái
+Mình nhìn vào cái má số đấy của họ
+Ví dụ hoặc là số điện thoại anh được
+Hoặc là có thể là như thế này mình check tên
+Check tên ví dụ như là Nguyễn Văn A chẳng hạn
+Thì nó sẽ ra, dữ niệu của mình nó sẽ ra khoảng 10 đến 20 cái Nguyễn Văn A đúng không?
+Vâng
+Đấy thì lúc đó là
+Bắt đầu lúc đấy mình mới check tiếp
+Ông này là có số điện Nguyễn Văn A này
+Nhưng mà nó khác nhau với số điện thoại đúng không?
+Đấy hoặc là địa chỉ
+Bắt đầu là mình mới dựa vào đấy
+Mình check vào cái ông đấy là
+Ông ấy đã sử dụng cái gì cụ này rồi
+Ông ấy học cái gì rồi đó
+Bắt đầu là mình mới cấp cho họ một cái má số
+Và
+Đấy lúc nay là từ cái má số nó sẽ rớt ra rất là nhiều cái
+Vâng
+Vậy đây là với trường hợp là
+Thành viên chưa có má số
+Thì sẽ là định danh bằng số điện thoại của họ cũng cấp
+Đúng rồi
+Vâng
+Định danh bằng số điện thoại
+Đấy
+Trường hợp mà họ chưa có
+Thẻ thành viên thì sẽ định danh bằng số điện thoại cũng cấp
+Vâng và theo dõi cái lịch sử
+Sử dụng dịch vụ của họ để
+Tư vấn họ nâng cấp lên thành viên
+Đúng rồi
+Vâng
+Thế còn cái trường hợp mà
+Người mới có má số thành viên nghĩa là sao anh?
+Cái người mới má số thành viên ấy
+Thì đấy
+Tức là sau khi họ
+Dùng dịch vụ
+Thì họ bắt đầu là họ
+Muốn tham gia vào thành viên chính thức của mình
+Thì họ sẽ nhấn vào cái link đăng ký
+Đúng không?
+Đăng ký mở má số
+Ừ
+Họ đăng ký vào mở má số
+À thì mình
+Kích vào đấy là mình viết là ví dụ như là
+Ông này từ đỏ lên sang chừng
+Ừ thì là ông ấy đang muốn
+Thành viên chính thức của mình
+Mình chỉ cần theo dõi các cái danh sách này là mình viết
+Bắt đầu mình nhắn tin cho họ chăm sóc cách hàng
+Đúng không?
+Xem họ là mong muốn cái gì
+Ừ
+Họ mong muốn lân cấp theo kiểu gì
+Sau khi họ có má số rồi
+Thì nó sẽ
+Sẽ có một cái tài khoản
+Nó víp hơn
+Tức là mới hầu
+Ông chỉ có
+Ông chỉ có số điện thoại thôi
+Thì nó đang là
+Màu bạc kia chẳng hạn
+Ừ thì nhưng mà ông
+Khi ông có má số rồi
+Ông đang nhập vào ấy
+Chỉ nó hiện lên cái
+Má số là
+Màu vàng
+Thì cái má số
+Là cố định
+Má số điện thoại thì có thể thay đổi
+Nhưng mà khi mình cấp cái má số
+Nó sẽ là cố định nguyện
+Đi theo hết cuộc đời
+Ông như Nguyễn Văn A này
+Thì hôm nay ông ấy có số điện thoại lại
+Nhưng mà mai ông ấy mất điện thoại hay như nào
+Ông ấy muốn thay cái khác đúng không?
+Vâng
+Thì mình vẫn phải chuyển dữ liệu của ông ấy
+Thế nhưng mà má số thì không bao giờ mất được
+Má số là mình cấp cho ông ấy là nó sẽ
+Không bao giờ thay đổi
+Chỉ đi suốt cuộc đời thôi
+Ví dụ như là ông
+Ông này là má số
+ABC chẳng hạn
+Nhưng sau 1 năm 25
+Ông ấy cắn bó mấy tôi
+Đấy ông ấy lên từ
+Ông ấy lên từ nhân viên
+Sau đó ông ấy lên phó phòng chẳng hạn
+Mình cấp thêm cho ông
+Thêm một cái má số nữa thôi
+Từ cái má số ABC
+Nhưng mà mình cấp thêm một cái số
+Hằng sau nữa là lên Z thôi
+Tức là ông ấy lên cấp
+Đó
+Thì cả tất cả những cái số
+Nó sẽ đi theo suốt cuộc đời mình
+Vâng
+Vâng
+Tức là má số đấy
+Nó sẽ có format gì đấy
+Thì mình phân biệt được
+Cái hạng thành viên luôn
+Đúng rồi
+Vâng
+Đây nha
+Mình mở thử cho bạn luôn
+Để mình
+Mình sẽ
+Mở thử xem cho bạn luôn
+Đây cái má số
+Đây bạn
+Đây
+Mình hôm nay đã được
+Hơn một số tiền
+Hơn 100 triệu
+Hơn 200 triệu
+Vâng
+Đây nha
+Đây là cái
+Cái này là cái thời gian
+Mà các bạn ấy đăng ký nè

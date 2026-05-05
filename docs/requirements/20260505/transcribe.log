@@ -1,0 +1,60 @@
+[load] model=medium compute_type=int8
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+[load] done in 28.1s
+
+[transcribe] audio_part1.mp3
+[info] duration=865.6s lang=vi
+  seg #20 t=96.2s
+  seg #40 t=145.5s
+  seg #60 t=183.5s
+  seg #80 t=220.5s
+  seg #100 t=260.4s
+  seg #120 t=308.8s
+  seg #140 t=365.0s
+  seg #160 t=406.2s
+  seg #180 t=447.3s
+  seg #200 t=492.5s
+  seg #220 t=538.0s
+  seg #240 t=580.9s
+  seg #260 t=625.0s
+  seg #280 t=659.2s
+  seg #300 t=697.2s
+  seg #320 t=732.6s
+  seg #340 t=770.6s
+  seg #360 t=803.8s
+  seg #380 t=832.5s
+  seg #400 t=858.6s
+[done] audio_part1.mp3 in 1055.1s -> audio_part1.txt, audio_part1.srt
+
+[transcribe] audio_part2.mp3
+[info] duration=867.8s lang=vi
+  seg #20 t=91.0s
+  seg #40 t=158.2s
+  seg #60 t=223.7s
+  seg #80 t=277.3s
+  seg #100 t=305.3s
+  seg #120 t=325.4s
+  seg #140 t=345.7s
+  seg #160 t=452.3s
+  seg #180 t=549.2s
+  seg #200 t=628.9s
+  seg #220 t=689.7s
+  seg #240 t=760.0s
+  seg #260 t=816.2s
+[done] audio_part2.mp3 in 1303.3s -> audio_part2.txt, audio_part2.srt
+
+[transcribe] audio_part3.mp3
+[info] duration=868.1s lang=vi
+  seg #20 t=69.2s
+  seg #40 t=128.1s
+  seg #60 t=189.4s
+  seg #80 t=263.5s
+  seg #100 t=343.9s
+  seg #120 t=419.8s
+  seg #140 t=492.0s
+  seg #160 t=561.5s
+  seg #180 t=638.4s
+  seg #200 t=727.8s
+[done] audio_part3.mp3 in 1041.8s -> audio_part3.txt, audio_part3.srt
+
+[ALL DONE]
