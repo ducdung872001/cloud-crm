@@ -25,10 +25,22 @@ import {
 } from "model/customer/CustomerRequestModel";
 import { convertParamsToString } from "reborn-util";
 
+// Khi gửi kèm customerExtraInfo (vd. "Trạng thái khoản vay Cashloan"), BE chỉ honor
+// sourceIds (plural JSON array) — định dạng FilterAdvanceModal đang dùng. SearchBox
+// quick filter ghi sourceId (singular) nên cần normalize, nếu không lọc "Nguồn khách
+// hàng" sẽ bị bỏ qua khi kết hợp với các bộ lọc động này (bug tester báo).
+const normalizeCustomerListParams = (params?: any) => {
+  if (!params) return params;
+  const hasExtraInfo = params.customerExtraInfo && params.customerExtraInfo !== "[]";
+  const hasSourceId = params.sourceId !== undefined && params.sourceId !== "" && params.sourceId !== null;
+  if (!hasExtraInfo || !hasSourceId || params.sourceIds) return params;
+  return { ...params, sourceIds: JSON.stringify([params.sourceId]) };
+};
+
 export default {
   //? thêm mới, cập nhập, xem, xem chi tiết khách hàng
   filter: (params?: ICustomerFilterRequest, signal?: AbortSignal) => {
-    return fetch(`${urlsApi.customer.filter}${convertParamsToString(params)}`, {
+    return fetch(`${urlsApi.customer.filter}${convertParamsToString(normalizeCustomerListParams(params))}`, {
       signal,
       method: "GET",
     }).then((res) => res.json());
@@ -36,7 +48,7 @@ export default {
 
   ///list khách hàng của đối tác
   listshared: (params?: ICustomerFilterRequest, signal?: AbortSignal) => {
-    return fetch(`${urlsApi.customer.listshared}${convertParamsToString(params)}`, {
+    return fetch(`${urlsApi.customer.listshared}${convertParamsToString(normalizeCustomerListParams(params))}`, {
       signal,
       method: "GET",
     }).then((res) => res.json());
