@@ -3,6 +3,7 @@
 import React from "react";
 import type { EventEntity, EventRegistration } from "../types";
 import { THEME, formatVND, computeRegistrationTotal } from "../shared";
+import { formatVNDateTime } from "../datetime";
 
 const STATUS_LABELS: Record<string, string> = {
   pending: "Chờ xác nhận",
@@ -20,15 +21,7 @@ const PAY_STATUS_LABELS: Record<string, { label: string; color: string }> = {
   rejected: { label: "Từ chối", color: "#991B1B" },
 };
 
-function formatDateTime(iso?: string): string {
-  if (!iso) return "—";
-  const d = new Date(iso);
-  if (isNaN(d.getTime())) return "—";
-  const pad = (n: number) => String(n).padStart(2, "0");
-  return `${pad(d.getHours())}:${pad(d.getMinutes())} ${pad(d.getDate())}/${pad(
-    d.getMonth() + 1,
-  )}/${d.getFullYear()}`;
-}
+const formatDateTime = formatVNDateTime;
 
 export default function RegistrationDetailModal({
   event,

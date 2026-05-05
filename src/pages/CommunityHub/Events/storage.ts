@@ -565,13 +565,26 @@ export const eventStorage = {
     return updated;
   },
 
-  async markConvertedToMemberAsync(regId: string): Promise<EventRegistration | null> {
+  async markConvertedToMemberAsync(
+    regId: string,
+  ): Promise<{ ok: true; registration: EventRegistration | null } | { ok: false; error: string }> {
+    let beErrorMsg: string | null = null;
     try {
       const res = await EventService.convertToMember(regId);
-      if (isApiOk(res)) { apiAvailable = true; return normalizeReg(unwrap<any>(res)); }
-    } catch { /* fallback */ }
-    const mockCustomerId = `cust-${Date.now()}`;
-    return this.markConvertedToMember(regId, mockCustomerId);
+      if (isApiOk(res)) {
+        apiAvailable = true;
+        return { ok: true, registration: normalizeReg(unwrap<any>(res)) };
+      }
+      // BE trả response có nội dung lỗi (VD `{code:500, message:"Lỗi hệ thống"}`)
+      // → ném lỗi cho UI hiển thị, KHÔNG fallback localStorage ngầm (tránh
+      // tester tưởng đã tạo hội viên thật mà thực ra chỉ ghi local).
+      beErrorMsg = (res && (res.error || res.message)) || `Mã lỗi ${res?.code ?? "?"}`;
+    } catch (err: any) {
+      // Network error thật sự → fallback localStorage
+      const mockCustomerId = `cust-${Date.now()}`;
+      return { ok: true, registration: this.markConvertedToMember(regId, mockCustomerId) };
+    }
+    return { ok: false, error: beErrorMsg ?? "Không thể tạo hội viên" };
   },
 
   markConvertedToMember(regId: string, customerId: string): EventRegistration | null {

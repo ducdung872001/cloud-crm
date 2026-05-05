@@ -668,8 +668,16 @@ function RegistrantsTab({
     )
       return;
     const result = await eventStorage.markConvertedToMemberAsync(reg.id);
+    if (!result.ok) {
+      alert(
+        `❌ Không tạo được hội viên.\n\nNguyên nhân: ${result.error}\n\n` +
+          `Vui lòng liên hệ team backend (endpoint convert đang lỗi). ` +
+          `Trong lúc chờ, có thể tạo hội viên thủ công ở phân hệ Khách hàng.`
+      );
+      return;
+    }
     alert(
-      `✓ Đã tạo hội viên.\n\nCustomer ID: ${result?.convertedToCustomerId ?? "N/A"}`
+      `✓ Đã tạo hội viên.\n\nCustomer ID: ${result.registration?.convertedToCustomerId ?? "N/A"}`
     );
     onRefresh();
   };

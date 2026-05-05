@@ -9,9 +9,10 @@ import React, { useEffect, useMemo, useState } from "react";
 import { useParams } from "react-router-dom";
 import { eventStorage } from "@/pages/CommunityHub/Events/storage";
 import type { EventEntity, SelectedAddOn, PaymentProof } from "@/pages/CommunityHub/Events/types";
-import DynamicFieldsRenderer from "@/pages/CommunityHub/Events/components/DynamicFieldsRenderer";
+import DynamicFieldsRenderer, { computeDynamicFieldsTotal } from "@/pages/CommunityHub/Events/components/DynamicFieldsRenderer";
 import AddOnItemsSelector from "@/pages/CommunityHub/Events/components/AddOnItemsSelector";
 import PaymentProofUpload from "@/pages/CommunityHub/Events/components/PaymentProofUpload";
+import { formatVNDateTime } from "@/pages/CommunityHub/Events/datetime";
 
 // Set SEO meta cho trang detail
 function setEventSeo(e: EventEntity) {
@@ -55,14 +56,7 @@ function formatVND(n: number): string {
   return new Intl.NumberFormat("vi-VN").format(Math.round(n));
 }
 
-function formatDateTime(iso: string): string {
-  if (!iso) return "—";
-  const d = new Date(iso);
-  const pad = (n: number) => String(n).padStart(2, "0");
-  return `${pad(d.getHours())}:${pad(d.getMinutes())} ${pad(d.getDate())}/${pad(
-    d.getMonth() + 1
-  )}/${d.getFullYear()}`;
-}
+const formatDateTime = formatVNDateTime;
 
 export default function ShareEventPage() {
   const [event, setEvent] = useState<EventEntity | null>(null);
@@ -182,7 +176,8 @@ export default function ShareEventPage() {
     const item = (event.addOnItems ?? []).find((i) => i.id === s.addOnId);
     return sum + (item ? item.unitPrice * s.qty : 0);
   }, 0);
-  const grandTotal = ticketPrice + addOnSubtotal;
+  const dynamicSubtotal = computeDynamicFieldsTotal(event.dynamicFields, dynamicValues);
+  const grandTotal = ticketPrice + addOnSubtotal + dynamicSubtotal;
 
   const handleSubmit = async () => {
     if (!form.fullName.trim()) {
@@ -304,6 +299,9 @@ export default function ShareEventPage() {
               .se-qr-row { justify-content: center; text-align: center; }
               .se-qr-row img { margin: 0 auto; }
             }
+            /* Upload bằng chứng CK (cột trái) + QR người nhận (cột phải), responsive */
+            .se-pay-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; align-items: stretch; }
+            @media (max-width: 760px) { .se-pay-grid { grid-template-columns: 1fr; gap: 12px; } }
             .se-actions-row { display: flex; gap: 8px; margin-top: 14px; }
             @media (max-width: 380px) { .se-actions-row { flex-direction: column-reverse; } }
             .se-footer { padding: 20px; text-align: center; font-size: 11px; }
@@ -728,6 +726,23 @@ export default function ShareEventPage() {
                           </div>
                         );
                       })}
+                      {(event.dynamicFields ?? []).map((f) => {
+                        const v = dynamicValues[f.id];
+                        if (!v) return null;
+                        let line: { name: string; price: number } | null = null;
+                        if (f.type === "checkbox" && v === "true" && (f.price ?? 0) > 0) {
+                          line = { name: f.label, price: f.price! };
+                        } else if (f.type === "select" && f.optionPrices?.[v]) {
+                          line = { name: `${f.label} — ${v}`, price: f.optionPrices[v] };
+                        }
+                        if (!line) return null;
+                        return (
+                          <div key={f.id} style={{ display: "flex", justifyContent: "space-between", fontSize: 12, color: THEME.textMuted }}>
+                            <span>{line.name}</span>
+                            <span>{formatVND(line.price)} đ</span>
+                          </div>
+                        );
+                      })}
                       <div
                         style={{
                           borderTop: `1px solid ${THEME.primary}`,
@@ -747,74 +762,76 @@ export default function ShareEventPage() {
                   </div>
                 )}
 
-                {/* ── 6a. QR chuyển khoản ── */}
-                {needsPayment && bank && (
-                  <div
-                    style={{
-                      marginTop: 14,
-                      padding: 14,
-                      background: "#fff",
-                      borderRadius: 8,
-                      border: `1px solid ${THEME.border}`,
-                    }}
-                  >
-                    <div style={{ fontSize: 13, fontWeight: 700, color: THEME.primaryDark, marginBottom: 10 }}>
-                      💳 Quét mã chuyển khoản
-                    </div>
-                    <div className="se-qr-row">
-                      {qrImgSrc && (
-                        <img
-                          src={qrImgSrc}
-                          alt="QR chuyển khoản"
-                          width={180}
-                          height={180}
-                          style={{ border: `1px solid ${THEME.border}`, borderRadius: 6, background: "#fff", objectFit: "contain" }}
-                        />
-                      )}
-                      <div style={{ flex: 1, minWidth: 200, fontSize: 13, lineHeight: 1.7 }}>
-                        {bank.bank && <div><strong>Ngân hàng:</strong> {bank.bank}</div>}
-                        {bank.holder && <div><strong>Chủ TK:</strong> {bank.holder}</div>}
-                        {bank.accountNumber && (
-                          <div>
-                            <strong>Số TK:</strong>{" "}
-                            <span style={{ fontFamily: "ui-monospace,monospace", fontWeight: 600 }}>
-                              {bank.accountNumber}
-                            </span>
-                          </div>
-                        )}
-                        {grandTotal > 0 && (
-                          <div><strong>Số tiền:</strong>{" "}
-                            <span style={{ color: THEME.accent, fontWeight: 700 }}>
-                              {formatVND(grandTotal)} đ
-                            </span>
-                          </div>
-                        )}
-                        <div style={{ marginTop: 6 }}>
-                          <strong>Nội dung:</strong>{" "}
-                          <span style={{ fontFamily: "ui-monospace,monospace" }}>
-                            EVENT-{event.slug}
-                          </span>
-                        </div>
-                        {bank.phone && (
-                          <div style={{ fontSize: 11, color: THEME.textMuted, marginTop: 6 }}>
-                            Hỗ trợ: {bank.phone}
-                          </div>
-                        )}
-                      </div>
-                    </div>
-                  </div>
-                )}
-
-                {/* ── 6b. Upload bằng chứng thanh toán ── */}
+                {/* ── 6. Thanh toán: QR (bank) + Upload bằng chứng cạnh nhau ── */}
                 {needsPayment && (
-                  <div style={{ marginTop: 14 }}>
-                    <PaymentProofUpload
-                      imageUrl={paymentProofUrl}
-                      onChange={setPaymentProofUrl}
-                    />
-                    {!bank && (
-                      <div style={{ fontSize: 11, color: THEME.textMuted, marginTop: 6 }}>
-                        Nếu có phí phát sinh, vui lòng liên hệ BTC để nhận thông tin chuyển khoản trước khi upload biên lai.
+                  <div className="se-pay-grid" style={{ marginTop: 14 }}>
+                    {/* Cột trái: Upload bằng chứng CK */}
+                    <div>
+                      <PaymentProofUpload
+                        imageUrl={paymentProofUrl}
+                        onChange={setPaymentProofUrl}
+                      />
+                      {!bank && (
+                        <div style={{ fontSize: 11, color: THEME.textMuted, marginTop: 6 }}>
+                          Nếu có phí phát sinh, vui lòng liên hệ BTC để nhận thông tin chuyển khoản trước khi upload biên lai.
+                        </div>
+                      )}
+                    </div>
+
+                    {/* Cột phải: QR + Thông tin TK người nhận (chỉ hiển thị khi có cấu hình) */}
+                    {bank && (
+                      <div
+                        style={{
+                          padding: 14,
+                          background: "#fff",
+                          borderRadius: 8,
+                          border: `1px solid ${THEME.border}`,
+                        }}
+                      >
+                        <div style={{ fontSize: 13, fontWeight: 700, color: THEME.primaryDark, marginBottom: 10 }}>
+                          💳 Quét mã chuyển khoản
+                        </div>
+                        <div className="se-qr-row">
+                          {qrImgSrc && (
+                            <img
+                              src={qrImgSrc}
+                              alt="QR chuyển khoản"
+                              width={180}
+                              height={180}
+                              style={{ border: `1px solid ${THEME.border}`, borderRadius: 6, background: "#fff", objectFit: "contain" }}
+                            />
+                          )}
+                          <div style={{ flex: 1, minWidth: 180, fontSize: 13, lineHeight: 1.7 }}>
+                            {bank.bank && <div><strong>Ngân hàng:</strong> {bank.bank}</div>}
+                            {bank.holder && <div><strong>Chủ TK:</strong> {bank.holder}</div>}
+                            {bank.accountNumber && (
+                              <div>
+                                <strong>Số TK:</strong>{" "}
+                                <span style={{ fontFamily: "ui-monospace,monospace", fontWeight: 600 }}>
+                                  {bank.accountNumber}
+                                </span>
+                              </div>
+                            )}
+                            {grandTotal > 0 && (
+                              <div><strong>Số tiền:</strong>{" "}
+                                <span style={{ color: THEME.accent, fontWeight: 700 }}>
+                                  {formatVND(grandTotal)} đ
+                                </span>
+                              </div>
+                            )}
+                            <div style={{ marginTop: 6 }}>
+                              <strong>Nội dung:</strong>{" "}
+                              <span style={{ fontFamily: "ui-monospace,monospace" }}>
+                                EVENT-{event.slug}
+                              </span>
+                            </div>
+                            {bank.phone && (
+                              <div style={{ fontSize: 11, color: THEME.textMuted, marginTop: 6 }}>
+                                Hỗ trợ: {bank.phone}
+                              </div>
+                            )}
+                          </div>
+                        </div>
                       </div>
                     )}
                   </div>

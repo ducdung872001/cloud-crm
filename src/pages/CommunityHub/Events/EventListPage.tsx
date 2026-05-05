@@ -11,6 +11,8 @@ import { MOCK_EVENTS } from "@/mocks/community-hub/events";
 import type { EventEntity, EventStatus } from "./types";
 import { ComingSoonBlock, PreviewBanner } from "../_shared/ComingSoon";
 import { showToast } from "@/utils/common";
+import { uploadDocumentFormData } from "utils/document";
+import { portalSettings, type PortalSettings } from "./portalSettings";
 import {
   THEME,
   EVENT_STATUS_LABELS,
@@ -28,6 +30,9 @@ export default function EventListPage() {
   const [search, setSearch] = useState("");
   const [regCounts, setRegCounts] = useState<Record<string, number>>({});
   const [isPreview, setIsPreview] = useState(false);
+  const [showSettings, setShowSettings] = useState(false);
+  const [settings, setSettings] = useState<PortalSettings>(() => portalSettings.get());
+  const [bannerUploading, setBannerUploading] = useState(false);
 
   const loadEvents = useCallback(async () => {
     setLoading(true);
@@ -172,22 +177,79 @@ export default function EventListPage() {
             bán Community Hub
           </p>
         </div>
-        <button
-          onClick={() => navigate("/ch_events/create")}
-          style={{
-            padding: "10px 18px",
-            background: THEME.primary,
-            color: "#fff",
-            border: "none",
-            borderRadius: 8,
-            cursor: "pointer",
-            fontWeight: 700,
-            fontSize: 13,
-          }}
-        >
-          + Tạo sự kiện mới
-        </button>
+        <div style={{ display: "flex", gap: 8 }}>
+          <button
+            onClick={() => setShowSettings(true)}
+            title="Cấu hình banner / hiển thị trang public"
+            style={{
+              padding: "10px 14px",
+              background: "#fff",
+              color: THEME.primaryDark,
+              border: `1px solid ${THEME.border}`,
+              borderRadius: 8,
+              cursor: "pointer",
+              fontWeight: 600,
+              fontSize: 13,
+            }}
+          >
+            ⚙️ Cài đặt portal
+          </button>
+          <button
+            onClick={() => navigate("/ch_events/create")}
+            style={{
+              padding: "10px 18px",
+              background: THEME.primary,
+              color: "#fff",
+              border: "none",
+              borderRadius: 8,
+              cursor: "pointer",
+              fontWeight: 700,
+              fontSize: 13,
+            }}
+          >
+            + Tạo sự kiện mới
+          </button>
+        </div>
       </div>
+
+      {showSettings && (
+        <PortalSettingsModal
+          settings={settings}
+          uploading={bannerUploading}
+          onUploadBanner={(file) => {
+            setBannerUploading(true);
+            uploadDocumentFormData(
+              file,
+              (data: any) => {
+                const url = data?.fileUrl ?? data?.url;
+                if (url) {
+                  const next = { ...settings, bannerImageUrl: url };
+                  portalSettings.set(next);
+                  setSettings(next);
+                  showToast("Đã cập nhật banner", "success");
+                } else {
+                  showToast("Upload thành công nhưng không nhận được URL", "error");
+                }
+                setBannerUploading(false);
+              },
+              () => {
+                showToast("Lỗi upload banner", "error");
+                setBannerUploading(false);
+              },
+            );
+          }}
+          onChange={(patch) => {
+            const next = { ...settings, ...patch };
+            portalSettings.set(next);
+            setSettings(next);
+          }}
+          onClear={() => {
+            portalSettings.set({});
+            setSettings({});
+          }}
+          onClose={() => setShowSettings(false)}
+        />
+      )}
 
       {/* KPI tiles */}
       <div
@@ -478,6 +540,132 @@ function actionBtnStyle(
     fontSize: 11,
     fontWeight: 600,
   };
+}
+
+function PortalSettingsModal({
+  settings,
+  uploading,
+  onUploadBanner,
+  onChange,
+  onClear,
+  onClose,
+}: {
+  settings: PortalSettings;
+  uploading: boolean;
+  onUploadBanner: (file: File) => void;
+  onChange: (patch: Partial<PortalSettings>) => void;
+  onClear: () => void;
+  onClose: () => void;
+}) {
+  return (
+    <div
+      onClick={onClose}
+      style={{
+        position: "fixed", inset: 0, background: "rgba(0,0,0,.45)", zIndex: 1000,
+        display: "flex", alignItems: "center", justifyContent: "center", padding: 20,
+      }}
+    >
+      <div
+        onClick={(e) => e.stopPropagation()}
+        style={{
+          background: "#fff", borderRadius: 10, maxWidth: 560, width: "100%",
+          padding: 20, boxShadow: "0 18px 40px rgba(0,0,0,.18)",
+        }}
+      >
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 14 }}>
+          <h3 style={{ margin: 0, color: THEME.primaryDark }}>⚙️ Cài đặt portal sự kiện</h3>
+          <button onClick={onClose} style={{ border: 0, background: "transparent", fontSize: 18, cursor: "pointer" }}>✕</button>
+        </div>
+        <p style={{ fontSize: 12, color: THEME.textMuted, margin: "0 0 14px" }}>
+          Cấu hình hiển thị trang public <code>/crm/events</code>. Lưu cục bộ trên trình duyệt theo tenant — khi BE hỗ trợ tenant settings sẽ đồng bộ tự động.
+        </p>
+
+        <div style={{ marginBottom: 14 }}>
+          <label style={{ display: "block", fontSize: 12, fontWeight: 600, marginBottom: 6, color: THEME.textMain }}>
+            Banner ảnh đầu trang
+          </label>
+          <p style={{ fontSize: 11, color: THEME.textMuted, margin: "0 0 8px" }}>
+            Nên dùng ảnh có chứa text branding (VD “W.HOUSE — NÂNG TẦM GIÁ TRỊ SỐNG”) để chặn trình duyệt auto-translate. Tỉ lệ gợi ý 4:1, tối thiểu 1600px chiều rộng.
+          </p>
+          {settings.bannerImageUrl ? (
+            <div style={{ marginBottom: 8 }}>
+              <img
+                src={settings.bannerImageUrl}
+                alt="Banner preview"
+                style={{ width: "100%", maxHeight: 160, objectFit: "cover", borderRadius: 6, border: `1px solid ${THEME.border}` }}
+              />
+            </div>
+          ) : (
+            <div style={{
+              padding: 20, textAlign: "center", color: THEME.textMuted, fontSize: 12,
+              border: `1px dashed ${THEME.border}`, borderRadius: 6, marginBottom: 8,
+            }}>
+              Chưa có banner — trang public hiển thị hero default.
+            </div>
+          )}
+          <label
+            style={{
+              display: "inline-block", padding: "8px 14px", background: THEME.primarySoft,
+              color: THEME.primaryDark, border: `1px dashed ${THEME.primary}`, borderRadius: 6,
+              cursor: uploading ? "wait" : "pointer", fontSize: 12, fontWeight: 600,
+            }}
+          >
+            {uploading ? "Đang upload..." : settings.bannerImageUrl ? "Đổi ảnh" : "Upload banner"}
+            <input
+              type="file"
+              accept="image/*"
+              disabled={uploading}
+              onChange={(e) => {
+                const f = e.target.files?.[0];
+                if (f) onUploadBanner(f);
+                e.target.value = "";
+              }}
+              style={{ display: "none" }}
+            />
+          </label>
+        </div>
+
+        <div style={{ marginBottom: 14 }}>
+          <label style={{ display: "block", fontSize: 12, fontWeight: 600, marginBottom: 6, color: THEME.textMain }}>
+            Link click banner (tuỳ chọn)
+          </label>
+          <input
+            type="url"
+            value={settings.bannerLinkUrl ?? ""}
+            onChange={(e) => onChange({ bannerLinkUrl: e.target.value || undefined })}
+            placeholder="https://... (để trống = banner không click)"
+            style={{
+              width: "100%", padding: "8px 10px", border: `1px solid ${THEME.border}`,
+              borderRadius: 6, fontSize: 13, boxSizing: "border-box",
+            }}
+          />
+        </div>
+
+        <div style={{ display: "flex", justifyContent: "space-between", gap: 8, marginTop: 14 }}>
+          <button
+            onClick={onClear}
+            disabled={!settings.bannerImageUrl && !settings.bannerLinkUrl}
+            style={{
+              padding: "8px 14px", background: "#fff", color: THEME.danger,
+              border: `1px solid ${THEME.danger}`, borderRadius: 6, cursor: "pointer",
+              fontSize: 12, fontWeight: 600, opacity: !settings.bannerImageUrl && !settings.bannerLinkUrl ? 0.4 : 1,
+            }}
+          >
+            Xoá cấu hình
+          </button>
+          <button
+            onClick={onClose}
+            style={{
+              padding: "8px 18px", background: THEME.primary, color: "#fff",
+              border: 0, borderRadius: 6, cursor: "pointer", fontSize: 13, fontWeight: 700,
+            }}
+          >
+            Xong
+          </button>
+        </div>
+      </div>
+    </div>
+  );
 }
 
 function KpiTile({

@@ -6,6 +6,7 @@ import type {
   EventStatus,
   RegistrationStatus,
 } from "./types";
+import { formatVNDateTime, formatVNDate } from "./datetime";
 
 export const THEME = {
   primary: "#00C9A7",
@@ -58,25 +59,8 @@ export function formatVND(n: number): string {
   return new Intl.NumberFormat("vi-VN").format(Math.round(n));
 }
 
-export function formatDateTime(iso: string): string {
-  if (!iso) return "—";
-  const d = new Date(iso);
-  const dd = String(d.getDate()).padStart(2, "0");
-  const mm = String(d.getMonth() + 1).padStart(2, "0");
-  const yyyy = d.getFullYear();
-  const hh = String(d.getHours()).padStart(2, "0");
-  const mi = String(d.getMinutes()).padStart(2, "0");
-  return `${hh}:${mi} ${dd}/${mm}/${yyyy}`;
-}
-
-export function formatDate(iso: string): string {
-  if (!iso) return "—";
-  const d = new Date(iso);
-  const dd = String(d.getDate()).padStart(2, "0");
-  const mm = String(d.getMonth() + 1).padStart(2, "0");
-  const yyyy = d.getFullYear();
-  return `${dd}/${mm}/${yyyy}`;
-}
+export const formatDateTime = formatVNDateTime;
+export const formatDate = formatVNDate;
 
 /** Tự động xác định status hiệu dụng dựa trên thời gian hiện tại */
 export function getEffectiveStatus(
@@ -93,9 +77,10 @@ export function getEffectiveStatus(
   return "published";
 }
 
-/** Tính tổng tiền 1 đăng ký = ticketPrice (event) + sum(addOn × qty).
- *  Fallback khi BE không trả `totalAmount` (trường hợp Jackson drop hoặc
- *  endpoint cũ). Nếu reg.totalAmount đã có → dùng luôn.
+/** Tính tổng tiền 1 đăng ký = ticketPrice (event) + sum(addOn × qty)
+ *  + giá option dynamic fields (checkbox tick / select option có price).
+ *  Fallback khi BE không trả `totalAmount` (Jackson drop / endpoint cũ).
+ *  Nếu reg.totalAmount đã có → dùng luôn.
  */
 export function computeRegistrationTotal(
   r: EventRegistration,
@@ -107,7 +92,14 @@ export function computeRegistrationTotal(
     const item = (event.addOnItems ?? []).find((i) => i.id === sel.addOnId);
     return acc + (item ? item.unitPrice * sel.qty : 0);
   }, 0);
-  return ticket + addons;
+  const dyn = (event.dynamicFields ?? []).reduce((acc, f) => {
+    const v = r.dynamicFieldValues?.[f.id];
+    if (!v) return acc;
+    if (f.type === "checkbox" && v === "true" && (f.price ?? 0) > 0) return acc + f.price!;
+    if (f.type === "select" && f.optionPrices?.[v]) return acc + f.optionPrices[v];
+    return acc;
+  }, 0);
+  return ticket + addons + dyn;
 }
 
 export function getShareUrl(slug: string): string {

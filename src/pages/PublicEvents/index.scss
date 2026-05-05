@@ -21,6 +21,24 @@
 }
 
 // ══════════════════════════════════════════════════════════════════════════
+// BANNER ẢNH (tenant-config) — render bằng <img translate="no"> để chặn auto-translate
+// ══════════════════════════════════════════════════════════════════════════
+.pe-banner-img-wrap {
+  display: block;
+  width: 100%;
+  background: #000;
+  line-height: 0; // bỏ khoảng trắng dưới img
+}
+.pe-banner-img {
+  display: block;
+  width: 100%;
+  height: auto;
+  max-height: 360px;
+  object-fit: cover;
+  user-select: none;
+}
+
+// ══════════════════════════════════════════════════════════════════════════
 // HERO
 // ══════════════════════════════════════════════════════════════════════════
 .pe-hero {

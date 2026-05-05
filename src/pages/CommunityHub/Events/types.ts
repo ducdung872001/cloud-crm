@@ -64,6 +64,11 @@ export interface DynamicFieldDefinition {
   options?: string[]; // cho type "select"
   defaultValue?: string;
   order: number; // thứ tự hiển thị
+  // Giá option (VND) — dùng cho type "checkbox" (tick = +price) và "select"
+  // (cộng theo từng option qua optionPrices). Tổng tiền đăng ký sẽ tự động
+  // cập nhật khi khách thay đổi lựa chọn.
+  price?: number;
+  optionPrices?: Record<string, number>; // map option value → price (cho type "select")
 }
 
 // ── Add-on Line Item — sản phẩm/dịch vụ bổ sung khi đăng ký ──────────────

@@ -13,19 +13,17 @@ import type { EventEntity, DynamicFieldDefinition, EventAddOnItem, EventVenue } 
 import { THEME, formatVND } from "./shared";
 import DynamicFieldsBuilder from "./components/DynamicFieldsBuilder";
 import ServiceCatalogPicker from "./components/ServiceCatalogPicker";
+import {
+  dateToVNLocalString,
+  vnLocalStringToDate,
+  vnLocalToOffsetIso,
+  isoToVNLocalString,
+} from "./datetime";
 
-// Form state dùng "YYYY-MM-DDTHH:mm" (tương thích datetime-local cũ).
-// DatePickerCustom làm việc với Date → cần adapter 2 chiều.
-function localToDate(s: string): Date | null {
-  if (!s) return null;
-  const d = new Date(s);
-  return isNaN(d.getTime()) ? null : d;
-}
-function dateToLocal(d: Date | null | undefined): string {
-  if (!d) return "";
-  const pad = (n: number) => String(n).padStart(2, "0");
-  return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`;
-}
+// Form state dùng "YYYY-MM-DDTHH:mm" coi như giờ VN (Asia/Ho_Chi_Minh) —
+// độc lập browser TZ. Adapter sang Date cho DatePickerCustom.
+const localToDate = vnLocalStringToDate;
+const dateToLocal = dateToVNLocalString;
 
 type FormState = {
   title: string;
@@ -110,20 +108,11 @@ const EMPTY: FormState = {
   selectableDates: [],
 };
 
-// Convert ISO → "YYYY-MM-DDTHH:mm" cho datetime-local input
-function isoToLocal(iso: string): string {
-  if (!iso) return "";
-  const d = new Date(iso);
-  const pad = (n: number) => String(n).padStart(2, "0");
-  return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(
-    d.getHours()
-  )}:${pad(d.getMinutes())}`;
-}
+// Convert ISO → "YYYY-MM-DDTHH:mm" giờ VN cho datetime-local input
+const isoToLocal = isoToVNLocalString;
 
-function localToIso(local: string): string {
-  if (!local) return "";
-  return new Date(local).toISOString();
-}
+// "YYYY-MM-DDTHH:mm" giờ VN → ISO with explicit "+07:00" offset cho BE
+const localToIso = vnLocalToOffsetIso;
 
 function entityToForm(e: EventEntity): FormState {
   return {

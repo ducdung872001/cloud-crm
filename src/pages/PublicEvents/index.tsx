@@ -9,6 +9,8 @@ import { useNavigate } from "react-router-dom";
 import EventService from "services/EventService";
 import type { EventEntity } from "@/pages/CommunityHub/Events/types";
 import { normalizeEvent } from "@/pages/CommunityHub/Events/storage";
+import { formatVNDate, formatVNTime } from "@/pages/CommunityHub/Events/datetime";
+import { portalSettings, type PortalSettings } from "@/pages/CommunityHub/Events/portalSettings";
 import "./index.scss";
 
 // ── Theme (đồng bộ ShareEventPage) ─────────────────────────────────────────
@@ -34,23 +36,20 @@ function formatVND(n?: number): string {
   return new Intl.NumberFormat("vi-VN").format(Math.round(n)) + "đ";
 }
 
-function formatDateShort(iso: string): string {
-  if (!iso) return "—";
-  const d = new Date(iso);
-  return `${pad(d.getDate())}/${pad(d.getMonth() + 1)}/${d.getFullYear()}`;
-}
-
-function formatTime(iso: string): string {
-  if (!iso) return "";
-  const d = new Date(iso);
-  return `${pad(d.getHours())}:${pad(d.getMinutes())}`;
-}
+const formatDateShort = formatVNDate;
+const formatTime = (iso: string) => (iso ? formatVNTime(iso) : "");
 
 function formatDateLong(iso: string): string {
   if (!iso) return "—";
   const d = new Date(iso);
-  const DAY = ["CN", "T2", "T3", "T4", "T5", "T6", "T7"];
-  return `${DAY[d.getDay()]}, ${pad(d.getDate())}/${pad(d.getMonth() + 1)}/${d.getFullYear()}`;
+  if (isNaN(d.getTime())) return "—";
+  // Lấy thứ trong tuần theo giờ VN — Intl trả về tên ngày dài "Saturday"; map sang T2/T3/...
+  const dayLong = new Intl.DateTimeFormat("en-US", {
+    timeZone: "Asia/Ho_Chi_Minh",
+    weekday: "short",
+  }).format(d); // "Sat", "Sun"...
+  const DAY_VN: Record<string, string> = { Sun: "CN", Mon: "T2", Tue: "T3", Wed: "T4", Thu: "T5", Fri: "T6", Sat: "T7" };
+  return `${DAY_VN[dayLong] ?? dayLong}, ${formatVNDate(iso)}`;
 }
 
 // Category badge mapping
@@ -350,8 +349,31 @@ export default function PublicEventsPage() {
   // ── Decide layout density: few (<=3 visible) vs many (>=4) ──
   const layoutDensity: "few" | "many" = filtered.length <= 3 ? "few" : "many";
 
+  // ── Banner config (per-tenant, có thể override hero default) ──
+  const [settings, setSettings] = useState<PortalSettings>(() => portalSettings.get());
+  useEffect(() => {
+    // Reload nếu admin vừa cập nhật (cùng tab)
+    const onStorage = () => setSettings(portalSettings.get());
+    window.addEventListener("storage", onStorage);
+    return () => window.removeEventListener("storage", onStorage);
+  }, []);
+
   return (
     <div className="pe-page" style={{ "--pe-primary": THEME.primary, "--pe-primary-dark": THEME.primaryDark, "--pe-primary-soft": THEME.primarySoft, "--pe-accent": THEME.accent, "--pe-text": THEME.textMain, "--pe-muted": THEME.textMuted, "--pe-border": THEME.border, "--pe-bg": THEME.bg } as React.CSSProperties}>
+      {/* ═══ BANNER ẢNH (tuỳ chọn — admin cấu hình per-tenant) ═══════════════ */}
+      {/* Render dạng <img> thay vì text để tránh trình duyệt auto-translate. */}
+      {settings.bannerImageUrl && (
+        settings.bannerLinkUrl ? (
+          <a href={settings.bannerLinkUrl} className="pe-banner-img-wrap" aria-label="Banner sự kiện">
+            <img src={settings.bannerImageUrl} alt="" className="pe-banner-img" translate="no" />
+          </a>
+        ) : (
+          <div className="pe-banner-img-wrap">
+            <img src={settings.bannerImageUrl} alt="" className="pe-banner-img" translate="no" />
+          </div>
+        )
+      )}
+
       {/* ═══ HERO ═══════════════════════════════════════════════════════════ */}
       <header className="pe-hero" role="banner">
         <div className="pe-hero__bg">

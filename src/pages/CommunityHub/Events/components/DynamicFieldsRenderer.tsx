@@ -1,12 +1,34 @@
 // CHUNG: Public-side renderer — hiển thị input cho dynamic fields trên form đăng ký.
 import React from "react";
 import type { DynamicFieldDefinition } from "../types";
-import { THEME } from "../shared";
+import { THEME, formatVND } from "../shared";
 
 interface Props {
   fields: DynamicFieldDefinition[];
   values: Record<string, string>;
   onChange: (values: Record<string, string>) => void;
+}
+
+/** Tính tổng tiền các option có giá đã được chọn. Dùng chung cho:
+ *  - Hiển thị "+100k" inline khi tick
+ *  - Tính grandTotal trên ShareEventPage
+ */
+export function computeDynamicFieldsTotal(
+  fields: DynamicFieldDefinition[] | undefined,
+  values: Record<string, string> | undefined,
+): number {
+  if (!fields?.length || !values) return 0;
+  let sum = 0;
+  for (const f of fields) {
+    const v = values[f.id];
+    if (!v) continue;
+    if (f.type === "checkbox" && v === "true" && (f.price ?? 0) > 0) {
+      sum += f.price!;
+    } else if (f.type === "select" && f.optionPrices && f.optionPrices[v]) {
+      sum += f.optionPrices[v];
+    }
+  }
+  return sum;
 }
 
 export default function DynamicFieldsRenderer({ fields, values, onChange }: Props) {
@@ -32,6 +54,11 @@ export default function DynamicFieldsRenderer({ fields, values, onChange }: Prop
             <label style={labelStyle}>
               {f.label}
               {f.required && <span style={{ color: THEME.danger }}> *</span>}
+              {f.type === "checkbox" && (f.price ?? 0) > 0 && (
+                <span style={{ color: THEME.primary, marginLeft: 6, fontWeight: 700 }}>
+                  +{formatVND(f.price!)}đ
+                </span>
+              )}
             </label>
 
             {f.type === "textarea" ? (
@@ -68,11 +95,14 @@ export default function DynamicFieldsRenderer({ fields, values, onChange }: Prop
                     style={inputStyle}
                   >
                     <option value="">-- Chọn --</option>
-                    {opts.map((opt) => (
-                      <option key={opt} value={opt}>
-                        {opt}
-                      </option>
-                    ))}
+                    {opts.map((opt) => {
+                      const p = f.optionPrices?.[opt];
+                      return (
+                        <option key={opt} value={opt}>
+                          {p && p > 0 ? `${opt} (+${formatVND(p)}đ)` : opt}
+                        </option>
+                      );
+                    })}
                   </select>
                 );
               })()

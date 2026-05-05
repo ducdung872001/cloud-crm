@@ -202,9 +202,63 @@ export default function DynamicFieldsBuilder({ fields, onChange }: Props) {
                     ⚠ Bắt buộc: select phải có ít nhất 1 tuỳ chọn — nếu không người đăng ký sẽ không chọn được gì
                   </div>
                 )}
+                {/* Giá theo từng option (VND). Để trống / 0 = không cộng vào tổng. */}
+                {hasOptions && (
+                  <div style={{ marginTop: 6 }}>
+                    <div style={{ fontSize: 11, color: THEME.textMuted, marginBottom: 4 }}>
+                      Giá theo lựa chọn (VND) — để trống nếu lựa chọn đó không tính tiền:
+                    </div>
+                    <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(180px, 1fr))", gap: 6 }}>
+                      {(f.options ?? []).map((opt) => (
+                        <div key={opt} style={{ display: "flex", alignItems: "center", gap: 4 }}>
+                          <span style={{ fontSize: 12, minWidth: 60, color: THEME.textMain }} title={opt}>
+                            {opt.length > 12 ? opt.slice(0, 12) + "…" : opt}
+                          </span>
+                          <input
+                            type="number"
+                            min={0}
+                            value={f.optionPrices?.[opt] ?? ""}
+                            onChange={(e) => {
+                              const v = e.target.value;
+                              const next = { ...(f.optionPrices ?? {}) };
+                              if (v === "") delete next[opt];
+                              else next[opt] = Number(v) || 0;
+                              updateField(idx, { optionPrices: next });
+                            }}
+                            placeholder="0"
+                            style={{ ...inputStyle, flex: 1 }}
+                          />
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
               </div>
             );
           })()}
+
+          {/* Giá cho checkbox: tick = +price, untick = -price */}
+          {f.type === "checkbox" && (
+            <div style={{ gridColumn: "1 / -1", marginTop: 4, display: "flex", alignItems: "center", gap: 8 }}>
+              <span style={{ fontSize: 12, color: THEME.textMuted }}>Giá khi tick (VND):</span>
+              <input
+                type="number"
+                min={0}
+                value={f.price ?? ""}
+                onChange={(e) => {
+                  const v = e.target.value;
+                  updateField(idx, { price: v === "" ? undefined : (Number(v) || 0) });
+                }}
+                placeholder="0 = không tính tiền"
+                style={{ ...inputStyle, width: 200 }}
+              />
+              {(f.price ?? 0) > 0 && (
+                <span style={{ fontSize: 11, color: THEME.textMuted }}>
+                  Khách tick → +{new Intl.NumberFormat("vi-VN").format(f.price!)}đ vào tổng
+                </span>
+              )}
+            </div>
+          )}
         </div>
       ))}
 

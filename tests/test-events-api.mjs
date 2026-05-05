@@ -119,7 +119,8 @@ const eventPayload = (overrides = {}) => ({
 
 const registerPayload = () => ({
   fullName: `${TAG} Đăng ký test`,
-  phone: `09${STAMP}`,
+  // VN mobile = 10 digits (09 + 8). STAMP=9 ký tự cuối timestamp → cắt còn 8.
+  phone: `09${STAMP.slice(-8)}`,
   email: "register@test.local",
   company: "QA Co.",
   note: "Đăng ký từ test API",
