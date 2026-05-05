@@ -1,0 +1,75 @@
+{
+  "module": "EVT-BUGS",
+  "name": "Events tester bugs verify (BE deployed)",
+  "runId": "e3kroa",
+  "timestamp": "2026-04-25T08:48:55.779Z",
+  "durationMs": 15304,
+  "baseUrl": "http://localhost:4000/crm",
+  "total": 10,
+  "passed": 5,
+  "failed": 5,
+  "passRate": "50%",
+  "results": [
+    {
+      "testId": "LOGIN",
+      "status": "PASS",
+      "detail": "Dung lai storageState da luu",
+      "ts": "2026-04-25T08:48:47.025Z"
+    },
+    {
+      "testId": "STEP1-create",
+      "status": "PASS",
+      "detail": "id=27, slug=test-bug-workshop-1777106935457-rzq",
+      "ts": "2026-04-25T08:48:55.607Z"
+    },
+    {
+      "testId": "BUG4-startDate-roundtrip",
+      "status": "FAIL",
+      "detail": "sent=2026-05-02T07:30:00.000Z | BE raw=\"2026-05-02T00:30:00Z\" | parsed=2026-05-02T00:30:00.000Z | diff=25200000ms",
+      "ts": "2026-04-25T08:48:55.702Z"
+    },
+    {
+      "testId": "BUG4-endDate-roundtrip",
+      "status": "FAIL",
+      "detail": "sent=2026-05-02T10:00:00.000Z | BE raw=\"2026-05-02T03:00:00Z\" | diff=25200000ms",
+      "ts": "2026-04-25T08:48:55.702Z"
+    },
+    {
+      "testId": "BUG4-display-hour",
+      "status": "FAIL",
+      "detail": "Local input 14:30 ↔ BE-parsed local 7:30",
+      "ts": "2026-04-25T08:48:55.702Z"
+    },
+    {
+      "testId": "BUG3-bank-exists",
+      "status": "PASS",
+      "detail": "bankAccountOverride: {\"bank\":\"VCB\",\"phone\":\"0987654321\",\"holder\":\"NGUYEN VAN TEST\",\"qrImageUrl\":\"https://reborn.vn/uploads/test-qr-1777106935457.png\",\"accountNumber\":\"0123456789\"}",
+      "ts": "2026-04-25T08:48:55.702Z"
+    },
+    {
+      "testId": "BUG3-qrImageUrl-persist",
+      "status": "PASS",
+      "detail": "Sent=\"https://reborn.vn/uploads/test-qr-1777106935457.png\" | BE return=\"https://reborn.vn/uploads/test-qr-1777106935457.png\"",
+      "ts": "2026-04-25T08:48:55.702Z"
+    },
+    {
+      "testId": "BUG3-bank-info-persist",
+      "status": "PASS",
+      "detail": "bank=VCB | accountNumber=0123456789 | holder=NGUYEN VAN TEST",
+      "ts": "2026-04-25T08:48:55.703Z"
+    },
+    {
+      "testId": "BUG3-qrImageUrl-public",
+      "status": "FAIL",
+      "detail": "Public endpoint qrImageUrl=(none)",
+      "ts": "2026-04-25T08:48:55.744Z"
+    },
+    {
+      "testId": "STEP4-register",
+      "status": "FAIL",
+      "detail": "FAIL: {\"error\":\"Sự kiện không tồn tại hoặc đã ngừng nhận đăng ký\"}",
+      "ts": "2026-04-25T08:48:55.779Z"
+    }
+  ],
+  "apiCalls": 2
+}

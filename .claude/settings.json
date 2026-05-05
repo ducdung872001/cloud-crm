@@ -4,7 +4,14 @@
       "Bash(ls d:/Git/reborn/reborn-cloud/cloud-ver2/cloud-crm/vite.config.*)",
       "Bash(yarn build:*)",
       "Bash(rm -rf bundle)",
-      "Bash(NODE_OPTIONS=--max-old-space-size=8192 yarn build)"
+      "Bash(NODE_OPTIONS=--max-old-space-size=8192 yarn build)",
+      "WebFetch(domain:docs.google.com)",
+      "mcp__claude_ai_Google_Drive__read_file_content",
+      "WebFetch(domain:doc-00-8s-docstext.googleusercontent.com)",
+      "Bash(grep -E \"src[\\\\\\\\/]services[\\\\\\\\/]CustomerService|src[\\\\\\\\/]pages[\\\\\\\\/]CustomerPerson[\\\\\\\\/]CustomerPersonList\")",
+      "Bash(git add *)",
+      "Bash(git commit -m ' *)",
+      "Bash(git push *)"
     ]
   }
 }

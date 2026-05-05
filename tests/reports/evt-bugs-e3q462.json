@@ -1,0 +1,129 @@
+{
+  "module": "EVT-BUGS",
+  "name": "Events tester bugs verify (BE deployed)",
+  "runId": "e3q462",
+  "timestamp": "2026-04-25T08:53:16.081Z",
+  "durationMs": 26135,
+  "baseUrl": "http://localhost:4000/crm",
+  "total": 19,
+  "passed": 16,
+  "failed": 3,
+  "passRate": "84%",
+  "results": [
+    {
+      "testId": "LOGIN",
+      "status": "PASS",
+      "detail": "Dung lai storageState da luu",
+      "ts": "2026-04-25T08:53:05.316Z"
+    },
+    {
+      "testId": "STEP1-create",
+      "status": "PASS",
+      "detail": "id=30, slug=test-bug-workshop-1777107195553-22cp",
+      "ts": "2026-04-25T08:53:15.667Z"
+    },
+    {
+      "testId": "STEP1b-publish",
+      "status": "PASS",
+      "detail": "publish status=200, body={\"code\":0,\"message\":\"OK\",\"result\":{\"id\":30,\"slug\":\"test-bug-workshop-1777107195553-22cp\",\"title\":\"[TEST-BUG] Workshop — 1777107195553\",\"description\":\"Test event để verify 4 bug tester báo sau BE deplo",
+      "ts": "2026-04-25T08:53:15.723Z"
+    },
+    {
+      "testId": "BUG4-startDate-roundtrip",
+      "status": "FAIL",
+      "detail": "sent=2026-05-02T07:30:00.000Z | BE raw=\"2026-05-02T00:30:00Z\" | parsed=2026-05-02T00:30:00.000Z | diff=25200000ms",
+      "ts": "2026-04-25T08:53:15.778Z"
+    },
+    {
+      "testId": "BUG4-endDate-roundtrip",
+      "status": "FAIL",
+      "detail": "sent=2026-05-02T10:00:00.000Z | BE raw=\"2026-05-02T03:00:00Z\" | diff=25200000ms",
+      "ts": "2026-04-25T08:53:15.779Z"
+    },
+    {
+      "testId": "BUG4-display-hour",
+      "status": "FAIL",
+      "detail": "Local input 14:30 ↔ BE-parsed local 7:30",
+      "ts": "2026-04-25T08:53:15.779Z"
+    },
+    {
+      "testId": "BUG3-bank-exists",
+      "status": "PASS",
+      "detail": "bankAccountOverride: {\"bank\":\"VCB\",\"phone\":\"0987654321\",\"holder\":\"NGUYEN VAN TEST\",\"qrImageUrl\":\"https://reborn.vn/uploads/test-qr-1777107195553.png\",\"accountNumber\":\"0123456789\"}",
+      "ts": "2026-04-25T08:53:15.779Z"
+    },
+    {
+      "testId": "BUG3-qrImageUrl-persist",
+      "status": "PASS",
+      "detail": "Sent=\"https://reborn.vn/uploads/test-qr-1777107195553.png\" | BE return=\"https://reborn.vn/uploads/test-qr-1777107195553.png\"",
+      "ts": "2026-04-25T08:53:15.779Z"
+    },
+    {
+      "testId": "BUG3-bank-info-persist",
+      "status": "PASS",
+      "detail": "bank=VCB | accountNumber=0123456789 | holder=NGUYEN VAN TEST",
+      "ts": "2026-04-25T08:53:15.779Z"
+    },
+    {
+      "testId": "BUG3-qrImageUrl-public",
+      "status": "PASS",
+      "detail": "Public endpoint qrImageUrl=https://reborn.vn/uploads/test-qr-1777107195553.png",
+      "ts": "2026-04-25T08:53:15.804Z"
+    },
+    {
+      "testId": "STEP3c-public-get",
+      "status": "PASS",
+      "detail": "Public endpoint thấy event id=30, status=published, regOpen=2026-03-25T10:00:00Z, regClose=2026-05-01T09:59:00Z",
+      "ts": "2026-04-25T08:53:15.822Z"
+    },
+    {
+      "testId": "STEP4-register",
+      "status": "PASS",
+      "detail": "regId=33, status=pending",
+      "ts": "2026-04-25T08:53:15.867Z"
+    },
+    {
+      "testId": "BUG2-reg-in-list",
+      "status": "PASS",
+      "detail": "Tìm thấy reg id=33",
+      "ts": "2026-04-25T08:53:15.915Z"
+    },
+    {
+      "testId": "BUG2-totalAmount-persist",
+      "status": "PASS",
+      "detail": "Sent 390000 | BE return 390000",
+      "ts": "2026-04-25T08:53:15.915Z"
+    },
+    {
+      "testId": "BUG2-selectedAddOns-persist",
+      "status": "PASS",
+      "detail": "BE raw=\"[{\\\"qty\\\": 2, \\\"addOnId\\\": \\\"ad-kit\\\"}, {\\\"qty\\\": 3, \\\"addOnId\\\": \\\"ad-snack\\\"}]\" | parsed=[{\"qty\":2,\"addOnId\":\"ad-kit\"},{\"qty\":3,\"addOnId\":\"ad-snack\"}]",
+      "ts": "2026-04-25T08:53:15.915Z"
+    },
+    {
+      "testId": "STEP6-update-status",
+      "status": "PASS",
+      "detail": "Update response status=200",
+      "ts": "2026-04-25T08:53:15.978Z"
+    },
+    {
+      "testId": "BUG2-ticketCode-auto-issue",
+      "status": "PASS",
+      "detail": "ticketCode after confirm = \"TEST-BUG-38FF90\"",
+      "ts": "2026-04-25T08:53:16.019Z"
+    },
+    {
+      "testId": "BUG2-confirmedAt-set",
+      "status": "PASS",
+      "detail": "confirmedAt = \"2026-04-25T08:53:17Z\"",
+      "ts": "2026-04-25T08:53:16.019Z"
+    },
+    {
+      "testId": "BUG2-status-confirmed",
+      "status": "PASS",
+      "detail": "status = \"confirmed\"",
+      "ts": "2026-04-25T08:53:16.019Z"
+    }
+  ],
+  "apiCalls": 2
+}

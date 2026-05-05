@@ -1,0 +1,21 @@
+{
+  "module": "EVT-BUGS",
+  "name": "Events tester bugs verify (BE deployed)",
+  "runId": "e34lb9",
+  "timestamp": "2026-04-25T08:36:15.183Z",
+  "durationMs": 9449,
+  "baseUrl": "http://localhost:4000/crm",
+  "total": 1,
+  "passed": 0,
+  "failed": 1,
+  "passRate": "0%",
+  "results": [
+    {
+      "testId": "LOGIN",
+      "status": "FAIL",
+      "detail": "Phien het han hoac redirect SSO: http://localhost:8080/?redirect_uri=http%3A%2F%2Flocalhost%3A4000%2Fcrm%2Flogin%3FreturnUrl%3D%2Fdashboard&domain=localhost&env=devlocal. Chay lai login-save.mjs.",
+      "ts": "2026-04-25T08:36:15.182Z"
+    }
+  ],
+  "apiCalls": 1
+}
