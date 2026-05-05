@@ -1,0 +1,77 @@
+{
+  "endpoint": "/adminapi/customer/list_paid",
+  "summary": [
+    {
+      "status": "Đã giải ngân (CLOSED)",
+      "top": 2491,
+      "baselineTotal": 330797,
+      "distinct": 13,
+      "singularWrong": 0,
+      "pluralWrong": 0,
+      "bothWrong": 0
+    },
+    {
+      "status": "Khoản vay bị từ chối (REJECTED)",
+      "top": 2490,
+      "baselineTotal": 1474876,
+      "distinct": 15,
+      "singularWrong": 0,
+      "pluralWrong": 0,
+      "bothWrong": 0
+    },
+    {
+      "status": "Đã khởi tạo đơn vay (AUTHENTICATE)",
+      "top": 2490,
+      "baselineTotal": 3458,
+      "distinct": 12,
+      "singularWrong": 0,
+      "pluralWrong": 0,
+      "bothWrong": 0
+    },
+    {
+      "status": "Chờ thẩm định phê duyệt (APPRAISAL/APPROVAL)",
+      "top": 2490,
+      "baselineTotal": 1379,
+      "distinct": 18,
+      "singularWrong": 0,
+      "pluralWrong": 0,
+      "bothWrong": 0
+    },
+    {
+      "status": "Khoản vay bị từ chối, cho đăng ký lại (TEMP_REJECT)",
+      "top": 2491,
+      "baselineTotal": 124813,
+      "distinct": 8,
+      "singularWrong": 0,
+      "pluralWrong": 0,
+      "bothWrong": 0
+    },
+    {
+      "status": "Chờ giải ngân (For_Disbursement)",
+      "top": 2081,
+      "baselineTotal": 103,
+      "distinct": 18,
+      "singularWrong": 0,
+      "pluralWrong": 0,
+      "bothWrong": 0
+    },
+    {
+      "status": "Chờ KH ký hợp đồng (Forsign)",
+      "top": 2495,
+      "baselineTotal": 4116,
+      "distinct": 10,
+      "singularWrong": 4,
+      "pluralWrong": 4,
+      "bothWrong": 4
+    },
+    {
+      "status": "Quá hạn ký hợp đồng (Expired)",
+      "top": 2491,
+      "baselineTotal": 27808,
+      "distinct": 6,
+      "singularWrong": 0,
+      "pluralWrong": 0,
+      "bothWrong": 0
+    }
+  ]
+}

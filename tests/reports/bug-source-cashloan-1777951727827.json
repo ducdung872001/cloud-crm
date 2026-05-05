@@ -1,0 +1,45 @@
+{
+  "source": {
+    "id": 2537,
+    "name": "ZALOPAYFE"
+  },
+  "cashloan": "Chưa có khoản vay (null,Init,Draft)",
+  "cases": [
+    {
+      "label": "A: chỉ sourceId (singular) — baseline non-extra",
+      "status": 200,
+      "total": 4,
+      "sample": 4,
+      "wrongSource": 0,
+      "firstWrong": null,
+      "qs": "contactType=1&limit=50&page=1&queryFromTnex=1&sourceId=2537"
+    },
+    {
+      "label": "B: sourceId + cashloan (FORMAT CŨ — kỳ vọng FAIL/bug)",
+      "status": 200,
+      "total": 0,
+      "sample": 0,
+      "wrongSource": 0,
+      "firstWrong": null,
+      "qs": "contactType=1&limit=50&page=1&queryFromTnex=1&sourceId=2537&customerExtraInfo=%5B%7B%22fieldName%22%3A%22Trangthaikhoanvaycashloan%22%2C%22attributeValue%22%3A%22Ch%C6%B0a+c%C3%B3+kho%E1%BA%A3n+vay+%28null%2CInit%2CDraft%29%22%2C%22datatype%22%3A%22list_string%22%2C%22operator%22%3A%22in%22%7D%5D&Trangthaikhoanvaycashloan=Ch%C6%B0a+c%C3%B3+kho%E1%BA%A3n+vay+%28null%2CInit%2CDraft%29"
+    },
+    {
+      "label": "C: sourceIds (plural) + cashloan — chỉ định dạng FE FilterAdvanceModal",
+      "status": 200,
+      "total": 0,
+      "sample": 0,
+      "wrongSource": 0,
+      "firstWrong": null,
+      "qs": "contactType=1&limit=50&page=1&queryFromTnex=1&sourceIds=%5B2537%5D&customerExtraInfo=%5B%7B%22fieldName%22%3A%22Trangthaikhoanvaycashloan%22%2C%22attributeValue%22%3A%22Ch%C6%B0a+c%C3%B3+kho%E1%BA%A3n+vay+%28null%2CInit%2CDraft%29%22%2C%22datatype%22%3A%22list_string%22%2C%22operator%22%3A%22in%22%7D%5D&Trangthaikhoanvaycashloan=Ch%C6%B0a+c%C3%B3+kho%E1%BA%A3n+vay+%28null%2CInit%2CDraft%29"
+    },
+    {
+      "label": "D: sourceId + sourceIds + cashloan — request FE GỬI THỰC TẾ SAU FIX",
+      "status": 200,
+      "total": 0,
+      "sample": 0,
+      "wrongSource": 0,
+      "firstWrong": null,
+      "qs": "contactType=1&limit=50&page=1&queryFromTnex=1&sourceId=2537&sourceIds=%5B2537%5D&customerExtraInfo=%5B%7B%22fieldName%22%3A%22Trangthaikhoanvaycashloan%22%2C%22attributeValue%22%3A%22Ch%C6%B0a+c%C3%B3+kho%E1%BA%A3n+vay+%28null%2CInit%2CDraft%29%22%2C%22datatype%22%3A%22list_string%22%2C%22operator%22%3A%22in%22%7D%5D&Trangthaikhoanvaycashloan=Ch%C6%B0a+c%C3%B3+kho%E1%BA%A3n+vay+%28null%2CInit%2CDraft%29"
+    }
+  ]
+}

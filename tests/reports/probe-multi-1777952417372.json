@@ -1,0 +1,210 @@
+[
+  {
+    "status": "Đã giải ngân (CLOSED)",
+    "baselineTotal": 330795,
+    "baselineDistinct": 15,
+    "topSource": 2491,
+    "topSourceCount": 26,
+    "sourceIdSingular": {
+      "total": 68604,
+      "sample": 100,
+      "wrong": 0
+    },
+    "sourceIdsPlural1": {
+      "total": 68604,
+      "sample": 100,
+      "wrong": 0
+    },
+    "sourceIdsPlural2": {
+      "sources": [
+        2491,
+        2490
+      ],
+      "total": 127982,
+      "sample": 100,
+      "wrong": 0
+    }
+  },
+  {
+    "status": "Khoản vay bị từ chối (REJECTED)",
+    "baselineTotal": 1474872,
+    "baselineDistinct": 13,
+    "topSource": 2490,
+    "topSourceCount": 22,
+    "sourceIdSingular": {
+      "total": 157054,
+      "sample": 100,
+      "wrong": 0
+    },
+    "sourceIdsPlural1": {
+      "total": 157054,
+      "sample": 100,
+      "wrong": 0
+    },
+    "sourceIdsPlural2": {
+      "sources": [
+        2490,
+        2495
+      ],
+      "total": 180170,
+      "sample": 100,
+      "wrong": 0
+    }
+  },
+  {
+    "status": "Đã khởi tạo đơn vay (AUTHENTICATE)",
+    "baselineTotal": 3458,
+    "baselineDistinct": 12,
+    "topSource": 2490,
+    "topSourceCount": 30,
+    "sourceIdSingular": {
+      "total": 30,
+      "sample": 30,
+      "wrong": 0
+    },
+    "sourceIdsPlural1": {
+      "total": 30,
+      "sample": 30,
+      "wrong": 0
+    },
+    "sourceIdsPlural2": {
+      "sources": [
+        2490,
+        2491
+      ],
+      "total": 48,
+      "sample": 48,
+      "wrong": 0
+    }
+  },
+  {
+    "status": "Chờ thẩm định phê duyệt (APPRAISAL/APPROVAL)",
+    "baselineTotal": 1380,
+    "baselineDistinct": 18,
+    "topSource": 2490,
+    "topSourceCount": 10,
+    "sourceIdSingular": {
+      "total": 15,
+      "sample": 15,
+      "wrong": 0
+    },
+    "sourceIdsPlural1": {
+      "total": 15,
+      "sample": 15,
+      "wrong": 0
+    },
+    "sourceIdsPlural2": {
+      "sources": [
+        2490,
+        2495
+      ],
+      "total": 30,
+      "sample": 30,
+      "wrong": 0
+    }
+  },
+  {
+    "status": "Khoản vay bị từ chối, cho đăng ký lại (TEMP_REJECT)",
+    "baselineTotal": 124810,
+    "baselineDistinct": 7,
+    "topSource": 2491,
+    "topSourceCount": 61,
+    "sourceIdSingular": {
+      "total": 26819,
+      "sample": 100,
+      "wrong": 0
+    },
+    "sourceIdsPlural1": {
+      "total": 26819,
+      "sample": 100,
+      "wrong": 0
+    },
+    "sourceIdsPlural2": {
+      "sources": [
+        2491,
+        2493
+      ],
+      "total": 30850,
+      "sample": 100,
+      "wrong": 0
+    }
+  },
+  {
+    "status": "Chờ giải ngân (For_Disbursement)",
+    "baselineTotal": 103,
+    "baselineDistinct": 18,
+    "topSource": 2081,
+    "topSourceCount": 21,
+    "sourceIdSingular": {
+      "total": 22,
+      "sample": 22,
+      "wrong": 0
+    },
+    "sourceIdsPlural1": {
+      "total": 22,
+      "sample": 22,
+      "wrong": 0
+    },
+    "sourceIdsPlural2": {
+      "sources": [
+        2081,
+        2455
+      ],
+      "total": 32,
+      "sample": 32,
+      "wrong": 0
+    }
+  },
+  {
+    "status": "Chờ KH ký hợp đồng (Forsign)",
+    "baselineTotal": 4116,
+    "baselineDistinct": 10,
+    "topSource": 2495,
+    "topSourceCount": 27,
+    "sourceIdSingular": {
+      "total": 103,
+      "sample": 100,
+      "wrong": 4
+    },
+    "sourceIdsPlural1": {
+      "total": 103,
+      "sample": 100,
+      "wrong": 4
+    },
+    "sourceIdsPlural2": {
+      "sources": [
+        2495,
+        2490
+      ],
+      "total": 201,
+      "sample": 100,
+      "wrong": 5
+    }
+  },
+  {
+    "status": "Quá hạn ký hợp đồng (Expired)",
+    "baselineTotal": 27808,
+    "baselineDistinct": 6,
+    "topSource": 2491,
+    "topSourceCount": 56,
+    "sourceIdSingular": {
+      "total": 14389,
+      "sample": 100,
+      "wrong": 0
+    },
+    "sourceIdsPlural1": {
+      "total": 14389,
+      "sample": 100,
+      "wrong": 0
+    },
+    "sourceIdsPlural2": {
+      "sources": [
+        2491,
+        2500
+      ],
+      "total": 16835,
+      "sample": 100,
+      "wrong": 0
+    }
+  }
+]

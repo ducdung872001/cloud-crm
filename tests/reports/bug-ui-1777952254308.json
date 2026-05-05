@@ -1,0 +1,40 @@
+{
+  "pickedSource": null,
+  "pickedCashloan": null,
+  "sourceCall": {
+    "qs": {
+      "keyword": "",
+      "contactType": "-1",
+      "queryFromTnex": "1",
+      "branchId": "260"
+    },
+    "total": 3331245,
+    "distribution": {
+      "2078": 1,
+      "2456": 2,
+      "2488": 1,
+      "2491": 1,
+      "2493": 1,
+      "2501": 1,
+      "null": 3
+    }
+  },
+  "combinedCall": {
+    "qs": {
+      "keyword": "",
+      "contactType": "-1",
+      "queryFromTnex": "1",
+      "branchId": "260"
+    },
+    "total": 3331245,
+    "distribution": {
+      "2078": 1,
+      "2456": 2,
+      "2488": 1,
+      "2491": 1,
+      "2493": 1,
+      "2501": 1,
+      "null": 3
+    }
+  }
+}

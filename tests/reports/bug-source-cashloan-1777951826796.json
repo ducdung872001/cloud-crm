@@ -1,0 +1,67 @@
+{
+  "probe": {
+    "status": "Đã giải ngân (CLOSED)",
+    "total": 330794,
+    "sample": 100,
+    "countBySource": {
+      "2065": 1,
+      "2078": 2,
+      "2081": 1,
+      "2083": 1,
+      "2089": 1,
+      "2434": 2,
+      "2451": 1,
+      "2455": 1,
+      "2456": 3,
+      "2490": 16,
+      "2491": 24,
+      "2493": 5,
+      "2495": 8,
+      "2498": 2,
+      "null": 32
+    },
+    "extra": "[{\"fieldName\":\"Trangthaikhoanvaycashloan\",\"attributeValue\":\"Đã giải ngân (CLOSED)\",\"datatype\":\"list_string\",\"operator\":\"in\"}]"
+  },
+  "picked": {
+    "sourceId": 2491,
+    "status": "Đã giải ngân (CLOSED)"
+  },
+  "cases": [
+    {
+      "label": "A: sourceId only — baseline non-extra",
+      "status": 200,
+      "total": 181801,
+      "sample": 100,
+      "wrongSource": 0,
+      "firstWrong": null,
+      "qs": "contactType=1&limit=100&page=1&queryFromTnex=1&sourceId=2491"
+    },
+    {
+      "label": "B: sourceId + cashloan — FORMAT CŨ (bug repro candidate)",
+      "status": 200,
+      "total": 68602,
+      "sample": 100,
+      "wrongSource": 0,
+      "firstWrong": null,
+      "qs": "contactType=1&limit=100&page=1&queryFromTnex=1&sourceId=2491&customerExtraInfo=%5B%7B%22fieldName%22%3A%22Trangthaikhoanvaycashloan%22%2C%22attributeValue%22%3A%22%C4%90%C3%A3+gi%E1%BA%A3i+ng%C3%A2n+%28CLOSED%29%22%2C%22datatype%22%3A%22list_string%22%2C%22operator%22%3A%22in%22%7D%5D&Trangthaikhoanvaycashloan=%C4%90%C3%A3+gi%E1%BA%A3i+ng%C3%A2n+%28CLOSED%29"
+    },
+    {
+      "label": "C: sourceIds (plural) + cashloan — FilterAdvanceModal format",
+      "status": 200,
+      "total": 68602,
+      "sample": 100,
+      "wrongSource": 0,
+      "firstWrong": null,
+      "qs": "contactType=1&limit=100&page=1&queryFromTnex=1&sourceIds=%5B2491%5D&customerExtraInfo=%5B%7B%22fieldName%22%3A%22Trangthaikhoanvaycashloan%22%2C%22attributeValue%22%3A%22%C4%90%C3%A3+gi%E1%BA%A3i+ng%C3%A2n+%28CLOSED%29%22%2C%22datatype%22%3A%22list_string%22%2C%22operator%22%3A%22in%22%7D%5D&Trangthaikhoanvaycashloan=%C4%90%C3%A3+gi%E1%BA%A3i+ng%C3%A2n+%28CLOSED%29"
+    },
+    {
+      "label": "D: sourceId + sourceIds + cashloan — REQUEST FE GỬI SAU FIX",
+      "status": 200,
+      "total": 68602,
+      "sample": 100,
+      "wrongSource": 0,
+      "firstWrong": null,
+      "qs": "contactType=1&limit=100&page=1&queryFromTnex=1&sourceId=2491&sourceIds=%5B2491%5D&customerExtraInfo=%5B%7B%22fieldName%22%3A%22Trangthaikhoanvaycashloan%22%2C%22attributeValue%22%3A%22%C4%90%C3%A3+gi%E1%BA%A3i+ng%C3%A2n+%28CLOSED%29%22%2C%22datatype%22%3A%22list_string%22%2C%22operator%22%3A%22in%22%7D%5D&Trangthaikhoanvaycashloan=%C4%90%C3%A3+gi%E1%BA%A3i+ng%C3%A2n+%28CLOSED%29"
+    }
+  ]
+}
