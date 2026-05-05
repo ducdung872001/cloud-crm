@@ -1,0 +1,32 @@
+** Member Ngọc note:
+Phần banner và text cho phép chỉnh sửa ảnh và chữ
+
+Dưới cùng, những phần trống cho phép thêm banner quảng cáo
+
+Hình thức đăng ký dành cho thành viên đã có mã định danh, thành viên mới đăng ký, thành viên chưa đăng ký bao giờ
+
+Thành viên mới đăng ký là thành viên đã cung cấp tên và số điện thoại. Lấy số điện thoại làm định danh truy xuất, căn cứ những dịch vụ và sản phẩm để nâng cấp tài khoản tạo mã thành viên
+
+Thành viên đã có mã số: Mã số định danh
+<số lượng người đăng ký thứ>-<số của nhóm>
+Nếu trưởng nhóm thì sẽ có mã trưởng nhóm Master <số>
+Số lượng người trong nhóm: 20 người
+Từ mã số định danh biết đã từng tham gia lớp (sự kiện), dịch vụ, ghi nợ.
+Sau khi tham gia lớp thì sẽ có mã tham gia lớp học lưu vào mã định danh
+
+Danh sách người đăng ký: bổ sung thêm các cột đúng với thực tế -> Xuất báo cáo
+Cần có bảng thống kê dữ liệu theo ngày người dùng đăng ký sản phẩm dịch vụ thêm nào và đã có hoạt động, lịch sử mua hàng gì
+Từ thông tin những hoạt động, lịch sử đăng ký và đã mua có báo cáo chi tiết thống kê: từng sản phẩm có bao nhiêu người mua, số lượng, biến thể nào và trạng thái như nào (đã đăng ký, đã mua,...)
+
+** Member Lợi note:
+Họp wit-house ngày 5/5/2026
+
+Forrm đăng ký thu thập sự kiện: 
+- giao diện: được phép chỉnh sửa baner giới thiệu tổng
+- đưa khung cho họ up ảnh vào, sắp xếp ảnh, ảnh nào lên trước, ảnh nào lên sau, nội dung sự kiện được tuỳ chỉnh thoải mái, 
+- chi tiết sự kiện cũng tương tự, chia các khối, họ được thoải mái treo banner quảng cáo, nôi dung
+- làm thêm phần bình luận trong sự kiện
+- có 2 hình thức tham gia sự kiện: 
+   + người đã có mã số thành viên: đã trải qua lớp đào tạo, trung thành, đã được cấp mã số thành viên, 
+   + ngưới chưa có mã số thành viên: chỉ có tên và số điện thoại qua việc đăng ký sự kiện, thành viên demo
+- Báo cáo chi tiết sự kiện, báo cáo chi tiết thành viên tham gia sự kiện, báo cáo tổng thể của việc các thành viên đăng ký
