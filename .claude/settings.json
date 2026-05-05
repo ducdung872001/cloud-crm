@@ -141,7 +141,19 @@
       "Bash(pandoc summary.txt -o summary.docx --to docx)",
       "Bash(pandoc _merged_full.md -o requirements_combined.docx --from gfm --to docx --toc --toc-depth=2)",
       "Bash(rm _merged.md _merged_full.md)",
-      "Bash(ls \"docs\\\\\\\\requirements\\\\\\\\20260505\\\\\\\\\")"
+      "Bash(ls \"docs\\\\\\\\requirements\\\\\\\\20260505\\\\\\\\\")",
+      "Bash(grep -n \"^\\\\s*}\\\\s*$\\\\|return\\\\|content\\\\|description\" src/pages/ShareEventPage/index.tsx)",
+      "Bash(grep -E \"src[\\\\\\\\/]pages[\\\\\\\\/]CommunityHub|src[\\\\\\\\/]pages[\\\\\\\\/]ShareEventPage|src[\\\\\\\\/]pages[\\\\\\\\/]PublicEvents|src[\\\\\\\\/]configs[\\\\\\\\/]routes\")",
+      "Bash(echo \"EXIT=$?\")",
+      "Bash(git add *)",
+      "Bash(git commit -m ' *)",
+      "Bash(git mv *)",
+      "Bash(git checkout *)",
+      "Bash(git rm *)",
+      "Bash(gh repo *)",
+      "Bash(git ls-tree *)",
+      "Bash(gh label *)",
+      "Bash(git push *)"
     ],
     "additionalDirectories": [
       "\\tmp"
