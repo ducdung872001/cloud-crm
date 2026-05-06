@@ -4,7 +4,7 @@ to: cloud-market-master (microservice /market/* — biz.reborn.vn)
 created: 2026-05-06T03:55:00Z
 slug: events-public-bsnid-filter
 status: open
-gh_issue: TBD
+gh_issue: https://github.com/ducdung872001/cloud-market-master/issues/10
 fe_branch: community-hub
 fe_commit: 65c55221
 priority: P0
