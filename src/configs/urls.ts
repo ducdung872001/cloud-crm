@@ -2542,7 +2542,9 @@ export const urlsApi = {
   },
   // Community-hub portal config — yc tester 2026-05-06 (banner cross-browser sync)
   communityHubPortalConfig: {
-    getPublic: prefixMarket + "/community-hub/portal-config/public",  // GET (anonymous, resolve bsnId qua Hostname)
+    // Path public đặt /community-hub/public/portal-config để Vert.x router
+    // không nhầm với admin GET /portal-config (cùng prefix gây 404).
+    getPublic: prefixMarket + "/community-hub/public/portal-config",
     get: prefixMarket + "/community-hub/portal-config",                // GET (admin)
     upsert: prefixMarket + "/community-hub/portal-config/upsert",     // POST (admin) body { config: JSON string }
   },
