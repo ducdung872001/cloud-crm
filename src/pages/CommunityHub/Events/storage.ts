@@ -152,6 +152,8 @@ export function normalizeEvent(e: any): EventEntity {
     createdBy: e.createdBy ?? e.created_by,
     // BE trả int 0/1 → coerce về boolean để dùng đúng trong {X && <JSX />}.
     requirePaymentProof: Boolean(e.requirePaymentProof ?? e.require_payment_proof ?? false),
+    // BE-2 yc tester 2026-05-06: count slot tử cloud-market public response
+    activeRegistrations: e.activeRegistrations ?? e.active_registrations,
   } as EventEntity;
 }
 

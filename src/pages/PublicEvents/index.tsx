@@ -350,13 +350,16 @@ export default function PublicEventsPage() {
   // ── Decide layout density: few (<=3 visible) vs many (>=4) ──
   const layoutDensity: "few" | "many" = filtered.length <= 3 ? "few" : "many";
 
-  // ── Banner config (per-tenant, có thể override hero default) ──
+  // ── Banner config (per-tenant) — yc tester 2026-05-06: fetch từ BE để
+  //    sync cross-browser. LS làm cache cho first paint nhanh, sau đó refresh
+  //    từ /community-hub/portal-config/public.
   const [settings, setSettings] = useState<PortalSettings>(() => portalSettings.get());
   useEffect(() => {
-    // Reload nếu admin vừa cập nhật (cùng tab)
-    const onStorage = () => setSettings(portalSettings.get());
+    let alive = true;
+    portalSettings.getAsync().then((s) => { if (alive) setSettings(s); });
+    const onStorage = () => { if (alive) setSettings(portalSettings.get()); };
     window.addEventListener("storage", onStorage);
-    return () => window.removeEventListener("storage", onStorage);
+    return () => { alive = false; window.removeEventListener("storage", onStorage); };
   }, []);
 
   return (

@@ -679,15 +679,16 @@ function RegistrantsTab({
 
   const handleConvert = async (reg: EventRegistration) => {
     if (reg.convertedToCustomerId) {
-      alert(`Đã chuyển thành hội viên trước đó. ID: ${reg.convertedToCustomerId}`);
+      alert(`Đã tạo hội viên trước đó. Mã/ID: ${reg.convertedToCustomerId}`);
       return;
     }
     if (
       !confirm(
-        `Tạo hội viên mới từ "${reg.fullName}"?\n\n` +
+        `Tạo hội viên W-HOUSE từ đăng ký "${reg.fullName}"?\n\n` +
           `SĐT: ${reg.phone}\n` +
           `Email: ${reg.email ?? "—"}\n\n` +
-          `Sau đó bạn có thể bán thêm gói thành viên / dịch vụ cho họ ở phân hệ Sales.`
+          `Hệ thống sẽ tự cấp mã định danh dạng "personal-group" (vd 5971-300). ` +
+          `Nếu SĐT này đã có hội viên trong tenant → link luôn vào hội viên đó (không tạo trùng).`
       )
     )
       return;
@@ -695,13 +696,13 @@ function RegistrantsTab({
     if (!result.ok) {
       alert(
         `❌ Không tạo được hội viên.\n\nNguyên nhân: ${result.error}\n\n` +
-          `Vui lòng liên hệ team backend (endpoint convert đang lỗi). ` +
-          `Trong lúc chờ, có thể tạo hội viên thủ công ở phân hệ Khách hàng.`
+          `Có thể vào /crm/ch_members để tạo thủ công và link sau.`
       );
       return;
     }
     alert(
-      `✓ Đã tạo hội viên.\n\nCustomer ID: ${result.registration?.convertedToCustomerId ?? "N/A"}`
+      `✓ Đã tạo/link hội viên.\n\nMember ID: ${result.registration?.convertedToCustomerId ?? "N/A"}\n\n` +
+        `Khi có giao dịch (admin duyệt biên lai CK), hệ thống sẽ tự đẩy thêm bản ghi sang CRM cs-master.`
     );
     onRefresh();
   };

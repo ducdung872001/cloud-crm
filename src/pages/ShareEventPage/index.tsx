@@ -119,9 +119,20 @@ export default function ShareEventPage() {
 
   // activeCount state + effect phải khai BEFORE early returns — tránh React error #310
   // (hooks order mismatch khi event từ null → object làm render path đi qua nhiều hook hơn).
+  //
+  // Yc tester 2026-05-06: BE-2 đã trả `event.activeRegistrations` trên public
+  // response (countActiveRegistrationsByEventId) → đọc thẳng, KHÔNG gọi admin
+  // /registrations/list. Trước đây anonymous visitor không có quyền → activeCount=0
+  // → "Còn 100/100" sai trong khi admin tab thấy "99/100".
+  // Fallback: nếu BE trả null (event chưa qua deploy có field này) thì gọi admin
+  // endpoint như cũ — admin context vẫn ra đúng.
   const [activeCount, setActiveCount] = useState(0);
   useEffect(() => {
     if (!event) return;
+    if (typeof (event as any).activeRegistrations === "number") {
+      setActiveCount((event as any).activeRegistrations);
+      return;
+    }
     (async () => {
       const regs = await eventStorage.listRegistrationsByEventAsync(event.id);
       setActiveCount(regs.filter((r) => r.status !== "cancelled").length);

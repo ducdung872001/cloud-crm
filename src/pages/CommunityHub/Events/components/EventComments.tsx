@@ -1,12 +1,14 @@
 // Bình luận dưới sự kiện. Yc 5/5: kênh CSKH, GIỮ VĨNH VIỄN, không trôi.
 //
-// Pattern giống PaymentProof: API-first, fallback localStorage. UI:
-//  - Public: list comment (gốc + reply 1 cấp), form thêm comment với name/phone
-//  - Admin: thêm reply, ẩn (không xoá), duyệt (nếu commentsModerated=true)
+// Yc tester 2026-05-06: trước đây hoàn toàn localStorage → cross-browser
+// admin/user không thấy nhau. BE đã có endpoint
+// (cloud-market-master EventCommentsPublicResource + EventCommentsResource)
+// → swap sang API-first, giữ LS làm cache offline.
 
 import React, { useEffect, useMemo, useState } from "react";
 import type { EventComment, CommentAuthorRole } from "../types";
 import { THEME } from "../shared";
+import EventService from "services/EventService";
 
 const KEY_COMMENTS = "reborn.community_hub.event_comments";
 
@@ -23,7 +25,45 @@ function genId(): string {
   return `cmt-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`;
 }
 
+/** Coerce BE response (snake_case + numeric id) về EventComment FE shape. */
+function normalizeComment(raw: any): EventComment {
+  if (!raw) return raw;
+  return {
+    id: String(raw.id ?? raw.comment_id ?? ""),
+    eventId: String(raw.eventId ?? raw.event_id ?? ""),
+    parentId: raw.parentId ?? raw.parent_id ?? undefined,
+    authorName: raw.authorName ?? raw.author_name ?? "",
+    authorPhone: raw.authorPhone ?? raw.author_phone ?? undefined,
+    authorMemberCode: raw.authorMemberCode ?? raw.author_member_code ?? undefined,
+    authorRole: (raw.authorRole ?? raw.author_role ?? "guest") as CommentAuthorRole,
+    content: raw.content ?? "",
+    status: raw.status ?? "approved",
+    isHidden: !!(raw.isHidden ?? raw.is_hidden ?? false),
+    hiddenReason: raw.hiddenReason ?? raw.hidden_reason ?? undefined,
+    createdAt: raw.createdAt ?? raw.created_at ?? new Date().toISOString(),
+    updatedAt: raw.updatedAt ?? raw.updated_at ?? undefined,
+    reviewedAt: raw.reviewedAt ?? raw.reviewed_at ?? undefined,
+    reviewedBy: raw.reviewedBy ?? raw.reviewed_by ?? undefined,
+  };
+}
+
+function isApiOk(res: any): boolean {
+  if (!res) return false;
+  if (res.code === 0 || res.code === 200) return true;
+  if (Array.isArray(res.result)) return true;
+  if (res.result && typeof res.result === "object") return true;
+  return false;
+}
+
+function unwrapList(res: any): any[] {
+  const r = res?.result ?? res;
+  if (Array.isArray(r)) return r;
+  if (Array.isArray(r?.items)) return r.items;
+  return [];
+}
+
 export const eventCommentsStorage = {
+  // ── LS-only sync helpers (fallback offline + caller cũ chưa migrate async) ──
   list(eventId: string, opts?: { includeHidden?: boolean; status?: EventComment["status"] }): EventComment[] {
     const all = readLS<EventComment[]>(KEY_COMMENTS, []);
     let filt = all.filter((c) => c.eventId === eventId);
@@ -33,40 +73,92 @@ export const eventCommentsStorage = {
   },
 
   add(input: Omit<EventComment, "id" | "createdAt">): EventComment {
-    const c: EventComment = {
-      ...input,
-      id: genId(),
-      createdAt: new Date().toISOString(),
-    };
+    const c: EventComment = { ...input, id: genId(), createdAt: new Date().toISOString() };
     const all = readLS<EventComment[]>(KEY_COMMENTS, []);
     all.push(c);
     writeLS(KEY_COMMENTS, all);
     return c;
   },
 
-  patch(id: string, patch: Partial<EventComment>): EventComment | null {
+  // ── API-first async helpers (yc tester 2026-05-06) ──
+  async listAsync(
+    eventId: string,
+    opts?: { includeHidden?: boolean; status?: EventComment["status"] },
+  ): Promise<EventComment[]> {
+    try {
+      const res = await EventService.listCommentsPublic(eventId, {
+        includeHidden: opts?.includeHidden,
+        status: opts?.status,
+      });
+      if (isApiOk(res)) {
+        const items = unwrapList(res).map(normalizeComment);
+        // Cache LS để offline đỡ trống
+        const all = readLS<EventComment[]>(KEY_COMMENTS, []);
+        const others = all.filter((c) => c.eventId !== String(eventId));
+        writeLS(KEY_COMMENTS, [...others, ...items]);
+        return items.sort((a, b) => (a.createdAt < b.createdAt ? -1 : 1));
+      }
+    } catch { /* fallback LS */ }
+    return this.list(eventId, opts);
+  },
+
+  async addAsync(input: Omit<EventComment, "id" | "createdAt">): Promise<EventComment> {
+    try {
+      const res = await EventService.createCommentPublic(input.eventId, {
+        parentId: input.parentId,
+        authorName: input.authorName,
+        authorPhone: input.authorPhone,
+        authorMemberCode: input.authorMemberCode,
+        authorRole: input.authorRole,
+        content: input.content,
+      });
+      if (isApiOk(res)) {
+        const created = normalizeComment(res?.result ?? res);
+        return created;
+      }
+    } catch { /* fallback LS */ }
+    return this.add(input);
+  },
+
+  async hideAsync(id: string, by: string, reason?: string): Promise<EventComment | null> {
+    try {
+      const res = await EventService.hideComment(id, reason ? { hidden_reason: reason } : undefined);
+      if (isApiOk(res)) return normalizeComment(res?.result ?? res);
+    } catch { /* fallback LS */ }
+    return this.patchLS(id, { isHidden: true, hiddenReason: reason, reviewedBy: by, reviewedAt: new Date().toISOString() });
+  },
+
+  async unhideAsync(id: string): Promise<EventComment | null> {
+    try {
+      const res = await EventService.unhideComment(id);
+      if (isApiOk(res)) return normalizeComment(res?.result ?? res);
+    } catch { /* fallback LS */ }
+    return this.patchLS(id, { isHidden: false, hiddenReason: undefined });
+  },
+
+  async approveAsync(id: string, by: string): Promise<EventComment | null> {
+    try {
+      const res = await EventService.approveComment(id);
+      if (isApiOk(res)) return normalizeComment(res?.result ?? res);
+    } catch { /* fallback LS */ }
+    return this.patchLS(id, { status: "approved", reviewedBy: by, reviewedAt: new Date().toISOString() });
+  },
+
+  async rejectAsync(id: string, by: string): Promise<EventComment | null> {
+    try {
+      const res = await EventService.rejectComment(id);
+      if (isApiOk(res)) return normalizeComment(res?.result ?? res);
+    } catch { /* fallback LS */ }
+    return this.patchLS(id, { status: "rejected", reviewedBy: by, reviewedAt: new Date().toISOString() });
+  },
+
+  patchLS(id: string, patch: Partial<EventComment>): EventComment | null {
     const all = readLS<EventComment[]>(KEY_COMMENTS, []);
     const idx = all.findIndex((c) => c.id === id);
     if (idx < 0) return null;
     all[idx] = { ...all[idx], ...patch, updatedAt: new Date().toISOString() };
     writeLS(KEY_COMMENTS, all);
     return all[idx];
-  },
-
-  hide(id: string, by: string, reason?: string): EventComment | null {
-    return this.patch(id, { isHidden: true, hiddenReason: reason, reviewedBy: by, reviewedAt: new Date().toISOString() });
-  },
-
-  unhide(id: string): EventComment | null {
-    return this.patch(id, { isHidden: false, hiddenReason: undefined });
-  },
-
-  approve(id: string, by: string): EventComment | null {
-    return this.patch(id, { status: "approved", reviewedBy: by, reviewedAt: new Date().toISOString() });
-  },
-
-  reject(id: string, by: string): EventComment | null {
-    return this.patch(id, { status: "rejected", reviewedBy: by, reviewedAt: new Date().toISOString() });
   },
 };
 
@@ -94,7 +186,10 @@ export default function EventComments({
   const [refreshTick, setRefreshTick] = useState(0);
 
   useEffect(() => {
-    setComments(eventCommentsStorage.list(eventId, { includeHidden: isAdmin }));
+    let alive = true;
+    eventCommentsStorage.listAsync(eventId, { includeHidden: isAdmin })
+      .then((cs) => { if (alive) setComments(cs); });
+    return () => { alive = false; };
   }, [eventId, refreshTick, isAdmin]);
 
   // Tách comment gốc & reply
@@ -194,15 +289,15 @@ function CommentNode({
         {isAdmin && (
           <>
             {comment.isHidden ? (
-              <button type="button" onClick={() => { eventCommentsStorage.unhide(comment.id); onChanged(); }} style={linkBtn}>
+              <button type="button" onClick={async () => { await eventCommentsStorage.unhideAsync(comment.id); onChanged(); }} style={linkBtn}>
                 Hiện lại
               </button>
             ) : (
               <button
                 type="button"
-                onClick={() => {
+                onClick={async () => {
                   const reason = prompt("Lý do ẩn (optional)");
-                  eventCommentsStorage.hide(comment.id, defaultAuthor?.name ?? "admin", reason ?? undefined);
+                  await eventCommentsStorage.hideAsync(comment.id, defaultAuthor?.name ?? "admin", reason ?? undefined);
                   onChanged();
                 }}
                 style={{ ...linkBtn, color: THEME.danger }}
@@ -212,10 +307,10 @@ function CommentNode({
             )}
             {moderated && isPending && (
               <>
-                <button type="button" onClick={() => { eventCommentsStorage.approve(comment.id, defaultAuthor?.name ?? "admin"); onChanged(); }} style={{ ...linkBtn, color: THEME.primary }}>
+                <button type="button" onClick={async () => { await eventCommentsStorage.approveAsync(comment.id, defaultAuthor?.name ?? "admin"); onChanged(); }} style={{ ...linkBtn, color: THEME.primary }}>
                   ✓ Duyệt
                 </button>
-                <button type="button" onClick={() => { eventCommentsStorage.reject(comment.id, defaultAuthor?.name ?? "admin"); onChanged(); }} style={{ ...linkBtn, color: THEME.danger }}>
+                <button type="button" onClick={async () => { await eventCommentsStorage.rejectAsync(comment.id, defaultAuthor?.name ?? "admin"); onChanged(); }} style={{ ...linkBtn, color: THEME.danger }}>
                   ✕ Từ chối
                 </button>
               </>
@@ -245,9 +340,9 @@ function CommentNode({
               {isAdmin && !r.isHidden && (
                 <button
                   type="button"
-                  onClick={() => {
+                  onClick={async () => {
                     const reason = prompt("Lý do ẩn (optional)");
-                    eventCommentsStorage.hide(r.id, defaultAuthor?.name ?? "admin", reason ?? undefined);
+                    await eventCommentsStorage.hideAsync(r.id, defaultAuthor?.name ?? "admin", reason ?? undefined);
                     onChanged();
                   }}
                   style={{ ...linkBtn, color: THEME.danger, fontSize: 11, marginTop: 4 }}
@@ -313,10 +408,10 @@ function CommentForm({
   const [content, setContent] = useState("");
   const role: CommentAuthorRole = defaultAuthor?.role ?? "guest";
 
-  const submit = (e: React.FormEvent) => {
+  const submit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!name.trim() || !content.trim()) return;
-    eventCommentsStorage.add({
+    await eventCommentsStorage.addAsync({
       eventId,
       parentId,
       authorName: name.trim(),

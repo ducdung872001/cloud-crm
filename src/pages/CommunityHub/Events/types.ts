@@ -227,6 +227,10 @@ export interface EventEntity {
   /** 3 luồng đăng ký được bật: "guest" (A: tên+SĐT), "member_signup" (B: yêu cầu mã mới),
    *  "member_login" (C: login mã+mật khẩu). Mặc định: ["guest"]. */
   registrationFlows?: ("guest" | "member_signup" | "member_login")[];
+  /** Số đăng ký đang giữ chỗ (status != cancelled). BE-2 yc tester 2026-05-06
+   *  trả trên public response để FE public hiển thị "Còn N/M chỗ" mà không
+   *  phải gọi admin /registrations/list. Optional vì legacy cache có thể chưa có. */
+  activeRegistrations?: number;
 }
 
 export interface EventRegistration {

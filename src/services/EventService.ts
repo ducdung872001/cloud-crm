@@ -110,4 +110,37 @@ export default {
   removeServiceUsage: (id: string) => {
     return apiDelete(urlsApi.events.removeServiceUsage, { id });
   },
+
+  // ═══ Comments (yc tester 2026-05-06 — swap LS → API) ═══════════════════
+  listCommentsPublic: (
+    eventId: string | number,
+    params?: { includeHidden?: boolean; status?: string },
+    signal?: AbortSignal,
+  ) => {
+    return apiGet(
+      urlsApi.events.listCommentsPublic,
+      { eventId, ...(params ?? {}) },
+      signal,
+    );
+  },
+
+  createCommentPublic: (eventId: string | number, body: Record<string, unknown>) => {
+    return apiPost(`${urlsApi.events.createCommentPublic}?eventId=${eventId}`, body);
+  },
+
+  hideComment: (id: string | number, body?: { hidden_reason?: string }) => {
+    return apiPost(`${urlsApi.events.hideComment}?id=${id}`, body ?? {});
+  },
+
+  unhideComment: (id: string | number) => {
+    return apiPost(`${urlsApi.events.unhideComment}?id=${id}`, {});
+  },
+
+  approveComment: (id: string | number) => {
+    return apiPost(`${urlsApi.events.approveComment}?id=${id}`, {});
+  },
+
+  rejectComment: (id: string | number) => {
+    return apiPost(`${urlsApi.events.rejectComment}?id=${id}`, {});
+  },
 };

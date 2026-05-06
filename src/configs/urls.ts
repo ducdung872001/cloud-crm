@@ -2532,6 +2532,19 @@ export const urlsApi = {
     listServiceUsage: prefixMarket + "/events/service-usage/list",  // GET ?registrationId={regId}
     addServiceUsage: prefixMarket + "/events/service-usage/add",    // POST
     removeServiceUsage: prefixMarket + "/events/service-usage/delete", // DELETE ?id={id}
+    // Comments — yc tester 2026-05-06 swap LS → API
+    listCommentsPublic: prefixMarket + "/events/comments/public/list",     // GET  ?eventId=X&includeHidden=&status=
+    createCommentPublic: prefixMarket + "/events/comments/public/create",  // POST ?eventId=X
+    hideComment: prefixMarket + "/comments/hide",         // POST ?id=X (admin)
+    unhideComment: prefixMarket + "/comments/unhide",     // POST ?id=X (admin)
+    approveComment: prefixMarket + "/comments/approve",   // POST ?id=X (admin)
+    rejectComment: prefixMarket + "/comments/reject",     // POST ?id=X (admin)
+  },
+  // Community-hub portal config — yc tester 2026-05-06 (banner cross-browser sync)
+  communityHubPortalConfig: {
+    getPublic: prefixMarket + "/community-hub/portal-config/public",  // GET (anonymous, resolve bsnId qua Hostname)
+    get: prefixMarket + "/community-hub/portal-config",                // GET (admin)
+    upsert: prefixMarket + "/community-hub/portal-config/upsert",     // POST (admin) body { config: JSON string }
   },
   fixedPricePromotion: {
     getProducts: prefixMarket + "/fixedPrice/products",

@@ -34,6 +34,13 @@ export default function EventListPage() {
   const [settings, setSettings] = useState<PortalSettings>(() => portalSettings.get());
   const [bannerUploading, setBannerUploading] = useState(false);
 
+  // Sync settings từ BE on mount — yc tester 2026-05-06 cross-browser sync
+  useEffect(() => {
+    let alive = true;
+    portalSettings.getAsync().then((s) => { if (alive) setSettings(s); });
+    return () => { alive = false; };
+  }, []);
+
   const loadEvents = useCallback(async () => {
     setLoading(true);
     try {
