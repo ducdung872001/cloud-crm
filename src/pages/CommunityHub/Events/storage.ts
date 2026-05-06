@@ -104,13 +104,20 @@ export function normalizeEvent(e: any): EventEntity {
     if (typeof v === "string") try { return JSON.parse(v); } catch { return v; }
     return v;
   };
+  // Một số field BE đôi khi trả về string không parse được hoặc null → ép về [] để
+  // FE map/find không crash. Trước đây registrants tab bị "Đã xảy ra lỗi" do
+  // gọi .find/.map trên string khi BE trả selectedAddOns/addOnItems sai shape.
+  const parseJsonArr = (v: any): any[] => {
+    const parsed = parseJson(v);
+    return Array.isArray(parsed) ? parsed : [];
+  };
   return {
     ...e,
-    tags: parseJson(e.tags) ?? [],
+    tags: parseJsonArr(e.tags),
     dynamicFields: parseJson(e.dynamicFields),
-    addOnItems: parseJson(e.addOnItems),
-    galleryImageUrls: parseJson(e.galleryImageUrls),
-    selectableDates: parseJson(e.selectableDates),
+    addOnItems: parseJsonArr(e.addOnItems),
+    galleryImageUrls: parseJsonArr(e.galleryImageUrls),
+    selectableDates: parseJsonArr(e.selectableDates),
     venue: typeof e.venue === "string" ? JSON.parse(e.venue) : (e.venue ?? {
       name: e.venueName ?? e.venue_name ?? "",
       address: e.venueAddress ?? e.venue_address ?? "",
@@ -118,7 +125,7 @@ export function normalizeEvent(e: any): EventEntity {
       isOnline: e.venueIsOnline ?? e.venue_is_online ?? false,
       onlineUrl: e.venueOnlineUrl ?? e.venue_online_url,
     }),
-    additionalVenues: parseJson(e.additionalVenues ?? e.additional_venues),
+    additionalVenues: parseJsonArr(e.additionalVenues ?? e.additional_venues),
     contactPerson: typeof e.contactPerson === "string" ? JSON.parse(e.contactPerson) : (e.contactPerson ?? {
       name: e.contactName ?? e.contact_name ?? "",
       phone: e.contactPhone ?? e.contact_phone ?? "",
@@ -148,6 +155,10 @@ function normalizeReg(r: any): EventRegistration {
     if (typeof v === "string") try { return JSON.parse(v); } catch { return v; }
     return v;
   };
+  const parseJsonArr = (v: any): any[] => {
+    const parsed = parseJson(v);
+    return Array.isArray(parsed) ? parsed : [];
+  };
   // checkInOutRecords có 2 field datetime nested → normalize sau khi parse JSON
   const rawCheckInOut = parseJson(r.checkInOutRecords ?? r.check_in_out_records);
   const checkInOutRecords = Array.isArray(rawCheckInOut)
@@ -175,8 +186,8 @@ function normalizeReg(r: any): EventRegistration {
   return {
     ...r,
     dynamicFieldValues: parseJson(r.dynamicFieldValues ?? r.dynamic_field_values),
-    selectedAddOns: parseJson(r.selectedAddOns ?? r.selected_add_ons),
-    selectedDates: parseJson(r.selectedDates ?? r.selected_dates),
+    selectedAddOns: parseJsonArr(r.selectedAddOns ?? r.selected_add_ons),
+    selectedDates: parseJsonArr(r.selectedDates ?? r.selected_dates),
     checkInOutRecords,
     totalAmount: r.totalAmount ?? r.total_amount,
     eventSlug: r.eventSlug ?? r.event_slug,

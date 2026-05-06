@@ -639,21 +639,25 @@ function RegistrantsTab({
 }) {
   const [filter, setFilter] = useState<RegistrationStatus | "all">("all");
   const [detailReg, setDetailReg] = useState<EventRegistration | null>(null);
+  const [addOnDetailReg, setAddOnDetailReg] = useState<EventRegistration | null>(null);
 
   const filtered =
     filter === "all" ? registrations : registrations.filter((r) => r.status === filter);
 
   // Thống kê add-on — số người đăng ký + tổng SL + doanh thu cho mỗi add-on.
   // Chỉ tính đăng ký còn hiệu lực (bỏ cancelled) để con số phản ánh thực tế BTC cần chuẩn bị.
+  // Defensive: BE hoặc localStorage cũ đôi lúc trả non-array → ép Array.isArray để
+  // .map/.find không throw → chặn crash "Đã xảy ra lỗi" trên tab Người đăng ký.
   const addOnStats = useMemo(() => {
-    const items = event.addOnItems ?? [];
+    const items = Array.isArray(event.addOnItems) ? event.addOnItems : [];
     if (items.length === 0) return [];
     const activeRegs = registrations.filter((r) => r.status !== "cancelled");
     return items.map((item) => {
       let peopleCount = 0;
       let totalQty = 0;
       for (const r of activeRegs) {
-        const sel = (r.selectedAddOns ?? []).find((s) => s.addOnId === item.id);
+        const sels = Array.isArray(r.selectedAddOns) ? r.selectedAddOns : [];
+        const sel = sels.find((s) => s.addOnId === item.id);
         if (sel && sel.qty > 0) {
           peopleCount += 1;
           totalQty += sel.qty;
@@ -663,7 +667,7 @@ function RegistrantsTab({
         item,
         peopleCount,
         totalQty,
-        revenue: totalQty * item.unitPrice,
+        revenue: totalQty * (item.unitPrice ?? 0),
       };
     }).filter((s) => s.peopleCount > 0);
   }, [event, registrations]);
@@ -883,7 +887,7 @@ function RegistrantsTab({
                 <th style={thStyle}>Đăng ký lúc</th>
                 <th style={thStyle}>Trạng thái</th>
                 <th style={thStyle}>Thanh toán</th>
-                <th style={thStyle}>Add-on</th>
+                <th style={thStyle}>Sản phẩm, dịch vụ bổ sung</th>
                 <th style={thStyle}>Tổng tiền</th>
                 <th style={thStyle}>Vé</th>
                 <th style={thStyle}>Hội viên</th>
@@ -964,15 +968,30 @@ function RegistrantsTab({
                       }}
                     />
                   </td>
-                  {/* Add-on */}
+                  {/* Sản phẩm, dịch vụ bổ sung — click để xem popup chi tiết */}
                   <td style={tdStyle}>
-                    {r.selectedAddOns && r.selectedAddOns.length > 0 ? (
-                      <div style={{ fontSize: 10, color: THEME.textMuted }}>
+                    {Array.isArray(r.selectedAddOns) && r.selectedAddOns.length > 0 ? (
+                      <button
+                        type="button"
+                        onClick={() => setAddOnDetailReg(r)}
+                        title="Xem chi tiết sản phẩm / dịch vụ đã đăng ký"
+                        style={{
+                          background: "transparent",
+                          border: "none",
+                          padding: 0,
+                          textAlign: "left",
+                          cursor: "pointer",
+                          fontSize: 10,
+                          color: THEME.primary,
+                          textDecoration: "underline",
+                          maxWidth: 220,
+                        }}
+                      >
                         {r.selectedAddOns.map((s) => {
                           const item = (event.addOnItems ?? []).find((i) => i.id === s.addOnId);
                           return item ? `${item.name} x${s.qty}` : null;
-                        }).filter(Boolean).join(", ")}
-                      </div>
+                        }).filter(Boolean).join(", ") || "Xem chi tiết"}
+                      </button>
                     ) : (
                       <span style={{ color: THEME.textMuted, fontSize: 10 }}>—</span>
                     )}
@@ -1057,7 +1076,136 @@ function RegistrantsTab({
           onClose={() => setDetailReg(null)}
         />
       )}
+      {addOnDetailReg && (
+        <AddOnDetailPopup
+          event={event}
+          registration={addOnDetailReg}
+          onClose={() => setAddOnDetailReg(null)}
+        />
+      )}
     </Card>
+  );
+}
+
+// ═══════════════════════════════════════════════════════════════════════
+// Popup chi tiết SP/DV bổ sung của 1 đăng ký — yc 5/5 #4
+// ═══════════════════════════════════════════════════════════════════════
+function AddOnDetailPopup({
+  event,
+  registration,
+  onClose,
+}: {
+  event: EventEntity;
+  registration: EventRegistration;
+  onClose: () => void;
+}) {
+  const sels = Array.isArray(registration.selectedAddOns) ? registration.selectedAddOns : [];
+  const items = Array.isArray(event.addOnItems) ? event.addOnItems : [];
+  const lines = sels
+    .map((s) => {
+      const item = items.find((i) => i.id === s.addOnId);
+      if (!item) return null;
+      return {
+        name: item.name,
+        group: item.group,
+        unit: item.unit,
+        qty: s.qty,
+        unitPrice: item.unitPrice,
+        subtotal: item.unitPrice * s.qty,
+      };
+    })
+    .filter(Boolean) as {
+    name: string;
+    group?: string;
+    unit?: string;
+    qty: number;
+    unitPrice: number;
+    subtotal: number;
+  }[];
+  const total = lines.reduce((s, l) => s + l.subtotal, 0);
+
+  return (
+    <div
+      onClick={onClose}
+      style={{
+        position: "fixed",
+        inset: 0,
+        background: "rgba(0,0,0,.45)",
+        zIndex: 1000,
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        padding: 20,
+      }}
+    >
+      <div
+        onClick={(e) => e.stopPropagation()}
+        style={{
+          background: "#fff",
+          borderRadius: 10,
+          maxWidth: 640,
+          width: "100%",
+          maxHeight: "90vh",
+          overflow: "auto",
+          padding: 18,
+          boxShadow: "0 18px 40px rgba(0,0,0,.18)",
+        }}
+      >
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 10 }}>
+          <h3 style={{ margin: 0, color: THEME.primaryDark, fontSize: 15 }}>
+            🛍️ Sản phẩm / dịch vụ bổ sung — {registration.fullName}
+          </h3>
+          <button onClick={onClose} style={{ border: 0, background: "transparent", fontSize: 18, cursor: "pointer" }}>
+            ✕
+          </button>
+        </div>
+        {lines.length === 0 ? (
+          <div style={{ padding: 20, color: THEME.textMuted, fontSize: 13, textAlign: "center" }}>
+            Khách này chưa chọn sản phẩm / dịch vụ bổ sung nào.
+          </div>
+        ) : (
+          <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 12 }}>
+            <thead>
+              <tr style={{ background: THEME.primarySoft, textAlign: "left" }}>
+                <th style={thStyle}>Sản phẩm / dịch vụ</th>
+                <th style={{ ...thStyle, textAlign: "center" }}>SL</th>
+                <th style={{ ...thStyle, textAlign: "right" }}>Đơn giá</th>
+                <th style={{ ...thStyle, textAlign: "right" }}>Thành tiền</th>
+              </tr>
+            </thead>
+            <tbody>
+              {lines.map((l, i) => (
+                <tr key={i} style={{ borderTop: `1px solid ${THEME.border}` }}>
+                  <td style={tdStyle}>
+                    <div style={{ fontWeight: 600, color: THEME.primaryDark }}>{l.name}</div>
+                    {l.group && (
+                      <div style={{ fontSize: 10, color: THEME.textMuted, marginTop: 2 }}>{l.group}</div>
+                    )}
+                  </td>
+                  <td style={{ ...tdStyle, textAlign: "center" }}>
+                    {l.qty} {l.unit ?? ""}
+                  </td>
+                  <td style={{ ...tdStyle, textAlign: "right", color: THEME.textMuted }}>
+                    {formatVND(l.unitPrice)}đ
+                  </td>
+                  <td style={{ ...tdStyle, textAlign: "right", fontWeight: 700, color: THEME.primaryDark }}>
+                    {formatVND(l.subtotal)}đ
+                  </td>
+                </tr>
+              ))}
+              <tr style={{ borderTop: `2px solid ${THEME.primary}` }}>
+                <td style={{ ...tdStyle, fontWeight: 700 }} colSpan={3}>
+                  Tổng SP / DV bổ sung
+                </td>
+                <td style={{ ...tdStyle, textAlign: "right", fontWeight: 800, color: THEME.primary, fontSize: 13 }}>
+                  {formatVND(total)}đ
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        )}
+      </div>
+    </div>
   );
 }
 
