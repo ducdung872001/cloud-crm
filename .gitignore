@@ -20,3 +20,6 @@ yarn-error.log
 tests/reports/
 tests/screenshots/
 tests/.auth-cookies.json
+tests/.auth-state-*.json
+tests/.bpm-token.json
+tests/.bpm-process-id.json

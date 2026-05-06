@@ -268,7 +268,7 @@ async function callApi(apiCtx, urlPath, opts = {}) {
   let fullUrl;
   if (urlPath.startsWith("http")) fullUrl = urlPath;
   else if (urlPath.startsWith("/bpmapi/")) fullUrl = API_BPM + urlPath;
-  else if (urlPath.match(/^\/(billing|care|contract|customer|finance|integration|inventory|logistics|market|notification|operation|sales)\//))
+  else if (urlPath.match(/^\/(billing|care|contract|customer|finance|integration|inventory|logistics|market|notification|operation|org|sales)\//))
     fullUrl = API_BIZ + urlPath;
   else fullUrl = "https://reborn.vn" + urlPath;
 
@@ -333,7 +333,7 @@ async function main() {
 
     // P3a — Resolve current user's employeeId (BPM list endpoints filter by employeeId,
     // process tạo ra phải gán employeeId = current user để xuất hiện trong list)
-    const meRes = await callApi(apiCtx, "/customer/employee/info");
+    const meRes = await callApi(apiCtx, "/org/employee/info");
     const employeeId = meRes.json?.result?.id;
     if (!employeeId) throw new Error(`employee/info failed: ${JSON.stringify(meRes.json)}`);
     console.log(`  ✓ employeeId=${employeeId} (${meRes.json.result.name})`);
