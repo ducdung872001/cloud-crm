@@ -263,7 +263,11 @@ export default function ShareEventPage() {
   // khi dùng trong pattern {needsPayment && <JSX />} (React render number literal 0).
   // Hiện upload bằng chứng BẤT CỨ KHI NÀO admin tick requirePaymentProof,
   // kể cả event giá 0 (phí ngoài, deposit, phí riêng cho từng tuỳ chọn...).
-  const needsPayment = !!event.requirePaymentProof;
+  // Hiện block thanh toán khi admin bật requirePaymentProof, HOẶC khi
+  // grandTotal > 0 do user chọn addOn / dynamic field có phí (yc tester 2026-05-06).
+  // Trước đây chỉ check requirePaymentProof → event miễn phí có addOn có phí
+  // sẽ không thấy QR / upload biên lai.
+  const needsPayment = !!event.requirePaymentProof || grandTotal > 0;
 
   // QR thanh toán — nếu admin có cấu hình bankAccountOverride
   // Ưu tiên QR ảnh upload (cho tenant chưa dùng VietQR), fallback sinh tự động.

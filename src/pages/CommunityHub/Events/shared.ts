@@ -79,14 +79,16 @@ export function getEffectiveStatus(
 
 /** Tính tổng tiền 1 đăng ký = ticketPrice (event) + sum(addOn × qty)
  *  + giá option dynamic fields (checkbox tick / select option có price).
- *  Fallback khi BE không trả `totalAmount` (Jackson drop / endpoint cũ).
- *  Nếu reg.totalAmount đã có → dùng luôn.
+ *
+ *  Note: trước đây nếu BE trả `r.totalAmount > 0` thì trust BE luôn — nhưng
+ *  tester yc 2026-05-06 báo BE có lúc trả thiếu (vd quên cộng addOn áo yoga).
+ *  → recompute FE dựa trên event config + dùng max(BE, FE) để không undercount.
+ *  BE total chỉ thắng khi cao hơn (vd có phụ phí BE-only mà FE không biết).
  */
 export function computeRegistrationTotal(
   r: EventRegistration,
   event: EventEntity,
 ): number {
-  if (typeof r.totalAmount === "number" && r.totalAmount > 0) return r.totalAmount;
   const ticket = event.ticketPrice ?? 0;
   const addons = (r.selectedAddOns ?? []).reduce((acc, sel) => {
     const item = (event.addOnItems ?? []).find((i) => i.id === sel.addOnId);
@@ -99,7 +101,9 @@ export function computeRegistrationTotal(
     if (f.type === "select" && f.optionPrices?.[v]) return acc + f.optionPrices[v];
     return acc;
   }, 0);
-  return ticket + addons + dyn;
+  const feTotal = ticket + addons + dyn;
+  const beTotal = typeof r.totalAmount === "number" ? r.totalAmount : 0;
+  return Math.max(feTotal, beTotal);
 }
 
 export function getShareUrl(slug: string): string {

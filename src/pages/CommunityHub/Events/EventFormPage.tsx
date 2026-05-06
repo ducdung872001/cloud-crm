@@ -1,7 +1,7 @@
 // CH Events — Form tạo/sửa sự kiện với RebornEditor + cover image upload.
 // Routes: /ch_events/create · /ch_events/:id/edit
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import RebornEditor from "components/editor/reborn";
 import DatePickerCustom from "components/datepickerCustom/datepickerCustom";
@@ -208,6 +208,72 @@ export default function EventFormPage() {
     setError(null);
   };
 
+  // ── Inline validations (yc tester 2026-05-06) ─────────────────────────
+  // Báo lỗi ngay khi nhập, không cần đợi bấm Lưu.
+  const fieldErrors = useMemo(() => {
+    const errs: Record<string, string> = {};
+    const now = new Date();
+    now.setHours(0, 0, 0, 0);
+    const start = form.startDate ? new Date(form.startDate) : null;
+    const end = form.endDate ? new Date(form.endDate) : null;
+    const regOpen = form.registrationOpenDate ? new Date(form.registrationOpenDate) : null;
+    const regClose = form.registrationCloseDate ? new Date(form.registrationCloseDate) : null;
+
+    // Phần 3: Thời gian
+    if (start && start < now) errs.startDate = "Ngày bắt đầu phải từ hôm nay trở đi";
+    if (start && end && end <= start) errs.endDate = "Ngày kết thúc phải sau ngày bắt đầu";
+    if (regOpen && start && regOpen >= start) errs.registrationOpenDate = "Ngày mở đăng ký phải trước ngày bắt đầu";
+    if (regClose && regOpen && regClose <= regOpen) errs.registrationCloseDate = "Ngày đóng đăng ký phải sau ngày mở";
+    else if (regClose && start && regClose >= start) errs.registrationCloseDate = "Ngày đóng đăng ký phải trước ngày bắt đầu";
+
+    // Phần 4: Sự kiện online — link URL hợp lệ
+    if (form.venueIsOnline && form.venueOnlineUrl.trim()) {
+      try {
+        const u = new URL(form.venueOnlineUrl.trim());
+        if (!/^https?:$/.test(u.protocol)) errs.venueOnlineUrl = "Link phải bắt đầu bằng http(s)://";
+      } catch {
+        errs.venueOnlineUrl = "Link không hợp lệ. VD: https://zoom.us/j/...";
+      }
+    }
+
+    // Phần 5: Người liên hệ
+    if (form.contactPhone.trim() && !/^[+\d][\d\s\-.()]{6,}$/.test(form.contactPhone.trim())) {
+      errs.contactPhone = "Số điện thoại chỉ chứa chữ số (có thể có +, -, dấu cách)";
+    }
+    if (form.contactEmail.trim() && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.contactEmail.trim())) {
+      errs.contactEmail = "Email không đúng định dạng";
+    }
+
+    // Multi-day: ngày tham gia phải nằm trong [start, end]
+    if (start && end) {
+      form.selectableDates.forEach((d, i) => {
+        if (!d) return;
+        const dt = new Date(d);
+        // selectableDates là yyyy-MM-dd → so sánh theo ngày
+        const startDay = new Date(start); startDay.setHours(0, 0, 0, 0);
+        const endDay = new Date(end); endDay.setHours(23, 59, 59, 999);
+        if (dt < startDay || dt > endDay) {
+          errs[`selectableDates_${i}`] = "Ngày tham gia phải nằm trong khoảng bắt đầu – kết thúc";
+        }
+      });
+    }
+
+    return errs;
+  }, [
+    form.startDate,
+    form.endDate,
+    form.registrationOpenDate,
+    form.registrationCloseDate,
+    form.venueIsOnline,
+    form.venueOnlineUrl,
+    form.contactPhone,
+    form.contactEmail,
+    form.selectableDates,
+  ]);
+
+  // Refs để scroll-to-error khi save lỗi (yc tester 2026-05-06)
+  const errorBannerRef = useRef<HTMLDivElement | null>(null);
+
   const handleContentChange = (descendants: any) => {
     const html = serialize({ children: descendants });
     setForm((f) => ({ ...f, content: html }));
@@ -291,10 +357,30 @@ export default function EventFormPage() {
   };
 
   const handleSave = async (publish: boolean) => {
+    // Block save khi còn lỗi inline (yc tester 2026-05-06)
+    const inlineKeys = Object.keys(fieldErrors);
+    if (inlineKeys.length > 0) {
+      setError(`Còn ${inlineKeys.length} trường nhập sai. Vui lòng sửa các trường có dấu ⚠ rồi thử lại.`);
+      // scroll lên banner lỗi (smooth) — fallback scrollTo(0,0)
+      requestAnimationFrame(() => {
+        if (errorBannerRef.current) {
+          errorBannerRef.current.scrollIntoView({ behavior: "smooth", block: "start" });
+        } else {
+          window.scrollTo({ top: 0, behavior: "smooth" });
+        }
+      });
+      return;
+    }
     const err = validate();
     if (err) {
       setError(err);
-      window.scrollTo(0, 0);
+      requestAnimationFrame(() => {
+        if (errorBannerRef.current) {
+          errorBannerRef.current.scrollIntoView({ behavior: "smooth", block: "start" });
+        } else {
+          window.scrollTo({ top: 0, behavior: "smooth" });
+        }
+      });
       return;
     }
     setSaving(true);
@@ -354,7 +440,10 @@ export default function EventFormPage() {
       galleryImageUrls: form.galleryImageUrls.length ? form.galleryImageUrls : undefined,
       requirePaymentProof: form.requirePaymentProof || undefined,
       // Bank account override — chỉ gửi khi requirePaymentProof bật + ít nhất số TK
-      bankAccountOverride: (form.requirePaymentProof && (form.bankAccountNumber.trim() || form.bankQrImageUrl.trim()))
+      // Lưu bankAccountOverride nếu có bất kỳ field nào (số TK / QR ảnh) —
+      // không phụ thuộc requirePaymentProof, để admin có thể chuẩn bị info
+      // trước khi bật toggle thanh toán (yc tester 2026-05-06).
+      bankAccountOverride: (form.bankAccountNumber.trim() || form.bankQrImageUrl.trim() || form.bankName.trim() || form.bankHolder.trim())
         ? {
             bank: form.bankName.trim(),
             holder: form.bankHolder.trim(),
@@ -419,6 +508,7 @@ export default function EventFormPage() {
 
       {error && (
         <div
+          ref={errorBannerRef}
           style={{
             background: "#FEF2F2",
             borderLeft: `4px solid ${THEME.danger}`,
@@ -493,7 +583,7 @@ export default function EventFormPage() {
 
           <Section title="3. Thời gian">
             <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
-              <Field label="Bắt đầu" required>
+              <Field label="Bắt đầu" required error={fieldErrors.startDate}>
                 <DatePickerCustom
                   hasSelectTime
                   value={localToDate(form.startDate) ?? ""}
@@ -501,7 +591,7 @@ export default function EventFormPage() {
                   onChange={(v) => update("startDate", v instanceof Date ? dateToLocal(v) : "")}
                 />
               </Field>
-              <Field label="Kết thúc" required>
+              <Field label="Kết thúc" required error={fieldErrors.endDate}>
                 <DatePickerCustom
                   hasSelectTime
                   value={localToDate(form.endDate) ?? ""}
@@ -509,7 +599,7 @@ export default function EventFormPage() {
                   onChange={(v) => update("endDate", v instanceof Date ? dateToLocal(v) : "")}
                 />
               </Field>
-              <Field label="Mở đăng ký" required>
+              <Field label="Mở đăng ký" required error={fieldErrors.registrationOpenDate}>
                 <DatePickerCustom
                   hasSelectTime
                   value={localToDate(form.registrationOpenDate) ?? ""}
@@ -517,7 +607,7 @@ export default function EventFormPage() {
                   onChange={(v) => update("registrationOpenDate", v instanceof Date ? dateToLocal(v) : "")}
                 />
               </Field>
-              <Field label="Đóng đăng ký" required>
+              <Field label="Đóng đăng ký" required error={fieldErrors.registrationCloseDate}>
                 <DatePickerCustom
                   hasSelectTime
                   value={localToDate(form.registrationCloseDate) ?? ""}
@@ -538,9 +628,10 @@ export default function EventFormPage() {
               <span style={{ fontSize: 13, color: THEME.textMain }}>Sự kiện online</span>
             </label>
             {form.venueIsOnline ? (
-              <Field label="Link online (Zoom/Meet/…)" required>
+              <Field label="Link online (Zoom/Meet/…)" required error={fieldErrors.venueOnlineUrl}>
                 <input
                   style={inputStyle}
+                  type="url"
                   value={form.venueOnlineUrl}
                   onChange={(e) => update("venueOnlineUrl", e.target.value)}
                   placeholder="https://zoom.us/j/..."
@@ -834,16 +925,23 @@ export default function EventFormPage() {
                   placeholder="VD: Trưởng BTC"
                 />
               </Field>
-              <Field label="Số điện thoại" required>
+              <Field label="Số điện thoại" required error={fieldErrors.contactPhone}>
                 <input
                   style={inputStyle}
+                  type="tel"
+                  inputMode="tel"
                   value={form.contactPhone}
-                  onChange={(e) => update("contactPhone", e.target.value)}
+                  onChange={(e) => {
+                    const cleaned = e.target.value.replace(/[^+\d\s\-.()]/g, "");
+                    update("contactPhone", cleaned);
+                  }}
+                  placeholder="VD: 0987654321"
                 />
               </Field>
-              <Field label="Email">
+              <Field label="Email" error={fieldErrors.contactEmail}>
                 <input
                   style={inputStyle}
+                  type="email"
                   value={form.contactEmail}
                   onChange={(e) => update("contactEmail", e.target.value)}
                 />
@@ -1274,40 +1372,49 @@ export default function EventFormPage() {
             <p style={{ fontSize: 11, color: THEME.textMuted, margin: "0 0 8px" }}>
               Nếu sự kiện diễn ra nhiều ngày, liệt kê các ngày để khách chọn.
             </p>
-            {form.selectableDates.map((d, i) => (
-              <div key={i} style={{ display: "flex", gap: 6, marginBottom: 4, alignItems: "center" }}>
-                <input
-                  type="date"
-                  value={d}
-                  onChange={(e) => {
-                    const copy = [...form.selectableDates];
-                    copy[i] = e.target.value;
-                    setForm((f) => ({ ...f, selectableDates: copy }));
-                  }}
-                  style={{ ...inputStyle, flex: 1 }}
-                />
-                <button
-                  onClick={() =>
-                    setForm((f) => ({
-                      ...f,
-                      selectableDates: f.selectableDates.filter((_, j) => j !== i),
-                    }))
-                  }
-                  style={{
-                    width: 28,
-                    height: 28,
-                    border: `1px solid ${THEME.danger}`,
-                    borderRadius: 4,
-                    background: "#fff",
-                    color: THEME.danger,
-                    cursor: "pointer",
-                    fontSize: 13,
-                  }}
-                >
-                  ✕
-                </button>
-              </div>
-            ))}
+            {form.selectableDates.map((d, i) => {
+              const errKey = `selectableDates_${i}`;
+              const err = fieldErrors[errKey];
+              return (
+                <div key={i} style={{ marginBottom: 6 }}>
+                  <div style={{ display: "flex", gap: 6, alignItems: "center" }}>
+                    <input
+                      type="date"
+                      min={form.startDate ? form.startDate.slice(0, 10) : undefined}
+                      max={form.endDate ? form.endDate.slice(0, 10) : undefined}
+                      value={d}
+                      onChange={(e) => {
+                        const copy = [...form.selectableDates];
+                        copy[i] = e.target.value;
+                        setForm((f) => ({ ...f, selectableDates: copy }));
+                      }}
+                      style={{ ...inputStyle, flex: 1, borderColor: err ? THEME.danger : THEME.border }}
+                    />
+                    <button
+                      onClick={() =>
+                        setForm((f) => ({
+                          ...f,
+                          selectableDates: f.selectableDates.filter((_, j) => j !== i),
+                        }))
+                      }
+                      style={{
+                        width: 28,
+                        height: 28,
+                        border: `1px solid ${THEME.danger}`,
+                        borderRadius: 4,
+                        background: "#fff",
+                        color: THEME.danger,
+                        cursor: "pointer",
+                        fontSize: 13,
+                      }}
+                    >
+                      ✕
+                    </button>
+                  </div>
+                  {err && <div style={{ fontSize: 11, color: THEME.danger, marginTop: 2, fontWeight: 600 }}>⚠ {err}</div>}
+                </div>
+              );
+            })}
             <button
               onClick={() =>
                 setForm((f) => ({ ...f, selectableDates: [...f.selectableDates, ""] }))
@@ -1590,11 +1697,13 @@ function Field({
   label,
   required,
   hint,
+  error,
   children,
 }: {
   label: string;
   required?: boolean;
   hint?: string;
+  error?: string | null;
   children: React.ReactNode;
 }) {
   return (
@@ -1604,9 +1713,11 @@ function Field({
         {required && <span style={{ color: THEME.danger }}> *</span>}
       </div>
       {children}
-      {hint && (
+      {error ? (
+        <div style={{ fontSize: 11, color: THEME.danger, marginTop: 3, fontWeight: 600 }}>⚠ {error}</div>
+      ) : hint ? (
         <div style={{ fontSize: 11, color: THEME.textMuted, marginTop: 3 }}>{hint}</div>
-      )}
+      ) : null}
     </div>
   );
 }

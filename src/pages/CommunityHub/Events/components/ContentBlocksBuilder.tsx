@@ -3,9 +3,11 @@
 //
 // Mỗi block là 1 unit độc lập, lưu thành JSON array `event.contentBlocks`.
 
-import React, { useCallback } from "react";
+import React, { useCallback, useRef, useState } from "react";
 import type { ContentBlock, ContentBlockType } from "../types";
 import { THEME } from "../shared";
+import { uploadDocumentFormData } from "utils/document";
+import { showToast } from "utils/common";
 
 interface Props {
   blocks: ContentBlock[];
@@ -142,12 +144,10 @@ function BlockEditor({ block, isFirst, isLast, onChange, onRemove, onMoveUp, onM
       </div>
 
       {block.type === "text" && (
-        <textarea
+        <RichTextArea
           value={block.text ?? ""}
-          onChange={(e) => onChange({ text: e.target.value })}
-          rows={4}
-          placeholder="Nội dung văn bản (hỗ trợ HTML cơ bản: <b>, <i>, <a>, <br>, <ul>, <li>...)"
-          style={input}
+          onChange={(html) => onChange({ text: html })}
+          placeholder="Nội dung văn bản — có thể paste trực tiếp từ Word/Google Docs (giữ format đậm/nghiêng/danh sách)"
         />
       )}
 
@@ -196,15 +196,11 @@ function BlockEditor({ block, isFirst, isLast, onChange, onRemove, onMoveUp, onM
 function ImageBlockEditor({ block, onChange }: { block: ContentBlock; onChange: (p: Partial<ContentBlock>) => void }) {
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
-      <input
+      <ImageUploadField
         value={block.imageUrl ?? ""}
-        onChange={(e) => onChange({ imageUrl: e.target.value })}
-        placeholder="URL ảnh (https://… hoặc data:image/…)"
-        style={input}
+        onChange={(url) => onChange({ imageUrl: url })}
+        placeholder="URL ảnh (https://…) hoặc bấm Upload để chọn từ máy"
       />
-      {block.imageUrl && (
-        <img src={block.imageUrl} alt="" style={{ maxWidth: "100%", maxHeight: 160, objectFit: "contain", borderRadius: 4 }} />
-      )}
       <input
         value={block.linkUrl ?? ""}
         onChange={(e) => onChange({ linkUrl: e.target.value })}
@@ -237,18 +233,16 @@ function ImageTextBlockEditor({ block, onChange }: { block: ContentBlock; onChan
           <option value="bottom">Dưới</option>
         </select>
       </div>
-      <input
+      <ImageUploadField
         value={block.imageUrl ?? ""}
-        onChange={(e) => onChange({ imageUrl: e.target.value })}
-        placeholder="URL ảnh"
-        style={input}
+        onChange={(url) => onChange({ imageUrl: url })}
+        placeholder="URL ảnh hoặc bấm Upload"
+        preview={false}
       />
-      <textarea
+      <RichTextArea
         value={block.text ?? ""}
-        onChange={(e) => onChange({ text: e.target.value })}
-        rows={3}
-        placeholder="Đoạn chữ kế bên ảnh"
-        style={input}
+        onChange={(html) => onChange({ text: html })}
+        placeholder="Đoạn chữ kế bên ảnh — paste từ Word/Docs giữ format"
       />
       <input
         value={block.linkUrl ?? ""}
@@ -262,9 +256,32 @@ function ImageTextBlockEditor({ block, onChange }: { block: ContentBlock; onChan
 
 function GalleryBlockEditor({ block, onChange }: { block: ContentBlock; onChange: (p: Partial<ContentBlock>) => void }) {
   const urls = block.imageUrls ?? [];
+  const inputRef = useRef<HTMLInputElement | null>(null);
+  const [uploading, setUploading] = useState(false);
+  const handleMultiPick = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    if (!files || !files.length) return;
+    setUploading(true);
+    const tasks = Array.from(files).map(
+      (f) => new Promise<string | null>((resolve) => {
+        uploadDocumentFormData(
+          f,
+          (data: any) => resolve(data?.fileUrl ?? data?.url ?? null),
+          () => resolve(null),
+        );
+      }),
+    );
+    Promise.all(tasks).then((rs) => {
+      const fresh = rs.filter((u): u is string => !!u);
+      if (fresh.length) onChange({ imageUrls: [...urls, ...fresh] });
+      else showToast("Upload thất bại", "error");
+      setUploading(false);
+    });
+    e.target.value = "";
+  };
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
-      <div style={{ fontSize: 12, color: THEME.textMuted }}>Mỗi dòng 1 URL ảnh:</div>
+      <div style={{ fontSize: 12, color: THEME.textMuted }}>Mỗi dòng 1 URL ảnh, hoặc bấm Upload để chọn nhiều file từ máy:</div>
       <textarea
         value={urls.join("\n")}
         onChange={(e) =>
@@ -277,6 +294,25 @@ function GalleryBlockEditor({ block, onChange }: { block: ContentBlock; onChange
 https://..."
         style={input}
       />
+      <input ref={inputRef} type="file" accept="image/*" multiple style={{ display: "none" }} onChange={handleMultiPick} />
+      <button
+        type="button"
+        onClick={() => inputRef.current?.click()}
+        disabled={uploading}
+        style={{
+          alignSelf: "flex-start",
+          padding: "6px 12px",
+          fontSize: 12,
+          background: uploading ? THEME.border : THEME.primarySoft,
+          color: THEME.primaryDark,
+          border: `1px solid ${THEME.primary}`,
+          borderRadius: 4,
+          cursor: uploading ? "wait" : "pointer",
+          fontWeight: 600,
+        }}
+      >
+        {uploading ? "Đang upload…" : "📎 Upload ảnh từ máy (nhiều)"}
+      </button>
       {urls.length > 0 && (
         <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(80px, 1fr))", gap: 4 }}>
           {urls.slice(0, 8).map((u, i) => (
@@ -291,11 +327,10 @@ https://..."
 function BannerAdBlockEditor({ block, onChange }: { block: ContentBlock; onChange: (p: Partial<ContentBlock>) => void }) {
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
-      <input
+      <ImageUploadField
         value={block.imageUrl ?? ""}
-        onChange={(e) => onChange({ imageUrl: e.target.value })}
-        placeholder="URL ảnh banner"
-        style={input}
+        onChange={(url) => onChange({ imageUrl: url })}
+        placeholder="URL ảnh banner hoặc bấm Upload"
       />
       <input
         value={block.linkUrl ?? ""}
@@ -309,6 +344,183 @@ function BannerAdBlockEditor({ block, onChange }: { block: ContentBlock; onChang
         placeholder="Nhãn link (optional, VD: 'Xem chi tiết')"
         style={input}
       />
+    </div>
+  );
+}
+
+/**
+ * Rich-text area dùng contentEditable — giữ format khi paste từ Word/Google Docs
+ * (yc tester 2026-05-06: textarea cũ làm mất format, mất chữ, scroll về top).
+ *
+ * Strategy:
+ *  - innerHTML khởi tạo = value (HTML đã sanitize sẵn).
+ *  - onPaste: lấy clipboardData('text/html') nếu có, chạy sanitize đơn giản
+ *    (drop <script>, on*=, javascript:, MS Office mso-* metadata) rồi
+ *    document.execCommand('insertHTML', ...). Fallback: paste plain text.
+ *  - onInput: emit innerHTML lên parent.
+ *
+ * Component KHÔNG remount theo `value` để tránh mất caret position khi gõ.
+ * Parent prop `value` chỉ dùng làm initial. Nếu cần reset, đổi `key`.
+ */
+function RichTextArea({
+  value,
+  onChange,
+  placeholder,
+}: {
+  value: string;
+  onChange: (html: string) => void;
+  placeholder?: string;
+}) {
+  const ref = useRef<HTMLDivElement | null>(null);
+  const initialized = useRef(false);
+
+  if (!initialized.current && ref.current) {
+    ref.current.innerHTML = value || "";
+    initialized.current = true;
+  }
+
+  const handlePaste = (e: React.ClipboardEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    const html = e.clipboardData.getData("text/html");
+    const plain = e.clipboardData.getData("text/plain");
+    let toInsert: string;
+    if (html) {
+      // Sanitize HTML từ Word/Docs
+      toInsert = html
+        // Drop script/style
+        .replace(/<script[\s\S]*?<\/script>/gi, "")
+        .replace(/<style[\s\S]*?<\/style>/gi, "")
+        // Drop MS Office xml/comment
+        .replace(/<!--[\s\S]*?-->/g, "")
+        .replace(/<\/?o:[^>]*>/gi, "")
+        .replace(/<\/?w:[^>]*>/gi, "")
+        // Drop on*= và javascript:
+        .replace(/on\w+\s*=\s*"[^"]*"/gi, "")
+        .replace(/on\w+\s*=\s*'[^']*'/gi, "")
+        .replace(/javascript:/gi, "")
+        // Drop class="MsoNormal" và mso-* style
+        .replace(/\s+class="?Mso[^"\s>]*"?/gi, "")
+        .replace(/style="[^"]*mso-[^"]*"/gi, "")
+        // Strip Word's <body>/html wrappers nhưng giữ inner
+        .replace(/<\/?html[^>]*>/gi, "")
+        .replace(/<\/?body[^>]*>/gi, "")
+        .replace(/<\/?head[^>]*>/gi, "")
+        .replace(/<meta[^>]*>/gi, "")
+        .replace(/<link[^>]*>/gi, "")
+        .replace(/<title[^>]*>[\s\S]*?<\/title>/gi, "");
+    } else {
+      // Plain text → preserve newlines as <br>
+      toInsert = plain.replace(/\n/g, "<br>");
+    }
+    document.execCommand("insertHTML", false, toInsert);
+  };
+
+  const handleInput = () => {
+    if (!ref.current) return;
+    onChange(ref.current.innerHTML);
+  };
+
+  return (
+    <div
+      ref={(el) => {
+        ref.current = el;
+        if (el && !initialized.current) {
+          el.innerHTML = value || "";
+          initialized.current = true;
+        }
+      }}
+      contentEditable
+      suppressContentEditableWarning
+      data-placeholder={placeholder}
+      onPaste={handlePaste}
+      onInput={handleInput}
+      style={{
+        minHeight: 80,
+        padding: "8px 10px",
+        border: `1px solid ${THEME.border}`,
+        borderRadius: 4,
+        fontSize: 13,
+        outline: "none",
+        background: "#fff",
+        lineHeight: 1.5,
+      }}
+    />
+  );
+}
+
+/**
+ * Field nhập URL ảnh + nút upload từ máy (yc tester 2026-05-06).
+ * Khi user chọn file → uploadDocumentFormData → set URL trả về.
+ */
+function ImageUploadField({
+  value,
+  onChange,
+  placeholder,
+  preview = true,
+  accept = "image/*",
+}: {
+  value: string;
+  onChange: (url: string) => void;
+  placeholder: string;
+  preview?: boolean;
+  accept?: string;
+}) {
+  const inputRef = useRef<HTMLInputElement | null>(null);
+  const [uploading, setUploading] = useState(false);
+
+  const handlePick = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const f = e.target.files?.[0];
+    if (!f) return;
+    setUploading(true);
+    uploadDocumentFormData(
+      f,
+      (data: any) => {
+        const url = data?.fileUrl ?? data?.url;
+        if (url) onChange(url);
+        else showToast("Upload OK nhưng không có URL trả về", "error");
+        setUploading(false);
+      },
+      () => {
+        showToast("Upload thất bại", "error");
+        setUploading(false);
+      },
+    );
+    e.target.value = "";
+  };
+
+  return (
+    <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
+      <div style={{ display: "flex", gap: 4 }}>
+        <input
+          value={value}
+          onChange={(e) => onChange(e.target.value)}
+          placeholder={placeholder}
+          style={{ ...input, flex: 1 }}
+        />
+        <input ref={inputRef} type="file" accept={accept} style={{ display: "none" }} onChange={handlePick} />
+        <button
+          type="button"
+          onClick={() => inputRef.current?.click()}
+          disabled={uploading}
+          style={{
+            padding: "0 10px",
+            fontSize: 11,
+            background: uploading ? THEME.border : THEME.primarySoft,
+            color: THEME.primaryDark,
+            border: `1px solid ${THEME.primary}`,
+            borderRadius: 4,
+            cursor: uploading ? "wait" : "pointer",
+            fontWeight: 600,
+            whiteSpace: "nowrap",
+          }}
+          title="Upload ảnh từ máy"
+        >
+          {uploading ? "..." : "📎 Upload"}
+        </button>
+      </div>
+      {preview && value && (
+        <img src={value} alt="" style={{ maxWidth: "100%", maxHeight: 160, objectFit: "contain", borderRadius: 4 }} />
+      )}
     </div>
   );
 }

@@ -16,9 +16,42 @@ const withHtml = editor => {
         const html = data.getData('text/html')
 
         if (html) {
-            const parsed = new DOMParser().parseFromString(html, 'text/html')
+            // Yc tester 2026-05-06: paste từ Word/Google Docs làm mất chữ &
+            // scroll về đầu trang. Pre-process clean Word's mso-* metadata,
+            // <o:p>, conditional comments, empty span wrapers... trước khi
+            // đẩy vào DOMParser.
+            const cleaned = html
+                // Conditional comments, MS xml namespaces
+                .replace(/<!--\[if[\s\S]*?<!\[endif\]-->/gi, '')
+                .replace(/<!--[\s\S]*?-->/g, '')
+                .replace(/<\/?o:[^>]*>/gi, '')
+                .replace(/<\/?w:[^>]*>/gi, '')
+                .replace(/<\/?v:[^>]*>/gi, '')
+                .replace(/<\/?xml[^>]*>/gi, '')
+                // Strip <style>, <script>, <meta>, <link>, <title>
+                .replace(/<style[\s\S]*?<\/style>/gi, '')
+                .replace(/<script[\s\S]*?<\/script>/gi, '')
+                .replace(/<meta[^>]*>/gi, '')
+                .replace(/<link[^>]*>/gi, '')
+                .replace(/<title[\s\S]*?<\/title>/gi, '')
+                // Remove on*= và javascript:
+                .replace(/on\w+\s*=\s*"[^"]*"/gi, '')
+                .replace(/on\w+\s*=\s*'[^']*'/gi, '')
+                .replace(/javascript:/gi, '')
+                // Drop class="MsoNormal", id="..."
+                .replace(/\s+class="?Mso[^"\s>]*"?/gi, '')
+                // Drop mso-* styles để khỏi gây nhiễu align
+                .replace(/style="[^"]*mso-[^"]*"/gi, '')
+
+            const parsed = new DOMParser().parseFromString(cleaned, 'text/html')
             const fragment = deserialize(parsed.body)
-            Transforms.insertFragment(editor, fragment)
+            try {
+                Transforms.insertFragment(editor, fragment)
+            } catch (e) {
+                // Fallback: nếu deserialize lỗi → paste plain text để không mất chữ
+                const plain = data.getData('text/plain')
+                if (plain) Transforms.insertText(editor, plain)
+            }
             return
         }
 
@@ -61,20 +94,37 @@ export const deserialize = el => {
 
     //Fix trường hợp thẻ A trong thẻ STRONG => Bị cấm như mô tả trong https://github.com/udecode/plate/issues/77
     //Link bài có thẻ A trong thẻ STRONG gây lỗi khi paste-html: https://benhvienthammykangnam.vn/tham-my-mui/nang-mui-han-quoc-kangnam/
+    //
+    // Yc tester 2026-05-06: paste từ Word/Docs có nested format (vd
+    // <strong>X <em>Y</em></strong>) trước đây bị flatten về `el.textContent`
+    // → mất các mark con. Giờ giữ children + apply mark đậm/nghiêng/... lên
+    // mọi text leaf bên trong (không animate up vào thẻ link để tránh lỗi
+    // A-trong-STRONG đã ghi chú ở trên).
+    const applyMark = (mark) => {
+        const safeChildren = children.length ? children : [{ text: el.textContent || '' }];
+        return safeChildren.map((c) => {
+            if (c == null) return null;
+            // Nếu là element link (nested A) → bỏ qua mark trên element, paste raw
+            if (typeof c === 'object' && (c).type === 'link') return c;
+            if (typeof c === 'string') return { text: c, ...mark };
+            if ((c).text != null) return { ...c, ...mark };
+            return c;
+        }).filter(Boolean);
+    };
     if (el.nodeName === 'STRONG' || el.nodeName === 'B') {
-        return { text: el.textContent, bold: true };
+        return applyMark({ bold: true });
     }
 
     if (el.nodeName === 'EM' || el.nodeName === 'I') {
-        return { text: el.textContent, italic: true };
+        return applyMark({ italic: true });
     }
 
     if (el.nodeName === 'DEL' || el.nodeName === 'S') {
-        return { text: el.textContent, strikethrough: true };
+        return applyMark({ strikethrough: true });
     }
 
     if (el.nodeName === 'U') {
-        return { text: el.textContent, underline: true };
+        return applyMark({ underline: true });
     }
 
     if (ELEMENT_TAGS[nodeName]) {

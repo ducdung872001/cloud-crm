@@ -711,6 +711,16 @@ function RegistrantsTab({
       alert(`Vé đã phát hành: ${reg.ticketCode}`);
       return;
     }
+    // Block phát vé khi đăng ký đã huỷ hoặc bằng chứng thanh toán đã bị từ chối
+    // (yc tester 2026-05-06 — trước đây phát vé tự đổi cancelled → confirmed).
+    if (reg.status === "cancelled") {
+      alert("Đăng ký này đã huỷ — không thể phát vé. Đổi trạng thái về 'Chờ xác nhận' hoặc 'Đã xác nhận' trước.");
+      return;
+    }
+    if (reg.paymentProof?.status === "rejected") {
+      alert("Bằng chứng thanh toán đã bị từ chối — không thể phát vé. Yêu cầu khách upload lại biên lai.");
+      return;
+    }
     const updated = await eventStorage.updateRegistrationStatusAsync(reg.id, "confirmed");
     alert(
       `🎟️ Đã phát hành vé cho ${reg.fullName}\n\nMã vé: ${updated?.ticketCode ?? "—"}`
@@ -882,6 +892,7 @@ function RegistrantsTab({
                   textAlign: "left",
                 }}
               >
+                <th style={thStyle}>Mã hội viên</th>
                 <th style={thStyle}>Họ tên</th>
                 <th style={thStyle}>Liên hệ</th>
                 <th style={thStyle}>Đăng ký lúc</th>
@@ -890,16 +901,41 @@ function RegistrantsTab({
                 <th style={thStyle}>Sản phẩm, dịch vụ bổ sung</th>
                 <th style={thStyle}>Tổng tiền</th>
                 <th style={thStyle}>Vé</th>
-                <th style={thStyle}>Hội viên</th>
+                <th style={thStyle}>Đã chuyển HV</th>
                 <th style={thStyle}>Hành động</th>
               </tr>
             </thead>
             <tbody>
-              {filtered.map((r) => (
+              {filtered.map((r) => {
+                const memberCode =
+                  r.memberCode ||
+                  r.issuedMemberCode ||
+                  r.customerAttributes?.memberCode ||
+                  r.customerAttributes?.mentorCode ||
+                  "";
+                return (
                 <tr
                   key={r.id}
                   style={{ borderTop: `1px solid ${THEME.border}` }}
                 >
+                  <td style={tdStyle}>
+                    {memberCode ? (
+                      <code
+                        style={{
+                          fontSize: 11,
+                          background: THEME.primarySoft,
+                          color: THEME.primaryDark,
+                          padding: "2px 6px",
+                          borderRadius: 4,
+                          fontWeight: 700,
+                        }}
+                      >
+                        {memberCode}
+                      </code>
+                    ) : (
+                      <span style={{ color: THEME.textMuted, fontSize: 10 }}>—</span>
+                    )}
+                  </td>
                   <td style={tdStyle}>
                     <strong style={{ color: THEME.primaryDark }}>
                       {r.fullName}
@@ -964,6 +1000,12 @@ function RegistrantsTab({
                       }}
                       onReject={async (reason) => {
                         await eventStorage.reviewPaymentProofAsync(r.id, false, reason);
+                        // Auto-cancel reg khi từ chối bằng chứng thanh toán —
+                        // để chuyển vào tab "Đã huỷ" thay vì kẹt ở "Chờ xác nhận"
+                        // (yc tester 2026-05-06).
+                        if (r.status !== "cancelled") {
+                          await eventStorage.updateRegistrationStatusAsync(r.id, "cancelled");
+                        }
                         onRefresh();
                       }}
                     />
@@ -1043,7 +1085,7 @@ function RegistrantsTab({
                       >
                         👁 Chi tiết
                       </button>
-                      {!r.ticketCode && (
+                      {!r.ticketCode && r.status !== "cancelled" && r.paymentProof?.status !== "rejected" && (
                         <button
                           onClick={() => handleIssueTicket(r)}
                           style={smallBtn(THEME.primary, "#fff")}
@@ -1064,7 +1106,8 @@ function RegistrantsTab({
                     </div>
                   </td>
                 </tr>
-              ))}
+                );
+              })}
             </tbody>
           </table>
         </div>
@@ -1586,7 +1629,7 @@ async function exportRegistrationsToExcel(
         rowValues.push(sel ? (sel.qty > 1 ? `✓ x${sel.qty}` : "✓") : "");
       });
     });
-    rowValues.push(formatVND(r.totalAmount ?? 0) + "đ");
+    rowValues.push(formatVND(computeRegistrationTotal(r, event)) + "đ");
     // Payment proofs: lấy proofs array (hoặc legacy single proof)
     const proofs = r.paymentProofs ?? (r.paymentProof ? [r.paymentProof] : []);
     rowValues.push(proofs.map((p) => p.imageUrl).join("\n"));
