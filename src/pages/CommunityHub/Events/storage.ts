@@ -100,9 +100,15 @@ function unwrap<T>(res: any): T {
 /** Normalize event từ API — parse JSON string fields nếu BE trả string thay vì object */
 export function normalizeEvent(e: any): EventEntity {
   if (!e) return e;
+  // BE đôi khi double-stringify field JSON (vd `selectedAddOns` là
+  // `"\"[{...}]\""` — JSON.stringify áp 2 lần). parseJson lặp tới khi
+  // không còn là string hoặc parse fail.
   const parseJson = (v: any) => {
-    if (typeof v === "string") try { return JSON.parse(v); } catch { return v; }
-    return v;
+    let cur = v;
+    for (let i = 0; i < 3 && typeof cur === "string"; i++) {
+      try { cur = JSON.parse(cur); } catch { return cur; }
+    }
+    return cur;
   };
   // Một số field BE đôi khi trả về string không parse được hoặc null → ép về [] để
   // FE map/find không crash. Trước đây registrants tab bị "Đã xảy ra lỗi" do
@@ -151,9 +157,13 @@ export function normalizeEvent(e: any): EventEntity {
 
 function normalizeReg(r: any): EventRegistration {
   if (!r) return r;
+  // Double-stringify guard — xem comment ở normalizeEvent.parseJson
   const parseJson = (v: any) => {
-    if (typeof v === "string") try { return JSON.parse(v); } catch { return v; }
-    return v;
+    let cur = v;
+    for (let i = 0; i < 3 && typeof cur === "string"; i++) {
+      try { cur = JSON.parse(cur); } catch { return cur; }
+    }
+    return cur;
   };
   const parseJsonArr = (v: any): any[] => {
     const parsed = parseJson(v);
