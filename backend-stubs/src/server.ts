@@ -11,6 +11,7 @@ import usageRouter from "./routes/usage.js";
 import adminRouter from "./routes/admin.js";
 import zaloRouter from "./routes/zalo.js";
 import perStudentBreakdownRouter from "./routes/per-student-breakdown.js";
+import { startSubscriptionCron } from "./jobs/subscription-cron.js";
 
 const app = express();
 
@@ -37,6 +38,8 @@ app.post("/webhook/vnpay", (await import("./routes/subscription.js")).vnpayWebho
 app.post("/webhook/zalo", (await import("./routes/zalo.js")).zaloWebhookHandler);
 
 app.use(errorHandler);
+
+startSubscriptionCron();
 
 app.listen(config.port, () => {
   console.log(`\n🚀 MentorHub BE stubs listening on http://localhost:${config.port}`);
