@@ -114,7 +114,7 @@
     "slate-html-serializer": "^0.8.13",
     "slate-hyperscript": "^0.77.0",
     "slate-react": "^0.91.3",
-    "swiper": "^7.4.1",
+    "swiper": "^11.2.10",
     "text-mask-addons": "^3.8.0",
     "universal-cookie": "^4.0.4",
     "use-debounce": "^7.0.1",
