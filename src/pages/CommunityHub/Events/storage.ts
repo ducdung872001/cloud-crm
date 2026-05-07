@@ -154,6 +154,16 @@ export function normalizeEvent(e: any): EventEntity {
     requirePaymentProof: Boolean(e.requirePaymentProof ?? e.require_payment_proof ?? false),
     // BE-2 yc tester 2026-05-06: count slot tử cloud-market public response
     activeRegistrations: e.activeRegistrations ?? e.active_registrations,
+    // Yc 7/5 bug 2: contentBlocks BE trả JSON string giống tags/dynamicFields.
+    // Check `event.contentBlocks?.length > 0` ở ShareEventPage match độ dài
+    // chuỗi (truthy) → nhánh `<ContentBlocksRenderer blocks={string}/>` được
+    // chọn nhưng renderer iterate ký tự rỗng → "Nội dung chi tiết" trống dù
+    // API có data. Parse về array để fallback HTML hoạt động đúng.
+    contentBlocks: parseJsonArr(e.contentBlocks ?? e.content_blocks),
+    // registrationFlows cũng dạng JSON array — check `?.length` false-positive
+    // sẽ bật RegistrationFlowSwitcher với shape sai.
+    registrationFlows: parseJsonArr(e.registrationFlows ?? e.registration_flows),
+    isTest: Boolean(e.isTest ?? e.is_test ?? false),
   } as EventEntity;
 }
 

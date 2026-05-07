@@ -1,5 +1,6 @@
 // Shared constants + helpers cho module Events.
 
+import { getCookie } from "reborn-util";
 import type {
   EventEntity,
   EventRegistration,
@@ -7,6 +8,21 @@ import type {
   RegistrationStatus,
 } from "./types";
 import { formatVNDateTime, formatVNDate } from "./datetime";
+
+/** Yc 7/5: chỉ admin đã login mới được nhìn thấy event đánh dấu isTest trên
+ *  trang public (/crm/events, /crm/events/:slug). Visitor chưa login → false.
+ *  Logged-in non-admin → false. Logged-in admin (user.root === "1") → true. */
+export function isLoggedInAdmin(): boolean {
+  if (typeof window === "undefined") return false;
+  let token = "";
+  try { token = getCookie("token") || ""; } catch { /* ignore */ }
+  if (!token) return false;
+  try {
+    return window.localStorage.getItem("user.root") === "1";
+  } catch {
+    return false;
+  }
+}
 
 export const THEME = {
   primary: "#00C9A7",

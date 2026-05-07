@@ -31,10 +31,9 @@ export default function EventListPage() {
   const [regCounts, setRegCounts] = useState<Record<string, number>>({});
   const [isPreview, setIsPreview] = useState(false);
   const [showSettings, setShowSettings] = useState(false);
-  const [settings, setSettings] = useState<PortalSettings>(() => portalSettings.get());
+  const [settings, setSettings] = useState<PortalSettings>({});
   const [bannerUploading, setBannerUploading] = useState(false);
 
-  // Sync settings từ BE on mount — yc tester 2026-05-06 cross-browser sync
   useEffect(() => {
     let alive = true;
     portalSettings.getAsync().then((s) => { if (alive) setSettings(s); });
@@ -227,13 +226,17 @@ export default function EventListPage() {
             setBannerUploading(true);
             uploadDocumentFormData(
               file,
-              (data: any) => {
+              async (data: any) => {
                 const url = data?.fileUrl ?? data?.url;
                 if (url) {
                   const next = { ...settings, bannerImageUrl: url };
-                  portalSettings.set(next);
                   setSettings(next);
-                  showToast("Đã cập nhật banner", "success");
+                  // Yc 7/5 bug 1: await BE upsert để báo đúng trạng thái sync
+                  // cross-device — trước đây fire-and-forget nên admin thấy
+                  // toast success nhưng máy khác vẫn lấy banner cũ khi BE fail.
+                  const r = await portalSettings.setAsync(next);
+                  if (r.ok) showToast("Đã cập nhật banner — đồng bộ tự động", "success");
+                  else showToast(r.error ?? "Banner chưa lưu được lên máy chủ", "error");
                 } else {
                   showToast("Upload thành công nhưng không nhận được URL", "error");
                 }
@@ -245,14 +248,16 @@ export default function EventListPage() {
               },
             );
           }}
-          onChange={(patch) => {
+          onChange={async (patch) => {
             const next = { ...settings, ...patch };
-            portalSettings.set(next);
             setSettings(next);
+            const r = await portalSettings.setAsync(next);
+            if (!r.ok) showToast(r.error ?? "Chưa lưu được cài đặt lên máy chủ", "error");
           }}
-          onClear={() => {
-            portalSettings.set({});
+          onClear={async () => {
             setSettings({});
+            const r = await portalSettings.setAsync({});
+            if (!r.ok) showToast(r.error ?? "Chưa lưu được cài đặt lên máy chủ", "error");
           }}
           onClose={() => setShowSettings(false)}
         />
@@ -584,7 +589,7 @@ function PortalSettingsModal({
           <button onClick={onClose} style={{ border: 0, background: "transparent", fontSize: 18, cursor: "pointer" }}>✕</button>
         </div>
         <p style={{ fontSize: 12, color: THEME.textMuted, margin: "0 0 14px" }}>
-          Cấu hình hiển thị trang public <code>/crm/events</code>. Lưu cục bộ trên trình duyệt theo tenant — khi BE hỗ trợ tenant settings sẽ đồng bộ tự động.
+          Cấu hình hiển thị trang public <code>/crm/events</code>. Đồng bộ tự động qua máy chủ theo tenant — admin máy khác chỉ cần reload trang là thấy thay đổi.
         </p>
 
         <div style={{ marginBottom: 14 }}>

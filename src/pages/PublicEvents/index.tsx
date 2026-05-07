@@ -11,6 +11,7 @@ import type { EventEntity } from "@/pages/CommunityHub/Events/types";
 import { normalizeEvent } from "@/pages/CommunityHub/Events/storage";
 import { formatVNDate, formatVNTime } from "@/pages/CommunityHub/Events/datetime";
 import { portalSettings, type PortalSettings } from "@/pages/CommunityHub/Events/portalSettings";
+import { isLoggedInAdmin } from "@/pages/CommunityHub/Events/shared";
 import "./index.scss";
 
 // ── Theme (đồng bộ ShareEventPage) ─────────────────────────────────────────
@@ -277,8 +278,14 @@ export default function PublicEventsPage() {
           // crash ở gallery.map vì .slice trên string trả về string (không có .map).
           const items: EventEntity[] = (Array.isArray(raw) ? raw : []).map(normalizeEvent);
           // Chỉ giữ published + ongoing (không show draft/ended/cancelled cho public)
-          // Yc 5/5: ẩn luôn các sự kiện đánh dấu isTest dù đã published.
-          const visible = items.filter(e => (e.status === "published" || e.status === "ongoing") && !e.isTest);
+          // Yc 7/5: isTest events chỉ admin đã login mới thấy. Visitor / user
+          // thường không được render (BE vẫn trả vì /public/list không phân
+          // biệt được caller, nên FE phải tự lọc dựa vào token + user.root).
+          const canSeeTestEvents = isLoggedInAdmin();
+          const visible = items.filter(e =>
+            (e.status === "published" || e.status === "ongoing") &&
+            (!e.isTest || canSeeTestEvents),
+          );
           setEvents(visible);
         } else {
           setError(res?.message ?? "Không thể tải danh sách sự kiện");
@@ -350,16 +357,12 @@ export default function PublicEventsPage() {
   // ── Decide layout density: few (<=3 visible) vs many (>=4) ──
   const layoutDensity: "few" | "many" = filtered.length <= 3 ? "few" : "many";
 
-  // ── Banner config (per-tenant) — yc tester 2026-05-06: fetch từ BE để
-  //    sync cross-browser. LS làm cache cho first paint nhanh, sau đó refresh
-  //    từ /community-hub/portal-config/public.
-  const [settings, setSettings] = useState<PortalSettings>(() => portalSettings.get());
+  // ── Banner config (per-tenant) — fetch từ BE qua /community-hub/portal-config.
+  const [settings, setSettings] = useState<PortalSettings>({});
   useEffect(() => {
     let alive = true;
     portalSettings.getAsync().then((s) => { if (alive) setSettings(s); });
-    const onStorage = () => { if (alive) setSettings(portalSettings.get()); };
-    window.addEventListener("storage", onStorage);
-    return () => { alive = false; window.removeEventListener("storage", onStorage); };
+    return () => { alive = false; };
   }, []);
 
   return (

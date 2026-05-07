@@ -17,6 +17,7 @@ import { formatVNDateTime } from "@/pages/CommunityHub/Events/datetime";
 import EventComments from "@/pages/CommunityHub/Events/components/EventComments";
 import ContentBlocksRenderer from "@/pages/CommunityHub/Events/components/ContentBlocksRenderer";
 import RegistrationFlowSwitcher, { type FlowReadyState } from "@/pages/CommunityHub/Events/components/RegistrationFlowSwitcher";
+import { isLoggedInAdmin } from "@/pages/CommunityHub/Events/shared";
 
 // Set SEO meta cho trang detail
 function setEventSeo(e: EventEntity) {
@@ -107,8 +108,10 @@ export default function ShareEventPage() {
     }
     (async () => {
       const e = await eventStorage.getEventBySlugAsync(slug);
-      // Yc 5/5: ẩn event isTest khỏi public (kèm draft/cancelled như cũ)
-      if (!e || (e.status !== "published" && e.status !== "ongoing") || e.isTest) {
+      // Yc 7/5: isTest event chỉ admin đã login mới mở được trang detail.
+      // Visitor / user thường truy cập trực tiếp slug → 404 như draft/cancelled.
+      const canSeeTest = isLoggedInAdmin();
+      if (!e || (e.status !== "published" && e.status !== "ongoing") || (e.isTest && !canSeeTest)) {
         setNotFound(true);
       } else {
         setEvent(e);

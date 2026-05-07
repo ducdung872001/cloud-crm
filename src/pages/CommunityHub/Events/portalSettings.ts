@@ -1,39 +1,10 @@
-// Settings cho portal sự kiện public (/crm/events) — banner ảnh, ...
-//
-// Yc tester 2026-05-06: trước đây chỉ lưu localStorage theo hostname → admin
-// sửa banner máy A, máy B/admin khác không thấy. BE-1 đã thêm endpoint
-// `/market/community-hub/portal-config/{public,upsert}` ở cloud-market-master
-// → swap sang API-first, giữ LS làm cache (đọc nhanh khi load page +
-// fallback offline).
+// Portal config cho trang public /crm/events — banner ảnh, link click, ...
+// Single source of truth: BE `/market/community-hub/portal-config` (admin POST
+// upsert, anonymous GET đọc theo Hostname). Không cache LS — gọi API như mọi
+// chức năng khác.
 
-import EventService from "services/EventService";
 import { apiPost, apiGet } from "services/apiHelper";
 import { urlsApi } from "configs/urls";
-
-const KEY_PREFIX = "community-hub:events-portal:";
-
-function tenantKey(): string {
-  if (typeof window === "undefined") return "default";
-  const host = window.location.hostname || "default";
-  return host;
-}
-
-function readJson<T>(key: string): T | null {
-  try {
-    const raw = localStorage.getItem(`${KEY_PREFIX}${tenantKey()}:${key}`);
-    return raw ? (JSON.parse(raw) as T) : null;
-  } catch {
-    return null;
-  }
-}
-
-function writeJson<T>(key: string, val: T | null): void {
-  try {
-    const k = `${KEY_PREFIX}${tenantKey()}:${key}`;
-    if (val == null) localStorage.removeItem(k);
-    else localStorage.setItem(k, JSON.stringify(val));
-  } catch { /* ignore quota errors */ }
-}
 
 export interface PortalSettings {
   /** URL ảnh banner hiển thị đầu trang /crm/events. Để trống → dùng hero
@@ -51,10 +22,7 @@ function isApiOk(res: any): boolean {
   return false;
 }
 
-/**
- * Parse `config` JSON string từ BE response thành PortalSettings.
- * BE schema loose — FE tự define key.
- */
+/** Parse `config` JSON string từ BE response thành PortalSettings. */
 function parseConfig(raw: any): PortalSettings {
   if (!raw) return {};
   const cfg = raw.config ?? raw;
@@ -66,38 +34,26 @@ function parseConfig(raw: any): PortalSettings {
 }
 
 export const portalSettings = {
-  /** Đọc từ LS (sync, dùng cho first paint). Caller nên gọi getAsync để sync với BE. */
-  get(): PortalSettings {
-    return readJson<PortalSettings>("settings") ?? {};
-  },
-
-  /** Set local + push lên BE (best-effort, fail vẫn giữ LS). */
-  set(s: PortalSettings): void {
-    writeJson("settings", s);
-    // Fire-and-forget upsert — admin context (cần JWT). Public page không
-    // gọi set(), chỉ admin EventListPage.
-    apiPost(urlsApi.communityHubPortalConfig.upsert, { config: JSON.stringify(s) })
-      .catch((err) => console.warn("[portalSettings] BE upsert fail, LS giữ làm cache:", err));
-  },
-
-  patch(p: Partial<PortalSettings>): void {
-    const next = { ...this.get(), ...p };
-    this.set(next);
-  },
-
-  /**
-   * Fetch BE → cache LS → return. Public page (anonymous) gọi để hiển thị
-   * banner mới nhất từ BE. Fail → fallback LS (đỡ trống).
-   */
+  /** Đọc config tenant hiện tại từ BE. */
   async getAsync(): Promise<PortalSettings> {
     try {
       const res = await apiGet(urlsApi.communityHubPortalConfig.getPublic, {});
-      if (isApiOk(res)) {
-        const parsed = parseConfig(res?.result ?? res);
-        writeJson("settings", parsed);
-        return parsed;
-      }
-    } catch { /* fallback LS */ }
-    return this.get();
+      if (isApiOk(res)) return parseConfig(res?.result ?? res);
+    } catch { /* ignore */ }
+    return {};
+  },
+
+  /** Upsert config tenant (admin only). Trả ok/error để UI surface toast. */
+  async setAsync(s: PortalSettings): Promise<{ ok: boolean; error?: string }> {
+    try {
+      const res = await apiPost(urlsApi.communityHubPortalConfig.upsert, {
+        config: JSON.stringify(s),
+      });
+      if (isApiOk(res)) return { ok: true };
+      const errMsg = (res && (res.error || res.message)) || "Máy chủ từ chối lưu cấu hình portal";
+      return { ok: false, error: String(errMsg) };
+    } catch {
+      return { ok: false, error: "Không kết nối được máy chủ, vui lòng thử lại" };
+    }
   },
 };
