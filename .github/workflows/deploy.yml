@@ -17,4 +17,4 @@ jobs:
           username: ${{ secrets.SERVER_USER }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
-            sudo su - reborn -c "bash /home/reborn/reborn-devops/deployment/rox/deploy_rox.sh hub"
+            sudo su - reborn -c "bash /home/reborn/reborn-devops/deployment/rox/deploy.sh hub"
