@@ -7,7 +7,7 @@ import type {
   Course, SessionEntity, PreClassChecklist, SentReminder,
   MentorOnboardingState, CustomFieldDefinition, CustomFieldValue,
   PromptTemplateOverride, CreditWallet, CreditTransaction, CreditRule,
-  ZoomPoolAccount, ZoomSlot, ZoomBooking,
+  ZoomPoolAccount, ZoomSlot, ZoomBooking, ZoomBorrowRequest,
   Material, MaterialAccessPolicy, EmbedWhitelistEntry, PublicMentorProfile,
   ReferralLink, ReferralAttribution, CommissionRule,
 } from "./types.js";
@@ -37,6 +37,7 @@ export const db = {
   zoomPoolAccounts: new Map<string, ZoomPoolAccount>(), // keyed by id
   zoomSlots: new Map<string, ZoomSlot>(),               // keyed by id
   zoomBookings: new Map<string, ZoomBooking>(),
+  zoomBorrowRequests: new Map<string, ZoomBorrowRequest>(),
 
   // Phase 7 — content + marketing + analytics
   materials: new Map<string, Material>(),
@@ -198,6 +199,42 @@ db.creditRules.set("TENANT-MT-001", {
   updatedBy: "system",
 });
 
+// Seed wallet + rules cho MT-002 (peer-borrow flow cần wallet đủ credit)
+db.creditWallets.set("TENANT-MT-002", {
+  tenantId: "TENANT-MT-002",
+  balance: 200,
+  earnedThisPeriod: 200,
+  spentThisPeriod: 0,
+  rules: { monthlyGrant: 200, swapRatePct: 0, rolloverEnabled: false, rolloverCap: 0 },
+  updatedAt: new Date().toISOString(),
+});
+db.creditTransactions.push({
+  id: "CTX-seed02",
+  tenantId: "TENANT-MT-002",
+  type: "grant",
+  amount: 200,
+  balanceAfter: 200,
+  reason: "seed_initial_grant",
+  createdBy: "system",
+  createdAt: new Date().toISOString(),
+});
+db.creditRules.set("TENANT-MT-002", {
+  tenantId: "TENANT-MT-002",
+  monthlyGrant: 200,
+  swapRatePct: 0,
+  rolloverEnabled: true,
+  rolloverCap: 100,
+  earnRules: [
+    { source: "refer_mentor", creditPerEvent: 100, enabled: true },
+    { source: "contribute_pool", creditPerEvent: 30, enabled: true },
+    { source: "complete_course", creditPerEvent: 50, enabled: true },
+    { source: "community_review", creditPerEvent: 10, enabled: true },
+  ],
+  tierDiscountPct: 10,
+  updatedAt: new Date().toISOString(),
+  updatedBy: "system",
+});
+
 // 3 pool accounts: 1 platform licensed + 2 mentor seed
 db.zoomPoolAccounts.set("ZA-001", {
   id: "ZA-001",
@@ -291,6 +328,33 @@ db.mentorProfiles.set("MT-001", {
 });
 db.mentorProfileSlugIndex.set("nguyen-trong-khoa", "MT-001");
 
+// Public profile MT-002 — đối ứng peer-borrow
+db.mentorProfiles.set("MT-002", {
+  mentorId: "MT-002",
+  tenantId: "TENANT-MT-002",
+  slug: "le-thi-mai",
+  name: "Lê Thị Mai",
+  short: "LM",
+  title: "Senior Product Designer",
+  avatarBg: "#7C3AED",
+  tags: ["UX", "Product Design", "Figma"],
+  verified: true,
+  coursesCount: 2,
+  studentsCount: 480,
+  nps: 4.78,
+  headline: "Product Designer 8 năm — chuyên thiết kế hệ thống design system enterprise",
+  bio: "Mentor design system + workshop UX. Sở hữu Zoom Pro, sẵn lòng chia sẻ slot với mentor khác.",
+  expertise: ["UX", "Product Design", "Figma", "Design System", "Workshop Facilitation"],
+  yearsExperience: 8,
+  links: [{ type: "linkedin", url: "https://linkedin.com/in/le-thi-mai" }],
+  publicCourseIds: [],
+  testimonials: [],
+  published: true,
+  publishedAt: new Date(now.getTime() - 30 * 86400_000).toISOString(),
+  updatedAt: new Date().toISOString(),
+});
+db.mentorProfileSlugIndex.set("le-thi-mai", "MT-002");
+
 // Default commission rule (platform-level)
 db.commissionRules.set("PLATFORM", {
   tenantId: "PLATFORM",
@@ -328,6 +392,27 @@ db.materials.set("MAT-001", {
   version: 1,
   status: "active",
   createdAt: new Date(now.getTime() - 5 * 86400_000).toISOString(),
+});
+
+// Sample borrow request: MT-002 (Mai) xin mượn Zoom của MT-001 (Khoa) → MT-001 inbox
+const sampleBorrowStart = new Date(now.getTime() + 4 * 86400_000);
+sampleBorrowStart.setUTCHours(15, 0, 0, 0);
+const sampleBorrowEnd = new Date(sampleBorrowStart.getTime() + 90 * 60_000);
+db.zoomBorrowRequests.set("BRQ-sample01", {
+  id: "BRQ-sample01",
+  fromTenantId: "TENANT-MT-002",
+  fromMentorId: "MT-002",
+  toTenantId: "TENANT-MT-001",
+  toMentorId: "MT-001",
+  proposedStartsAt: sampleBorrowStart.toISOString(),
+  proposedEndsAt: sampleBorrowEnd.toISOString(),
+  courseTitle: "UX Workshop — Design System Onboarding",
+  reason: "Em có 1 buổi workshop UX cho team enterprise client, cần Zoom licensed (>40 phút). Anh Khoa cho mượn slot này em trả 90 credit nhé.",
+  offeredCredits: 90,
+  message: "Cảm ơn anh trước!",
+  status: "pending",
+  expiresAt: new Date(now.getTime() + 22 * 3_600_000).toISOString(),
+  createdAt: new Date(now.getTime() - 2 * 3_600_000).toISOString(),
 });
 
 // Seed một số free slot trong 7 ngày tới (mỗi account ~ 4 slot/ngày)

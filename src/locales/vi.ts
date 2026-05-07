@@ -84,6 +84,10 @@ const vi = {
     mhRevenue: "Doanh thu",
     mhMarketing: "Marketing & Chia sẻ",
     mhSettings: "Cài đặt & Tích hợp",
+    mhZoomPoolGroup: "Zoom Pool",
+    mhZoomPoolBrowse: "Tìm & mượn Zoom",
+    mhZoomPoolBookings: "Đặt lịch của tôi",
+    mhWallet: "Ví credit",
 
     // [CH] Community Hub menu items
     chCheckin: "Check-in / Cửa vào",

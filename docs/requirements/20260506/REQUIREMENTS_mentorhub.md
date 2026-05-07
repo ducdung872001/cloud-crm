@@ -82,6 +82,8 @@
 
 ### F4 — Zoom credit pool (USP — cấu hình được toàn bộ)
 
+> **Chi tiết flow & marketing pitch:** xem [URD_ZOOM_POOL.md](./URD_ZOOM_POOL.md) — bổ sung 2 mô hình (auto-pool + peer-borrow), state machine, screen mapping, target metric.
+
 - **F4.1** **Wallet credit per mentor**: số dư credit, lịch sử cộng/trừ, soft-limit cảnh báo.
 - **F4.2** **Engine cấu hình rule** (admin SaaS đặt — không hard-code):
   - **Conversion rate**: 1 phút meeting = X credit (theo loại tài khoản basic/pro/business/enterprise).
@@ -93,6 +95,7 @@
 - **F4.4** **Booking flow**: mentor đặt buổi → hệ thống tự chọn tài khoản Zoom phù hợp (ưu tiên của mentor đó, fallback sang pool) → trừ credit.
 - **F4.5** **Audit log mọi giao dịch credit** (compliance).
 - **F4.6** **Onboard pool ngoài**: invite cộng đồng WIT (và tương lai mở rộng) — họ connect Zoom rảnh → earn credit hoặc tiền.
+- **F4.7** **Peer-to-peer borrow request** (mô hình bổ sung): mentor C đề xuất giờ + credit gửi mentor A; A approve/decline/counter; approve auto book + auto earn 100%. State machine + 24h TTL — chi tiết xem URD.
 
 ### F5 — Tích hợp Zalo OA (2 chiều)
 

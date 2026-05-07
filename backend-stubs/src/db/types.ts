@@ -418,6 +418,66 @@ export interface ZoomBooking {
   cancelledAt?: string;
   cancelReason?: string;
   createdAt: string;
+  /** Nếu booking sinh từ borrow request (peer-to-peer flow) */
+  fromBorrowRequestId?: string;
+}
+
+/**
+ * Peer-to-peer borrow request — flow thoả thuận khi mentor C muốn dùng Zoom của A.
+ *
+ * 2 cách kích hoạt:
+ *   1. C chọn slot từ pool (slotId set) → A "pre-approve" hoặc còn dispatchable
+ *   2. C đề xuất giờ bất kỳ (slotId null) — A có thể accept (BE tự generate slot
+ *      ad-hoc), counter-offer giờ khác/credit khác, hoặc decline
+ *
+ * State machine:
+ *   pending --A approve--> approved --auto book--> booked (link bookingId)
+ *   pending --A decline--> declined
+ *   pending --A counter--> pending (countered=true, C accept/reject)
+ *   pending --24h TTL--> expired
+ */
+export type BorrowRequestStatus =
+  | "pending"
+  | "approved"
+  | "declined"
+  | "expired"
+  | "booked"
+  | "cancelled";
+
+export interface ZoomBorrowRequest {
+  id: string;
+  /** Bên xin mượn (mentor C) */
+  fromTenantId: string;
+  fromMentorId: string;
+  /** Bên cho mượn (mentor A) */
+  toTenantId: string;
+  toMentorId: string;
+  /** Pool account của A (nếu A đã publish lên pool) */
+  accountId?: string;
+  /** Slot cụ thể nếu C chọn từ pool, null nếu C đề xuất giờ tự do */
+  slotId?: string;
+  proposedStartsAt: string;
+  proposedEndsAt: string;
+  /** Lý do/khoá học C dạy */
+  courseTitle?: string;
+  reason?: string;
+  /** Credit C đề xuất trả ban đầu */
+  offeredCredits: number;
+  /** A counter-offer credit khác (vẫn pending chờ C confirm) */
+  counterCredits?: number;
+  /** A counter-offer giờ khác */
+  counterStartsAt?: string;
+  counterEndsAt?: string;
+  /** Note 2 chiều */
+  message?: string;
+  responseMessage?: string;
+  status: BorrowRequestStatus;
+  /** TTL — auto expire sau 24h nếu A không trả lời */
+  expiresAt: string;
+  createdAt: string;
+  respondedAt?: string;
+  /** Set khi approve → auto-book */
+  bookingId?: string;
 }
 
 export interface PromptTemplateOverride {

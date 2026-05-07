@@ -1,0 +1,54 @@
+// [MH] Wallet page styles
+.mh-wallet-kpi { background: var(--mh-teal-d); color: #fff; .mh__kpi-label, .mh__kpi-delta { color: rgba(255,255,255,.7); } }
+
+.mh-wallet-rules {
+  ul {
+    list-style: none;
+    padding: 0;
+    margin: 12px 0 0;
+    li {
+      padding: 8px 0;
+      border-bottom: 1px solid var(--mh-line);
+      font-size: 14px;
+      &:last-child { border-bottom: none; }
+    }
+  }
+}
+
+.mh-wallet-table {
+  display: grid;
+  gap: 8px;
+}
+.mh-wallet-row {
+  display: grid;
+  grid-template-columns: 110px 1fr 120px 120px;
+  align-items: center;
+  gap: 16px;
+  padding: 12px 16px;
+  background: #fff;
+  border: 1px solid var(--mh-line);
+  border-radius: 10px;
+
+  &__main {
+    div { font-size: 14px; color: var(--mh-ink); }
+    small { font-family: 'Geist Mono', monospace; font-size: 11px; color: var(--mh-ink-soft); }
+  }
+  &__amount {
+    font-family: 'Fraunces', serif;
+    font-size: 20px;
+    text-align: right;
+    color: var(--mh-green);
+    &.is-neg { color: var(--mh-red); }
+  }
+  &__balance {
+    font-family: 'Geist Mono', monospace;
+    font-size: 12px;
+    color: var(--mh-ink-soft);
+    text-align: right;
+  }
+
+  @media (max-width: 720px) {
+    grid-template-columns: 1fr;
+    gap: 4px;
+  }
+}

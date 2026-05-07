@@ -213,6 +213,9 @@ const MHMarketing = React.lazy(() => import("@/pages/MentorHub/Marketing"));
 const MHCalendar = React.lazy(() => import("@/pages/MentorHub/Calendar"));
 const MHSettings = React.lazy(() => import("@/pages/MentorHub/Settings"));
 const MHAccount = React.lazy(() => import("@/pages/MentorHub/Account"));
+const MHZoomPool = React.lazy(() => import("@/pages/MentorHub/ZoomPool"));
+const MHZoomPoolBookings = React.lazy(() => import("@/pages/MentorHub/ZoomPool/Bookings"));
+const MHWallet = React.lazy(() => import("@/pages/MentorHub/Wallet"));
 
 // [Admin] Reborn internal — platform monitoring
 const AdminUsage = React.lazy(() => import("@/pages/Admin/Usage"));
@@ -297,6 +300,17 @@ export const menu: IMenuItem[] = [
     ],
   },
   {
+    title: "mhZoomPoolGroup",
+    path: "/mh/zoom-pool",
+    icon: <Icon name="EventMenu" />,
+    code: "",
+    children: [
+      { title: "mhZoomPoolBrowse", path: "/mh/zoom-pool", icon: <Icon name="EventMenu" />, code: "" },
+      { title: "mhZoomPoolBookings", path: "/mh/zoom-pool/bookings", icon: <Icon name="OrderListMenu" />, code: "" },
+      { title: "mhWallet", path: "/mh/wallet", icon: <Icon name="FinanceInfoMenu" />, code: "" },
+    ],
+  },
+  {
     title: "mhSettings",
     path: "/mh/settings",
     icon: <Icon name="SettingsMenu" />,
@@ -324,6 +338,9 @@ export const routes: IRouter[] = [
   { path: "/mh/calendar", component: <MHCalendar /> },
   { path: "/mh/settings", component: <MHSettings /> },
   { path: "/mh/account", component: <MHAccount /> },
+  { path: "/mh/zoom-pool", component: <MHZoomPool /> },
+  { path: "/mh/zoom-pool/bookings", component: <MHZoomPoolBookings /> },
+  { path: "/mh/wallet", component: <MHWallet /> },
 
   // [Admin] Reborn internal routes
   { path: "/admin/usage", component: <AdminUsage /> },
