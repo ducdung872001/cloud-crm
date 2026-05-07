@@ -17,6 +17,7 @@ Single source of truth cho 2 skill `/handoff-out-ms` và `/handoff-in-ms` của 
 
 | service | Repo BE | Mô tả gốc |
 |---|---|---|
+| `ai` | `ducdung872001/cloud-ai-master` (master) | (no profile yet — service mới #13 trong cluster) |
 | `billing` | `ducdung872001/cloud-billing-master` (master) | [SERVICE_PROFILE.txt](https://github.com/ducdung872001/cloud-billing-master/blob/master/docs/SERVICE_PROFILE.txt) |
 | `bpm` | `ducdung872001/bpm-core` **(branch: `cloud`)** | [README.md](https://github.com/ducdung872001/bpm-core/blob/cloud/README.md) |
 | `care` | `ducdung872001/cloud-care-master` | [MICROSERVICE_OVERVIEW.md](https://github.com/ducdung872001/cloud-care-master/blob/master/docs/MICROSERVICE_OVERVIEW.md) |
@@ -38,6 +39,15 @@ Single source of truth cho 2 skill `/handoff-out-ms` và `/handoff-in-ms` của 
 ## Scope chi tiết — chọn service nào?
 
 Trích từ overview docs của từng repo BE. Khi không chắc service nào, đọc kỹ "Scope chính" và "KHÔNG thuộc scope" của các candidate.
+
+### `ai`
+- **Mục đích chính**: Service AI cluster-level — abstracts mọi LLM provider + MCP host + prompt engineering + cost tracking + budget guard. Service thứ 13 trong cluster, mới register 2026-05-07.
+- **Scope chính**: Multi-provider gateway (Anthropic Claude / OpenAI / Groq / Gemini / DeepSeek / Whisper / Ollama local), per-tenant key store BYOK với encryption KMS, MCP host registry (Claude Code CLI as MCP), model registry với cost-per-token metadata, prompt template manager versioning, AI usage log + budget guard, telemetry circuit breaker, fallback chain provider, prompt caching.
+- **KHÔNG thuộc scope**: Domain orchestration cụ thể (lecture pipeline state machine có thể ở mentorhub-be hoặc cloud-ai tùy coupling); 3rd-party non-AI integration (Zoom OAuth, sInvoice, GHN, ZNS) → `integration`; subscription billing → `billing`.
+- **Mentorhub use case**: Post-class AI flow (Whisper transcribe + Claude summarize + per-student breakdown), Live Assistant in-class, MCP routing cho heavy/tool-use task, prompt manager UI quota.
+- **Entity/bảng key**: `ai_provider_key`, `mcp_host`, `mcp_event`, `ai_model_registry`, `prompt_template`, `ai_usage_log`, `ai_budget_per_tenant`.
+- **API base path**: `/ai/*`.
+- **Repo**: `ducdung872001/cloud-ai-master` (branch `master`). Notice: cluster register commit `45951dc` trên cloud-integration-master.
 
 ### `billing`
 - **Mục đích chính**: Quản lý tài chính nội bộ — dòng tiền, quỹ, công nợ, đối chiếu ngân hàng, hóa đơn điện tử.
