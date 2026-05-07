@@ -6,6 +6,7 @@ import type {
   ZoomConnection, MeetingNote, Subscription, Invoice, UsageLog, ZaloMapping,
   Course, SessionEntity, PreClassChecklist, SentReminder,
   MentorOnboardingState, CustomFieldDefinition, CustomFieldValue,
+  PromptTemplateOverride,
 } from "./types.js";
 
 export const db = {
@@ -24,6 +25,7 @@ export const db = {
   mentorOnboarding: new Map<string, MentorOnboardingState>(),    // keyed by mentorId
   customFieldDefs: new Map<string, CustomFieldDefinition>(),
   customFieldValues: [] as CustomFieldValue[],
+  promptOverrides: new Map<string, PromptTemplateOverride>(),  // keyed by id
 };
 
 // ── Seed mock data ─────────────────────────────────────────────────────────

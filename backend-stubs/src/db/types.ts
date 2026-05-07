@@ -169,6 +169,27 @@ export interface CustomFieldValue {
   updatedAt: string;
 }
 
+// ── Phase 5: prompt template override per tenant ────────────────────────────
+
+export interface PromptTemplateOverride {
+  id: string;
+  tenantId: string;
+  /** Match với prompt name ở registry (session-summary, per-student-breakdown, ...) */
+  name: string;
+  /** Version tự đặt cho override này — không trùng default v1/v2 */
+  version: string;
+  description: string;
+  cacheable: boolean;
+  system: string;
+  /** User template — string với placeholder `{{varName}}` */
+  userTemplate?: string;
+  /** Active = tenant này dùng override này thay default */
+  active: boolean;
+  createdAt: string;
+  updatedAt: string;
+  createdBy: string;     // mentorId
+}
+
 /** Credit pool theo tenant — D4 configurable rules. */
 export interface CreditWallet {
   tenantId: string;

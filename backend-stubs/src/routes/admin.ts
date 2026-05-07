@@ -4,6 +4,8 @@ import { db } from "../db/store.js";
 import { PLANS } from "./subscription.js";
 import { getQuota } from "../config/plans.js";
 import { mapLegacyPlanToTier } from "../middleware/quota.js";
+import { computeFinancialPnL } from "../services/financial-pnl.js";
+import { mcpStatus } from "../services/mcp-client.js";
 
 const router = Router();
 
@@ -85,6 +87,17 @@ router.get("/alerts", (_req, res) => {
   }
 
   res.json(alerts);
+});
+
+// GET /admin/financial/pnl?period=YYYY-MM
+router.get("/financial/pnl", (req, res) => {
+  const period = req.query.period as string | undefined;
+  res.json(computeFinancialPnL(period));
+});
+
+// GET /admin/mcp/status
+router.get("/mcp/status", (_req, res) => {
+  res.json(mcpStatus());
 });
 
 export default router;

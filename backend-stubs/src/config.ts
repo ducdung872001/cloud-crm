@@ -38,6 +38,15 @@ export const config = {
   cors: {
     origins: (process.env.CORS_ORIGINS ?? "http://localhost:4000,http://localhost:5173").split(","),
   },
+
+  mcp: {
+    /** HTTP endpoint của MCP host (Claude Code CLI exposed). Empty = MCP disabled. */
+    endpoint: process.env.MCP_ENDPOINT ?? "",
+    /** Auth token nếu MCP host yêu cầu */
+    token: process.env.MCP_TOKEN ?? "",
+    /** Timeout ms cho MCP request — heavy task cần dài hơn API */
+    timeoutMs: Number(process.env.MCP_TIMEOUT_MS ?? 120_000),
+  },
 };
 
 export const IS_MOCK = !config.anthropic.apiKey && !config.groq.apiKey;

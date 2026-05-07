@@ -14,6 +14,7 @@ import perStudentBreakdownRouter from "./routes/per-student-breakdown.js";
 import preClassRouter from "./routes/pre-class.js";
 import onboardingRouter from "./routes/onboarding.js";
 import customFieldsRouter from "./routes/custom-fields.js";
+import promptsRouter from "./routes/prompts.js";
 import { startSubscriptionCron } from "./jobs/subscription-cron.js";
 
 const app = express();
@@ -37,6 +38,7 @@ app.use(`${config.apiBase}/per-student-breakdown`, perStudentBreakdownRouter);
 app.use(`${config.apiBase}/pre-class`, preClassRouter);
 app.use(`${config.apiBase}/onboarding`, onboardingRouter);
 app.use(`${config.apiBase}/custom-fields`, customFieldsRouter);
+app.use(`${config.apiBase}/prompts`, promptsRouter);
 
 // Webhook routes (không có /api/v1 prefix — Zoom/VNPay gọi trực tiếp)
 app.post("/webhook/zoom", (await import("./routes/zoom.js")).zoomWebhookHandler);

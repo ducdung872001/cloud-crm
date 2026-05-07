@@ -1,5 +1,6 @@
 import { runLifecycleTick, drainLifecycleEvents } from "../services/subscription-lifecycle.js";
 import { runReminderTick, drainReminderEvents } from "../services/pre-class-reminder.js";
+import { checkMcpHealth, isMcpEnabled } from "../services/mcp-client.js";
 
 /**
  * Lifecycle cron — chạy mỗi 15 phút.
@@ -36,6 +37,7 @@ export function stopSubscriptionCron() {
 function tick() {
   try {
     const start = Date.now();
+    if (isMcpEnabled()) void checkMcpHealth(); // fire-and-forget, không block tick
     const lifecycle = runLifecycleTick();
     const reminder = runReminderTick();
     const lifecycleEvents = drainLifecycleEvents();
