@@ -81,6 +81,94 @@ export interface SessionEntity {
   createdAt: string;
 }
 
+// ── Phase 4 entities ────────────────────────────────────────────────────────
+
+export type ChecklistItemKey =
+  | "zoom_link_created"
+  | "payment_received"
+  | "invite_sent"
+  | "oa_optin"
+  | "talking_points_ready"
+  | "slide_uploaded";
+
+export interface PreClassChecklistItem {
+  key: ChecklistItemKey;
+  label: string;
+  done: boolean;
+  /** Khi auto-tick từ event nào (tracking) */
+  autoTickedBy?: "zoom_meeting_created" | "payment_webhook" | "invite_sent_event" | "manual";
+  doneAt?: string;
+  /** Số HV đã đạt (cho item check theo HV như payment_received, oa_optin) */
+  studentsDone?: number;
+  studentsTotal?: number;
+}
+
+export interface PreClassChecklist {
+  id: string;
+  tenantId: string;
+  sessionId: string;
+  courseId: string;
+  mentorId: string;
+  items: PreClassChecklistItem[];
+  /** Tỉ lệ hoàn thành 0..1 (cache, recompute khi update) */
+  progress: number;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export type ReminderTrigger = "D-3" | "D-1" | "H-2";
+
+export interface SentReminder {
+  id: string;
+  tenantId: string;
+  sessionId: string;
+  trigger: ReminderTrigger;
+  /** Đối tượng nhận: mentor hoặc tất cả students */
+  audience: "mentor" | "students" | "both";
+  sentAt: string;
+}
+
+export interface MentorOnboardingState {
+  mentorId: string;
+  tenantId: string;
+  /** Step status — ordered */
+  steps: {
+    zoom_connected: boolean;
+    zalo_connected: boolean;
+    first_course_created: boolean;
+    first_student_invited: boolean;
+    first_session_scheduled: boolean;
+  };
+  completedAt?: string;
+  updatedAt: string;
+}
+
+export interface CustomFieldDefinition {
+  id: string;
+  tenantId: string;
+  /** Entity nào mang field này: "student" | "course" */
+  scope: "student" | "course";
+  name: string;
+  /** snake_case key dùng làm DB column name khi BE port sang Postgres */
+  key: string;
+  type: "text" | "number" | "date" | "select" | "multi_select" | "boolean";
+  required: boolean;
+  options?: string[];   // cho type select / multi_select
+  description?: string;
+  createdAt: string;
+}
+
+export interface CustomFieldValue {
+  /** Composite: tenantId + entityType + entityId + fieldKey unique */
+  tenantId: string;
+  entityType: "student" | "course";
+  entityId: string;
+  fieldKey: string;
+  /** Stored as JSON string — BE port sang JSONB column */
+  value: string | number | boolean | string[] | null;
+  updatedAt: string;
+}
+
 /** Credit pool theo tenant — D4 configurable rules. */
 export interface CreditWallet {
   tenantId: string;

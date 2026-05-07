@@ -1,4 +1,5 @@
 import { runLifecycleTick, drainLifecycleEvents } from "../services/subscription-lifecycle.js";
+import { runReminderTick, drainReminderEvents } from "../services/pre-class-reminder.js";
 
 /**
  * Lifecycle cron — chạy mỗi 15 phút.
@@ -35,14 +36,20 @@ export function stopSubscriptionCron() {
 function tick() {
   try {
     const start = Date.now();
-    const result = runLifecycleTick();
-    const events = drainLifecycleEvents();
-    if (result.events > 0 || events.length > 0) {
-      console.log(`[cron] tick ${Date.now() - start}ms · processed=${result.events} · events=${events.length}`);
-      for (const ev of events) {
+    const lifecycle = runLifecycleTick();
+    const reminder = runReminderTick();
+    const lifecycleEvents = drainLifecycleEvents();
+    const reminderEvents = drainReminderEvents();
+    const totalEvents = lifecycleEvents.length + reminderEvents.length;
+    if (lifecycle.events > 0 || reminder.events > 0 || totalEvents > 0) {
+      console.log(`[cron] tick ${Date.now() - start}ms · lifecycle=${lifecycle.events} · reminder=${reminder.events} · events=${totalEvents}`);
+      for (const ev of lifecycleEvents) {
         console.log(`[cron]   - ${ev.type} mentor=${ev.mentorId}${ev.invoiceId ? ` invoice=${ev.invoiceId}` : ""}${ev.days != null ? ` days=${ev.days}` : ""}`);
-        // TODO: POST tới notification service (reborn-notihub) — handoff Phase 3
       }
+      for (const ev of reminderEvents) {
+        console.log(`[cron]   - ${ev.type} ${ev.trigger} session=${ev.sessionId} audience=${ev.audience} mins=${ev.minutesUntilStart}`);
+      }
+      // TODO: POST sang notification service (reborn-notihub) — sẽ handoff Phase 4
     }
   } catch (e) {
     console.error("[cron] tick failed", e);

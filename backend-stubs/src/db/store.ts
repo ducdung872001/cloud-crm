@@ -4,6 +4,8 @@
  */
 import type {
   ZoomConnection, MeetingNote, Subscription, Invoice, UsageLog, ZaloMapping,
+  Course, SessionEntity, PreClassChecklist, SentReminder,
+  MentorOnboardingState, CustomFieldDefinition, CustomFieldValue,
 } from "./types.js";
 
 export const db = {
@@ -12,7 +14,16 @@ export const db = {
   subscriptions: new Map<string, Subscription>(),
   invoices: new Map<string, Invoice>(),
   usageLogs: [] as UsageLog[],
-  zaloMappings: new Map<string, ZaloMapping>(), // mentorId → zalo user
+  zaloMappings: new Map<string, ZaloMapping>(),
+
+  // Phase 4 entities
+  courses: new Map<string, Course>(),
+  sessions: new Map<string, SessionEntity>(),
+  preClassChecklists: new Map<string, PreClassChecklist>(),     // keyed by sessionId
+  sentReminders: [] as SentReminder[],
+  mentorOnboarding: new Map<string, MentorOnboardingState>(),    // keyed by mentorId
+  customFieldDefs: new Map<string, CustomFieldDefinition>(),
+  customFieldValues: [] as CustomFieldValue[],
 };
 
 // ── Seed mock data ─────────────────────────────────────────────────────────
@@ -75,4 +86,52 @@ db.meetingNotes.set("MN-2026-001", {
   actionItems: ["Implement Eureka, deadline 26/04", "Đọc trước: Istio Architecture"],
   recordingUrl: null,
   createdAt: new Date().toISOString(),
+});
+
+// ── Phase 4 seed: 1 course + sessions sắp tới + onboarding state ──────────────
+db.courses.set("CRS-01", {
+  id: "CRS-01",
+  tenantId: "TENANT-MT-001",
+  ownerMentorId: "MT-001",
+  coMentorIds: [],
+  name: "Microservice Architecture Mastery",
+  status: "active",
+  studentIds: ["S1", "S2", "S3", "S4", "S5"],
+  autoSendPostClass: true,
+  createdAt: new Date(now.getTime() - 30 * 86400_000).toISOString(),
+});
+
+const sessionStarts = [
+  new Date(now.getTime() + 2 * 60 * 60_000),   // H-2 reminder match (vừa qua mốc 2h)
+  new Date(now.getTime() + 24 * 60 * 60_000),  // D-1
+  new Date(now.getTime() + 3 * 86400_000),     // D-3
+  new Date(now.getTime() + 7 * 86400_000),     // xa hơn
+];
+sessionStarts.forEach((scheduledAt, idx) => {
+  const id = `SES-${idx + 4}`;
+  db.sessions.set(id, {
+    id,
+    tenantId: "TENANT-MT-001",
+    courseId: "CRS-01",
+    mentorId: "MT-001",
+    sessionNumber: 4 + idx,
+    title: `Session ${4 + idx} (seed)`,
+    scheduledAt: scheduledAt.toISOString(),
+    durationMin: 90,
+    status: "scheduled",
+    createdAt: new Date().toISOString(),
+  });
+});
+
+db.mentorOnboarding.set("MT-001", {
+  mentorId: "MT-001",
+  tenantId: "TENANT-MT-001",
+  steps: {
+    zoom_connected: false,
+    zalo_connected: false,
+    first_course_created: true,    // có course CRS-01
+    first_student_invited: true,   // có 5 student
+    first_session_scheduled: true, // có session
+  },
+  updatedAt: new Date().toISOString(),
 });
