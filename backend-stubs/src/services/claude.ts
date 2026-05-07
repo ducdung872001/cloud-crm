@@ -1,35 +1,28 @@
 import { config } from "../config.js";
+import { getModel, estimateCostUSD as registryCost, type TenantTier } from "../config/models.js";
+import { getPrompt } from "../prompts/index.js";
 
 /**
- * Wrapper cho Anthropic API (Claude) — summarize transcript.
+ * Wrapper cho Anthropic API (Claude). Mọi pricing/model metadata lấy từ
+ * `config/models.ts`; system prompt lấy từ `prompts/session-summary.v*`.
  *
- * Default: Haiku 4.5 (rẻ, đủ chất lượng). Sonnet 4.6 cho Unlimited plan.
+ * Default: Haiku (rẻ, đủ chất lượng). Sonnet/Opus theo tenant tier.
  *
- * Prompt caching: cache system prompt (format template + example) để giảm 90%
- * cost input token từ lần gọi thứ 2 trở đi.
+ * Prompt caching: nếu prompt template `cacheable=true`, BE đính cache_control
+ * ephemeral vào system block → giảm 90% input cost từ lần gọi thứ 2.
  */
-
-const SYSTEM_PROMPT = `Bạn là AI assistant tóm tắt meeting notes cho mentor. Đọc transcript buổi học và trả về JSON đúng schema sau:
-
-{
-  "summary": "Tóm tắt 2-3 câu bằng tiếng Việt tự nhiên, không liệt kê bullet",
-  "keyPoints": [{ "time": "MM:SS", "text": "Điểm chính trong 1 câu ngắn" }],
-  "questions": [{ "time": "MM:SS", "student": "Tên HV", "q": "câu hỏi", "a": "câu trả lời" }],
-  "actionItems": ["Action item 1 cho học viên", "Action item 2..."]
-}
-
-Quy tắc:
-- keyPoints: 5-8 điểm, mỗi điểm ≤ 15 từ
-- Chỉ trích xuất Q&A chất lượng (có trả lời thực sự, không chỉ "dạ em hiểu rồi")
-- actionItems: cụ thể, kèm deadline nếu mentor có nói
-- Giữ tiếng Việt tự nhiên, tránh dịch máy`;
 
 export interface SummarizeRequest {
   transcript: string;
   courseName: string;
   sessionNumber: number;
   sessionTitle: string;
-  model?: "haiku" | "sonnet";
+  /** Alias model: "haiku" | "sonnet" | "opus" — resolve qua registry */
+  model?: string;
+  /** Tenant tier để check access. Mặc định "free". */
+  tier?: TenantTier;
+  /** Prompt version, default v1 */
+  promptVersion?: string;
 }
 
 export interface SummarizeResult {
@@ -41,32 +34,42 @@ export interface SummarizeResult {
   tokensOut: number;
   costUSD: number;
   model: string;
+  promptVersion: string;
 }
 
 export async function summarize(req: SummarizeRequest): Promise<SummarizeResult> {
-  if (!config.anthropic.apiKey) {
-    return mockSummary(req);
+  const modelAlias = req.model ?? "haiku";
+  const model = getModel(modelAlias);
+  const tier: TenantTier = req.tier ?? "free";
+  if (!model.access.includes(tier)) {
+    throw new Error(
+      `[claude] Model ${model.alias} không khả dụng cho tier ${tier}. Upgrade plan để dùng.`,
+    );
   }
-  const model = req.model === "sonnet" ? "claude-sonnet-4-6" : "claude-haiku-4-5";
+  const prompt = getPrompt("session-summary", req.promptVersion ?? "v1");
+
+  if (!config.anthropic.apiKey) {
+    return mockSummary(req, model.id, prompt.version);
+  }
 
   // POST https://api.anthropic.com/v1/messages
   // body: {
-  //   model,
+  //   model: model.id,
   //   max_tokens: 2000,
-  //   system: [{ type: "text", text: SYSTEM_PROMPT, cache_control: { type: "ephemeral" } }],
-  //   messages: [{ role: "user", content: userContent }],
+  //   system: prompt.cacheable
+  //     ? [{ type: "text", text: prompt.system, cache_control: { type: "ephemeral" } }]
+  //     : prompt.system,
+  //   messages: [{ role: "user", content: prompt.buildUser!(req) }],
   // }
-  // TODO: real fetch
+  // TODO: real fetch — Phase 5
 
-  return mockSummary(req);
+  return mockSummary(req, model.id, prompt.version);
 }
 
-function mockSummary(req: SummarizeRequest): SummarizeResult {
+function mockSummary(req: SummarizeRequest, modelId: string, promptVersion: string): SummarizeResult {
   const tokensIn = Math.ceil(req.transcript.length / 4);
   const tokensOut = 800;
-  const model = req.model === "sonnet" ? "sonnet-4-6" : "haiku-4-5";
-  const pricePerTokenIn = model === "sonnet-4-6" ? 3 / 1_000_000 : 1 / 1_000_000;
-  const pricePerTokenOut = model === "sonnet-4-6" ? 15 / 1_000_000 : 5 / 1_000_000;
+  const costUSD = registryCost(modelId, tokensIn, tokensOut);
 
   return {
     summary: `[MOCK] Buổi ${req.sessionNumber} khoá ${req.courseName} tập trung ${req.sessionTitle}. Học viên tương tác tích cực.`,
@@ -84,13 +87,13 @@ function mockSummary(req: SummarizeRequest): SummarizeResult {
     ],
     tokensIn,
     tokensOut,
-    costUSD: tokensIn * pricePerTokenIn + tokensOut * pricePerTokenOut,
-    model,
+    costUSD,
+    model: modelId,
+    promptVersion,
   };
 }
 
-export function estimateCost(tokensIn: number, tokensOut: number, model: "haiku" | "sonnet"): number {
-  const inRate = model === "sonnet" ? 3 / 1_000_000 : 1 / 1_000_000;
-  const outRate = model === "sonnet" ? 15 / 1_000_000 : 5 / 1_000_000;
-  return tokensIn * inRate + tokensOut * outRate;
+/** Backward-compat: legacy callers pass alias. Forwards to registry. */
+export function estimateCost(tokensIn: number, tokensOut: number, modelAlias: string): number {
+  return registryCost(modelAlias, tokensIn, tokensOut);
 }

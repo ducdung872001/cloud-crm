@@ -2,6 +2,8 @@ import { Router } from "express";
 import { requireAdmin } from "../middleware/auth.js";
 import { db } from "../db/store.js";
 import { PLANS } from "./subscription.js";
+import { getQuota } from "../config/plans.js";
+import { mapLegacyPlanToTier } from "../middleware/quota.js";
 
 const router = Router();
 
@@ -18,8 +20,11 @@ router.get("/usage/platform", (req, res) => {
     const logs = db.usageLogs.filter((l) => l.mentorId === s.mentorId);
     const whisperCostUSD = logs.filter((l) => l.step === "whisper").reduce((sum, l) => sum + l.costUSD, 0);
     const claudeCostUSD = logs.filter((l) => l.step === "claude").reduce((sum, l) => sum + l.costUSD, 0);
+    const breakdownCostUSD = logs.filter((l) => l.step === "per_student_breakdown").reduce((sum, l) => sum + l.costUSD, 0);
+    const zoomCreditCostUSD = logs.filter((l) => l.step === "zoom_credit").reduce((sum, l) => sum + l.costUSD, 0);
     const storageUSD = logs.filter((l) => l.step === "storage").reduce((sum, l) => sum + l.costUSD, 0);
-    const totalCostUSD = whisperCostUSD + claudeCostUSD + storageUSD;
+    const zaloCostUSD = logs.filter((l) => l.step === "zalo_push").reduce((sum, l) => sum + l.costUSD, 0);
+    const totalCostUSD = whisperCostUSD + claudeCostUSD + breakdownCostUSD + zoomCreditCostUSD + storageUSD + zaloCostUSD;
 
     const plan = PLANS.find((p) => p.id === s.plan);
     const revenueVND = s.status === "active" && plan ? plan.monthlyPriceVND : 0;
@@ -29,8 +34,10 @@ router.get("/usage/platform", (req, res) => {
       mentorId: s.mentorId,
       mentorName: s.mentorId, // TODO: join mentor profile
       plan: s.plan,
+      tier: mapLegacyPlanToTier(s.plan),
       sessions: s.usage.aiSessionsUsed,
-      whisperCostUSD, claudeCostUSD, storageUSD, totalCostUSD,
+      whisperCostUSD, claudeCostUSD, breakdownCostUSD, zoomCreditCostUSD, storageUSD, zaloCostUSD,
+      totalCostUSD,
       revenueVND, marginPct,
       status: s.status,
     };
@@ -57,14 +64,15 @@ router.get("/alerts", (_req, res) => {
   const alerts: Array<{ type: string; mentorId: string; severity: string; message: string; action?: { label: string; url: string } }> = [];
 
   for (const sub of db.subscriptions.values()) {
-    const quotas: Record<string, number> = { trial: 5, starter: 5, pro: 20, unlimited: 100 };
-    const limit = quotas[sub.plan] ?? 100;
+    const tier = mapLegacyPlanToTier(sub.plan);
+    const quota = getQuota(tier);
+    const limit = quota.aiEvaluationsPerMonth;
     if (limit > 0) {
       const pct = (sub.usage.aiSessionsUsed / limit) * 100;
       if (pct >= 100) {
-        alerts.push({ type: "quota_exceeded", mentorId: sub.mentorId, severity: "critical", message: `Đã vượt ${sub.usage.aiSessionsUsed}/${limit} buổi AI` });
+        alerts.push({ type: "quota_exceeded", mentorId: sub.mentorId, severity: "critical", message: `Đã vượt ${sub.usage.aiSessionsUsed}/${limit} buổi AI (gói ${tier})` });
       } else if (pct >= 80) {
-        alerts.push({ type: "quota_near", mentorId: sub.mentorId, severity: "warning", message: `${sub.usage.aiSessionsUsed}/${limit} buổi AI (${pct.toFixed(0)}%)` });
+        alerts.push({ type: "quota_near", mentorId: sub.mentorId, severity: "warning", message: `${sub.usage.aiSessionsUsed}/${limit} buổi AI (${pct.toFixed(0)}%, gói ${tier})` });
       }
     }
 
