@@ -1,9 +1,9 @@
 import { v4 as uuid } from "uuid";
 import { db } from "../db/store.js";
-import { transcribeChunk, mergeTranscripts, estimateCostUSD, type WhisperSegment } from "../services/whisper.js";
-import { summarize, estimateCost as estimateClaudeCost } from "../services/claude.js";
+import { transcribeChunkWithMeta, mergeTranscripts, type WhisperSegment } from "../services/whisper.js";
+import { summarize } from "../services/claude.js";
 import { sendZaloPush } from "../services/zalo.js";
-import { PLANS } from "../routes/subscription.js";
+import { logWhisperUsage } from "../services/usage-log.js";
 
 /**
  * Pipeline full: download recording → audio extract → chunk → whisper → merge
@@ -43,12 +43,13 @@ async function runTranscribeJob(input: TranscribeJobInput) {
       { path: "/tmp/chunk-2.wav", startOffsetSec: 2400 },
     ];
 
-    // 4. Parallel Whisper
-    const perChunk: WhisperSegment[][] = await Promise.all(mockChunks.map((c) => transcribeChunk(c)));
+    // 4. Parallel Whisper (dùng meta version để biết provider thật)
+    const perChunkResults = await Promise.all(mockChunks.map((c) => transcribeChunkWithMeta(c)));
+    const perChunk: WhisperSegment[][] = perChunkResults.map((r) => r.segments);
     const allSegments = mergeTranscripts(perChunk);
     const transcript = allSegments.map((s) => s.text).join(" ");
     const audioSeconds = allSegments.at(-1)?.end ?? 3600;
-    const whisperCost = estimateCostUSD(audioSeconds, "groq");
+    const whisperProvider = perChunkResults[0]?.provider ?? "mock";
 
     // 5. Summarize với Claude (pick model theo plan)
     const sub = db.subscriptions.get(input.mentorId);
@@ -59,6 +60,8 @@ async function runTranscribeJob(input: TranscribeJobInput) {
       sessionNumber: 1,
       sessionTitle: "(mock)",
       model,
+      mentorId: input.mentorId,
+      // sessionId is set sau khi tạo MeetingNote — gọi summarize lần 2 hoặc skip log
     });
 
     // 6. Lưu MeetingNote
@@ -81,11 +84,16 @@ async function runTranscribeJob(input: TranscribeJobInput) {
       createdAt: new Date().toISOString(),
     });
 
-    // 7. Log cost
-    db.usageLogs.push(
-      { id: uuid(), mentorId: input.mentorId, sessionId: noteId, step: "whisper", audioSeconds, costUSD: whisperCost, costVND: whisperCost * 25_000, createdAt: new Date().toISOString() },
-      { id: uuid(), mentorId: input.mentorId, sessionId: noteId, step: "claude", model: summary.model, tokensIn: summary.tokensIn, tokensOut: summary.tokensOut, costUSD: summary.costUSD, costVND: summary.costUSD * 25_000, createdAt: new Date().toISOString() }
-    );
+    // 7. Log cost qua centralized helpers
+    if (whisperProvider !== "mock") {
+      logWhisperUsage({
+        mentorId: input.mentorId,
+        sessionId: noteId,
+        provider: whisperProvider,
+        audioSeconds,
+      });
+    }
+    // Claude usage đã được log bên trong summarize() nếu mentorId được truyền
 
     // 8. Tăng usage counter
     if (sub) sub.usage.aiSessionsUsed += 1;
@@ -106,10 +114,8 @@ async function runTranscribeJob(input: TranscribeJobInput) {
       });
     }
 
-    console.log(`[JOB ${jobId}] ✓ Done. Note ${noteId}. Whisper $${whisperCost.toFixed(4)}, Claude $${summary.costUSD.toFixed(4)}`);
+    console.log(`[JOB ${jobId}] ✓ Done. Note ${noteId}. Whisper(${whisperProvider}) ${audioSeconds}s, Claude $${summary.costUSD.toFixed(4)}`);
   } catch (e) {
     console.error(`[JOB ${jobId}] ✕ Failed`, e);
   }
 }
-
-function _unused() { PLANS.length; estimateClaudeCost(0, 0, "haiku"); }

@@ -10,6 +10,7 @@ import subscriptionRouter from "./routes/subscription.js";
 import usageRouter from "./routes/usage.js";
 import adminRouter from "./routes/admin.js";
 import zaloRouter from "./routes/zalo.js";
+import perStudentBreakdownRouter from "./routes/per-student-breakdown.js";
 
 const app = express();
 
@@ -28,6 +29,7 @@ app.use(`${config.apiBase}/subscription`, subscriptionRouter);
 app.use(`${config.apiBase}/usage`, usageRouter);
 app.use(`${config.apiBase}/admin`, adminRouter);
 app.use(`${config.apiBase}/zalo`, zaloRouter);
+app.use(`${config.apiBase}/per-student-breakdown`, perStudentBreakdownRouter);
 
 // Webhook routes (không có /api/v1 prefix — Zoom/VNPay gọi trực tiếp)
 app.post("/webhook/zoom", (await import("./routes/zoom.js")).zoomWebhookHandler);

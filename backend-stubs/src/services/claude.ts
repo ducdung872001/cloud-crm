@@ -1,6 +1,8 @@
 import { config } from "../config.js";
 import { getModel, estimateCostUSD as registryCost, type TenantTier } from "../config/models.js";
 import { getPrompt } from "../prompts/index.js";
+import { callAnthropic } from "./anthropic-client.js";
+import { logClaudeUsage } from "./usage-log.js";
 
 /**
  * Wrapper cho Anthropic API (Claude). Mọi pricing/model metadata lấy từ
@@ -10,6 +12,9 @@ import { getPrompt } from "../prompts/index.js";
  *
  * Prompt caching: nếu prompt template `cacheable=true`, BE đính cache_control
  * ephemeral vào system block → giảm 90% input cost từ lần gọi thứ 2.
+ *
+ * Mock mode: khi không có ANTHROPIC_API_KEY, trả mock summary có shape giống
+ * thật, cost tính theo registry → FE/test e2e không cần creds.
  */
 
 export interface SummarizeRequest {
@@ -23,6 +28,10 @@ export interface SummarizeRequest {
   tier?: TenantTier;
   /** Prompt version, default v1 */
   promptVersion?: string;
+  /** Optional metadata để log usage gắn đúng session */
+  mentorId?: string;
+  tenantId?: string;
+  sessionId?: string;
 }
 
 export interface SummarizeResult {
@@ -32,6 +41,7 @@ export interface SummarizeResult {
   actionItems: string[];
   tokensIn: number;
   tokensOut: number;
+  cacheReadTokens: number;
   costUSD: number;
   model: string;
   promptVersion: string;
@@ -52,18 +62,80 @@ export async function summarize(req: SummarizeRequest): Promise<SummarizeResult>
     return mockSummary(req, model.id, prompt.version);
   }
 
-  // POST https://api.anthropic.com/v1/messages
-  // body: {
-  //   model: model.id,
-  //   max_tokens: 2000,
-  //   system: prompt.cacheable
-  //     ? [{ type: "text", text: prompt.system, cache_control: { type: "ephemeral" } }]
-  //     : prompt.system,
-  //   messages: [{ role: "user", content: prompt.buildUser!(req) }],
-  // }
-  // TODO: real fetch — Phase 5
+  const userText = prompt.buildUser!(req as unknown as Record<string, unknown>);
+  const apiResult = await callAnthropic({
+    modelId: model.id,
+    systemText: prompt.system,
+    userText,
+    cacheable: prompt.cacheable && model.supportsCaching,
+    maxTokens: 2000,
+    jsonMode: true,
+  });
 
-  return mockSummary(req, model.id, prompt.version);
+  const parsed = safeParseJSON<SummarizeJSON>(apiResult.text) ?? fallbackParse(apiResult.text);
+  const costUSD = registryCost(
+    model.id,
+    apiResult.tokensIn,
+    apiResult.tokensOut,
+    apiResult.cacheReadTokens,
+    apiResult.cacheWriteTokens,
+  );
+
+  if (req.mentorId) {
+    logClaudeUsage({
+      tenantId: req.tenantId,
+      mentorId: req.mentorId,
+      sessionId: req.sessionId,
+      modelId: model.id,
+      promptVersion: prompt.version,
+      tokensIn: apiResult.tokensIn,
+      tokensOut: apiResult.tokensOut,
+      cacheReadTokens: apiResult.cacheReadTokens,
+      cacheWriteTokens: apiResult.cacheWriteTokens,
+      durationMs: apiResult.durationMs,
+      step: "claude",
+    });
+  }
+
+  return {
+    summary: parsed.summary ?? "",
+    keyPoints: parsed.keyPoints ?? [],
+    questions: parsed.questions ?? [],
+    actionItems: parsed.actionItems ?? [],
+    tokensIn: apiResult.tokensIn,
+    tokensOut: apiResult.tokensOut,
+    cacheReadTokens: apiResult.cacheReadTokens,
+    costUSD,
+    model: model.id,
+    promptVersion: prompt.version,
+  };
+}
+
+interface SummarizeJSON {
+  summary?: string;
+  keyPoints?: { time: string; text: string }[];
+  questions?: { time: string; student: string; q: string; a: string }[];
+  actionItems?: string[];
+}
+
+function safeParseJSON<T>(text: string): T | null {
+  try {
+    return JSON.parse(text) as T;
+  } catch {
+    // Try extract first {...} block
+    const m = text.match(/\{[\s\S]*\}/);
+    if (!m) return null;
+    try {
+      return JSON.parse(m[0]) as T;
+    } catch {
+      return null;
+    }
+  }
+}
+
+function fallbackParse(text: string): SummarizeJSON {
+  // LLM không trả JSON sạch → giữ raw text vào summary, các field khác rỗng
+  return { summary: text.trim(), keyPoints: [], questions: [], actionItems: [] };
 }
 
 function mockSummary(req: SummarizeRequest, modelId: string, promptVersion: string): SummarizeResult {
@@ -87,6 +159,7 @@ function mockSummary(req: SummarizeRequest, modelId: string, promptVersion: stri
     ],
     tokensIn,
     tokensOut,
+    cacheReadTokens: 0,
     costUSD,
     model: modelId,
     promptVersion,
