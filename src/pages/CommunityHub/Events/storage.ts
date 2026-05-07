@@ -15,6 +15,7 @@ import type {
 } from "./types";
 import { MOCK_EVENTS } from "@/mocks/community-hub/events";
 import EventService from "services/EventService";
+import { isLoggedInAdmin } from "./shared";
 
 const KEY_EVENTS = "reborn.events";
 const KEY_REGISTRATIONS = "reborn.event_registrations";
@@ -316,21 +317,30 @@ export const eventStorage = {
   },
 
   async getEventBySlugAsync(slug: string): Promise<EventEntity | null> {
+    let publicFailed = false;
     try {
       const res = await EventService.getPublic(slug);
       if (isApiOk(res)) {
         apiAvailable = true;
         return normalizeEvent(unwrap<any>(res));
       }
-      // API trả error → thử tìm trong list events từ API
-      if (apiAvailable) {
+      publicFailed = true;
+      console.warn("[EventStorage] getPublic failed for slug:", slug, res);
+    } catch (err) {
+      publicFailed = true;
+      console.warn("[EventStorage] getPublic error:", err);
+    }
+    // Admin preview: public endpoint chỉ trả event published (draft/test → 400/404).
+    // Admin đã login → có quyền xem tất cả → fallback admin list endpoint để
+    // tìm theo slug. Visitor (không login) → bỏ qua, return null.
+    if (publicFailed && isLoggedInAdmin()) {
+      try {
         const all = await this.listEventsAsync();
         const found = all.find((e) => e.slug === slug);
         if (found) return found;
+      } catch (err) {
+        console.warn("[EventStorage] admin list fallback error:", err);
       }
-      console.warn("[EventStorage] getPublic failed for slug:", slug, res);
-    } catch (err) {
-      console.warn("[EventStorage] getPublic error:", err);
     }
     return this.getEventBySlug(slug);
   },

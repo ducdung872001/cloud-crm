@@ -11,7 +11,6 @@ import type { EventEntity } from "@/pages/CommunityHub/Events/types";
 import { normalizeEvent } from "@/pages/CommunityHub/Events/storage";
 import { formatVNDate, formatVNTime } from "@/pages/CommunityHub/Events/datetime";
 import { portalSettings, type PortalSettings } from "@/pages/CommunityHub/Events/portalSettings";
-import { isLoggedInAdmin } from "@/pages/CommunityHub/Events/shared";
 import "./index.scss";
 
 // ── Theme (đồng bộ ShareEventPage) ─────────────────────────────────────────
@@ -277,14 +276,12 @@ export default function PublicEventsPage() {
           // dạng JSON string — phải normalize trước khi render, nếu không EventCard sẽ
           // crash ở gallery.map vì .slice trên string trả về string (không có .map).
           const items: EventEntity[] = (Array.isArray(raw) ? raw : []).map(normalizeEvent);
-          // Chỉ giữ published + ongoing (không show draft/ended/cancelled cho public)
-          // Yc 7/5: isTest events chỉ admin đã login mới thấy. Visitor / user
-          // thường không được render (BE vẫn trả vì /public/list không phân
-          // biệt được caller, nên FE phải tự lọc dựa vào token + user.root).
-          const canSeeTestEvents = isLoggedInAdmin();
+          // Chỉ giữ published + ongoing (không show draft/ended/cancelled cho public).
+          // isTest=1 luôn ẩn khỏi list public — kể cả admin đang login. Admin xem
+          // event test qua trang quản lý /crm/ch_events và preview detail qua
+          // direct slug (/crm/events/:slug — ShareEventPage cho phép admin truy cập).
           const visible = items.filter(e =>
-            (e.status === "published" || e.status === "ongoing") &&
-            (!e.isTest || canSeeTestEvents),
+            (e.status === "published" || e.status === "ongoing") && !e.isTest,
           );
           setEvents(visible);
         } else {

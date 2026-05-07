@@ -53,13 +53,16 @@ export default function RegisterFetch() {
       } else if (!config.headers["Content-Type"]) {
         config.headers["Content-Type"] = "application/json";
       }
-      // Local (localhost / 127.0.0.1) → luôn "hub.reborn.vn" (env test mặc định cho nhánh community-hub).
-      // Live (prod/staging) → location.hostname thật của tenant user đang truy cập.
-      {
-        const realHost = location.hostname || "";
-        const isLocal = realHost === "localhost" || realHost === "127.0.0.1" || realHost === "";
-        config.headers["Hostname"] = isLocal ? "hub.reborn.vn" : realHost;
-      }
+      // [TEMP] Force toàn bộ request gửi Hostname = hub.reborn.vn (không phân biệt local/live).
+      // Rollback: bỏ block dưới và uncomment block phía trên.
+      config.headers["Hostname"] = "hub.reborn.vn";
+
+      // Block gốc (giữ lại để rollback):
+      // {
+      //   const realHost = location.hostname || "";
+      //   const isLocal = realHost === "localhost" || realHost === "127.0.0.1" || realHost === "";
+      //   config.headers["Hostname"] = isLocal ? "hub.reborn.vn" : realHost;
+      // }
 
 
       if (!url.startsWith("http")) {

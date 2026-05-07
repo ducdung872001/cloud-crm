@@ -108,10 +108,13 @@ export default function ShareEventPage() {
     }
     (async () => {
       const e = await eventStorage.getEventBySlugAsync(slug);
-      // Yc 7/5: isTest event chỉ admin đã login mới mở được trang detail.
-      // Visitor / user thường truy cập trực tiếp slug → 404 như draft/cancelled.
-      const canSeeTest = isLoggedInAdmin();
-      if (!e || (e.status !== "published" && e.status !== "ongoing") || (e.isTest && !canSeeTest)) {
+      // Admin login → preview mode: thấy mọi event (draft/test/cancelled) để duyệt nội dung
+      // và đăng ký thử trước khi công bố. Visitor → chỉ published/ongoing && !isTest.
+      const isAdmin = isLoggedInAdmin();
+      const visibleForVisitor = !!e
+        && (e.status === "published" || e.status === "ongoing")
+        && !e.isTest;
+      if (!e || (!isAdmin && !visibleForVisitor)) {
         setNotFound(true);
       } else {
         setEvent(e);
@@ -323,6 +326,9 @@ export default function ShareEventPage() {
             @media (max-width: 480px) { .se-content-header { padding: 14px 16px; gap: 10px; } }
             .se-content-body { padding: 22px 24px 24px; }
             @media (max-width: 480px) { .se-content-body { padding: 16px 16px 18px; } }
+            .se-comments-body { padding: 20px 24px 24px; border-top: 1px solid ${THEME.border}; }
+            .se-comments-body > div:first-child { margin-top: 0 !important; }
+            @media (max-width: 480px) { .se-comments-body { padding: 16px 16px 18px; } }
             .se-qr-row { display: flex; gap: 14px; align-items: flex-start; flex-wrap: wrap; }
             @media (max-width: 520px) {
               .se-qr-row { justify-content: center; text-align: center; }
@@ -1022,25 +1028,33 @@ export default function ShareEventPage() {
                 </div>
               </div>
             </div>
-            {/* Yc 5/5: nếu admin đã cấu hình contentBlocks → render block layout, fallback content HTML */}
-            {event.contentBlocks && event.contentBlocks.length > 0 ? (
+            {/* Render cả hai: event.content (text HTML) và contentBlocks (image/gallery/...).
+                Admin có thể nhập text vào "Nội dung chi tiết" và bổ sung block ảnh — public phải
+                hiển thị đủ. Placeholder chỉ khi cả hai cùng rỗng. */}
+            {event.content && (
+              <div
+                className="event-prose se-content-body"
+                dangerouslySetInnerHTML={{ __html: event.content }}
+              />
+            )}
+            {event.contentBlocks && event.contentBlocks.length > 0 && (
               <div className="event-prose se-content-body">
                 <ContentBlocksRenderer blocks={event.contentBlocks} />
               </div>
-            ) : (
+            )}
+            {!event.content && (!event.contentBlocks || event.contentBlocks.length === 0) && (
               <div
                 className="event-prose se-content-body"
                 dangerouslySetInnerHTML={{
-                  __html:
-                    event.content ||
-                    `<em style="color:${THEME.textMuted}">(Chưa có nội dung)</em>`,
+                  __html: `<em style="color:${THEME.textMuted}">(Chưa có nội dung)</em>`,
                 }}
               />
             )}
 
-            {/* Yc 5/5: bình luận (kênh CSKH, giữ vĩnh viễn) — chỉ render nếu admin bật */}
+            {/* Yc 5/5: bình luận (kênh CSKH, giữ vĩnh viễn) — chỉ render nếu admin bật.
+                Padding khớp .se-content-body (22px 24px) + divider top để tách khỏi nội dung. */}
             {event.commentsEnabled !== false && (
-              <div style={{ marginTop: 24 }}>
+              <div className="se-comments-body">
                 <EventComments
                   eventId={event.id}
                   canPost

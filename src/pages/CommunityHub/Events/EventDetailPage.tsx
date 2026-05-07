@@ -122,6 +122,29 @@ export default function EventDetailPage() {
           ← Danh sách
         </button>
         <div style={{ flex: 1 }} />
+        {event.slug && (
+          <a
+            href={`/crm/events/${encodeURIComponent(event.slug)}`}
+            target="_blank"
+            rel="noreferrer"
+            title={event.isTest
+              ? "Mở trang public để preview & đăng ký thử (event TEST chỉ admin login mới truy cập được)"
+              : "Mở trang public để xem trước & đăng ký thử"}
+            style={{
+              padding: "6px 14px",
+              background: THEME.primarySoft,
+              color: THEME.primaryDark,
+              border: `1px solid ${THEME.primary}`,
+              borderRadius: 6,
+              cursor: "pointer",
+              fontSize: 12,
+              fontWeight: 600,
+              textDecoration: "none",
+            }}
+          >
+            👁 Xem trước & đăng ký thử
+          </a>
+        )}
         <button
           onClick={() => navigate(`/ch_events/${event.id}/edit`)}
           style={{

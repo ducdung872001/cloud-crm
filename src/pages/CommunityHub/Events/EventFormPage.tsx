@@ -190,6 +190,8 @@ export default function EventFormPage() {
   const [qrUploading, setQrUploading] = useState(false);
   // editorKey để force remount RebornEditor khi load dữ liệu edit
   const [editorKey, setEditorKey] = useState(0);
+  // Slug của event đang edit — phục vụ nút "Xem trước" mở trang public detail.
+  const [previewSlug, setPreviewSlug] = useState<string>("");
 
   useEffect(() => {
     if (isEdit && id) {
@@ -198,6 +200,7 @@ export default function EventFormPage() {
         if (e) {
           setForm(entityToForm(e));
           setEditorKey((k) => k + 1);
+          setPreviewSlug(e.slug || "");
         }
       })();
     }
@@ -504,6 +507,29 @@ export default function EventFormPage() {
         <h2 style={{ margin: 0, color: THEME.primaryDark, flex: 1 }}>
           {isEdit ? "✏️ Sửa sự kiện" : "➕ Tạo sự kiện mới"}
         </h2>
+        {isEdit && previewSlug && (
+          <a
+            href={`/crm/events/${encodeURIComponent(previewSlug)}`}
+            target="_blank"
+            rel="noreferrer"
+            title={form.isTest
+              ? "Mở trang public để preview & đăng ký thử (event TEST chỉ admin login mới truy cập được)"
+              : "Mở trang public để xem trước & đăng ký thử"}
+            style={{
+              padding: "6px 12px",
+              background: THEME.primarySoft,
+              color: THEME.primaryDark,
+              border: `1px solid ${THEME.primary}`,
+              borderRadius: 6,
+              cursor: "pointer",
+              fontSize: 12,
+              fontWeight: 600,
+              textDecoration: "none",
+            }}
+          >
+            👁 Xem trước & đăng ký thử
+          </a>
+        )}
       </div>
 
       {error && (
