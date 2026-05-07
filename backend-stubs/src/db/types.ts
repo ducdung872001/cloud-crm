@@ -249,6 +249,161 @@ export interface ZoomSlot {
   sessionId?: string;
 }
 
+// ── Phase 7: content + marketing + analytics ──────────────────────────────
+
+export type MaterialKind = "pdf" | "video" | "audio" | "doc" | "slide" | "image" | "archive";
+
+export interface Material {
+  id: string;
+  tenantId: string;
+  courseId?: string;          // gắn vào course (null = mentor library)
+  uploaderMentorId: string;
+  /** Tên hiển thị */
+  title: string;
+  description?: string;
+  kind: MaterialKind;
+  mimeType: string;
+  sizeBytes: number;
+  /** S3-style storage key — production: bucket/path/uuid */
+  storageKey: string;
+  /** Public-readable signed URL (TTL ngắn) — generated on demand */
+  signedUrl?: string;
+  /** Version chain: parentMaterialId of trước nó. Latest có replacedById = undefined */
+  version: number;
+  parentMaterialId?: string;
+  replacedById?: string;
+  status: "active" | "archived" | "deleted";
+  createdAt: string;
+}
+
+export interface MaterialAccessPolicy {
+  /** Composite: tenantId + materialId + audienceType + audienceId */
+  tenantId: string;
+  materialId: string;
+  /** Audience scope */
+  audienceType: "course" | "student" | "tier";
+  /** ID của course / student / tier name */
+  audienceId: string;
+  /** Time-bound access */
+  validFrom?: string;
+  validUntil?: string;
+  /** Mode: read-only hoặc download */
+  mode: "view" | "download";
+  createdAt: string;
+}
+
+export interface EmbedWhitelistEntry {
+  id: string;
+  tenantId: string;          // 'PLATFORM' = áp dụng global
+  /** Hostname pattern: 'notion.so', '*.notion.site', 'drive.google.com' */
+  domainPattern: string;
+  /** Provider category để FE hiển thị icon */
+  provider: "notion" | "drive" | "loom" | "youtube" | "vimeo" | "miro" | "figma" | "other";
+  /** Có cho phép iframe embed không (false = chỉ link out) */
+  allowIframe: boolean;
+  enabled: boolean;
+  createdAt: string;
+}
+
+/**
+ * Public mentor profile — superset của legacy `MENTORS` mock trong FE Portal.
+ * FE Portal/MentorDetail render dùng các field: name, short, title, bio, avatar,
+ * tags, verified, courses, students, nps. BE response phải giữ NGUYÊN các field
+ * này (alias) để FE không phải thay code khi cutover.
+ */
+export interface PublicMentorProfile {
+  mentorId: string;
+  tenantId: string;
+  /** URL slug unique platform-wide. Routing: /portal/m/:slug */
+  slug: string;
+
+  // ── Legacy compat với Portal/MENTORS mock ─────────────────────────────
+  /** Họ tên đầy đủ — legacy field `name` */
+  name: string;
+  /** 2-letter avatar fallback — legacy `short` */
+  short: string;
+  /** Tiêu đề ngắn (vd "Principal Engineer, Ex-Grab") — legacy `title` */
+  title: string;
+  /** Background avatar nếu chưa có ảnh — legacy `avatarBg` */
+  avatarBg: string;
+  /** Tags expertise — legacy `tags`, content giống `expertise` */
+  tags: string[];
+  /** Đã verify Reborn HQ — legacy `verified` */
+  verified: boolean;
+  /** Số khoá đang dạy — legacy `courses` (cache, BE tính từ courses table) */
+  coursesCount: number;
+  /** Số học viên đã dạy — legacy `students` (cache) */
+  studentsCount: number;
+  /** NPS score 0-5 — legacy `nps` (cache, tính từ feedback) */
+  nps: number;
+
+  // ── Mở rộng cho editor mới (Phase 7.4) ────────────────────────────────
+  /** Headline marketing dài hơn title */
+  headline: string;
+  bio: string;
+  expertise: string[];           // canonical = tags
+  yearsExperience?: number;
+  avatarUrl?: string;
+  coverUrl?: string;
+  /** Social links */
+  links: { type: "linkedin" | "facebook" | "youtube" | "tiktok" | "github" | "personal"; url: string }[];
+  /** Courses công khai (subset của tất cả courses mentor) */
+  publicCourseIds: string[];
+  /** Testimonials đã verify */
+  testimonials: { studentName: string; quote: string; courseName?: string; rating: number }[];
+  /** Visibility */
+  published: boolean;
+  publishedAt?: string;
+  updatedAt: string;
+}
+
+export interface ReferralLink {
+  id: string;
+  /** Mentor sở hữu link */
+  ownerMentorId: string;
+  tenantId: string;
+  /** Code unique platform-wide — đính vào URL ?ref=CODE */
+  code: string;
+  campaign?: string;
+  active: boolean;
+  createdAt: string;
+}
+
+export type ReferralStatus = "click" | "signed_up" | "converted" | "paid_out";
+
+export interface ReferralAttribution {
+  id: string;
+  linkId: string;
+  refereeMentorId?: string;     // set khi signed_up
+  refereeTenantId?: string;
+  /** Trạng thái cuối */
+  status: ReferralStatus;
+  /** Plan mà referee mua (set khi converted) */
+  convertedToPlan?: string;
+  /** Số tiền VND mà referee thanh toán đầu tiên */
+  conversionAmountVND?: number;
+  commissionVND?: number;
+  /** Khi nào commission được trả ra */
+  paidOutAt?: string;
+  payoutInvoiceId?: string;
+  clickedAt: string;
+  signedUpAt?: string;
+  convertedAt?: string;
+}
+
+export interface CommissionRule {
+  tenantId: string;            // 'PLATFORM' = global default
+  /** % hoa hồng theo plan của referee */
+  ratesByPlan: Record<string, number>;   // { starter: 20, pro: 15, master: 10, academy: 5 }
+  /** Commission có recurring không (% mỗi tháng renewal) */
+  recurring: boolean;
+  /** Số tháng tối đa commission recur (vd 12 = 1 năm) */
+  maxRecurringMonths: number;
+  /** Min payout VND — dưới mức này commission tích luỹ */
+  minPayoutVND: number;
+  updatedAt: string;
+}
+
 export interface ZoomBooking {
   id: string;
   tenantId: string;

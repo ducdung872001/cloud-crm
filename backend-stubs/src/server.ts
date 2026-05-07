@@ -17,6 +17,10 @@ import customFieldsRouter from "./routes/custom-fields.js";
 import promptsRouter from "./routes/prompts.js";
 import creditRouter from "./routes/credit.js";
 import zoomPoolRouter from "./routes/zoom-pool.js";
+import contentRouter from "./routes/content.js";
+import mentorProfileRouter from "./routes/mentor-profile.js";
+import referralRouter from "./routes/referral.js";
+import reportsRouter from "./routes/reports.js";
 import { startSubscriptionCron } from "./jobs/subscription-cron.js";
 
 const app = express();
@@ -43,6 +47,10 @@ app.use(`${config.apiBase}/custom-fields`, customFieldsRouter);
 app.use(`${config.apiBase}/prompts`, promptsRouter);
 app.use(`${config.apiBase}/credit`, creditRouter);
 app.use(`${config.apiBase}/zoom-pool`, zoomPoolRouter);
+app.use(`${config.apiBase}/content`, contentRouter);
+app.use(`${config.apiBase}/mentor-profile`, mentorProfileRouter);
+app.use(`${config.apiBase}/referral`, referralRouter);
+app.use(`${config.apiBase}/reports`, reportsRouter);
 
 // Webhook routes (không có /api/v1 prefix — Zoom/VNPay gọi trực tiếp)
 app.post("/webhook/zoom", (await import("./routes/zoom.js")).zoomWebhookHandler);

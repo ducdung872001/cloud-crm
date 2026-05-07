@@ -8,6 +8,8 @@ import type {
   MentorOnboardingState, CustomFieldDefinition, CustomFieldValue,
   PromptTemplateOverride, CreditWallet, CreditTransaction, CreditRule,
   ZoomPoolAccount, ZoomSlot, ZoomBooking,
+  Material, MaterialAccessPolicy, EmbedWhitelistEntry, PublicMentorProfile,
+  ReferralLink, ReferralAttribution, CommissionRule,
 } from "./types.js";
 
 export const db = {
@@ -34,7 +36,18 @@ export const db = {
   creditRules: new Map<string, CreditRule>(),           // keyed by tenantId
   zoomPoolAccounts: new Map<string, ZoomPoolAccount>(), // keyed by id
   zoomSlots: new Map<string, ZoomSlot>(),               // keyed by id
-  zoomBookings: new Map<string, ZoomBooking>(),         // keyed by id
+  zoomBookings: new Map<string, ZoomBooking>(),
+
+  // Phase 7 — content + marketing + analytics
+  materials: new Map<string, Material>(),
+  materialAccessPolicies: [] as MaterialAccessPolicy[],
+  embedWhitelist: new Map<string, EmbedWhitelistEntry>(),
+  mentorProfiles: new Map<string, PublicMentorProfile>(),  // keyed by mentorId
+  mentorProfileSlugIndex: new Map<string, string>(),       // slug → mentorId
+  referralLinks: new Map<string, ReferralLink>(),          // keyed by id
+  referralCodeIndex: new Map<string, string>(),            // code → linkId
+  referralAttributions: new Map<string, ReferralAttribution>(), // keyed by id
+  commissionRules: new Map<string, CommissionRule>(),      // keyed by tenantId
 };
 
 // ── Seed mock data ─────────────────────────────────────────────────────────
@@ -225,6 +238,96 @@ db.zoomPoolAccounts.set("ZA-003", {
   status: "available",
   contributorEarnRatePct: 70,    // WIT volunteer earn cao hơn (community USP)
   joinedPoolAt: new Date(now.getTime() - 7 * 86400_000).toISOString(),
+});
+
+// ── Phase 7 seed ────────────────────────────────────────────────────────
+// Embed whitelist global
+const WHITELIST_DEFAULTS: Array<[string, EmbedWhitelistEntry["provider"]]> = [
+  ["notion.so", "notion"], ["*.notion.site", "notion"],
+  ["drive.google.com", "drive"], ["docs.google.com", "drive"],
+  ["loom.com", "loom"], ["*.loom.com", "loom"],
+  ["youtube.com", "youtube"], ["youtu.be", "youtube"],
+  ["vimeo.com", "vimeo"], ["miro.com", "miro"], ["figma.com", "figma"],
+];
+WHITELIST_DEFAULTS.forEach(([domain, provider], i) => {
+  const id = `EMW-${i + 1}`;
+  db.embedWhitelist.set(id, {
+    id, tenantId: "PLATFORM", domainPattern: domain, provider,
+    allowIframe: true, enabled: true, createdAt: new Date().toISOString(),
+  });
+});
+
+// Public mentor profile mẫu MT-001 (superset của legacy Portal/MENTORS mock)
+db.mentorProfiles.set("MT-001", {
+  mentorId: "MT-001",
+  tenantId: "TENANT-MT-001",
+  slug: "nguyen-trong-khoa",
+  // Legacy compat
+  name: "Nguyễn Trọng Khoa",
+  short: "NT",
+  title: "Principal Engineer, Ex-Grab",
+  avatarBg: "#134E4A",
+  tags: ["Microservices", "Distributed Systems", "K8s"],
+  verified: true,
+  coursesCount: 3,
+  studentsCount: 1240,
+  nps: 4.92,
+  // Editor extension
+  headline: "Solution Architect — 12 năm hệ thống phân tán & cloud-native",
+  bio: "Mentor Pro chuyên sâu microservices, từng dẫn dắt migration cho 5+ enterprise team từ monolith sang distributed.",
+  expertise: ["Microservices", "Distributed Systems", "K8s", "Service Mesh", "Event-Driven", "AWS"],
+  yearsExperience: 12,
+  links: [
+    { type: "linkedin", url: "https://linkedin.com/in/nguyen-trong-khoa" },
+    { type: "github", url: "https://github.com/khoa-nt" },
+  ],
+  publicCourseIds: ["CRS-01"],
+  testimonials: [
+    { studentName: "Trần Văn Đức", quote: "Khoá học rất thực tiễn, Khoa giải thích rất dễ hiểu.", courseName: "Microservice Architecture Mastery", rating: 5 },
+  ],
+  published: true,
+  publishedAt: new Date(now.getTime() - 14 * 86400_000).toISOString(),
+  updatedAt: new Date().toISOString(),
+});
+db.mentorProfileSlugIndex.set("nguyen-trong-khoa", "MT-001");
+
+// Default commission rule (platform-level)
+db.commissionRules.set("PLATFORM", {
+  tenantId: "PLATFORM",
+  ratesByPlan: { starter: 20, pro: 15, master: 10, academy: 5 },
+  recurring: true,
+  maxRecurringMonths: 12,
+  minPayoutVND: 500_000,
+  updatedAt: new Date().toISOString(),
+});
+
+// Referral link mẫu
+db.referralLinks.set("RL-001", {
+  id: "RL-001",
+  ownerMentorId: "MT-001",
+  tenantId: "TENANT-MT-001",
+  code: "KHOA2026",
+  campaign: "spring-2026-launch",
+  active: true,
+  createdAt: new Date().toISOString(),
+});
+db.referralCodeIndex.set("KHOA2026", "RL-001");
+
+// Material mẫu
+db.materials.set("MAT-001", {
+  id: "MAT-001",
+  tenantId: "TENANT-MT-001",
+  courseId: "CRS-01",
+  uploaderMentorId: "MT-001",
+  title: "Service Discovery — Slide buổi 3",
+  description: "Slide chính + reading list",
+  kind: "slide",
+  mimeType: "application/pdf",
+  sizeBytes: 1_245_000,
+  storageKey: "tenant/TENANT-MT-001/materials/MAT-001.pdf",
+  version: 1,
+  status: "active",
+  createdAt: new Date(now.getTime() - 5 * 86400_000).toISOString(),
 });
 
 // Seed một số free slot trong 7 ngày tới (mỗi account ~ 4 slot/ngày)
