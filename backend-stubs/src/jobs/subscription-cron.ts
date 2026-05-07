@@ -1,6 +1,7 @@
 import { runLifecycleTick, drainLifecycleEvents } from "../services/subscription-lifecycle.js";
 import { runReminderTick, drainReminderEvents } from "../services/pre-class-reminder.js";
 import { checkMcpHealth, isMcpEnabled } from "../services/mcp-client.js";
+import { runPoolScanner } from "../services/zoom-pool.js";
 
 /**
  * Lifecycle cron — chạy mỗi 15 phút.
@@ -40,6 +41,10 @@ function tick() {
     if (isMcpEnabled()) void checkMcpHealth(); // fire-and-forget, không block tick
     const lifecycle = runLifecycleTick();
     const reminder = runReminderTick();
+    const pool = runPoolScanner();
+    if (pool.expired > 0 || pool.released > 0) {
+      console.log(`[cron] pool: expired=${pool.expired} released=${pool.released}`);
+    }
     const lifecycleEvents = drainLifecycleEvents();
     const reminderEvents = drainReminderEvents();
     const totalEvents = lifecycleEvents.length + reminderEvents.length;

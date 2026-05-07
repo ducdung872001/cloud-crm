@@ -171,6 +171,100 @@ export interface CustomFieldValue {
 
 // ── Phase 5: prompt template override per tenant ────────────────────────────
 
+// ── Phase 6: credit pool + Zoom slot pool ──────────────────────────────────
+
+export type CreditTxnType = "grant" | "spend" | "earn" | "swap" | "adjust" | "refund";
+
+export interface CreditTransaction {
+  id: string;
+  tenantId: string;
+  type: CreditTxnType;
+  /** Số credit thay đổi (positive cho grant/earn/adjust+/refund, negative cho spend/swap-out) */
+  amount: number;
+  /** Balance sau giao dịch (cache để audit dễ) */
+  balanceAfter: number;
+  /** Lý do tự do — admin tag */
+  reason: string;
+  /** Liên kết tới session/booking nếu là spend */
+  sessionId?: string;
+  bookingId?: string;
+  createdBy: string;       // mentorId hoặc 'system'
+  createdAt: string;
+}
+
+export interface CreditRule {
+  tenantId: string;
+  /** Cấp credit hàng tháng (đầu kỳ) — auto theo plan */
+  monthlyGrant: number;
+  /** % giảm khi swap credit thành Zoom phút (Pro+) */
+  swapRatePct: number;
+  /** Có cho rollover qua tháng không */
+  rolloverEnabled: boolean;
+  /** Cap rollover (-1 = unlimited). 0 = không rollover. */
+  rolloverCap: number;
+  /** Earn rules: nguồn earn ngoài (refer, contribute pool, etc.) */
+  earnRules: Array<{
+    source: "refer_mentor" | "contribute_pool" | "complete_course" | "community_review";
+    creditPerEvent: number;
+    enabled: boolean;
+  }>;
+  /** Discount % theo plan — Master/Academy có discount thêm khi spend */
+  tierDiscountPct: number;
+  updatedAt: string;
+  updatedBy: string;
+}
+
+export type ZoomPoolAccountStatus = "available" | "in_use" | "blocked" | "expired";
+export type ZoomPoolOwnerType = "mentor" | "wit" | "platform";
+
+export interface ZoomPoolAccount {
+  id: string;
+  ownerType: ZoomPoolOwnerType;
+  ownerId: string;          // mentorId hoặc witCommunityMemberId
+  zoomUserId: string;
+  zoomEmail: string;
+  zoomDisplayName?: string;
+  /** Licensed = paid Zoom account → meeting >40 phút. Basic = free, 40 phút limit */
+  licensed: boolean;
+  /** Số meeting concurrent tối đa */
+  maxConcurrent: number;
+  status: ZoomPoolAccountStatus;
+  /** Earn rate riêng cho WIT contributor (% credit họ giữ lại khi pool dùng account của họ) */
+  contributorEarnRatePct: number;
+  joinedPoolAt: string;
+  lastVerifiedAt?: string;
+}
+
+export type ZoomSlotStatus = "free" | "reserved" | "booked" | "expired" | "cancelled";
+
+export interface ZoomSlot {
+  id: string;
+  accountId: string;
+  startsAt: string;
+  endsAt: string;
+  status: ZoomSlotStatus;
+  /** Khi reserved: TTL — auto release nếu không booked trong 5 phút */
+  reservedUntil?: string;
+  bookedBy?: string;        // tenantId
+  sessionId?: string;
+}
+
+export interface ZoomBooking {
+  id: string;
+  tenantId: string;
+  sessionId: string;
+  slotId: string;
+  accountId: string;
+  startsAt: string;
+  endsAt: string;
+  /** Số credit đã trừ (sau khi apply discount) */
+  creditCost: number;
+  status: "active" | "cancelled" | "completed";
+  cancelledAt?: string;
+  cancelReason?: string;
+  createdAt: string;
+}
+
 export interface PromptTemplateOverride {
   id: string;
   tenantId: string;

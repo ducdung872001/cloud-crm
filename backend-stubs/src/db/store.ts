@@ -6,7 +6,8 @@ import type {
   ZoomConnection, MeetingNote, Subscription, Invoice, UsageLog, ZaloMapping,
   Course, SessionEntity, PreClassChecklist, SentReminder,
   MentorOnboardingState, CustomFieldDefinition, CustomFieldValue,
-  PromptTemplateOverride,
+  PromptTemplateOverride, CreditWallet, CreditTransaction, CreditRule,
+  ZoomPoolAccount, ZoomSlot, ZoomBooking,
 } from "./types.js";
 
 export const db = {
@@ -25,7 +26,15 @@ export const db = {
   mentorOnboarding: new Map<string, MentorOnboardingState>(),    // keyed by mentorId
   customFieldDefs: new Map<string, CustomFieldDefinition>(),
   customFieldValues: [] as CustomFieldValue[],
-  promptOverrides: new Map<string, PromptTemplateOverride>(),  // keyed by id
+  promptOverrides: new Map<string, PromptTemplateOverride>(),
+
+  // Phase 6 — credit pool + Zoom slot pool
+  creditWallets: new Map<string, CreditWallet>(),       // keyed by tenantId
+  creditTransactions: [] as CreditTransaction[],
+  creditRules: new Map<string, CreditRule>(),           // keyed by tenantId
+  zoomPoolAccounts: new Map<string, ZoomPoolAccount>(), // keyed by id
+  zoomSlots: new Map<string, ZoomSlot>(),               // keyed by id
+  zoomBookings: new Map<string, ZoomBooking>(),         // keyed by id
 };
 
 // ── Seed mock data ─────────────────────────────────────────────────────────
@@ -137,3 +146,103 @@ db.mentorOnboarding.set("MT-001", {
   },
   updatedAt: new Date().toISOString(),
 });
+
+// ── Phase 6 seed: wallet + rules + pool accounts + free slots ─────────────
+// Khởi tạo wallet rỗng + log seed grant qua transaction để invariant đúng
+db.creditWallets.set("TENANT-MT-001", {
+  tenantId: "TENANT-MT-001",
+  balance: 60,
+  earnedThisPeriod: 60,
+  spentThisPeriod: 0,
+  rules: { monthlyGrant: 60, swapRatePct: 0, rolloverEnabled: false, rolloverCap: 0 },
+  updatedAt: new Date().toISOString(),
+});
+db.creditTransactions.push({
+  id: "CTX-seed01",
+  tenantId: "TENANT-MT-001",
+  type: "grant",
+  amount: 60,
+  balanceAfter: 60,
+  reason: "seed_initial_grant",
+  createdBy: "system",
+  createdAt: new Date().toISOString(),
+});
+
+db.creditRules.set("TENANT-MT-001", {
+  tenantId: "TENANT-MT-001",
+  monthlyGrant: 60,            // trial = 60 phút
+  swapRatePct: 0,
+  rolloverEnabled: false,
+  rolloverCap: 0,
+  earnRules: [
+    { source: "refer_mentor", creditPerEvent: 100, enabled: true },
+    { source: "contribute_pool", creditPerEvent: 30, enabled: false },
+    { source: "complete_course", creditPerEvent: 50, enabled: true },
+    { source: "community_review", creditPerEvent: 10, enabled: true },
+  ],
+  tierDiscountPct: 0,
+  updatedAt: new Date().toISOString(),
+  updatedBy: "system",
+});
+
+// 3 pool accounts: 1 platform licensed + 2 mentor seed
+db.zoomPoolAccounts.set("ZA-001", {
+  id: "ZA-001",
+  ownerType: "platform",
+  ownerId: "REBORN_HQ",
+  zoomUserId: "z-platform-1",
+  zoomEmail: "platform-pool-1@mentorhub.vn",
+  zoomDisplayName: "MentorHub Pool 1",
+  licensed: true,
+  maxConcurrent: 1,
+  status: "available",
+  contributorEarnRatePct: 0,
+  joinedPoolAt: new Date(now.getTime() - 60 * 86400_000).toISOString(),
+  lastVerifiedAt: new Date(now.getTime() - 1 * 86400_000).toISOString(),
+});
+db.zoomPoolAccounts.set("ZA-002", {
+  id: "ZA-002",
+  ownerType: "mentor",
+  ownerId: "MT-002",
+  zoomUserId: "z-m2",
+  zoomEmail: "mt002@example.com",
+  zoomDisplayName: "Mentor 002",
+  licensed: false,
+  maxConcurrent: 1,
+  status: "available",
+  contributorEarnRatePct: 50,    // mentor góp account → giữ 50% credit
+  joinedPoolAt: new Date(now.getTime() - 14 * 86400_000).toISOString(),
+});
+db.zoomPoolAccounts.set("ZA-003", {
+  id: "ZA-003",
+  ownerType: "wit",
+  ownerId: "WIT-VOL-001",
+  zoomUserId: "z-wit1",
+  zoomEmail: "vol1@wit-community.vn",
+  zoomDisplayName: "WIT Volunteer 1",
+  licensed: true,
+  maxConcurrent: 1,
+  status: "available",
+  contributorEarnRatePct: 70,    // WIT volunteer earn cao hơn (community USP)
+  joinedPoolAt: new Date(now.getTime() - 7 * 86400_000).toISOString(),
+});
+
+// Seed một số free slot trong 7 ngày tới (mỗi account ~ 4 slot/ngày)
+const SLOT_DURATION_HRS = 1.5;
+for (const [accId, _] of db.zoomPoolAccounts) {
+  for (let day = 1; day <= 7; day++) {
+    for (let hr of [9, 14, 19]) {
+      const start = new Date(now.getTime() + day * 86400_000);
+      start.setUTCHours(hr, 0, 0, 0);
+      const end = new Date(start.getTime() + SLOT_DURATION_HRS * 3_600_000);
+      const id = `ZS-${accId}-d${day}-h${hr}`;
+      db.zoomSlots.set(id, {
+        id,
+        accountId: accId,
+        startsAt: start.toISOString(),
+        endsAt: end.toISOString(),
+        status: "free",
+      });
+    }
+  }
+}
