@@ -1,13 +1,24 @@
 // [MH] MentorHub - Zoom credit pool + peer-borrow API client
 // Calls reborn-mentorhub-be endpoints under /api/v1/zoom-pool/* + /api/v1/credit/*
 // USP feature: chia sẻ Zoom giữa mentor — auto-pool và peer-to-peer.
-import axios, { AxiosRequestConfig } from "axios";
 
 const API_BASE = (import.meta as any).env?.APP_API_URL || "";
 const MOCK_MENTOR_ID = "MT-001"; // FE stub mentorId — production lấy từ session
 
-function authHeaders(): AxiosRequestConfig["headers"] {
-  return { "x-mentor-id": MOCK_MENTOR_ID };
+async function req<T>(method: string, path: string, body?: any): Promise<T> {
+  const r = await fetch(`${API_BASE}/api/v1${path}`, {
+    method,
+    headers: { "x-mentor-id": MOCK_MENTOR_ID, "content-type": "application/json" },
+    body: body !== undefined ? JSON.stringify(body) : undefined,
+  });
+  const data = r.status === 204 ? null : await r.json().catch(() => null);
+  if (!r.ok) {
+    const msg = data?.error || `HTTP ${r.status}`;
+    const err = new Error(msg) as Error & { response?: any };
+    err.response = { data, status: r.status };
+    throw err;
+  }
+  return data as T;
 }
 
 // ── Domain types ────────────────────────────────────────────────────────────
@@ -115,82 +126,73 @@ export interface CreditTransaction {
 
 // ── Pool browse + book ──────────────────────────────────────────────────────
 
-export async function listFreeSlots(opts?: { notBefore?: string; notAfter?: string; preferLicensed?: boolean }): Promise<FreeSlot[]> {
+export function listFreeSlots(opts?: { notBefore?: string; notAfter?: string; preferLicensed?: boolean }): Promise<FreeSlot[]> {
   const params = new URLSearchParams();
   if (opts?.notBefore) params.set("notBefore", opts.notBefore);
   if (opts?.notAfter) params.set("notAfter", opts.notAfter);
   if (opts?.preferLicensed) params.set("preferLicensed", "true");
-  const r = await axios.get(`${API_BASE}/api/v1/zoom-pool/slots?${params.toString()}`, { headers: authHeaders() });
-  return r.data;
+  return req("GET", `/zoom-pool/slots?${params.toString()}`);
 }
 
-export async function listPoolAccounts(): Promise<PoolAccount[]> {
-  const r = await axios.get(`${API_BASE}/api/v1/zoom-pool/accounts`, { headers: authHeaders() });
-  return r.data;
+export function listPoolAccounts(): Promise<PoolAccount[]> {
+  return req("GET", `/zoom-pool/accounts`);
 }
 
-export async function bookFromPool(input: {
+export function bookFromPool(input: {
   sessionId: string;
   startsAt: string;
   durationMin?: number;
   needLicensed?: boolean;
 }): Promise<{ booking: ZoomBooking; slot: FreeSlot }> {
-  const r = await axios.post(`${API_BASE}/api/v1/zoom-pool/book`, input, { headers: authHeaders() });
-  return r.data;
+  return req("POST", `/zoom-pool/book`, input);
 }
 
-export async function listMyBookings(status?: ZoomBooking["status"]): Promise<ZoomBooking[]> {
-  const params = status ? `?status=${status}` : "";
-  const r = await axios.get(`${API_BASE}/api/v1/zoom-pool/bookings${params}`, { headers: authHeaders() });
-  return r.data;
+export function listMyBookings(status?: ZoomBooking["status"]): Promise<ZoomBooking[]> {
+  const q = status ? `?status=${status}` : "";
+  return req("GET", `/zoom-pool/bookings${q}`);
 }
 
-export async function cancelBooking(id: string, reason?: string): Promise<{ booking: ZoomBooking; refunded: number }> {
-  const r = await axios.delete(`${API_BASE}/api/v1/zoom-pool/bookings/${id}${reason ? `?reason=${encodeURIComponent(reason)}` : ""}`, { headers: authHeaders() });
-  return r.data;
+export function cancelBooking(id: string, reason?: string): Promise<{ booking: ZoomBooking; refunded: number }> {
+  const q = reason ? `?reason=${encodeURIComponent(reason)}` : "";
+  return req("DELETE", `/zoom-pool/bookings/${id}${q}`);
 }
 
 // ── My accounts (mentor góp Zoom lên pool) ─────────────────────────────────
 
-export async function listMyAccounts(): Promise<MyPoolAccount[]> {
-  const r = await axios.get(`${API_BASE}/api/v1/zoom-pool/my-accounts`, { headers: authHeaders() });
-  return r.data;
+export function listMyAccounts(): Promise<MyPoolAccount[]> {
+  return req("GET", `/zoom-pool/my-accounts`);
 }
 
-export async function publishMyAccount(input: {
+export function publishMyAccount(input: {
   zoomEmail?: string;
   zoomDisplayName?: string;
   licensed: boolean;
   maxConcurrent?: number;
   contributorEarnRatePct: number;
 }): Promise<MyPoolAccount> {
-  const r = await axios.post(`${API_BASE}/api/v1/zoom-pool/my-accounts`, input, { headers: authHeaders() });
-  return r.data;
+  return req("POST", `/zoom-pool/my-accounts`, input);
 }
 
-export async function patchMyAccount(id: string, input: {
+export function patchMyAccount(id: string, input: {
   contributorEarnRatePct?: number;
   status?: PoolAccount["status"];
   zoomDisplayName?: string;
   licensed?: boolean;
 }): Promise<MyPoolAccount> {
-  const r = await axios.patch(`${API_BASE}/api/v1/zoom-pool/my-accounts/${id}`, input, { headers: authHeaders() });
-  return r.data;
+  return req("PATCH", `/zoom-pool/my-accounts/${id}`, input);
 }
 
-export async function listMyAccountSlots(id: string): Promise<FreeSlot[]> {
-  const r = await axios.get(`${API_BASE}/api/v1/zoom-pool/my-accounts/${id}/slots`, { headers: authHeaders() });
-  return r.data;
+export function listMyAccountSlots(id: string): Promise<FreeSlot[]> {
+  return req("GET", `/zoom-pool/my-accounts/${id}/slots`);
 }
 
-export async function addMyAccountSlot(id: string, input: { startsAt: string; endsAt: string }): Promise<FreeSlot> {
-  const r = await axios.post(`${API_BASE}/api/v1/zoom-pool/my-accounts/${id}/slots`, input, { headers: authHeaders() });
-  return r.data;
+export function addMyAccountSlot(id: string, input: { startsAt: string; endsAt: string }): Promise<FreeSlot> {
+  return req("POST", `/zoom-pool/my-accounts/${id}/slots`, input);
 }
 
 // ── Peer-to-peer borrow request ────────────────────────────────────────────
 
-export async function createBorrowRequest(input: {
+export function createBorrowRequest(input: {
   toMentorId: string;
   slotId?: string;
   proposedStartsAt?: string;
@@ -200,56 +202,47 @@ export async function createBorrowRequest(input: {
   offeredCredits?: number;
   message?: string;
 }): Promise<BorrowRequest> {
-  const r = await axios.post(`${API_BASE}/api/v1/zoom-pool/borrow`, input, { headers: authHeaders() });
-  return r.data;
+  return req("POST", `/zoom-pool/borrow`, input);
 }
 
-export async function listInboxRequests(): Promise<BorrowRequest[]> {
-  const r = await axios.get(`${API_BASE}/api/v1/zoom-pool/borrow/inbox`, { headers: authHeaders() });
-  return r.data;
+export function listInboxRequests(): Promise<BorrowRequest[]> {
+  return req("GET", `/zoom-pool/borrow/inbox`);
 }
 
-export async function listSentRequests(): Promise<BorrowRequest[]> {
-  const r = await axios.get(`${API_BASE}/api/v1/zoom-pool/borrow/sent`, { headers: authHeaders() });
-  return r.data;
+export function listSentRequests(): Promise<BorrowRequest[]> {
+  return req("GET", `/zoom-pool/borrow/sent`);
 }
 
-export async function approveBorrowRequest(id: string, responseMessage?: string): Promise<{ request: BorrowRequest; bookingId: string }> {
-  const r = await axios.post(`${API_BASE}/api/v1/zoom-pool/borrow/${id}/approve`, { responseMessage }, { headers: authHeaders() });
-  return r.data;
+export function approveBorrowRequest(id: string, responseMessage?: string): Promise<{ request: BorrowRequest; bookingId: string }> {
+  return req("POST", `/zoom-pool/borrow/${id}/approve`, { responseMessage });
 }
 
-export async function declineBorrowRequest(id: string, responseMessage?: string): Promise<BorrowRequest> {
-  const r = await axios.post(`${API_BASE}/api/v1/zoom-pool/borrow/${id}/decline`, { responseMessage }, { headers: authHeaders() });
-  return r.data;
+export function declineBorrowRequest(id: string, responseMessage?: string): Promise<BorrowRequest> {
+  return req("POST", `/zoom-pool/borrow/${id}/decline`, { responseMessage });
 }
 
-export async function counterBorrowRequest(id: string, input: {
+export function counterBorrowRequest(id: string, input: {
   counterCredits?: number;
   counterStartsAt?: string;
   counterEndsAt?: string;
   responseMessage?: string;
 }): Promise<BorrowRequest> {
-  const r = await axios.post(`${API_BASE}/api/v1/zoom-pool/borrow/${id}/counter`, input, { headers: authHeaders() });
-  return r.data;
+  return req("POST", `/zoom-pool/borrow/${id}/counter`, input);
 }
 
-export async function cancelBorrowRequest(id: string): Promise<BorrowRequest> {
-  const r = await axios.post(`${API_BASE}/api/v1/zoom-pool/borrow/${id}/cancel`, {}, { headers: authHeaders() });
-  return r.data;
+export function cancelBorrowRequest(id: string): Promise<BorrowRequest> {
+  return req("POST", `/zoom-pool/borrow/${id}/cancel`, {});
 }
 
 // ── Wallet / credits ────────────────────────────────────────────────────────
 
-export async function getWallet(): Promise<Wallet> {
-  const r = await axios.get(`${API_BASE}/api/v1/credit/wallet`, { headers: authHeaders() });
-  return r.data;
+export function getWallet(): Promise<Wallet> {
+  return req("GET", `/credit/wallet`);
 }
 
-export async function listTransactions(opts?: { type?: CreditTransaction["type"]; limit?: number }): Promise<CreditTransaction[]> {
+export function listTransactions(opts?: { type?: CreditTransaction["type"]; limit?: number }): Promise<CreditTransaction[]> {
   const params = new URLSearchParams();
   if (opts?.type) params.set("type", opts.type);
   if (opts?.limit) params.set("limit", String(opts.limit));
-  const r = await axios.get(`${API_BASE}/api/v1/credit/transactions?${params.toString()}`, { headers: authHeaders() });
-  return r.data;
+  return req("GET", `/credit/transactions?${params.toString()}`);
 }
