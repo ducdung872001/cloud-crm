@@ -177,4 +177,155 @@ export const MOCK_SESSION_REVIEW = {
     "Review: circuit breaker demo code trên GitHub",
     "Optional: xem video talks của Netflix về Hystrix evolution",
   ],
+  // Per-student AI breakdown — nhận xét cá nhân hoá tự sinh từ transcript
+  perStudentBreakdown: [
+    {
+      studentId: "S-005",
+      name: "Vũ Hoàng Nam",
+      short: "VN",
+      avatarBg: "#166534",
+      engagementScore: 96,
+      attendanceStatus: "present" as const,
+      talkTimeMin: 6.4,
+      questionsAsked: 0,
+      chatMessages: 14,
+      sentiment: "positive" as const,
+      highlights: [
+        "Chia sẻ kinh nghiệm Istio migration ở Shopee — bổ sung thực tế cho case study",
+        "Trả lời 3 câu hỏi của bạn cùng lớp trong chat",
+      ],
+      aiRemark: "Anh Nam — buổi này anh đã chia sẻ một loạt kinh nghiệm Istio migration ở Shopee mà cả lớp được lợi rất nhiều. Em đặc biệt thích đoạn anh giải thích về timeout cascading. Anh có thể gửi em link tới blog post về vấn đề này được không? Em muốn đính kèm vào tài liệu buổi tới cho cả nhóm. ✦",
+      zaloChannel: "Zalo OA" as const,
+      zaloStatus: "scheduled" as const,
+      scheduledAt: "21/04/2026 22:30",
+    },
+    {
+      studentId: "S-001",
+      name: "Trần Văn Đức",
+      short: "TĐ",
+      avatarBg: "#0F766E",
+      engagementScore: 92,
+      attendanceStatus: "present" as const,
+      talkTimeMin: 4.2,
+      questionsAsked: 1,
+      chatMessages: 8,
+      sentiment: "positive" as const,
+      highlights: [
+        "Đặt câu hỏi sâu về split-brain trong Eureka @ 0:34:11",
+        "Liên hệ với context FPT Software trong phần thảo luận",
+      ],
+      aiRemark: "Anh Đức — câu hỏi về split-brain Eureka đã giúp cả lớp hiểu sâu hơn về quorum mode. Buổi tới em sẽ chuẩn bị thêm về peer-awareness mode (như anh đã đề xuất). Anh nhớ làm homework health check endpoint trước Thứ 6 26/04 nhé — nếu vướng gì cứ ping em trên kênh Zalo này. 💪",
+      zaloChannel: "Zalo OA" as const,
+      zaloStatus: "scheduled" as const,
+      scheduledAt: "21/04/2026 22:30",
+    },
+    {
+      studentId: "S-002",
+      name: "Phạm Thu Hà",
+      short: "PH",
+      avatarBg: "#B45309",
+      engagementScore: 88,
+      attendanceStatus: "present" as const,
+      talkTimeMin: 3.5,
+      questionsAsked: 1,
+      chatMessages: 6,
+      sentiment: "positive" as const,
+      highlights: [
+        "Câu hỏi so sánh Istio vs Linkerd — rất phù hợp cho team chị bắt đầu",
+        "Take note kỹ trong cả buổi (theo screen share)",
+      ],
+      aiRemark: "Chị Hà — câu hỏi Istio vs Linkerd của chị có lẽ là câu hợp lý nhất cho stage hiện tại của TPBank. Em gợi ý chị đọc thêm 'Istio in Action' chapter 2 (em đã share trong group). Buổi tới chúng ta sẽ deep dive API Gateway — chị có muốn em chuẩn bị thêm context BFF pattern cho team product không? 📚",
+      zaloChannel: "Zalo OA" as const,
+      zaloStatus: "scheduled" as const,
+      scheduledAt: "21/04/2026 22:30",
+    },
+    {
+      studentId: "S-003",
+      name: "Nguyễn Hoàng Anh",
+      short: "NH",
+      avatarBg: "#134E4A",
+      engagementScore: 71,
+      attendanceStatus: "present" as const,
+      talkTimeMin: 0.8,
+      questionsAsked: 0,
+      chatMessages: 2,
+      sentiment: "neutral" as const,
+      highlights: [
+        "Theo dõi đầy đủ, nhưng tương tác ít hơn buổi trước",
+        "React +1 các câu hỏi của bạn khác trong chat",
+      ],
+      aiRemark: "Anh Hoàng Anh — em thấy anh theo buổi đầy đủ nhưng có vẻ ít tương tác hơn buổi 2. Có phải nội dung Eureka đã quá quen với anh ở VNG không? Buổi tới về API Gateway, em rất muốn nghe góc nhìn của một Tech Lead về việc choose giữa Kong / Spring Gateway / Envoy. Anh share giúp em được không? 🙏",
+      zaloChannel: "Zalo OA" as const,
+      zaloStatus: "needs_review" as const,
+      scheduledAt: "21/04/2026 22:30",
+    },
+    {
+      studentId: "S-004",
+      name: "Lê Minh Tuấn",
+      short: "LT",
+      avatarBg: "#7C2D12",
+      engagementScore: 58,
+      attendanceStatus: "late" as const,
+      talkTimeMin: 0.4,
+      questionsAsked: 0,
+      chatMessages: 1,
+      sentiment: "neutral" as const,
+      highlights: [
+        "Vào trễ 22 phút — bỏ lỡ phần intro service discovery",
+        "Có ticket support đang mở (TK-2340 — hoá đơn VAT)",
+      ],
+      aiRemark: "Anh Tuấn — em để ý anh vào hơi trễ buổi nay. Em đã clip lại 22 phút đầu (intro service discovery) và gửi kèm tin này — anh xem lại lúc rảnh nhé. Còn chuyện hoá đơn VAT (TK-2340) — em đã chuyển team backoffice xử lý, sẽ có trước Thứ 4 ạ. Có vướng gì khác cứ ping em! 🎬",
+      zaloChannel: "Zalo OA" as const,
+      zaloStatus: "needs_review" as const,
+      scheduledAt: "21/04/2026 22:30",
+    },
+    {
+      studentId: "S-006",
+      name: "Đặng Thùy Linh",
+      short: "ĐL",
+      avatarBg: "#991B1B",
+      engagementScore: 32,
+      attendanceStatus: "absent" as const,
+      talkTimeMin: 0,
+      questionsAsked: 0,
+      chatMessages: 0,
+      sentiment: "negative" as const,
+      highlights: [
+        "Vắng 2 buổi liên tiếp (buổi 2 + buổi 3)",
+        "Có ticket Zoom link không nhận được (TK-2341 — high priority)",
+        "Segment: Churn risk — last active 14d trước",
+      ],
+      aiRemark: "Chị Linh — em không thấy chị buổi nay (cũng vắng buổi 2). Em đoán có thể chị đang gặp issue với link Zoom (em thấy ticket TK-2341). Em đã làm việc với team IT và có thể đã fix DKIM của Vinhomes. Em có gửi kèm recording đầy đủ buổi 2+3 + tóm tắt 5 phút đọc nhanh. Cần em call hỗ trợ trực tiếp không chị? Em ưu tiên giúp chị bắt kịp lớp. 🤝",
+      zaloChannel: "Email + Zalo OA" as const,
+      zaloStatus: "needs_review" as const,
+      scheduledAt: "21/04/2026 22:30",
+    },
+  ] as PerStudentBreakdown[],
+  // Tổng quan dispatch tin nhắn cá nhân hoá
+  zaloDispatchSummary: {
+    autoSendEnabled: false,
+    autoSendCount: 3,
+    needsReviewCount: 3,
+    estimatedReachAt: "21/04/2026 22:30",
+    channelBreakdown: { zaloOA: 5, email: 1 },
+  },
+};
+
+// Type cho per-student breakdown — dùng để hint TS trong UI
+export type PerStudentBreakdown = {
+  studentId: string;
+  name: string;
+  short: string;
+  avatarBg: string;
+  engagementScore: number;
+  attendanceStatus: "present" | "late" | "absent";
+  talkTimeMin: number;
+  questionsAsked: number;
+  chatMessages: number;
+  sentiment: "positive" | "neutral" | "negative";
+  highlights: string[];
+  aiRemark: string;
+  zaloChannel: string;
+  zaloStatus: "scheduled" | "needs_review" | "sent" | "failed";
+  scheduledAt: string;
 };

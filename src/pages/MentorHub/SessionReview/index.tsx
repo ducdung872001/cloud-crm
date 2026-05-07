@@ -1,7 +1,22 @@
 // [MH] MentorHub - Session Review với AI Meeting Notes + action handlers
 import React, { useState } from "react";
-import { MOCK_SESSION_REVIEW, MOCK_STUDENTS } from "@/mocks/mentorhub";
+import { MOCK_SESSION_REVIEW, MOCK_STUDENTS, type PerStudentBreakdown } from "@/mocks/mentorhub";
 import "../_shared/styles.scss";
+
+// Helpers cho per-student breakdown
+const engagementColor = (score: number) => {
+  if (score >= 85) return "var(--mh-teal)";
+  if (score >= 65) return "var(--mh-amber)";
+  if (score >= 45) return "#B45309";
+  return "var(--mh-red)";
+};
+const attendancePill = (s: PerStudentBreakdown["attendanceStatus"]) => {
+  if (s === "present") return { label: "Có mặt", cls: "mh__pill--green" };
+  if (s === "late") return { label: "Vào trễ", cls: "mh__pill--draft" };
+  return { label: "Vắng", cls: "mh__pill--draft" };
+};
+const sentimentEmoji = (s: PerStudentBreakdown["sentiment"]) =>
+  s === "positive" ? "😊" : s === "neutral" ? "😐" : "😟";
 
 type Toast = { text: string; kind?: "ok" | "info" } | null;
 
@@ -34,6 +49,7 @@ export default function MentorHubSessionReviewPage() {
 
   const [showSend, setShowSend] = useState(false);
   const [showShare, setShowShare] = useState(false);
+  const [showPersonalize, setShowPersonalize] = useState(false);
   const [toast, setToast] = useState<Toast>(null);
 
   const notify = (text: string, kind: Toast["kind"] = "ok") => {
@@ -222,8 +238,70 @@ export default function MentorHubSessionReviewPage() {
         </div>
       </div>
 
+      {/* Per-student breakdown — nhận xét cá nhân hoá AI tự sinh */}
+      <div style={{ marginTop: 36 }}>
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end", marginBottom: 16, gap: 16, flexWrap: "wrap" }}>
+          <div>
+            <div className="mh__kicker" style={{ color: "var(--mh-amber)" }}>✦ AI · NHẬN XÉT CÁ NHÂN HOÁ TỪNG HỌC VIÊN</div>
+            <h2 style={{ marginTop: 6, fontFamily: "'Fraunces', serif", fontWeight: 400, letterSpacing: "-.01em" }}>
+              <em>Phần thịt sau</em> — mỗi học viên một thông điệp riêng
+            </h2>
+            <p style={{ color: "var(--mh-ink-soft)", fontSize: 13, marginTop: 4 }}>
+              {s.zaloDispatchSummary.autoSendCount} sẽ tự gửi · {s.zaloDispatchSummary.needsReviewCount} cần review · gửi qua {s.zaloDispatchSummary.channelBreakdown.zaloOA} Zalo OA, {s.zaloDispatchSummary.channelBreakdown.email} email · dự kiến {s.zaloDispatchSummary.estimatedReachAt}
+            </p>
+          </div>
+          <button className="mh__btn mh__btn--primary" onClick={() => setShowPersonalize(true)}>
+            💬 Mở cockpit gửi cá nhân hoá ({s.perStudentBreakdown.length})
+          </button>
+        </div>
+
+        <div className="mh__grid mh__grid--2" style={{ gap: 16 }}>
+          {s.perStudentBreakdown.map((p) => {
+            const att = attendancePill(p.attendanceStatus);
+            return (
+              <div key={p.studentId} className="mh__card" style={{ padding: 18, position: "relative", borderTop: `3px solid ${engagementColor(p.engagementScore)}` }}>
+                <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 12 }}>
+                  <div className="mh__avatar" style={{ background: p.avatarBg, width: 44, height: 44, fontSize: 14 }}>{p.short}</div>
+                  <div style={{ flex: 1, minWidth: 0 }}>
+                    <div style={{ fontWeight: 600, fontSize: 14 }}>{p.name}</div>
+                    <div style={{ display: "flex", gap: 6, marginTop: 4, alignItems: "center" }}>
+                      <span className={"mh__pill " + att.cls} style={{ fontSize: 9 }}>{att.label}</span>
+                      <span className="mh__mono" style={{ fontSize: 10, color: "var(--mh-ink-soft)" }}>
+                        {sentimentEmoji(p.sentiment)} talk {p.talkTimeMin}m · chat {p.chatMessages} · Q {p.questionsAsked}
+                      </span>
+                    </div>
+                  </div>
+                  <div style={{ textAlign: "right" }}>
+                    <div className="mh__mono" style={{ fontSize: 9, letterSpacing: ".08em", color: "var(--mh-ink-soft)" }}>ENGAGEMENT</div>
+                    <div style={{ fontFamily: "'Fraunces', serif", fontSize: 28, fontWeight: 400, color: engagementColor(p.engagementScore), lineHeight: 1 }}>{p.engagementScore}</div>
+                  </div>
+                </div>
+
+                {p.highlights.length > 0 && (
+                  <ul style={{ listStyle: "none", padding: 0, margin: "0 0 12px", display: "flex", flexDirection: "column", gap: 4 }}>
+                    {p.highlights.map((h, i) => (
+                      <li key={i} style={{ fontSize: 12, color: "var(--mh-ink-soft)", paddingLeft: 14, position: "relative" }}>
+                        <span style={{ position: "absolute", left: 0, color: "var(--mh-teal)" }}>·</span>{h}
+                      </li>
+                    ))}
+                  </ul>
+                )}
+
+                <div style={{ background: "var(--mh-amber-soft)", borderRadius: 8, padding: "12px 14px", borderLeft: "3px solid var(--mh-amber)" }}>
+                  <div className="mh__mono" style={{ fontSize: 9, letterSpacing: ".08em", color: "var(--mh-amber)", marginBottom: 4 }}>
+                    {p.zaloChannel.toUpperCase()} · {p.zaloStatus === "scheduled" ? "📤 SẼ TỰ GỬI" : p.zaloStatus === "needs_review" ? "👁 CẦN REVIEW" : p.zaloStatus.toUpperCase()}
+                  </div>
+                  <div style={{ fontFamily: "'Fraunces', serif", fontStyle: "italic", fontSize: 13, lineHeight: 1.55 }}>{p.aiRemark}</div>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      </div>
+
       {showSend && <SendToStudentsModal session={s} onClose={() => setShowSend(false)} onSent={(ch, count) => { setShowSend(false); notify(`✓ Đã gửi ghi chú buổi học tới ${count} học viên qua ${ch}.`); }} />}
       {showShare && <ShareNoteModal session={s} onClose={() => setShowShare(false)} />}
+      {showPersonalize && <PersonalizeCockpitModal session={s} onClose={() => setShowPersonalize(false)} onSent={(count) => { setShowPersonalize(false); notify(`✓ Đã lên lịch gửi ${count} tin cá nhân hoá lúc ${s.zaloDispatchSummary.estimatedReachAt}.`); }} />}
 
       {toast && (
         <div style={{ position: "fixed", bottom: 24, right: 24, padding: "14px 20px", background: toast.kind === "info" ? "var(--mh-ink)" : "#166534", color: "#fff", borderRadius: 10, boxShadow: "0 10px 30px rgba(0,0,0,.2)", zIndex: 300, fontSize: 14, maxWidth: 440 }}>{toast.text}</div>
@@ -422,6 +500,150 @@ function ShareNoteModal({ session, onClose }: { session: typeof MOCK_SESSION_REV
 
         <div style={{ display: "flex", gap: 8, justifyContent: "flex-end", marginTop: 20 }}>
           <button type="button" className="mh__btn" onClick={onClose}>Đóng</button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ── Personalize cockpit modal — review từng tin Zalo cá nhân hoá trước khi gửi ─
+function PersonalizeCockpitModal({ session, onClose, onSent }: { session: typeof MOCK_SESSION_REVIEW; onClose: () => void; onSent: (count: number) => void }) {
+  const breakdown = session.perStudentBreakdown;
+  const [activeId, setActiveId] = useState(breakdown[0]?.studentId ?? "");
+  const [drafts, setDrafts] = useState<Record<string, string>>(
+    Object.fromEntries(breakdown.map((p) => [p.studentId, p.aiRemark]))
+  );
+  const [approved, setApproved] = useState<Set<string>>(
+    new Set(breakdown.filter((p) => p.zaloStatus === "scheduled").map((p) => p.studentId))
+  );
+  const [autoSend, setAutoSend] = useState(false);
+
+  const active = breakdown.find((p) => p.studentId === activeId) ?? breakdown[0];
+  const toggleApprove = (id: string) => {
+    const n = new Set(approved);
+    n.has(id) ? n.delete(id) : n.add(id);
+    setApproved(n);
+  };
+  const approveAll = () => setApproved(new Set(breakdown.map((p) => p.studentId)));
+
+  const submit = () => {
+    onSent(approved.size);
+  };
+
+  return (
+    <div className="mh__modal-backdrop" onClick={onClose}>
+      <div className="mh__modal" onClick={(e) => e.stopPropagation()} style={{ maxWidth: 980, width: "92vw", maxHeight: "90vh", display: "flex", flexDirection: "column" }}>
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 16 }}>
+          <div>
+            <div className="mh__kicker" style={{ color: "var(--mh-amber)" }}>✦ COCKPIT GỬI CÁ NHÂN HOÁ</div>
+            <h3 style={{ marginTop: 4 }}>Buổi {session.sessionNumber}: {session.sessionTitle}</h3>
+            <p style={{ fontSize: 12, color: "var(--mh-ink-soft)", marginTop: 4 }}>
+              Approve {approved.size}/{breakdown.length} tin · gửi qua Zalo OA + Email · dự kiến {session.zaloDispatchSummary.estimatedReachAt}
+            </p>
+          </div>
+          <button className="mh__btn mh__btn--ghost" onClick={onClose} style={{ padding: 4 }}>✕</button>
+        </div>
+
+        <div style={{ display: "grid", gridTemplateColumns: "260px 1fr", gap: 16, flex: 1, minHeight: 0 }}>
+          {/* Left: list học viên */}
+          <div style={{ borderRight: "1px solid var(--mh-line)", paddingRight: 12, overflowY: "auto" }}>
+            <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 10, alignItems: "center" }}>
+              <span className="mh__mono" style={{ fontSize: 10, letterSpacing: ".08em", color: "var(--mh-ink-soft)" }}>HỌC VIÊN ({breakdown.length})</span>
+              <button className="mh__btn" style={{ padding: "2px 8px", fontSize: 10 }} onClick={approveAll}>Approve all</button>
+            </div>
+            <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
+              {breakdown.map((p) => {
+                const isActive = p.studentId === activeId;
+                const isApproved = approved.has(p.studentId);
+                return (
+                  <button key={p.studentId} type="button" onClick={() => setActiveId(p.studentId)}
+                    style={{
+                      display: "flex", alignItems: "center", gap: 8, padding: "8px 10px",
+                      background: isActive ? "var(--mh-ivory-2)" : "transparent",
+                      border: isActive ? "1px solid var(--mh-teal)" : "1px solid transparent",
+                      borderRadius: 8, cursor: "pointer", textAlign: "left", width: "100%",
+                    }}
+                  >
+                    <div className="mh__avatar mh__avatar--sm" style={{ background: p.avatarBg }}>{p.short}</div>
+                    <div style={{ flex: 1, minWidth: 0 }}>
+                      <div style={{ fontSize: 12, fontWeight: 500, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{p.name}</div>
+                      <div className="mh__mono" style={{ fontSize: 9, color: engagementColor(p.engagementScore) }}>● {p.engagementScore} engagement</div>
+                    </div>
+                    <span style={{ fontSize: 14, color: isApproved ? "var(--mh-teal)" : "var(--mh-line)" }}>{isApproved ? "✓" : "○"}</span>
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+
+          {/* Right: editor */}
+          <div style={{ overflowY: "auto", paddingRight: 8 }}>
+            {active && (
+              <>
+                <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 12 }}>
+                  <div className="mh__avatar" style={{ background: active.avatarBg, width: 56, height: 56, fontSize: 18 }}>{active.short}</div>
+                  <div>
+                    <h4 style={{ margin: 0 }}>{active.name}</h4>
+                    <div className="mh__mono" style={{ fontSize: 10, color: "var(--mh-ink-soft)", marginTop: 2 }}>
+                      {active.zaloChannel} · scheduled {active.scheduledAt}
+                    </div>
+                  </div>
+                </div>
+
+                <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 8, marginBottom: 14, padding: 10, background: "var(--mh-ivory-2)", borderRadius: 8 }}>
+                  <div><div className="mh__mono" style={{ fontSize: 9, color: "var(--mh-ink-soft)" }}>ENGAGEMENT</div><div style={{ fontFamily: "'Fraunces', serif", fontSize: 22, color: engagementColor(active.engagementScore) }}>{active.engagementScore}</div></div>
+                  <div><div className="mh__mono" style={{ fontSize: 9, color: "var(--mh-ink-soft)" }}>TALK</div><div style={{ fontFamily: "'Fraunces', serif", fontSize: 22 }}>{active.talkTimeMin}m</div></div>
+                  <div><div className="mh__mono" style={{ fontSize: 9, color: "var(--mh-ink-soft)" }}>CHAT</div><div style={{ fontFamily: "'Fraunces', serif", fontSize: 22 }}>{active.chatMessages}</div></div>
+                  <div><div className="mh__mono" style={{ fontSize: 9, color: "var(--mh-ink-soft)" }}>Q&A</div><div style={{ fontFamily: "'Fraunces', serif", fontSize: 22 }}>{active.questionsAsked}</div></div>
+                </div>
+
+                {active.highlights.length > 0 && (
+                  <div className="mh__field">
+                    <label className="mh__label">AI HIGHLIGHTS từ transcript</label>
+                    <ul style={{ listStyle: "none", padding: 0, margin: 0, display: "flex", flexDirection: "column", gap: 6 }}>
+                      {active.highlights.map((h, i) => (
+                        <li key={i} style={{ fontSize: 13, padding: "8px 12px", background: "var(--mh-ivory-2)", borderRadius: 6, borderLeft: "2px solid var(--mh-teal)" }}>{h}</li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+
+                <div className="mh__field">
+                  <label className="mh__label mh__label--req">Tin nhắn cá nhân hoá (sẽ gửi qua {active.zaloChannel})</label>
+                  <textarea
+                    className="mh__input"
+                    style={{ minHeight: 140, fontFamily: "'Fraunces', serif", fontStyle: "italic", fontSize: 14, lineHeight: 1.55, resize: "vertical" }}
+                    value={drafts[active.studentId] ?? ""}
+                    onChange={(e) => setDrafts({ ...drafts, [active.studentId]: e.target.value })}
+                  />
+                  <div style={{ fontSize: 11, color: "var(--mh-ink-soft)", marginTop: 4 }}>
+                    AI sinh từ transcript + profile học viên · {(drafts[active.studentId] ?? "").length} ký tự
+                  </div>
+                </div>
+
+                <div style={{ display: "flex", gap: 10, alignItems: "center", padding: 10, background: "var(--mh-ivory-2)", borderRadius: 8 }}>
+                  <input type="checkbox" id={`approve-${active.studentId}`} checked={approved.has(active.studentId)} onChange={() => toggleApprove(active.studentId)} />
+                  <label htmlFor={`approve-${active.studentId}`} style={{ fontSize: 13, cursor: "pointer", flex: 1 }}>
+                    Approve gửi cho {active.name.split(" ").pop()}
+                  </label>
+                  <button type="button" className="mh__btn" style={{ padding: "4px 10px", fontSize: 11 }} onClick={() => setDrafts({ ...drafts, [active.studentId]: active.aiRemark })}>↺ Reset AI</button>
+                </div>
+              </>
+            )}
+          </div>
+        </div>
+
+        <div style={{ marginTop: 16, paddingTop: 14, borderTop: "1px solid var(--mh-line)", display: "flex", gap: 12, alignItems: "center", justifyContent: "space-between", flexWrap: "wrap" }}>
+          <label style={{ display: "flex", alignItems: "center", gap: 8, fontSize: 12 }}>
+            <input type="checkbox" checked={autoSend} onChange={(e) => setAutoSend(e.target.checked)} />
+            Auto-send từ buổi sau (không cần review nữa, chỉ với gói Pro+)
+          </label>
+          <div style={{ display: "flex", gap: 8 }}>
+            <button type="button" className="mh__btn" onClick={onClose}>Huỷ</button>
+            <button type="button" className="mh__btn mh__btn--primary" onClick={submit} disabled={approved.size === 0}>
+              📤 Lên lịch gửi {approved.size} tin lúc {session.zaloDispatchSummary.estimatedReachAt.split(" ")[1]}
+            </button>
+          </div>
         </div>
       </div>
     </div>
