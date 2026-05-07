@@ -2542,10 +2542,10 @@ export const urlsApi = {
   },
   // Community-hub portal config — yc tester 2026-05-06 (banner cross-browser sync)
   communityHubPortalConfig: {
-    // Path public đặt /community-hub/public/portal-config để Vert.x router
-    // không nhầm với admin GET /portal-config (cùng prefix gây 404).
-    getPublic: prefixMarket + "/community-hub/public/portal-config",
-    get: prefixMarket + "/community-hub/portal-config",                // GET (admin)
+    // GET dùng chung 1 route — BE handler tự branch admin (JWT) vs anonymous
+    // (Hostname). Workaround Vert.x router không register nested public path.
+    getPublic: prefixMarket + "/community-hub/portal-config",
+    get: prefixMarket + "/community-hub/portal-config",
     upsert: prefixMarket + "/community-hub/portal-config/upsert",     // POST (admin) body { config: JSON string }
   },
   fixedPricePromotion: {
