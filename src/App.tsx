@@ -366,7 +366,7 @@ export default function App() {
 
   const authValue: AuthContextType = {
     id: user?.id,
-    idEmployee: user?.idEmployee,
+    idEmployee: dataInfoEmployee?.id ?? user?.idEmployee,
     username: user?.username,
     name: user?.name,
     phone: user?.phone,

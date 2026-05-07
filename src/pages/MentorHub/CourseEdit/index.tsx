@@ -7,7 +7,7 @@ import { UserContext, ContextType } from "contexts/userContext";
 import SalesServiceClient, { SalesService } from "services/SalesServiceClient";
 import ZoomClientForCourseEdit from "services/ZoomClient";
 import FileService from "services/FileService";
-import { apiGet } from "services/apiHelper";
+import { apiGet, apiPost } from "services/apiHelper";
 import { urlsApi } from "configs/urls";
 import "../_shared/styles.scss";
 import "./form.scss";
@@ -117,7 +117,9 @@ export default function MHCourseEdit() {
   const formCardRef = useRef<HTMLDivElement>(null);
   const skipNextSaveRef = useRef(true); // chặn save lần đầu (mount)
 
-  // Resolve default categoryId — bootstrap "Khoá học mentorhub" cho bsnId=6
+  // Resolve default categoryId — bootstrap "Khoá học mentorhub" cho bsnId=6.
+  // Nếu org chưa có category match keyword "mentorhub" → tự tạo để publish khoá
+  // không bị chặn ở "Chưa có category mặc định cho mentorhub".
   useEffect(() => {
     apiGet(urlsApi.categoryService.list, {
       keyword: DEFAULT_CATEGORY_KEYWORD,
@@ -126,10 +128,30 @@ export default function MHCourseEdit() {
     })
       .then((res: { result?: { items?: Array<{ id: number }> } }) => {
         const items = res?.result?.items || [];
-        if (items.length > 0) setResolvedCategoryId(items[0].id);
+        if (items.length > 0) {
+          setResolvedCategoryId(items[0].id);
+          return;
+        }
+        // Không tìm thấy → tự tạo
+        return apiPost(urlsApi.categoryService.update, {
+          name: "Khoá học mentorhub",
+          avatar: "",
+          parentId: 0,
+          position: 0,
+          active: 1,
+          featured: 0,
+        }).then((createRes: { result?: { id?: number } | number; code?: number }) => {
+          const newId =
+            typeof createRes?.result === "object"
+              ? createRes.result?.id
+              : typeof createRes?.result === "number"
+              ? createRes.result
+              : null;
+          if (newId) setResolvedCategoryId(newId);
+        });
       })
       .catch(() => {
-        /* sẽ rơi xuống fallback 0 lúc save → BE reject + show error */
+        /* fallback null → save sẽ show error "Chưa có category mặc định" */
       });
   }, []);
 
