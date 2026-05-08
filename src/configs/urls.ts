@@ -907,6 +907,16 @@ export const urlsApi = {
   salesServiceExtraInfo: {
     list: prefixSales + "/serviceExtraInfo/list",
   },
+  // Service taxonomy moved inventory → sales (cloud-crm#226, sales#23).
+  // Owner entity rule: dịch vụ thuộc sales nên category cũng do sales sở hữu.
+  // Endpoint sẽ available sau khi sales ship cloud-sales-master#23 — trong lúc đó
+  // FE call có thể trả 404; bootstrap useEffect ở CourseEdit đã handle silent.
+  salesServiceCategory: {
+    list: prefixSales + "/category/list",
+    get: prefixSales + "/category/get",
+    update: prefixSales + "/category/update",
+    delete: prefixSales + "/category/delete",
+  },
   // Public student enrollment (no JWT, HMAC-SHA256). Reply: cloud-crm#210, sales commit 5749210.
   salesPublic: {
     orderRegister: prefixSales + "/public/order/register",

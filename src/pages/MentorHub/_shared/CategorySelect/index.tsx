@@ -4,22 +4,21 @@
 // Lịch sử:
 // - Bản đầu giả định taxonomy ở /inventory/category/* (CategoryServiceService).
 // - 2026-05-08: BE inventory close cloud-crm#226 + cloud-inventory-master#43,
-//   re-route sang sales. Endpoint thật sẽ là /sales/service-category/* khi
-//   sales ship #23. Permission cũng đổi: INVENTORY_CATEGORY_WRITE → SALES_SERVICE_CATEGORY_WRITE.
+//   re-route sang sales. Endpoint thật sẽ là /sales/category/* khi sales ship
+//   #23. Permission cũng đổi: INVENTORY_CATEGORY_WRITE → SALES_SERVICE_CATEGORY_WRITE.
 //
-// Hiện tại component vẫn dùng CategoryServiceService làm placeholder để dev UI;
-// khi sales mở endpoint, swap sang ServiceCategoryService (sẽ có) + đổi
-// permission key tương ứng.
+// Component dùng ServiceCategoryService gọi /sales/category/* (sales owner).
+// Endpoint sẽ available sau khi sales ship cloud-sales-master#23; trong lúc đó
+// loadOptions fail-soft sang MENTORHUB_DEFAULT_CATEGORIES mock.
 //
 // Spec UI: dropdown async + inline "+ Tạo danh mục mới" mở modal-in-modal.
 // CHƯA wire vào CourseEdit — chờ:
-//   1. Sales ship endpoint /sales/service-category/list + /save (cloud-sales-master#23)
+//   1. Sales ship endpoint /sales/category/list + /update (cloud-sales-master#23)
 //   2. RBAC seed permission SALES_SERVICE_CATEGORY_WRITE cho mentorhub tenant
 
 import React, { useState, useCallback, useContext } from "react";
 import { AsyncPaginate } from "react-select-async-paginate";
-// TODO(sales#23): swap CategoryServiceService → ServiceCategoryService khi sales ship
-import CategoryServiceService from "services/CategoryServiceService";
+import ServiceCategoryService from "services/ServiceCategoryService";
 import { UserContext, ContextType } from "contexts/userContext";
 import { showToast } from "utils/common";
 import { MENTORHUB_DEFAULT_CATEGORIES } from "@/mocks/mentorhub";
@@ -72,7 +71,7 @@ export default function CategorySelect({
     ): Promise<LoadResult> => {
       const page = additional?.page ?? 1;
       try {
-        const res = await CategoryServiceService.list({
+        const res = await ServiceCategoryService.list({
           keyword,
           page,
           limit: PAGE_SIZE,
@@ -172,14 +171,12 @@ function CreateCategoryModal({ onClose, onCreated }: CreateCategoryModalProps) {
     }
     setSubmitting(true);
     try {
-      const res = await CategoryServiceService.update({
-        // @ts-expect-error — BE schema yêu cầu các field này; giả định omit id = create
+      const res = await ServiceCategoryService.update({
         name: trimmed,
         avatar: "",
         parentId: 0,
         position: 0,
         active: 1,
-        featured: 0,
       });
       const newId =
         typeof res?.result === "object"

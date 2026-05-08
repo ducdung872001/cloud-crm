@@ -7,8 +7,7 @@ import { UserContext, ContextType } from "contexts/userContext";
 import SalesServiceClient, { SalesService } from "services/SalesServiceClient";
 import ZoomClientForCourseEdit from "services/ZoomClient";
 import FileService from "services/FileService";
-import { apiGet, apiPost } from "services/apiHelper";
-import { urlsApi } from "configs/urls";
+import ServiceCategoryService from "services/ServiceCategoryService";
 import "../_shared/styles.scss";
 import "./form.scss";
 
@@ -118,21 +117,20 @@ export default function MHCourseEdit() {
   const skipNextSaveRef = useRef(true); // chặn save lần đầu (mount)
 
   // Resolve default categoryId — bootstrap "Khoá học mentorhub" cho bsnId=6.
-  // Nếu org chưa có category match keyword "mentorhub" → tự tạo để publish khoá
-  // không bị chặn ở "Chưa có category mặc định cho mentorhub".
-  // apiHelper KHÔNG throw khi HTTP 401 (chỉ parse JSON body) → phải check
-  // `res.code === 0` để detect BE-level failure (vd. inventory 401 đang block —
-  // xem handoff cloud-inventory-master#43 + .handoff/sent/.../mentorhub-401.md).
+  // Owner: SALES microservice (taxonomy `service_category` sống cùng entity
+  // service mà nó phân loại — owner entity rule). Endpoint /sales/category/*
+  // đang chờ cloud-sales-master#23 ship; trong lúc đó FE 404 silently và banner
+  // hướng dẫn user.
+  // apiHelper KHÔNG throw trên HTTP 4xx → check `res.code === 0` để detect BE fail.
   useEffect(() => {
     type ListRes = { code?: number; message?: string; result?: { items?: Array<{ id: number }> } };
     type CreateRes = { code?: number; message?: string; result?: { id?: number } | number };
 
-    const reportFail = (stage: string, msg?: string) => {
-      const detail = msg ? ` (${msg})` : "";
-      setSaveError(`Bootstrap category mentorhub thất bại ở bước ${stage}${detail}. Có thể BE inventory đang chặn 401 — xem handoff cloud-inventory-master#43.`);
+    const reportFail = (_stage: string, _msg?: string) => {
+      setSaveError("Chưa có category mặc định cho mentorhub — liên hệ admin");
     };
 
-    apiGet(urlsApi.categoryService.list, {
+    ServiceCategoryService.list({
       keyword: DEFAULT_CATEGORY_KEYWORD,
       page: 1,
       limit: 1,
@@ -148,13 +146,12 @@ export default function MHCourseEdit() {
           return;
         }
         // Không tìm thấy → tự tạo
-        return apiPost(urlsApi.categoryService.update, {
+        return ServiceCategoryService.update({
           name: "Khoá học mentorhub",
-          avatar: "",
           parentId: 0,
           position: 0,
           active: 1,
-          featured: 0,
+          avatar: "",
         }).then((createRes: CreateRes) => {
           if (createRes?.code !== 0 && createRes?.code !== undefined) {
             reportFail("auto-create", createRes?.message);
