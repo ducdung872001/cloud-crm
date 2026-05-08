@@ -39,6 +39,9 @@ export const MOCK_REVENUE_30D = [
   4.1, 3.8, 4.3, 4.7, 5.1, 4.8, 5.2, 5.5, 5.8, 6.2,
 ];
 
+// categoryId/categoryName: shape transition theo cloud-crm#226 (inventory clarify reply).
+// Kế hoạch: ghi categoryId (FK → category_item) + categoryName (denormalized cho display).
+// metadata.category (string) giữ legacy fallback đến khi BE backfill xong.
 export const MOCK_COURSES = [
   {
     id: "CRS-01",
@@ -54,6 +57,8 @@ export const MOCK_COURSES = [
     nps: 4.92,
     icon: "⎈",
     iconBg: "linear-gradient(135deg, #134E4A, #0F766E)",
+    categoryId: 9001,
+    categoryName: "Kỹ thuật phần mềm",
   },
   {
     id: "CRS-02",
@@ -69,6 +74,8 @@ export const MOCK_COURSES = [
     nps: 0,
     icon: "∞",
     iconBg: "linear-gradient(135deg, #1E40AF, #3B82F6)",
+    categoryId: 9001,
+    categoryName: "Kỹ thuật phần mềm",
   },
   {
     id: "CRS-03",
@@ -84,6 +91,8 @@ export const MOCK_COURSES = [
     nps: 4.85,
     icon: "◈",
     iconBg: "linear-gradient(135deg, #374151, #6B7280)",
+    categoryId: 9001,
+    categoryName: "Kỹ thuật phần mềm",
   },
   {
     id: "CRS-04",
@@ -99,6 +108,8 @@ export const MOCK_COURSES = [
     nps: 4.78,
     icon: "⚡",
     iconBg: "linear-gradient(135deg, #B45309, #F59E0B)",
+    categoryId: 9005,
+    categoryName: "DevOps",
   },
   {
     id: "CRS-05",
@@ -114,7 +125,20 @@ export const MOCK_COURSES = [
     nps: 0,
     icon: "★",
     iconBg: "linear-gradient(135deg, #0F766E, #5EEAD4)",
+    categoryId: 9003,
+    categoryName: "Leadership",
   },
+];
+
+// Default categories sẽ seed cho tenant mentorhub (bsnId=6). categoryId là mock.
+// Khi BE customer/org ship onboarding seed flow, dùng list này làm payload bulk-create.
+export const MENTORHUB_DEFAULT_CATEGORIES = [
+  { id: 9001, name: "Kỹ thuật phần mềm" },
+  { id: 9002, name: "Quản lý sản phẩm" },
+  { id: 9003, name: "Leadership" },
+  { id: 9004, name: "Data & AI" },
+  { id: 9005, name: "DevOps" },
+  { id: 9006, name: "Khác" },
 ];
 
 export const MOCK_STUDENTS = [
