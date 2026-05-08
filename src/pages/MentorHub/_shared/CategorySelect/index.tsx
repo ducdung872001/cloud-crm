@@ -1,17 +1,32 @@
 // [MH] CategorySelect — async paginated picker cho khoá học MentorHub.
-// Scaffold cho clarify-reply cloud-crm#226 → BE inventory đề xuất chuyển từ
-// metadata.category (string) sang categoryId (FK ref category_item).
+// Status: SCAFFOLD — chờ sales ship handoff cloud-sales-master#23.
+//
+// Lịch sử:
+// - Bản đầu giả định taxonomy ở /inventory/category/* (CategoryServiceService).
+// - 2026-05-08: BE inventory close cloud-crm#226 + cloud-inventory-master#43,
+//   re-route sang sales. Endpoint thật sẽ là /sales/service-category/* khi
+//   sales ship #23. Permission cũng đổi: INVENTORY_CATEGORY_WRITE → SALES_SERVICE_CATEGORY_WRITE.
+//
+// Hiện tại component vẫn dùng CategoryServiceService làm placeholder để dev UI;
+// khi sales mở endpoint, swap sang ServiceCategoryService (sẽ có) + đổi
+// permission key tương ứng.
+//
 // Spec UI: dropdown async + inline "+ Tạo danh mục mới" mở modal-in-modal.
-// CHƯA wire vào CourseEdit — chờ BE confirm:
-//   1. Mở 401 cho /inventory/category/list + /update (handoff 401)
-//   2. Confirm endpoint /update có dùng được làm create không (Q2 reply)
+// CHƯA wire vào CourseEdit — chờ:
+//   1. Sales ship endpoint /sales/service-category/list + /save (cloud-sales-master#23)
+//   2. RBAC seed permission SALES_SERVICE_CATEGORY_WRITE cho mentorhub tenant
 
 import React, { useState, useCallback, useContext } from "react";
 import { AsyncPaginate } from "react-select-async-paginate";
+// TODO(sales#23): swap CategoryServiceService → ServiceCategoryService khi sales ship
 import CategoryServiceService from "services/CategoryServiceService";
 import { UserContext, ContextType } from "contexts/userContext";
 import { showToast } from "utils/common";
 import { MENTORHUB_DEFAULT_CATEGORIES } from "@/mocks/mentorhub";
+
+// Permission key mới (sau re-route từ inventory sang sales).
+// Trước: "INVENTORY_CATEGORY_WRITE" — đã deprecated theo cloud-crm#226 reply.
+const PERMISSION_CREATE_CATEGORY = "SALES_SERVICE_CATEGORY_WRITE";
 
 export interface CategoryOption {
   value: number;
@@ -45,7 +60,7 @@ export default function CategorySelect({
   className,
 }: CategorySelectProps) {
   const ctx = useContext(UserContext) as ContextType;
-  const canCreate = ctx?.permissions?.["INVENTORY_CATEGORY_WRITE"] === true;
+  const canCreate = ctx?.permissions?.[PERMISSION_CREATE_CATEGORY] === true;
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [refreshKey, setRefreshKey] = useState(0); // bump để force AsyncPaginate refetch
 

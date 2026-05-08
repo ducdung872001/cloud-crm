@@ -5,10 +5,18 @@ fe_branch: reborn-mentorhub
 to: inventory
 created: 2026-05-08T19:18:00+07:00
 slug: category-clarify-reply
-status: posted
+status: closed
+resolution: re-routed-to-sales
 gh_issue: https://github.com/ducdung872001/cloud-crm/issues/226#issuecomment-4406403416
+gh_close_comment: https://github.com/ducdung872001/cloud-crm/issues/226#issuecomment-4406475697
+re_routed_to: https://github.com/ducdung872001/cloud-sales-master/issues/23
 related_reply: https://github.com/ducdung872001/cloud-crm/issues/226
 related_origin: https://github.com/ducdung872001/cloud-inventory-master/issues/43
+note: |
+  BE inventory đóng #226 với state_reason=not_planned. Re-route sang sales#23
+  để build service_category thuộc namespace /sales/service-category/* (taxonomy
+  theo owner entity: dịch vụ thuộc sales, sản phẩm thuộc inventory).
+  Permission name đổi: INVENTORY_CATEGORY_WRITE → SALES_SERVICE_CATEGORY_WRITE.
 ---
 
 # Clarify-reply: course-catalog-mentorhub category model

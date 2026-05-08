@@ -5,8 +5,16 @@ fe_branch: reborn-mentorhub
 to: inventory
 created: 2026-05-08T00:03:00+07:00
 slug: category-mentorhub-401
-status: open
-gh_issue: TBD (mở issue ở ducdung872001/cloud-inventory-master)
+status: obsolete
+resolution: superseded-by-sales-rerouting
+gh_issue: never-posted
+re_routed_to: https://github.com/ducdung872001/cloud-sales-master/issues/23
+note: |
+  Per BE inventory comment cloud-crm#226#issuecomment-4406475697 (2026-05-08):
+  endpoint mới của taxonomy dịch vụ là /sales/service-category/* — không còn ở
+  /inventory/category/*. Vì handoff này chưa kịp gửi inventory nên không cần
+  open issue, chỉ archive lại để làm reference. Permission name cũng đổi sang
+  SALES_SERVICE_CATEGORY_WRITE.
 ---
 
 # `/inventory/category/list` & `/inventory/category/update` trả 401 cho tenant mentorhub
