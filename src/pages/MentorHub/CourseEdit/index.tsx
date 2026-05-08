@@ -2,6 +2,7 @@
 import React, { useContext, useEffect, useMemo, useRef, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import type { Descendant } from "slate";
+import { Text } from "slate";
 import RebornEditor from "components/editor/reborn";
 import { UserContext, ContextType } from "contexts/userContext";
 import SalesServiceClient, { SalesService } from "services/SalesServiceClient";
@@ -27,6 +28,43 @@ function parseSlateContent(s?: string | null): Descendant[] | null {
   }
   return [{ type: "paragraph", children: [{ text: s }] }] as Descendant[];
 }
+
+// Slate Descendant[] → HTML string. Cần để pass vào RebornEditor.initialValue
+// (editor parse HTML qua DOMParser → deserialize → Slate). Trước đây code cast
+// Descendant[] as string khiến DOMParser nhận "[object Object]" và editor hiển thị
+// chuỗi đó như văn bản, người dùng không edit được.
+const escapeHtml = (s: string) =>
+  s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+
+const serializeSlateNode = (node: Descendant): string => {
+  if (Text.isText(node)) {
+    let out = escapeHtml(node.text);
+    const leaf = node as { bold?: boolean; italic?: boolean; underline?: boolean; code?: boolean };
+    if (leaf.bold) out = `<strong>${out}</strong>`;
+    if (leaf.italic) out = `<em>${out}</em>`;
+    if (leaf.underline) out = `<u>${out}</u>`;
+    if (leaf.code) out = `<code>${out}</code>`;
+    return out;
+  }
+  const el = node as { type?: string; children?: Descendant[]; url?: string; alt?: string };
+  const children = (el.children ?? []).map(serializeSlateNode).join("");
+  switch (el.type) {
+    case "paragraph": return `<p>${children}</p>`;
+    case "heading-one": return `<h1>${children}</h1>`;
+    case "heading-two": return `<h2>${children}</h2>`;
+    case "heading-three": return `<h3>${children}</h3>`;
+    case "bulleted-list": return `<ul>${children}</ul>`;
+    case "numbered-list": return `<ol>${children}</ol>`;
+    case "list-item": return `<li>${children}</li>`;
+    case "block-quote": return `<blockquote>${children}</blockquote>`;
+    case "code-block": return `<pre><code>${children}</code></pre>`;
+    case "link": return `<a href="${escapeHtml(el.url ?? "")}">${children}</a>`;
+    case "image": return `<img src="${escapeHtml(el.url ?? "")}" alt="${escapeHtml(el.alt ?? "")}" />`;
+    default: return `<p>${children}</p>`;
+  }
+};
+
+const slateToHtml = (nodes: Descendant[]): string => nodes.map(serializeSlateNode).join("");
 
 type AgendaItem = { id: string; title: string; description: string; durationMin: number };
 
@@ -935,7 +973,7 @@ function Step2({
           <RebornEditor
             name="courseContent"
             fill
-            initialValue={form.content as unknown as string}
+            initialValue={slateToHtml(form.content)}
             onChangeContent={(value) => set("content", value)}
           />
         </div>
