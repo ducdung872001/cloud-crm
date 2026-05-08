@@ -5,8 +5,8 @@ fe_branch: reborn-mentorhub
 to: sales
 created: 2026-05-08T20:06:00+07:00
 slug: mentorhub-seed-sample-courses
-status: open
-gh_issue: TBD (mở issue ở ducdung872001/cloud-sales-master, label from-mentorhub)
+status: posted
+gh_issue: https://github.com/ducdung872001/cloud-sales-master/issues/24
 severity: MEDIUM
 ---
 
