@@ -204,6 +204,16 @@ export default function EventFormPage() {
   // (typing/select/checkbox/paste...). Programmatic state change → bỏ qua.
   const [isDirty, setIsDirty] = useState(false);
   const formWrapRef = useRef<HTMLDivElement | null>(null);
+  // editorTouchedRef: false cho đến khi user thực sự gõ trong RebornEditor.
+  // Mount-time onChange của Slate ghi đè form.content về rỗng (initialValueDelta
+  // còn ở emptyParagraph trước khi useEffect[initialValue] deserialize HTML thật).
+  const editorTouchedRef = useRef(false);
+  // editorContentRef: nguồn chân lý duy nhất cho content khi submit. KHÔNG dùng
+  // form.content vì Slate có thể fire onChange nhiều lần với các shape rỗng
+  // khác nhau (`<p></p>`, `<p><br></p>`, `<p></p><p></p>`...) lúc mount/normalize
+  // → khó detect chính xác để skip. Ref này chỉ update khi user touched + content
+  // thật sự khác empty; submit đọc thẳng ref, không phụ thuộc form state.
+  const editorContentRef = useRef("");
 
   useEffect(() => {
     if (isEdit && id) {
@@ -212,6 +222,10 @@ export default function EventFormPage() {
         if (e) {
           setForm(entityToForm(e));
           setEditorInitialContent(e.content || "");
+          // Seed ref với content thật từ BE → submit có giá trị fallback đúng
+          // ngay cả khi user không touch editor và Slate wipe form.content.
+          editorContentRef.current = e.content || "";
+          editorTouchedRef.current = false;
           setEditorKey((k) => k + 1);
           setPreviewSlug(e.slug || "");
         }
@@ -222,18 +236,23 @@ export default function EventFormPage() {
   // Đánh dấu dirty khi user thực sự thao tác trong form (typing, select, paste,
   // tick checkbox, edit content...). isTrusted=true → event do user, không phải
   // do JS dispatch → đảm bảo việc load + editor normalize không trigger.
+  // Đồng thời track editorTouched cho riêng RebornEditor (contenteditable).
   useEffect(() => {
     const wrap = formWrapRef.current;
     if (!wrap) return;
-    const markDirty = (e: Event) => {
+    const onUserInput = (e: Event) => {
       if (!e.isTrusted) return;
       setIsDirty(true);
+      const target = e.target as HTMLElement | null;
+      if (target?.closest?.("[contenteditable]")) {
+        editorTouchedRef.current = true;
+      }
     };
-    wrap.addEventListener("input", markDirty);
-    wrap.addEventListener("change", markDirty);
+    wrap.addEventListener("input", onUserInput);
+    wrap.addEventListener("change", onUserInput);
     return () => {
-      wrap.removeEventListener("input", markDirty);
-      wrap.removeEventListener("change", markDirty);
+      wrap.removeEventListener("input", onUserInput);
+      wrap.removeEventListener("change", onUserInput);
     };
   }, []);
 
@@ -310,6 +329,16 @@ export default function EventFormPage() {
 
   const handleContentChange = (descendants: any) => {
     const html = serialize({ children: descendants });
+    // Detect mount-time empty wipe: Slate có thể fire onChange với rỗng
+    // (`<p></p>`, `<p><br></p>`, `<p></p><p></p>`...) ở mount + lúc remount do
+    // key đổi. Nếu html rỗng + ref đã có seed từ BE + user chưa touched → skip,
+    // tránh mất content khi user chỉ sửa field khác.
+    const stripped = html.replace(/\s/g, "");
+    const isEmpty = !stripped || /^(<p[^>]*>(<br\s*\/?>)?<\/p>)+$/.test(stripped);
+    if (isEmpty && !editorTouchedRef.current && editorContentRef.current) {
+      return;
+    }
+    editorContentRef.current = html;
     setForm((f) => ({ ...f, content: html }));
   };
 
@@ -418,10 +447,14 @@ export default function EventFormPage() {
       return;
     }
     setSaving(true);
+    // editorContentRef là nguồn chân lý duy nhất: seed từ BE lúc load, chỉ
+    // được ghi đè khi user thực sự gõ (input event isTrusted trong contenteditable).
+    // Tránh hoàn toàn race với mount-time onChange của Slate.
+    const safeContent = editorContentRef.current;
     const payload: Omit<EventEntity, "id" | "slug" | "createdAt" | "updatedAt"> = {
       title: form.title.trim(),
       description: form.description.trim(),
-      content: form.content,
+      content: safeContent,
       coverImageUrl: form.coverImageUrl || undefined,
       startDate: localToIso(form.startDate),
       endDate: localToIso(form.endDate),
