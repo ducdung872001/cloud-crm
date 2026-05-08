@@ -5,8 +5,8 @@ fe_branch: reborn-mentorhub
 to: inventory
 created: 2026-05-08T19:18:00+07:00
 slug: category-clarify-reply
-status: open
-gh_issue: TBD (clarify-reply issue trên cloud-inventory-master, label from-mentorhub)
+status: posted
+gh_issue: https://github.com/ducdung872001/cloud-crm/issues/226#issuecomment-4406403416
 related_reply: https://github.com/ducdung872001/cloud-crm/issues/226
 related_origin: https://github.com/ducdung872001/cloud-inventory-master/issues/43
 ---
