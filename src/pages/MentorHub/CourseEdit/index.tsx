@@ -120,13 +120,28 @@ export default function MHCourseEdit() {
   // Resolve default categoryId — bootstrap "Khoá học mentorhub" cho bsnId=6.
   // Nếu org chưa có category match keyword "mentorhub" → tự tạo để publish khoá
   // không bị chặn ở "Chưa có category mặc định cho mentorhub".
+  // apiHelper KHÔNG throw khi HTTP 401 (chỉ parse JSON body) → phải check
+  // `res.code === 0` để detect BE-level failure (vd. inventory 401 đang block —
+  // xem handoff cloud-inventory-master#43 + .handoff/sent/.../mentorhub-401.md).
   useEffect(() => {
+    type ListRes = { code?: number; message?: string; result?: { items?: Array<{ id: number }> } };
+    type CreateRes = { code?: number; message?: string; result?: { id?: number } | number };
+
+    const reportFail = (stage: string, msg?: string) => {
+      const detail = msg ? ` (${msg})` : "";
+      setSaveError(`Bootstrap category mentorhub thất bại ở bước ${stage}${detail}. Có thể BE inventory đang chặn 401 — xem handoff cloud-inventory-master#43.`);
+    };
+
     apiGet(urlsApi.categoryService.list, {
       keyword: DEFAULT_CATEGORY_KEYWORD,
       page: 1,
       limit: 1,
     })
-      .then((res: { result?: { items?: Array<{ id: number }> } }) => {
+      .then((res: ListRes) => {
+        if (res?.code !== 0 && res?.code !== undefined) {
+          reportFail("list", res?.message);
+          return;
+        }
         const items = res?.result?.items || [];
         if (items.length > 0) {
           setResolvedCategoryId(items[0].id);
@@ -140,7 +155,11 @@ export default function MHCourseEdit() {
           position: 0,
           active: 1,
           featured: 0,
-        }).then((createRes: { result?: { id?: number } | number; code?: number }) => {
+        }).then((createRes: CreateRes) => {
+          if (createRes?.code !== 0 && createRes?.code !== undefined) {
+            reportFail("auto-create", createRes?.message);
+            return;
+          }
           const newId =
             typeof createRes?.result === "object"
               ? createRes.result?.id
@@ -148,10 +167,11 @@ export default function MHCourseEdit() {
               ? createRes.result
               : null;
           if (newId) setResolvedCategoryId(newId);
+          else reportFail("auto-create", "BE không trả id");
         });
       })
-      .catch(() => {
-        /* fallback null → save sẽ show error "Chưa có category mặc định" */
+      .catch((err: Error) => {
+        reportFail("network", err?.message);
       });
   }, []);
 
