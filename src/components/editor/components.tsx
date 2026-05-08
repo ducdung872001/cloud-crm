@@ -178,7 +178,8 @@ export const Toolbar = React.forwardRef(({ className, ...props }: PropsWithChild
         display: flex;
         align-items: center;
         justify-content: flex-start;
-        gap: 0 0.5rem;
+        flex-wrap: wrap;
+        gap: 0.4rem 0.5rem;
       `
     )}
   />

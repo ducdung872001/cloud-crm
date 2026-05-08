@@ -69,7 +69,7 @@ export default function RegistrationFlowSwitcher({ enabledFlows = ["guest"], onR
 
       {active === "guest" && (
         <p style={{ fontSize: 12, color: THEME.textMuted, margin: 0 }}>
-          ✓ Bạn sẽ điền form bên dưới với tên + SĐT. Sau 1-2 lần tham gia, BTC sẽ liên hệ tư vấn cấp mã chính thức.
+          ✓ Bạn sẽ điền form bên dưới với tên + SĐT.
         </p>
       )}
     </div>
@@ -101,6 +101,7 @@ function FlowTab({ id, label, active, onClick }: { id: string; label: string; ac
 function MemberLoginForm({ onSuccess }: { onSuccess: (m: MemberEntity) => void }) {
   const [code, setCode] = useState("");
   const [password, setPassword] = useState("");
+  const [showPwd, setShowPwd] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
@@ -133,14 +134,42 @@ function MemberLoginForm({ onSuccess }: { onSuccess: (m: MemberEntity) => void }
         autoFocus
         style={inp}
       />
-      <input
-        value={password}
-        onChange={(e) => setPassword(e.target.value)}
-        placeholder="Mật khẩu"
-        type="password"
-        required
-        style={inp}
-      />
+      <div style={{ position: "relative" }}>
+        <input
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          placeholder="Mật khẩu"
+          type={showPwd ? "text" : "password"}
+          required
+          style={{ ...inp, paddingRight: 44 }}
+        />
+        <button
+          type="button"
+          onClick={() => setShowPwd((v) => !v)}
+          aria-label={showPwd ? "Ẩn mật khẩu" : "Hiện mật khẩu"}
+          title={showPwd ? "Ẩn mật khẩu" : "Hiện mật khẩu"}
+          style={{
+            position: "absolute",
+            top: "50%",
+            right: 6,
+            transform: "translateY(-50%)",
+            width: 32,
+            height: 28,
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            background: "transparent",
+            border: "none",
+            cursor: "pointer",
+            color: THEME.textMuted,
+            fontSize: 16,
+            padding: 0,
+            lineHeight: 1,
+          }}
+        >
+          {showPwd ? "🙈" : "👁"}
+        </button>
+      </div>
       {error && <div style={{ fontSize: 12, color: THEME.danger }}>{error}</div>}
       <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
         <button

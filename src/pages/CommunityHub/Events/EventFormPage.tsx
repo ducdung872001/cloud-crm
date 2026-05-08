@@ -190,8 +190,20 @@ export default function EventFormPage() {
   const [qrUploading, setQrUploading] = useState(false);
   // editorKey để force remount RebornEditor khi load dữ liệu edit
   const [editorKey, setEditorKey] = useState(0);
+  // editorInitialContent: snapshot HTML chỉ set 1 lần khi load → truyền vào
+  // RebornEditor làm initialValue. KHÔNG dùng form.content (cập nhật mỗi keystroke)
+  // vì RebornEditor có useEffect[initialValue] re-deserialize + Slate dùng dynamic
+  // key → mọi keystroke remount Slate, mất cursor/scroll position.
+  const [editorInitialContent, setEditorInitialContent] = useState<string>("");
   // Slug của event đang edit — phục vụ nút "Xem trước" mở trang public detail.
   const [previewSlug, setPreviewSlug] = useState<string>("");
+  // Track form dirty bằng DOM event listener (input/change). KHÔNG dùng
+  // useEffect[form] vì RebornEditor fire onChange ngay khi mount để normalize
+  // HTML (round-trip serialize/deserialize) → setForm → tưởng dirty dù user
+  // chưa gõ. DOM event với `isTrusted` chỉ fire khi user thực sự thao tác
+  // (typing/select/checkbox/paste...). Programmatic state change → bỏ qua.
+  const [isDirty, setIsDirty] = useState(false);
+  const formWrapRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
     if (isEdit && id) {
@@ -199,12 +211,31 @@ export default function EventFormPage() {
         const e = await eventStorage.getEventAsync(id);
         if (e) {
           setForm(entityToForm(e));
+          setEditorInitialContent(e.content || "");
           setEditorKey((k) => k + 1);
           setPreviewSlug(e.slug || "");
         }
       })();
     }
   }, [id]);
+
+  // Đánh dấu dirty khi user thực sự thao tác trong form (typing, select, paste,
+  // tick checkbox, edit content...). isTrusted=true → event do user, không phải
+  // do JS dispatch → đảm bảo việc load + editor normalize không trigger.
+  useEffect(() => {
+    const wrap = formWrapRef.current;
+    if (!wrap) return;
+    const markDirty = (e: Event) => {
+      if (!e.isTrusted) return;
+      setIsDirty(true);
+    };
+    wrap.addEventListener("input", markDirty);
+    wrap.addEventListener("change", markDirty);
+    return () => {
+      wrap.removeEventListener("input", markDirty);
+      wrap.removeEventListener("change", markDirty);
+    };
+  }, []);
 
   const update = <K extends keyof FormState>(key: K, value: FormState[K]) => {
     setForm((f) => ({ ...f, [key]: value }));
@@ -467,9 +498,11 @@ export default function EventFormPage() {
     try {
       if (isEdit && id) {
         await eventStorage.updateEventAsync(id, payload);
+        setIsDirty(false); // tránh blocker chặn chính cú navigate sau save
         navigate(`/ch_events/${id}`);
       } else {
         const created = await eventStorage.createEventAsync(payload);
+        setIsDirty(false);
         navigate(`/ch_events/${created.id}`);
       }
     } catch (e) {
@@ -481,8 +514,63 @@ export default function EventFormPage() {
     }
   };
 
+  // ── Guard rời trang khi có thay đổi chưa lưu ─────────────────────────
+  // App đang dùng BrowserRouter (không phải data router) → useBlocker không
+  // dùng được. Workaround:
+  // 1) Capture click vào <a> trên toàn document (sidebar / breadcrumb / Link) →
+  //    confirm trước khi để default navigation chạy. Chỉ tác động khi isDirty.
+  // 2) beforeunload cho đóng tab / refresh / gõ URL ngoài.
+  // 3) Nút "← Danh sách sự kiện" của form là <button onClick={navigate}> nên
+  //    không qua <a> — wrap riêng confirm bên trong onClick (ở phần JSX).
+  const isDirtyRef = useRef(isDirty);
+  useEffect(() => { isDirtyRef.current = isDirty; }, [isDirty]);
+
+  useEffect(() => {
+    const onAnchorClick = (e: MouseEvent) => {
+      if (!isDirtyRef.current) return;
+      const anchor = (e.target as HTMLElement | null)?.closest?.("a");
+      if (!anchor) return;
+      // Bỏ qua link mở tab mới / có modifier / không có href / link external.
+      if (anchor.target === "_blank") return;
+      if (e.metaKey || e.ctrlKey || e.shiftKey || e.button !== 0) return;
+      const href = anchor.getAttribute("href");
+      if (!href || href.startsWith("http") || href.startsWith("mailto:") || href.startsWith("tel:")) return;
+      const ok = window.confirm(
+        "Bạn có thay đổi chưa lưu. Rời khỏi trang sẽ mất các thay đổi này. Bạn có chắc muốn rời đi?",
+      );
+      if (!ok) {
+        e.preventDefault();
+        e.stopPropagation();
+      }
+    };
+    document.addEventListener("click", onAnchorClick, true);
+    return () => document.removeEventListener("click", onAnchorClick, true);
+  }, []);
+
+  useEffect(() => {
+    if (!isDirty) return;
+    const handler = (e: BeforeUnloadEvent) => {
+      e.preventDefault();
+      e.returnValue = "";
+    };
+    window.addEventListener("beforeunload", handler);
+    return () => window.removeEventListener("beforeunload", handler);
+  }, [isDirty]);
+
+  // Wrap navigate cho các nút trong form (button onClick={navigate}) — confirm
+  // khi dirty rồi mới đi. Dùng cho "← Danh sách sự kiện".
+  const navigateGuarded = (to: string) => {
+    if (isDirty) {
+      const ok = window.confirm(
+        "Bạn có thay đổi chưa lưu. Rời khỏi trang sẽ mất các thay đổi này. Bạn có chắc muốn rời đi?",
+      );
+      if (!ok) return;
+    }
+    navigate(to);
+  };
+
   return (
-    <div style={{ padding: 20, background: THEME.bg, minHeight: "calc(100vh - 60px)" }}>
+    <div ref={formWrapRef} style={{ padding: 20, background: THEME.bg, minHeight: "calc(100vh - 60px)" }}>
       <div
         style={{
           display: "flex",
@@ -492,7 +580,7 @@ export default function EventFormPage() {
         }}
       >
         <button
-          onClick={() => navigate("/ch_events")}
+          onClick={() => navigateGuarded("/ch_events")}
           style={{
             padding: "6px 12px",
             background: "#fff",
@@ -600,8 +688,9 @@ export default function EventFormPage() {
                 key={editorKey}
                 name="event-content"
                 fill={true}
-                initialValue={form.content}
+                initialValue={editorInitialContent}
                 onChangeContent={handleContentChange}
+                disableAutoScroll
                 placeholder="Nội dung chi tiết sự kiện — có thể chèn ảnh, bảng, link..."
               />
             </div>
@@ -1330,20 +1419,40 @@ export default function EventFormPage() {
                     Nếu tenant chưa dùng VietQR, upload ảnh QR thủ công ở đây. Khi có ảnh QR upload, hệ thống sẽ ưu tiên hiển thị QR này thay vì auto-gen.
                   </p>
                   <div style={{ display: "flex", gap: 12, alignItems: "flex-start", flexWrap: "wrap" }}>
-                    {form.bankQrImageUrl && (
-                      <img
-                        src={form.bankQrImageUrl}
-                        alt="QR ngân hàng"
-                        style={{
-                          width: 120,
-                          height: 120,
-                          objectFit: "contain",
-                          border: `1px solid ${THEME.border}`,
-                          borderRadius: 6,
-                          background: "#fff",
-                        }}
-                      />
-                    )}
+                    {(() => {
+                      // Preview QR khớp với những gì user thấy trên ShareEventPage:
+                      // ưu tiên ảnh upload, fallback auto-gen từ bank info qua qrserver.
+                      const hasBank = !!(form.bankName.trim() && form.bankAccountNumber.trim());
+                      const priceNum = parseInt(form.ticketPrice.replace(/[^\d]/g, ""), 10) || 0;
+                      const autoPayload = hasBank
+                        ? `${form.bankName.trim()}|${form.bankAccountNumber.trim()}|${priceNum || ""}|EVENT-${previewSlug || ""}`
+                        : "";
+                      const previewSrc = form.bankQrImageUrl
+                        || (autoPayload ? `https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=${encodeURIComponent(autoPayload)}` : "");
+                      const isAuto = !form.bankQrImageUrl && !!previewSrc;
+                      if (!previewSrc) return null;
+                      return (
+                        <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 4 }}>
+                          <img
+                            src={previewSrc}
+                            alt="QR ngân hàng"
+                            style={{
+                              width: 120,
+                              height: 120,
+                              objectFit: "contain",
+                              border: `1px solid ${THEME.border}`,
+                              borderRadius: 6,
+                              background: "#fff",
+                            }}
+                          />
+                          {isAuto && (
+                            <span style={{ fontSize: 10, color: THEME.textMuted, fontStyle: "italic" }}>
+                              (auto-gen từ thông tin TK)
+                            </span>
+                          )}
+                        </div>
+                      );
+                    })()}
                     <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
                       <label
                         style={{

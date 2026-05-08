@@ -445,14 +445,17 @@ function InfoTab({ event }: { event: EventEntity }) {
   const hasCoordinates = event.venue.latitude != null && event.venue.longitude != null;
   const venueImages = event.venue.venueImages ?? [];
   const bank = event.bankAccountOverride;
-  // QR VietQR động: reuse endpoint /billing/vietqr/api/generate_qr khi thanh toán thật.
-  // Hiện hiển thị link Google Chart QR tạm (tránh phụ thuộc backend cho preview).
-  const qrPayload = bank && event.ticketPrice
-    ? `${bank.bank}|${bank.accountNumber}|${event.ticketPrice}|EVENT-${event.slug}`
+  // QR thanh toán: ưu tiên ảnh upload (bank.qrImageUrl). Fallback auto-gen
+  // từ qrserver chỉ cần có bank+accountNumber (không bắt buộc ticketPrice — event
+  // có thể miễn phí vé nhưng có add-on phí, vẫn cần QR cho người đăng ký).
+  const qrPayload = bank && bank.bank && bank.accountNumber
+    ? `${bank.bank}|${bank.accountNumber}|${event.ticketPrice || ""}|EVENT-${event.slug}`
     : null;
-  const qrImgSrc = qrPayload
-    ? `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(qrPayload)}`
-    : null;
+  const qrImgSrc = bank?.qrImageUrl
+    ? bank.qrImageUrl
+    : qrPayload
+      ? `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(qrPayload)}`
+      : null;
 
   return (
     <div style={{ display: "grid", gridTemplateColumns: "2fr 1fr", gap: 14 }}>
@@ -571,7 +574,7 @@ function InfoTab({ event }: { event: EventEntity }) {
                 />
               ) : (
                 <div style={{ fontSize: 11, color: THEME.textMuted, fontStyle: "italic", padding: "20px 0" }}>
-                  (QR chỉ sinh khi sự kiện có giá vé &gt; 0)
+                  (Chưa có QR — upload ảnh QR hoặc điền số TK trong form Sửa)
                 </div>
               )}
             </div>

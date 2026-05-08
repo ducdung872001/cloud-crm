@@ -61,6 +61,11 @@ interface EditorProps {
   refInput?: React.RefObject<HTMLDivElement>;
   required?: boolean;
   dataText?: string; //Dữ liệu text muốn được chèn vào vị trí hiện tại của trình soạn thảo
+  /** Tắt auto-scroll page khi cursor di chuyển (Enter / paste / typing).
+   *  Mặc định Slate gọi scrollSelectionIntoView → scroll page tới cursor — annoying
+   *  với editor nhúng trong form dài. Bật prop này để giữ nguyên scroll page;
+   *  cursor vẫn nằm trong khung editor (overflow internal vẫn track). */
+  disableAutoScroll?: boolean;
 }
 
 const emptyParagraph: Descendant[] = [
@@ -88,6 +93,7 @@ const RebornEditor = (props: EditorProps) => {
     name,
     required,
     disabled,
+    disableAutoScroll,
   } = props;
   const renderElement = useCallback((props) => <Element {...props} />, []);
   const renderLeaf = useCallback((props) => <Leaf {...props} />, []);
@@ -195,6 +201,10 @@ const RebornEditor = (props: EditorProps) => {
             spellCheck={false}
             autoFocus
             readOnly={readOnly}
+            // Khi disableAutoScroll bật: thay default scrollSelectionIntoView (scroll
+            // page tới cursor mỗi lần Enter/paste/type) bằng no-op. Editor nhúng
+            // trong form dài giữ nguyên scroll page khi user nhập liệu.
+            scrollSelectionIntoView={disableAutoScroll ? () => { /* no-op */ } : undefined}
             onKeyDown={(event) => {
               for (const hotkey in HOTKEYS) {
                 if (isHotkey(hotkey, event as unknown as KeyboardEvent)) {

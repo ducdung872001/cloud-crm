@@ -92,11 +92,18 @@ export const eventCommentsStorage = {
       });
       if (isApiOk(res)) {
         const items = unwrapList(res).map(normalizeComment);
-        // Cache LS để offline đỡ trống
+        // BE public list endpoint hiện filter event chưa publish (draft/test) →
+        // trả [] cho admin preview. KHÔNG ghi đè LS bằng [] (sẽ wipe sạch
+        // comment đã cache từ create) — thay vào đó merge BE + LS theo id.
         const all = readLS<EventComment[]>(KEY_COMMENTS, []);
+        const lsForEvent = all.filter((c) => c.eventId === String(eventId));
+        const beIds = new Set(items.map((c) => c.id));
+        const localOnly = lsForEvent.filter((c) => !beIds.has(c.id));
+        const merged = [...items, ...localOnly];
+        // Update cache: items từ event khác giữ nguyên + merged cho event này.
         const others = all.filter((c) => c.eventId !== String(eventId));
-        writeLS(KEY_COMMENTS, [...others, ...items]);
-        return items.sort((a, b) => (a.createdAt < b.createdAt ? -1 : 1));
+        writeLS(KEY_COMMENTS, [...others, ...merged]);
+        return merged.sort((a, b) => (a.createdAt < b.createdAt ? -1 : 1));
       }
     } catch { /* fallback LS */ }
     return this.list(eventId, opts);
@@ -114,6 +121,11 @@ export const eventCommentsStorage = {
       });
       if (isApiOk(res)) {
         const created = normalizeComment(res?.result ?? res);
+        // Cache LS để reload không mất — listAsync sẽ merge vào.
+        const all = readLS<EventComment[]>(KEY_COMMENTS, []);
+        if (!all.some((c) => c.id === created.id)) {
+          writeLS(KEY_COMMENTS, [...all, created]);
+        }
         return created;
       }
     } catch { /* fallback LS */ }
@@ -188,13 +200,44 @@ export default function EventComments({
   useEffect(() => {
     let alive = true;
     eventCommentsStorage.listAsync(eventId, { includeHidden: isAdmin })
-      .then((cs) => { if (alive) setComments(cs); });
+      .then((cs) => {
+        if (!alive) return;
+        // Merge với state hiện tại để giữ comment optimistic vừa post (BE
+        // public list có thể bỏ qua comment trên event draft/test → user post
+        // xong sẽ thấy "Bình luận (0)" dù BE đã lưu thành công).
+        setComments((prev) => {
+          const beIds = new Set(cs.map((c) => c.id));
+          const optimistic = prev.filter((c) => !beIds.has(c.id));
+          return [...cs, ...optimistic].sort((a, b) =>
+            (a.createdAt < b.createdAt ? -1 : 1),
+          );
+        });
+      });
     return () => { alive = false; };
   }, [eventId, refreshTick, isAdmin]);
 
-  // Tách comment gốc & reply
+  const handlePosted = (created?: EventComment) => {
+    if (created) {
+      setComments((prev) =>
+        prev.some((c) => c.id === created.id) ? prev : [...prev, created],
+      );
+    }
+    // Vẫn trigger BE list lại để đồng bộ thay đổi từ tab khác (admin hide/approve, etc.)
+    // Merge logic trong useEffect sẽ giữ nguyên optimistic comment nếu BE list trống.
+    setRefreshTick((t) => t + 1);
+  };
+
+  // Tách comment gốc & reply.
+  // Non-admin thấy approved + pending (kèm badge "chờ duyệt" — user vừa post phải
+  // thấy comment của mình ngay). Ẩn rejected + isHidden khỏi public.
   const { roots, repliesByParent } = useMemo(() => {
-    const visible = isAdmin ? comments : comments.filter((c) => (c.status ?? "approved") === "approved");
+    const visible = isAdmin
+      ? comments
+      : comments.filter((c) => {
+        if (c.isHidden) return false;
+        const st = c.status ?? "approved";
+        return st === "approved" || st === "pending";
+      });
     const r: EventComment[] = [];
     const m: Record<string, EventComment[]> = {};
     for (const c of visible) {
@@ -207,6 +250,7 @@ export default function EventComments({
     return { roots: r, repliesByParent: m };
   }, [comments, isAdmin]);
 
+  // refresh giữ lại cho legacy callers (hide/approve/reject) — chỉ trigger fetch BE.
   const refresh = () => setRefreshTick((t) => t + 1);
 
   return (
@@ -221,7 +265,7 @@ export default function EventComments({
           parentId={undefined}
           defaultAuthor={defaultAuthor}
           moderated={moderated}
-          onPosted={refresh}
+          onPosted={handlePosted}
         />
       )}
 
@@ -240,7 +284,7 @@ export default function EventComments({
             isAdmin={isAdmin}
             moderated={moderated}
             defaultAuthor={defaultAuthor}
-            onChanged={refresh}
+            onChanged={handlePosted}
             eventId={eventId}
           />
         ))}
@@ -257,7 +301,7 @@ function CommentNode({
   isAdmin: boolean;
   moderated: boolean;
   defaultAuthor?: Props["defaultAuthor"];
-  onChanged: () => void;
+  onChanged: (created?: EventComment) => void;
   eventId: string;
 }) {
   const [showReply, setShowReply] = useState(false);
@@ -326,7 +370,7 @@ function CommentNode({
             parentId={comment.id}
             defaultAuthor={defaultAuthor}
             moderated={moderated}
-            onPosted={() => { setShowReply(false); onChanged(); }}
+            onPosted={(c) => { setShowReply(false); onChanged(c); }}
           />
         </div>
       )}
@@ -401,7 +445,7 @@ function CommentForm({
   parentId?: string;
   defaultAuthor?: Props["defaultAuthor"];
   moderated: boolean;
-  onPosted: () => void;
+  onPosted: (created?: EventComment) => void;
 }) {
   const [name, setName] = useState(defaultAuthor?.name ?? "");
   const [phone, setPhone] = useState(defaultAuthor?.phone ?? "");
@@ -411,7 +455,7 @@ function CommentForm({
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!name.trim() || !content.trim()) return;
-    await eventCommentsStorage.addAsync({
+    const created = await eventCommentsStorage.addAsync({
       eventId,
       parentId,
       authorName: name.trim(),
@@ -422,7 +466,7 @@ function CommentForm({
       status: moderated && role === "guest" ? "pending" : "approved",
     });
     setContent("");
-    onPosted();
+    onPosted(created);
   };
 
   return (

@@ -149,19 +149,17 @@
       [data-test-id="menu"] {
         margin: 0;
         padding: 1.8rem 1rem 1.6rem;
-        position: absolute;
-        top: 0;
-        right: 0;
-        left: 0;
+        // Position relative thay vì absolute → toolbar đẩy editor xuống đúng
+        // chiều cao thực tế (kể cả khi flex-wrap thành nhiều hàng), tránh
+        // overlap với nội dung editor.
+        position: relative;
         z-index: 9;
-        // z-index: 999;
         background-color: var(--white-color);
       }
 
       .editor {
         position: initial !important;
         padding: 2rem 1.2rem;
-        margin-top: 6rem;
         max-height: 60rem;
         font-size: 1.4rem;
         overflow: auto;

@@ -139,6 +139,10 @@ export function normalizeEvent(e: any): EventEntity {
       email: e.contactEmail ?? e.contact_email,
       role: e.contactRole ?? e.contact_role,
     }),
+    // BE đôi khi trả JSON string (bank|accountNumber|holder|phone|qrImageUrl).
+    // Nếu không parse → bank.qrImageUrl truy cập trên string → undefined → QR
+    // upload không hiển thị dù admin đã upload.
+    bankAccountOverride: parseJson(e.bankAccountOverride ?? e.bank_account_override) || undefined,
     // snake_case → camelCase fallback
     coverImageUrl: e.coverImageUrl ?? e.cover_image_url,
     startDate: normalizeBeDate(e.startDate ?? e.start_date),

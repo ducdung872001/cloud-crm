@@ -5,8 +5,10 @@
 //   GET /marketing/events/public/{slug}
 //   POST /marketing/events/public/{slug}/register
 
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import { useParams } from "react-router-dom";
+import Fancybox from "components/fancybox/fancybox";
+import { showToast } from "utils/common";
 import { eventStorage } from "@/pages/CommunityHub/Events/storage";
 import type { EventEntity, SelectedAddOn, PaymentProof } from "@/pages/CommunityHub/Events/types";
 import DynamicFieldsRenderer, { computeDynamicFieldsTotal } from "@/pages/CommunityHub/Events/components/DynamicFieldsRenderer";
@@ -59,6 +61,144 @@ const THEME = {
 
 function formatVND(n: number): string {
   return new Intl.NumberFormat("vi-VN").format(Math.round(n));
+}
+
+// Gallery ticker chạy 1 chiều liên tục bằng CSS transform translateX.
+// Render gấp đôi urls (gốc + clone). requestAnimationFrame đẩy strip sang trái
+// đều đặn; khi offset chạm vị trí item gốc đầu tiên trong phần clone, trừ instant
+// về 0 — content tại 2 vị trí giống hệt nhau nên user không thấy cú nhảy nào.
+// Click ảnh → Fancybox lightbox; clones forward click sang gốc để lightbox
+// không nhân đôi số ảnh.
+function GalleryStrip({ urls, title }: { urls: string[]; title: string }) {
+  const wrapRef = useRef<HTMLDivElement | null>(null);
+  const trackRef = useRef<HTMLDivElement | null>(null);
+  // offset & paused giữ trong ref — KHÔNG dùng React state để tránh re-render
+  // mỗi khi hover/leave (re-render sẽ teardown useEffect và reset offset → strip
+  // nhảy về đầu). Ticker update transform thẳng vào DOM.
+  const offsetRef = useRef(0);
+  const pausedRef = useRef(false);
+
+  const loop = urls.length >= 2;
+  // Tốc độ ticker — px/giây. 50 = chậm dễ nhìn; tăng = trượt nhanh hơn.
+  const PX_PER_SEC = 50;
+
+  // needsScroll: chỉ animate + render clones khi nội dung gốc THỰC SỰ overflow
+  // wrap. Nếu vài ảnh đủ chỗ trong khung → đứng yên, không trượt, không nhân
+  // đôi clone (để clone không lộ ra cạnh phải).
+  const [needsScroll, setNeedsScroll] = useState(true);
+  const needsScrollRef = useRef(true);
+  useEffect(() => { needsScrollRef.current = needsScroll; }, [needsScroll]);
+
+  const items = (loop && needsScroll) ? [...urls, ...urls] : urls;
+
+  // Đo originals width sau mỗi render + khi resize (ResizeObserver) → quyết
+  // định bật/tắt animation. useLayoutEffect chạy trước paint nên tránh flicker.
+  React.useLayoutEffect(() => {
+    if (!loop) { setNeedsScroll(false); return; }
+    const wrap = wrapRef.current;
+    const track = trackRef.current;
+    if (!wrap || !track) return;
+
+    const check = () => {
+      const lastOriginal = track.children[urls.length - 1] as HTMLElement | undefined;
+      if (!lastOriginal) return;
+      const originalsRight = lastOriginal.offsetLeft + lastOriginal.offsetWidth;
+      // Tolerance 4px tránh dao động viền pixel trong fractional sizes.
+      setNeedsScroll(originalsRight > wrap.clientWidth + 4);
+    };
+    check();
+    // Observe cả wrap (viewport resize) và track (ảnh load xong làm content giãn).
+    // Nếu chỉ observe wrap, lần check đầu tiên khi <img loading="lazy"> chưa load
+    // sẽ ra offsetWidth=0 → tưởng fit → kẹt ở static dù sau đó ảnh giãn ra.
+    const ro = new ResizeObserver(check);
+    ro.observe(wrap);
+    ro.observe(track);
+    // Defensive: cũng nghe sự kiện img load — backup nếu RO không fire vì lý do nào đó.
+    const imgs = Array.from(track.querySelectorAll("img"));
+    imgs.forEach((img) => img.addEventListener("load", check));
+    return () => {
+      ro.disconnect();
+      imgs.forEach((img) => img.removeEventListener("load", check));
+    };
+  }, [urls, loop]);
+
+  useEffect(() => {
+    if (!loop) return;
+    const track = trackRef.current;
+    if (!track) return;
+    let lastTs = 0;
+    let raf = 0;
+
+    const tick = (ts: number) => {
+      if (lastTs === 0) lastTs = ts;
+      const dt = (ts - lastTs) / 1000;
+      lastTs = ts;
+      const lightboxOpen = !!document.querySelector(".fancybox__container");
+      if (!needsScrollRef.current) {
+        // Không cần scroll (số ảnh đủ ít, fit trong khung) → reset transform về 0
+        // nếu đang ở vị trí cũ (vd vừa từ overflow → fit do resize).
+        if (offsetRef.current !== 0) {
+          offsetRef.current = 0;
+          track.style.transform = "translateX(0px)";
+        }
+      } else if (!pausedRef.current && !lightboxOpen) {
+        offsetRef.current += PX_PER_SEC * dt;
+        const cloneStart = track.children[urls.length] as HTMLElement | undefined;
+        const halfPx = cloneStart ? cloneStart.offsetLeft : 0;
+        if (halfPx > 0 && offsetRef.current >= halfPx) offsetRef.current -= halfPx;
+        track.style.transform = `translateX(${-offsetRef.current}px)`;
+      }
+      raf = window.requestAnimationFrame(tick);
+    };
+    raf = window.requestAnimationFrame(tick);
+    return () => window.cancelAnimationFrame(raf);
+  }, [loop, urls]);
+
+  const fancyOptions = useMemo(() => ({ Carousel: { infinite: false } }), []);
+
+  return (
+    <div
+      ref={wrapRef}
+      className="se-gallery-wrap"
+      onMouseEnter={() => { pausedRef.current = true; }}
+      onMouseLeave={() => { pausedRef.current = false; }}
+      onTouchStart={() => { pausedRef.current = true; }}
+      onTouchEnd={() => { pausedRef.current = false; }}
+    >
+      <Fancybox options={fancyOptions}>
+        <div ref={trackRef} className="se-gallery-track">
+          {items.map((url, i) => {
+            const isClone = loop && i >= urls.length;
+            const originalIndex = i % urls.length;
+            return (
+              <a
+                key={i}
+                href={url}
+                data-fancybox={isClone ? undefined : "se-gallery"}
+                data-caption={isClone ? undefined : `${title} — Hoạt động ${originalIndex + 1}`}
+                onClick={isClone ? (e) => {
+                  e.preventDefault();
+                  const originals = trackRef.current?.querySelectorAll<HTMLAnchorElement>(
+                    'a[data-fancybox="se-gallery"]',
+                  );
+                  originals?.[originalIndex]?.click();
+                } : undefined}
+                className="se-gallery-item"
+              >
+                <img
+                  src={url}
+                  alt={`Hoạt động ${originalIndex + 1}`}
+                  className="se-gallery-img"
+                  loading="lazy"
+                  draggable={false}
+                />
+              </a>
+            );
+          })}
+        </div>
+      </Fancybox>
+    </div>
+  );
 }
 
 const formatDateTime = formatVNDateTime;
@@ -204,31 +344,37 @@ export default function ShareEventPage() {
   const grandTotal = ticketPrice + addOnSubtotal + dynamicSubtotal;
 
   const handleSubmit = async () => {
+    // Helper: hiện cả banner đỏ phía trên form lẫn toast góc phải để user
+    // không bỏ lỡ (banner ở xa nút Submit khi form dài, toast luôn nổi lên).
+    const warn = (msg: string) => {
+      setError(msg);
+      showToast(msg, "warning");
+    };
     if (!form.fullName.trim()) {
-      setError("Vui lòng nhập họ tên");
+      warn("Vui lòng nhập họ tên");
       return;
     }
     if (!form.phone.trim() || form.phone.replace(/[^\d]/g, "").length < 9) {
-      setError("Số điện thoại không hợp lệ");
+      warn("Số điện thoại không hợp lệ");
       return;
     }
     // Validate multi-day selection
     if (event.selectableDates?.length && selectedDates.length === 0) {
-      setError("Vui lòng chọn ít nhất 1 ngày tham gia");
+      warn("Vui lòng chọn ít nhất 1 ngày tham gia");
       return;
     }
     // Validate dynamic required fields
     if (event.dynamicFields?.length) {
       for (const f of event.dynamicFields) {
         if (f.required && !(dynamicValues[f.id] ?? "").trim()) {
-          setError(`Vui lòng điền "${f.label}"`);
+          warn(`Vui lòng điền "${f.label}"`);
           return;
         }
       }
     }
     // Validate payment proof — yêu cầu bất cứ khi nào admin tick requirePaymentProof
     if (event.requirePaymentProof && !paymentProofUrl) {
-      setError("Vui lòng upload ảnh bằng chứng thanh toán");
+      warn("Vui lòng upload ảnh bằng chứng thanh toán");
       return;
     }
 
@@ -261,9 +407,12 @@ export default function ShareEventPage() {
     } as any);
     setSubmitting(false);
     if (!result.ok) {
-      setError(result.error ?? "Đăng ký thất bại");
+      const msg = result.error ?? "Đăng ký thất bại";
+      setError(msg);
+      showToast(msg, "error");
       return;
     }
+    showToast("Đăng ký thành công!", "success");
     setSubmitted({
       registrationId: result.registration?.id,
       ticketCode: result.registration?.ticketCode,
@@ -341,8 +490,18 @@ export default function ShareEventPage() {
             @media (max-width: 380px) { .se-actions-row { flex-direction: column-reverse; } }
             .se-footer { padding: 20px; text-align: center; font-size: 11px; }
             @media (max-width: 480px) { .se-footer { padding: 16px 12px; } }
-            .se-gallery-img { height: 140px; }
+            .se-gallery-img { height: 140px; width: auto; user-select: none; }
             @media (max-width: 480px) { .se-gallery-img { height: 100px !important; } }
+            .se-gallery-wrap { position: relative; overflow: hidden; margin-bottom: 16px; }
+            .se-gallery-track {
+              display: flex; gap: 8px; width: max-content;
+              will-change: transform; transform: translateX(0);
+            }
+            .se-gallery-item {
+              flex-shrink: 0; display: block; border-radius: 10px; overflow: hidden;
+              border: 2px solid #fff; box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+              cursor: zoom-in;
+            }
 
             /* ── Prose (rich content from editor) ── */
             .event-prose { font-size: 15px; line-height: 1.78; color: ${THEME.textMain}; word-break: break-word; }
@@ -494,33 +653,9 @@ export default function ShareEventPage() {
       )}
 
       <div className="se-container">
-        {/* ── Gallery ảnh hoạt động ── */}
+        {/* ── Gallery ảnh hoạt động — slide ngang + click để zoom (Fancybox) ── */}
         {hasGallery && (
-          <div
-            style={{
-              display: "flex",
-              gap: 8,
-              overflowX: "auto",
-              marginBottom: 16,
-              paddingBottom: 6,
-            }}
-          >
-            {event.galleryImageUrls!.map((url, i) => (
-              <img
-                key={i}
-                src={url}
-                alt={`Hoạt động ${i + 1}`}
-                className="se-gallery-img"
-                style={{
-                  borderRadius: 10,
-                  objectFit: "cover",
-                  border: `2px solid #fff`,
-                  boxShadow: "0 2px 8px rgba(0,0,0,0.1)",
-                  flexShrink: 0,
-                }}
-              />
-            ))}
-          </div>
+          <GalleryStrip urls={event.galleryImageUrls!} title={event.title} />
         )}
 
         {/* Registration success banner */}
@@ -1058,6 +1193,7 @@ export default function ShareEventPage() {
                 <EventComments
                   eventId={event.id}
                   canPost
+                  isAdmin={isLoggedInAdmin()}
                   moderated={!!event.commentsModerated}
                 />
               </div>
