@@ -735,7 +735,17 @@ function AvatarUpload({
   const [uploading, setUploading] = useState(false);
   const [progress, setProgress] = useState(0);
   const [error, setError] = useState<string | null>(null);
+  const [imgBroken, setImgBroken] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
+
+  // PLACEHOLDER_AVATAR (placeholder.reborn.vn) hiện không tồn tại — coi như chưa có
+  // ảnh. Đồng thời nếu BE trả URL valid nhưng <img> load fail (404/CORS/...) cũng
+  // fallback bằng onError.
+  const isPlaceholder = value === PLACEHOLDER_AVATAR;
+  const showImage = !!value && !isPlaceholder && !imgBroken;
+
+  // reset broken flag khi value đổi (user upload ảnh mới)
+  useEffect(() => { setImgBroken(false); }, [value]);
 
   const handleFile = (file: File) => {
     if (!file.type.startsWith("image/")) {
@@ -784,9 +794,7 @@ function AvatarUpload({
             width: 96,
             height: 96,
             borderRadius: 12,
-            background: value
-              ? `url(${value}) center/cover`
-              : "var(--mh-ivory-2)",
+            background: "var(--mh-ivory-2)",
             border: "1px solid var(--mh-line)",
             display: "flex",
             alignItems: "center",
@@ -794,9 +802,19 @@ function AvatarUpload({
             color: "var(--mh-ink-soft)",
             fontSize: 11,
             flexShrink: 0,
+            overflow: "hidden",
           }}
         >
-          {!value && "Chưa có ảnh"}
+          {showImage ? (
+            <img
+              src={value}
+              alt="Ảnh đại diện khoá"
+              onError={() => setImgBroken(true)}
+              style={{ width: "100%", height: "100%", objectFit: "cover" }}
+            />
+          ) : (
+            "Chưa có ảnh"
+          )}
         </div>
         <div style={{ flex: 1 }}>
           <input
@@ -815,9 +833,9 @@ function AvatarUpload({
             onClick={() => inputRef.current?.click()}
             disabled={uploading}
           >
-            {uploading ? `Đang upload ${Math.round(progress)}%…` : value ? "Đổi ảnh" : "Chọn ảnh từ máy"}
+            {uploading ? `Đang upload ${Math.round(progress)}%…` : showImage ? "Đổi ảnh" : "Chọn ảnh từ máy"}
           </button>
-          {value && !uploading && (
+          {showImage && !uploading && (
             <button
               type="button"
               className="mh__btn"
