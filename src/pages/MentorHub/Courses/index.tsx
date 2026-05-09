@@ -343,20 +343,23 @@ export default function MentorHubCoursesPage() {
               <div className="mh__progress" style={{ marginBottom: 16 }}>
                 <div className="mh__progress-fill" style={{ width: `${c.sessions > 0 ? (c.sessionsDone / c.sessions) * 100 : 0}%` }}></div>
               </div>
-              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                <div className="mh__mono" style={{ fontSize: 13, display: "flex", alignItems: "baseline", gap: 6 }}>
-                  {c.price === 0 ? (
-                    <span style={{ color: "var(--mh-teal)", fontWeight: 600 }}>Miễn phí</span>
-                  ) : (
-                    <>
-                      <span style={{ color: "var(--mh-teal)", fontWeight: 600 }}>{formatVND(c.price)}</span>
-                      {c.originalPrice > c.price && (
-                        <span style={{ color: "var(--mh-ink-soft)", textDecoration: "line-through", fontSize: 11 }}>
-                          {formatVND(c.originalPrice)}
-                        </span>
-                      )}
-                    </>
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: 8 }}>
+                <div style={{ display: "flex", flexDirection: "column", lineHeight: 1.2, minWidth: 0 }}>
+                  {c.originalPrice > c.price && c.price > 0 && (
+                    <span className="mh__mono" style={{ fontSize: 10, color: "var(--mh-ink-soft)", textDecoration: "line-through" }}>
+                      {formatVND(c.originalPrice)}
+                    </span>
                   )}
+                  <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
+                    <span className="mh__mono" style={{ fontSize: 14, color: "var(--mh-teal)", fontWeight: 700 }}>
+                      {c.price === 0 ? "Miễn phí" : formatVND(c.price)}
+                    </span>
+                    {c.originalPrice > c.price && c.price > 0 && (
+                      <span className="mh__pill mh__pill--green" style={{ fontSize: 9, padding: "2px 6px" }}>
+                        -{Math.round((1 - c.price / c.originalPrice) * 100)}%
+                      </span>
+                    )}
+                  </div>
                 </div>
                 <div style={{ display: "flex", gap: 6 }}>
                   {(c.status === "live" || c.status === "upcoming") && typeof c.id === "number" && (
