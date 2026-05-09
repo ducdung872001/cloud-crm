@@ -187,7 +187,11 @@ export default function MentorHubCoursesPage() {
     const meta = (raw.metadata as Record<string, unknown>) || {};
     const currentDone = Number(meta.sessionsDone ?? 0);
     const total = Number(meta.sessions ?? raw.total_time ?? 0);
-    if (total > 0 && currentDone >= total) {
+    if (total <= 0) {
+      window.alert("Khoá chưa định số buổi tổng — vào Sửa để cập nhật trước khi đánh dấu buổi xong.");
+      return;
+    }
+    if (currentDone >= total) {
       window.alert("Khoá đã hoàn tất tất cả buổi.");
       return;
     }
@@ -336,13 +340,19 @@ export default function MentorHubCoursesPage() {
               </span>
               <h3 style={{ margin: "12px 0 16px", fontSize: 18 }}>{c.title}</h3>
               <div style={{ display: "flex", justifyContent: "space-between", fontSize: 12, color: "var(--mh-ink-soft)", marginBottom: 10 }} className="mh__mono">
-                <span>{c.sessionsDone}/{c.sessions} buổi</span>
+                <span title={c.sessions === 0 ? "Khoá chưa định số buổi tổng — vào Sửa để cập nhật" : undefined}>
+                  {c.sessions === 0
+                    ? (c.sessionsDone > 0 ? `${c.sessionsDone} buổi (chưa định tổng)` : "Chưa định buổi")
+                    : `${c.sessionsDone}/${c.sessions} buổi`}
+                </span>
                 <span>{c.registered}/{c.capacity} HV</span>
                 {c.nps > 0 && <span>NPS {c.nps}</span>}
               </div>
-              <div className="mh__progress" style={{ marginBottom: 16 }}>
-                <div className="mh__progress-fill" style={{ width: `${c.sessions > 0 ? (c.sessionsDone / c.sessions) * 100 : 0}%` }}></div>
-              </div>
+              {c.sessions > 0 && (
+                <div className="mh__progress" style={{ marginBottom: 16 }}>
+                  <div className="mh__progress-fill" style={{ width: `${(c.sessionsDone / c.sessions) * 100}%` }}></div>
+                </div>
+              )}
               <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: 8 }}>
                 <div style={{ display: "flex", flexDirection: "column", lineHeight: 1.2, minWidth: 0 }}>
                   {c.originalPrice > c.price && c.price > 0 && (
@@ -362,7 +372,7 @@ export default function MentorHubCoursesPage() {
                   </div>
                 </div>
                 <div style={{ display: "flex", gap: 6 }}>
-                  {(c.status === "live" || c.status === "upcoming") && typeof c.id === "number" && (
+                  {(c.status === "live" || c.status === "upcoming") && typeof c.id === "number" && c.sessions > 0 && (
                     <button
                       type="button"
                       className="mh__btn"
