@@ -39,7 +39,7 @@ async function fetchCourseStats(
 
 const formatVND = (n: number) => new Intl.NumberFormat("vi-VN").format(n) + "₫";
 
-type UiStatus = "live" | "upcoming" | "draft" | "ended";
+type UiStatus = "live" | "upcoming" | "draft" | "ended" | "archived";
 
 type UiCourse = {
   id: string | number;
@@ -68,8 +68,10 @@ const ICON_PALETTE = [
 ];
 
 function deriveUiStatus(svc: SalesService): UiStatus {
+  // ARCHIVED là trạng thái user lưu trữ thủ công — distinguish khỏi "ended"
+  // (khoá hoàn thành tự nhiên do sessionsDone >= total) để có thể restore.
+  if ((svc.status || "").toUpperCase() === "ARCHIVED") return "archived";
   if ((svc.status || "").toUpperCase() === "DRAFT" || svc.active === 0) return "draft";
-  if ((svc.status || "").toUpperCase() === "ARCHIVED") return "ended";
   const m = (svc.metadata as Record<string, unknown>) || {};
   const done = Number(m.sessionsDone ?? 0);
   const total = Number(m.sessions ?? svc.total_time ?? 0);
@@ -295,10 +297,15 @@ export default function MentorHubCoursesPage() {
         </div>
       </div>
 
-      <div style={{ display: "flex", gap: 8, marginBottom: 24 }}>
-        {(["all", "live", "upcoming", "draft", "ended"] as Filter[]).map((s) => (
+      <div style={{ display: "flex", gap: 8, marginBottom: 24, flexWrap: "wrap" }}>
+        {(["all", "live", "upcoming", "draft", "ended", "archived"] as Filter[]).map((s) => (
           <button key={s} onClick={() => setFilter(s)} className="mh__btn" style={filter === s ? { borderColor: "var(--mh-teal)", background: "var(--mh-ivory-2)" } : {}}>
-            {s === "all" ? "Tất cả" : s === "live" ? "Đang live" : s === "upcoming" ? "Sắp bắt đầu" : s === "draft" ? "Nháp" : "Đã kết thúc"}
+            {s === "all" ? "Tất cả"
+              : s === "live" ? "Đang live"
+              : s === "upcoming" ? "Sắp bắt đầu"
+              : s === "draft" ? "Nháp"
+              : s === "ended" ? "Đã kết thúc"
+              : "📦 Đã lưu trữ"}
           </button>
         ))}
       </div>
@@ -320,7 +327,13 @@ export default function MentorHubCoursesPage() {
               {c.icon}
             </div>
             <div style={{ padding: 20 }}>
-              <span className={`mh__pill mh__pill--${c.status}`}>{c.status === "live" ? "● Đang live" : c.status === "upcoming" ? "Sắp bắt đầu" : c.status === "draft" ? "Nháp" : "Đã kết thúc"}</span>
+              <span className={`mh__pill mh__pill--${c.status}`}>
+                {c.status === "live" ? "● Đang live"
+                  : c.status === "upcoming" ? "Sắp bắt đầu"
+                  : c.status === "draft" ? "Nháp"
+                  : c.status === "ended" ? "Đã kết thúc"
+                  : "📦 Đã lưu trữ"}
+              </span>
               <h3 style={{ margin: "12px 0 16px", fontSize: 18 }}>{c.title}</h3>
               <div style={{ display: "flex", justifyContent: "space-between", fontSize: 12, color: "var(--mh-ink-soft)", marginBottom: 10 }} className="mh__mono">
                 <span>{c.sessionsDone}/{c.sessions} buổi</span>

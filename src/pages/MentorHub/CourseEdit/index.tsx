@@ -154,6 +154,7 @@ export default function MHCourseEdit() {
   const [archiving, setArchiving] = useState(false);
   const [showArchiveDialog, setShowArchiveDialog] = useState(false);
   const [archiveDialog, setArchiveDialog] = useState<IContentDialog | null>(null);
+  const [beStatus, setBeStatus] = useState<string | null>(null); // status từ BE để biết khoá đang ARCHIVED chưa
   const formCardRef = useRef<HTMLDivElement>(null);
   const skipNextSaveRef = useRef(true); // chặn save lần đầu (mount)
 
@@ -226,6 +227,7 @@ export default function MHCourseEdit() {
       .then((res: { result?: SalesService }) => {
         const svc = res?.result;
         if (!svc) return;
+        setBeStatus((svc.status || "").toUpperCase() || null);
         const meta = (svc.metadata as Record<string, unknown>) || {};
         const agendaFromMeta = Array.isArray(meta.agenda) ? (meta.agenda as AgendaItem[]) : null;
         const parsedContent = parseSlateContent(svc.content) ?? EMPTY_RICH;
@@ -522,6 +524,55 @@ export default function MHCourseEdit() {
     setShowArchiveDialog(true);
   };
 
+  const handleRestore = () => {
+    const numId = Number(id);
+    if (!isEdit || !Number.isFinite(numId) || numId <= 0) return;
+
+    const closeDialog = () => {
+      setShowArchiveDialog(false);
+      setArchiveDialog(null);
+    };
+
+    const doRestore = async () => {
+      setArchiving(true);
+      setSaveError(null);
+      try {
+        // Un-archive = update status sang ACTIVE. BE chưa expose endpoint
+        // /unarchive riêng, dùng update với status=ACTIVE.
+        const res: { code?: number; message?: string } = await SalesServiceClient.update({
+          id: numId,
+          status: "ACTIVE",
+        });
+        if (res?.code !== 0) throw new Error(res?.message || "Khôi phục thất bại");
+        setBeStatus("ACTIVE");
+        closeDialog();
+        navigate("/mh/courses");
+      } catch (err) {
+        const msg = err instanceof Error ? err.message : "Khôi phục thất bại";
+        setSaveError(msg);
+        setArchiving(false);
+        closeDialog();
+      }
+    };
+
+    setArchiveDialog({
+      color: "success",
+      isCentered: true,
+      isLoading: true,
+      title: <Fragment>Khôi phục khoá học</Fragment>,
+      message: (
+        <Fragment>
+          Khoá học sẽ được chuyển từ <strong>Đã lưu trữ</strong> về trạng thái <strong>Đang hoạt động</strong> (status=ACTIVE) và hiển thị lại trên marketplace.
+        </Fragment>
+      ),
+      cancelText: "Huỷ",
+      cancelAction: closeDialog,
+      defaultText: "Xác nhận khôi phục",
+      defaultAction: doRestore,
+    });
+    setShowArchiveDialog(true);
+  };
+
   if (submitted) {
     return (
       <div className="mh">
@@ -700,15 +751,27 @@ export default function MHCourseEdit() {
           </span>
           <div style={{ flex: 1 }} />
           {isEdit && Number.isFinite(Number(id)) && Number(id) > 0 && (
-            <button
-              type="button"
-              className="mh__btn"
-              onClick={handleArchive}
-              disabled={saving || archiving}
-              style={{ borderColor: "#fca5a5", color: "#991b1b" }}
-            >
-              {archiving ? "Đang lưu trữ…" : "Lưu trữ khoá"}
-            </button>
+            beStatus === "ARCHIVED" ? (
+              <button
+                type="button"
+                className="mh__btn"
+                onClick={handleRestore}
+                disabled={saving || archiving}
+                style={{ borderColor: "#86efac", color: "#166534" }}
+              >
+                {archiving ? "Đang khôi phục…" : "♻️ Khôi phục khoá"}
+              </button>
+            ) : (
+              <button
+                type="button"
+                className="mh__btn"
+                onClick={handleArchive}
+                disabled={saving || archiving}
+                style={{ borderColor: "#fca5a5", color: "#991b1b" }}
+              >
+                {archiving ? "Đang lưu trữ…" : "📦 Lưu trữ khoá"}
+              </button>
+            )
           )}
           {step < 6 ? (
             <button
