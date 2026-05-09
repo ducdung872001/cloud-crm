@@ -752,11 +752,14 @@ function AvatarUpload({
     FileService.uploadFile({
       data: file,
       onProgress: (p: number) => setProgress(p),
-      onSuccess: (result: { url?: string; src?: string } | string) => {
+      onSuccess: (result: { fileUrl?: string; url?: string; src?: string } | string) => {
+        // BE convention thực tế: response.result.fileUrl (xem
+        // src/components/fileUpload/fileUpload.tsx). Giữ url/src làm fallback
+        // phòng khi BE đổi shape.
         const url =
           typeof result === "string"
             ? result
-            : result?.url || result?.src || "";
+            : result?.fileUrl || result?.url || result?.src || "";
         if (url) {
           onChange(url);
         } else {
