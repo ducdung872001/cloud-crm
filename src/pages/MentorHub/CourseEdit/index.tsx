@@ -1,9 +1,10 @@
 // [MH] CourseEdit — form tạo/sửa khoá học với validation, autosave, live preview, sticky actions
-import React, { useContext, useEffect, useMemo, useRef, useState } from "react";
+import React, { Fragment, useContext, useEffect, useMemo, useRef, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import type { Descendant } from "slate";
 import { Text } from "slate";
 import RebornEditor from "components/editor/reborn";
+import Dialog, { IContentDialog } from "components/dialog/dialog";
 import { UserContext, ContextType } from "contexts/userContext";
 import SalesServiceClient, { SalesService } from "services/SalesServiceClient";
 import ZoomClientForCourseEdit from "services/ZoomClient";
@@ -151,6 +152,8 @@ export default function MHCourseEdit() {
   const [saving, setSaving] = useState(false);
   const [saveError, setSaveError] = useState<string | null>(null);
   const [archiving, setArchiving] = useState(false);
+  const [showArchiveDialog, setShowArchiveDialog] = useState(false);
+  const [archiveDialog, setArchiveDialog] = useState<IContentDialog | null>(null);
   const formCardRef = useRef<HTMLDivElement>(null);
   const skipNextSaveRef = useRef(true); // chặn save lần đầu (mount)
 
@@ -476,23 +479,47 @@ export default function MHCourseEdit() {
     }
   };
 
-  const handleArchive = async () => {
+  const handleArchive = () => {
     const numId = Number(id);
     if (!isEdit || !Number.isFinite(numId) || numId <= 0) return;
-    if (!window.confirm("Lưu trữ khoá này? Khoá sẽ ẩn khỏi danh sách công khai (status=ARCHIVED) nhưng dữ liệu vẫn giữ lại.")) {
-      return;
-    }
-    setArchiving(true);
-    setSaveError(null);
-    try {
-      const res: { code?: number; message?: string } = await SalesServiceClient.archive(numId);
-      if (res?.code !== 0) throw new Error(res?.message || "Lưu trữ thất bại");
-      navigate("/mh/courses");
-    } catch (err) {
-      const msg = err instanceof Error ? err.message : "Lưu trữ thất bại";
-      setSaveError(msg);
-      setArchiving(false);
-    }
+
+    const closeDialog = () => {
+      setShowArchiveDialog(false);
+      setArchiveDialog(null);
+    };
+
+    const doArchive = async () => {
+      setArchiving(true);
+      setSaveError(null);
+      try {
+        const res: { code?: number; message?: string } = await SalesServiceClient.archive(numId);
+        if (res?.code !== 0) throw new Error(res?.message || "Lưu trữ thất bại");
+        closeDialog();
+        navigate("/mh/courses");
+      } catch (err) {
+        const msg = err instanceof Error ? err.message : "Lưu trữ thất bại";
+        setSaveError(msg);
+        setArchiving(false);
+        closeDialog();
+      }
+    };
+
+    setArchiveDialog({
+      color: "warning",
+      isCentered: true,
+      isLoading: true,
+      title: <Fragment>Lưu trữ khoá học</Fragment>,
+      message: (
+        <Fragment>
+          Khoá học sẽ được chuyển sang trạng thái <strong>Đã lưu trữ</strong> (status=ARCHIVED) và <strong>ẩn khỏi danh sách công khai</strong> trên marketplace. Dữ liệu vẫn được giữ lại.
+        </Fragment>
+      ),
+      cancelText: "Huỷ",
+      cancelAction: closeDialog,
+      defaultText: "Xác nhận lưu trữ",
+      defaultAction: doArchive,
+    });
+    setShowArchiveDialog(true);
   };
 
   if (submitted) {
@@ -711,6 +738,7 @@ export default function MHCourseEdit() {
           )}
         </div>
       </div>
+      {archiveDialog && <Dialog content={archiveDialog} isOpen={showArchiveDialog} />}
     </div>
   );
 }
