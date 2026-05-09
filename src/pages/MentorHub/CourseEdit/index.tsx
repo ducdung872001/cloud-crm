@@ -448,7 +448,12 @@ export default function MHCourseEdit() {
         icon: form.icon,
         category: form.category,
         agenda: form.agenda,
-        sessions: form.sessions === "" ? 0 : Number(form.sessions),
+        // UI "Số buổi" readonly = form.agenda.length (xem Step 3 input). form.sessions
+        // state thường rỗng vì không có UI nhập tay → fallback agenda.length để khoá
+        // không bị "Chưa định buổi" trên list.
+        sessions: form.sessions === "" || +form.sessions === 0
+          ? form.agenda.length
+          : Number(form.sessions),
         sessionsDone: 0,
         capacity: form.capacity === "" ? 0 : Number(form.capacity),
         registered: 0,
@@ -560,7 +565,9 @@ export default function MHCourseEdit() {
             icon: form.icon,
             category: form.category,
             agenda: form.agenda,
-            sessions: form.sessions === "" ? 0 : Number(form.sessions),
+            sessions: form.sessions === "" || +form.sessions === 0
+              ? form.agenda.length
+              : Number(form.sessions),
             capacity: form.capacity === "" ? 0 : Number(form.capacity),
             startDate: form.startDate,
             zoomId: form.zoomId,
