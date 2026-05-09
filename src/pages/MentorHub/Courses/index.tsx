@@ -344,7 +344,20 @@ export default function MentorHubCoursesPage() {
                 <div className="mh__progress-fill" style={{ width: `${c.sessions > 0 ? (c.sessionsDone / c.sessions) * 100 : 0}%` }}></div>
               </div>
               <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                <div className="mh__mono" style={{ fontSize: 13, color: "var(--mh-teal)", fontWeight: 600 }}>{formatVND(c.revenue)}</div>
+                <div className="mh__mono" style={{ fontSize: 13, display: "flex", alignItems: "baseline", gap: 6 }}>
+                  {c.price === 0 ? (
+                    <span style={{ color: "var(--mh-teal)", fontWeight: 600 }}>Miễn phí</span>
+                  ) : (
+                    <>
+                      <span style={{ color: "var(--mh-teal)", fontWeight: 600 }}>{formatVND(c.price)}</span>
+                      {c.originalPrice > c.price && (
+                        <span style={{ color: "var(--mh-ink-soft)", textDecoration: "line-through", fontSize: 11 }}>
+                          {formatVND(c.originalPrice)}
+                        </span>
+                      )}
+                    </>
+                  )}
+                </div>
                 <div style={{ display: "flex", gap: 6 }}>
                   {(c.status === "live" || c.status === "upcoming") && typeof c.id === "number" && (
                     <button
