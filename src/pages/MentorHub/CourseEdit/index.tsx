@@ -538,14 +538,39 @@ export default function MHCourseEdit() {
       setSaveError(null);
       try {
         // Un-archive = update status sang ACTIVE. BE chưa expose endpoint
-        // /unarchive riêng, dùng update với status=ACTIVE.
-        // BE validate avatar non-empty khi update (ngay cả khi chỉ flip status)
-        // → phải gửi kèm để tránh 400 "Ảnh dịch vụ không được để trống".
-        const res: { code?: number; message?: string } = await SalesServiceClient.update({
+        // /unarchive riêng, dùng update với status=ACTIVE. BE validate
+        // nhiều field non-empty (avatar, name, intro, content...) ngay cả khi
+        // chỉ flip status → gửi full snapshot từ form (giống submit) để pass
+        // tất cả validate.
+        const payload = {
           id: numId,
-          status: "ACTIVE",
+          name: form.title.trim() || "(chưa đặt tên)",
+          intro: form.description.trim() || " ",
+          content: JSON.stringify(form.content),
+          contentType: 0,
           avatar: form.avatar || PLACEHOLDER_AVATAR,
-        });
+          type: "COURSE_LIVE",
+          status: "ACTIVE",
+          active: 1,
+          supplierId,
+          categoryId: resolvedCategoryId,
+          price: form.price === "" ? 0 : Number(form.price),
+          retailPrice: form.originalPrice === "" ? 0 : Number(form.originalPrice),
+          metadata: {
+            icon: form.icon,
+            category: form.category,
+            agenda: form.agenda,
+            sessions: form.sessions === "" ? 0 : Number(form.sessions),
+            capacity: form.capacity === "" ? 0 : Number(form.capacity),
+            startDate: form.startDate,
+            zoomId: form.zoomId,
+            reminderZalo: form.reminderZalo,
+            reminderEmail: form.reminderEmail,
+            autoFeedback: form.autoFeedback,
+            autoRecording: form.autoRecording,
+          },
+        };
+        const res: { code?: number; message?: string } = await SalesServiceClient.update(payload as Partial<SalesService>);
         if (res?.code !== 0) throw new Error(res?.message || "Khôi phục thất bại");
         setBeStatus("ACTIVE");
         closeDialog();
