@@ -155,10 +155,9 @@ export default function MHCourseEdit() {
   const skipNextSaveRef = useRef(true); // chặn save lần đầu (mount)
 
   // Resolve default categoryId — bootstrap "Khoá học mentorhub" cho bsnId=6.
-  // Owner: SALES microservice (taxonomy `service_category` sống cùng entity
-  // service mà nó phân loại — owner entity rule). Endpoint /sales/category/*
-  // đang chờ cloud-sales-master#23 ship; trong lúc đó FE 404 silently và banner
-  // hướng dẫn user.
+  // Owner: SALES microservice (taxonomy `category-item` sống cùng entity service
+  // mà nó phân loại — owner entity rule). Endpoint /sales/category-item/* đã ship
+  // ở cloud-sales-master#23.
   // apiHelper KHÔNG throw trên HTTP 4xx → check `res.code === 0` để detect BE fail.
   useEffect(() => {
     type ListRes = { code?: number; message?: string; result?: { items?: Array<{ id: number }> } };

@@ -1,20 +1,19 @@
 // [MH] CategorySelect — async paginated picker cho khoá học MentorHub.
-// Status: SCAFFOLD — chờ sales ship handoff cloud-sales-master#23.
 //
 // Lịch sử:
 // - Bản đầu giả định taxonomy ở /inventory/category/* (CategoryServiceService).
 // - 2026-05-08: BE inventory close cloud-crm#226 + cloud-inventory-master#43,
-//   re-route sang sales. Endpoint thật sẽ là /sales/category/* khi sales ship
-//   #23. Permission cũng đổi: INVENTORY_CATEGORY_WRITE → SALES_SERVICE_CATEGORY_WRITE.
+//   re-route sang sales. Permission đổi: INVENTORY_CATEGORY_WRITE → SALES_SERVICE_CATEGORY_WRITE.
+// - 2026-05-09: BE sales ship cloud-sales-master#23 — endpoint sống tại
+//   /sales/category-item/* (CategoryItemResource.java).
 //
-// Component dùng ServiceCategoryService gọi /sales/category/* (sales owner).
-// Endpoint sẽ available sau khi sales ship cloud-sales-master#23; trong lúc đó
-// loadOptions fail-soft sang MENTORHUB_DEFAULT_CATEGORIES mock.
+// Component dùng ServiceCategoryService gọi /sales/category-item/* (sales owner).
+// loadOptions fail-soft sang MENTORHUB_DEFAULT_CATEGORIES mock khi BE lỗi/404.
 //
 // Spec UI: dropdown async + inline "+ Tạo danh mục mới" mở modal-in-modal.
-// CHƯA wire vào CourseEdit — chờ:
-//   1. Sales ship endpoint /sales/category/list + /update (cloud-sales-master#23)
-//   2. RBAC seed permission SALES_SERVICE_CATEGORY_WRITE cho mentorhub tenant
+// Wire vào CourseEdit Step 1 (replace <select> hardcoded CATEGORIES) cần làm sau khi:
+//   1. RBAC seed permission SALES_SERVICE_CATEGORY_WRITE cho mentorhub tenant
+//   2. Default categories đã seed cho tenant (qua bulk-create endpoint)
 
 import React, { useState, useCallback, useContext } from "react";
 import { AsyncPaginate } from "react-select-async-paginate";
