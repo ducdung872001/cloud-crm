@@ -6,8 +6,8 @@ to: integration
 created: 2026-05-09T10:10:00+07:00
 slug: zoom-meeting-create-404
 status: posted
-gh_issue: https://github.com/ducdung872001/cloud-crm/issues/212#issuecomment-4411252247
-note: Token không access được cloud-integration-master → comment fallback trên cloud-crm#212 (BE reply gốc), BE integration sẽ thấy.
+gh_issue: https://github.com/ducdung872001/cloud-integration-master/issues/17
+gh_cross_ref_comment: https://github.com/ducdung872001/cloud-crm/issues/212#issuecomment-4411252247
 severity: HIGH
 ---
 
