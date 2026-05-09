@@ -4,6 +4,7 @@ import { Link } from "react-router-dom";
 import { UserContext, ContextType } from "contexts/userContext";
 import SalesServiceClient, { SalesService } from "services/SalesServiceClient";
 import SalesOrderService from "services/SalesOrderService";
+import ServiceCategoryService from "services/ServiceCategoryService";
 import { MOCK_COURSES, MOCK_MENTOR } from "@/mocks/mentorhub";
 import "../_shared/styles.scss";
 
@@ -111,6 +112,17 @@ export default function MentorHubCoursesPage() {
   const [rawCourses, setRawCourses] = useState<SalesService[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  // Bootstrap default categoryId — BE update validate categoryId non-zero kể cả patch nhỏ.
+  // Khoá seed có category_id=0 → bump +1 buổi sẽ 400. Fallback dùng default category đầu tiên.
+  const [defaultCategoryId, setDefaultCategoryId] = useState<number | null>(null);
+  useEffect(() => {
+    ServiceCategoryService.list({ page: 1, limit: 1 })
+      .then((res: { result?: { items?: Array<{ id: number }> } }) => {
+        const items = res?.result?.items || [];
+        if (items.length > 0) setDefaultCategoryId(items[0].id);
+      })
+      .catch(() => { /* silent — bump sẽ thử raw.category_id trước */ });
+  }, []);
   const [usingMock, setUsingMock] = useState(false);
   const [bumpingId, setBumpingId] = useState<number | null>(null);
 
@@ -216,15 +228,19 @@ export default function MentorHubCoursesPage() {
       ),
     );
     // Full payload back (sales BE require non-null avatar/categoryId/name).
-    // BE validate avatar/name non-empty kể cả patch nhỏ → ép placeholder nếu rỗng
-    // để khỏi 400 "Ảnh dịch vụ không được để trống".
+    // BE validate avatar/name/categoryId non-empty kể cả patch nhỏ → ép placeholder
+    // nếu rỗng. categoryId fallback default (bootstrap useEffect ở component) cho
+    // khoá seed có category_id=0 ("no category" convention nhưng update lại reject).
     const PLACEHOLDER_AVATAR = "https://placeholder.reborn.vn/course-default.png";
     const newMeta = { ...meta, sessionsDone: newDone };
+    const resolvedCategoryId =
+      raw.category_id && raw.category_id > 0 ? raw.category_id : defaultCategoryId;
     const payload: Partial<SalesService> = {
       ...raw,
       avatar: raw.avatar || PLACEHOLDER_AVATAR,
       name: raw.name || "(chưa đặt tên)",
       intro: raw.intro || " ",
+      ...(resolvedCategoryId ? { categoryId: resolvedCategoryId, category_id: resolvedCategoryId } : {}),
       metadata: newMeta,
     };
     try {
