@@ -215,10 +215,16 @@ export default function MentorHubCoursesPage() {
           : c,
       ),
     );
-    // Full payload back (sales BE require non-null avatar/categoryId/name)
+    // Full payload back (sales BE require non-null avatar/categoryId/name).
+    // BE validate avatar/name non-empty kể cả patch nhỏ → ép placeholder nếu rỗng
+    // để khỏi 400 "Ảnh dịch vụ không được để trống".
+    const PLACEHOLDER_AVATAR = "https://placeholder.reborn.vn/course-default.png";
     const newMeta = { ...meta, sessionsDone: newDone };
     const payload: Partial<SalesService> = {
       ...raw,
+      avatar: raw.avatar || PLACEHOLDER_AVATAR,
+      name: raw.name || "(chưa đặt tên)",
+      intro: raw.intro || " ",
       metadata: newMeta,
     };
     try {
