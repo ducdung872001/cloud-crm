@@ -1303,7 +1303,14 @@ function Step5({ form, errors, set, supplierId, courseTitle, startDate, totalDur
       }
       set("zoomId", res.result.zoomMeetingId);
     } catch (err) {
-      setZoomError(err instanceof Error ? err.message : "Lỗi mạng");
+      const raw = err instanceof Error ? err.message : "Lỗi mạng";
+      // apiHelper.apiPost crash JSON.parse khi BE trả HTML (vd. nginx 404 page).
+      // Detect pattern này để báo "endpoint chưa deploy" thay vì lộ stack trace ra UI.
+      if (/Unexpected token .*</.test(raw) || /not valid JSON/i.test(raw)) {
+        setZoomError("Zoom service BE chưa deploy hoặc 404 — xem cloud-crm#212 (chờ Zoom Marketplace App + container restart)");
+      } else {
+        setZoomError(raw);
+      }
     } finally {
       setCreatingZoom(false);
     }
