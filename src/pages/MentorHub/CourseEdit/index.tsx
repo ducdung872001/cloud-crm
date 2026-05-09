@@ -539,9 +539,12 @@ export default function MHCourseEdit() {
       try {
         // Un-archive = update status sang ACTIVE. BE chưa expose endpoint
         // /unarchive riêng, dùng update với status=ACTIVE.
+        // BE validate avatar non-empty khi update (ngay cả khi chỉ flip status)
+        // → phải gửi kèm để tránh 400 "Ảnh dịch vụ không được để trống".
         const res: { code?: number; message?: string } = await SalesServiceClient.update({
           id: numId,
           status: "ACTIVE",
+          avatar: form.avatar || PLACEHOLDER_AVATAR,
         });
         if (res?.code !== 0) throw new Error(res?.message || "Khôi phục thất bại");
         setBeStatus("ACTIVE");
