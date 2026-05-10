@@ -60,7 +60,7 @@ export default function App() {
   const [lstRole, setLstRole] = useState([]);
 
   const takeSelectedRole = localStorage.getItem("SelectedRole");
-  const defaultRedirectRef = useRef<string>("/customer");
+  const defaultRedirectRef = useRef<string>("/dashboard");
 
   const handleGetRoles = async (token: string) => {
     if (!token) return;
@@ -95,7 +95,7 @@ export default function App() {
           setIsLogin(true);
           if (location.pathname === "/" || location.pathname === "/login") {
             if (cookies.user) {
-              const target = returnUrl || defaultRedirectRef.current || "/customer";
+              const target = returnUrl || defaultRedirectRef.current || "/dashboard";
               navigate(target);
             }
           }
@@ -112,7 +112,7 @@ export default function App() {
 
             if (location.pathname === "/" || location.pathname === "/login") {
               if (cookies.user) {
-                const target = returnUrl || defaultRedirectRef.current || "/customer";
+                const target = returnUrl || defaultRedirectRef.current || "/dashboard";
                 navigate(target);
               }
             }
@@ -189,8 +189,10 @@ export default function App() {
         if (result) {
           const changeResult = result.lstOrgApp[0];
 
-          const defaultRedirect = result?.defaultRedirect;
-          defaultRedirectRef.current = defaultRedirect || "/customer";
+          // /customer route đã bị strip khỏi superadmin — bỏ qua nếu BE trả về.
+          const beRedirect = result?.defaultRedirect;
+          const safeRedirect = beRedirect && beRedirect !== "/customer" ? beRedirect : "/dashboard";
+          defaultRedirectRef.current = safeRedirect;
 
           // Chuyển đổi startDate và endDate thành đối tượng Date
           const endDate: any = new Date(changeResult?.endDate);

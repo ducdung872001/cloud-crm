@@ -12,7 +12,10 @@ import UserList from "pages/User/UserList";
 import FieldMannagement from "pages/FieldManagement/FieldManagement";
 import ResourceManagementList from "pages/ResourceManagement/ResourceManagementList";
 
-// Menu cho Reborn Super Admin (console quản trị nền tảng)
+// Menu cho Reborn Super Admin (console quản trị nền tảng).
+// Bố cục: 4 entry points vận hành hằng ngày (Tổ chức / Người dùng / Gói / Gia hạn)
+// để cấp 1 — 1-click; gom 2 mục cấu hình master data (Lĩnh vực / Tài nguyên)
+// vào group "Cấu hình hệ thống"; cài đặt cá nhân tách dưới cùng.
 export const menu: IMenuItem[] = [
   {
     title: "dashboard",
@@ -21,35 +24,35 @@ export const menu: IMenuItem[] = [
     code: "DASHBOARD",
   },
   {
-    title: "organizationalManagement",
+    title: "listOfOrganizations",
     path: urls.organization,
     icon: <Icon name="Partner" />,
+    code: "ORGANIZATION_MANAGEMENT",
+  },
+  {
+    title: "userAdministration",
+    path: urls.user,
+    icon: <Icon name="Customer" />,
+    code: "RESOURCE",
+  },
+  {
+    title: "servicePackageManagement",
+    path: urls.package_manage,
+    icon: <Icon name="Beauty" />,
+    code: "RESOURCE",
+  },
+  {
+    title: "renewalList",
+    path: urls.extension_list,
+    icon: <Icon name="Renewal" />,
+    code: "RENEWAL_LIST",
+  },
+  {
+    title: "systemConfiguration",
+    path: urls.field_management,
+    icon: <Icon name="SettingJob" />,
     code: "RESOURCE",
     children: [
-      {
-        title: "listOfOrganizations",
-        path: urls.organization,
-        icon: <Icon name="Partner" />,
-        code: "ORGANIZATION_MANAGEMENT",
-      },
-      {
-        title: "userAdministration",
-        path: urls.user,
-        icon: <Icon name="Customer" />,
-        code: "RESOURCE",
-      },
-      {
-        title: "servicePackageManagement",
-        path: urls.package_manage,
-        icon: <Icon name="Beauty" />,
-        code: "RESOURCE",
-      },
-      {
-        title: "renewalList",
-        path: urls.extension_list,
-        icon: <Icon name="Renewal" />,
-        code: "RENEWAL_LIST",
-      },
       {
         title: "fieldManagement",
         path: urls.field_management,
@@ -65,18 +68,10 @@ export const menu: IMenuItem[] = [
     ],
   },
   {
-    title: "settings",
+    title: "settingPersonal",
     path: urls.setting_account,
-    icon: <Icon name="Settings" />,
+    icon: <Icon name="ContactCustomer" />,
     code: "",
-    children: [
-      {
-        title: "settingPersonal",
-        path: urls.setting_account,
-        icon: <Icon name="ContactCustomer" />,
-        code: "",
-      },
-    ],
   },
 ];
 

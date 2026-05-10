@@ -199,7 +199,7 @@ export const getPermissions = () => {
  * @param returnUrl
  */
 export const redirectUrl = (returnUrl: any, targetUrl: any) => {
-  targetUrl = targetUrl || "/customer"; //dashboard
+  targetUrl = targetUrl && targetUrl !== "/customer" ? targetUrl : "/dashboard";
   let url = returnUrl || targetUrl;
   if (!url.startsWith("/")) {
     url = "/" + url;

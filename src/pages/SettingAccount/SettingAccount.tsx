@@ -472,18 +472,7 @@ export default function SettingAccount() {
           </div>
         </div>
       </div>
-      <div className="card-box info__package--use" id="scrollToElementId" ref={elementRef}>
-        <TitleAction title="Thông tin gói dịch vụ đang dùng" />
-
-        <ServiceInfomation checkUser={checkUserRoot} />
-      </div>
-      {+checkUserRoot == 1 && (
-        <div className="card-box info__package--service">
-          <TitleAction title="Thông tin các gói dịch vụ liên quan" />
-
-          <InformationServicePackage isShowDialog={takeUrlParams && takeUrlParams?.isPackage} />
-        </div>
-      )}
+      {/* Superadmin platform owner — không hiển thị thông tin gói dịch vụ. */}
 
       <Dialog content={contentDialog} isOpen={showDialog} />
     </div>
