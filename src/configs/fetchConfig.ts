@@ -33,12 +33,12 @@ export default function RegisterFetch() {
         config.headers["Content-Type"] = "application/json";
       }
       config.headers["Hostname"] = location.hostname || "";
-      // Local (localhost / 127.0.0.1) → luôn "kcn.reborn.vn" (env test mặc định).
+      // Local (localhost / 127.0.0.1) → fix cứng "rebornjsc.reborn.vn" (test superadmin).
       // Live (prod/staging) → location.hostname thật của tenant user đang truy cập.
       {
         const realHost = location.hostname || "";
         const isLocal = realHost === "localhost" || realHost === "127.0.0.1" || realHost === "";
-        config.headers["Hostname"] = isLocal ? "kcn.reborn.vn" : realHost;
+        config.headers["Hostname"] = isLocal ? "rebornjsc.reborn.vn" : realHost;
       }
 
       if (!url.startsWith("http")) {

@@ -1,5 +1,9 @@
 // Đã migrate: toàn bộ endpoint /adminapi/* → biz.reborn.vn/customer/*.
 const prefixCustomer = (process.env.APP_CUSTOMER_API_URL || "https://biz.reborn.vn") + "/customer";
+// WORKAROUND TẠM (test superadmin) — các endpoint /employee/*, /role/*, /permission/resource
+// chưa được migrate sang biz.reborn.vn/customer. Trỏ tạm về cloud.reborn.vn/adminapi cho đến
+// khi BE migrate xong. Cần revert lại prefixCustomer sau.
+const prefixAdminLegacy = (process.env.APP_ADMIN_URL || "https://cloud.reborn.vn") + "/adminapi";
 const prefixBpm = process.env.APP_BPM_URL + "/bpmapi";
 const prefixApi = "/api";
 const prefixAuthenticator = "/authenticator";
@@ -411,23 +415,23 @@ export const urlsApi = {
   },
 
   employee: {
-    list: prefixCustomer + "/employee/list",
-    update: prefixCustomer + "/employee/update",
-    detail: prefixCustomer + "/employee/get",
-    delete: prefixCustomer + "/employee/delete",
-    linkEmployeeUser: prefixCustomer + "/employee/link_user",
-    init: prefixCustomer + "/employee/init",
-    info: prefixCustomer + "/employee/info",
-    takeRoles: prefixCustomer + "/employee/roles",
-    listExTip: prefixCustomer + "/employee/listExTip",
-    generateRandomPass: prefixCustomer + "/employee/random_pass",
-    list_department: prefixCustomer + "/employee/list/department",
-    updateToken: prefixCustomer + "/employee/update_token", //Cập nhật token của Outlook Mail
-    checkEmailConnection: prefixCustomer + "/employee/check_email_connection",
-    disconnectEmail: prefixCustomer + "/employee/disconnect_email",
-    updateRole: prefixCustomer + "/roleEmployee/insert-batch",
-    getListRoleEmployee: prefixCustomer + "/roleEmployee/list",
-    deleteRole: prefixCustomer + "/roleEmployee/delete",
+    list: prefixAdminLegacy + "/employee/list",
+    update: prefixAdminLegacy + "/employee/update",
+    detail: prefixAdminLegacy + "/employee/get",
+    delete: prefixAdminLegacy + "/employee/delete",
+    linkEmployeeUser: prefixAdminLegacy + "/employee/link_user",
+    init: prefixAdminLegacy + "/employee/init",
+    info: prefixAdminLegacy + "/employee/info",
+    takeRoles: prefixAdminLegacy + "/employee/roles",
+    listExTip: prefixAdminLegacy + "/employee/listExTip",
+    generateRandomPass: prefixAdminLegacy + "/employee/random_pass",
+    list_department: prefixAdminLegacy + "/employee/list/department",
+    updateToken: prefixAdminLegacy + "/employee/update_token", //Cập nhật token của Outlook Mail
+    checkEmailConnection: prefixAdminLegacy + "/employee/check_email_connection",
+    disconnectEmail: prefixAdminLegacy + "/employee/disconnect_email",
+    updateRole: prefixAdminLegacy + "/roleEmployee/insert-batch",
+    getListRoleEmployee: prefixAdminLegacy + "/roleEmployee/list",
+    deleteRole: prefixAdminLegacy + "/roleEmployee/delete",
   },
   employeeAgent: {
     list: prefixCustomer + "/employeeAgent/list",
@@ -1770,7 +1774,7 @@ export const urlsApi = {
     freeResource: prefixCustomer + "/resource/list_ex",
   },
   permission: {
-    getPermissionResources: prefixCustomer + "/permission/resource",
+    getPermissionResources: prefixAdminLegacy + "/permission/resource",
     //API phân quyền theo phòng ban
     permissionDepartment: prefixCustomer + "/permission/info",
     //API phân quyền theo nhóm quyền
@@ -1802,7 +1806,7 @@ export const urlsApi = {
     updateRejectPermission: prefixCustomer + "/requestPermission/update/rejected ",
   },
   rolePermission: {
-    getPermissionResources: prefixCustomer + "/permission/resource",
+    getPermissionResources: prefixAdminLegacy + "/permission/resource",
     //API phân quyền theo nhóm quyền
     rolePermission: prefixCustomer + "/rolePermission/info",
     //API phân quyền theo gói

@@ -93,7 +93,8 @@ export default defineConfig(({ mode }) => {
     base: "/crm/",
 
     server: {
-      port: 4000,
+      port: 7000,
+      strictPort: true,
       open: true,
     },
 

@@ -3,7 +3,22 @@
     "allow": [
       "Bash(find . -maxdepth 2 -name \"tests\" -type d)",
       "Bash(ls *.mjs *.spec.*)",
-      "Bash(ls auth*.json .auth*)"
+      "Bash(ls auth*.json .auth*)",
+      "Bash(git checkout *)",
+      "PowerShell($keep = @\\('404','Common','Dashboard','Extension','FieldManagement','Login','Organization','Package','ResourceManagement','SettingAccount','User'\\); Get-ChildItem \"src\\\\pages\" -Directory | Where-Object { $keep -notcontains $_.Name } | ForEach-Object { Remove-Item -Recurse -Force $_.FullName }; Get-ChildItem \"src\\\\pages\" -Directory | Select-Object -ExpandProperty Name)",
+      "Bash(yarn build *)",
+      "Bash(git add *)",
+      "Bash(git commit -m ' *)",
+      "Bash(yarn dev *)",
+      "Bash(curl -s -o /dev/null -w \"SSO_8080: %{http_code}\\\\n\" --max-time 3 http://localhost:8080/)",
+      "Bash(curl -s -o /dev/null -w \"CRM_4001: %{http_code}\\\\n\" --max-time 3 http://localhost:4001/crm/)",
+      "Bash(curl -s http://localhost:4001/crm/)",
+      "PowerShell(Get-ChildItem -Force | Select-Object Name | Where-Object { $_.Name -match \"env\" })",
+      "PowerShell(Get-NetTCPConnection -LocalPort 7000 -State Listen | Select-Object -First 3 OwningProcess; Get-Process -Id \\(Get-NetTCPConnection -LocalPort 7000 -State Listen\\).OwningProcess | Select-Object Id, ProcessName)",
+      "PowerShell(Get-Process -Id 26392 -ErrorAction SilentlyContinue)",
+      "PowerShell(Get-Process | Where-Object { $_.Id -eq 26392 } | Format-List Id, Name, ProcessName, Path)",
+      "PowerShell(Stop-Process -Id 26392 -Force; Start-Sleep -Milliseconds 500; \\(Get-NetTCPConnection -LocalPort 7000 -State Listen -ErrorAction SilentlyContinue\\) ? \"STILL_BUSY\" : \"FREE\")",
+      "Bash(curl -s -o /dev/null -w \"Dev_7000: %{http_code}\\\\n\" --max-time 3 http://localhost:7000/crm/)"
     ]
   }
 }
