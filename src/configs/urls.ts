@@ -1755,87 +1755,87 @@ export const urlsApi = {
   },
   //API quản trị phân hệ
   subsystemAdministration: {
-    list: prefixCustomer + "/module/list",
-    update: prefixCustomer + "/module/update",
-    detail: prefixCustomer + "/module/get",
-    delete: prefixCustomer + "/module/delete",
+    list: prefixAdminLegacy + "/module/list",
+    update: prefixAdminLegacy + "/module/update",
+    detail: prefixAdminLegacy + "/module/get",
+    delete: prefixAdminLegacy + "/module/delete",
     // Thêm mới một tài nguyên vào phân hệ
-    addModuleResource: prefixCustomer + "/moduleResource/add",
+    addModuleResource: prefixAdminLegacy + "/moduleResource/add",
     // Xóa một tài nguyên hỏi phân hệ
-    removeModuleResource: prefixCustomer + "/moduleResource/remove",
+    removeModuleResource: prefixAdminLegacy + "/moduleResource/remove",
   },
   //API quản trị chúc năng
   functionalManagement: {
-    list: prefixCustomer + "/resource/list",
-    update: prefixCustomer + "/resource/update",
-    detail: prefixCustomer + "/resource/get",
-    delete: prefixCustomer + "/resource/delete",
+    list: prefixAdminLegacy + "/resource/list",
+    update: prefixAdminLegacy + "/resource/update",
+    detail: prefixAdminLegacy + "/resource/get",
+    delete: prefixAdminLegacy + "/resource/delete",
     // lấy ra danh sách tài nguyên chưa thuộc phân hệ nào
-    freeResource: prefixCustomer + "/resource/list_ex",
+    freeResource: prefixAdminLegacy + "/resource/list_ex",
   },
   permission: {
     getPermissionResources: prefixAdminLegacy + "/permission/resource",
     //API phân quyền theo phòng ban
-    permissionDepartment: prefixCustomer + "/permission/info",
+    permissionDepartment: prefixAdminLegacy + "/permission/info",
     //API phân quyền theo nhóm quyền
-    rolePermission: prefixCustomer + "/rolePermission/info",
+    rolePermission: prefixAdminLegacy + "/rolePermission/info",
     //API thêm quyền cho phòng ban
-    permissionDepartmentAdd: prefixCustomer + "/permission/add",
+    permissionDepartmentAdd: prefixAdminLegacy + "/permission/add",
     //API thêm quyền cho nhóm quyền
-    permissionRoleAdd: prefixCustomer + "/rolePermission/add",
+    permissionRoleAdd: prefixAdminLegacy + "/rolePermission/add",
     //API xóa quyền được cấp
-    permissionDepartmentDelete: prefixCustomer + "/permission/remove",
+    permissionDepartmentDelete: prefixAdminLegacy + "/permission/remove",
     //API lấy danh sách quyền trước đó cho một đối tượng muốn sao chép
-    permissionClone: prefixCustomer + "/permission/clone",
+    permissionClone: prefixAdminLegacy + "/permission/clone",
 
     //danh sách yêu cầu xin quyền truy cập (mình xin quyền)
-    requestPermissionSource: prefixCustomer + "/requestPermission/list/source",
+    requestPermissionSource: prefixAdminLegacy + "/requestPermission/list/source",
     //gửi yêu cầu xin phê duyệt
-    updateRequestPermission: prefixCustomer + "/requestPermission/update",
+    updateRequestPermission: prefixAdminLegacy + "/requestPermission/update",
 
     //xoá yêu cầu xin phê duyệt
-    deleteRequestPermission: prefixCustomer + "/requestPermission/delete",
+    deleteRequestPermission: prefixAdminLegacy + "/requestPermission/delete",
 
     //danh sách cấp quyền truy cập (đối tác xin quyền)
-    requestPermissionTarget: prefixCustomer + "/requestPermission/list/target",
+    requestPermissionTarget: prefixAdminLegacy + "/requestPermission/list/target",
 
     //phê duyệt quyền truy cập
-    updateApprovePermission: prefixCustomer + "/requestPermission/update/approved ",
+    updateApprovePermission: prefixAdminLegacy + "/requestPermission/update/approved ",
 
     //từ chối quyền truy cập
-    updateRejectPermission: prefixCustomer + "/requestPermission/update/rejected ",
+    updateRejectPermission: prefixAdminLegacy + "/requestPermission/update/rejected ",
   },
   rolePermission: {
     getPermissionResources: prefixAdminLegacy + "/permission/resource",
     //API phân quyền theo nhóm quyền
-    rolePermission: prefixCustomer + "/rolePermission/info",
+    rolePermission: prefixAdminLegacy + "/rolePermission/info",
     //API phân quyền theo gói
-    packagePermission: prefixCustomer + "/packagePermission/info",
+    packagePermission: prefixAdminLegacy + "/packagePermission/info",
     //API thêm quyền cho nhóm quyền
-    packagePermissionAdd: prefixCustomer + "/packagePermission/add",
+    packagePermissionAdd: prefixAdminLegacy + "/packagePermission/add",
     //API thêm quyền cho nhóm quyền
-    permissionRoleAdd: prefixCustomer + "/rolePermission/add",
+    permissionRoleAdd: prefixAdminLegacy + "/rolePermission/add",
     //API xóa quyền được cấp
-    permissionRoleDelete: prefixCustomer + "/rolePermission/remove",
+    permissionRoleDelete: prefixAdminLegacy + "/rolePermission/remove",
     //API lấy danh sách quyền trước đó cho một đối tượng muốn sao chép
-    permissionClone: prefixCustomer + "/permission/clone",
+    permissionClone: prefixAdminLegacy + "/permission/clone",
 
     //danh sách yêu cầu xin quyền truy cập (mình xin quyền)
-    requestPermissionSource: prefixCustomer + "/requestPermission/list/source",
+    requestPermissionSource: prefixAdminLegacy + "/requestPermission/list/source",
     //gửi yêu cầu xin phê duyệt
-    updateRequestPermission: prefixCustomer + "/requestPermission/update",
+    updateRequestPermission: prefixAdminLegacy + "/requestPermission/update",
 
     //xoá yêu cầu xin phê duyệt
-    deleteRequestPermission: prefixCustomer + "/requestPermission/delete",
+    deleteRequestPermission: prefixAdminLegacy + "/requestPermission/delete",
 
     //danh sách cấp quyền truy cập (đối tác xin quyền)
-    requestPermissionTarget: prefixCustomer + "/requestPermission/list/target",
+    requestPermissionTarget: prefixAdminLegacy + "/requestPermission/list/target",
 
     //phê duyệt quyền truy cập
-    updateApprovePermission: prefixCustomer + "/requestPermission/update/approved ",
+    updateApprovePermission: prefixAdminLegacy + "/requestPermission/update/approved ",
 
     //từ chối quyền truy cập
-    updateRejectPermission: prefixCustomer + "/requestPermission/update/rejected ",
+    updateRejectPermission: prefixAdminLegacy + "/requestPermission/update/rejected ",
   },
   //API tổng đài
   callCenter: {
