@@ -17,7 +17,8 @@
 | 07a | [Legacy Mapping & ETL Scripts](./07a-Legacy-Mapping.md) | Naming convention, per-column mapping, SQL ETL scripts idempotent, validation suite | DBA, BE Dev, Migration owner |
 | 08 | [NFR](./08-NFR.md) | Security, performance, SLA, scalability, compliance | Architect, Security, SRE |
 | 09 | [Deployment](./09-Deployment.md) | Tech stack, infra, CI/CD, env, observability | DevOps, SRE |
-| 10 | [ADR](./10-ADR.md) | Architecture Decision Record — 20 quyết định chốt | Tất cả (đặc biệt khi onboard) |
+| 10 | [ADR](./10-ADR.md) | Architecture Decision Record — 20+ quyết định chốt | Tất cả (đặc biệt khi onboard) |
+| 11 | [UI Design](./11-UI-Design.md) | Mockup ASCII + spec component cho Tenant Landing, App Mgmt, App Switcher widget, Tenant Admin outline | FE Dev, Designer, PM |
 
 ## Đọc theo vai trò
 
@@ -27,6 +28,12 @@
 3. `04-Database-Schema` (1 giờ) — DDL ready apply
 4. `05-API-Spec` (45 phút) — endpoint contract
 5. `06-Integration` (30 phút) — call Identity/Org
+
+### Dev FE (chuẩn bị implement)
+1. `00-Overview` (15 phút)
+2. `11-UI-Design` (1 giờ) — mockup + behavior + API mapping
+3. `05-API-Spec` (30 phút) — endpoints sẽ gọi
+4. `03-Domain-Model § 3.9b` — App + Edition concept (cho App Switcher widget)
 
 ### DBA / DevOps
 1. `00-Overview` (15 phút)

@@ -62,8 +62,11 @@
 | Package_permission matrix UI | ✅ | |
 | Industry CRUD | ✅ | |
 | Module + Resource + Module_resource CRUD | ✅ | |
-| **App + App Edition CRUD UI** (UC-12) | ✅ | Quản lý phát hành app mới |
-| **Exclusive edition whitelist UI** (UC-13) | ✅ | Cấp custom edition cho tenant VIP |
+| **App + App Edition CRUD UI** (UC-12) | ✅ | Quản lý phát hành app mới — mockup `11 § 11.3` |
+| **Exclusive edition whitelist UI** (UC-13) | ✅ | Cấp custom edition cho tenant VIP — mockup `11 § 11.3.5` |
+| **Tenant Landing Page** | ✅ | UI khi user vào subdomain tenant (root path) — mockup `11 § 11.2` |
+| **App Switcher widget** (NPM lib `@reborn/app-switcher-react`) | ✅ | Component shared embed trong mọi FE app — spec `11 § 11.4` |
+| Tenant Admin Console (CRUD member, gói, hoá đơn cho tenant tự quản) | ⬜ | Phase 6+ — outline `11 § 11.5` |
 | File upload (avatar, logo) | ✅ | |
 | Help video CRUD | ⬜ | Phase 2 |
 | Help article CRUD | ⬜ | Phase 2 |
