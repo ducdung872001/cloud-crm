@@ -11,6 +11,9 @@ import ExtensionList from "pages/Extension/ExtensionList";
 import UserList from "pages/User/UserList";
 import FieldMannagement from "pages/FieldManagement/FieldManagement";
 import ResourceManagementList from "pages/ResourceManagement/ResourceManagementList";
+import AppList from "pages/AppManagement/AppList";
+import AppEditionList from "pages/AppManagement/AppEditionList";
+import AppEditionWhitelist from "pages/AppManagement/AppEditionWhitelist";
 
 // Menu cho Reborn Super Admin (console quản trị nền tảng).
 // Bố cục: 4 entry points vận hành hằng ngày (Tổ chức / Người dùng / Gói / Gia hạn)
@@ -34,6 +37,12 @@ export const menu: IMenuItem[] = [
     path: urls.user,
     icon: <Icon name="Customer" />,
     code: "RESOURCE",
+  },
+  {
+    title: "appManagement",
+    path: urls.app_management,
+    icon: <Icon name="SettingJob" />,
+    code: "", // placeholder — sau khi BE Platform deploy + seed permission "APP_MANAGEMENT_VIEW" thì set lại
   },
   {
     title: "servicePackageManagement",
@@ -111,5 +120,17 @@ export const routes: IRouter[] = [
   {
     path: urls.resource_management,
     component: <ResourceManagementList />,
+  },
+  {
+    path: urls.app_management,
+    component: <AppList />,
+  },
+  {
+    path: urls.app_edition_management,
+    component: <AppEditionList />,
+  },
+  {
+    path: urls.app_edition_whitelist,
+    component: <AppEditionWhitelist />,
   },
 ];

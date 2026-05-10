@@ -3074,6 +3074,10 @@ export const urls = {
   extension_list: "/extension_list",
   //quản lý lĩnh vực
   field_management: "/field_management",
+  //quản lý ứng dụng (App + Edition catalog) — UC-12, UC-13
+  app_management: "/app_management",
+  app_edition_management: "/app_management/:appCode/edition",
+  app_edition_whitelist: "/app_management/edition/:editionId/whitelist",
   //Loại luật nghiệp vụ
   business_rule: "/bpm/business_rule",
   business_rule_config: "/bpm/business_rule_config/:id",

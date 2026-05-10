@@ -167,6 +167,7 @@ i18n.use(initReactI18next).init({
           userAdministration: "User administration",
           fieldManagement: "Field management",
           systemConfiguration: "System configuration",
+          appManagement: "App management",
           settingConfiguration: "Configuration settings",
         },
         pageDashboard: {
@@ -377,6 +378,7 @@ i18n.use(initReactI18next).init({
           userAdministration: "Quản trị người dùng",
           fieldManagement: "Quản lý lĩnh vực",
           systemConfiguration: "Cấu hình hệ thống",
+          appManagement: "Quản lý ứng dụng",
           settingConfiguration: "Cài đặt cấu hình chung",
         },
         pageDashboard: {
