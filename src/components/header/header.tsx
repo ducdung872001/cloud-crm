@@ -319,7 +319,7 @@ export default function Header(props: any) {
           <SwiperSlide className="swiper__item">
             <div className="info__common">
               <span className="name">{dataCompany && dataCompany.name}</span>
-              <span className="__package">{` - Sử dụng ${dataExpired?.name?.toLowerCase()}`}</span>{" "}
+              <span className="__package">{` — Quản trị nền tảng`}</span>{" "}
             </div>
           </SwiperSlide>
         </Swiper>

@@ -1,5 +1,6 @@
 import React from "react";
 import { useNavigate, useParams } from "react-router-dom";
+import "./AppManagement.scss";
 
 // Placeholder UC-13: whitelist tenant cho exclusive edition.
 // Spec: docs/platform-service/11-UI-Design.md § 11.3.5.
@@ -20,67 +21,61 @@ export default function AppEditionWhitelist() {
   const { editionId } = useParams<{ editionId: string }>();
 
   return (
-    <div style={{ padding: "24px 32px" }}>
-      <div style={{ marginBottom: 8 }}>
-        <button
-          onClick={() => navigate("/app_management")}
-          style={{ background: "none", border: 0, color: "#0F766E", cursor: "pointer", padding: 0, fontSize: 14 }}
-        >
+    <div className="app-management">
+      <div className="am-breadcrumb">
+        <button className="am-breadcrumb-link" onClick={() => navigate("/app_management")}>
           ◀ Quản lý ứng dụng
         </button>
-        <span style={{ color: "#9CA3AF", margin: "0 8px" }}>/</span>
-        <span style={{ color: "#0F766E", cursor: "pointer" }} onClick={() => navigate("/app_management/CRM/edition")}>CRM</span>
-        <span style={{ color: "#9CA3AF", margin: "0 8px" }}>/</span>
-        <span style={{ fontWeight: 600 }}>Whitelist edition #{editionId}</span>
+        <span className="am-breadcrumb-sep">/</span>
+        <button className="am-breadcrumb-link" onClick={() => navigate("/app_management/CRM/edition")}>
+          CRM
+        </button>
+        <span className="am-breadcrumb-sep">/</span>
+        <span className="am-breadcrumb-current">Whitelist edition #{editionId}</span>
       </div>
-      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 16 }}>
-        <h1 style={{ fontSize: 24, fontWeight: 700, margin: 0 }}>WHITELIST TENANT</h1>
-        <button
-          onClick={() => alert("Modal Thêm tenant whitelist — chờ BE Platform")}
-          style={{ padding: "10px 20px", background: "#0F766E", color: "#fff", border: 0, borderRadius: 6, cursor: "pointer", fontWeight: 600 }}
-        >
+
+      <div className="am-header">
+        <h1>Whitelist tenant</h1>
+        <button className="am-btn-primary" onClick={() => alert("Modal Thêm tenant whitelist — chờ BE Platform")}>
           + Thêm tenant
         </button>
       </div>
 
-      <div style={{
-        background: "#FEE2E2", border: "1px solid #DC2626", borderRadius: 6,
-        padding: "12px 16px", marginBottom: 16, fontSize: 13, color: "#991B1B",
-      }}>
-        <strong>🔒 Edition exclusive</strong> — chỉ tenant trong danh sách dưới mới subscribe được. Mọi thao tác audit log đầy đủ.
+      <div className="am-exclusive-banner">
+        🔒 <strong>Edition exclusive</strong> — chỉ tenant trong danh sách dưới mới subscribe được. Mọi thao tác audit log đầy đủ.
       </div>
 
-      <div style={{ background: "#fff", border: "1px solid #E5E7EB", borderRadius: 8, overflow: "hidden" }}>
-        <table style={{ width: "100%", borderCollapse: "collapse" }}>
-          <thead style={{ background: "#F9FAFB" }}>
+      <div className="am-table-wrap">
+        <table className="am-table">
+          <thead>
             <tr>
-              <th style={th}>STT</th>
-              <th style={th}>Tenant</th>
-              <th style={th}>Cấp bởi</th>
-              <th style={th}>Ngày cấp</th>
-              <th style={th}>Ghi chú</th>
-              <th style={th}></th>
+              <th style={{ width: 60 }}>STT</th>
+              <th>Tenant</th>
+              <th>Cấp bởi</th>
+              <th style={{ width: 130 }}>Ngày cấp</th>
+              <th>Ghi chú</th>
+              <th style={{ width: 100 }}></th>
             </tr>
           </thead>
           <tbody>
             {MOCK_WHITELIST.map((row, i) => (
-              <tr key={row.tenantId} style={{ borderTop: "1px solid #E5E7EB" }}>
-                <td style={td}>{i + 1}</td>
-                <td style={td}>
-                  <div style={{ fontWeight: 600 }}>{row.tenantName}</div>
-                  <div style={{ fontSize: 12, color: "#6B7280" }}>alias: {row.tenantAlias}</div>
+              <tr key={row.tenantId}>
+                <td>{i + 1}</td>
+                <td>
+                  <div className="am-table-name">{row.tenantName}</div>
+                  <div className="am-table-sub">{row.tenantAlias}.reborn.vn</div>
                 </td>
-                <td style={td}>{row.grantedBy}</td>
-                <td style={td}>{row.grantedAt}</td>
-                <td style={td}>{row.notes}</td>
-                <td style={td}>
+                <td>{row.grantedBy}</td>
+                <td>{row.grantedAt}</td>
+                <td>{row.notes}</td>
+                <td>
                   <button
+                    className="am-btn-danger"
                     onClick={() => {
                       if (confirm(`Revoke whitelist của ${row.tenantName}?`)) {
                         alert("Đã revoke (mock — chờ BE)");
                       }
                     }}
-                    style={{ background: "none", border: 0, color: "#DC2626", cursor: "pointer", fontSize: 13 }}
                   >
                     🗑 Revoke
                   </button>
@@ -93,6 +88,3 @@ export default function AppEditionWhitelist() {
     </div>
   );
 }
-
-const th: React.CSSProperties = { padding: "10px 12px", textAlign: "left", fontSize: 12, fontWeight: 600, color: "#4B5563", textTransform: "uppercase" };
-const td: React.CSSProperties = { padding: "12px", fontSize: 14 };

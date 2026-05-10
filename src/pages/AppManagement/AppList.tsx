@@ -1,5 +1,6 @@
 import React, { useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import "./AppManagement.scss";
 
 // Placeholder cho UC-12: Quản lý ứng dụng (Phát hành App + Edition).
 // Hiện tại dùng mock data — wire API thật sau khi BE Platform Service deploy.
@@ -16,51 +17,16 @@ type AppRow = {
 };
 
 const MOCK_APPS: AppRow[] = [
-  {
-    code: "CRM",
-    name: "Quản lý khách hàng (CRM)",
-    iconLabel: "📇",
-    status: "active",
-    ordinal: 1,
-    editions: ["CRM-SPA", "CRM-EDU", "CRM-LOYALTY", "CRM-REALTY", "CRM-GENERIC"],
-    tenantsCount: 48,
-  },
-  {
-    code: "BPM",
-    name: "Quản lý quy trình (BPM)",
-    iconLabel: "🔁",
-    status: "active",
-    ordinal: 2,
-    editions: ["BPM-GENERIC"],
-    tenantsCount: 12,
-  },
-  {
-    code: "CXM",
-    name: "CXM",
-    iconLabel: "💬",
-    status: "beta",
-    ordinal: 3,
-    editions: ["CXM-GENERIC"],
-    tenantsCount: 0,
-  },
-  {
-    code: "POS",
-    name: "Bán hàng (POS)",
-    iconLabel: "🛒",
-    status: "active",
-    ordinal: 4,
-    editions: ["POS-FNB", "POS-RETAIL", "POS-GENERIC"],
-    tenantsCount: 5,
-  },
-  {
-    code: "SUPERADMIN",
-    name: "Quản trị nền tảng (Superadmin)",
-    iconLabel: "🛡️",
-    status: "active",
-    ordinal: 99,
-    editions: ["SUPERADMIN-GENERIC"],
-    tenantsCount: 1,
-  },
+  { code: "CRM",        name: "Quản lý khách hàng (CRM)", iconLabel: "📇", status: "active", ordinal: 1,
+    editions: ["CRM-SPA", "CRM-EDU", "CRM-LOYALTY", "CRM-REALTY", "CRM-GENERIC"], tenantsCount: 48 },
+  { code: "BPM",        name: "Quản lý quy trình (BPM)",  iconLabel: "🔁", status: "active", ordinal: 2,
+    editions: ["BPM-GENERIC"], tenantsCount: 12 },
+  { code: "CXM",        name: "CXM",                       iconLabel: "💬", status: "beta",   ordinal: 3,
+    editions: ["CXM-GENERIC"], tenantsCount: 0 },
+  { code: "POS",        name: "Bán hàng (POS)",            iconLabel: "🛒", status: "active", ordinal: 4,
+    editions: ["POS-FNB", "POS-RETAIL", "POS-GENERIC"], tenantsCount: 5 },
+  { code: "SUPERADMIN", name: "Quản trị nền tảng",         iconLabel: "🛡️", status: "active", ordinal: 99,
+    editions: ["SUPERADMIN-GENERIC"], tenantsCount: 1 },
 ];
 
 export default function AppList() {
@@ -80,116 +46,70 @@ export default function AppList() {
   }, [query, statusFilter]);
 
   return (
-    <div style={{ padding: "24px 32px", fontFamily: "inherit" }}>
-      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 16 }}>
-        <h1 style={{ fontSize: 24, fontWeight: 700, margin: 0 }}>QUẢN LÝ ỨNG DỤNG</h1>
-        <button
-          onClick={() => alert("Modal Thêm App — chờ BE Platform deploy")}
-          style={{ padding: "10px 20px", background: "#0F766E", color: "#fff", border: 0, borderRadius: 6, cursor: "pointer", fontWeight: 600 }}
-        >
+    <div className="app-management">
+      <div className="am-header">
+        <h1>Quản lý ứng dụng</h1>
+        <button className="am-btn-primary" onClick={() => alert("Modal Thêm App — chờ BE Platform deploy")}>
           + Thêm App
         </button>
       </div>
 
-      <div style={{
-        background: "#FEF3C7",
-        border: "1px solid #F59E0B",
-        borderRadius: 6,
-        padding: "12px 16px",
-        marginBottom: 16,
-        fontSize: 13,
-        color: "#92400E",
-      }}>
-        <strong>⚠️ Đang dùng mock data</strong> — BE Platform Service chưa deploy. Khi BE ready, page này sẽ wire vào{" "}
-        <code style={{ background: "#FFF7CD", padding: "1px 6px", borderRadius: 3 }}>GET /api/v1/app</code> +{" "}
-        <code style={{ background: "#FFF7CD", padding: "1px 6px", borderRadius: 3 }}>POST /api/v1/app</code>. Spec đầy đủ ở{" "}
-        <code style={{ background: "#FFF7CD", padding: "1px 6px", borderRadius: 3 }}>docs/platform-service/05-API-Spec.md § 5.5b</code>.
+      <div className="am-mock-banner">
+        ⚠️ <strong>Đang dùng mock data</strong> — BE Platform Service chưa deploy. Page sẽ wire vào{" "}
+        <code>GET /api/v1/app</code> + <code>POST /api/v1/app</code>. Spec ở{" "}
+        <code>docs/platform-service/05-API-Spec.md § 5.5b</code>.
       </div>
 
-      <div style={{ display: "flex", gap: 12, marginBottom: 16 }}>
+      <div className="am-toolbar">
         <input
           type="text"
+          className="am-search"
           placeholder="🔍 Tìm theo tên / code…"
           value={query}
           onChange={(e) => setQuery(e.target.value)}
-          style={{ flex: 1, padding: "8px 12px", border: "1px solid #D1D5DB", borderRadius: 6, fontSize: 14 }}
         />
-        <select
-          value={statusFilter}
-          onChange={(e) => setStatusFilter(e.target.value as any)}
-          style={{ padding: "8px 12px", border: "1px solid #D1D5DB", borderRadius: 6, fontSize: 14 }}
-        >
-          <option value="all">Status: Tất cả</option>
-          <option value="active">Active</option>
+        <select className="am-select" value={statusFilter} onChange={(e) => setStatusFilter(e.target.value as any)}>
+          <option value="all">Tất cả trạng thái</option>
+          <option value="active">Đang hoạt động</option>
           <option value="beta">Beta</option>
-          <option value="archived">Archived</option>
+          <option value="archived">Đã ẩn</option>
         </select>
       </div>
 
-      <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+      <div className="am-card-list">
         {filtered.map((app) => (
-          <div
-            key={app.code}
-            style={{
-              border: "1px solid #E5E7EB",
-              borderRadius: 8,
-              padding: 16,
-              background: "#fff",
-              display: "flex",
-              gap: 16,
-              alignItems: "center",
-            }}
-          >
-            <div style={{
-              width: 60, height: 60, borderRadius: 8, background: "#F3F4F6",
-              display: "flex", alignItems: "center", justifyContent: "center", fontSize: 32,
-            }}>
-              {app.iconLabel}
-            </div>
-            <div style={{ flex: 1 }}>
-              <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
-                <strong style={{ fontSize: 16 }}>{app.name}</strong>
-                <code style={{ background: "#F3F4F6", padding: "2px 8px", borderRadius: 4, fontSize: 12 }}>
-                  {app.code}
-                </code>
-                {app.status === "beta" && (
-                  <span style={{ background: "#FEF3C7", color: "#92400E", padding: "2px 8px", borderRadius: 4, fontSize: 11, fontWeight: 600 }}>
-                    BETA
-                  </span>
-                )}
-                {app.status === "archived" && (
-                  <span style={{ background: "#FEE2E2", color: "#991B1B", padding: "2px 8px", borderRadius: 4, fontSize: 11, fontWeight: 600 }}>
-                    ARCHIVED
-                  </span>
-                )}
+          <div key={app.code} className="am-card">
+            <div className="am-app-row">
+              <div className="am-app-icon">{app.iconLabel}</div>
+              <div className="am-app-body">
+                <div className="am-app-title-row">
+                  <span className="am-app-title">{app.name}</span>
+                  <span className="am-tag-code">{app.code}</span>
+                  {app.status === "beta" && <span className="am-tag am-tag-beta">Beta</span>}
+                  {app.status === "archived" && <span className="am-tag am-tag-archived">Đã ẩn</span>}
+                </div>
+                <div className="am-app-desc">
+                  {app.editions.length} phiên bản: {app.editions.join(", ")}
+                </div>
+                <div className="am-app-meta">
+                  {app.tenantsCount} tenant đang dùng • Thứ tự: {app.ordinal}
+                </div>
               </div>
-              <div style={{ fontSize: 13, color: "#6B7280", marginTop: 4 }}>
-                {app.editions.length} edition{app.editions.length > 1 ? "s" : ""}: {app.editions.join(", ")}
+              <div className="am-app-actions">
+                <button className="am-btn-secondary" onClick={() => navigate(`/app_management/${app.code}/edition`)}>
+                  Xem editions →
+                </button>
+                <button className="am-btn-icon" onClick={() => alert(`Sửa App ${app.code} — chờ BE`)} title="Sửa">
+                  ✏️
+                </button>
               </div>
-              <div style={{ fontSize: 13, color: "#6B7280" }}>
-                {app.tenantsCount} tenant đang dùng • Order: {app.ordinal}
-              </div>
-            </div>
-            <div style={{ display: "flex", gap: 8 }}>
-              <button
-                onClick={() => navigate(`/app_management/${app.code}/edition`)}
-                style={{ padding: "8px 16px", background: "#fff", color: "#0F766E", border: "1px solid #0F766E", borderRadius: 6, cursor: "pointer", fontWeight: 500 }}
-              >
-                Xem editions →
-              </button>
-              <button
-                onClick={() => alert(`Sửa App ${app.code} — chờ BE Platform`)}
-                style={{ padding: "8px 12px", background: "#fff", border: "1px solid #D1D5DB", borderRadius: 6, cursor: "pointer" }}
-              >
-                ✏️
-              </button>
             </div>
           </div>
         ))}
       </div>
 
       {filtered.length === 0 && (
-        <div style={{ textAlign: "center", padding: 48, color: "#9CA3AF" }}>
+        <div className="am-empty">
           Không tìm thấy app nào khớp filter.
         </div>
       )}
