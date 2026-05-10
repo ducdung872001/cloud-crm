@@ -18,7 +18,11 @@
       "PowerShell(Get-Process -Id 26392 -ErrorAction SilentlyContinue)",
       "PowerShell(Get-Process | Where-Object { $_.Id -eq 26392 } | Format-List Id, Name, ProcessName, Path)",
       "PowerShell(Stop-Process -Id 26392 -Force; Start-Sleep -Milliseconds 500; \\(Get-NetTCPConnection -LocalPort 7000 -State Listen -ErrorAction SilentlyContinue\\) ? \"STILL_BUSY\" : \"FREE\")",
-      "Bash(curl -s -o /dev/null -w \"Dev_7000: %{http_code}\\\\n\" --max-time 3 http://localhost:7000/crm/)"
+      "Bash(curl -s -o /dev/null -w \"Dev_7000: %{http_code}\\\\n\" --max-time 3 http://localhost:7000/crm/)",
+      "Bash(git push *)",
+      "Bash(Get-ChildItem -Path \"D:\\\\Git\\\\reborn\\\\reborn-cloud\\\\cloud-ver2\\\\cloud-crm\\\\src\" -Recurse -Filter \"*superadmin*\" -Directory)",
+      "Bash(Select-Object -ExpandProperty FullName)",
+      "PowerShell(New-Item -ItemType Directory -Path \"docs/platform-service\")"
     ]
   }
 }
