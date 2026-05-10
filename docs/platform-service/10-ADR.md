@@ -538,6 +538,67 @@ KHÔNG. Tách thành Billing Service riêng (Phase tương lai).
 
 ---
 
+## ADR-022 — App Edition + Routing 2 lớp (1 wildcard pattern + reserved exceptions)
+
+- **Trạng thái**: Accepted (2026-05-10)
+- **Updated**: clarify routing pattern duy nhất sau review của user
+
+### Bối cảnh
+1 ứng dụng (CRM, BPM, CXM, POS, social, ...) trong hệ Reborn thực tế phát hành nhiều variant theo lĩnh vực kinh doanh:
+- CRM-SPA (Spa, branch `reborn-tech`), CRM-EDU (Giáo dục, `mentorhub`), CRM-LOYALTY (chuỗi bán lẻ, `reborn-loyalty`), CRM-REALTY (BĐS), CRM-GENERIC (mọi ngành)
+- BPM-HEALTHCARE, BPM-FINANCE, BPM-GENERIC
+- POS-FNB, POS-RETAIL, POS-GENERIC
+- Tương lai: MARKETING-*, WAREHOUSE-*, ACCOUNTING-*, …
+
+Mỗi variant deploy là 1 FE container riêng. Khi user của tenant truy cập, cần route tới đúng variant tenant đó đăng ký.
+
+### Quyết định
+1. Tách 2 bảng catalog: **`app`** (CRM, BPM, POS, ...) + **`app_edition`** (CRM-SPA, CRM-REALTY, BPM-FINANCE, ...) — pattern general, không hardcode CRM.
+2. Bổ sung cột `app_edition_id` vào `tenant_app` (FK + trigger validate match `app_code`).
+3. **Routing pattern duy nhất** cho mọi tenant (trừ reserved): `https://{tenant.subdomain}.reborn.vn{edition.url_suffix}`. Subdomain CHỈ 1 cấp = tenant. Suffix là path prefix (vd `/crm-spa`, `/crm-realty`, `/bpm`).
+4. **Reserved subdomain** (`auth`, `platform`, `org`, `notification`, `ecosystem`, `cdn`, `admin`, `www`, …) đi qua nginx custom route — bảng `reserved_subdomain` quản lý + validate khi tạo tenant.
+5. Endpoint `GET /internal/tenant/{id}/app/{code}/access-url` tính sẵn `redirect_url` ở server side. FE chỉ cần follow URL — không biết logic concat.
+6. **Default edition per (app, industry)**: dùng generated column `default_key` + UNIQUE → enforce 1-default-per-pair tự động.
+7. **Package vẫn gắn với app_code** (KHÔNG edition_code) — gói "Premium CRM" áp cho mọi edition CRM với cùng giá + entitlement.
+8. **Migration legacy**: legacy `org_app` không có edition → resolve theo (app_code, tenant.industry_id) → default edition. Fallback GENERIC. Log nếu không match.
+9. **Visibility 3-tier** trên `app_edition` (`public` / `private` / `exclusive`) + bảng `app_edition_allowed_tenant` cho whitelist exclusive. Mặc định endpoint catalog public chỉ trả `public` — tenant không thấy private/exclusive editions tồn tại. Bảo vệ runtime qua check membership ở `/access-url` (403 nếu guess URL trái phép).
+10. **App + Edition CRUD UI** thuộc MVP của superadmin console (UC-12, UC-13) — vì catalog này là tiền đề cho mọi tenant subscribe.
+
+### Lý do
+- **Concept general** áp dụng mọi app, hôm nay và tương lai — schema không cần thay đổi
+- **1 routing pattern duy nhất** đơn giản hoá ops: 1 wildcard SSL cert `*.reborn.vn`, 1 nginx ingress với routing rules theo path, 1 DNS wildcard A record
+- Subdomain 1 cấp = tenant rõ ràng, không nested confuse
+- Path suffix dễ đọc trong URL (`/crm-realty` rõ hơn `crm-realty.reborn.vn`)
+- Reserved exceptions xử lý infrastructure cleanly — không lẫn với tenant routes
+- Routing tính ở server: nếu sau đổi pattern (vd thêm version path `/v2/`) chỉ update Platform code, không động FE
+- Default per industry → UX onboarding mượt
+- Tách `app_edition` khỏi `package` giảm complexity matrix permission
+
+### Loại bỏ
+- **Multi-level subdomain** (`{tenant}.{edition}.reborn.vn` vd `tnpm.crm-realty.reborn.vn`): rườm rà, cần wildcard cert nhiều cấp, khó manage DNS
+- **4 routing pattern (subdomain/path/fixed/tenant_subdomain)** trong field `routing_pattern` enum: over-engineering, thực tế chỉ dùng 1
+- **Subdomain riêng per edition** (`crm-spa.reborn.vn`, `crm-realty.reborn.vn`) không có tenant: phải thêm domain mỗi khi launch edition mới + cert mới
+- **Ghép `app_code = "CRM-SPA"` thành 1 string** trong tenant_app: thiếu normalization
+- **Hardcode routing rule trong FE**: update FE mỗi khi thêm edition
+- **Routing client-side dựa trên tenant.industry**: FE duplicate logic Platform
+- **Chỉ 2 mức visibility (`public`/`private`)**: gộp `private` + `exclusive` thành 1 → mất khả năng whitelist tenant cụ thể, sales-led deal khó manage. 3 tier rõ vai trò: public (catalog), private (sales backdoor), exclusive (custom build cho tenant đã ký HĐ).
+
+### Hệ quả
+- ✅ DevOps đơn giản: 1 wildcard cert + 1 ingress rule + 1 DNS wildcard
+- ✅ Schema scalable — app mới chỉ INSERT row + thêm location block nginx, KHÔNG cần DNS/cert mới
+- ✅ Onboarding tenant smooth (auto-suggest edition theo industry)
+- ✅ App Switcher widget thống nhất qua `/me/access-urls`
+- ✅ URL đẹp + dễ nhớ: `tnpm.reborn.vn/crm-realty`
+- ⚠️ Trigger validate `app_code = app_edition.app_code` — overhead nhỏ
+- ⚠️ Migration legacy phải resolve edition cho ~8,000 row tenant_app — có thể có ~5% cần manual review
+- ⚠️ Bảng `reserved_subdomain` cần maintain (~30-50 row, ít thay đổi)
+- ⚠️ Đổi edition của tenant đã active là rare + destructive — chỉ SUPER_ADMIN, có schedule + warning + nginx redirect 302 cũ→mới trong 30 ngày để bookmark còn dùng
+- ⚠️ FE phải đọc tenant từ subdomain (Host header) — cần nginx forward đúng `Host` (đã include trong sample config)
+- ⚠️ Workflow phát hành app mới (UC-12) cần phối hợp BE/FE/DevOps + Super Admin — tài liệu hoá rõ thứ tự (1. dev/deploy, 2. nginx route, 3. khai báo Platform, 4. seed catalog/package)
+- ⚠️ Exclusive edition cần audit chặt — mỗi `allow-tenant` ghi `granted_by` + `notes` (số HĐ) bắt buộc
+
+---
+
 ## ADR-021 — Self-service signup từ ecosystem.reborn.vn (Phase 5)
 
 - **Trạng thái**: Accepted (2026-05-10) — implement post-MVP

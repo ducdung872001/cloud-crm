@@ -484,6 +484,165 @@ Notification:
 - T+0: gửi "Trial đã hết, dữ liệu được giữ 30 ngày, click để nâng cấp"
 - T+30: cron auto-suspend tenant nếu chưa nâng cấp
 
+## 6.9c. App Edition routing — luồng từ login đến đúng FE
+
+### 6.9c.1. Vấn đề
+1 user của tenant Spa "Reborn JSC" sau khi login vào `auth.reborn.vn` cần được redirect tới `https://rebornjsc.reborn.vn/crm-spa` (KHÔNG `/crm-edu` hay `/crm-realty`). Tương tự tenant BĐS "TNPM" → `https://tnpm.reborn.vn/crm-realty`. Khi click "App Switcher" trong CRM để qua BPM, phải đi đúng edition của BPM mà tenant đó đăng ký.
+
+→ Routing là chức năng cốt lõi của Platform: cho biết user X của tenant Y nếu muốn dùng app Z thì đi đâu.
+
+### 6.9c.2. URL pattern (chốt — 1 quy luật chung)
+
+```
+https://{tenant.subdomain}.reborn.vn{edition.url_suffix}/{app-internal-path}
+```
+
+Ví dụ:
+- TNPM (BĐS) + CRM → `https://tnpm.reborn.vn/crm-realty`
+- Reborn JSC (Spa) + CRM → `https://rebornjsc.reborn.vn/crm-spa`
+- Reborn JSC + SUPERADMIN → `https://rebornjsc.reborn.vn/superadmin`
+- Cty X + BPM → `https://cty-x.reborn.vn/bpm`
+
+Ngoại lệ — reserved subdomain (`auth`, `platform`, `org`, `notification`, `ecosystem`, ...) đi nginx custom route (xem `09-Deployment § 9.9`).
+
+### 6.9c.3. Sequence — sau khi user login
+
+```
+┌──────────┐  ┌──────────┐  ┌──────────┐  ┌──────────────────┐
+│ Browser  │  │   SSO    │  │ Platform │  │  CRM-Realty FE   │
+│          │  │ (auth.   │  │          │  │  (qua nginx      │
+│          │  │ reborn.  │  │          │  │   wildcard route)│
+│          │  │ vn)      │  │          │  │                  │
+└────┬─────┘  └────┬─────┘  └────┬─────┘  └──────┬───────────┘
+     │ login        │              │                │
+     │─────────────►│              │                │
+     │              │ verify       │                │
+     │              │              │                │
+     │              │ GET /me/access-urls           │
+     │              │─────────────►│                │
+     │              │              │ query memberships + tenant_app + app_edition
+     │              │ ◄────────────│  list apps + redirect_urls (đã tính)
+     │              │              │                │
+     │              │ pick default app (CRM)        │
+     │              │ redirect_url = first matched in response
+     │              │              │                │
+     │ 302 → https://tnpm.reborn.vn/crm-realty      │
+     │ ◄────────────│              │                │
+     │                                              │
+     │ GET https://tnpm.reborn.vn/crm-realty        │
+     │  ──── nginx server *.reborn.vn ──────────────│
+     │  ──── location ^/crm-realty/ → CRM-Realty FE │
+     │─────────────────────────────────────────────►│
+     │                                              │ extract tenant từ subdomain (tnpm)
+     │                                              │ check subscription valid
+     │                                              │  (gọi Platform internal/tenant/{id}/app/CRM)
+     │                                              │ render dashboard
+     │ ◄────────────────────────────────────────────│
+```
+
+### 6.9c.4. App Switcher widget — chuyển giữa các app
+
+Mỗi app FE (CRM, BPM, ...) có 1 widget "App Switcher" ở góc trên, cho user nhảy giữa các app/tenant:
+
+```
+┌──────────────────────────────────────┐
+│ Reborn JSC ▼                          │  ← Tenant switcher (multi-tenant user)
+├──────────────────────────────────────┤
+│ ✓ Reborn JSC      → rebornjsc.reborn.vn
+│   Spa Dr.Lena     → drlena.reborn.vn
+│   Cty BĐS TNPM    → tnpm.reborn.vn
+└──────────────────────────────────────┘
+
+┌────────────────────────────────────────────────┐
+│ Apps ▼                                          │  ← Theo tenant đang chọn
+├────────────────────────────────────────────────┤
+│ ● CRM (CRM-SPA)     /crm-spa    [đang ở]       │
+│ ○ BPM (BPM-GENERIC) /bpm                       │
+│ ○ POS (POS-FNB)     /pos-fnb                   │
+└────────────────────────────────────────────────┘
+```
+
+**Implementation**: FE app chỉ cần:
+1. Khi load: gọi `GET https://platform.reborn.vn/api/v1/me/access-urls`
+2. Hiển thị list, click → `window.location = redirect_url` (đã tính sẵn `https://{tenant}.reborn.vn{suffix}`)
+
+KHÔNG cần FE biết tenant subdomain, root domain, hay url_suffix — Platform tính tất cả.
+
+### 6.9c.5. Nginx routing — 2 lớp
+
+```
+Lớp 1: Reserved subdomain (custom route)
+─────────────────────────────────────────────────────────
+auth.reborn.vn           → Identity Service
+platform.reborn.vn       → Platform Service (this)
+org.reborn.vn            → Org Service
+notification.reborn.vn   → Notification Service
+ecosystem.reborn.vn      → Corporate site + self-signup form
+cdn.reborn.vn            → CDN
+... (xem 03-Domain § reserved subdomain table)
+
+Lớp 2: Wildcard tenant (*.reborn.vn) — route theo path suffix
+─────────────────────────────────────────────────────────
+*.reborn.vn/crm-spa/*       → crm-spa-fe deployment
+*.reborn.vn/crm-realty/*    → crm-realty-fe
+*.reborn.vn/crm-edu/*       → crm-edu-fe
+*.reborn.vn/crm/*           → crm-generic-fe
+*.reborn.vn/bpm/*           → bpm-fe
+*.reborn.vn/cxm/*           → cxm-fe
+*.reborn.vn/pos-fnb/*       → pos-fnb-fe
+*.reborn.vn/superadmin/*    → superadmin-fe
+*.reborn.vn/                → tenant-landing-fe (chọn app khi user không vào URL cụ thể)
+```
+
+Sample nginx config đầy đủ ở `09-Deployment § 9.9`.
+
+### 6.9c.4. Tenant subscribe app mới — flow chọn edition
+
+Khi superadmin (UC-01) hoặc tenant admin add app mới cho tenant:
+
+1. UI hiển thị list app (`GET /api/v1/app`)
+2. Chọn app (vd CRM) → UI gọi `GET /api/v1/app/CRM/edition?industry_id={tenant.industry_id}`
+3. Hiển thị list edition, highlight default
+4. User chọn edition → submit `POST /api/v1/tenant/{id}/app` với `app_edition_id`
+5. Platform INSERT `tenant_app(app_edition_id = X)`
+6. Emit event `tenant.app_subscribed` (kèm edition info)
+7. FE edition (vd CRM-SPA) consume event → init data riêng cho tenant
+
+### 6.9c.6. Edge case — đổi edition của tenant đã active
+
+Vd tenant Spa muốn đổi sang Healthcare → đổi `tenant_app.app_edition_id` từ `CRM-SPA` → `CRM-HEALTHCARE`.
+
+Vấn đề:
+- Data structure của 2 edition khác nhau (CRM-SPA có `treatment_history`, CRM-HEALTHCARE có `medical_record`)
+- User đang dùng bookmark URL `https://rebornjsc.reborn.vn/crm-spa/customer/123` → URL cũ chết (path đổi sang `/crm-health/`)
+
+Giải pháp:
+1. Schedule `change_edition` (POST `/tenant_app/{id}/change_edition`)
+2. Platform: ghi nhận thời điểm switch (`schedule_at`)
+3. Trước switch 24h: gửi email cảnh báo cho admin tenant
+4. Đến `schedule_at`:
+   - UPDATE `tenant_app.app_edition_id`
+   - Emit `tenant_app.edition_changed`
+5. CRM-SPA FE consume event → mark tenant data archive, redirect users sang URL mới (path mới)
+6. CRM-HEALTHCARE FE consume → init data structure mới
+7. Optional: data migration job (do team riêng viết per case)
+8. Bonus: nginx có thể setup redirect cũ → mới trong 30 ngày để bookmark còn dùng được:
+   ```nginx
+   location ^/crm-spa/ { return 302 https://$host/crm-health/$1; }
+   ```
+
+→ Cực kỳ rare event. UI chỉ SUPER_ADMIN mới thấy nút đổi edition.
+
+### 6.9c.7. URL routing tính sẵn vs runtime
+
+**Lựa chọn**: tính `redirect_url` ở **server side** (Platform) thay vì để FE concat.
+
+Lý do:
+- Logic routing (`{subdomain}.{root}{suffix}`) ẩn khỏi FE → nếu sau này đổi pattern (vd thêm version path `/v2/`) chỉ cần update Platform code
+- Root domain (`reborn.vn` prod / `staging.reborn.vn` staging) là config Platform, FE không cần biết
+- Centralized — 1 nơi sửa nếu domain thay đổi
+- Test dễ — mock 1 endpoint cho mọi case
+
 ## 6.10. API contract testing
 
 - **Provider tests** (Platform): verify response match OpenAPI spec

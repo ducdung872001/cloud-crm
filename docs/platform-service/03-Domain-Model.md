@@ -313,6 +313,200 @@ Khi Platform cần data từ Identity (vd hiển thị `name + email` của user
 - **Trial package**: gói dùng thử có thời hạn (vd 14 ngày), hết hạn auto-suspend.
 - **Free package**: gói miễn phí vô thời hạn nhưng giới hạn tính năng (max_users, max_storage, package_permission ít).
 
+## 3.9b. Aggregate: App + App Edition (variants theo lĩnh vực)
+
+### Bối cảnh
+
+**Mọi app trong hệ sinh thái Reborn** (CRM hôm nay, BPM, POS, Social, và bất kỳ app nào ra mắt sau này) đều có khả năng phát hành **nhiều edition** (variant) theo lĩnh vực kinh doanh. Đây là design pattern **chung**, không phải đặc thù CRM.
+
+Ví dụ minh hoạ (snapshot 2026-05, sẽ mở rộng theo thời gian):
+
+| App | Edition | URL suffix | Git branch (FE) | Industry mặc định |
+|---|---|---|---|---|
+| **CRM** | `CRM-SPA` | `/crm-spa` | `reborn-tech` | Spa |
+| CRM | `CRM-HEALTHCARE` | `/crm-health` | TBD | Y tế |
+| CRM | `CRM-EDUCATION` | `/crm-edu` | `mentorhub` | Giáo dục |
+| CRM | `CRM-LOYALTY` | `/crm-loyalty` | `reborn-loyalty` | Bán lẻ chuỗi |
+| CRM | `CRM-REALTY` | `/crm-realty` | TBD | Bất động sản |
+| CRM | `CRM-GENERIC` | `/crm` | `reborn-tech` | (neutral, default) |
+| **BPM** | `BPM-HEALTHCARE` | `/bpm-health` | TBD | Y tế (quy trình khám) |
+| BPM | `BPM-FINANCE` | `/bpm-finance` | TBD | Tài chính (approval flow) |
+| BPM | `BPM-GENERIC` | `/bpm` | TBD | (neutral, default) |
+| **CXM** | `CXM-GENERIC` | `/cxm` | TBD | (neutral) |
+| **POS** | `POS-FNB` | `/pos-fnb` | TBD | F&B (table, kitchen) |
+| POS | `POS-RETAIL` | `/pos-retail` | TBD | Bán lẻ (barcode) |
+| POS | `POS-GENERIC` | `/pos` | TBD | (neutral) |
+| **SOCIAL** | `SOCIAL-SPA` | `/social-spa` | TBD | Spa (treatment timeline) |
+| **SUPERADMIN** | `SUPERADMIN-GENERIC` | `/superadmin` | `reborn-superadmin` | (Reborn JSC nội bộ) |
+
+→ Khi tenant onboard, chọn edition phù hợp với industry **cho mỗi app** mà tenant subscribe. Ghi nhận trong `tenant_app.app_edition_id`. Khi user truy cập, Platform trả về URL routing chính xác.
+
+**Quan trọng**: pattern này áp dụng đồng nhất cho mọi app — schema `app` + `app_edition` không hardcode CRM. App mới ra mắt sau này (vd `MARKETING`, `WAREHOUSE`, `ACCOUNTING`) chỉ cần INSERT vào bảng `app` + ≥1 row trong `app_edition`, không cần code change ở Platform.
+
+### Aggregate
+
+```
+┌─────────────────────────────────────────────────────────┐
+│ Aggregate: App                                          │
+│ ─────────────────────────────────────────────────────── │
+│ ROOT: app                                               │
+│   children: app_edition[]                               │
+│                                                         │
+│ Invariant:                                              │
+│   - app.code UNIQUE (vd 'CRM', 'BPM')                   │
+│   - 1 app phải có ≥1 edition active                     │
+│   - 1 (app, industry) chỉ có 1 edition is_default=1     │
+│                                                         │
+│ Lifecycle: active → archived                            │
+└─────────────────────────────────────────────────────────┘
+
+┌─────────────────────────────────────────────────────────┐
+│ Entity: AppEdition                                      │
+│ ─────────────────────────────────────────────────────── │
+│   refs: app_code, industry_id (NULL = neutral)          │
+│   field: url_suffix, visibility                         │
+│   children: app_edition_allowed_tenant[] (chỉ exclusive)│
+│                                                         │
+│ Invariant:                                              │
+│   - code UNIQUE toàn hệ thống                           │
+│   - url_suffix UNIQUE, regex ^/[a-z0-9-]+$              │
+│   - is_default_for_industry=1 ⟹ industry_id NOT NULL    │
+│   - visibility=public chỉ valid khi industry_id IS NULL │
+│     hoặc tenant cùng industry (mở subscribe rộng)       │
+│   - visibility=exclusive ⟹ phải có ≥1 row trong         │
+│     app_edition_allowed_tenant trước khi cho subscribe  │
+│                                                         │
+│ Lifecycle: beta → active → deprecated → archived        │
+└─────────────────────────────────────────────────────────┘
+
+┌─────────────────────────────────────────────────────────┐
+│ Entity: AppEditionAllowedTenant (junction)              │
+│ ─────────────────────────────────────────────────────── │
+│   composite PK: (app_edition_id, tenant_id)             │
+│   field: granted_by, granted_at, notes                  │
+│                                                         │
+│ Invariant:                                              │
+│   - parent edition phải có visibility = 'exclusive'     │
+│     (trigger reject nếu khác)                           │
+└─────────────────────────────────────────────────────────┘
+```
+
+### Visibility — 3 mức truy cập
+
+| visibility | Hiện trong public catalog | Subscribe được khi | Use case |
+|---|---|---|---|
+| **`public`** (default) | ✅ Có | Tenant cùng industry hoặc edition neutral | CRM-SPA, CRM-REALTY, BPM-GENERIC, … |
+| **`private`** | ❌ Không | Bất kỳ tenant — nếu biết edition_code (Sales chia sẻ) | Beta sớm, sales-led deal đặc biệt |
+| **`exclusive`** | ❌ Không | Chỉ tenant có row trong `app_edition_allowed_tenant` | Custom dev cho 1 khách VIP |
+
+**Tránh leak**: Endpoint `GET /api/v1/app/{code}/edition` (public) chỉ trả `visibility=public`. Tenant khác không thấy `private`/`exclusive` editions tồn tại trong catalog.
+
+**Bảo vệ runtime**: ngay cả khi guess đúng URL (`https://other-tenant.reborn.vn/x-abc-7f2e1`), FE call Platform `/access-url` để check membership → trả 403 nếu không có subscription.
+
+### Routing pattern (1 quy luật chung)
+
+**Quy ước Reborn — chốt 1 pattern duy nhất** cho mọi tenant không thuộc danh sách reserved:
+
+```
+https://{tenant.subdomain}.reborn.vn{edition.url_suffix}/{app-internal-path}
+└────── 1 cấp ───────┘ └─ root ─┘ └─── xác định app + edition ──┘
+        multi-tenant      domain          (path prefix)
+```
+
+**Formula tính ở Platform**:
+```
+redirect_url = `https://${tenant.subdomain}.${platform.root-domain}${edition.url_suffix}`
+```
+
+Ví dụ:
+- TNPM (subdomain `tnpm`, industry Bất động sản, app CRM) → `https://tnpm.reborn.vn/crm-realty`
+- Reborn JSC (subdomain `rebornjsc`, industry Spa, app CRM) → `https://rebornjsc.reborn.vn/crm-spa`
+- Reborn JSC, app SUPERADMIN → `https://rebornjsc.reborn.vn/superadmin`
+- Cty X (subdomain `cty-x`, app BPM Generic) → `https://cty-x.reborn.vn/bpm`
+
+### Reserved subdomain (ngoại lệ — nginx route custom)
+
+Một số subdomain dành cho **infrastructure / system service**, không thuộc tenant pool, nginx có rule riêng (KHÔNG đi qua wildcard route + path suffix):
+
+| Subdomain reserved | Phục vụ |
+|---|---|
+| `auth` | Identity Service (SSO) |
+| `platform` | Platform Service API |
+| `org` | Org Service |
+| `notification` | Notification Service |
+| `ecosystem` | Corporate site + self-signup |
+| `cdn`, `static` | Static asset CDN |
+| `api` | API gateway |
+| `admin` | Superadmin gateway alternative |
+| `www`, `m`, `mail`, `mx`, `ftp`, `vpn` | Marketing / infrastructure |
+| `status`, `docs`, `help` | Public ops/docs |
+| `dev`, `staging`, `test`, `preview`, `demo` | Environment-specific |
+
+**Invariant**:
+- INV-T5: `tenant.subdomain` NOT IN `reserved_subdomain`. Validate khi POST `/tenant` và POST `/public/signup`.
+
+Danh sách quản trong bảng `reserved_subdomain` (xem `04-DB § 4.5c`). Có thể CRUD qua superadmin (Phase 2+).
+
+### Liên kết với Tenant App
+
+```
+tenant_app
+├── tenant_id            → tenant
+├── app_code             → app.code (denormalized cho query nhanh)
+├── app_edition_id       → app_edition.id (NEW)
+├── package_id           → package
+├── ...
+```
+
+### Liên kết với Package
+
+Package vẫn gắn với `app_code` (generic), KHÔNG gắn cứng với 1 edition cụ thể. Lý do:
+- Cùng gói "Premium CRM" có thể bán cho mọi edition (Spa/Healthcare/Edu) với cùng giá + entitlement
+- Edition khác nhau ở UI/feature flavor, KHÔNG khác về quyền truy cập business resource
+- Nếu sau cần price khác per edition → thêm field `package.eligible_app_edition_codes JSON` (whitelist)
+
+### Routing API
+
+```
+GET /api/v1/internal/tenant/{tenant_id}/app/{app_code}/access-url
+→ {
+    "tenant_id": 1,
+    "tenant_subdomain": "rebornjsc",
+    "app_code": "CRM",
+    "edition_code": "CRM-SPA",
+    "edition_name": "CRM Thẩm mỹ",
+    "redirect_url": "https://rebornjsc.crm-spa.reborn.vn",
+    "routing_pattern": "subdomain"
+  }
+```
+
+Caller (SSO sau login, hoặc App Switcher trong các app khác) gọi endpoint này để biết URL chính xác cần redirect.
+
+### Quy trình chọn edition
+
+**Khi onboard manual (UC-01 — Sales)**:
+1. Sales chọn industry → Platform suggest edition default
+2. Sales có thể override (vd tenant Spa muốn CRM-GENERIC)
+3. Submit → INSERT `tenant_app(app_edition_id = X)`
+
+**Khi self-onboard (UC-11 — Phase 5)**:
+1. Form `ecosystem.reborn.vn` chọn industry → auto-pick edition default
+2. User KHÔNG override (tránh nhầm; có thể đổi edition sau qua admin)
+
+**Đổi edition sau khi đã active (rare)**:
+- Có UI riêng "Migrate to edition X" — đặc biệt vì đổi edition = đổi data structure (vd CRM-SPA có treatment_history table mà CRM-HEALTHCARE không có)
+- Cần data migration job per case
+- Phase tương lai, không MVP
+
+### Domain event
+
+| Event | Trigger | Payload | Subscriber |
+|---|---|---|---|
+| `app.created` | INSERT app | `{code, name}` | (info, low priority) |
+| `app_edition.activated` | INSERT/status→active | `{edition_code, app_code, frontend_base_url}` | App Switcher cache invalidate |
+| `app_edition.deprecated` | status→deprecated | `{edition_code}` | UI hiển thị warning, không cho subscribe mới |
+| `tenant_app.edition_changed` | UPDATE app_edition_id | `{tenant_id, app_code, old_edition, new_edition}` | Notification + edition app cleanup data legacy |
+
 ## 3.10. Aggregate: Signup Request (Phase 5 — forward compat ở MVP)
 
 **Tóm tắt**: Tách thành aggregate riêng để xử lý luồng self-onboarding. KHÔNG ghép vào `tenant` vì:

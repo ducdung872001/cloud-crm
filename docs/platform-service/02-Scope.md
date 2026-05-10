@@ -62,6 +62,8 @@
 | Package_permission matrix UI | ✅ | |
 | Industry CRUD | ✅ | |
 | Module + Resource + Module_resource CRUD | ✅ | |
+| **App + App Edition CRUD UI** (UC-12) | ✅ | Quản lý phát hành app mới |
+| **Exclusive edition whitelist UI** (UC-13) | ✅ | Cấp custom edition cho tenant VIP |
 | File upload (avatar, logo) | ✅ | |
 | Help video CRUD | ⬜ | Phase 2 |
 | Help article CRUD | ⬜ | Phase 2 |

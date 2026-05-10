@@ -423,27 +423,151 @@ echo -n "secret-value" | kubectl create secret generic platform-db \
 
 Rotate quarterly.
 
-## 9.9. Networking
+## 9.9. Networking + Routing 2 lớp
 
 ```
 Internet
   ↓
-Cloudflare (WAF + DDoS) 
+Cloudflare (WAF + DDoS, wildcard *.reborn.vn cert)
   ↓
-nginx ingress (TLS termination)
-  ↓
-Service: platform-service (ClusterIP)
-  ↓
-Pods (2-20 replicas)
-  ↓ ↓
-DB primary    Redis cluster   Kafka cluster   S3
-  ↓
-DB standby (sync)
-  ↓
-DB replica (async, read-only)
+nginx ingress (TLS termination — 1 wildcard cert *.reborn.vn)
+  │
+  ├── Lớp 1: Reserved subdomain → custom upstream
+  │     auth.reborn.vn         → identity-service
+  │     platform.reborn.vn     → platform-service (this)
+  │     org.reborn.vn          → org-service
+  │     notification.reborn.vn → notification-service
+  │     ecosystem.reborn.vn    → ecosystem-fe
+  │     cdn.reborn.vn          → cdn / s3
+  │     ...
+  │
+  └── Lớp 2: Wildcard *.reborn.vn → route theo path suffix
+        location ^/crm-spa/    → crm-spa-fe
+        location ^/crm-realty/ → crm-realty-fe
+        location ^/crm-edu/    → crm-edu-fe
+        location ^/crm/        → crm-generic-fe
+        location ^/bpm/        → bpm-fe
+        location ^/cxm/        → cxm-fe
+        location ^/pos-fnb/    → pos-fnb-fe
+        location ^/superadmin/ → superadmin-fe
+        location /             → tenant-landing-fe (chọn app)
+
+Backend services (Platform, Identity, ...) → DB primary
+                                           → DB sync standby
+                                           → DB async replica (read)
+                                           → Redis cluster
+                                           → Kafka cluster
+                                           → S3
 ```
 
 Internal traffic (CRM/BPM gọi Platform): qua internal LB `platform.internal:8090`, không đi qua Cloudflare → giảm latency.
+
+### Sample nginx config (production)
+
+```nginx
+# ==================================================================
+# Lớp 1: Reserved subdomain — custom upstream per service
+# ==================================================================
+upstream identity-service     { server identity-svc.cluster.local:8081; }
+upstream platform-service     { server platform-svc.cluster.local:8090; }
+upstream org-service          { server org-svc.cluster.local:8082; }
+upstream notification-service { server notification-svc.cluster.local:8083; }
+upstream ecosystem-fe         { server ecosystem-fe.cluster.local:80; }
+
+# Wildcard SSL cert phục vụ TẤT CẢ subdomain
+ssl_certificate     /etc/letsencrypt/live/wildcard.reborn.vn/fullchain.pem;
+ssl_certificate_key /etc/letsencrypt/live/wildcard.reborn.vn/privkey.pem;
+
+server {
+    listen 443 ssl http2;
+    server_name auth.reborn.vn;
+    location / { proxy_pass http://identity-service; proxy_set_header Host $host; }
+}
+
+server {
+    listen 443 ssl http2;
+    server_name platform.reborn.vn;
+    location / { proxy_pass http://platform-service; proxy_set_header Host $host; }
+}
+
+server {
+    listen 443 ssl http2;
+    server_name org.reborn.vn;
+    location / { proxy_pass http://org-service; proxy_set_header Host $host; }
+}
+
+server {
+    listen 443 ssl http2;
+    server_name notification.reborn.vn;
+    location / { proxy_pass http://notification-service; proxy_set_header Host $host; }
+}
+
+server {
+    listen 443 ssl http2;
+    server_name ecosystem.reborn.vn;
+    location / { proxy_pass http://ecosystem-fe; proxy_set_header Host $host; }
+}
+
+# ==================================================================
+# Lớp 2: Wildcard *.reborn.vn — route theo path suffix
+# ==================================================================
+upstream crm-spa-fe      { server crm-spa-fe.cluster.local:80; }
+upstream crm-realty-fe   { server crm-realty-fe.cluster.local:80; }
+upstream crm-edu-fe      { server crm-edu-fe.cluster.local:80; }
+upstream crm-loyalty-fe  { server crm-loyalty-fe.cluster.local:80; }
+upstream crm-generic-fe  { server crm-generic-fe.cluster.local:80; }
+upstream bpm-fe          { server bpm-fe.cluster.local:80; }
+upstream cxm-fe          { server cxm-fe.cluster.local:80; }
+upstream pos-fnb-fe      { server pos-fnb-fe.cluster.local:80; }
+upstream pos-retail-fe   { server pos-retail-fe.cluster.local:80; }
+upstream pos-generic-fe  { server pos-generic-fe.cluster.local:80; }
+upstream superadmin-fe   { server superadmin-fe.cluster.local:80; }
+upstream tenant-landing-fe { server tenant-landing-fe.cluster.local:80; }
+
+server {
+    listen 443 ssl http2;
+    server_name *.reborn.vn;       # Wildcard — match mọi tenant subdomain
+    
+    # Forward Host header để FE biết tenant subdomain
+    proxy_set_header Host $host;
+    proxy_set_header X-Real-IP $remote_addr;
+    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+    proxy_set_header X-Forwarded-Proto $scheme;
+    proxy_set_header X-Tenant-Subdomain $subdomain;  # extract từ $host
+
+    # Route theo path suffix → backend của edition tương ứng
+    location ^~ /crm-spa/      { proxy_pass http://crm-spa-fe; }
+    location ^~ /crm-realty/   { proxy_pass http://crm-realty-fe; }
+    location ^~ /crm-edu/      { proxy_pass http://crm-edu-fe; }
+    location ^~ /crm-loyalty/  { proxy_pass http://crm-loyalty-fe; }
+    location ^~ /crm/          { proxy_pass http://crm-generic-fe; }
+    location ^~ /bpm/          { proxy_pass http://bpm-fe; }
+    location ^~ /cxm/          { proxy_pass http://cxm-fe; }
+    location ^~ /pos-fnb/      { proxy_pass http://pos-fnb-fe; }
+    location ^~ /pos-retail/   { proxy_pass http://pos-retail-fe; }
+    location ^~ /pos/          { proxy_pass http://pos-generic-fe; }
+    location ^~ /superadmin/   { proxy_pass http://superadmin-fe; }
+
+    # Fallback: tenant landing page (chọn app)
+    location / { proxy_pass http://tenant-landing-fe; }
+}
+
+# extract subdomain từ host (Lua hoặc map directive)
+map $host $subdomain {
+    ~^(?<sub>[^.]+)\.reborn\.vn$ $sub;
+    default "";
+}
+```
+
+### Thêm 1 edition mới
+
+Khi launch edition mới (vd `MARKETING-RETAIL`):
+1. Deploy FE container `marketing-retail-fe`
+2. Add upstream + location block trong nginx config
+3. INSERT row vào `app_edition` (`url_suffix = '/marketing-retail'`)
+4. Reload nginx (`nginx -s reload`) — không downtime
+
+KHÔNG cần đụng DNS, KHÔNG cần cert mới (vì đã có wildcard).
 
 ## 9.10. Observability stack
 

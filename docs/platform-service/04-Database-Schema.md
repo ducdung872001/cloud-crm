@@ -157,6 +157,312 @@ ALTER TABLE tenant
     ADD CONSTRAINT fk_tenant_avatar FOREIGN KEY (avatar_file_id) REFERENCES file_metadata(id) ON DELETE SET NULL;
 ```
 
+## 4.5b. Bảng `app` + `app_edition` — Catalog ứng dụng & variants theo lĩnh vực
+
+> Pattern **chung cho mọi app** trong hệ sinh thái Reborn (CRM/BPM/POS/SOCIAL/...). Mỗi app có 1+ edition theo lĩnh vực. App mới chỉ cần INSERT row, không cần code change.
+
+### `app` — Catalog ứng dụng
+
+```sql
+CREATE TABLE app (
+    code            VARCHAR(32)     NOT NULL,
+    -- vd CRM, BPM, POS, SOCIAL, SUPERADMIN
+    name            VARCHAR(128)    NOT NULL,
+    description     TEXT            NULL,
+    icon            VARCHAR(64)     NULL,
+    color           VARCHAR(16)     NULL,
+    ordinal         INT             NOT NULL DEFAULT 0,
+    status          VARCHAR(16)     NOT NULL DEFAULT 'active',
+    created_at      DATETIME(6)     NOT NULL DEFAULT CURRENT_TIMESTAMP(6),
+    updated_at      DATETIME(6)     NOT NULL DEFAULT CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6),
+    created_by      BIGINT UNSIGNED NULL,
+    updated_by      BIGINT UNSIGNED NULL,
+    deleted_at      DATETIME(6)     NULL,
+    PRIMARY KEY (code),
+    -- code làm PK (natural key) vì code stable, được tham chiếu rộng (tenant_app.app_code, package.app_code)
+    CONSTRAINT chk_app_status CHECK (status IN ('active','archived'))
+) ENGINE=InnoDB COMMENT='Catalog ứng dụng SaaS trong hệ sinh thái Reborn.';
+```
+
+### `app_edition` — Variant theo lĩnh vực
+
+```sql
+CREATE TABLE app_edition (
+    id              BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
+    code            VARCHAR(64)     NOT NULL,
+    -- vd CRM-SPA, CRM-HEALTHCARE, CRM-REALTY, BPM-FINANCE, POS-FNB, CRM-GENERIC
+    app_code        VARCHAR(32)     NOT NULL,
+    -- FK app.code
+    name            VARCHAR(128)    NOT NULL,
+    description     TEXT            NULL,
+    industry_id     BIGINT UNSIGNED NULL,
+    -- NULL = neutral (vd CRM-GENERIC); NOT NULL = gắn ngành
+    -- Routing — 1 pattern duy nhất: {tenant.subdomain}.{root_domain}{url_suffix}
+    url_suffix      VARCHAR(64)     NOT NULL,
+    -- Path prefix sau tenant subdomain. Vd '/crm-spa', '/crm-realty', '/bpm', '/cxm'.
+    -- Có leading slash, KHÔNG trailing slash. Lowercase, hyphen-only.
+    -- Git info (informational, không enforce)
+    git_repo_url    VARCHAR(255)    NULL,
+    -- vd 'https://github.com/reborn/cloud-crm'
+    git_branch      VARCHAR(64)     NULL,
+    -- vd 'reborn-tech', 'mentorhub', 'reborn-loyalty'
+    -- Display
+    icon            VARCHAR(64)     NULL,
+    color           VARCHAR(16)     NULL,
+    ordinal         INT             NOT NULL DEFAULT 0,
+    -- Default flag
+    is_default_for_industry TINYINT(1) NOT NULL DEFAULT 0,
+    -- 1 = edition mặc định cho industry_id này (khi tenant có industry này, suggest edition này)
+    -- Visibility (xem 03-Domain § 3.9b)
+    visibility      VARCHAR(16)     NOT NULL DEFAULT 'public',
+    -- public:    hiện trong catalog, mọi tenant cùng industry/neutral subscribe được
+    -- private:   ẩn khỏi catalog, biết code mới subscribe (sales-led)
+    -- exclusive: ẩn + check whitelist app_edition_allowed_tenant
+    -- Lifecycle
+    status          VARCHAR(16)     NOT NULL DEFAULT 'active',
+    -- beta | active | deprecated | archived
+    available_from  DATETIME(6)     NULL,
+    available_until DATETIME(6)     NULL,
+    -- Thời gian cho phép subscribe (NULL = vô thời hạn)
+    -- Audit
+    created_at      DATETIME(6)     NOT NULL DEFAULT CURRENT_TIMESTAMP(6),
+    updated_at      DATETIME(6)     NOT NULL DEFAULT CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6),
+    created_by      BIGINT UNSIGNED NULL,
+    updated_by      BIGINT UNSIGNED NULL,
+    deleted_at      DATETIME(6)     NULL,
+    PRIMARY KEY (id),
+    UNIQUE KEY uq_app_edition_code (code),
+    UNIQUE KEY uq_app_edition_url_suffix (url_suffix),
+    -- Mỗi suffix unique toàn hệ thống (vì nginx route theo path)
+    KEY idx_app_edition_app (app_code, status, deleted_at),
+    KEY idx_app_edition_industry (industry_id, status, deleted_at),
+    KEY idx_app_edition_default (app_code, industry_id, is_default_for_industry, status, deleted_at),
+    CONSTRAINT fk_app_edition_app FOREIGN KEY (app_code) REFERENCES app(code),
+    CONSTRAINT fk_app_edition_industry FOREIGN KEY (industry_id) REFERENCES industry(id),
+    CONSTRAINT chk_app_edition_status CHECK (status IN ('beta','active','deprecated','archived')),
+    CONSTRAINT chk_app_edition_visibility CHECK (visibility IN ('public','private','exclusive')),
+    CONSTRAINT chk_app_edition_url_suffix CHECK (url_suffix REGEXP '^/[a-z0-9][a-z0-9-]*[a-z0-9]$' OR url_suffix REGEXP '^/[a-z0-9]$'),
+    -- Default chỉ valid khi gắn industry + visibility public
+    CONSTRAINT chk_app_edition_default CHECK (is_default_for_industry = 0 OR (industry_id IS NOT NULL AND visibility = 'public'))
+) ENGINE=InnoDB COMMENT='Variant của app theo lĩnh vực kinh doanh — url_suffix quyết định path prefix khi route từ wildcard subdomain.';
+
+-- Whitelist tenant cho exclusive edition
+CREATE TABLE app_edition_allowed_tenant (
+    app_edition_id  BIGINT UNSIGNED NOT NULL,
+    tenant_id       BIGINT UNSIGNED NOT NULL,
+    granted_by      BIGINT UNSIGNED NULL,
+    granted_at      DATETIME(6)     NOT NULL DEFAULT CURRENT_TIMESTAMP(6),
+    notes           TEXT            NULL,
+    -- vd "Custom build cho ABC theo HĐ #2026-001 ngày 10/05/2026"
+    PRIMARY KEY (app_edition_id, tenant_id),
+    KEY idx_aeat_tenant (tenant_id),
+    CONSTRAINT fk_aeat_edition FOREIGN KEY (app_edition_id) REFERENCES app_edition(id) ON DELETE CASCADE,
+    CONSTRAINT fk_aeat_tenant  FOREIGN KEY (tenant_id) REFERENCES tenant(id) ON DELETE CASCADE
+) ENGINE=InnoDB COMMENT='Whitelist tenant cho exclusive edition. Chỉ valid khi parent edition.visibility = exclusive.';
+
+-- Trigger: chỉ cho phép insert nếu parent edition có visibility = exclusive
+DELIMITER $$
+CREATE TRIGGER trg_aeat_check_exclusive
+    BEFORE INSERT ON app_edition_allowed_tenant
+    FOR EACH ROW
+BEGIN
+    DECLARE v_visibility VARCHAR(16);
+    SELECT visibility INTO v_visibility FROM app_edition WHERE id = NEW.app_edition_id;
+    IF v_visibility <> 'exclusive' THEN
+        SIGNAL SQLSTATE '45000'
+            SET MESSAGE_TEXT = 'Cannot whitelist tenant for non-exclusive edition. Set visibility=exclusive first.';
+    END IF;
+END$$
+DELIMITER ;
+
+-- Enforce "1 edition default per (app, industry)" qua generated column trick
+ALTER TABLE app_edition
+    ADD COLUMN default_key VARCHAR(96) AS (
+        IF(is_default_for_industry = 1 AND status IN ('active','beta') AND deleted_at IS NULL,
+           CONCAT(app_code, ':', industry_id),
+           NULL)
+    ) STORED,
+    ADD UNIQUE KEY uq_app_edition_default (default_key);
+```
+
+### Sample seed data
+
+```sql
+-- Apps
+INSERT INTO app (code, name, ordinal, status) VALUES
+    ('CRM',         'Quản lý khách hàng (CRM)',  1, 'active'),
+    ('BPM',         'Quản lý quy trình (BPM)',   2, 'active'),
+    ('POS',         'Bán hàng (POS)',            3, 'active'),
+    ('SOCIAL',      'Mạng xã hội',               4, 'active'),
+    ('SUPERADMIN',  'Quản trị nền tảng',         99, 'active')
+ON DUPLICATE KEY UPDATE name = VALUES(name), ordinal = VALUES(ordinal);
+
+-- App editions (ID industry lookup theo code)
+INSERT INTO app_edition (code, app_code, name, industry_id, url_suffix,
+                          git_repo_url, git_branch, is_default_for_industry, status, ordinal)
+VALUES
+    -- CRM editions
+    ('CRM-SPA',         'CRM', 'CRM Thẩm mỹ',
+        (SELECT id FROM industry WHERE code = 'SPA'),
+        '/crm-spa',
+        'https://github.com/reborn/cloud-crm', 'reborn-tech', 1, 'active', 10),
+    ('CRM-HEALTHCARE',  'CRM', 'CRM Y tế',
+        (SELECT id FROM industry WHERE code = 'HEALTHCARE'),
+        '/crm-health',
+        'https://github.com/reborn/cloud-crm', 'reborn-healthcare', 1, 'beta', 20),
+    ('CRM-EDUCATION',   'CRM', 'CRM Giáo dục',
+        (SELECT id FROM industry WHERE code = 'EDUCATION'),
+        '/crm-edu',
+        'https://github.com/reborn/cloud-crm', 'mentorhub', 1, 'active', 30),
+    ('CRM-LOYALTY',     'CRM', 'CRM Loyalty (chuỗi bán lẻ)',
+        (SELECT id FROM industry WHERE code = 'RETAIL'),
+        '/crm-loyalty',
+        'https://github.com/reborn/cloud-crm', 'reborn-loyalty', 1, 'active', 40),
+    ('CRM-REALTY',      'CRM', 'CRM Bất động sản',
+        (SELECT id FROM industry WHERE code = 'REAL_ESTATE'),
+        '/crm-realty',
+        'https://github.com/reborn/cloud-crm', 'reborn-realty', 1, 'beta', 50),
+    ('CRM-GENERIC',     'CRM', 'CRM Tiêu chuẩn (mọi ngành)',
+        NULL,
+        '/crm',
+        'https://github.com/reborn/cloud-crm', 'reborn-tech', 0, 'active', 99),
+
+    -- BPM editions (placeholder, mở rộng sau)
+    ('BPM-GENERIC',     'BPM', 'BPM Tiêu chuẩn',
+        NULL,
+        '/bpm',
+        NULL, NULL, 0, 'active', 99),
+
+    -- CXM (placeholder)
+    ('CXM-GENERIC',     'CXM', 'CXM Tiêu chuẩn',
+        NULL,
+        '/cxm',
+        NULL, NULL, 0, 'active', 99),
+
+    -- POS editions
+    ('POS-FNB',         'POS', 'POS Nhà hàng & Ăn uống',
+        (SELECT id FROM industry WHERE code = 'FNB'),
+        '/pos-fnb',
+        NULL, NULL, 1, 'beta', 10),
+    ('POS-RETAIL',      'POS', 'POS Bán lẻ',
+        (SELECT id FROM industry WHERE code = 'RETAIL'),
+        '/pos-retail',
+        NULL, NULL, 0, 'beta', 20),
+    ('POS-GENERIC',     'POS', 'POS Tiêu chuẩn',
+        NULL,
+        '/pos',
+        NULL, NULL, 0, 'active', 99),
+
+    -- SUPERADMIN (Reborn JSC nội bộ — không gắn industry)
+    ('SUPERADMIN-GENERIC', 'SUPERADMIN', 'Reborn Super Admin Console',
+        NULL,
+        '/superadmin',
+        'https://github.com/ducdung872001/cloud-crm', 'reborn-superadmin', 0, 'active', 1)
+ON DUPLICATE KEY UPDATE
+    name = VALUES(name),
+    url_suffix = VALUES(url_suffix),
+    git_branch = VALUES(git_branch),
+    status = VALUES(status);
+```
+
+### Helper view: edition default per industry
+
+```sql
+CREATE OR REPLACE VIEW v_app_edition_default AS
+SELECT
+    ae.app_code,
+    ae.industry_id,
+    ae.id AS edition_id,
+    ae.code AS edition_code,
+    ae.name AS edition_name,
+    ae.url_suffix
+FROM app_edition ae
+WHERE ae.is_default_for_industry = 1
+  AND ae.status IN ('active','beta')
+  AND ae.deleted_at IS NULL;
+```
+
+→ Khi onboard tenant với industry X, query view này để suggest edition default cho mỗi app.
+
+## 4.5c. Bảng `reserved_subdomain` — Subdomain dành riêng
+
+Để chặn tenant đăng ký subdomain trùng với infrastructure/system service. Validation tại API `POST /tenant` và `POST /public/signup`.
+
+```sql
+CREATE TABLE reserved_subdomain (
+    subdomain   VARCHAR(63)  NOT NULL,
+    reason      VARCHAR(255) NOT NULL,
+    category    VARCHAR(32)  NOT NULL,
+    -- system | infrastructure | marketing | reserved-future | offensive
+    created_at  DATETIME(6)  NOT NULL DEFAULT CURRENT_TIMESTAMP(6),
+    created_by  BIGINT UNSIGNED NULL,
+    PRIMARY KEY (subdomain),
+    KEY idx_reserved_category (category),
+    CONSTRAINT chk_reserved_category CHECK (category IN ('system','infrastructure','marketing','reserved-future','offensive'))
+) ENGINE=InnoDB COMMENT='Subdomain cấm tenant đăng ký — nginx route custom hoặc dành riêng cho hệ thống.';
+
+-- Seed
+INSERT INTO reserved_subdomain (subdomain, reason, category) VALUES
+    -- System services
+    ('auth',         'Identity Service SSO',                 'system'),
+    ('platform',     'Platform Service API',                 'system'),
+    ('org',          'Org Service',                          'system'),
+    ('notification', 'Notification Service',                 'system'),
+    ('admin',        'Superadmin gateway alternative',       'system'),
+    -- Marketing / public
+    ('ecosystem',    'Corporate site + self-signup form',    'marketing'),
+    ('www',          'Marketing redirect',                   'marketing'),
+    ('m',            'Mobile redirect',                      'marketing'),
+    ('docs',         'Public docs',                          'marketing'),
+    ('help',         'Help center',                          'marketing'),
+    ('blog',         'Blog',                                 'marketing'),
+    -- Infrastructure
+    ('cdn',          'Static asset CDN',                     'infrastructure'),
+    ('static',       'Static asset',                         'infrastructure'),
+    ('api',          'API gateway',                          'infrastructure'),
+    ('mail',         'Mail server',                          'infrastructure'),
+    ('mx',           'MX record',                            'infrastructure'),
+    ('ftp',          'FTP',                                  'infrastructure'),
+    ('vpn',          'VPN',                                  'infrastructure'),
+    ('status',       'Status page',                          'infrastructure'),
+    ('monitor',      'Monitoring',                           'infrastructure'),
+    ('grafana',      'Grafana',                              'infrastructure'),
+    ('prometheus',   'Prometheus',                           'infrastructure'),
+    -- Environment-specific (dự phòng — KHÔNG cho tenant chiếm)
+    ('dev',     'Dev env',     'reserved-future'),
+    ('staging', 'Staging env', 'reserved-future'),
+    ('test',    'Test env',    'reserved-future'),
+    ('preview', 'Preview env', 'reserved-future'),
+    ('demo',    'Demo env',    'reserved-future'),
+    ('uat',     'UAT env',     'reserved-future'),
+    ('beta',    'Beta env',    'reserved-future'),
+    -- Reserved keywords (tránh nhầm lẫn / abuse)
+    ('reborn',  'Brand name',  'reserved-future'),
+    ('null',    'Reserved keyword', 'reserved-future'),
+    ('undefined','Reserved keyword','reserved-future'),
+    ('root',    'Reserved keyword', 'reserved-future'),
+    ('system',  'Reserved keyword', 'reserved-future')
+ON DUPLICATE KEY UPDATE reason = VALUES(reason), category = VALUES(category);
+```
+
+**Validation flow** trong service layer khi tạo tenant:
+
+```sql
+-- Check 4 layer (theo thứ tự fail-fast):
+-- 1. Format
+SELECT @candidate REGEXP '^[a-z0-9][a-z0-9-]{1,61}[a-z0-9]$' AS valid_format;
+-- 2. Reserved
+SELECT EXISTS(SELECT 1 FROM reserved_subdomain WHERE subdomain = @candidate) AS is_reserved;
+-- 3. Đã có tenant
+SELECT EXISTS(SELECT 1 FROM tenant WHERE subdomain = @candidate AND deleted_at IS NULL) AS taken;
+-- 4. Đã có signup pending (Phase 5)
+SELECT EXISTS(SELECT 1 FROM signup_request
+              WHERE suggested_alias = @candidate
+                AND status = 'pending_email_verify') AS pending;
+```
+
+API `POST /api/v1/public/signup/check-availability` trả về `{available: bool, alternatives: [...]}` (xem `05-API § 5.9b`).
+
 ## 4.6. Bảng `package` — Gói dịch vụ
 
 ```sql
@@ -237,6 +543,9 @@ CREATE TABLE tenant_app (
     id              BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
     tenant_id       BIGINT UNSIGNED NOT NULL,
     app_code        VARCHAR(32)     NOT NULL,
+    -- FK app.code (denormalized cho query nhanh)
+    app_edition_id  BIGINT UNSIGNED NOT NULL,
+    -- FK app_edition.id — quyết định FE URL routing
     package_id      BIGINT UNSIGNED NOT NULL,
     start_date      DATE            NOT NULL,
     end_date        DATE            NOT NULL,
@@ -258,12 +567,42 @@ CREATE TABLE tenant_app (
     KEY idx_tenant_app_tenant (tenant_id, deleted_at),
     KEY idx_tenant_app_status (status, deleted_at),
     KEY idx_tenant_app_end_date (end_date, status, deleted_at),
+    KEY idx_tenant_app_edition (app_edition_id, deleted_at),
     -- Index cho báo cáo "sắp hết hạn"
-    CONSTRAINT fk_tenant_app_tenant  FOREIGN KEY (tenant_id) REFERENCES tenant(id),
-    CONSTRAINT fk_tenant_app_package FOREIGN KEY (package_id) REFERENCES package(id),
+    CONSTRAINT fk_tenant_app_tenant      FOREIGN KEY (tenant_id) REFERENCES tenant(id),
+    CONSTRAINT fk_tenant_app_app         FOREIGN KEY (app_code) REFERENCES app(code),
+    CONSTRAINT fk_tenant_app_edition     FOREIGN KEY (app_edition_id) REFERENCES app_edition(id),
+    CONSTRAINT fk_tenant_app_package     FOREIGN KEY (package_id) REFERENCES package(id),
     CONSTRAINT chk_tenant_app_status CHECK (status IN ('pending','active','expired','cancelled')),
     CONSTRAINT chk_tenant_app_dates  CHECK (end_date > start_date)
-) ENGINE=InnoDB COMMENT='Subscription tenant ↔ app. 1 tenant có nhiều app subscription cùng lúc.';
+) ENGINE=InnoDB COMMENT='Subscription tenant ↔ app + edition. 1 tenant có nhiều app cùng lúc; mỗi app chọn 1 edition.';
+
+-- App-layer enforce: app_edition_id phải point vào edition có app_code khớp tenant_app.app_code
+-- (DB không check được vì cross-table CHECK chưa hỗ trợ tốt — service layer enforce qua trigger hoặc validation)
+DELIMITER $$
+CREATE TRIGGER trg_tenant_app_edition_match
+    BEFORE INSERT ON tenant_app
+    FOR EACH ROW
+BEGIN
+    DECLARE v_app_code VARCHAR(32);
+    SELECT app_code INTO v_app_code FROM app_edition WHERE id = NEW.app_edition_id;
+    IF v_app_code <> NEW.app_code THEN
+        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'tenant_app.app_edition_id not matching app_code';
+    END IF;
+END$$
+CREATE TRIGGER trg_tenant_app_edition_match_upd
+    BEFORE UPDATE ON tenant_app
+    FOR EACH ROW
+BEGIN
+    DECLARE v_app_code VARCHAR(32);
+    IF NEW.app_edition_id <> OLD.app_edition_id OR NEW.app_code <> OLD.app_code THEN
+        SELECT app_code INTO v_app_code FROM app_edition WHERE id = NEW.app_edition_id;
+        IF v_app_code <> NEW.app_code THEN
+            SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'tenant_app.app_edition_id not matching app_code';
+        END IF;
+    END IF;
+END$$
+DELIMITER ;
 ```
 
 ### Bảng `tenant_app_history` — Lịch sử thay đổi subscription
@@ -775,7 +1114,9 @@ ON DUPLICATE KEY UPDATE name = VALUES(name);
 ```
 prod_platformdb/migrations/
 ├── V001__create_industry_area.sql
-├── V002__create_tenant_package.sql        -- bao gồm package.is_trial/is_free/trial_days/is_self_signup_eligible
+├── V001b__create_app_app_edition.sql      -- catalog app + variants + visibility + allowed_tenant (CRM-SPA, CRM-REALTY, BPM-FINANCE, …)
+├── V001c__create_reserved_subdomain.sql   -- bảng + seed subdomain dành riêng cho infrastructure
+├── V002__create_tenant_package.sql        -- bao gồm package.is_trial/is_free/trial_days/is_self_signup_eligible + tenant_app.app_edition_id FK
 ├── V003__create_module_resource.sql
 ├── V004__create_package_permission.sql
 ├── V005__create_tenant_app_membership.sql
@@ -785,6 +1126,8 @@ prod_platformdb/migrations/
 ├── V009__create_platform_role.sql
 ├── V010__create_signup_request.sql        -- Phase 5 forward-compat (table có sẵn, API mở sau)
 ├── V011__seed_industry_module_role.sql
+├── V011b__seed_app_app_edition.sql        -- seed CRM/BPM/CXM/POS/SUPERADMIN editions
+├── V011c__seed_reserved_subdomain.sql     -- seed ~30 subdomain reserved
 ├── V012__seed_resource_action.sql
 ├── V013__seed_area_vn.sql
 ├── V014__seed_default_trial_free_packages.sql  -- gói "TRIAL_14D" + "FREE_LIMITED" cho self-signup
@@ -800,6 +1143,10 @@ prod_platformdb/migrations/
 | `tenant_app` | 8,000 | 1 KB | 8 MB |
 | `tenant_app_history` | 50,000 | 1 KB | 50 MB |
 | `tenant_membership` | 50,000 | 0.5 KB | 25 MB |
+| `app` | 10 | 0.5 KB | 5 KB |
+| `app_edition` | 50 | 1 KB | 50 KB |
+| `app_edition_allowed_tenant` | 100 | 0.3 KB | 30 KB |
+| `reserved_subdomain` | 50 | 0.3 KB | 15 KB |
 | `package` | 100 | 2 KB | 200 KB |
 | `package_permission` | 5,000 | 0.3 KB | 1.5 MB |
 | `industry` | 50 | 0.5 KB | 25 KB |

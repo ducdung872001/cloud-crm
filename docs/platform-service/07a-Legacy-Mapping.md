@@ -136,13 +136,14 @@
 
 ### T02 — `org_app` → `tenant_app`
 
-> Source: `reborn_db.org_app` (~8,000 rows)
+> Source: `reborn_db.org_app` (~8,000 rows). **Lưu ý**: legacy không có concept "edition" — tenant_app cần resolve edition từ tenant.industry + app_code (xem § 7a.3a).
 
 | Cột nguồn | Cột đích | Transform | Ghi chú |
 |---|---|---|---|
 | `id` | `metadata.old_org_app_id` | JSON | |
 | `org_id` | `tenant_id` | `(SELECT new_id FROM _migration_lookup_tenant WHERE old_id = oa.org_id)` | Lookup |
 | `app_code` | `app_code` | direct, UPPER | |
+| (computed) | `app_edition_id` | Resolve qua tenant.industry_id + app_code → default edition | Xem § 7a.3a |
 | `package_id` | `package_id` | `(SELECT new_id FROM _migration_lookup_package WHERE old_id = oa.package_id)` | Lookup |
 | `start_date` | `start_date` | direct (DATE) | |
 | `end_date` | `end_date` | direct | |
@@ -159,6 +160,63 @@
 **Edge cases**:
 - 23 row có `org_id` không tìm thấy `_migration_lookup_tenant` (org đã bị hard-delete) → skip + log `_migration_orphan_org_app.csv`
 - 156 row có `package_id` không tồn tại → fallback gói default cùng `app_code`
+- Edge case lớn nhất: legacy KHÔNG có app_edition. Cần default edition resolution — xem § 7a.3a.
+
+### T02a — Resolve `app_edition_id` cho legacy tenant_app
+
+Legacy `org_app` chỉ có `app_code` (free-text). Khi migrate, cần resolve `app_edition_id` cho mỗi row dựa vào:
+
+**Quy tắc resolve** (priority cao → thấp):
+1. **Match theo (app_code, tenant.industry_id, is_default_for_industry=1)**: nếu có default edition cho industry của tenant → dùng
+2. **Match theo (app_code, industry_id IS NULL, status=active)**: edition GENERIC của app
+3. **Fallback**: bất kỳ edition active nào của app_code (lấy oldest theo created_at)
+4. Nếu app_code không có edition nào → SKIP row, log `_migration_no_edition.csv`
+
+```sql
+-- ETL resolution
+UPDATE tenant_app ta
+JOIN tenant t ON t.id = ta.tenant_id
+LEFT JOIN app_edition ae ON ae.app_code = ta.app_code
+   AND ae.deleted_at IS NULL
+   AND ae.status IN ('active','beta')
+   AND (
+       -- Priority 1: default cho industry tenant
+       (ae.industry_id = t.industry_id AND ae.is_default_for_industry = 1)
+       OR
+       -- Priority 2: GENERIC nếu không có specific
+       (ae.industry_id IS NULL AND NOT EXISTS (
+           SELECT 1 FROM app_edition ae2
+           WHERE ae2.app_code = ta.app_code
+             AND ae2.industry_id = t.industry_id
+             AND ae2.is_default_for_industry = 1
+             AND ae2.deleted_at IS NULL
+       ))
+   )
+SET ta.app_edition_id = ae.id
+WHERE ta.app_edition_id IS NULL;
+
+-- Log những row chưa resolve được
+INSERT INTO _migration_no_edition (tenant_app_id, tenant_id, app_code, reason, created_at)
+SELECT ta.id, ta.tenant_id, ta.app_code, 'no_matching_edition', NOW(6)
+FROM tenant_app ta
+WHERE ta.app_edition_id IS NULL;
+
+-- Manual review + fix sau
+SELECT * FROM _migration_no_edition;
+```
+
+**Verification**:
+```sql
+-- Count: tất cả tenant_app phải có edition
+SELECT COUNT(*) AS unresolved FROM tenant_app WHERE app_edition_id IS NULL;
+-- Expect: 0
+```
+
+### T02b — Bảng `app` + `app_edition` — không có nguồn legacy
+
+Hai bảng này KHÔNG migrate từ đâu — seed thẳng từ `V001b__create_app_app_edition.sql` + `V011b__seed_app_app_edition.sql` (xem `04-Database-Schema § 4.5b`).
+
+Phải seed XONG trước khi run T02 (tenant_app cần FK tới app_edition).
 
 ### T03 — `field` → `industry`
 
@@ -378,13 +436,15 @@ Mỗi script idempotent. Chạy theo thứ tự:
 04_migrate_industry.sql            -- T03
 05_migrate_area.sql                -- T04
 06_migrate_package.sql             -- T05 (+ insert TRIAL_14D + FREE_LIMITED nếu chưa có)
+06b_seed_app_app_edition.sql       -- T02b (seed app + app_edition trước khi tenant_app)
 07_migrate_module.sql              -- T06
 08_migrate_resource.sql            -- T07 (split actions)
 09_migrate_module_resource.sql     -- T08 (cần lookup module + resource)
 10_migrate_package_permission.sql  -- T09 (cần lookup package + resource)
 11_migrate_tenant.sql              -- T01 (cần lookup industry + area)
 12_build_lookup_tenant.sql         -- Lookup tenant → cho T02
-13_migrate_tenant_app.sql          -- T02 (cần lookup tenant + package)
+13_migrate_tenant_app.sql          -- T02 (cần lookup tenant + package; edition tạm NULL)
+13b_resolve_tenant_app_edition.sql -- T02a (resolve app_edition_id cho mỗi tenant_app)
 14_seed_tenant_membership.sql      -- Seed từ employee.user_id (xem § 7a.6)
 15_run_blob_upload.py              -- T10 (Phase 1.5)
 16_validate_all.sql                -- Run validation suite (xem § 7a.7)

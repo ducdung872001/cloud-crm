@@ -116,6 +116,56 @@
 **Goal**: xem ai đã thay đổi gì trên tenant/package/resource.
 **Flow**: bảng `*_event_log` ghi mọi mutation; UI list filter theo entity + actor + time range.
 
+### UC-12: Phát hành App mới + Edition mới
+**Actor**: Super Admin (S1) sau khi BE/FE/DevOps đã ship code
+**Trigger**: Reborn JSC ra mắt app mới (vd MARKETING) hoặc edition mới của app hiện hữu (vd CRM-FNB)
+**Precondition**:
+- BE service mới đã deploy (nếu là app mới)
+- FE container của edition đã deploy
+- DevOps đã add nginx upstream + location block + reload
+
+**Flow**:
+1. Super Admin mở `/app_management` trong console
+2. (Nếu app mới) Click "Thêm App":
+   - Fill: code (vd `MARKETING`), name, icon, ordinal
+   - Submit → POST `/api/v1/app`
+3. Click vào app → tab "Editions" → "Thêm Edition":
+   - Fill: code (`MARKETING-RETAIL`), industry (RETAIL), `url_suffix` (`/marketing-retail`), git_branch, status (mặc định `beta`)
+   - Chọn `visibility` (mặc định `public`)
+   - Tick `is_default_for_industry` nếu là default cho industry này
+   - Submit → POST `/api/v1/app_edition`
+4. (Nếu app có resource mới) chuyển tab "Tài nguyên" → CRUD `resource` + `module_resource`
+5. (Nếu cần gói mới) chuyển sang `/package_manage` → tạo package gắn `app_code = MARKETING`
+6. Sau soak 2-4 tuần beta → quay lại `/app_management`, edit edition: status `beta` → `active`
+7. Tenant nào subscribe sau đó sẽ thấy edition trong dropdown (auto-suggest theo industry)
+
+**Acceptance**:
+- Sau khi save, tenant cùng industry RETAIL khi onboard mới sẽ auto-suggest `MARKETING-RETAIL` trong dropdown app
+- URL routing tenant truy cập: `https://{tenant}.reborn.vn/marketing-retail`
+- Audit log ghi đầy đủ ai/khi nào tạo app + edition
+
+### UC-13: Cấp Exclusive Edition cho khách hàng VIP
+**Actor**: Super Admin (S1)
+**Trigger**: Khách hàng VIP yêu cầu custom development → Reborn JSC code/deploy edition riêng → cần whitelist tenant đó
+
+**Flow**:
+1. Super Admin tạo edition theo UC-12 nhưng:
+   - `visibility = 'exclusive'`
+   - `industry_id = NULL` (custom, không gắn ngành)
+   - `is_default_for_industry = 0`
+   - `url_suffix` có thể obscure (vd `/x-abc-7f2e1` thay vì `/crm-abc-vip`) nếu cần extra obscurity
+2. Vào tab "Whitelist" của edition → "Thêm tenant"
+3. Search tenant theo alias/name → chọn tenant ABC
+4. Fill notes: "Custom build per HĐ #2026-001 ngày 10/05/2026"
+5. Submit → POST `/api/v1/app_edition/{id}/allow-tenant`
+6. Tenant ABC giờ có thể subscribe edition này (qua UC-01 hoặc tự subscribe trong tenant admin console)
+
+**Acceptance**:
+- Edition KHÔNG hiển thị trong public catalog (`GET /app/CRM/edition`) — tenant khác không thấy tồn tại
+- Tenant XYZ guess URL `https://xyz.reborn.vn/x-abc-7f2e1` → FE → Platform check `/access-url(xyz, CRM)` → 403 Forbidden vì không có membership cho edition này
+- Tenant ABC truy cập `https://abc.reborn.vn/x-abc-7f2e1` → 200 OK
+- Whitelist có thể revoke bất kỳ lúc nào (DELETE `/app_edition/{id}/allow-tenant/{tenant_id}`); revoke không xoá `tenant_app` đã subscribe (chỉ cản subscribe mới) — admin phải manual cancel `tenant_app` nếu muốn
+
 ### UC-11: Self-onboard từ `ecosystem.reborn.vn` (Phase 5)
 **Actor**: Prospect Tenant (S9)
 **Trigger**: Visitor truy cập `ecosystem.reborn.vn`, bấm CTA "Dùng thử 14 ngày" hoặc "Đăng ký gói Free"
@@ -164,7 +214,7 @@
 
 | Phase | Tính năng | Stakeholder hưởng lợi |
 |---|---|---|
-| **MVP** | Tenant CRUD + Package CRUD + Industry CRUD + tenant_app + tenant_membership | S1, S2, S3 |
+| **MVP** | Tenant CRUD + Package CRUD + Industry CRUD + tenant_app + tenant_membership + **App + Edition CRUD + visibility/whitelist** (UC-12, UC-13) | S1, S2, S3 |
 | **Phase 2** | Module + Resource + Package_permission CRUD | S1 |
 | **Phase 3** | File storage (avatar/logo) | S1, S5 |
 | **Phase 4** | Help center (video + article) | S1, S5, S6 |

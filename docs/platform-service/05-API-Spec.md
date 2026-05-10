@@ -264,6 +264,301 @@ Detail kèm `permissions[]` (full matrix).
 
 ### `POST /api/v1/package/{id}/archive`
 
+## 5.5b. App + App Edition endpoints
+
+### `GET /api/v1/app`
+List apps (public catalog).
+
+**Response 200**:
+```json
+{
+  "result": [
+    { "code": "CRM", "name": "Quản lý khách hàng", "icon": "...", "ordinal": 1 },
+    { "code": "BPM", "name": "Quản lý quy trình", "icon": "...", "ordinal": 2 },
+    ...
+  ]
+}
+```
+
+### `GET /api/v1/app/{code}/edition`
+List editions của 1 app. Filter `?status=active&industry_id=1&show=public|private|all`.
+
+**Mặc định** trả `visibility = public` (an toàn — tenant không thấy private/exclusive).
+
+| `?show=` | Auth required | Trả về |
+|---|---|---|
+| `public` (default) | none | Chỉ visibility=public |
+| `private` | role `app_edition.read_private` | public + private |
+| `all` | role SUPER_ADMIN | public + private + exclusive |
+
+**Response 200** (default `?show=public`):
+```json
+{
+  "result": [
+    {
+      "id": 1,
+      "code": "CRM-SPA",
+      "app_code": "CRM",
+      "name": "CRM Thẩm mỹ",
+      "industry": { "id": 1, "code": "SPA", "name": "Spa & Thẩm mỹ" },
+      "url_suffix": "/crm-spa",
+      "is_default_for_industry": true,
+      "visibility": "public",
+      "status": "active"
+    },
+    {
+      "id": 5,
+      "code": "CRM-REALTY",
+      "app_code": "CRM",
+      "name": "CRM Bất động sản",
+      "industry": { "id": 6, "code": "REAL_ESTATE", "name": "Bất động sản" },
+      "url_suffix": "/crm-realty",
+      "is_default_for_industry": true,
+      "visibility": "public",
+      "status": "beta"
+    },
+    {
+      "id": 6,
+      "code": "CRM-GENERIC",
+      "app_code": "CRM",
+      "name": "CRM Tiêu chuẩn (mọi ngành)",
+      "industry": null,
+      "url_suffix": "/crm",
+      "is_default_for_industry": false,
+      "visibility": "public",
+      "status": "active"
+    }
+  ]
+}
+```
+
+**Response 200** (`?show=all` — SUPER_ADMIN, có thêm `allowed_tenant_count`):
+```json
+{
+  "result": [
+    /* ... public editions như trên ... */
+    {
+      "id": 50,
+      "code": "CRM-ABC-VIP",
+      "app_code": "CRM",
+      "name": "CRM ABC (custom)",
+      "industry": null,
+      "url_suffix": "/x-abc-7f2e1",
+      "is_default_for_industry": false,
+      "visibility": "exclusive",
+      "allowed_tenant_count": 1,
+      "status": "active"
+    }
+  ]
+}
+```
+
+### `POST /api/v1/app` & `PUT /api/v1/app/{code}` & `DELETE /api/v1/app/{code}`
+Super Admin CRUD app.
+
+### `POST /api/v1/app_edition` & `PUT /api/v1/app_edition/{id}` & `DELETE /api/v1/app_edition/{id}`
+Super Admin CRUD edition. Cần role `app_edition.create|update|delete`.
+
+**Body POST** (public edition):
+```json
+{
+  "code": "POS-FNB",
+  "app_code": "POS",
+  "name": "POS Nhà hàng & Ăn uống",
+  "industry_id": 5,
+  "url_suffix": "/pos-fnb",
+  "git_repo_url": "https://github.com/reborn/cloud-pos",
+  "git_branch": "fnb",
+  "is_default_for_industry": true,
+  "visibility": "public",
+  "status": "beta"
+}
+```
+
+**Body POST** (exclusive edition cho khách VIP):
+```json
+{
+  "code": "CRM-ABC-VIP",
+  "app_code": "CRM",
+  "name": "CRM ABC (custom)",
+  "industry_id": null,
+  "url_suffix": "/x-abc-7f2e1",
+  "git_repo_url": "https://github.com/reborn/cloud-crm",
+  "git_branch": "crm-abc-custom",
+  "is_default_for_industry": false,
+  "visibility": "exclusive",
+  "status": "active"
+}
+```
+
+**Validation**:
+- `url_suffix`: regex `^/[a-z0-9][a-z0-9-]*[a-z0-9]$`, UNIQUE toàn hệ thống
+- `is_default_for_industry=true` chỉ khi `industry_id IS NOT NULL` AND `visibility='public'`
+- `visibility='exclusive'` → sau khi tạo phải gọi `allow-tenant` để whitelist (DB trigger sẽ block subscribe nếu chưa whitelist)
+
+### `POST /api/v1/app_edition/{id}/allow-tenant` ⭐
+Whitelist tenant cho **exclusive** edition.
+
+**Required role**: `app_edition.manage_whitelist` (chỉ SUPER_ADMIN)
+
+**Body**:
+```json
+{
+  "tenant_id": 999,
+  "notes": "Custom build per HĐ #2026-001 ngày 10/05/2026"
+}
+```
+
+**Logic**:
+- Validate parent `app_edition.visibility = 'exclusive'` (DB trigger enforce)
+- INSERT `app_edition_allowed_tenant`
+- Emit event `app_edition.tenant_whitelisted`
+
+**Response 201**:
+```json
+{
+  "result": {
+    "app_edition_id": 50,
+    "tenant_id": 999,
+    "tenant_name": "Công ty ABC",
+    "granted_by": 66,
+    "granted_at": "2026-05-10T10:00:00Z",
+    "notes": "Custom build per HĐ #2026-001"
+  }
+}
+```
+
+### `DELETE /api/v1/app_edition/{id}/allow-tenant/{tenant_id}`
+Revoke whitelist. KHÔNG xoá `tenant_app` đã subscribe — chỉ cản subscribe mới. Admin phải manual cancel `tenant_app` nếu cần.
+
+### `GET /api/v1/app_edition/{id}/allow-tenant`
+List whitelist của 1 exclusive edition. Required role `app_edition.read_private`.
+
+**Response 200**:
+```json
+{
+  "result": [
+    {
+      "tenant_id": 999, "tenant_alias": "abc", "tenant_name": "Công ty ABC",
+      "granted_by_user": { "id": 66, "name": "Phan Đức Dũng" },
+      "granted_at": "2026-05-10T10:00:00Z",
+      "notes": "..."
+    }
+  ]
+}
+```
+
+### Lifecycle workflow — Promote beta → active
+
+Sau khi soak edition mới ở `beta` 2-4 tuần:
+
+```
+PUT /api/v1/app_edition/{id}
+{
+  "status": "active"
+}
+```
+
+→ Emit event `app_edition.activated`. Mọi tenant đang dùng edition tự động mất badge "Beta".
+
+### Deprecate edition
+
+```
+PUT /api/v1/app_edition/{id}
+{
+  "status": "deprecated"
+}
+```
+
+→ Emit `app_edition.deprecated`. Tenant đang subscribe vẫn dùng được (không cản); nhưng tenant mới KHÔNG subscribe được nữa. UI hiển thị warning "Phiên bản này không còn được hỗ trợ — chuyển sang phiên bản X".
+
+### `GET /api/v1/app_edition/by-industry/{industry_id}/default`
+Trả default edition của mỗi app cho industry. Dùng khi onboard tenant — để auto-suggest.
+
+**Response 200** (industry_id = 6 / REAL_ESTATE):
+```json
+{
+  "result": [
+    { "app_code": "CRM", "edition_code": "CRM-REALTY", "edition_name": "CRM Bất động sản", "url_suffix": "/crm-realty" }
+  ]
+}
+```
+
+### `GET /api/v1/internal/tenant/{tenant_id}/app/{app_code}/access-url` ⭐
+**Endpoint trung tâm cho routing.** SSO/App Switcher gọi sau khi user login để biết URL chính xác cần redirect.
+
+**Auth**: service-to-service token (scope `internal:read`)
+
+**Response 200** (tenant `tnpm` / industry Real Estate / app CRM):
+```json
+{
+  "result": {
+    "tenant_id": 999,
+    "tenant_subdomain": "tnpm",
+    "tenant_name": "Công ty BĐS TNPM",
+    "app_code": "CRM",
+    "edition_id": 5,
+    "edition_code": "CRM-REALTY",
+    "edition_name": "CRM Bất động sản",
+    "url_suffix": "/crm-realty",
+    "redirect_url": "https://tnpm.reborn.vn/crm-realty",
+    "subscription_status": "active",
+    "subscription_end_date": "2027-04-30"
+  }
+}
+```
+
+**Formula** (1 quy luật chung, áp dụng cho mọi tenant không thuộc reserved):
+```
+redirect_url = "https://" + tenant.subdomain + "." + platform.root_domain + edition.url_suffix
+```
+
+Cấu hình `platform.root_domain` ở env (`reborn.vn` cho prod, `staging.reborn.vn` cho staging).
+
+**Response 404**: tenant không có subscription cho app này
+**Response 403**: subscription đã expired/cancelled
+
+### `GET /api/v1/me/access-urls`
+Trả TẤT CẢ apps mà user có quyền truy cập, kèm redirect URL. Dùng cho App Switcher widget trong các app FE.
+
+**Response 200**:
+```json
+{
+  "result": [
+    {
+      "tenant_id": 1, "tenant_name": "Reborn JSC", "tenant_subdomain": "rebornjsc",
+      "apps": [
+        { "app_code": "CRM", "edition_code": "CRM-SPA", "url_suffix": "/crm-spa", "redirect_url": "https://rebornjsc.reborn.vn/crm-spa", "icon": "..." },
+        { "app_code": "BPM", "edition_code": "BPM-GENERIC", "url_suffix": "/bpm", "redirect_url": "https://rebornjsc.reborn.vn/bpm", "icon": "..." },
+        { "app_code": "SUPERADMIN", "edition_code": "SUPERADMIN-GENERIC", "url_suffix": "/superadmin", "redirect_url": "https://rebornjsc.reborn.vn/superadmin", "icon": "..." }
+      ]
+    },
+    {
+      "tenant_id": 999, "tenant_name": "Công ty BĐS TNPM", "tenant_subdomain": "tnpm",
+      "apps": [
+        { "app_code": "CRM", "edition_code": "CRM-REALTY", "url_suffix": "/crm-realty", "redirect_url": "https://tnpm.reborn.vn/crm-realty", "icon": "..." }
+      ]
+    }
+  ]
+}
+```
+
+### `POST /api/v1/tenant_app/{id}/change_edition`
+Đổi edition cho 1 tenant_app (rare event — đổi edition nghĩa là đổi FE deploy + có thể cần data migration).
+
+**Body**:
+```json
+{
+  "new_edition_id": 5,
+  "reason": "Tenant đổi mô hình kinh doanh từ Spa sang Healthcare",
+  "schedule_at": "2026-06-01T00:00:00Z"
+}
+```
+
+**Required role**: `tenant_app.change_edition` (chỉ SUPER_ADMIN — đây là destructive op)
+
+**Side effect**: emit event `tenant_app.edition_changed` → các app FE có thể trigger data migration.
+
 ## 5.6. Catalog endpoints
 
 ### Industry — `GET|POST|PUT|DELETE /api/v1/industry`
@@ -407,19 +702,39 @@ Kiểm tra alias/subdomain có sẵn không — gọi khi user gõ tên doanh ng
 
 **Body**:
 ```json
-{ "suggested_alias": "company-x" }
+{ "suggested_alias": "tnpm" }
 ```
 
-**Response 200**:
+**Response 200** (subdomain available):
+```json
+{
+  "code": 0,
+  "result": {
+    "available": true,
+    "subdomain": "tnpm",
+    "preview_url": "https://tnpm.reborn.vn/{app}"
+  }
+}
+```
+
+**Response 200** (subdomain conflict — fail 1 trong 4 layer):
 ```json
 {
   "code": 0,
   "result": {
     "available": false,
-    "alternatives": ["company-x-1", "company-x-vn", "companyx-2026"]
+    "reason": "RESERVED",
+    "// reason ∈ INVALID_FORMAT | RESERVED | TAKEN | PENDING_SIGNUP": null,
+    "alternatives": ["tnpm-vn", "tnpm-bds", "tnpm-2026"]
   }
 }
 ```
+
+**Validation 4 layer** (theo thứ tự fail-fast):
+1. **INVALID_FORMAT**: regex `^[a-z0-9][a-z0-9-]{1,61}[a-z0-9]$`
+2. **RESERVED**: tồn tại trong bảng `reserved_subdomain` (vd `auth`, `platform`, `admin`, `www`...)
+3. **TAKEN**: tồn tại trong `tenant.subdomain` (active hoặc soft-deleted)
+4. **PENDING_SIGNUP**: tồn tại trong `signup_request` đang `pending_email_verify`
 
 ### `POST /api/v1/public/signup`
 Submit form đăng ký. Tạo `signup_request` (status `pending_email_verify`) + gửi email xác minh.
