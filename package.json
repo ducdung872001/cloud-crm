@@ -1,7 +1,7 @@
 {
-  "name": "reborn-crm",
+  "name": "reborn-superadmin",
   "version": "0.0.1",
-  "description": "Reborn CRM",
+  "description": "Reborn Super Admin Console — quản trị nền tảng multi-tenant (Reborn JSC)",
   "author": "Reborn JSC",
   "license": "ISC",
   "scripts": {

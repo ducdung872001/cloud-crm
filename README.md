@@ -1,3 +1,15 @@
+# Reborn Super Admin Console
+
+Console quản trị nền tảng multi-tenant — chỉ dành cho công ty nền tảng **Reborn JSC** (`ecosystem.reborn.vn`) vận hành. Bóc tách từ nhánh `reborn-tech` (CRM cho tenant) để tách quyền: tenant chỉ cấu hình quyền cho đơn vị mình, mọi việc thêm tổ chức / khai báo phân hệ / quản lý gói dịch vụ / quản lý người dùng tập trung do bên này phụ trách.
+
+Chứa các phân hệ:
+
+- Quản lý tổ chức (multi-tenant)
+- Quản trị người dùng tập trung
+- Quản lý gói dịch vụ + danh sách gia hạn
+- Quản lý phân hệ (Field Management)
+- Quản trị tài nguyên (Resource Management)
+
 # Hướng dẫn sử dụng
 
 1. Cài đặt các gói thư viện

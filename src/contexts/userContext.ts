@@ -38,11 +38,5 @@ export interface ContextType {
   lastShowModalPayment: boolean;
   setLastShowModalPayment: (e: boolean) => void;
   lstRole: any[];
-  callState: string;
-  incomingNumber: string;
-  makeCall: (number: string) => void;
-  hangup: () => void;
-  answer: () => void;
-  transfer: (number: string) => void;
 }
 export const UserContext = React.createContext({});

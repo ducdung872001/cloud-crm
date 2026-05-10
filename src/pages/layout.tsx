@@ -14,9 +14,7 @@ import BeautyBranchService from "services/BeautyBranchService";
 import { IBeautyBranchResponse } from "model/beautyBranch/BeautyBranchResponseModel";
 import NotifiPackageRenewal from "components/notifiPackageRenewal/notifiPackageRenewal";
 import { showToast } from "utils/common";
-import ChatFeedback from "./ChatFeedback";
 import EmployeeService from "services/EmployeeService";
-import Chatbot from "./ChatBot";
 import { getDomain } from "reborn-util";
 // import { SystemNotification } from "components/systemNotification/systemNotification";
 
@@ -334,8 +332,6 @@ export default function Layout() {
               </div>
             </Fragment>
           </CustomScrollbar>
-          {isShowFeedback && <ChatFeedback />}
-          {!checkSubdomainTNEX ? <Chatbot /> : null}
         </div>
       </div>
 

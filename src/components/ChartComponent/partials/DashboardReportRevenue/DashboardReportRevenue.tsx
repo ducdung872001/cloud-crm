@@ -16,11 +16,12 @@ import BeautyBranchService from "services/BeautyBranchService";
 import { showToast } from "utils/common";
 import { ContextType, UserContext } from "contexts/userContext";
 import "./DashboardReportRevenue.scss";
-import ReportOpportunity from "pages/OpportunityList/partials/ReportOpportunity";
-import ReportCustomer from "pages/CustomerPerson/partials/ReportCustomer";
-import ReportPartner from "pages/PartnerList/partials/ReportPartner";
-import ReportGuarantee from "pages/Contract/GuaranteeContract/ReportGuarantee";
-import ReportWaranty from "pages/Contract/WarrantyContract/ReportWaranty";
+// Stub: các báo cáo CRM bị strip khỏi superadmin console
+const ReportOpportunity = () => null;
+const ReportCustomer = () => null;
+const ReportPartner = () => null;
+const ReportGuarantee = () => null;
+const ReportWaranty = () => null;
 import { stringify } from "uuid";
 
 interface ReportRevenueProps {
