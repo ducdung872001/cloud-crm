@@ -453,7 +453,21 @@ export default function ShareEventPage() {
     window.scrollTo(0, 0);
   };
 
-  const hasGallery = (event.galleryImageUrls ?? []).length > 0;
+  // Gallery strip = ảnh giới thiệu (trước event) + ảnh recap (sau event, nếu đã
+  // công bố hoặc đang ở preview admin). De-dup vì admin có thể dùng cùng URL.
+  // KHÔNG dùng useMemo vì hàm này nằm sau early-return loading → vi phạm rules-of-hooks.
+  const galleryStripUrls = (() => {
+    const base = event.galleryImageUrls ?? [];
+    const showRecap = adminRecapPreview || !!event.recap?.publishedAt;
+    const recapImgs = showRecap ? (event.recap?.highlightImages ?? []) : [];
+    const seen = new Set<string>();
+    return [...base, ...recapImgs].filter((u) => {
+      if (!u || seen.has(u)) return false;
+      seen.add(u);
+      return true;
+    });
+  })();
+  const hasGallery = galleryStripUrls.length > 0;
   const hasDynamicFields = (event.dynamicFields ?? []).length > 0;
   const hasAddOns = (event.addOnItems ?? []).length > 0;
   const hasMultiDay = (event.selectableDates ?? []).length > 0;
@@ -687,7 +701,7 @@ export default function ShareEventPage() {
       <div className="se-container">
         {/* ── Gallery ảnh hoạt động — slide ngang + click để zoom (Fancybox) ── */}
         {hasGallery && (
-          <GalleryStrip urls={event.galleryImageUrls!} title={event.title} />
+          <GalleryStrip urls={galleryStripUrls} title={event.title} />
         )}
 
         {/* Preview banner cho admin (?preview=recap) — cho biết đang ở chế độ xem trước. */}

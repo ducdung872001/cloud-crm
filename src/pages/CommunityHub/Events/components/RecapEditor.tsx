@@ -307,10 +307,7 @@ export default function RecapEditor({ recap, onChange }: Props) {
                     height: 100,
                     borderRadius: 8,
                     border: `1px dashed ${THEME.border}`,
-                    backgroundImage: w.imageUrl ? `url(${w.imageUrl})` : undefined,
-                    backgroundSize: "cover",
-                    backgroundPosition: "center",
-                    background: w.imageUrl ? undefined : THEME.primarySoft,
+                    backgroundColor: w.imageUrl ? "#fff" : THEME.primarySoft,
                     display: "flex",
                     alignItems: "center",
                     justifyContent: "center",
@@ -320,7 +317,15 @@ export default function RecapEditor({ recap, onChange }: Props) {
                     marginBottom: 4,
                   }}
                 >
-                  {!w.imageUrl && "Chưa có ảnh"}
+                  {w.imageUrl ? (
+                    <img
+                      src={w.imageUrl}
+                      alt={w.name || "Ảnh người đoạt giải"}
+                      style={{ width: "100%", height: "100%", objectFit: "cover" }}
+                    />
+                  ) : (
+                    "Chưa có ảnh"
+                  )}
                 </div>
                 <label
                   style={{

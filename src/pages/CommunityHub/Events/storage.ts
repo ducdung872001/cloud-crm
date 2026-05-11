@@ -19,24 +19,6 @@ import { isLoggedInAdmin } from "./shared";
 
 const KEY_EVENTS = "reborn.events";
 const KEY_REGISTRATIONS = "reborn.event_registrations";
-// LS shadow cho recap: BE có thể chưa deploy column `recap` (xem handoff
-// 20260511-1130). Khi BE strip field, FE vẫn giữ recap ở LS, hydrate khi load.
-// Key theo eventId. Sau khi BE deploy + trả `recap` đúng → hydrate vẫn no-op
-// (vì check ưu tiên BE > LS).
-const KEY_RECAP_SHADOW = "reborn.events.recap_shadow";
-
-function getRecapShadow(): Record<string, any> {
-  return readLS<Record<string, any>>(KEY_RECAP_SHADOW, {});
-}
-function setRecapShadow(eventId: string, recap: any): void {
-  const all = getRecapShadow();
-  if (recap == null) delete all[eventId];
-  else all[eventId] = recap;
-  writeLS(KEY_RECAP_SHADOW, all);
-}
-function getRecapShadowFor(eventId: string): any | undefined {
-  return getRecapShadow()[eventId];
-}
 
 // ── Flag: set true khi API trả về thành công lần đầu → tắt fallback ──
 let apiAvailable = false;
@@ -336,12 +318,7 @@ export const eventStorage = {
       const res = await EventService.get(id);
       if (isApiOk(res)) {
         apiAvailable = true;
-        const normalized = normalizeEvent(unwrap<any>(res));
-        if (normalized && !normalized.recap) {
-          const shadow = getRecapShadowFor(id);
-          if (shadow) normalized.recap = shadow;
-        }
-        return normalized;
+        return normalizeEvent(unwrap<any>(res));
       }
     } catch { /* fallback */ }
     return this.getEvent(id);
@@ -357,12 +334,7 @@ export const eventStorage = {
       const res = await EventService.getPublic(slug);
       if (isApiOk(res)) {
         apiAvailable = true;
-        const normalized = normalizeEvent(unwrap<any>(res));
-        if (normalized && !normalized.recap && normalized.id) {
-          const shadow = getRecapShadowFor(String(normalized.id));
-          if (shadow) normalized.recap = shadow;
-        }
-        return normalized;
+        return normalizeEvent(unwrap<any>(res));
       }
       publicFailed = true;
       console.warn("[EventStorage] getPublic failed for slug:", slug, res);
@@ -420,24 +392,12 @@ export const eventStorage = {
   },
 
   async updateEventAsync(id: string, patch: Partial<EventEntity>): Promise<EventEntity | null> {
-    // Shadow recap vào LS TRƯỚC khi gọi BE — đảm bảo dù BE strip field, FE vẫn
-    // nhớ. Khi BE migrate xong, shadow hydrate sẽ ưu tiên BE response, shadow
-    // chỉ còn là backup.
-    if (patch && Object.prototype.hasOwnProperty.call(patch, "recap")) {
-      setRecapShadow(id, patch.recap);
-    }
     let beErrorMsg: string | null = null;
     try {
       const res = await EventService.update(id, patch as any);
       if (isApiOk(res)) {
         apiAvailable = true;
-        const normalized = normalizeEvent(unwrap<any>(res));
-        // Hydrate recap từ shadow nếu BE response không có (BE chưa deploy column).
-        if (normalized && !normalized.recap) {
-          const shadow = getRecapShadowFor(id);
-          if (shadow) normalized.recap = shadow;
-        }
-        return normalized;
+        return normalizeEvent(unwrap<any>(res));
       }
       beErrorMsg = (res && (res.error || res.message)) || null;
     } catch { /* network fallback */ }
