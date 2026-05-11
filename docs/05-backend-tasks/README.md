@@ -13,8 +13,18 @@ URL endpoint bị bug → phần prefix đầu tiên sau host = microservice own
 ```
 POST https://biz.reborn.vn/inventory/warehouse/create
                          └─ inventory ─┘
-→ task vào docs/backend-tasks/inventory/
+→ task vào docs/05-backend-tasks/inventory/
 ```
+
+**Host convention** — Reborn ecosystem có 2 host tách bạch:
+
+| Host | Owns |
+|---|---|
+| `https://reborn.vn/authenticator/*` | **Auth/SSO only** — không migrate sang biz |
+| `https://biz.reborn.vn/<service>/*` | Mọi business service (customer, market, care, sales, inventory, ...) |
+| `https://biz.reborn.vn/org/*` | Org chart / RBAC / permission (service riêng, pattern mentorhub) |
+
+> ⚠️ `reborn.vn/adminapi/*` đã **deprecated** — task nào nói về `/adminapi/<svc>/*` map về `biz.reborn.vn/<svc>/*`.
 
 ## 📁 12 microservice
 

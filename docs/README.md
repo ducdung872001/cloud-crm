@@ -160,7 +160,20 @@ docs/
 
 ---
 
-## 6. Liên hệ
+## 6. API Host Convention
+
+Reborn ecosystem dùng **2 host** tách bạch — tham chiếu nhất quán trong mọi tài liệu:
+
+| Loại | Host + prefix | Ví dụ |
+|---|---|---|
+| **Authentication / SSO** | `https://reborn.vn/authenticator/*` | `/authenticator/otp/verify`, `/authenticator/callback` |
+| **Business services** | `https://biz.reborn.vn/<service>/*` | `/customer/lookup`, `/market/loyalty/autoEarn`, `/care/tickets` |
+| **Org chart / RBAC / Permission** | `https://biz.reborn.vn/org/*` | `/org/users`, `/org/roles`, `/org/permissions` (pattern mentorhub) |
+| **BPM Engine** | `https://biz.reborn.vn/bpmapi/*` | `/bpmapi/process-instances` |
+
+> ⚠️ **Deprecated:** `reborn.vn/adminapi/*` — đã migrate sang `biz.reborn.vn/<service>/*`. Tham chiếu trong code legacy cần update.
+
+## 7. Liên hệ
 
 - **Đơn vị triển khai:** Reborn JSC — `ecosystem.reborn.vn`
 - **Liên hệ:** `ceo@reborn.vn`

@@ -53,7 +53,7 @@ Nếu đơn refund/cancel sau đó:
 
 | | |
 |---|---|
-| **Endpoint** | `GET /api/loyalty/member/lookup` |
+| **Endpoint** | `GET https://biz.reborn.vn/customer/lookup` (hoặc `https://biz.reborn.vn/market/loyalty/member/lookup` cho lookup gắn balance) |
 | **Auth** | API Key (header `X-API-Key`) |
 | **Params** | `phone` (E.164) hoặc `barcode` hoặc `card_number` |
 | **Response** | `{member_id, name, tier_code, tier_name, balance, available_rewards: [{id, name, points_required}], applicable_promotions: [...]}` |
@@ -63,7 +63,7 @@ Nếu đơn refund/cancel sau đó:
 
 | | |
 |---|---|
-| **Endpoint** | `POST /api/loyalty/autoEarn` |
+| **Endpoint** | `POST https://biz.reborn.vn/market/loyalty/autoEarn` |
 | **Body** | `{ "phone": "+84xxx", "order_ref": "POS-A001-202605110001", "amount": 350000, "items": [{"sku":"MILK-1L","qty":2,"unit_price":35000,"category":"dairy"}], "store_id": "STORE-001", "brand_id": "BRAND_A", "occurred_at": "2026-05-11T15:30:00+07:00", "idempotency_key": "uuid-here" }` |
 | **Logic** | 1) Validate API key + store_id thuộc tenant. 2) Idempotent check: `(order_ref, brand_id)` đã có trong ledger → trả response cũ. 3) Lookup member by phone, tạo mới nếu chưa có (flag `auto_created = true`). 4) Áp earn rules + active campaigns + tier multiplier + min_spend. 5) Ghi ledger. 6) Check tier upgrade. 7) Trigger notification async. |
 | **Response** | `{ "ok": true, "member_id": "...", "points_earned": 35, "new_balance": 1302, "tier": "silver", "tier_changed": false, "expires_at": "2027-05-11", "applied_rules": ["base_earn", "weekend_x2"] }` |
@@ -73,7 +73,7 @@ Nếu đơn refund/cancel sau đó:
 
 | | |
 |---|---|
-| **Endpoint** | `POST /api/loyalty/consume` |
+| **Endpoint** | `POST https://biz.reborn.vn/market/loyalty/consume` |
 | **Body** | `{member_id, points, order_ref, idempotency_key}` |
 | **Logic** | 1) Validate balance ≥ points. 2) Tính discount = points × redemption_rate. 3) FIFO consume earn entries. 4) Ghi ledger redeem. 5) Trả discount amount để POS apply giảm giá. |
 | **AC** | • Balance không đủ → 400 + message rõ<br>• Idempotent<br>• POS phải block submit cho tới khi nhận response OK |
@@ -82,7 +82,7 @@ Nếu đơn refund/cancel sau đó:
 
 | | |
 |---|---|
-| **Endpoint** | `POST /api/loyalty/refund` |
+| **Endpoint** | `POST https://biz.reborn.vn/market/loyalty/refund` |
 | **Body** | `{order_ref, refund_amount, full_refund: bool}` |
 | **Logic** | Tìm earn entry của order_ref. Tính số điểm rollback = full → toàn bộ, partial → `earned × (refund_amount/order_amount)`. Ghi ledger `refund` (negative). Nếu KH đã tiêu thì balance đi âm — alert. |
 | **AC** | • Idempotent<br>• Audit log đầy đủ<br>• Notification KH "Đơn refund, điểm bị trừ" |

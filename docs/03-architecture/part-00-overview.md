@@ -81,16 +81,25 @@ SAD KHÔNG mô tả: nghiệp vụ chi tiết (xem [URD](../02-requirements/)), 
 └──────────────────┬─────────────────────────────────────┘
                    │ HTTPS / REST / JSON
 ┌──────────────────┴─────────────────────────────────────┐
-│ API GATEWAY                                             │
-│  ├─ Kong / Nginx — Rate limit, JWT verify, routing      │
-│  ├─ /api          → Public API                          │
-│  ├─ /adminapi     → Admin operations                    │
-│  ├─ /bizapi       → Business APIs                       │
-│  │   ├─ /market      → Loyalty engine                   │
-│  │   ├─ /customer    → Member 360°                      │
-│  │   ├─ /care        → CSKH                             │
-│  │   └─ /notification → SMS/Email/Zalo                  │
-│  └─ /authenticator → SSO                                │
+│ API GATEWAY — 2 hosts                                   │
+│                                                         │
+│  reborn.vn (legacy, chỉ auth)                          │
+│  └─ /authenticator/*  → SSO, JWT, OAuth/OIDC           │
+│                                                         │
+│  biz.reborn.vn (business)                              │
+│  ├─ /customer/*       → Member 360°, dedupe            │
+│  ├─ /market/*         → Loyalty engine                 │
+│  ├─ /care/*           → CSKH ticket, warranty          │
+│  ├─ /notification/*   → SMS/Email/Zalo OA              │
+│  ├─ /analytics/*      → RFM/CLV/cohort                 │
+│  ├─ /org/*            → Org chart, RBAC, permission    │
+│  ├─ /sales/*          → Reuse from platform            │
+│  ├─ /inventory/*      → Reuse from platform            │
+│  ├─ /billing/*        → Reuse from platform            │
+│  └─ /bpmapi/*         → BPM Engine (advanced earn)     │
+│                                                         │
+│  Cross-cutting: Kong/Nginx — rate limit, JWT verify,    │
+│  Hostname header injection                              │
 └──────────────────┬─────────────────────────────────────┘
                    │
 ┌──────────────────┴─────────────────────────────────────┐

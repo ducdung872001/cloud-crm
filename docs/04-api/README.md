@@ -45,15 +45,26 @@ openapi-generator-cli generate \
   -o sdk/java
 ```
 
-## Versioning
+## Host & Versioning
+
+Reborn ecosystem có 2 host:
+
+| Host | Mục đích | Ví dụ path |
+|---|---|---|
+| `https://reborn.vn` | Auth only | `/authenticator/*` |
+| `https://biz.reborn.vn` | Business services | `/customer/*`, `/market/*`, `/care/*`, `/org/*`, `/bpmapi/*` |
+
+Versioning per service:
 
 | Path | Mô tả |
 |---|---|
-| `/v1/...` | Current public API |
-| `/internal/v1/...` | Internal service-to-service |
-| `/adminapi/v1/...` | Admin endpoints |
+| `biz.reborn.vn/<svc>/v1/...` | Current public API per service |
+| `biz.reborn.vn/<svc>/internal/v1/...` | Internal service-to-service (chỉ cluster nội bộ) |
+| `biz.reborn.vn/org/v1/...` | RBAC / org chart endpoints |
 
 Breaking change → bump `/v2/...`, không in-place edit.
+
+> ⚠️ **Deprecated:** `reborn.vn/adminapi/*` không còn dùng. Mọi endpoint admin migrate sang `biz.reborn.vn/<service>/*`.
 
 ## Tham chiếu
 

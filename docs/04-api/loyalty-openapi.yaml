@@ -10,7 +10,17 @@ info:
 
 servers:
   - url: https://biz.reborn.vn/market
-    description: Production
+    description: Production (Loyalty engine — points/tier/rewards/campaigns)
+  - url: https://biz.reborn.vn/customer
+    description: Production (Customer 360°, member entity)
+  - url: https://biz.reborn.vn/care
+    description: Production (CSKH ticket, warranty)
+  - url: https://biz.reborn.vn/org
+    description: Production (Org chart, RBAC, permission — pattern mentorhub)
+  - url: https://biz.reborn.vn/bpmapi
+    description: Production (BPM Engine — advanced earn workflows)
+  - url: https://reborn.vn/authenticator
+    description: Production (Auth/SSO only — KHÔNG migrate sang biz.reborn.vn)
 
 security:
   - BearerAuth: []

@@ -2,17 +2,26 @@
 
 ## 1. Service catalog
 
-| Service | URL prefix | Ngôn ngữ | DB | Trách nhiệm |
+> **Hosting convention** — Reborn ecosystem dùng **2 host** tách bạch:
+> - `reborn.vn` (legacy): **chỉ Auth/SSO** — `https://reborn.vn/authenticator/*`
+> - `biz.reborn.vn` (business): mọi service nghiệp vụ — `https://biz.reborn.vn/<service>/*`
+>
+> URL pattern `reborn.vn/adminapi/*` cũ đã **deprecated**, migrate sang `biz.reborn.vn/<service>/*`.
+> Service org chart/phân quyền dùng `biz.reborn.vn/org/*` (pattern reborn-mentorhub).
+
+| Service | Base URL | Ngôn ngữ | DB | Trách nhiệm |
 |---|---|---|---|---|
-| **market-service** | `/bizapi/market` | Java Spring Boot | PG `market_db` | Loyalty engine: points, ledger, tier, earn rules, rewards, campaigns |
-| **customer-service** | `/bizapi/customer` | Java Spring Boot | PG `customer_db` | Member entity, profile 360°, dedupe, merge, bulk import |
-| **care-service** | `/bizapi/care` | Java Spring Boot | PG `care_db` | Ticket workflow, warranty, feedback, NPS |
-| **notification-service** | `/bizapi/notification` | Java/Go | Redis + PG `notification_db` | Email/SMS/Zalo OA outbound, template, throttle |
-| **analytics-service** | `/bizapi/analytics` | Java + Python | ClickHouse | RFM, CLV, cohort, dashboard queries |
-| **auth-service** | `/authenticator`, `/adminapi/auth` | Java | PG `auth_db` | JWT, API key mgmt, SSO bridge |
-| **gateway** | `/` (catch-all) | Kong/Nginx | — | Rate limit, routing, TLS, header injection |
-| **admin-frontend** | `/` (static SPA) | React 18 + Vite | — | Admin UI |
-| **member-frontend** | `app.loyalty.reborn.vn` | React Native / Zalo Mini (TBD) | — | Member-facing app |
+| **market-service** | `https://biz.reborn.vn/market/*` | Java Spring Boot | PG `market_db` | Loyalty engine: points, ledger, tier, earn rules, rewards, campaigns |
+| **customer-service** | `https://biz.reborn.vn/customer/*` | Java Spring Boot | PG `customer_db` | Member entity, profile 360°, dedupe, merge, bulk import |
+| **care-service** | `https://biz.reborn.vn/care/*` | Java Spring Boot | PG `care_db` | Ticket workflow, warranty, feedback, NPS |
+| **notification-service** | `https://biz.reborn.vn/notification/*` | Java/Go | Redis + PG `notification_db` | Email/SMS/Zalo OA outbound, template, throttle |
+| **analytics-service** | `https://biz.reborn.vn/analytics/*` | Java + Python | ClickHouse | RFM, CLV, cohort, dashboard queries |
+| **org-service** | `https://biz.reborn.vn/org/*` | Java Spring Boot | PG `org_db` | Org chart, RBAC, user-role-permission, scope assignment (pattern mentorhub) |
+| **bpm-engine** | `https://biz.reborn.vn/bpmapi/*` | Reborn BPM | PG `bpm_db` | Workflow advanced earn rules (xem §10) |
+| **auth-service** | `https://reborn.vn/authenticator/*` | Java | PG `auth_db` | **GIỮ DOMAIN reborn.vn** — SSO, JWT, OAuth/OIDC, API key mgmt |
+| **gateway** | `reborn.vn` + `biz.reborn.vn` ingress | Kong/Nginx | — | Rate limit, routing, TLS, Hostname header injection |
+| **admin-frontend** | `admin.loyalty.reborn.vn` (TBD) | React 18 + Vite | — | Admin UI SPA |
+| **member-frontend** | `app.loyalty.reborn.vn` (TBD) | React Native / Zalo Mini | — | Member-facing app |
 
 ## 2. Service map
 

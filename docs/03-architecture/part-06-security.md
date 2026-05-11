@@ -30,13 +30,16 @@
 
 ### 2.1. Admin authentication (qua SSO)
 
+> **Auth host:** `https://reborn.vn/authenticator/*` (legacy domain — KHÔNG migrate sang `biz.reborn.vn`)
+
 ```
 1. User → admin.loyalty.reborn.vn → redirect to SSO
-2. SSO (Reborn central) authenticate → issue OIDC code
-3. Browser → /authenticator/callback?code=...
+2. SSO (Reborn central tại reborn.vn) authenticate → issue OIDC code
+3. Browser → https://reborn.vn/authenticator/callback?code=...
 4. Backend exchange code → JWT (RS256, 1h TTL)
-5. JWT stored in HttpOnly+Secure+SameSite=Lax cookie
+5. JWT stored in HttpOnly+Secure+SameSite=Lax cookie (scope: .reborn.vn)
 6. Refresh token (30d TTL) in separate cookie
+7. Subsequent API calls tới biz.reborn.vn/<service>/* gửi JWT trong cookie/header
 ```
 
 JWT claims:

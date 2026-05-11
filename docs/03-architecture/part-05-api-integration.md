@@ -15,60 +15,97 @@
 
 ## 2. API surface
 
-### 2.1. Public-facing (member app/web)
+> **URL Convention** — Auth dùng `https://reborn.vn/authenticator/*`. Mọi business endpoint dùng `https://biz.reborn.vn/<service>/*`. Endpoint dạng `/adminapi/*` cũ đã deprecated, migrate sang `biz.reborn.vn/<service>/*`. Service org chart/RBAC dùng `biz.reborn.vn/org/*` (pattern mentorhub).
+
+### 2.1. Public-facing (member app/web) — `reborn.vn` + `biz.reborn.vn`
 
 ```
-POST   /v1/auth/register-otp           Yêu cầu OTP
-POST   /v1/auth/verify-otp             Verify + tạo session
-GET    /v1/me/profile
-PATCH  /v1/me/profile
-GET    /v1/me/balance
-GET    /v1/me/ledger?cursor=...        Lịch sử điểm
-GET    /v1/me/tier
-GET    /v1/rewards?tier=...            Browse catalog
-POST   /v1/rewards/redeem              Đổi reward
-GET    /v1/me/redemptions              Đã đổi gì
-GET    /v1/me/vouchers
-POST   /v1/me/data-export              GDPR-like export
-POST   /v1/me/deletion-request         Soft-delete request
+# Auth (host reborn.vn)
+POST   https://reborn.vn/authenticator/otp/request           Yêu cầu OTP
+POST   https://reborn.vn/authenticator/otp/verify            Verify + tạo session
+
+# Business (host biz.reborn.vn)
+GET    https://biz.reborn.vn/customer/me/profile
+PATCH  https://biz.reborn.vn/customer/me/profile
+GET    https://biz.reborn.vn/market/me/balance
+GET    https://biz.reborn.vn/market/me/ledger?cursor=...     Lịch sử điểm
+GET    https://biz.reborn.vn/market/me/tier
+GET    https://biz.reborn.vn/market/rewards?tier=...         Browse catalog
+POST   https://biz.reborn.vn/market/rewards/redeem           Đổi reward
+GET    https://biz.reborn.vn/market/me/redemptions
+GET    https://biz.reborn.vn/market/me/vouchers
+POST   https://biz.reborn.vn/customer/me/data-export         GDPR export
+POST   https://biz.reborn.vn/customer/me/deletion-request    Soft-delete
 ```
 
-### 2.2. POS Integration (external system)
+### 2.2. POS Integration (external system) — `biz.reborn.vn`
 
 ```
-GET    /v1/loyalty/member/lookup?phone=...|barcode=...
-POST   /v1/loyalty/autoEarn            ⭐ Quan trọng nhất
-POST   /v1/loyalty/consume
-POST   /v1/loyalty/refund
-POST   /v1/voucher/validate
-POST   /v1/voucher/redeem
-GET    /v1/loyalty/active-promotions?store_id=...
+GET    https://biz.reborn.vn/customer/lookup?phone=...|barcode=...
+POST   https://biz.reborn.vn/market/loyalty/autoEarn          ⭐ Quan trọng nhất
+POST   https://biz.reborn.vn/market/loyalty/consume
+POST   https://biz.reborn.vn/market/loyalty/refund
+POST   https://biz.reborn.vn/market/voucher/validate
+POST   https://biz.reborn.vn/market/voucher/redeem
+GET    https://biz.reborn.vn/market/loyalty/active-promotions?store_id=...
 ```
 
-### 2.3. Admin (internal)
+### 2.3. Admin (internal) — `biz.reborn.vn`
 
 ```
-GET    /adminapi/members?filters=...&page=...
-POST   /adminapi/members/bulk-import
-GET    /adminapi/members/{id}/profile-360
-POST   /adminapi/members/merge
-GET    /adminapi/ledger?member_id=...
-POST   /adminapi/points/manual-adjust
-GET    /adminapi/tiers
-POST   /adminapi/tiers/eval-dryrun
-POST   /adminapi/tiers/eval-apply
-GET    /adminapi/rewards
-POST   /adminapi/rewards
-GET    /adminapi/campaigns
-POST   /adminapi/campaigns
-POST   /adminapi/campaigns/{id}/launch
-GET    /adminapi/tickets
-PATCH  /adminapi/tickets/{id}
-GET    /adminapi/dashboard/exec
-GET    /adminapi/analytics/rfm
-GET    /adminapi/audit-logs
-GET    /adminapi/settings/*
-PATCH  /adminapi/settings/*
+# Customer 360°
+GET    https://biz.reborn.vn/customer/list?filters=...&page=...
+POST   https://biz.reborn.vn/customer/bulk-import
+GET    https://biz.reborn.vn/customer/{id}/profile-360
+POST   https://biz.reborn.vn/customer/merge
+
+# Loyalty engine
+GET    https://biz.reborn.vn/market/ledger?member_id=...
+POST   https://biz.reborn.vn/market/points/manual-adjust
+GET    https://biz.reborn.vn/market/tiers
+POST   https://biz.reborn.vn/market/tiers/eval-dryrun
+POST   https://biz.reborn.vn/market/tiers/eval-apply
+GET    https://biz.reborn.vn/market/rewards
+POST   https://biz.reborn.vn/market/rewards
+GET    https://biz.reborn.vn/market/campaigns
+POST   https://biz.reborn.vn/market/campaigns
+POST   https://biz.reborn.vn/market/campaigns/{id}/launch
+
+# CSKH
+GET    https://biz.reborn.vn/care/tickets
+PATCH  https://biz.reborn.vn/care/tickets/{id}
+
+# Analytics
+GET    https://biz.reborn.vn/analytics/dashboard/exec
+GET    https://biz.reborn.vn/analytics/rfm
+
+# Settings
+GET    https://biz.reborn.vn/market/settings/*
+PATCH  https://biz.reborn.vn/market/settings/*
+
+# Audit & Permission (org-service)
+GET    https://biz.reborn.vn/org/audit-logs
+GET    https://biz.reborn.vn/org/users
+POST   https://biz.reborn.vn/org/users
+GET    https://biz.reborn.vn/org/roles
+POST   https://biz.reborn.vn/org/roles
+GET    https://biz.reborn.vn/org/permissions
+GET    https://biz.reborn.vn/org/org-chart                   # cây tổ chức
+PATCH  https://biz.reborn.vn/org/users/{id}/scope-assign
+```
+
+### 2.4. BPM Engine — `biz.reborn.vn/bpmapi`
+
+```
+# Workflow management
+GET    https://biz.reborn.vn/bpmapi/process-definitions
+POST   https://biz.reborn.vn/bpmapi/process-definitions/deploy
+GET    https://biz.reborn.vn/bpmapi/process-instances?member_id=...
+POST   https://biz.reborn.vn/bpmapi/process-instances/{id}/terminate
+
+# Internal callback từ BPM tới market-service
+POST   https://biz.reborn.vn/market/internal/v1/loyalty/award
+POST   https://biz.reborn.vn/market/internal/v1/loyalty/award-bundle
 ```
 
 OpenAPI 3.0 đầy đủ: [`../04-api/loyalty-openapi.yaml`](../04-api/loyalty-openapi.yaml)
