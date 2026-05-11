@@ -12,6 +12,10 @@ import PointExpiryConfig from "./PointExpiryConfig";
 import AutoTierConfig from "./AutoTierConfig";
 import LoyaltyScopeConfig from "./LoyaltyScopeConfig";
 import ModuleToggleConfig from "./ModuleToggleConfig";
+import AdvancedEarnConfig from "./AdvancedEarnConfig";
+import NotificationTemplateConfig from "./NotificationTemplateConfig";
+import ApiKeyWebhookConfig from "./ApiKeyWebhookConfig";
+import AuditLogViewer from "./AuditLogViewer";
 
 interface Props {
   onBackProps?: (v: boolean) => void;
@@ -83,6 +87,38 @@ export default function SettingLoyalty({ onBackProps }: Props = {}) {
       backgroundColor: "#F3F4F6",
       strokeColor: "#6B7280",
     },
+    {
+      title: "Earn rule nâng cao (BPM)",
+      is_tab: "tab_advanced_earn",
+      des: "Quy trình tích điểm phức tạp — Loyalty Quest, Family Pool, Journey, B2B approval — chạy trên BPM Engine",
+      icon: "BPMProcess",
+      backgroundColor: "#ECFEFF",
+      strokeColor: "#0E7490",
+    },
+    {
+      title: "Thông báo gửi KH",
+      is_tab: "tab_notification",
+      des: "Cấu hình template SMS / Zalo / Email / Push cho 11 loại event loyalty",
+      icon: "Bell",
+      backgroundColor: "#FEF3C7",
+      strokeColor: "#D97706",
+    },
+    {
+      title: "API Key & Webhook",
+      is_tab: "tab_integration",
+      des: "Quản lý API key cho POS, đăng ký webhook, theo dõi Dead Letter Queue",
+      icon: "ApiKey",
+      backgroundColor: "#F0FDF4",
+      strokeColor: "#15803D",
+    },
+    {
+      title: "Audit Log",
+      is_tab: "tab_audit",
+      des: "Lịch sử mọi thay đổi config + manual action — append-only, retention 7 năm",
+      icon: "AuditLog",
+      backgroundColor: "#FAF5FF",
+      strokeColor: "#7E22CE",
+    },
   ];
 
   return (
@@ -145,6 +181,30 @@ export default function SettingLoyalty({ onBackProps }: Props = {}) {
         />
       ) : isDetail && tab === "tab_modules" ? (
         <ModuleToggleConfig
+          onBackProps={(isBack) => {
+            if (isBack) setIsDetail(false);
+          }}
+        />
+      ) : isDetail && tab === "tab_advanced_earn" ? (
+        <AdvancedEarnConfig
+          onBackProps={(isBack) => {
+            if (isBack) setIsDetail(false);
+          }}
+        />
+      ) : isDetail && tab === "tab_notification" ? (
+        <NotificationTemplateConfig
+          onBackProps={(isBack) => {
+            if (isBack) setIsDetail(false);
+          }}
+        />
+      ) : isDetail && tab === "tab_integration" ? (
+        <ApiKeyWebhookConfig
+          onBackProps={(isBack) => {
+            if (isBack) setIsDetail(false);
+          }}
+        />
+      ) : isDetail && tab === "tab_audit" ? (
+        <AuditLogViewer
           onBackProps={(isBack) => {
             if (isBack) setIsDetail(false);
           }}
