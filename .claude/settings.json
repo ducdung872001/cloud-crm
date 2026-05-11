@@ -87,7 +87,14 @@
       "Bash(pdftotext \"docs/fitpro/info/FitPro_Health_Infrastructure.pdf\" /tmp/fitpro-health.txt)",
       "Bash(python -c \"import fitz; print\\(fitz.version\\)\")",
       "Bash(python d:/tmp/pdf-to-pages.py docs/fitpro/info/FitPro_Health_Infrastructure.pdf d:/tmp/pdf-health 100)",
-      "Bash(python d:/tmp/pdf-to-pages.py docs/fitpro/info/FitPro_Inside_Phygital_Evolution.pdf d:/tmp/pdf-phygital 100)"
+      "Bash(python d:/tmp/pdf-to-pages.py docs/fitpro/info/FitPro_Inside_Phygital_Evolution.pdf d:/tmp/pdf-phygital 100)",
+      "Bash(python -c \"from docx import Document; doc=Document\\('docs/stragy/20260511/BẢN ĐỒ CL FITPRO.docx'\\); [print\\(p.text\\) for p in doc.paragraphs]\")",
+      "Bash(where pdftoppm *)",
+      "Bash(pandoc -o docs/stragy/exports/_reference.docx --print-default-data-file reference.docx)",
+      "Bash(pandoc ../PHAN_TICH_TONG_HOP_FITPRO_2027.md -o FitPro_2027_Phan_Tich_Tong_Hop.docx --reference-doc=_reference.docx --toc --toc-depth=3 --highlight-style=tango -V lang=vi --metadata 'title=PHÂN TÍCH TỔNG HỢP CHIẾN LƯỢC FITPRO BY MF7 — VISION 2027' --metadata 'subtitle=Tài liệu trình Ban Giám đốc — Reborn JSC soạn thảo' --metadata 'author=CTO Office, Reborn JSC' --metadata date=11/05/2026)",
+      "Bash(python build_docx.py)",
+      "Bash(where soffice *)",
+      "Bash(where libreoffice *)"
     ],
     "additionalDirectories": [
       "\\tmp"
