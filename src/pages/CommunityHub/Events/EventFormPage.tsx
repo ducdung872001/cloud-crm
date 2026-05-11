@@ -79,6 +79,7 @@ type FormState = {
   commentsEnabled: boolean;
   commentsModerated: boolean;
   registrationFlows: ("guest" | "member_signup" | "member_login")[];
+  forcedEnded: boolean;
   // ── Recap (sau sự kiện) ──
   recap: EventRecap;
 };
@@ -123,6 +124,7 @@ const EMPTY: FormState = {
   commentsEnabled: true,
   commentsModerated: false,
   registrationFlows: ["guest"],
+  forcedEnded: false,
   recap: {},
 };
 
@@ -180,6 +182,7 @@ function entityToForm(e: EventEntity): FormState {
     commentsEnabled: e.commentsEnabled !== false,
     commentsModerated: e.commentsModerated ?? false,
     registrationFlows: e.registrationFlows ?? ["guest"],
+    forcedEnded: e.forcedEnded ?? false,
     recap: e.recap ?? {},
   };
 }
@@ -566,6 +569,7 @@ export default function EventFormPage() {
       commentsEnabled: form.commentsEnabled,
       commentsModerated: form.commentsModerated || undefined,
       registrationFlows: form.registrationFlows.length ? form.registrationFlows : ["guest"],
+      forcedEnded: form.forcedEnded || undefined,
       // ── Recap (sau sự kiện) — gửi undefined nếu rỗng để BE không lưu blob rỗng. ──
       recap: (() => {
         const r = form.recap;
@@ -1363,6 +1367,18 @@ export default function EventFormPage() {
               />
               <span>
                 <b>Đây là sự kiện TEST</b> — sẽ <u>ẩn khỏi public portal</u> dù status = published
+              </span>
+            </label>
+            <label style={{ display: "flex", alignItems: "flex-start", gap: 6, fontSize: 13, marginBottom: 8 }}>
+              <input
+                type="checkbox"
+                style={{ marginTop: 3 }}
+                checked={form.forcedEnded}
+                onChange={(e) => update("forcedEnded", e.target.checked)}
+              />
+              <span>
+                <b>Ép cứng "Đã kết thúc"</b> — bỏ qua check ngày kết thúc, coi event ended ngay.
+                Bỏ tick = mở lại (nếu ngày chưa qua). Song song với check endDate cũ.
               </span>
             </label>
             <label style={{ display: "flex", alignItems: "center", gap: 6, fontSize: 13, marginBottom: 6 }}>

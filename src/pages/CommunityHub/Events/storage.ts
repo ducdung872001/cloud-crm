@@ -169,6 +169,7 @@ export function normalizeEvent(e: any): EventEntity {
     // sẽ bật RegistrationFlowSwitcher với shape sai.
     registrationFlows: parseJsonArr(e.registrationFlows ?? e.registration_flows),
     isTest: Boolean(e.isTest ?? e.is_test ?? false),
+    forcedEnded: Boolean(e.forcedEnded ?? e.forced_ended ?? false),
     // Recap (sau sự kiện) — BE lưu JSON-string giống contentBlocks. parseJson lặp
     // tới khi ra object hoặc undefined nếu rỗng/lỗi.
     recap: (() => {

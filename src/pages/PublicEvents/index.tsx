@@ -91,7 +91,9 @@ function useCountdown(targetIso: string): string | null {
 }
 
 // ── Tính filter hash cho tình trạng thực tế (không tin status field) ───────
+// forcedEnded (admin ép cứng) thắng tất cả — ngay cả khi ngày chưa qua.
 function liveStatus(e: EventEntity): "ongoing" | "upcoming" | "ended" {
+  if (e.forcedEnded) return "ended";
   const now = Date.now();
   const s = new Date(e.startDate).getTime();
   const en = new Date(e.endDate).getTime();
@@ -415,7 +417,7 @@ export default function PublicEventsPage() {
               với banner ngay phía trên, (b) tránh trình duyệt auto-translate
               sai branding. Default tenant vẫn show kicker như cũ. */}
           {!settings.bannerImageUrl && (
-            <span className="pe-hero__kicker">Cộng đồng · Sự kiện · Kết nối</span>
+            <span className="pe-hero__kicker" translate="no">W.HOUSE — NÂNG TẦM GIÁ TRỊ SỐNG</span>
           )}
           <h1 className="pe-hero__title">
             Sự kiện sắp tới

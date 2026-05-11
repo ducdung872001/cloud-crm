@@ -353,10 +353,11 @@ export default function ShareEventPage() {
   const regNotYet = now < regOpen;
   const regClosed = now > regClose;
   const isFull = !!event.maxAttendees && activeCount >= event.maxAttendees;
-  // Event đã kết thúc: now > endDate hoặc status = ended/cancelled.
-  // Khi ended không cho đăng ký nữa — tránh case endDate < now nhưng regClose > now.
+  // Event đã kết thúc: now > endDate, status = ended/cancelled, HOẶC admin
+  // ép cứng (forcedEnded). Khi ended không cho đăng ký nữa.
   const eventEnd = new Date(event.endDate);
-  const isEnded = (Number.isFinite(eventEnd.getTime()) && now > eventEnd) ||
+  const isEnded = !!event.forcedEnded ||
+    (Number.isFinite(eventEnd.getTime()) && now > eventEnd) ||
     event.status === "ended" || event.status === "cancelled";
   // Preview mode cho admin: bỏ qua gate isEnded + publishedAt, render recap luôn để
   // admin review trước khi event diễn ra / công bố. Chỉ bật cho admin đã login.

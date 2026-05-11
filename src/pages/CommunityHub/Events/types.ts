@@ -265,6 +265,10 @@ export interface EventEntity {
   /** Recap "sau sự kiện" — ảnh/video/winners/bài viết. BE lưu dạng JSON-string
    *  giống contentBlocks (xem EventRecap). FE render khi event đã `ended`. */
   recap?: EventRecap;
+  /** Admin ép cứng sự kiện đã kết thúc (bỏ qua check endDate). Song song với
+   *  luồng kiểm tra ngày: forcedEnded=true HOẶC now > endDate → coi như ended.
+   *  Bỏ tick = mở lại event (nếu ngày chưa qua). */
+  forcedEnded?: boolean;
 }
 
 export interface EventRegistration {
