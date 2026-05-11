@@ -1,157 +1,168 @@
-# Tài liệu dự án — Reborn CRM (Loyalty Retail Edition)
+# Reborn Loyalty Platform — Tài liệu Dự án
 
-> **Phiên bản:** reborn-loyalty  
-> **Cập nhật:** 16/04/2026  
-> **Khách hàng:** Chuỗi siêu thị bán lẻ (2 brand, 100+ store, 3M KH)
-
----
-
-## Danh mục tài liệu
-
-### 1. Kinh doanh & Đề xuất
-
-| # | Tài liệu | Đường dẫn | Mô tả |
-|---|----------|-----------|-------|
-| 1.1 | Đề xuất giải pháp (MD) | [proposal/de-xuat-giai-phap-loyalty-ban-le.md](proposal/de-xuat-giai-phap-loyalty-ban-le.md) | Proposal 10 phần: bài toán, giải pháp, kiến trúc, tính năng, lộ trình |
-| 1.2 | Slide trình chiếu (PPTX) | [proposal/Reborn-Loyalty-Proposal.pptx](proposal/Reborn-Loyalty-Proposal.pptx) | 11 slides cho thuyết minh demo |
-| 1.3 | GAP Analysis | [loyalty-supermarket-gap-analysis.md](loyalty-supermarket-gap-analysis.md) | Đánh giá khoảng cách hiện trạng vs đích |
-| 1.4 | Yêu cầu khách hàng (ảnh) | [requirements/](requirements/) | Screenshot chat khảo sát |
-
-### 2. Phân tích & Thiết kế (SA)
-
-| # | Tài liệu | Đường dẫn | Chuẩn tham chiếu |
-|---|----------|-----------|-------------------|
-| 2.1 | Kiến trúc hệ thống | [sa/](sa/) — 15 phần | IEEE 1471, 4+1 View (Kruchten) |
-| 2.2 | Tổng quan | [sa/part-00-tong-quan.md](sa/part-00-tong-quan.md) | |
-| 2.3 | Kiến trúc tổng thể | [sa/part-01-kien-truc-tong-the.md](sa/part-01-kien-truc-tong-the.md) | |
-| 2.4 | Frontend Architecture | [sa/part-02-frontend-architecture.md](sa/part-02-frontend-architecture.md) | |
-| 2.5 | Tech Stack | [sa/part-03-tech-stack.md](sa/part-03-tech-stack.md) | |
-| 2.6 | Routing & Navigation | [sa/part-04-routing-navigation.md](sa/part-04-routing-navigation.md) | |
-| 2.7 | Component & Module | [sa/part-05-component-module.md](sa/part-05-component-module.md) | |
-| 2.8 | Service & API | [sa/part-06-service-api.md](sa/part-06-service-api.md) | |
-| 2.9 | Data Architecture | [sa/part-07-data-architecture.md](sa/part-07-data-architecture.md) | |
-| 2.10 | Backend Architecture | [sa/part-08-backend-architecture.md](sa/part-08-backend-architecture.md) | |
-| 2.11 | Integration | [sa/part-09-integration.md](sa/part-09-integration.md) | |
-| 2.12 | Security | [sa/part-10-security.md](sa/part-10-security.md) | OWASP Top 10 |
-| 2.13 | Cross-cutting Concerns | [sa/part-11-cross-cutting.md](sa/part-11-cross-cutting.md) | |
-| 2.14 | Deployment | [sa/part-12-deployment.md](sa/part-12-deployment.md) | |
-| 2.15 | ADR (Architecture Decisions) | [sa/part-13-adr.md](sa/part-13-adr.md) | |
-| 2.16 | Quality & Risks | [sa/part-14-quality-risks.md](sa/part-14-quality-risks.md) | |
-
-### 3. Yêu cầu nghiệp vụ (URD)
-
-| # | Tài liệu | Đường dẫn | Chuẩn tham chiếu |
-|---|----------|-----------|-------------------|
-| 3.1 | Yêu cầu người dùng | [urd/](urd/) — 15 phần | IEEE 830, ISO/IEC 29148 |
-| 3.2 | Giới thiệu | [urd/part-00-gioi-thieu.md](urd/part-00-gioi-thieu.md) | |
-| 3.3 | Truy cập hệ thống | [urd/part-01-truy-cap.md](urd/part-01-truy-cap.md) | |
-| 3.4 | POS bán hàng | [urd/part-02-pos-ban-hang.md](urd/part-02-pos-ban-hang.md) | |
-| 3.5 | Khách hàng | [urd/part-03-khach-hang.md](urd/part-03-khach-hang.md) | |
-| 3.6 | Đơn hàng & Hoá đơn | [urd/part-04-don-hang-hoa-don.md](urd/part-04-don-hang-hoa-don.md) | |
-| 3.7 | Kho & Sản phẩm | [urd/part-05-kho-san-pham.md](urd/part-05-kho-san-pham.md) | |
-| 3.8 | Mua hàng & NCC | [urd/part-06-mua-hang-ncc.md](urd/part-06-mua-hang-ncc.md) | |
-| 3.9 | Vận chuyển | [urd/part-07-van-chuyen.md](urd/part-07-van-chuyen.md) | |
-| 3.10 | Tài chính | [urd/part-08-tai-chinh.md](urd/part-08-tai-chinh.md) | |
-| 3.11 | Marketing & KM | [urd/part-09-marketing-khuyen-mai.md](urd/part-09-marketing-khuyen-mai.md) | |
-| 3.12 | **Loyalty & CSKH** | [urd/part-10-loyalty-cham-soc.md](urd/part-10-loyalty-cham-soc.md) | UR-LOY-01→20 |
-| 3.13 | Báo cáo | [urd/part-11-bao-cao-phan-tich.md](urd/part-11-bao-cao-phan-tich.md) | |
-| 3.14 | Cài đặt | [urd/part-12-cai-dat.md](urd/part-12-cai-dat.md) | |
-| 3.15 | BPM & Automation | [urd/part-13-bpm-automation.md](urd/part-13-bpm-automation.md) | |
-| 3.16 | NFR & Tích hợp | [urd/part-14-nfr-tich-hop.md](urd/part-14-nfr-tich-hop.md) | |
-
-### 4. API Documentation
-
-| # | Tài liệu | Đường dẫn | Chuẩn tham chiếu |
-|---|----------|-----------|-------------------|
-| 4.1 | OpenAPI Spec (Swagger) | [api/loyalty-openapi.yaml](api/loyalty-openapi.yaml) | OpenAPI 3.0 |
-| 4.2 | API Docs (tích hợp trong app) | Trang `/loyalty_integration` trên admin dashboard | |
-
-### 5. Hướng dẫn sử dụng (HDSD)
-
-| # | Tài liệu | Đường dẫn | Đối tượng |
-|---|----------|-----------|-----------|
-| 5.1 | User Guide | [userguides/](userguides/) — 14 phần | End users |
-| 5.2 | Part 10 — Loyalty | [userguides/part-10-loyalty-cham-soc.md](userguides/part-10-loyalty-cham-soc.md) | CSKH, Marketing |
-
-### 6. Kiểm thử (QA)
-
-| # | Tài liệu | Đường dẫn | Chuẩn tham chiếu |
-|---|----------|-----------|-------------------|
-| 6.1 | Test Cases (UAT) | [TESTCASE_REBORN_RETAIL_FULL.md](TESTCASE_REBORN_RETAIL_FULL.md) | ISTQB — 51 suites, 895+ steps |
-| 6.2 | Validation Audit | [VALIDATION_AUDIT.md](VALIDATION_AUDIT.md) | OWASP |
-| 6.3 | Uncertain Bugs | [UNCERTAIN_BUGS.md](UNCERTAIN_BUGS.md) | |
-
-### 7. Triển khai & Vận hành
-
-| # | Tài liệu | Đường dẫn | Chuẩn tham chiếu |
-|---|----------|-----------|-------------------|
-| 7.1 | Deployment Guide | [deployment-guide.md](deployment-guide.md) | DevOps best practices |
-| 7.2 | Data Migration Plan | [data-migration-plan.md](data-migration-plan.md) | PMBOK |
-| 7.3 | Operations Runbook | [operations-runbook.md](operations-runbook.md) | ITIL |
-
-### 8. Quản lý dự án
-
-| # | Tài liệu | Đường dẫn | Chuẩn tham chiếu |
-|---|----------|-----------|-------------------|
-| 8.1 | Risk Register | [risk-register.md](risk-register.md) | PMBOK |
-| 8.2 | Acceptance Criteria | [acceptance-criteria.md](acceptance-criteria.md) | PMBOK |
-| 8.3 | Backend Tasks | [backend-tasks/](backend-tasks/) | Per microservice |
-
-### 9. Code Quality
-
-| # | Tài liệu | Đường dẫn |
-|---|----------|-----------|
-| 9.1 | Code Review Report | [CODE_REVIEW_REPORT.md](CODE_REVIEW_REPORT.md) |
-| 9.2 | Dead Code Audit | [DEAD_CODE_AUDIT.md](DEAD_CODE_AUDIT.md) |
-| 9.3 | Frontend Review | [FRONTEND_REVIEW_RESULT.md](FRONTEND_REVIEW_RESULT.md) |
-| 9.4 | Tech Debt Inventory | [TECH_DEBT_INVENTORY.md](TECH_DEBT_INVENTORY.md) |
-| 9.5 | Scan Results | [SCAN_RESULTS_SUMMARY.md](SCAN_RESULTS_SUMMARY.md) |
+> **Khách hàng:** Chuỗi siêu thị bán lẻ — 2 thương hiệu, ~300 cửa hàng (kế hoạch 1.000–1.500), ~3 triệu khách hàng thành viên, ~150.000 giao dịch/ngày (peak ~300.000).
+> **Nhánh codebase:** `reborn-loyalty` · **Mục tiêu demo:** 24/04/2026 · **Cập nhật:** 11/05/2026
 
 ---
 
-## Chuẩn tham chiếu
+## 1. Mục đích bộ tài liệu
 
-| Chuẩn | Áp dụng cho |
-|-------|-------------|
-| IEEE 1471 / ISO/IEC 42010 | System Architecture (SA) |
-| IEEE 830 / ISO/IEC 29148 | User Requirements (URD) |
-| OpenAPI 3.0 | API Documentation |
-| ISTQB | Test Cases |
-| OWASP Top 10 | Security Assessment |
-| PMBOK 7th Edition | Project Management (Risk, Acceptance, Migration) |
-| ITIL v4 | Operations & Service Management |
+Bộ tài liệu này mô tả **toàn bộ vòng đời dự án** Reborn Loyalty cho khách hàng siêu thị bán lẻ: từ bài toán kinh doanh → yêu cầu nghiệp vụ → kiến trúc kỹ thuật → triển khai → vận hành. Tài liệu được tổ chức theo **chuẩn industry** (IEEE 830, IEEE 1471, OpenAPI 3.0, PMBOK, ITIL v4) và đánh số **10 nhóm chính + 3 folder phụ trợ** để dễ định vị.
+
+| Bạn là... | Hãy đọc từ... |
+|---|---|
+| Khách hàng (BOD, sponsor) | `01-business/executive-summary.md` → `01-business/proposal/` |
+| BA, PO | `02-requirements/` (URD loyalty-focused) |
+| Architect, Tech Lead | `03-architecture/` → `06-analysis/` |
+| Backend Dev | `05-backend-tasks/` + `04-api/loyalty-openapi.yaml` |
+| QA Engineer | `07-testing/` |
+| DevOps, SRE | `08-operations/` |
+| End user (CSKH, Cashier, Manager) | `09-userguides/` |
 
 ---
 
-## Sơ đồ cấu trúc thư mục
+## 2. Cấu trúc thư mục
 
 ```
 docs/
-├── README.md                          ← BẠN ĐANG Ở ĐÂY
-├── proposal/                          ← Đề xuất giải pháp
-│   ├── de-xuat-giai-phap-loyalty-ban-le.md
-│   ├── Reborn-Loyalty-Proposal.pptx
-│   └── generate-pptx.mjs
-├── requirements/                      ← Ảnh yêu cầu KH
-├── sa/                                ← System Architecture (15 parts)
-├── urd/                               ← User Requirements (15 parts)
-├── userguides/                        ← Hướng dẫn sử dụng (14 parts)
-├── api/                               ← OpenAPI Swagger spec
+├── README.md                     ← Bạn đang ở đây
+│
+├── 01-business/                  Bài toán kinh doanh, đề xuất giải pháp, báo giá
+│   ├── executive-summary.md      Tóm tắt 2 trang cho BOD
+│   ├── gap-analysis.md           Phân tích khoảng cách hiện trạng → đích
+│   ├── proposal/                 Đề xuất giải pháp đầy đủ (10 phần)
+│   ├── pricing/                  Báo giá + phân tích CAPEX/Margin (INTERNAL)
+│   ├── survey/                   Khảo sát khách hàng
+│   └── customer-requirements/    Ảnh chat yêu cầu + Q&A
+│
+├── 02-requirements/              URD — Yêu cầu nghiệp vụ (IEEE 830, loyalty-focused)
+│   ├── part-00-introduction.md   Phạm vi, stakeholder, glossary, MoSCoW
+│   ├── part-01-actors-roles.md   Actor, role, permission map
+│   ├── part-02-membership-core.md      Hội viên: profile 360°, cross-brand
+│   ├── part-03-points-engine.md  Tích/tiêu điểm, rule, hạn điểm
+│   ├── part-04-membership-tiers.md     Hạng thành viên, đánh giá tự động
+│   ├── part-05-rewards-redemption.md   Catalog quà, đổi thưởng
+│   ├── part-06-promotions-campaigns.md Khuyến mãi, automation
+│   ├── part-07-cross-brand-scope.md    Phạm vi: chain-wide / per-brand / per-group
+│   ├── part-08-pos-integration.md      Tích hợp POS, webhook, idempotency
+│   ├── part-09-cskh-feedback.md  Ticket khiếu nại, feedback, warranty
+│   ├── part-10-analytics-reports.md    Dashboard, RFM, CLV, retention
+│   ├── part-11-settings-admin.md Cấu hình, phân quyền, audit
+│   └── part-12-nfr.md            Phi chức năng: 3M KH, 500 TPS, 99.5% uptime
+│
+├── 03-architecture/              SA — Kiến trúc kỹ thuật (IEEE 1471 + 4+1 View)
+│   ├── part-00-overview.md
+│   ├── part-01-system-context.md
+│   ├── part-02-loyalty-domain-model.md
+│   ├── part-03-data-architecture.md
+│   ├── part-04-microservices.md
+│   ├── part-05-api-integration.md
+│   ├── part-06-security.md
+│   ├── part-07-scalability-3m-customers.md
+│   ├── part-08-deployment.md
+│   ├── part-09-adr.md            Architecture Decision Records
+│   └── part-10-quality-attributes.md
+│
+├── 04-api/                       OpenAPI 3.0 spec
 │   └── loyalty-openapi.yaml
-├── backend-tasks/                     ← BE spec per microservice
-│   ├── market/loyalty-supermarket.md
-│   ├── inventory/
-│   ├── sales/
-│   └── ...
-├── deployment-guide.md                ← Hướng dẫn triển khai
-├── data-migration-plan.md             ← Kế hoạch chuyển đổi data
-├── operations-runbook.md              ← SLA & vận hành
-├── risk-register.md                   ← Sổ rủi ro
-├── acceptance-criteria.md             ← Tiêu chí nghiệm thu
-├── loyalty-supermarket-gap-analysis.md
-├── TESTCASE_REBORN_RETAIL_FULL.md
-├── VALIDATION_AUDIT.md
-├── CODE_REVIEW_REPORT.md
-├── TECH_DEBT_INVENTORY.md
-└── ...
+│
+├── 05-backend-tasks/             Spec kỹ thuật BE theo microservice
+│   ├── market/                   Loyalty engine (chính)
+│   ├── customer/                 Customer 360°, cross-brand merge
+│   ├── care/                     CSKH, ticket, warranty
+│   ├── sales/                    POS integration touch points
+│   └── inventory/                (nếu cần — chủ yếu read-only)
+│
+├── 06-analysis/                  PHÂN TÍCH CHUYÊN SÂU loyalty
+│   ├── loyalty-economics.md      Cost-per-point, breakage, NPV, sensitivity
+│   ├── rfm-clv-model.md          Phân khúc RFM, công thức CLV
+│   ├── point-expiry-strategy.md  So sánh 3 chế độ hết hạn + tác động P&L
+│   ├── cross-brand-strategy.md   Pool chung vs riêng, tỷ giá chuyển đổi
+│   ├── data-migration-strategy.md  Goldmem/Access/Excel/Supporter → 1 nguồn
+│   ├── fraud-prevention.md       Gian lận tích điểm, tài khoản ma, chargeback
+│   ├── compliance-pdpa.md        NĐ 13/2023, audit, retention 3M KH
+│   └── advanced-earn-rule-bpm-case-study.md  Case Loyalty Quest — earn rule nâng cao qua BPM Engine
+│
+├── 07-testing/                   QA — ISTQB
+│   ├── test-strategy.md
+│   ├── testcases-legacy-retail.md   (~51 suite — reference, cần lọc loyalty)
+│   ├── validation-audit.md
+│   ├── uncertain-bugs.md
+│   └── bug-reports/              Bug report từ tester thực tế
+│
+├── 08-operations/                Triển khai & Vận hành (PMBOK + ITIL)
+│   ├── deployment-guide.md
+│   ├── data-migration-plan.md
+│   ├── operations-runbook.md
+│   ├── risk-register.md
+│   └── acceptance-criteria.md    Tiêu chí nghiệm thu 3 phase
+│
+├── 09-userguides/                HDSD cho end user
+│   ├── part-01-overview.md       Giới thiệu, đăng nhập
+│   ├── part-02-membership.md     Quản lý hội viên, in thẻ
+│   ├── part-03-points-tier.md    Tích/tiêu điểm, hạng
+│   ├── part-04-rewards.md        Đổi thưởng
+│   ├── part-05-promotions.md     Tạo campaign
+│   ├── part-06-pos-cashier.md    Hướng dẫn thu ngân
+│   ├── part-07-cross-brand.md    Cấu hình scope
+│   ├── part-08-reports.md        Đọc dashboard, export
+│   ├── part-09-settings.md       Cấu hình admin
+│   └── part-10-faq.md
+│
+├── 10-code-quality/              Báo cáo chất lượng codebase
+│   ├── code-review.md
+│   ├── dead-code-audit.md
+│   ├── frontend-review.md
+│   ├── tech-debt-inventory.md
+│   └── scan-results.md
+│
+├── _assets/                      File nguồn (PDF, PPTX, DOCX, XLSX, ảnh)
+├── _scripts/                     Script regenerate (.mjs sinh PPTX/DOCX, etc.)
+└── _legacy/                      Tài liệu cũ không thuộc bài toán loyalty
+                                  (giữ để tham chiếu — POS bán lẻ generic, kho, vận chuyển, ...)
 ```
+
+---
+
+## 3. Chuẩn tham chiếu
+
+| Nhóm tài liệu | Chuẩn áp dụng |
+|---|---|
+| `02-requirements/` | IEEE 830, ISO/IEC 29148 |
+| `03-architecture/` | IEEE 1471 / ISO/IEC 42010, 4+1 View (Kruchten), C4 model |
+| `04-api/` | OpenAPI 3.0 |
+| `06-analysis/` | Industry benchmark loyalty (Smile.io, Capillary, LoyaltyOne) |
+| `07-testing/` | ISTQB Foundation |
+| `08-operations/` | PMBOK 7th, ITIL v4 |
+| `03-architecture/part-06-security.md` | OWASP Top 10, NĐ 13/2023 (PDPA VN) |
+
+---
+
+## 4. Quy ước
+
+- **Ngôn ngữ:** Tiếng Việt có dấu cho toàn bộ tài liệu. Thuật ngữ kỹ thuật loyalty giữ nguyên tiếng Anh (members, points, tier, redemption, breakage, RFM, CLV).
+- **Mã yêu cầu:** `UR-LOY-<NN>` cho URD loyalty, `UR-MBR-<NN>` membership, `UR-POS-<NN>` POS integration, ...
+- **Mã ADR:** `ADR-<NN>` cho mỗi quyết định kiến trúc.
+- **Mức độ tự tin:** 🟢 Cao (có code/bằng chứng) · 🟡 Trung bình (suy luận hợp lý) · 🔴 Thấp (giả định, cần xác nhận).
+- **Tham chiếu code:** dạng `[file.tsx:42](src/file.tsx#L42)` để click được trong IDE.
+- **Sơ đồ:** dùng Mermaid khi có thể (render được trực tiếp trên GitHub), PNG export trong `diagrams/` cho đóng gói PDF.
+
+---
+
+## 5. Vòng đời tài liệu
+
+| Trạng thái | Ý nghĩa | Vị trí |
+|---|---|---|
+| **Active** | Đang dùng cho dự án loyalty hiện tại | `01-` → `10-` folders |
+| **Asset** | File nguồn không phải markdown | `_assets/` |
+| **Script** | Code sinh ra tài liệu (tái chạy được) | `_scripts/` |
+| **Legacy** | Tài liệu cũ, generic (POS, kho, vận chuyển, Spa) — giữ để tham chiếu | `_legacy/` |
+
+---
+
+## 6. Liên hệ
+
+- **Đơn vị triển khai:** Reborn JSC — `ecosystem.reborn.vn`
+- **Liên hệ:** `ceo@reborn.vn`
+- **Codebase:** `cloud-crm/` nhánh `reborn-loyalty`
+- **App demo:** `http://localhost:4000` (dev), `loyalty.reborn.vn` (staging — TBD)

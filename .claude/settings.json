@@ -85,7 +85,8 @@
       "Bash(unzip -p d:/Git/reborn/reborn-cloud/cloud-ver2/cloud-crm/docs/proposal/bao-gia/Phan-tich-Chi-phi-Margin-INTERNAL.docx word/document.xml)",
       "Bash(node docs/proposal/bao-gia/generate-capex-docx.mjs)",
       "Bash(unzip -p d:/Git/reborn/reborn-cloud/cloud-ver2/cloud-crm/docs/proposal/bao-gia/Phan-tich-CAPEX-Allocation-INTERNAL.docx word/document.xml)",
-      "Bash(unzip -p d:/Git/reborn/reborn-cloud/cloud-ver2/cloud-crm/docs/proposal/bao-gia/dukien/Bao-gia-Loyalty-Platform.docx word/document.xml)"
+      "Bash(unzip -p d:/Git/reborn/reborn-cloud/cloud-ver2/cloud-crm/docs/proposal/bao-gia/dukien/Bao-gia-Loyalty-Platform.docx word/document.xml)",
+      "PowerShell($root = \"d:\\\\Git\\\\reborn\\\\reborn-cloud\\\\cloud-ver2\\\\cloud-crm\\\\docs\"; $dirs = @\\(\"01-business\",\"01-business\\\\proposal\",\"01-business\\\\pricing\",\"01-business\\\\survey\",\"01-business\\\\customer-requirements\",\"02-requirements\",\"02-requirements\\\\diagrams\",\"03-architecture\",\"03-architecture\\\\diagrams\",\"04-api\",\"05-backend-tasks\",\"06-analysis\",\"07-testing\",\"07-testing\\\\bug-reports\",\"08-operations\",\"09-userguides\",\"09-userguides\\\\images\",\"10-code-quality\",\"_assets\",\"_assets\\\\proposal\",\"_assets\\\\pricing\",\"_assets\\\\survey\",\"_assets\\\\customer-requirements\",\"_assets\\\\bug-reports\",\"_scripts\",\"_legacy\",\"_legacy\\\\urd\",\"_legacy\\\\urd\\\\diagrams\",\"_legacy\\\\userguides\",\"_legacy\\\\userguides\\\\images\",\"_legacy\\\\sa\",\"_legacy\\\\sa\\\\diagrams\",\"_legacy\\\\misc\"\\); foreach \\($d in $dirs\\) { New-Item -ItemType Directory -Force -Path \\(Join-Path $root $d\\) | Out-Null }; Write-Output \"Created $\\($dirs.Count\\) directories\")"
     ],
     "additionalDirectories": [
       "\\tmp",
