@@ -43,6 +43,7 @@ import ShareCouponPage from "pages/ShareCouponPage";
 import ShareEventPage from "pages/ShareEventPage";
 import PublicEventsPage from "pages/PublicEvents";
 import GridFormNew from "pages/BPM/GridForm";
+import FirebaseOtpTest from "pages/FirebaseOtpTest";
 import { onMessage } from "firebase/messaging";
 import NotificationService from "services/NotificationService";
 import WebRtcCallIncomeModal from "pages/CallCenter/partials/WebRtcCallIncomeModal";
@@ -419,6 +420,7 @@ export default function App() {
           {/* Public Events Portal — SEO-friendly URLs */}
           {location.pathname == "/events" && <Route path="/events" element={<PublicEventsPage />} />}
           {location.pathname.startsWith("/events/") && <Route path="/events/:slug" element={<ShareEventPage />} />}
+          {location.pathname == "/firebase-otp-test" && <Route path="/firebase-otp-test" element={<FirebaseOtpTest />} />}
           <Route path="/login" element={<Login />} />
         </Routes>
         <ChooseRole onShow={chooseRoleInit} onHide={() => setChooseRoleInit(false)} lstRole={lstRole} />
