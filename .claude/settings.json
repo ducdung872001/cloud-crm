@@ -94,7 +94,20 @@
       "Bash(pandoc ../PHAN_TICH_TONG_HOP_FITPRO_2027.md -o FitPro_2027_Phan_Tich_Tong_Hop.docx --reference-doc=_reference.docx --toc --toc-depth=3 --highlight-style=tango -V lang=vi --metadata 'title=PHÂN TÍCH TỔNG HỢP CHIẾN LƯỢC FITPRO BY MF7 — VISION 2027' --metadata 'subtitle=Tài liệu trình Ban Giám đốc — Reborn JSC soạn thảo' --metadata 'author=CTO Office, Reborn JSC' --metadata date=11/05/2026)",
       "Bash(python build_docx.py)",
       "Bash(where soffice *)",
-      "Bash(where libreoffice *)"
+      "Bash(where libreoffice *)",
+      "Bash(sort -k1 -h -r)",
+      "Bash(git ls-tree *)",
+      "Bash(git mv *)",
+      "Bash(mv docs/platform-reborn-crm/userguides/userguides/* docs/platform-reborn-crm/userguides/)",
+      "Bash(mv docs/platform-reborn-crm/userguides/userguides/.* docs/platform-reborn-crm/userguides/)",
+      "Bash(git add *)",
+      "Bash(mkdir -p docs/archive/tooling)",
+      "Bash(rmdir docs/platform-reborn-crm/userguides/tooling)",
+      "Bash(git rm *)",
+      "Bash(mkdir -p docs/products/tax-compliance-hokd)",
+      "Bash(rmdir docs/02-requirements/diagrams docs/02-requirements)",
+      "Bash(rmdir docs/03-architecture/diagrams docs/03-architecture)",
+      "Bash(rmdir docs/09-userguides/images docs/09-userguides)"
     ],
     "additionalDirectories": [
       "\\tmp"
