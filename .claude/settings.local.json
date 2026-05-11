@@ -82,7 +82,8 @@
       "PowerShell(Write-Host \"=== All LISTEN ports 8000-9100 ===\"; Get-NetTCPConnection -State Listen -ErrorAction SilentlyContinue | Where-Object { $_.LocalPort -ge 8000 -and $_.LocalPort -le 9100 } | ForEach-Object { $p = Get-Process -Id $_.OwningProcess -ErrorAction SilentlyContinue; [PSCustomObject]@{Port=$_.LocalPort; PID=$_.OwningProcess; Name=$p.ProcessName} } | Sort-Object Port | Format-Table -AutoSize)",
       "PowerShell(try { $r = Invoke-WebRequest -Uri \"http://localhost:8080/\" -TimeoutSec 5 -UseBasicParsing -ErrorAction Stop; Write-Host \"HTTP $\\($r.StatusCode\\)\"; Write-Host \"--- first 500 chars ---\"; $r.Content.Substring\\(0, [Math]::Min\\(500, $r.Content.Length\\)\\) } catch { Write-Host \"ERROR: $\\($_.Exception.Message\\)\"; if \\($_.Exception.Response\\) { Write-Host \"Status: $\\($_.Exception.Response.StatusCode\\)\" } })",
       "PowerShell(try { $r = Invoke-WebRequest -Uri \"http://localhost:8080/\" -TimeoutSec 8 -UseBasicParsing -ErrorAction Stop; Write-Host \"HTTP $\\($r.StatusCode\\) — SSO reachable\"; Write-Host \"--- first 300 chars body ---\"; $r.Content.Substring\\(0, [Math]::Min\\(300, $r.Content.Length\\)\\) } catch { Write-Host \"Probe error: $\\($_.Exception.Message\\)\" })",
-      "Bash(node scripts/test-login-flow.cjs)"
+      "Bash(node scripts/test-login-flow.cjs)",
+      "Bash(python3 -c ' *)"
     ]
   }
 }
