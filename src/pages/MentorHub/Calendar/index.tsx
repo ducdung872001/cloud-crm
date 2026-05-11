@@ -89,20 +89,21 @@ export default function MHCalendar() {
 
       <h2 style={{ textTransform: "capitalize", marginBottom: 20 }}>{monthName}</h2>
 
-      <div style={{ display: "grid", gridTemplateColumns: "2fr 1fr", gap: 24, alignItems: "flex-start" }} className="mh-cal-layout">
-        <div className="mh__card" style={{ padding: 20 }}>
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(7, 1fr)", gap: 4, marginBottom: 8 }}>
+      <div style={{ display: "grid", gridTemplateColumns: "minmax(0, 2fr) minmax(0, 1fr)", gap: 24, alignItems: "flex-start" }} className="mh-cal-layout">
+        <div className="mh__card" style={{ padding: 20, minWidth: 0 }}>
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(7, minmax(0, 1fr))", gap: 4, marginBottom: 8 }}>
             {["T2", "T3", "T4", "T5", "T6", "T7", "CN"].map((d) => (
               <div key={d} className="mh__mono" style={{ textAlign: "center", fontSize: 11, color: "var(--mh-ink-soft)", padding: 6 }}>{d}</div>
             ))}
           </div>
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(7, 1fr)", gap: 4 }}>
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(7, minmax(0, 1fr))", gap: 4 }}>
             {cells.map((d, i) => (
               <div
                 key={i}
                 onClick={() => d && handleCellClick(d)}
                 style={{
                   minHeight: 96,
+                  minWidth: 0,
                   padding: 6,
                   background: d && isToday(d) ? "var(--mh-ivory-2)" : d ? "#fff" : "transparent",
                   border: d ? "1px solid var(--mh-line)" : "none",
@@ -111,6 +112,7 @@ export default function MHCalendar() {
                   cursor: d ? "pointer" : "default",
                   position: "relative",
                   transition: "border-color .1s",
+                  overflow: "hidden",
                 }}
                 onMouseEnter={(e) => d && (e.currentTarget.style.borderColor = "var(--mh-teal)")}
                 onMouseLeave={(e) => d && (e.currentTarget.style.borderColor = "var(--mh-line)")}
