@@ -8,7 +8,22 @@
       "Bash(python -c \"import openpyxl; wb = openpyxl.load_workbook\\('docs/roadmap/CRM_Kế hoạch triển khai.xlsx', data_only=False\\); [print\\(f'=== Sheet: {s} ==='\\) or print\\('\\\\n'.join\\([' | '.join\\([str\\(c.value\\) if c.value is not None else '' for c in row]\\) for row in wb[s].iter_rows\\(\\)]\\)\\) for s in wb.sheetnames]\")",
       "Bash(python -c ' *)",
       "Bash(PYTHONIOENCODING=utf-8 python d:/tmp/build_roadmap.py)",
-      "Bash(PYTHONIOENCODING=utf-8 python d:/tmp/patch_dates.py)"
+      "Bash(PYTHONIOENCODING=utf-8 python d:/tmp/patch_dates.py)",
+      "Bash(pdftotext -layout \"/d/Git/reborn/reborn-cloud/cloud-ver2/cloud-crm/docs/urd/TNPM_HLD_v2.pdf\" \"/d/tmp/TNPM_HLD_v2.txt\")",
+      "Read(//d/tmp/**)",
+      "Bash(Get-ChildItem -Path src/pages -Filter *.tsx -Recurse)",
+      "Bash(Measure-Object)",
+      "Bash(Select-Object -ExpandProperty Count)",
+      "Bash(python -c \"import openpyxl; print\\(openpyxl.__version__\\)\")",
+      "Bash(python d:\\\\tmp\\\\build_cost_xlsx.py)",
+      "PowerShell(python \"d:\\\\tmp\\\\build_cost_xlsx.py\")",
+      "PowerShell(python -c \"from openpyxl import load_workbook; wb = load_workbook\\(r'd:\\\\Git\\\\reborn\\\\reborn-cloud\\\\cloud-ver2\\\\cloud-crm\\\\docs\\\\tnpm-platform\\\\06-cost-estimate\\\\COST_ESTIMATE.xlsx', data_only=False\\); [print\\(s, wb[s].max_row, wb[s].max_column\\) for s in wb.sheetnames]\")",
+      "Bash(git mv *)",
+      "Bash(cp -r \"docs/requirements/20260511/Phase1\" \"docs/tnpm-platform/99-source-archive/sample-data/\")",
+      "Bash(git rm *)",
+      "Bash(git add *)",
+      "PowerShell(python \"d:\\\\tmp\\\\add_opex_sheets.py\")",
+      "PowerShell(python -c \"from openpyxl import load_workbook; wb = load_workbook\\(r'd:\\\\Git\\\\reborn\\\\reborn-cloud\\\\cloud-ver2\\\\cloud-crm\\\\docs\\\\tnpm-platform\\\\06-cost-estimate\\\\COST_ESTIMATE.xlsx'\\); print\\('Sheets:'\\); [print\\(' ', s, '-', wb[s].max_row, 'rows x', wb[s].max_column, 'cols'\\) for s in wb.sheetnames]\")"
     ],
     "additionalDirectories": [
       "\\tmp"
