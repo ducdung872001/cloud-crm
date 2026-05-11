@@ -23,6 +23,7 @@
 
 ## 2. Cấu trúc tài liệu cost
 
+- [`THUYET_MINH_CHI_PHI_NEN_TANG_TNPM.docx`](./THUYET_MINH_CHI_PHI_NEN_TANG_TNPM.docx) — **★ Bản thuyết minh chi phí** bóc tách 5.63 tỷ (Reborn IP creation) vs 8.16 tỷ (rollout customer #1) + danh sách feature scope. Định dạng docx để gửi nội bộ Reborn × TNTech.
 - [`methodology.md`](./methodology.md) — Cách tính CAPEX: role rate VND, công thức bottom-up, MM per module, assumption.
 - [`opex.md`](./opex.md) — **OPEX vận hành**: 4 segment S/M/L/XL, PlatOps + Pass-through, TCO 3 năm.
 - [`risk-buffer.md`](./risk-buffer.md) — Cách buffer rủi ro vào cost.

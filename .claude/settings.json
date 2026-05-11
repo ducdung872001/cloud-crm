@@ -23,7 +23,9 @@
       "Bash(git rm *)",
       "Bash(git add *)",
       "PowerShell(python \"d:\\\\tmp\\\\add_opex_sheets.py\")",
-      "PowerShell(python -c \"from openpyxl import load_workbook; wb = load_workbook\\(r'd:\\\\Git\\\\reborn\\\\reborn-cloud\\\\cloud-ver2\\\\cloud-crm\\\\docs\\\\tnpm-platform\\\\06-cost-estimate\\\\COST_ESTIMATE.xlsx'\\); print\\('Sheets:'\\); [print\\(' ', s, '-', wb[s].max_row, 'rows x', wb[s].max_column, 'cols'\\) for s in wb.sheetnames]\")"
+      "PowerShell(python -c \"from openpyxl import load_workbook; wb = load_workbook\\(r'd:\\\\Git\\\\reborn\\\\reborn-cloud\\\\cloud-ver2\\\\cloud-crm\\\\docs\\\\tnpm-platform\\\\06-cost-estimate\\\\COST_ESTIMATE.xlsx'\\); print\\('Sheets:'\\); [print\\(' ', s, '-', wb[s].max_row, 'rows x', wb[s].max_column, 'cols'\\) for s in wb.sheetnames]\")",
+      "PowerShell(python -c \"import docx; print\\(docx.__version__\\)\")",
+      "PowerShell(python \"d:\\\\tmp\\\\build_thuyet_minh_docx.py\")"
     ],
     "additionalDirectories": [
       "\\tmp"
