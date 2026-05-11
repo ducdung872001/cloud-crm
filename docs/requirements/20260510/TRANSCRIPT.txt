@@ -1,0 +1,881 @@
+# Transcript họp TNEX × Reborn — 2026-05-10 (Vincom Center)
+
+Nguồn: 2 file ghi âm trong cùng thư mục
+  - Vincom Center 8.m4a (31m42s, 706 segments)
+  - Vincom Center 9.m4a (6m11s,  158 segments)
+ASR: faster-whisper medium (vi), VAD filter on.
+Lưu ý: ASR có thể sai. SRT bản gốc nằm cạnh để đối chiếu timestamp.
+
+============================================================
+PART 1 — Vincom Center 8.m4a  (31m42s, 706 segments)
+============================================================
+
+Cảm ơn mọi người
+Sử dụng cơ hiếng
+Hiếng của mình nên là sử dụng cơ hiếng
+Nóng nha, phòng cũng nhận nóng
+Biên hả?
+Không có điều ngoài nữa
+Đúng rồi
+Thở được chưa?
+Bây giờ nha
+Hiện tại là mọi người từ bên anh
+Bây giờ đổ nít qua chỗ tàu xe vô nhà
+Đổ vào tổng xe em của mình dự dụng
+Vâng
+Vì bây giờ cái đầu tiên là cho anh hỏi này
+Bây giờ anh muốn tạo 10 cái cam bêm
+Từ 1 cho tới 10
+Là làm được không?
+Gửi cam bêm
+Từ 1 đến 10 luôn anh
+Đúng rồi
+Cam bêm chiến dịch vẫn bắt hàng
+Đúng, tên ấy
+Nó gọi là seo quite line
+Em gần như dạng seo bắt hàng theo tường bước ấy
+Nhưng các cái bữa đấy của anh có...
+Không, anh chỉ cần là
+Giống như là hình ảnh của em
+Nó đẻ mỗi một đối tác có 1 cái tên
+Rồi
+Vậy bây giờ mình bắt tên, anh chỉ cần nó có 10 cái tên
+Có thể là mở kèo 1
+Hoặc cho tên mở kèo 10
+Rồi
+Rồi
+Cái đấy bây giờ em làm được đúng không?
+Đúng rồi
+Đúng rồi
+Rồi, cái đấy tạo khúc bao lâu?
+Nhưng mà anh có yêu cầu chi tiết chưa?
+Anh sẽ có một cái mẫu
+Rồi, cho em cái đấy đi
+Xong rồi em sẽ trả lời hết bao lâu trong...
+Cái mẫu đấy được, chỉ có tên điện thoại đấy
+Hay là chỉ có gì khác?
+Bọn anh cần cái gì
+Bọn anh trường gì cũng có
+Nhưng bọn anh cần cái gì thì bọn em lại dùng
+Đúng rồi
+Quan trọng là seo em không nhận được cái gì
+Bọn nó hiển dị
+Rồi, thì em phải có cái pha đấy để em phân tích qua
+Nó sẽ là tên mở kèo 10
+Chắc chắn đẩy ra chị Lan chỉ cần số điện thoại thôi đúng không?
+Đúng rồi, số điện thoại với tên mở kèo 10
+Mỗi số điện thoại có tên à?
+Tên có, tốt mà không có, không có tên gì
+Không được, còn phải có cái để nó lại
+Cái trạng thái của gọi với mấy cái gì nữa đó
+Trạng thái của gọi trên hệ thống CAM đã có sẵn
+Phần trạng thái thôi
+Đúng rồi
+Vậy bọn em đẩy ra thì chỉ cần là tên của gọi
+Đúng rồi
+Vậy cái tablet nó đơn giản 2 triệu thôi
+Tên với số giải
+Vậy là chị tự mát được xây tốt đúng không?
+Ừ, xây tốt thì mấy bạn chị tự...
+Bản chất em cũng hiểu là mình chia cái list vào trong các campaign
+Đúng không? Chỉ chia thành giỏ khác nhau
+Thì khi chị Lan theo từng giỏ, chị chia nó sẽ có từng mặt
+Với từng cái giỏ đấy
+Rồi coi như một cái danh ngục, một dạng danh ngục phần chia
+Cái này nhanh đúng không?
+Rồi
+Rồi
+Từ vết 1 tới 10 thì đoạn hệ thống đã có rết triều tham trạng thái, rết triều tham cục gọi rồi
+Trạng thái có gọi là TSC không?
+Ừ, mình hốt
+Còn trạng thái của cái khách hàng đấy thì mình lấy cái đoạn hệ thống nhà mình là vô rồi đúng không?
+Chưa rượu tham
+Chưa rượu tham thì bao lâu là mình có trạng thái đúng
+Có khi là phải hôm sau mà có, có những khách hàng này không lên được
+Đấy là cái mà chị not trên ngón cho mọi người trải lý đấy
+Đúng rồi, cho nó tới đồng hộ
+Cái này đẩy như ở đâu?
+Đang hướng ở cái chỗ là 2 bên cứ bảo nhau là đẩy trạng thái hay xa
+Nhưng đứng lúc lên hệ thống thì không có trạng thái
+Đúng, đúng
+Cái này thì bọn em có đẩy 3 bên siêu em rồi
+Nhưng mà có cái thì nó bảo thành công nhé
+Nhưng mà quan trọng là nó khoảng thời gian sau mới lên
+Còn 1 cái thì không mãi không thấy bọn em không lên
+Rồi, hôm trước em chắc chị nó có lỗi mặt gia tăng
+Em có lỗi mọi người vào 1 cái bảng rồi
+Thì bây giờ mình đã có 1 cái bảng mình theo dõi đấy
+Thì cái bản nghi nào lỗi thì sau em sẽ gửi lại
+Cho mình nhìn xem
+Nó có lỗi vì nó sẽ tiết thành retry
+Thì trong giờ mà nó retry được thì lúc sau nó sẽ lên
+Lúc đây anh tự chủ động retry đúng không?
+Đúng rồi, sẽ chủ động retry
+Nhưng mà có những bản nghi mà nó lỗi ra ta, nó không retry được
+Thì cái đấy là em sẽ show lên thành chức năng
+Sau đó mọi người sẽ vào review cái đấy lên để mọi người hiểu là lỗi ở đâu
+Thì nó có những cái...
+Thì nó chỉ chủ động ở chỗ đầu của siêu em thôi
+Đấy, thì em sẽ móc 1 cái đấy ra
+Vì cái near time cũng không near time nhé
+Đi lấy tầm 3 phút, 3 phút giảm chạm lợi
+Thì khoai nhiêu là?
+Khoai nhiêu là near time
+Vậy thì bây giờ anh cứ cho nó lên tới cổ 1 nhé
+Thì cái khúc trạng thái của khách hàng
+Bây giờ, thật ra là 3 phút là đã có trạng thái rồi
+Nhưng bây giờ anh cứ cho nó lên tới cổ 1
+Thế thì em dựa vào cái tới cổ 1 trạng thái này
+Ok chưa?
+Để em lấy ra, để em bấm
+Để em dụng API để em bấm HDDF cho khách hàng
+Thì từ cái này qua cái này, thảm chức web view rồi
+Thì làm được bình thường
+Chỉ có việc kéo rồi là xong
+Thằng Khương có sẵn cái này chứ em luôn rồi
+Em chỉ cần một cái chuồng
+Yêu giờ có tý thì là ông đẩy lên, em bắt là xong rồi
+Đúng, là đã có sẵn rồi
+Thế thì bây giờ, trong chi tiết của mỗi một cái cam này là
+Mình sẽ có tất cả liên quan đến trạng thái khách hàng
+Trạng thái vãng quay, trạng thái cục là phải là
+Thì có 1 cái bóng kéo sẵn trong này rồi
+Kinh siếp của Dũng
+Thì bây giờ nếu dù em cần là dù em không nghe máy
+Thì thì bóng view khương là kéo không nghe máy này
+Thì khách hàng được bắn của bên này là sao?
+Là coi như đơn
+Không có dữ gì cả
+Còn gì khác nữa không?
+Cái này mình đổi làm được bình thường đúng không Dũng?
+Có nghĩa là nha
+Bây giờ đổ list vào thì nó giống như cái này nãy giờ nói rồi
+Đúng không?
+Đổi chống từ mỗi một cái cam này thì ta sẽ có
+Nó giống như mùi ống khách hàng
+Rồi nghe máy hay gì cái nào đấy
+Thì từ cái trạng thái này thì bên anh sẽ lấy UCMP
+Bên anh sẽ bắn AVI vào cho phía bên tiền bán tin
+Nó dùng cái công cụ gì đấy để bắn
+Rồi nó còn một cái nữa là các bạn bên trụ bán tin
+Các bạn đang muốn có một cái báo cáo
+Cái báo cáo này là được làm automation
+Hiện tại mình chỉ đang có một cái bảng
+Và mình vào cho mình đau lúc fan sale về đúng không?
+Thì bây giờ các bạn bên tiền bán tin ấy
+Các bạn muốn có một cái báo cáo là bình thường
+Bình thường là từ ông 1 đến ông 100
+Trạng thái ông này như thế nào đã lên mũ tư vây chưa
+Thì cái này có làm một cái báo cáo trên dashboard không?
+Nó trên CM không?
+Dạ
+Em thử thử đi nha
+Sở lýt này đẩy sang là đang đẩy rồi
+CM cũng đang đẩy rồi
+Trong đẩy ở đây thì đối với anh sẽ chia vào dọa tự nhiên
+marketing 1 đúng không?
+Gọi là CAM1
+Anh sẽ đẩy vào đây là CAM1
+Em đi máy kìa
+Thì cái luật này của anh có phát định từ cái này không?
+Cái đầu lýt này em đã chia sẵn rồi
+Em có giống CMP
+Là em muốn đầu lýt em bắn thường từng CAM, từng CAM 1 sang
+Thì quay như nó chẳng khác gì thì cái trường nguồn
+Đúng không?
+Nguồn cái hàng luôn
+Đấy nó cũng tương đương như thế này
+Cái trường nguồn
+Nó không có cái hàng
+Sau đây thì ở đây của anh
+Cái này nó chia thành các trạng thái như là nghe máy
+Không nghe máy đúng không?
+Thì đây
+Thì cái này em muốn là với những trạng thái
+Thì em muốn là với những trạng thái từ không nghe máy
+Thì em muốn bắn qua ZNF
+Cho khách hàng mất
+Hoặc kênh của mình
+Hoặc là kênh nào khác
+Tức là không quá phố định là cái này
+Mình ý là em cần phải trả lại cái này về hệ thống của mình
+Thì đấy thì là từ đây bắn về đây
+Là mình sẽ mang đồ hay là thủ công hay là tự động
+Không tốt
+Hay là tự động
+Tự động anh ạ?
+Vinh Thang luôn ạ
+Thì ý em đây là khi nó đẩy vào đây
+Chỗ chị sẽ gọi
+Và chị sẽ gọi là chị áp nhất là khách hàng không nghe máy
+Và khi khách hàng không nghe máy thì nó đẩy về trên hệ thống của bên mình luôn
+Đúng rồi
+Vâng
+Vâng
+Vâng
+Vâng
+Vâng
+Vâng
+Vâng
+Vâng
+Vâng
+Vâng
+Vâng
+Vâng
+Vâng
+Vâng
+Vâng
+Vâng
+Vâng
+Vâng
+Đúng không?
+Tổng bao nhiêu nghe
+Tổng bao nhiêu không nghe
+Để em đưa ra báo cáo như thế này
+Đây là các đối tượng là bóp và chỗ này có để bóp phong trí thiết
+Đấy sau đấy thì có thể đi bóp ra hoặc là gì đấy
+Nhưng đây là dạng của báo cáo thông kê
+Cho em thêm một ý nữa
+Đấy là nó thể filter theo cái bá cốt này
+Rồi
+Đây có thể filter theo bá cốt
+Đúng rồi đây là thông kê
+Thông kê này là cho kẻ thải
+Đúng rồi
+Đúng rồi, thì là đúng idea của mình rồi đúng không?
+Đúng rồi
+Đúng rồi
+Ok thì đây là cái phần này
+Phần này thì đang có thể là hai bên khớp với nhau này
+Vì cơn phương em tâm hiệu là đang chỉ là đợi khớp thôi
+Khớp số liệu
+Còn cái đầu webbook thì bên CM cũng đã gửi cho mình rồi
+Ngoài này test thì chưa test
+Đúng rồi
+Đúng rồi, nhưng là cái phần này
+Còn cái đầu webbook này hay sao?
+Chúng nhau, mình làm chung đi
+Webbook thì chắc như thế luôn
+Còn em cũng sẽ có cái đầu webbook để vào em cầm
+Đấy, thì cầm vào vòng xét này nhất á
+Vào cái vòng bắn MS
+Hiện tại là bọn em đã có webbook cắm vào CM rồi
+CM hiện tại mình đang có rồi
+Nhưng mà nó đang trả về cho em là
+Ôi, hết tất cả này là cùng một khớp
+Và bây giờ là em muốn là nó phải tách tương ứng như thế này này
+Ví dụ như là đầu chỗ bọn em, em đang có một cái CMB
+Nó đã cắm webbook với lại CM rồi đấy
+Nhưng bây giờ nó cần phải tương ứng, nó tách tách theo từng cái bên của em
+Rồi, thế giới ra là cái từng cái bên này của mình là
+Mình nhảy muộn là kiếm
+Một cái webbook khác nhau
+Đúng rồi
+Một vẫn là một cái webbook đấy nhưng một cái webbook khác nhau đúng không?
+Đúng rồi
+Một đầu API liên quan là cái dữ liệu mà truyền ở trong API thì nó sẽ khác nhau thôi đúng không?
+Nó phải tương ứng
+Em muốn nó đeo với
+Vì bản chất là khi một phát hàng thay đổi thì cho phép tăng ký nhiều webbook vào
+Tại vì là webbook có thể là bên này cần làm gì đấy
+Đúng không? Sau đấy thì bên em cũng cần làm gì đấy
+Vì vậy nó thành ra là một thay đổi
+Một thay đổi là hai bên đều lắng nghe
+Trong lúc chờ Yến nhá, thì bây giờ chị hỏi cái này
+Còn để trạng thái phụ gọi, à, trạng thái phép hàng này là cái chị quan tâm nhất với con CR
+Thì bây giờ thì thấy rất nhiều phép hàng chị trách thủ công là vẫn đang có trạng thái lên CR mà đặt là chống
+Khi chị lọc là không có trạng thái là vẫn ra
+Và khi chị trách thủ công từ sang hệ thống với chị thì nó đã có hoàn bay thì trốn rất là dành hơn rồi
+Thì mình xem lại nếu nó bị tình trạng là trạng thái hoàn bay đúng không?
+Chạng thái hoàn bay rồi em hỏi cái gốc nhé
+Gốc đó là ví dụ bây giờ khi mà nó bắn CR thì ở cái tàu VPNX của mình
+Là đã lấy cái trạng thái là current nhất chưa?
+Có rồi
+Trước đây là chỗ hàng ấy nó chưa làm được
+Trước đây thì nó bị lỗi, còn một em bây giờ là chỗ hàng ấy đã cạn hết tầm hộp
+Ok, chứ là cái chỗ này bây giờ đã ok rồi đúng không?
+Ừ
+Ok, bây giờ là vấn đề có thể là chị lọc ở CR
+Ừ
+Theo trạng thái
+Theo trạng thái hoàn bay
+Theo bằng trưa
+Theo trạng thái hoàn bay
+Thì nó ra cái hàng đấy
+Nhưng thực tế khi mà chỉ trách trên hệ thống thì nó đã toàn bộ đã có
+Rồi, thì hồi nãy đây là dữ liệu của CR đang chưa có
+Ừ
+Đây là trên CR
+Nhưng mà thực tế thì ở trên hệ thống
+Hệ thống TNX đã bay bị tự trối hoặc lấy ngân
+Ừ, của TNX đã có
+Ừ
+Vì nó xảy ra ngay tìm uống như thế này
+Có thể thay đổi ở bấy tàn
+Nhưng mà chưa bắn được sang CR
+Đây là một lỗi tiềm đánh
+Chờ thứ 2 là có thể bắn đổi những CR xử lý có vấn đề
+Thì đấy, thì đầu tiên cái ngốc của nó là như thế
+Nó có thể xảy ra 2 nguyên, một là BLX không bắn thật
+Không bắn khi mà thay đổi nhật 2
+Khi thay đổi nhật 2
+Chờ hợp thứ 2 là có bắn
+Nhưng CR lỗi
+Lỗi có thể là do gata và do hệ thống xử lý lỗi
+Có 2 hình cây như thế này
+Với cái cây như thế này, với trường hợp như thế này
+Mình có thể trách được, ví dụ như cho số 1 số 1 hoài
+Thì lúc đấy là người ta bị cây mà mà em xử lý, mà em nhận được tí nhiệm
+Làm em lưu vết hết
+Về em đã lưu vết rồi là có nhận hay không nhận được ENX
+Về em chưa xử lý thì em đã lưu vết rồi
+Thì lúc đấy là chị gửi em đi sang em trả lời là
+Có nhận hay không nhận được cái bản tin đấy
+Nếu mà em trả lời rằng là bọn em không nhận được cái trạng thái của cái hàng đấy
+Trên MCM như là cái đầu nguồn ENX là không bắn
+Có thay đổi nhưng không bắn
+Chị gửi mình gửi comment cái số đi đó
+Chị gửi nhanh đều là cũng có
+Thì em sẽ trả lời cho chị
+Thì sẽ là tìm ra được mấy nhân nằm ở đây hay mấy nhân nằm ở đây
+Thứ 2 nếu mà có bắn sang có lấp nhưng mà lại xử lý
+MCM xử lý đôi thì em sẽ kiểm tra nếu một đôi ra tay em đã lưu
+Trong cái bảng ra tay rồi thì em cũng có thể lưu vết được
+Lỗi do hệ thống MCM thì nó retry nó sẽ thành công
+Mà trang hợp với lỗi rất là thật thì nó không thể retry được
+Cái này 2 năm kia vẫn chưa xử lý cho chị
+Hôm nay chị cũng kêu là cả suốt ngày thì mới cả 2 bên làm lý lắm
+Thì cái này em sẽ trách nha
+Đầu mối là cho cái số em đúng không?
+Thì sẽ xử lý thế này
+Chú chị cũng bảo vệ khi vào là không quên được
+Cái này chỉ có...
+Cái chỗ vết cặn này thì đúng là khi mình gửi là mình sẽ vết cặn
+Nhưng mà anh đang lo rằng khi trên hệ thống của mình có thì nó không nhiều được thôi
+1,2,3,4...
+Em lấy ở cái gốc môn á
+Thì em không quan tâm với các team khác người sử dụng như thế nào á
+Em cứ 3 phút một lần em vết cặn hết, em để lại lên
+Với cái Time Mart của anh á
+Nếu có thì nó không có gì này đây, phải không?
+Tức là trong hệ thống của mình có khoảng 5 triệu hạ
+Thì cứ 3 phút một lần là mình lấy như thế nào?
+Em lấy trong khoảng thời gian thôi
+Khoảng thời gian mà từ em đánh dấu lần trước thì em phét đến cái record số bao nhiêu
+Và sau đó phét từ góc tiếp theo về đấy
+Em có bạn lưu lốc đấy, tạm bộ đấy
+Rồi thì mình cứ lấy vết cặn theo kiểu rowing
+Quay vòng đúng không?
+Nếu em lưu mời giao sẵn giao
+Thì bây giờ thì có, chị là chỉ có gửi cái đánh xách số điện thoại đấy
+Thì anh thì có, anh thích đánh xách đúng không?
+Cho nhỏ ẩn tĩ là bên mình có mấy hệ thống này
+Có mấy hệ thống mà có khả năng thay đổi trường thái
+Thì em cũng có đâu, nhưng mà em lấy bản sử dụng nguồn
+Nguồn là tất cả đều đổi trường thái về đấy
+Và khi mà thay đổi trường thái đấy thì nó sẽ thay đổi thời gian tương ứng
+Và em sẽ lọc là thời gian tương ứng đấy đẹp hơn, bắt sang bên này
+Thì là nó sẽ theo cái thời gian
+Và mỗi lần em lấy em phét ra bao nhiêu cái gì?
+Em phét hết rồi em bắt theo về
+Bắt hết đây
+Nhiều không? Nhiều 3 phút thì nó không hiểu
+3 phút bắn một lần
+3 phút thì nó bắn vô
+Bắn bao nhiêu cái đường rồi thay đổi trường thái đâu anh?
+Thế để tiên anh chắc chắn chữ tiết thì bắn đi vô chủ truyền văn
+Chắc chắn là bắn miệng lòng anh
+Chắc tiên tiên có giò lông đi
+Bắn mù hụp còn chắc là bắn lại thôi đúng không?
+Bắn mù hụp
+Thế cái phần bạn là update data và pha Excel lên CRM
+Nó có map được cái trạng thái của bạn không?
+Theo như hồi đầu thì nhận thức tiết về bạn là không map được
+Tiết trạng thái
+Trạng thái khoản phai hả?
+Chị dùng chức năng hay dùng pha Excel?
+Pha Excel
+Pha Excel là dùng chức năng app bloat khách hàng
+Chị app bao giờ chứ?
+Chị chưa
+Vậy là toàn một đồng lối API mà
+Vậy là chị chưa app lắm
+Nhưng mà chị vẫn có những cái dữ liệu liệu bên ngoài
+À thế thì chị thử để chị bỏ người ta gửi đây cho khúc
+Thử đoạn, thử ngắm
+Từ mỗi 2 bản nghi em chị tẹt rồi
+Chẳng ok thì em thẳng định
+Em có hỏi bên team rồi thì các bạn cũng chắc bạn em đã không có ở đây
+Thì anh xem giúp em
+Anh nốt cho em cái câu hỏi
+Như thế nào nếu mà có hút thì em sẽ gửi lại để các bạn trả lời
+Nhưng theo em nghĩ thì nếu mà mở thêm mất hút
+Thì khả năng chắc cũng ok thôi
+Nhưng mà
+Tất cả
+Tất cả
+Tất cả ý là phải mở mất hút khác nhỏ
+Không, không, vì là bây giờ đang nhận được đầu kỹ thuật này
+Đang yêu cầu có một cái hút đẩy về
+Và bây giờ bên số các em có yêu cầu đầu cái hút nữa
+Nó sẽ có 2 đầu cái hút
+2 đầu cái hút đều lắng nghe một sự thay đổi từ bên cái bản nghi customer
+Và bây giờ đang đăng ký 2 đầu cái hút thì có sao nhỉ
+Tại vì anh chưa chắc là nó vô sợ 2 hay vô sợ 1
+Cho dọc mà vô sợ 2 thì em phải mở thêm cái chinh tạng này ra
+Thế thôi
+Về bản lít tuyết thì một sự thay đổi có thể là bắn
+Nhiều bao nhiêu cái hút cũng đều được
+Nhưng mà nó sẽ làm tăng tải cho cái việc
+Nếu mà đây việc thì bắn nhanh tục
+Nếu mà bắn lít thì không sao
+Nếu mà bắn nhiều thì không sao
+Em nghĩ có thể hệ thống này nó sinh ra thì nó sẽ phải nhận được cái dữ liệu như thế
+Đúng rồi
+Em nghĩ là như thế
+Thế thì anh cho em gọi cái phần webhook đi
+Còn cái phần này thì là
+Tức là mình là 2 team hay nhau
+2 team hay nhau
+Bọn em ở đầu này
+Bọn em đang ở đầu này
+Vấn đề của em là đang nằm ở chỗ này đến đây
+Còn chỗ này thì em nghĩ là chắc là cũng rêu rồi đúng không
+Là bắn từ đây thì có 1 cái webhook ra đúng không
+Còn cái này là đầu vào của em này
+Em sẽ có cái đầu vào ở đây này
+Em sẽ đẩy
+Bây giờ hiện tại nó đang có tôi là đẩy cái webhook của CM
+Mình đang có ở đây
+Nhưng mà nó đang là cận cùng cùng như thế này
+Và bây giờ nhiệm vụ là cách
+Bây giờ thì đầu clip này mình chỉ cần là có thêm cái trường để nó phát hiện thôi
+Mình đã có thêm 1 cái trường nữa chưa
+Có
+Bọn em sẽ có dọn theo kèm bên ID hoặc là kèm bên nêm
+Điều được nha
+Thôi cứ cho là kèm bên nêm đi
+Đấy
+Thì tương ứng của nó thì nó sẽ chạy xuống đây
+Thì như thế này
+Rồi thì mình làm giống như trường nguồn ấy
+Làm yên thì trường nguồn
+Nhưng mà em đang không biết rồi
+Bây giờ ai sẽ là người chỉ làm
+Ví dụ như bên em
+Trường nguồn thì chỉ là ai là người quản trị cái hệ thống này bên đầu tiên ấy
+Quản trị hợp
+Đó
+Thì là vui đấy là mình bên tiên tệ truyền giao
+Mình chỉ cần phổ sung thêm 1 trường nữa ở đây
+Còn nếu không thì đều cho...
+Cho anh trên trường anh tặng hộ
+Khai ngoài
+Tên trường thì giờ em chưa hiểu
+Tên trường
+Tên các tổ cao của em ấy
+Tên tụ tĩnh của cái trường đấy của em ấy
+Ví dụ như cái bên nêm
+Em gọi là đây em muốn phổ sung thêm 1 trường nữa
+Là cái bên nêm
+Sau đấy thì là...
+Sau đây anh bắt cái bên nêm đúng không?
+Đúng rồi
+Cái bên nêm ở đây thì em có rồi nè
+Tụ tĩnh này có rồi
+Chimium đã có rồi
+Nhưng vấn đề là bây giờ CM có bắt được cái đấy của anh không?
+CM cần khai báo cái trường này này
+Cái bên nêm tướng là được
+Đúng rồi
+Trên CM lên
+Người dùng lên CM khai báo cái trường này nha
+Thật ra em hiểu là nó giống như là trường tên và trường số liên thoại
+Bây giờ nó bắt được rồi
+Bắt được rồi thì bên này khai báo để bắt thêm được cái trường CM này của em rồi đúng không?
+Nó là trường đậm
+Chưa phải thả thêm nhiều cái hút đâu đúng không anh?
+Không
+Đấy đây là trường tin
+Sau đấy thì làm thêm 1 cái bộ lọc nữa để cho mình lọc theo cái trường này
+Thì nó sẽ là cái phần khách hàng sẽ...
+Vậy thì bây giờ em sẽ từng cho anh các attribute tương ứng
+Các attribute mấy cái
+Thật ra cái kem hột, cái kem này nó là value của cái attribute thôi
+Đúng rồi
+Nên là không có quan trọng
+Sau này không có trong cái thì nó cũng sẽ là tương ứng thôi đúng không ạ?
+Đúng rồi
+Nó tự bắt trong cái bên name, y hề trong bên này
+Attribute name, chứ không phải attribute value
+À attribute name, còn value thì không cần quan tâm
+100 cái cũng được
+Đúng rồi
+Rồi, em hiểu rồi
+Clear chứ
+Em clear rồi
+Thế bây giờ em gửi cho anh là xong đúng không?
+Rồi, thêm 1 trường nữa
+Thêm 1 trường nữa và thêm 1 bộ lọc nữa
+Thêm 1 trường, thêm 1 bộ lọc
+Và kiểm trao thì lặng ngay dưới này
+Rồi lặng, vài ít đây 1, 2, 3
+Và gửi lại cho em cái thông kê này
+Để xem là bố nghĩ là xem là cái phần báo cáo mình muốn báo cáo cái gì
+Muốn view lên cái gì cho team marketing thì gửi thêm
+Cái này marketing nó...
+Đúng không?
+Vâng, chị lấy marketing thì em hỏi được
+Cái phần, cái phần của chị lúc nãy chị có báo là cái phần app file
+Cái file lên thì chị cần 1 cái tên nguồn
+Đúng rồi
+Đúng không? Bởi vì mỗi 1 cái data của tèm
+Đúng rồi
+Chị mà mình lọc thì mình sẽ lọc theo phần
+Hôm nay cái app cái tèm này tên như này
+Cái đấy, cái đấy có rồi đấy
+Nhìn nó phải bắt bình nhận vào trạng thái của con ấy
+Trạng thái của bay
+Cái đấy thì chị gần gửi 1 cái phen mẫu cho chung đi
+Để chung cứ nhận nha
+Cái nữa là cái phần shirt dữ liệu của bên em ấy
+Hiện tại bây giờ cái shirt file là nó chỉ có được trường thông tin là tên, mối lệnh số điện thoại
+Hôm nay là các cái mỗi lộng lộng ra là cái phần mềnh cân
+Chỉ tròn trường người app cũng chưa đâu
+Không, đang lọc bình thường để shirt file thôi mà
+Lọc để shirt file à?
+Chứ không phải là cái trường apput của dữ liệu ra
+Apput đấy là phòng đảnh data vào và bệ ảnh là shirt data ra
+Shirt file
+Chị trao đối với chung đi
+Shirt file nó cũng chọn là chỉ shirt file bao nhiêu trường
+Nó chỉ đề phong là cái trường bắt buộc thì nó sẽ là
+Chị không chọn nó cũng khó
+Thế còn có những trường lưng cao thì chị chọn trước rồi chị ăn shirt file thì không có lời
+Thế còn 1 cái mục nữa đấy là thay đổi cho chị cách nhìn nhận
+Bây giờ sẽ là nhìn nhận
+Trước là mình đang để là 1 số điện thoại được nhìn nhận 1
+Thì vào nguồn để thay đổi trên cái nguồn cuối cùng
+Bây giờ muốn nhìn nhận là theo tất cả các cái nguồn
+Nhưng mà nhìn nhận cái gì?
+Nguồn số điện thoại có thể được hiển thị nhiều nguồn ở trước CIF
+Biết là nó chưa đăng ký quản vai thì nó có thể chia data để cho các bạn lấy côn
+Còn như bây giờ nó đang là nguồn A
+Có nguồn B thì vào cái nó mất đi nguồn A luôn
+Rồi em lấy cái nguồn B
+Đổi cách nhìn nhận thôi
+Cách nhìn nhận
+Vì hiện tại bây giờ cái nguồn đẩy lên thường sẽ bị thiếu
+Bởi vì là nó lại vào cái nguồn khác
+Thành ra cái nguồn data mình tìm kiếm nó không đủ
+Và bây giờ chỉ có miễn ra khách hàng đấy chưa đăng ký quản vai là chỉ có thể chia cho bạn A, B, C, bạn Lico
+Và không lâu là bạn nào không kiểm trọng thì là ok
+Tức là phách hàng thì số điện thoại nó ươi nhất là nhiều đúng không?
+Nhưng mà bây giờ bây giờ hôm nay nó đăng ký là
+Nguồn A
+Nguồn A
+Và nó trên kênh mobile là đăng ký
+Rồi mình ghi nhận nó là nguồn A
+Mai nó lên là web
+Rồi nó đăng ký
+Và mình ghi nhận đấy là vẫn ông dũng đấy
+Nhưng đấy là nguồn B
+Thì một khách hàng có hai nguồn
+Sau đấy thì chị đã sẽ làm gì tiếp theo
+Sau đấy thì chị sẽ lọc thường là chị sẽ chia nguồn A
+Sau đấy là chị sẽ lọc theo nguồn A rồi
+Nguồn data thì chị sẽ chia
+Cái chuộc nó là nguồn A
+Nó là một đợi đấy
+Chị đã làm như vậy
+Vậy chị có chịu phim tơ thế nào
+Đúng rồi
+Bởi vì bây giờ mình đang hạn chế là
+Nó sẽ được ghi nhận là nguồn cuối cùng thôi
+Vậy bây giờ em đổi lại cách nhận đi
+Để chị có thể lọc theo từ nguồn
+Vậy thì bắn dữ liệu sang
+Bắn dữ liệu sang mà cư chế mật
+Bởi vì bàn chân là nó hai lần xứng ít của một ốc
+Mà nó lại đang cư chế là mật
+Mật là nó phải nhận hai cái nguồn và phương số điện thoại
+Nhưng mà lại
+Khác nguồn
+Khác nguồn
+Thì nếu cư chế mật của mình là
+Chọn như thế nào nhỉ
+Chứ cư chế mật của mình là có hay là mật làm giàu nhỉ
+Mật của mình thì là chưa có
+Thì ghi nhận
+Có rồi
+Bản chất là mới nhất đúng không
+Mật nghĩa là
+Nếu mà không có thì sao
+Còn nếu mà nó có rồi thì ta ghi đẻ lại tự dụng mới nhất thôi
+Rồi tức là hai thằng đều có thì nó sẽ ghi đẻ với cũ
+Thế là thay ra nó không ghi nhận hai nguồn mà chỉ ghi nhận một nguồn
+Vậy bây giờ bảo là ghi nhận hai nguồn phải không
+Vậy phải có một cư chế
+Nhưng mà lúc đấy nó lại cứ như này
+Cứ nó mật nâng cao nhưng mà lúc đấy nó mà dì phai
+Là những cái trường nào là trường nguồn là cộng gộm
+Thì những cái trường khác nó cứ đầy hoạt động như cư chế
+Mật ớt van
+Sau đây là ớt van
+Mệt nhé
+Sau đây mình chỉ chọn là trường suộng
+Và tôi là aggregate
+Tức là theo ứng tăng dẫn
+Đừng xóa cứ tôi đi và upend thêm cái mơ
+Thì nó sẽ hoạt động như thế
+Thế bây giờ anh cũng thử lô dịch xem là nó hợp lý như thế nào
+Tức là mình định nghĩa luật thôi
+Còn nếu em hình dung ra được cư chế u động thì em sẽ sửa được
+Vì theo hiểu như thế rồi mình phải customize
+Mình chọn đến nó có một cái chỗ để cho chị bạn
+Chỉ định nghĩa là cả trường nào sẽ là aggregate
+Thế là theo kiểu tăng dẫn
+Chưa có dư liệu thì đầu tiên nó sẽ nhận đây là nguồn đầu tiên
+Cái thứ hai là tiếp theo đẩy vào nguồn cũ
+Và cư chế là mật nâng cao
+Mật nhưng mật nâng cao và nó sẽ chắc chắn những trường nào sẽ giữ lặng
+Khi mà trùng nhau nó giữ lặng
+Thì nó sẽ cộng thêm nhưng không ghi đè như cũ nữa
+Thì đấy nó chỉ một công ty làm đấy
+Các thông tin thì nó không tác đổi để đổi cái nguồn như thế thôi
+Rồi đấy là phải phát triển thêm mật nâng cao nữa
+Nâng cao vào filter đa nguồn
+Như vậy thì mình sẽ tận dụng được tất cả các nguồn nga nga trên đó
+Cái mặt đấy để gửi lại
+Rồi thế thì bây giờ bên đầu bên chị sẽ gửi lại cho bên em những thông tin nào
+Cái chỗ ố ố đấy là của marketing
+Chị sẽ gửi lại cho em
+Cái này để em gửi lại cho bạn
+Cái này để em gửi lại cho bạn
+Và tiếp lại chỗ này
+Rồi chạy kết nha
+Hết chưa?
+Còn mong muốn nữa
+Vậy cứ xử lý được cái phần chặn vào quản vai
+Cái này là một trong cái khó này
+Cái này thì cái nhận hiệu dòi thì em sẽ chạy
+Chắc em người ta nghi nó rơi vào cái kế này
+Hiện tại trên hệ thống rất nhiều cái hạng bị cái tình dạng là lên đó bị chống quản vai
+Còn lần thực tế thì đã có rồi
+Bên đầu bên chị có một cái chỗ nào đấy mà em có thể chạy được không?
+Ví dụ như là chia ra cái gì đấy
+Ví dụ nhé
+Ví dụ chị làm, cơ lên
+Cái hàng ngày tôi thấy là nó bị lạnh chạy thái như thế này
+Thì là lúc đấy là anh sẽ chủ đồng anh vào chạy
+Chạy thái thực sự nó đang ở trên TNX
+Cảm bệnh anh phải chạy tiếp ở bên đầu của CN
+Thì tự anh đi tìm biết
+Anh điều tra được không cần quá
+Ví dụ chị gửi một ABA ra thúc được
+Để anh tắt nhanh
+Một ABA đi
+Ví dụ chị làm claim, phát chỉ cần claim đúng đầu
+Đầu này thôi
+Nếu không bây giờ nó phải tành ra hai đầu thì chị phải gửi
+Vào đây ông Dũng thì bảo là ông kia chứa chết như tôi
+Đúng không?
+Chứa chết quá thì chị có đôi chứ
+Tại vì cứ order thêm, tìm đấy nếu mà có thì gửi lại
+Các đích là một cái y
+Vào đây là đi tìm để có...
+Nó có cái y bằng hàng ở chỗ đấy
+Cứ gửi thêm
+Cứ gửi thêm
+Nếu mà để nhanh thì trước mắt thì có thể bọn em
+Chị Lan chị gửi thì bọn em để chạy trước
+Chạy trước thì bảo xem là bọn em để qua bên đây
+Thế thì chị Lan chị gửi ra xanh đấy
+Chị lỗi thì chị gửi qua
+Bạn đã xếp xong đấy, bạn đã xếp xong đấy
+Khách hàng này chẳng thái mỗi chị gửi
+Cứ đẩy, có cái nhóm mà chị gửi cái nhóm đấy
+Thì bọn em chứ bằng xanh đấy
+Bọn em sẽ lấy cái trả bản để nhận đấy
+Bọn em sẽ xó xanh vào bên trong xe
+Xem ra tìm ra mấy cái gốc
+Mùa vui xinh như thế
+Một, hai
+Rồi, cho tìm nhé
+Ngày nay thì tìm này là phải
+Bọn em, anh tìm chưa có gì phải trẩn rô đúng không?
+Cả marketing hay gì cũng xinh đau lắm bây giờ bọn em đâu
+Má tỉnh chờ
+Cả marketing thì bọn em đều tìm ra
+Cả marketing thì bọn em đều tìm ra
+Cả marketing thì bọn em đều tìm ra
+Bọn em đều tìm ra
+Xong rồi về mình nốt cái mail không ạ?
+Các thằng nào mình sẽ trải ra đẹp đuông?
+Thứ nào mình sẽ trải ra đẹp đuông?
+Thứ nào mình sẽ trải ra đẹp đuông?
+Rồi ok, thì sẽ lên với cái phương án tham life, giống như lần trước
+Rồi, tạm kiều anh nha
+
+============================================================
+PART 2 — Vincom Center 9.m4a  (6m11s, 158 segments)
+============================================================
+
+Mình vẫn không bạn thôi nhưng mà nhiều khi mình dư có 2-3 bạn thì chị chia 2-3 bạn từ 1-2 người bạn kia không có
+Tại sao bạn kia được em cũng được
+Nó nói là như thế
+Chị bảo nếu không được thì cho chị hết lên trên đấy
+Chị đặt tên hôm nay
+Chị đặt, hiện tại chị đang cộng băng của 1 là review, 2 là final, 3 là cái tần trào ký
+Điều thế chị đặt lên
+Nó là chị cứ lập review của 100 ông kia, 100 ông kia
+Hằng ngày chị đặt, đẩy ra tha lên, chị đúng khích buồn ra tha đấy thôi
+Hoặc không thì em có một cái gì đấy nó có thể đựng được
+Khi đẩy lên nó sẽ có cho, cho, cho, cho, cho
+Nó có, nó có là cái đợt upload, nó có idea của đợt upload
+Cho phép chị đặt tên của cái đợt upload
+Chị cứ lập, cứ lập đến đây, chị muốn là review là bởi vì tháng 4 này được bao nhiêu tài cấp review
+Chị chỉ lập từ ngày 1, ngày 34
+Nó ra nhiều đồ, ra 5, 7, 9 nghìn
+Còn những cái bây giờ chị vẫn vãng, phai xe, chị lại lập theo ngày nữa thế
+Bởi vì bọn chị có một cái cộn là ngày chia
+Chị cứ lập, ngày chia ra tha, cô chị báo cáo, lăn ra tha
+Thế rồi chị còn lý mức lại trên phai xe
+Ý số 3 để em xử luyện, 3 là mật lần cao
+Trái thứ 3 này là đường này, thì là ngon nhất
+Em hiểu trái thái rồi
+Trái thái thì đương nhiên là phải có
+Nó là cái đồ nối ABA ngay bên
+Còn lại là cái áp lực cái trái thứ 3 là cái nguồn data
+Lý do thì sao, khắp bên đấy cứ bảo trình là
+Hôm nay em phải cho chị nguồn data nha
+Với khi chị chất vào nguồn đấy thì chị ra là 700
+Với bao nhiêu sử dụng thì nguồn khác rồi
+À, thì đúng rồi, thì nó phải ghi nhận tất cả các nguồn của cái đấy
+Để khớt ra đúng không?
+Chị không quan tâm đến ông đấy là nguồn nào
+Biện là ông chưa đăng ký, chị cho em gai tác
+Em không gai tác được, chị cho bạn kia
+Một khách hàng có thể ai bao ông gai tác một lúc cũng được
+Bởi vì bên chị đang đến cái trị độ mở
+Tên lưu siêu gai tác, marketing gai tác, outsource gai tác
+Chị nghĩ đến thằng nào bạn, thằng nào để lại
+Để anh biết là bộ trưởng khách hàng đăng ký thật tốt
+Nên lần trước đây chị sợ là
+Còn ông thì nhiều người gọi
+Nhưng thật ra bây giờ là bị gọi tù lum rồi
+Nên là em để cái trị độ mở
+Ghi nhận lát tít thôi
+Có thể là ông đến trước gì không
+Có thể chị chặn lại con vật được
+Trước đây chị để cái trị độ là
+Sau 30 ngày
+Sao 60 ngày thì bị thu hồi data
+Nhưng bây giờ 30 ngày không gọi là chị đã có thể truyền cho bạn khác rồi
+Vậy bây giờ em dạy cái data đến 30 ngày cũng không cố trợ được
+3 ngày 31 chị truyền cho bạn khác
+Một ông đấy em đang buồn A
+Em không cố trợ được
+Buồn B gọi cái nhà để nghe máy
+Một tuần sau chị đảo rồi
+Cái tâm lý của người đi quay thì quay nhanh nhất có thể
+Ý của chị là ngày xưa chị văn niệm là
+Mỗi khách hàng bây giờ chị để nhiều quần
+Chị lọc ra thì có thể là 3 đứa cùng côn một lúc
+Nhưng bây giờ thay đổi cái suy nghĩ đấy
+Là 3 đứa cùng côn những cái đứa nào tạo được lát tít
+Với cùng cho khách hàng
+Bởi vì có những đứa này gọi xong
+Nó không hỗ trợ cho khách hàng đúng gầm vào đấy
+Đối với thì có data phát đồng hút
+Đồng lượng khách hàng đồng ký thế là xong
+Đấy là lý do là mọi người đồng côn quần
+Chị có tiêu di theo tương ứng là
+Chia theo năng lực của sales
+Cái số lượng, cái số
+Chia theo năng lực của sales thằng nào
+Mà sales tốt tỷ lệ, chuyển đổi cao
+Chị chia nhiều hơn số
+Thì là sao hệ thống đó sẽ ghi nhấy được?
+Bởi vì em biết là
+Chia này nó cũng vô mồm buồn
+Chị không thể nào lòng theo số điện thoại
+Chị phải lòng thông buồn
+Lòng thông buồn thì lúc nguyên là chị bị mất một lượng rất là lớn
+Tại xưa là Corolla A10 người ta tạo ra rất thất lợi
+Nhưng mà chị cũng ý kiến với em là tại sao
+Chia em số lượng ít
+Bởi vì nó đẩy ra những nguồn khác rồi được làm được đâu
+Nhưng mình làm sao mà lòng ôm được được cô được
+Và bên chị thì chỉ có ấn định một vàng nguồn được cô
+Có thể một ông đến
+Tự nhau một cái nhau
+Hôm nay em sẵn biết
+Nguồn Datanet mà em sẵn biết
+Nguồn Dagobot mà em sẵn biết nguồn Mobi
+Thế bây giờ chị chỉ cần biết
+Em thôi em nguồn nào không quan trọng
+Có ba đứa chăm sóc em ba nguồn khác nhau
+Đúng rồi, mấy hai đứa chị trả lời được cái ống nguồn
+Chị bỏ tử với chị một nghìn, chị lọc trên trống
+Còn con 500
+Thiếu mất 500 thôi
+Chứ ngày con sao
+Làm nguồn không ra
+Vì chị Datanet
+Vì dễ dàng
+Em đang ở nguồn này
+Chị đang follow em
+Em lên nguồn khác, chị mất follow này
+Nguồn khác thì không follow đúng không
+Thế là hơi ký
+Vì bây giờ chị cũng giác định
+Nếu mà hai bên làm được với nhau
+Là sử dụng tiếp
+Vì thứ nhất là công ty công nghệ
+Thì tế gì cũng phải là công nghệ
+Chứ giờ còn thủ công
+Nó quay lại thời thì đồ đồng rồi đã
+Đúng rồi, đúng rồi
+Tên như thế này em sẽ lấy tập dụng
+Lấy xong qua
+Đạo bằng 6 thì chị phải
+Xìm xin hướng nhân sách cho
+Năm trước giao rồi
+Xìm ướp đôi lên sách thì được
+Ướp đôi nên không buồn, dạy ngon ngay
+Không buồn sách
+Liên quan đến cái hét cao đúng không ạ
+Hét cao dạ
+Đúng rồi, đầu nâng cấp
+Nâng cấp những lần này chị phải xin theo kiểu
+Dạng ấy ạ
+Ví dụ như
+Lần này thì xin theo kiểu hoạt sinh
+Thì đấy em cứ cho đổi cho 1 nhóm để cho quyền
+Follow tiếp
+Còn lại cái vần nhân sách thì chị ăn
+Hét cao thôi
+Vì cái phần chi phí hoạt sinh
+Nó không nằm trong cái kế hoạch phương
+Mỗi lần nào cũng hoạt sinh
+Còn lại cái phần hét cao
+Đây là chỗ quyền là chỗ
+Quyền 3 tình hả?
+Quyền là B.O
+Quyền là B.M.O
+Quyền là B.M.O
+Quyền là B.M.O
+Bộ phận hỗ trợ có tác khoảng 3
+Tiếp tách nhé
+Đúng đấy
+Tiếp tách nhé
+Tiếp tách nhé
+Tiếp tách nhé
+Tiếp tách nhé
+Tiếp tách nhé
+Tiếp tách nhé
+Tạm biệt
+Tạm biệt
+Ông về bóp băng xong rồi em sẽ gửi lại
+Trong tin nha
