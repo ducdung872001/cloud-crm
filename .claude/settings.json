@@ -95,7 +95,11 @@
       "Bash(taskkill /F /IM node.exe /T)",
       "Bash(curl -s http://localhost:4000/crm/ -o /dev/null -w \"Dev server: HTTP %{http_code}\\\\n\")",
       "Bash(node tests/test-url-routing-with-auth.mjs)",
-      "PowerShell(Get-Process node -ErrorAction SilentlyContinue | Where-Object { $_.StartTime -gt \\(Get-Date\\).AddMinutes\\(-15\\) } | Stop-Process -Force; \"dev server stopped\")"
+      "PowerShell(Get-Process node -ErrorAction SilentlyContinue | Where-Object { $_.StartTime -gt \\(Get-Date\\).AddMinutes\\(-15\\) } | Stop-Process -Force; \"dev server stopped\")",
+      "Bash(git rm *)",
+      "Bash(rm -f tests/screenshots/routing-auth-*.png tests/screenshots/url-routing-*.png)",
+      "Bash(rm -f tests/reports/url-routing-*.json)",
+      "Bash(grep -rn \"\\\\\\\\./inventory/\\\\|\\\\\\\\./sales/\\\\|sales/resolved\" docs/05-backend-tasks/)"
     ],
     "additionalDirectories": [
       "\\tmp",

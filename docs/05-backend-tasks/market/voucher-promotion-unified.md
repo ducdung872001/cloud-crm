@@ -1,6 +1,6 @@
 # BACKEND TASK — Voucher + Promotion: Design flaw tracking (làm chung 1 lần)
 
-> ✅ **[PARTIAL RESOLVED 2026-04-15]** — `cloud-sales-master` phần đã **FIXED + verified**: `POST /sales/invoice/create` nhận `couponCode` + `promotionId`, ghi `voucher_usage` / `promotion_usage`, auto increment `usedCount` sau sale. Verified bằng `test-e2e-voucher-flow.mjs` 20/20 PASS + `test-e2e-promotion-flow.mjs` 26/26 PASS. Xem [sales/resolved/invoice-create-voucher-promotion-fields.md](../sales/resolved/invoice-create-voucher-promotion-fields.md).
+> ✅ **[PARTIAL RESOLVED 2026-04-15]** — `cloud-sales-master` phần đã **FIXED + verified** trên nhánh `reborn-retail`: `POST /sales/invoice/create` nhận `couponCode` + `promotionId`, ghi `voucher_usage` / `promotion_usage`, auto increment `usedCount` sau sale. Verified bằng `test-e2e-voucher-flow.mjs` 20/20 PASS + `test-e2e-promotion-flow.mjs` 26/26 PASS (doc resolved đã archive về branch retail; xem git history nếu cần tra).
 >
 > Phần còn lại của design (reverse flow khi cancel, reports endpoints, audit log, budget, alerting) thuộc `cloud-market-master` — chưa verify đầy đủ, giữ ở đây làm tài liệu reference.
 

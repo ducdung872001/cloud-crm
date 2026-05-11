@@ -36,12 +36,12 @@ POST https://biz.reborn.vn/inventory/warehouse/create
 | `/customer/…` | [customer/](./customer/) | Customer entity CRUD, lifecycle, telesale assignment, segment/source/relationship | **Legacy prefix `/adminapi/customer/*`** cũng thuộc domain này |
 | `/finance/…` | [finance/](./finance/) | Hồ sơ tài chính chi tiết của KH | **⚠️ CHỈ dùng riêng domain banking** — không áp dụng retail/spa/tech |
 | `/integration/…` | [integration/](./integration/) | Tích hợp bên thứ 3 (Viettel sInvoice, Zalo, Facebook, shipping partners, …) | |
-| `/inventory/…` | [inventory/](./inventory/) | Kho, sản phẩm, biến thể, đơn vị, nhập/xuất, stock ledger | |
+| `/inventory/…` | `inventory/` (chưa có task) | Kho, sản phẩm, biến thể, đơn vị, nhập/xuất, stock ledger | |
 | `/logistics/…` | [logistics/](./logistics/) | Vận chuyển, shipping order, shipping fee config | |
 | `/market/…` | [market/](./market/) | Voucher, promotion (CTKM), campaign, marketing automation, Zalo marketing | |
 | `/notification/…` | [notification/](./notification/) | Push, email, SMS, Zalo ZNS | |
 | `/operation/…` | [operation/](./operation/) | Vận hành TNPM | **⚠️ CHỈ dành cho nhánh reborn-tnpm** — không áp dụng các ngành khác |
-| `/sales/…` | [sales/](./sales/) | Invoice (IV1/IV2/IV11), shift, cart, đơn hàng, dashboard sale, báo cáo POS | |
+| `/sales/…` | `sales/` (chưa có task) | Invoice (IV1/IV2/IV11), shift, cart, đơn hàng, dashboard sale, báo cáo POS | |
 
 ### Phân biệt dễ nhầm
 
@@ -59,63 +59,35 @@ POST https://biz.reborn.vn/inventory/warehouse/create
 
 ---
 
-## 📋 Task đang mở (cập nhật khi có task mới)
-
-### [sales/](./sales/) — `cloud-sales-master`
-
-_Không còn task mở. Xem [sales/resolved/](./sales/resolved/) cho 3 task đã fix (verified 2026-04-15)._
-
-### [inventory/](./inventory/) — `cloud-inventory-master`
-
-| File | Severity | Tóm tắt |
-|------|----------|---------|
-| [stock-product-list-NA.md](./inventory/stock-product-list-NA.md) | 🔴 HIGH | `/inventoryBalance/stockProduct/list` trả `"N/A"` cho `productName`, `batchNo`, `expiryDate` |
-| [import-invoice-error-response.md](./inventory/import-invoice-error-response.md) | 🟡 MEDIUM | Error response của `/invoice/import/update` mơ hồ + stock ledger không tạo khi approve |
-| [warehouse-create-api.md](./inventory/warehouse-create-api.md) | 🟡 MEDIUM | Các bug nhỏ Playwright (warehouse create, unit_type, barcode) |
-| [warehouse-list-code-missing.md](./inventory/warehouse-list-code-missing.md) | 🔴 CRITICAL | `GET /warehouse/list` không trả field `code` dù create đã lưu |
-| [product-delete-safety.md](./inventory/product-delete-safety.md) | 🟡 MEDIUM | Validate safe-delete cho product khi có transaction |
-| [unit-delete-safety.md](./inventory/unit-delete-safety.md) | 🟡 MEDIUM | Validate safe-delete cho unit khi đang được tham chiếu |
+## 📋 Task đang mở — dự án Loyalty
 
 ### [market/](./market/) — `cloud-market-master`
 
 | File | Severity | Tóm tắt |
 |------|----------|---------|
-| [voucher-promotion-unified.md](./market/voucher-promotion-unified.md) | 🔴 CRITICAL | **Unified design** cho voucher + promotion: schema `*_usage`, reverse flow, reports, audit log, budget enforcement, alerting |
+| [loyalty-supermarket.md](./market/loyalty-supermarket.md) | 🟠 HIGH | Mở rộng loyalty cho chuỗi siêu thị (2 brand, 300+ store, 3M KH) |
+| [loyalty-gamification.md](./market/loyalty-gamification.md) | 🟡 MEDIUM | Quest/achievement system |
+| [loyalty-referral.md](./market/loyalty-referral.md) | 🟡 MEDIUM | Referral chain bonus |
+| [loyalty-rfm-analytics.md](./market/loyalty-rfm-analytics.md) | 🟠 HIGH | RFM segmentation backend |
+| [voucher-promotion-unified.md](./market/voucher-promotion-unified.md) | 🔴 CRITICAL | Unified voucher + promotion schema, reverse flow, reports |
 
-### Các microservice chưa có task
+### [customer/](./customer/) — `cloud-customer-master`
 
-- [billing/](./billing/) — chưa có task
-- [care/](./care/) — chưa có task
-- [contract/](./contract/) — chưa có task
-- [finance/](./finance/) — chưa có task (chỉ banking dùng)
-- [integration/](./integration/) — chưa có task
-- [logistics/](./logistics/) — chưa có task
-- [notification/](./notification/) — chưa có task
-- [operation/](./operation/) — chưa có task (chỉ reborn-tnpm dùng)
+| File | Severity | Tóm tắt |
+|------|----------|---------|
+| [customer-change-log.md](./customer/customer-change-log.md) | 🟡 MEDIUM | Audit log cho thay đổi customer profile |
 
----
+### [care/](./care/) — `cloud-care-master`
 
-## 🔗 Cross-service tasks
+| File | Severity | Tóm tắt |
+|------|----------|---------|
+| [ticket-complaint-fields.md](./care/ticket-complaint-fields.md) | 🟡 MEDIUM | Bổ sung fields cho ticket complaint workflow |
 
-Một số task yêu cầu phối hợp nhiều microservice. Doc chính sống ở microservice **chủ** (nơi có business logic chính), các service khác chỉ có doc pointer ngắn.
+### Microservice khác (chưa có task loyalty)
 
-| Task | Sales | Market | Inventory |
-|------|:-:|:-:|:-:|
-| Voucher/Promotion tracking per invoice | ✅ [resolved](./sales/resolved/invoice-create-voucher-promotion-fields.md) | ✅ [market](./market/voucher-promotion-unified.md) | — |
-| Cancel via return (IV2) reverse usage | ✅ sales (reverse call) | ✅ market (reverse service) | ✅ inventory (restock) |
-| Import invoice approve → stock ledger | — | — | ✅ inventory (ledger write) |
+`billing/`, `contract/`, `finance/` (banking), `integration/`, `logistics/`, `notification/`, `operation/` (tnpm), `sales/`, `inventory/` — không có task active cho bài toán loyalty hiện tại. Nếu cần tạo task mới, mkdir folder tương ứng theo prefix.
 
----
-
-## ✅ Task đã giải quyết (resolved)
-
-### [sales/resolved/](./sales/resolved/)
-
-| File | Fix date | Verified by |
-|------|----------|-------------|
-| [shift-close-cash-diff.md](./sales/resolved/shift-close-cash-diff.md) | 2026-04-15 | `test-e2e-shift-flow.mjs` 20/20 PASS (S6-04 cashDifference=0) |
-| [invoice-list-cancelled-filter.md](./sales/resolved/invoice-list-cancelled-filter.md) | 2026-04-15 | `test-e2e-cancel-dashboard-sync.mjs` 5/5 PASS (T3 list+1, T4 total+200k) |
-| [invoice-create-voucher-promotion-fields.md](./sales/resolved/invoice-create-voucher-promotion-fields.md) | 2026-04-15 | `test-e2e-voucher-flow.mjs` 20/20 PASS + `test-e2e-promotion-flow.mjs` 26/26 PASS |
+> 📝 **Lưu ý:** Backend tasks cho các bug retail (POS/Kho/Sales) đã được xóa khỏi folder này — di chuyển ngữ cảnh đó về nhánh `reborn-retail`. Lịch sử git vẫn giữ.
 
 ---
 
