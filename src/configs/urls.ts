@@ -2548,6 +2548,23 @@ export const urlsApi = {
     get: prefixMarket + "/community-hub/portal-config",
     upsert: prefixMarket + "/community-hub/portal-config/upsert",     // POST (admin) body { config: JSON string }
   },
+  // Community-hub members — luồng đăng ký mã + login mã (yc 8/5 mục B+C).
+  // Path/method theo handoff 20260508-1100-community-hub-member-flows.md.
+  communityHubMembers: {
+    // ── Signup request (luồng B — đăng ký mã thành viên mới) ─────────
+    createSignupRequest: prefixMarket + "/community-hub/members/signup-request/create",   // POST (public) body
+    listSignupRequests:  prefixMarket + "/community-hub/members/signup-request/list",     // GET  (admin) ?status=&page=&limit=
+    approveSignupRequest: prefixMarket + "/community-hub/members/signup-request/approve", // POST (admin) ?id=
+    rejectSignupRequest:  prefixMarket + "/community-hub/members/signup-request/reject",  // POST (admin) ?id= body {reason}
+    // ── Member auth (luồng C — login bằng mã + mật khẩu) ─────────────
+    loginByCode:    prefixMarket + "/community-hub/members/login-by-code",   // POST (public) body {memberCode, password}
+    setPassword:    prefixMarket + "/community-hub/members/set-password",    // POST (public) body {memberCode, otpCode|resetToken, newPassword}
+    forgotPassword: prefixMarket + "/community-hub/members/forgot-password", // POST (public) body {memberCode, phoneOrEmail}
+    // ── Member CRUD (admin) ──────────────────────────────────────────
+    listMembers: prefixMarket + "/community-hub/members/list",       // GET (admin) ?q=&status=&page=&limit=
+    getMember:   prefixMarket + "/community-hub/members/get",        // GET (admin) ?id=
+    getMemberByCode: prefixMarket + "/community-hub/members/get-by-code", // GET (admin) ?code=
+  },
   fixedPricePromotion: {
     getProducts: prefixMarket + "/fixedPrice/products",
     saveProducts: prefixMarket + "/fixedPrice/products/save",

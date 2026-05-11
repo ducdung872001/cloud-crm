@@ -104,8 +104,9 @@ function MemberLoginForm({ onSuccess }: { onSuccess: (m: MemberEntity) => void }
   const [showPwd, setShowPwd] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+  const [forgotOpen, setForgotOpen] = useState(false);
 
-  const submit = (e: React.FormEvent) => {
+  const submit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
     const parsed = parseMemberCode(code);
@@ -114,14 +115,18 @@ function MemberLoginForm({ onSuccess }: { onSuccess: (m: MemberEntity) => void }
       return;
     }
     setLoading(true);
-    // Local-only login. BE: POST /community-hub/members/login
-    const r = memberStorage.loginByCode(code.trim(), password);
-    setLoading(false);
-    if (!r.ok) {
-      setError(r.reason ?? "Đăng nhập thất bại");
-      return;
+    try {
+      // API-first: POST /market/community-hub/members/login-by-code
+      // Fallback LS khi network lỗi (dev local). BE verify bcrypt + rate-limit.
+      const r = await memberStorage.loginByCodeAsync(code.trim(), password);
+      if (!r.ok) {
+        setError(r.reason ?? "Đăng nhập thất bại");
+        return;
+      }
+      if (r.member) onSuccess(r.member);
+    } finally {
+      setLoading(false);
     }
-    if (r.member) onSuccess(r.member);
   };
 
   return (
@@ -192,16 +197,158 @@ function MemberLoginForm({ onSuccess }: { onSuccess: (m: MemberEntity) => void }
           href="#"
           onClick={(e) => {
             e.preventDefault();
-            alert("Vui lòng liên hệ admin để được reset mật khẩu (giai đoạn đầu — yc khách 5/5).");
+            setForgotOpen(true);
           }}
           style={{ fontSize: 12, color: THEME.primary }}
         >
           Quên mật khẩu?
         </a>
       </div>
+      {forgotOpen && <ForgotPasswordModal initialCode={code} onClose={() => setForgotOpen(false)} />}
     </form>
   );
 }
+
+// ── Quên mật khẩu — UI stub (chưa nối backend OTP). ────────────────────────
+// UI cho user nhập mã + SĐT/email → "Gửi OTP" (button disabled) → form nhập OTP
+// + mật khẩu mới. Submit hiện toast "tính năng đang phát triển — liên hệ admin".
+// Sau khi BE có endpoints forgot-password + set-password thật → nối vào.
+function ForgotPasswordModal({ initialCode, onClose }: { initialCode: string; onClose: () => void }) {
+  const [step, setStep] = useState<"request" | "otp">("request");
+  const [memberCode, setMemberCode] = useState(initialCode);
+  const [contact, setContact] = useState("");
+  const [otp, setOtp] = useState("");
+  const [newPwd, setNewPwd] = useState("");
+  const [info] = useState<string>(
+    "Tạm thời tính năng tự đặt mật khẩu chưa khả dụng. Vui lòng liên hệ BTC qua hotline để được hỗ trợ.",
+  );
+
+  return (
+    <div
+      onClick={onClose}
+      style={{
+        position: "fixed", inset: 0, background: "rgba(0,0,0,0.45)",
+        display: "flex", alignItems: "center", justifyContent: "center", zIndex: 1000, padding: 16,
+      }}
+    >
+      <div
+        onClick={(e) => e.stopPropagation()}
+        style={{
+          background: "#fff", borderRadius: 10, padding: 20, width: 420, maxWidth: "100%",
+          boxShadow: "0 20px 50px rgba(0,0,0,0.25)",
+        }}
+      >
+        <h3 style={{ margin: "0 0 4px", fontSize: 18 }}>Quên mật khẩu</h3>
+        <div style={{ fontSize: 12, color: THEME.textMuted, marginBottom: 12 }}>
+          Đặt lại mật khẩu bằng OTP gửi qua SMS/email.
+        </div>
+
+        {/* Banner báo tính năng đang phát triển */}
+        <div style={{
+          background: "#FEF3C7", border: "1px solid #F59E0B", color: "#92400E",
+          padding: "8px 12px", borderRadius: 6, fontSize: 12, marginBottom: 14,
+        }}>
+          ⏳ <b>Đang phát triển</b> — {info}
+        </div>
+
+        {step === "request" ? (
+          <>
+            <Field label="Mã thành viên *">
+              <input
+                value={memberCode}
+                onChange={(e) => setMemberCode(e.target.value)}
+                placeholder="VD: 5971-300"
+                style={inp}
+              />
+            </Field>
+            <Field label="Số điện thoại hoặc email đã đăng ký *">
+              <input
+                value={contact}
+                onChange={(e) => setContact(e.target.value)}
+                placeholder="0xxx hoặc you@example.com"
+                style={inp}
+              />
+            </Field>
+            <div style={{ display: "flex", gap: 8, justifyContent: "flex-end", marginTop: 12 }}>
+              <button onClick={onClose} style={btnGhostMd}>Huỷ</button>
+              <button
+                disabled
+                onClick={() => setStep("otp")}
+                title="Tính năng đang phát triển"
+                style={btnPrimaryDisabled}
+              >
+                Gửi OTP
+              </button>
+            </div>
+          </>
+        ) : (
+          <>
+            <Field label="Mã OTP (6 số)">
+              <input
+                value={otp}
+                onChange={(e) => setOtp(e.target.value)}
+                placeholder="123456"
+                style={inp}
+              />
+            </Field>
+            <Field label="Mật khẩu mới">
+              <input
+                value={newPwd}
+                onChange={(e) => setNewPwd(e.target.value)}
+                type="password"
+                placeholder="Tối thiểu 6 ký tự"
+                style={inp}
+              />
+            </Field>
+            <div style={{ display: "flex", gap: 8, justifyContent: "space-between", marginTop: 12 }}>
+              <button onClick={() => setStep("request")} style={btnGhostMd}>← Quay lại</button>
+              <button
+                disabled
+                title="Tính năng đang phát triển"
+                style={btnPrimaryDisabled}
+              >
+                Đặt mật khẩu mới
+              </button>
+            </div>
+          </>
+        )}
+      </div>
+    </div>
+  );
+}
+
+function Field({ label, children }: { label: string; children: React.ReactNode }) {
+  return (
+    <div style={{ marginBottom: 10 }}>
+      <label style={{ display: "block", fontSize: 12, fontWeight: 600, color: THEME.textMain, marginBottom: 4 }}>
+        {label}
+      </label>
+      {children}
+    </div>
+  );
+}
+
+const btnGhostMd: React.CSSProperties = {
+  padding: "8px 14px",
+  background: "#fff",
+  color: THEME.textMain,
+  border: `1px solid ${THEME.border}`,
+  borderRadius: 6,
+  cursor: "pointer",
+  fontSize: 13,
+};
+
+const btnPrimaryDisabled: React.CSSProperties = {
+  padding: "8px 14px",
+  background: "#9CA3AF",
+  color: "#fff",
+  border: "none",
+  borderRadius: 6,
+  cursor: "not-allowed",
+  fontSize: 13,
+  fontWeight: 600,
+  opacity: 0.7,
+};
 
 function MemberSignupForm({ onSuccess }: { onSuccess: (reqId: string) => void }) {
   const [name, setName] = useState("");
@@ -209,6 +356,8 @@ function MemberSignupForm({ onSuccess }: { onSuccess: (reqId: string) => void })
   const [email, setEmail] = useState("");
   const [occupation, setOccupation] = useState("");
   const [submitted, setSubmitted] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
 
   if (submitted) {
     return (
@@ -220,17 +369,26 @@ function MemberSignupForm({ onSuccess }: { onSuccess: (reqId: string) => void })
     );
   }
 
-  const submit = (e: React.FormEvent) => {
+  const submit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setError(null);
     if (!name.trim() || !phone.trim()) return;
-    const r = memberStorage.createRequest({
-      fullName: name.trim(),
-      phone: phone.trim(),
-      email: email.trim() || undefined,
-      occupation: occupation.trim() || undefined,
-    });
-    setSubmitted(r.id);
-    onSuccess(r.id);
+    setLoading(true);
+    try {
+      // API: POST /market/community-hub/members/signup-request/create
+      const r = await memberStorage.createRequestAsync({
+        fullName: name.trim(),
+        phone: phone.trim(),
+        email: email.trim() || undefined,
+        occupation: occupation.trim() || undefined,
+      });
+      setSubmitted(r.id);
+      onSuccess(r.id);
+    } catch (err: any) {
+      setError(err?.message || "Không gửi được yêu cầu cấp mã");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -239,8 +397,10 @@ function MemberSignupForm({ onSuccess }: { onSuccess: (reqId: string) => void })
       <input value={phone} onChange={(e) => setPhone(e.target.value)} placeholder="Số điện thoại *" required style={inp} />
       <input value={email} onChange={(e) => setEmail(e.target.value)} placeholder="Email (optional)" type="email" style={inp} />
       <input value={occupation} onChange={(e) => setOccupation(e.target.value)} placeholder="Công việc hiện tại" style={inp} />
+      {error && <div style={{ fontSize: 12, color: THEME.danger }}>{error}</div>}
       <button
         type="submit"
+        disabled={loading}
         style={{
           padding: "8px 16px",
           background: THEME.primary,
@@ -248,12 +408,13 @@ function MemberSignupForm({ onSuccess }: { onSuccess: (reqId: string) => void })
           border: "none",
           borderRadius: 6,
           fontSize: 13,
-          cursor: "pointer",
+          cursor: loading ? "not-allowed" : "pointer",
           fontWeight: 600,
           alignSelf: "flex-start",
+          opacity: loading ? 0.7 : 1,
         }}
       >
-        Gửi yêu cầu cấp mã
+        {loading ? "Đang gửi..." : "Gửi yêu cầu cấp mã"}
       </button>
       <p style={{ fontSize: 11, color: THEME.textMuted, margin: 0 }}>
         Sau khi gửi, BTC sẽ kiểm tra và cấp mã định danh dạng <code>STT-nhóm</code> (vd 5971-300).

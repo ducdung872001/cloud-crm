@@ -1,6 +1,8 @@
 // Members storage — API-first, fallback localStorage khi BE chưa sẵn sàng.
 //
-// BE handoff: xem docs/backend-tasks/community-hub/REQUIREMENTS-2026-05-05.md.
+// BE handoff: docs/handoff/20260508-1100-community-hub-member-flows.md.
+// API methods (postfix Async) gọi BE trước, throw lỗi nếu BE trả non-zero;
+// catch network thì fallback LS để dev local vẫn dùng được.
 
 import type {
   MemberEntity,
@@ -10,6 +12,7 @@ import type {
   MemberGroup,
 } from "./types";
 import { buildMasterCode, buildMemberCode, deriveGroupSeqFromPersonal } from "./codeUtils";
+import MemberService from "services/MemberService";
 
 const KEY_MEMBERS = "reborn.community_hub.members";
 const KEY_GROUPS = "reborn.community_hub.member_groups";
@@ -123,6 +126,18 @@ export const memberStorage = {
     return readLS<MemberSignupRequest[]>(KEY_REQUESTS, []);
   },
 
+  /** Admin: list signup requests qua BE, fallback LS nếu lỗi mạng. */
+  async listRequestsAsync(params?: { status?: string; page?: number; limit?: number }): Promise<MemberSignupRequest[]> {
+    try {
+      const res: any = await MemberService.listSignupRequests(params as Record<string, unknown>);
+      if (res?.code === 0) {
+        const items = res.result?.items ?? res.result ?? [];
+        return Array.isArray(items) ? items : [];
+      }
+    } catch { /* fallback */ }
+    return this.listRequests();
+  },
+
   createRequest(input: Omit<MemberSignupRequest, "id" | "createdAt" | "status">): MemberSignupRequest {
     const req: MemberSignupRequest = {
       ...input,
@@ -134,6 +149,29 @@ export const memberStorage = {
     all.push(req);
     writeLS(KEY_REQUESTS, all);
     return req;
+  },
+
+  /** Public: gửi yêu cầu cấp mã. Throws nếu BE trả lỗi (vd duplicate phone). */
+  async createRequestAsync(input: Omit<MemberSignupRequest, "id" | "createdAt" | "status">): Promise<MemberSignupRequest> {
+    try {
+      const res: any = await MemberService.createSignupRequest(input as Record<string, unknown>);
+      if (res?.code === 0 && res.result) {
+        const req = res.result as MemberSignupRequest;
+        // Cache nhẹ vào LS để admin xem được lần đầu khi BE chưa list endpoint.
+        const all = this.listRequests();
+        all.push(req);
+        writeLS(KEY_REQUESTS, all);
+        return req;
+      }
+      const msg = res?.message || res?.error || "Không gửi được yêu cầu cấp mã";
+      throw new Error(msg);
+    } catch (e: any) {
+      // Network error → fallback LS để dev không bị block.
+      if (e?.name === "TypeError" || /Failed to fetch|Network/i.test(String(e?.message))) {
+        return this.createRequest(input);
+      }
+      throw e;
+    }
   },
 
   approveRequest(reqId: string, by: string): MemberEntity | null {
@@ -157,6 +195,21 @@ export const memberStorage = {
     return member;
   },
 
+  /** Admin: approve qua BE → BE sinh memberCode + tạo MemberEntity. */
+  async approveRequestAsync(reqId: string, override?: Partial<MemberSignupRequest>): Promise<MemberEntity | null> {
+    try {
+      const res: any = await MemberService.approveSignupRequest(reqId, override as Record<string, unknown>);
+      if (res?.code === 0 && res.result) return res.result as MemberEntity;
+      const msg = res?.message || "Approve thất bại";
+      throw new Error(msg);
+    } catch (e: any) {
+      if (e?.name === "TypeError" || /Failed to fetch|Network/i.test(String(e?.message))) {
+        return this.approveRequest(reqId, "admin");
+      }
+      throw e;
+    }
+  },
+
   rejectRequest(reqId: string, by: string, reason: string): MemberSignupRequest | null {
     const all = this.listRequests();
     const idx = all.findIndex((r) => r.id === reqId);
@@ -164,6 +217,19 @@ export const memberStorage = {
     all[idx] = { ...all[idx], status: "rejected", reviewedBy: by, reviewedAt: new Date().toISOString(), rejectReason: reason };
     writeLS(KEY_REQUESTS, all);
     return all[idx];
+  },
+
+  async rejectRequestAsync(reqId: string, reason: string): Promise<MemberSignupRequest | null> {
+    try {
+      const res: any = await MemberService.rejectSignupRequest(reqId, { reason });
+      if (res?.code === 0) return (res.result as MemberSignupRequest) ?? null;
+      throw new Error(res?.message || "Reject thất bại");
+    } catch (e: any) {
+      if (e?.name === "TypeError" || /Failed to fetch|Network/i.test(String(e?.message))) {
+        return this.rejectRequest(reqId, "admin", reason);
+      }
+      throw e;
+    }
   },
 
   // ── Login luồng C ─────────────────────────────────
@@ -181,6 +247,42 @@ export const memberStorage = {
     const i = all.findIndex((x) => x.id === m.id);
     if (i >= 0) { all[i] = m; writeLS(KEY_MEMBERS, all); }
     return { ok: true, member: m };
+  },
+
+  /** Public: verify qua BE bcrypt. Trả {ok, member, token?, reason}. */
+  async loginByCodeAsync(memberCode: string, password: string): Promise<{ ok: boolean; member?: MemberEntity; token?: string; reason?: string }> {
+    try {
+      const res: any = await MemberService.loginByCode({ memberCode, password });
+      if (res?.code === 0 && res.result?.member) {
+        return { ok: true, member: res.result.member as MemberEntity, token: res.result.token };
+      }
+      return { ok: false, reason: res?.message || res?.error || "Đăng nhập thất bại" };
+    } catch (e: any) {
+      // Network → fallback LS để dev local vẫn login được.
+      if (e?.name === "TypeError" || /Failed to fetch|Network/i.test(String(e?.message))) {
+        return this.loginByCode(memberCode, password);
+      }
+      return { ok: false, reason: e?.message || "Lỗi kết nối máy chủ" };
+    }
+  },
+
+  /** Admin set password qua BE. Body theo handoff: { memberCode, newPassword }.
+   *  Trả về { ok, reason? }. Fallback LS nếu network lỗi. */
+  async setPasswordAsync(memberCode: string, newPassword: string): Promise<{ ok: boolean; reason?: string }> {
+    try {
+      const res: any = await MemberService.setPassword({ memberCode, newPassword });
+      if (res?.code === 0) return { ok: true };
+      return { ok: false, reason: res?.message || "Đặt mật khẩu thất bại" };
+    } catch (e: any) {
+      if (e?.name === "TypeError" || /Failed to fetch|Network/i.test(String(e?.message))) {
+        // LS fallback (dev local): tìm member theo code rồi gán pwd.
+        const m = this.getByCode(memberCode);
+        if (!m) return { ok: false, reason: "Mã không tồn tại (LS fallback)" };
+        const ok = this.setPassword(m.id, newPassword);
+        return { ok, reason: ok ? undefined : "Lỗi LS" };
+      }
+      return { ok: false, reason: e?.message || "Lỗi kết nối" };
+    }
   },
 
   /** Admin set password. */

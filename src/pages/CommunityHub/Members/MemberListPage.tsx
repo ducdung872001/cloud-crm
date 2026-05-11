@@ -20,6 +20,25 @@ const T = {
 
 type Tab = "members" | "requests";
 
+/** Sinh mật khẩu tạm 8 ký tự dễ đọc (loại bỏ 0/O/1/I/l). Admin show cho user
+ *  qua điện thoại — user nên đổi sau khi có UI OTP. */
+function generateTempPassword(): string {
+  const chars = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
+  let s = "";
+  for (let i = 0; i < 8; i++) s += chars[Math.floor(Math.random() * chars.length)];
+  return s;
+}
+
+/** State cho modal "Duyệt + cấp tài khoản". */
+interface ApproveModalState {
+  request: MemberSignupRequest;
+  password: string;
+  /** Sau khi BE approve, hold result để show "Mã + mật khẩu" cho admin copy. */
+  issued?: { memberCode: string; password: string };
+  loading: boolean;
+  error: string | null;
+}
+
 export default function MemberListPage() {
   const navigate = useNavigate();
   const [tab, setTab] = useState<Tab>("members");
@@ -27,10 +46,17 @@ export default function MemberListPage() {
   const [requests, setRequests] = useState<MemberSignupRequest[]>([]);
   const [keyword, setKeyword] = useState("");
   const [tick, setTick] = useState(0);
+  const [approveModal, setApproveModal] = useState<ApproveModalState | null>(null);
 
   useEffect(() => {
-    setMembers(memberStorage.list());
-    setRequests(memberStorage.listRequests());
+    let alive = true;
+    (async () => {
+      setMembers(memberStorage.list());
+      // Admin tab — gọi BE list, fallback LS bên trong storage.
+      const reqs = await memberStorage.listRequestsAsync();
+      if (alive) setRequests(reqs);
+    })();
+    return () => { alive = false; };
   }, [tick]);
 
   const filteredMembers = useMemo(() => {
@@ -172,23 +198,27 @@ export default function MemberListPage() {
                       {r.status === "pending" && (
                         <>
                           <button
-                            onClick={() => {
-                              const m = memberStorage.approveRequest(r.id, "admin");
-                              if (m) {
-                                alert(`Đã cấp mã ${m.memberCode} cho ${r.fullName}`);
-                                setTick((t) => t + 1);
-                              }
-                            }}
+                            onClick={() =>
+                              setApproveModal({
+                                request: r,
+                                password: generateTempPassword(),
+                                loading: false,
+                                error: null,
+                              })
+                            }
                             style={{ ...btnGhostSm, color: T.primary }}
                           >
                             ✓ Duyệt
                           </button>
                           <button
-                            onClick={() => {
+                            onClick={async () => {
                               const reason = prompt("Lý do từ chối:");
-                              if (reason) {
-                                memberStorage.rejectRequest(r.id, "admin", reason);
+                              if (!reason) return;
+                              try {
+                                await memberStorage.rejectRequestAsync(r.id, reason);
                                 setTick((t) => t + 1);
+                              } catch (e: any) {
+                                alert(e?.message || "Từ chối thất bại");
                               }
                             }}
                             style={{ ...btnGhostSm, marginLeft: 4, color: T.danger }}
@@ -205,7 +235,242 @@ export default function MemberListPage() {
           )}
         </div>
       )}
+
+      {approveModal && (
+        <ApproveRequestModal
+          state={approveModal}
+          onChange={setApproveModal}
+          onDone={() => {
+            setApproveModal(null);
+            setTick((t) => t + 1);
+          }}
+        />
+      )}
     </div>
+  );
+}
+
+// ── Modal: Duyệt + cấp tài khoản ────────────────────────────────────────────
+// Flow 2 bước:
+//   1) Admin xem info, đặt mật khẩu tạm (auto-generated, có thể đổi) → bấm "Duyệt".
+//      → approveRequestAsync (BE sinh memberCode) → setPasswordAsync (BE bcrypt).
+//   2) Hiện màn "Đã cấp" với mã + mật khẩu để admin copy / gọi user.
+//      Có 2 button stub "Gửi qua Zalo" / "Gửi qua SMS" — chưa implement, hiện toast.
+function ApproveRequestModal({
+  state,
+  onChange,
+  onDone,
+}: {
+  state: ApproveModalState;
+  onChange: (s: ApproveModalState) => void;
+  onDone: () => void;
+}) {
+  const { request: r, password, issued, loading, error } = state;
+
+  const handleApprove = async () => {
+    if (!password.trim() || password.length < 6) {
+      onChange({ ...state, error: "Mật khẩu tạm phải ít nhất 6 ký tự" });
+      return;
+    }
+    onChange({ ...state, loading: true, error: null });
+    try {
+      const member = await memberStorage.approveRequestAsync(r.id);
+      if (!member) {
+        onChange({ ...state, loading: false, error: "Duyệt thất bại — không nhận được member info" });
+        return;
+      }
+      const pwdRes = await memberStorage.setPasswordAsync(member.memberCode, password);
+      if (!pwdRes.ok) {
+        onChange({
+          ...state,
+          loading: false,
+          error: `Đã cấp mã ${member.memberCode} nhưng đặt mật khẩu thất bại: ${pwdRes.reason}. Vào trang chi tiết để đặt lại.`,
+        });
+        return;
+      }
+      onChange({
+        ...state,
+        loading: false,
+        issued: { memberCode: member.memberCode, password },
+      });
+    } catch (e: any) {
+      onChange({ ...state, loading: false, error: e?.message || "Có lỗi xảy ra" });
+    }
+  };
+
+  const copy = (text: string) => {
+    navigator.clipboard?.writeText(text).then(
+      () => { /* silent — admin tự thấy đã copy */ },
+      () => alert("Không copy được — trình duyệt chặn clipboard."),
+    );
+  };
+
+  return (
+    <div
+      onClick={onDone}
+      style={{
+        position: "fixed", inset: 0, background: "rgba(0,0,0,0.45)",
+        display: "flex", alignItems: "center", justifyContent: "center",
+        zIndex: 1000, padding: 16,
+      }}
+    >
+      <div
+        onClick={(e) => e.stopPropagation()}
+        style={{
+          background: "#fff", borderRadius: 10, padding: 20, width: 480, maxWidth: "100%",
+          maxHeight: "90vh", overflowY: "auto", boxShadow: "0 20px 50px rgba(0,0,0,0.25)",
+        }}
+      >
+        {!issued ? (
+          <>
+            <h3 style={{ margin: "0 0 4px", fontSize: 18, color: T.textMain }}>Duyệt yêu cầu cấp mã</h3>
+            <div style={{ fontSize: 12, color: T.textMuted, marginBottom: 14 }}>
+              Tạo MemberEntity mới + đặt mật khẩu tạm. Bạn sẽ thấy mã + mật khẩu sau khi duyệt để gọi cho user.
+            </div>
+
+            <div style={{ background: T.bg, borderRadius: 6, padding: 10, marginBottom: 12, fontSize: 13 }}>
+              <Row label="Họ tên" value={r.fullName} />
+              <Row label="SĐT" value={r.phone} />
+              <Row label="Email" value={r.email ?? "—"} />
+              <Row label="Công việc" value={r.occupation ?? "—"} />
+            </div>
+
+            <label style={{ display: "block", fontSize: 12, fontWeight: 600, color: T.textMain, marginBottom: 4 }}>
+              Mật khẩu tạm (admin tự đặt, gọi báo user)
+            </label>
+            <div style={{ display: "flex", gap: 6, marginBottom: error ? 8 : 14 }}>
+              <input
+                style={{ ...inp, flex: 1, fontFamily: "monospace" }}
+                value={password}
+                onChange={(e) => onChange({ ...state, password: e.target.value, error: null })}
+              />
+              <button
+                type="button"
+                onClick={() => onChange({ ...state, password: generateTempPassword(), error: null })}
+                style={btnGhostSm}
+                title="Sinh mật khẩu mới"
+              >
+                🎲
+              </button>
+            </div>
+            {error && (
+              <div style={{ fontSize: 12, color: T.danger, marginBottom: 12 }}>{error}</div>
+            )}
+
+            <div style={{ display: "flex", gap: 8, justifyContent: "flex-end" }}>
+              <button onClick={onDone} disabled={loading} style={btnGhost}>Huỷ</button>
+              <button
+                onClick={handleApprove}
+                disabled={loading}
+                style={{
+                  padding: "8px 16px", background: T.primary, color: "#fff",
+                  border: "none", borderRadius: 6, cursor: loading ? "not-allowed" : "pointer",
+                  fontSize: 13, fontWeight: 600, opacity: loading ? 0.7 : 1,
+                }}
+              >
+                {loading ? "Đang xử lý..." : "✓ Duyệt và cấp tài khoản"}
+              </button>
+            </div>
+          </>
+        ) : (
+          <>
+            <div style={{ textAlign: "center", marginBottom: 14 }}>
+              <div style={{ fontSize: 36 }}>🎉</div>
+              <h3 style={{ margin: "6px 0 4px", fontSize: 18, color: T.textMain }}>Đã cấp tài khoản</h3>
+              <div style={{ fontSize: 12, color: T.textMuted }}>
+                Liên hệ <b>{r.fullName}</b> ({r.phone}) để báo thông tin đăng nhập:
+              </div>
+            </div>
+
+            <div style={{ background: "#F0FDF4", border: `1px solid #BBF7D0`, borderRadius: 8, padding: 14, marginBottom: 12 }}>
+              <CredentialRow label="Mã thành viên" value={issued.memberCode} mono onCopy={copy} />
+              <CredentialRow label="Mật khẩu tạm" value={issued.password} mono onCopy={copy} />
+            </div>
+
+            <div style={{ marginBottom: 12 }}>
+              <div style={{ fontSize: 12, fontWeight: 600, color: T.textMain, marginBottom: 6 }}>
+                Gửi tự động (sắp ra mắt)
+              </div>
+              <div style={{ display: "flex", gap: 6, flexWrap: "wrap" }}>
+                <StubSendButton icon="💬" label="Gửi qua Zalo" />
+                <StubSendButton icon="📱" label="Gửi qua SMS" />
+                <StubSendButton icon="📧" label="Gửi qua Email" disabled={!r.email} />
+              </div>
+              <div style={{ fontSize: 11, color: T.textMuted, marginTop: 6 }}>
+                Tạm thời gọi điện trực tiếp cho user để báo. Tính năng gửi tự động đang phát triển.
+              </div>
+            </div>
+
+            <div style={{ display: "flex", justifyContent: "flex-end" }}>
+              <button onClick={onDone} style={{
+                padding: "8px 16px", background: T.primary, color: "#fff",
+                border: "none", borderRadius: 6, cursor: "pointer", fontSize: 13, fontWeight: 600,
+              }}>
+                ✓ Đã gọi báo / Xong
+              </button>
+            </div>
+          </>
+        )}
+      </div>
+    </div>
+  );
+}
+
+function Row({ label, value }: { label: string; value: string }) {
+  return (
+    <div style={{ display: "flex", gap: 8, padding: "3px 0" }}>
+      <span style={{ width: 80, color: T.textMuted, fontSize: 12 }}>{label}:</span>
+      <span style={{ flex: 1 }}>{value}</span>
+    </div>
+  );
+}
+
+function CredentialRow({
+  label, value, mono, onCopy,
+}: { label: string; value: string; mono?: boolean; onCopy: (v: string) => void }) {
+  return (
+    <div style={{ display: "flex", alignItems: "center", gap: 8, padding: "4px 0" }}>
+      <span style={{ width: 110, color: T.textMuted, fontSize: 12, fontWeight: 600 }}>{label}</span>
+      <code style={{
+        flex: 1, padding: "4px 8px", background: "#fff", borderRadius: 4,
+        border: `1px solid ${T.border}`, fontFamily: mono ? "monospace" : "inherit",
+        fontSize: 14, fontWeight: 700, color: "#166534",
+      }}>{value}</code>
+      <button
+        onClick={() => onCopy(value)}
+        style={{ ...btnGhostSm, padding: "4px 8px" }}
+        title="Copy"
+      >
+        📋 Copy
+      </button>
+    </div>
+  );
+}
+
+function StubSendButton({ icon, label, disabled }: { icon: string; label: string; disabled?: boolean }) {
+  return (
+    <button
+      type="button"
+      disabled
+      title={disabled ? "Thiếu thông tin liên hệ" : "Tính năng đang phát triển — sắp có"}
+      style={{
+        padding: "6px 12px",
+        background: "#F3F4F6",
+        color: T.textMuted,
+        border: `1px solid ${T.border}`,
+        borderRadius: 6,
+        cursor: "not-allowed",
+        fontSize: 12,
+        display: "inline-flex",
+        alignItems: "center",
+        gap: 4,
+        opacity: disabled ? 0.5 : 0.8,
+      }}
+    >
+      <span>{icon}</span>
+      <span>{label}</span>
+      <span style={{ fontSize: 9, padding: "1px 5px", background: "#FEF3C7", color: "#92400E", borderRadius: 4, marginLeft: 2 }}>SOON</span>
+    </button>
   );
 }
 
