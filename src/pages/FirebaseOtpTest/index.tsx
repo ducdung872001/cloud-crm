@@ -66,11 +66,15 @@ const FirebaseOtpTest: React.FC = () => {
   const ensureVerifier = (): RecaptchaVerifier => {
     if (verifierRef.current) return verifierRef.current;
     if (!authRef.current) throw new Error("Auth chưa init");
-    const verifier = new RecaptchaVerifier(authRef.current, "recaptcha-container", {
-      size: "invisible",
-      callback: () => log("reCAPTCHA solved"),
-      "expired-callback": () => log("reCAPTCHA expired"),
-    });
+    const verifier = new RecaptchaVerifier(
+      "recaptcha-container",
+      {
+        size: "invisible",
+        callback: () => log("reCAPTCHA solved"),
+        "expired-callback": () => log("reCAPTCHA expired"),
+      },
+      authRef.current
+    );
     verifierRef.current = verifier;
     return verifier;
   };
