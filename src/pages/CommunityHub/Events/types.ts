@@ -143,6 +143,37 @@ export interface ContentBlock {
   caption?: string; // chú thích nhỏ dưới ảnh
 }
 
+// ── Recap — nội dung "sau sự kiện" (ảnh/video/winners/bài viết) ───────────
+// Khi sự kiện kết thúc, admin up phần này để cộng đồng xem lại kết quả.
+// FE render thay cho form đăng ký trên trang chi tiết khi event đã `ended`.
+// BE: lưu nguyên dạng JSON-string giống `contentBlocks`/`dynamicFields`.
+export interface EventRecapWinner {
+  id: string;
+  rank?: string;        // VD: "Giải nhất", "HCV", "Top 1"
+  name: string;         // tên người / đội
+  achievement?: string; // mô tả thành tích / thông số
+  imageUrl?: string;    // ảnh chân dung / đội
+}
+
+export interface EventRecap {
+  /** Headline ngắn — VD: "Sự kiện đã diễn ra thành công với hơn 250 người tham gia." */
+  summary?: string;
+  /** Số người THỰC TẾ tham gia (admin tự nhập — có thể khác activeRegistrations vì có người vắng). */
+  attendeeCount?: number;
+  /** Ảnh nổi bật hero cho recap (tách khỏi galleryImageUrls trước sự kiện). */
+  highlightImages?: string[];
+  /** YouTube/Vimeo/Facebook embed URLs. */
+  videoUrls?: string[];
+  /** Danh sách đoạt giải / vinh danh. */
+  winners?: EventRecapWinner[];
+  /** Bài viết / nội dung tự do (kéo-thả block) — reuse ContentBlocksBuilder. */
+  blocks?: ContentBlock[];
+  /** Slug sự kiện tiếp theo — FE render CTA "Sự kiện tiếp theo". */
+  nextEventSlug?: string;
+  /** ISO timestamp khi admin publish recap. Chưa có = recap chỉ là draft. */
+  publishedAt?: string;
+}
+
 // ── Comments — kênh CSKH dưới mỗi sự kiện ─────────────────────────────────
 // Yc 5/5 mục 1: bình luận giữ vĩnh viễn, không trôi như Facebook. Là kênh CSKH:
 // khách hỏi → admin trả lời tại đây.
@@ -231,6 +262,9 @@ export interface EventEntity {
    *  trả trên public response để FE public hiển thị "Còn N/M chỗ" mà không
    *  phải gọi admin /registrations/list. Optional vì legacy cache có thể chưa có. */
   activeRegistrations?: number;
+  /** Recap "sau sự kiện" — ảnh/video/winners/bài viết. BE lưu dạng JSON-string
+   *  giống contentBlocks (xem EventRecap). FE render khi event đã `ended`. */
+  recap?: EventRecap;
 }
 
 export interface EventRegistration {

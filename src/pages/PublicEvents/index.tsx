@@ -180,6 +180,9 @@ function EventCard({
               <span className="pe-live-dot" /> ĐANG DIỄN RA
             </span>
           )}
+          {live === "ended" && (
+            <span className="pe-chip pe-chip--ended">ĐÃ KẾT THÚC</span>
+          )}
           {isFree && variant === "featured" && <span className="pe-chip pe-chip--free">MIỄN PHÍ</span>}
         </div>
 
@@ -236,7 +239,7 @@ function EventCard({
               onOpen(event.slug);
             }}
           >
-            Đăng ký ngay <span className="pe-cta-arrow">→</span>
+            {live === "ended" ? "Xem kết quả" : "Đăng ký ngay"} <span className="pe-cta-arrow">→</span>
           </button>
         </div>
       </div>
@@ -251,7 +254,7 @@ export default function PublicEventsPage() {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [query, setQuery] = useState("");
-  const [activeFilter, setActiveFilter] = useState<"all" | "ongoing" | "upcoming" | "free">("all");
+  const [activeFilter, setActiveFilter] = useState<"all" | "ongoing" | "upcoming" | "ended" | "free">("all");
   const [activeCat, setActiveCat] = useState<string | null>(null);
 
   // ── SEO ──
@@ -308,31 +311,51 @@ export default function PublicEventsPage() {
 
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase();
-    return events.filter(e => {
-      const live = liveStatus(e);
-      if (live === "ended") return false;
-      if (activeFilter === "ongoing" && live !== "ongoing") return false;
-      if (activeFilter === "upcoming" && live !== "upcoming") return false;
-      if (activeFilter === "free" && (e.ticketPrice ?? 0) > 0) return false;
-      if (activeCat && e.category !== activeCat) return false;
-      if (q) {
-        const hay = `${e.title} ${e.description} ${e.tags?.join(" ") ?? ""} ${e.venue?.name ?? ""} ${e.venue?.city ?? ""}`.toLowerCase();
-        if (!hay.includes(q)) return false;
-      }
-      return true;
-    });
+    // Event đã kết thúc vẫn show (để cộng đồng xem lại kết quả) — chỉ xếp xuống dưới.
+    // Sort: ongoing trước → upcoming (sớm nhất trước) → ended (mới kết thúc trước).
+    const rankLive = (s: ReturnType<typeof liveStatus>) =>
+      s === "ongoing" ? 0 : s === "upcoming" ? 1 : 2;
+    return events
+      .filter(e => {
+        const live = liveStatus(e);
+        if (activeFilter === "ongoing" && live !== "ongoing") return false;
+        if (activeFilter === "upcoming" && live !== "upcoming") return false;
+        if (activeFilter === "ended" && live !== "ended") return false;
+        if (activeFilter === "free" && (e.ticketPrice ?? 0) > 0) return false;
+        if (activeCat && e.category !== activeCat) return false;
+        if (q) {
+          const hay = `${e.title} ${e.description} ${e.tags?.join(" ") ?? ""} ${e.venue?.name ?? ""} ${e.venue?.city ?? ""}`.toLowerCase();
+          if (!hay.includes(q)) return false;
+        }
+        return true;
+      })
+      .sort((a, b) => {
+        const la = liveStatus(a);
+        const lb = liveStatus(b);
+        const r = rankLive(la) - rankLive(lb);
+        if (r !== 0) return r;
+        const sa = new Date(a.startDate).getTime();
+        const sb = new Date(b.startDate).getTime();
+        // upcoming: sớm nhất trước; ended: mới nhất (kết thúc gần đây) trước.
+        return la === "ended" ? sb - sa : sa - sb;
+      });
   }, [events, query, activeFilter, activeCat]);
 
-  // ── Chọn featured: ưu tiên ongoing, fallback nearest upcoming ──
+  // ── Chọn featured: ongoing > nearest upcoming > most-recent ended ──
+  // Khi không còn event active, vẫn pick ended mới nhất làm featured để page không trống —
+  // user có thể xem kết quả/recap. Spotlight label sẽ đổi sang "Sự kiện gần đây" tương ứng.
   const featuredEvent = useMemo<EventEntity | null>(() => {
     if (filtered.length === 0) return null;
     const ongoing = filtered.find(e => liveStatus(e) === "ongoing");
     if (ongoing) return ongoing;
-    // Nearest upcoming
     const upcoming = [...filtered]
       .filter(e => liveStatus(e) === "upcoming")
       .sort((a, b) => new Date(a.startDate).getTime() - new Date(b.startDate).getTime());
-    return upcoming[0] ?? filtered[0];
+    if (upcoming[0]) return upcoming[0];
+    const ended = [...filtered]
+      .filter(e => liveStatus(e) === "ended")
+      .sort((a, b) => new Date(b.endDate).getTime() - new Date(a.endDate).getTime());
+    return ended[0] ?? filtered[0];
   }, [filtered]);
 
   const rest = useMemo(
@@ -446,6 +469,7 @@ export default function PublicEventsPage() {
               { k: "all",      l: "Tất cả" },
               { k: "ongoing",  l: "Đang diễn ra" },
               { k: "upcoming", l: "Sắp tới" },
+              { k: "ended",    l: "Đã kết thúc" },
               { k: "free",     l: "Miễn phí" },
             ] as const).map(opt => (
               <button
@@ -543,9 +567,14 @@ export default function PublicEventsPage() {
           <section className="pe-few">
             <div className="pe-few__headline">
               <span className="pe-few__eyebrow">
-                {liveStatus(featuredEvent) === "ongoing" ? "🔴 Sự kiện đang diễn ra" : "✨ Sự kiện nổi bật tuần này"}
+                {(() => {
+                  const ls = liveStatus(featuredEvent);
+                  if (ls === "ongoing") return "🔴 Sự kiện đang diễn ra";
+                  if (ls === "ended") return "📌 Sự kiện gần đây";
+                  return "✨ Sự kiện nổi bật tuần này";
+                })()}
               </span>
-              <h2 className="pe-few__h2">Đừng bỏ lỡ</h2>
+              <h2 className="pe-few__h2">{liveStatus(featuredEvent) === "ended" ? "Xem lại" : "Đừng bỏ lỡ"}</h2>
             </div>
             <EventCard event={featuredEvent} variant="featured" onOpen={openEvent} />
 
@@ -569,7 +598,12 @@ export default function PublicEventsPage() {
           <>
             <section className="pe-spotlight">
               <div className="pe-spotlight__label">
-                {liveStatus(featuredEvent) === "ongoing" ? "🔴 Đang diễn ra" : "⭐ Nổi bật"}
+                {(() => {
+                  const ls = liveStatus(featuredEvent);
+                  if (ls === "ongoing") return "🔴 Đang diễn ra";
+                  if (ls === "ended") return "📌 Gần đây";
+                  return "⭐ Nổi bật";
+                })()}
               </div>
               <EventCard event={featuredEvent} variant="featured" onOpen={openEvent} />
             </section>

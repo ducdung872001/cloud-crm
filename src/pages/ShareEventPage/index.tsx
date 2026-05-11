@@ -6,7 +6,7 @@
 //   POST /marketing/events/public/{slug}/register
 
 import React, { useEffect, useMemo, useRef, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import Fancybox from "components/fancybox/fancybox";
 import { showToast } from "utils/common";
 import { eventStorage } from "@/pages/CommunityHub/Events/storage";
@@ -19,6 +19,7 @@ import { formatVNDateTime } from "@/pages/CommunityHub/Events/datetime";
 import EventComments from "@/pages/CommunityHub/Events/components/EventComments";
 import ContentBlocksRenderer from "@/pages/CommunityHub/Events/components/ContentBlocksRenderer";
 import RegistrationFlowSwitcher, { type FlowReadyState } from "@/pages/CommunityHub/Events/components/RegistrationFlowSwitcher";
+import EventRecapBlock from "@/pages/CommunityHub/Events/components/EventRecapBlock";
 import { isLoggedInAdmin } from "@/pages/CommunityHub/Events/shared";
 
 // Set SEO meta cho trang detail
@@ -61,6 +62,22 @@ const THEME = {
 
 function formatVND(n: number): string {
   return new Intl.NumberFormat("vi-VN").format(Math.round(n));
+}
+
+// Đọc cookie `user` (set bởi SSO khi admin login) để lấy tên + SĐT cho reply
+// bình luận trên trang public detail. Trả undefined nếu không parse được.
+function readAdminFromCookie(): { name: string; phone?: string; role: "admin" } | undefined {
+  try {
+    const m = document.cookie.match(/(?:^|;\s*)user=([^;]+)/);
+    if (!m) return undefined;
+    const raw = decodeURIComponent(m[1]);
+    const u = JSON.parse(raw);
+    const name = u?.fullName ?? u?.name ?? u?.username ?? "Admin";
+    const phone = u?.phone ?? u?.phoneNumber ?? undefined;
+    return { name, phone, role: "admin" };
+  } catch {
+    return { name: "Admin", role: "admin" };
+  }
 }
 
 // Gallery ticker chạy 1 chiều liên tục bằng CSS transform translateX.
@@ -229,15 +246,19 @@ export default function ShareEventPage() {
   const [error, setError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
 
+  const navigate = useNavigate();
   const routeParams = useParams<{ slug?: string }>();
-  const { slug, heroStyle } = useMemo(() => {
+  const { slug, heroStyle, recapPreview } = useMemo(() => {
     const params = new URLSearchParams(window.location.search);
     // Ưu tiên slug trong URL path (/events/:slug — SEO friendly)
     // Fallback query ?slug={slug} để backward compat với /share_event
     const slugFromPath = routeParams.slug ? decodeURIComponent(routeParams.slug) : "";
+    // ?preview=recap → admin xem trước block Recap dù event chưa kết thúc / chưa công bố.
+    // Gate bằng isLoggedInAdmin() bên dưới để khách public không tự bật được.
     return {
       slug: slugFromPath || params.get("slug") || "",
       heroStyle: (params.get("layout") ?? "card") as "card" | "cover",
+      recapPreview: params.get("preview") === "recap",
     };
   }, [routeParams.slug]);
 
@@ -332,7 +353,18 @@ export default function ShareEventPage() {
   const regNotYet = now < regOpen;
   const regClosed = now > regClose;
   const isFull = !!event.maxAttendees && activeCount >= event.maxAttendees;
-  const canRegister = !regNotYet && !regClosed && !isFull;
+  // Event đã kết thúc: now > endDate hoặc status = ended/cancelled.
+  // Khi ended không cho đăng ký nữa — tránh case endDate < now nhưng regClose > now.
+  const eventEnd = new Date(event.endDate);
+  const isEnded = (Number.isFinite(eventEnd.getTime()) && now > eventEnd) ||
+    event.status === "ended" || event.status === "cancelled";
+  // Preview mode cho admin: bỏ qua gate isEnded + publishedAt, render recap luôn để
+  // admin review trước khi event diễn ra / công bố. Chỉ bật cho admin đã login.
+  const adminRecapPreview = recapPreview && isLoggedInAdmin();
+  const hasPublishedRecap = adminRecapPreview
+    ? !!event.recap
+    : isEnded && !!event.recap?.publishedAt;
+  const canRegister = !regNotYet && !regClosed && !isFull && !isEnded;
 
   // ── Tính tổng tiền ──
   const ticketPrice = event.ticketPrice ?? 0;
@@ -658,6 +690,43 @@ export default function ShareEventPage() {
           <GalleryStrip urls={event.galleryImageUrls!} title={event.title} />
         )}
 
+        {/* Preview banner cho admin (?preview=recap) — cho biết đang ở chế độ xem trước. */}
+        {adminRecapPreview && (
+          <div
+            style={{
+              background: "#FEF3C7",
+              border: "1px solid #F59E0B",
+              borderRadius: 8,
+              padding: "10px 14px",
+              marginBottom: 12,
+              fontSize: 13,
+              color: "#92400E",
+              display: "flex",
+              alignItems: "center",
+              gap: 10,
+            }}
+          >
+            <span style={{ fontSize: 16 }}>📌</span>
+            <div style={{ flex: 1 }}>
+              <strong>Chế độ xem trước Recap (admin)</strong> — block recap đang hiện
+              dù sự kiện chưa kết thúc hoặc chưa công bố. Khách hàng KHÔNG thấy đường
+              dẫn này.
+              {!event.recap && " Hiện chưa có nội dung recap nào — vào form sửa sự kiện để thêm."}
+            </div>
+          </div>
+        )}
+
+        {/* ── Recap block — sự kiện đã kết thúc + admin đã công bố recap. ──
+            Render lên đầu (thay vị trí CTA đăng ký) để khách xem ngay kết quả /
+            ảnh / winners. CTA đăng ký bên dưới sẽ tự ẩn nhờ hasPublishedRecap. */}
+        {hasPublishedRecap && event.recap && (
+          <EventRecapBlock
+            recap={event.recap}
+            fallbackAttendeeCount={event.activeRegistrations}
+            onOpenNextEvent={(s) => navigate(`/events/${encodeURIComponent(s)}`)}
+          />
+        )}
+
         {/* Registration success banner */}
         {submitted && (
           <div
@@ -697,8 +766,8 @@ export default function ShareEventPage() {
           </div>
         )}
 
-        {/* CTA card */}
-        {!submitted && (
+        {/* CTA card — ẩn khi đã có recap published (block recap ở trên thay thế). */}
+        {!submitted && !hasPublishedRecap && (
           <div
             className="se-cta-card"
             style={{
@@ -714,19 +783,23 @@ export default function ShareEventPage() {
                 <div
                   style={{
                     fontSize: 14,
-                    color: THEME.warning,
+                    color: isEnded ? THEME.textMuted : THEME.warning,
                     fontWeight: 700,
                     marginBottom: 8,
                   }}
                 >
-                  {regNotYet
+                  {isEnded
+                    ? "🎉 Sự kiện đã kết thúc"
+                    : regNotYet
                     ? `⏰ Mở đăng ký vào ${formatDateTime(event.registrationOpenDate)}`
                     : regClosed
                     ? "⛔ Đã hết hạn đăng ký"
                     : "🚫 Sự kiện đã đủ chỗ"}
                 </div>
                 <p style={{ fontSize: 12, color: THEME.textMuted }}>
-                  Vui lòng theo dõi kênh của BTC để cập nhật thông tin
+                  {isEnded
+                    ? "BTC sẽ cập nhật ảnh / video / kết quả tại đây — quay lại sau nhé!"
+                    : "Vui lòng theo dõi kênh của BTC để cập nhật thông tin"}
                 </p>
               </>
             ) : showRegisterForm ? (
@@ -1188,16 +1261,24 @@ export default function ShareEventPage() {
 
             {/* Yc 5/5: bình luận (kênh CSKH, giữ vĩnh viễn) — chỉ render nếu admin bật.
                 Padding khớp .se-content-body (22px 24px) + divider top để tách khỏi nội dung. */}
-            {event.commentsEnabled !== false && (
-              <div className="se-comments-body">
-                <EventComments
-                  eventId={event.id}
-                  canPost
-                  isAdmin={isLoggedInAdmin()}
-                  moderated={!!event.commentsModerated}
-                />
-              </div>
-            )}
+            {event.commentsEnabled !== false && (() => {
+              const isAdmin = isLoggedInAdmin();
+              // Đọc thông tin admin từ cookie để prefill khi reply: tên +
+              // SĐT auto-fill, role="admin" → comment hiện badge admin nổi bật.
+              // Visitor thường không có defaultAuthor → form yêu cầu nhập như cũ.
+              const adminAuthor = isAdmin ? readAdminFromCookie() : undefined;
+              return (
+                <div className="se-comments-body">
+                  <EventComments
+                    eventId={event.id}
+                    canPost
+                    isAdmin={isAdmin}
+                    moderated={!!event.commentsModerated}
+                    defaultAuthor={adminAuthor}
+                  />
+                </div>
+              );
+            })()}
           </div>
           <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
             <Card>

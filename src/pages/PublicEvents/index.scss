@@ -479,6 +479,15 @@
   }
 }
 
+.pe-card--ended {
+  .pe-card__cover img { filter: grayscale(0.35) brightness(0.92); }
+  .pe-card__title { color: var(--pe-text); }
+  .pe-cta {
+    background: #6B7280;
+    &:hover { background: #4B5563; }
+  }
+}
+
 // ── Cover ──
 .pe-card__cover {
   position: relative;
@@ -533,6 +542,10 @@
   &--live {
     background: #DC2626;
     animation: pe-glow 2s ease-in-out infinite;
+  }
+  &--ended {
+    background: #6B7280;
+    color: #fff;
   }
   &--free {
     background: var(--pe-primary);

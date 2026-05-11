@@ -9,11 +9,12 @@ import { serialize } from "utils/editor";
 import { uploadDocumentFormData } from "utils/document";
 import { showToast } from "utils/common";
 import { eventStorage } from "./storage";
-import type { EventEntity, DynamicFieldDefinition, EventAddOnItem, EventVenue } from "./types";
+import type { EventEntity, DynamicFieldDefinition, EventAddOnItem, EventVenue, EventRecap } from "./types";
 import { THEME, formatVND } from "./shared";
 import DynamicFieldsBuilder from "./components/DynamicFieldsBuilder";
 // Yc 5/5: block-based editor cho trang sự kiện
 import ContentBlocksBuilder from "./components/ContentBlocksBuilder";
+import RecapEditor from "./components/RecapEditor";
 import type { ContentBlock } from "./types";
 import ServiceCatalogPicker from "./components/ServiceCatalogPicker";
 import {
@@ -78,6 +79,8 @@ type FormState = {
   commentsEnabled: boolean;
   commentsModerated: boolean;
   registrationFlows: ("guest" | "member_signup" | "member_login")[];
+  // ── Recap (sau sự kiện) ──
+  recap: EventRecap;
 };
 
 const EMPTY: FormState = {
@@ -120,6 +123,7 @@ const EMPTY: FormState = {
   commentsEnabled: true,
   commentsModerated: false,
   registrationFlows: ["guest"],
+  recap: {},
 };
 
 // Convert ISO → "YYYY-MM-DDTHH:mm" giờ VN cho datetime-local input
@@ -176,6 +180,7 @@ function entityToForm(e: EventEntity): FormState {
     commentsEnabled: e.commentsEnabled !== false,
     commentsModerated: e.commentsModerated ?? false,
     registrationFlows: e.registrationFlows ?? ["guest"],
+    recap: e.recap ?? {},
   };
 }
 
@@ -195,6 +200,10 @@ export default function EventFormPage() {
   // vì RebornEditor có useEffect[initialValue] re-deserialize + Slate dùng dynamic
   // key → mọi keystroke remount Slate, mất cursor/scroll position.
   const [editorInitialContent, setEditorInitialContent] = useState<string>("");
+  // Cùng pattern cho RebornEditor của recap.summary (Tóm tắt sau sự kiện).
+  // Riêng key/initial để không xung đột với editor "Nội dung chi tiết" ở Section 2.
+  const [recapSummaryKey, setRecapSummaryKey] = useState(0);
+  const [recapSummaryInitial, setRecapSummaryInitial] = useState<string>("");
   // Slug của event đang edit — phục vụ nút "Xem trước" mở trang public detail.
   const [previewSlug, setPreviewSlug] = useState<string>("");
   // Track form dirty bằng DOM event listener (input/change). KHÔNG dùng
@@ -214,6 +223,9 @@ export default function EventFormPage() {
   // → khó detect chính xác để skip. Ref này chỉ update khi user touched + content
   // thật sự khác empty; submit đọc thẳng ref, không phụ thuộc form state.
   const editorContentRef = useRef("");
+  // Cùng cặp ref/touched cho recap.summary (xem comment editorContentRef).
+  const recapSummaryTouchedRef = useRef(false);
+  const recapSummaryContentRef = useRef("");
 
   useEffect(() => {
     if (isEdit && id) {
@@ -227,6 +239,11 @@ export default function EventFormPage() {
           editorContentRef.current = e.content || "";
           editorTouchedRef.current = false;
           setEditorKey((k) => k + 1);
+          // Đồng bộ recap.summary vào RebornEditor: snapshot + force remount.
+          setRecapSummaryInitial(e.recap?.summary || "");
+          recapSummaryContentRef.current = e.recap?.summary || "";
+          recapSummaryTouchedRef.current = false;
+          setRecapSummaryKey((k) => k + 1);
           setPreviewSlug(e.slug || "");
         }
       })();
@@ -244,7 +261,16 @@ export default function EventFormPage() {
       if (!e.isTrusted) return;
       setIsDirty(true);
       const target = e.target as HTMLElement | null;
-      if (target?.closest?.("[contenteditable]")) {
+      // Phân biệt editor nào đang được gõ bằng data-editor-key trên wrapper.
+      // Trước đây chỉ có 1 editor nên gán chung — nay có thêm recap.summary editor
+      // ở Section 8 nên cần tách touched-flag.
+      const wrap = target?.closest?.("[data-editor-key]") as HTMLElement | null;
+      if (wrap) {
+        const key = wrap.dataset.editorKey;
+        if (key === "event-content") editorTouchedRef.current = true;
+        else if (key === "event-recap-summary") recapSummaryTouchedRef.current = true;
+      } else if (target?.closest?.("[contenteditable]")) {
+        // Fallback (không trùng wrapper): giữ behavior cũ — touched cho editor chính.
         editorTouchedRef.current = true;
       }
     };
@@ -340,6 +366,20 @@ export default function EventFormPage() {
     }
     editorContentRef.current = html;
     setForm((f) => ({ ...f, content: html }));
+  };
+
+  // Tóm tắt sau sự kiện — dùng RebornEditor, ghi vào form.recap.summary (HTML).
+  // Cùng pattern empty-wipe guard với handleContentChange: bỏ qua khi editor fire
+  // empty lúc mount/remount để không clobber summary đã có từ BE.
+  const handleRecapSummaryChange = (descendants: any) => {
+    const html = serialize({ children: descendants });
+    const stripped = html.replace(/\s/g, "");
+    const isEmpty = !stripped || /^(<p[^>]*>(<br\s*\/?>)?<\/p>)+$/.test(stripped);
+    if (isEmpty && !recapSummaryTouchedRef.current && recapSummaryContentRef.current) {
+      return;
+    }
+    recapSummaryContentRef.current = html;
+    setForm((f) => ({ ...f, recap: { ...f.recap, summary: html } }));
   };
 
   const handleCoverUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -526,6 +566,21 @@ export default function EventFormPage() {
       commentsEnabled: form.commentsEnabled,
       commentsModerated: form.commentsModerated || undefined,
       registrationFlows: form.registrationFlows.length ? form.registrationFlows : ["guest"],
+      // ── Recap (sau sự kiện) — gửi undefined nếu rỗng để BE không lưu blob rỗng. ──
+      recap: (() => {
+        const r = form.recap;
+        const hasContent = !!(
+          r.summary?.trim() ||
+          r.attendeeCount != null ||
+          (r.highlightImages?.length ?? 0) > 0 ||
+          (r.videoUrls?.filter(Boolean).length ?? 0) > 0 ||
+          (r.winners?.length ?? 0) > 0 ||
+          (r.blocks?.length ?? 0) > 0 ||
+          r.nextEventSlug ||
+          r.publishedAt
+        );
+        return hasContent ? r : undefined;
+      })(),
     };
 
     try {
@@ -629,27 +684,48 @@ export default function EventFormPage() {
           {isEdit ? "✏️ Sửa sự kiện" : "➕ Tạo sự kiện mới"}
         </h2>
         {isEdit && previewSlug && (
-          <a
-            href={`/crm/events/${encodeURIComponent(previewSlug)}`}
-            target="_blank"
-            rel="noreferrer"
-            title={form.isTest
-              ? "Mở trang public để preview & đăng ký thử (event TEST chỉ admin login mới truy cập được)"
-              : "Mở trang public để xem trước & đăng ký thử"}
-            style={{
-              padding: "6px 12px",
-              background: THEME.primarySoft,
-              color: THEME.primaryDark,
-              border: `1px solid ${THEME.primary}`,
-              borderRadius: 6,
-              cursor: "pointer",
-              fontSize: 12,
-              fontWeight: 600,
-              textDecoration: "none",
-            }}
-          >
-            👁 Xem trước & đăng ký thử
-          </a>
+          <>
+            <a
+              href={`/crm/events/${encodeURIComponent(previewSlug)}`}
+              target="_blank"
+              rel="noreferrer"
+              title={form.isTest
+                ? "Mở trang public để preview & đăng ký thử (event TEST chỉ admin login mới truy cập được)"
+                : "Mở trang public để xem trước & đăng ký thử"}
+              style={{
+                padding: "6px 12px",
+                background: THEME.primarySoft,
+                color: THEME.primaryDark,
+                border: `1px solid ${THEME.primary}`,
+                borderRadius: 6,
+                cursor: "pointer",
+                fontSize: 12,
+                fontWeight: 600,
+                textDecoration: "none",
+              }}
+            >
+              👁 Xem trước & đăng ký thử
+            </a>
+            <a
+              href={`/crm/events/${encodeURIComponent(previewSlug)}?preview=recap`}
+              target="_blank"
+              rel="noreferrer"
+              title="Xem trước block Recap dù sự kiện chưa kết thúc / chưa công bố (chỉ admin)"
+              style={{
+                padding: "6px 12px",
+                background: "#FEF3C7",
+                color: "#92400E",
+                border: "1px solid #F59E0B",
+                borderRadius: 6,
+                cursor: "pointer",
+                fontSize: 12,
+                fontWeight: 600,
+                textDecoration: "none",
+              }}
+            >
+              📌 Xem trước Recap
+            </a>
+          </>
         )}
       </div>
 
@@ -716,7 +792,10 @@ export default function EventFormPage() {
           </Section>
 
           <Section title="2. Nội dung chi tiết">
-            <div style={{ border: `1px solid ${THEME.border}`, borderRadius: 6, padding: 8 }}>
+            <div
+              data-editor-key="event-content"
+              style={{ border: `1px solid ${THEME.border}`, borderRadius: 6, padding: 8 }}
+            >
               <RebornEditor
                 key={editorKey}
                 name="event-content"
@@ -1157,6 +1236,55 @@ export default function EventFormPage() {
             <AddOnTab
               items={form.addOnItems}
               onChange={(items) => setForm((f) => ({ ...f, addOnItems: items }))}
+            />
+          </Section>
+
+          {/* ── Recap "Sau sự kiện" ── */}
+          <Section title="8. 📌 Recap sau sự kiện (ảnh, video, winners)">
+            {(() => {
+              const endIso = form.endDate ? vnLocalToOffsetIso(form.endDate) : "";
+              const isEnded = endIso ? new Date(endIso).getTime() < Date.now() : false;
+              return (
+                <p style={{ fontSize: 12, color: THEME.textMuted, margin: "0 0 10px" }}>
+                  {isEnded
+                    ? "Sự kiện đã kết thúc — up ảnh / video / danh sách đoạt giải, rồi nhấn \"Công bố recap\" để cộng đồng xem lại kết quả."
+                    : "Bạn có thể chuẩn bị recap trước. Khi sự kiện kết thúc + bấm \"Công bố recap\", FE public sẽ tự thay form đăng ký bằng block Recap."}
+                </p>
+              );
+            })()}
+
+            {/* Tóm tắt — RebornEditor (rich text) để admin chèn ảnh/link/bảng. */}
+            <div style={{ marginBottom: 14 }}>
+              <label
+                style={{
+                  display: "block",
+                  fontSize: 12,
+                  fontWeight: 600,
+                  color: THEME.primaryDark,
+                  marginBottom: 4,
+                }}
+              >
+                Tóm tắt sau sự kiện
+              </label>
+              <div
+                data-editor-key="event-recap-summary"
+                style={{ border: `1px solid ${THEME.border}`, borderRadius: 6, padding: 8 }}
+              >
+                <RebornEditor
+                  key={recapSummaryKey}
+                  name="event-recap-summary"
+                  fill={true}
+                  initialValue={recapSummaryInitial}
+                  onChangeContent={handleRecapSummaryChange}
+                  disableAutoScroll
+                  placeholder='VD: "Sự kiện đã diễn ra thành công với hơn 250 người tham gia…"'
+                />
+              </div>
+            </div>
+
+            <RecapEditor
+              recap={form.recap}
+              onChange={(recap) => setForm((f) => ({ ...f, recap }))}
             />
           </Section>
         </div>
