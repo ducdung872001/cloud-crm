@@ -177,7 +177,10 @@ Khớp `types.ts:47-79`. BE chỉ cần trả các trường:
   address?: string;
   passwordSet: boolean;
   lastLoginAt?: string;     // ISO; BE update mỗi lần login thành công
-  status: "active" | "inactive" | "blocked";
+  // [updated 2026-05-11] đã align với BE: active|suspended|graduated|inactive.
+  // BE reply 20260508-1130 ban đầu báo FE = "active|inactive|blocked" — đã không
+  // còn đúng từ commit trước; types.ts hiện match BE 100%.
+  status: "active" | "suspended" | "graduated" | "inactive";
   joinedAt: string;
   source?: "event_signup" | "manual" | "import" | "api";
   createdAt: string;
