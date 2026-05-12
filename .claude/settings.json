@@ -180,7 +180,9 @@
       "Bash(git -C \"d:/Git/reborn/reborn-cloud/cloud-ver2/cloud-crm\" diff .claude/settings.json)",
       "Bash(git -C \"d:/Git/reborn/reborn-cloud/cloud-ver2/cloud-crm\" add .claude/settings.json)",
       "Bash(git -C \"d:/Git/reborn/reborn-cloud/cloud-ver2/cloud-crm\" commit -m \"chore: update Claude Code settings allowlist từ session debug 401\")",
-      "Bash(git -C \"d:/Git/reborn/reborn-cloud/cloud-ver2/cloud-crm\" log --oneline origin/reborn-mentorhub -5)"
+      "Bash(git -C \"d:/Git/reborn/reborn-cloud/cloud-ver2/cloud-crm\" log --oneline origin/reborn-mentorhub -5)",
+      "Bash(yarn dev *)",
+      "Bash(git branch *)"
     ],
     "additionalDirectories": [
       "\\tmp"
