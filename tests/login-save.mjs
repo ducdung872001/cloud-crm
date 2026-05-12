@@ -23,7 +23,10 @@ const PASS = CONFIG.PASSWORD;
 console.log(`[login] BASE_URL=${APP_URL}  user=${USER}`);
 
 const browser = await chromium.launch({ headless: CONFIG.HEADLESS });
-const context = await browser.newContext({ viewport: CONFIG.VIEWPORT });
+const context = await browser.newContext({
+  viewport: CONFIG.VIEWPORT,
+  extraHTTPHeaders: { Hostname: "kcn.reborn.vn" },
+});
 const page = await context.newPage();
 
 try {

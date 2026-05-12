@@ -62,18 +62,21 @@ export default function DashboardCH() {
             icon: <Icon name="Customer" />,
             value: `Đang tập: ${data.members.active}/${data.members.total_slots}`,
             color: "primary",
+            href: urls.customer_list,
           },
           {
             label: "Buổi tập hôm nay (6-9h)",
             icon: <Icon name="Barchart" />,
             value: `${data.checkins_today} buổi`,
             color: "accent",
+            href: "/ch_checkin",
           },
           {
             label: "Cần gia hạn (≤15 ngày)",
             icon: <Icon name="WarningCircle" />,
             value: `${data.members.expiring_soon} thành viên`,
             color: "warning",
+            href: urls.customer_care_page,
           },
           {
             label: "Doanh thu trạm tháng này",
@@ -81,16 +84,17 @@ export default function DashboardCH() {
             value: masked ? "••••••••••" : `~${formatCurrency(data.mrr_vnd, ".", "")}đ`,
             color: "success",
             canMask: true,
+            href: "/ch_report_revenue",
           },
         ].map((card, i) => (
-          <div key={i} className={`stat-card stat-card--${card.color}`}>
+          <div key={i} className={`stat-card stat-card--${card.color}`} onClick={() => card.href && navTo(card.href)} style={{ cursor: card.href ? "pointer" : "default" }}>
             <div className={`stat-card-icon ${card.color}`}>{card.icon}</div>
             <div className="stat-card-content">
               <div className="stat-card-label">{card.label}</div>
               <div className="stat-card-value-container">
                 <span className="stat-card-value">{card.value}</span>
                 {card.canMask && (
-                  <button onClick={() => setMasked(!masked)} className="stat-card-toggle">
+                  <button onClick={(e) => { e.stopPropagation(); setMasked(!masked); }} className="stat-card-toggle">
                     {masked ? <Icon name="EyeSlash" /> : <Icon name="Eye" />}
                   </button>
                 )}

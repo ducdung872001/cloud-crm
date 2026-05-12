@@ -107,7 +107,17 @@
       "Bash(mkdir -p docs/products/tax-compliance-hokd)",
       "Bash(rmdir docs/02-requirements/diagrams docs/02-requirements)",
       "Bash(rmdir docs/03-architecture/diagrams docs/03-architecture)",
-      "Bash(rmdir docs/09-userguides/images docs/09-userguides)"
+      "Bash(rmdir docs/09-userguides/images docs/09-userguides)",
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\" http://localhost:4000/crm/dashboard)",
+      "Bash(HEADLESS=true node tests/fitpro-e2e/role-customer.mjs)",
+      "Bash(HEADLESS=true node tests/fitpro-e2e/role-master.mjs)",
+      "Bash(HEADLESS=true node tests/fitpro-e2e/role-coach.mjs)",
+      "Bash(HEADLESS=true node tests/fitpro-e2e/role-admin.mjs)",
+      "Bash(node tests/fitpro-e2e/_lib/build-slideshow.mjs --all)",
+      "Bash(HEADLESS=true node tests/login-save.mjs)",
+      "Bash(node tests/login-debug.mjs)",
+      "Bash(node tests/login-manual.mjs)",
+      "Bash(curl -s -o /dev/null -w \"dev server: %{http_code}\\\\n\" http://localhost:4000/crm/dashboard)"
     ],
     "additionalDirectories": [
       "\\tmp"

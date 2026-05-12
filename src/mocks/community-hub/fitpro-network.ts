@@ -23,11 +23,12 @@ export interface INetworkNode {
   children_ids: string[];
 }
 
-// Top level (tầng 0) = Master BO — đã có 5 Elite F1, chưa đủ N007 (cần 7)
+// Top level (tầng 0) = Master BO — đủ 7 Elite F1-F7 active → auto-mint N007 ("Nhà")
 const master: INetworkNode = {
   id: "BO-MASTER",
   name: "Nguyễn Master (Bạn)",
   affiliate_code: "A007",
+  house_code: "N007",  // Mint khi đủ 7 Elite F1-F7 active liền nhau (5 active + 2 setup chưa kích hoạt → snapshot demo)
   role: "entrepreneur",
   tier: 1,
   station_code: "FP-HN-001",
@@ -38,16 +39,18 @@ const master: INetworkNode = {
   monthly_commission_vnd: 42000000,
   status: "active",
   parent_id: null,
-  children_ids: ["BO-T1-001", "BO-T1-002", "BO-T1-003", "BO-T1-004", "BO-T1-005"],
+  children_ids: ["BO-T1-001", "BO-T1-002", "BO-T1-003", "BO-T1-004", "BO-T1-005", "BO-T1-006", "BO-T1-007"],
 };
 
-// Tầng 1 — 5 trạm trực tiếp (mục tiêu 7)
+// Tầng 1 — 7 Elite F1 trực tiếp (đủ chuẩn 7×7×7)
 const tier1: INetworkNode[] = [
   { id: "BO-T1-001", name: "Trần Thị B", affiliate_code: "A015", role: "entrepreneur", tier: 1, station_code: "FP-HN-002", city: "Hà Nội", joined_date: "2025-08-01", stations_count: 3, monthly_revenue_vnd: 128000000, monthly_commission_vnd: 64000000, status: "active", parent_id: "BO-MASTER", children_ids: ["BO-T2-001", "BO-T2-002", "BO-T2-003"] },
   { id: "BO-T1-002", name: "Lê Văn C", affiliate_code: "A028", role: "trainer", tier: 1, station_code: "FP-DN-001", city: "Đà Nẵng", joined_date: "2025-11-15", stations_count: 2, monthly_revenue_vnd: 95000000, monthly_commission_vnd: 28000000, status: "active", parent_id: "BO-MASTER", children_ids: ["BO-T2-004", "BO-T2-005"] },
   { id: "BO-T1-003", name: "Phạm Thị D", affiliate_code: "A041", role: "ambassador", tier: 1, station_code: "FP-NA-001", city: "Nghệ An", joined_date: "2025-12-01", stations_count: 1, monthly_revenue_vnd: 42000000, monthly_commission_vnd: 8500000, status: "active", parent_id: "BO-MASTER", children_ids: ["BO-T2-006"] },
   { id: "BO-T1-004", name: "Hoàng Văn E", affiliate_code: "A053", role: "office", tier: 1, station_code: "FP-HCM-001", city: "TP.HCM", joined_date: "2026-01-10", stations_count: 1, monthly_revenue_vnd: 32000000, monthly_commission_vnd: 4200000, status: "active", parent_id: "BO-MASTER", children_ids: [] },
   { id: "BO-T1-005", name: "Bùi Thị F", affiliate_code: "A067", role: "office", tier: 1, station_code: "FP-HN-SETUP", city: "Hà Nội", joined_date: "2026-04-01", stations_count: 0, monthly_revenue_vnd: 0, monthly_commission_vnd: 0, status: "setup", parent_id: "BO-MASTER", children_ids: [] },
+  { id: "BO-T1-006", name: "Đỗ Minh Quân", affiliate_code: "A073", role: "entrepreneur", tier: 1, station_code: "FP-HCM-002", city: "TP.HCM", joined_date: "2025-12-20", stations_count: 2, monthly_revenue_vnd: 78000000, monthly_commission_vnd: 19500000, status: "active", parent_id: "BO-MASTER", children_ids: [] },
+  { id: "BO-T1-007", name: "Lưu Thu Trang", affiliate_code: "A088", role: "trainer", tier: 1, station_code: "FP-CT-001", city: "Cần Thơ", joined_date: "2026-02-08", stations_count: 1, monthly_revenue_vnd: 36000000, monthly_commission_vnd: 6200000, status: "active", parent_id: "BO-MASTER", children_ids: [] },
 ];
 
 // Tầng 2 — downline của tier 1

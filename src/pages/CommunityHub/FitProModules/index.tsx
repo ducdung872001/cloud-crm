@@ -1,9 +1,46 @@
 // [FitPro] 9 FitPro-specific modules (F2, F4-F11) — each reachable via dedicated route.
 // Kept in 1 file to avoid prototype churn; each sub-route locks its own tab and hides the tab pills.
-import React, { useState } from "react";
-import { useLocation } from "react-router-dom";
+import React, { useState, useEffect } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
 import { MOCK_FITPRO_STATIONS } from "@/mocks/community-hub/fitpro-stations";
 import { formatCurrency } from "reborn-util";
+
+// ── Toast nhỏ (replace alert()) ─────────────────────────────────────
+function Toast({ msg, onDone }: { msg: string; onDone: () => void }) {
+  useEffect(() => {
+    const t = setTimeout(onDone, 2800);
+    return () => clearTimeout(t);
+  }, [onDone]);
+  return (
+    <div style={{
+      position: "fixed", bottom: 24, right: 24, zIndex: 2000,
+      background: "#0B2E2A", color: "#fff", padding: "12px 20px",
+      borderRadius: 8, boxShadow: "0 8px 24px rgba(0,0,0,.2)",
+      fontSize: 13, maxWidth: 380, whiteSpace: "pre-line", lineHeight: 1.5,
+    }}>
+      {msg}
+    </div>
+  );
+}
+
+// ── Ledger HBL mock (6 kỳ) ─────────────────────────────────────────
+interface ILedgerEntry {
+  id: string;
+  period: string;
+  bo: string;
+  file: string;
+  paid: number;
+  distributed: number;
+  uploaded_at: string;
+}
+const INIT_LEDGER: ILedgerEntry[] = [
+  { id: "L-006", period: "04/2026", bo: "Nguyễn Master (A007)", file: "HBL_commission_2026-04.xlsx", paid: 42_000_000, distributed: 41_200_000, uploaded_at: "2026-05-08 09:14" },
+  { id: "L-005", period: "04/2026", bo: "Trần Thị B (A015)", file: "HBL_apr_TT-B.csv", paid: 18_400_000, distributed: 17_900_000, uploaded_at: "2026-05-07 16:42" },
+  { id: "L-004", period: "03/2026", bo: "Nguyễn Master (A007)", file: "HBL_commission_2026-03.xlsx", paid: 38_500_000, distributed: 38_500_000, uploaded_at: "2026-04-08 10:30" },
+  { id: "L-003", period: "03/2026", bo: "Trần Thị B (A015)", file: "HBL_mar_TT-B.csv", paid: 16_200_000, distributed: 16_200_000, uploaded_at: "2026-04-06 14:00" },
+  { id: "L-002", period: "02/2026", bo: "Nguyễn Master (A007)", file: "HBL_commission_2026-02.xlsx", paid: 35_100_000, distributed: 35_100_000, uploaded_at: "2026-03-08 11:20" },
+  { id: "L-001", period: "02/2026", bo: "Lê Văn C (A028)", file: "HBL_feb_LV-C.csv", paid: 12_800_000, distributed: 11_500_000, uploaded_at: "2026-03-07 09:55" },
+];
 
 type TabKey = "f2-station-type" | "f4-body-metrics" | "f5-cross-card" | "f6-sop" | "f7-finder" | "f8-commission" | "f9-funnel" | "f10-tax" | "f11-mf7";
 
@@ -21,6 +58,7 @@ const TABS: { key: TabKey; label: string; icon: string; priority: string; path: 
 
 export default function FitProModulesPage() {
   const location = useLocation();
+  const navigate = useNavigate();
   const pathTab = TABS.find((t) => t.path === location.pathname);
   const isStandalone = Boolean(pathTab);
   document.title = pathTab ? `FitPro — ${pathTab.title}` : "FitPro Modules";
@@ -30,6 +68,12 @@ export default function FitProModulesPage() {
   }, [pathTab?.key]);
   const [createStationType, setCreateStationType] = useState<"home" | "center" | "inside" | null>(null);
   const [shareContent, setShareContent] = useState<{ title: string; type: string } | null>(null);
+  const [toast, setToast] = useState<string | null>(null);
+  const [ledger, setLedger] = useState<ILedgerEntry[]>(INIT_LEDGER);
+  const [selectedLedger, setSelectedLedger] = useState<ILedgerEntry | null>(null);
+  const [medlatecOpen, setMedlatecOpen] = useState(false);
+  const [taxFiling, setTaxFiling] = useState<{ code: string; revenue: number; tax: number } | null>(null);
+  const [mf7Lesson, setMf7Lesson] = useState<{ day: number; title: string } | null>(null);
   const [stationForm, setStationForm] = useState({
     name: "",
     code: "",
@@ -40,15 +84,33 @@ export default function FitProModulesPage() {
     opening_date: new Date().toISOString().split("T")[0],
   });
 
+  const showToast = (m: string) => setToast(m);
+
   const handleCreateStation = () => {
-    if (!stationForm.name.trim()) { alert("Vui lòng nhập tên trạm"); return; }
-    if (!stationForm.code.trim()) { alert("Vui lòng nhập mã trạm"); return; }
+    if (!stationForm.name.trim()) { showToast("⚠️ Vui lòng nhập tên trạm"); return; }
+    if (!stationForm.code.trim()) { showToast("⚠️ Vui lòng nhập mã trạm"); return; }
     const typeLabel = createStationType === "home" ? "Home FitPro"
       : createStationType === "center" ? "FitPro CENTER"
       : "FitPro INSIDE";
-    alert(`✓ Đã tạo ${typeLabel}: ${stationForm.name} (${stationForm.code})\nSetup 72h sẽ bắt đầu.`);
+    showToast(`✓ Đã tạo ${typeLabel}: ${stationForm.name} (${stationForm.code})\nSetup 72h sẽ bắt đầu.\n→ Mở sơ đồ thảm tập...`);
     setCreateStationType(null);
     setStationForm({ name: "", code: "", address: "", city: "Hà Nội", total_mats: 5, owner_name: "", opening_date: new Date().toISOString().split("T")[0] });
+    setTimeout(() => navigate("/ch_accommodation"), 1200);
+  };
+
+  const handleUploadHBL = (filename: string) => {
+    const nextId = `L-${String(ledger.length + 1).padStart(3, "0")}`;
+    const newEntry: ILedgerEntry = {
+      id: nextId,
+      period: "05/2026",
+      bo: "Nguyễn Master (A007)",
+      file: filename,
+      paid: 44_500_000 + Math.round(Math.random() * 3_000_000),
+      distributed: 43_900_000,
+      uploaded_at: new Date().toISOString().slice(0, 16).replace("T", " "),
+    };
+    setLedger((prev) => [newEntry, ...prev]);
+    showToast(`✓ Đã import "${filename}"\n→ Tạo ledger entry ${nextId} (passthrough)\n→ Không sinh giao dịch tiền`);
   };
 
   return (
@@ -207,7 +269,7 @@ export default function FitProModulesPage() {
                     <div>🔬 Re-test: 2026-04-28 (Upcoming)</div>
                   </div>
                   <button
-                    onClick={() => alert("📞 Đã kết nối API Medlatec — đặt lịch lấy mẫu tại nhà trạm FitPro.\n📅 Dự kiến: 2026-04-28 08:00\n🩺 Gói xét nghiệm: Tổng quát 12 chỉ số")}
+                    onClick={() => setMedlatecOpen(true)}
                     style={{ width: "100%", padding: "8px", background: "#FF8C42", color: "#fff", border: "none", borderRadius: 6, cursor: "pointer" }}
                   >
                     📞 Đặt lịch Medlatec
@@ -302,11 +364,11 @@ export default function FitProModulesPage() {
                 <p style={{ fontSize: 13, color: "#6B8A85" }}>Master BO giám sát tất cả trạm downline tuân thủ SOP chuẩn thương hiệu FitPro</p>
               </div>
               <div style={{ display: "flex", gap: 8 }}>
-                <button onClick={() => alert("📊 Đã xuất báo cáo SOP compliance xuống file Excel")}
+                <button onClick={() => showToast("📊 Đã xuất báo cáo SOP compliance → Excel\n5 trạm · điểm TB 87/100")}
                   style={{ padding: "8px 14px", background: "#fff", color: "#00C9A7", border: "1px solid #00C9A7", borderRadius: 6, fontSize: 12, fontWeight: 600, cursor: "pointer" }}>
                   📊 Xuất báo cáo
                 </button>
-                <button onClick={() => alert("📝 Đã lên lịch đợt audit tiếp theo — các trạm có điểm < 85 sẽ được kiểm tra đột xuất trong 7 ngày tới")}
+                <button onClick={() => showToast("📝 Đã lên lịch audit đột xuất\n→ 2 trạm điểm < 85 sẽ được kiểm tra trong 7 ngày")}
                   style={{ padding: "8px 14px", background: "#00C9A7", color: "#fff", border: "none", borderRadius: 6, fontSize: 12, fontWeight: 600, cursor: "pointer" }}>
                   ⚡ Lên lịch audit
                 </button>
@@ -440,11 +502,11 @@ export default function FitProModulesPage() {
                   <input type="file" accept=".csv,.xlsx,.xls" style={{ display: "none" }}
                     onChange={(e) => {
                       const f = e.target.files?.[0];
-                      if (f) alert(`✓ Đã import "${f.name}"\n→ Tạo ledger entry mới (passthrough, KHÔNG sinh giao dịch tiền)`);
+                      if (f) handleUploadHBL(f.name);
                     }}
                   />
                 </label>
-                <button onClick={() => alert("📑 Xuất báo cáo đối soát kỳ 04/2026 → Excel\n• 6 BO\n• Tổng HBL chuyển: 42 tr\n• Tổng phân phối anh A khai báo: 41,2 tr\n• Lệch: -800k (BO tự xử lý)")}
+                <button onClick={() => showToast(`📑 Xuất báo cáo đối soát → Excel\n• ${ledger.length} entry\n• Tổng HBL chuyển: ${formatCurrency(ledger.reduce((a, e) => a + e.paid, 0), ".", "")}đ\n• Tổng phân phối: ${formatCurrency(ledger.reduce((a, e) => a + e.distributed, 0), ".", "")}đ`)}
                   style={{ padding: "8px 14px", background: "#00C9A7", color: "#fff", border: "none", borderRadius: 6, fontSize: 12, fontWeight: 600, cursor: "pointer" }}>
                   📑 Xuất báo cáo đối soát
                 </button>
@@ -480,7 +542,15 @@ export default function FitProModulesPage() {
 
             {/* Ledger các file HBL đã upload */}
             <div style={{ marginTop: 20 }}>
-              <h4 style={{ marginBottom: 8 }}>📁 Ledger — file commission HBL đã upload (passthrough)</h4>
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 8 }}>
+                <h4 style={{ margin: 0 }}>📁 Ledger — file commission HBL đã upload (passthrough)</h4>
+                <span style={{ fontSize: 11, color: "#6B8A85" }}>{ledger.length} entry · click 1 hàng để xem chi tiết đối soát</span>
+              </div>
+              {ledger.length === 0 ? (
+                <div style={{ padding: 30, textAlign: "center", background: "#F5F9F8", borderRadius: 10, color: "#6B8A85", fontSize: 13 }}>
+                  📭 Chưa có file commission nào được upload. Bấm "Upload file HBL" ở trên để bắt đầu đối soát.
+                </div>
+              ) : (
               <div style={{ overflowX: "auto" }}><table style={{ width: "100%", minWidth: 720, fontSize: 12, borderCollapse: "collapse" }}>
                 <thead>
                   <tr style={{ background: "#E4F7F3" }}>
@@ -494,16 +564,14 @@ export default function FitProModulesPage() {
                   </tr>
                 </thead>
                 <tbody>
-                  {[
-                    { period: "04/2026", bo: "Nguyễn Master (A007)", file: "HBL_commission_2026-04.xlsx", paid: 42_000_000, distributed: 41_200_000 },
-                    { period: "03/2026", bo: "Nguyễn Master (A007)", file: "HBL_commission_2026-03.xlsx", paid: 38_500_000, distributed: 38_500_000 },
-                    { period: "04/2026", bo: "Trần Thị B (A015)", file: "HBL_apr_TT-B.csv", paid: 18_400_000, distributed: 17_900_000 },
-                    { period: "03/2026", bo: "Trần Thị B (A015)", file: "HBL_mar_TT-B.csv", paid: 16_200_000, distributed: 16_200_000 },
-                  ].map((row, i) => {
+                  {ledger.map((row) => {
                     const diff = row.paid - row.distributed;
                     const ok = diff === 0;
                     return (
-                      <tr key={i} style={{ borderBottom: "1px solid #E0E8E5" }}>
+                      <tr key={row.id} onClick={() => setSelectedLedger(row)} style={{ borderBottom: "1px solid #E0E8E5", cursor: "pointer" }}
+                        onMouseEnter={(e) => (e.currentTarget.style.background = "#F5F9F8")}
+                        onMouseLeave={(e) => (e.currentTarget.style.background = "transparent")}
+                      >
                         <td style={{ padding: 10, fontWeight: 600 }}>{row.period}</td>
                         <td style={{ padding: 10 }}>{row.bo}</td>
                         <td style={{ padding: 10, fontFamily: "monospace", fontSize: 11, color: "#6B8A85" }}>{row.file}</td>
@@ -522,6 +590,7 @@ export default function FitProModulesPage() {
                   })}
                 </tbody>
               </table></div>
+              )}
             </div>
 
             {/* Reference — % cấu hình tenant (read-only display) */}
@@ -614,13 +683,13 @@ export default function FitProModulesPage() {
               </div>
               <div style={{ display: "flex", gap: 8 }}>
                 <button
-                  onClick={() => alert("💰 Đã gửi khai thuế tháng 03/2026 cho tất cả trạm → Chi cục Thuế\n\n• 4 trạm đã nộp\n• 1 trạm chưa phát sinh doanh thu")}
+                  onClick={() => showToast("💰 Đã gửi khai thuế hàng loạt 03/2026 → Chi cục Thuế\n• 4 trạm đã nộp · 1 trạm chưa phát sinh DT")}
                   style={{ padding: "8px 14px", background: "#00C9A7", color: "#fff", border: "none", borderRadius: 6, fontSize: 12, cursor: "pointer", fontWeight: 600 }}
                 >
                   💰 Khai thuế hàng loạt
                 </button>
                 <button
-                  onClick={() => alert("📑 Đã xuất báo cáo thuế tháng 03/2026 → Excel")}
+                  onClick={() => showToast("📑 Đã xuất báo cáo thuế 03/2026 → Excel")}
                   style={{ padding: "8px 14px", background: "#fff", color: "#00C9A7", border: "1px solid #00C9A7", borderRadius: 6, fontSize: 12, cursor: "pointer", fontWeight: 600 }}
                 >
                   📑 Xuất báo cáo
@@ -665,7 +734,7 @@ export default function FitProModulesPage() {
                       <td style={{ padding: 10, textAlign: "center", fontSize: 11, color: "#6B8A85" }}>20/04/2026</td>
                       <td style={{ padding: 10, textAlign: "center" }}>
                         <button
-                          onClick={() => alert(`📋 Trạm ${s.code}\n\nDoanh thu: ${formatCurrency(s.month_revenue_vnd, ".", "")}đ\nThuế khoán (1.5%): ${formatCurrency(taxAmount, ".", "")}đ\n\n→ Mở form khai thuế chi tiết`)}
+                          onClick={() => setTaxFiling({ code: s.code, revenue: s.month_revenue_vnd, tax: taxAmount })}
                           style={{ padding: "4px 10px", background: statusText === "Chưa nộp" ? "#FF8C42" : "#E4F7F3", color: statusText === "Chưa nộp" ? "#fff" : "#00C9A7", border: "none", borderRadius: 4, fontSize: 11, cursor: "pointer", fontWeight: 600 }}
                         >
                           {statusText === "Chưa nộp" ? "Khai ngay" : "Xem"}
@@ -739,7 +808,7 @@ export default function FitProModulesPage() {
                       <span style={{ fontSize: 11, color: "#00C9A7" }}>✅ Hoàn thành</span>
                     ) : (
                       <button
-                        onClick={() => alert(`🎓 Bắt đầu bài học ngày ${s.day}\n\n"${s.title}"\n\n→ Mở giáo trình chi tiết + video hướng dẫn`)}
+                        onClick={() => setMf7Lesson({ day: s.day, title: s.title })}
                         style={{ padding: "6px 12px", background: "#00C9A7", color: "#fff", border: "none", borderRadius: 6, fontSize: 11, cursor: "pointer", fontWeight: 600 }}
                       >
                         ▶ Bắt đầu
@@ -802,12 +871,12 @@ export default function FitProModulesPage() {
                       if (ch.key === "copy") {
                         try {
                           navigator.clipboard.writeText(`https://fitpro.vn/content/${shareContent.title.toLowerCase().replace(/\s+/g, "-")}`);
-                          alert("✓ Đã copy link vào clipboard");
+                          showToast("✓ Đã copy link vào clipboard");
                         } catch {
-                          alert("Trình duyệt không hỗ trợ copy");
+                          showToast("⚠️ Trình duyệt không hỗ trợ copy");
                         }
                       } else {
-                        alert(`✓ Đã gửi "${shareContent.title}" qua ${ch.label}`);
+                        showToast(`✓ Đã gửi "${shareContent.title}" qua ${ch.label}`);
                       }
                       setShareContent(null);
                     }}
@@ -1070,6 +1139,163 @@ export default function FitProModulesPage() {
           </div>
         </div>
       )}
+
+      {/* ── Modal Medlatec đặt lịch xét nghiệm ── */}
+      {medlatecOpen && (
+        <div onClick={() => setMedlatecOpen(false)}
+          style={{ position: "fixed", inset: 0, background: "rgba(11,46,42,.5)", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 1000 }}>
+          <div onClick={(e) => e.stopPropagation()}
+            style={{ background: "#fff", borderRadius: 14, width: 480, maxWidth: "90vw", boxShadow: "0 20px 60px rgba(11,46,42,.3)" }}>
+            <div style={{ padding: "18px 24px", borderBottom: "1px solid #E0E8E5", display: "flex", justifyContent: "space-between", alignItems: "center", background: "linear-gradient(135deg, #FFF0E3 0%, #fff 100%)" }}>
+              <h3 style={{ margin: 0, color: "#0B2E2A" }}>🩺 Đặt lịch xét nghiệm Medlatec</h3>
+              <button onClick={() => setMedlatecOpen(false)} style={{ background: "transparent", border: "none", fontSize: 22, cursor: "pointer", color: "#6B8A85" }}>✕</button>
+            </div>
+            <div style={{ padding: 24 }}>
+              <div style={{ padding: 12, background: "#FFF7E6", borderRadius: 8, marginBottom: 16, fontSize: 12, color: "#8B5A00" }}>
+                ℹ️ Member <strong>Trần Thị Hương</strong> · Gói VIP · Day 73/90 · Re-test scheduled
+              </div>
+              <div style={{ display: "grid", gap: 12, fontSize: 13 }}>
+                <div><strong>Gói xét nghiệm:</strong> Tổng quát 12 chỉ số (kèm gói VIP)</div>
+                <div><strong>Ngày đề xuất:</strong> 2026-04-28 (D85, trước khi outcome)</div>
+                <div><strong>Giờ:</strong> 08:00 — lấy mẫu tại nhà trạm FitPro</div>
+                <div><strong>Chi phí:</strong> <span style={{ color: "#00C9A7", fontWeight: 700 }}>0đ — đã bao gồm trong gói VIP</span></div>
+              </div>
+              <div style={{ marginTop: 18, display: "flex", gap: 10, justifyContent: "flex-end" }}>
+                <button onClick={() => setMedlatecOpen(false)} style={{ padding: "10px 18px", borderRadius: 8, border: "1px solid #d9e0de", background: "#fff", color: "#6B8A85", fontWeight: 600, cursor: "pointer" }}>Hủy</button>
+                <button onClick={() => { setMedlatecOpen(false); showToast("📞 Đã đặt lịch Medlatec 2026-04-28 08:00\n→ Notification đã gửi tới member qua Zalo OA"); }}
+                  style={{ padding: "10px 18px", borderRadius: 8, border: "none", background: "#FF8C42", color: "#fff", fontWeight: 700, cursor: "pointer" }}>
+                  ✓ Xác nhận đặt lịch
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ── Modal Tax Filing chi tiết theo trạm ── */}
+      {taxFiling && (
+        <div onClick={() => setTaxFiling(null)}
+          style={{ position: "fixed", inset: 0, background: "rgba(11,46,42,.5)", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 1000 }}>
+          <div onClick={(e) => e.stopPropagation()}
+            style={{ background: "#fff", borderRadius: 14, width: 520, maxWidth: "90vw", boxShadow: "0 20px 60px rgba(11,46,42,.3)" }}>
+            <div style={{ padding: "18px 24px", borderBottom: "1px solid #E0E8E5", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+              <h3 style={{ margin: 0, color: "#0B2E2A" }}>📋 Khai thuế HKD trạm {taxFiling.code}</h3>
+              <button onClick={() => setTaxFiling(null)} style={{ background: "transparent", border: "none", fontSize: 22, cursor: "pointer", color: "#6B8A85" }}>✕</button>
+            </div>
+            <div style={{ padding: 24, fontSize: 13 }}>
+              <table style={{ width: "100%", borderCollapse: "collapse" }}>
+                <tbody>
+                  <tr style={{ borderBottom: "1px solid #E0E8E5" }}><td style={{ padding: 8, color: "#6B8A85" }}>Doanh thu 03/2026</td><td style={{ padding: 8, textAlign: "right", fontWeight: 600 }}>{formatCurrency(taxFiling.revenue, ".", "")}đ</td></tr>
+                  <tr style={{ borderBottom: "1px solid #E0E8E5" }}><td style={{ padding: 8, color: "#6B8A85" }}>Tỷ lệ khoán</td><td style={{ padding: 8, textAlign: "right" }}>1,5%</td></tr>
+                  <tr style={{ borderBottom: "1px solid #E0E8E5" }}><td style={{ padding: 8, color: "#6B8A85" }}>Thuế phải nộp</td><td style={{ padding: 8, textAlign: "right", color: "#FF8C42", fontWeight: 700 }}>{formatCurrency(taxFiling.tax, ".", "")}đ</td></tr>
+                  <tr><td style={{ padding: 8, color: "#6B8A85" }}>Hạn nộp</td><td style={{ padding: 8, textAlign: "right" }}>20/04/2026</td></tr>
+                </tbody>
+              </table>
+              <div style={{ marginTop: 14, padding: 10, background: "#EEF3FF", borderRadius: 6, fontSize: 11, color: "#1E3A8A" }}>
+                💡 Sang module <a href="/tax" style={{ color: "#0B2E2A", fontWeight: 700 }}>/tax</a> để khai TT 40/2021 + NĐ 70/2025 đầy đủ.
+              </div>
+              <div style={{ marginTop: 18, display: "flex", gap: 10, justifyContent: "flex-end" }}>
+                <button onClick={() => setTaxFiling(null)} style={{ padding: "10px 18px", borderRadius: 8, border: "1px solid #d9e0de", background: "#fff", color: "#6B8A85", fontWeight: 600, cursor: "pointer" }}>Đóng</button>
+                <button onClick={() => { setTaxFiling(null); showToast(`✓ Đã gửi tờ khai HKD trạm ${taxFiling.code} → Chi cục Thuế`); }}
+                  style={{ padding: "10px 18px", borderRadius: 8, border: "none", background: "#00C9A7", color: "#fff", fontWeight: 700, cursor: "pointer" }}>
+                  ✓ Gửi tờ khai
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ── Modal MF7 Lesson ── */}
+      {mf7Lesson && (
+        <div onClick={() => setMf7Lesson(null)}
+          style={{ position: "fixed", inset: 0, background: "rgba(11,46,42,.5)", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 1000 }}>
+          <div onClick={(e) => e.stopPropagation()}
+            style={{ background: "#fff", borderRadius: 14, width: 520, maxWidth: "90vw", boxShadow: "0 20px 60px rgba(11,46,42,.3)" }}>
+            <div style={{ padding: "18px 24px", borderBottom: "1px solid #E0E8E5", background: "linear-gradient(135deg, #E4F7F3 0%, #FFF0E3 100%)", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+              <h3 style={{ margin: 0, color: "#0B2E2A" }}>🎓 Bài học ngày {mf7Lesson.day} — MF7 Onboarding</h3>
+              <button onClick={() => setMf7Lesson(null)} style={{ background: "transparent", border: "none", fontSize: 22, cursor: "pointer", color: "#6B8A85" }}>✕</button>
+            </div>
+            <div style={{ padding: 24 }}>
+              <h4 style={{ marginTop: 0 }}>{mf7Lesson.title}</h4>
+              <div style={{ padding: 18, background: "#000", borderRadius: 8, color: "#fff", textAlign: "center", marginBottom: 14 }}>
+                <div style={{ fontSize: 40, marginBottom: 8 }}>▶</div>
+                <div style={{ fontSize: 12, opacity: 0.7 }}>Video giảng giải · 18 phút · HD</div>
+              </div>
+              <ul style={{ fontSize: 13, color: "#0B2E2A", lineHeight: 1.7, paddingLeft: 18 }}>
+                <li>Mục tiêu bài học · 4 trang slide PDF kèm</li>
+                <li>Quiz cuối bài (3 câu) — đạt 2/3 mới sang ngày kế</li>
+                <li>Workbook in-app: ghi chú riêng theo nhánh</li>
+              </ul>
+              <div style={{ marginTop: 18, display: "flex", gap: 10, justifyContent: "flex-end" }}>
+                <button onClick={() => setMf7Lesson(null)} style={{ padding: "10px 18px", borderRadius: 8, border: "1px solid #d9e0de", background: "#fff", color: "#6B8A85", fontWeight: 600, cursor: "pointer" }}>Đóng</button>
+                <button onClick={() => { setMf7Lesson(null); showToast(`✓ Đã đánh dấu hoàn thành ngày ${mf7Lesson.day}`); }}
+                  style={{ padding: "10px 18px", borderRadius: 8, border: "none", background: "#00C9A7", color: "#fff", fontWeight: 700, cursor: "pointer" }}>
+                  ✓ Hoàn thành bài học
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ── Modal Ledger Detail (HBL đối soát chi tiết) ── */}
+      {selectedLedger && (
+        <div onClick={() => setSelectedLedger(null)}
+          style={{ position: "fixed", inset: 0, background: "rgba(11,46,42,.5)", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 1000 }}>
+          <div onClick={(e) => e.stopPropagation()}
+            style={{ background: "#fff", borderRadius: 14, width: 600, maxWidth: "92vw", boxShadow: "0 20px 60px rgba(11,46,42,.3)" }}>
+            <div style={{ padding: "18px 24px", borderBottom: "1px solid #E0E8E5", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+              <h3 style={{ margin: 0, color: "#0B2E2A" }}>🧾 Đối soát chi tiết — {selectedLedger.id}</h3>
+              <button onClick={() => setSelectedLedger(null)} style={{ background: "transparent", border: "none", fontSize: 22, cursor: "pointer", color: "#6B8A85" }}>✕</button>
+            </div>
+            <div style={{ padding: 24, fontSize: 13 }}>
+              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12, marginBottom: 16 }}>
+                <div style={{ padding: 12, background: "#F5F9F8", borderRadius: 8 }}>
+                  <div style={{ fontSize: 11, color: "#6B8A85" }}>Kỳ</div>
+                  <div style={{ fontWeight: 700 }}>{selectedLedger.period}</div>
+                </div>
+                <div style={{ padding: 12, background: "#F5F9F8", borderRadius: 8 }}>
+                  <div style={{ fontSize: 11, color: "#6B8A85" }}>NPP</div>
+                  <div style={{ fontWeight: 700 }}>{selectedLedger.bo}</div>
+                </div>
+                <div style={{ padding: 12, background: "#FFF7E6", borderRadius: 8 }}>
+                  <div style={{ fontSize: 11, color: "#8B5A00" }}>HBL chuyển về TK NPP</div>
+                  <div style={{ fontWeight: 700, color: "#FF8C42" }}>{formatCurrency(selectedLedger.paid, ".", "")}đ</div>
+                </div>
+                <div style={{ padding: 12, background: "#E4F7F3", borderRadius: 8 }}>
+                  <div style={{ fontSize: 11, color: "#00C9A7" }}>NPP khai phân phối</div>
+                  <div style={{ fontWeight: 700, color: "#00C9A7" }}>{formatCurrency(selectedLedger.distributed, ".", "")}đ</div>
+                </div>
+              </div>
+              {selectedLedger.paid !== selectedLedger.distributed ? (
+                <div style={{ padding: 14, background: "#FEE2E2", borderRadius: 8, color: "#991B1B", fontSize: 12 }}>
+                  ⚠️ <strong>Cảnh báo lệch:</strong> {formatCurrency(selectedLedger.paid - selectedLedger.distributed, ".", "")}đ chưa được phân phối.
+                  Đề nghị NPP rà lại danh sách downline kỳ này — hệ thống <strong>không tự xử lý</strong> chênh lệch.
+                </div>
+              ) : (
+                <div style={{ padding: 14, background: "#E4F7F3", borderRadius: 8, color: "#00C9A7", fontSize: 12 }}>
+                  ✅ Đã đối soát khớp 100%. Không có chênh lệch.
+                </div>
+              )}
+              <div style={{ marginTop: 16, fontSize: 11, color: "#6B8A85" }}>
+                File gốc: <code style={{ fontFamily: "monospace" }}>{selectedLedger.file}</code><br />
+                Upload lúc: {selectedLedger.uploaded_at}
+              </div>
+              <div style={{ marginTop: 18, display: "flex", gap: 10, justifyContent: "flex-end" }}>
+                <button onClick={() => setSelectedLedger(null)} style={{ padding: "10px 18px", borderRadius: 8, border: "1px solid #d9e0de", background: "#fff", color: "#6B8A85", fontWeight: 600, cursor: "pointer" }}>Đóng</button>
+                <button onClick={() => { showToast(`📥 Đã tải file gốc: ${selectedLedger.file}`); }}
+                  style={{ padding: "10px 18px", borderRadius: 8, border: "none", background: "#00C9A7", color: "#fff", fontWeight: 700, cursor: "pointer" }}>
+                  📥 Tải file gốc
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Toast nhỏ thay alert() */}
+      {toast && <Toast msg={toast} onDone={() => setToast(null)} />}
     </div>
   );
 }
