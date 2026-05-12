@@ -18,12 +18,27 @@ const T = {
   danger: "#DC2626",
 };
 
+/** Sinh mật khẩu tạm 8 ký tự dễ đọc (loại 0/O/1/I/l). */
+function generateTempPassword(): string {
+  const chars = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
+  let s = "";
+  for (let i = 0; i < 8; i++) s += chars[Math.floor(Math.random() * chars.length)];
+  return s;
+}
+
 export default function MemberDetailPage() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const [member, setMember] = useState<MemberEntity | null>(null);
   const [history, setHistory] = useState<MemberHistoryItem[]>([]);
   const [stats, setStats] = useState<MemberStats | null>(null);
+
+  // Reset password modal state
+  const [resetPwdOpen, setResetPwdOpen] = useState(false);
+  const [resetPwd, setResetPwd] = useState("");
+  const [resetLoading, setResetLoading] = useState(false);
+  const [resetError, setResetError] = useState<string | null>(null);
+  const [resetDone, setResetDone] = useState<string | null>(null);
 
   // Filter UI: theo tháng, theo ngày
   const [selectedMonth, setSelectedMonth] = useState<string | null>(null); // YYYY-MM
@@ -97,6 +112,23 @@ export default function MemberDetailPage() {
               ))}
             </div>
           )}
+        </div>
+        <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
+          <button
+            onClick={() => {
+              setResetPwd(generateTempPassword());
+              setResetError(null);
+              setResetDone(null);
+              setResetPwdOpen(true);
+            }}
+            style={{ ...btnGhost, fontSize: 12, whiteSpace: "nowrap" }}
+            title="Đặt lại mật khẩu cho thành viên — admin tự gọi báo user"
+          >
+            🔑 Đặt lại mật khẩu
+          </button>
+          <span style={{ fontSize: 10, color: T.textMuted, textAlign: "center" }}>
+            {member.passwordSet ? "✓ Đã cấp pwd" : "⚠ Chưa cấp pwd"}
+          </span>
         </div>
       </div>
 
@@ -183,9 +215,158 @@ export default function MemberDetailPage() {
           </div>
         )}
       </div>
+
+      {/* Reset password modal */}
+      {resetPwdOpen && (
+        <div
+          onClick={() => { if (!resetLoading) setResetPwdOpen(false); }}
+          style={{
+            position: "fixed", inset: 0, background: "rgba(0,0,0,0.45)",
+            display: "flex", alignItems: "center", justifyContent: "center",
+            zIndex: 1000, padding: 16,
+          }}
+        >
+          <div
+            onClick={(e) => e.stopPropagation()}
+            style={{
+              background: "#fff", borderRadius: 10, padding: 20, width: 440, maxWidth: "100%",
+              boxShadow: "0 20px 50px rgba(0,0,0,0.25)",
+            }}
+          >
+            {!resetDone ? (
+              <>
+                <h3 style={{ margin: "0 0 4px", fontSize: 18 }}>Đặt lại mật khẩu (admin override)</h3>
+                <div style={{ fontSize: 12, color: T.textMuted, marginBottom: 8 }}>
+                  Cấp mật khẩu mới cho <b>{member.fullName}</b> ({member.memberCode}). Bạn sẽ
+                  thấy mật khẩu sau khi đặt lại để gọi báo user.
+                </div>
+                <div style={{
+                  background: "#FEF3C7", border: "1px solid #FDE047", color: "#854D0E",
+                  padding: "8px 10px", borderRadius: 6, fontSize: 11, marginBottom: 12, lineHeight: 1.5,
+                }}>
+                  💡 <b>Khuyến nghị:</b> hướng dẫn user tự dùng <b>"Quên mật khẩu"</b> trên trang đăng nhập
+                  để đặt pwd qua Firebase OTP — admin không cần biết pwd. Chỉ dùng admin override
+                  khi user không nhận được SMS / không tự thao tác được.
+                </div>
+                <label style={{ display: "block", fontSize: 12, fontWeight: 600, marginBottom: 4 }}>
+                  Mật khẩu tạm
+                </label>
+                <div style={{ display: "flex", gap: 6 }}>
+                  <input
+                    style={{ ...inp, flex: 1, fontFamily: "monospace" }}
+                    value={resetPwd}
+                    onChange={(e) => { setResetPwd(e.target.value); setResetError(null); }}
+                  />
+                  <button
+                    type="button"
+                    onClick={() => { setResetPwd(generateTempPassword()); setResetError(null); }}
+                    style={{ ...btnGhost, padding: "6px 10px" }}
+                    title="Sinh mật khẩu mới"
+                  >
+                    🎲
+                  </button>
+                </div>
+                {resetError && (
+                  <div style={{ fontSize: 12, color: T.danger, marginTop: 8 }}>{resetError}</div>
+                )}
+                <div style={{ display: "flex", gap: 8, justifyContent: "flex-end", marginTop: 16 }}>
+                  <button
+                    onClick={() => setResetPwdOpen(false)}
+                    disabled={resetLoading}
+                    style={btnGhost}
+                  >
+                    Huỷ
+                  </button>
+                  <button
+                    onClick={async () => {
+                      if (resetPwd.length < 6) {
+                        setResetError("Mật khẩu phải ít nhất 6 ký tự");
+                        return;
+                      }
+                      setResetLoading(true);
+                      setResetError(null);
+                      try {
+                        // Admin reset — không cần Firebase OTP, dùng admin endpoint.
+                        const r = await memberStorage.adminSetPasswordAsync(member.id, resetPwd);
+                        if (!r.ok) {
+                          setResetError(r.reason || "Đặt mật khẩu thất bại");
+                        } else {
+                          setResetDone(resetPwd);
+                          // Refresh member để passwordSet=true.
+                          const fresh = memberStorage.get(member.id);
+                          if (fresh) setMember(fresh);
+                        }
+                      } catch (e: any) {
+                        setResetError(e?.message || "Có lỗi xảy ra");
+                      } finally {
+                        setResetLoading(false);
+                      }
+                    }}
+                    disabled={resetLoading}
+                    style={{
+                      ...btnPrimary,
+                      opacity: resetLoading ? 0.7 : 1,
+                      cursor: resetLoading ? "not-allowed" : "pointer",
+                    }}
+                  >
+                    {resetLoading ? "Đang đặt..." : "🔑 Đặt mật khẩu mới"}
+                  </button>
+                </div>
+              </>
+            ) : (
+              <>
+                <div style={{ textAlign: "center", marginBottom: 12 }}>
+                  <div style={{ fontSize: 36 }}>✅</div>
+                  <h3 style={{ margin: "6px 0 4px", fontSize: 18 }}>Đã đặt lại mật khẩu</h3>
+                  <div style={{ fontSize: 12, color: T.textMuted }}>
+                    Gọi <b>{member.fullName}</b> ({member.phone}) báo mật khẩu mới:
+                  </div>
+                </div>
+                <div style={{ background: "#F0FDF4", border: "1px solid #BBF7D0", borderRadius: 8, padding: 14, marginBottom: 12 }}>
+                  <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                    <span style={{ width: 110, color: T.textMuted, fontSize: 12, fontWeight: 600 }}>Mật khẩu mới</span>
+                    <code style={{
+                      flex: 1, padding: "4px 8px", background: "#fff", borderRadius: 4,
+                      border: `1px solid ${T.border}`, fontFamily: "monospace",
+                      fontSize: 14, fontWeight: 700, color: "#166534",
+                    }}>{resetDone}</code>
+                    <button
+                      onClick={() => navigator.clipboard?.writeText(resetDone)}
+                      style={{ ...btnGhost, padding: "4px 8px", fontSize: 11 }}
+                    >
+                      📋 Copy
+                    </button>
+                  </div>
+                </div>
+                <div style={{ fontSize: 11, color: T.textMuted, marginBottom: 12 }}>
+                  Tính năng gửi tự động qua SMS/Zalo đang phát triển — hiện gọi điện trực tiếp.
+                </div>
+                <div style={{ display: "flex", justifyContent: "flex-end" }}>
+                  <button
+                    onClick={() => { setResetPwdOpen(false); setResetDone(null); }}
+                    style={btnPrimary}
+                  >
+                    ✓ Đã gọi báo / Xong
+                  </button>
+                </div>
+              </>
+            )}
+          </div>
+        </div>
+      )}
     </div>
   );
 }
+
+const inp: React.CSSProperties = {
+  padding: "8px 10px",
+  border: `1px solid ${T.border}`,
+  borderRadius: 6,
+  fontSize: 13,
+  outline: "none",
+  width: "100%",
+  boxSizing: "border-box",
+};
 
 function Stat({ label, value, highlight }: { label: string; value: number | string; highlight?: boolean }) {
   return (

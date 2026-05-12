@@ -8,11 +8,20 @@
 // flow A hoặc đã login flow C → callback `onReady(state)` để parent tự render
 // form đăng ký với prefill phù hợp.
 
-import React, { useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { THEME } from "../shared";
 import { memberStorage } from "../../Members/storage";
 import { parseMemberCode } from "../../Members/codeUtils";
 import type { MemberEntity } from "../../Members/types";
+import {
+  createRecaptchaVerifier,
+  isValidVNPhone,
+  isFirebasePhoneAuthAvailable,
+  sendPhoneOtp,
+  toE164VN,
+  verifyOtpAndGetIdToken,
+} from "../../Members/firebasePhoneOtp";
+import type { ConfirmationResult } from "firebase/auth";
 
 export type RegFlow = "guest" | "member_signup" | "member_login";
 
@@ -199,33 +208,137 @@ function MemberLoginForm({ onSuccess }: { onSuccess: (m: MemberEntity) => void }
             e.preventDefault();
             setForgotOpen(true);
           }}
-          style={{ fontSize: 12, color: THEME.primary }}
+          style={{ fontSize: 12, color: THEME.primary, fontWeight: 600 }}
         >
-          Quên mật khẩu?
+          Đặt / quên mật khẩu?
         </a>
       </div>
+      <p style={{ fontSize: 11, color: THEME.textMuted, margin: "6px 0 0" }}>
+        Lần đầu nhận mã thành viên? Bấm <b>"Đặt / quên mật khẩu?"</b> để đặt mật khẩu qua OTP.
+      </p>
       {forgotOpen && <ForgotPasswordModal initialCode={code} onClose={() => setForgotOpen(false)} />}
     </form>
   );
 }
 
-// ── Quên mật khẩu — UI stub (chưa nối backend OTP). ────────────────────────
-// UI cho user nhập mã + SĐT/email → "Gửi OTP" (button disabled) → form nhập OTP
-// + mật khẩu mới. Submit hiện toast "tính năng đang phát triển — liên hệ admin".
-// Sau khi BE có endpoints forgot-password + set-password thật → nối vào.
+// ── Quên mật khẩu — wire Firebase Phone OTP per BE flow 2026-05-12 ─────────
+// Flow:
+//   1. User nhập memberCode + phone → click "Gửi OTP" → Firebase SDK signInWithPhoneNumber
+//      → Firebase gửi SMS OTP (sender Firebase default, không brandname VN)
+//   2. User nhập OTP → confirm → idToken Firebase
+//   3. User nhập pwd mới → POST /community-hub/members/set-password
+//      body: { memberCode, firebaseIdToken, newPassword }
+//      → Market call Auth verify idToken nội bộ → match phone với members.phone
+//      → bcrypt + update → 200
+//
+// Caveat: cần `<div id="ch-recaptcha-container">` trong DOM (mount invisible).
 function ForgotPasswordModal({ initialCode, onClose }: { initialCode: string; onClose: () => void }) {
-  const [step, setStep] = useState<"request" | "otp">("request");
+  const [step, setStep] = useState<"request" | "otp" | "newpwd">("request");
   const [memberCode, setMemberCode] = useState(initialCode);
-  const [contact, setContact] = useState("");
+  const [phone, setPhone] = useState("");
   const [otp, setOtp] = useState("");
   const [newPwd, setNewPwd] = useState("");
-  const [info] = useState<string>(
-    "Tạm thời tính năng tự đặt mật khẩu chưa khả dụng. Vui lòng liên hệ BTC qua hotline để được hỗ trợ.",
-  );
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [info, setInfo] = useState<string | null>(null);
+
+  // Confirmation result từ Firebase — cần ở step 2 để confirm OTP.
+  const confirmationRef = useRef<ConfirmationResult | null>(null);
+
+  // ── Step 1 → 2: gửi OTP qua Firebase ────────────────────────────────────
+  const handleSendOtp = async () => {
+    setError(null);
+    if (!parseMemberCode(memberCode.trim())) {
+      setError("Mã không đúng định dạng. VD: 5971-300");
+      return;
+    }
+    if (!isValidVNPhone(phone)) {
+      setError("Số điện thoại không hợp lệ");
+      return;
+    }
+    if (!isFirebasePhoneAuthAvailable) {
+      setError("Firebase chưa cấu hình — liên hệ admin để bật biến môi trường.");
+      return;
+    }
+    setLoading(true);
+    try {
+      const verifier = createRecaptchaVerifier("ch-recaptcha-container");
+      const e164 = toE164VN(phone);
+      const confirmation = await sendPhoneOtp(e164, verifier);
+      confirmationRef.current = confirmation;
+      setInfo(`Đã gửi OTP tới ${maskPhone(phone)}. Mã có hiệu lực 5 phút.`);
+      setStep("otp");
+    } catch (e: any) {
+      const msg = e?.message || String(e);
+      setError(`Gửi OTP thất bại: ${msg}`);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // ── Step 2 → 3: verify OTP + lấy idToken ────────────────────────────────
+  const handleVerifyOtp = async () => {
+    setError(null);
+    if (otp.length !== 6 || !/^\d{6}$/.test(otp)) {
+      setError("Vui lòng nhập đủ 6 chữ số OTP");
+      return;
+    }
+    if (!confirmationRef.current) {
+      setError("Phiên OTP hết hạn — vui lòng gửi lại");
+      setStep("request");
+      return;
+    }
+    setLoading(true);
+    try {
+      const idToken = await verifyOtpAndGetIdToken(confirmationRef.current, otp);
+      // Lưu idToken tạm vào ref để dùng ở step set-password.
+      (confirmationRef as any).idToken = idToken;
+      setInfo("✓ OTP xác minh thành công. Nhập mật khẩu mới để hoàn tất.");
+      setStep("newpwd");
+    } catch (e: any) {
+      const msg = e?.message || String(e);
+      setError(/auth\/invalid-verification-code/.test(msg) ? "Mã OTP không đúng" : `Verify thất bại: ${msg}`);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // ── Step 3: gọi BE set-password ─────────────────────────────────────────
+  const handleSetPassword = async () => {
+    setError(null);
+    if (newPwd.length < 6) {
+      setError("Mật khẩu tối thiểu 6 ký tự");
+      return;
+    }
+    const idToken: string | undefined = (confirmationRef as any).idToken;
+    if (!idToken) {
+      setError("Thiếu idToken — vui lòng làm lại từ đầu");
+      setStep("request");
+      return;
+    }
+    setLoading(true);
+    try {
+      const r = await memberStorage.setPasswordAsync({
+        memberCode: memberCode.trim(),
+        firebaseIdToken: idToken,
+        newPassword: newPwd,
+      });
+      if (!r.ok) {
+        setError(r.reason || "Đặt mật khẩu thất bại");
+        return;
+      }
+      setInfo("✓ Đã đặt lại mật khẩu thành công. Bạn có thể đăng nhập ngay.");
+      setTimeout(onClose, 1500);
+    } catch (e: any) {
+      setError(e?.message || "Có lỗi xảy ra");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <div
-      onClick={onClose}
+      onClick={() => { if (!loading) onClose(); }}
       style={{
         position: "fixed", inset: 0, background: "rgba(0,0,0,0.45)",
         display: "flex", alignItems: "center", justifyContent: "center", zIndex: 1000, padding: 16,
@@ -238,20 +351,38 @@ function ForgotPasswordModal({ initialCode, onClose }: { initialCode: string; on
           boxShadow: "0 20px 50px rgba(0,0,0,0.25)",
         }}
       >
-        <h3 style={{ margin: "0 0 4px", fontSize: 18 }}>Quên mật khẩu</h3>
+        <h3 style={{ margin: "0 0 4px", fontSize: 18 }}>Đặt mật khẩu</h3>
         <div style={{ fontSize: 12, color: THEME.textMuted, marginBottom: 12 }}>
-          Đặt lại mật khẩu bằng OTP gửi qua SMS/email.
+          {step === "request" && (
+            <>
+              Nhập mã thành viên + SĐT đã đăng ký để nhận OTP qua SMS.<br />
+              <span style={{ color: THEME.primary, fontWeight: 600 }}>
+                Cũng dùng để đặt mật khẩu LẦN ĐẦU sau khi được cấp mã.
+              </span>
+            </>
+          )}
+          {step === "otp" && "Nhập 6 chữ số OTP đã gửi qua SMS."}
+          {step === "newpwd" && "Đặt mật khẩu (≥ 6 ký tự)."}
         </div>
 
-        {/* Banner báo tính năng đang phát triển */}
-        <div style={{
-          background: "#FEF3C7", border: "1px solid #F59E0B", color: "#92400E",
-          padding: "8px 12px", borderRadius: 6, fontSize: 12, marginBottom: 14,
-        }}>
-          ⏳ <b>Đang phát triển</b> — {info}
-        </div>
+        {info && (
+          <div style={{
+            background: "#ECFDF5", border: "1px solid #BBF7D0", color: "#065F46",
+            padding: "8px 12px", borderRadius: 6, fontSize: 12, marginBottom: 10,
+          }}>
+            {info}
+          </div>
+        )}
+        {error && (
+          <div style={{
+            background: "#FEF2F2", border: "1px solid #FECACA", color: "#991B1B",
+            padding: "8px 12px", borderRadius: 6, fontSize: 12, marginBottom: 10,
+          }}>
+            ⚠ {error}
+          </div>
+        )}
 
-        {step === "request" ? (
+        {step === "request" && (
           <>
             <Field label="Mã thành viên *">
               <input
@@ -261,60 +392,91 @@ function ForgotPasswordModal({ initialCode, onClose }: { initialCode: string; on
                 style={inp}
               />
             </Field>
-            <Field label="Số điện thoại hoặc email đã đăng ký *">
+            <Field label="Số điện thoại đã đăng ký *">
               <input
-                value={contact}
-                onChange={(e) => setContact(e.target.value)}
-                placeholder="0xxx hoặc you@example.com"
+                value={phone}
+                onChange={(e) => setPhone(e.target.value)}
+                placeholder="VD: 0912345678"
                 style={inp}
               />
             </Field>
             <div style={{ display: "flex", gap: 8, justifyContent: "flex-end", marginTop: 12 }}>
-              <button onClick={onClose} style={btnGhostMd}>Huỷ</button>
+              <button onClick={onClose} disabled={loading} style={btnGhostMd}>Huỷ</button>
               <button
-                disabled
-                onClick={() => setStep("otp")}
-                title="Tính năng đang phát triển"
-                style={btnPrimaryDisabled}
+                disabled={loading}
+                onClick={handleSendOtp}
+                style={btnPrimary(loading)}
               >
-                Gửi OTP
+                {loading ? "Đang gửi..." : "Gửi OTP"}
               </button>
             </div>
           </>
-        ) : (
+        )}
+
+        {step === "otp" && (
           <>
             <Field label="Mã OTP (6 số)">
               <input
                 value={otp}
-                onChange={(e) => setOtp(e.target.value)}
+                onChange={(e) => setOtp(e.target.value.replace(/[^\d]/g, "").slice(0, 6))}
                 placeholder="123456"
-                style={inp}
+                maxLength={6}
+                inputMode="numeric"
+                style={{ ...inp, letterSpacing: 4, fontFamily: "monospace", fontSize: 16 }}
+                autoFocus
               />
             </Field>
-            <Field label="Mật khẩu mới">
+            <div style={{ display: "flex", gap: 8, justifyContent: "space-between", marginTop: 12 }}>
+              <button onClick={() => setStep("request")} disabled={loading} style={btnGhostMd}>← Quay lại</button>
+              <button
+                disabled={loading}
+                onClick={handleVerifyOtp}
+                style={btnPrimary(loading)}
+              >
+                {loading ? "Đang xác minh..." : "Xác minh OTP"}
+              </button>
+            </div>
+          </>
+        )}
+
+        {step === "newpwd" && (
+          <>
+            <Field label="Mật khẩu mới *">
               <input
                 value={newPwd}
                 onChange={(e) => setNewPwd(e.target.value)}
                 type="password"
                 placeholder="Tối thiểu 6 ký tự"
                 style={inp}
+                autoFocus
               />
             </Field>
             <div style={{ display: "flex", gap: 8, justifyContent: "space-between", marginTop: 12 }}>
-              <button onClick={() => setStep("request")} style={btnGhostMd}>← Quay lại</button>
+              <button onClick={() => setStep("otp")} disabled={loading} style={btnGhostMd}>← Quay lại</button>
               <button
-                disabled
-                title="Tính năng đang phát triển"
-                style={btnPrimaryDisabled}
+                disabled={loading}
+                onClick={handleSetPassword}
+                style={btnPrimary(loading)}
               >
-                Đặt mật khẩu mới
+                {loading ? "Đang đặt..." : "Đặt mật khẩu mới"}
               </button>
             </div>
           </>
         )}
+
+        {/* Invisible recaptcha — Firebase yêu cầu mount trước khi gọi signInWithPhoneNumber.
+            Phải có element id này tồn tại trong DOM. */}
+        <div id="ch-recaptcha-container" style={{ display: "none" }} />
       </div>
     </div>
   );
+}
+
+/** Mask phone để hiện toast user-friendly: 0912345678 → 091***5678. */
+function maskPhone(phone: string): string {
+  const digits = phone.replace(/[^\d]/g, "");
+  if (digits.length < 6) return phone;
+  return digits.slice(0, 3) + "***" + digits.slice(-4);
 }
 
 function Field({ label, children }: { label: string; children: React.ReactNode }) {
@@ -338,51 +500,129 @@ const btnGhostMd: React.CSSProperties = {
   fontSize: 13,
 };
 
-const btnPrimaryDisabled: React.CSSProperties = {
+const btnPrimary = (loading: boolean): React.CSSProperties => ({
   padding: "8px 14px",
-  background: "#9CA3AF",
+  background: loading ? "#9CA3AF" : THEME.primary,
   color: "#fff",
   border: "none",
   borderRadius: 6,
-  cursor: "not-allowed",
+  cursor: loading ? "not-allowed" : "pointer",
   fontSize: 13,
   fontWeight: 600,
-  opacity: 0.7,
-};
+  opacity: loading ? 0.7 : 1,
+});
 
+// ── MemberSignupForm — OTP-first 2-step (yc Hiền Đỗ + BE 2026-05-12) ──────
+// Step 1: User nhập SĐT → Firebase SDK gửi SMS OTP → user confirm → idToken
+// Step 2: User nhập tên + email + occupation → POST /signup-request/create
+//         body có thêm `firebaseIdToken` → BE verify qua Auth, set phoneVerified=true
+//
+// Admin tab "Yêu cầu cấp mã" sẽ thấy badge "📱 SĐT đã verify" cho request loại
+// này → có thể duyệt mà không cần gọi điện xác minh.
 function MemberSignupForm({ onSuccess }: { onSuccess: (reqId: string) => void }) {
-  const [name, setName] = useState("");
+  const [step, setStep] = useState<"phone" | "otp" | "info">("phone");
   const [phone, setPhone] = useState("");
+  const [otp, setOtp] = useState("");
+  const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [occupation, setOccupation] = useState("");
-  const [submitted, setSubmitted] = useState<string | null>(null);
+  const [submitted, setSubmitted] = useState<{ id: string; verified: boolean } | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [info, setInfo] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+
+  const confirmationRef = useRef<ConfirmationResult | null>(null);
+  const idTokenRef = useRef<string | null>(null);
 
   if (submitted) {
     return (
       <div style={{ padding: 12, background: "#ECFDF5", color: "#065F46", borderRadius: 6, fontSize: 13 }}>
-        ✓ Yêu cầu cấp mã đã gửi. BTC sẽ liên hệ qua SĐT <b>{phone}</b> để cấp mã chính thức.
+        ✓ Yêu cầu cấp mã đã gửi.
+        {submitted.verified && (
+          <span style={{ display: "inline-block", marginLeft: 6, padding: "2px 8px", background: "#BBF7D0", color: "#065F46", borderRadius: 10, fontSize: 11, fontWeight: 700 }}>
+            📱 SĐT đã verify
+          </span>
+        )}
         <br />
-        <span style={{ fontSize: 12 }}>Mã yêu cầu: {submitted}</span>
+        BTC sẽ liên hệ qua SĐT <b>{phone}</b> để cấp mã chính thức.
+        <br />
+        <span style={{ fontSize: 12 }}>Mã yêu cầu: {submitted.id}</span>
       </div>
     );
   }
 
-  const submit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setError(null);
-    if (!name.trim() || !phone.trim()) return;
+  // ── Step 1: gửi OTP qua Firebase ───────────────────────────────────────
+  const handleSendOtp = async () => {
+    setError(null); setInfo(null);
+    if (!isValidVNPhone(phone)) {
+      setError("Số điện thoại không hợp lệ");
+      return;
+    }
+    if (!isFirebasePhoneAuthAvailable) {
+      // Fallback Phase 1 — bỏ qua OTP, gửi thẳng signup-request (admin duyệt thủ công).
+      setInfo("Firebase chưa cấu hình — chuyển sang chế độ admin duyệt thủ công.");
+      setStep("info");
+      return;
+    }
     setLoading(true);
     try {
-      // API: POST /market/community-hub/members/signup-request/create
+      const verifier = createRecaptchaVerifier("ch-signup-recaptcha");
+      const e164 = toE164VN(phone);
+      const confirmation = await sendPhoneOtp(e164, verifier);
+      confirmationRef.current = confirmation;
+      setInfo(`Đã gửi OTP tới ${maskPhone(phone)}. Mã có hiệu lực 5 phút.`);
+      setStep("otp");
+    } catch (e: any) {
+      setError(`Gửi OTP thất bại: ${e?.message || e}`);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // ── Step 2: verify OTP → lấy idToken → chuyển sang form info ───────────
+  const handleVerifyOtp = async () => {
+    setError(null);
+    if (!/^\d{6}$/.test(otp)) {
+      setError("Vui lòng nhập đủ 6 chữ số OTP");
+      return;
+    }
+    if (!confirmationRef.current) {
+      setError("Phiên OTP hết hạn — vui lòng gửi lại");
+      setStep("phone");
+      return;
+    }
+    setLoading(true);
+    try {
+      const token = await verifyOtpAndGetIdToken(confirmationRef.current, otp);
+      idTokenRef.current = token;
+      setInfo("✓ SĐT đã xác minh. Vui lòng điền thông tin còn lại.");
+      setStep("info");
+    } catch (e: any) {
+      const msg = e?.message || String(e);
+      setError(/auth\/invalid-verification-code/.test(msg) ? "Mã OTP không đúng" : `Verify thất bại: ${msg}`);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // ── Step 3: gửi signup-request ─────────────────────────────────────────
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setError(null);
+    if (!name.trim()) {
+      setError("Vui lòng nhập họ tên");
+      return;
+    }
+    setLoading(true);
+    try {
       const r = await memberStorage.createRequestAsync({
         fullName: name.trim(),
         phone: phone.trim(),
         email: email.trim() || undefined,
         occupation: occupation.trim() || undefined,
+        firebaseIdToken: idTokenRef.current ?? undefined,
       });
-      setSubmitted(r.id);
+      setSubmitted({ id: r.id, verified: !!idTokenRef.current });
       onSuccess(r.id);
     } catch (err: any) {
       setError(err?.message || "Không gửi được yêu cầu cấp mã");
@@ -392,35 +632,102 @@ function MemberSignupForm({ onSuccess }: { onSuccess: (reqId: string) => void })
   };
 
   return (
-    <form onSubmit={submit} style={{ display: "flex", flexDirection: "column", gap: 8 }}>
-      <input value={name} onChange={(e) => setName(e.target.value)} placeholder="Họ tên *" required style={inp} />
-      <input value={phone} onChange={(e) => setPhone(e.target.value)} placeholder="Số điện thoại *" required style={inp} />
-      <input value={email} onChange={(e) => setEmail(e.target.value)} placeholder="Email (optional)" type="email" style={inp} />
-      <input value={occupation} onChange={(e) => setOccupation(e.target.value)} placeholder="Công việc hiện tại" style={inp} />
-      {error && <div style={{ fontSize: 12, color: THEME.danger }}>{error}</div>}
-      <button
-        type="submit"
-        disabled={loading}
-        style={{
-          padding: "8px 16px",
-          background: THEME.primary,
-          color: "#fff",
-          border: "none",
-          borderRadius: 6,
-          fontSize: 13,
-          cursor: loading ? "not-allowed" : "pointer",
-          fontWeight: 600,
-          alignSelf: "flex-start",
-          opacity: loading ? 0.7 : 1,
-        }}
-      >
-        {loading ? "Đang gửi..." : "Gửi yêu cầu cấp mã"}
-      </button>
-      <p style={{ fontSize: 11, color: THEME.textMuted, margin: 0 }}>
-        Sau khi gửi, BTC sẽ kiểm tra và cấp mã định danh dạng <code>STT-nhóm</code> (vd 5971-300).
-        Bạn vẫn có thể đăng ký tham gia sự kiện ngay bằng luồng "đăng ký nhanh".
-      </p>
-    </form>
+    <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+      {/* Progress dots */}
+      <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 4 }}>
+        {(["phone", "otp", "info"] as const).map((s, i) => {
+          const order = ["phone", "otp", "info"];
+          const active = order.indexOf(step) >= i;
+          return (
+            <React.Fragment key={s}>
+              {i > 0 && <div style={{ flex: 1, height: 1, background: active ? THEME.primary : THEME.border }} />}
+              <div style={{
+                width: 18, height: 18, borderRadius: "50%",
+                background: active ? THEME.primary : THEME.border,
+                color: "#fff", fontSize: 11, fontWeight: 700,
+                display: "flex", alignItems: "center", justifyContent: "center",
+              }}>{i + 1}</div>
+            </React.Fragment>
+          );
+        })}
+      </div>
+
+      {info && (
+        <div style={{
+          background: "#ECFDF5", border: "1px solid #BBF7D0", color: "#065F46",
+          padding: "6px 10px", borderRadius: 6, fontSize: 12,
+        }}>{info}</div>
+      )}
+      {error && (
+        <div style={{
+          background: "#FEF2F2", border: "1px solid #FECACA", color: "#991B1B",
+          padding: "6px 10px", borderRadius: 6, fontSize: 12,
+        }}>⚠ {error}</div>
+      )}
+
+      {step === "phone" && (
+        <>
+          <input
+            value={phone}
+            onChange={(e) => setPhone(e.target.value)}
+            placeholder="Số điện thoại * (VD: 0912345678)"
+            style={inp}
+            autoFocus
+          />
+          <button
+            type="button"
+            onClick={handleSendOtp}
+            disabled={loading}
+            style={{ ...btnPrimary(loading), alignSelf: "flex-start" }}
+          >
+            {loading ? "Đang gửi OTP..." : "📱 Gửi OTP qua SMS"}
+          </button>
+          <p style={{ fontSize: 11, color: THEME.textMuted, margin: 0 }}>
+            BTC cần xác minh SĐT thật trước khi tạo yêu cầu. SMS sẽ được gửi qua Firebase
+            (sender mặc định Google, không brandname).
+          </p>
+        </>
+      )}
+
+      {step === "otp" && (
+        <>
+          <input
+            value={otp}
+            onChange={(e) => setOtp(e.target.value.replace(/[^\d]/g, "").slice(0, 6))}
+            placeholder="6 chữ số OTP"
+            maxLength={6}
+            inputMode="numeric"
+            style={{ ...inp, letterSpacing: 4, fontFamily: "monospace", fontSize: 16 }}
+            autoFocus
+          />
+          <div style={{ display: "flex", gap: 8 }}>
+            <button type="button" onClick={() => setStep("phone")} disabled={loading} style={btnGhostMd}>
+              ← Đổi SĐT
+            </button>
+            <button type="button" onClick={handleVerifyOtp} disabled={loading} style={btnPrimary(loading)}>
+              {loading ? "Đang xác minh..." : "Xác minh OTP"}
+            </button>
+          </div>
+        </>
+      )}
+
+      {step === "info" && (
+        <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+          <input value={name} onChange={(e) => setName(e.target.value)} placeholder="Họ tên *" required style={inp} autoFocus />
+          <input value={email} onChange={(e) => setEmail(e.target.value)} placeholder="Email (optional)" type="email" style={inp} />
+          <input value={occupation} onChange={(e) => setOccupation(e.target.value)} placeholder="Công việc hiện tại" style={inp} />
+          <button type="submit" disabled={loading} style={{ ...btnPrimary(loading), alignSelf: "flex-start" }}>
+            {loading ? "Đang gửi..." : "Gửi yêu cầu cấp mã"}
+          </button>
+          <p style={{ fontSize: 11, color: THEME.textMuted, margin: 0 }}>
+            BTC sẽ kiểm tra và cấp mã định danh dạng <code>STT-nhóm</code> (vd 5971-300).
+          </p>
+        </form>
+      )}
+
+      {/* Invisible recaptcha — Firebase yêu cầu mount trước khi gọi signInWithPhoneNumber. */}
+      <div id="ch-signup-recaptcha" style={{ display: "none" }} />
+    </div>
   );
 }
 

@@ -1,5 +1,6 @@
 import { initializeApp } from "firebase/app";
 import { getMessaging, getToken, onMessage } from "firebase/messaging";
+import { getAuth } from "firebase/auth";
 
 var firebaseConfig = {
   apiKey:            import.meta.env.VITE_FIREBASE_API_KEY,
@@ -13,6 +14,12 @@ var firebaseConfig = {
 const isFirebaseConfigured = Boolean(firebaseConfig.projectId && firebaseConfig.apiKey && firebaseConfig.appId);
 const firebaseApp = isFirebaseConfigured ? initializeApp(firebaseConfig) : null;
 const messaging = firebaseApp ? getMessaging(firebaseApp) : null;
+
+// Phone Auth — yc Hiền Đỗ 2026-05-11: OTP qua Firebase SDK client-side (yc BE 2026-05-12).
+// Flow: signInWithPhoneNumber(auth, phone, recaptcha) → user nhập OTP → confirm
+// → idToken gửi lên Market endpoint, Market call Auth verify-id-token nội bộ.
+export const firebaseAuth = firebaseApp ? getAuth(firebaseApp) : null;
+export const isFirebasePhoneAuthAvailable = Boolean(firebaseAuth);
 
 export const fetchToken = () => {
   if (!messaging) return Promise.resolve(undefined);

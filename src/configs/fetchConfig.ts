@@ -38,6 +38,8 @@ export default function RegisterFetch() {
       }
       // Bỏ qua các call sang host ngoài (Firebase, Google APIs, …) —
       // chỉ áp Authorization/Hostname/Content-Type cho backend reborn.
+      // Firebase SDK gọi thẳng googleapis.com — Google reject CORS preflight
+      // nếu thấy custom header `Hostname`/`Authorization` → `auth/network-request-failed`.
       if (/^https?:\/\//i.test(url)) {
         try {
           const host = new URL(url).hostname;

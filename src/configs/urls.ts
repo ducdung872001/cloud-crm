@@ -2564,6 +2564,9 @@ export const urlsApi = {
     listMembers: prefixMarket + "/community-hub/members/list",       // GET (admin) ?q=&status=&page=&limit=
     getMember:   prefixMarket + "/community-hub/members/get",        // GET (admin) ?id=
     getMemberByCode: prefixMarket + "/community-hub/members/get-by-code", // GET (admin) ?code=
+    // Admin set/reset password — KHÔNG cần Firebase OTP (admin override).
+    // Per BE reply 20260508-1130: POST /market/members/{id}/password đã có ở MembersResource.
+    adminSetMemberPassword: prefixMarket + "/members/password",            // POST (admin) ?id={memberId} body {password}
   },
   fixedPricePromotion: {
     getProducts: prefixMarket + "/fixedPrice/products",

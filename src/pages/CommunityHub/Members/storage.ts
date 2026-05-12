@@ -14,6 +14,16 @@ import type {
 import { buildMasterCode, buildMemberCode, deriveGroupSeqFromPersonal } from "./codeUtils";
 import MemberService from "services/MemberService";
 
+/** BE community-hub mix `code: 0` (Vert.x style) và `code: 200` (HTTP style) tuỳ
+ *  endpoint. Helper unify check 1 chỗ. */
+function isOk(res: any): boolean {
+  return !!res && (res.code === 0 || res.code === 200);
+}
+/** Lấy payload — BE dùng `result` hoặc `data` tuỳ endpoint. */
+function unwrap(res: any): any {
+  return res?.result ?? res?.data ?? res;
+}
+
 const KEY_MEMBERS = "reborn.community_hub.members";
 const KEY_GROUPS = "reborn.community_hub.member_groups";
 const KEY_REQUESTS = "reborn.community_hub.member_signup_requests";
@@ -130,8 +140,9 @@ export const memberStorage = {
   async listRequestsAsync(params?: { status?: string; page?: number; limit?: number }): Promise<MemberSignupRequest[]> {
     try {
       const res: any = await MemberService.listSignupRequests(params as Record<string, unknown>);
-      if (res?.code === 0) {
-        const items = res.result?.items ?? res.result ?? [];
+      if (isOk(res)) {
+        const payload = unwrap(res);
+        const items = payload?.items ?? payload ?? [];
         return Array.isArray(items) ? items : [];
       }
     } catch { /* fallback */ }
@@ -151,11 +162,17 @@ export const memberStorage = {
     return req;
   },
 
-  /** Public: gửi yêu cầu cấp mã. Throws nếu BE trả lỗi (vd duplicate phone). */
-  async createRequestAsync(input: Omit<MemberSignupRequest, "id" | "createdAt" | "status">): Promise<MemberSignupRequest> {
+  /** Public: gửi yêu cầu cấp mã. Phase 2 OTP-first: body có thêm `firebaseIdToken`
+   *  (BE verify qua Auth → extract phone từ token, set phone_verified=true).
+   *  Phase 1 (firebaseIdToken=undefined): BE giữ phone từ body, phoneVerified=false. */
+  async createRequestAsync(
+    input: Omit<MemberSignupRequest, "id" | "createdAt" | "status" | "phoneVerified" | "firebaseUid"> & {
+      firebaseIdToken?: string;
+    },
+  ): Promise<MemberSignupRequest> {
     try {
       const res: any = await MemberService.createSignupRequest(input as Record<string, unknown>);
-      if (res?.code === 0 && res.result) {
+      if (isOk(res) && unwrap(res)) {
         const req = res.result as MemberSignupRequest;
         // Cache nhẹ vào LS để admin xem được lần đầu khi BE chưa list endpoint.
         const all = this.listRequests();
@@ -168,7 +185,8 @@ export const memberStorage = {
     } catch (e: any) {
       // Network error → fallback LS để dev không bị block.
       if (e?.name === "TypeError" || /Failed to fetch|Network/i.test(String(e?.message))) {
-        return this.createRequest(input);
+        const { firebaseIdToken: _ignored, ...lsInput } = input;
+        return this.createRequest(lsInput);
       }
       throw e;
     }
@@ -199,7 +217,10 @@ export const memberStorage = {
   async approveRequestAsync(reqId: string, override?: Partial<MemberSignupRequest>): Promise<MemberEntity | null> {
     try {
       const res: any = await MemberService.approveSignupRequest(reqId, override as Record<string, unknown>);
-      if (res?.code === 0 && res.result) return res.result as MemberEntity;
+      if (isOk(res)) {
+        const payload = unwrap(res);
+        if (payload) return payload as MemberEntity;
+      }
       const msg = res?.message || "Approve thất bại";
       throw new Error(msg);
     } catch (e: any) {
@@ -222,7 +243,7 @@ export const memberStorage = {
   async rejectRequestAsync(reqId: string, reason: string): Promise<MemberSignupRequest | null> {
     try {
       const res: any = await MemberService.rejectSignupRequest(reqId, { reason });
-      if (res?.code === 0) return (res.result as MemberSignupRequest) ?? null;
+      if (isOk(res)) return (unwrap(res) as MemberSignupRequest) ?? null;
       throw new Error(res?.message || "Reject thất bại");
     } catch (e: any) {
       if (e?.name === "TypeError" || /Failed to fetch|Network/i.test(String(e?.message))) {
@@ -253,8 +274,11 @@ export const memberStorage = {
   async loginByCodeAsync(memberCode: string, password: string): Promise<{ ok: boolean; member?: MemberEntity; token?: string; reason?: string }> {
     try {
       const res: any = await MemberService.loginByCode({ memberCode, password });
-      if (res?.code === 0 && res.result?.member) {
-        return { ok: true, member: res.result.member as MemberEntity, token: res.result.token };
+      if (isOk(res)) {
+        const payload = unwrap(res);
+        if (payload?.member) {
+          return { ok: true, member: payload.member as MemberEntity, token: payload.token };
+        }
       }
       return { ok: false, reason: res?.message || res?.error || "Đăng nhập thất bại" };
     } catch (e: any) {
@@ -266,19 +290,41 @@ export const memberStorage = {
     }
   },
 
-  /** Admin set password qua BE. Body theo handoff: { memberCode, newPassword }.
-   *  Trả về { ok, reason? }. Fallback LS nếu network lỗi. */
-  async setPasswordAsync(memberCode: string, newPassword: string): Promise<{ ok: boolean; reason?: string }> {
+  /** User self-reset pwd qua OTP Firebase (yc BE 2026-05-12).
+   *  Body: { memberCode, firebaseIdToken, newPassword }. BE call Auth verify
+   *  idToken → match phone với members.phone (lookup theo memberCode) → bcrypt+update.
+   *  Fallback LS chỉ khi network lỗi (dev local), KHÔNG fallback khi BE reject. */
+  async setPasswordAsync(args: {
+    memberCode: string;
+    firebaseIdToken: string;
+    newPassword: string;
+  }): Promise<{ ok: boolean; reason?: string }> {
     try {
-      const res: any = await MemberService.setPassword({ memberCode, newPassword });
-      if (res?.code === 0) return { ok: true };
+      const res: any = await MemberService.setPassword(args);
+      if (isOk(res)) return { ok: true };
       return { ok: false, reason: res?.message || "Đặt mật khẩu thất bại" };
     } catch (e: any) {
       if (e?.name === "TypeError" || /Failed to fetch|Network/i.test(String(e?.message))) {
-        // LS fallback (dev local): tìm member theo code rồi gán pwd.
-        const m = this.getByCode(memberCode);
+        // LS fallback (dev local) — bỏ qua idToken, dùng raw pwd.
+        const m = this.getByCode(args.memberCode);
         if (!m) return { ok: false, reason: "Mã không tồn tại (LS fallback)" };
-        const ok = this.setPassword(m.id, newPassword);
+        const ok = this.setPassword(m.id, args.newPassword);
+        return { ok, reason: ok ? undefined : "Lỗi LS" };
+      }
+      return { ok: false, reason: e?.message || "Lỗi kết nối" };
+    }
+  },
+
+  /** Admin override set pwd qua BE — KHÔNG cần Firebase OTP. Dùng khi admin
+   *  duyệt signup-request cấp pwd tạm, hoặc reset pwd cho member quên. */
+  async adminSetPasswordAsync(memberId: string, newPassword: string): Promise<{ ok: boolean; reason?: string }> {
+    try {
+      const res: any = await MemberService.adminSetMemberPassword(memberId, { password: newPassword });
+      if (isOk(res)) return { ok: true };
+      return { ok: false, reason: res?.message || "Đặt mật khẩu thất bại" };
+    } catch (e: any) {
+      if (e?.name === "TypeError" || /Failed to fetch|Network/i.test(String(e?.message))) {
+        const ok = this.setPassword(memberId, newPassword);
         return { ok, reason: ok ? undefined : "Lỗi LS" };
       }
       return { ok: false, reason: e?.message || "Lỗi kết nối" };

@@ -20,21 +20,16 @@ const T = {
 
 type Tab = "members" | "requests";
 
-/** Sinh mật khẩu tạm 8 ký tự dễ đọc (loại bỏ 0/O/1/I/l). Admin show cho user
- *  qua điện thoại — user nên đổi sau khi có UI OTP. */
-function generateTempPassword(): string {
-  const chars = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
-  let s = "";
-  for (let i = 0; i < 8; i++) s += chars[Math.floor(Math.random() * chars.length)];
-  return s;
-}
-
-/** State cho modal "Duyệt + cấp tài khoản". */
+/** State cho modal "Duyệt yêu cầu cấp mã" — pattern self-service first login:
+ *  Admin chỉ duyệt + cấp memberCode, KHÔNG set password. User sẽ tự đặt pwd
+ *  lần đầu qua flow "Quên mật khẩu" (Firebase OTP). Lợi:
+ *  - Admin không cần biết pwd → security tốt hơn (không lộ qua chat/SMS).
+ *  - Reuse Firebase OTP đã có, không cần wire SMS gateway riêng.
+ *  - Admin tab gọn — chỉ duyệt + báo memberCode. */
 interface ApproveModalState {
   request: MemberSignupRequest;
-  password: string;
-  /** Sau khi BE approve, hold result để show "Mã + mật khẩu" cho admin copy. */
-  issued?: { memberCode: string; password: string };
+  /** Sau khi BE approve, hold result để show memberCode + hướng dẫn cho admin. */
+  issued?: { memberCode: string };
   loading: boolean;
   error: string | null;
 }
@@ -180,7 +175,30 @@ export default function MemberListPage() {
                 {requests.map((r) => (
                   <tr key={r.id} style={{ borderTop: `1px solid ${T.border}` }}>
                     <td style={td}>{r.fullName}</td>
-                    <td style={td}>{r.phone}</td>
+                    <td style={td}>
+                      <div style={{ display: "flex", alignItems: "center", gap: 6, flexWrap: "wrap" }}>
+                        <span>{r.phone}</span>
+                        {r.phoneVerified ? (
+                          <span
+                            title="SĐT đã verify qua Firebase OTP"
+                            style={{
+                              fontSize: 10, padding: "1px 6px", borderRadius: 10,
+                              background: "#DCFCE7", color: "#166534", fontWeight: 700,
+                              whiteSpace: "nowrap",
+                            }}
+                          >📱 verified</span>
+                        ) : (
+                          <span
+                            title="Chưa verify SĐT — admin cần gọi điện xác minh"
+                            style={{
+                              fontSize: 10, padding: "1px 6px", borderRadius: 10,
+                              background: "#FEF3C7", color: "#92400E", fontWeight: 700,
+                              whiteSpace: "nowrap",
+                            }}
+                          >⚠ chưa verify</span>
+                        )}
+                      </div>
+                    </td>
                     <td style={td}>{r.email ?? "—"}</td>
                     <td style={td}>{r.occupation ?? "—"}</td>
                     <td style={td}>
@@ -201,7 +219,6 @@ export default function MemberListPage() {
                             onClick={() =>
                               setApproveModal({
                                 request: r,
-                                password: generateTempPassword(),
                                 loading: false,
                                 error: null,
                               })
@@ -250,12 +267,13 @@ export default function MemberListPage() {
   );
 }
 
-// ── Modal: Duyệt + cấp tài khoản ────────────────────────────────────────────
-// Flow 2 bước:
-//   1) Admin xem info, đặt mật khẩu tạm (auto-generated, có thể đổi) → bấm "Duyệt".
-//      → approveRequestAsync (BE sinh memberCode) → setPasswordAsync (BE bcrypt).
-//   2) Hiện màn "Đã cấp" với mã + mật khẩu để admin copy / gọi user.
-//      Có 2 button stub "Gửi qua Zalo" / "Gửi qua SMS" — chưa implement, hiện toast.
+// ── Modal: Duyệt yêu cầu cấp mã ────────────────────────────────────────────
+// Pattern self-service first login (yc anh Lợi 2026-05-12):
+//   1) Admin xem info → bấm "Duyệt" → BE sinh memberCode (KHÔNG set pwd).
+//   2) Modal hiện memberCode + hướng dẫn admin báo user.
+//   3) User tự đặt pwd lần đầu qua "Quên mật khẩu" → Firebase OTP.
+//
+// Lợi ích: admin không lưu pwd ở Zalo/Excel, reuse OTP flow đã có, security hơn.
 function ApproveRequestModal({
   state,
   onChange,
@@ -265,13 +283,9 @@ function ApproveRequestModal({
   onChange: (s: ApproveModalState) => void;
   onDone: () => void;
 }) {
-  const { request: r, password, issued, loading, error } = state;
+  const { request: r, issued, loading, error } = state;
 
   const handleApprove = async () => {
-    if (!password.trim() || password.length < 6) {
-      onChange({ ...state, error: "Mật khẩu tạm phải ít nhất 6 ký tự" });
-      return;
-    }
     onChange({ ...state, loading: true, error: null });
     try {
       const member = await memberStorage.approveRequestAsync(r.id);
@@ -279,20 +293,7 @@ function ApproveRequestModal({
         onChange({ ...state, loading: false, error: "Duyệt thất bại — không nhận được member info" });
         return;
       }
-      const pwdRes = await memberStorage.setPasswordAsync(member.memberCode, password);
-      if (!pwdRes.ok) {
-        onChange({
-          ...state,
-          loading: false,
-          error: `Đã cấp mã ${member.memberCode} nhưng đặt mật khẩu thất bại: ${pwdRes.reason}. Vào trang chi tiết để đặt lại.`,
-        });
-        return;
-      }
-      onChange({
-        ...state,
-        loading: false,
-        issued: { memberCode: member.memberCode, password },
-      });
+      onChange({ ...state, loading: false, issued: { memberCode: member.memberCode } });
     } catch (e: any) {
       onChange({ ...state, loading: false, error: e?.message || "Có lỗi xảy ra" });
     }
@@ -300,10 +301,24 @@ function ApproveRequestModal({
 
   const copy = (text: string) => {
     navigator.clipboard?.writeText(text).then(
-      () => { /* silent — admin tự thấy đã copy */ },
+      () => { /* silent */ },
       () => alert("Không copy được — trình duyệt chặn clipboard."),
     );
   };
+
+  // Tin nhắn mẫu để admin copy gửi user
+  const buildSampleMessage = (memberCode: string) =>
+    `Chào ${r.fullName},\n\n` +
+    `BTC đã duyệt yêu cầu cấp mã thành viên cho bạn.\n\n` +
+    `🆔 Mã thành viên: ${memberCode}\n\n` +
+    `Cách đặt mật khẩu lần đầu:\n` +
+    `1. Vào https://hub.reborn.vn\n` +
+    `2. Bấm "Đăng nhập"\n` +
+    `3. Bấm "Quên mật khẩu?"\n` +
+    `4. Nhập mã ${memberCode} + SĐT ${r.phone}\n` +
+    `5. Nhận OTP qua SMS → đặt mật khẩu mới\n\n` +
+    `Sau đó dùng mã + mật khẩu vừa đặt để đăng nhập.\n` +
+    `Trân trọng.`;
 
   return (
     <div
@@ -317,7 +332,7 @@ function ApproveRequestModal({
       <div
         onClick={(e) => e.stopPropagation()}
         style={{
-          background: "#fff", borderRadius: 10, padding: 20, width: 480, maxWidth: "100%",
+          background: "#fff", borderRadius: 10, padding: 20, width: 520, maxWidth: "100%",
           maxHeight: "90vh", overflowY: "auto", boxShadow: "0 20px 50px rgba(0,0,0,0.25)",
         }}
       >
@@ -325,7 +340,8 @@ function ApproveRequestModal({
           <>
             <h3 style={{ margin: "0 0 4px", fontSize: 18, color: T.textMain }}>Duyệt yêu cầu cấp mã</h3>
             <div style={{ fontSize: 12, color: T.textMuted, marginBottom: 14 }}>
-              Tạo MemberEntity mới + đặt mật khẩu tạm. Bạn sẽ thấy mã + mật khẩu sau khi duyệt để gọi cho user.
+              BE sẽ tạo Member entity + sinh <code>memberCode</code> dạng <code>STT-nhóm</code>.
+              <b> Không cần đặt mật khẩu</b> — user sẽ tự đặt lần đầu qua "Quên mật khẩu" (Firebase OTP).
             </div>
 
             <div style={{ background: T.bg, borderRadius: 6, padding: 10, marginBottom: 12, fontSize: 13 }}>
@@ -333,26 +349,12 @@ function ApproveRequestModal({
               <Row label="SĐT" value={r.phone} />
               <Row label="Email" value={r.email ?? "—"} />
               <Row label="Công việc" value={r.occupation ?? "—"} />
+              <Row
+                label="SĐT verify"
+                value={r.phoneVerified ? "✅ Đã verify qua Firebase OTP" : "⚠ Chưa verify — gọi điện xác minh trước khi duyệt"}
+              />
             </div>
 
-            <label style={{ display: "block", fontSize: 12, fontWeight: 600, color: T.textMain, marginBottom: 4 }}>
-              Mật khẩu tạm (admin tự đặt, gọi báo user)
-            </label>
-            <div style={{ display: "flex", gap: 6, marginBottom: error ? 8 : 14 }}>
-              <input
-                style={{ ...inp, flex: 1, fontFamily: "monospace" }}
-                value={password}
-                onChange={(e) => onChange({ ...state, password: e.target.value, error: null })}
-              />
-              <button
-                type="button"
-                onClick={() => onChange({ ...state, password: generateTempPassword(), error: null })}
-                style={btnGhostSm}
-                title="Sinh mật khẩu mới"
-              >
-                🎲
-              </button>
-            </div>
             {error && (
               <div style={{ fontSize: 12, color: T.danger, marginBottom: 12 }}>{error}</div>
             )}
@@ -368,7 +370,7 @@ function ApproveRequestModal({
                   fontSize: 13, fontWeight: 600, opacity: loading ? 0.7 : 1,
                 }}
               >
-                {loading ? "Đang xử lý..." : "✓ Duyệt và cấp tài khoản"}
+                {loading ? "Đang duyệt..." : "✓ Duyệt và cấp memberCode"}
               </button>
             </div>
           </>
@@ -376,28 +378,59 @@ function ApproveRequestModal({
           <>
             <div style={{ textAlign: "center", marginBottom: 14 }}>
               <div style={{ fontSize: 36 }}>🎉</div>
-              <h3 style={{ margin: "6px 0 4px", fontSize: 18, color: T.textMain }}>Đã cấp tài khoản</h3>
+              <h3 style={{ margin: "6px 0 4px", fontSize: 18, color: T.textMain }}>Đã cấp memberCode</h3>
               <div style={{ fontSize: 12, color: T.textMuted }}>
-                Liên hệ <b>{r.fullName}</b> ({r.phone}) để báo thông tin đăng nhập:
+                Báo <b>{r.fullName}</b> ({r.phone}) mã + hướng dẫn đặt mật khẩu lần đầu:
               </div>
             </div>
 
             <div style={{ background: "#F0FDF4", border: `1px solid #BBF7D0`, borderRadius: 8, padding: 14, marginBottom: 12 }}>
               <CredentialRow label="Mã thành viên" value={issued.memberCode} mono onCopy={copy} />
-              <CredentialRow label="Mật khẩu tạm" value={issued.password} mono onCopy={copy} />
+            </div>
+
+            <div style={{
+              background: "#FEF9C3", border: "1px solid #FDE047", borderRadius: 8, padding: 12, marginBottom: 12,
+            }}>
+              <div style={{ fontSize: 12, fontWeight: 700, color: "#854D0E", marginBottom: 4 }}>
+                📋 Hướng dẫn user đặt mật khẩu lần đầu
+              </div>
+              <ol style={{ fontSize: 12, color: "#713F12", margin: "4px 0 0 18px", padding: 0, lineHeight: 1.6 }}>
+                <li>Vào <code>hub.reborn.vn</code></li>
+                <li>Bấm "Đăng nhập" → "Quên mật khẩu?"</li>
+                <li>Nhập mã <code>{issued.memberCode}</code> + SĐT <code>{r.phone}</code></li>
+                <li>Nhận OTP qua SMS → đặt mật khẩu mới</li>
+                <li>Dùng mã + mật khẩu vừa đặt để đăng nhập</li>
+              </ol>
             </div>
 
             <div style={{ marginBottom: 12 }}>
               <div style={{ fontSize: 12, fontWeight: 600, color: T.textMain, marginBottom: 6 }}>
-                Gửi tự động (sắp ra mắt)
+                Tin nhắn mẫu cho user
               </div>
-              <div style={{ display: "flex", gap: 6, flexWrap: "wrap" }}>
+              <textarea
+                readOnly
+                value={buildSampleMessage(issued.memberCode)}
+                style={{
+                  width: "100%", minHeight: 120, padding: 10, fontSize: 12, fontFamily: "inherit",
+                  border: `1px solid ${T.border}`, borderRadius: 6, background: "#FAFAFA",
+                  resize: "vertical", boxSizing: "border-box",
+                }}
+                onClick={(e) => (e.target as HTMLTextAreaElement).select()}
+              />
+              <div style={{ display: "flex", gap: 6, marginTop: 6, flexWrap: "wrap" }}>
+                <button
+                  type="button"
+                  onClick={() => copy(buildSampleMessage(issued.memberCode))}
+                  style={{ ...btnGhostSm, padding: "6px 12px" }}
+                >
+                  📋 Copy tin nhắn
+                </button>
                 <StubSendButton icon="💬" label="Gửi qua Zalo" />
                 <StubSendButton icon="📱" label="Gửi qua SMS" />
                 <StubSendButton icon="📧" label="Gửi qua Email" disabled={!r.email} />
               </div>
               <div style={{ fontSize: 11, color: T.textMuted, marginTop: 6 }}>
-                Tạm thời gọi điện trực tiếp cho user để báo. Tính năng gửi tự động đang phát triển.
+                Tạm thời copy tin nhắn rồi gửi user qua Zalo/SMS thủ công. Auto-send đang phát triển.
               </div>
             </div>
 
@@ -406,7 +439,7 @@ function ApproveRequestModal({
                 padding: "8px 16px", background: T.primary, color: "#fff",
                 border: "none", borderRadius: 6, cursor: "pointer", fontSize: 13, fontWeight: 600,
               }}>
-                ✓ Đã gọi báo / Xong
+                ✓ Đã gửi cho user / Xong
               </button>
             </div>
           </>

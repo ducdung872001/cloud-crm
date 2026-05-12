@@ -94,6 +94,12 @@ export interface MemberSignupRequest {
   rejectReason?: string;
   /** Mã được cấp khi approve. */
   issuedMemberCode?: string;
+  /** SĐT đã được verify qua Firebase OTP lúc submit signup-request (yc BE 2026-05-12).
+   *  Phase 2 OTP-first: form bắt user verify trước khi gửi request. Admin thấy
+   *  badge "📱 SĐT đã verify" trong list để skip gọi điện xác minh. */
+  phoneVerified?: boolean;
+  /** Firebase UID extract từ idToken (BE lưu để tránh dual-verify). */
+  firebaseUid?: string;
   createdAt: string;
 }
 
