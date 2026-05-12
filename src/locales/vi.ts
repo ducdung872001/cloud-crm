@@ -101,7 +101,7 @@ const vi = {
     fpStationLayout: "Sơ đồ trạm",
     fpSOPCompliance: "Tuân thủ SOP",
     fpStationFinder: "Tìm trạm gần nhất",
-    fpCommission: "Hoa hồng hệ thống",
+    fpCommission: "Đối soát HBL (zero-touch)",
     fpMarketingFunnel: "Phễu marketing",
     fpTaxStation: "Khai thuế từng trạm",
     fpMF7Onboarding: "Onboarding MF7",

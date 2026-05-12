@@ -24,6 +24,36 @@ export default function DashboardCH() {
 
   return (
     <div className="ch-dashboard">
+      {/* [FitPro] Dual Cash-Flow banner — hiển thị 2 luồng tiền tách biệt, App chỉ chạm Luồng 1 */}
+      <div
+        style={{
+          padding: "12px 16px",
+          marginBottom: 14,
+          background: "linear-gradient(90deg, #E4F7F3 0%, #fff 60%, #FFF0E3 100%)",
+          border: "1px solid #d9e0de",
+          borderRadius: 10,
+          display: "grid",
+          gridTemplateColumns: "1fr 1fr",
+          gap: 12,
+          fontSize: 12,
+        }}
+      >
+        <div style={{ display: "flex", gap: 10, alignItems: "center" }}>
+          <span style={{ fontSize: 22 }}>💼</span>
+          <div>
+            <div style={{ fontWeight: 700, color: "#0B2E2A" }}>Luồng 1 — App FitPro (SaaS · Direct)</div>
+            <div style={{ color: "#6B8A85", marginTop: 2 }}>80k+/buổi · Gói 30/60/90 · Phí SaaS · <strong>Hiển thị trong App</strong></div>
+          </div>
+        </div>
+        <div style={{ display: "flex", gap: 10, alignItems: "center", borderLeft: "1px dashed #d9e0de", paddingLeft: 12 }}>
+          <span style={{ fontSize: 22 }}>🏭</span>
+          <div>
+            <div style={{ fontWeight: 700, color: "#7C2D12" }}>Luồng 2 — Herbalife (37% NPP · Zero-touch)</div>
+            <div style={{ color: "#6B8A85", marginTop: 2 }}>HBL → TK cá nhân NPP · App KHÔNG cầm tiền · chỉ <a href="/fp_commission" style={{ color: "#FF8C42", fontWeight: 600 }}>đối soát file</a></div>
+          </div>
+        </div>
+      </div>
+
       {/* STAT CARDS ROW - [CH] Community Hub metrics */}
       <div className="stat-cards-row">
         {[

@@ -39,7 +39,17 @@ function NodeCard({ node, onClick, selected }: { node: INetworkNode; onClick: ()
           <div style={{ fontSize: 13, fontWeight: 700, color: "#0B2E2A", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
             {node.name}
           </div>
-          <div style={{ fontSize: 10, color: "#6B8A85" }}>{node.station_code} · {node.city}</div>
+          <div style={{ fontSize: 10, color: "#6B8A85", display: "flex", gap: 6, alignItems: "center", flexWrap: "wrap" }}>
+            <span title="Mã định danh bất biến trọn đời" style={{ fontFamily: "monospace", fontWeight: 700, color: "#FF8C42", background: "#FFF0E3", padding: "1px 6px", borderRadius: 4 }}>
+              {node.affiliate_code}
+            </span>
+            {node.house_code && (
+              <span title="Mã Nhà — đủ 7 Elite F1-F7" style={{ fontFamily: "monospace", fontWeight: 700, color: "#2563EB", background: "#E0EBFF", padding: "1px 6px", borderRadius: 4 }}>
+                🏠 {node.house_code}
+              </span>
+            )}
+            <span>· {node.station_code} · {node.city}</span>
+          </div>
         </div>
       </div>
       <div style={{ display: "flex", gap: 8, fontSize: 11 }}>
@@ -85,9 +95,13 @@ export default function NetworkTreePage() {
     if (parent && parent.children_ids.length >= 7) { alert("BO này đã đủ 7 downline — không thể thêm"); return; }
 
     const newId = `BO-T${newTier}-${String(nodes.length + 1).padStart(3, "0")}`;
+    // Mint mã định danh A### bất biến — lấy số kế tiếp lớn nhất hiện có + jitter
+    const maxA = Math.max(0, ...nodes.map((n) => parseInt(n.affiliate_code.replace(/^A/, ""), 10) || 0));
+    const newAffiliateCode = `A${String(maxA + Math.ceil(Math.random() * 13)).padStart(3, "0")}`;
     const newNode: INetworkNode = {
       id: newId,
       name: inviteForm.name,
+      affiliate_code: newAffiliateCode,
       role: inviteForm.role,
       tier: newTier as 1 | 2 | 3,
       station_code: inviteForm.station_code,

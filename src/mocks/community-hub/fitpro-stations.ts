@@ -35,22 +35,32 @@ export interface IFitProMat {
 export interface IFitProStation {
   id: string;
   code: string;
+  // Mã định danh location bất biến trọn đời (xem docs/fitpro/03-architecture/business-model.md):
+  //   home   → H### (Home FitPro)
+  //   inside → I### (Inside plugin)
+  //   center → C### (Center hub)
+  location_code: string;
   name: string;
   type: StationType;
   typeLabel: string;
-  owner_name: string;         // chủ trạm BO
-  owner_tier: number;         // 1|2|3 tầng trong MLM
+  owner_name: string;
+  owner_affiliate_code?: string; // A### của BO chủ trạm
+  owner_tier: number;
   address: string;
   city: string;
   mats: IFitProMat[];
   total_mats: number;
-  operating_hours: string;    // "6:00 - 9:00"
+  operating_hours: string;
   opened_date: string;
   status: "active" | "setup" | "inactive";
-  today_sessions: number;     // số buổi tập hôm nay
+  today_sessions: number;
   month_revenue_vnd: number;
-  parent_station_id?: string; // trạm cấp trên (tầng trên)
-  insidePlugin?: InsidePluginMeta; // chỉ có khi type="inside"
+  parent_station_id?: string;
+  insidePlugin?: InsidePluginMeta;
+}
+
+export function locationCodePrefix(type: StationType): "H" | "I" | "C" {
+  return type === "home" ? "H" : type === "inside" ? "I" : "C";
 }
 
 // Helper resolve type cũ ("coworking") → mới ("center") cho backward compat
@@ -78,10 +88,12 @@ export const MOCK_FITPRO_STATIONS: IFitProStation[] = [
   {
     id: "ST-001",
     code: "FP-HN-001",
+    location_code: "H007",
     name: "Trạm Nguyễn Văn A (Hà Đông)",
     type: "home",
     typeLabel: "Home FitPro",
     owner_name: "Nguyễn Văn A",
+    owner_affiliate_code: "A007",
     owner_tier: 1,
     address: "Số 12 Ngõ 45, Nguyễn Trãi, Hà Đông",
     city: "Hà Nội",
@@ -102,10 +114,12 @@ export const MOCK_FITPRO_STATIONS: IFitProStation[] = [
   {
     id: "ST-002",
     code: "FP-HN-002",
+    location_code: "C015",
     name: "Trạm Cầu Giấy Co-Work",
     type: "center",
     typeLabel: "FitPro CENTER",
     owner_name: "Trần Văn B",
+    owner_affiliate_code: "A015",
     owner_tier: 1,
     address: "Tầng 2, Tòa Indochina, Cầu Giấy",
     city: "Hà Nội",
@@ -135,10 +149,12 @@ export const MOCK_FITPRO_STATIONS: IFitProStation[] = [
   {
     id: "ST-003",
     code: "FP-HCM-001",
+    location_code: "H053",
     name: "Trạm Quận 1 Phạm Văn C",
     type: "home",
     typeLabel: "Home FitPro",
     owner_name: "Phạm Văn C",
+    owner_affiliate_code: "A053",
     owner_tier: 2,
     parent_station_id: "ST-001",
     address: "48 Nguyễn Huệ, Q1",
@@ -159,10 +175,12 @@ export const MOCK_FITPRO_STATIONS: IFitProStation[] = [
   {
     id: "ST-004",
     code: "FP-DN-001",
+    location_code: "C028",
     name: "Trạm Hải Châu Đà Nẵng",
     type: "center",
     typeLabel: "FitPro CENTER",
     owner_name: "Lê Thị D",
+    owner_affiliate_code: "A028",
     owner_tier: 2,
     parent_station_id: "ST-001",
     address: "120 Bạch Đằng, Hải Châu",
@@ -193,10 +211,12 @@ export const MOCK_FITPRO_STATIONS: IFitProStation[] = [
   {
     id: "ST-006",
     code: "FP-INS-001",
+    location_code: "I082",
     name: "FitPro INSIDE @ California Gym Mỹ Đình",
     type: "inside",
     typeLabel: "FitPro INSIDE",
     owner_name: "Hoàng Văn K",
+    owner_affiliate_code: "A082",
     owner_tier: 2,
     parent_station_id: "ST-002",
     address: "The Manor, Mỹ Đình 1, Nam Từ Liêm",
@@ -220,10 +240,12 @@ export const MOCK_FITPRO_STATIONS: IFitProStation[] = [
   {
     id: "ST-005",
     code: "FP-HN-SETUP",
+    location_code: "H067",
     name: "Trạm Thanh Xuân (đang setup)",
     type: "home",
     typeLabel: "Home FitPro",
     owner_name: "Bùi Văn E",
+    owner_affiliate_code: "A067",
     owner_tier: 2,
     parent_station_id: "ST-001",
     address: "Chung cư Imperia, Thanh Xuân",

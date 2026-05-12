@@ -158,6 +158,25 @@ export default function MembershipPlanSettings() {
               {formatCurrency(plan.price, ".", "")}đ
               <span className="duration">/ {plan.duration_months} tháng</span>
             </div>
+            {"price_per_session" in plan && (plan as Record<string, unknown>).price_per_session && (
+              <div style={{ marginTop: -4, marginBottom: 8, fontSize: 12, color: "#6B8A85" }}>
+                = <strong style={{ color: plan.color }}>
+                  {formatCurrency((plan as Record<string, number>).price_per_session, ".", "")}đ
+                </strong>/buổi × 30 buổi
+              </div>
+            )}
+            <div style={{ display: "flex", flexWrap: "wrap", gap: 6, marginBottom: 8 }}>
+              {"unlocks_elite" in plan && (plan as Record<string, unknown>).unlocks_elite && (
+                <span style={{ padding: "2px 8px", borderRadius: 10, background: "#E4F7F3", color: "#00C9A7", fontSize: 10, fontWeight: 700 }}>
+                  ⚡ Mở quyền Elite
+                </span>
+              )}
+              {"includes_medlatec" in plan && (plan as Record<string, unknown>).includes_medlatec && (
+                <span style={{ padding: "2px 8px", borderRadius: 10, background: "#FFF0E3", color: "#FF8C42", fontSize: 10, fontWeight: 700 }}>
+                  🩺 Xét nghiệm Medlatec
+                </span>
+              )}
+            </div>
 
             <p className="plan-setting-card__desc">{plan.description}</p>
 

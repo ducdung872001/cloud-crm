@@ -1,86 +1,127 @@
-// [FitPro] Mock data for FitPro Packages — 5 gói trải nghiệm 90 ngày
-// Theo slide 9 pptx: Cơ bản → Plus → Pro → VIP → Super VIP
+// [FitPro] 5 tier gói trải nghiệm — giá chuẩn 11/05/2026 theo bảng pricing chiến lược.
+// Mỗi gói 30 buổi × giá/buổi. Tier ≥ PRO mở quyền Elite Member; gói ≥30 buổi mở quyền VIP Member;
+// Medlatec lab chỉ kèm VIP / SUPER VIP. Xem docs/fitpro/03-architecture/business-model.md §3.3.
 
-export const MOCK_MEMBERSHIP_PLANS = [
+export interface IMembershipPlan {
+  id: string;
+  name: string;
+  tier_code: "BASIC" | "PLUS" | "PRO" | "VIP" | "SUPER_VIP";
+  price_per_session: number;
+  sessions: number;
+  price: number;
+  duration_months: number;
+  description: string;
+  color: string;
+  badge?: string;
+  popular?: boolean;
+  unlocks_elite?: boolean;      // PRO trở lên → quyền Elite (kinh doanh, gửi khách toàn quốc)
+  includes_medlatec?: boolean;  // chỉ VIP / SUPER VIP
+  includes: { service: string; quota: number; unit: string }[];
+}
+
+export const MOCK_MEMBERSHIP_PLANS: IMembershipPlan[] = [
   {
     id: "FP-BASIC",
-    name: "FitPro Cơ Bản",
-    price: 2400000,
-    duration_months: 3, // 90 ngày
-    description: "Gói khởi đầu 90 ngày: 30 buổi tập + trà năng lượng + shake",
+    name: "FitPro BASIC",
+    tier_code: "BASIC",
+    price_per_session: 80_000,
+    sessions: 30,
+    price: 2_400_000,
+    duration_months: 3,
+    description: "Penetration tier — 80k ≈ 1 ly cà phê specialty, loại bỏ rào cản chạm thử",
     color: "#8E9BAE",
     includes: [
       { service: "30 buổi tập tại trạm", quota: 30, unit: "buổi/90 ngày" },
-      { service: "Trà năng lượng", quota: 30, unit: "ly" },
-      { service: "Shake protein", quota: 30, unit: "ly" },
+      { service: "Trà NRG (năng lượng sạch)", quota: 30, unit: "ly" },
+      { service: "F1 Sport Shake", quota: 30, unit: "ly" },
     ],
   },
   {
     id: "FP-PLUS",
-    name: "FitPro Plus",
-    price: 3600000,
+    name: "FitPro PLUS",
+    tier_code: "PLUS",
+    price_per_session: 140_000,
+    sessions: 30,
+    price: 4_200_000,
     duration_months: 3,
-    description: "Cơ bản + Cấp nước điện giải (hydrate)",
+    description: "BASIC + Hydrate — bù khoáng/điện giải chuyên sâu",
     color: "#4DE4C4",
     includes: [
       { service: "30 buổi tập tại trạm", quota: 30, unit: "buổi/90 ngày" },
-      { service: "Trà năng lượng", quota: 30, unit: "ly" },
-      { service: "Shake protein", quota: 30, unit: "ly" },
-      { service: "Cấp nước (Hydrate)", quota: 30, unit: "ly" },
+      { service: "Trà NRG", quota: 30, unit: "ly" },
+      { service: "F1 Sport Shake", quota: 30, unit: "ly" },
+      { service: "Hydrate (điện giải)", quota: 30, unit: "ly" },
     ],
   },
   {
     id: "FP-PRO",
-    name: "FitPro Pro",
-    price: 5200000,
+    name: "FitPro PRO",
+    tier_code: "PRO",
+    price_per_session: 260_000,
+    sessions: 30,
+    price: 7_800_000,
     duration_months: 3,
-    description: "Plus + Phục hồi cơ bắp sau tập",
+    description: "PLUS + Rebuild Strength — phục hồi cơ thần tốc · Cổng mở quyền Elite Member (kinh doanh, gửi khách toàn quốc)",
     color: "#00C9A7",
     popular: true,
+    unlocks_elite: true,
+    badge: "Cổng Elite",
     includes: [
       { service: "30 buổi tập tại trạm", quota: 30, unit: "buổi/90 ngày" },
-      { service: "Trà năng lượng", quota: 30, unit: "ly" },
-      { service: "Shake protein", quota: 30, unit: "ly" },
-      { service: "Cấp nước (Hydrate)", quota: 30, unit: "ly" },
-      { service: "Phục hồi cơ bắp", quota: 30, unit: "liều" },
+      { service: "Trà NRG", quota: 30, unit: "ly" },
+      { service: "F1 Sport Shake", quota: 30, unit: "ly" },
+      { service: "Hydrate (điện giải)", quota: 30, unit: "ly" },
+      { service: "Rebuild Strength (phục hồi cơ)", quota: 30, unit: "liều" },
     ],
   },
   {
     id: "FP-VIP",
     name: "FitPro VIP",
-    price: 8500000,
+    tier_code: "VIP",
+    price_per_session: 315_000,
+    sessions: 30,
+    price: 9_450_000,
     duration_months: 3,
-    description: "Gói KHỞI NGHIỆP CHUẨN — Pro + Bảo vệ xương khớp + Xét nghiệm y tế Medlatec",
+    description: "PRO + Xtra-Cal + Herbalifeline — tối ưu xương khớp, tim mạch · Kèm xét nghiệm Medlatec trước/sau",
     color: "#FF8C42",
-    badge: "Khởi nghiệp chuẩn",
+    badge: "Premium + Medlatec",
+    unlocks_elite: true,
+    includes_medlatec: true,
     includes: [
       { service: "30 buổi tập tại trạm", quota: 30, unit: "buổi/90 ngày" },
-      { service: "Trà năng lượng", quota: 30, unit: "ly" },
-      { service: "Shake protein", quota: 30, unit: "ly" },
-      { service: "Cấp nước (Hydrate)", quota: 30, unit: "ly" },
-      { service: "Phục hồi cơ bắp", quota: 30, unit: "liều" },
-      { service: "Bảo vệ xương khớp & tim mạch", quota: 90, unit: "viên" },
-      { service: "Xét nghiệm y tế (Medlatec)", quota: 2, unit: "lần (trước & sau)" },
+      { service: "Trà NRG", quota: 30, unit: "ly" },
+      { service: "F1 Sport Shake", quota: 30, unit: "ly" },
+      { service: "Hydrate", quota: 30, unit: "ly" },
+      { service: "Rebuild Strength", quota: 30, unit: "liều" },
+      { service: "Xtra-Cal (xương khớp)", quota: 90, unit: "viên" },
+      { service: "Herbalifeline (tim mạch)", quota: 90, unit: "viên" },
+      { service: "Xét nghiệm Medlatec (trước & sau)", quota: 2, unit: "lần" },
     ],
   },
   {
     id: "FP-SUPER",
-    name: "FitPro Super VIP",
-    price: 10500000,
+    name: "FitPro SUPER VIP",
+    tier_code: "SUPER_VIP",
+    price_per_session: 500_000,
+    sessions: 30,
+    price: 15_000_000,
     duration_months: 3,
-    description: "Full trải nghiệm premium — bao gồm quà tặng E-Gift",
+    description: "VIP + Joint Support + Niteworks — vận động đỉnh cao, phục hồi sâu · Concierge 1-1 với Master Trainer",
     color: "#E8473B",
-    badge: "Premium",
+    badge: "Đỉnh cao",
+    unlocks_elite: true,
+    includes_medlatec: true,
     includes: [
       { service: "30 buổi tập tại trạm", quota: 30, unit: "buổi/90 ngày" },
-      { service: "Trà năng lượng", quota: 30, unit: "ly" },
-      { service: "Shake protein", quota: 30, unit: "ly" },
-      { service: "Cấp nước (Hydrate)", quota: 30, unit: "ly" },
-      { service: "Phục hồi cơ bắp", quota: 30, unit: "liều" },
-      { service: "Bảo vệ xương khớp & tim mạch", quota: 90, unit: "viên" },
-      { service: "Xét nghiệm y tế (Medlatec)", quota: 2, unit: "lần" },
-      { service: "Quà tặng E-Gift", quota: 1, unit: "gift" },
-      { service: "Concierge 1-1 với Master Trainer", quota: 3, unit: "buổi" },
+      { service: "Trà NRG", quota: 30, unit: "ly" },
+      { service: "F1 Sport Shake", quota: 30, unit: "ly" },
+      { service: "Hydrate", quota: 30, unit: "ly" },
+      { service: "Rebuild Strength", quota: 30, unit: "liều" },
+      { service: "Xtra-Cal + Herbalifeline", quota: 90, unit: "viên" },
+      { service: "Joint Support (khớp sâu)", quota: 90, unit: "viên" },
+      { service: "Niteworks (phục hồi đêm)", quota: 90, unit: "viên" },
+      { service: "Xét nghiệm Medlatec (trước & sau)", quota: 2, unit: "lần" },
+      { service: "Concierge 1-1 Master Trainer", quota: 3, unit: "buổi" },
     ],
   },
 ];

@@ -3,7 +3,6 @@
 import React, { useState } from "react";
 import { useLocation } from "react-router-dom";
 import { MOCK_FITPRO_STATIONS } from "@/mocks/community-hub/fitpro-stations";
-import { MOCK_NETWORK_NODES } from "@/mocks/community-hub/fitpro-network";
 import { formatCurrency } from "reborn-util";
 
 type TabKey = "f2-station-type" | "f4-body-metrics" | "f5-cross-card" | "f6-sop" | "f7-finder" | "f8-commission" | "f9-funnel" | "f10-tax" | "f11-mf7";
@@ -14,7 +13,7 @@ const TABS: { key: TabKey; label: string; icon: string; priority: string; path: 
   { key: "f4-body-metrics", label: "Chỉ số cơ thể", icon: "🩺", priority: "⭐⭐", path: "/fp_body_metrics", title: "Chỉ số cơ thể" },
   { key: "f6-sop", label: "SOP Compliance", icon: "✅", priority: "⭐⭐", path: "/fp_sop", title: "SOP Compliance" },
   { key: "f7-finder", label: "Tìm trạm", icon: "📍", priority: "⭐⭐", path: "/fp_finder", title: "Tìm trạm" },
-  { key: "f8-commission", label: "Hoa hồng", icon: "💰", priority: "⭐⭐", path: "/fp_commission", title: "Hoa hồng" },
+  { key: "f8-commission", label: "Đối soát HBL", icon: "🧾", priority: "⭐⭐", path: "/fp_commission", title: "Đối soát HBL (zero-touch)" },
   { key: "f9-funnel", label: "Phễu marketing", icon: "📣", priority: "⭐⭐", path: "/fp_funnel", title: "Phễu marketing" },
   { key: "f10-tax", label: "Khai thuế", icon: "📋", priority: "⭐", path: "/fp_tax", title: "Khai thuế" },
   { key: "f11-mf7", label: "MF7 Onboarding", icon: "🎓", priority: "⭐", path: "/fp_mf7", title: "MF7 Onboarding" },
@@ -344,8 +343,16 @@ export default function FitProModulesPage() {
                     const scores = [92, 85, 75, 88, 70][i];
                     return (
                       <tr key={s.id} style={{ borderBottom: "1px solid #E0E8E5" }}>
-                        <td style={{ padding: 10 }}><strong>{s.code}</strong></td>
-                        <td style={{ padding: 10 }}>{s.owner_name}</td>
+                        <td style={{ padding: 10 }}>
+                          <strong>{s.code}</strong>
+                          <div style={{ fontFamily: "monospace", fontSize: 10, color: "#2563EB", marginTop: 2 }}>📍 {s.location_code}</div>
+                        </td>
+                        <td style={{ padding: 10 }}>
+                          {s.owner_name}
+                          {s.owner_affiliate_code && (
+                            <div style={{ fontFamily: "monospace", fontSize: 10, color: "#FF8C42", marginTop: 2 }}>{s.owner_affiliate_code}</div>
+                          )}
+                        </td>
                         <td style={{ padding: 10, textAlign: "center" }}>{i % 2 === 0 ? "✅" : "⚠️"}</td>
                         <td style={{ padding: 10, textAlign: "center" }}>{i !== 3 ? "✅" : "❌"}</td>
                         <td style={{ padding: 10, textAlign: "center" }}>✅</td>
@@ -377,6 +384,7 @@ export default function FitProModulesPage() {
                     <div style={{ display: "flex", justifyContent: "space-between", alignItems: "start" }}>
                       <div>
                         <strong style={{ fontSize: 13 }}>{s.name}</strong>
+                        <div style={{ fontFamily: "monospace", fontSize: 10, color: "#2563EB", marginTop: 2 }}>{s.location_code} · {s.code}</div>
                         <div style={{ fontSize: 11, color: "#6B8A85", marginTop: 2 }}>📍 {s.address}</div>
                         <div style={{ fontSize: 11, color: "#6B8A85" }}>⏰ {s.operating_hours}</div>
                       </div>
@@ -403,69 +411,127 @@ export default function FitProModulesPage() {
           </div>
         )}
 
-        {/* F8: Commission dashboard */}
+        {/* F8: Đối soát HBL (zero-touch) — App KHÔNG cầm tiền, KHÔNG hiển thị commission thực */}
         {tab === "f8-commission" && (
           <div>
-            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "start" }}>
+            {/* Banner Nguyên tắc thép Dual Cash-Flow */}
+            <div style={{
+              padding: "14px 18px",
+              marginBottom: 18,
+              background: "linear-gradient(90deg, #FEF3C7 0%, #FFFBEB 100%)",
+              border: "1.5px solid #F59E0B",
+              borderLeft: "6px solid #F59E0B",
+              borderRadius: 10,
+              fontSize: 12.5,
+              color: "#7C2D12",
+              lineHeight: 1.7,
+            }}>
+              ⚖️ <strong>Nguyên tắc thép — Dual Cash-Flow:</strong> Hoa hồng 37% Herbalife thuộc <strong>Luồng 2</strong> — đi thẳng từ HBL về tài khoản cá nhân NPP, <strong>zero-touch với App FitPro</strong>. App không cầm tiền, không tính, không phân phối, không hiển thị commission thực. Module này chỉ <strong>đối soát file</strong> NPP xuất từ portal HBL với phân phối anh ấy ghi nhận xuống nhánh, để cảnh báo chênh lệch nội bộ. <em>(Tuân thủ pháp lý đa cấp VN — xem business-model.md)</em>
+            </div>
+
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "start", flexWrap: "wrap", gap: 12 }}>
               <div>
-                <h3 style={{ marginTop: 0 }}>💰 Hoa hồng hệ thống (hãng tự trả)</h3>
-                <p style={{ fontSize: 13, color: "#6B8A85" }}>Dashboard xem hoa hồng 5%/tầng × 3 tầng từ hãng Herbalife — BO chỉ view, không cần quản lý</p>
+                <h3 style={{ marginTop: 0 }}>🧾 Đối soát commission HBL (NPP tự nhập)</h3>
+                <p style={{ fontSize: 13, color: "#6B8A85", margin: 0 }}>Upload file commission xuất từ portal Herbalife → so sánh với phân phối nội bộ → cảnh báo lệch. <strong>Không tính, không chi.</strong></p>
               </div>
               <div style={{ display: "flex", gap: 8 }}>
-                <button onClick={() => alert("📄 Đã xuất báo cáo hoa hồng tháng 04/2026 → PDF")}
-                  style={{ padding: "8px 14px", background: "#fff", color: "#722ed1", border: "1px solid #722ed1", borderRadius: 6, fontSize: 12, fontWeight: 600, cursor: "pointer" }}>
-                  📄 Xuất PDF
-                </button>
-                <button onClick={() => alert("🔄 Đã sync dữ liệu mới nhất từ Herbalife API — cập nhật thành công")}
-                  style={{ padding: "8px 14px", background: "#722ed1", color: "#fff", border: "none", borderRadius: 6, fontSize: 12, fontWeight: 600, cursor: "pointer" }}>
-                  🔄 Sync từ hãng
+                <label style={{ padding: "8px 14px", background: "#fff", color: "#0B2E2A", border: "1px solid #00C9A7", borderRadius: 6, fontSize: 12, fontWeight: 600, cursor: "pointer" }}>
+                  📤 Upload file HBL (CSV/Excel)
+                  <input type="file" accept=".csv,.xlsx,.xls" style={{ display: "none" }}
+                    onChange={(e) => {
+                      const f = e.target.files?.[0];
+                      if (f) alert(`✓ Đã import "${f.name}"\n→ Tạo ledger entry mới (passthrough, KHÔNG sinh giao dịch tiền)`);
+                    }}
+                  />
+                </label>
+                <button onClick={() => alert("📑 Xuất báo cáo đối soát kỳ 04/2026 → Excel\n• 6 BO\n• Tổng HBL chuyển: 42 tr\n• Tổng phân phối anh A khai báo: 41,2 tr\n• Lệch: -800k (BO tự xử lý)")}
+                  style={{ padding: "8px 14px", background: "#00C9A7", color: "#fff", border: "none", borderRadius: 6, fontSize: 12, fontWeight: 600, cursor: "pointer" }}>
+                  📑 Xuất báo cáo đối soát
                 </button>
               </div>
             </div>
+
+            {/* Sơ đồ Dual Cash-Flow */}
+            <div style={{ marginTop: 18, padding: 16, background: "#F5F9F8", borderRadius: 10 }}>
+              <div style={{ fontSize: 12, fontWeight: 700, color: "#0B2E2A", marginBottom: 10 }}>📊 Luồng tiền HBL — zero-touch với App</div>
+              <div style={{ display: "grid", gridTemplateColumns: "1fr auto 1fr auto 1fr", gap: 8, alignItems: "center", fontSize: 11 }}>
+                <div style={{ padding: 10, background: "#fff", borderRadius: 6, textAlign: "center", border: "1px dashed #d9e0de" }}>
+                  <div style={{ fontSize: 22 }}>👤</div>
+                  <div style={{ fontWeight: 600 }}>Khách hàng</div>
+                  <div style={{ color: "#6B8A85", marginTop: 2 }}>Đặt hàng dưới mã NPP</div>
+                </div>
+                <div style={{ color: "#00C9A7", fontWeight: 700 }}>→</div>
+                <div style={{ padding: 10, background: "#fff", borderRadius: 6, textAlign: "center", border: "1px solid #FF8C42" }}>
+                  <div style={{ fontSize: 22 }}>🏭</div>
+                  <div style={{ fontWeight: 600 }}>Herbalife VN</div>
+                  <div style={{ color: "#6B8A85", marginTop: 2 }}>Tính 37% trên 73% lợi nhuận NPP</div>
+                </div>
+                <div style={{ color: "#00C9A7", fontWeight: 700 }}>→</div>
+                <div style={{ padding: 10, background: "#fff", borderRadius: 6, textAlign: "center", border: "1px solid #00C9A7" }}>
+                  <div style={{ fontSize: 22 }}>💳</div>
+                  <div style={{ fontWeight: 600 }}>TK cá nhân NPP</div>
+                  <div style={{ color: "#6B8A85", marginTop: 2 }}>HBL chuyển trực tiếp</div>
+                </div>
+              </div>
+              <div style={{ marginTop: 10, padding: 8, background: "#FEE2E2", borderRadius: 6, fontSize: 11, color: "#991B1B" }}>
+                ❌ App FitPro KHÔNG xuất hiện trong chuỗi trên. Mọi nỗ lực ghi nhận commission HBL trong App → vi phạm Dual Cash-Flow.
+              </div>
+            </div>
+
+            {/* Ledger các file HBL đã upload */}
             <div style={{ marginTop: 20 }}>
-              <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(140px, 1fr))", gap: 12, marginBottom: 16 }}>
-                {[
-                  { l: "Tháng này", v: "42 tr", c: "#00C9A7", i: "💰" },
-                  { l: "Tầng 1 (5%)", v: "18 tr", c: "#4DE4C4", i: "1️⃣" },
-                  { l: "Tầng 2 (5%)", v: "16 tr", c: "#FF8C42", i: "2️⃣" },
-                  { l: "Tầng 3 (5%)", v: "8 tr", c: "#E8473B", i: "3️⃣" },
-                ].map((s, i) => (
-                  <div key={i} style={{ padding: 14, background: "#fff", borderRadius: 10, border: `1.5px solid ${s.c}33` }}>
-                    <div style={{ fontSize: 20 }}>{s.i}</div>
-                    <div style={{ fontSize: 22, fontWeight: 700, color: s.c, marginTop: 4 }}>{s.v}</div>
-                    <div style={{ fontSize: 11, color: "#6B8A85" }}>{s.l}</div>
-                  </div>
-                ))}
-              </div>
-              <div style={{ padding: 14, background: "#FFF7E6", borderRadius: 8, fontSize: 12, color: "#8B5A00" }}>
-                💡 <strong>Lưu ý:</strong> Hoa hồng do hãng tự tính và trả hàng tháng — chủ trạm không cần quản lý phần này. Dashboard này chỉ cho bạn **xem** để biết thu nhập hệ thống đang chảy về.
-              </div>
-              <div style={{ marginTop: 16 }}>
-                <h4>Breakdown từ downline (6 BO)</h4>
-                <div style={{ overflowX: "auto" }}><table style={{ width: "100%", minWidth: 560, fontSize: 12, borderCollapse: "collapse" }}>
-                  <thead>
-                    <tr style={{ background: "#E4F7F3" }}>
-                      <th style={{ padding: 10, textAlign: "left" }}>BO</th>
-                      <th style={{ padding: 10 }}>Tier</th>
-                      <th style={{ padding: 10 }}>DT tháng</th>
-                      <th style={{ padding: 10 }}>% HH về Master</th>
-                      <th style={{ padding: 10 }}>Thực nhận</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {MOCK_NETWORK_NODES.filter(n => n.parent_id !== null).slice(0, 6).map((n) => (
-                      <tr key={n.id} style={{ borderBottom: "1px solid #E0E8E5" }}>
-                        <td style={{ padding: 10 }}>{n.name}</td>
-                        <td style={{ padding: 10, textAlign: "center" }}>Tier {n.tier}</td>
-                        <td style={{ padding: 10, textAlign: "right" }}>{formatCurrency(n.monthly_revenue_vnd, ".", "")}đ</td>
-                        <td style={{ padding: 10, textAlign: "center", color: "#FF8C42" }}>5%</td>
-                        <td style={{ padding: 10, textAlign: "right", color: "#00C9A7", fontWeight: 600 }}>
-                          {formatCurrency(Math.round(n.monthly_revenue_vnd * 0.05), ".", "")}đ
+              <h4 style={{ marginBottom: 8 }}>📁 Ledger — file commission HBL đã upload (passthrough)</h4>
+              <div style={{ overflowX: "auto" }}><table style={{ width: "100%", minWidth: 720, fontSize: 12, borderCollapse: "collapse" }}>
+                <thead>
+                  <tr style={{ background: "#E4F7F3" }}>
+                    <th style={{ padding: 10, textAlign: "left" }}>Kỳ</th>
+                    <th style={{ padding: 10, textAlign: "left" }}>NPP (BO upload)</th>
+                    <th style={{ padding: 10, textAlign: "left" }}>File gốc HBL</th>
+                    <th style={{ padding: 10, textAlign: "right" }}>HBL chuyển về TK NPP</th>
+                    <th style={{ padding: 10, textAlign: "right" }}>NPP khai phân phối</th>
+                    <th style={{ padding: 10, textAlign: "right" }}>Chênh lệch</th>
+                    <th style={{ padding: 10, textAlign: "center" }}>Trạng thái</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {[
+                    { period: "04/2026", bo: "Nguyễn Master (A007)", file: "HBL_commission_2026-04.xlsx", paid: 42_000_000, distributed: 41_200_000 },
+                    { period: "03/2026", bo: "Nguyễn Master (A007)", file: "HBL_commission_2026-03.xlsx", paid: 38_500_000, distributed: 38_500_000 },
+                    { period: "04/2026", bo: "Trần Thị B (A015)", file: "HBL_apr_TT-B.csv", paid: 18_400_000, distributed: 17_900_000 },
+                    { period: "03/2026", bo: "Trần Thị B (A015)", file: "HBL_mar_TT-B.csv", paid: 16_200_000, distributed: 16_200_000 },
+                  ].map((row, i) => {
+                    const diff = row.paid - row.distributed;
+                    const ok = diff === 0;
+                    return (
+                      <tr key={i} style={{ borderBottom: "1px solid #E0E8E5" }}>
+                        <td style={{ padding: 10, fontWeight: 600 }}>{row.period}</td>
+                        <td style={{ padding: 10 }}>{row.bo}</td>
+                        <td style={{ padding: 10, fontFamily: "monospace", fontSize: 11, color: "#6B8A85" }}>{row.file}</td>
+                        <td style={{ padding: 10, textAlign: "right" }}>{formatCurrency(row.paid, ".", "")}đ</td>
+                        <td style={{ padding: 10, textAlign: "right" }}>{formatCurrency(row.distributed, ".", "")}đ</td>
+                        <td style={{ padding: 10, textAlign: "right", color: ok ? "#00C9A7" : "#E8473B", fontWeight: 700 }}>
+                          {ok ? "✓ Khớp" : `−${formatCurrency(Math.abs(diff), ".", "")}đ`}
+                        </td>
+                        <td style={{ padding: 10, textAlign: "center" }}>
+                          <span style={{ padding: "3px 10px", borderRadius: 10, background: ok ? "#E4F7F3" : "#FEE2E2", color: ok ? "#00C9A7" : "#E8473B", fontSize: 11, fontWeight: 600 }}>
+                            {ok ? "Đã đối soát" : "Cảnh báo lệch"}
+                          </span>
                         </td>
                       </tr>
-                    ))}
-                  </tbody>
-                </table></div>
+                    );
+                  })}
+                </tbody>
+              </table></div>
+            </div>
+
+            {/* Reference — % cấu hình tenant (read-only display) */}
+            <div style={{ marginTop: 20, padding: 14, background: "#EEF3FF", border: "1px solid #B8C9E8", borderRadius: 10 }}>
+              <div style={{ fontSize: 12, fontWeight: 700, color: "#1E3A8A", marginBottom: 8 }}>
+                ⚙️ Cấu hình % tham chiếu phân phối nhánh (tenant setting — F5.3)
+              </div>
+              <div style={{ fontSize: 11, color: "#1E3A8A", lineHeight: 1.7 }}>
+                Hệ thống chỉ <strong>so sánh tham chiếu</strong>: NPP khai phân phối có khớp tỷ lệ chuẩn không. Cấu hình tại{" "}
+                <a href="/ch_tenant_config" style={{ color: "#0B2E2A", fontWeight: 700 }}>/ch_tenant_config</a>. <strong>App không tự động chi trả.</strong>
               </div>
             </div>
           </div>
@@ -581,7 +647,11 @@ export default function FitProModulesPage() {
                   const statusText = ["Đã nộp", "Đã nộp", "Chưa nộp", "Đã nộp", "—"][i];
                   return (
                     <tr key={s.id} style={{ borderBottom: "1px solid #E0E8E5" }}>
-                      <td style={{ padding: 10 }}><strong>{s.code}</strong><br /><span style={{ fontSize: 10, color: "#6B8A85" }}>{s.owner_name}</span></td>
+                      <td style={{ padding: 10 }}>
+                        <strong>{s.code}</strong>
+                        <div style={{ fontFamily: "monospace", fontSize: 10, color: "#2563EB", marginTop: 2 }}>{s.location_code}</div>
+                        <span style={{ fontSize: 10, color: "#6B8A85" }}>{s.owner_name}</span>
+                      </td>
                       <td style={{ padding: 10, fontFamily: "monospace", fontSize: 11, textAlign: "center" }}>HKD-{String(i + 1).padStart(4, "0")}</td>
                       <td style={{ padding: 10, textAlign: "right" }}>{formatCurrency(s.month_revenue_vnd, ".", "")}đ</td>
                       <td style={{ padding: 10, textAlign: "right", color: "#FF8C42", fontWeight: 600 }}>

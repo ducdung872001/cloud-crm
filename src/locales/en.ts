@@ -101,7 +101,7 @@ const en = {
     fpStationLayout: "Station Layout",
     fpSOPCompliance: "SOP Compliance",
     fpStationFinder: "Station Finder",
-    fpCommission: "Commission Dashboard",
+    fpCommission: "HBL Reconciliation (zero-touch)",
     fpMarketingFunnel: "Marketing Funnel",
     fpTaxStation: "Tax per Station",
     fpMF7Onboarding: "MF7 Onboarding",
