@@ -74,7 +74,10 @@
   width: 100%;
   height: auto;
   max-height: 360px;
-  object-fit: cover;
+  // contain: giữ nguyên nội dung ảnh, không kéo dãn không cắt — chấp nhận
+  // letterbox đen 2 đầu (trên/dưới hoặc trái/phải) khi ảnh không đúng tỉ lệ.
+  // Tỉ lệ gợi ý 4:1 1600px → vừa đẹp trên viewport phổ thông, không letterbox.
+  object-fit: contain;
   user-select: none;
 }
 

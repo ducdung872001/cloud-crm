@@ -1,12 +1,16 @@
 // Strip chạy ảnh ngang dùng cho banner đầu trang public events.
 // Cùng pattern animation với GalleryStrip trong ShareEventPage (auto-scroll
-// trái-phải, pause khi hover) — nhưng KHÔNG dùng Fancybox lightbox: click
-// banner sẽ mở link (nếu có) thay vì zoom ảnh.
+// trái-phải, pause khi hover).
+//
+// Click behavior:
+//   - Ảnh có `linkUrl` → mở link mới (banner quảng cáo).
+//   - Ảnh KHÔNG có `linkUrl` → mở Fancybox lightbox để zoom xem (yc anh Lợi 2026-05-12).
 //
 // CSS: prefix `tgs-` (top gallery strip) để không xung đột `.se-gallery-*`
 // của ShareEventPage.
 
-import React, { useEffect, useLayoutEffect, useRef, useState } from "react";
+import React, { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
+import Fancybox from "components/fancybox/fancybox";
 
 export interface TopGalleryItem {
   url: string;
@@ -82,6 +86,8 @@ export default function TopGalleryStrip({
     return () => window.cancelAnimationFrame(raf);
   }, [loop, items, needsScroll, speedPxPerSec]);
 
+  const fancyOptions = useMemo(() => ({ Carousel: { infinite: false } }), []);
+
   if (!items.length) return null;
 
   return (
@@ -94,6 +100,7 @@ export default function TopGalleryStrip({
       onTouchEnd={() => { pausedRef.current = false; }}
       style={{ "--tgs-img-h": `${imageHeight}px` } as React.CSSProperties}
     >
+      <Fancybox options={fancyOptions}>
       <div ref={trackRef} className="tgs-track">
         {renderItems.map((it, i) => {
           const node = (
@@ -106,6 +113,7 @@ export default function TopGalleryStrip({
               translate="no"
             />
           );
+          // Ảnh có linkUrl → click mở link mới (banner quảng cáo). Không link → Fancybox zoom.
           if (it.linkUrl) {
             return (
               <a
@@ -120,13 +128,32 @@ export default function TopGalleryStrip({
               </a>
             );
           }
+          // Index ảnh gốc (loại trừ clones) để caption đúng.
+          const isClone = loop && needsScroll && i >= items.length;
+          const originalIdx = i % items.length;
           return (
-            <div key={i} className="tgs-item">
+            <a
+              key={i}
+              href={it.url}
+              data-fancybox={isClone ? undefined : "tgs-gallery"}
+              data-caption={isClone ? undefined : `Ảnh ${originalIdx + 1}`}
+              onClick={isClone ? (e) => {
+                // Click vào clone — redirect sang ảnh gốc tương ứng để Fancybox open đúng.
+                e.preventDefault();
+                const originals = trackRef.current?.querySelectorAll<HTMLAnchorElement>(
+                  'a[data-fancybox="tgs-gallery"]'
+                );
+                originals?.[originalIdx]?.click();
+              } : undefined}
+              className="tgs-item"
+              aria-label={`Xem ảnh ${originalIdx + 1}`}
+            >
               {node}
-            </div>
+            </a>
           );
         })}
       </div>
+      </Fancybox>
     </div>
   );
 }

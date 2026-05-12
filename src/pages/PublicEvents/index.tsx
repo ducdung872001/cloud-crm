@@ -420,13 +420,9 @@ export default function PublicEventsPage() {
         </div>
 
         <div className="pe-hero__inner">
-          {/* Khi tenant đã upload banner ảnh có text branding (vd "W.HOUSE — NÂNG
-              TẦM GIÁ TRỊ SỐNG"), ẩn dòng kicker text vì (a) tránh trùng nội dung
-              với banner ngay phía trên, (b) tránh trình duyệt auto-translate
-              sai branding. Default tenant vẫn show kicker như cũ. */}
-          {!settings.bannerImageUrl && (
-            <span className="pe-hero__kicker" translate="no">W.HOUSE — NÂNG TẦM GIÁ TRỊ SỐNG</span>
-          )}
+          {/* Kicker text luôn hiện — kể cả khi tenant upload banner (yc anh Lợi 2026-05-12).
+              `translate="no"` chặn Chrome auto-translate phá brand. */}
+          <span className="pe-hero__kicker" translate="no">W.HOUSE — NÂNG TẦM GIÁ TRỊ SỐNG</span>
           <h1 className="pe-hero__title">
             Sự kiện sắp tới
             <br/>

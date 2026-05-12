@@ -633,6 +633,8 @@ function PortalSettingsModal({
         style={{
           background: "#fff", borderRadius: 10, maxWidth: 560, width: "100%",
           padding: 20, boxShadow: "0 18px 40px rgba(0,0,0,.18)",
+          // Strip section dài + nhiều ảnh dễ vượt viewport → cho phép scroll trong modal.
+          maxHeight: "calc(100vh - 40px)", overflowY: "auto",
         }}
       >
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 14 }}>
