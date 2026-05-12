@@ -36,6 +36,18 @@ export default function RegisterFetch() {
       if (!config.headers) {
         config.headers = {};
       }
+      // Bỏ qua các call sang host ngoài (Firebase, Google APIs, …) —
+      // chỉ áp Authorization/Hostname/Content-Type cho backend reborn.
+      if (/^https?:\/\//i.test(url)) {
+        try {
+          const host = new URL(url).hostname;
+          if (!/(^|\.)reborn\.vn$/i.test(host)) {
+            return [url, config];
+          }
+        } catch {
+          // URL parse fail → để chảy xuống flow cũ
+        }
+      }
       const isFormDataBody = typeof FormData !== "undefined" && config.body instanceof FormData;
       const isPublic = url.includes("/public/");
       const token = getCookie("token");
