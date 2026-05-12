@@ -5,8 +5,8 @@ fe_branch: reborn-mentorhub
 to: sales
 created: 2026-05-11T22:30:00+07:00
 slug: mentorhub-session-entity-crud
-status: draft
-gh_issue: TBD
+status: posted
+gh_issue: https://github.com/ducdung872001/cloud-sales-master/issues/32
 severity: MEDIUM
 ---
 

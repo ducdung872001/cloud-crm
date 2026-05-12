@@ -83,7 +83,17 @@
       "PowerShell(try { $r = Invoke-WebRequest -Uri \"http://localhost:8080/\" -TimeoutSec 5 -UseBasicParsing -ErrorAction Stop; Write-Host \"HTTP $\\($r.StatusCode\\)\"; Write-Host \"--- first 500 chars ---\"; $r.Content.Substring\\(0, [Math]::Min\\(500, $r.Content.Length\\)\\) } catch { Write-Host \"ERROR: $\\($_.Exception.Message\\)\"; if \\($_.Exception.Response\\) { Write-Host \"Status: $\\($_.Exception.Response.StatusCode\\)\" } })",
       "PowerShell(try { $r = Invoke-WebRequest -Uri \"http://localhost:8080/\" -TimeoutSec 8 -UseBasicParsing -ErrorAction Stop; Write-Host \"HTTP $\\($r.StatusCode\\) — SSO reachable\"; Write-Host \"--- first 300 chars body ---\"; $r.Content.Substring\\(0, [Math]::Min\\(300, $r.Content.Length\\)\\) } catch { Write-Host \"Probe error: $\\($_.Exception.Message\\)\" })",
       "Bash(node scripts/test-login-flow.cjs)",
-      "Bash(python3 -c ' *)"
+      "Bash(python3 -c ' *)",
+      "Bash(~/.local/bin/gh auth *)",
+      "Bash(echo \"Started PID: $!\")",
+      "Bash(~/.local/bin/gh repo *)",
+      "Bash('~/.local/bin/gh' issue *)",
+      "Bash(git -C /Users/nguyentrung/Documents/projects/crm-web-cloud/cloud-crm status)",
+      "Bash(git -C /Users/nguyentrung/Documents/projects/crm-web-cloud/cloud-crm diff)",
+      "Bash(git -C /Users/nguyentrung/Documents/projects/crm-web-cloud/cloud-crm log --oneline -10)",
+      "Bash(git -C /Users/nguyentrung/Documents/projects/crm-web-cloud/cloud-crm log --oneline c9769173 -1 --stat)",
+      "Bash(git -C /Users/nguyentrung/Documents/projects/crm-web-cloud/cloud-crm log --all --oneline -5 .claude/settings.local.json)",
+      "Bash(git commit *)"
     ]
   }
 }
