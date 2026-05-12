@@ -244,6 +244,22 @@ export default function MemberListPage() {
                           </button>
                         </>
                       )}
+                      {r.status === "approved" && r.issuedMemberCode && (
+                        <button
+                          onClick={() =>
+                            setApproveModal({
+                              request: r,
+                              issued: { memberCode: r.issuedMemberCode! },
+                              loading: false,
+                              error: null,
+                            })
+                          }
+                          style={{ ...btnGhostSm, color: T.primary }}
+                          title="Xem lại memberCode + tin nhắn mẫu để gửi user"
+                        >
+                          👁 Xem lại / Gửi
+                        </button>
+                      )}
                     </td>
                   </tr>
                 ))}
@@ -434,12 +450,21 @@ function ApproveRequestModal({
               </div>
             </div>
 
+            <div style={{
+              fontSize: 11, color: T.textMuted, marginBottom: 8, padding: "8px 10px",
+              background: "#F0F9FF", border: "1px solid #BAE6FD", borderRadius: 6,
+            }}>
+              💡 Chưa gửi cho user cũng không sao — bấm <b>Đóng</b> để đóng lại. Sau này
+              vào tab <b>Yêu cầu cấp mã</b>, bấm <b>"👁 Xem lại / Gửi"</b> ở dòng
+              tương ứng là mở lại modal này để copy/gửi.
+            </div>
+
             <div style={{ display: "flex", justifyContent: "flex-end" }}>
               <button onClick={onDone} style={{
                 padding: "8px 16px", background: T.primary, color: "#fff",
                 border: "none", borderRadius: 6, cursor: "pointer", fontSize: 13, fontWeight: 600,
               }}>
-                ✓ Đã gửi cho user / Xong
+                Đóng
               </button>
             </div>
           </>

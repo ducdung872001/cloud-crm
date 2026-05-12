@@ -21,7 +21,7 @@ import PaymentProofReview from "./components/PaymentProofReview";
 import RegistrationDetailModal from "./components/RegistrationDetailModal";
 import CheckinBoard from "./components/CheckinBoard";
 import CheckinServiceTracker from "./components/CheckinServiceTracker";
-import EventComments from "./components/EventComments";
+import EventComments, { eventCommentsStorage } from "./components/EventComments";
 
 type TabKey = "info" | "registrants" | "checkin" | "comments" | "share";
 
@@ -33,6 +33,9 @@ export default function EventDetailPage() {
   const [registrations, setRegistrations] = useState<EventRegistration[]>([]);
   const [stats, setStats] = useState<EventStats | null>(null);
   const [loading, setLoading] = useState(true);
+  // Comment count để hiện badge trên tab "💬 Bình luận (N)" + flag pending để
+  // admin biết có comment đang chờ duyệt mà không cần click vào tab.
+  const [commentStats, setCommentStats] = useState<{ total: number; pending: number }>({ total: 0, pending: 0 });
 
   const loadData = useCallback(async () => {
     if (!id) return;
@@ -47,6 +50,12 @@ export default function EventDetailPage() {
       // Stats tính từ chính regs/event vừa fetch (KHÔNG đọc localStorage)
       // — đảm bảo con số luôn khớp với data đang render.
       setStats(eventStorage.getEventStats(id, { regs, event: evt }));
+      // Đếm comment để hiện badge trên tab. Admin xem cả pending + isHidden.
+      const cs = await eventCommentsStorage.listAsync(id, { includeHidden: true });
+      setCommentStats({
+        total: cs.length,
+        pending: cs.filter((c) => (c.status ?? "approved") === "pending").length,
+      });
     } catch {
       const evt = eventStorage.getEvent(id);
       const regs = eventStorage.listRegistrationsByEvent(id);
@@ -371,7 +380,12 @@ export default function EventDetailPage() {
               label: `👥 Người đăng ký (${registrations.length})`,
             },
             { key: "checkin", label: "✅ Check-in" },
-            { key: "comments", label: "💬 Bình luận" },
+            {
+              key: "comments",
+              label: commentStats.pending > 0
+                ? `💬 Bình luận (${commentStats.total}) · ${commentStats.pending} chờ duyệt`
+                : `💬 Bình luận (${commentStats.total})`,
+            },
             { key: "share", label: "🔗 Chia sẻ & công bố" },
           ] as { key: TabKey; label: string }[]
         ).map((t) => {

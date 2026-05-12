@@ -213,13 +213,20 @@ export const memberStorage = {
     return member;
   },
 
-  /** Admin: approve qua BE → BE sinh memberCode + tạo MemberEntity. */
+  /** Admin: approve qua BE → BE sinh memberCode + tạo MemberEntity.
+   *  BE 2026-05-08 trả response shape `result: { member, request }` (nested) —
+   *  KHÔNG phải member trực tiếp. Bóc payload.member ra. Có guard nếu BE đổi
+   *  shape sau này (trả thẳng member). */
   async approveRequestAsync(reqId: string, override?: Partial<MemberSignupRequest>): Promise<MemberEntity | null> {
     try {
       const res: any = await MemberService.approveSignupRequest(reqId, override as Record<string, unknown>);
       if (isOk(res)) {
         const payload = unwrap(res);
-        if (payload) return payload as MemberEntity;
+        // Nested shape: { member, request } — BE 2026-05-08 spec.
+        const member = payload?.member ?? payload;
+        if (member && (member.memberCode || member.id)) {
+          return member as MemberEntity;
+        }
       }
       const msg = res?.message || "Approve thất bại";
       throw new Error(msg);

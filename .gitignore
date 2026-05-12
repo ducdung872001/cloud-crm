@@ -21,3 +21,4 @@ tests/reports/
 tests/screenshots/
 tests/.auth-cookies.json
 tests/.auth-state.json
+tests/.env*
