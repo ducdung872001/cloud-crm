@@ -12,7 +12,11 @@
       "Bash(yarn add:*)",
       "Bash(npx vitest:*)",
       "Bash(mv vitest.config.ts vitest.config.mts)",
-      "Bash(ls vitest.config.*)"
+      "Bash(ls vitest.config.*)",
+      "Bash(curl -sk -w \"\\\\nHTTP %{http_code}\\\\n\" -H \"Hostname: kcn.reborn.vn\" -H \"Authorization: Bearer none\" \"https://cloud.reborn.vn/adminapi/employee/info\")",
+      "Bash(curl -sk -w \"\\\\nHTTP %{http_code}\\\\n\" -H \"Hostname: kcn.reborn.vn\" -H \"Authorization: Bearer none\" \"https://biz.reborn.vn/customer/employee/info\")",
+      "Bash(curl -sk -w \"\\\\nHTTP %{http_code}\\\\n\" -H \"Hostname: kcn.reborn.vn\" -H \"Authorization: Bearer none\" \"https://biz.reborn.vn/org/employee/info\")",
+      "Bash(curl -sk -w \"\\\\nHTTP %{http_code}\\\\n\" -H \"Hostname: kcn.reborn.vn\" -H \"Authorization: Bearer none\" \"https://biz.reborn.vn/org/employee/init\")"
     ]
   }
 }
