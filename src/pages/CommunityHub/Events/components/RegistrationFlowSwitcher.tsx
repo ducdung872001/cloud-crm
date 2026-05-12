@@ -238,6 +238,7 @@ function ForgotPasswordModal({ initialCode, onClose }: { initialCode: string; on
   const [phone, setPhone] = useState("");
   const [otp, setOtp] = useState("");
   const [newPwd, setNewPwd] = useState("");
+  const [showNewPwd, setShowNewPwd] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [info, setInfo] = useState<string | null>(null);
@@ -442,14 +443,42 @@ function ForgotPasswordModal({ initialCode, onClose }: { initialCode: string; on
         {step === "newpwd" && (
           <>
             <Field label="Mật khẩu mới *">
-              <input
-                value={newPwd}
-                onChange={(e) => setNewPwd(e.target.value)}
-                type="password"
-                placeholder="Tối thiểu 6 ký tự"
-                style={inp}
-                autoFocus
-              />
+              <div style={{ position: "relative" }}>
+                <input
+                  value={newPwd}
+                  onChange={(e) => setNewPwd(e.target.value)}
+                  type={showNewPwd ? "text" : "password"}
+                  placeholder="Tối thiểu 6 ký tự"
+                  style={{ ...inp, paddingRight: 44 }}
+                  autoFocus
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowNewPwd((v) => !v)}
+                  aria-label={showNewPwd ? "Ẩn mật khẩu" : "Hiện mật khẩu"}
+                  title={showNewPwd ? "Ẩn mật khẩu" : "Hiện mật khẩu"}
+                  style={{
+                    position: "absolute",
+                    top: "50%",
+                    right: 6,
+                    transform: "translateY(-50%)",
+                    width: 32,
+                    height: 28,
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    background: "transparent",
+                    border: "none",
+                    cursor: "pointer",
+                    color: THEME.textMuted,
+                    fontSize: 16,
+                    padding: 0,
+                    lineHeight: 1,
+                  }}
+                >
+                  {showNewPwd ? "🙈" : "👁"}
+                </button>
+              </div>
             </Field>
             <div style={{ display: "flex", gap: 8, justifyContent: "space-between", marginTop: 12 }}>
               <button onClick={() => setStep("otp")} disabled={loading} style={btnGhostMd}>← Quay lại</button>
