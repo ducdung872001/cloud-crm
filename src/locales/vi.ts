@@ -74,6 +74,7 @@ const vi = {
     chHealthBeauty: "Sức khỏe & Sắc đẹp",
     chCourses: "Khóa học & CLB",
     chEvents: "Sự kiện",
+    chMembers: "Thành viên cộng đồng",
     chPartners: "Đối tác (KOL/PO)",
     chFeedback: "Phản hồi",
     chReports: "Báo cáo",

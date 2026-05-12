@@ -74,6 +74,7 @@ const en = {
     chHealthBeauty: "Health & Beauty",
     chCourses: "Courses & Clubs",
     chEvents: "Events",
+    chMembers: "Community members",
     chPartners: "Partners (KOL/PO)",
     chFeedback: "Feedback",
     chReports: "Reports",

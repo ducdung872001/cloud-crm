@@ -11,6 +11,7 @@ import type { EventEntity } from "@/pages/CommunityHub/Events/types";
 import { normalizeEvent } from "@/pages/CommunityHub/Events/storage";
 import { formatVNDate, formatVNTime } from "@/pages/CommunityHub/Events/datetime";
 import { portalSettings, type PortalSettings } from "@/pages/CommunityHub/Events/portalSettings";
+import TopGalleryStrip from "@/pages/CommunityHub/Events/components/TopGalleryStrip";
 import "./index.scss";
 
 // ── Theme (đồng bộ ShareEventPage) ─────────────────────────────────────────
@@ -389,6 +390,13 @@ export default function PublicEventsPage() {
 
   return (
     <div className="pe-page" style={{ "--pe-primary": THEME.primary, "--pe-primary-dark": THEME.primaryDark, "--pe-primary-soft": THEME.primarySoft, "--pe-accent": THEME.accent, "--pe-text": THEME.textMain, "--pe-muted": THEME.textMuted, "--pe-border": THEME.border, "--pe-bg": THEME.bg } as React.CSSProperties}>
+      {/* ═══ TOP GALLERY STRIP — yc Hiền Đỗ: strip ảnh chạy ngang trên cùng ═══
+          Render TRƯỚC banner đơn để strip nằm cao nhất. Admin cấu hình tại
+          /crm/ch_events → modal Portal settings → section "Strip ảnh đầu trang". */}
+      {(settings.topGallery?.length ?? 0) > 0 && (
+        <TopGalleryStrip items={settings.topGallery!} />
+      )}
+
       {/* ═══ BANNER ẢNH (tuỳ chọn — admin cấu hình per-tenant) ═══════════════ */}
       {/* Render dạng <img> thay vì text để tránh trình duyệt auto-translate. */}
       {settings.bannerImageUrl && (

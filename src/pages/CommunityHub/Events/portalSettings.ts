@@ -13,6 +13,10 @@ export interface PortalSettings {
   bannerImageUrl?: string;
   /** Link click vào banner — optional, để trống = không clickable. */
   bannerLinkUrl?: string;
+  /** Strip ảnh chạy ngang ở TRÊN CÙNG trang /crm/events (yc Hiền Đỗ — giống
+   *  gallery strip trong chi tiết event). Mảng URL ảnh, optional `linkUrl`
+   *  từng item để click → mở link. Auto-scroll, pause khi hover. */
+  topGallery?: Array<{ url: string; linkUrl?: string }>;
 }
 
 function isApiOk(res: any): boolean {

@@ -21,6 +21,46 @@
 }
 
 // ══════════════════════════════════════════════════════════════════════════
+// TOP GALLERY STRIP — strip ảnh chạy ngang ở đầu trang (yc Hiền Đỗ)
+// Pattern y hệt .se-gallery-* của ShareEventPage nhưng dùng prefix tgs-
+// để không xung đột.
+// ══════════════════════════════════════════════════════════════════════════
+.tgs-wrap {
+  position: relative;
+  overflow: hidden;
+  background: #000;
+  width: 100%;
+}
+.tgs-track {
+  display: flex;
+  gap: 8px;
+  width: max-content;
+  will-change: transform;
+  transform: translateX(0);
+  padding: 6px 0;
+}
+.tgs-item {
+  flex-shrink: 0;
+  display: block;
+  border-radius: 8px;
+  overflow: hidden;
+  border: 2px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
+
+  &--link { cursor: pointer; }
+  &--link:hover { transform: scale(1.02); transition: transform 0.2s ease; }
+}
+.tgs-img {
+  height: var(--tgs-img-h, 180px);
+  width: auto;
+  user-select: none;
+  display: block;
+}
+@media (max-width: 480px) {
+  .tgs-img { height: 120px !important; }
+}
+
+// ══════════════════════════════════════════════════════════════════════════
 // BANNER ẢNH (tenant-config) — render bằng <img translate="no"> để chặn auto-translate
 // ══════════════════════════════════════════════════════════════════════════
 .pe-banner-img-wrap {
@@ -131,6 +171,8 @@
   line-height: 1.15;
   margin: 0 0 16px;
   letter-spacing: -0.02em;
+  // In hoa theo yc Hiền Đỗ — text-transform giữ a11y (screen reader đọc đúng case gốc).
+  text-transform: uppercase;
   // Guard: đảm bảo trắng tinh + không dính webkit text fill từ span con
   color: #fff;
   -webkit-text-fill-color: #fff;
@@ -157,6 +199,8 @@
   font-size: clamp(15px, 2vw, 17px);
   line-height: 1.55;
   color: rgba(255, 255, 255, 0.85);
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
 }
 
 .pe-hero__stats {

@@ -248,6 +248,41 @@ export default function EventListPage() {
               },
             );
           }}
+          onUploadStripImages={(files) => {
+            // Upload nhiều ảnh cho strip — chờ tất cả xong rồi update 1 lần để
+            // tránh race condition (mỗi callback ghi đè topGallery).
+            const pending = Array.from(files);
+            const uploaded: string[] = [];
+            let remaining = pending.length;
+            if (!remaining) return;
+            pending.forEach((file) => {
+              uploadDocumentFormData(
+                file,
+                async (data: any) => {
+                  const url = data?.fileUrl ?? data?.url;
+                  if (url) uploaded.push(url);
+                  remaining -= 1;
+                  if (remaining === 0) {
+                    const next = {
+                      ...settings,
+                      topGallery: [
+                        ...(settings.topGallery ?? []),
+                        ...uploaded.map((url) => ({ url })),
+                      ],
+                    };
+                    setSettings(next);
+                    const r = await portalSettings.setAsync(next);
+                    if (r.ok) showToast(`Đã thêm ${uploaded.length} ảnh vào strip`, "success");
+                    else showToast(r.error ?? "Lưu strip thất bại", "error");
+                  }
+                },
+                () => {
+                  remaining -= 1;
+                  showToast("Lỗi upload 1 ảnh strip", "error");
+                },
+              );
+            });
+          }}
           onChange={async (patch) => {
             const next = { ...settings, ...patch };
             setSettings(next);
@@ -558,6 +593,7 @@ function PortalSettingsModal({
   settings,
   uploading,
   onUploadBanner,
+  onUploadStripImages,
   onChange,
   onClear,
   onClose,
@@ -565,10 +601,25 @@ function PortalSettingsModal({
   settings: PortalSettings;
   uploading: boolean;
   onUploadBanner: (file: File) => void;
+  onUploadStripImages: (files: FileList) => void;
   onChange: (patch: Partial<PortalSettings>) => void;
   onClear: () => void;
   onClose: () => void;
 }) {
+  const strip = settings.topGallery ?? [];
+  const removeStripItem = (i: number) => {
+    onChange({ topGallery: strip.filter((_, j) => j !== i) });
+  };
+  const updateStripItem = (i: number, patch: Partial<{ url: string; linkUrl?: string }>) => {
+    onChange({ topGallery: strip.map((it, j) => (j === i ? { ...it, ...patch } : it)) });
+  };
+  const moveStripItem = (i: number, dir: -1 | 1) => {
+    const j = i + dir;
+    if (j < 0 || j >= strip.length) return;
+    const arr = [...strip];
+    [arr[i], arr[j]] = [arr[j], arr[i]];
+    onChange({ topGallery: arr });
+  };
   return (
     <div
       onClick={onClose}
@@ -651,6 +702,97 @@ function PortalSettingsModal({
               borderRadius: 6, fontSize: 13, boxSizing: "border-box",
             }}
           />
+        </div>
+
+        {/* ── Strip ảnh chạy ngang đầu trang (yc Hiền Đỗ) ─────────────────── */}
+        <div style={{ marginBottom: 14, paddingTop: 14, borderTop: `1px dashed ${THEME.border}` }}>
+          <label style={{ display: "block", fontSize: 12, fontWeight: 600, marginBottom: 4, color: THEME.textMain }}>
+            🖼️ Strip ảnh chạy ngang (trên cùng trang)
+          </label>
+          <p style={{ fontSize: 11, color: THEME.textMuted, margin: "0 0 8px" }}>
+            Nhiều ảnh, chạy ngang giống gallery trong chi tiết sự kiện. Hiển thị ở TRÊN banner đơn.
+            Click 1 ảnh → mở link (nếu có). Tỉ lệ gợi ý 16:9 hoặc 4:3, chiều cao render ~180px.
+          </p>
+
+          {strip.length > 0 && (
+            <div style={{ marginBottom: 8, display: "flex", flexDirection: "column", gap: 6 }}>
+              {strip.map((it, i) => (
+                <div
+                  key={i}
+                  style={{
+                    display: "flex", alignItems: "center", gap: 8,
+                    padding: 6, border: `1px solid ${THEME.border}`, borderRadius: 6, background: "#fff",
+                  }}
+                >
+                  <img
+                    src={it.url}
+                    alt=""
+                    style={{ width: 80, height: 50, objectFit: "cover", borderRadius: 4, flexShrink: 0 }}
+                  />
+                  <input
+                    type="url"
+                    value={it.linkUrl ?? ""}
+                    onChange={(e) => updateStripItem(i, { linkUrl: e.target.value || undefined })}
+                    placeholder="Link click (tuỳ chọn) — https://..."
+                    style={{
+                      flex: 1, padding: "6px 8px", border: `1px solid ${THEME.border}`,
+                      borderRadius: 4, fontSize: 12, minWidth: 0,
+                    }}
+                  />
+                  <button
+                    onClick={() => moveStripItem(i, -1)}
+                    disabled={i === 0}
+                    title="Lên"
+                    style={{
+                      padding: "4px 8px", background: "#fff", border: `1px solid ${THEME.border}`,
+                      borderRadius: 4, cursor: i === 0 ? "not-allowed" : "pointer", fontSize: 11,
+                      opacity: i === 0 ? 0.4 : 1,
+                    }}
+                  >↑</button>
+                  <button
+                    onClick={() => moveStripItem(i, 1)}
+                    disabled={i === strip.length - 1}
+                    title="Xuống"
+                    style={{
+                      padding: "4px 8px", background: "#fff", border: `1px solid ${THEME.border}`,
+                      borderRadius: 4, cursor: i === strip.length - 1 ? "not-allowed" : "pointer", fontSize: 11,
+                      opacity: i === strip.length - 1 ? 0.4 : 1,
+                    }}
+                  >↓</button>
+                  <button
+                    onClick={() => removeStripItem(i)}
+                    title="Xoá"
+                    style={{
+                      padding: "4px 8px", background: "#fff", border: `1px solid ${THEME.danger}`,
+                      color: THEME.danger, borderRadius: 4, cursor: "pointer", fontSize: 11,
+                    }}
+                  >✕</button>
+                </div>
+              ))}
+            </div>
+          )}
+
+          <label
+            style={{
+              display: "inline-block", padding: "6px 12px", background: THEME.primarySoft,
+              color: THEME.primaryDark, border: `1px dashed ${THEME.primary}`, borderRadius: 6,
+              cursor: "pointer", fontSize: 12, fontWeight: 600,
+            }}
+          >
+            + Thêm ảnh vào strip
+            <input
+              type="file"
+              accept="image/*"
+              multiple
+              onChange={(e) => {
+                if (e.target.files && e.target.files.length > 0) {
+                  onUploadStripImages(e.target.files);
+                }
+                e.target.value = "";
+              }}
+              style={{ display: "none" }}
+            />
+          </label>
         </div>
 
         <div style={{ display: "flex", justifyContent: "space-between", gap: 8, marginTop: 14 }}>

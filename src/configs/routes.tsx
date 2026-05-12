@@ -292,6 +292,12 @@ export const menu: IMenuItem[] = [
     code: "",
   },
   {
+    title: "chMembers", // Thành viên & cấp mã (duyệt yêu cầu cấp memberCode)
+    path: "/ch_members",
+    icon: <Icon name="MemberListMenu" />,
+    code: "",
+  },
+  {
     title: "chPartners", // Đối tác
     path: "/ch_partners",
     icon: <Icon name="PartnerMenu" />,
