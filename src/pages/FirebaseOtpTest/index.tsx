@@ -9,13 +9,17 @@ import {
   Auth,
 } from "firebase/auth";
 
+// Config của project Reborn chính (reborn-303801) — cùng project SSO/BPM đang dùng cho phone auth.
+// Web client config public, không phải secret. Khởi tạo dưới tên app riêng để không đụng default app (FCM test-noti-bd32d).
+const OTP_APP_NAME = "otp-test";
 const firebaseConfig = {
-  apiKey:            import.meta.env.VITE_FIREBASE_API_KEY,
-  authDomain:        import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
-  projectId:         import.meta.env.VITE_FIREBASE_PROJECT_ID,
-  storageBucket:     import.meta.env.VITE_FIREBASE_STORAGE_BUCKET,
-  messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
-  appId:             import.meta.env.VITE_FIREBASE_APP_ID,
+  apiKey:            "AIzaSyBv9EvG0ZkpST3UY6lAqU6K3CthPlJxBU4",
+  authDomain:        "reborn-303801.firebaseapp.com",
+  projectId:         "reborn-303801",
+  storageBucket:     "reborn-303801.appspot.com",
+  messagingSenderId: "357545188498",
+  appId:             "1:357545188498:web:f623e55db0948c60cd1a4b",
+  measurementId:     "G-G6HE55D8N4",
 };
 
 function normalizePhone(input: string): string {
@@ -49,11 +53,12 @@ const FirebaseOtpTest: React.FC = () => {
 
   useEffect(() => {
     try {
-      const app = getApps().length ? getApp() : initializeApp(firebaseConfig);
+      const existing = getApps().find((a) => a.name === OTP_APP_NAME);
+      const app = existing || initializeApp(firebaseConfig, OTP_APP_NAME);
       const auth = getAuth(app);
       auth.languageCode = "vi";
       authRef.current = auth;
-      log("Firebase init OK", { projectId: firebaseConfig.projectId, authDomain: firebaseConfig.authDomain });
+      log("Firebase init OK", { app: app.name, projectId: firebaseConfig.projectId, authDomain: firebaseConfig.authDomain });
     } catch (e: any) {
       log("Firebase init FAILED", e?.message || String(e));
     }
