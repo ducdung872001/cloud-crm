@@ -1,0 +1,90 @@
+{
+  "suite": "New Loyalty UI Tabs",
+  "runId": "h9xo",
+  "timestamp": "2026-05-11T15:45:44.615Z",
+  "total": 16,
+  "passed": 0,
+  "failed": 16,
+  "results": [
+    {
+      "testId": "TAB-VISIBLE-Earn rule nâ",
+      "status": "FAIL",
+      "detail": "Tab \"Earn rule nâng cao (BPM)\" present (0 matches)"
+    },
+    {
+      "testId": "TAB-VISIBLE-Thông báo gử",
+      "status": "FAIL",
+      "detail": "Tab \"Thông báo gửi KH\" present (0 matches)"
+    },
+    {
+      "testId": "TAB-VISIBLE-API Key & We",
+      "status": "FAIL",
+      "detail": "Tab \"API Key & Webhook\" present (0 matches)"
+    },
+    {
+      "testId": "TAB-VISIBLE-Audit Log",
+      "status": "FAIL",
+      "detail": "Tab \"Audit Log\" present (0 matches)"
+    },
+    {
+      "testId": "CONTENT-01-bpm-Loyalty Qu",
+      "status": "FAIL",
+      "detail": "\"Loyalty Quest\" appears (0x)"
+    },
+    {
+      "testId": "CONTENT-01-bpm-BPM Engine",
+      "status": "FAIL",
+      "detail": "\"BPM Engine\" appears (0x)"
+    },
+    {
+      "testId": "CONTENT-01-bpm-Active pro",
+      "status": "FAIL",
+      "detail": "\"Active process instances\" appears (0x)"
+    },
+    {
+      "testId": "CONTENT-02-notification-Loại thông",
+      "status": "FAIL",
+      "detail": "\"Loại thông báo\" appears (0x)"
+    },
+    {
+      "testId": "CONTENT-02-notification-Preview",
+      "status": "FAIL",
+      "detail": "\"Preview\" appears (0x)"
+    },
+    {
+      "testId": "CONTENT-02-notification-Variables",
+      "status": "FAIL",
+      "detail": "\"Variables\" appears (0x)"
+    },
+    {
+      "testId": "CONTENT-03-apikey-API Keys",
+      "status": "FAIL",
+      "detail": "\"API Keys\" appears (0x)"
+    },
+    {
+      "testId": "CONTENT-03-apikey-Webhooks",
+      "status": "FAIL",
+      "detail": "\"Webhooks\" appears (0x)"
+    },
+    {
+      "testId": "CONTENT-03-apikey-Dead Lette",
+      "status": "FAIL",
+      "detail": "\"Dead Letter\" appears (0x)"
+    },
+    {
+      "testId": "CONTENT-04-audit-Critical a",
+      "status": "FAIL",
+      "detail": "\"Critical actions\" appears (0x)"
+    },
+    {
+      "testId": "CONTENT-04-audit-append-onl",
+      "status": "FAIL",
+      "detail": "\"append-only\" appears (0x)"
+    },
+    {
+      "testId": "CONTENT-04-audit-Export CSV",
+      "status": "FAIL",
+      "detail": "\"Export CSV\" appears (0x)"
+    }
+  ]
+}
