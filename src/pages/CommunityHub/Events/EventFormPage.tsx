@@ -590,10 +590,24 @@ export default function EventFormPage() {
     try {
       if (isEdit && id) {
         await eventStorage.updateEventAsync(id, payload);
-        setIsDirty(false); // tránh blocker chặn chính cú navigate sau save
+        // BE update endpoint KHÔNG accept `status` field — chỉ status change qua
+        // endpoint riêng /publish, /unpublish. Trước đây gửi status trong body bị
+        // BE ignore → event sau khi "Lưu & công bố" vẫn là draft (bug user gặp).
+        // Fix: gọi publish/unpublish riêng sau update.
+        if (publish) {
+          await eventStorage.publishEventAsync(id);
+        } else {
+          await eventStorage.unpublishEventAsync(id);
+        }
+        setIsDirty(false);
         navigate(`/ch_events/${id}`);
       } else {
         const created = await eventStorage.createEventAsync(payload);
+        // Event mới tạo mặc định draft trên BE. Nếu user chọn "Lưu & công bố"
+        // → publish ngay sau create.
+        if (publish && created?.id) {
+          await eventStorage.publishEventAsync(created.id);
+        }
         setIsDirty(false);
         navigate(`/ch_events/${created.id}`);
       }
