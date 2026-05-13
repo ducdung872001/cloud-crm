@@ -316,6 +316,55 @@ export async function injectOverlay(
     .catch(() => {});
 }
 
+// SPA-style navigation: pushState + popstate để React Router đổi route mà không reload trang
+// → không còn màn trắng khi chuyển cảnh trong video. Fallback về page.goto nếu URL không đổi.
+async function spaNavigate(page: Page, routePath: string): Promise<boolean> {
+  const fullPath = `/crm${routePath}`;
+  const currentPath = new URL(page.url()).pathname;
+  if (currentPath === fullPath) return true; // đã ở route đó, không cần navigate
+
+  // Snapshot main-content HTML để biết khi nào React đã re-render route mới
+  const beforeContentHash = await page
+    .evaluate(() => {
+      const el = document.querySelector(".main-content__wrapper");
+      return el ? el.innerHTML.length : 0;
+    })
+    .catch(() => 0);
+
+  await page
+    .evaluate((p) => {
+      window.history.pushState({}, "", p);
+      window.dispatchEvent(new PopStateEvent("popstate"));
+    }, fullPath)
+    .catch(() => {});
+
+  // Đợi React thật sự render route mới: URL đổi VÀ content đổi
+  const routerNavigated = await page
+    .waitForFunction(
+      ({ expected, prevLen }) => {
+        if (new URL(location.href).pathname !== expected) return false;
+        const el = document.querySelector(".main-content__wrapper");
+        const curLen = el ? el.innerHTML.length : 0;
+        return curLen !== prevLen; // content đã đổi → React Router đã nhận popstate
+      },
+      { expected: fullPath, prevLen: beforeContentHash },
+      { timeout: 3_000 }
+    )
+    .then(() => true)
+    .catch(() => false);
+
+  if (!routerNavigated) {
+    // React Router không nhận popstate (hiếm với v7, nhưng phòng hờ) → full reload
+    console.log(`[spa-nav] popstate không trigger cho ${fullPath} — fallback page.goto`);
+    await page.goto(`${CRM}${fullPath}`, { waitUntil: "domcontentloaded", timeout: 45_000 }).catch(() => {});
+    return false;
+  }
+
+  // Đợi network idle (API call cho route mới settle xong)
+  await page.waitForLoadState("networkidle", { timeout: 8_000 }).catch(() => {});
+  return true;
+}
+
 export async function gotoStep(
   page: Page,
   role: RoleInfo,
@@ -326,8 +375,9 @@ export async function gotoStep(
   holdMs = 9000
 ) {
   if (routePath) {
-    await page.goto(`${CRM}/crm${routePath}`, { waitUntil: "domcontentloaded", timeout: 45_000 }).catch(() => {});
-    await page.waitForTimeout(2500);
+    const usedSpa = await spaNavigate(page, routePath);
+    // SPA nav nhanh (~1.5s đủ React render); full reload fallback cần lâu hơn
+    await page.waitForTimeout(usedSpa ? 1500 : 2500);
   }
   await injectOverlay(page, role, stepNum, totalSteps, narration);
   await page.waitForTimeout(holdMs);
