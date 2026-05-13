@@ -20,6 +20,8 @@ import EventComments from "@/pages/CommunityHub/Events/components/EventComments"
 import ContentBlocksRenderer from "@/pages/CommunityHub/Events/components/ContentBlocksRenderer";
 import RegistrationFlowSwitcher, { type FlowReadyState } from "@/pages/CommunityHub/Events/components/RegistrationFlowSwitcher";
 import EventRecapBlock from "@/pages/CommunityHub/Events/components/EventRecapBlock";
+import MyRegistrationsModal from "@/pages/CommunityHub/Events/components/MyRegistrationsModal";
+import { PUBLIC_MY_REGISTRATIONS_READY } from "services/PublicRegistrationService";
 import { isLoggedInAdmin } from "@/pages/CommunityHub/Events/shared";
 
 // Set SEO meta cho trang detail
@@ -245,6 +247,8 @@ export default function ShareEventPage() {
 
   const [error, setError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
+  // Self-edit modal — handoff issue #23. Gated bởi PUBLIC_MY_REGISTRATIONS_READY.
+  const [showMyRegsModal, setShowMyRegsModal] = useState(false);
 
   const navigate = useNavigate();
   const routeParams = useParams<{ slug?: string }>();
@@ -1191,6 +1195,25 @@ export default function ShareEventPage() {
                 <p style={{ fontSize: 11, color: THEME.textMuted, marginTop: 10 }}>
                   Hạn đăng ký: {formatDateTime(event.registrationCloseDate)}
                 </p>
+                {PUBLIC_MY_REGISTRATIONS_READY && (
+                  <button
+                    type="button"
+                    onClick={() => setShowMyRegsModal(true)}
+                    style={{
+                      marginTop: 4,
+                      padding: "8px 18px",
+                      background: "transparent",
+                      color: THEME.primary,
+                      border: `1.5px solid ${THEME.primary}`,
+                      borderRadius: 8,
+                      cursor: "pointer",
+                      fontSize: 13,
+                      fontWeight: 600,
+                    }}
+                  >
+                    🔍 Tôi đã đăng ký — xem / sửa thông tin
+                  </button>
+                )}
               </>
             )}
           </div>
@@ -1472,6 +1495,13 @@ export default function ShareEventPage() {
         © Reborn Community Hub · Powered by{" "}
         <strong style={{ color: THEME.primary }}>Reborn CRM</strong>
       </div>
+
+      {showMyRegsModal && (
+        <MyRegistrationsModal
+          currentEventSlug={slug}
+          onClose={() => setShowMyRegsModal(false)}
+        />
+      )}
     </div>
   );
 }

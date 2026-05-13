@@ -300,7 +300,10 @@ export const memberStorage = {
   /** User self-reset pwd qua OTP Firebase (yc BE 2026-05-12).
    *  Body: { memberCode, firebaseIdToken, newPassword }. BE call Auth verify
    *  idToken → match phone với members.phone (lookup theo memberCode) → bcrypt+update.
-   *  Fallback LS chỉ khi network lỗi (dev local), KHÔNG fallback khi BE reject. */
+   *
+   *  KHÔNG fallback LS khi network/CORS lỗi. Pre-fix: fallback lưu pwd vào
+   *  localStorage browser này → user thấy "thành công" giả → tới khi login
+   *  thì BE 400 vì DB không có pwd. Misleading → bỏ. */
   async setPasswordAsync(args: {
     memberCode: string;
     firebaseIdToken: string;
@@ -312,18 +315,15 @@ export const memberStorage = {
       return { ok: false, reason: res?.message || "Đặt mật khẩu thất bại" };
     } catch (e: any) {
       if (e?.name === "TypeError" || /Failed to fetch|Network/i.test(String(e?.message))) {
-        // LS fallback (dev local) — bỏ qua idToken, dùng raw pwd.
-        const m = this.getByCode(args.memberCode);
-        if (!m) return { ok: false, reason: "Mã không tồn tại (LS fallback)" };
-        const ok = this.setPassword(m.id, args.newPassword);
-        return { ok, reason: ok ? undefined : "Lỗi LS" };
+        return { ok: false, reason: "Máy chủ chưa sẵn sàng — không thể đặt mật khẩu. Vui lòng thử lại sau hoặc liên hệ admin." };
       }
       return { ok: false, reason: e?.message || "Lỗi kết nối" };
     }
   },
 
   /** Admin override set pwd qua BE — KHÔNG cần Firebase OTP. Dùng khi admin
-   *  duyệt signup-request cấp pwd tạm, hoặc reset pwd cho member quên. */
+   *  duyệt signup-request cấp pwd tạm, hoặc reset pwd cho member quên.
+   *  KHÔNG fallback LS (cùng lý do `setPasswordAsync`). */
   async adminSetPasswordAsync(memberId: string, newPassword: string): Promise<{ ok: boolean; reason?: string }> {
     try {
       const res: any = await MemberService.adminSetMemberPassword(memberId, { password: newPassword });
@@ -331,8 +331,7 @@ export const memberStorage = {
       return { ok: false, reason: res?.message || "Đặt mật khẩu thất bại" };
     } catch (e: any) {
       if (e?.name === "TypeError" || /Failed to fetch|Network/i.test(String(e?.message))) {
-        const ok = this.setPassword(memberId, newPassword);
-        return { ok, reason: ok ? undefined : "Lỗi LS" };
+        return { ok: false, reason: "Máy chủ chưa sẵn sàng — không thể đặt mật khẩu." };
       }
       return { ok: false, reason: e?.message || "Lỗi kết nối" };
     }

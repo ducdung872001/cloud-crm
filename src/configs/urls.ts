@@ -2507,6 +2507,10 @@ export const urlsApi = {
     listPublic: prefixMarket + "/events/public/list",  // GET  ?q=&category=&status=&page=&limit=
     registerPublic: prefixMarket + "/events/public/register", // POST ?slug={slug}
     checkTicket: prefixMarket + "/events/public/check-ticket", // POST ?slug={slug}
+    // Self-edit luồng OTP-by-phone (handoff issue #23) — public, auth bằng
+    // X-Firebase-Id-Token header. BE verify token + match phone → list/edit.
+    myRegistrations: prefixMarket + "/events/public/my-registrations",         // GET (header X-Firebase-Id-Token)
+    updateMyRegistrationInfo: prefixMarket + "/events/public/registrations/info", // PUT ?id={regId} (header X-Firebase-Id-Token)
     // Admin (JWT)
     list: prefixMarket + "/events/list",               // GET  ?status=&q=&category=&page=&limit=
     get: prefixMarket + "/events/get",                 // GET  ?id={id}
