@@ -1,2891 +1,5975 @@
 1
-00:00:00,000 --> 00:00:04,160
-đẩy lên thì đẩy khuyên mồi lên
+00:00:00,000 --> 00:00:04,000
+đẩy lên thì nó mới đẩy phim mồi lên
 
 2
-00:00:04,160 --> 00:00:15,120
-em đoán là trước anh cũng đang dung ra tham vọng
+00:00:10,000 --> 00:00:15,000
+em đoán là trước anh cũng đang hình dung ra cái tham vọng ấy
 
 3
-00:00:15,120 --> 00:00:21,040
-nhưng mà để mà đi tham vọng đẩy chắc cũng còn chứa cách kiểm soát thế nào
+00:00:15,000 --> 00:00:21,000
+nhưng mà để mà đi cái tham vọng đấy chắc cũng vẫn chưa có cách kiểm soát thế nào
 
 4
-00:00:21,040 --> 00:00:23,170
-đây các bạn, kiểm soát thế nào
+00:00:21,000 --> 00:00:23,000
+đây các bạn kiểm soát
 
 5
-00:00:24,170 --> 00:00:28,320
-đại diện độc liền trong tỉnh đức
+00:00:23,000 --> 00:00:25,000
+Chưa được
 
 6
-00:00:28,320 --> 00:00:30,320
-có đùa chơi trẻ em
+00:00:25,000 --> 00:00:28,000
+Đại diện độc liền trong người không tìm thức
 
 7
-00:00:30,320 --> 00:00:32,320
-anh có xây chuối ở trong Sài Gòn
+00:00:28,000 --> 00:00:30,000
+Mọi người có đồ chơi trẻ em
 
 8
-00:00:35,540 --> 00:00:37,540
-đồng tư khá nhiều tiền mình làm, rất là lắm
+00:00:30,000 --> 00:00:33,000
+Đại diện có xây chuối ở trong Sài Gòn
 
 9
-00:00:37,540 --> 00:00:39,540
-đồng tư hơn chục kỷ mấy lắm
+00:00:33,000 --> 00:00:35,000
+Mời mọi người cố gắng cho chúng ta
 
 10
-00:00:39,540 --> 00:00:43,540
-làm ăn tự làm tất cả anh phải lắm
+00:00:35,000 --> 00:00:38,000
+Đầu tư khá nhiều tiền của người mình làm rất là lắm
 
 11
-00:00:43,540 --> 00:00:45,540
-tất cả
+00:00:38,000 --> 00:00:40,000
+Đầu tư cũng hơn chút kỷ mà đấy
 
 12
-00:00:45,540 --> 00:00:48,540
-và sau đấy anh dự định bước đấy là định bán
+00:00:40,000 --> 00:00:43,000
+Làm ăn từ làm tất cả anh Bài Lâm
 
 13
-00:00:48,540 --> 00:00:52,540
-nhưng mà khi mình chưa định bán thì nó đã đào
+00:00:43,000 --> 00:00:45,000
+Tất cả anh Bài Lâm
 
 14
-00:00:52,540 --> 00:00:58,140
-thì cái thời điểm anh nhớ anh chuyển nguyện cho 1 cái cửa hàng ở Lê Đánh Côn
+00:00:45,000 --> 00:00:48,000
+Và sau đấy anh dự định bước đấy là mình bán
 
 15
-00:00:58,140 --> 00:01:02,720
-cái chị đấy, chị làm chuối nhà hàng
+00:00:48,000 --> 00:00:52,000
+Nhưng mà khi mình chưa tìm bán thì nó đã đào
 
 16
-00:01:02,720 --> 00:01:04,720
-chị làm nhiệm nhạc
+00:00:52,000 --> 00:00:58,000
+thì cái thời điểm anh nhớ anh chuyển nguyện cho một cái chị cửa hàng ở Lê Đánh Cơn á
 
 17
-00:01:04,720 --> 00:01:06,720
-chắc thì không là ý chị được làm gì đâu
+00:00:58,000 --> 00:01:02,000
+cái chị đấy nhé, chị làm chuối nhà hàng
 
 18
-00:01:06,720 --> 00:01:08,720
-nhưng mà các cửa hàng của chị cực kịp hết
+00:01:02,000 --> 00:01:04,000
+chị làm nhiệm nhiệm nhà hàng á
 
 19
-00:01:08,720 --> 00:01:11,980
-cứ là anh Ngọc và đồ vũ công người
+00:01:04,000 --> 00:01:07,000
+thì thật nhiệm không gây ý chị được làm gì đâu
 
 20
-00:01:11,980 --> 00:01:15,520
-kể mà nhân viên, design và thiết kế
+00:01:07,000 --> 00:01:09,000
+nhưng mà các cửa hàng của chị cũng cực kịp hết
 
 21
-00:01:15,520 --> 00:01:17,520
-cũng là cục nhà hàng
+00:01:09,000 --> 00:01:12,000
+thế là anh Ngọc là đồ vũ cộng người
 
 22
-00:01:17,520 --> 00:01:19,550
-thì có việc gì mỗi người một ít cục
+00:01:12,000 --> 00:01:15,000
+kể mà nhân viên, design và thiết kế nhé
 
 23
-00:01:19,550 --> 00:01:21,550
-cục đâu?
+00:01:15,000 --> 00:01:17,000
+cũng là chủ đồng của nhà hàng
 
 24
-00:01:21,550 --> 00:01:23,550
-cục tiền ngàn, tiền ngàn
+00:01:17,000 --> 00:01:20,000
+thì có việc gì mỗi người mục ích của chị
 
 25
-00:01:23,550 --> 00:01:26,350
-chẳng hạn người dân góng nhỏ
+00:01:20,000 --> 00:01:20,500
+đồ đông
 
 26
-00:01:26,350 --> 00:01:28,350
-người dân góng nhỏ, cục đường nhỏ
+00:01:20,500 --> 00:01:22,000
+ngay ra nó là người hành động
 
 27
-00:01:28,350 --> 00:01:30,350
-mỗi người vẫn có những cái hàng của mình
+00:01:22,000 --> 00:01:24,000
+tự tin ngàn là tự tin ngàn
 
 28
-00:01:30,350 --> 00:01:33,350
-thì anh Dung là cái dự án này làm sao
+00:01:25,000 --> 00:01:26,000
+chẳng ai tin cái đống nhỏ
 
 29
-00:01:33,350 --> 00:01:35,830
-anh em xây xâm chơi
+00:01:26,000 --> 00:01:28,000
+đồ đông người ta tin cái đống nhỏ, cái cốc đồng nhỏ
 
 30
-00:01:35,830 --> 00:01:37,830
-xâm chơi để vào
+00:01:28,000 --> 00:01:30,000
+đồ đông người ta có cái mạng của mình
 
 31
-00:01:37,830 --> 00:01:39,830
-anh nhận thức là cái điều ngoài kia
+00:01:32,000 --> 00:01:34,000
+thì anh nhìn dung là cái dự án này làm sao
 
 32
-00:01:39,830 --> 00:01:41,830
-bao la mây mông, nhu cầu xã hội nhiều
+00:01:34,000 --> 00:01:36,000
+anh nhìn xây cái sông chơi
 
 33
-00:01:41,830 --> 00:01:42,830
-nhiều cách kiếm
+00:01:36,000 --> 00:01:38,000
+sông chơi để vào, bởi vì là
 
 34
-00:01:42,830 --> 00:01:44,830
-nhiều cách kiếm, ai là người giải quyết được cái đấy
+00:01:38,000 --> 00:01:40,000
+anh nhìn thức là cái tiền ngoài kia
 
 35
-00:01:44,830 --> 00:01:46,830
-và anh em vào đều có tư tâm thế là người chủ
+00:01:40,000 --> 00:01:42,000
+bao lãng mây mông và nhu cầu xã hội cũng nhiều
 
 36
-00:01:46,830 --> 00:01:49,120
-và đây là xây cho mình
+00:01:42,000 --> 00:01:43,000
+nhiều cách kiếm nữa
 
 37
-00:01:49,120 --> 00:01:51,120
-giống như từ coast, họ vào một center
+00:01:43,000 --> 00:01:45,000
+nhiều cách kiếm, ai là người giải quyết được cái đấy
 
 38
-00:01:52,120 --> 00:01:54,120
-thì họ có vẻ ở center mãi nữa
+00:01:45,000 --> 00:01:47,000
+và anh em vào đều có cái tư tâm thế là người chủ
 
 39
-00:01:54,120 --> 00:01:56,120
-giống như các bibi mà đi tập đây là họ cứ làm bibi mãi
+00:01:47,000 --> 00:01:49,000
+và đây là xây trung hình
 
 40
-00:01:56,120 --> 00:01:58,410
-họ khó lên là làm chủ
+00:01:49,000 --> 00:01:53,640
+Giống như từ Coast, họ vào một cái center, thì họ có vẻ ở center mãi nữa
 
 41
-00:01:58,410 --> 00:02:00,410
-nhưng mà một coast đi vào
+00:01:53,640 --> 00:01:58,760
+Giống như các MP mà đi tập đây là họ cứ làm MP mãi, họ khó lên là làm chủ lập
 
 42
-00:02:00,410 --> 00:02:02,660
-họ xây được cái dây, họ đến bảy
+00:01:58,760 --> 00:02:02,360
+Nhưng mà một Coast để vào, họ xây được DJ, họ đến bảy
 
 43
-00:02:02,660 --> 00:02:04,660
-từ F1, họ đến F1 đi
+00:02:02,360 --> 00:02:07,320
+Từ F1, họ đến bảy thì automatic, họ phải cắt ra thành cái nhà
 
 44
-00:02:04,660 --> 00:02:06,660
-đến bảy là automatic, nó phải cắt ra thành cái nhà
+00:02:07,320 --> 00:02:11,720
+Lúc đấy là có 4 khách vai trò để đi vào center mới
 
 45
-00:02:06,660 --> 00:02:08,950
-thành cái nhà
+00:02:11,720 --> 00:02:15,560
+Vì họ đã nằm trong center, họ học được center vận hành như thế nào rồi
 
 46
-00:02:08,950 --> 00:02:10,950
-lúc đấy là có tư khách vài sò để đi vào center mới
+00:02:15,560 --> 00:02:22,280
+Rất là thực tế, khó giao mà mà mình không ai phải đổ tươi thì cả 7 anh em ấy tự mang ra đổ tươi
 
 47
-00:02:10,950 --> 00:02:14,300
-thì họ đấy nằm trong center, họ học được center
+00:02:22,280 --> 00:02:25,320
+Để mình xây một cái sân chơi để cho mọi người đưa ẩm như thế
 
 48
-00:02:14,300 --> 00:02:16,300
-nó phân hành như thế nào thôi
+00:02:25,320 --> 00:02:27,320
+Mà mỗi người chỉ cần đổ tươi một cái thôi
 
 49
-00:02:16,300 --> 00:02:18,300
-rất là thiết tế, khó ra không hờ
+00:02:27,320 --> 00:02:31,800
+Một cái không nhiều, 10 đến 30 triệu maximum một cái
 
 50
-00:02:18,300 --> 00:02:20,300
-mà mình không ai phải đổ tươi thì cả
+00:02:31,800 --> 00:02:35,800
+Thì mà sân chơi thì dễ, ai cũng có thể
 
 51
-00:02:20,300 --> 00:02:22,300
-bởi anh em ấy tự mang ra đổ tươi
+00:02:35,800 --> 00:02:39,800
+Thay vì mà ra mở quán cafe, nhanh dù anh em đi mở quán cafe vì đam mê
 
 52
-00:02:22,300 --> 00:02:25,300
-để mình xây một cái sân chơi để mình không phải đưa ổn như thế
+00:02:39,800 --> 00:02:43,800
+Mở ra tuyệt tình, nhưng mà xong đi nhập chân lệ
 
 53
-00:02:25,300 --> 00:02:27,300
-mà mỗi người chỉ cần đổ tươi một cái thôi
-
-54
-00:02:27,300 --> 00:02:29,300
-một cái không nhiều
-
-55
-00:02:29,300 --> 00:02:31,300
-10 đến 30 triệu maximum một cái
-
-56
-00:02:31,300 --> 00:02:33,500
-thì...
-
-57
-00:02:33,500 --> 00:02:35,590
-một sân chơi thì dễ, ai cũng có thể
-
-58
-00:02:35,590 --> 00:02:37,590
-hay vì mà ra mở quán cafe
-
-59
-00:02:37,590 --> 00:02:39,590
-như nhiều anh em đi mở quán cafe vì đam mê
-
-60
-00:02:39,590 --> 00:02:41,660
-mở ra tiền tỉ
-
-61
-00:02:41,660 --> 00:02:42,660
-nhưng mà sao mà đi nhập tiền này
-
-62
-00:02:42,660 --> 00:02:45,300
+00:02:43,800 --> 00:02:44,800
 anh chiến kiến nhiều rồi
 
-63
-00:02:45,300 --> 00:02:47,300
+54
+00:02:44,800 --> 00:02:47,480
 lại phụ thuộc vào ngôn người vận hành
 
-64
-00:02:47,300 --> 00:02:49,300
-mở tiền tỉ ra để phụ thuộc vào ngôn người vận hành
+55
+00:02:47,480 --> 00:02:50,280
+em bỏ tiền tí ra để phụ thuộc vào ngôn người vận hành
 
-65
-00:02:49,300 --> 00:02:51,300
-em ở phòng din đấy, anh ta mê
+56
+00:02:50,280 --> 00:02:55,400
+hay là mở phòng din, phòng din bóng cửa với giám kiểu được
 
-66
-00:02:51,300 --> 00:02:53,460
-phòng din đóng cửa ở phòng din đấy
+57
+00:02:55,400 --> 00:02:59,080
+có em bao nhiêu tiền tình lý em bỏ hết rồi nhỉ?
 
-67
-00:02:53,460 --> 00:02:56,000
-em có em vài tiền tỉnh lĩ
+58
+00:02:59,080 --> 00:03:02,080
+một cái center này có 21 nhà
 
-68
-00:02:56,000 --> 00:02:58,000
-em bắt em
+59
+00:03:02,080 --> 00:03:04,200
+24 người ở đấy
 
-69
-00:02:58,000 --> 00:03:00,160
-vài cái center đấy là có
-
-70
-00:03:00,160 --> 00:03:02,160
-21 nhà
-
-71
-00:03:02,160 --> 00:03:04,160
-21 người
-
-72
-00:03:04,160 --> 00:03:06,160
+60
+00:03:04,200 --> 00:03:06,600
 vào vùng có 7 người ở phía trên
 
+61
+00:03:06,600 --> 00:03:08,680
+nó gọi là vùng bỏ chậm
+
+62
+00:03:08,680 --> 00:03:11,280
+thì 7 người này là có cần phải có mặt ở đấy
+
+63
+00:03:11,280 --> 00:03:13,780
+Nhưng phải giúp làm thế nào để 14 con người để họ truyền thành.
+
+64
+00:03:14,740 --> 00:03:18,040
+Nếu là có 7 post là F1 của 7 người của đâu đấy.
+
+65
+00:03:18,540 --> 00:03:19,740
+Xong rồi 7 F2 nữa.
+
+66
+00:03:20,180 --> 00:03:22,580
+Để giúp làm sao để hiểu là cái hệ con và cái hệ cháu á.
+
+67
+00:03:22,900 --> 00:03:25,180
+Rồi ra làm truyền thành nó đi xây nhà riêng.
+
+68
+00:03:26,580 --> 00:03:28,900
+Xây có nhà riêng rồi bắt đầu xây center.
+
+69
+00:03:29,100 --> 00:03:30,380
+Xây có nhà rồi có xe.
+
+70
+00:03:31,100 --> 00:03:32,180
+Center đó là phương tiện.
+
+71
+00:03:32,540 --> 00:03:36,900
+Phương tiện để giúp cho con người có thể lấy cái vòng này để giúp mọi người.
+
+72
+00:03:37,100 --> 00:03:39,180
+Họ không phải quá về cái nhiệm vụ của tâm.
+
 73
-00:03:06,160 --> 00:03:08,160
-đó là vùng vòng bỏ chậm
+00:03:39,180 --> 00:03:44,180
+và cái vòng lặp nó cứ lặp đi lặp lại như thế, nó đỉnh cao nhất là vì là cô cao đơn
 
 74
-00:03:08,160 --> 00:03:10,350
-thì 7 người này là
+00:03:44,180 --> 00:03:50,180
+thì cái khác của cô cao đơn này so với cô cao đơn mà pick up anh đang làm
 
 75
-00:03:10,350 --> 00:03:12,350
-phức ca mình có mặt ở đấy
+00:03:50,180 --> 00:03:55,180
+là chỉ cần bỏ 3,6 triệu, đi học 5 ngày để gồm vô hóa nhân thức
 
 76
-00:03:12,350 --> 00:03:14,800
-nhưng phải giúp làm thế nào để 14 con người để có truyền thành
+00:03:55,180 --> 00:03:58,180
+sau đó được chứng nhận và là cô cao đơn
 
 77
-00:03:14,800 --> 00:03:16,800
-nếu là có 7 host là F1
+00:03:58,180 --> 00:04:01,180
+nhiều người hôn chân hướt chân giáo chưa hiểu gì là tiêu hóa rất là trẻ
 
 78
-00:03:16,800 --> 00:03:18,800
-của 7 người của đông đấy
+00:04:01,180 --> 00:04:07,180
+đúng quá cái cô cao đơn, nhưng mà cái tâm đế hậu ra là nó khó khăn lắm
 
 79
-00:03:18,800 --> 00:03:20,800
-có 7 F2 nữa
+00:04:07,180 --> 00:04:12,180
+Các cái trại vũ đu luyện đó là anh xây được hết, mô hình
 
 80
-00:03:20,800 --> 00:03:22,800
-giúp làm sao tìm hiểu tế hệ con và tế hệ cháu
+00:04:12,180 --> 00:04:16,180
+Anh có hết mô hình, tài liệu, tất cả những cái nào mình sẽ làm, những cái chơi nó hay hơn
 
 81
-00:03:22,800 --> 00:03:24,800
-mà ra là không xây nhà riêng
+00:04:16,180 --> 00:04:23,180
+Trở thành co-founder là cái người giữ ra người có cộng đồng này, có nhà riêng này, và có những người cùng làm
 
 82
-00:03:26,800 --> 00:03:28,800
-có nhà riêng rồi bắt đầu xây center
+00:04:23,180 --> 00:04:27,180
+Chứ không phải một mình ra mở tự nhiên mở cái set tơ
 
 83
-00:03:28,800 --> 00:03:30,800
-có nhà rồi có xe
+00:04:27,180 --> 00:04:38,180
+Món rửa đấy, tế mô mình ok, trồng chi tiết ok, nếu là mình chốt là cái định nướng chung.
 
 84
-00:03:30,800 --> 00:03:32,800
-center đó là phương tiện
+00:04:38,180 --> 00:04:49,180
+Thức là vừa mà thì mình theo cái nguyên lý của tất cả những cơ kết là mình cũng phải chốt cho xem là trong nhân tức của mình, cái sức khổ nó là cái gì.
 
 85
-00:03:32,800 --> 00:03:34,800
-phương tiện để giúp cho con người
+00:04:49,180 --> 00:05:01,180
+Nói ra được trong khoảng 5 câu, mô tả được là cái gì, hay là sản phẩm, hay là mô hình dành mang lại cho dịp dịp cho con người.
 
 86
-00:03:34,800 --> 00:03:36,800
-vòng này đổi
+00:05:01,180 --> 00:05:08,180
+Xong rồi còn lại thì đi xuống dịp dịp cho con người, rồi tận hành cho con người về dịp công nghệ hay sao cũng được cho dịp dịp cho con người.
 
 87
-00:03:36,800 --> 00:03:38,800
-vòng này đổi với sức khỏe
+00:05:08,180 --> 00:05:14,180
+Sau đến những cái đấy rồi, thành phần phát lên, phát lên, phát lên dịp dịp cho con người.
 
 88
-00:03:40,960 --> 00:03:42,960
-và cái vòng lặp nó cứ lặp đi lặp lại như thế
+00:05:14,180 --> 00:05:30,180
+Hôm trước khi em nhìn cái hình thì em đang tìm thấy cái mô hình này là một dạng, là một nền tạng, nói rộng ràng giống như là một vệ sinh thái ạ, một nền tạng.
 
 89
-00:03:42,960 --> 00:03:46,400
-đỉnh cao nhất là phô founder
+00:05:30,180 --> 00:05:35,180
+Mình gọi Vy là thầy tặng, tên là Vy trung, giống như một miếng đất.
 
 90
-00:03:46,400 --> 00:03:48,400
-thì cái khác của phô founder này
+00:05:35,180 --> 00:05:46,180
+Giống như một miếng đất, cho nên là Vy trả hội các khẩu phương tiện, khẩu phân bọn, nước nông, quy hoạch cho đảo Nga tiểu tế sắp xếp
 
 91
-00:03:48,400 --> 00:03:50,400
-phô founder mà phít lắp anh đang làm
+00:05:46,180 --> 00:05:51,180
+để chuẩn bị luôn những công thức phương pháp để người ta có thể kháng thác và xem các hành trái đại
 
 92
-00:03:50,400 --> 00:03:52,400
-là chỉ cần bỏ 3,6
+00:05:51,180 --> 00:05:58,180
+Để cho những người phó sử hoạt hoặc những người sau này làm các review, review list,
 
 93
-00:03:52,400 --> 00:03:54,400
-đi học 5 ngày để
+00:05:58,180 --> 00:06:06,180
+hoặc những forwarder hãy hỏi có cơ hội để trưởng thành và giúp cho những người dưới họ trưởng thành,
 
 94
-00:03:54,400 --> 00:03:56,400
-vòng vô hoá nhân thức
+00:06:06,180 --> 00:06:13,180
+dưới sự trưởng thành của người về cả sức khỏe, về lưu tâm về mũ phát hệ và về tài trình.
 
 95
-00:03:56,400 --> 00:03:59,140
-sau đó được chứng nhận là phô founder
+00:06:13,180 --> 00:06:15,180
+Lưu tâm sức khỏe của người tài trình.
 
 96
-00:03:59,140 --> 00:04:01,140
-nhiều người không chân nước chân giáo chưa hiểu gì
+00:06:15,180 --> 00:06:20,180
+Cảm bình dung và lưu tâm giới thiệu về tài trình của mọi người.
 
 97
-00:04:01,140 --> 00:04:03,140
-là phô founder rất là trẻ
+00:06:20,180 --> 00:06:25,180
+Bạn đến đây trên một nền tạp và bắt đầu từ sự thành chất, bắt đầu từ bắt đầu
 
 98
-00:04:03,140 --> 00:04:05,140
-đúng là phô founder
+00:06:26,180 --> 00:06:29,180
+Đó là cái công cụ bắt đầu
 
 99
-00:04:05,140 --> 00:04:07,490
-nhưng mà cái tâm dế ông ra làm
+00:06:31,180 --> 00:06:33,180
+Tài phán nó đơn giản
 
 100
-00:04:07,490 --> 00:04:09,490
-nó khó khăn lắm
+00:06:36,180 --> 00:06:39,180
+Nhưng cái phần anh nói là thì đúng là...
 
 101
-00:04:09,490 --> 00:04:11,490
-các cái chạy vũ đu luyện đó anh xây được
+00:06:39,180 --> 00:06:41,180
+Anh là...
 
 102
-00:04:11,490 --> 00:04:13,490
-hết mô hình
+00:06:41,180 --> 00:06:43,180
+Biết rồi, anh là chuyên gia
 
 103
-00:04:13,490 --> 00:04:15,490
-mô hình, tài liệu, tất cả
+00:06:43,180 --> 00:06:44,180
+Vậy là những nghiệp phán
 
 104
-00:04:15,490 --> 00:04:17,490
-mô hình sẽ làm được cho nó hay hơn
+00:06:44,180 --> 00:06:48,180
+Chị biết anh hoài hình lộng trình cho từng người như nào
 
 105
-00:04:17,490 --> 00:04:19,490
-bây giờ là cái người gì
+00:06:48,180 --> 00:07:07,180
+Ví dụ như là lộ chỉnh cho một người từ PT, personal trainer đến người thành công vô khách hàng mới hoặc là lộ chỉnh từ một khách hàng mới và sau chúng ta trở thành, chúng ta đi thẳng đến vô khách hàng mới hay chúng ta phải đi qua PT hay là chúng ta đi như thế nào, thì trả lộ chỉnh như thế nào.
 
 106
-00:04:19,490 --> 00:04:21,490
-người có công đồng nè, có nhà riêng nè
+00:07:07,180 --> 00:07:19,180
+Học các công cụ công tiện như là nền tạng công nghệ, center, home, tất cả là công tiện cho người ta thực hành.
 
 107
-00:04:21,490 --> 00:04:23,900
-và có những người cùng làm
+00:07:19,180 --> 00:07:29,180
+Rồi bệnh bản thứ 2 là khi mà trăm tìm mũ văn hệ thì để làm sâu vợn thì để làm hệ bước thứ 2 thì tức là đầu tiên là từ sức khỏe tình chất.
 
 108
-00:04:23,900 --> 00:04:25,900
-chứ không phải một mình ra mở
+00:07:29,180 --> 00:07:33,180
+Thứ 2 là để trăm tìm mũ văn hệ. Mũ văn hệ là bây giờ nhiều người gặp bệnh bản.
 
 109
-00:04:25,900 --> 00:04:32,060
-tự nhiên mở những cái xét tơ
+00:07:33,180 --> 00:07:40,180
+Vậy thì kể OK nó sẽ giúp cho người ta cung cố được những mũ văn hệ người ta đối với cả những người trong gia đình.
 
 110
-00:04:32,060 --> 00:04:34,060
-mô hình ok
+00:07:40,180 --> 00:07:43,180
+Thông qua cái chương trình người ta để tấn động.
 
 111
-00:04:34,060 --> 00:04:36,060
-đoạn chi tiết ok
+00:07:43,180 --> 00:07:52,180
+Thì từ đấy, nếu mà không cố được hai cái đấy thì chắc là lô tâm ngon, rồi từ từ, rồi cận tiền thì làm tài chính
 
 112
-00:04:36,060 --> 00:04:38,060
-đây mình tốt là cái định hướng chung
+00:07:52,180 --> 00:07:56,180
+Còn ai có tiền thôi thì chứ mình không cần phải để hàng tài chính lên
 
 113
-00:04:38,060 --> 00:04:40,060
-rất là vừa
+00:07:56,180 --> 00:08:00,180
+Chỉ cần là sức khỏe, lô tâm và mối quan hệ ngon thì nó đã ngon lắm rồi
 
 114
-00:04:40,060 --> 00:04:42,060
-hình theo cái nguyên lý
+00:08:00,180 --> 00:08:04,180
+Nói nhiều người còn có nhiều tiền, không cần tiền, không cần mục tiêu tài chính
 
 115
-00:04:42,060 --> 00:04:44,060
-của anh ngạc tất cả những cơ kết
+00:08:04,180 --> 00:08:10,180
+Thì chỉ cần ba mạng là đầu tiên là sức khỏe, sau đó đến mối quan hệ là hai cái mà đang quan nạn nhiều nhất
 
 116
-00:04:44,060 --> 00:04:46,060
-là lúc nào mình cũng phải
+00:08:10,180 --> 00:08:12,840
+Thì 2 cái này nó ảnh hưởng rất nhiều đến nội tâm luôn á
 
 117
-00:04:46,060 --> 00:04:48,060
-tốt là xem lại trong nhân thức của mình
+00:08:12,840 --> 00:08:16,780
+Vậy thì sau khi cái này xong thì gần như nội tâm của ta ngon
 
 118
-00:04:48,060 --> 00:04:50,060
-cái phít phô nó là cái gì
+00:08:16,780 --> 00:08:19,840
+Tại chính thì có người không phải lo và có người mà muốn lo nữa
 
 119
-00:04:50,060 --> 00:04:52,060
-nói ra được trong khoảng 5 câu
+00:08:19,840 --> 00:08:21,940
+Vì sức dẫn chúng ta sang cái stage tiếp theo là
 
 120
-00:04:52,060 --> 00:04:54,190
-mô giả là cái gì
+00:08:21,940 --> 00:08:24,580
+Thành TT hoặc là Thành Co-Forder
 
 121
-00:04:54,190 --> 00:04:56,190
-hay là sản phẩm
+00:08:24,580 --> 00:08:27,960
+Cùng mở 2 cái hệ thẩm đến thế giới kinh tế để phát triển tài trình
 
 122
-00:04:56,190 --> 00:04:58,190
-hay là mô hình doanh
+00:08:29,960 --> 00:08:31,960
+Thì cái kinh tế của em đang lên như vậy
 
 123
-00:04:58,190 --> 00:05:00,190
-mang lại giá trị của mình từ con người
+00:08:31,960 --> 00:09:01,960
+Tổng đoạn tổng đoạn tổng đoạn tổng đoạn tổng đoạn tổng đoạn tổng đoạn tổng đoạn tổng đoạn tổng đoạn tổng đoạn tổng đoạn tổng đoạn tổng đoạn tổng đoạn tổng đoạn tổng đoạn tổng đoạn tổng đoạn tổng đoạn tổng đoạn tổng đoạn tổng đoạn tổng đoạn tổng đoạn tổng đoạn tổng đoạn tổng đoạn tổng đoạn tổng đoạn tổng đoạn tổng đoạn tổng đoạn tổng đoạn tổng đoạn tổng đoạn tổng đoạn t
 
 124
-00:05:00,190 --> 00:05:02,220
-hoặc là
+00:09:01,960 --> 00:09:04,960
+Vì cái app làm sao mà nó giống như kiểu building mode
 
 125
-00:05:02,220 --> 00:05:04,220
-còn lại thì mình đi xuống cái tầng
+00:09:05,960 --> 00:09:07,960
+Vì con người ta là cái hóa quen
 
 126
-00:05:04,220 --> 00:05:06,220
-vượt rồi vận thành con người quý trình công nghệ
+00:09:08,960 --> 00:09:10,960
+Và làm sao để giúp con di chuyển được
 
 127
-00:05:06,220 --> 00:05:08,220
-hay sao cũng được cho mình biết
+00:09:11,960 --> 00:09:12,960
+Đối với cực kỳ quan trọng
 
 128
-00:05:08,220 --> 00:05:10,220
-sau hết những cái đấy rồi thành công
+00:09:12,960 --> 00:09:13,960
+GAME đấy
 
 129
-00:05:10,220 --> 00:05:12,220
-tốt lắm, tốt, không nhận tốt lý
+00:09:13,960 --> 00:09:16,960
+GAME, tại vì cái phần mềm này mà tập hay là kiến thức
 
 130
-00:05:12,220 --> 00:05:15,860
-không hiện tài đâu
+00:09:16,960 --> 00:09:18,960
+Nên là cái chức bây giờ không có thiếu
 
 131
-00:05:15,860 --> 00:05:17,860
-hôm trước mà em nhìn cái hình
+00:09:18,960 --> 00:09:20,960
+Nhưng mà cái môi trường nào
 
 132
-00:05:17,860 --> 00:05:19,860
-thì em đang kỳ vững là
+00:09:21,960 --> 00:09:23,960
+Có cái gì để giữ trong đoàn lại được không hả Bệnh
 
 133
-00:05:19,860 --> 00:05:21,860
-một dạng
+00:09:23,960 --> 00:09:25,960
+Để mà có khích động viên hò
 
 134
-00:05:21,860 --> 00:05:23,860
-một nền tạng
+00:09:26,960 --> 00:09:27,960
+Là là đơn ăn của mẫu quá à
 
 135
-00:05:23,860 --> 00:05:25,860
-nói rộng ra mà giống như là
+00:09:27,960 --> 00:09:28,960
+Đấy
 
 136
-00:05:25,860 --> 00:05:27,860
-một vệ sinh thái
+00:09:28,960 --> 00:09:30,960
+Đơn ăn của mẫu, nó gọi như là cái
 
 137
-00:05:27,860 --> 00:05:30,210
-một vệ sinh thái
+00:09:30,960 --> 00:09:33,620
+Thời xuyên hẳn ngày thì là thành công rồi
 
 138
-00:05:30,210 --> 00:05:32,210
-mình nói vì là nền tạng
+00:09:35,540 --> 00:09:39,740
+Anh không biết deal bingo trước thì anh có dùng đâu mà Cường mới nói anh
 
 139
-00:05:32,210 --> 00:05:34,210
-tên là mình dùng cho giống như
+00:09:39,740 --> 00:09:41,740
+Anh có dùng hôm nay ngày thứ 8, thứ 9 này hả?
 
 140
-00:05:34,210 --> 00:05:36,210
-một miếng đất đó
+00:09:41,740 --> 00:09:42,740
+Nó nhắc liên tục
 
 141
-00:05:36,210 --> 00:05:38,210
-giống như miếng đất cho nên là mình sẽ hội
+00:09:42,740 --> 00:09:46,260
+Nó nhắc liên tục, hôm qua mà mình không học một cái là mặt nó đỏ lư
 
 142
-00:05:38,210 --> 00:05:40,210
-các cái cung cương tiện
+00:09:46,260 --> 00:09:47,260
+Thái lô nữa
 
 143
-00:05:40,210 --> 00:05:42,210
-rồi hội phân bòn
+00:09:47,260 --> 00:09:48,260
+Thái lô xì
 
 144
-00:05:42,210 --> 00:05:44,210
-nước non, quy hoạch
+00:09:48,260 --> 00:09:49,260
+Thái lô xì
 
 145
-00:05:44,210 --> 00:05:46,210
-đó là mình phải để sắp xếp
+00:09:49,260 --> 00:09:50,260
+Nó nhắc mà em
 
 146
-00:05:46,210 --> 00:05:48,210
-để chuẩn bị luôn những cái công thức phương pháp
+00:09:50,260 --> 00:09:51,260
+Xong nó gửi email
 
 147
-00:05:48,210 --> 00:05:50,210
-để người ta có thể trang tác
+00:09:53,260 --> 00:09:56,260
+Cái đấy nó cũng ở bên nó cũng làm cái game kìa đấy
 
 148
-00:05:50,210 --> 00:05:52,210
-và xem các hành trái này
+00:09:56,260 --> 00:10:06,260
+Chuyện này của anh em ấy là chuyên lý, chuyên lý rất nhiều, tại vì em ta đi lập đi ở ngoài, đi không chuyện, nó không có cái hình ương, nó không có cái hình ương.
 
 149
-00:05:52,210 --> 00:05:54,210
-để cho những người mà
+00:10:06,260 --> 00:10:17,260
+Cái penboy lớn nhất của những người kinh doanh như này là nào đấy để thay đổi cái thói quen, giống như thay đổi thói quen của em, để em đến với anh.
 
 150
-00:05:54,210 --> 00:05:56,210
-những người phó suất hoặc là những người
+00:10:17,260 --> 00:10:26,260
+Thì đấy là thành công, bình thường người ta có thể có theo về sức khỏe thật và sức khỏe của người ta như người ta cũng đẩy ý.
 
 151
-00:05:56,210 --> 00:05:58,210
-mà sau này làm thành các review
+00:10:26,260 --> 00:10:32,260
+Người ta vẫn theo một thói quen hàng ngày đây, vẫn sáng dậy đi làm, gặp gửi tạch hàng, ngay thứ hàng tối.
 
 152
-00:05:58,210 --> 00:06:00,210
-tức là digital
+00:10:32,260 --> 00:10:38,260
+Đi làm đấy anh bơm vào đầu cho người ta hiểu cái đấy và người ta phải nhận thức được.
 
 153
-00:06:00,210 --> 00:06:02,210
-hay những cái commander
+00:10:38,260 --> 00:10:43,260
+Để mà duy trì được thói quen hàng ngày, người ta phải nhận được cái thông đầu người ta mới duy trì được.
 
 154
-00:06:02,210 --> 00:06:04,210
-có cơ hội để triển thành
+00:10:43,260 --> 00:10:46,260
+Rồi lúc đó 4-5 năm nửa mửa tháng nó bỏ này vào
 
 155
-00:06:04,210 --> 00:06:06,210
-và giúp cho những người
+00:10:47,260 --> 00:10:48,260
+Nó không thể chạy rồi được
 
 156
-00:06:06,210 --> 00:06:08,370
-tương đối họ triển thành
+00:10:48,260 --> 00:10:49,260
+Vậy là gốc dế đấy, gốc dế
 
 157
-00:06:08,370 --> 00:06:10,370
-với cả sức khỏe
+00:10:49,260 --> 00:10:50,260
+Gốc dế
 
 158
-00:06:10,370 --> 00:06:12,370
-và lưu tâm về mũ phát hiện
+00:10:50,260 --> 00:10:51,260
+Vì lúc đấy tư duy còn phải đổ
 
 159
-00:06:12,370 --> 00:06:14,720
-và tài chính
+00:10:51,260 --> 00:10:52,260
+Tư duy còn phải chạy không?
 
 160
-00:06:14,720 --> 00:06:17,230
-lưu tâm sức khỏe của cái này
+00:10:52,260 --> 00:10:53,260
+Thay đổi
 
 161
-00:06:17,230 --> 00:06:19,230
-và giới thiệu về cái chuyện của
+00:10:53,260 --> 00:10:57,260
+Nếu được như thế thì mô hình này sẽ rất là thành công
 
 162
-00:06:19,230 --> 00:06:21,300
-tất cả những cái đây
+00:10:57,260 --> 00:11:00,260
+Bởi vì là cái phần lợi thật sự ấy
 
 163
-00:06:21,300 --> 00:06:23,300
-trên một nền tảng bắt đầu
+00:11:00,260 --> 00:11:03,260
+Nếu họ thay đổi được thì lợi thật sự họ là sức khỏe mà
 
 164
-00:06:23,300 --> 00:06:26,130
-từ sức khỏe tiết chấp, bắt đầu từ bắt đầu
+00:11:03,260 --> 00:11:04,260
+Nhưng bản tốt là thân của họ
 
 165
-00:06:26,130 --> 00:06:28,130
-thì đó là cái công thủ
+00:11:04,260 --> 00:11:09,260
+Chứ không phải là mình bán cái gì đấy mà nó gọi là đem chỉ để chư tiền từ khách hàng
 
 166
-00:06:28,130 --> 00:06:31,540
-mà được tài trình bắt đầu
+00:11:09,260 --> 00:11:26,260
+mình chiếu từ cái mùi ghi doanh mình với cái lợi ích tích của họ và xong hành động của họ tự xuyên thì đúng là từ 100 triệu người đã nhận được 10% cho đến số đấy đúng không ạ, anh đã thắng lợi
 
 167
-00:06:31,540 --> 00:06:34,560
-bài phán đơn giản
+00:11:26,260 --> 00:11:32,260
+một phần trăm nữa đấy thì anh đã ngọt đứa gần rồi
 
 168
-00:06:36,560 --> 00:06:38,560
-những cái phần mà anh nói là
+00:11:40,260 --> 00:11:49,260
+chắc là mấy nhà phải qua số anh Dũng để trải nghiệm cái món sức khỏe đấy tí để hiểu biết về mặt quy trình
 
 169
-00:06:38,560 --> 00:06:40,560
-đúng là anh là
+00:11:49,260 --> 00:11:55,260
+Thực ra là không phải chỉ để ấy đâu, mà là hiệu để mình sản nghiệm với khách hàng ấy.
 
 170
-00:06:40,560 --> 00:06:42,560
-biết rồi anh là chuyên gia
+00:11:55,260 --> 00:11:58,260
+Điều đấy là cái nền thẳng của nghệ mình nóng sát.
 
 171
-00:06:42,560 --> 00:06:44,560
-thế là những kiếp phán
+00:11:58,260 --> 00:12:04,260
+Không là mình chỉ đứng không một chỗ không ấy, kể cả làm ra, sao có nghệ nóng sát không?
 
 172
-00:06:44,560 --> 00:06:46,560
-chỉ thiết anh mời định
+00:12:04,260 --> 00:12:06,260
+Đúng rồi, anh em mình sản nghiệm thực tế luôn nhỉ?
 
 173
-00:06:46,560 --> 00:06:48,560
-lộn trình cho từng người như nào
+00:12:06,260 --> 00:12:10,260
+Sản nghiệm luôn. Từ lúc đầu như thế này đúng không?
 
 174
-00:06:48,560 --> 00:06:50,560
-dường như là lộn trình cho một người
+00:12:10,260 --> 00:12:13,260
+Thì anh sẽ phải bước em, coi em là khách hàng ấy.
 
 175
-00:06:50,560 --> 00:06:52,560
-từ PT, personal trainer
+00:12:13,260 --> 00:12:17,260
+Anh sẽ tôn vào đầu cho em những cái gì để em nhận thức.
 
 176
-00:06:52,560 --> 00:06:54,560
-đến người
+00:12:17,260 --> 00:12:24,260
+và cung cấp cho em công cụ gì để em dùng, bao gồm là cả công cụ văn lý sản phẩm của người.
 
 177
-00:06:54,560 --> 00:06:56,560
-người thành công order
+00:12:24,260 --> 00:12:29,260
+Đến đâu, trách nghiệm ra sao, theo dõi chỉ số như thế nào.
 
 178
-00:06:56,560 --> 00:06:58,560
-hoặc là lộn trình
+00:12:29,260 --> 00:12:34,260
+Rồi giả xử em 3-5 ngày em cũng đếm thì nó sẽ hành xử như nào giống như nói.
 
 179
-00:06:58,560 --> 00:07:00,560
-từ một khách hàng mới và đâu
+00:12:34,260 --> 00:12:37,260
+Hành xử như nào để cho họ quay trở lại.
 
 180
-00:07:00,560 --> 00:07:02,560
-chúng ta đi thẳng lên công order
+00:12:37,260 --> 00:12:41,260
+Thì tỷ lệ rời bỏ mình rất là thấp.
 
 181
-00:07:02,560 --> 00:07:04,560
-hay là chúng ta đi qua PT
+00:12:41,260 --> 00:12:43,260
+Nó ra tùy để tập nhận với tế tế
 
 182
-00:07:04,560 --> 00:07:06,560
-hay là chúng ta đi như thế nào
+00:12:43,260 --> 00:12:45,260
+Vậy là ok
 
 183
-00:07:06,560 --> 00:07:08,560
-còn các công cụ phương tiện như là
+00:12:45,260 --> 00:12:47,260
+Thì đấy anh ghi qua một khách hàng mới
 
 184
-00:07:08,560 --> 00:07:10,560
-nền tảng công nghệ
+00:12:47,260 --> 00:12:49,260
+Nó rất là nhanh, hoặc anh truyền cái thông điểm đấy cho
 
 185
-00:07:10,560 --> 00:07:12,560
-thứ hai là center
+00:12:49,260 --> 00:12:51,260
+Chí nhánh người dưới nó thực hiện
 
 186
-00:07:12,560 --> 00:07:14,560
-thứ ba là home
+00:12:51,260 --> 00:12:53,260
+Yên như thế là thành công rồi
 
 187
-00:07:14,560 --> 00:07:16,560
-tất cả là phương tiện
+00:12:53,260 --> 00:12:55,260
+Vậy sau nhà nhà là đi cập thể dục
 
 188
-00:07:16,560 --> 00:07:18,560
-tất cả là phương tiện
+00:12:55,260 --> 00:12:57,260
+Thế thạo
 
 189
-00:07:18,560 --> 00:07:20,690
-cho người ta kiểm hại
+00:12:57,260 --> 00:12:59,260
+Có sức cỡ
 
 190
-00:07:20,690 --> 00:07:22,690
-rồi
+00:12:59,260 --> 00:13:01,260
+Hôm qua anh ghi quả phá cái tự án này cho
 
 191
-00:07:22,690 --> 00:07:24,690
-về mạng thứ hai là
-
-192
-00:07:24,690 --> 00:07:26,690
-khi mà trăm tiền mũ quan hệ
-
-193
-00:07:26,690 --> 00:07:28,690
-thì mình làm sau hơn
-
-194
-00:07:28,690 --> 00:07:30,690
-một cái bước thứ hai thì
-
-195
-00:07:30,690 --> 00:07:32,690
-tức là đầu tiên là từ sức khỏe tình chất
-
-196
-00:07:32,690 --> 00:07:34,690
-thứ hai là đến mạng mũ quan hệ
-
-197
-00:07:34,690 --> 00:07:36,690
-mũ quan hệ là bây giờ nhiều người gặp bệnh mạng
-
-198
-00:07:36,690 --> 00:07:38,690
-thế thì kể đây nó sẽ
-
-199
-00:07:38,690 --> 00:07:40,690
-lúc cho người ta cung cố được mũ quan hệ
-
-200
-00:07:40,690 --> 00:07:42,690
-người ta đối với cả những người thành công gia đình
-
-201
-00:07:42,690 --> 00:07:45,940
-thông qua các chương trình
-
-202
-00:07:45,940 --> 00:07:47,940
-từ đấy thì
-
-203
-00:07:47,940 --> 00:07:49,940
-nếu mà cung cố được hai cái đấy thì chắc là
-
-204
-00:07:49,940 --> 00:07:51,940
-nô tâm ngon rồi từ từ rồi tươi tươi tươi làm tài trình
-
-205
-00:07:51,940 --> 00:07:53,940
-còn ai có tiền rồi thì
-
-206
-00:07:53,940 --> 00:07:55,940
-thì mình không cần phải để mạng tài trình lên
-
-207
-00:07:55,940 --> 00:07:57,940
-chỉ cần là
-
-208
-00:07:57,940 --> 00:07:59,940
-sức khỏe, nô tâm và mũ quan hệ ngon
-
-209
-00:07:59,940 --> 00:08:01,940
-nhiều người có nhiều tiền
-
-210
-00:08:01,940 --> 00:08:03,940
-không cần tiền, không cần mũ phiêu tài trình
-
-211
-00:08:03,940 --> 00:08:05,940
-thì chỉ cần 3 mạng
-
-212
-00:08:05,940 --> 00:08:07,940
-đầu tiên là sức khỏe, sau đó đến mũ quan hệ
-
-213
-00:08:07,940 --> 00:08:09,940
-là hai cái mà đang vấn đại nhiều nhất
-
-214
-00:08:09,940 --> 00:08:11,940
-thì hai cái này nó ảnh hưởng rất nhiều
-
-215
-00:08:11,940 --> 00:08:13,940
-đến nô tâm luôn ấy
-
-216
-00:08:13,940 --> 00:08:15,940
-sau khi cái đây xong
-
-217
-00:08:15,940 --> 00:08:17,940
-tươi nô tâm ngon
-
-218
-00:08:17,940 --> 00:08:19,940
-tài trình thì có người không phải lo, có người mà muốn lo nữa
-
-219
-00:08:19,940 --> 00:08:21,940
-thì sức khỏe thì ra sang cái stage tiếp theo là
-
-220
-00:08:21,940 --> 00:08:23,940
-thành TT
-
-221
-00:08:23,940 --> 00:08:25,940
-và thành Coforder
-
-222
-00:08:25,940 --> 00:08:27,940
-cùng mở ra các hệ thống đấy để tinh thần
-
-223
-00:08:27,940 --> 00:08:31,380
-phát triển tài trình
-
-224
-00:08:31,380 --> 00:08:40,220
-thì cái thình của em đang là như vậy
-
-225
-00:08:40,220 --> 00:08:42,220
-thần xưa anh em bán
-
-226
-00:08:42,220 --> 00:08:44,220
-còn bây giờ em tìm được tinh thần
-
-227
-00:08:44,220 --> 00:08:46,220
-phải tìm được tinh thần, nó mơ hồ vàng
-
-228
-00:08:46,220 --> 00:08:48,220
-nó mơ hồ, mơ xăm phần, nó mơ hồ
-
-229
-00:08:48,220 --> 00:08:50,220
-bởi vì bố AOM, bố Linh bảo
-
-230
-00:08:50,220 --> 00:08:52,220
-cái bóng gì đó nó không thể
-
-231
-00:08:52,220 --> 00:08:54,320
-tiêu linh đi, đi đến cái hệ thống này
-
-232
-00:08:54,320 --> 00:08:56,320
-bây giờ đến cái hệ thống này
-
-233
-00:08:56,320 --> 00:08:58,320
-tốt lắm, mơ xăm phần cả
-
-234
-00:08:58,320 --> 00:09:01,440
-một cái cái rất quan trọng
-
-235
-00:09:01,440 --> 00:09:03,440
-đấy là cái app lần sau mà
-
-236
-00:09:03,440 --> 00:09:06,050
-nó giống như kiểu building mode
-
-237
-00:09:06,050 --> 00:09:08,050
-vì con người đa là cái hóa quen
-
-238
-00:09:08,050 --> 00:09:10,080
-mà làm sao
-
-239
-00:09:10,080 --> 00:09:12,080
-nó giúp con di chuyển được
-
-240
-00:09:12,080 --> 00:09:14,080
-cái đó cực kỳ quan trọng, game đấy
-
-241
-00:09:14,080 --> 00:09:16,080
-game, tại vì cái phần mềm này mà tập
-
-242
-00:09:16,080 --> 00:09:18,080
-hay là kiến thức mềm này là
-
-243
-00:09:18,080 --> 00:09:20,270
-không có tiêu, nhưng mà cái môi trường nào
-
-244
-00:09:20,270 --> 00:09:22,400
-có cái gì để giữ
-
-245
-00:09:22,400 --> 00:09:24,400
-cho đau lại đều có hợp đỉnh
-
-246
-00:09:24,400 --> 00:09:26,400
-để mà thuyết thích động viên hò
-
-247
-00:09:26,400 --> 00:09:28,400
-là là để ăn có máu quá à
-
-248
-00:09:28,400 --> 00:09:30,400
-đấy, ăn có máu, nó gọi như là cái
-
-249
-00:09:30,400 --> 00:09:32,400
-thường xuyên hàng ngày
-
-250
-00:09:32,400 --> 00:09:35,710
-thì là thành công đấy
-
-251
-00:09:35,710 --> 00:09:37,710
-anh không biết building mode trước thì anh có dùng đâu
-
-252
-00:09:37,710 --> 00:09:39,710
-Cường, Cường mới nói anh
-
-253
-00:09:39,710 --> 00:09:41,710
-anh có dùng hôm nay ngày thứ 8, thứ 9 đấy
-
-254
-00:09:41,710 --> 00:09:43,710
-nó nhắc liên tục
-
-255
-00:09:43,710 --> 00:09:45,710
-hôm qua mà mình không học một cái là mặt nó bỏ lư
-
-256
-00:09:45,710 --> 00:09:47,710
-thái độ
-
-257
-00:09:47,710 --> 00:09:49,710
-nó xị
-
-258
-00:09:49,710 --> 00:09:51,710
-sao nó gửi email
-
-259
-00:09:51,710 --> 00:09:54,060
-cái đấy là một phần
-
-260
-00:09:54,060 --> 00:09:56,060
-giữa bên nó cũng có làm cái game
-
-261
-00:09:56,060 --> 00:09:58,060
-cái
-
-262
-00:09:58,060 --> 00:10:00,060
-của anh em ấy, cái che lý
-
-263
-00:10:00,060 --> 00:10:02,060
-cái che lý của những người em ta đi gặp đi ở ngoài
-
-264
-00:10:02,060 --> 00:10:04,060
-đi hôm xửa tập thôi, nó không có cái
-
-265
-00:10:04,060 --> 00:10:06,060
-dạng, nó không có lối
-
-266
-00:10:06,060 --> 00:10:08,060
-cái bên boy
-
-267
-00:10:08,060 --> 00:10:10,060
-lớn nhất của những người
-
-268
-00:10:10,060 --> 00:10:12,060
-kinh doanh như thế này là
-
-269
-00:10:12,060 --> 00:10:14,060
-để thay đổi thói quen
-
-270
-00:10:14,060 --> 00:10:16,060
-giống như thay đổi thói quen của em
-
-271
-00:10:16,060 --> 00:10:18,060
-để em đến với anh
-
-272
-00:10:18,060 --> 00:10:20,060
-thì đấy là thành công
-
-273
-00:10:20,060 --> 00:10:22,060
-bình thường người ta có thể
-
-274
-00:10:22,060 --> 00:10:24,060
-phóng đè về sức khỏe thật
-
-275
-00:10:24,060 --> 00:10:26,060
-và sức khỏe của người ta
-
-276
-00:10:26,060 --> 00:10:28,060
-người ta cũng đẩy ý
-
-277
-00:10:28,060 --> 00:10:30,060
-người ta vẫn theo một cái thói quen hàng ngày đây, vẫn sáng dậy đi làm
-
-278
-00:10:30,060 --> 00:10:32,060
-đúng không, gặp gỡ, tạch hàng
-
-279
-00:10:32,060 --> 00:10:34,060
-cái thứ hàng tối, đi làm đấy anh bơm vào
-
-280
-00:10:34,060 --> 00:10:36,060
-đầu cho người ta, hiểu không
-
-281
-00:10:36,060 --> 00:10:38,060
-cái đấy và người ta phải
-
-282
-00:10:38,060 --> 00:10:40,060
-nhận thức được, để em
-
-283
-00:10:40,060 --> 00:10:42,060
-duy trì được thói quen hàng ngày, người ta phải nhận được
-
-284
-00:10:42,060 --> 00:10:44,060
-trong đầu người ta, người ta mới duy trì được
-
-285
-00:10:44,060 --> 00:10:46,060
-người ta 3 năm, 5 bữa, 1 đứa tháng thôi
-
-286
-00:10:46,060 --> 00:10:48,060
-đúng rồi, đúng rồi
-
-287
-00:10:48,060 --> 00:10:50,060
-đấy là gốc dế đấy
-
-288
-00:10:50,060 --> 00:10:52,060
-thì lúc đấy tư duy không phải đủ
-
-289
-00:10:52,060 --> 00:10:54,060
-tư duy đủ, thay đổi
-
-290
-00:10:54,060 --> 00:10:56,060
-được như thế thì mô hình này sẽ
-
-291
-00:10:56,060 --> 00:10:58,060
-rất là thành công
-
-292
-00:10:58,060 --> 00:11:00,060
-vì là cái phần lợi
-
-293
-00:11:00,060 --> 00:11:02,060
-thật sự ấy, nếu họ thay đổi được
-
-294
-00:11:02,060 --> 00:11:04,060
-thì lợi thật sự họ là sức khỏe mà
-
-295
-00:11:04,060 --> 00:11:06,060
-bản tốt là thân của họ
-
-296
-00:11:06,060 --> 00:11:08,060
-chứ không phải là mình bán cái gì đấy mà
-
-297
-00:11:08,060 --> 00:11:10,060
-nó gọi là chỉ để chư tiền, từ cái hàng
-
-298
-00:11:10,060 --> 00:11:12,060
-mà mang lại về phía
-
-299
-00:11:12,060 --> 00:11:14,060
-thì mình chiếu từ cái mùi kinh doanh
-
-300
-00:11:14,060 --> 00:11:16,060
-mình với cái lợi ích đấy của họ
-
-301
-00:11:16,060 --> 00:11:18,060
-và xong hành trở của họ
-
-302
-00:11:18,060 --> 00:11:20,130
-thường xuyên thì
-
-303
-00:11:20,130 --> 00:11:22,130
-đúng là từ 100 triệu
-
-304
-00:11:22,130 --> 00:11:24,130
-người, anh chẳng phải 10%
-
-305
-00:11:24,130 --> 00:11:26,130
-đúng không?
-
-306
-00:11:26,130 --> 00:11:28,930
-anh đã thắng lợi
-
-307
-00:11:28,930 --> 00:11:30,930
-1% nữa đấy anh đã ngon
-
-308
-00:11:30,930 --> 00:11:32,930
-chưa gần
-
-309
-00:11:39,890 --> 00:11:42,500
-chắc là
-
-310
-00:11:42,500 --> 00:11:44,500
-mấy nhà phải qua số anh Dũng
-
-311
-00:11:44,500 --> 00:11:46,500
-để trải nghiệm cái món sức khỏe đấy
-
-312
-00:11:46,500 --> 00:11:48,500
-để dộ
-
-313
-00:11:48,500 --> 00:11:50,500
-nhất về mặt quy trình
-
-314
-00:11:50,500 --> 00:11:52,500
-tự ra là không phải chỉ để ấy đâu
-
-315
-00:11:52,500 --> 00:11:54,500
-mà dộ để mình
-
-316
-00:11:54,500 --> 00:11:56,500
-trải nghiệm với các hàng ấy
-
-317
-00:11:56,500 --> 00:11:58,660
-cái nền tài công nghệ của mình nó có sát
-
-318
-00:11:58,660 --> 00:12:00,660
-mà mình chỉ đứng không một chỗ
-
-319
-00:12:00,660 --> 00:12:02,660
-không, kể cả làm ra
-
-320
-00:12:02,660 --> 00:12:04,660
-sản phẩm công nghệ đó không sát
-
-321
-00:12:04,660 --> 00:12:06,660
-anh em mình trải nghiệm thực tế đúng không?
-
-322
-00:12:06,660 --> 00:12:08,660
-trải nghiệm luôn
-
-323
-00:12:08,660 --> 00:12:10,660
-từ lúc đầu như thế này
-
-324
-00:12:10,660 --> 00:12:12,660
-anh sẽ phải bước em
-
-325
-00:12:12,660 --> 00:12:14,660
-coi em là khách hàng ấy
-
-326
-00:12:14,660 --> 00:12:16,660
-mở đầu cho em những cái gì để em nhận tức
-
-327
-00:12:16,660 --> 00:12:18,660
-đấy và
-
-328
-00:12:18,660 --> 00:12:20,660
-cung cấp cho em công cụ gì để em
-
-329
-00:12:20,660 --> 00:12:22,660
-dùng bao gồm là cả
-
-330
-00:12:22,660 --> 00:12:24,660
-công cụ quan lý là sản phẩm công nghệ
-
-331
-00:12:24,660 --> 00:12:26,660
-đến đâu, check in ra sao
-
-332
-00:12:26,660 --> 00:12:28,660
-rồi theo dõi chỉ số như thế nào
-
-333
-00:12:28,660 --> 00:12:30,660
-rồi
-
-334
-00:12:30,660 --> 00:12:32,660
-giả sử 3 ngày, 5 ngày
-
-335
-00:12:32,660 --> 00:12:34,660
-em cũng đếm thì nó sẽ hành xử như nào
-
-336
-00:12:34,660 --> 00:12:36,660
-hành xử như nào để cho họ quay trở lại
-
-337
-00:12:36,660 --> 00:12:39,200
-để tỷ lệ rời bỏ
-
-338
-00:12:39,200 --> 00:12:41,200
-mình rất là tấp
-
-339
-00:12:41,200 --> 00:12:43,200
-còn ra tỷ lệ tấp là
-
-340
-00:12:43,200 --> 00:12:45,200
-thì là ok
-
-341
-00:12:45,200 --> 00:12:47,200
-anh ghi qua 1 khách hàng mới
-
-342
-00:12:47,200 --> 00:12:49,200
-nó rất là nhanh, hoặc anh truyền
-
-343
-00:12:49,200 --> 00:12:51,200
-cái thông điểm đấy cho xin anh ở dưới nó thực hiện
-
-344
-00:12:51,200 --> 00:12:53,200
-thực hiện như thế là
-
-345
-00:12:53,200 --> 00:12:55,200
-thành công rồi, rồi sau nhà nhà
-
-346
-00:12:55,200 --> 00:12:57,200
-là đi tập thể dục, thể thảo
-
-347
-00:12:57,200 --> 00:12:59,200
-có sức khẩu
-
-348
-00:12:59,200 --> 00:13:01,200
-hôm qua anh ghi quả bá cái tự án này cho
-
-349
-00:13:01,200 --> 00:13:03,200
+00:13:01,260 --> 00:13:03,260
 Cường
 
-350
-00:13:03,200 --> 00:13:05,200
+192
+00:13:03,260 --> 00:13:05,260
 Cường là cộng em trong cộng đồng quanh
 
-351
-00:13:05,200 --> 00:13:07,200
-thì
+193
+00:13:05,260 --> 00:13:07,260
+Vậy là
 
-352
-00:13:07,200 --> 00:13:10,480
-Cường là bên công ty Egypt
+194
+00:13:07,260 --> 00:13:12,260
+Cường là bên cộng tế Egypt, cộng tế này
 
-353
-00:13:10,480 --> 00:13:12,700
-công ty này
+195
+00:13:12,260 --> 00:13:15,260
+Cộng tế Linh
 
-354
-00:13:12,700 --> 00:13:14,700
-cùng với Linh
+196
+00:13:15,260 --> 00:13:18,260
+Thì đấy thì khỏa hóa với Cường thì Cường thấy là rất là thích luôn
 
-355
-00:13:14,700 --> 00:13:16,700
-Cường thấy là
+197
+00:13:18,260 --> 00:13:20,260
+Bản thân Cường là có nhu cầu
 
-356
-00:13:16,700 --> 00:13:18,700
-rất là thích luôn
+198
+00:13:20,260 --> 00:13:25,260
+Và Cường đang có ý định là 2027 The Iron Man
 
-357
-00:13:18,700 --> 00:13:20,700
-bản thân Cường là có nhu cầu
+199
+00:13:25,260 --> 00:13:28,260
+Thì Cường mới là anh hỗ trợ với em cái mảnh vinh dưỡng luôn
 
-358
-00:13:20,700 --> 00:13:22,700
-Cường đang có ý định là
+200
+00:13:28,260 --> 00:13:30,260
+Hôm qua là thành khách hàng vô tiên
 
-359
-00:13:22,700 --> 00:13:24,700
-2027 The Iron Man
+201
+00:13:30,260 --> 00:13:33,260
+Anh mới bảo, thế thì em làm khách hàng đầu tiên đi của dự án này
 
-360
-00:13:24,700 --> 00:13:26,770
-Cường là anh
+202
+00:13:33,260 --> 00:13:37,420
+Thế là ok là mua off-pro là chuyển tiền ngay 7,8 triệu là thành off-pro
 
-361
-00:13:26,770 --> 00:13:28,770
-phẫu trợ game mạng Vinh Dương luôn
+203
+00:13:37,420 --> 00:13:39,820
+Thế mà bắt đầu là bắt đầu post về hình dưỡng
 
-362
-00:13:28,770 --> 00:13:30,770
-hôm qua là thành khách hàng luôn, anh mới bảo
+204
+00:13:39,820 --> 00:13:41,620
+Hình dưỡng để bắt đầu
 
-363
-00:13:30,770 --> 00:13:32,770
-em làm khách hàng đầu tiên đi của dưới án này
+205
+00:13:41,620 --> 00:13:43,620
+Thế Cường nói là...
 
-364
-00:13:32,770 --> 00:13:34,770
-là ok là mua
+206
+00:13:43,620 --> 00:13:46,620
+Cường đang mong muốn là...
 
-365
-00:13:34,770 --> 00:13:36,770
-FPro là chuyển tiền ngay 7.8
+207
+00:13:46,620 --> 00:13:49,260
+Trong cái công ty của Cường á
 
-366
-00:13:36,770 --> 00:13:38,770
-là thành FPro
+208
+00:13:49,260 --> 00:13:52,460
+Cũng như là tạo một cái công đồng xanh năm sau
 
-367
-00:13:38,770 --> 00:13:40,770
-bắt đầu post về Vinh Dương
+209
+00:13:52,460 --> 00:13:54,660
+200 Ironman
 
-368
-00:13:40,770 --> 00:13:42,770
-Cường thấy là
+210
+00:13:54,660 --> 00:13:58,260
+Cũng là muốn post cho chủ doanh nghiệp
 
-369
-00:13:42,770 --> 00:13:45,340
-Cường đang mong muốn
+211
+00:13:58,260 --> 00:14:00,020
+Tạo cái văn hóa này vào chủ doanh nghiệp
 
-370
-00:13:45,340 --> 00:13:47,630
-trong công ty
+212
+00:14:00,020 --> 00:14:02,620
+Thế là định hình luôn cái dự án chúng ta làm á
 
-371
-00:13:47,630 --> 00:13:49,630
-của Cường
+213
+00:14:02,620 --> 00:14:05,620
+là có hai cái điểm gọi là khỏe thịnh và ngồi suy
 
-372
-00:13:49,630 --> 00:13:51,630
-tạo một cộng đồng
+214
+00:14:06,620 --> 00:14:10,620
+thì cái người mà chỉ tập trung vào khỏe thịnh không á, là chỉ làm cho nhà lầu không á
 
-373
-00:13:51,630 --> 00:13:53,630
-xanh năm sau 200 Iron Man
+215
+00:14:10,620 --> 00:14:11,620
+thì cũng chết
 
-374
-00:13:53,630 --> 00:13:55,630
-muốn post
+216
+00:14:11,620 --> 00:14:14,620
+mà người mà tập trung vào cho nhà nghèo không cũng chết
 
-375
-00:13:55,630 --> 00:13:57,630
-cho chủ
+217
+00:14:14,620 --> 00:14:16,620
+nếu mình chỉ cân bằng là cả hai
 
-376
-00:13:57,630 --> 00:13:59,660
-doanh nghiệp, tạo cái văn hóa này gọi chủ
+218
+00:14:16,620 --> 00:14:19,620
+thì mình phục vụ người có tiền với mọi người cũng ok
 
-377
-00:13:59,660 --> 00:14:01,660
-doanh nghiệp, thế là định hình luôn
+219
+00:14:19,620 --> 00:14:21,620
+thì người trước có tiền thì sao?
 
-378
-00:14:01,660 --> 00:14:03,660
-dự án chúng ta làm có 2 cái niệm
-
-379
-00:14:03,660 --> 00:14:06,940
-gọi là phỏ thịnh và phỏ suy
-
-380
-00:14:06,940 --> 00:14:08,940
-thì người mà chỉ tập trung vào phỏ thịnh
-
-381
-00:14:08,940 --> 00:14:10,940
-không, là chỉ làm cái nhà lầu không
-
-382
-00:14:10,940 --> 00:14:12,940
-thì cũng chết, mà người mà tập trung vào
-
-383
-00:14:12,940 --> 00:14:14,940
-trong nhà nghèo không, cũng chết
-
-384
-00:14:14,940 --> 00:14:16,940
-thế bây giờ cân bằng là cả 2
-
-385
-00:14:16,940 --> 00:14:18,940
-thì mình phục vụ người có tiền
-
-386
-00:14:18,940 --> 00:14:20,940
-thì mọi người cũng ok, người chưa có tiền thì sao
-
-387
-00:14:20,940 --> 00:14:22,940
+220
+00:14:21,620 --> 00:14:22,620
 thì cùng với mình đi làm
 
-388
-00:14:22,940 --> 00:14:24,940
-để giúp người có tiền thì tất cả đều đều thắng
-
-389
-00:14:24,940 --> 00:14:27,070
-Cường đang
-
-390
-00:14:27,070 --> 00:14:29,070
-có một cái vong muốn là
-
-391
-00:14:29,070 --> 00:14:31,070
-giúp cho các chủ
-
-392
-00:14:31,070 --> 00:14:33,070
-doanh nghiệp, thay đổi nhận thức
-
-393
-00:14:33,070 --> 00:14:35,070
-về sức khỏe, thế là phải trở thành doanh nghiệp
-
-394
-00:14:35,070 --> 00:14:37,070
-rồi có văn hóa, doanh nghiệp mà đi thi Iron Man
-
-395
-00:14:37,070 --> 00:14:39,070
-chứ không phải là doanh bụng to
-
-396
-00:14:39,070 --> 00:14:41,070
-thì đấy cũng là một trong những đối tượng
-
-397
-00:14:41,070 --> 00:14:43,070
-khách hàng của chúng ta
-
-398
-00:14:43,070 --> 00:14:45,070
-giống như cái Pipro Insight
-
-399
-00:14:45,070 --> 00:14:47,070
-là những doanh nghiệp nào họ có năng lực
-
-400
-00:14:47,070 --> 00:14:49,230
-họ có tài chính
-
-401
-00:14:49,230 --> 00:14:51,230
-họ có phong gian
-
-402
-00:14:51,230 --> 00:14:53,230
-thì chúng ta có thể mở một cái Pipro
-
-403
-00:14:55,230 --> 00:14:57,230
-Insight trong doanh nghiệp đấy
-
-404
-00:14:57,230 --> 00:14:59,230
-họ có thể tài trợ về cơ sở và chất
-
-405
-00:14:59,230 --> 00:15:01,230
-nhưng mà nhân viên thì họ uống dinh dưới
-
-406
-00:15:01,230 --> 00:15:03,780
-bất cứ vụ cầu, chúng ta vẫn có thể
-
-407
-00:15:03,780 --> 00:15:05,780
-bán gói bình thường ở đấy, ai có vụ cầu đến đâu
-
-408
-00:15:05,780 --> 00:15:07,780
-gói cơ bản lên cao thì ngồi vụ cầu đến đâu
-
-409
-00:15:07,780 --> 00:15:11,780
-hoặc là gửi bệnh viên đến đấy để đứng dẫn cho doanh nghiệp
-
-410
-00:15:11,780 --> 00:15:13,780
-cũng như trong công ty em
-
-411
-00:15:13,780 --> 00:15:15,780
-tức là tức là
-
-412
-00:15:15,780 --> 00:15:17,780
-tức là mời bạn ý về là bạn ý là
-
-413
-00:15:17,780 --> 00:15:19,780
-uống dinh dưới, ngồi vụ cầu trong doanh nghiệp
-
-414
-00:15:19,780 --> 00:15:21,780
-nhưng mà về sau
-
-415
-00:15:21,780 --> 00:15:23,780
-mỗi doanh nghiệp nó không cần biết phải
-
-416
-00:15:23,780 --> 00:15:25,780
-cơ ứu một ông
-
-417
-00:15:25,780 --> 00:15:27,780
-mà cứ đến giờ đấy thì
-
-418
-00:15:27,780 --> 00:15:29,780
-bệnh viên xuất hiện cần phải
-
-419
-00:15:29,780 --> 00:15:31,780
-trở tâm, trở tâm
-
-420
-00:15:31,780 --> 00:15:33,780
-có thể là không cần biết ai đến
-
-421
-00:15:33,780 --> 00:15:35,780
-chỉ cần biết vị trí đấy
-
-422
-00:15:35,780 --> 00:15:37,780
-có thể là bệnh viên có thể có thể đạo
-
-423
-00:15:37,780 --> 00:15:39,780
-người đàn người kia
-
-424
-00:15:39,780 --> 00:15:41,780
-mọi người thích người nhân viên
-
-425
-00:15:41,780 --> 00:15:43,780
-cái đấy mình tổ chức
-
-426
-00:15:43,780 --> 00:15:45,900
-không khác như một center
-
-427
-00:15:45,900 --> 00:15:47,900
-cũng có một center như thế, cũng có 10 buổi đông cốt
-
-428
-00:15:47,900 --> 00:15:49,900
-mà mỗi ngày cần 2 buổi đông cốt
-
-429
-00:15:49,900 --> 00:15:51,900
-cái gì đấy
-
-430
-00:15:51,900 --> 00:15:53,900
-đông cốt đấy vẫn đi làm việc
-
-431
-00:15:53,900 --> 00:15:55,900
-bình thường
-
-432
-00:15:55,900 --> 00:15:57,900
-để nó lịch hóa cho vấn đề lịch của bệnh viên
-
-433
-00:15:57,900 --> 00:15:59,900
-bệnh viên hôm nay nó vắng
-
-434
-00:15:59,900 --> 00:16:01,900
-cho doanh nghiệp trên ad mình làm vốt luôn
-
-435
-00:16:01,900 --> 00:16:03,900
-vốt chọn bệnh viên
-
-436
-00:16:03,900 --> 00:16:05,900
-làm sao
-
-437
-00:16:05,900 --> 00:16:07,900
-làm sao
-
-438
-00:16:07,900 --> 00:16:09,900
-bệnh viên kiểm soát được VT từ hôm nay
-
-439
-00:16:09,900 --> 00:16:11,900
-là một giai kiện có 10 bài
-
-440
-00:16:11,900 --> 00:16:13,900
-một đào tạo 10 bài
-
-441
-00:16:13,900 --> 00:16:15,900
-anh cứ nói hôm nay là buổi đào tạo số 7
-
-442
-00:16:15,900 --> 00:16:17,900
-kể VT nào
-
-443
-00:16:17,900 --> 00:16:20,260
-không biết là buổi đào tạo sẽ là cái gì
-
-444
-00:16:20,260 --> 00:16:22,260
-thì nó sẽ đào nhau
-
-445
-00:16:22,260 --> 00:16:24,260
-bởi vì hôm nay em là VT, em là lẫn
-
-446
-00:16:24,260 --> 00:16:26,260
-lẫn đào đúng hông
-
-447
-00:16:26,260 --> 00:16:28,260
-thì anh cứ nói hôm nay là buổi đào tạo số 7
-
-448
-00:16:28,260 --> 00:16:30,260
-cho công ty Tien Tech
-
-449
-00:16:30,260 --> 00:16:32,260
-để biết nội dung là cái gì
-
-450
-00:16:32,260 --> 00:16:34,260
-để nó đào nhau
-
-451
-00:16:34,260 --> 00:16:36,260
-tập trên thẳng là 2 mấy khuôn
-
-452
-00:16:36,260 --> 00:16:38,260
-thì nó có
-
-453
-00:16:38,260 --> 00:16:40,260
-thứ 2 là
-
-454
-00:16:40,260 --> 00:16:42,260
-sân trên, thứ 3 là sân dưới
-
-455
-00:16:42,260 --> 00:16:44,260
-thứ 4 là dãn tơ
-
-456
-00:16:44,260 --> 00:16:46,260
-thứ 5 là độ mông, thứ 6 là độ đào
-
-457
-00:16:46,260 --> 00:16:48,260
-hay gì hết
-
-458
-00:16:48,260 --> 00:16:50,260
-có cái bài 5 ngày 1 tuần
-
-459
-00:16:50,260 --> 00:16:52,260
-5-6 ngày 1 tuần
-
-460
-00:16:52,260 --> 00:16:54,260
-chủ nhật là nghỉ
-
-461
-00:16:54,260 --> 00:16:56,260
-có cái link hết
-
-462
-00:16:56,260 --> 00:16:58,260
-dạy là hết
-
-463
-00:16:58,260 --> 00:17:00,580
-dạy đây là mật băng
-
-464
-00:17:00,580 --> 00:17:02,580
-mật băng mà có những chuyên nghiệp rồi
-
-465
-00:17:02,580 --> 00:17:05,090
-mật băng là những dân
-
-466
-00:17:05,090 --> 00:17:07,090
-nên là cốt làm ở đâu được ngày nào
-
-467
-00:17:07,090 --> 00:17:09,090
-cái điện à ngày hôm nay là đúng thân trên hả
-
-468
-00:17:09,090 --> 00:17:11,090
-nhưng mà mình như vậy là mình sẽ phải
-
-469
-00:17:11,090 --> 00:17:13,090
-ra 1 cái tiêu chuẩn của cái bán cốt ở đây
-
-470
-00:17:13,090 --> 00:17:15,090
-1 là như thế 2 là về sau
-
-471
-00:17:15,090 --> 00:17:17,090
-có thể liên kết nhé
-
-472
-00:17:17,090 --> 00:17:19,090
-về nguyên hiệp ở trường
-
-473
-00:17:19,090 --> 00:17:21,090
-1 anh thắng thì là quan
-
-474
-00:17:21,090 --> 00:17:23,660
-nhiều trường nề
-
-475
-00:17:23,660 --> 00:17:25,660
-có thể liên kết để xây dựng
-
-476
-00:17:25,660 --> 00:17:27,660
-môi khoa học đào tạo về cốt
-
-477
-00:17:27,660 --> 00:17:29,660
-sau cái này
-
-478
-00:17:29,660 --> 00:17:31,660
-chuyện đấy thì lại chăm chăm tay đúng không ạ
-
-479
-00:17:31,660 --> 00:17:33,890
-dạ
-
-480
-00:17:33,890 --> 00:17:35,890
-cái tiêu chuẩn ở lòng
-
-481
-00:17:35,890 --> 00:17:37,890
-ok được
-
-482
-00:17:37,890 --> 00:17:39,890
-vẫn là những bạn biết đi đây
-
-483
-00:17:39,890 --> 00:17:41,890
-nhưng mà những bạn đấy
-
-484
-00:17:41,890 --> 00:17:43,890
-qua lý thái thì mình chăm chăm chỉ các bạn đây
-
-485
-00:17:43,890 --> 00:17:45,890
-để đi
-
-486
-00:17:45,890 --> 00:17:47,890
-trong trường
-
-487
-00:17:47,890 --> 00:17:49,890
-có spa, có tắc kê luôn
-
-488
-00:17:49,890 --> 00:17:51,890
-đúng rồi đấy
-
-489
-00:17:51,890 --> 00:17:59,170
-đúng đấy
-
-490
-00:18:01,170 --> 00:18:03,170
-trước kìa là
-
-491
-00:18:03,170 --> 00:18:05,170
-có cái khu này
-
-492
-00:18:05,170 --> 00:18:07,170
-có cái khu này
-
-493
-00:18:07,170 --> 00:18:09,170
-đúng rồi
-
-494
-00:18:09,170 --> 00:18:11,170
-đúng rồi
-
-495
-00:18:11,170 --> 00:18:13,170
-đúng rồi
-
-496
-00:18:13,170 --> 00:18:15,170
-rồi kết kế 1 cái lộn trình cho công ty
-
-497
-00:18:15,170 --> 00:18:17,170
-để hằng ngày tập hàng tháng
-
-498
-00:18:17,170 --> 00:18:19,170
-thì có khi tổ chức 1 cái chương trình chạy với nhau
-
-499
-00:18:19,170 --> 00:18:21,170
-và bận chạy lần
-
-500
-00:18:21,170 --> 00:18:23,420
-hàng chạy non ram
-
-501
-00:18:23,420 --> 00:18:25,420
-nếu mà công ty nào, tức là tùy
-
-502
-00:18:25,420 --> 00:18:27,420
-những người ta biết, người ta đợm nhiều
-
-503
-00:18:27,420 --> 00:18:29,420
-thì mình sẽ đưa
-
-504
-00:18:29,420 --> 00:18:31,420
-chung hướng tới cái chạy marathon này
-
-505
-00:18:31,420 --> 00:18:33,420
-và mình sẽ đưa chung cao nhất là
-
-506
-00:18:33,420 --> 00:18:35,420
-Ironman
-
-507
-00:18:35,420 --> 00:18:37,420
-Ironman
-
-508
-00:18:37,420 --> 00:18:39,420
-vâng, vâng, vâng
-
-509
-00:18:39,420 --> 00:18:41,420
-vâng, vâng
-
-510
-00:18:41,420 --> 00:18:43,420
-vâng
-
-511
-00:18:43,420 --> 00:18:45,420
-vâng
-
-512
-00:18:45,420 --> 00:18:47,420
-vâng
-
-513
-00:18:47,420 --> 00:18:49,420
-vâng
-
-514
-00:18:49,420 --> 00:18:51,420
-vâng
-
-515
-00:18:51,420 --> 00:18:53,420
-vâng
-
-516
-00:18:53,420 --> 00:18:55,420
-vâng
-
-517
-00:18:55,420 --> 00:18:57,420
-vâng
-
-518
-00:18:57,420 --> 00:18:59,420
-vâng
-
-519
-00:18:59,420 --> 00:19:01,420
-vâng
-
-520
-00:19:01,420 --> 00:19:03,420
-vâng
-
-521
-00:19:03,420 --> 00:19:05,420
-vâng
-
-522
-00:19:05,420 --> 00:19:07,420
-vâng
-
-523
-00:19:09,420 --> 00:19:11,420
-vâng
-
-524
-00:19:11,420 --> 00:19:13,420
-vâng
-
-525
-00:19:13,420 --> 00:19:15,420
-vâng
-
-526
-00:19:15,420 --> 00:19:18,030
-dạ vâng
-
-527
-00:19:22,030 --> 00:19:27,260
-h deshalb
-
-528
-00:19:27,260 --> 00:19:29,260
-h所以
-
-529
-00:19:29,260 --> 00:19:31,260
-h sao
-
-530
-00:19:31,260 --> 00:19:33,260
-Dân nghiệp đấy, làm được hết
-
-531
-00:19:33,260 --> 00:19:36,260
-Mà cũng xây dựng cái văn hóa của dân nghiệp luôn
-
-532
-00:19:36,260 --> 00:19:38,260
-Đấy là, quán em cũng đang định hướng là
-
-533
-00:19:38,260 --> 00:19:41,260
-Khi văn hóa dân nghiệp thì nó xây dựng trên 3 nền tảng chính là
-
-534
-00:19:41,260 --> 00:19:43,260
-Lấy cái tinh quý của văn hóa gia đình
-
-535
-00:19:43,260 --> 00:19:46,260
-Đấy, thứ 2 là cái nền tảng của tính hướng
-
-536
-00:19:46,260 --> 00:19:48,260
-Và thứ 3 là nền tảng của đảo lý
-
-537
-00:19:48,260 --> 00:19:51,260
-Là 3 góc độ đấy để xây dựng văn hóa dân nghiệp
-
-538
-00:19:51,260 --> 00:19:54,260
-Thế nên là ở dân nghiệp em mới có chuyện là buổi cơ, gia đình
-
-539
-00:19:54,260 --> 00:19:57,260
-Chưa ăn cơ như gia đình, có người nông
-
-540
-00:19:57,260 --> 00:19:59,260
-Đấy thế, rồi vẫn đắm cùng nhau
-
-541
-00:19:59,260 --> 00:20:01,260
-Hợp cập, xây dựng cùng nhau
-
-542
-00:20:01,260 --> 00:20:03,260
-Thì nó lại khác văn hóa gia đình
-
-543
-00:20:22,900 --> 00:20:25,900
-Cảm lại là, ban đầu thì bây giờ
-
-544
-00:20:25,900 --> 00:20:28,900
-Ransom ra xong là mình sẽ đi được 4 hộ đại
-
-545
-00:20:28,900 --> 00:20:31,900
-Nhưng mà cái tính của mình nó thật là sẽ thành 1 cái
-
-546
-00:20:31,900 --> 00:20:34,900
-Giống như là 1 cái nền tảng
-
-547
-00:20:34,900 --> 00:20:36,900
-Hay mình gọi là tình hại
-
-548
-00:20:36,900 --> 00:20:39,900
-Cái nối mà đem đến cái lợi cho người nông trên đây
-
-549
-00:20:39,900 --> 00:20:41,900
-Tối tương chính thực ra thì có là
-
-550
-00:20:41,900 --> 00:20:43,900
-Người vốn lương viên và
-
-551
-00:20:43,900 --> 00:20:45,900
-Hoặc là người business owner
-
-552
-00:20:45,900 --> 00:20:48,900
-Với cả cái người khách hàng cuối
-
-553
-00:20:48,900 --> 00:20:49,900
-Khách hàng đấy có thể là
-
-554
-00:20:49,900 --> 00:20:51,900
-Khách hàng cá nhân, một khách hàng gia đình
-
-555
-00:20:51,900 --> 00:20:53,900
-Một khách hàng nông nghiệp
-
-556
-00:20:53,900 --> 00:20:56,790
-Thì tối tương chính mình cần tạo lập tương trình
-
-557
-00:20:56,790 --> 00:20:58,790
-Còn người vốn lương viên cũng là
-
-558
-00:20:58,790 --> 00:21:00,790
-Người vốn lương viên thì cần phải quan tâm
-
-559
-00:21:00,790 --> 00:21:02,790
-Cái chất lượng của họ sẽ quyết định chất lượng của mình
-
-560
-00:21:02,790 --> 00:21:07,330
-Nhìn chung nha, sẽ có 2 cục đồng như thế này
-
-561
-00:21:07,330 --> 00:21:09,330
-Cái má định danh là N
-
-562
-00:21:09,330 --> 00:21:11,330
-Về nhà
-
-563
-00:21:11,330 --> 00:21:13,330
-Đấy là những người làm việc
-
-564
-00:21:13,330 --> 00:21:15,330
-Kinh doanh nè
-
-565
-00:21:15,330 --> 00:21:17,810
-Má định danh thứ 2 là Hát
-
-566
-00:21:17,810 --> 00:21:19,810
-Hát tức là Hôn
-
-567
-00:21:19,810 --> 00:21:22,810
-Thì có thể là người chồng, người vợ
-
-568
-00:21:22,810 --> 00:21:24,810
-Mang cái đấy về nhà
-
-569
-00:21:24,810 --> 00:21:26,810
-Sinh hoạt gia đình
-
-570
-00:21:26,810 --> 00:21:28,810
-Thì trên cái game là đua
-
-571
-00:21:28,810 --> 00:21:30,810
-Cái đó đua nhà là những người mà kinh doanh
-
-572
-00:21:30,810 --> 00:21:32,810
-Cũng có thể thích đua và một bên là Hôn
-
-573
-00:21:32,810 --> 00:21:34,810
+221
+00:14:22,620 --> 00:14:25,620
+để giúp người có tiền thì tất cả đều được thẳng dạng
+
+222
+00:14:25,620 --> 00:14:30,620
+thì cường ra có một cái mong muốn là giúp cho các chủ nguyên nghiệp
+
+223
+00:14:30,620 --> 00:14:35,260
+Chủ doanh nghiệp thay đổi nhận thức, sức khỏe, trở thành doanh nghiệp rồi có văn hóa
+
+224
+00:14:35,260 --> 00:14:38,220
+Doanh nghiệp mà đi The Iron Man, chứ không phải là doanh nghiệp bùm to
+
+225
+00:14:38,220 --> 00:14:42,940
+Đấy cũng là một trong những ý tượng, ối tượng khách hàng của chúng ta
+
+226
+00:14:42,940 --> 00:14:50,300
+Giống như Pipro Insight, những doanh nghiệp nào có năng lực, họ có tài chính, họ có phong gian
+
+227
+00:14:50,300 --> 00:14:57,020
+Thì chúng ta có thể mở một cái Pipro Insight trong doanh nghiệp đấy
+
+228
+00:14:57,020 --> 00:15:02,020
+Họ có thể tài trợ về cơ sở và chất. Nhưng nhân viên thì họ uống dinh dưỡng bất cứ vụ cầu.
+
+229
+00:15:03,020 --> 00:15:06,020
+Chúng ta vẫn có thể bán gói được bình thường ở đấy. Ai có vụ cầu đến đâu?
+
+230
+00:15:06,020 --> 00:15:09,020
+Gói cơ bản, nhanh cao thì hỏi vụ cầu đến đâu dù bên đấy.
+
+231
+00:15:09,020 --> 00:15:13,020
+Vâng là cửa dụng bình tĩ lên đấy để tương dẫn cho doanh nghiệp.
+
+232
+00:15:13,020 --> 00:15:20,020
+Cũng như trong công ty em, tức là tương nhiên là mời bạn ý về là bạn ý là uống dinh dưỡng, nộp bộ của trong doanh nghiệp.
+
+233
+00:15:20,020 --> 00:15:25,020
+Nhưng mà về sau, mỗi doanh nghiệp thì nó không cần biết là phải cơ ứu một ông.
+
+234
+00:15:25,020 --> 00:15:30,020
+Mà cứ đến giờ đấy thì phim điện xuất hiện gần phải dễ tâm
+
+235
+00:15:30,020 --> 00:15:36,020
+Có thể là không cần biết ai đếm, chỉ cần biết vị trí đấy
+
+236
+00:15:36,020 --> 00:15:39,020
+Có thể là mình không thể đạo, không thể là người kia
+
+237
+00:15:42,020 --> 00:15:45,020
+Cái đấy mình tổ chức không khác gì một cái center cả
+
+238
+00:15:45,020 --> 00:15:48,020
+Cũng có một center như thế, cũng có 14 hương cốt
+
+239
+00:15:48,020 --> 00:15:51,020
+Mà mỗi ngày cần 2 hương cốt được đấy
+
+240
+00:15:51,020 --> 00:15:53,020
+Còn hương cốt đấy vẫn đi làm việc
+
+241
+00:15:53,020 --> 00:15:58,020
+Để nó lịch hóa cho vấn đề lịch của VT
+
+242
+00:15:58,020 --> 00:16:01,020
+VT hôm nay nó vắng như thế thì mình phải đảo
+
+243
+00:16:01,020 --> 00:16:03,020
+Sẵn sàng cho doanh nghiệp đấy trên app mình làm vốt luôn
+
+244
+00:16:03,020 --> 00:16:07,020
+Vỗt chọn VT hoặc là mình chọn VT lần mời VT nào
+
+245
+00:16:07,020 --> 00:16:10,020
+Làm sao mà anh không kiểm soát được VT hôm nay là bởi doanh nghiệp
+
+246
+00:16:10,020 --> 00:16:13,020
+Nó có 10 bài, 1 đào tạo 10 bài
+
+247
+00:16:13,020 --> 00:16:16,020
+Anh chỉ nói hà hôm nay là buổi đào tạo số 7
+
+248
+00:16:16,020 --> 00:16:20,020
+Vậy mất kể VT nào cũng biết là buổi về đào tạo số 7 là cái gì
+
+249
+00:16:20,020 --> 00:16:25,020
+Vì nó sẽ đào nhau, bởi vì hôm nay em là BD, em hứa dẫn, em hứa bận lắt đào, đúng không?
+
+250
+00:16:25,020 --> 00:16:30,020
+Vì anh kể nói, anh Linh hôm nay là buổi đào tạo số 7 cho công ty Vintech nhé.
+
+251
+00:16:30,020 --> 00:16:32,020
+Vậy là biết là nội dung là những cái gì rồi.
+
+252
+00:16:32,020 --> 00:16:34,020
+Vậy nói thì nó đào nhau.
+
+253
+00:16:34,020 --> 00:16:37,020
+Cảm lực này nó hay lắm, tập trên thẳng là gọi là 2m2 đấy á.
+
+254
+00:16:37,020 --> 00:16:42,020
+Thì nó có ví dụ như thứ 2 là sanh trên, thứ 3 là sanh dưới,
+
+255
+00:16:42,020 --> 00:16:47,020
+thứ 4 là giãn tơ, thứ 5 là độ mông, thứ 6 là độ đào hay gì hết.
+
+256
+00:16:47,020 --> 00:16:51,020
+Có bài 7 ngày, có bài 5 ngày 1 tuần nữa không?
+
+257
+00:16:51,020 --> 00:16:54,020
+5-6 ngày 1 tuần như thế, chủ nhật là nghỉ.
+
+258
+00:16:54,020 --> 00:16:58,020
+Có cái linh ghếp này, cái cốt dậy là ghếp, dậy là ghếp.
+
+259
+00:16:58,020 --> 00:17:00,020
+Và dậy đây là mặt băng.
+
+260
+00:17:00,020 --> 00:17:04,020
+Mặt băng mà có những cái chuyên nghiệp rồi, đến mặt băng là những cái dẫn thôi.
+
+261
+00:17:04,020 --> 00:17:06,020
+Nên là cốt làm ở đâu được ngày nào cũng được.
+
+262
+00:17:06,020 --> 00:17:08,020
+Cứ biết à, ngày hôm nay là luôn thân trên.
+
+263
+00:17:08,020 --> 00:17:12,020
+Nhưng mà mình như vậy là mình sẽ phải ra 1 cái tiêu chuẩn của cái bàn cốt ở đây.
+
+264
+00:17:12,020 --> 00:17:14,020
+Có, tiêu chuẩn.
+
+265
+00:17:14,020 --> 00:17:18,020
+Một là như thế, hai là về sau, có thể liên kết nhé
+
+266
+00:17:18,020 --> 00:17:22,020
+Về thiết về trường, một trong những anh thắng thì là quen nhiều trường nề
+
+267
+00:17:22,020 --> 00:17:23,020
+Ừ
+
+268
+00:17:23,020 --> 00:17:28,020
+Có thể liên kết để xây dựng mối khoa học đào tạo về post sau cái này
+
+269
+00:17:28,020 --> 00:17:30,020
+Cấp chính trị luôn
+
+270
+00:17:30,020 --> 00:17:31,020
+Đúng rồi
+
+271
+00:17:31,020 --> 00:17:33,020
+Chuyện đấy thì lại trông trong tay đúng không ạ?
+
+272
+00:17:33,020 --> 00:17:34,020
+Vâng
+
+273
+00:17:34,020 --> 00:17:36,020
+Đấy, đều hỏi lòng ạ
+
+274
+00:17:36,020 --> 00:17:38,020
+Ok được
+
+275
+00:17:38,020 --> 00:17:40,020
+Vậy là vẫn là những bạn PD đây
+
+276
+00:17:40,020 --> 00:17:45,020
+Nhưng mà khi các bạn đây qua lý thái thì chắc chắn chỉ các bạn đây phải gì
+
+277
+00:17:45,020 --> 00:17:46,020
+Vâng
+
+278
+00:17:46,020 --> 00:17:49,020
+Trong trường thì người trường nó có spa nó có tắc kèt mà
+
+279
+00:17:49,020 --> 00:17:50,020
+Tắc kèt mà
+
+280
+00:17:50,020 --> 00:17:51,020
+Đúng rồi
+
+281
+00:17:51,020 --> 00:17:52,020
+Cũng biết hoàn vô trường như thế này
+
+282
+00:17:52,020 --> 00:17:53,020
+Đúng rồi
+
+283
+00:17:59,020 --> 00:18:00,020
+Cảm ơn ạ
+
+284
+00:18:00,020 --> 00:18:01,020
+Cảm ơn ạ
+
+285
+00:18:02,020 --> 00:18:05,020
+Trước từ lần hôm nay có cái xe được mọi người coi
+
+286
+00:18:05,020 --> 00:18:06,020
+Cảm ơn ạ
+
+287
+00:18:06,020 --> 00:18:07,020
+Cảm ơn ạ
+
+288
+00:18:07,020 --> 00:18:08,020
+Cảm ơn ạ
+
+289
+00:18:08,020 --> 00:18:11,020
+Vì các hàng công ty khác gặp trong tình duyên này
+
+290
+00:18:11,020 --> 00:18:12,020
+Đúng rồi
+
+291
+00:18:12,020 --> 00:18:17,020
+Rồi, kết kế một cái lộn trình cho công ty để hằng ngày tập hằng tháng
+
+292
+00:18:17,020 --> 00:18:19,020
+Thì có khi tổ chức một cái chương trình chạy với nhau
+
+293
+00:18:19,020 --> 00:18:20,020
+Đúng rồi
+
+294
+00:18:20,020 --> 00:18:22,020
+Bân chạy lần
+
+295
+00:18:22,020 --> 00:18:24,020
+Hàng chạy long run nếu có công ty nào
+
+296
+00:18:24,020 --> 00:18:26,020
+Tức là tùy những cái xuyên doanh nghiệp người ta thích
+
+297
+00:18:26,020 --> 00:18:28,020
+Bân đồng nhiều thì sẽ đưa
+
+298
+00:18:28,020 --> 00:18:29,020
+Đúng rồi
+
+299
+00:18:29,020 --> 00:18:31,020
+Hướng tới cái chạy Marathon này
+
+300
+00:18:31,020 --> 00:18:33,020
+Thì em gặp gặp truyền cao nhất là
+
+301
+00:18:33,020 --> 00:18:34,020
+Là vì là
+
+302
+00:18:34,020 --> 00:18:35,020
+Adamant
+
+303
+00:18:35,020 --> 00:18:36,020
+Adamant
+
+304
+00:18:36,020 --> 00:18:38,020
+Bạn có biết hả?
+
+305
+00:18:38,020 --> 00:18:40,020
+Bạn có biết hả?
+
+306
+00:18:40,020 --> 00:18:42,020
+Thì em nhớ cái gì ở trong một cộng kỳ của bên bán đôi xin vậy hả?
+
+307
+00:18:42,020 --> 00:18:44,020
+Bán đôi xin, một bên bán đôi xin
+
+308
+00:18:44,020 --> 00:18:46,020
+Cộng kỳ chưa nhìn thấy cái sự kiện
+
+309
+00:18:46,020 --> 00:18:48,020
+Mà nhìn thấy cái sự kiện của chúng ta đã được thành
+
+310
+00:18:48,020 --> 00:18:50,020
+Vì đấy cho phương viên
+
+311
+00:18:50,020 --> 00:18:52,020
+Vì vậy bộ phẩm của vài đứa kia là mình làm chung một dài
+
+312
+00:18:52,020 --> 00:18:54,020
+Đúng rồi, tổ chức một sân dài
+
+313
+00:18:54,020 --> 00:18:56,020
+Một áo đo
+
+314
+00:18:56,020 --> 00:18:58,020
+Một áo đo, đấy
+
+315
+00:18:58,020 --> 00:19:00,020
+Bọn em lại chuyên tổ chức dài đấy
+
+316
+00:19:00,020 --> 00:19:02,020
+Ví dụ như bọn em làm vật vẩm, tổ chức dài
+
+317
+00:19:02,020 --> 00:19:04,020
+Bọn em đang làm một cái dài với trái trứng xanh
+
+318
+00:19:04,020 --> 00:19:09,020
+Cuối tuần chạy
+
+319
+00:19:09,020 --> 00:19:16,020
+Cuối tuần này thì mời luôn là bí thư thứ nhất chung và hành quân chạy cùng
+
+320
+00:19:16,020 --> 00:19:24,020
+Có 3 đồng chí, 1 là đồng chí bí thư, 1 là đồng chí phó bí thư, 1 là đồng chí trợ lý, chắc đi theo kẻ khách
+
+321
+00:19:24,020 --> 00:19:25,020
+Vậy có phải không?
+
+322
+00:19:25,020 --> 00:19:26,020
+Vậy có phải không?
+
+323
+00:19:26,020 --> 00:19:27,020
+Vậy có phải không?
+
+324
+00:19:27,020 --> 00:19:28,020
+Vậy có phải không?
+
+325
+00:19:28,020 --> 00:19:29,020
+Vậy có phải không?
+
+326
+00:19:29,020 --> 00:19:30,020
+Vậy có phải không?
+
+327
+00:19:30,020 --> 00:19:31,020
+Vậy có phải không?
+
+328
+00:19:31,020 --> 00:19:32,020
+Vậy có phải không?
+
+329
+00:19:32,020 --> 00:19:33,020
+Vậy có phải không?
+
+330
+00:19:33,020 --> 00:19:34,020
+Vậy có phải không?
+
+331
+00:19:34,020 --> 00:19:35,020
+Vậy có phải không?
+
+332
+00:19:35,020 --> 00:19:36,020
+Vậy có phải không?
+
+333
+00:19:36,020 --> 00:19:37,020
+Vậy có phải không?
+
+334
+00:19:37,020 --> 00:19:38,020
+Vậy có phải không?
+
+335
+00:19:38,020 --> 00:19:39,020
+Vậy có phải không?
+
+336
+00:19:39,020 --> 00:19:40,020
+Vậy có phải không?
+
+337
+00:19:40,020 --> 00:19:41,020
+Vậy có phải không?
+
+338
+00:19:41,020 --> 00:19:42,020
+Vậy có phải không?
+
+339
+00:19:42,020 --> 00:19:43,020
+Vậy có phải không?
+
+340
+00:19:43,020 --> 00:19:44,020
+Vậy có phải không?
+
+341
+00:19:44,020 --> 00:19:45,020
+Vậy có phải không?
+
+342
+00:19:45,020 --> 00:19:46,020
+Vậy có phải không?
+
+343
+00:19:46,020 --> 00:19:47,020
+Vậy có phải không?
+
+344
+00:19:47,020 --> 00:19:48,020
+Vậy có phải không?
+
+345
+00:19:48,020 --> 00:19:49,020
+Vậy có phải không?
+
+346
+00:19:49,020 --> 00:19:50,020
+Vậy có phải không?
+
+347
+00:19:50,020 --> 00:19:51,020
+Vậy có phải không?
+
+348
+00:19:51,020 --> 00:19:52,020
+Vậy có phải không?
+
+349
+00:19:54,020 --> 00:19:57,020
+Chưa ngăn cơm với gia đình của người nồng
+
+350
+00:19:58,020 --> 00:20:01,020
+Với bất đập cùng nhau, hợp tập sẽ luôn cùng nhau
+
+351
+00:20:01,020 --> 00:20:03,020
+Nó là hành phạm hòa gia đình
+
+352
+00:20:03,020 --> 00:20:33,020
+Cảm ơn các bạn đã theo dõi, hãy đăng ký kênh để ủng hộ kênh và đăng ký kênh để ủng hộ kênh và đăng ký kênh để ủng hộ kênh và đăng ký kênh để ủng hộ kênh và đăng ký kênh để ủng hộ kênh và đăng ký kênh để ủng hộ kênh và đăng ký kênh để ủng hộ kênh và đăng ký kênh để ủng hộ kênh và đăng ký kênh để ủng hộ kênh và đăng ký kênh để ủng hộ kênh và đăng ký kênh để ủng hộ kênh và đăng ký kênh để ủng hộ kênh và đăng ký
+
+353
+00:20:33,020 --> 00:20:37,020
+giống như là một nền tạng, hay gọi là tình hại trên đồi
+
+354
+00:20:37,020 --> 00:20:41,020
+mà đem đến cái lợi ích cho người mình trên đời.
+
+355
+00:20:41,020 --> 00:20:44,020
+Đối tượng chính thường ra thì có là người vũ luyện viên
+
+356
+00:20:44,020 --> 00:20:47,020
+hoặc là người business owner
+
+357
+00:20:47,020 --> 00:20:49,020
+với cả người khách hàng vũ luyện viên.
+
+358
+00:20:49,020 --> 00:20:51,020
+Khách hàng đấy có thể là khách hàng cá nhân,
+
+359
+00:20:51,020 --> 00:20:55,020
+một khách hàng gia đình, một khách hàng vương viện.
+
+360
+00:20:55,020 --> 00:20:58,020
+Đối tượng chính thì mình cần tạo lập với khách hàng vũ luyện viên.
+
+361
+00:20:58,020 --> 00:21:01,020
+Còn người vũ luyện viên cũng là người mình thực sự cần được quan tâm.
+
+362
+00:21:01,020 --> 00:21:03,020
+chất lượng của họ sẽ quyết định chất lượng của mình.
+
+363
+00:21:05,020 --> 00:21:07,020
+Mình hình dung nhé, sẽ có hai cộng đồng như này.
+
+364
+00:21:08,020 --> 00:21:10,020
+Má đình danh là N, là nhà.
+
+365
+00:21:11,020 --> 00:21:14,020
+Đấy là những người làm việc, kinh doanh.
+
+366
+00:21:15,020 --> 00:21:17,020
+Má đình danh kế hai là hát.
+
+367
+00:21:18,020 --> 00:21:20,020
+Hát tức là hôn, tức là hôn.
+
+368
+00:21:21,020 --> 00:21:24,020
+Có thể là người chồng, người vợ, mang cái đấy về nhà.
+
+369
+00:21:25,020 --> 00:21:26,020
+Sinh hoạt gia đình.
+
+370
+00:21:27,020 --> 00:21:28,020
+Trên cái game là đua.
+
+371
+00:21:28,020 --> 00:21:33,020
+Một cái đó đua nhà là những người mà kinh doanh này cũng có thể tính đua và một bên là hôn
+
+372
+00:21:33,020 --> 00:21:34,020
 Các gia đình đua với nhau
 
+373
+00:21:34,020 --> 00:21:36,020
+Và cái đích đếm cuối cùng của mình là các hôn
+
+374
+00:21:36,020 --> 00:21:38,020
+10 ngàn là 10 ngàn hôn
+
+375
+00:21:38,020 --> 00:21:42,020
+Đấy, gia đình đi tạo được 10 ngàn hôn đến 500
+
+376
+00:21:42,020 --> 00:21:47,020
+500 cái center, đến 500 nhà
+
+377
+00:21:54,020 --> 00:21:56,020
+Em em xóm cái nhà đi
+
+378
+00:21:58,020 --> 00:22:03,020
+Hôm nay là nhà, hôm nay là khách
+
+379
+00:22:03,020 --> 00:22:06,020
+Hôm nay là nhà, hôm nay là khách
+
+380
+00:22:12,020 --> 00:22:15,020
+Chắc phải đổi đi cho nó đỡ chậm lầm
+
+381
+00:22:15,020 --> 00:22:30,020
+Một cái nhà là cái này, cái công thức mà A, B, N đó, gấp số nhân đó, A là khóa nhân đó, N đó, thì cái ý ước của cái kia kìa.
+
+382
+00:22:30,020 --> 00:22:40,020
+Một cái nhà là cái này, cái công thức mà A, B, N đó, gấp số nhân đó, A là khóa nhân đó, N đó, thì cái ý ước của cái kia.
+
+383
+00:22:40,020 --> 00:22:50,020
+Các bạn hãy đăng ký kênh để ủng hộ kênh nhé!
+
+384
+00:23:10,020 --> 00:23:20,020
+Cảm ơn các bạn đã theo dõi, hãy đăng ký kênh để ủng hộ kênh và đăng ký kênh để ủng hộ kênh nhé!
+
+385
+00:23:40,020 --> 00:23:45,020
+giống như nhà thì nó có hay hay là nó mang tính chức của gia đình
+
+386
+00:23:45,020 --> 00:23:49,020
+giống như bảy người thành thành 1 cái nhà rồi đó là giống như người trong gia đình
+
+387
+00:23:49,020 --> 00:23:52,020
+thì mình có xác nghiệm, mình giúp cho con cháu một cái sự thành
+
+388
+00:23:54,020 --> 00:23:56,020
+ý nghĩa là nó hay không?
+
+389
+00:23:56,020 --> 00:24:26,020
+Nhưng mọi người đã có vấn đề cho sức khỏe, mỗi người đã có vấn đề cho sức khỏe, mỗi người đã có vấn đề cho sức khỏe, mỗi người đã có vấn đề cho sức khỏe, mỗi người đã có vấn đề cho sức khỏe, mỗi người đã có vấn đề cho sức khỏe, mỗi người đã có vấn đề cho sức khỏe, mỗi người đã có vấn đề cho sức khỏe, mỗi người đã có vấn đề cho sức khỏe, mỗi người đã có vấn đề cho sức khỏe, mỗi người đã có vấn đề cho sức khỏe, mỗi người đã có vấn đề cho sức khỏe, mỗi người đã có vấn đề cho sức khỏe, mỗi người đã có vấn đề cho sức kh
+
+390
+00:24:26,020 --> 00:24:30,800
+Với nhà cứ đem hai người vương dựa nhau, hai người vương dựa nhau, hai người vương dựa nhau
+
+391
+00:24:30,800 --> 00:24:33,800
+Cũng hiểu nhau, nhìn xa xa
+
+392
+00:24:33,800 --> 00:24:36,800
+Giống như trong vùng đồng huyết nhá, anh thấy hay thíu á
+
+393
+00:24:36,800 --> 00:24:40,800
+Khi mọi người mà cùng sinh hoạt trong vùng đồng á, thân phục á
+
+394
+00:24:40,800 --> 00:24:42,800
+Thậm chí biết các nhà khác
+
+395
+00:24:42,800 --> 00:24:46,400
+Nhà anh với nhà Linh này xưa là hai đối đủ, chơi uống
+
+396
+00:24:46,400 --> 00:24:48,400
+Biết hết, nhà này biết nhà kia
+
+397
+00:24:48,400 --> 00:24:52,400
+Thôi, xong vân hóa đi gặp trong vùng đồng hỏi nhà nào, nhà nào
+
+398
+00:24:52,400 --> 00:25:02,400
+Cảm ơn các bạn đã theo dõi, hãy đăng ký kênh để ủng hộ kênh nhé!
+
+399
+00:25:22,400 --> 00:25:25,400
+thì là rất dễ là kiểu
+
+400
+00:25:25,400 --> 00:25:27,400
+cạnh tranh
+
+401
+00:25:27,400 --> 00:25:28,400
+cũng không phải cạnh tranh đâu
+
+402
+00:25:28,400 --> 00:25:30,400
+mà cái tiêu cực ở đây là gì
+
+403
+00:25:30,400 --> 00:25:32,400
+nói xấu nhau này
+
+404
+00:25:32,400 --> 00:25:33,400
+nói xấu tiếng trên này
+
+405
+00:25:33,400 --> 00:25:35,400
+nói xấu tiếng dưới này
+
+406
+00:25:35,400 --> 00:25:37,400
+nhưng mà đây là cùng trong 1 gia đình
+
+407
+00:25:37,400 --> 00:25:39,400
+trong 1 dây như thế
+
+408
+00:25:39,400 --> 00:25:41,400
+thì chúng ta cùng nhau
+
+409
+00:25:41,400 --> 00:25:43,400
+cực kì dễ bao nhiêu người nhau
+
+410
+00:25:43,400 --> 00:25:45,400
+trong khi nó trở thành thống như thế này
+
+411
+00:25:45,400 --> 00:25:47,400
+mình cũng học được nhiều bài học
+
+412
+00:25:47,400 --> 00:25:49,400
+thế tại sao khi mình mở mát số
+
+413
+00:25:49,400 --> 00:25:51,400
+mình cứ gắn liền với nhau như thế
+
+414
+00:25:51,400 --> 00:25:52,800
+và đi cùng nhau thì nó...
+
+415
+00:25:52,800 --> 00:25:53,400
+Thế thì...
+
+416
+00:25:53,400 --> 00:25:54,160
+chắc lần...
+
+417
+00:25:54,160 --> 00:25:55,200
+ban đầu thì cũng...
+
+418
+00:25:55,200 --> 00:25:57,200
+anh cũng nên quy hoạch luôn một cái...
+
+419
+00:25:57,200 --> 00:25:59,160
+hay lấy luôn cái phòng bán của cái tình tình...
+
+420
+00:25:59,160 --> 00:26:00,160
+đào tạo...
+
+421
+00:26:00,160 --> 00:26:02,400
+lộ tình đào tạo và ổn luyện
+
+422
+00:26:02,400 --> 00:26:03,960
+rồi chạy ổn luyện như thế nào đấy
+
+423
+00:26:03,960 --> 00:26:05,640
+để đích lại để đồng bộ...
+
+424
+00:26:05,640 --> 00:26:08,160
+đồng bộ biến tích của pha của bộ thế giống luôn
+
+425
+00:26:09,640 --> 00:26:11,800
+Thì bây giờ auto cái việc mà cài...
+
+426
+00:26:11,800 --> 00:26:13,240
+phân bệnh này...
+
+427
+00:26:13,240 --> 00:26:15,000
+nó tự động nó làm cái gì đấy luôn
+
+428
+00:26:15,000 --> 00:26:17,240
+anh nói giả sử nhé
+
+429
+00:26:17,240 --> 00:26:18,200
+giả sử mà...
+
+430
+00:26:18,200 --> 00:26:19,800
+bố anh em 1 giây đi
+
+431
+00:26:19,800 --> 00:26:21,800
+Điểm dũng dạ hạ
+
+432
+00:26:22,500 --> 00:26:23,620
+Có tiếp
+
+433
+00:26:23,620 --> 00:26:24,620
+Thế xong là có tiếp nữa
+
+434
+00:26:24,620 --> 00:26:27,620
+Điểm đủ 7 người thì nó tự động nó tạo ra 1 nhà đúng không?
+
+435
+00:26:27,620 --> 00:26:30,820
+Nhưng mà chẳng hạn 4 anh em đến em, em chưa có bên dưới
+
+436
+00:26:30,820 --> 00:26:31,920
+Nhưng mà chỗ anh Thán
+
+437
+00:26:31,920 --> 00:26:34,120
+Anh Thán nó đi xuống đến được có 7 giây
+
+438
+00:26:34,120 --> 00:26:37,620
+Thì tự nhiên nó tự động, nó chia ra thành 1 nhà
+
+439
+00:26:38,720 --> 00:26:41,720
+Một người chỉ thuộc khuôn số của 1 nhà thôi
+
+440
+00:26:42,220 --> 00:26:44,120
+Thì kể cả em vẫn thích anh thầy rất hay
+
+441
+00:26:44,120 --> 00:26:46,120
+Đấy là
+
+442
+00:26:46,120 --> 00:26:49,120
+Giống như mà không có kênh danh về chính trị ấy
+
+443
+00:26:49,120 --> 00:26:51,120
+Nó từ đông hoái rồi
+
+444
+00:26:51,120 --> 00:26:54,120
+Thì cái nhà nó xong trước, cái nhà nó nghĩ đến chuyện làm center trước
+
+445
+00:26:56,120 --> 00:26:59,120
+Rồi là xong mảnh chất này, đi phai tối trước
+
+446
+00:26:59,120 --> 00:27:01,120
+Thì là anh vui hoạch luôn
+
+447
+00:27:01,120 --> 00:27:03,120
+Cái tình nhất là tập tinh danh cho họ
+
+448
+00:27:03,120 --> 00:27:05,120
+Thế hai là lộ dình của họ
+
+449
+00:27:05,120 --> 00:27:07,120
+Chỉ để họ có mục tiêu quốc tế
+
+450
+00:27:07,120 --> 00:27:09,120
+Lúc bao phát là có hình luôn
+
+451
+00:27:09,120 --> 00:27:11,120
+Điều video là cái điều kiện để thành ra một center là
+
+452
+00:27:11,120 --> 00:27:13,120
+1, 2, 3, 4, 5
+
+453
+00:27:13,120 --> 00:27:15,120
+Thì hệ thống công nghệ là xong xếp trước
+
+454
+00:27:15,120 --> 00:27:17,120
+Chỉ mà thủ 7 người, cái tự nhiên là nhà
+
+455
+00:27:17,120 --> 00:27:25,120
+Vui vào nhà, phát tiện đưa vào luật lộn trình là làm thế nào để tự vấn đề xung quanh?
+
+456
+00:27:27,120 --> 00:27:35,120
+Em nghĩ là xong cái đấy, xong các cái chuẩn bị đấy, mình sẽ làm một cái dạng UAT thực tế
+
+457
+00:27:35,120 --> 00:27:38,120
+Dù anh có mission term ở đấy đúng không?
+
+458
+00:27:38,120 --> 00:27:41,120
+Vài nhà mà đến, dù anh rút dạng hạng đúng không?
+
+459
+00:27:41,120 --> 00:27:43,120
+Chẳng nhận nhiệt như thế
+
+460
+00:27:43,120 --> 00:27:47,720
+sau đó mình sẽ ghi nhận lại những bước đầu tiên đến, thì đường sẽ là như thế nào
+
+461
+00:27:47,720 --> 00:27:53,120
+họ sẽ phải làm những gì khách, sẽ phải làm những gì bt nhà mình sẽ làm những gì
+
+462
+00:27:53,120 --> 00:27:59,120
+đúng không, ghi lại như thế, sau đấy em sẽ tâm tích là những cái chỗ đấy là điểm trạng công nghệ hay điểm trạng vật lý
+
+463
+00:27:59,120 --> 00:28:04,120
+điểm trạng vật lý thì mọi người cứ thế theo quy trình offside đấy để chạy
+
+464
+00:28:04,120 --> 00:28:09,120
+còn điểm trạng online thì em sẽ ghi nhận lại để em hoàn thiện về bắc công nghệ mà
+
+465
+00:28:09,120 --> 00:28:11,120
+là xem chỗ nào thì khách sẽ dùng cái gì
+
+466
+00:28:11,120 --> 00:28:13,120
+sau đấy thì mình sẽ làm một hành trình
+
+467
+00:28:13,120 --> 00:28:15,120
+bản xuất là end to end, bình phải là người end to end
+
+468
+00:28:15,120 --> 00:28:17,120
+xong cái cuối trình đấy trước
+
+469
+00:28:17,120 --> 00:28:19,120
+rồi rồi xong cái nhất, khách hàng thật là
+
+470
+00:28:19,120 --> 00:28:21,120
+end to end chứ
+
+471
+00:28:21,120 --> 00:28:23,120
+nếu không thì
+
+472
+00:28:23,120 --> 00:28:25,120
+cứ ngồi nghĩ end to end
+
+473
+00:28:25,120 --> 00:28:27,120
+đến đoạn này nó bị mất
+
+474
+00:28:27,120 --> 00:28:29,120
+một cái bước ra đi, cả thì nó
+
+475
+00:28:29,120 --> 00:28:31,120
+không bao giờ là hiệu quả
+
+476
+00:28:31,120 --> 00:28:33,120
+dạ, anh gặp hiệu như thế
+
+477
+00:28:33,120 --> 00:28:35,120
+sau đó cũng anh sẽ lên cả
+
+478
+00:28:35,120 --> 00:28:37,120
+phương án về truyền thông miệng
+
+479
+00:28:37,120 --> 00:28:40,120
+Cái này của anh rất mạnh về truyền thông biển, không lý thích về truyền thông
+
+480
+00:28:40,120 --> 00:28:44,120
+Vấn khí là gì cả, nhưng mình sẽ có một cái bài lên các cái bài truyền thông
+
+481
+00:28:44,120 --> 00:28:49,120
+Để sẽ xa đổ với họ những cái gì, để họ nhận chức cái gì, để họ nói lại những cái khác cái gì
+
+482
+00:28:49,120 --> 00:28:53,120
+Vậy là mình sẽ xây dựa trước, về sau kết gọi phát bí thế chắc
+
+483
+00:28:53,120 --> 00:28:54,120
+Bài gọi phát
+
+484
+00:28:56,120 --> 00:28:58,120
+Còn 3 miệng này còn đang mạnh
+
+485
+00:29:07,120 --> 00:29:13,120
+Mình đã vừa kích thế rồi, mình vừa làm thành cái tự nhiên rất là tự nhiên rồi
+
+486
+00:29:13,120 --> 00:29:16,120
+Thế xong thì đã xong ở đấy rồi, rồi mình thành công bắt đầu rồi
+
+487
+00:29:18,120 --> 00:29:21,120
+Tự tin rồi, mệt cho nhân, mệt cho mảnh
+
+488
+00:29:22,120 --> 00:29:25,120
+Mình vừa thấy khác nó khó cái, mình vừa đi tìm đi trường luôn
+
+489
+00:29:25,120 --> 00:29:30,120
+Đấy đi thì mình vừa muốn khó mất công, mà mình vừa muốn sẵn, khó mét, mô típ
+
+490
+00:29:30,120 --> 00:29:32,120
+Mình vừa đi tù vết cả luôn
+
+491
+00:29:33,120 --> 00:29:35,120
+Cái này là mình chỉn khai thật được luôn hả?
+
+492
+00:29:35,120 --> 00:29:38,120
+Thì tỉ 7 người đấy tự ra là một cái nhóm truy tự yêu thú
+
+493
+00:29:38,120 --> 00:29:40,120
+Mastermind
+
+494
+00:29:40,120 --> 00:29:42,120
+Vì bốn anh em mình bây giờ có thêm 3 người nữa
+
+495
+00:29:42,120 --> 00:29:44,120
+Làm thêm giai bộ nhà đó
+
+496
+00:29:44,120 --> 00:29:46,120
+Giai bộ nhà xong thì mới đi chuyển ra center luôn
+
+497
+00:29:46,120 --> 00:29:48,120
+Thì anh xuân đây anh có 3 điểm
+
+498
+00:29:48,120 --> 00:29:50,120
+Thì 3 điểm đấy là môn truyền thống
+
+499
+00:29:50,120 --> 00:29:51,120
+Bây giờ bên dưới của anh thì có
+
+500
+00:29:51,120 --> 00:29:52,120
+Trong hệ thống của anh có
+
+501
+00:29:52,120 --> 00:29:54,120
+Nó đang làm những cái truyền thống
+
+502
+00:29:54,120 --> 00:29:56,120
+Là một cái truyền dưới này
+
+503
+00:29:56,120 --> 00:29:58,120
+Và có nơi thì chỉ có trong không này
+
+504
+00:29:58,120 --> 00:30:01,120
+Nhưng mà cái pitpro này nó vô cả truyền dưới mà cả vòng
+
+505
+00:30:01,120 --> 00:30:04,120
+Thì một cái center lập lên thì có 2 khu
+
+506
+00:30:04,120 --> 00:30:07,120
+Một khu là về vận động, một khu là về dinh sướng
+
+507
+00:30:07,120 --> 00:30:09,120
+Một khu phục vụ được cả hai đối tượng luôn
+
+508
+00:30:09,120 --> 00:30:11,120
+Đối tượng không vận động đến cũng ok
+
+509
+00:30:11,120 --> 00:30:15,120
+Đối tượng vận động đến thì cũng được hưởng cả 2 cái nữa
+
+510
+00:30:17,120 --> 00:30:20,120
+Thậm chí nha, bây giờ nếu mà mình có mối quan hệ nào mà
+
+511
+00:30:20,120 --> 00:30:22,120
+Đối với cái idea này mà
+
+512
+00:30:22,120 --> 00:30:24,120
+Mình làm tới InSight ấy
+
+513
+00:30:24,120 --> 00:30:26,120
+Đối chủ cơ nghiệm ấy
+
+514
+00:30:26,120 --> 00:30:28,120
+Mình có thể chin bay, vô tác
+
+515
+00:30:28,120 --> 00:30:31,120
+Mình xác 1 cái ở trong tên nghiệm bức uống
+
+516
+00:30:31,120 --> 00:30:36,120
+Mình sẽ lấy cái để em kết nối, rồi anh nghe lần qua anh kết nối
+
+517
+00:30:36,120 --> 00:30:39,120
+Ok, lần qua mình chia sẻ thôi
+
+518
+00:30:41,120 --> 00:30:45,120
+Nhưng mà em nghĩ là cũng nên đi vào cái hành động cụ thể
+
+519
+00:30:45,120 --> 00:30:50,120
+Mình ra cửa đi cụ thể, xong rồi mình chiến thai luôn, thấy nó đó rồi
+
+520
+00:30:50,120 --> 00:30:52,120
+Đúng rồi, cụ thể bây giờ nha, là cái bắc lý
+
+521
+00:30:52,120 --> 00:30:56,120
+Bắc lý là, ví dụ cái ba số, các loại này, loại này mình mở luôn
+
+522
+00:30:58,120 --> 00:31:00,120
+Mình mở luôn, thành một dây luôn
+
+523
+00:31:01,120 --> 00:31:04,120
+thì anh đến với Linh là thông qua Cường
+
+524
+00:31:04,120 --> 00:31:06,120
+Cường có hóa số đi lâu rồi
+
+525
+00:31:06,120 --> 00:31:09,120
+thì Cường có thể tham gia vào đây hoặc không tham gia thì chưa biết
+
+526
+00:31:09,120 --> 00:31:10,120
+không tham gia thì tốt
+
+527
+00:31:10,120 --> 00:31:11,120
+không tham gia không sao cả
+
+528
+00:31:11,120 --> 00:31:13,120
+mình phải xây dựng một cái...
+
+529
+00:31:13,120 --> 00:31:17,120
+một cái cái mà để cho ai cũng thích
+
+530
+00:31:17,120 --> 00:31:20,120
+muốn được tham gia cũng trở thành một phần
+
+531
+00:31:20,120 --> 00:31:22,120
+thế cứ đủ bảy kìa
+
+532
+00:31:22,120 --> 00:31:24,120
+anh em mình là tự yên hề thôi
+
+533
+00:31:24,120 --> 00:31:25,120
+có đôi tham gia một nhà
+
+534
+00:31:25,120 --> 00:31:27,120
+xong rồi ngồi lại mình xây dựng
+
+535
+00:31:27,120 --> 00:31:29,120
+bắt đầu từ mình nuốt
+
+536
+00:31:59,120 --> 00:32:05,120
+Cái mô hình nó đến được kiểm chứng nhiều năm rồi
+
+537
+00:32:05,120 --> 00:32:08,120
+Hôm nay nó đến 50 năm rồi, bởi vì bây giờ là 17 năm rồi
+
+538
+00:32:08,120 --> 00:32:10,120
+Nó đến được kiểm chứng và nó được phát
+
+539
+00:32:15,120 --> 00:32:16,120
+Còn 2 phần là gì?
+
+540
+00:32:16,120 --> 00:32:18,120
+Còn 2 phần là gì?
+
+541
+00:32:18,120 --> 00:32:19,120
+Còn 2 phần là gì?
+
+542
+00:32:19,120 --> 00:32:20,120
+Còn 2 phần là gì?
+
+543
+00:32:20,120 --> 00:32:21,120
+Còn 2 phần là gì?
+
+544
+00:32:21,120 --> 00:32:31,120
+Cảm ơn mọi người đã theo dõi, hãy đăng ký kênh để ủng hộ kênh nhé
+
+545
+00:32:51,120 --> 00:32:54,800
+Vì mỗi người thư mà QC ủng hộ cho mọi người một lần thì không cần
+
+546
+00:32:54,800 --> 00:32:57,320
+Nhưng mà nếu bây giờ anh em mình tập hợp như thế này á
+
+547
+00:32:57,320 --> 00:32:59,480
+và mình xác định cái tài sản của mình là cái gì
+
+548
+00:32:59,480 --> 00:33:02,080
+Tại tài sản của mình ở đây không phải là hóa cơ lai đâu
+
+549
+00:33:02,080 --> 00:33:03,920
+Mà cái tài sản thì cũng nguyên đấy
+
+550
+00:33:03,920 --> 00:33:06,480
+Đúng không? Sau này nó có thể lớn lên nó có thể thành cái gì không?
+
+551
+00:33:06,480 --> 00:33:08,240
+Thậm chí không cần kêu hóa cơ lai
+
+552
+00:33:08,240 --> 00:33:10,720
+Mình vẫn có thể
+
+553
+00:33:10,720 --> 00:33:11,360
+Vâng ạ
+
+554
+00:33:11,360 --> 00:33:12,680
+Đấy, mình xác định cái gì đấy
+
+555
+00:33:12,680 --> 00:33:14,160
+Hóa cơ lai nó không đối tác đâu
+
+556
+00:33:14,160 --> 00:33:16,760
+Có lần này là text hay là e-gip tất cả thì là đối tác
+
+557
+00:33:16,760 --> 00:33:19,000
+Cũng xích rồi đấy không?
+
+558
+00:33:19,000 --> 00:33:21,000
+Mình nhận lấy vinh chen của nó
+
+559
+00:33:21,000 --> 00:33:25,000
+Nhưng mà HubLine nó là cái công cụm để dọng tiền nó tự nhiên mà ra
+
+560
+00:33:25,000 --> 00:33:27,000
+Nó cũng tinh truyền rồi đấy
+
+561
+00:33:27,000 --> 00:33:30,000
+Trên ngày xưa cái điện thoại lúc, cái tiền đầu của anh cũng không ngon lắm
+
+562
+00:33:30,000 --> 00:33:32,000
+Cái anh gặp con hẹn ý
+
+563
+00:33:32,000 --> 00:33:34,000
+Sẽ hơi thiên về HubLine
+
+564
+00:33:34,000 --> 00:33:37,000
+Nó như thế đấy là cái chút phố, cái sửu trống để làm cái chút
+
+565
+00:33:37,000 --> 00:33:38,000
+Một cái khác ngắn ở đây
+
+566
+00:33:38,000 --> 00:33:41,000
+Còn rồi đang nhìn thấy cái đấy là cái đắng mà thôi
+
+567
+00:33:41,000 --> 00:33:42,000
+Tuy nhiêu cái khác
+
+568
+00:33:42,000 --> 00:33:43,000
+Tuy nhiêu, tuy nhiêu, tuy nhiêu
+
+569
+00:33:43,000 --> 00:33:53,000
+Cảm ơn các bạn đã theo dõi video này, hãy đăng ký kênh để ủng hộ kênh và đăng ký kênh để ủng hộ kênh.
+
+570
+00:34:13,000 --> 00:34:16,000
+Vì không thấy hấp lái đâu, chỉ biết là Kipro thôi
+
+571
+00:34:18,000 --> 00:34:21,000
+Tho được 7 ngày trải nghiệm, biết phí hoàn toàn
+
+572
+00:34:21,000 --> 00:34:24,000
+Đến đó mong chích thôi chung không thấy cái món khác
+
+573
+00:34:25,000 --> 00:34:28,000
+Cái này mình mua nó như kiểu công ty công nghệ, như kiểu graph
+
 574
-00:21:34,810 --> 00:21:36,810
-Và cái đích đến cuối cùng của mình là các Hôn
+00:34:28,000 --> 00:34:30,000
+Cái này không biết graph ở đâu đâu
 
 575
-00:21:36,810 --> 00:21:39,320
-10 ngàn là 10 ngàn Hôn
+00:34:30,000 --> 00:34:33,000
+Còn đây mình chỉ có cho xuất hiện mọi người mà xem là
 
 576
-00:21:39,320 --> 00:21:41,320
-Để tạo được 10 ngàn Hôn là 500
+00:34:33,000 --> 00:34:36,000
+Còn người đi thăm nơi thôi chung là mình đong cái kết công nghệ
 
 577
-00:21:41,320 --> 00:21:43,510
-500 cái
+00:34:36,000 --> 00:34:40,000
+Nó chạy gắn xuất hiện ở Việt Nam, vẫn chạy về Bâm
 
 578
-00:21:43,510 --> 00:21:45,990
-Setter
+00:34:40,000 --> 00:34:44,000
+Cái công nghệ nó ẩn ở phía sau
 
 579
-00:21:45,990 --> 00:21:47,990
-500 ngàn
+00:34:44,000 --> 00:34:48,000
+Mọi người cứ thích ngại K-PRO đúng không?
 
 580
-00:21:53,820 --> 00:21:55,820
-Em đem gió cái nhà đi
+00:34:48,000 --> 00:34:51,000
+K-PRO đúng rồi
 
 581
-00:21:55,820 --> 00:21:57,820
-Em đem gió cái nhà đi
+00:34:51,000 --> 00:34:56,000
+Tức là mình sẽ xác định là K-PRO của mình là một thế giới xác định của công nghệ
 
 582
-00:21:57,820 --> 00:21:59,820
-Ôi cái nhà, em đem gió cái nhà đi
+00:34:56,000 --> 00:35:00,000
+Và định của K-PRO thứ 2 là cái tương hiệu của K-PRO
 
 583
-00:21:59,820 --> 00:22:01,820
-Ờ đúng rồi
+00:35:00,000 --> 00:35:04,000
+Còn về đằng kỳ sau đó thì mình cứ coi như là
 
 584
-00:22:01,820 --> 00:22:03,820
-Nhà hôn là Hôn
+00:35:04,000 --> 00:35:07,000
+Apple Line nó là một trong những thôi
 
 585
-00:22:03,820 --> 00:22:05,820
-Hôn là nhà, danh đường Hát
+00:35:07,000 --> 00:35:12,000
+Đầu tiên là mình bay cho nó về sau, có thể là một tháng khác chứ ạ
 
 586
-00:22:12,140 --> 00:22:14,140
-Mình chắc là dội đi cho nên đỡ
+00:35:17,000 --> 00:35:23,000
+Sau này mình mới phở rộng được ra là mình mang lại thêm cái gì gì cho mấy ngàn
 
 587
-00:22:14,140 --> 00:22:16,900
-Chồng lật, chồng lật
+00:35:23,000 --> 00:35:30,000
+hoặc là sau này mình cũng không biết là cái su vế của mấy ngàn sức khỏe nó đi đến đâu
 
 588
-00:22:16,900 --> 00:22:22,780
-Cái đó là
+00:35:30,000 --> 00:35:34,000
+sau này có thêm giảm khắc mới, giúp cho mọi người tốt hơn
 
 589
-00:22:22,780 --> 00:22:24,780
-Cái đó là C
+00:35:34,000 --> 00:35:38,000
+thì không có vấn đề về tìm vào một cái đối tác tốc độ không?
 
 590
-00:22:24,780 --> 00:22:27,540
-Cái đó là Hôn
+00:35:38,000 --> 00:35:40,000
+Vâng.
 
 591
-00:22:27,540 --> 00:22:29,540
-Thế mà mình dùng tiếng Việt là mình dùng tiếng Việt mà dùng tiếng Anh là tiếng Anh
+00:35:40,000 --> 00:35:42,000
+Vâng.
 
 592
-00:22:29,540 --> 00:22:31,700
-Chắc chắn
+00:35:42,000 --> 00:35:44,000
+Vâng.
 
 593
-00:22:31,700 --> 00:22:33,700
-Chỉ một cái nhà là cái này
+00:35:44,000 --> 00:35:46,000
+Vâng.
 
 594
-00:22:33,700 --> 00:22:35,700
-CBrad incom bố Seh
+00:35:46,000 --> 00:35:48,000
+Vâng.
 
 595
-00:22:40,740 --> 00:22:43,810
-Anh nhảy cái n n Hammer
+00:35:48,000 --> 00:35:50,000
+Vâng.
 
 596
-00:22:43,810 --> 00:23:15,040
-hay v Мих delighted
+00:35:50,000 --> 00:35:52,000
+Vâng.
 
 597
-00:23:15,040 --> 00:23:22,810
-Vì d simulate
+00:35:52,000 --> 00:35:54,000
+Vâng.
 
 598
-00:23:22,810 --> 00:23:24,890
-Em trời
+00:35:54,000 --> 00:35:56,000
+Vâng.
 
 599
-00:23:24,890 --> 00:23:26,890
-Nhưng mà lúc nãy thì tôi vui.
+00:35:56,000 --> 00:35:58,000
+Vâng.
 
 600
-00:23:26,890 --> 00:23:30,840
-Cảm ơn.
+00:35:58,000 --> 00:36:00,000
+Vâng.
 
 601
-00:23:30,840 --> 00:23:33,840
-Tôi hỏi nhà con, bây giờ đây nó em bà, tôi hỏi nhà con.
+00:36:00,000 --> 00:36:02,000
+Vâng.
 
 602
-00:23:33,840 --> 00:23:39,840
-Thì cái nhà nó hay như thế này, mình đang ước đến cái đích tế cuối cùng là gia tộc trường tội.
+00:36:02,000 --> 00:36:05,000
+Rất nhiều về đấy như thế nào rồi
 
 603
-00:23:39,840 --> 00:23:45,990
-Như cái nhà này nó có hay hay là nó mát tính nhất kiểu gia đình.
+00:36:05,000 --> 00:36:09,000
+Chỉ phải chia vai, tức là trong một công ty phải chia vai ra
 
 604
-00:23:45,990 --> 00:23:48,990
-Giống như 7 người thành 1 cái nhà này, giống như người trong gia đình.
+00:36:09,000 --> 00:36:11,000
+Tiên về vận hành, tiên về kết nối này
 
 605
-00:23:48,990 --> 00:23:53,150
-Thì mình có trách nhiệm giúp cho con cháu, mình cũng giựng thành.
+00:36:11,000 --> 00:36:14,000
+Kéo tất cả các năng quốc tham gia
 
 606
-00:23:53,150 --> 00:23:56,940
-Ý ghét là nó hay lắm.
+00:36:14,000 --> 00:36:16,000
+Trong nghệ xinh thái này chẳng hạn
 
 607
-00:24:28,260 --> 00:24:38,260
-Cảm ơn các quý vị đã theo dõi, hãy đăng ký kênh để ủng hộ kênh nhé!
+00:36:16,000 --> 00:36:19,000
+Còn em chuyên về một công nghệ chia vai
 
 608
-00:24:58,640 --> 00:25:09,310
-Hãy đăng ký kênh để ủng hộ kênh nhé!
+00:36:19,000 --> 00:36:21,000
+Thì mới đẩy mạnh được
 
 609
-00:25:29,820 --> 00:25:40,560
-Hãy đăng ký kênh để ủng hộ kênh nhé!
+00:36:21,000 --> 00:36:22,000
+Thì nó có mấy sụp vột
 
 610
-00:26:01,740 --> 00:26:11,740
-Hãy đăng ký kênh để ủng hộ kênh nhé!
+00:36:22,000 --> 00:36:24,000
+Công ty nó sửa mấy sụp vột tức là
 
 611
-00:26:32,510 --> 00:26:44,750
-Hãy đăng ký kênh để ủng hộ kênh nhé!
+00:36:24,000 --> 00:36:26,000
+Công nghệ, vận hành, rồi chính doanh
 
 612
-00:27:07,340 --> 00:27:17,340
-Hãy đăng ký kênh để ủng hộ kênh nhé!
+00:36:26,000 --> 00:36:30,000
+Thì đây, bản chất người ta nhiều tạo tội là kính doanh
 
 613
-00:27:38,780 --> 00:27:48,780
-Hãy đăng ký kênh để ủng hộ kênh nhé!
+00:36:30,000 --> 00:36:43,000
+Vận hành đây, công nghệ đây. Còn quy trình cả ba xây, quy trình vận hành vận hành, văn hóa, ván chất tương hiệu Fipro đấy là một dạng văn hóa.
 
 614
-00:28:08,780 --> 00:28:18,780
-Hãy đăng ký kênh để ủng hộ kênh nhé!
+00:36:43,000 --> 00:36:50,000
+Mình xây ra được cái gen, gen mà xuyên xuất như thế đấy là một dạng văn hóa.
 
 615
-00:28:40,540 --> 00:28:50,540
-Hãy đăng ký kênh để ủng hộ kênh nhé!
+00:36:50,000 --> 00:36:53,000
+Đi đâu gần nói bác biết là tụi nó như thế nào luôn
 
 616
-00:29:11,820 --> 00:29:22,400
-Hãy đăng ký kênh để ủng hộ kênh nhé!
+00:36:54,000 --> 00:36:59,000
+Thì sau khi mà phân ra được thành role của mô hình mới
 
 617
-00:29:42,400 --> 00:29:52,400
-Hãy đăng ký kênh để ủng hộ kênh nhé!
+00:36:59,000 --> 00:37:01,000
+thì chúng ta biết là chúng ta tham gia show hết đâu
 
 618
-00:30:12,500 --> 00:30:25,090
-Hãy đăng ký kênh để ủng hộ kênh nhé!
+00:37:01,000 --> 00:37:04,000
+và thì lại tham gia như thế nào là phủ vập
 
 619
-00:30:46,750 --> 00:30:56,750
-Hãy đăng ký kênh để ủng hộ kênh nhé!
+00:37:08,000 --> 00:37:11,000
+Rồi sau khi phân xong rồi thì bắt tay vào
 
 620
-00:31:18,610 --> 00:31:30,080
-Hãy đăng ký kênh để ủng hộ kênh nhé!
+00:37:11,000 --> 00:37:13,000
+thì anh nghĩ là sẽ đi nhỏ trước rồi đi lớn
 
 621
-00:31:52,830 --> 00:32:04,780
-Hãy đăng ký kênh để ủng hộ kênh nhé!
+00:37:13,000 --> 00:37:15,000
+Vì nhỏ thì lấy luôn cái mô hình
 
 622
-00:32:30,800 --> 00:32:44,610
-Hãy đăng ký kênh để ủng hộ kênh nhé!
+00:37:15,000 --> 00:37:18,000
+mà anh đang chạy vận ảnh hiện tại tự nghiệp luôn
 
 623
-00:33:04,610 --> 00:33:15,540
-Hãy đăng ký kênh để ủng hộ kênh nhé!
+00:37:18,000 --> 00:37:23,900
+rồi anh chỉ nhận vm đây, thấy tự tin rồi đầu nhân ra, nhanh nhanh cấp gọi là tự nhân F1
 
 624
-00:33:35,540 --> 00:33:47,300
-Hãy đăng ký kênh để ủng hộ kênh nhé!
+00:37:23,900 --> 00:37:29,080
+rồi sau đấy tự nhân F1 xin F2, tự nhân F7 rồi, chứ là làm cái chút xuỗi đây là ok rồi
 
 625
-00:34:07,840 --> 00:34:18,800
-Hãy đăng ký kênh để ủng hộ kênh nhé!
+00:37:29,080 --> 00:37:36,800
+lúc đấy, lúc đấy đếm được rất thành công, anh làm hội thảo, anh nhân ra, chạy các event để nhân rộng
 
 626
-00:34:39,020 --> 00:34:49,020
-Hãy đăng ký kênh để ủng hộ kênh nhé!
+00:37:36,800 --> 00:37:38,800
+lúc đấy thành công, bớ sẵn nhanh nhanh
 
 627
-00:35:09,020 --> 00:35:19,700
-Hãy đăng ký kênh để ủng hộ kênh nhé!
+00:37:38,800 --> 00:37:58,800
+Lúc đầu UAT nó mới khó, thì nó sẽ tiêu này, tiêu kia, mình hoàn kiện kiếp concept, concept là hay, nhưng mà thật ra là đi lúc mà đi bình tĩnh thế nó mới thấy là nó không vô cãi tầng thể tiết, nó không còn giống như là cái mình nghĩ, nó sẽ kéo mình từ trên trời xuống mặt tất như vậy.
 
 628
-00:35:39,890 --> 00:35:52,260
-Hãy đăng ký kênh để ủng hộ kênh nhé!
+00:37:58,800 --> 00:38:03,800
+Ở đây từ mặt đất người này vung lên được để thành công bền vượng như thế này
 
 629
-00:36:12,930 --> 00:36:22,930
-Hãy đăng ký kênh để ủng hộ kênh nhé!
+00:38:03,800 --> 00:38:05,800
+Cứng vãi trên trời này nè mà nói
 
 630
-00:36:43,920 --> 00:36:54,460
-Hãy đăng ký kênh để ủng hộ kênh nhé!
+00:38:08,800 --> 00:38:11,800
+Các anh em mình phải đồng với nhau về cái quan điểm
 
 631
-00:37:14,820 --> 00:37:24,820
-Hãy đăng ký kênh để ủng hộ kênh nhé!
+00:38:11,800 --> 00:38:14,800
+Đồng với nhau về cái định này, cái định đến
 
 632
-00:37:47,060 --> 00:37:57,060
-Hãy đăng ký kênh để ủng hộ kênh nhé!
+00:38:14,800 --> 00:38:16,800
+Cái định đến tất cùng là cái gì
 
 633
-00:38:21,760 --> 00:38:32,780
-Hãy đăng ký kênh để ủng hộ kênh nhé!
+00:38:20,800 --> 00:38:23,800
+Cái định đến tất cùng là cung nhau với mục tiêu sửu mệnh
 
 634
-00:38:54,830 --> 00:39:04,900
-Hãy đăng ký kênh để ủng hộ kênh nhé!
+00:38:23,800 --> 00:38:38,800
+Thì bắt đầu thì dường là idea mình rất là hay và dường là những người xong cuộc thì dường là thấy hay
 
 635
-00:39:25,120 --> 00:39:35,950
-Hãy đăng ký kênh để ủng hộ kênh nhé!
+00:38:38,800 --> 00:38:44,800
+Nhưng mà chưa nhìn thấy cái giường, nhìn đến đoạn mà làm rồi mới thấy là nó lên lên xuống xuống
 
 636
-00:39:55,950 --> 00:40:05,950
-Hãy đăng ký kênh để ủng hộ kênh nhé!
+00:38:44,800 --> 00:38:47,800
+Bước qua để lên lên xuống xuống đấy thì nó ok
 
 637
-00:40:25,950 --> 00:40:36,110
-Hãy đăng ký kênh để ủng hộ kênh nhé!
+00:38:47,800 --> 00:38:54,800
+Đa phần, đa phần, đa phần các sở tán áp đã chết ở Gia Đại Loạn này, thì ở trên tươi đường.
 
 638
-00:40:56,110 --> 00:41:06,110
-Hãy đăng ký kênh để ủng hộ kênh nhé!
+00:38:54,800 --> 00:38:58,800
+Và đấy những đoạn vất xuống mặt đất thì không ngoài được.
 
 639
-00:41:26,110 --> 00:41:36,110
-Hãy đăng ký kênh để ủng hộ kênh nhé!
+00:38:58,800 --> 00:39:03,800
+Thì cái này nhé, nó có cái phản lợi là nó dựa trên cái mô hình đang hoàn hành.
 
 640
-00:41:56,110 --> 00:42:06,110
-Hãy đăng ký kênh để ủng hộ kênh nhé!
+00:39:03,800 --> 00:39:04,800
+Nó đang hiệu quả.
 
 641
-00:42:26,110 --> 00:42:36,110
-Hãy đăng ký kênh để ủng hộ kênh nhé!
+00:39:04,800 --> 00:39:08,800
+Việc của mình là làm nó cố hơn, nó tối ưu nhất có thể.
 
 642
-00:42:56,110 --> 00:43:06,210
-Hãy đăng ký kênh để ủng hộ kênh nhé!
+00:39:08,800 --> 00:39:10,800
+Vậy chính là cái công nghệnh mà.
 
 643
-00:43:28,190 --> 00:43:38,190
-Hãy đăng ký kênh để ủng hộ kênh nhé!
+00:39:10,800 --> 00:39:13,800
+Hiệu quả, tối ưu và làm dọc nhanh nhất.
 
 644
-00:43:59,060 --> 00:44:09,950
-Hãy đăng ký kênh để ủng hộ kênh nhé!
+00:39:13,800 --> 00:39:14,800
+Làm dọc nhanh nhất.
 
 645
-00:44:31,300 --> 00:44:41,900
-Hãy đăng ký kênh để ủng hộ kênh nhé!
+00:39:14,800 --> 00:39:17,800
+không có ích lượng hay không nguồn, thì đã có rồi
 
 646
-00:45:03,120 --> 00:45:22,500
-Hãy đăng ký kênh để ủng hộ kênh nhé!
+00:39:17,800 --> 00:39:18,800
+cái bước đấy là khó
 
 647
-00:46:21,860 --> 00:46:48,300
-Hãy đăng ký kênh để ủng hộ kênh nhé!
+00:39:20,800 --> 00:39:24,800
+cửa tử là đã tạm thời, yên tâm là không thể chết được
 
 648
-00:47:10,580 --> 00:47:23,780
-Hãy đăng ký kênh để ủng hộ kênh nhé!
+00:39:25,800 --> 00:39:27,800
+hoặc là có thể là không có gì để mới chết
 
 649
-00:47:43,970 --> 00:47:53,970
-Hãy đăng ký kênh để ủng hộ kênh nhé!
+00:39:29,800 --> 00:39:30,800
+thế em nghĩ như thế này là
 
 650
-00:48:16,110 --> 00:48:26,270
-Hãy đăng ký kênh để ủng hộ kênh nhé!
+00:39:30,800 --> 00:39:32,800
+thứ nhất là mình vẫn không nhắc
 
 651
-00:48:46,270 --> 00:48:56,910
-Hãy đăng ký kênh để ủng hộ kênh nhé!
+00:39:32,800 --> 00:39:36,800
+cái định hướng cuối cùng là một cái nền tạng của công nghệ
 
 652
-00:49:17,300 --> 00:49:27,300
-Hãy đăng ký kênh để ủng hộ kênh nhé!
+00:39:36,800 --> 00:39:41,800
+thậm chí vì cả tương hiệu và cả cái kho của nó loại là công nghệ
 
 653
-00:49:47,300 --> 00:49:58,290
-Hãy đăng ký kênh để ủng hộ kênh nhé!
+00:39:41,800 --> 00:39:46,800
+Chúng ta phải phục vụ cho các tên, các đối tượng mà mình thường tới đấy
 
 654
-00:50:19,310 --> 00:50:29,920
-Hãy đăng ký kênh để ủng hộ kênh nhé!
+00:39:46,800 --> 00:39:51,800
+Thì mình thay lập công ty hay là gì đấy, tháp nhân thì nó cũng là bích của cái đấy
 
 655
-00:50:51,550 --> 00:51:02,990
-Hãy đăng ký kênh để ủng hộ kênh nhé!
+00:39:51,800 --> 00:39:56,800
+Còn cái tư cách vai trò bên gấp lại thì chắc là nó là tư cách vai trò cá nhân nữa
 
 656
-00:51:33,810 --> 00:51:43,810
-Hãy đăng ký kênh để ủng hộ kênh nhé!
+00:39:56,800 --> 00:40:07,800
+Nó mong phải là liên quan đến cho người ấy thì cái đấy thì anh chủ động sắp xếp để làm sao cho nó thú ưu nhất cho cả người ta tham gia được mạnh phục mình
 
 657
-00:52:09,760 --> 00:52:19,760
-Hãy đăng ký kênh để ủng hộ kênh nhé!
+00:40:07,800 --> 00:40:17,500
+Thứ hai nữa là để mà đi vào phản động vận hành cụ thể thì em không nghĩ là thôi mình cứ đi trải nghiệm một cái trung tâm ở đấy và anh cho nó thực tế.
 
 658
-00:52:39,860 --> 00:52:50,140
-Hãy đăng ký kênh để ủng hộ kênh nhé!
+00:40:17,500 --> 00:40:22,100
+Em bắt đầu là kế lập một cái quy trình, kế giao công nơi vàng thẳng vào cái trung tế đấy luôn.
 
 659
-00:53:10,140 --> 00:53:20,140
-Hãy đăng ký kênh để ủng hộ kênh nhé!
+00:40:22,100 --> 00:40:28,200
+Thì sau khi mà có trải nghiệm xong thì mình diễn thay cái đấy luôn.
 
 660
-00:53:40,530 --> 00:53:50,530
-Hãy đăng ký kênh để ủng hộ kênh nhé!
+00:40:28,200 --> 00:40:31,000
+Thì hoặc là xong xong luôn tưởng.
 
 661
-00:54:10,530 --> 00:54:20,720
-Hãy đăng ký kênh để ủng hộ kênh nhé!
+00:40:31,000 --> 00:40:34,200
+Trong quá trình mà anh nhảy công nghiệp thì mình làm luôn cái việc đấy.
 
 662
-00:54:40,720 --> 00:54:50,720
-Hãy đăng ký kênh để ủng hộ kênh nhé!
+00:40:34,200 --> 00:40:36,200
+Trải nghiệm mình thích trải nghiệm một điểm hay là...
 
 663
-00:55:10,720 --> 00:55:20,720
-Hãy đăng ký kênh để ủng hộ kênh nhé!
+00:40:36,200 --> 00:40:37,360
+phải trải nghiệm một điểm hay là...
 
 664
-00:55:41,970 --> 00:55:52,450
-Hãy đăng ký kênh để ủng hộ kênh nhé!
+00:40:37,360 --> 00:40:38,360
+Cần một điểm thôi
 
 665
-00:56:16,350 --> 00:56:26,350
-Hãy đăng ký kênh để ủng hộ kênh nhé!
+00:40:38,360 --> 00:40:38,860
+Cần một điểm thôi
 
 666
-00:56:47,150 --> 00:56:57,150
-Hãy đăng ký kênh để ủng hộ kênh nhé!
+00:40:38,860 --> 00:40:39,360
+Cần nhà
 
 667
-00:57:17,730 --> 00:57:27,730
-Hãy đăng ký kênh để ủng hộ kênh nhé!
+00:40:39,360 --> 00:40:40,860
+Tuy hôm nay đây là hai
 
 668
-00:57:47,730 --> 00:57:57,730
-Hãy đăng ký kênh để ủng hộ kênh nhé!
+00:40:40,860 --> 00:40:41,360
+Một điểm
 
 669
-00:58:17,950 --> 00:58:27,950
-Hãy đăng ký kênh để ủng hộ kênh nhé!
+00:40:41,360 --> 00:40:41,860
+Một điểm
 
 670
-00:58:47,950 --> 00:58:57,950
-Hãy đăng ký kênh để ủng hộ kênh nhé!
+00:40:41,860 --> 00:40:44,860
+Ví dụ như trong nghiệm bọn em hay phân làm bốn tầng điện
 
 671
-00:59:17,950 --> 00:59:27,950
-Hãy đăng ký kênh để ủng hộ kênh nhé!
+00:40:44,860 --> 00:40:45,860
+Thứ nhất là cái tầng bịnh bướng
 
 672
-00:59:47,950 --> 00:59:57,950
-Hãy đăng ký kênh để ủng hộ kênh nhé!
+00:40:45,860 --> 00:40:47,860
+Thật thường là một cái ngôi đồng
 
 673
-01:00:18,110 --> 01:00:28,500
-Hãy đăng ký kênh để ủng hộ kênh nhé!
+00:40:47,860 --> 00:40:48,860
+Ngôi đồng quản trị định hướng chung
 
 674
-01:00:48,880 --> 01:00:59,580
-Hãy đăng ký kênh để ủng hộ kênh nhé!
+00:40:48,860 --> 00:40:49,860
+Thứ nhất là sáng tiết
 
 675
-01:01:20,420 --> 01:01:30,420
-Hãy đăng ký kênh để ủng hộ kênh nhé!
+00:40:49,860 --> 00:40:50,860
+Điểm thứ hai là...
 
 676
-01:01:50,420 --> 01:02:00,420
-Hãy đăng ký kênh để ủng hộ kênh nhé!
+00:40:50,860 --> 00:40:53,860
+là cái mục tiêu phục hệ cho từng gia đoạn
 
 677
-01:02:20,420 --> 01:02:30,420
-Hãy đăng ký kênh để ủng hộ kênh nhé!
+00:40:53,860 --> 00:40:54,360
+Rốt lắp
 
 678
-01:02:50,450 --> 01:03:00,450
-Hãy đăng ký kênh để ủng hộ kênh nhé!
+00:40:54,360 --> 00:40:55,360
+Hai cái đấy là phân trọng
 
 679
-01:03:20,540 --> 01:03:30,610
-Hãy đăng ký kênh để ủng hộ kênh nhé!
+00:40:55,360 --> 00:40:57,360
+Sau đó đến cái tầm điều hành
 
 680
-01:03:50,610 --> 01:04:00,610
-Hãy đăng ký kênh để ủng hộ kênh nhé!
+00:40:57,360 --> 00:40:59,360
+lúc đấy là có bao nhiêu hành
 
 681
-01:04:20,610 --> 01:04:30,610
-Hãy đăng ký kênh để ủng hộ kênh nhé!
+00:40:59,360 --> 00:41:01,360
+lúc đấy, phần tiêu hành chính nằm ở cho anh
 
 682
-01:04:50,640 --> 01:05:00,640
-Hãy đăng ký kênh để ủng hộ kênh nhé!
+00:41:03,360 --> 00:41:05,360
+phần quy trình khu thể đó
 
 683
-01:05:20,640 --> 01:05:30,640
-Hãy đăng ký kênh để ủng hộ kênh nhé!
+00:41:05,360 --> 00:41:07,360
+thì anh hỏi với Chúc, con người quy trình công nghệ
 
 684
-01:06:00,980 --> 01:06:12,420
-Hãy đăng ký kênh để ủng hộ kênh nhé!
+00:41:07,360 --> 00:41:09,360
+nó sẽ nối với nhau
 
 685
-01:06:32,480 --> 01:06:42,480
-Hãy đăng ký kênh để ủng hộ kênh nhé!
+00:41:09,360 --> 00:41:11,360
+và đến phần triển khai thực thi
 
 686
-01:07:09,200 --> 01:07:23,300
-Hãy đăng ký kênh để ủng hộ kênh nhé!
+00:41:11,360 --> 00:41:13,360
+thực thi thì
 
 687
-01:07:44,000 --> 01:07:54,000
-Hãy đăng ký kênh để ủng hộ kênh nhé!
+00:41:13,360 --> 00:41:15,360
+chính là quá trình đang định
 
 688
-01:08:14,000 --> 01:08:24,830
-Hãy đăng ký kênh để ủng hộ kênh nhé!
+00:41:15,360 --> 00:41:17,360
+uống từ xuống thực thi
 
 689
-01:08:44,830 --> 01:08:54,830
-Hãy đăng ký kênh để ủng hộ kênh nhé!
+00:41:17,360 --> 00:41:19,360
+nó lộ ra cái gì, mình phí cái đấy
 
 690
-01:09:15,340 --> 01:09:25,340
-Hãy đăng ký kênh để ủng hộ kênh nhé!
+00:41:19,360 --> 00:41:21,360
+quá trình nó gọi là sideways tích lý
 
 691
-01:09:45,890 --> 01:09:56,780
-Hãy đăng ký kênh để ủng hộ kênh nhé!
+00:41:21,360 --> 00:41:23,360
+cho mình chiếc đường lộ
 
 692
-01:10:16,980 --> 01:10:26,980
-Hãy đăng ký kênh để ủng hộ kênh nhé!
+00:41:23,360 --> 00:41:28,360
+Lúc đấy là nó lộ ra các cái điểm chưa vấn đề mình sửa
 
 693
-01:10:46,980 --> 01:10:57,490
-Hãy đăng ký kênh để ủng hộ kênh nhé!
+00:41:28,360 --> 00:41:30,360
+chứ không phải là nó có vấn đề thì cả
 
 694
-01:11:17,490 --> 01:11:27,490
-Hãy đăng ký kênh để ủng hộ kênh nhé!
+00:41:30,360 --> 00:41:32,360
+bởi vì nếu mà định hướng ra đúng
 
 695
-01:11:47,490 --> 01:11:57,490
-Hãy đăng ký kênh để ủng hộ kênh nhé!
+00:41:32,360 --> 00:41:33,360
+điều hành ok
 
 696
-01:12:17,490 --> 01:12:27,490
-Hãy đăng ký kênh để ủng hộ kênh nhé!
+00:41:33,360 --> 00:41:35,360
+thì lúc đấy mình chỉ xem trên cái điều hành đấy
 
 697
-01:12:47,490 --> 01:12:57,490
-Hãy đăng ký kênh để ủng hộ kênh nhé!
+00:41:35,360 --> 00:41:37,360
+nó cần thích thêm gì không
 
 698
-01:13:17,490 --> 01:13:27,490
-Hãy đăng ký kênh để ủng hộ kênh nhé!
+00:41:37,360 --> 00:41:40,360
+ít khi người ta xửa định vướng hay là xửa cái tông rõ mát đấy lắm
 
 699
-01:13:47,490 --> 01:13:57,490
-Hãy đăng ký kênh để ủng hộ kênh nhé!
+00:41:40,360 --> 00:41:42,360
+chứ lửa cái 5 năm thì lên
 
 700
-01:14:17,490 --> 01:14:28,190
-Hãy đăng ký kênh để ủng hộ kênh nhé!
+00:41:42,360 --> 00:41:43,360
+đúng rồi
 
 701
-01:14:48,190 --> 01:14:58,190
-Hãy đăng ký kênh để ủng hộ kênh nhé!
+00:41:43,360 --> 00:41:45,360
+thì điều hành như thế nào thì mình thích cái đấy
 
 702
-01:15:18,580 --> 01:15:28,580
-Hãy đăng ký kênh để ủng hộ kênh nhé!
+00:41:45,360 --> 00:41:47,360
+để cho thời gian nó được phối ưu
 
 703
-01:15:48,770 --> 01:15:58,770
-Hãy đăng ký kênh để ủng hộ kênh nhé!
+00:41:47,360 --> 00:41:48,360
+cái tông vận hành
 
 704
-01:16:18,770 --> 01:16:28,770
-Hãy đăng ký kênh để ủng hộ kênh nhé!
+00:41:48,360 --> 00:41:51,360
+để hành nắm cái phần điều hành
 
 705
-01:16:48,770 --> 01:16:59,570
-Hãy đăng ký kênh để ủng hộ kênh nhé!
+00:41:51,360 --> 00:41:56,360
+Cái phần quy trình công nghệ thì cũng nằm
 
 706
-01:17:19,570 --> 01:17:29,570
-Hãy đăng ký kênh để ủng hộ kênh nhé!
+00:41:56,360 --> 00:41:59,360
+Đến phần thực thi đang làm phối hợp tết
 
 707
-01:17:49,570 --> 01:17:59,600
-Hãy đăng ký kênh để ủng hộ kênh nhé!
+00:41:59,360 --> 00:42:03,360
+Trong đấy có việc là phối hợp trên hai, với cả các đối tác khác
 
 708
-01:18:19,600 --> 01:18:29,600
-Hãy đăng ký kênh để ủng hộ kênh nhé!
+00:42:03,360 --> 00:42:05,360
+Các cải sinh thái xong xong
 
 709
-01:18:50,400 --> 01:19:00,400
-Hãy đăng ký kênh để ủng hộ kênh nhé!
+00:42:05,360 --> 00:42:10,360
+Thì có thể em với anh Thẳng là tham gia thứ nhất là phần bước
 
 710
-01:19:21,460 --> 01:19:31,460
-Hãy đăng ký kênh để ủng hộ kênh nhé!
+00:42:10,360 --> 00:42:13,360
+Cùng với đại nga trong ngôi đồng với ai là phần kết nối
 
 711
-01:19:51,680 --> 01:20:01,680
-Hãy đăng ký kênh để ủng hộ kênh nhé!
+00:42:13,360 --> 00:42:19,360
+Trong phần mà thực thi, tham gia phần kết nối theo dạng là partnership thôi
 
 712
-01:20:21,680 --> 01:20:31,680
-Hãy đăng ký kênh để ủng hộ kênh nhé!
+00:42:19,360 --> 00:42:23,760
+đối tác, phát hiện trị distribution, đối tác thì anh em cần thêm một cái gì
 
 713
-01:20:51,680 --> 01:21:01,680
-Hãy đăng ký kênh để ủng hộ kênh nhé!
+00:42:23,760 --> 00:42:28,560
+hoặc là nối với xây dựng một cái siêu ương trình đảo tạo riêng thì anh em sẽ xây
 
 714
-01:21:21,680 --> 01:21:31,680
-Hãy đăng ký kênh để ủng hộ kênh nhé!
+00:42:28,560 --> 00:42:31,560
+mình khẳng được hoặc là cái trường mà hồi trước em học nutrition code
 
 715
-01:21:51,680 --> 01:22:01,970
-Hãy đăng ký kênh để ủng hộ kênh nhé!
+00:42:31,560 --> 00:42:35,560
+thì mình cũng có thể kết nối cái trường đấy vào để họ đồng hành của mình
 
 716
-01:22:21,970 --> 01:22:31,970
-Hãy đăng ký kênh để ủng hộ kênh nhé!
+00:42:35,560 --> 00:42:37,160
+để cấp chứng chỉ cho anh em
 
 717
-01:22:51,970 --> 01:23:02,580
-Hãy đăng ký kênh để ủng hộ kênh nhé!
+00:42:37,160 --> 00:42:41,960
+và bắt đầu đi mối các đối tác khác, đối tác bảo hiểm, đối tác tài chiến, đối tác hào đại
 
 718
-01:23:22,580 --> 01:23:32,580
-Hãy đăng ký kênh để ủng hộ kênh nhé!
+00:42:41,960 --> 00:42:44,760
+rồi em cũng cùng với cả Cường hoặc là anh em Egypt
 
 719
-01:23:52,580 --> 01:24:02,580
-Hãy đăng ký kênh để ủng hộ kênh nhé!
+00:42:44,760 --> 00:42:48,360
+để xây dựng cho mình các cái chương trình, các cái sinh kiện
 
 720
-01:24:22,580 --> 01:24:32,580
-Hãy đăng ký kênh để ủng hộ kênh nhé!
+00:42:48,360 --> 00:42:51,360
+thì tức tức là mình sẽ nồi để bồi các mỹ nguồn liệu vào
 
 721
-01:24:54,300 --> 01:25:04,720
-Hãy đăng ký kênh để ủng hộ kênh nhé!
+00:42:51,360 --> 00:42:53,360
+và em đánh thăng có vẻ hợp với trả chạy
 
 722
-01:25:24,910 --> 01:25:34,910
-Hãy đăng ký kênh để ủng hộ kênh nhé!
+00:42:53,360 --> 00:42:56,360
+lần đầu em nồi các mỹ nguồn liệu
 
 723
-01:25:56,420 --> 01:26:06,420
+00:42:56,360 --> 00:42:57,360
+tất cả chiếc ký trí của mình
+
+724
+00:42:57,360 --> 00:42:59,360
+trong quản trí thì làm ký trí
+
+725
+00:42:59,360 --> 00:43:02,360
+còn cụ thể chi tiết và vận hành
+
+726
+00:43:02,360 --> 00:43:05,360
+cho nên là anh là người đồng hồ nơi chính
+
+727
+00:43:05,360 --> 00:43:07,360
+một chút thì phần công nghệ 2 trước mặt
+
+728
+00:43:07,360 --> 00:43:09,360
+đấy là phổ lập trả chạy với nhau
+
+729
+00:43:09,360 --> 00:43:10,360
+nhà đúng ở đâu nè?
+
+730
+00:43:10,360 --> 00:43:11,360
+em ở đây luôn ạ
+
+731
+00:43:11,360 --> 00:43:12,360
+à gần đây
+
+732
+00:43:12,360 --> 00:43:13,360
+đây em ngay mặt 6
+
+733
+00:43:13,360 --> 00:43:14,360
+à
+
+734
+00:43:14,360 --> 00:43:15,360
+mặt 6 đây á
+
+735
+00:43:15,360 --> 00:43:16,360
+vâng
+
+736
+00:43:18,360 --> 00:43:23,360
+Anh sẽ tìm một cái điểm ở gần đây đi, cho mấy anh em mình xải nghiệm
+
+737
+00:43:23,360 --> 00:43:24,360
+Đúng rồi
+
+738
+00:43:24,360 --> 00:43:26,360
+Xải nghiệm
+
+739
+00:43:27,360 --> 00:43:31,360
+Xải nghiệm ở gần đây là gần nhất ở chỗ nào anh nhỉ?
+
+740
+00:43:31,360 --> 00:43:33,360
+Anh sẽ tìm ở trong cộng đồng
+
+741
+00:43:33,360 --> 00:43:34,360
+Vâng
+
+742
+00:43:34,360 --> 00:43:38,360
+Vì anh ở trong cộng đồng thích gấp, thì nó có tổng 1.000 cơ sở pháp luật quốc
+
+743
+00:43:38,360 --> 00:43:40,360
+Vì mình chọn cái nào cũng là của mình mà
+
+744
+00:43:40,360 --> 00:43:42,360
+Vâng, cái nào cũng là của mình
+
+745
+00:43:42,360 --> 00:43:45,360
+Vậy là xong có những cái gia đoạn demo không phải lo hả?
+
+746
+00:43:45,360 --> 00:43:46,360
+Không phải lo hả?
+
+747
+00:43:46,360 --> 00:43:51,360
+Một cái đặc chuẩn thì nó cũng hơn 100m2 thì nó nằm ở quân nhân
+
+748
+00:43:51,360 --> 00:43:58,360
+Quân nhân thì hay, hay trong chính là quân nhân
+
+749
+00:43:58,360 --> 00:44:02,360
+Mô hình của mình làm nó cũng phải trên 100m2
+
+750
+00:44:02,360 --> 00:44:05,360
+Đó là center đấy
+
+751
+00:44:05,360 --> 00:44:08,360
+Center là đấy là số đầu đao đúng không?
+
+752
+00:44:08,360 --> 00:44:16,360
+Thì nếu mà được là tối thứ 5 anh em mình qua đấy, khuyến để xem họ giới thiệu về FITCLUB
+
+753
+00:44:16,360 --> 00:44:19,360
+Giới thiệu về FITCLUB, quay FITCLUB
+
+754
+00:44:19,360 --> 00:44:24,360
+Thì mình nhìn thấy cái bức tranh tổng thể của thị trường, bức tranh của quán xã hội là FITCLUB
+
+755
+00:44:24,360 --> 00:44:27,360
+Và mình thấy, thấy luôn cái điểm yếu của FITCLUB là gì
+
+756
+00:44:27,360 --> 00:44:29,360
+Và tại sao là cái clip của đầu
+
+757
+00:44:29,360 --> 00:44:32,360
+Đó là cách mình có cái bức tranh tổng thể nhất
+
+758
+00:44:32,360 --> 00:44:34,360
+Và hay nữa là với anh em mình đến đây trải nghiệm đấy luôn
+
+759
+00:44:34,360 --> 00:44:36,360
+Trải nghiệm luôn
+
+760
+00:44:36,360 --> 00:44:38,360
+Tối 5 tuần này hay tuần sau?
+
+761
+00:44:38,360 --> 00:44:40,360
+Tối 5 tuần này
+
+762
+00:44:40,360 --> 00:44:42,360
+Tối 5 tuần này chắc được
+
+763
+00:44:42,360 --> 00:44:44,360
+Tối mai?
+
+764
+00:44:44,360 --> 00:44:46,360
+Tối mai thử luôn
+
+765
+00:44:46,360 --> 00:44:48,360
+Tối mai thử luôn
+
+766
+00:44:48,360 --> 00:44:50,360
+Qua nhân đúng không?
+
+767
+00:44:50,360 --> 00:44:52,360
+Qua nhân, 2 đứa chỉ là qua nhân
+
+768
+00:44:52,360 --> 00:44:54,360
+Tối mai qua thử luôn
+
+769
+00:44:56,360 --> 00:44:58,360
+Tối này đang yếu nên đang xem
+
+770
+00:44:58,360 --> 00:45:00,360
+Kéo lên được 200% công lực
+
+771
+00:45:06,360 --> 00:45:16,360
+Cảm ơn các bạn đã theo dõi, hãy đăng ký kênh để ủng hộ kênh nhé
+
+772
+00:45:36,360 --> 00:45:46,360
+Các bạn hãy đăng ký kênh để ủng hộ kênh của chúng tôi.
+
+773
+00:46:06,360 --> 00:46:12,360
+Cái này là chỉ được phép hai người chồng, chỉ được phép một khóa số thôi
+
+774
+00:46:12,360 --> 00:46:18,360
+Nhưng mình nhà mách sua là vâng là mình chưa có mở
+
+775
+00:46:18,360 --> 00:46:21,360
+Chỉ khi đã mở thì tụi kia đã khác
+
+776
+00:46:21,360 --> 00:46:24,360
+Tập tạm đốc này cũng tìm thắng này
+
+777
+00:46:36,360 --> 00:46:46,360
+Cảm ơn mọi người đã theo dõi video này, hãy đăng ký kênh để ủng hộ kênh nhé!
+
+778
+00:47:06,360 --> 00:47:08,360
+giọng tiền lớn mà nó nằm ở đây
+
+779
+00:47:08,360 --> 00:47:10,360
+nó chảy qua đây
+
+780
+00:47:10,360 --> 00:47:12,360
+mô hình hấp hồi lai
+
+781
+00:47:12,360 --> 00:47:14,360
+hấp hồi lai
+
+782
+00:47:14,360 --> 00:47:16,360
+bán thêm
+
+783
+00:47:16,360 --> 00:47:18,360
+cái ốm hệ của anh em mình
+
+784
+00:47:18,360 --> 00:47:20,360
+tương lai
+
+785
+00:47:20,360 --> 00:47:22,360
+em em mình xây ra tương lai
+
+786
+00:47:22,360 --> 00:47:24,360
+cái giọng tiền để cho khách hàng
+
+787
+00:47:24,360 --> 00:47:26,360
+để cho mọi người nó chủ yếu
+
+788
+00:47:26,360 --> 00:47:28,360
+nó sẽ tẹp qua đây
+
+789
+00:47:28,360 --> 00:47:30,360
+từ đây đúng không?
+
+790
+00:47:30,360 --> 00:47:32,360
+một cái đúng không?
+
+791
+00:47:32,360 --> 00:47:34,360
+nối nhau, anh em mình nối nhau thành một dây
+
+792
+00:47:34,360 --> 00:47:36,360
+Anh lấy cái này để hả?
+
+793
+00:47:36,360 --> 00:47:37,860
+Dùng này
+
+794
+00:47:37,860 --> 00:47:39,360
+Cái này
+
+795
+00:47:39,360 --> 00:47:42,360
+Nhưng mà tức là về các bạn là
+
+796
+00:47:42,360 --> 00:47:44,360
+Về sau trên cái kế hệ thống đấy
+
+797
+00:47:44,360 --> 00:47:46,360
+Thì là anh là người sắp xếp
+
+798
+00:47:46,360 --> 00:47:47,360
+Để cho nó...
+
+799
+00:47:47,360 --> 00:47:49,360
+Thì bây giờ anh sắp xếp luôn đấy
+
+800
+00:47:49,360 --> 00:47:51,360
+Tức là từ sau kế hệ thống bên dưới là sắp xếp
+
+801
+00:47:51,360 --> 00:47:53,360
+Anh dự đoán là sắp xếp
+
+802
+00:47:53,360 --> 00:47:55,360
+Thì sau tổ tiêu cho kế hệ thống đảm nhé
+
+803
+00:47:55,360 --> 00:47:57,360
+Sau này nó tự động nha
+
+804
+00:47:57,360 --> 00:47:58,360
+Vậy là...
+
+805
+00:47:58,360 --> 00:48:00,360
+Ví dụ của em nha
+
+806
+00:48:00,360 --> 00:48:04,360
+Em có thể có theo hình bạch trời
+
+807
+00:48:04,360 --> 00:48:07,360
+và của em nó có thể thở ra
+
+808
+00:48:07,360 --> 00:48:09,360
+và của em có kinh doanh lớn này của anh
+
+809
+00:48:09,360 --> 00:48:12,360
+Thì em biết điều đấy nhưng mà nghĩ là mình chưa có
+
+810
+00:48:12,360 --> 00:48:15,360
+tức là mình sẽ không định tâm vào cái khuội này
+
+811
+00:48:15,360 --> 00:48:17,360
+để tìm ra lên
+
+812
+00:48:17,360 --> 00:48:19,360
+mà là mình định tâm vào cái thích gồm
+
+813
+00:48:19,360 --> 00:48:20,360
+Đúng rồi, bọn em đang tìm ra
+
+814
+00:48:20,360 --> 00:48:22,360
+nó sẽ gom hết được vùng đối
+
+815
+00:48:22,360 --> 00:48:25,360
+xong rồi cái đấy là cái vũ của cả company
+
+816
+00:48:25,360 --> 00:48:28,360
+Đấy, xong rồi mỗi người bọn em
+
+817
+00:48:28,360 --> 00:48:30,360
+Chúng ta cần thêm một cái nền duyên thôi
+
+818
+00:48:30,360 --> 00:48:32,360
+À đúng rồi, đúng rồi
+
+819
+00:48:32,360 --> 00:48:34,360
+Mình xây chung để mình xây một cái chung
+
+820
+00:48:34,360 --> 00:48:36,360
+Một cái san chêo chung
+
+821
+00:48:36,360 --> 00:48:38,360
+Anh xây hiện tại là để xây một cái nền thôi
+
+822
+00:48:38,360 --> 00:48:40,360
+Vì sau cái hệ thống mà nó nở ra
+
+823
+00:48:40,360 --> 00:48:42,360
+Thông qua Kipro á
+
+824
+00:48:42,360 --> 00:48:44,360
+Thì anh cắn cái này làm cái gì đó
+
+825
+00:48:44,360 --> 00:48:46,360
+Chứ đâu có cắn vào
+
+826
+00:48:48,360 --> 00:48:50,360
+Bên dưới nó sẽ đi theo cái nhân duyên
+
+827
+00:48:50,360 --> 00:48:52,360
+Đi theo nhân duyên
+
+828
+00:48:52,360 --> 00:48:54,360
+Ví dụ
+
+829
+00:48:54,360 --> 00:48:56,360
+Anh em mình là một dây bảy nha
+
+830
+00:48:56,360 --> 00:48:59,360
+sau đó có một cốt, có 7 cốt nhưng mà có 7 người
+
+831
+00:48:59,360 --> 00:49:02,360
+thì như thế mình dùng mình xây một cái nhà nha, mình đào mỏng xuống
+
+832
+00:49:02,360 --> 00:49:04,360
+xong từ đấy nó chia chia ra
+
+833
+00:49:04,360 --> 00:49:06,360
+thì cái mỏng này mới là vững
+
+834
+00:49:06,360 --> 00:49:10,360
+và sau này tất cả nền tảng đều chung theo một cái lát con như thế này
+
+835
+00:49:10,360 --> 00:49:13,360
+nên cái mã này cực kỳ quan trọng luôn á
+
+836
+00:49:13,360 --> 00:49:15,360
+cái mã này là mã tình danh luôn á
+
+837
+00:49:15,360 --> 00:49:17,360
+tình danh luôn
+
+838
+00:49:17,360 --> 00:49:21,360
+nhưng mà tức là mình phải đúng nhất với nhau để cho nó rõ ràng từ đầu á
+
+839
+00:49:21,360 --> 00:49:22,360
+đúng rồi
+
+840
+00:49:22,360 --> 00:49:26,520
+là tức là bọn em sẽ không đứng tâm vào mô hình vinh doanh pha bộ lái
+
+841
+00:49:26,520 --> 00:49:27,360
+à hiểu
+
+842
+00:49:27,360 --> 00:49:32,120
+mà đứng tâm vào cái mô hình kíp rổ thôi, thì mình làm kíp rổ thôi
+
+843
+00:49:32,120 --> 00:49:39,800
+thế là cái kia kia nó đi đến đâu thì là anh anh chủ động để coi như là nó là một cái bông nớt hay là gì đấy
+
+844
+00:49:39,800 --> 00:49:46,880
+để cho cái doanh nghiệp hoặc là cái ban điều hành này nó có thêm quyền lợn trong ngàn hạng hoặc trung hạng
+
+845
+00:49:46,880 --> 00:49:55,640
+Đúng rồi, nếu mà vào xong rồi mình xem nhân duyên thì mình sẽ quay qua để giải quyết phát triển hệ thống, hoặc là mình vừa người thêm vào thì nó...
+
+846
+00:49:55,640 --> 00:49:57,640
+Từ đâu? Từ đâu?
+
+847
+00:49:57,640 --> 00:50:01,640
+Học ý là quay qua thì sẽ mất mắc công sức đi phát triển...
+
+848
+00:50:01,640 --> 00:50:03,640
+Vâng, vâng, vâng
+
+849
+00:50:03,640 --> 00:50:11,640
+Không, không, không, đấy là cái lợi nhiệm của công nghệ mà nó sẽ khắc cùng với cái mà mọi người đang vất vả, mọi người đang làm
+
+850
+00:50:11,640 --> 00:50:19,640
+Cái vận hành cái center đấy nha, là co-founder không phải trực thiết ở đấy, center đấy vận hành tự động luôn.
+
+851
+00:50:19,640 --> 00:50:23,640
+14 code sẽ không tự làm, mình có mặt hay không có mặt không quan trọng.
+
+852
+00:50:23,640 --> 00:50:27,640
+Thấy thấy xây view rồi như thế mà, tự động mà.
+
+853
+00:50:27,640 --> 00:50:32,640
+Rồi sau đó họ tự động được thì họ ra họ đi mở, 7 người đấy họ mới đi ra mở cái center khác.
+
+854
+00:50:32,640 --> 00:50:37,640
+Khi họ không dúng tay vào sự vụ của center đấy, center đấy lại có 14 code khác.
+
+855
+00:50:37,640 --> 00:50:47,640
+Các bạn hãy đăng ký kênh để ủng hộ kênh nhé!
+
+856
+00:51:07,640 --> 00:51:21,640
+Thứ hai, trong 7 ngày đến, họ cảm thấy thích. Lúc đấy, họ mới mua gói 30 ngày, họ trở thành VIP member.
+
+857
+00:51:21,640 --> 00:51:28,640
+VIP member. Tiếp theo là gì?
+
+858
+00:51:28,640 --> 00:51:35,640
+Cái quyền lợi của VIP member là họ được trải nghiệm tất cả các trung tâm FitPro trên toàn quốc.
+
+859
+00:51:35,640 --> 00:51:46,640
+Nhưng mà họ không có quyền kinh doanh và không có quyền gửi khách, không có quyền lợn thì đến nâng cấp một cái nó gọi là elite member
+
+860
+00:51:50,640 --> 00:51:54,640
+Elite member nhé, elite member này là gì?
+
+861
+00:51:54,640 --> 00:52:00,640
+Là được quyền kinh doanh và được quyền gửi khách, được quyền kinh doanh thì phải có mát số hotline
+
+862
+00:52:00,640 --> 00:52:05,640
+Đúng không? Vì mình có 1 khách trong Sài Gòn á, cốt trong kia trốt cho mình
+
+863
+00:52:05,640 --> 00:52:08,640
+Nhưng mà 100% tiền của tiền đó là của mình á
+
+864
+00:52:08,640 --> 00:52:12,640
+Tụi mình nhận vào xong mình chỉ ship hàng vào để cốt trong kia trăm thôi
+
+865
+00:52:12,640 --> 00:52:15,640
+Em hiểu, thì cái này là đang bay trên Herbalife
+
+866
+00:52:15,640 --> 00:52:20,640
+Vì sau có thể là, đây nhà họ có quyền người khách, họ có quyền kinh doanh
+
+867
+00:52:20,640 --> 00:52:24,640
+Nhưng có thể là Herbalife họ cũng có thể là 1 cái nhãn hiệu khác
+
+868
+00:52:24,640 --> 00:52:28,640
+Đấy và kinh doanh ở đây nó 2 thứ, 1 là thu từ bán sản phẩm dự vụ
+
+869
+00:52:28,640 --> 00:52:35,400
+hay là thu từ tôi thu ACON thêm như thế thì tôi bán tại chỗ hoặc là công sức lao động của tôi
+
+870
+00:52:35,400 --> 00:52:37,900
+đúng không? thì đấy là nguồn thu thêm
+
+871
+00:52:37,900 --> 00:52:38,400
+đúng rồi
+
+872
+00:52:38,400 --> 00:52:43,380
+nếu mà ở đây thì nếu mà không có cái mã số này tôi không kinh doanh ở đây thì điểm nghẽn của nó chính là thằng này
+
+873
+00:52:43,380 --> 00:52:50,740
+điểm nghẽn của nó là nếu mà thằng Hoplite không cấp cho cho mình, không cấp cho họ cái mã số thì coi như là họ không chạy được cái ghi số bán
+
+874
+00:52:50,740 --> 00:52:51,240
+chạy được
+
+875
+00:52:51,240 --> 00:52:53,540
+giống như hôm qua anh thu kiệp của được là anh thu trước
+
+876
+00:52:53,540 --> 00:52:56,340
+không, em nhiều nhưng cái mô hình của mình như thế là đang lệ thuộc vào thằng này
+
+877
+00:52:56,340 --> 00:52:57,900
+đang lệ thuộc rất mạnh vào thằng này
+
+878
+00:52:57,900 --> 00:52:59,400
+Chắc chắn lại thuộc chứ
+
+879
+00:52:59,400 --> 00:53:02,600
+Đấy, thưa Công TV, anh đang định hình môi hình của mình là
+
+880
+00:53:02,600 --> 00:53:05,600
+là một cái nhánh gọi là gì nhỉ, dinh dưỡng
+
+881
+00:53:05,600 --> 00:53:07,600
+là đồ hoàn toàn hợp lạnh
+
+882
+00:53:07,600 --> 00:53:10,200
+Nhưng anh có hình dung ra dù dạ xử như đây
+
+883
+00:53:10,200 --> 00:53:11,900
+anh coi như một cái optional đây
+
+884
+00:53:11,900 --> 00:53:13,000
+Optional, đúng rồi
+
+885
+00:53:13,000 --> 00:53:15,100
+Thì thì lúc đấy là 3 anh vẫn chạy được
+
+886
+00:53:15,100 --> 00:53:16,200
+Ký số 3 anh vẫn chạy được
+
+887
+00:53:16,200 --> 00:53:18,800
+Dù em mở ra một cái chi nhánh mới đúng không?
+
+888
+00:53:18,800 --> 00:53:20,200
+Nhưng mà khách của em đang ở trong Sài Gòn
+
+889
+00:53:20,200 --> 00:53:21,500
+em gửi khách hàng đấy
+
+890
+00:53:21,500 --> 00:53:24,100
+vào mỗi chi nhánh kia để họ đến hỏi tập cũng được không?
+
+891
+00:53:24,100 --> 00:53:25,000
+Được, được, được
+
+892
+00:53:25,000 --> 00:53:26,700
+Đấy thì lúc đấy thì em
+
+893
+00:53:26,700 --> 00:53:28,700
+kể cả em không có match số hopla em
+
+894
+00:53:28,700 --> 00:53:31,260
+em có tính cho anh được cái số 3 này không?
+
+895
+00:53:31,260 --> 00:53:33,260
+thì doanh thu của em nó đến từ đâu?
+
+896
+00:53:33,260 --> 00:53:35,260
+đấy, doanh thu, doanh thu 2 thứ
+
+897
+00:53:35,260 --> 00:53:36,540
+1 là đến từ sản phẩm văn lý
+
+898
+00:53:36,540 --> 00:53:38,300
+là dịnh dưỡng
+
+899
+00:53:38,300 --> 00:53:41,580
+2 là doanh thu chính ở add-on thêm
+
+900
+00:53:41,580 --> 00:53:43,100
+trên cái đấy luôn
+
+901
+00:53:43,100 --> 00:53:44,620
+ở vị trí để điểm văn lý đấy
+
+902
+00:53:44,620 --> 00:53:47,660
+hoặc là công sức của anh, anh Tuyện
+
+903
+00:53:47,660 --> 00:53:49,500
+thì đâu phải đến từ mỗi tháng nay đâu
+
+904
+00:53:49,500 --> 00:53:52,140
+mặc dù bây giờ đúng là nó là 1 doanh thu chính
+
+905
+00:53:52,140 --> 00:53:55,500
+nhưng về sau đối với mình thì nó là phần phụ đó
+
+906
+00:53:55,500 --> 00:53:56,760
+cẩn thêm nó
+
+907
+00:53:56,760 --> 00:54:00,160
+thì anh phải mở ý số 3 này ra, anh không lệ thuộc vào thằng này
+
+908
+00:54:00,160 --> 00:54:02,780
+cấp cái mã số này là mình cấp hệ thống
+
+909
+00:54:02,780 --> 00:54:05,700
+Fibro của mình cấp để cho họ làm được việc đó
+
+910
+00:54:05,700 --> 00:54:08,380
+nếu còn để họ mua được cái thằng Herblight này đúng không
+
+911
+00:54:08,380 --> 00:54:11,760
+thì đối đấy là họ có mã họ mua, không có mã thì tôi không giống
+
+912
+00:54:11,760 --> 00:54:13,360
+tôi giống người ta khác
+
+913
+00:54:13,360 --> 00:54:14,760
+sao?
+
+914
+00:54:14,760 --> 00:54:15,940
+nói cái tốt nhất
+
+915
+00:54:15,940 --> 00:54:19,040
+bây giờ mình xác định khi mình đã chọn Herblight vào đây rồi á
+
+916
+00:54:19,040 --> 00:54:20,280
+em hiểu
+
+917
+00:54:20,280 --> 00:54:21,040
+em hiểu
+
+918
+00:54:21,040 --> 00:54:22,820
+khi mà mình lâu dài mình không thuộc
+
+919
+00:54:22,820 --> 00:54:27,460
+Khi mà build hệ thống của mình và data base tất cả thì mình ngon, mình đâu có vụ thuộc này
+
+920
+00:54:27,460 --> 00:54:28,820
+Nó chỉ là một bắt đơ thôi mà
+
+921
+00:54:28,820 --> 00:54:31,700
+Nhưng thì tại sao mình lại chọn đàn này?
+
+922
+00:54:31,700 --> 00:54:33,380
+Vì nó đạt chuẩn gì?
+
+923
+00:54:33,380 --> 00:54:40,020
+Em hiểu, nhưng mà đấy thì thành ra nó bị cứng về mục tiêu cuối cùng mà mình không lệ thuộc vào đàn này
+
+924
+00:54:40,020 --> 00:54:42,260
+Là mình coi thằng này như một cái optional thôi
+
+925
+00:54:42,260 --> 00:54:46,820
+Và cái phần 3 này của anh anh chảy cả, đàn này nó không chạy cho anh, nó chạy đến nguyên của anh
+
+926
+00:54:46,820 --> 00:54:48,180
+Anh cấm vào đàn khác, anh chạy chứ
+
+927
+00:54:48,180 --> 00:54:50,180
+Đúng rồi, đúng rồi
+
+928
+00:54:50,180 --> 00:54:54,180
+Thì chỉ khi cái thằng này nó có vấn đề hoặc là mình không chọn nó nữa thì mình có thể bấm thẳng khác
+
+929
+00:54:54,180 --> 00:54:56,180
+Ok, anh ơi, em đang bị hiểu nhận cả
+
+930
+00:54:56,180 --> 00:54:58,180
+Dạ, ý anh dũ ý
+
+931
+00:54:58,180 --> 00:55:00,180
+Cái hạp lai to ở trên này này
+
+932
+00:55:00,180 --> 00:55:03,180
+Mình nấu xuống cái này, cái này riêng, không phải riêng của mình nó đâu
+
+933
+00:55:03,180 --> 00:55:07,180
+Quay một tích hợp thôi, cái môi của mình là tích hợp với thằng này
+
+934
+00:55:07,180 --> 00:55:11,180
+Đấy, làm sao tích hợp với thằng này để mình kiểm soát của anh
+
+935
+00:55:13,180 --> 00:55:14,180
+À
+
+936
+00:55:14,180 --> 00:55:16,980
+Đây là một cái đường mới, mình không có được một mình nữa ạ
+
+937
+00:55:16,980 --> 00:55:18,680
+Không, không, không, xong xong ạ
+
+938
+00:55:18,680 --> 00:55:21,280
+Mình vẫn là BitPro, và thằng này là optional
+
+939
+00:55:21,280 --> 00:55:23,480
+Thằng này là đối tác cẩn bảo
+
+940
+00:55:23,480 --> 00:55:25,680
+Ở đây nha, là họ vẫn có thể một mình BitPro
+
+941
+00:55:25,680 --> 00:55:29,680
+Nhưng mà với Elite Member ạ, thì họ được thêm thêm quyền
+
+942
+00:55:29,680 --> 00:55:30,480
+Thêm quyền
+
+943
+00:55:30,480 --> 00:55:33,280
+Ờ, ok, ờ, nó còn một chút đồ nào mà anh...
+
+944
+00:55:33,280 --> 00:55:35,080
+Đây, giep hết
+
+945
+00:55:35,080 --> 00:55:38,480
+Giep đến nha, cốt
+
+946
+00:55:38,480 --> 00:55:39,780
+Cốt
+
+947
+00:55:39,780 --> 00:55:41,580
+Cốt này thì đương nhiên họ cũng Elite
+
+948
+00:55:41,580 --> 00:55:42,580
+Đúng rồi, bởi Elite
+
+949
+00:55:42,580 --> 00:55:45,580
+Nhưng mà Elit này không cần về là Côs
+
+950
+00:55:45,580 --> 00:55:47,580
+Thì Côs này cũng là người trải nghiệm
+
+951
+00:55:47,580 --> 00:55:48,580
+Cũng trải nghiệm và cũng có má số
+
+952
+00:55:48,580 --> 00:55:50,580
+Côs thì đương nhiên có má số rồi
+
+953
+00:55:50,580 --> 00:55:52,580
+Và cấp đôi cuối cùng, cấp đôi năm lắm
+
+954
+00:55:52,580 --> 00:55:54,580
+Là Cô Fowder
+
+955
+00:55:57,580 --> 00:55:59,580
+Cô Fowder có cần về là Côs không?
+
+956
+00:55:59,580 --> 00:56:00,580
+Không cần
+
+957
+00:56:00,580 --> 00:56:02,580
+Elit này có thể thành dựng
+
+958
+00:56:02,580 --> 00:56:03,580
+Là Cô Fowder được
+
+959
+00:56:03,580 --> 00:56:05,580
+Nhưng nhất nhất là Côs
+
+960
+00:56:05,580 --> 00:56:07,580
+Vì có những người...
+
+961
+00:56:07,580 --> 00:56:11,580
+Nhưng mà anh em mình đâu cần về là Côs với là Cô Fowder
+
+962
+00:56:11,580 --> 00:56:17,580
+Thế thì ông cốt thì có thể là một người bình thường lại cốt được không?
+
+963
+00:56:17,580 --> 00:56:19,580
+Được, được
+
+964
+00:56:19,580 --> 00:56:21,580
+Thế thì lần đầu đâu phải là...
+
+965
+00:56:21,580 --> 00:56:28,580
+Nên thành ra đây để em trở thành cốt được, phải có ông này thì nó bị lệ thuộc vào thằng này
+
+966
+00:56:30,580 --> 00:56:32,580
+Nó bị điểm tắt vào chỗ này
+
+967
+00:56:32,580 --> 00:56:36,580
+Vì kinh doanh, vì kinh doanh dòng tiền nó đến từ đâu, dòng tiền đến với sản phẩm
+
+968
+00:56:36,580 --> 00:56:43,260
+rồi em hiểu, ông này về sau, bây giờ mình hiểu rằng mở ra thì 2 ông này ông sẽ mua ông này là chính
+
+969
+00:56:43,260 --> 00:56:47,220
+vì mình đoán là ông này sẽ là đối tác chiến lược của Vipro
+
+970
+00:56:47,220 --> 00:56:53,020
+đấy, nhưng về sau mình hiểu rằng là kể cả là nó nói là tôi muốn là cốt
+
+971
+00:56:53,020 --> 00:56:55,020
+tôi là cốt thật, tôi có kinh nghiệm về cốt thật
+
+972
+00:56:55,020 --> 00:56:58,020
+đúng không, và tôi công bán sản phẩm này thì cũng được không
+
+973
+00:56:58,020 --> 00:57:01,020
+mà tôi vẫn chạy trên Vipro mà
+
+974
+00:57:01,020 --> 00:57:03,500
+và tôi trả cho ông cho hình chức khác được không
+
+975
+00:57:03,500 --> 00:57:04,500
+thế thì được sản phẩm khác
+
+976
+00:57:04,500 --> 00:57:05,500
+đấy, sản phẩm đấy
+
+977
+00:57:05,500 --> 00:57:07,500
+Sản phẩm A, B, C, H, Z
+
+978
+00:57:07,500 --> 00:57:13,500
+ý là cái cấp cho ông này là Fibro cấp cho ông này
+
+979
+00:57:13,500 --> 00:57:19,500
+còn là nếu mà mày đăng ký bán thằng này thì lúc đấy optional mày tích làm
+
+980
+00:57:19,500 --> 00:57:23,500
+thì lúc đấy ta sẽ cấp cho mày cái mã để để
+
+981
+00:57:23,500 --> 00:57:27,500
+tương tự thế là nó đủ năng lực nó thành Nha Liz rồi
+
+982
+00:57:27,500 --> 00:57:30,500
+Fibro sẽ là người cấp và Verify
+
+983
+00:57:30,500 --> 00:57:32,500
+thằng này cũng là mình cấp Verify
+
+984
+00:57:32,500 --> 00:57:35,940
+Khi họ muốn bán sản phẩm để mang lại ảnh phu lớn, họ tích ở đây
+
+985
+00:57:35,940 --> 00:57:40,500
+Thì là cấp mã, thì hai cái mã này nó sẽ nở lại, mắt tinh một một độc lập với nhau
+
+986
+00:57:40,500 --> 00:57:41,940
+Hai dòng tiền ạ, hai dòng tiền
+
+987
+00:57:41,940 --> 00:57:43,940
+Họ vẫn có thể kiếm tiền được từ cái dòng kíp rồi
+
+988
+00:57:43,940 --> 00:57:49,620
+Đấy, em sợ nhất là nó gắn chặt kia này, có cái này thì không có cái này tôi không trở thành cốt được thì là thôi, đúng không?
+
+989
+00:57:49,620 --> 00:57:50,340
+Đúng rồi
+
+990
+00:57:50,340 --> 00:57:51,300
+Anh hiểu đấy
+
+991
+00:57:51,300 --> 00:57:55,860
+Thì em mới hỏi thế, để anh mô tả cái chân dung gông cốt này là điều kiện gông cốt là gì?
+
+992
+00:57:55,860 --> 00:58:00,900
+Tại anh mô tả cái gông cốt thì là tình nghiệm của gông này
+
+993
+00:58:00,900 --> 00:58:01,860
+Ừ
+
+994
+00:58:01,860 --> 00:58:07,340
+Ông này là người giúp cho các ngàn tạo ra tiêu, tạo ra kết quả để hướng dẫn các ngàn
+
+995
+00:58:07,340 --> 00:58:08,340
+Ông có tiêu chuẩn chứ?
+
+996
+00:58:08,340 --> 00:58:11,540
+Chắc chắn phải có tiêu chuẩn chứ ông có trải nghiệm
+
+997
+00:58:11,540 --> 00:58:15,540
+nhưng mà ông cũng phải về cơ thể, thân hình, tất cả có thể làm một người cốt
+
+998
+00:58:15,540 --> 00:58:17,540
+thì không thể một người cốt mà thừa thân và...
+
+999
+00:58:17,540 --> 00:58:19,060
+Thì người như thế này không làm cốt được
+
+1000
+00:58:19,060 --> 00:58:20,260
+Đúng thế, anh ơi
+
+1001
+00:58:20,260 --> 00:58:23,060
+Không phải trải nghiệm, không phải có một truyền khỏe
+
+1002
+00:58:23,060 --> 00:58:26,740
+Cái này là tiền đề bản, cái này là tiền đề bản, cái này là tiền đề bản
+
+1003
+00:58:26,740 --> 00:58:33,740
+và mục đích cuối cùng là thưa em là bây giờ vẫn là tiêm để bán ở đây để bán lại cho anh chú
+
+1004
+00:58:34,740 --> 00:58:37,740
+thì mình đặt câu hỏi là cái dòng tiền nó sẽ đến từ đâu
+
+1005
+00:58:37,740 --> 00:58:39,740
+thì dòng tiền gia đoạn này nó sẽ đến từ đây
+
+1006
+00:58:39,740 --> 00:58:42,740
+sau này cái này trở thành một cái gì đấy
+
+1007
+00:58:42,740 --> 00:58:45,740
+hoặc là có thêm một cái dịch vụ gì khác thì nó sẽ có thêm trong xong
+
+1008
+00:58:45,740 --> 00:58:46,740
+nhưng bánh đầu nó vẫn đến từ đây
+
+1009
+00:58:46,740 --> 00:58:47,740
+mình tách ra 2 luồng
+
+1010
+00:58:47,740 --> 00:58:49,740
+tách rồi, trong 2 luồng tách rồi
+
+1011
+00:58:49,740 --> 00:58:51,740
+tại nhà mình trẻ ở đây
+
+1012
+00:58:51,740 --> 00:58:55,740
+thì bên này hoặc là nó phải luồng khách hàng sử dụng sản phẩm
+
+1013
+00:58:55,740 --> 00:58:57,740
+Lùa sản phẩm, lùa công nghệ
+
+1014
+00:58:57,740 --> 00:59:00,740
+Lúc đấy là mình đang chọn sản phẩm gì
+
+1015
+00:59:00,740 --> 00:59:05,740
+Ví dụ ta đang chọn sản phẩm Hopper Lite thì mình sẽ vẽ cho người ta khách hàng hành trình sử dụng sản phẩm Hopper Lite
+
+1016
+00:59:05,740 --> 00:59:10,740
+Bên đây là những người khốt, tức là những người khốt rừng biên để giúp cho khách hàng đấy
+
+1017
+00:59:10,740 --> 00:59:12,740
+Đó là một hành trình riêng
+
+1018
+00:59:12,740 --> 00:59:17,740
+Ông này gánh thu như nào, ông này gánh thu như nào, gánh thu như nào, thu những cái gì
+
+1019
+00:59:17,740 --> 00:59:23,740
+Gạch đầu dòng này thu là công bán này, công bà và bán sản phẩm này
+
+1020
+00:59:23,740 --> 00:59:25,740
+Bán gói này, cái thứ này
+
+1021
+00:59:25,740 --> 00:59:28,740
+Đấy, ông này doanh thu cái gì này, mặt bằng cái thứ đúng không?
+
+1022
+00:59:28,740 --> 00:59:30,740
+Đấy, thì anh gạch ra như thế đấy
+
+1023
+00:59:30,740 --> 00:59:32,740
+Để nhìn đến sự suốt suốt
+
+1024
+00:59:32,740 --> 00:59:34,740
+Và doanh thu đấy thì nó sẽ chảy qua nền tảng
+
+1025
+00:59:34,740 --> 00:59:36,740
+Thì cái nền tảng, doanh thu nền tảng đâu
+
+1026
+00:59:36,740 --> 00:59:38,740
+Ông này có trả phí nền tảng không? Ông này có trả phí nền tảng không?
+
+1027
+00:59:38,740 --> 00:59:41,740
+Trả bao nhiêu tiền? Một set trả bao nhiêu tiền?
+
+1028
+00:59:41,740 --> 00:59:43,740
+Đấy, để có đẹp trạng không nghệ thì ông phải trả bao nhiêu
+
+1029
+00:59:43,740 --> 00:59:48,740
+Ông dùng... Thế tống của tôi thì ông phải thống nhất là dùng nền tảng không nghệ đúng không?
+
+1030
+00:59:48,740 --> 00:59:49,740
+Để thống nhất cái thứ
+
+1031
+00:59:49,740 --> 00:59:54,740
+Thì ông này giả bao nhiêu trên chi phí, trên giao dịch hay theo tháng
+
+1032
+00:59:54,740 --> 00:59:57,740
+Thì mình hình thành ra doanh thu nền tạng của mình đây
+
+1033
+00:59:57,740 --> 01:00:00,740
+Giống như trong e-Fi em đề cập
+
+1034
+01:00:00,740 --> 01:00:04,740
+Ví dụ mô hình như anh nói tầm khoảng 4,5 triệu 1 tháng
+
+1035
+01:00:04,740 --> 01:00:07,740
+Đấy là doanh thu nền tạng
+
+1036
+01:00:07,740 --> 01:00:09,740
+Còn cái này nó lên cao rất nhiều
+
+1037
+01:00:09,740 --> 01:00:11,740
+Nhưng mà cái này mình không hiểm soạn được
+
+1038
+01:00:11,740 --> 01:00:13,740
+Để anh hỏi lộn 1 cái đối tượng nữa nè
+
+1039
+01:00:13,740 --> 01:00:18,740
+Cái đối tượng mà đích để cho tất cả mô hình kinh doanh lớn chính là cơm này
+
+1040
+01:00:18,740 --> 01:00:20,740
+Đúng không anh?
+
+1041
+01:00:20,740 --> 01:00:22,740
+Cô father
+
+1042
+01:00:22,740 --> 01:00:24,740
+Em hỏi anh là hành tình của ông cô father
+
+1043
+01:00:24,740 --> 01:00:26,740
+Nếu ông có cần phải điều kiện
+
+1044
+01:00:26,740 --> 01:00:28,740
+Ông phải trải qua những cái này, lông miếng lên này không?
+
+1045
+01:00:28,740 --> 01:00:30,740
+Cái này nếu mà những người ngay thời đầu
+
+1046
+01:00:30,740 --> 01:00:32,740
+Người ta có, điều kiện, người kinh chế
+
+1047
+01:00:32,740 --> 01:00:34,740
+Cái người ta đầu tiêu luôn thì...
+
+1048
+01:00:34,740 --> 01:00:36,740
+Đúng rồi
+
+1049
+01:00:36,740 --> 01:00:38,740
+Giống như
+
+1050
+01:00:38,740 --> 01:00:40,740
+Điều kiệp của cô father nhé
+
+1051
+01:00:40,740 --> 01:00:42,740
+Là phải trải qua cái nhất là ông phải có
+
+1052
+01:00:42,740 --> 01:00:44,740
+Trở thành có member cái đó này
+
+1053
+01:00:44,740 --> 01:00:46,740
+Cái mà đương danh là A
+
+1054
+01:00:46,740 --> 01:00:49,440
+xong đó, ông phải có cái 1 cái dây là 7 nhà
+
+1055
+01:00:50,440 --> 01:00:51,740
+là n ở đó là có nhà
+
+1056
+01:00:52,540 --> 01:00:54,740
+xong rồi ông có center này, tính đấy là co-coder
+
+1057
+01:00:54,740 --> 01:00:57,040
+co-coder là người sáng lập ra các center
+
+1058
+01:00:57,940 --> 01:00:59,540
+đấy, điều kiện của co-coder này đấy
+
+1059
+01:00:59,840 --> 01:01:04,040
+chứ nếu mà ông chỉ có tiền và ông trải nghiệm cái này thì ông mới là VIP member thôi
+
+1060
+01:01:04,640 --> 01:01:07,940
+ông elite thì ông có cả 2 mắt, ông có mắt số, mắt fly thì ông có thành elite
+
+1061
+01:01:10,440 --> 01:01:12,540
+và ông cost á, cost tiền thu từ đâu?
+
+1062
+01:01:12,540 --> 01:01:18,540
+Thế thì anh phải tách cho 2 luồng. Vậy nó chỉ có 2 đối tượng chính thôi. Một là luồng huấn luyện viên.
+
+1063
+01:01:18,540 --> 01:01:22,540
+Một luồng huấn luyện viên. Mình sẽ có một game khác cho họ.
+
+1064
+01:01:22,540 --> 01:01:24,540
+Và bên đây là luồng thành viên.
+
+1065
+01:01:24,540 --> 01:01:28,540
+Thành viên thì có thể là... Đây là những người người ta chỉ dùng thôi.
+
+1066
+01:01:28,540 --> 01:01:31,540
+Dùng đến với ngày cũng đếm là chỉ dùng thôi mà.
+
+1067
+01:01:31,540 --> 01:01:33,540
+Elite thì cũng chỉ là dùng thôi mà.
+
+1068
+01:01:33,540 --> 01:01:36,540
+Dùng và mang về gia đình để làm mô hình hay gì đấy thôi, không có biết.
+
+1069
+01:01:36,540 --> 01:01:38,540
+Dùng và được kinh doanh.
+
+1070
+01:01:38,540 --> 01:01:42,540
+Không biết, biết rồi. Nhưng được kinh doanh đây, người ta có điều kiện gì không?
+
+1071
+01:01:42,540 --> 01:01:45,540
+Ví dụ như là người ta đang tìm A6 xong, người ta có điều kiện gì không?
+
+1072
+01:01:45,540 --> 01:01:49,540
+Đấy, nhưng cũng không có điều kiện thì bản chất nó vẫn là dùng được, nhưng mà người ta có quyền chọn kinh doanh có không?
+
+1073
+01:01:49,540 --> 01:01:50,540
+Ừ, đúng rồi.
+
+1074
+01:01:50,540 --> 01:01:55,540
+Đó, thì chỉ khi mà người ta quyết định cuối cùng, người ta thực sự có muốn kinh doanh thì người ta phải chuyển sang mức này.
+
+1075
+01:01:55,540 --> 01:01:56,540
+Ờ.
+
+1076
+01:01:56,540 --> 01:01:59,540
+Đấy, như vậy là cái luồng đấy nó gọi là luồng membership.
+
+1077
+01:01:59,540 --> 01:02:03,540
+Membership trên cái hệ thống people của mình.
+
+1078
+01:02:03,540 --> 01:02:12,540
+Lùa bên đây là lùa ông coach, bởi vì anh đang lấn cấn tốt này này, bởi vì ông coach này là đối tượng đồng hành của mình để tạo lực giá trị cho ông này
+
+1079
+01:02:12,540 --> 01:02:13,540
+Đó mới là sự khác biệt nha
+
+1080
+01:02:13,540 --> 01:02:18,540
+Chứ còn nếu mà mình chỉ đi theo cái mồi truyền thống, thì vào một cái thì tự nhiên nó bình biệt
+
+1081
+01:02:18,540 --> 01:02:24,540
+Nó hơi bị gương ép, về chuyện là mình gần như là muốn ép-ép người ta vào để kinh doanh level I
+
+1082
+01:02:24,540 --> 01:02:25,540
+Thì nó lại...
+
+1083
+01:02:25,540 --> 01:02:26,540
+Có đấy á
+
+1084
+01:02:26,540 --> 01:02:27,540
+Đúng rồi
+
+1085
+01:02:27,540 --> 01:02:29,540
+Nên mình bóp tách thẳng cái ông huấn luyện viên này ra
+
+1086
+01:02:29,540 --> 01:02:33,540
+Thì mình sẽ vẽ một cái lộ trình trở thành huấn luyện viên của tý tổ chuyên nghiệp
+
+1087
+01:02:33,540 --> 01:02:35,540
+Không liên hoạt thì hơi bổ lạ
+
+1088
+01:02:35,540 --> 01:02:39,540
+Có huấn luyện, có đào tạo, có nguồn du, có cơ hội như vậy
+
+1089
+01:02:39,540 --> 01:02:43,540
+Thì có thể thu thức nhiều các ông khác vào mà ông trả cân với cả
+
+1090
+01:02:43,540 --> 01:02:45,540
+Rồi xong chừng nào ông muốn đúng không?
+
+1091
+01:02:45,540 --> 01:02:48,540
+Chừng nào ông thật sự muốn rồi, ông thấy hiệu quả, ông kiểm chứng được rồi
+
+1092
+01:02:48,540 --> 01:02:50,540
+Thì thông qua khách hàng thì ông này được kiểm chứng
+
+1093
+01:02:50,540 --> 01:03:00,540
+Khách hàng này, mặc dù là ông này có thể là dùng, nhưng mà ông cốt đại hộ ông thấy là khách hàng của ông dùng hiệu quả thật
+
+1094
+01:03:00,540 --> 01:03:02,540
+Tự lan tỏa
+
+1095
+01:03:02,540 --> 01:03:07,540
+Ông khắc khắc thì lúc đấy bắt đầu lại phải quay lại, ông chuyển dịch sang lùng thành viên
+
+1096
+01:03:07,540 --> 01:03:15,540
+Hoặc là lúc đấy ông có một cái ưu đãi gì đấy là ngay lập tức ông được vào đây, xong được kinh doanh luôn, chẳng hạn lầy chứ
+
+1097
+01:03:15,540 --> 01:03:21,000
+Cái này là nhiễu xạ tự nhiên hương, anh để nó là nhiễu xạ tự nhiên hương thì tốt hơn
+
+1098
+01:03:21,000 --> 01:03:28,840
+Bởi vì nếu mà anh đẩy vào và anh tiết thị luôn cái này thì nó sẽ thành ra vầy dạng là hơi ngựa, ép bán sản phẩm
+
+1099
+01:03:28,840 --> 01:03:31,640
+Anh phải vẽ một hành trình là member này
+
+1100
+01:03:31,640 --> 01:03:35,540
+Thuấn nó chỉ bảo nó dùng giống như nhỏ anh, K.O, V.I.T, member
+
+1101
+01:03:35,540 --> 01:03:40,740
+Cái thứ 2 là gì? Hành trình thứ 2 là hành trình để trở thành Elite
+
+1102
+01:03:40,740 --> 01:03:42,700
+Đi như thế nào, điều kiện là gì?
+
+1103
+01:03:42,700 --> 01:03:46,200
+Đi như thế nào nhá, và điều kiện để trở thành đấy là cái gì
+
+1104
+01:03:46,200 --> 01:03:48,700
+Cái thứ 3 là hành trình của ông Cốt này
+
+1105
+01:03:48,700 --> 01:03:53,200
+Đấy, cũng như cái thế là hành trình như thế nào và điều kiện trở thành Cốt là gì
+
+1106
+01:03:53,200 --> 01:03:56,200
+Anh phải tuyên bố rất rõ và cuối cùng là thành Cô Forward cũng thế
+
+1107
+01:03:56,200 --> 01:03:58,200
+Sau đấy là gì là giữa các rôn đấy
+
+1108
+01:03:58,200 --> 01:04:02,700
+Rôn 1 là Member, rôn 2 là Thành Nha Lít, rôn 3 là Cốt, rôn 4 là thành Cô Forward
+
+1109
+01:04:02,700 --> 01:04:06,700
+Thì là gì nó chuyển qua lại với nhau như thế nào thì anh sẽ vẽ một cái relationship
+
+1110
+01:04:06,700 --> 01:04:11,200
+Đấy là ông này chuyển ra ông này thì như thế nào, ông kia chuyển ra như ông kia như thế nào
+
+1111
+01:04:11,200 --> 01:04:14,880
+và cuối cùng là làm cái nào để con vận ông này dùng cái này
+
+1112
+01:04:14,880 --> 01:04:17,280
+mặc dù là mình định ướng cho họ cái này
+
+1113
+01:04:17,280 --> 01:04:22,080
+nhưng mà đôi khi có một số ông ông ấy là bỏ tôi chưa cần tư vấn cho khách cái này
+
+1114
+01:04:22,080 --> 01:04:24,080
+nhưng mà tôi vẫn là muốn là tôi là coach
+
+1115
+01:04:24,080 --> 01:04:25,280
+tôi xin mất bán
+
+1116
+01:04:25,280 --> 01:04:27,840
+tôi chỉ thuận là coach tự dưng thôi
+
+1117
+01:04:27,840 --> 01:04:30,160
+tôi luôn bán, thương mại hóa những cái thách thôi
+
+1118
+01:04:30,160 --> 01:04:31,360
+thương mại hóa thách
+
+1119
+01:04:31,360 --> 01:04:33,920
+cái này mình truyền ra ông nhau ướng như em nói
+
+1120
+01:04:33,920 --> 01:04:37,280
+đấy, tả công nghệ hỗ trợ những cái thứ như vậy cho họ
+
+1121
+01:04:37,280 --> 01:04:40,320
+đấy, và nó xuyên suốt theo tiêu chuẩn của mình
+
+1122
+01:04:40,320 --> 01:04:42,320
+Đầu vào đổi ra. Thật xác.
+
+1123
+01:04:42,320 --> 01:04:46,320
+Thì lúc này, những người cốt này, anh có thể cố cộng đồng buýt nó đơn giản thôi.
+
+1124
+01:04:46,320 --> 01:04:55,320
+Chứ còn nếu mà anh ngay lập tức anh dạng 2 cái luồng này vào nhau và điều kiện là phải cái tài thì nó không bị cảm giác, là nó không bị gương.
+
+1125
+01:04:55,320 --> 01:05:00,320
+Mặc dù là mình thấy nó tốt thật, nhưng mà cái tốt đấy nên để cho người ta tự trải nghiệm.
+
+1126
+01:05:00,320 --> 01:05:02,320
+Trải nghiệm đã.
+
+1127
+01:05:02,320 --> 01:05:05,320
+Một phát là mình nói luôn để họ chia sẻ.
+
+1128
+01:05:05,320 --> 01:05:08,320
+Con người hay là cứ thư vấn cái gì, họ lại làm người vậy.
+
+1129
+01:05:08,320 --> 01:05:16,320
+Thay ra cứ để cho khách hàng có thể tự nguyện
+
+1130
+01:05:16,320 --> 01:05:17,320
+Đúng rồi
+
+1131
+01:05:17,320 --> 01:05:20,320
+Tự nguyện
+
+1132
+01:05:20,320 --> 01:05:23,320
+Vì sao em nói đây là option đồ luồn thương mại hóa
+
+1133
+01:05:23,320 --> 01:05:25,320
+Cách riêng mới luồn thương mại hóa ra
+
+1134
+01:05:25,320 --> 01:05:28,320
+Trong khi mình làm, đây là giá trị truyền ra cho khách hàng là thật
+
+1135
+01:05:28,320 --> 01:05:31,320
+Đúng không? Tại đây mình nói đây tôi giới thiệu thêm
+
+1136
+01:05:31,320 --> 01:05:34,320
+Thì thấy cái này là dùng UVX
+
+1137
+01:05:34,320 --> 01:05:35,320
+Thì cũng định hướng vô này vô này
+
+1138
+01:05:35,320 --> 01:05:37,320
+Chứ không phải là có cái này tôi mới trở thành vốt
+
+1139
+01:05:37,320 --> 01:05:41,320
+Nói cái này tôn thì sẽ thành gà lít, thì nó bị cưỡng áp
+
+1140
+01:05:55,320 --> 01:05:58,320
+Về sau không về nó sẽ hỗ dẫn cho những hoạt động này
+
+1141
+01:05:58,320 --> 01:06:01,320
+Hoạt động này sẽ tích hợp vào để add-on
+
+1142
+01:06:07,320 --> 01:06:14,320
+và cái kia phải tập huyện người nội tâm, người outdoor như Đinh nói đấy, tụi tụi co để hành hành và không cần phải
+
+1143
+01:06:14,320 --> 01:06:18,320
+Tức là đây nhé, là anh vẽ một cái hành trình trưởng thành của một khách hàng
+
+1144
+01:06:18,320 --> 01:06:21,320
+một cách cụ thể đối tượng đấy
+
+1145
+01:06:21,320 --> 01:06:24,320
+trên cái hành trình đấy thì nó có cái mảnh đứng giữa
+
+1146
+01:06:24,320 --> 01:06:29,320
+và trong tất cả những cái phần như thế này thì anh offer online
+
+1147
+01:06:29,320 --> 01:06:31,320
+Recomendation
+
+1148
+01:06:31,320 --> 01:06:33,320
+Thì lúc đấy nó vào một cách rất là tự nhiên
+
+1149
+01:06:33,320 --> 01:06:38,320
+Nhưng trên hành trình này anh phải vẽ cho người ta đến hành trình trưởng thành tận cùng luôn
+
+1150
+01:06:38,320 --> 01:06:42,320
+Trong hành trình đó có sự đồng hành của các quốc
+
+1151
+01:06:42,320 --> 01:06:46,320
+Điền hành nhé, điền hành phí club trong vòng hành như thế nào
+
+1152
+01:06:52,320 --> 01:06:54,320
+Vòng hành như thế này
+
+1153
+01:06:54,320 --> 01:06:57,320
+Khách hàng tỉnh thì nó cũng có những cái gói sản nghiệm
+
+1154
+01:06:57,320 --> 01:07:01,320
+hình như anh chia sẻ đấy, có mắc gói đấy
+
+1155
+01:07:01,320 --> 01:07:03,320
+là tự gói Basic này
+
+1156
+01:07:03,320 --> 01:07:05,320
+thơ bản
+
+1157
+01:07:05,320 --> 01:07:07,320
+kênh hai là Plus này
+
+1158
+01:07:07,320 --> 01:07:09,320
+ba là BR
+
+1159
+01:07:09,320 --> 01:07:11,320
+tự tư là VIP này
+
+1160
+01:07:11,320 --> 01:07:13,320
+tự tư là Vip
+
+1161
+01:07:13,320 --> 01:07:15,320
+tự tư là Super VIP
+
+1162
+01:07:15,320 --> 01:07:17,320
+Super VIP
+
+1163
+01:07:17,320 --> 01:07:19,320
+super VIP
+
+1164
+01:07:19,320 --> 01:07:21,320
+thế mình hiểu là bản sếp của cái club này á
+
+1165
+01:07:21,320 --> 01:07:23,320
+họ không bán sạch còn
+
+1166
+01:07:23,320 --> 01:07:25,320
+họ không bán hyperlight
+
+1167
+01:07:25,320 --> 01:07:27,320
+mà họ bán kết quả
+
+1168
+01:07:27,320 --> 01:07:29,320
+bán theo mong muốn của khách hàng
+
+1169
+01:07:29,320 --> 01:07:31,320
+nếu khách hàng muốn giảm cân
+
+1170
+01:07:31,320 --> 01:07:33,320
+khách hàng muốn khỏe
+
+1171
+01:07:33,320 --> 01:07:35,320
+khách hàng muốn đẹp, khách hàng muốn gì đó
+
+1172
+01:07:35,320 --> 01:07:37,320
+họ bán kết quả
+
+1173
+01:07:37,320 --> 01:07:39,320
+và họ mới cam kết 100%
+
+1174
+01:07:39,320 --> 01:07:41,320
+nếu không có kết quả bán tiền 100%
+
+1175
+01:07:41,320 --> 01:07:43,320
+thì những cái này nó có giá
+
+1176
+01:07:43,320 --> 01:07:45,320
+có giá
+
+1177
+01:07:45,320 --> 01:07:47,320
+tùy khách hàng tùy điều kiện
+
+1178
+01:07:47,320 --> 01:07:49,320
+họ chọn cái nào
+
+1179
+01:07:49,320 --> 01:07:51,320
+và họ bán, họ mua từ 30 ngày, 60 ngày hay 90 ngày
+
+1180
+01:07:51,320 --> 01:07:53,320
+khách hàng chọn
+
+1181
+01:07:53,320 --> 01:07:57,320
+Các bạn hãy đăng ký kênh để xem những video hấp dẫn.
+
+1182
+01:08:23,320 --> 01:08:29,320
+Họ sẽ hiểu, đây là cung cấp hàng ngày, sản phẩm bổ sung hàng ngày, mình ăn không thể đủ được
+
+1183
+01:08:29,320 --> 01:08:31,320
+Lúc đấy họ mới phát sinh nhu cầu
+
+1184
+01:08:31,320 --> 01:08:33,320
+Thì mình coi đây là Salamos
+
+1185
+01:08:33,320 --> 01:08:36,320
+Như cầu thì họ có nhu cầu, nhưng họ không muốn mua, không muốn mua ở đâu
+
+1186
+01:08:36,320 --> 01:08:38,320
+Ok, ở đây họ sẽ bán tiết, giá lẻ
+
+1187
+01:08:38,320 --> 01:08:43,320
+Nhưng nếu họ muốn mua trực tiếp không, và được giá chiếc khấu là 25% hơn
+
+1188
+01:08:43,320 --> 01:08:46,320
+Mua trực tiếp, từ Hoplite
+
+1189
+01:08:46,320 --> 01:08:48,320
+Họ nói có, ok, họ không muốn mua
+
+1190
+01:08:48,320 --> 01:08:52,320
+Chúng ta tự nhiên như thế
+
+1191
+01:08:52,320 --> 01:08:56,320
+Nó mới lộng trong cái gói bán
+
+1192
+01:08:56,320 --> 01:08:59,320
+Thế thì trên đằng quick roll anh chỉ nên biết cái này rồi
+
+1193
+01:08:59,320 --> 01:09:02,320
+Và những cái kết quả được cam kết
+
+1194
+01:09:02,320 --> 01:09:06,320
+Sau đó là một cái lùng riêng là khó su hỗ trợ của các cốt
+
+1195
+01:09:06,320 --> 01:09:10,320
+Để hỗ trợ cho cái lùng riêng này 30, 60, 90 ngày
+
+1196
+01:09:10,320 --> 01:09:13,320
+Cốt đứng ra cam kết mà, cốt đứng ra tự nhiên là cốt đứng ra cam kết mà
+
+1197
+01:09:13,320 --> 01:09:16,320
+Những cái cốt đấy họ đứng ra cam kết
+
+1198
+01:09:16,320 --> 01:09:19,320
+sau đó khách hàng rất là tự nhiên, nếu họ muốn mua, mua thêm
+
+1199
+01:09:19,320 --> 01:09:20,320
+thì phải hỏi họ
+
+1200
+01:09:20,320 --> 01:09:21,320
+hỏi họ chứ
+
+1201
+01:09:21,320 --> 01:09:22,320
+phải hỏi họ chứ
+
+1202
+01:09:22,320 --> 01:09:23,320
+hỏi họ chứ
+
+1203
+01:09:23,320 --> 01:09:26,320
+và mới mở thì vẫn có người mở nhưng họ không tin xoay
+
+1204
+01:09:26,320 --> 01:09:27,320
+bình thường á
+
+1205
+01:09:27,320 --> 01:09:30,320
+họ không tin xoay
+
+1206
+01:09:30,320 --> 01:09:31,320
+rồi ok
+
+1207
+01:09:31,320 --> 01:09:33,320
+bây giờ đến đoạn mở này
+
+1208
+01:09:33,320 --> 01:09:37,320
+anh bảo ví dụ như anh em mình lấy một cái má số của ai trên đường này
+
+1209
+01:09:37,320 --> 01:09:39,320
+mình tin cho anh thì chủ yếu trên cái này nè
+
+1210
+01:09:39,320 --> 01:09:41,320
+đây là list của crypto nè
+
+1211
+01:09:41,320 --> 01:09:43,320
+nhưng mà đến đoạn mở ở đây á
+
+1212
+01:09:43,320 --> 01:09:47,320
+Thì người mới khách hàng đấy người ta mở người ta thuộc về ả?
+
+1213
+01:09:47,320 --> 01:09:49,320
+Xem khách hàng đấy đỉnh lại
+
+1214
+01:09:49,320 --> 01:09:51,320
+Khách hàng đấy đỉnh lại
+
+1215
+01:09:51,320 --> 01:09:57,320
+Thì có phải là nếu mà khách hàng đấy đến từ những người khác trong vĩnh thẩm này
+
+1216
+01:09:57,320 --> 01:09:59,320
+Về quyền lời herbal eye thì mình cũng có
+
+1217
+01:09:59,320 --> 01:10:04,320
+Còn trừ khi những người đấy đến từ những người mà do mình giới thiệu đến
+
+1218
+01:10:04,320 --> 01:10:06,320
+Thì mình cũng có phiền lợi mà
+
+1219
+01:10:06,320 --> 01:10:09,320
+Cho nên là nếu mà mình setup một cái business ở đây nha mình
+
+1220
+01:10:09,320 --> 01:10:12,320
+Thì tự ra bọn em chỉ nhìn vào cái này thôi
+
+1221
+01:10:12,320 --> 01:10:14,320
+Chỉ nhìn cái này thôi
+
+1222
+01:10:14,320 --> 01:10:16,320
+Vâng, hết rồi đây
+
+1223
+01:10:18,320 --> 01:10:20,320
+Cho nên là em hãy nói anh là
+
+1224
+01:10:20,320 --> 01:10:22,320
+nếu mà về cái line mà hệ thống
+
+1225
+01:10:22,320 --> 01:10:24,320
+line mà hệ thống
+
+1226
+01:10:24,320 --> 01:10:26,320
+nếu mà anh bảo là léo léo
+
+1227
+01:10:26,320 --> 01:10:28,320
+bảo là anh sắp xếp
+
+1228
+01:10:28,320 --> 01:10:30,320
+léo léo sắp xếp được
+
+1229
+01:10:30,320 --> 01:10:32,320
+thì anh chủ đồng xây để làm sao
+
+1230
+01:10:32,320 --> 01:10:34,320
+cho 1 lớp thêm quyền lợi cho anh em
+
+1231
+01:10:34,320 --> 01:10:36,320
+ở trong tờ này thì anh
+
+1232
+01:10:36,320 --> 01:10:38,320
+thêm overview để anh làm
+
+1233
+01:10:38,320 --> 01:10:40,320
+còn em sẽ công dụng công
+
+1234
+01:10:40,320 --> 01:10:44,320
+để mà đi xây dựng cái giới thiệu thành viên, đến các cái đấy
+
+1235
+01:10:44,320 --> 01:10:48,320
+Thế thì, nãy em mình nghĩ ra một cái hướng á, là
+
+1236
+01:10:48,320 --> 01:10:52,320
+hay vì là hôm nay mình phải đi tuyển từ người từ người đến đây
+
+1237
+01:10:52,320 --> 01:10:56,320
+thì em mới để riêng tại riêng một cái Line Code đấy
+
+1238
+01:10:56,320 --> 01:11:00,320
+thì các cái Line Code đấy á, chính là những người mà đi phát triển
+
+1239
+01:11:00,320 --> 01:11:02,320
+cái khách hàng về Jilip
+
+1240
+01:11:02,320 --> 01:11:06,320
+Thế thì em mới, nếu mà mình mở ra một cái học viện, một chương trình đào tạo gì đấy
+
+1241
+01:11:06,320 --> 01:11:12,840
+Tất cả những cái code đấy, ông nào mà muốn tham gia hệ thống thì việc ông làm đấy ông cứ làm, không cần có thu nhập, ngắn hạn này
+
+1242
+01:11:12,840 --> 01:11:16,520
+Nhưng nếu ông muốn tham gia hệ thống thì những người đó là hệ thúc của mình
+
+1243
+01:11:16,520 --> 01:11:21,240
+Thì cái đấy nó sẽ hay rất là nhiều sau việc mình phải đi bán lẹ từ ngành viên 1
+
+1244
+01:11:21,240 --> 01:11:24,840
+Thì thì các ông code này thì tự công sẽ có thành viên
+
+1245
+01:11:24,840 --> 01:11:31,000
+Hoặc là lúc đấy thông qua các cái việc marketing hoặc là cái lộn chỉnh cá nhân mình lại tổ chức cái platform giống như
+
+1246
+01:11:31,000 --> 01:11:34,360
+Nóng ảnh nhà mình đó, không mở các khoa học online rồi gì đấy
+
+1247
+01:11:34,360 --> 01:11:38,520
+Xong là đưa khách hàng về vốn luyện cho họ những cái bài gì đấy trên YouTube
+
+1248
+01:11:38,520 --> 01:11:41,080
+Sau đó thì tự phát triển thành viên cách rất tự nhiên
+
+1249
+01:11:41,080 --> 01:11:47,080
+Rồi xong tự hỏi thành viên đấy là bây giờ anh chỉ muốn dùng sản phẩm gì trong các sản phẩm khác có thì có thể là
+
+1250
+01:11:47,080 --> 01:11:53,080
+Nếu mà người chưa có điều kiện lắm thì thôi, anh chỉ về uống các cái bột đậm lành và bột cú cấp về thương xay cũng được
+
+1251
+01:11:53,080 --> 01:11:57,960
+Thì cái cái người cốt đấy người ta sẽ có những cái kiến thức của thương đối ca chiều
+
+1252
+01:11:57,960 --> 01:11:59,960
+Nó không biết nguồn nguồn của nó là hồ lai rồi
+
+1253
+01:11:59,960 --> 01:12:01,960
+Em kêu gọi như thế này nha, em nghĩ như thế này
+
+1254
+01:12:01,960 --> 01:12:05,960
+Thay vì là anh kiêm cả khâu là đào tạo, khâu nhận thức
+
+1255
+01:12:05,960 --> 01:12:09,960
+thì có khi anh chỉ tập trung với khâu vật lý
+
+1256
+01:12:09,960 --> 01:12:13,960
+hoặc là chuyển giao khâu đào tạo và nhận thức đấy cho cánh này
+
+1257
+01:12:13,960 --> 01:12:17,960
+Ví dụ như thế, dạ thì anh nó rất là nhanh
+
+1258
+01:12:17,960 --> 01:12:19,960
+để làm nào để cố anh hất sang đây này đây
+
+1259
+01:12:19,960 --> 01:12:21,960
+Đào tạo theo lúc tiêu chuẩn này, anh cần chuyển nội dung từ đây này
+
+1260
+01:12:21,960 --> 01:12:23,960
+cho tổ chức đào tạo
+
+1261
+01:12:23,960 --> 01:12:25,960
+và verify chứng nhận
+
+1262
+01:12:25,960 --> 01:12:30,320
+sau đấy thì gọi là member đúng không để hiểu được cái đấy của anh
+
+1263
+01:12:30,320 --> 01:12:34,040
+lên đây trên này học cái phí hoặc là đào tạo, miếng phí gì đấy
+
+1264
+01:12:34,040 --> 01:12:35,680
+hoặc là có phí tươi
+
+1265
+01:12:35,680 --> 01:12:36,600
+để nhận thức
+
+1266
+01:12:36,600 --> 01:12:41,600
+nhận thức để làm gì để về sau hiểu cái giá trị của Fibro thì bản anh rất sang hoàng này phát
+
+1267
+01:12:41,600 --> 01:12:45,200
+đúng không, anh chỉ tập trung về phần vận hành thôi
+
+1268
+01:12:45,200 --> 01:12:48,840
+còn nếu mình gom cả vận hành, rồi cả phần đào tạo, nhận thức
+
+1269
+01:12:48,840 --> 01:12:53,960
+rồi code train, live, thư bại hóa, nó khó lắm
+
+1270
+01:12:53,960 --> 01:13:00,360
+Phần cốt, tại vì những người cốt nếu mà làm ra người ta làm hợp luyện viên thì nó cũng hơi có danh một tí
+
+1271
+01:13:00,360 --> 01:13:03,080
+Nói là làm thầy và người vũ dân
+
+1272
+01:13:03,080 --> 01:13:08,040
+Thì nếu mà gò F người ta vào một cái gì đấy thì có cái cảm giác nó hơi dộng
+
+1273
+01:13:08,040 --> 01:13:11,000
+Nên là mình dạy cho người ta một cái rất tự nhiệt
+
+1274
+01:13:11,000 --> 01:13:12,840
+Họ trưởng thành cùng với cả mô hình này
+
+1275
+01:13:12,840 --> 01:13:15,240
+Đây là một mô hình truyền thống hoàn toàn mà
+
+1276
+01:13:15,240 --> 01:13:17,080
+Trong cái truyền thống đấy thì lúc đấy
+
+1277
+01:13:17,080 --> 01:13:21,080
+Cái bộ phận mình gọi là nếu mà công ty truyền thống người ta sẽ có bộ phận tàn đi
+
+1278
+01:13:21,080 --> 01:13:25,080
+để người ta nghiên cứu xem là nếu mà lộ trình cam kết 30 ngày 60 ngày
+
+1279
+01:13:25,080 --> 01:13:27,080
+có khỏe không là phải trả lại tiền cho khách hàng ấy
+
+1280
+01:13:27,080 --> 01:13:29,080
+thì phải cho trận lập nào nó phù hữu qua
+
+1281
+01:13:29,080 --> 01:13:32,080
+thì lúc đấy mới giả sát thì có thể là
+
+1282
+01:13:32,080 --> 01:13:35,080
+lộ trình nó là go live nếu không go live là mặc được
+
+1283
+01:13:35,080 --> 01:13:38,080
+và sau này nó là các công ty khác cho công ty ta mặc được
+
+1284
+01:13:38,080 --> 01:13:40,080
+tìm miếng sao người ta phải bảo vệ những lộ trình này
+
+1285
+01:13:40,080 --> 01:13:42,080
+vô trạng hạn, không người ta phải trả tiền
+
+1286
+01:13:42,080 --> 01:13:44,080
+còn tiền để có cái uy tín người ta mặc
+
+1287
+01:13:44,080 --> 01:13:46,080
+cho nên là mình là mình bảo vệ cái này
+
+1288
+01:13:46,080 --> 01:13:48,080
+thế thì các cốt người ta cũng nhìn vào cái này
+
+1289
+01:13:48,080 --> 01:13:49,080
+để người ta đi tùm mình
+
+1290
+01:13:49,080 --> 01:13:54,080
+Thì lúc đấy mình chỉ giải thích với người ta là tại sao chúng tôi chọn chủ hộ sản phẩm của Google Live
+
+1291
+01:13:54,080 --> 01:13:56,080
+Về không vấn đề với anh
+
+1292
+01:13:56,080 --> 01:13:58,080
+Về không vấn đề với anh
+
+1293
+01:13:58,080 --> 01:14:02,080
+Anh không phải là người giải thích nữa, anh nhất sang này cho đội này
+
+1294
+01:14:02,080 --> 01:14:07,080
+Ở đây có sáng rồi các chuyên gia về đây chia thành live
+
+1295
+01:14:07,080 --> 01:14:11,080
+Anh chỉ thuần vận hành thôi, và nhân quy mô thôi
+
+1296
+01:14:11,080 --> 01:14:15,080
+Còn đội này là nhân chi thức, kiểm soát bản quản, chi thức, thông tin
+
+1297
+01:14:15,080 --> 01:14:26,080
+Chuyển truyền ra nhóm chào tạo kết nối để dẫn họ đi theo hành trình này rồi này
+
+1298
+01:14:26,080 --> 01:14:31,080
+Còn em là công nghệ để giải quyết tất cả các tư tư
+
+1299
+01:14:31,080 --> 01:14:35,080
+Họ tập trung vào chăm sóc nhà
+
+1300
+01:14:35,080 --> 01:14:38,080
+Hết nào cũng là họ chăm sóc nhau và chăm sóc tốt
+
+1301
+01:14:38,080 --> 01:14:42,080
+Sau đây có hệ thống công nghệ luôn, tạo cho các cốt cá nhân
+
+1302
+01:14:42,080 --> 01:14:55,080
+Vì là khi mà một code có thể nó nhiều, dựa sọn nhiều mô hình, như có thể FitPro, có thể là FitPro 7, thì nó sẽ chọn mình vì đây có chi tức là, ôi chả sẵn rồi rồi, code công nghệ cũng chả sẵn cho họ rồi, đúng không?
+
+1303
+01:14:55,080 --> 01:15:00,080
+Có gì vận hành cũng chả sẵn cho họ rồi, 1, 2, 3, thì họ sẽ gói bính.
+
+1304
+01:15:01,080 --> 01:15:09,080
+Vì sau có thể là, tại vì là mình muốn làm thật lớn, thì mình sẽ phải open hơn cái mô hình của mình ra.
+
+1305
+01:15:09,080 --> 01:15:16,080
+Thì lúc đấy mình chỉ là đặt một cái phiếu lập, đó là những cái ông cô này muốn ấp tên sản phẩm lên một cái Marketplace
+
+1306
+01:15:16,080 --> 01:15:23,080
+để các ông ấy, tại vì là những người đó người ra là chuyên gia, người ta có hoàn toàn có thể kiểm chứng để đưa những sản phẩm phù hợp với lộ trình người ta xây dựng mà
+
+1307
+01:15:23,080 --> 01:15:25,080
+Cả nhân hóa
+
+1308
+01:15:25,080 --> 01:15:29,080
+Là người ta có thể, đây bây giờ mình thì mình offer hap lạc
+
+1309
+01:15:29,080 --> 01:15:33,080
+Nhưng mà có thể những cái người khác người ta offer mua người khác thì sao?
+
+1310
+01:15:33,080 --> 01:15:36,080
+Sản phẩm khác mà vẫn tảm bảo với lộ trình hay thì sao?
+
+1311
+01:15:36,080 --> 01:15:39,080
+Nó gọi là phát đồ điều trị của bác sĩ.
+
+1312
+01:15:39,080 --> 01:15:44,080
+Mỗi ông có một phát đồ khác nhau để trị cái bệnh cho anh, đúng không?
+
+1313
+01:15:44,080 --> 01:15:47,080
+Ông thì phát đồ 1 tháng mới khỏi.
+
+1314
+01:15:47,080 --> 01:15:49,080
+Ông chỉ có 3 ngày.
+
+1315
+01:15:57,080 --> 01:16:01,080
+Bao giờ anh trả lời được câu hỏi là vì sao thằng post đấy nó này doi với mình,
+
+1316
+01:16:01,080 --> 01:16:03,080
+mà không phải nó doi với một chung đông khác.
+
+1317
+01:16:03,080 --> 01:16:06,080
+thì quan trọng là anh sẽ thành công vút được cái đống cốt đấy
+
+1318
+01:16:06,080 --> 01:16:09,080
+đây, hỗ trợ chi thức này, hỗ trợ công nghệ này, hỗ trợ vận hành cho họ này
+
+1319
+01:16:09,080 --> 01:16:13,080
+để họ chiến khách họ vào
+
+1320
+01:16:13,080 --> 01:16:15,080
+tại vì sao?
+
+1321
+01:16:15,080 --> 01:16:18,080
+là ông bản chất ngũi ông cốt đã có tếp khách hàng rồi
+
+1322
+01:16:18,080 --> 01:16:20,080
+đúng không? tếp khách hàng cá nhân của nó đã có rồi
+
+1323
+01:16:20,080 --> 01:16:23,080
+nhưng nếu nó kéo vào trong hệ thống này của mình thì nó nhiều lợi ích nữa
+
+1324
+01:16:23,080 --> 01:16:26,080
+được khách hàng của nó nó đách cần phải trao đổi
+
+1325
+01:16:26,080 --> 01:16:30,080
+cần phải giải thích là tại sao 90 ngày hiệu quả
+
+1326
+01:16:30,080 --> 01:16:32,080
+hoặc là đúng hay không
+
+1327
+01:16:32,080 --> 01:16:34,080
+Ổng này sẽ là người giải thích
+
+1328
+01:16:34,080 --> 01:16:36,080
+Ở đây theo đúng cái kế hoạch của tôi đúng không?
+
+1329
+01:16:36,080 --> 01:16:38,080
+Dùng các sản phẩm người tập, các bài tập như thế này
+
+1330
+01:16:38,080 --> 01:16:42,080
+Thì mỗi ngày tăng thêm lượng như thế này thì có sẵn hỗ trợ thôi
+
+1331
+01:16:42,080 --> 01:16:44,080
+Thì kéo nó là thôi
+
+1332
+01:16:46,080 --> 01:16:48,080
+Thì mua nhiều tống nó mới chiếp tiêu được
+
+1333
+01:16:50,080 --> 01:16:52,080
+Thì lúc ấy nó sẽ hữu xa tự nhiên hơn đến mức
+
+1334
+01:16:52,080 --> 01:16:56,080
+Nếu chính sách kinh doanh của Herbalife đủ cú lợi thể
+
+1335
+01:16:56,080 --> 01:17:00,080
+Và hệ thống quản trình thu nhập phục động của Herbalife
+
+1336
+01:17:00,080 --> 01:17:03,080
+và có mang thực sự măng này là sẽ cho người cốt
+
+1337
+01:17:03,080 --> 01:17:06,080
+thì cái việc là người ta đương nhiên là người ta sẽ doi rồi
+
+1338
+01:17:06,080 --> 01:17:09,080
+thế nên nó không còn là cái gì đó
+
+1339
+01:17:09,080 --> 01:17:11,080
+mình phải đi chút phục
+
+1340
+01:17:11,080 --> 01:17:14,080
+thứ nhất là người ta nhìn thấy kết quả điện thực ở đây
+
+1341
+01:17:14,080 --> 01:17:17,080
+là vô bây giờ
+
+1342
+01:17:17,080 --> 01:17:19,080
+không phải bỏ tiền ra để trải nghiệm sản phẩm
+
+1343
+01:17:19,080 --> 01:17:22,080
+mà vẫn nhìn thấy hiện thực thì sẽ giữ hiệu tin ngay và luôn
+
+1344
+01:17:22,080 --> 01:17:25,080
+thứ hai là chính sách trả thưởng này hay quá
+
+1345
+01:17:25,080 --> 01:17:27,080
+và mang lại cái cơ hội tương nhiệm lâu dài
+
+1346
+01:17:27,080 --> 01:17:31,080
+Chắc chắn thì chẳng có lý do để không tham gia cả, hay đúng không?
+
+1347
+01:17:31,080 --> 01:17:36,080
+Nhưng mà thế thì tạo tạo làm sao thì những cái người khô đấy lại thuộc hệ thống của mình là tốt nhất
+
+1348
+01:17:36,080 --> 01:17:42,080
+Thế thì lúc đấy mình nghĩ là ngay trước đây mình sẽ dùng cái chương trình tạo tạo của một trẻ học viên, một thằng PC đấy
+
+1349
+01:17:42,080 --> 01:17:46,080
+Đấy cái đấy thì thắng nghiên cứu, em ấy thắng triển khai cái đấy
+
+1350
+01:17:46,080 --> 01:17:51,080
+Tạo tạo cấp chương trình nhận, ông nào muốn vào đây này, đấy thì qualify cái này
+
+1351
+01:17:51,080 --> 01:17:56,080
+Định cao của xây dựng hệ thống, mọi người không phải tự tìm, khó khăn đi tìm người đó
+
+1352
+01:17:56,080 --> 01:17:58,080
+Một mình thành hệ thống này
+
+1353
+01:17:58,080 --> 01:17:59,080
+Đúng không? Tức là em
+
+1354
+01:17:59,080 --> 01:18:00,080
+Mình có hệ thống giao tạo này xong đưa về
+
+1355
+01:18:00,080 --> 01:18:01,080
+Anh là người điều hành
+
+1356
+01:18:01,080 --> 01:18:03,080
+Anh làm sao? Anh bổ chí, anh sắp xếp
+
+1357
+01:18:03,080 --> 01:18:04,080
+Đúng không?
+
+1358
+01:18:04,080 --> 01:18:05,080
+Anh như nào anh sắp xếp
+
+1359
+01:18:05,080 --> 01:18:06,080
+Để làm sao phải trúng ra
+
+1360
+01:18:06,080 --> 01:18:07,080
+Không ai phải biết gì
+
+1361
+01:18:07,080 --> 01:18:09,080
+Không phải xây
+
+1362
+01:18:09,080 --> 01:18:10,080
+Đấy là xây như không xây
+
+1363
+01:18:10,080 --> 01:18:11,080
+Đấy là đỉnh cao
+
+1364
+01:18:11,080 --> 01:18:12,080
+Đúng là xây như không xây
+
+1365
+01:18:12,080 --> 01:18:13,080
+Ok
+
+1366
+01:18:13,080 --> 01:18:16,080
+Lúc này bọn em mời giáo sư tiến sĩ
+
+1367
+01:18:16,080 --> 01:18:18,080
+Là thầy đào tạo cho nó
+
+1368
+01:18:18,080 --> 01:18:19,080
+Đây rồi
+
+1369
+01:18:19,080 --> 01:18:21,080
+Một mô đun là mời mấy thầy tâm tâm về
+
+1370
+01:18:21,080 --> 01:18:23,080
+Để làm bộ hết cái tâm tâm
+
+1371
+01:18:23,080 --> 01:18:24,080
+Làm nó rất mạnh
+
+1372
+01:18:24,080 --> 01:18:25,380
+Nó nguồn rất mạnh
+
+1373
+01:18:25,380 --> 01:18:27,380
+Làm ở đây buồn không tìm thấy
+
+1374
+01:18:27,380 --> 01:18:31,380
+Anh Thắng thì đây rất là chuyên gia trong việc xây dựng các truyền tỷ giao tạ
+
+1375
+01:18:31,380 --> 01:18:33,380
+Hồi xưa làm ở các trường ấy
+
+1376
+01:18:33,380 --> 01:18:35,380
+10 trường cấp chính trị
+
+1377
+01:18:38,380 --> 01:18:40,380
+Hợp lý đúng không?
+
+1378
+01:18:40,380 --> 01:18:42,380
+Gó hơn, gó hơn rồi này
+
+1379
+01:18:42,380 --> 01:18:44,380
+Mặc hơn
+
+1380
+01:18:44,380 --> 01:18:46,380
+Đưa chân rồi rồi hết rồi
+
+1381
+01:18:46,380 --> 01:18:48,380
+Em có nghĩ phát triển đến chương còn em không phát
+
+1382
+01:18:48,380 --> 01:18:50,380
+Chưa hình dung ra đâu
+
+1383
+01:18:50,380 --> 01:18:52,380
+Ý anh không, anh mong muốn cái giống như Linh nói
+
+1384
+01:18:52,380 --> 01:18:54,380
+Thì nó quá đỉnh cao luôn
+
+1385
+01:18:54,380 --> 01:18:56,380
+Thì tại sao mà có công hệ á
+
+1386
+01:18:56,380 --> 01:18:58,380
+Tại sao mà xây cái quy chuẩn nó tự động lắp lắp
+
+1387
+01:18:58,380 --> 01:19:00,380
+Tự động lắp
+
+1388
+01:19:00,380 --> 01:19:02,380
+Thì em nhìn lên về lần đó
+
+1389
+01:19:02,380 --> 01:19:04,380
+Hơn nữa cái lộ tiền cho
+
+1390
+01:19:04,380 --> 01:19:06,380
+Học tác thái thường ra là khách hạ
+
+1391
+01:19:06,380 --> 01:19:08,380
+Và người cố
+
+1392
+01:19:08,380 --> 01:19:10,380
+Giống như hồi xưa em xây mô hình hệ sinh thái y tế
+
+1393
+01:19:10,380 --> 01:19:12,380
+Em tìm hiếm 2 đối tượng
+
+1394
+01:19:12,380 --> 01:19:14,380
+Có 2 đối tượng thôi
+
+1395
+01:19:14,380 --> 01:19:16,380
+Một là mô lâm bác sĩ và mô lâm bệnh nhân
+
+1396
+01:19:16,380 --> 01:19:18,380
+Hồi xưa em nhận được cái này
+
+1397
+01:19:18,380 --> 01:19:20,380
+Từ anh tiến sĩ y khoa của Mỹ
+
+1398
+01:19:20,380 --> 01:19:26,380
+Nhưng hệ thống này sẽ không bao giờ vận hành được nếu hai ông đó không gặp nhau.
+
+1399
+01:19:26,380 --> 01:19:32,380
+Vậy thì xây dựng một hệ thống sinh thái phải đưa vào, phải làm sao để tập trung vào hai đối tượng chỉ.
+
+1400
+01:19:32,380 --> 01:19:37,380
+Tiếp mình đề nghị ở trên Fibro của mình là bộ đồng cốt và bộ đồng khách ạ.
+
+1401
+01:19:37,380 --> 01:19:41,380
+Gặp nhau được tương tác những gì muốn luyện qua lại, tạo lược tài trị cho nhau.
+
+1402
+01:19:41,380 --> 01:19:44,380
+Thì hệ thống này tất cả mọi thứ xung quanh sẽ vận hành.
+
+1403
+01:19:44,380 --> 01:19:46,380
+Bạn em đồng ý không?
+
+1404
+01:19:46,380 --> 01:19:50,380
+Nhà cái đích điểm của hai ông này vẫn là cô khó đời đúng không?
+
+1405
+01:19:50,380 --> 01:19:52,380
+Đúng rồi, ông là cô khó đời
+
+1406
+01:19:52,380 --> 01:19:55,380
+Thì ông nào cũng có cách riêng của ông ấy
+
+1407
+01:19:55,380 --> 01:19:59,380
+Có những ông ấy ở ngoài trong cái clip number thì tìm nhiều quá
+
+1408
+01:19:59,380 --> 01:20:03,380
+Vì bây giờ mặc tìm đi xài sản thẩm cho nó xuyên xuyên, xài mãi thôi
+
+1409
+01:20:03,380 --> 01:20:06,380
+Có những ông ấy mong muốn kiếm tiền
+
+1410
+01:20:06,380 --> 01:20:08,380
+Có những ông ấy nhiều khi không muốn kiếm tiền
+
+1411
+01:20:08,380 --> 01:20:13,380
+Nhưng mà tôi cũng muốn mở cái này ra để cho con cháu tạo điều kiện cho thế nào đấy
+
+1412
+01:20:13,380 --> 01:20:19,380
+Tuy nhiên ổng cốt này thì có thể chưa có điều kiện để làm này
+
+1413
+01:20:19,380 --> 01:20:21,380
+Nhưng mà thì thôi cứ đến để huấn luyện với ông này
+
+1414
+01:20:21,380 --> 01:20:23,380
+Vì ông Quid Pro có sách khách hàng này
+
+1415
+01:20:23,380 --> 01:20:27,380
+Đến để gặp tương tác engine để kiếm tiền ngay đây
+
+1416
+01:20:27,380 --> 01:20:31,380
+Ông quý lại cấp chứng chỉ cho mình, tạo vô nghề nghiệp cho mình luôn
+
+1417
+01:20:31,380 --> 01:20:33,380
+Vừa cấp chứng chỉ xong, dài phóng nghề
+
+1418
+01:20:33,380 --> 01:20:35,380
+Một chỗ làm, đúng chưa?
+
+1419
+01:20:35,380 --> 01:20:37,380
+Chương mặt quốc, muốn làm nó cũng được, bao nhiêu điểm đấy
+
+1420
+01:20:37,380 --> 01:20:39,380
+có bằng cái này hông đi
+
+1421
+01:20:39,380 --> 01:20:41,380
+có bằng cái này hông đi
+
+1422
+01:20:41,380 --> 01:20:43,380
+chống bất cứ đâu
+
+1423
+01:20:43,380 --> 01:20:45,380
+rồi xong ok
+
+1424
+01:20:45,380 --> 01:20:47,380
+xong khi làm xong thời gian hông thấy khách hàng ngon ta
+
+1425
+01:20:47,380 --> 01:20:49,380
+bây giờ nếu đặt bài toán
+
+1426
+01:20:49,380 --> 01:20:51,380
+là sẽ được thu nhập thủ động kinh xác
+
+1427
+01:20:51,380 --> 01:20:53,380
+lại trở thành như thế nào
+
+1428
+01:20:53,380 --> 01:20:55,380
+thì có thể có những ông muốn làm quốc hòa
+
+1429
+01:20:55,380 --> 01:20:57,380
+chẳng cần muốn kinh danh cho
+
+1430
+01:20:57,380 --> 01:20:59,380
+đúng không ạ
+
+1431
+01:20:59,380 --> 01:21:01,380
+hành trình ơi, chỉ đến đấy thôi
+
+1432
+01:21:01,380 --> 01:21:03,380
+nhưng mà ông nào muốn bất phá hơn nữa
+
+1433
+01:21:03,380 --> 01:21:05,380
+ông trở thành như thế nào
+
+1434
+01:21:05,380 --> 01:21:14,380
+Nó có thể nó không phải toàn tự, nó có thể là đếm những năng lực như thế này là chỉ muốn làm cốt, thu tiện để đến đây thôi, không muốn kinh doanh.
+
+1435
+01:21:15,380 --> 01:21:20,380
+Còn người ta không muốn đến đây thôi thôi là lúc đấy nó sẽ phục vụ vào năng lực quảng bá của anh.
+
+1436
+01:21:21,380 --> 01:21:26,380
+Cái đấy là mình phải quảng bá thôi, anh cứ quảng bá thì những người này sẽ hút, người ta hút, người ta tự lên nấp.
+
+1437
+01:21:27,380 --> 01:21:32,380
+Chứ mình dùng quảng bá mà mình không dùng quảng cáo như hồi xưa, hay là hút xe hút xôi như hồi xưa để cho người ta áp lực.
+
+1438
+01:21:32,380 --> 01:21:40,380
+Hãy chức ứng những nguyên liệu quảng 3 mình làm, hãy chức quảng 3, ứ thù vốn, ông nào kích được tầm nhiệm đến đâu thì ông sẽ ở vị trí đó.
+
+1439
+01:21:40,380 --> 01:21:46,380
+Không cần gì về lưu hẹp cả. Còn tốt khác ông ở chỗ nào được, ông 2 lặng ngay mức đấy rồi, không cần phải làm thêm.
+
+1440
+01:21:46,380 --> 01:21:49,380
+Cái này chẳng hiểu không? Nói kêu chưa? 2 lặng thì đi làm thêm.
+
+1441
+01:21:49,380 --> 01:21:51,380
+Ừ, đúng là 2 lặng, không phải...
+
+1442
+01:21:51,380 --> 01:21:55,380
+Có, nhưng mà trong đấy ông cứ 2 lặng thì ok rồi, không cần gì về lưu hẹp nữa.
+
+1443
+01:21:55,380 --> 01:21:57,380
+Đúng rồi, đúng rồi.
+
+1444
+01:21:57,380 --> 01:22:09,380
+Vậy thì, hông khách hàng, hông có người hỗn luyện trong nhà, có chương trình đào tạo, có phóng máy, có quy vạch kết rồi, xong rồi có người cốt đồng hành, hỗ trợ, trưởng thành, trưởng thành, trưởng thành.
+
+1445
+01:22:09,380 --> 01:22:20,380
+Vậy hông cốt đấy lại được là, hông quýt vừa đầu là verify hông cốt, hông luyện đào tạo cho hông cốt, đàng hoàng về kiến thức, về tâm, về các nhen tạng, về nhân thức, về tâm thái.
+
+1446
+01:22:20,380 --> 01:22:26,380
+sau đó có chương trình kiểm dựa tháng năm để verifying các ổng code liên tục
+
+1447
+01:22:26,380 --> 01:22:30,380
+hoặc là tạo game cho các ổng code để tính tích chương nhau
+
+1448
+01:22:30,380 --> 01:22:33,380
+tạo con code thêm hoặc là contribute thêm, tạo lợn giá trị thêm
+
+1449
+01:22:33,380 --> 01:22:37,380
+thì lại ghi nhận ổng code, chấm điểm code cho khách hàng code
+
+1450
+01:22:37,380 --> 01:22:40,380
+cho các ổng code thì đưa ở chỗ rất nhiều người ta
+
+1451
+01:22:40,380 --> 01:22:43,380
+mà chỉ cần hai đối tượng thôi anh ạ, trong tất cả các đối tượng
+
+1452
+01:22:43,380 --> 01:22:45,380
+Chứ hai đối tượng chủ yếu thì...
+
+1453
+01:22:45,380 --> 01:22:48,380
+Tại vì hồi xưa trong vây cuốn Platform Form Revolution
+
+1454
+01:22:48,380 --> 01:22:51,380
+Nó bảo là hiệu ứng mạnh Networking Effective
+
+1455
+01:22:51,380 --> 01:22:55,380
+Thì nó không chỉ là một, không thể một được đúng không?
+
+1456
+01:22:55,380 --> 01:22:58,380
+Chỉ có thể tối thiểu là hai thì nó bắt đầu gây ra hiệu ứng Networking
+
+1457
+01:22:58,380 --> 01:23:00,380
+Hai muốn một mà
+
+1458
+01:23:00,380 --> 01:23:03,380
+Cho nên là cái unit nhỏ nhất là...
+
+1459
+01:23:03,380 --> 01:23:07,380
+Người ta hỏi là hai cái người đầu tiên đấy là ai
+
+1460
+01:23:07,380 --> 01:23:09,380
+Một đối tượng nào và một đối tượng nào
+
+1461
+01:23:09,380 --> 01:23:11,380
+Thì mình tập trung vào cái đấy
+
+1462
+01:23:11,380 --> 01:23:13,380
+là cả hay sử dụng thái cho bệnh viện?
+
+1463
+01:23:13,380 --> 01:23:16,380
+Vào hôm nay tử ý ạ, đầu tiên nó nhận 2
+
+1464
+01:23:16,380 --> 01:23:20,380
+Chứ bây giờ mình nhiều đối tượng quá nên mình không tập trung được đâu
+
+1465
+01:23:20,380 --> 01:23:22,380
+2 đối tượng phân loại
+
+1466
+01:23:22,380 --> 01:23:25,380
+Hồi xưa bệnh viện hay sử dụng thái y tế nó chỉ bằng 2 cái đấy thôi
+
+1467
+01:23:25,380 --> 01:23:30,380
+Em đi và nói chuyện đến cả giám đốc bệnh viện sở y tế thì ai cũng đồng ý là
+
+1468
+01:23:30,380 --> 01:23:33,380
+đúng là nếu mà trong bệnh viện không có một ông bác sĩ ngồi ông bệnh nhân
+
+1469
+01:23:33,380 --> 01:23:37,380
+thì không có chỉ tình cầm lân sáng thì ít quang, siêu ấm, xét nghiệm để làm thì
+
+1470
+01:23:37,380 --> 01:23:42,380
+Không có ông bác sĩ vô nhân để ra đơn thuốc thì dạ thuốc chẳng có gì cả
+
+1471
+01:23:42,380 --> 01:23:46,380
+Nhưng mà định như nhiều đối tượng quá để làm gì, trong khi này thì khả chỉ cầm bắt đầu hay là thế nào?
+
+1472
+01:23:46,380 --> 01:23:52,380
+Kháng lâm sàng ông chỉ định sáng nghiệm, là đấy tổng hợp kết quả và ra cơ luận
+
+1473
+01:23:52,380 --> 01:23:57,380
+Đấy, hồi xưa tôi xây dụng rốt máy cầm ẩm thách này không cực kỳ tinh đoạn, nó rất giả
+
+1474
+01:23:57,380 --> 01:24:01,380
+Không cần phải làm thức tạp, làm ban đầu phục vụ là hay ông đấy
+
+1475
+01:24:01,380 --> 01:24:04,380
+Tại giống như anh nói em là cái mô hình ông chuyên tạ đấy
+
+1476
+01:24:04,380 --> 01:24:11,780
+Chỉ cần tham này thôi. Cứ ông chuyên ra mà phục vụ được trong khách hàng cuối thì hẹn xinh thái chất tử nó sẽ ra.
+
+1477
+01:24:11,780 --> 01:24:15,860
+Bởi vì hai mũ của này đấy tốt thì học viên tự nhiên hỏi thầy thầy.
+
+1478
+01:24:15,860 --> 01:24:19,660
+Vậy bây giờ sau khi uống rượu tâm rồi bảo thầy thầy mua sản phẩm đấy ở đâu.
+
+1479
+01:24:19,660 --> 01:24:24,820
+Vậy cũng phải là cái thương mại nó ra và thầy thầy bây giờ cái đấy hay qua tập ở đâu.
+
+1480
+01:24:24,820 --> 01:24:27,820
+Hay là uống sách đấy hay qua mua ở đâu. Nó cũng như thế không ạ?
+
+1481
+01:24:27,820 --> 01:24:30,260
+Bây giờ mà thương mại trực thiện là không thua đâu.
+
+1482
+01:24:30,260 --> 01:24:34,260
+Nó đều phải là đi truyền thông, dẫn tức xong rồi mình qua
+
+1483
+01:24:34,260 --> 01:24:37,260
+Nó Ấn đi một tí để người ta nghe
+
+1484
+01:24:37,260 --> 01:24:38,260
+Đúng xác
+
+1485
+01:24:44,260 --> 01:24:46,260
+Đúng rồi, mình gồm về
+
+1486
+01:24:46,260 --> 01:24:50,260
+Mà hồi xưa em làm hệ thống em cũng không bao giờ đi chuyển người dân đồng cuối cùng
+
+1487
+01:24:50,260 --> 01:24:52,260
+Em chỉ chuyển tướng thôi
+
+1488
+01:24:52,260 --> 01:24:54,260
+Hồi xưa hệ thống em có 2-3 ầm mà
+
+1489
+01:24:54,260 --> 01:24:58,260
+Nhưng mà cứ một âm danh nhìn người, một âm danh nhìn người
+
+1490
+01:24:58,260 --> 01:25:18,260
+Bây giờ mình đi tìm tốt, tạo tạo tốt. Nếu mình tạo được cơ hữu đủ, công nghệ đủ, quy trình vận hành hông này làm tốt, không có khác gì mà hông biết giới ra được.
+
+1491
+01:25:18,260 --> 01:25:28,260
+Hệ sinh khái quá hay. Họ dùng hệ sinh khái quá hay của mình thì họ sẽ hút mở vào.
+
+1492
+01:25:28,260 --> 01:25:32,260
+Và kéo đông cốt, bắt đầu họ lại kéo khách, đi bỏ vào trong cái suối đấy.
+
+1493
+01:25:32,260 --> 01:25:38,260
+Thay vì họ tự mở ra một cái ấy, thì họ có thể tham gia một cái setter khó sẵn.
+
+1494
+01:25:38,260 --> 01:25:48,260
 Hãy đăng ký kênh để ủng hộ kênh nhé!

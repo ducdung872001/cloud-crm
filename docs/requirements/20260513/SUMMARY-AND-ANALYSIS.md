@@ -1,325 +1,447 @@
 # Vincom Center 10 — Họp định hướng FitPro (2026-05-13)
 
-> **Nguồn:** `Vincom Center 10.m4a` (file 1h25m, nhưng nội dung thực ~24 phút đầu, phần còn lại im lặng).
-> **Transcript:** `TRANSCRIPT.txt` (đã cắt 117 segment hallucinate của Whisper). SRT đầy đủ giữ ở `Vincom Center 10.srt` để đối chiếu timestamp.
-> **ASR:** `faster-whisper medium` (Vietnamese, int8 CPU, ~36 phút wall-time).
-> **Cảnh báo chất lượng:** ASR có sai sót đáng kể (audio xa mic, nhiều người, ồn). Một số đoạn ngắn ASR ra ngôn ngữ lạ (`h所以`, `h deshalb`) — phớt lờ. Một số tên/thuật ngữ chỉ là phiên âm gần đúng (ví dụ: "phỏ founder" ≈ phó-founder, "phỏ thịnh / phỏ suy" ≈ phú thịnh / phú suy, "đông cốt" ≈ HLV).
+> **Nguồn:** `Vincom Center 10.m4a` — **toàn bộ 1h25m56s đều có nội dung**.
+> **Lưu ý quan trọng:** Bản tóm tắt + transcript hiện tại là **kết quả lần ASR thứ 2** với `vad_filter=False`. Lần đầu (vad_filter mặc định) đã bỏ qua ~62 phút giọng nói thật (do âm bé/xa mic, VAD whisper coi là non-speech) → kết quả sai lệch trầm trọng. Lần 2 chạy 76 phút wall, ra 1494 segment (gấp đôi lần 1 = 723). Sau khi cắt 12 dòng hallucinate "đăng ký kênh…" + nén 40 dãy dòng trùng lặp → còn 1442 dòng.
+> **ASR:** `faster-whisper medium`, Vietnamese, int8 CPU, `vad_filter=False`, `condition_on_previous_text=False`, beam=5, temperature fallback `[0.0, 0.2, 0.4, 0.6]`.
+> **Cảnh báo chất lượng:** ASR mạnh hơn nhưng vẫn sai nhiều thuật ngữ. Một số phiên âm cần đối chiếu SRT/audio gốc khi đưa lên SOP:
+>
+> | Phiên âm ASR | Khả năng thực tế |
+> |---|---|
+> | cô coder / cô father / cô forward / phỏ founder | **Co-Founder** |
+> | cốt / bốt / quốc / cô / code | **Coach** (HLV) |
+> | Kipro / Fipro / Vipro / Bitpro / Kipro / KPRO | **FitPro** |
+> | set-tơ / setter | **Center** (cơ sở vật lý) |
+> | hap lai / hop lite / Plot lai / Apple Line / Hopper Lite / HubLine | **Herbalife** |
+> | Nha lít / Element / Nha Liz | **Elite** (member tier) |
+> | bắt lý / bắc lý | **pilot** |
+> | mật băng | **PT đông cốt? (cần đối chiếu)** |
+> | gò F người | **gò ép người vào** |
+>
 > **Bên tham gia (suy đoán từ ngữ cảnh):**
-> - **Anh Dũng** — founder FitPro, đã có center bất động sản ở Sài Gòn, đầu tư hơn chục tỷ vào dự án.
-> - **Anh Ngọc** — mentor / cố vấn chiến lược (được "anh em" nhắc lại nhiều lần như nguồn nguyên lý).
-> - **"Em"** — người đối thoại chính với Dũng/Ngọc (có thể là CEO Reborn — ceo@reborn.vn).
-> - **Cường** — chủ doanh nghiệp "Egypt" trong cộng đồng Quan, vừa trở thành **khách hàng FitPro đầu tiên** (chuyển tiền 7.8 — đơn vị không rõ trong audio), tham vọng cá nhân Ironman 2027 + xây "200 Iron Man" trong công ty.
-> - **Linh** — người trong cộng đồng (chỉ nhắc thoáng).
+> - **Anh Dũng** — founder FitPro, có sẵn center vật lý ở Sài Gòn (~chục tỷ đầu tư), người vận hành chính.
+> - **Anh Ngọc** — mentor chiến lược (nguyên lý: "xem trong nhân thức của mình", "phú thịnh / phú suy", "xây như không xây").
+> - **Anh Thắng** — chuyên gia đào tạo (đã làm 10 trường cấp chính trị), sẽ phụ trách phần xây chương trình giáo dục cho Coach.
+> - **"Em"** — đối thoại chính, phụ trách công nghệ (rất khả năng là CEO Reborn — ceo@reborn.vn).
+> - **Cường** — chủ doanh nghiệp **Egypt** trong cộng đồng Quan, vừa trở thành khách hàng FitPro đầu tiên (đã chuyển 7.8 — đơn vị không rõ), cá nhân nhắm Ironman 2027 + xây "200 Ironman" trong Egypt.
+> - **Đại Nga** — "ngôi đồng" (quản trị/định hướng); cùng anh em ngồi phần kết nối.
+> - **Linh** — partner trong cộng đồng (nhà gần Egypt, có nhà với anh Ngọc xưa đi chơi uống).
 
 ---
 
 ## 1. Tóm tắt nội dung
 
-Cuộc họp **không phải requirement-by-requirement kỹ thuật** như buổi 2026-05-10 với TNEX. Đây là buổi định hướng tầm nhìn (vision alignment) giữa founder + mentor + đội thực thi, xoay quanh việc **đóng khung FitPro thành hệ sinh thái (ecosystem), không phải sản phẩm**, và bàn các cơ chế tạo cộng đồng tự nhân bản.
+Buổi này là **vision + architecture alignment** dài 1h25, có giá trị **rất cao về requirement** — vượt xa nhận định ban đầu (v1) là "chỉ vision không có tech". Nội dung tách thành 8 chủ đề lớn, sắp xếp theo trình tự thời gian gần đúng:
 
-### 1.1. Bối cảnh founder
+### 1.1. Bối cảnh founder + triết lý "sân chơi" (0–8 phút)
 
-- Anh Dũng đã đầu tư hơn chục tỷ tự xây center ở Sài Gòn, định bán → đã đào (xây xong). Giờ "không định bán nữa" mà chuyển thành sân chơi.
-- Triết lý: "**bao la, nhu cầu xã hội nhiều, ai giải quyết được thì người đó kiếm**". Center không phải kinh doanh đơn lẻ → là mô hình để anh em cùng vào với tư thế chủ, mỗi người chỉ cần góp 10–30 triệu.
-- Khác hẳn mô hình "đi tập gym" — ở đây học viên có cơ hội leo từ F0 → F1 → F2 → ... → Co-founder (thay vì làm BiBi/PT mãi mãi).
+Anh Dũng đã đầu tư hơn chục tỷ tự xây center vật lý, định bán → đã đào xong. Giờ chuyển hướng: thay vì kinh doanh đơn lẻ, **dùng center làm sân chơi** để anh em vào với tư thế chủ (mỗi người chỉ cần góp 10–30 triệu / cái). Triết lý "**bao la, nhu cầu xã hội nhiều, ai giải quyết được thì người đó kiếm**".
 
-### 1.2. Khung kim tự tháp lộ trình con người
+### 1.2. Lộ trình con người + 4 tầng mục tiêu (8–14 phút)
 
-Anh Ngọc chốt lộ trình ưu tiên cho khách hàng:
+Anh Ngọc chốt lộ trình ưu tiên cho khách:
 
 ```
 Sức khỏe thân thể  →  Mối quan hệ  →  Mũ tâm  →  Tài chính
    (gốc rễ)            (cọng cố)       (đỉnh)       (nếu cần)
 ```
 
-- Hai tầng dưới (sức khỏe + quan hệ) tác động trực tiếp lên mũ tâm.
-- Khách giàu sẵn → chỉ cần 3 tầng đầu là đủ.
-- Sau khi cá nhân ổn → đẩy lên giai đoạn **PT → Co-founder** (mở hệ thống nhỏ riêng, được trích từ doanh số).
+- Hai tầng đầu tác động trực tiếp lên mũ tâm.
+- Khách giàu sẵn → chỉ cần 3 tầng đầu.
+- Sau khi cá nhân ổn → đẩy lên PT → Co-founder (mở hệ thống nhỏ riêng, ăn % từ doanh số).
 
-### 1.3. Hình học center: 7 + 14
+### 1.3. Hình học center 7+14 + cô-founder dynamics (14–22 phút)
 
-- Mỗi center có **21 nhà / 21 người**: 7 host trên cùng (F1) + 14 con cháu (F2 và xa hơn).
-- Vai trò của 7 host: kéo 14 người dưới trưởng thành (tự tách ra mở nhà riêng → center mới → vòng lặp).
-- Center chỉ là **phương tiện**, không phải đích đến. "Có nhà riêng rồi mới mở center."
+- Mỗi center có **21 nhà / 24 người**: 7 host trên (F1, "vùng bỏ chậm") + 14 con cháu (F2).
+- 7 host **không cần có mặt** ở center hằng ngày — center vận hành **tự động** qua 14 coach.
+- Khi 7 host thoát ra (center tự chạy) → họ ra mở center mới → vòng lặp.
+- **Co-founder** = người sáng lập ra center, **không** phải người đến tập hàng ngày.
+- Khác biệt với "phỏ-founder" giả tạo (3.6 triệu / 5 ngày học → cấp chứng nhận): Co-founder của FitPro phải có cộng đồng thật + nhà riêng + dây 7 người + center.
 
-### 1.4. Cơ chế giữ thói quen ("Building Mode")
+### 1.4. Building Mode + thay đổi thói quen (~22 phút, chen giữa các phần)
 
-Bắt đầu từ kinh nghiệm Cường (Egypt + Linh): Cường dùng một app học (gần như chắc chắn là **Duolingo**, dù transcript chỉ phiên âm "Building Mode") — và đề xuất chuyển cơ chế đó vào FitPro:
+(Đã ghi trong v1 — vẫn đúng.) App phải nhắc liên tục, có avatar có cảm xúc khi miss (Duolingo-style). Pain point chính: **thay đổi thói quen sức khỏe**.
 
-- App nhắc liên tục mỗi ngày.
-- Nếu user miss → avatar "**mặt nó bỏ lư, thái độ, nó xị, gửi email**" (gamified emotion, không chỉ notification khô).
-- Pain point thực: "**cái bên boy lớn nhất của những người kinh doanh là thay đổi thói quen**". Phần mềm không bán kiến thức — bán **môi trường giữ thói quen**.
-- Nếu thay đổi được thói quen → khách "**thay đổi đời sống của họ là thật**", lợi ích thuộc về họ, biến cảm xúc mua hàng thành quan hệ dài hạn.
+### 1.5. ★ HỆ THỐNG 5 CẤP MEMBERSHIP (32–60 phút) — TRỌNG TÂM TECH
 
-### 1.5. FitPro Insight cho doanh nghiệp (B2B)
+Đây là **phần quan trọng nhất** mà v1 đã bỏ sót hoàn toàn. Anh Ngọc + Em cùng anh Dũng định nghĩa **5 cấp rõ ràng** với điều kiện chuyển cấp:
 
-Lấy cảm hứng từ chính công ty Egypt của Cường:
+```
+Trial (7 ngày miễn phí)
+  ↓ thấy thích, muốn dùng tiếp
+VIP Member (gói 30 ngày)  ← dùng được tất cả trung tâm FitPro toàn quốc, KHÔNG kinh doanh
+  ↓ muốn kinh doanh / gửi khách
+Elite Member                ← có mã kinh doanh, 2 mã: (1) FitPro core, (2) Herbalife optional
+  ↓ có trải nghiệm + cơ thể đạt chuẩn + được qualify
+Coach (HLV)                 ← Đào tạo + verify chứng chỉ; có thể nâng từ Elite hoặc tuyển ngoài
+  ↓ + có dây 7 nhà (mã N) + có center
+Co-Founder                  ← Người sáng lập center, vận hành tự động
+```
 
-- Doanh nghiệp đủ năng lực + tài chính + không gian → mở **FitPro Insight tại chính doanh nghiệp**.
-- Tài trợ cơ sở vật chất; nhân viên uống dinh dưỡng + dùng HLV.
-- Gói cơ bản → cao, "tùy nhu cầu đến đâu trả đến đó".
-- Bán xét nghiệm / gửi bệnh viện đến đo lường (gắn với pathway Medlatec đã ghi trong Phase 4).
+**Quan trọng**:
+- **Coach KHÔNG bắt buộc qua Elite** — có thể là người ngoài hoàn toàn được FitPro train + verify.
+- **Co-Founder KHÔNG bắt buộc qua Coach** — một Elite có cộng đồng + nhà + center cũng có thể thành Co-Founder.
+- Đây là **graph chuyển trạng thái** (state diagram), không phải linear ladder. CEO yêu cầu: anh Dũng phải vẽ rõ **4 hành trình** + **relationship giữa các role** (line 1056-1060):
+  - Hành trình thành VIP Member
+  - Hành trình thành Elite
+  - Hành trình thành Coach
+  - Hành trình thành Co-Founder
 
-### 1.6. Mô hình HLV xoay vòng (rotation pool)
+### 1.6. ★ Tách 2 luồng: Member vs Coach (60–70 phút)
 
-Quan sát từ Cường: "doanh nghiệp không cần biết phải có một ông, chỉ cần đến giờ đấy có HLV xuất hiện".
+Một quyết định kiến trúc lớn: **không gộp Customer + Coach vào 1 lùng**. Lý do:
 
-- Pool HLV của FitPro có **10 buổi đào tạo chuẩn** (curriculum cố định: buổi 1, 2, ..., 10).
-- Lịch tập 5–6 buổi/tuần, chủ nhật nghỉ.
-- Phân chia nhóm cơ theo ngày: T2 thân trên, T3 thân dưới, T4 dãn cơ, T5 đùi/mông, T6 độ đào (mặt sau).
-- HLV nào đến doanh nghiệp X hôm nay không quan trọng — "**buổi đào tạo số 7 cho công ty Tien Tech**" là đủ để cả HLV mới lẫn HLV cũ giảng đồng bộ.
-- Liên kết trường nghề (đại học thể thao? — transcript mờ) làm nguồn HLV ổn định, có thể mở khoa đào tạo riêng.
+- Nếu gộp, mọi flow "lên Elite/Coach" sẽ trông như **ép user kinh doanh** → cảm giác đa cấp.
+- Tách → mỗi luồng có game riêng. Coach có lộ trình huấn luyện/chứng chỉ/nguồn dữ liệu; Member có lộ trình kết quả (giảm cân, khỏe, đẹp).
+- 2 luồng **giao thoa tự nhiên** thông qua "kinh doanh optional" — khi Coach thấy hiệu quả, có thể chuyển luồng thành Elite Member để kinh doanh.
 
-### 1.7. Gamification "Đua Nhà N vs Nhà H"
+### 1.7. ★ Herbalife là OPTIONAL, không phải lệ thuộc (50–65 phút xen kẽ)
 
-- **N = Nghiệp** (kinh doanh / business owner / nhân viên).
-- **H = Hôn / Home** (gia đình / cá nhân).
-- Hai team đua với nhau trong app theo các chương trình (chạy bộ, marathon, Ironman…).
-- Đích đến tổng: **10 000 Hôn → 500 setter (center)**.
-- Logic: mỗi setter "đẻ" ~20 Hôn (khớp với cấu trúc 21 nhà ở mục 1.3).
+Pain point cụ thể của anh Dũng: **không muốn lệ thuộc Herbalife** để cấp mã kinh doanh cho thành viên. Đây là **point-of-failure** đe doạ toàn hệ thống.
 
-### 1.8. Văn hóa doanh nghiệp 3 nền tảng
+**Giải pháp kiến trúc**:
+- FitPro **tự cấp mã kinh doanh** cho Elite (mã FitPro).
+- Herbalife là **1 partner** — Elite có thể tích option để có thêm mã Herbalife, kinh doanh sản phẩm Herbalife song song.
+- **2 dòng tiền độc lập**: doanh thu FitPro + doanh thu Herbalife.
+- Sau này có thể plug-in **nhiều supplier khác** (A, B, C, …) — mỗi supplier là 1 partnership riêng.
 
-- **Tinh quý của văn hóa gia đình** (bữa cơm chung, đắm cùng nhau).
-- **Tính hướng** (định hướng chung).
-- **Đạo lý**.
-- Đây là khung văn hóa **bán cho khách doanh nghiệp** (FitPro Insight), không chỉ nội bộ.
+### 1.8. ★ Marketplace cho Coach (cá nhân hoá sản phẩm) — 70–80 phút
 
-### 1.9. Pathway "Marathon → Ironman"
+Tầm nhìn xa hơn: khi Coach trưởng thành → cho phép **upload sản phẩm phù hợp** lên marketplace của FitPro. Mô hình "**phác đồ điều trị của bác sĩ**": mỗi Coach cá nhân hoá ladder sản phẩm cho khách. FitPro vẫn verify (gate) chất lượng sản phẩm và cấp mã, nhưng không bắt buộc 1 supplier.
 
-- Sau gói cơ bản, FitPro đẩy khách doanh nghiệp lên mục tiêu chạy bộ → marathon → cao nhất **Ironman**.
-- Cường cam kết tự đạt Ironman 2027 + lan toả "200 Ironman" trong công ty Egypt → đây là **case study mẫu** đầu tiên.
+### 1.9. ★ Coach Qualification + Education tách riêng (60–75 phút)
 
-### 1.10. Customer #1 mindset
+CEO khuyến nghị **không gánh cả 3** (Đào tạo + Vận hành + Công nghệ):
 
-Anh Ngọc nhấn mạnh: **anh Dũng (founder) phải tự đi qua quy trình** với tư cách khách hàng — onboarding, check-in, theo dõi chỉ số 3–5 ngày, hành xử khi user inactive, tỷ lệ rời bỏ. Không thể "đứng một chỗ" mà ra sản phẩm tốt.
+| Vai trò | Chủ trách | Output |
+|---|---|---|
+| Vận hành center | **Anh Dũng** | Center, scale chi nhánh, business |
+| Đào tạo Coach + verify chứng chỉ | **Anh Thắng** + đội (PC?) | Curriculum, chương trình, chứng chỉ |
+| Công nghệ + platform | **Em (Reborn)** | App, hệ thống quản trị, marketplace |
+| B2B partnership + sự kiện | **Cường + Egypt** | Marathon, Ironman event, B2B onboard |
+| Ngôi đồng (quản trị/định hướng) | **Đại Nga + ngôi đồng** | Định hướng tổng |
+
+Lý do: nếu anh Dũng gánh cả Đào tạo + Vận hành + Code train + Live thì sẽ **gãy** ở Phase 1. Đào tạo có thể **outsource** một phần — kết nối **trường nutrition code** (nơi "em" đã học) để cấp chứng chỉ chính thức cho Coach (line 668-670).
+
+### 1.10. ★ UAT thực tế ở FitClub (kế hoạch hành động cụ thể) — 32–40 phút
+
+Quyết định hành động **trong tuần**:
+
+- Anh Dũng tìm 1 center FitClub trong cộng đồng Quan (có sẵn ~1000 cơ sở) ở khu Quân Nhân, >100m².
+- **Tối mai (T5/14)** hoặc tối T5 tuần này — cả nhóm đến trải nghiệm.
+- Mục đích: nhìn bức tranh tổng thể + tìm điểm yếu của FitClub + làm "UAT thực tế" của mô hình FitPro.
+- Anh Thắng + Em + (có thể Cường) cùng đi → ghi nhận quy trình hiện tại của FitClub → từ đó **đề xuất phần cần công nghệ vs phần để offline**.
+
+### 1.11. Pay-flow + nền tảng fee (~58 phút)
+
+- Anh Ngọc gợi ý mô hình thu phí **per-center cho nền tảng**:
+  - Nền tảng FitPro: **~4.5 triệu/tháng/setup** (cố định, biết trước).
+  - Center: doanh thu cao hơn nhiều **(không kiểm soát được)**.
+- Cấu trúc: 3 nguồn thu cho Coach (line 818-820):
+  1. Tiền công bán sản phẩm (per-sale).
+  2. Add-on (mặt bằng, công lao động).
+  3. Doanh thu thêm khi tích vào supplier.
+
+### 1.12. ★ Tham chiếu "ecosystem 2-node" (Platform Revolution) — 80–85 phút
+
+CEO trích từ sách *Platform Revolution* (Networking Effect): hệ sinh thái chỉ cần **2 đối tượng tối thiểu** để tạo Network Effect:
+
+- 2 đối tượng FitPro: **Coach ↔ Customer**.
+- Khi 2 ông này gặp nhau → mọi vai trò xung quanh (Elite, Co-Founder, partner, supplier) tự đến.
+- Đừng tập trung vào nhiều đối tượng — "**bệnh viện chỉ cần 2: bác sĩ ngồi + bệnh nhân**". Tương tự ở đây.
 
 ---
 
-## 2. Tách rõ: ý tưởng có chiều kỹ thuật vs ý tưởng thuần chiến lược
+## 2. Phân loại ý tưởng: chiến lược vs kỹ thuật
 
-Buổi này chủ yếu là vision. Tôi tách thành hai cột để khỏi nhầm:
+### 2.1. Thuần chiến lược / kinh doanh
 
-### 2.1. Thuần chiến lược / kinh doanh (KHÔNG cần code thay đổi)
+- Triết lý "phú thịnh / phú suy".
+- Hình học 7+14 (đã là **quy ước nghiệp vụ** sẵn của Network Tree — không phải tính năng mới).
+- Marathon → Ironman pathway (ý tưởng truyền thông).
+- Cường + Egypt làm pilot B2B.
+- "Xây như không xây", "đỉnh cao là tự động".
 
-- Triết lý "phú thịnh / phú suy" (cân bằng giàu / chưa giàu).
-- Vai trò mentor của anh Ngọc.
-- Mô hình 7+14 (đây là **quy ước nghiệp vụ** của Network Tree đã có — không phải tính năng mới).
-- Cường ký gói 7.8 → việc sales/account.
-- Pathway Marathon→Ironman ở mức ý tưởng truyền thông.
-- Văn hóa doanh nghiệp 3 nền tảng (content writing, không phải code).
+### 2.2. Có chiều kỹ thuật rõ — Bảng đánh giá
 
-### 2.2. Có chiều kỹ thuật — bảng đánh giá
+| # | Đề xuất | Trạng thái roadmap | Phạm vi tác động | Ưu tiên | Rủi ro |
+|---|---------|--------------------|------------------|---------|--------|
+| **P1** | "Building Mode" — avatar có cảm xúc + cadence | Mở rộng Phase 1.9 + Phase 3.3 | FE PWA + BE notification engine | ★★★ | Trung |
+| **P2** | FitPro Insight (B2B in-company) | Trùng Phase 4.1–4.3 | BE corporate account | ★★ | Thấp |
+| **P3** | HLV / Coach rotation pool + curriculum 10 buổi | **Mới** | Mới + tận dụng cloud-org | ★★ | Trung |
+| **P4** | "Đua Nhà N vs H" leaderboard | Mở rộng Phase 3.3 | FE leaderboard + BE scoring | ★★ | Trung |
+| **P5** | Marathon → Ironman pathway tracking | **Mới** | FE JourneyTracker + BE goal entity | ★ | Thấp |
+| **P6** | **★ State graph Customer→VIP→Elite→Coach→Co-Founder** | **Mới — định nghĩa rõ hơn** | **BE schema lớn + FE 4 luồng + workflow approval** | **★★★** | **Cao** |
+| **P7** | Wire `fitpro-network` mock → API thật | Trùng Phase 1.3 | FE + BE | ★★★ | Thấp |
+| **P8** | Re-engagement sau 3–5 ngày inactive | Trùng (gộp P1) | (gộp) | ★★ | Trung |
+| **P9** | **★ Supplier abstraction (Herbalife = optional)** | **Mới** | **BE product catalog + partner integration layer** | **★★★** | **Cao** |
+| **P10** | **★ Coach Marketplace (cá nhân hoá sản phẩm)** | **Mới** | **BE marketplace + verify gate** | ★ (sau P9) | Cao |
+| **P11** | **★ Coach qualification + chứng chỉ flow** | **Mới** | **BE workflow approval + integration trường đào tạo** | ★★ | Trung |
+| **P12** | **★ Tách 2 luồng Member vs Coach (UX architecture)** | **Mới — design decision** | **FE 2 luồng + nav + state model** | **★★★** | Trung |
 
-| # | Đề xuất | Mới hay đã có trong roadmap? | Phạm vi tác động | Ưu tiên đề xuất | Rủi ro |
-|---|---------|------------------------------|------------------|-----------------|--------|
-| **P1** | "Building Mode" — avatar có cảm xúc + email nhắc khi miss | **Mở rộng** Phase 1.9 (notification) + Phase 3.3 (streak) đã có | FE app member (PWA?) + BE notification engine | ★★★ | Trung — cần thiết kế emotion-design, không phải tech khó |
-| **P2** | FitPro Insight (B2B in-company) | **Trùng** Phase 4.1–4.3 đã có | BE corporate account + bulk enroll | ★★ | Thấp |
-| **P3** | HLV rotation pool + curriculum 10 buổi cố định | **Mới** (chưa có trong implementation-phases.md) | Module mới: HLV roster + lesson template + schedule | ★★ | Trung — phải mô hình lesson plan và substitution logic |
-| **P4** | "Đua Nhà N vs H" leaderboard nhóm | **Mở rộng** Phase 3.3 (global leaderboard) | FE leaderboard 2 chiều + BE scoring engine | ★★ | Trung — cần quy định scoring và quy đổi điểm giữa N và H |
-| **P5** | Marathon→Ironman pathway tracking trên 1 khách | **Mới** | BE goal/milestone entity + FE progress UI | ★ | Thấp — đơn giản, có thể tận dụng `JourneyTracker` mock đã có |
-| **P6** | Lộ trình thăng tiến Customer → PT → Co-founder (workflow status) | **Mới một phần** (Co-Founder Console đã ghi ở 2027) | BE: enum status + workflow upgrade + FE detail | ★★ | Trung — đụng tới tài chính (chia hoa hồng theo status) |
-| **P7** | F1/F2 network khám phá (đã có mock `fitpro-network.ts`) | **Trùng** Phase 1.3 (wire `/fp_network_tree` lên API) | Wire mock → API thật | ★★★ | Thấp |
-| **P8** | "Re-engagement" sau 3–5 ngày inactive (anh Ngọc nói) | **Trùng một phần** Phase 1.9 (notification) + Phase 3.3 | BE inactivity detector + cadence engine | ★★ | Trung — phải đo trước retention thật |
-
-**Đề xuất tổng:** trong 8 đề xuất, **5 đã trùng/mở rộng** roadmap có sẵn. **3 thực sự mới** là P3 (HLV rotation), P5 (Ironman pathway), P6 (status workflow Customer→Co-founder).
+**11 đề xuất có chiều kỹ thuật.** Trong đó:
+- 3 trùng / mở rộng roadmap có sẵn (P1, P2, P4 + P7 + P8 gộp).
+- **6 thực sự mới hoặc cần re-define lớn**: P3 (HLV rotation), P5 (Ironman pathway), **P6 (state graph 5 cấp)**, **P9 (supplier abstraction)**, **P10 (Coach marketplace)**, **P11 (Coach qualification)**, **P12 (dual-track UX)**.
 
 ---
 
-## 3. Phân tích chi tiết các đề xuất NẾU được duyệt
+## 3. Phân tích chi tiết các đề xuất kỹ thuật
 
-> Mục đích: chỉ **đánh giá tác động**, chưa thực hiện. Mỗi mục dưới đây nêu file/module ảnh hưởng, công sức ước lượng, dependency, decision-point cần CEO chốt trước khi build.
+> Mục tiêu: **chỉ đánh giá** tác động, chưa thực hiện. Mỗi mục: file/module ảnh hưởng, công sức ước lượng, dependency, decision-point cho CEO.
 
-### 3.1. P1 — Building Mode (avatar emotion + cadence nhắc)
+### 3.1. P6 — State Graph 5 cấp Membership (CHỦ ĐẠO)
+
+Đây là **đề xuất cốt lõi nhất** của buổi họp này. Tất cả các đề xuất khác (P1, P3, P9-12) đều **phụ thuộc** vào việc chốt P6 trước.
 
 **Cần xây**:
-- BE: scheduler để tính streak, broken-streak, last-active timestamp; job gửi email/push theo cadence (D / D+3 / D+5).
-- FE PWA member: component avatar có 4–5 state (happy / neutral / sad / angry / sleeping) + giao diện streak counter.
-- Content: copy email theo emotion (cần copywriter, không phải dev).
+- BE: enum `member_tier`: `TRIAL` / `VIP_MEMBER` / `ELITE_MEMBER` / `COACH` / `CO_FOUNDER`.
+- BE: bảng `tier_transition` log — ai chuyển từ tier nào sang tier nào, ai duyệt, khi nào.
+- BE: workflow approval cho 3 transition cần qualify:
+  - VIP → Elite: cần cấp **mã kinh doanh FitPro**.
+  - Elite → Coach: cần verify (cơ thể, kết quả, chứng chỉ).
+  - Coach → Co-Founder: cần verify (dây 7 nhà mã N + có center).
+- FE: 4 trang lộ trình + 1 trang relationship/graph quản trị.
 
 **File ảnh hưởng (FE)**:
-- Tạo mới: `src/pages/CommunityHub/HabitBuilder/` (chưa có).
-- Mở rộng: `src/mocks/community-hub/checkin.ts`, `src/mocks/community-hub/courses.ts` để bổ sung streak state.
-- Sẽ cần backend mới ở `cloud-customer` hoặc `cloud-org` — chưa thấy service streak ở repo này (FE only).
+- Mới: `src/pages/CommunityHub/MembershipJourney/` (chưa có).
+- Sửa: `src/pages/CommunityHub/MembershipPlanSettings/` (hiện đang là plan, không phải tier — cần phân biệt rõ **plan = gói mua** vs **tier = vai trò**).
+- Mới: `src/pages/CommunityHub/TierTransitionConsole/` (cho admin duyệt).
+- Sửa: `src/mocks/community-hub/membership-plans.ts` → thêm field `requiredTier`, `unlocksRights`.
+
+**File ảnh hưởng (BE — cloud-customer hoặc cloud-org)**:
+- Schema migration: `customer.tier` enum + history table.
+- Service mới: `MemberTierService` (transition + approval).
+- API: `POST /customer/tier/request` + `POST /customer/tier/approve`.
+- Phụ thuộc: **cloud-org migration** (notice #214) đã xong → có thể đặt vào cloud-org domain.
 
 **Ước lượng**:
-- Concept + design state machine emotion: 1 ngày designer.
-- FE habit component + streak UI: 3–4 ngày FE.
-- BE streak service + cadence cron + email template: 3–4 ngày BE.
-- **Tổng:** ~1.5 tuần cho 1 FE + 1 BE.
+- Schema + migration + tests: 2 ngày BE.
+- Workflow approval engine: 3 ngày BE.
+- 4 trang FE journey + 1 trang admin: 5 ngày FE.
+- **Tổng:** ~2 tuần cho 1 FE + 1 BE.
 
 **Phụ thuộc**:
-- D1 trong Phase 1.7 ("PWA member ~1 tuần hay Zalo OA?") **phải chốt trước**, vì avatar emotion cần PWA (Zalo OA không kham hết). Nếu chọn Zalo OA, P1 phải giảm scope còn email + notification flat.
+- Cần CEO **vẽ rõ 4 hành trình + relationship matrix** trước (line 1056-1060 đã yêu cầu). Đây là **business artifact**, không phải code.
 
-**Rủi ro**: thấp về tech, nhưng cao về UX — emotion mà thiết kế dở sẽ phản tác dụng (annoying).
+**Rủi ro**:
+- **Cao** — đụng trực tiếp tới phân chia hoa hồng. Một user lên Elite trước khi định nghĩa % hoa hồng cho Elite → đối soát tháng đầu sẽ vỡ. **Tuyệt đối phải định nghĩa rights matrix trước**.
+- Nếu sửa enum sau khi đã có dữ liệu thật → migration đau.
 
-**Decision-point cho CEO**: chốt PWA hay Zalo OA cho member app trước khi mở P1.
-
----
-
-### 3.2. P2 — FitPro Insight (B2B)
-
-**Cần xây**: trùng hoàn toàn Phase 4.1–4.3 đã ghi. **Không cần thêm scope** so với roadmap hiện tại.
-
-**Sửa scope nhỏ**:
-- Phase 4.1 hiện chỉ ghi "Corporate Account + bulk enrollment Excel" — cần bổ sung: model "**doanh nghiệp tài trợ cơ sở vật chất**" (chứ không chỉ trả phí) → cần thêm trường `physical_sponsor: boolean` hoặc tách entity `corporate_facility`.
-- Cần workflow xét duyệt B2B (legal contract, IP của setup vật lý) — chưa có ở Phase 4.
-
-**Ước lượng**: như đã ghi trong roadmap (4 ngày bulk enroll + 2 trial + 2 dashboard) — đủ.
-
-**Decision-point cho CEO**: pilot bằng chính công ty Egypt của Cường hay tìm B2B khác?
+**Decision-point CEO**:
+1. Vẽ **state diagram** chính thức của 5 cấp (đề nghị workshop riêng).
+2. Rights matrix: tier nào được làm gì (kinh doanh, gửi khách, mở center, ăn hoa hồng %, marketplace).
+3. Có **giảm cấp** (downgrade) không? Khi nào? Ai duyệt?
+4. Co-Founder có **expire** không (ví dụ center không hoạt động 6 tháng → revoke)?
 
 ---
 
-### 3.3. P3 — HLV Rotation Pool (MỚI)
+### 3.2. P12 — Tách 2 luồng UX: Member vs Coach
+
+Phụ thuộc P6. Ở mức UX, đây là **decision lớn về information architecture**:
 
 **Cần xây**:
-- Entity mới: `coach`, `coach_curriculum` (10 buổi cố định), `coach_assignment` (HLV ↔ doanh nghiệp ↔ slot), `lesson_session` (buổi N của curriculum).
-- Logic: khi 1 doanh nghiệp request slot, hệ thống chọn HLV available + nâng curriculum số kế tiếp cho doanh nghiệp đó.
-- Quan trọng: substitution — HLV nghỉ → HLV khác có thể tiếp tục **đúng buổi đào tạo số 7** mà không biết khách trước đó (đây là USP của transcript).
+- FE: 2 root navigation tách biệt (`/member/*` và `/coach/*`), hoặc 1 root với context-switcher cho user vừa Coach vừa Member.
+- BE: 1 user có thể có **đồng thời** 2 role active (Coach của FitPro + cá nhân là VIP Member).
+- Logic: khi 1 user lên Elite + Coach đồng thời → app phải tự switch context.
 
 **File ảnh hưởng**:
-- FE: trang mới `src/pages/CommunityHub/CoachRoster/` (chưa có), trang lịch tuần `src/pages/CommunityHub/CoachSchedule/`.
-- BE: service mới ở `cloud-org` (vừa migrate xong notice #214 — đặt cùng domain employee là hợp lý vì coach **là** employee).
-- DB: bảng `coach_curriculum`, `lesson_session`, `coach_assignment`.
+- FE: `src/router/`, `src/layouts/`, nav components.
+- BE: `customer.tier` cho phép multi-active hay single-active? (decision).
+
+**Ước lượng**: ~1 tuần FE + 2 ngày BE.
+
+**Phụ thuộc**: P6 trước.
+
+**Rủi ro**: Trung — chủ yếu UX design, không phải tech.
+
+**Decision-point CEO**: 1 user có thể đồng thời là Coach + Co-Founder không? Yes, line 909 "Cô Father có cần về là Cốt không? Không cần" → cho phép multi.
+
+---
+
+### 3.3. P9 — Supplier Abstraction (Herbalife = 1 trong N)
+
+Đây là **architectural cleanup** — đảm bảo Herbalife không phải hardcoded.
+
+**Cần xây**:
+- BE: bảng `supplier` (id, name, status, contract_terms, commission_rate).
+- BE: bảng `product` linked to `supplier_id` (đã có ở `cloud-customer`?).
+- BE: bảng `member_supplier_code` — 1 Elite có thể có N supplier codes (FitPro tự cấp + Herbalife + future).
+- BE: API quản lý supplier (add new, deactivate, switch).
+- FE: trang `/admin/suppliers` — CRUD supplier; FE `/coach/products` filter theo supplier.
+
+**File ảnh hưởng**:
+- Hiện không thấy `supplier` model trong FE — cần grep BE để xác nhận.
+- Catalog đang dùng `inventory.product` (theo Phase 1.4) → cần audit schema có `supplierId` chưa.
 
 **Ước lượng**:
-- Data model + migration: 2 ngày BE.
-- Engine assign + substitution: 3 ngày BE.
-- FE roster + schedule UI: 4 ngày FE.
-- **Tổng:** ~1.5 tuần cho 1 FE + 1 BE.
+- Schema + migration: 2 ngày BE.
+- API + admin UI: 3 ngày FE+BE.
+- Refactor catalog hiện tại để route qua supplier: 2 ngày.
+- **Tổng:** ~1.5 tuần.
 
 **Phụ thuộc**:
-- Cần chốt curriculum 10 buổi chuẩn — đây là **business artifact**, không phải code. Trước khi build, anh Dũng + HLV trưởng phải ngồi soạn lesson plan.
-- Nếu mở rộng đến "liên kết trường nghề" (transcript dòng 470–476) → thêm flow recruit HLV mới — **scope sau, đừng dồn vào v1**.
+- Phụ thuộc P6 (vì cấp mã supplier phụ thuộc tier).
+- Cần Phase 2 (hoa hồng engine) phối hợp để mỗi supplier có rule % riêng.
 
 **Rủi ro**:
-- Trung — logic substitution nếu sai sẽ làm 2 HLV cùng giảng buổi 7, hoặc nhảy buổi.
-- Phải có audit log mọi assignment.
+- **Cao** — nếu đã có data thật vào product/customer với Herbalife hardcoded, migration sẽ phức tạp.
+- Khuyến nghị: làm sớm, **trước khi có data sản xuất**, kể cả khi v1 chỉ có 1 supplier (Herbalife).
 
-**Decision-point cho CEO**:
-- 10 buổi curriculum có **flat** (ai cũng học 1→10) hay **tier theo gói** (basic 5 buổi / premium 10 buổi)?
-- HLV được trả lương cố định hay theo buổi?
+**Decision-point CEO**:
+1. Có cho phép multi-supplier ngay từ v1 không? (đề nghị có — chi phí thấp khi chưa có data).
+2. Mỗi Coach được nhận mã của bao nhiêu supplier max?
+3. Khi supplier rút lui (chấm dứt hợp đồng), data hiện hữu xử lý sao?
 
 ---
 
-### 3.4. P4 — Đua Nhà N vs H
+### 3.4. P10 — Coach Marketplace
+
+**Phụ thuộc P9.** Khi đã có abstraction supplier → Coach có thể chính là 1 "supplier" cho sản phẩm cá nhân hoá.
 
 **Cần xây**:
-- Entity `team_membership` cho mỗi user: thuộc team `N` hay team `H` (mỗi user có thể có 1 cả 2 nếu là chủ doanh nghiệp đồng thời là gia đình).
-- Scoring engine: tích lũy điểm theo hoạt động (km chạy, buổi tập, check-in, gói mua…).
-- Leaderboard 2 chiều, có thể global hoặc theo center.
-- UI quy đổi (1 buổi tập = bao nhiêu điểm? Vẫn cần CEO chốt).
+- BE: bảng `marketplace_listing` (coach_id, product_template, price, status: pending_verify / approved / suspended).
+- BE: verify workflow (FitPro duyệt từng listing).
+- FE: trang Coach upload product + trang Customer browse.
 
-**File ảnh hưởng**:
-- FE: `src/pages/CommunityHub/Leaderboard/` (chưa có — Phase 3.3 đã plan).
-- BE: scoring service.
+**Ước lượng**: ~2 tuần (Phase 4 trong roadmap hiện tại — phù hợp).
 
-**Ước lượng**:
-- ~1 tuần FE + 1 tuần BE.
-
-**Phụ thuộc**:
-- Phải build sau P1 (streak), vì leaderboard ăn cùng data streak.
-- Phải chốt **bảng quy đổi điểm** trước — đây là business decision, ảnh hưởng fairness.
+**Phụ thuộc**: P9 phải xong trước. P11 (qualification) song song.
 
 **Rủi ro**:
-- Cao về **gamification balance** — nếu N quá dễ thắng H (vì doanh nghiệp có nhiều người), leaderboard nhạt; phải cân quy đổi (theo trung bình thay vì tổng?).
-- Cần policy chống gian lận (giả km chạy, giả check-in).
+- **Cao** — pháp lý + nội dung. Coach upload sản phẩm health/supplement → FitPro chịu trách nhiệm gì? Cần đội verify chuyên môn.
+- Hoãn — đợi cá nhân hoá thực sự cần thiết (sau Phase 2).
 
-**Decision-point cho CEO**:
-- Quy đổi điểm theo **trung bình** (per-member) hay **tổng** (per-team)?
-- Phần thưởng cuối kỳ là gì, ngân sách?
+**Decision-point CEO**: ai chịu trách nhiệm pháp lý cho sản phẩm trên marketplace?
 
 ---
 
-### 3.5. P5 — Marathon → Ironman pathway tracking
+### 3.5. P11 — Coach Qualification + Chứng chỉ
 
 **Cần xây**:
-- Entity `goal` cho mỗi user, có ladder cố định: 5K → 10K → Half → Full → 70.3 → Ironman.
-- Progress milestone: ngày đạt mỗi mốc, đính kèm chứng chỉ.
-- UI cá nhân: timeline lên Ironman.
-- (Tuỳ chọn) ranking công ty: "công ty X có Y Ironman".
+- BE: bảng `coach_certification` (coach_id, program_id, status, issuer, valid_until).
+- BE: workflow: đăng ký → hoàn thành chương trình → cấp chứng chỉ → re-verify định kỳ (line 1395-1396).
+- BE: integration với **trường đào tạo bên ngoài** — API cấp chứng chỉ + verify.
+- FE: trang Coach upload bằng cấp + trang FitPro admin duyệt.
 
 **File ảnh hưởng**:
-- FE: `src/pages/CommunityHub/JourneyTracker/` (đã có module + mock — chỉ thêm goal type "race"). Tận dụng được.
-- BE: nhỏ — chỉ thêm bảng `goal_milestone`.
+- Có thể tận dụng `src/pages/CommunityHub/Courses/` đã có mock.
+- Mở rộng `customer` schema BE thêm `coach_attributes`.
 
 **Ước lượng**:
-- 3 ngày FE + 2 ngày BE = tuần.
+- Schema + workflow: 3 ngày BE.
+- UI upload + duyệt: 3 ngày FE.
+- API integration trường nutrition code: 5–10 ngày (phụ thuộc bên kia).
+- **Tổng:** ~2 tuần (không tính trường ngoài).
 
-**Phụ thuộc**: không.
-
-**Rủi ro**: thấp.
-
-**Decision-point cho CEO**: pathway có **bắt buộc đạt mốc trước mới lên mốc sau** không? Nếu có, cần ràng buộc UX.
-
----
-
-### 3.6. P6 — Workflow Customer → PT → Co-founder
-
-**Cần xây**:
-- Enum `member_role`: Customer / PT / Co-Founder (hiện không thấy enum này trong code FE — cần grep BE).
-- Workflow upgrade: ai duyệt, tiêu chí, ký hợp đồng.
-- Đụng đến **hoa hồng**: PT và Co-founder ăn % khác nhau → vào Phase 2.2 (engine phân phối).
-
-**File ảnh hưởng**:
-- BE: schema customer thêm `role` + workflow approval.
-- FE: trang `MembershipPlanSettings` đang có, nhưng đây là gói mua — khác với role. Có thể cần trang mới `RoleProgression`.
-
-**Ước lượng**:
-- 2 ngày BE schema + workflow.
-- 3 ngày FE.
-- **Phụ thuộc tài chính**: nếu hoa hồng theo role chưa rõ → phải chờ Phase 2 chạy đo xong, rồi mới enable role.
+**Phụ thuộc**: P6 (tier).
 
 **Rủi ro**:
-- Cao về **tài chính**: nâng 1 user thành PT mà chưa rõ tier hoa hồng → đối soát tháng đầu sẽ vỡ.
-- Khuyến nghị: **tạm thời để Customer/PT thôi**, hoãn Co-founder qua 2027 (đã match roadmap).
+- Trung — chủ yếu chậm vì phải đàm phán với trường nutrition code (đang có "em" có quan hệ — line 668).
 
-**Decision-point cho CEO**: bảng % hoa hồng theo role.
-
----
-
-### 3.7. P7 — Wire `fitpro-network` mock → API thật
-
-**Đã có trong Phase 1.3.** Chỉ là remind: cuộc họp này khẳng định **cấu trúc 7+14** sẽ là quy ước nghiệp vụ → khi wire API, validate "không host nào có >14 con cháu" nên bật ở UI (cảnh báo, không chặn).
-
-**Ước lượng**: như Phase 1.3 (2d).
-
-**Decision-point cho CEO**: 7+14 là **enforced** (chặn cứng) hay **chỉ guideline** (cảnh báo)?
+**Decision-point CEO**:
+1. Trường nutrition code có sẵn sàng cấp API/portal hợp tác?
+2. Re-verify Coach mỗi 6 tháng / 1 năm? Tiêu chí?
+3. Coach không qualify → suspend hay revoke?
 
 ---
 
-### 3.8. P8 — Re-engagement sau 3–5 ngày inactive
+### 3.6. P3 — HLV / Coach Rotation Pool + Curriculum 10 buổi
 
-Đã trùng P1 (cadence engine). Không tách thành mục riêng — gộp vào P1.
+(Đã đánh giá trong summary v1 — vẫn đúng, **bổ sung thêm**:)
+
+Buổi này chốt thêm: curriculum **10 buổi cố định** (line 442-450 cũ + line 1393-1395 mới) gắn với từng doanh nghiệp khách hàng:
+
+> "Anh nói hôm nay là buổi đào tạo số 7 cho công ty Tien Tech" → HLV mới đến biết ngay nội dung phải giảng.
+
+**Cần xây**:
+- BE: `coach_curriculum` (10 lesson cố định, thay đổi version control), `coach_assignment` (HLV ↔ khách ↔ slot), `lesson_session` (buổi N của khách K, ai đã giảng).
+- Logic substitution: HLV A nghỉ → HLV B tiếp đúng buổi `lesson_number=N` cho khách K (USP của transcript).
+
+**Ước lượng**: ~1.5 tuần 1 FE + 1 BE.
+
+**Phụ thuộc**: P11 (qualification — chỉ Coach qualified mới được assign).
+
+**Rủi ro**: như summary v1.
+
+**Decision-point CEO**:
+- Curriculum 10 buổi **flat** (ai cũng học 1→10) hay **tier theo gói** (basic 5 buổi / premium 10)?
+- HLV lương cố định hay theo buổi?
 
 ---
 
-## 4. Đề xuất ưu tiên (cho CEO duyệt)
+### 3.7. P1 — Building Mode (avatar emotion + cadence)
+
+Không đổi so với summary v1. **Bổ sung**: bây giờ có tier system (P6) → cadence khác cho Trial vs VIP vs Elite vs Coach.
+
+---
+
+### 3.8. P2 — FitPro Insight B2B
+
+Trùng Phase 4.1–4.3 + bổ sung **B2B với Egypt làm pilot**. Anh Cường có thể là **bridge** giữa FitPro + Egypt → đề xuất 1 hợp đồng thử nghiệm với Egypt cho 50 nhân viên là khả thi.
+
+---
+
+### 3.9. P4 — Đua Nhà N vs H
+
+Không đổi so với summary v1.
+
+---
+
+### 3.10. P5 — Marathon → Ironman pathway
+
+Không đổi so với summary v1. **Bổ sung**: Cường cam kết "200 Ironman" → đây là **pilot fitness target** đầu tiên để demo pathway.
+
+---
+
+### 3.11. P7 — Wire fitpro-network mock → API thật
+
+Không đổi so với summary v1.
+
+---
+
+## 4. Đề xuất ưu tiên (cho CEO duyệt) — phiên bản v2
 
 | Wave | Đề xuất | Lý do |
 |------|---------|-------|
-| **Wave A (làm ngay, ăn vào Phase 0–1 hiện tại)** | P7 (wire network), P5 (Ironman pathway) | Tận dụng mock/module sẵn có, ít rủi ro, gây hiệu ứng visual cho khách Cường |
-| **Wave B (sau khi Phase 1 đo xong retention)** | P1 (Building Mode), P8 (re-engagement) | Phải đo retention thật ở 1 Center pilot trước khi đầu tư UX emotion |
-| **Wave C (Phase 3 hiện tại, mở rộng scope)** | P4 (Đua N vs H), P6 phần PT only | Cần streak data + scoring đã chạy ổn |
-| **Wave D (cùng Phase 4 hoặc sau)** | P2 (FitPro Insight B2B), P3 (HLV rotation) | Cần Egypt làm pilot — chốt B2B contract trước, code sau |
-| **Hoãn** | P6 phần Co-founder | Cần dữ liệu tài chính + định nghĩa role thật, ít nhất Q4 2026 |
+| **Wave 0 (workshop CEO trước khi build)** | Vẽ state diagram P6 + rights matrix + chốt decision-point | Block toàn bộ phía sau |
+| **Wave A (Phase 0–1 hiện tại)** | P6 schema, P9 supplier abstraction, P7 wire network | Đặt nền móng đúng từ đầu, tránh re-migrate sau khi có data thật |
+| **Wave B (Phase 1 cuối → Phase 2)** | P12 dual-track UX, P1 Building Mode v1 (notification + cadence), P11 Coach qualification v1 | UX + onboarding cho từng tier |
+| **Wave C (Phase 3)** | P5 Ironman pathway, P4 Đua N vs H, P1 emotion avatar v2 | Cần dữ liệu user thật trước |
+| **Wave D (Phase 4 hoặc sau)** | P2 B2B (Egypt pilot), P3 Coach rotation, P10 Marketplace | Cần chứng chỉ và supplier flow ổn định |
 
 ---
 
-## 5. Việc cần CEO quyết trước khi bắt đầu
+## 5. Việc cần CEO quyết trước khi bắt đầu (v2)
 
-1. **PWA hay Zalo OA** cho member app (Decision D1 Phase 1.7 đang treo) — block P1, P4, P5, P8.
-2. **Curriculum 10 buổi**: ai soạn, khi nào xong — block P3.
-3. **Bảng % hoa hồng theo gói × role** — block P6, ảnh hưởng cả Phase 2.
-4. **Quy đổi điểm Đua nhà** + ngân sách giải thưởng — block P4.
-5. **7+14 enforced hay guideline** — micro decision cho P7.
-6. **Egypt làm B2B pilot** hay tìm khách khác — chốt với Cường.
+1. **★ State diagram 5 tier + rights matrix** (P6) — workshop riêng. **Block tất cả.**
+2. **★ Curriculum 10 buổi**: ai soạn, version control, flat vs tier. Block P3.
+3. **★ Multi-supplier ngay từ v1 hay sau?** Block P9, P10.
+4. **★ Coach re-verify policy** (6 tháng / 1 năm / khác): block P11.
+5. **PWA hay Zalo OA** member app (D1 Phase 1.7 đang treo) — block P1, P4, P5.
+6. **% hoa hồng theo (tier × supplier × product)** — block hoa hồng engine + P6.
+7. **Quy đổi điểm Đua nhà** + ngân sách giải thưởng — block P4.
+8. **7+14 enforced hay guideline** — micro decision cho P7.
+9. **Egypt làm B2B pilot** — chốt với Cường.
+10. **Trường nutrition code** có sẵn sàng API/portal hợp tác không — block P11.
 
 ---
 
-## 6. Cảnh báo + ghi chú
+## 6. Action items cụ thể trong tuần
 
-- Audio dài 1h25 nhưng nội dung thực chỉ ~24 phút. **Khả năng cao buổi họp này tiếp tục ở file ghi âm khác** (Vincom Center 11?), hoặc kết thúc sớm rồi quên tắt thu. Nếu có file 11 mới, gọi lại flow này.
-- ASR sai nhiều thuật ngữ (phỏ founder, phỏ thịnh, đông cốt, bệnh viên = HLV?). Khi đưa transcript này lên thành SOP, cần biên tập viên review lại bản gốc.
-- Buổi này **không ra quyết định ràng buộc** — toàn vision. Đừng commit dev resource dựa trên file này; chờ buổi tiếp theo có CEO chốt + biên bản viết tay.
+Từ transcript có **action item rõ trong tuần** — đây là cam kết của founder + đội:
+
+| # | Việc | Owner | Deadline |
+|---|------|-------|----------|
+| A1 | Tìm 1 FitClub trong cộng đồng Quan ở Quân Nhân (>100m²) | Anh Dũng | T5/14 (tối mai) |
+| A2 | Cả nhóm đến FitClub trải nghiệm + ghi nhận điểm yếu | Anh Dũng + Em + Thắng + (Cường?) | T5/14 hoặc T5/15 |
+| A3 | Từ trải nghiệm UAT → kế hoạch quy trình tích hợp công nghệ | Em | Sau A2 |
+| A4 | Vẽ state diagram 5 tier + 4 hành trình | Anh Dũng + Em | Trước Wave A |
+| A5 | Tách role: Vận hành (Dũng) / Đào tạo (Thắng) / Công nghệ (Em) / B2B (Cường) | Tất cả | Đã chốt tại họp |
+
+---
+
+## 7. Cảnh báo + ghi chú
+
+- **ASR sai nhiều thuật ngữ** — bảng phiên âm ở header chỉ cover phần chính. Khi đưa transcript này lên SOP, **bắt buộc biên tập viên review lại bản gốc** ít nhất 30 phút đầu (đoạn quan trọng nhất về tier + supplier ở phút 32-65).
+- Buổi này **đã ra decision concrete** (khác summary v1 nhận định "không có quyết định ràng buộc"). Đề nghị anh Dũng + Em viết **biên bản chính thức** dựa trên file này + đối chiếu audio.
+- Đề xuất P6 (state graph membership) thay đổi đáng kể nội dung Phase 1 của roadmap hiện tại (`docs/fitpro/04-roadmap/implementation-phases.md`) — cần **update implementation-phases.md** trong Phase 0 để chèn schema migration tier.
+- Một số nội dung mô hình tiền có thể nhầm đơn vị: Cường chuyển "7.8" (có thể là 7.8 triệu / 78 triệu / 780 triệu / 7.8 tỷ — không rõ trong audio). Trước khi commit anywhere, **xác nhận với Cường**.
