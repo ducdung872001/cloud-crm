@@ -1,49 +1,172 @@
-import { Page } from "@playwright/test";
+import { Page, BrowserContext } from "@playwright/test";
+import fs from "fs";
+import path from "path";
 
-const PHONE = "0971234599";
-const PASSWORD = "Reborn@12345";
-export const CRM = "http://localhost:4000";
+const PHONE = process.env.E2E_PHONE || "0971234599";
+const PASSWORD = process.env.E2E_PASSWORD || "Reborn@12345";
 
-export async function loginAsBanGiamDoc(page: Page) {
+// CRM_URL env: chuyển giữa local (http://localhost:4000) và prod (https://tnpm.reborn.vn)
+export const CRM = (process.env.CRM_URL || "http://localhost:4000").replace(/\/+$/, "");
+const CRM_HOST = new URL(CRM).host;
+
+// Auth cache — sau lần login đầu, lưu cookies + localStorage để các spec sau bypass SSO
+const AUTH_FILE = path.join(__dirname, ".auth.json");
+const AUTH_TTL_MS = 45 * 60 * 1000; // 45 phút — token reborn.vn thường ≥ 50 phút lifetime
+
+interface AuthState {
+  cookies: any[];
+  localStorage: Record<string, string>;
+  savedAt: number;
+  crmHost: string; // để invalidate nếu chuyển local↔prod
+}
+
+function readAuthCache(): AuthState | null {
+  try {
+    if (!fs.existsSync(AUTH_FILE)) return null;
+    const state = JSON.parse(fs.readFileSync(AUTH_FILE, "utf-8")) as AuthState;
+    const age = Date.now() - state.savedAt;
+    if (age > AUTH_TTL_MS) {
+      console.log(`[auth-cache] expired (age=${Math.round(age / 60000)}min) — sẽ login lại`);
+      return null;
+    }
+    if (state.crmHost !== CRM_HOST) {
+      console.log(`[auth-cache] host mismatch (${state.crmHost} vs ${CRM_HOST}) — login lại`);
+      return null;
+    }
+    return state;
+  } catch (e) {
+    console.log(`[auth-cache] read error: ${(e as Error).message}`);
+    return null;
+  }
+}
+
+function writeAuthCache(state: AuthState) {
+  try {
+    fs.writeFileSync(AUTH_FILE, JSON.stringify(state, null, 2));
+    console.log(`[auth-cache] saved (${state.cookies.length} cookies, ${Object.keys(state.localStorage).length} localStorage keys)`);
+  } catch (e) {
+    console.log(`[auth-cache] write error: ${(e as Error).message}`);
+  }
+}
+
+async function captureAuthState(page: Page, context: BrowserContext) {
+  const cookies = await context.cookies();
+  const localStorage = await page.evaluate(() => {
+    const obj: Record<string, string> = {};
+    for (let i = 0; i < window.localStorage.length; i++) {
+      const k = window.localStorage.key(i)!;
+      obj[k] = window.localStorage.getItem(k) || "";
+    }
+    return obj;
+  }).catch(() => ({}));
+  writeAuthCache({ cookies, localStorage, savedAt: Date.now(), crmHost: CRM_HOST });
+}
+
+async function restoreAuthState(page: Page, context: BrowserContext, state: AuthState): Promise<boolean> {
+  try {
+    await context.addCookies(state.cookies);
+    // Cần load 1 trang trên CRM_HOST trước khi set localStorage
+    await page.goto(`${CRM}/crm/dashboard`, { waitUntil: "commit", timeout: 30_000 });
+    if (Object.keys(state.localStorage).length > 0) {
+      await page.evaluate((items) => {
+        for (const [k, v] of Object.entries(items)) {
+          try { localStorage.setItem(k, v as string); } catch {}
+        }
+      }, state.localStorage);
+    }
+    await page.reload({ waitUntil: "domcontentloaded", timeout: 30_000 }).catch(() => {});
+    await page.waitForTimeout(3500);
+
+    // Verify: nếu vẫn ở /crm/login hoặc bị redirect ra SSO → auth không valid
+    const url = page.url();
+    const stillOnLogin = url.includes("/crm/login") || url.includes("localhost:8080") || /\/\/sso\./.test(url);
+    if (stillOnLogin) {
+      console.log("[auth-cache] restore failed — vẫn ở login, sẽ full login");
+      return false;
+    }
+    console.log(`[auth-cache] restored OK → ${url}`);
+    return true;
+  } catch (e) {
+    console.log(`[auth-cache] restore error: ${(e as Error).message}`);
+    return false;
+  }
+}
+
+async function fullSsoLogin(page: Page) {
   await page.goto(`${CRM}/crm/login`, { waitUntil: "commit", timeout: 60_000 }).catch(() => {});
   await page
     .waitForFunction(
-      () => location.host.includes("localhost:8080") && !!document.querySelector('input[type="password"]'),
-      undefined,
+      (crmHost) => {
+        const onSso =
+          (location.host.startsWith("localhost:") && location.host !== crmHost) ||
+          location.hostname.startsWith("sso.");
+        return onSso && !!document.querySelector('input[type="password"]');
+      },
+      CRM_HOST,
       { timeout: 60_000 }
     )
     .catch(() => {});
 
-  if (page.url().includes("localhost:8080")) {
+  const url = page.url();
+  const isOnSso = url.includes("localhost:8080") || /\/\/sso\./.test(url);
+  if (isOnSso) {
     await page.locator('input[type="text"], input[type="tel"]').first().fill(PHONE);
     await page.locator('input[type="password"]').first().fill(PASSWORD);
     await page.locator('button[type="submit"], button:has-text("Đăng nhập")').first().click();
-    await page.waitForFunction(() => location.host.includes("localhost:4000"), undefined, { timeout: 30_000 }).catch(() => {});
+    await page.waitForFunction((host) => location.host === host, CRM_HOST, { timeout: 30_000 }).catch(() => {});
     await page.waitForTimeout(5000);
 
-    const roleCard = page.locator('text="Ban giám đốc"').first();
-    if (await roleCard.isVisible().catch(() => false)) {
-      await page.evaluate(() => {
-        document.querySelectorAll(".tour-tooltip, [class*='tour' i]").forEach((el) => el.remove());
-      });
-      await roleCard.click({ force: true });
-      const confirm = page.locator('button:has-text("Xác nhận")').first();
-      if (await confirm.isVisible().catch(() => false)) await confirm.click({ force: true });
-      await page.waitForTimeout(6000);
+    // Role chooser — tolerant
+    const roleSelectors = [
+      'text="Ban giám đốc"',
+      'text=/giám đốc/i',
+      'text=/admin/i',
+      '.role-card, [class*="role" i]',
+    ];
+    for (const sel of roleSelectors) {
+      const card = page.locator(sel).first();
+      if (await card.isVisible().catch(() => false)) {
+        await page.evaluate(() => {
+          document.querySelectorAll(".tour-tooltip, [class*='tour' i]").forEach((el) => el.remove());
+        });
+        await card.click({ force: true }).catch(() => {});
+        const confirm = page.locator('button:has-text("Xác nhận"), button:has-text("OK")').first();
+        if (await confirm.isVisible().catch(() => false)) await confirm.click({ force: true });
+        await page.waitForTimeout(6000);
+        break;
+      }
     }
   }
-  // ensure we're at dashboard
-  await page.waitForURL(/\/crm\/dashboard|\/crm\/$|\/crm\/projects/, { timeout: 30_000 }).catch(() => {});
+  await page.waitForURL(/\/crm\//, { timeout: 30_000 }).catch(() => {});
   await page.waitForTimeout(2000);
 }
 
+export async function loginAsBanGiamDoc(page: Page) {
+  const context = page.context();
+  const cached = readAuthCache();
+
+  if (cached) {
+    const ok = await restoreAuthState(page, context, cached);
+    if (ok) return;
+  }
+
+  // Cache miss hoặc invalid → full SSO login
+  console.log("[auth-cache] doing full SSO login...");
+  await fullSsoLogin(page);
+
+  // Lưu cache cho lần sau
+  await captureAuthState(page, context);
+}
+
+// ─── Overlay helpers (caption + role badge) ─────────────────────────────────
+
 export interface RoleInfo {
-  index: number;        // 1-7
-  total: number;        // 7
-  shortName: string;    // "CĐT"
-  longName: string;     // "Chủ đầu tư"
-  description: string;  // one-line tagline
-  color: string;        // hex without #
+  index: number;
+  total: number;
+  shortName: string;
+  longName: string;
+  description: string;
+  color: string;
 }
 
 export async function injectOverlay(
@@ -56,11 +179,9 @@ export async function injectOverlay(
   await page
     .evaluate(
       ({ role, stepNum, totalSteps, narration }) => {
-        // Remove existing if any
         document.getElementById("__pw_role_badge__")?.remove();
         document.getElementById("__pw_caption_bar__")?.remove();
 
-        // Role badge — top-left
         const badge = document.createElement("div");
         badge.id = "__pw_role_badge__";
         badge.style.cssText = `
@@ -80,7 +201,6 @@ export async function injectOverlay(
         `;
         document.body.appendChild(badge);
 
-        // Caption bar — bottom
         const bar = document.createElement("div");
         bar.id = "__pw_caption_bar__";
         bar.style.cssText = `
@@ -111,13 +231,12 @@ export async function gotoStep(
   stepNum: number,
   totalSteps: number,
   narration: string,
-  path: string,
+  routePath: string,
   holdMs = 9000
 ) {
-  // Navigate first (overlay will be wiped by reload)
-  if (path) {
-    await page.goto(`${CRM}/crm${path}`, { waitUntil: "domcontentloaded", timeout: 45_000 }).catch(() => {});
-    await page.waitForTimeout(2500); // let SPA render
+  if (routePath) {
+    await page.goto(`${CRM}/crm${routePath}`, { waitUntil: "domcontentloaded", timeout: 45_000 }).catch(() => {});
+    await page.waitForTimeout(2500);
   }
   await injectOverlay(page, role, stepNum, totalSteps, narration);
   await page.waitForTimeout(holdMs);
@@ -133,14 +252,11 @@ export async function actionStep(
   holdMs = 6000
 ) {
   await injectOverlay(page, role, stepNum, totalSteps, narration);
-  await page.waitForTimeout(2500); // let user read first
+  await page.waitForTimeout(2500);
   try {
     await action(page);
-  } catch (e) {
-    /* keep recording */
-  }
+  } catch {}
   await page.waitForTimeout(2000);
-  // re-inject in case modal/page changed
   await injectOverlay(page, role, stepNum, totalSteps, narration);
-  await page.waitForTimeout(holdMs - 2500);
+  await page.waitForTimeout(Math.max(holdMs - 2500, 2000));
 }

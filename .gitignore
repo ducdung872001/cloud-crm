@@ -20,3 +20,7 @@ yarn-error.log
 # Playwright test artifacts (screenshots, traces, videos)
 e2e-tests/test-results/
 playwright-report/
+
+# Playwright auth cache (chứa token + cookie — KHÔNG commit)
+e2e-tests/**/.auth.json
+e2e-tests/**/.auth/
