@@ -15,13 +15,19 @@ export default defineConfig({
     trace: "retain-on-failure",
     screenshot: "only-on-failure",
     ignoreHTTPSErrors: true,
-    viewport: { width: 1440, height: 900 },
-    video: process.env.PW_VIDEO === "on" ? { mode: "on", size: { width: 1440, height: 900 } } : "retain-on-failure",
+    viewport: { width: 1920, height: 1080 },
+    video: process.env.PW_VIDEO === "on" ? { mode: "on", size: { width: 1920, height: 1080 } } : "retain-on-failure",
+    launchOptions: {
+      args: ["--window-size=1920,1080", "--start-maximized"],
+    },
   },
   projects: [
     {
       name: "chromium",
-      use: { ...devices["Desktop Chrome"] },
+      use: {
+        ...devices["Desktop Chrome"],
+        viewport: { width: 1920, height: 1080 },
+      },
     },
   ],
   webServer: process.env.CI

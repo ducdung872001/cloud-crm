@@ -9,6 +9,69 @@ const PASSWORD = process.env.E2E_PASSWORD || "Reborn@12345";
 export const CRM = (process.env.CRM_URL || "http://localhost:4000").replace(/\/+$/, "");
 const CRM_HOST = new URL(CRM).host;
 
+// ─── E2E demo bypasses (chạy trên mọi page trong context) ───────────────────
+// 1) Mark onboarding "login" tour done với mọi userId → tắt hẳn welcome tour
+// 2) Hide gold-package expiration banner (CSS) → demo sạch không banner đỏ
+// 3) Hide tour overlay residue nếu user lỡ kích hoạt
+const DEMO_INIT_SCRIPT = `
+(() => {
+  try {
+    const _get = Storage.prototype.getItem;
+    Storage.prototype.getItem = function (k) {
+      if (typeof k === "string" && /^reborn_onboarding_.+_login$/.test(k)) return "1";
+      return _get.call(this, k);
+    };
+  } catch (e) {}
+
+  const injectHideCss = () => {
+    if (document.getElementById("__pw_demo_hide__")) return;
+    const style = document.createElement("style");
+    style.id = "__pw_demo_hide__";
+    style.textContent = \`
+      .notification__warning--package,
+      .tour-tooltip, .onboarding-tour, .tour-overlay,
+      [class*="onboarding" i], [class*="tour-tooltip" i] {
+        display: none !important;
+        visibility: hidden !important;
+      }
+    \`;
+    (document.head || document.documentElement).appendChild(style);
+  };
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", injectHideCss, { once: true });
+  } else {
+    injectHideCss();
+  }
+})();
+`;
+
+// Intercept /employee/info → kéo dài endDate thêm 1 năm để bỏ banner đỏ
+async function setupApiIntercepts(context: BrowserContext) {
+  await context.route("**/employee/info*", async (route) => {
+    try {
+      const response = await route.fetch();
+      const ct = response.headers()["content-type"] || "";
+      if (!ct.includes("application/json")) {
+        return route.fulfill({ response });
+      }
+      const json = await response.json();
+      const orgApp = json?.result?.lstOrgApp?.[0];
+      if (orgApp) {
+        const futureDate = new Date();
+        futureDate.setFullYear(futureDate.getFullYear() + 1);
+        orgApp.endDate = futureDate.toISOString();
+      }
+      return route.fulfill({
+        status: response.status(),
+        headers: response.headers(),
+        body: JSON.stringify(json),
+      });
+    } catch {
+      return route.continue();
+    }
+  });
+}
+
 // Auth cache — sau lần login đầu, lưu cookies + localStorage để các spec sau bypass SSO
 const AUTH_FILE = path.join(__dirname, ".auth.json");
 const AUTH_TTL_MS = 45 * 60 * 1000; // 45 phút — token reborn.vn thường ≥ 50 phút lifetime
@@ -65,16 +128,16 @@ async function captureAuthState(page: Page, context: BrowserContext) {
 async function restoreAuthState(page: Page, context: BrowserContext, state: AuthState): Promise<boolean> {
   try {
     await context.addCookies(state.cookies);
-    // Cần load 1 trang trên CRM_HOST trước khi set localStorage
-    await page.goto(`${CRM}/crm/dashboard`, { waitUntil: "commit", timeout: 30_000 });
+    // Inject localStorage TRƯỚC khi page load để React đọc được SelectedRole ngay lần đầu
+    // (tránh race: page goto → React boot → đọc localStorage rỗng → mở role chooser)
     if (Object.keys(state.localStorage).length > 0) {
-      await page.evaluate((items) => {
+      await context.addInitScript((items) => {
         for (const [k, v] of Object.entries(items)) {
           try { localStorage.setItem(k, v as string); } catch {}
         }
       }, state.localStorage);
     }
-    await page.reload({ waitUntil: "domcontentloaded", timeout: 30_000 }).catch(() => {});
+    await page.goto(`${CRM}/crm/dashboard`, { waitUntil: "domcontentloaded", timeout: 30_000 });
     await page.waitForTimeout(3500);
 
     // Verify: nếu vẫn ở /crm/login hoặc bị redirect ra SSO → auth không valid
@@ -84,12 +147,53 @@ async function restoreAuthState(page: Page, context: BrowserContext, state: Auth
       console.log("[auth-cache] restore failed — vẫn ở login, sẽ full login");
       return false;
     }
+    // Đóng role chooser nếu nó vẫn lỡ mở (do SelectedRole expired hoặc khác user)
+    await dismissRoleChooserIfOpen(page);
     console.log(`[auth-cache] restored OK → ${url}`);
     return true;
   } catch (e) {
     console.log(`[auth-cache] restore error: ${(e as Error).message}`);
     return false;
   }
+}
+
+// Đóng role chooser nếu nó đang mở. Ưu tiên "Ban giám đốc" theo departmentName,
+// fallback theo tên role chứa "giám đốc". Bấm "Xác nhận" sau khi state đã set.
+async function dismissRoleChooserIfOpen(page: Page) {
+  const modal = page.locator(".page__choose--role");
+  if (!(await modal.isVisible().catch(() => false))) return;
+
+  console.log("[role-chooser] visible — đang chọn 'Ban giám đốc'");
+  const candidates = [
+    '.item--role:has-text("Ban giám đốc")',
+    '.item--role:has-text("Ban điều hành")',
+    '.item--role:has-text("Giám đốc")',
+    '.item--role',
+  ];
+  let clicked = false;
+  for (const sel of candidates) {
+    const card = page.locator(sel).first();
+    if (await card.isVisible().catch(() => false)) {
+      await card.click({ force: true }).catch(() => {});
+      clicked = true;
+      break;
+    }
+  }
+  if (!clicked) {
+    console.log("[role-chooser] không thấy card nào để click");
+    return;
+  }
+
+  // Đợi state.dataRole set + button Xác nhận enable
+  const confirm = page.locator('.page__choose--role button:has-text("Xác nhận")').first();
+  await confirm.waitFor({ state: "visible", timeout: 5000 }).catch(() => {});
+  for (let i = 0; i < 10; i++) {
+    const disabled = await confirm.getAttribute("disabled").catch(() => null);
+    if (disabled === null) break;
+    await page.waitForTimeout(300);
+  }
+  await confirm.click().catch(() => {});
+  await page.waitForTimeout(3500);
 }
 
 async function fullSsoLogin(page: Page) {
@@ -115,34 +219,21 @@ async function fullSsoLogin(page: Page) {
     await page.locator('button[type="submit"], button:has-text("Đăng nhập")').first().click();
     await page.waitForFunction((host) => location.host === host, CRM_HOST, { timeout: 30_000 }).catch(() => {});
     await page.waitForTimeout(5000);
-
-    // Role chooser — tolerant
-    const roleSelectors = [
-      'text="Ban giám đốc"',
-      'text=/giám đốc/i',
-      'text=/admin/i',
-      '.role-card, [class*="role" i]',
-    ];
-    for (const sel of roleSelectors) {
-      const card = page.locator(sel).first();
-      if (await card.isVisible().catch(() => false)) {
-        await page.evaluate(() => {
-          document.querySelectorAll(".tour-tooltip, [class*='tour' i]").forEach((el) => el.remove());
-        });
-        await card.click({ force: true }).catch(() => {});
-        const confirm = page.locator('button:has-text("Xác nhận"), button:has-text("OK")').first();
-        if (await confirm.isVisible().catch(() => false)) await confirm.click({ force: true });
-        await page.waitForTimeout(6000);
-        break;
-      }
-    }
   }
   await page.waitForURL(/\/crm\//, { timeout: 30_000 }).catch(() => {});
+  await page.waitForTimeout(3000);
+  // Role chooser có thể mở dù SSO hay không (local dev có thể đã có session sẵn)
+  await dismissRoleChooserIfOpen(page);
   await page.waitForTimeout(2000);
 }
 
 export async function loginAsBanGiamDoc(page: Page) {
   const context = page.context();
+
+  // Setup TRƯỚC mọi thao tác: tắt tour + ẩn banner gói + gia hạn endDate qua intercept
+  await context.addInitScript(DEMO_INIT_SCRIPT);
+  await setupApiIntercepts(context);
+
   const cached = readAuthCache();
 
   if (cached) {

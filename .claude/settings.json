@@ -73,7 +73,23 @@
       "Bash(date -u -Iseconds)",
       "Bash(gh label *)",
       "Bash(gh issue *)",
-      "Bash(cat d:/tmp/handoff-vendor-body.md > /tmp/body.txt && wc -l /tmp/body.txt)"
+      "Bash(cat d:/tmp/handoff-vendor-body.md > /tmp/body.txt && wc -l /tmp/body.txt)",
+      "Bash(ls C:\\\\\\\\Users\\\\\\\\HP\\\\\\\\AppData\\\\\\\\Local\\\\\\\\Temp\\\\\\\\claude\\\\\\\\d--Git-reborn-reborn-cloud-cloud-ver2-cloud-crm\\\\\\\\c7af5f61-88f3-4018-9186-f686cfd8d6c6\\\\\\\\tasks\\\\\\\\b3vq68rtp.output)",
+      "Bash(wait)",
+      "Bash(curl -s -o /dev/null -w \"local-4000:%{http_code}\\\\n\" --max-time 3 http://localhost:4000/crm/login)",
+      "Bash(curl -s -o /dev/null -w \"tnpm-prod:%{http_code}\\\\n\" --max-time 5 https://tnpm.reborn.vn/crm/login)",
+      "Bash(Get-Content C:\\\\Users\\\\HP\\\\AppData\\\\Local\\\\Temp\\\\claude\\\\d--Git-reborn-reborn-cloud-cloud-ver2-cloud-crm\\\\c7af5f61-88f3-4018-9186-f686cfd8d6c6\\\\tasks\\\\bt9zud7ub.output -Tail 40)",
+      "PowerShell($env:PW_VIDEO=\"on\"; Start-Process -FilePath \"npx\" -ArgumentList \"playwright\",\"test\",\"e2e-tests/video-journey/\" -RedirectStandardOutput \"e2e-tests/video-journey/.run-7roles.log\" -RedirectStandardError \"e2e-tests/video-journey/.run-7roles.err.log\" -PassThru -NoNewWindow | Select-Object -Property Id,StartTime | Format-List)",
+      "PowerShell(Start-Sleep -Seconds 8; $proc = Get-Process -Id 30944 -ErrorAction SilentlyContinue; if \\($proc\\) { \"RUNNING \\(PID 30944, CPU $\\([math]::Round\\($proc.CPU,1\\)\\)s\\)\" } else { \"NOT RUNNING\" }; \"--- log tail ---\"; if \\(Test-Path \"e2e-tests/video-journey/.run-7roles.log\"\\) { Get-Content \"e2e-tests/video-journey/.run-7roles.log\" -Tail 15 } else { \"no log yet\" })",
+      "PowerShell(Stop-Process -Id 30944 -Force -ErrorAction SilentlyContinue)",
+      "PowerShell(Stop-Process -Force -ErrorAction SilentlyContinue)",
+      "PowerShell(\"killed\")",
+      "Bash(curl -s -L --max-time 10 http://localhost:4000/crm/login)",
+      "Bash(curl -s -L --max-time 10 -o /tmp/login.html http://localhost:4000/crm/login)",
+      "Bash(curl -s -o /dev/null -w \"code:%{http_code} url:%{url_effective}\\\\n\" --max-time 5 http://localhost:4000/crm/login)",
+      "Bash(curl -s -o /dev/null -w \"code:%{http_code} url:%{url_effective}\\\\n\" --max-time 5 -L http://localhost:4000/crm/login)",
+      "PowerShell(Start-Process -FilePath \"npm\" -ArgumentList \"run\",\"dev\" -RedirectStandardOutput \"e2e-tests/video-journey/.dev.log\" -RedirectStandardError \"e2e-tests/video-journey/.dev.err.log\" -PassThru -NoNewWindow)",
+      "Bash(curl -s -k -o /dev/null -w \"tnpm-prod-noverify:%{http_code}\\\\n\" --max-time 10 https://tnpm.reborn.vn/crm/login)"
     ],
     "additionalDirectories": [
       "\\tmp"
