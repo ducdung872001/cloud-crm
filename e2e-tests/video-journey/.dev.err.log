@@ -1,0 +1,20 @@
+[2m4:51:34 pm[22m [33m[1m[vite][22m[39m [33m[2m(client)[22m[39m [33mwarning: [33mDuplicate key "Dashboard" in object literal[33m
+223 |            "Cài đặt": "Settings",
+224 |            // ─── Added by i18n audit — menu keys from routes.tsx still missing ─
+225 |            "Dashboard": "Dashboard",
+    |            ^
+226 |            "Portfolio": "Portfolio",
+227 |            "B2G — Dự án HC": "B2G — Government Projects",
+[39m
+  Plugin: [35mvite:esbuild[39m
+  File: [36mD:/Git/reborn/reborn-cloud/cloud-ver2/cloud-crm/src/i18n.ts[39m
+[2m4:51:34 pm[22m [33m[1m[vite][22m[39m [33m[2m(client)[22m[39m [33mwarning: [33mDuplicate key "Dashboard" in object literal[33m
+526 |            "Cài đặt": "Cài đặt",
+527 |            // ─── Added by i18n audit — menu keys from routes.tsx still missing ─
+528 |            "Dashboard": "Bảng điều khiển",
+    |            ^
+529 |            "Portfolio": "Danh mục đầu tư",
+530 |            "B2G — Dự án HC": "B2G — Dự án Hành chính",
+[39m
+  Plugin: [35mvite:esbuild[39m
+  File: [36mD:/Git/reborn/reborn-cloud/cloud-ver2/cloud-crm/src/i18n.ts[39m

@@ -2,4 +2,34 @@
 Running 7 tests using 1 worker
 
 [auth-cache] doing full SSO login...
-[auth-cache] saved (0 cookies, 0 localStorage keys)
+[role-chooser] visible — đang chọn 'Ban giám đốc'
+[auth-cache] saved (5 cookies, 5 localStorage keys)
+  ok 1 [chromium] › e2e-tests\video-journey\01-cdt-chu-dau-tu.spec.ts:12:5 › Role 1/7 — Chủ đầu tư: hành trình E2E (10.9m)
+[auth-cache] restored OK → http://localhost:4000/crm/dashboard
+  ok 2 [chromium] › e2e-tests\video-journey\02-leadership-tnpm.spec.ts:12:5 › Role 2/7 — TNPM Leadership: hành trình E2E (13.0m)
+[auth-cache] restored OK → http://localhost:4000/crm/dashboard
+  ok 3 [chromium] › e2e-tests\video-journey\03-bql-qlda.spec.ts:12:5 › Role 3/7 — BQL/QLDA: hành trình E2E (10.2m)
+[auth-cache] restored OK → http://localhost:4000/crm/dashboard
+  ok 4 [chromium] › e2e-tests\video-journey\04-kst-ky-thuat.spec.ts:12:5 › Role 4/7 — Kỹ sư trưởng / Kỹ thuật: hành trình E2E (10.1m)
+[auth-cache] restored OK → http://localhost:4000/crm/dashboard
+  ok 5 [chromium] › e2e-tests\video-journey\05-ketoan-finance.spec.ts:12:5 › Role 5/7 — Kế toán / Tài chính: hành trình E2E (13.6m)
+[auth-cache] expired (age=57min) — sẽ login lại
+[auth-cache] doing full SSO login...
+[auth-cache] saved (5 cookies, 4 localStorage keys)
+  ok 6 [chromium] › e2e-tests\video-journey\06-vendor-ncc.spec.ts:12:5 › Role 6/7 — Vendor / Nhà cung cấp: hành trình E2E (13.0m)
+[role-chooser] visible — đang chọn 'Ban giám đốc'
+[auth-cache] restored OK → http://localhost:4000/crm/dashboard
+  ok 7 [chromium] › e2e-tests\video-journey\07-khachhang-cu-dan.spec.ts:12:5 › Role 7/7 — Khách hàng / Cư dân: hành trình E2E (placeholder) (10.5m)
+
+  Slow test file: [chromium] › e2e-tests\video-journey\05-ketoan-finance.spec.ts (13.6m)
+  Slow test file: [chromium] › e2e-tests\video-journey\02-leadership-tnpm.spec.ts (13.0m)
+  Slow test file: [chromium] › e2e-tests\video-journey\06-vendor-ncc.spec.ts (13.0m)
+  Slow test file: [chromium] › e2e-tests\video-journey\01-cdt-chu-dau-tu.spec.ts (10.9m)
+  Slow test file: [chromium] › e2e-tests\video-journey\07-khachhang-cu-dan.spec.ts (10.5m)
+  Consider running tests from slow files in parallel. See: https://playwright.dev/docs/test-parallel
+  7 passed (1.4h)
+
+To open last HTML report run:
+[36m[39m
+[36m  npx playwright show-report[39m
+[36m[39m
