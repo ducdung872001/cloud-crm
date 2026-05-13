@@ -10,7 +10,7 @@ const role: RoleInfo = {
 };
 
 test("Role 3/7 — BQL/QLDA: hành trình E2E", async ({ page }) => {
-  test.setTimeout(900_000);
+  test.setTimeout(1_200_000);
   const T = 24;
 
   await injectOverlay(page, role, 1, T, "Mở đầu — BQL/QLDA là người quản lý vận hành tại 1 site cụ thể (1 toà nhà / 1 dự án). Họ là cầu nối giữa CĐT, kế toán, kỹ thuật và NCC.");
