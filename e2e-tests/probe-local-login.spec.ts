@@ -33,6 +33,13 @@ test("probe: local CRM login via local SSO (port 8080)", async ({ page }) => {
       } catch {}
       failedLog.push({ url, status, method: resp.request().method(), body });
     }
+
+    if (url.includes("/employee/roles")) {
+      try {
+        const body = await resp.text();
+        console.log(`\n===== ROLES RESPONSE BODY =====\n${body}\n`);
+      } catch {}
+    }
   });
 
   // 1. open CRM /crm/login (Router basename is /crm/) → expect redirect to local SSO

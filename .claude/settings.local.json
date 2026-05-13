@@ -16,7 +16,9 @@
       "Bash(curl -sk -w \"\\\\nHTTP %{http_code}\\\\n\" -H \"Hostname: kcn.reborn.vn\" -H \"Authorization: Bearer none\" \"https://cloud.reborn.vn/adminapi/employee/info\")",
       "Bash(curl -sk -w \"\\\\nHTTP %{http_code}\\\\n\" -H \"Hostname: kcn.reborn.vn\" -H \"Authorization: Bearer none\" \"https://biz.reborn.vn/customer/employee/info\")",
       "Bash(curl -sk -w \"\\\\nHTTP %{http_code}\\\\n\" -H \"Hostname: kcn.reborn.vn\" -H \"Authorization: Bearer none\" \"https://biz.reborn.vn/org/employee/info\")",
-      "Bash(curl -sk -w \"\\\\nHTTP %{http_code}\\\\n\" -H \"Hostname: kcn.reborn.vn\" -H \"Authorization: Bearer none\" \"https://biz.reborn.vn/org/employee/init\")"
+      "Bash(curl -sk -w \"\\\\nHTTP %{http_code}\\\\n\" -H \"Hostname: kcn.reborn.vn\" -H \"Authorization: Bearer none\" \"https://biz.reborn.vn/org/employee/init\")",
+      "Read(//dev/**)",
+      "Bash(curl -s 'https://biz.reborn.vn/org/employee/roles' -H 'Hostname: kcn.reborn.vn' -H \"Authorization: Bearer $\\(grep -oP '\\(?<=token=\\)[^;]+' /dev/null || echo invalid\\)\")"
     ]
   }
 }

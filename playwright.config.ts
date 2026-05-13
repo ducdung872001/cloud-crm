@@ -16,6 +16,7 @@ export default defineConfig({
     screenshot: "only-on-failure",
     ignoreHTTPSErrors: true,
     viewport: { width: 1440, height: 900 },
+    video: process.env.PW_VIDEO === "on" ? { mode: "on", size: { width: 1440, height: 900 } } : "retain-on-failure",
   },
   projects: [
     {
