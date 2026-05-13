@@ -91,7 +91,8 @@
       "PowerShell(Start-Process -FilePath \"npm\" -ArgumentList \"run\",\"dev\" -RedirectStandardOutput \"e2e-tests/video-journey/.dev.log\" -RedirectStandardError \"e2e-tests/video-journey/.dev.err.log\" -PassThru -NoNewWindow)",
       "Bash(curl -s -k -o /dev/null -w \"tnpm-prod-noverify:%{http_code}\\\\n\" --max-time 10 https://tnpm.reborn.vn/crm/login)",
       "PowerShell(Remove-Item \"e2e-tests/video-journey/.auth.json\" -ErrorAction SilentlyContinue; Remove-Item \"e2e-tests/video-journey/.run-7roles.log\" -ErrorAction SilentlyContinue; Remove-Item \"e2e-tests/test-results\" -Recurse -Force -ErrorAction SilentlyContinue; $env:PW_VIDEO=\"on\"; $env:CRM_URL=\"http://localhost:4000\"; Start-Process -FilePath \"npx\" -ArgumentList \"playwright\",\"test\",\"e2e-tests/video-journey/\" -RedirectStandardOutput \"e2e-tests/video-journey/.run-7roles.log\" -RedirectStandardError \"e2e-tests/video-journey/.run-7roles.err.log\" -PassThru -NoNewWindow | Select-Object Id,StartTime | Format-List; \"Launched at $\\(Get-Date -Format 'HH:mm:ss'\\)\")",
-      "Bash(tasklist)"
+      "Bash(tasklist)",
+      "Bash(echo \"tsc done: $?\")"
     ],
     "additionalDirectories": [
       "\\tmp"
