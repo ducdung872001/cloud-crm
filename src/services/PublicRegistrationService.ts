@@ -10,18 +10,20 @@
 
 import { urlsApi } from "configs/urls";
 
-/** Feature flag — flip true sau khi BE deploy + test issue #23 endpoints.
- *  Giữ OFF trên prod (anh Lợi đã preview UI 2026-05-12 OK). Khi BE up + test
- *  shape thực OK rồi flip TRUE trong 1 commit nhỏ. */
-export const PUBLIC_MY_REGISTRATIONS_READY = false;
+/** BE đã deploy 2 endpoint (issue #23 reply #237 commit 2ef693a — 2026-05-13).
+ *  Smoke test endpoint live (401 khi thiếu token đúng contract). Flag ON. */
+export const PUBLIC_MY_REGISTRATIONS_READY = true;
 
 const HEADER_ID_TOKEN = "X-Firebase-Id-Token";
 
 export interface MyRegistrationItem {
-  regId: string;
-  eventId: string;
+  // BE trả Integer (entity column id INT auto_increment) — chấp nhận cả number
+  // và string để defensive nếu sau này BE đổi sang UUID.
+  regId: number | string;
+  eventId: number | string;
   eventSlug: string;
   eventTitle: string;
+  /** LocalDateTime ISO không Z suffix — `new Date()` parse vẫn OK cho format ngày. */
   eventStartAt?: string;
   eventEndAt?: string;
   status: "pending" | "approved" | "checked_in" | "completed" | "cancelled" | string;

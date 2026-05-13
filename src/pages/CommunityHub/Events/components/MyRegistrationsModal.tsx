@@ -117,7 +117,9 @@ export default function MyRegistrationsModal({ currentEventSlug, onClose, onUpda
         setError(res?.message || "Không tải được danh sách đăng ký");
         return;
       }
-      const list: MyRegistrationItem[] = res?.result ?? [];
+      // BE wrap DfResponse dùng `data`; FE handoff example viết `result` —
+      // accept cả 2 để defensive.
+      const list: MyRegistrationItem[] = res?.data ?? res?.result ?? [];
       setItems(list);
       setStep("list");
       if (list.length === 0) {
@@ -475,18 +477,21 @@ function RegistrationEditForm({
         note: note.trim() || undefined,
         selectedDates: selectedDates.length > 0 ? selectedDates : undefined,
       };
-      const res = await PublicRegistrationService.updateInfo(r.regId, idToken, body);
+      const res = await PublicRegistrationService.updateInfo(String(r.regId), idToken, body);
       if (res?.code !== 0 && res?.code !== 200) {
         const code = res?.error || res?.code;
         const msg = code === "CHECKED_IN_LOCKED" ? "Đã check-in — không sửa được nữa"
           : code === "EVENT_ENDED" ? "Sự kiện đã kết thúc"
           : code === "NOT_OWNER" ? "SĐT không khớp đăng ký này"
-          : code === "DATES_LOCKED_PER_DAY_PRICING" ? "Ngày tham gia không sửa được — liên hệ admin"
+          : code === "CANCELLED" ? "Đăng ký đã bị huỷ"
+          : code === "INVALID_EMAIL" ? "Email không hợp lệ"
+          : code === "INVALID_DATE" ? "Ngày tham gia không hợp lệ"
           : res?.message || "Lưu thất bại";
         setError(msg);
         return;
       }
-      const updatedValues = res?.result?.values ?? body;
+      // DfResponse `data` envelope (BE reply issue #237).
+      const updatedValues = res?.data?.values ?? res?.result?.values ?? body;
       onSaved({ ...r, values: { ...r.values, ...updatedValues } });
     } catch (e: any) {
       setError(e?.message || "Lỗi kết nối máy chủ");
