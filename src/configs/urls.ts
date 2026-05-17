@@ -37,95 +37,95 @@ export const urlsApi = {
     update: prefixSales + "/user-shortcut/update",
   },
   beautySalon: {
-    list: prefixRebornVn + "/beautySalon/list",
-    approve: prefixRebornVn + "/beautySalon/approve",
-    delete: prefixRebornVn + "/beautySalon/delete",
+    list: prefixRebornVn + "/beauty-salon/list",
+    approve: prefixRebornVn + "/beauty-salon/approve",
+    delete: prefixRebornVn + "/beauty-salon/delete",
   },
   businessRule: {
-    list: prefixBpm + "/businessRule/list",
-    update: prefixBpm + "/businessRule/update",
-    updateActive: prefixBpm + "/businessRule/updateActive",
-    detail: prefixBpm + "/businessRule/detail",
-    delete: prefixBpm + "/businessRule/delete",
+    list: prefixBpm + "/business-rule/list",
+    update: prefixBpm + "/business-rule/update",
+    updateActive: prefixBpm + "/business-rule/update-active",
+    detail: prefixBpm + "/business-rule/detail",
+    delete: prefixBpm + "/business-rule/delete",
   },
   businessRuleItem: {
-    list: prefixBpm + "/businessRuleItem/list",
-    update: prefixBpm + "/businessRuleItem/update",
-    updateActive: prefixBpm + "/businessRuleItem/updateActive",
-    detail: prefixBpm + "/businessRuleItem/detail",
-    delete: prefixBpm + "/businessRuleItem/delete",
+    list: prefixBpm + "/business-rule-item/list",
+    update: prefixBpm + "/business-rule-item/update",
+    updateActive: prefixBpm + "/business-rule-item/update-active",
+    detail: prefixBpm + "/business-rule-item/detail",
+    delete: prefixBpm + "/business-rule-item/delete",
   },
   decisionTableInput: {
-    list: prefixBpm + "/decisionTableInput/list",
-    update: prefixBpm + "/decisionTableInput/update",
-    updateActive: prefixBpm + "/decisionTableInput/updateActive",
-    detail: prefixBpm + "/decisionTableInput/detail",
-    delete: prefixBpm + "/decisionTableInput/delete",
+    list: prefixBpm + "/decision-table-input/list",
+    update: prefixBpm + "/decision-table-input/update",
+    updateActive: prefixBpm + "/decision-table-input/update-active",
+    detail: prefixBpm + "/decision-table-input/detail",
+    delete: prefixBpm + "/decision-table-input/delete",
   },
   decisionTableOutput: {
-    list: prefixBpm + "/decisionTableOutput/list",
-    update: prefixBpm + "/decisionTableOutput/update",
-    updateActive: prefixBpm + "/decisionTableOutput/updateActive",
-    detail: prefixBpm + "/decisionTableOutput/detail",
-    delete: prefixBpm + "/decisionTableOutput/delete",
+    list: prefixBpm + "/decision-table-output/list",
+    update: prefixBpm + "/decision-table-output/update",
+    updateActive: prefixBpm + "/decision-table-output/update-active",
+    detail: prefixBpm + "/decision-table-output/detail",
+    delete: prefixBpm + "/decision-table-output/delete",
   },
   user: {
     create: prefixAuthenticator + "/user/create",
-    update: prefixAuthenticator + "/user/admin_update",
+    update: prefixAuthenticator + "/user/admin-update",
     profile: prefixAuthenticator + "/user/me",
     detail: prefixAuthenticator + "/user/get",
-    basicInfo: prefixAuthenticator + "/user/basic_info",
+    basicInfo: prefixAuthenticator + "/user/basic-info",
     selectUsers: prefixAuthenticator + "/user/select",
-    resetPass: prefixAuthenticator + "/user/reset_pass",
-    changePass: prefixAuthenticator + "/user/change_pass",
-    checkLogin: prefixCustomer + "/userLogin/list",
-    detailTimeLogin: prefixCustomer + "/userLogin/daily/list",
+    resetPass: prefixAuthenticator + "/user/reset-pass",
+    changePass: prefixAuthenticator + "/user/change-pass",
+    checkLogin: prefixCustomer + "/user-login/list",
+    detailTimeLogin: prefixCustomer + "/user-login/daily/list",
     list: prefixAuthenticator + "/user/list",
     delete: prefixAuthenticator + "/user/delete",
-    fcmDevice: prefixNotification + "/fcmDevice/update",
+    fcmDevice: prefixNotification + "/fcm-device/update",
   },
   notificationHistory: {
-    list: prefixNotification + "/firebaseDeliveryHistory/list",
-    update: prefixNotification + "/firebaseDeliveryHistory/update",
-    detail: prefixNotification + "/firebaseDeliveryHistory/get",
-    delete: prefixNotification + "/firebaseDeliveryHistory/delete",
+    list: prefixNotification + "/firebase-delivery-history/list",
+    update: prefixNotification + "/firebase-delivery-history/update",
+    detail: prefixNotification + "/firebase-delivery-history/get",
+    delete: prefixNotification + "/firebase-delivery-history/delete",
 
-    updateUnread: prefixNotification + "/firebaseDeliveryHistory/update/unread",
-    updateReadAll: prefixNotification + "/firebaseDeliveryHistory/update/readAll",
-    countUnread: prefixNotification + "/firebaseDeliveryHistory/count",
+    updateUnread: prefixNotification + "/firebase-delivery-history/update/unread",
+    updateReadAll: prefixNotification + "/firebase-delivery-history/update/read-all",
+    countUnread: prefixNotification + "/firebase-delivery-history/count",
   },
 
   customer: {
-    filter: prefixCustomer + "/customer/list_paid/basic",
-    listshared: prefixCustomer + "/customer/list_paid/basic/shared",
+    filter: prefixCustomer + "/customer/list-paid/basic",
+    listshared: prefixCustomer + "/customer/list-paid/basic/shared",
     update: prefixCustomer + "/customer/update",
-    telesaleCallList: prefixCare + "/telesaleCall/list",
-    telesaleCallUpdate: prefixCare + "/telesaleCall/update",
-    updateByField: prefixCustomer + "/customer/update/byField",
+    telesaleCallList: prefixCare + "/telesale-call/list",
+    telesaleCallUpdate: prefixCare + "/telesale-call/update",
+    updateByField: prefixCustomer + "/customer/update/by-field",
     delete: prefixCustomer + "/customer/delete",
     deleteAll: prefixCustomer + "/customer/delete",
-    checkInProcess: prefixCustomer + "/customer/checkInProcess",
-    link: prefixCustomer + "/customer/link_user",
+    checkInProcess: prefixCustomer + "/customer/check-in-process",
+    link: prefixCustomer + "/customer/link-user",
     detail: prefixCustomer + "/customer/get",
     area: prefixRebornVn + "/area/child",
 
     // api lấy ra thông tin khách hàng dựa theo id
-    listById: prefixCustomer + "/customer/list_by_id",
+    listById: prefixCustomer + "/customer/list-by-id",
     // Cập nhập hàng loạt
-    updateCustomerGroup: prefixCustomer + "/customer/update_batch/customer_group",
+    updateCustomerGroup: prefixCustomer + "/customer/update-batch/customer-group",
     updateOneRelationship: prefixCustomer + "/customer/update/relationship",
-    updateCustomeRelationship: prefixCustomer + "/customer/update_batch/relationship",
-    updateCustomerSource: prefixCustomer + "/customer/update_batch/customer_source",
-    updateCustomerEmployee: prefixCustomer + "/customer/update_batch/employee",
+    updateCustomeRelationship: prefixCustomer + "/customer/update-batch/relationship",
+    updateCustomerSource: prefixCustomer + "/customer/update-batch/customer-source",
+    updateCustomerEmployee: prefixCustomer + "/customer/update-batch/employee",
     // Lịch điều trị
-    updateScheduler: prefixCustomer + "/customerScheduler/update",
-    filterScheduler: prefixCustomer + "/customerScheduler/list",
-    cancelScheduler: prefixCustomer + "/customerScheduler/cancel",
-    detailScheduler: prefixCustomer + "/customerScheduler/get",
+    updateScheduler: prefixCustomer + "/customer-scheduler/update",
+    filterScheduler: prefixCustomer + "/customer-scheduler/list",
+    cancelScheduler: prefixCustomer + "/customer-scheduler/cancel",
+    detailScheduler: prefixCustomer + "/customer-scheduler/get",
     // Trao đổi
-    customerExchangeList: prefixCustomer + "/customerExchange/list",
-    customerExchangeUpdate: prefixCustomer + "/customerExchange/update",
-    customerExchangeDelete: prefixCustomer + "/customerExchange/delete",
+    customerExchangeList: prefixCustomer + "/customer-exchange/list",
+    customerExchangeUpdate: prefixCustomer + "/customer-exchange/update",
+    customerExchangeDelete: prefixCustomer + "/customer-exchange/delete",
     // gửi sms, gửi email, gửi zalo
     customerSendSMS: prefixCustomer + "/customer/send/sms",
     customerSendEmail: prefixCustomer + "/customer/send/email",
@@ -140,31 +140,31 @@ export const urlsApi = {
     // lấy email khi bị che
     viewEmail: prefixCustomer + "/customer/get/email",
 
-    addOther: prefixCustomer + "/customerViewer/update",
+    addOther: prefixCustomer + "/customer-viewer/update",
     // thêm mới nhiều người xem cho 1 khách hàng
-    addCustomerViewer: prefixCustomer + "/customerViewer/update",
+    addCustomerViewer: prefixCustomer + "/customer-viewer/update",
     // lấy về danh sách người xem
-    lstCustomerViewer: prefixCustomer + "/customerViewer/list",
+    lstCustomerViewer: prefixCustomer + "/customer-viewer/list",
     // xóa đi 1 người xem
-    deleteCustomerViewer: prefixCustomer + "/customerViewer/delete",
+    deleteCustomerViewer: prefixCustomer + "/customer-viewer/delete",
     // thêm khách hàng vào chương trình MA
-    addCustomerMA: prefixCustomer + "/maCustomer/insertList",
+    addCustomerMA: prefixCustomer + "/ma-customer/insert-list",
     // điền số lượng bản ghi muốn hiển thị
-    numberFieldCustomer: prefixCustomer + "/customer/export/randomCustomers",
+    numberFieldCustomer: prefixCustomer + "/customer/export/random-customers",
     // import khách hàng b2
-    autoProcess: prefixCustomer + "/customer/import/autoProcess",
+    autoProcess: prefixCustomer + "/customer/import/auto-process",
     // import khách hàng b3
-    manualProcess: prefixCustomer + "/customer/import/manualProcess",
+    manualProcess: prefixCustomer + "/customer/import/manual-process",
     // tải file lỗi trong quá trình upload
     downloadFile: prefixCustomer + "/customer/import",
     // tương tác khách hàng
-    customerReport: prefixCustomer + "/customerReport/summaryAction",
+    customerReport: prefixCustomer + "/customer-report/summary-action",
     // chi tiết tương tác khách hàng
-    detailCustomerReport: prefixCustomer + "/customerReport/summaryAction/detail",
+    detailCustomerReport: prefixCustomer + "/customer-report/summary-action/detail",
     // danh sách các file đã tải
-    lstAttachments: prefixCustomer + "/customerExchange/attachment/list",
+    lstAttachments: prefixCustomer + "/customer-exchange/attachment/list",
     // chi tiết tương tác từng khách hàng trong màn hình chi tiết khách hàng
-    descCustomerReport: prefixCustomer + "/customerReport/action/list",
+    descCustomerReport: prefixCustomer + "/customer-report/action/list",
     // khách hàng đã theo dõi tk zalo nào
     customerZaloOA: prefixCustomer + "/customer/zalo/oa",
     // đoạn này là api bộ lọc nâng cao
@@ -177,7 +177,7 @@ export const urlsApi = {
     // businessPartner: prefixCustomer + "/businessPartner/attributes",
     // emailAttributes: prefixCustomer + "/businessPartner/attributes",
     // lấy thuộc tính vào bảng filter
-    filterTable: prefixCustomer + "/customerAttribute/listFilter",
+    filterTable: prefixCustomer + "/customer-attribute/list-filter",
     // lấy ra các trường, để tải dữ liệu mẫu về
     exAttributes: prefixCustomer + "/customer/export/attributes",
     // đoạn này tạo cơ hội cho khách hàng doanh nghiệp
@@ -187,30 +187,30 @@ export const urlsApi = {
     detailOpportunity: prefixCustomer + "/opportunity/get",
 
     // danh sách upload
-    lstUpload: prefixCustomer + "/customerUpload/list",
+    lstUpload: prefixCustomer + "/customer-upload/list",
 
     // api phân tích chân dung khách hàng
     classifyAge: prefixCustomer + "/api/v1/customer/classify/age",
     classifyGender: prefixCustomer + "/api/v1/customer/classify/gender",
     classifyIdentify: prefixCustomer + "/api/v1/customer/classify/identify",
-    classifyTopRevenue: prefixCustomer + "/api/v1/customer/classify/topRevenue",
-    classifyTopBought: prefixCustomer + "/api/v1/customer/classify/topBought",
-    classifyTopValueInvoice: prefixCustomer + "/api/v1/customer/classify/topValueInvoice",
-    classifyNotInteractDay: prefixCustomer + "/api/v1/customer/classify/notInteractDay",
-    classifyTopInteract: prefixCustomer + "/api/v1/customer/classify/topInteract",
-    classifyCampaignJoined: prefixCustomer + "/api/v1/customer/classify/campaignJoined",
-    classifyCustType: prefixCustomer + "/api/v1/customer/classify/custType",
-    classifyCustGroup: prefixCustomer + "/api/v1/customer/classify/custGroup",
-    classifyCustSource: prefixCustomer + "/api/v1/customer/classify/custSource",
-    classifyCustCareer: prefixCustomer + "/api/v1/customer/classify/custCareer",
-    classifyCustArea: prefixCustomer + "/api/v1/customer/classify/custArea",
-    classifyCustomerCard: prefixCustomer + "/api/v1/customer/classify/customerCard",
-    classifyInteractTimes: prefixCustomer + "/api/v1/customer/classify/interactTimes",
+    classifyTopRevenue: prefixCustomer + "/api/v1/customer/classify/top-revenue",
+    classifyTopBought: prefixCustomer + "/api/v1/customer/classify/top-bought",
+    classifyTopValueInvoice: prefixCustomer + "/api/v1/customer/classify/top-value-invoice",
+    classifyNotInteractDay: prefixCustomer + "/api/v1/customer/classify/not-interact-day",
+    classifyTopInteract: prefixCustomer + "/api/v1/customer/classify/top-interact",
+    classifyCampaignJoined: prefixCustomer + "/api/v1/customer/classify/campaign-joined",
+    classifyCustType: prefixCustomer + "/api/v1/customer/classify/cust-type",
+    classifyCustGroup: prefixCustomer + "/api/v1/customer/classify/cust-group",
+    classifyCustSource: prefixCustomer + "/api/v1/customer/classify/cust-source",
+    classifyCustCareer: prefixCustomer + "/api/v1/customer/classify/cust-career",
+    classifyCustArea: prefixCustomer + "/api/v1/customer/classify/cust-area",
+    classifyCustomerCard: prefixCustomer + "/api/v1/customer/classify/customer-card",
+    classifyInteractTimes: prefixCustomer + "/api/v1/customer/classify/interact-times",
 
     // gợi ý các sản phẩm/dịch vụ cho khách hàng
-    serviceSuggestions: prefixCustomer + "/customerObject/list",
+    serviceSuggestions: prefixCustomer + "/customer-object/list",
     // api khác để làm
-    serviceSuggestionsv2: prefixCustomer + "/customerObject/getTop",
+    serviceSuggestionsv2: prefixCustomer + "/customer-object/get-top",
 
     // lấy ra các field động view nên chart
     fieldChart: prefixCustomer + "/customer/dashboard/fields",
@@ -218,7 +218,7 @@ export const urlsApi = {
     updateChartDynamicChart: prefixCustomer + "/customer/dashboard/update",
     deleteChartDynamicChart: prefixCustomer + "/customer/dashboard/delete",
     detailChartDynamicChart: prefixCustomer + "/customer/dashboard/get",
-    viewChartDynamicChart: prefixCustomer + "/customer/dashboard/fetchData",
+    viewChartDynamicChart: prefixCustomer + "/customer/dashboard/fetch-data",
 
     //export multi
     exportMulti: prefixCustomer + "/customer/export/multi",
@@ -228,20 +228,20 @@ export const urlsApi = {
     createCall: "https://api-athenaspear-prod.athenafs.io/api/v1/call-history/create-call",
 
     //lấy tài khoản tổng đài
-    getAccountCall: prefixCustomer + "/employeeAgent/employeeId",
-    reloadData: prefixCustomer + "/customer/moveToEs",
+    getAccountCall: prefixCustomer + "/employee-agent/employee-id",
+    reloadData: prefixCustomer + "/customer/move-to-es",
 
     // chia data khách hàng Tnex
     customerAssign: prefixCustomer + "/customer/assign",
   },
 
   careScenario: {
-    list: prefixBiz + "/market/careScenario/list",
-    stats: prefixBiz + "/market/careScenario/stats",
-    get: prefixBiz + "/market/careScenario/get",
-    update: prefixBiz + "/market/careScenario/update",
-    toggleActive: prefixBiz + "/market/careScenario/toggle-active",
-    delete: prefixBiz + "/market/careScenario/delete",
+    list: prefixBiz + "/market/care-scenario/list",
+    stats: prefixBiz + "/market/care-scenario/stats",
+    get: prefixBiz + "/market/care-scenario/get",
+    update: prefixBiz + "/market/care-scenario/update",
+    toggleActive: prefixBiz + "/market/care-scenario/toggle-active",
+    delete: prefixBiz + "/market/care-scenario/delete",
   },
 
   // GHD api chống chế =))))))))))))
@@ -250,46 +250,46 @@ export const urlsApi = {
   },
 
   partner: {
-    list: prefixCustomer + "/businessPartner/list_paid",
-    update: prefixCustomer + "/businessPartner/update",
-    detail: prefixCustomer + "/businessPartner/get",
-    delete: prefixCustomer + "/businessPartner/delete",
-    downloadFile: prefixCustomer + "/businessPartner/import",
+    list: prefixCustomer + "/business-partner/list-paid",
+    update: prefixCustomer + "/business-partner/update",
+    detail: prefixCustomer + "/business-partner/get",
+    delete: prefixCustomer + "/business-partner/delete",
+    downloadFile: prefixCustomer + "/business-partner/import",
     // lấy số điện thoại khi bị che
-    viewPhone: prefixCustomer + "/businessPartner/get/phone",
+    viewPhone: prefixCustomer + "/business-partner/get/phone",
     // lấy email khi bị che
-    viewEmail: prefixCustomer + "/businessPartner/get/email",
+    viewEmail: prefixCustomer + "/business-partner/get/email",
 
-    numberFieldPartner: prefixCustomer + "/businessPartner/export/randomBusinessPartners",
-    autoProcess: prefixCustomer + "/businessPartner/import/autoProcess",
-    exAttributes: prefixCustomer + "/businessPartner/export/attributes",
+    numberFieldPartner: prefixCustomer + "/business-partner/export/random-business-partners",
+    autoProcess: prefixCustomer + "/business-partner/import/auto-process",
+    exAttributes: prefixCustomer + "/business-partner/export/attributes",
 
     // lấy thuộc tính vào bảng filter
-    filterTable: prefixCustomer + "/businessPartner/listFilter",
+    filterTable: prefixCustomer + "/business-partner/list-filter",
 
     // Trao đổi
-    partnerExchangeList: prefixCustomer + "/businessPartnerExchange/list",
-    partnerExchangeUpdate: prefixCustomer + "/businessPartnerExchange/update",
-    partnerExchangeDelete: prefixCustomer + "/businessPartnerExchange/delete",
+    partnerExchangeList: prefixCustomer + "/business-partner-exchange/list",
+    partnerExchangeUpdate: prefixCustomer + "/business-partner-exchange/update",
+    partnerExchangeDelete: prefixCustomer + "/business-partner-exchange/delete",
   },
 
   partnerExtraInfo: {
-    list: prefixCustomer + "/businessPartnerExtraInfo/list",
+    list: prefixCustomer + "/business-partner-extra-info/list",
   },
 
   partnerAttribute: {
-    list: prefixCustomer + "/businessPartnerAttribute/list",
-    update: prefixCustomer + "/businessPartnerAttribute/update",
-    delete: prefixCustomer + "/businessPartnerAttribute/delete",
-    listAll: prefixCustomer + "/businessPartnerAttribute/listAll",
-    checkDuplicated: prefixCustomer + "/businessPartnerAttribute/checkDuplicated",
+    list: prefixCustomer + "/business-partner-attribute/list",
+    update: prefixCustomer + "/business-partner-attribute/update",
+    delete: prefixCustomer + "/business-partner-attribute/delete",
+    listAll: prefixCustomer + "/business-partner-attribute/list-all",
+    checkDuplicated: prefixCustomer + "/business-partner-attribute/check-duplicated",
   },
 
   project: {
-    list: prefixCustomer + "/workProject/list",
-    update: prefixCustomer + "/workProject/update",
-    detail: prefixCustomer + "/workProject/get",
-    delete: prefixCustomer + "/workProject/delete",
+    list: prefixCustomer + "/work-project/list",
+    update: prefixCustomer + "/work-project/update",
+    detail: prefixCustomer + "/work-project/get",
+    delete: prefixCustomer + "/work-project/delete",
   },
 
   projectReport: {
@@ -304,40 +304,40 @@ export const urlsApi = {
     delete: prefixOperation + "/space/delete",
   },
   spaceType: {
-    list: prefixOperation + "/spaceType/list",
-    update: prefixOperation + "/spaceType/update",
-    detail: prefixOperation + "/spaceType/get",
-    delete: prefixOperation + "/spaceType/delete",
+    list: prefixOperation + "/space-type/list",
+    update: prefixOperation + "/space-type/update",
+    detail: prefixOperation + "/space-type/get",
+    delete: prefixOperation + "/space-type/delete",
   },
   spaceCustomer: {
-    list: prefixOperation + "/spaceCustomer/list",
-    update: prefixOperation + "/spaceCustomer/update",
-    detail: prefixOperation + "/spaceCustomer/get",
-    delete: prefixOperation + "/spaceCustomer/delete",
+    list: prefixOperation + "/space-customer/list",
+    update: prefixOperation + "/space-customer/update",
+    detail: prefixOperation + "/space-customer/get",
+    delete: prefixOperation + "/space-customer/delete",
   },
   ortherFee: {
-    list: prefixOperation + "/otherFee/list",
-    update: prefixOperation + "/otherFee/update",
-    detail: prefixOperation + "/otherFee/get",
-    delete: prefixOperation + "/otherFee/delete",
+    list: prefixOperation + "/other-fee/list",
+    update: prefixOperation + "/other-fee/update",
+    detail: prefixOperation + "/other-fee/get",
+    delete: prefixOperation + "/other-fee/delete",
   },
   utilityReading: {
-    list: prefixOperation + "/utilityReading/list",
-    update: prefixOperation + "/utilityReading/update",
-    detail: prefixOperation + "/utilityReading/get",
-    delete: prefixOperation + "/utilityReading/delete",
+    list: prefixOperation + "/utility-reading/list",
+    update: prefixOperation + "/utility-reading/update",
+    detail: prefixOperation + "/utility-reading/get",
+    delete: prefixOperation + "/utility-reading/delete",
   },
   managementFee: {
-    list: prefixOperation + "/managementFee/list",
-    update: prefixOperation + "/managementFee/update",
-    detail: prefixOperation + "/managementFee/get",
-    delete: prefixOperation + "/managementFee/delete",
+    list: prefixOperation + "/management-fee/list",
+    update: prefixOperation + "/management-fee/update",
+    detail: prefixOperation + "/management-fee/get",
+    delete: prefixOperation + "/management-fee/delete",
   },
   vehicleRegistration: {
-    list: prefixOperation + "/vehicleRegistration/list",
-    update: prefixOperation + "/vehicleRegistration/update",
-    detail: prefixOperation + "/vehicleRegistration/get",
-    delete: prefixOperation + "/vehicleRegistration/delete",
+    list: prefixOperation + "/vehicle-registration/list",
+    update: prefixOperation + "/vehicle-registration/update",
+    detail: prefixOperation + "/vehicle-registration/get",
+    delete: prefixOperation + "/vehicle-registration/delete",
   },
   vehicle: {
     list: prefixOperation + "/vehicle/list",
@@ -352,10 +352,10 @@ export const urlsApi = {
     delete: prefixOperation + "/building/delete",
   },
   buildingFloor: {
-    list: prefixOperation + "/buildingFloor/list",
-    update: prefixOperation + "/buildingFloor/update",
-    detail: prefixOperation + "/buildingFloor/get",
-    delete: prefixOperation + "/buildingFloor/delete",
+    list: prefixOperation + "/building-floor/list",
+    update: prefixOperation + "/building-floor/update",
+    detail: prefixOperation + "/building-floor/get",
+    delete: prefixOperation + "/building-floor/delete",
   },
   operationProject: {
     list: prefixOperation + "/project/list",
@@ -364,59 +364,59 @@ export const urlsApi = {
     delete: prefixOperation + "/project/delete",
   },
   electricityMeter: {
-    list: prefixOperation + "/electricMeter/list",
-    update: prefixOperation + "/electricMeter/update",
-    detail: prefixOperation + "/electricMeter/get",
-    delete: prefixOperation + "/electricMeter/delete",
+    list: prefixOperation + "/electric-meter/list",
+    update: prefixOperation + "/electric-meter/update",
+    detail: prefixOperation + "/electric-meter/get",
+    delete: prefixOperation + "/electric-meter/delete",
   },
   electricityRate: {
-    list: prefixOperation + "/electricityRate/list",
-    update: prefixOperation + "/electricityRate/update",
-    detail: prefixOperation + "/electricityRate/get",
-    delete: prefixOperation + "/electricityRate/delete",
+    list: prefixOperation + "/electricity-rate/list",
+    update: prefixOperation + "/electricity-rate/update",
+    detail: prefixOperation + "/electricity-rate/get",
+    delete: prefixOperation + "/electricity-rate/delete",
   },
   waterRate: {
-    list: prefixOperation + "/waterRate/list",
-    update: prefixOperation + "/waterRate/update",
-    detail: prefixOperation + "/waterRate/get",
-    delete: prefixOperation + "/waterRate/delete",
+    list: prefixOperation + "/water-rate/list",
+    update: prefixOperation + "/water-rate/update",
+    detail: prefixOperation + "/water-rate/get",
+    delete: prefixOperation + "/water-rate/delete",
   },
   managementFeeRate: {
-    list: prefixOperation + "/managementFeeRate/list",
-    update: prefixOperation + "/managementFeeRate/update",
-    detail: prefixOperation + "/managementFeeRate/get",
-    delete: prefixOperation + "/managementFeeRate/delete",
+    list: prefixOperation + "/management-fee-rate/list",
+    update: prefixOperation + "/management-fee-rate/update",
+    detail: prefixOperation + "/management-fee-rate/get",
+    delete: prefixOperation + "/management-fee-rate/delete",
   },
   parkingFee: {
-    list: prefixOperation + "/parkingFee/list",
-    update: prefixOperation + "/parkingFee/update",
-    detail: prefixOperation + "/parkingFee/get",
-    delete: prefixOperation + "/parkingFee/delete",
+    list: prefixOperation + "/parking-fee/list",
+    update: prefixOperation + "/parking-fee/update",
+    detail: prefixOperation + "/parking-fee/get",
+    delete: prefixOperation + "/parking-fee/delete",
   },
   //--- Khu vực quản lý vận hành
 
   historySend: {
-    historySendSMS: prefixCustomer + "/customerSms/list",
-    historySendEmail: prefixCustomer + "/customerEmail/list",
-    historySendZalo: prefixCustomer + "/customerZalo/list",
+    historySendSMS: prefixCustomer + "/customer-sms/list",
+    historySendEmail: prefixCustomer + "/customer-email/list",
+    historySendZalo: prefixCustomer + "/customer-zalo/list",
   },
   sendSMS: {
     // thêm, sửa, xóa danh sách gửi sms
-    listSMS: prefixCustomer + "/smsRequest/list",
-    updateSMS: prefixCustomer + "/smsRequest/update",
-    detailSMS: prefixCustomer + "/smsRequest/get",
-    deleteSMS: prefixCustomer + "/smsRequest/delete",
-    approveSMS: prefixCustomer + "/smsRequest/approve",
-    cancelSMS: prefixCustomer + "/smsRequest/cancel",
+    listSMS: prefixCustomer + "/sms-request/list",
+    updateSMS: prefixCustomer + "/sms-request/update",
+    detailSMS: prefixCustomer + "/sms-request/get",
+    deleteSMS: prefixCustomer + "/sms-request/delete",
+    approveSMS: prefixCustomer + "/sms-request/approve",
+    cancelSMS: prefixCustomer + "/sms-request/cancel",
   },
   sendEmail: {
     // thêm, sửa, xóa danh sách gửi email
-    listEmail: prefixCustomer + "/emailRequest/list",
-    updateEmail: prefixCustomer + "/emailRequest/update",
-    detailEmail: prefixCustomer + "/emailRequest/get",
-    deleteEmail: prefixCustomer + "/emailRequest/delete",
-    approveEmail: prefixCustomer + "/emailRequest/approve",
-    cancelEmail: prefixCustomer + "/emailRequest/cancel",
+    listEmail: prefixCustomer + "/email-request/list",
+    updateEmail: prefixCustomer + "/email-request/update",
+    detailEmail: prefixCustomer + "/email-request/get",
+    deleteEmail: prefixCustomer + "/email-request/delete",
+    approveEmail: prefixCustomer + "/email-request/approve",
+    cancelEmail: prefixCustomer + "/email-request/cancel",
   },
   estimate: {
     takeEstimate: prefixCustomer + "/customer/estimate",
@@ -430,12 +430,12 @@ export const urlsApi = {
     export: prefixSales + "/invoice/export",
     tabCounts: prefixSales + "/invoice/tab-counts",
     create: prefixSales + "/invoice/create",
-    invoiceDetail: prefixSales + "/invoiceDetail/get",
-    cardService: prefixSales + "/invoiceDetail/cardService",
+    invoiceDetail: prefixSales + "/invoice-detail/get",
+    cardService: prefixSales + "/invoice-detail/card-service",
     // Tạo hóa đơn bán hàng
-    invoiceDetailCustomer: prefixSales + "/invoiceDetail/customer",
+    invoiceDetailCustomer: prefixSales + "/invoice-detail/customer",
     // Xem chi tiết hóa đơn
-    invoiceDetailList: prefixSales + "/invoiceDetail/get",
+    invoiceDetailList: prefixSales + "/invoice-detail/get",
     // Hủy hóa đơn
     cancelInvoice: prefixSales + "/invoice/delete",
     // vinh danh bán hàng
@@ -449,7 +449,7 @@ export const urlsApi = {
     // lấy mã hoá đơn
     invoiceCode: prefixSales + "/invoice/code",
     // Gửi biên lai qua email
-    sendEmail: prefixSales + "/invoice/sendEmail",
+    sendEmail: prefixSales + "/invoice/send-email",
     salesReport: {
       posSummary: prefixSales + "/report/pos-summary",
       summary: prefixSales + "/report/summary",
@@ -475,7 +475,7 @@ export const urlsApi = {
     getReturnItems: prefixSales + "/invoice/get/return",
     createReturn: prefixSales + "/invoice/create/return",
     createExchange: prefixSales + "/invoice/create/exchange",
-    variantListDetail: prefixInventory + "/productVariant/list-detail", // ← THÊM DÒNG NÀY
+    variantListDetail: prefixInventory + "/product-variant/list-detail", // ← THÊM DÒNG NÀY
     confirm: prefixSales + "/invoice/return/confirm",
   },
   invoiceImport: {
@@ -523,35 +523,35 @@ export const urlsApi = {
     suggest: prefixLogistics + "/fee-config/suggest",
   },
   boughtService: {
-    addToInvoice: prefixCustomer + "/boughtService/update",
-    delete: prefixCustomer + "/boughtService/delete",
-    update: prefixCustomer + "/boughtService/update",
-    detail: prefixCustomer + "/boughtService/get",
-    getByCustomer: prefixCustomer + "/boughtService/getBoughtServiceByCustomerId",
+    addToInvoice: prefixCustomer + "/bought-service/update",
+    delete: prefixCustomer + "/bought-service/delete",
+    update: prefixCustomer + "/bought-service/update",
+    detail: prefixCustomer + "/bought-service/get",
+    getByCustomer: prefixCustomer + "/bought-service/get-bought-service-by-customer-id",
   },
   boughtProduct: {
-    insert: prefixSales + "/boughtProduct/insertBatch",
-    list: prefixCustomer + "/boughtProduct/list",
-    addToInvoice: prefixCustomer + "/boughtProduct/update",
-    delete: prefixCustomer + "/boughtProduct/delete",
-    update: prefixCustomer + "/boughtProduct/update",
-    detail: prefixCustomer + "/boughtProduct/get",
-    getByCustomer: prefixCustomer + "/boughtProduct/getBoughtProductByCustomerId",
+    insert: prefixSales + "/bought-product/insert-batch",
+    list: prefixCustomer + "/bought-product/list",
+    addToInvoice: prefixCustomer + "/bought-product/update",
+    delete: prefixCustomer + "/bought-product/delete",
+    update: prefixCustomer + "/bought-product/update",
+    detail: prefixCustomer + "/bought-product/get",
+    getByCustomer: prefixCustomer + "/bought-product/get-bought-product-by-customer-id",
   },
   boughtCard: {
-    list: prefixCustomer + "/boughtCardService/list",
-    listLoyaltyPoint: prefixCustomer + "/loyaltyPointLedger/list",
-    add: prefixCustomer + "/boughtCardService/update",
-    delete: prefixCustomer + "/boughtCardService/delete",
-    update: prefixCustomer + "/boughtCardService/update/cardNumber",
-    updateCustomerCard: prefixCustomer + "/boughtCard/update",
-    listBoughtCardByCustomerId: prefixCustomer + "/boughtCardService/getBoughtCardServiceByCustomerId",
+    list: prefixCustomer + "/bought-card-service/list",
+    listLoyaltyPoint: prefixCustomer + "/loyalty-point-ledger/list",
+    add: prefixCustomer + "/bought-card-service/update",
+    delete: prefixCustomer + "/bought-card-service/delete",
+    update: prefixCustomer + "/bought-card-service/update/card-number",
+    updateCustomerCard: prefixCustomer + "/bought-card/update",
+    listBoughtCardByCustomerId: prefixCustomer + "/bought-card-service/get-bought-card-service-by-customer-id",
   },
   product: {
-    filterWarehouse: prefixWarehouse + "/product/in_warehouse",
+    filterWarehouse: prefixWarehouse + "/product/in-warehouse",
     list: prefixInventory + "/product/list",
-    topProduct: prefixSales + "/invoice/topProduct",
-    topProductV2: prefixSales + "/invoice/topProduct/v2",
+    topProduct: prefixSales + "/invoice/top-product",
+    topProductV2: prefixSales + "/invoice/top-product/v2",
     detail: prefixInventory + "/product/get",
     update: prefixInventory + "/product/update",
     updateContent: prefixInventory + "/product/update/content",
@@ -585,11 +585,11 @@ export const urlsApi = {
     wTagCreate: prefixInventory + "/product-tag/update", // dùng lại endpoint tag CRUD
     // ── Import ──
     wImportTemplate: prefixInventory + "/product/import/template",
-    wImportUpload: prefixInventory + "/product/import/uploadFile",
+    wImportUpload: prefixInventory + "/product/import/upload-file",
     wImportErrorFile: prefixInventory + "/product/import/error-file",
     wImportConfirm: prefixInventory + "/product/import/confirm",
     wImportCancel: prefixInventory + "/product/import/cancel",
-    listById: prefixCustomer + "/product/list_by_id",
+    listById: prefixCustomer + "/product/list-by-id",
     publicList: prefixInventory + "/public/product/list",
 
     // ── Public APIs (không cần auth) ──
@@ -619,65 +619,65 @@ export const urlsApi = {
 
   //warehouse
   stockTransfer: {
-    list: prefixInventory + "/stockTransfer/list",
-    get: prefixInventory + "/stockTransfer/get",
-    update: prefixInventory + "/stockTransfer/update",
-    delete: prefixInventory + "/stockTransfer/delete",
-    approve: prefixInventory + "/stockTransfer/approve",
-    cancel: prefixInventory + "/stockTransfer/cancel",
+    list: prefixInventory + "/stock-transfer/list",
+    get: prefixInventory + "/stock-transfer/get",
+    update: prefixInventory + "/stock-transfer/update",
+    delete: prefixInventory + "/stock-transfer/delete",
+    approve: prefixInventory + "/stock-transfer/approve",
+    cancel: prefixInventory + "/stock-transfer/cancel",
   },
   inventoryBalance: {
-    stockProductList: prefixInventory + "/inventoryBalance/stockProduct/list",
-    variantList: prefixInventory + "/inventoryBalance/variant/list", // Tồn kho theo biến thể + đơn vị bán
-    list: prefixInventory + "/inventoryBalance/list",
-    get: prefixInventory + "/inventoryBalance/get",
+    stockProductList: prefixInventory + "/inventory-balance/stock-product/list",
+    variantList: prefixInventory + "/inventory-balance/variant/list", // Tồn kho theo biến thể + đơn vị bán
+    list: prefixInventory + "/inventory-balance/list",
+    get: prefixInventory + "/inventory-balance/get",
   },
   stockTransferDetail: {
-    list: prefixInventory + "/stockTransferDetail/list",
-    update: prefixInventory + "/stockTransferDetail/update",
-    delete: prefixInventory + "/stockTransferDetail/delete",
+    list: prefixInventory + "/stock-transfer-detail/list",
+    update: prefixInventory + "/stock-transfer-detail/update",
+    delete: prefixInventory + "/stock-transfer-detail/delete",
   },
 
   integration: {
-    list: prefixCustomer + "/integrationPartner/list",
-    update: prefixCustomer + "/integrationConfig/update",
-    updateStatus: prefixCustomer + "/integrationLog/update/status",
-    delete: prefixCustomer + "/integrationConfig/delete",
-    logList: prefixCustomer + "/integrationLog/list",
+    list: prefixCustomer + "/integration-partner/list",
+    update: prefixCustomer + "/integration-config/update",
+    updateStatus: prefixCustomer + "/integration-log/update/status",
+    delete: prefixCustomer + "/integration-config/delete",
+    logList: prefixCustomer + "/integration-log/list",
   },
 
   productAttribute: {
-    list: prefixCustomer + "/productAttribute/list",
-    update: prefixCustomer + "/productAttribute/update",
-    delete: prefixCustomer + "/productAttribute/delete",
-    listAll: prefixCustomer + "/productAttribute/listAll",
-    checkDuplicated: prefixCustomer + "/productAttribute/checkDuplicated",
+    list: prefixCustomer + "/product-attribute/list",
+    update: prefixCustomer + "/product-attribute/update",
+    delete: prefixCustomer + "/product-attribute/delete",
+    listAll: prefixCustomer + "/product-attribute/list-all",
+    checkDuplicated: prefixCustomer + "/product-attribute/check-duplicated",
   },
 
   productExtraInfo: {
-    list: prefixCustomer + "/productExtraInfo/list",
+    list: prefixCustomer + "/product-extra-info/list",
   },
 
   productImport: {
-    list: prefixInventory + "/product_import/list",
-    update: prefixInventory + "/product_import/update",
-    detail: prefixInventory + "/product_import/detail",
-    delete: prefixInventory + "/product_import/delete",
-    variantList: prefixInventory + "/productVariant/list",
+    list: prefixInventory + "/product-import/list",
+    update: prefixInventory + "/product-import/update",
+    detail: prefixInventory + "/product-import/detail",
+    delete: prefixInventory + "/product-import/delete",
+    variantList: prefixInventory + "/product-variant/list",
   },
 
   inventory: {
     list: prefixInventory + "/warehouse/list",
     update: prefixInventory + "/warehouse/update",
     delete: prefixInventory + "/warehouse/delete",
-    ledgerList: prefixInventory + "/inventoryTransaction/ledger/list",
-    ledgerDetail: prefixInventory + "/inventoryTransaction/ledger/get",
-    saleExportList: prefixInventory + "/inventoryTransaction/sale/list",
-    saleExportSummary: prefixInventory + "/inventoryTransaction/sale/summary",
-    destroyList: prefixInventory + "/inventoryTransaction/destroy/list",
-    destroyDetail: prefixInventory + "/inventoryTransaction/destroy/get",
-    destroySummary: prefixInventory + "/inventoryTransaction/destroy/summary",
-    costSummary: prefixInventory + "/inventoryBalance/cost/summary",
+    ledgerList: prefixInventory + "/inventory-transaction/ledger/list",
+    ledgerDetail: prefixInventory + "/inventory-transaction/ledger/get",
+    saleExportList: prefixInventory + "/inventory-transaction/sale/list",
+    saleExportSummary: prefixInventory + "/inventory-transaction/sale/summary",
+    destroyList: prefixInventory + "/inventory-transaction/destroy/list",
+    destroyDetail: prefixInventory + "/inventory-transaction/destroy/get",
+    destroySummary: prefixInventory + "/inventory-transaction/destroy/summary",
+    costSummary: prefixInventory + "/inventory-balance/cost/summary",
   },
   pom: {
     //định nghĩa pom cho sản phẩm, dịch vụ
@@ -699,15 +699,15 @@ export const urlsApi = {
     listShared: prefixCustomer + "/service/list/shared",
   },
   serviceAttribute: {
-    list: prefixCustomer + "/serviceAttribute/list",
-    update: prefixCustomer + "/serviceAttribute/update",
-    delete: prefixCustomer + "/serviceAttribute/delete",
-    listAll: prefixCustomer + "/serviceAttribute/listAll",
-    checkDuplicated: prefixCustomer + "/serviceAttribute/checkDuplicated",
+    list: prefixCustomer + "/service-attribute/list",
+    update: prefixCustomer + "/service-attribute/update",
+    delete: prefixCustomer + "/service-attribute/delete",
+    listAll: prefixCustomer + "/service-attribute/list-all",
+    checkDuplicated: prefixCustomer + "/service-attribute/check-duplicated",
   },
 
   serviceExtraInfo: {
-    list: prefixCustomer + "/serviceExtraInfo/list",
+    list: prefixCustomer + "/service-extra-info/list",
   },
 
   employee: {
@@ -715,24 +715,24 @@ export const urlsApi = {
     update: prefixOrg + "/employee/update",
     detail: prefixOrg + "/employee/get",
     delete: prefixOrg + "/employee/delete",
-    linkEmployeeUser: prefixOrg + "/employee/link_user",
+    linkEmployeeUser: prefixOrg + "/employee/link-user",
     init: prefixOrg + "/employee/init",
     info: prefixOrg + "/employee/info",
     takeRoles: prefixOrg + "/employee/roles",
-    listExTip: prefixOrg + "/employee/listExTip",
-    generateRandomPass: prefixOrg + "/employee/random_pass",
+    listExTip: prefixOrg + "/employee/list-ex-tip",
+    generateRandomPass: prefixOrg + "/employee/random-pass",
     list_department: prefixOrg + "/employee/list/department",
-    updateToken: prefixOrg + "/employee/update_token", //Cập nhật token của Outlook Mail
-    checkEmailConnection: prefixOrg + "/employee/check_email_connection",
-    disconnectEmail: prefixOrg + "/employee/disconnect_email",
-    updateRole: prefixOrg + "/roleEmployee/insert-batch",
-    getListRoleEmployee: prefixOrg + "/roleEmployee/list",
-    deleteRole: prefixOrg + "/roleEmployee/delete",
+    updateToken: prefixOrg + "/employee/update-token", //Cập nhật token của Outlook Mail
+    checkEmailConnection: prefixOrg + "/employee/check-email-connection",
+    disconnectEmail: prefixOrg + "/employee/disconnect-email",
+    updateRole: prefixOrg + "/role-employee/insert-batch",
+    getListRoleEmployee: prefixOrg + "/role-employee/list",
+    deleteRole: prefixOrg + "/role-employee/delete",
   },
   employeeAgent: {
-    list: prefixCustomer + "/employeeAgent/list",
-    update: prefixCustomer + "/employeeAgent/update",
-    delete: prefixCustomer + "/employeeAgent/delete",
+    list: prefixCustomer + "/employee-agent/list",
+    update: prefixCustomer + "/employee-agent/update",
+    delete: prefixCustomer + "/employee-agent/delete",
     listAthena: prefixCustomer + "/athena/account-info",
   },
 
@@ -742,68 +742,68 @@ export const urlsApi = {
     update: prefixCustomer + "/group/update",
     delete: prefixCustomer + "/group/delete",
 
-    listEmployee: prefixCustomer + "/groupEmployee/list",
-    updateEmployee: prefixCustomer + "/groupEmployee/update",
-    deleteEmployee: prefixCustomer + "/groupEmployee/delete",
+    listEmployee: prefixCustomer + "/group-employee/list",
+    updateEmployee: prefixCustomer + "/group-employee/update",
+    deleteEmployee: prefixCustomer + "/group-employee/delete",
   },
 
   treatment: {
     // đoạn api này cần xem lại chút
-    filterSchedule: prefixCustomer + "/treatmentTime/list_schedule_next",
-    filterByScheduler: prefixCustomer + "/treatmentTime/get_byscheduler",
-    updateNext: prefixCustomer + "/treatmentTime/update_next",
-    delete: prefixCustomer + "/treatmentTime/delete",
-    updateCaringEmployee: prefixCustomer + "/treatmentTime/update_caring_employee",
-    update: prefixCustomer + "/treatmentTime/update",
+    filterSchedule: prefixCustomer + "/treatment-time/list-schedule-next",
+    filterByScheduler: prefixCustomer + "/treatment-time/get-byscheduler",
+    updateNext: prefixCustomer + "/treatment-time/update-next",
+    delete: prefixCustomer + "/treatment-time/delete",
+    updateCaringEmployee: prefixCustomer + "/treatment-time/update-caring-employee",
+    update: prefixCustomer + "/treatment-time/update",
   },
   // lịch sử điều trị
   treatmentHistory: {
-    list: prefixCustomer + "/treatmentHistory/list_all",
-    update: prefixCustomer + "/treatmentHistory/update",
-    detail: prefixCustomer + "/treatmentHistory/get",
-    delete: prefixCustomer + "/treatmentHistory/delete",
-    listByCustomer: prefixCustomer + "/treatmentHistory/list_by_customer",
+    list: prefixCustomer + "/treatment-history/list-all",
+    update: prefixCustomer + "/treatment-history/update",
+    detail: prefixCustomer + "/treatment-history/get",
+    delete: prefixCustomer + "/treatment-history/delete",
+    listByCustomer: prefixCustomer + "/treatment-history/list-by-customer",
   },
   // nhật ký điều trị
   diarySurgery: {
-    list: prefixCustomer + "/diarySurgery/listAll",
-    update: prefixCustomer + "/diarySurgery/update",
-    detail: prefixCustomer + "/diarySurgery/get",
-    delete: prefixCustomer + "/diarySurgery/delete",
+    list: prefixCustomer + "/diary-surgery/list-all",
+    update: prefixCustomer + "/diary-surgery/update",
+    detail: prefixCustomer + "/diary-surgery/get",
+    delete: prefixCustomer + "/diary-surgery/delete",
   },
   // lịch trình tư vấn
   scheduleConsultant: {
-    list: prefixCustomer + "/scheduleConsultant/list",
-    update: prefixCustomer + "/scheduleConsultant/update",
-    detail: prefixCustomer + "/scheduleConsultant/get",
-    delete: prefixCustomer + "/scheduleConsultant/delete",
-    updateKafka: prefixBpm + "/kafka/activate/receiveTask",
+    list: prefixCustomer + "/schedule-consultant/list",
+    update: prefixCustomer + "/schedule-consultant/update",
+    detail: prefixCustomer + "/schedule-consultant/get",
+    delete: prefixCustomer + "/schedule-consultant/delete",
+    updateKafka: prefixBpm + "/kafka/activate/receive-task",
   },
   // lịch điều trị
   scheduleTreatment: {
-    list: prefixCustomer + "/scheduleTreatment/list",
-    update: prefixCustomer + "/scheduleTreatment/update",
-    detail: prefixCustomer + "/scheduleTreatment/get",
-    delete: prefixCustomer + "/scheduleTreatment/delete",
-    updateKafka: prefixBpm + "/kafka/activateProcess",
+    list: prefixCustomer + "/schedule-treatment/list",
+    update: prefixCustomer + "/schedule-treatment/update",
+    detail: prefixCustomer + "/schedule-treatment/get",
+    delete: prefixCustomer + "/schedule-treatment/delete",
+    updateKafka: prefixBpm + "/kafka/activate-process",
   },
   // lịch chung (điều trị, tư vấn, công việc)
   scheduleCommon: {
     list: prefixCustomer + "/schedule/list",
-    listRelatedToCustomer: prefixCustomer + "/schedule/list/by_customer",
+    listRelatedToCustomer: prefixCustomer + "/schedule/list/by-customer",
   },
   // phòng điều trị
   treatmentRoom: {
-    list: prefixCustomer + "/treatmentRoom/list",
-    update: prefixCustomer + "/treatmentRoom/update",
-    detail: prefixCustomer + "/treatmentRoom/get",
-    delete: prefixCustomer + "/treatmentRoom/delete",
-    checkTreatmentRoom: prefixCustomer + "/treatmentRoom/check",
+    list: prefixCustomer + "/treatment-room/list",
+    update: prefixCustomer + "/treatment-room/update",
+    detail: prefixCustomer + "/treatment-room/get",
+    delete: prefixCustomer + "/treatment-room/delete",
+    checkTreatmentRoom: prefixCustomer + "/treatment-room/check",
   },
   crmCareHistory: {
-    list: prefixCustomer + "/crmCareHistory/list",
-    update: prefixCustomer + "/crmCareHistory/update",
-    delete: prefixCustomer + "/crmCareHistory/delete",
+    list: prefixCustomer + "/crm-care-history/list",
+    update: prefixCustomer + "/crm-care-history/update",
+    delete: prefixCustomer + "/crm-care-history/delete",
   },
   timekeeping: {
     list: prefixCustomer + "/timekeeping/list",
@@ -840,14 +840,14 @@ export const urlsApi = {
     detail: prefixBilling + "/cashbook/get"
   },
   qrCodePro: {
-    generate: prefixBilling + "/vietqr/api/generate_qr",
+    generate: prefixBilling + "/vietqr/api/generate-qr",
     reconciliation: prefixBilling + "/reconciliation/list",
   },
   orderRequest: {
     list: prefixSales + "/order-request/list",
     listOne: prefixSales + "/order-request/list-one",
     update: prefixSales + "/order-request/update",
-    updateStatus: prefixSales + "/order-request/updateDynamic",
+    updateStatus: prefixSales + "/order-request/update-dynamic",
     confirm: prefixSales + "/order-request/confirm",
     updateAndInit: prefixSales + "/order-request/update-and-init",
     delete: prefixSales + "/order-request/delete-soft",
@@ -856,40 +856,40 @@ export const urlsApi = {
   },
   //khu vực trải nghiệm khách hàng
   cxmSurvey: {
-    list: prefixCustomer + "/cxmSurvey/list",
-    update: prefixCustomer + "/cxmSurvey/update",
-    delete: prefixCustomer + "/cxmSurvey/delete",
-    detail: prefixCustomer + "/cxmSurvey/get",
+    list: prefixCustomer + "/cxm-survey/list",
+    update: prefixCustomer + "/cxm-survey/update",
+    delete: prefixCustomer + "/cxm-survey/delete",
+    detail: prefixCustomer + "/cxm-survey/get",
   },
   cxmResponse: {
-    list: prefixCustomer + "/cxmResponse/list",
-    update: prefixCustomer + "/cxmResponse/update",
-    delete: prefixCustomer + "/cxmResponse/delete",
-    detail: prefixCustomer + "/cxmResponse/get",
+    list: prefixCustomer + "/cxm-response/list",
+    update: prefixCustomer + "/cxm-response/update",
+    delete: prefixCustomer + "/cxm-response/delete",
+    detail: prefixCustomer + "/cxm-response/get",
   },
   cxmResponseDetail: {
-    list: prefixCustomer + "/cxmResponseDetail/list",
-    update: prefixCustomer + "/cxmResponseDetail/update",
-    delete: prefixCustomer + "/cxmResponseDetail/delete",
-    detail: prefixCustomer + "/cxmResponseDetail/get",
+    list: prefixCustomer + "/cxm-response-detail/list",
+    update: prefixCustomer + "/cxm-response-detail/update",
+    delete: prefixCustomer + "/cxm-response-detail/delete",
+    detail: prefixCustomer + "/cxm-response-detail/get",
   },
   cxmQuestion: {
-    list: prefixCustomer + "/cxmQuestion/list",
-    update: prefixCustomer + "/cxmQuestion/update",
-    delete: prefixCustomer + "/cxmQuestion/delete",
-    detail: prefixCustomer + "/cxmQuestion/get",
+    list: prefixCustomer + "/cxm-question/list",
+    update: prefixCustomer + "/cxm-question/update",
+    delete: prefixCustomer + "/cxm-question/delete",
+    detail: prefixCustomer + "/cxm-question/get",
   },
   cxmOption: {
-    list: prefixCustomer + "/cxmOption/list",
-    update: prefixCustomer + "/cxmOption/update",
-    delete: prefixCustomer + "/cxmOption/delete",
-    detail: prefixCustomer + "/cxmOption/get",
+    list: prefixCustomer + "/cxm-option/list",
+    update: prefixCustomer + "/cxm-option/update",
+    delete: prefixCustomer + "/cxm-option/delete",
+    detail: prefixCustomer + "/cxm-option/get",
   },
   cxmQuestionCondition: {
-    list: prefixCustomer + "/cxmQuestionCondition/list",
-    update: prefixCustomer + "/cxmQuestionCondition/update",
-    delete: prefixCustomer + "/cxmQuestionCondition/delete",
-    detail: prefixCustomer + "/cxmQuestionCondition/get",
+    list: prefixCustomer + "/cxm-question-condition/list",
+    update: prefixCustomer + "/cxm-question-condition/update",
+    delete: prefixCustomer + "/cxm-question-condition/delete",
+    detail: prefixCustomer + "/cxm-question-condition/get",
   },
   //khu vực trải nghiệm khách hàng
   warehouse: {
@@ -897,115 +897,115 @@ export const urlsApi = {
     //API lấy ra danh sách sản phẩm trong kho
     productList: prefixInventory + "/warehouse/product/list",
     //API lấy ra thông tin ngày hết hạn / sản xuất dựa trên số lô của sản phẩm
-    infoExpiryDateProductionDate: prefixInventory + "/warehouse/get_mfg_expired_date",
+    infoExpiryDateProductionDate: prefixInventory + "/warehouse/get-mfg-expired-date",
   },
   earnings: {
     filter: prefixCustomer + "/earnings/admin/list",
   },
   paymentHistory: {
-    filter: prefixCustomer + "/paymentHistory/list",
-    update: prefixCustomer + "/paymentHistory/update",
-    delete: prefixCustomer + "/paymentHistory/delete",
+    filter: prefixCustomer + "/payment-history/list",
+    update: prefixCustomer + "/payment-history/update",
+    delete: prefixCustomer + "/payment-history/delete",
   },
   //! đoạn này bh check lại một chút dữ liệu tạo cũ
   crmCampaign: {
-    list: prefixCustomer + "/crmCampaign/list",
-    update: prefixCustomer + "/crmCampaign/update",
-    delete: prefixCustomer + "/crmCampaign/delete",
+    list: prefixCustomer + "/crm-campaign/list",
+    update: prefixCustomer + "/crm-campaign/update",
+    delete: prefixCustomer + "/crm-campaign/delete",
   },
   // Quản lý chiến dịch
   campaign: {
     list: prefixCustomer + "/campaign/list",
-    listViewSale: prefixCustomer + "/campaign/list/view_sale",
+    listViewSale: prefixCustomer + "/campaign/list/view-sale",
     update: prefixCustomer + "/campaign/update",
     updateStatus: prefixCustomer + "/campaign/update/status",
     detail: prefixCustomer + "/campaign/get",
     delete: prefixCustomer + "/campaign/delete",
-    convertRate: prefixCustomer + "/opportunityProcess",
+    convertRate: prefixCustomer + "/opportunity-process",
     listActionScore: prefixCustomer + "/api/v1/score/action",
     //Cài đặt điểm khách hàng
-    updateStep3: prefixCustomer + "/api/v1/score/insertMulti",
+    updateStep3: prefixCustomer + "/api/v1/score/insert-multi",
     listDataStep3: prefixCustomer + "/api/v1/score/campaign",
 
     //Cài đặt điểm nhân viên
     updateStep4: prefixCustomer + "/campaign/sale-point-config/update",
     listDataScoreEmployee: prefixCustomer + "/campaign/sale-point-config/get",
 
-    listSale: prefixCustomer + "/campaignSale/list",
-    statisticApproach: prefixCustomer + "/campaignOpportunity/statisticApproach",
-    statisticSale: prefixCustomer + "/campaignOpportunity/statisticSale",
-    statisticConvertRate: prefixCustomer + "/campaignOpportunity/statisticConvertRate",
+    listSale: prefixCustomer + "/campaign-sale/list",
+    statisticApproach: prefixCustomer + "/campaign-opportunity/statistic-approach",
+    statisticSale: prefixCustomer + "/campaign-opportunity/statistic-sale",
+    statisticConvertRate: prefixCustomer + "/campaign-opportunity/statistic-convert-rate",
 
-    exportResult: prefixCustomer + "/campaignOpportunity/exportResult",
-    exportAction: prefixCustomer + "/campaignOpportunity/exportAction",
-    exportCustomer: prefixCustomer + "/campaignOpportunity/exportCustomer",
+    exportResult: prefixCustomer + "/campaign-opportunity/export-result",
+    exportAction: prefixCustomer + "/campaign-opportunity/export-action",
+    exportCustomer: prefixCustomer + "/campaign-opportunity/export-customer",
 
     updateConfigSLA: prefixCustomer + "/campaign/sla-config",
   },
   campaignApproach: {
-    list: prefixCustomer + "/campaignApproach/list",
-    update: prefixCustomer + "/campaignApproach/update",
-    detail: prefixCustomer + "/campaignApproach/get",
-    delete: prefixCustomer + "/campaignApproach/delete",
-    updateSLA: prefixCustomer + "/campaignApproach/update/sla",
-    activityList: prefixCustomer + "/campaignActivity/list",
-    updateActivity: prefixCustomer + "/campaignActivity/update",
-    deleteActivity: prefixCustomer + "/campaignActivity/delete",
+    list: prefixCustomer + "/campaign-approach/list",
+    update: prefixCustomer + "/campaign-approach/update",
+    detail: prefixCustomer + "/campaign-approach/get",
+    delete: prefixCustomer + "/campaign-approach/delete",
+    updateSLA: prefixCustomer + "/campaign-approach/update/sla",
+    activityList: prefixCustomer + "/campaign-activity/list",
+    updateActivity: prefixCustomer + "/campaign-activity/update",
+    deleteActivity: prefixCustomer + "/campaign-activity/delete",
   },
   campaignPipeline: {
-    list: prefixCustomer + "/campaignPipeline/list",
-    update: prefixCustomer + "/campaignPipeline/update",
-    detail: prefixCustomer + "/campaignPipeline/get",
-    delete: prefixCustomer + "/campaignPipeline/delete",
+    list: prefixCustomer + "/campaign-pipeline/list",
+    update: prefixCustomer + "/campaign-pipeline/update",
+    detail: prefixCustomer + "/campaign-pipeline/get",
+    delete: prefixCustomer + "/campaign-pipeline/delete",
   },
   // quản lý cơ hội
   campaignOpportunity: {
-    list: prefixCustomer + "/campaignOpportunity/list",
-    listViewSale: prefixCustomer + "/campaignOpportunity/list/view_sale",
-    update: prefixCustomer + "/campaignOpportunity/update",
-    updateBatch: prefixCustomer + "/campaignOpportunity/update/batch",
-    detail: prefixCustomer + "/campaignOpportunity/get",
-    delete: prefixCustomer + "/campaignOpportunity/delete",
+    list: prefixCustomer + "/campaign-opportunity/list",
+    listViewSale: prefixCustomer + "/campaign-opportunity/list/view-sale",
+    update: prefixCustomer + "/campaign-opportunity/update",
+    updateBatch: prefixCustomer + "/campaign-opportunity/update/batch",
+    detail: prefixCustomer + "/campaign-opportunity/get",
+    delete: prefixCustomer + "/campaign-opportunity/delete",
     // Đổi người phụ trách cơ hội
-    changeEmployee: prefixCustomer + "/campaignOpportunity/change/employee",
+    changeEmployee: prefixCustomer + "/campaign-opportunity/change/employee",
     // Chuyển đổi trạng thái cơ hội
-    changeSale: prefixCustomer + "/campaignOpportunity/change/sale",
+    changeSale: prefixCustomer + "/campaign-opportunity/change/sale",
     // Thêm mới hoặc cập nhập xác suất cơ hội
-    opportunityProcessUpdate: prefixCustomer + "/opportunityProcess/update",
+    opportunityProcessUpdate: prefixCustomer + "/opportunity-process/update",
     // Xóa 1 xác suất cơ hội
-    opportunityProcessDelete: prefixCustomer + "/opportunityProcess/delete",
+    opportunityProcessDelete: prefixCustomer + "/opportunity-process/delete",
 
-    opportunityExchange: prefixCustomer + "/opportunityExchange/list",
+    opportunityExchange: prefixCustomer + "/opportunity-exchange/list",
     // xóa 1 trao đổi trong công việc
-    deleteOpportunityExchange: prefixCustomer + "/opportunityExchange/delete",
+    deleteOpportunityExchange: prefixCustomer + "/opportunity-exchange/delete",
     // thêm mới 1 trao đổi công việc
-    addOpportunityExchange: prefixCustomer + "/opportunityExchange/update",
+    addOpportunityExchange: prefixCustomer + "/opportunity-exchange/update",
 
     // chỉnh sửa 1 trao đổi công việc
-    updateOpportunityExchange: prefixCustomer + "/opportunityExchange/get",
+    updateOpportunityExchange: prefixCustomer + "/opportunity-exchange/get",
     listOpportunity: prefixCustomer + "/opportunity/list",
 
     //check cơ hội đủ điều kiện để kéo
-    opportunityCheck: prefixCustomer + "/campaignOpportunity/check",
+    opportunityCheck: prefixCustomer + "/campaign-opportunity/check",
 
     //send email
     sendEmail: prefixCustomer + "/customer/campaign/send/email",
 
     //Đầu mối làm việc
-    opportunityContact: prefixCustomer + "/opportunityContact/update",
-    detailOpportunityContact: prefixCustomer + "/opportunityContact/detail",
+    opportunityContact: prefixCustomer + "/opportunity-contact/update",
+    detailOpportunityContact: prefixCustomer + "/opportunity-contact/detail",
 
     ///Eform thu thập thông tin
-    opportunityEformUpdate: prefixCustomer + "/opportunityEform/update",
-    opportunityEformDetail: prefixCustomer + "/opportunityEform/get/criteria",
+    opportunityEformUpdate: prefixCustomer + "/opportunity-eform/update",
+    opportunityEformDetail: prefixCustomer + "/opportunity-eform/get/criteria",
 
-    addOther: prefixCustomer + "/campaignOpportunityViewer/update",
+    addOther: prefixCustomer + "/campaign-opportunity-viewer/update",
     // thêm mới nhiều người xem cho 1 khách hàng
-    addCoyViewer: prefixCustomer + "/campaignOpportunityViewer/update",
+    addCoyViewer: prefixCustomer + "/campaign-opportunity-viewer/update",
     // lấy về danh sách người xem
-    lstCoyViewer: prefixCustomer + "/campaignOpportunityViewer/list",
+    lstCoyViewer: prefixCustomer + "/campaign-opportunity-viewer/list",
     // xóa đi 1 người xem
-    deleteCoyViewer: prefixCustomer + "/campaignOpportunityViewer/delete",
+    deleteCoyViewer: prefixCustomer + "/campaign-opportunity-viewer/delete",
   },
 
   saleflow: {
@@ -1013,45 +1013,45 @@ export const urlsApi = {
     update: prefixCustomer + "/saleflow/update",
     detail: prefixCustomer + "/saleflow/get",
     delete: prefixCustomer + "/saleflow/delete",
-    activityList: prefixCustomer + "/saleflowActivity/list",
-    updateActivity: prefixCustomer + "/saleflowActivity/update",
-    deleteActivity: prefixCustomer + "/saleflowActivity/delete",
+    activityList: prefixCustomer + "/saleflow-activity/list",
+    updateActivity: prefixCustomer + "/saleflow-activity/update",
+    deleteActivity: prefixCustomer + "/saleflow-activity/delete",
 
-    saleflowEformUpdate: prefixCustomer + "/saleflowEform/update",
-    saleflowEformDetail: prefixCustomer + "/saleflowEform/get/criteria",
+    saleflowEformUpdate: prefixCustomer + "/saleflow-eform/update",
+    saleflowEformDetail: prefixCustomer + "/saleflow-eform/get/criteria",
   },
 
   saleflowApproach: {
-    list: prefixCustomer + "/saleflowApproach/list",
-    update: prefixCustomer + "/saleflowApproach/update",
-    detail: prefixCustomer + "/saleflowApproach/get",
-    delete: prefixCustomer + "/saleflowApproach/delete",
-    updateSLA: prefixCustomer + "/saleflowApproach/update/sla",
-    activityList: prefixCustomer + "/saleflowActivity/list",
-    updateActivity: prefixCustomer + "/saleflowActivity/update",
-    deleteActivity: prefixCustomer + "/saleflowActivity/delete",
+    list: prefixCustomer + "/saleflow-approach/list",
+    update: prefixCustomer + "/saleflow-approach/update",
+    detail: prefixCustomer + "/saleflow-approach/get",
+    delete: prefixCustomer + "/saleflow-approach/delete",
+    updateSLA: prefixCustomer + "/saleflow-approach/update/sla",
+    activityList: prefixCustomer + "/saleflow-activity/list",
+    updateActivity: prefixCustomer + "/saleflow-activity/update",
+    deleteActivity: prefixCustomer + "/saleflow-activity/delete",
 
-    updateSaleflowSale: prefixCustomer + "/saleflowSale/update",
-    detailSaleflowSale: prefixCustomer + "/saleflowSale/get/byApproachId",
+    updateSaleflowSale: prefixCustomer + "/saleflow-sale/update",
+    detailSaleflowSale: prefixCustomer + "/saleflow-sale/get/by-approach-id",
   },
 
   // quản lý bán hàng
   saleflowInvoice: {
-    list: prefixCustomer + "/saleflowInvoice/list",
-    update: prefixCustomer + "/saleflowInvoice/update",
-    updateApproach: prefixCustomer + "/saleflowInvoice/update/approach",
-    updateApproachSuccess: prefixCustomer + "/saleflowInvoice/update/success",
-    updateApproachCancel: prefixCustomer + "/saleflowInvoice/update/cancel",
-    detail: prefixCustomer + "/saleflowInvoice/get",
-    delete: prefixCustomer + "/saleflowInvoice/delete",
+    list: prefixCustomer + "/saleflow-invoice/list",
+    update: prefixCustomer + "/saleflow-invoice/update",
+    updateApproach: prefixCustomer + "/saleflow-invoice/update/approach",
+    updateApproachSuccess: prefixCustomer + "/saleflow-invoice/update/success",
+    updateApproachCancel: prefixCustomer + "/saleflow-invoice/update/cancel",
+    detail: prefixCustomer + "/saleflow-invoice/get",
+    delete: prefixCustomer + "/saleflow-invoice/delete",
 
-    invoiceExchange: prefixCustomer + "/saleflowExchange/list",
+    invoiceExchange: prefixCustomer + "/saleflow-exchange/list",
     // xóa 1 trao đổi trong
-    deleteInvoiceExchange: prefixCustomer + "/saleflowExchange/delete",
+    deleteInvoiceExchange: prefixCustomer + "/saleflow-exchange/delete",
     // thêm mới 1 trao đổi
-    addInvoiceExchange: prefixCustomer + "/saleflowExchange/update",
+    addInvoiceExchange: prefixCustomer + "/saleflow-exchange/update",
     // // chỉnh sửa 1 trao đổi
-    updateInvoiceExchange: prefixCustomer + "/saleflowExchange/get",
+    updateInvoiceExchange: prefixCustomer + "/saleflow-exchange/get",
   },
 
   categoryService: {
@@ -1063,10 +1063,10 @@ export const urlsApi = {
   },
 
   categoryProject: {
-    list: prefixCustomer + "/projectType/list",
-    update: prefixCustomer + "/projectType/update",
-    detail: prefixCustomer + "/projectType/get",
-    delete: prefixCustomer + "/projectType/delete",
+    list: prefixCustomer + "/project-type/list",
+    update: prefixCustomer + "/project-type/update",
+    detail: prefixCustomer + "/project-type/get",
+    delete: prefixCustomer + "/project-type/delete",
   },
 
   category: {
@@ -1078,33 +1078,33 @@ export const urlsApi = {
   },
 
   codeSequence: {
-    list: prefixCustomer + "/codeSequence/list",
-    update: prefixCustomer + "/codeSequence/update",
-    detail: prefixCustomer + "/codeSequence/get",
-    delete: prefixCustomer + "/codeSequence/delete",
-    detailEntity: prefixCustomer + "/codeSequence/get/entity",
+    list: prefixCustomer + "/code-sequence/list",
+    update: prefixCustomer + "/code-sequence/update",
+    detail: prefixCustomer + "/code-sequence/get",
+    delete: prefixCustomer + "/code-sequence/delete",
+    detailEntity: prefixCustomer + "/code-sequence/get/entity",
   },
 
   beautyBranch: {
-    list: prefixCustomer + "/beautyBranch/list",
-    childList: prefixCustomer + "/beautyBranch/child",
-    detail: prefixCustomer + "/beautyBranch/get",
-    update: prefixCustomer + "/beautyBranch/update",
-    delete: prefixCustomer + "/beautyBranch/delete",
-    getByBeauty: `${process.env.APP_AUTHENTICATOR_URL}/api/beautySalon/get_bydomain`,
+    list: prefixCustomer + "/beauty-branch/list",
+    childList: prefixCustomer + "/beauty-branch/child",
+    detail: prefixCustomer + "/beauty-branch/get",
+    update: prefixCustomer + "/beauty-branch/update",
+    delete: prefixCustomer + "/beauty-branch/delete",
+    getByBeauty: `${process.env.APP_AUTHENTICATOR_URL}/api/beauty-salon/get-bydomain`,
 
     //tìm đối tác theo mã
-    getBeautyBranchByCode: prefixCustomer + "/beautyBranch/get/byCode",
+    getBeautyBranchByCode: prefixCustomer + "/beauty-branch/get/by-code",
 
     // thay đổi trạng thái chi nhánh
-    activate: prefixCustomer + "/beautyBranch/update/activate",
-    unActivate: prefixCustomer + "/beautyBranch/update/deactivate",
+    activate: prefixCustomer + "/beauty-branch/update/activate",
+    unActivate: prefixCustomer + "/beauty-branch/update/deactivate",
   },
 
   organization: {
-    list: prefixRebornVn + "/beautySalon/list",
-    customerUploadList: prefixCustomer + "/customerUpload/list",
-    customerUploadDelete: prefixCustomer + "/cleanData/uploadCustomer/delete",
+    list: prefixRebornVn + "/beauty-salon/list",
+    customerUploadList: prefixCustomer + "/customer-upload/list",
+    customerUploadDelete: prefixCustomer + "/clean-data/upload-customer/delete",
   },
   order: {
     list: prefixCustomer + "/order/list",
@@ -1120,14 +1120,14 @@ export const urlsApi = {
   },
 
   unitExchange: {
-    listByProduct: prefixInventory + "/unitExchange/listByProduct",
-    update: prefixInventory + "/unitExchange/update",
-    delete: prefixInventory + "/unitExchange/delete",
+    listByProduct: prefixInventory + "/unit-exchange/list-by-product",
+    update: prefixInventory + "/unit-exchange/update",
+    delete: prefixInventory + "/unit-exchange/delete",
   },
   reportTemplate: {
-    list: prefixCustomer + "/reportTemplate/list",
-    update: prefixCustomer + "/reportTemplate/update",
-    delete: prefixCustomer + "/reportTemplate/delete",
+    list: prefixCustomer + "/report-template/list",
+    update: prefixCustomer + "/report-template/update",
+    delete: prefixCustomer + "/report-template/delete",
   },
   department: {
     list: prefixOrg + "/department/list",
@@ -1154,7 +1154,7 @@ export const urlsApi = {
     list: prefixRebornVn + "/service/list",
   },
   cardServiceIdApi: {
-    list: prefixRebornVn + "/cardService/list",
+    list: prefixRebornVn + "/card-service/list",
   },
   card: {
     list: prefixCustomer + "/card/list",
@@ -1162,54 +1162,54 @@ export const urlsApi = {
     delete: prefixCustomer + "/card/delete",
   },
   cardService: {
-    list: prefixCustomer + "/cardService/list",
-    update: prefixCustomer + "/cardService/update",
-    detail: prefixCustomer + "/cardService/get",
-    delete: prefixCustomer + "/cardService/delete",
+    list: prefixCustomer + "/card-service/list",
+    update: prefixCustomer + "/card-service/update",
+    detail: prefixCustomer + "/card-service/get",
+    delete: prefixCustomer + "/card-service/delete",
   },
   contractCategory: {
-    list: prefixCustomer + "/contractCategory/list",
-    update: prefixCustomer + "/contractCategory/update",
-    detail: prefixCustomer + "/contractCategory/get",
-    delete: prefixCustomer + "/contractCategory/delete",
+    list: prefixCustomer + "/contract-category/list",
+    update: prefixCustomer + "/contract-category/update",
+    detail: prefixCustomer + "/contract-category/get",
+    delete: prefixCustomer + "/contract-category/delete",
   },
   contractPipeline: {
-    list: prefixCustomer + "/contractPipeline/list",
-    update: prefixCustomer + "/contractPipeline/update",
-    detail: prefixCustomer + "/contractPipeline/get",
-    delete: prefixCustomer + "/contractPipeline/delete",
-    contractSubPipelineUpdate: prefixCustomer + "/contractSubPipeline/update",
+    list: prefixCustomer + "/contract-pipeline/list",
+    update: prefixCustomer + "/contract-pipeline/update",
+    detail: prefixCustomer + "/contract-pipeline/get",
+    delete: prefixCustomer + "/contract-pipeline/delete",
+    contractSubPipelineUpdate: prefixCustomer + "/contract-sub-pipeline/update",
   },
   contractApproach: {
-    list: prefixCustomer + "/contractApproach/list",
-    update: prefixCustomer + "/contractApproach/update",
-    detail: prefixCustomer + "/contractApproach/get",
-    delete: prefixCustomer + "/contractApproach/delete",
+    list: prefixCustomer + "/contract-approach/list",
+    update: prefixCustomer + "/contract-approach/update",
+    detail: prefixCustomer + "/contract-approach/get",
+    delete: prefixCustomer + "/contract-approach/delete",
 
-    activityList: prefixCustomer + "/contractActivity/list",
-    updateActivity: prefixCustomer + "/contractActivity/update",
-    deleteActivity: prefixCustomer + "/contractActivity/delete",
+    activityList: prefixCustomer + "/contract-activity/list",
+    updateActivity: prefixCustomer + "/contract-activity/update",
+    deleteActivity: prefixCustomer + "/contract-activity/delete",
   },
 
   contractPayment: {
-    list: prefixCustomer + "/contractPayment/list",
-    update: prefixCustomer + "/contractPayment/update",
-    detail: prefixCustomer + "/contractPayment/get",
-    delete: prefixCustomer + "/contractPayment/delete",
+    list: prefixCustomer + "/contract-payment/list",
+    update: prefixCustomer + "/contract-payment/update",
+    detail: prefixCustomer + "/contract-payment/get",
+    delete: prefixCustomer + "/contract-payment/delete",
   },
 
   contractorPayment: {
-    list: prefixCustomer + "/contractInvestorPayment/list",
-    update: prefixCustomer + "/contractInvestorPayment/update",
-    detail: prefixCustomer + "/contractInvestorPayment/get",
-    delete: prefixCustomer + "/contractInvestorPayment/delete",
+    list: prefixCustomer + "/contract-investor-payment/list",
+    update: prefixCustomer + "/contract-investor-payment/update",
+    detail: prefixCustomer + "/contract-investor-payment/get",
+    delete: prefixCustomer + "/contract-investor-payment/delete",
   },
 
   contractProgress: {
-    list: prefixCustomer + "/contractProgress/list",
-    update: prefixCustomer + "/contractProgress/update",
-    detail: prefixCustomer + "/contractProgress/get",
-    delete: prefixCustomer + "/contractProgress/delete",
+    list: prefixCustomer + "/contract-progress/list",
+    update: prefixCustomer + "/contract-progress/update",
+    detail: prefixCustomer + "/contract-progress/get",
+    delete: prefixCustomer + "/contract-progress/delete",
   },
 
   contractEform: {
@@ -1218,21 +1218,21 @@ export const urlsApi = {
     detail: prefixBpm + "/eform/get",
     delete: prefixBpm + "/eform/delete",
 
-    listEformExtraInfo: prefixCustomer + "/eformExtraInfo/list",
-    updateEformExtraInfo: prefixCustomer + "/eformExtraInfo/update",
-    updateEformExtraInfoPosition: prefixCustomer + "/eformExtraInfo/update/position",
-    detailEformExtraInfo: prefixCustomer + "/eformExtraInfo/get",
-    deleteEformExtraInfo: prefixCustomer + "/eformExtraInfo/delete",
+    listEformExtraInfo: prefixCustomer + "/eform-extra-info/list",
+    updateEformExtraInfo: prefixCustomer + "/eform-extra-info/update",
+    updateEformExtraInfoPosition: prefixCustomer + "/eform-extra-info/update/position",
+    detailEformExtraInfo: prefixCustomer + "/eform-extra-info/get",
+    deleteEformExtraInfo: prefixCustomer + "/eform-extra-info/delete",
 
-    listEformAttribute: prefixCustomer + "/eformAttribute/list",
-    updateEformAttribute: prefixCustomer + "/eformAttribute/update",
-    detailEformAttribute: prefixCustomer + "/eformAttribute/get",
-    deleteEformAttribute: prefixCustomer + "/eformAttribute/delete",
-    listEformAttributeAll: prefixCustomer + "/eformAttribute/listAll",
+    listEformAttribute: prefixCustomer + "/eform-attribute/list",
+    updateEformAttribute: prefixCustomer + "/eform-attribute/update",
+    detailEformAttribute: prefixCustomer + "/eform-attribute/get",
+    deleteEformAttribute: prefixCustomer + "/eform-attribute/delete",
+    listEformAttributeAll: prefixCustomer + "/eform-attribute/list-all",
 
-    checkDuplicated: prefixCustomer + "/eformAttribute/checkDuplicated",
-    contractEformUpdate: prefixCustomer + "/contractEform/update",
-    contractEformDetail: prefixCustomer + "/contractEform/get/criteria",
+    checkDuplicated: prefixCustomer + "/eform-attribute/check-duplicated",
+    contractEformUpdate: prefixCustomer + "/contract-eform/update",
+    contractEformDetail: prefixCustomer + "/contract-eform/get/criteria",
   },
 
   manageDefaultProcesses: {
@@ -1248,10 +1248,10 @@ export const urlsApi = {
     detail: prefixCustomer + "/attachment/get",
     delete: prefixCustomer + "/attachment/delete",
 
-    contractAttachmentList: prefixCustomer + "/contractAttachment/list",
-    contractAttachmentUpdate: prefixCustomer + "/contractAttachment/update",
-    contractAttachmentDetail: prefixCustomer + "/contractAttachment/get",
-    contractAttachmentDelete: prefixCustomer + "/contractAttachment/delete",
+    contractAttachmentList: prefixCustomer + "/contract-attachment/list",
+    contractAttachmentUpdate: prefixCustomer + "/contract-attachment/update",
+    contractAttachmentDetail: prefixCustomer + "/contract-attachment/get",
+    contractAttachmentDelete: prefixCustomer + "/contract-attachment/delete",
   },
 
   contractGuarantee: {
@@ -1260,9 +1260,9 @@ export const urlsApi = {
     detail: prefixCustomer + "/guarantee/get",
     delete: prefixCustomer + "/guarantee/delete",
 
-    guaranteeTypeList: prefixCustomer + "/guaranteeType/list",
-    guaranteeTypeUpdate: prefixCustomer + "/guaranteeType/update",
-    guaranteeTypeDelete: prefixCustomer + "/guaranteeType/delete",
+    guaranteeTypeList: prefixCustomer + "/guarantee-type/list",
+    guaranteeTypeUpdate: prefixCustomer + "/guarantee-type/update",
+    guaranteeTypeDelete: prefixCustomer + "/guarantee-type/delete",
 
     competencyList: prefixCustomer + "/competency/list",
     competencyUpdate: prefixCustomer + "/competency/update",
@@ -1273,21 +1273,21 @@ export const urlsApi = {
     bankDelete: prefixCustomer + "/bank/delete",
 
     exAttributes: prefixCustomer + "/guarantee/export/attributes",
-    numberFieldGuarantee: prefixCustomer + "/guarantee/export/randomGuarantees",
-    autoProcess: prefixCustomer + "/guarantee/import/autoProcess",
+    numberFieldGuarantee: prefixCustomer + "/guarantee/export/random-guarantees",
+    autoProcess: prefixCustomer + "/guarantee/import/auto-process",
     // tải file lỗi trong quá trình upload
     downloadFile: prefixCustomer + "/guarantee/import",
   },
 
   contractWarranty: {
-    list: prefixCustomer + "/contractWarranty/list",
-    update: prefixCustomer + "/contractWarranty/update",
-    detail: prefixCustomer + "/contractWarranty/get",
-    delete: prefixCustomer + "/contractWarranty/delete",
+    list: prefixCustomer + "/contract-warranty/list",
+    update: prefixCustomer + "/contract-warranty/update",
+    detail: prefixCustomer + "/contract-warranty/get",
+    delete: prefixCustomer + "/contract-warranty/delete",
 
-    warrantyTypeList: prefixCustomer + "/contractWarrantyType/list",
-    warrantyTypeUpdate: prefixCustomer + "/contractWarrantyType/update",
-    warrantyTypeDelete: prefixCustomer + "/contractWarrantyType/delete",
+    warrantyTypeList: prefixCustomer + "/contract-warranty-type/list",
+    warrantyTypeUpdate: prefixCustomer + "/contract-warranty-type/update",
+    warrantyTypeDelete: prefixCustomer + "/contract-warranty-type/delete",
 
     competencyList: prefixCustomer + "/competency/list",
     competencyUpdate: prefixCustomer + "/competency/update",
@@ -1297,32 +1297,32 @@ export const urlsApi = {
     bankUpdate: prefixCustomer + "/bank/update",
     bankDelete: prefixCustomer + "/bank/delete",
 
-    exAttributes: prefixCustomer + "/contractWarranty/export/attributes",
+    exAttributes: prefixCustomer + "/contract-warranty/export/attributes",
     // numberFieldWarranty: prefixCustomer + "/contractWarranty/export/randomWarranty",
-    numberFieldWarranty: prefixCustomer + "/contractWarranty/export/randomContractWarranty",
-    autoProcess: prefixCustomer + "/contractWarranty/import/autoProcess",
+    numberFieldWarranty: prefixCustomer + "/contract-warranty/export/random-contract-warranty",
+    autoProcess: prefixCustomer + "/contract-warranty/import/auto-process",
     // tải file lỗi trong quá trình upload
-    downloadFile: prefixCustomer + "/contractWarranty/import",
+    downloadFile: prefixCustomer + "/contract-warranty/import",
   },
 
   guaranteeAttachment: {
-    guaranteeAttachmentList: prefixCustomer + "/guaranteeAttachment/list",
-    guaranteeAttachmentUpdate: prefixCustomer + "/guaranteeAttachment/update",
-    guaranteeAttachmentDelete: prefixCustomer + "/guaranteeAttachment/delete",
+    guaranteeAttachmentList: prefixCustomer + "/guarantee-attachment/list",
+    guaranteeAttachmentUpdate: prefixCustomer + "/guarantee-attachment/update",
+    guaranteeAttachmentDelete: prefixCustomer + "/guarantee-attachment/delete",
   },
 
   warrantyAttachment: {
-    warrantyAttachmentList: prefixCustomer + "/contractWarrantyAttachment/list",
-    warrantyAttachmentUpdate: prefixCustomer + "/contractWarrantyAttachment/update",
-    warrantyAttachmentDelete: prefixCustomer + "/contractWarrantyAttachment/delete",
+    warrantyAttachmentList: prefixCustomer + "/contract-warranty-attachment/list",
+    warrantyAttachmentUpdate: prefixCustomer + "/contract-warranty-attachment/update",
+    warrantyAttachmentDelete: prefixCustomer + "/contract-warranty-attachment/delete",
   },
 
   znsTemplate: {
-    list: prefixCustomer + "/znsTemplate/list",
-    updateSync: prefixCustomer + "/znsTemplate/list/sync",
-    detail: prefixCustomer + "/znsTemplate/get",
-    delete: prefixCustomer + "/znsTemplate/delete",
-    templateDetail: prefixCustomer + "/znsTemplate/refresh",
+    list: prefixCustomer + "/zns-template/list",
+    updateSync: prefixCustomer + "/zns-template/list/sync",
+    detail: prefixCustomer + "/zns-template/get",
+    delete: prefixCustomer + "/zns-template/delete",
+    templateDetail: prefixCustomer + "/zns-template/refresh",
   },
   contractProduct: {
     list: prefixCustomer + "/project/list",
@@ -1334,59 +1334,59 @@ export const urlsApi = {
   },
 
   contractStage: {
-    list: prefixCustomer + "/contractStage/list",
-    update: prefixCustomer + "/contractStage/update",
-    detail: prefixCustomer + "/contractStage/get",
-    delete: prefixCustomer + "/contractStage/delete",
+    list: prefixCustomer + "/contract-stage/list",
+    update: prefixCustomer + "/contract-stage/update",
+    detail: prefixCustomer + "/contract-stage/get",
+    delete: prefixCustomer + "/contract-stage/delete",
   },
   rentalType: {
-    list: prefixCustomer + "/rentalType/list",
-    update: prefixCustomer + "/rentalType/update",
-    detail: prefixCustomer + "/rentalType/get",
-    delete: prefixCustomer + "/rentalType/delete",
+    list: prefixCustomer + "/rental-type/list",
+    update: prefixCustomer + "/rental-type/update",
+    detail: prefixCustomer + "/rental-type/get",
+    delete: prefixCustomer + "/rental-type/delete",
   },
   contact: {
     list: prefixCustomer + "/contact/list",
     update: prefixCustomer + "/contact/update",
     detail: prefixCustomer + "/contact/get",
     delete: prefixCustomer + "/contact/delete",
-    fieldTable: prefixCustomer + "/contactAttribute/listFilter",
+    fieldTable: prefixCustomer + "/contact-attribute/list-filter",
 
-    contactExchange: prefixCustomer + "/contactExchange/list",
+    contactExchange: prefixCustomer + "/contact-exchange/list",
     // xóa 1 trao đổi trong
-    deleteContactExchange: prefixCustomer + "/contactExchange/delete",
+    deleteContactExchange: prefixCustomer + "/contact-exchange/delete",
     // thêm mới 1 trao đổi
-    addContactExchange: prefixCustomer + "/contactExchange/update",
+    addContactExchange: prefixCustomer + "/contact-exchange/update",
     // // chỉnh sửa 1 trao đổi
-    updateContactExchange: prefixCustomer + "/contactExchange/get",
+    updateContactExchange: prefixCustomer + "/contact-exchange/get",
 
     exAttributes: prefixCustomer + "/contact/export/attributes",
-    numberFieldContact: prefixCustomer + "/contact/export/randomContacts",
-    autoProcess: prefixCustomer + "/contact/import/autoProcess",
+    numberFieldContact: prefixCustomer + "/contact/export/random-contacts",
+    autoProcess: prefixCustomer + "/contact/import/auto-process",
     // tải file lỗi trong quá trình upload
     downloadFile: prefixCustomer + "/contact/import",
   },
   contactPipeline: {
-    list: prefixCustomer + "/contactPipeline/list",
-    update: prefixCustomer + "/contactPipeline/update",
-    detail: prefixCustomer + "/contactPipeline/get",
-    delete: prefixCustomer + "/contactPipeline/delete",
+    list: prefixCustomer + "/contact-pipeline/list",
+    update: prefixCustomer + "/contact-pipeline/update",
+    detail: prefixCustomer + "/contact-pipeline/get",
+    delete: prefixCustomer + "/contact-pipeline/delete",
   },
   contactStatus: {
-    list: prefixCustomer + "/contactStatus/list",
-    update: prefixCustomer + "/contactStatus/update",
-    detail: prefixCustomer + "/contactStatus/get",
-    delete: prefixCustomer + "/contactStatus/delete",
+    list: prefixCustomer + "/contact-status/list",
+    update: prefixCustomer + "/contact-status/update",
+    detail: prefixCustomer + "/contact-status/get",
+    delete: prefixCustomer + "/contact-status/delete",
   },
   contactAttribute: {
-    list: prefixCustomer + "/contactAttribute/list",
-    update: prefixCustomer + "/contactAttribute/update",
-    delete: prefixCustomer + "/contactAttribute/delete",
-    listAll: prefixCustomer + "/contactAttribute/listAll",
-    checkDuplicated: prefixCustomer + "/contactAttribute/checkDuplicated",
+    list: prefixCustomer + "/contact-attribute/list",
+    update: prefixCustomer + "/contact-attribute/update",
+    delete: prefixCustomer + "/contact-attribute/delete",
+    listAll: prefixCustomer + "/contact-attribute/list-all",
+    checkDuplicated: prefixCustomer + "/contact-attribute/check-duplicated",
   },
   contactExtraInfo: {
-    list: prefixCustomer + "/contactExtraInfo/list",
+    list: prefixCustomer + "/contact-extra-info/list",
   },
 
   position: {
@@ -1403,28 +1403,28 @@ export const urlsApi = {
     updateAlert: prefixCustomer + "/contract/update/alert",
 
     //cảnh báo hợp đồng chung cho tất cả
-    contractAlertUpdate: prefixCustomer + "/contractAlert/update",
-    contractAlertList: prefixCustomer + "/contractAlert/list",
+    contractAlertUpdate: prefixCustomer + "/contract-alert/update",
+    contractAlertList: prefixCustomer + "/contract-alert/list",
 
     //cảnh báo bảo lãnh hợp đồng chung cho tất cả
-    guaranteeAlertUpdate: prefixCustomer + "/guaranteeAlert/update",
-    guaranteeAlertList: prefixCustomer + "/guaranteeAlert/list",
+    guaranteeAlertUpdate: prefixCustomer + "/guarantee-alert/update",
+    guaranteeAlertList: prefixCustomer + "/guarantee-alert/list",
 
     //cảnh báo bảo hành hợp đồng chung cho tất cả
-    warrantyAlertUpdate: prefixCustomer + "/contractWarrantyAlert/update",
-    warrantyAlertList: prefixCustomer + "/contractWarrantyAlert/list",
+    warrantyAlertUpdate: prefixCustomer + "/contract-warranty-alert/update",
+    warrantyAlertList: prefixCustomer + "/contract-warranty-alert/list",
 
     //cảnh báo hợp đồng riêng từng cái
     contractAlertSpecific: prefixCustomer + "/contract/update/alert",
     contractAlertListSpecific: prefixCustomer + "/contract/alert/get",
 
     detailAlert: prefixCustomer + "/contract",
-    fieldTable: prefixCustomer + "/contractAttribute/listFilter",
+    fieldTable: prefixCustomer + "/contract-attribute/list-filter",
 
     updateApproach: prefixCustomer + "/contract/update/approach",
 
     //list mã đề nghị
-    listCodeSuggest: prefixCustomer + "/contractRequest/list",
+    listCodeSuggest: prefixCustomer + "/contract-request/list",
 
     //list mã mặt hàng dịch vụ
     listCodeService: prefixCustomer + "/contract/products/select",
@@ -1433,30 +1433,30 @@ export const urlsApi = {
     listSupplier: prefixCustomer + "/contract/suppliers/select",
 
     //thêm hạng mục bàn giao
-    updateHandover: prefixCustomer + "/contractItem/update",
+    updateHandover: prefixCustomer + "/contract-item/update",
 
     //thêm đợt bàn giao
-    updateHandoverProgress: prefixCustomer + "/contractHandover/update",
+    updateHandoverProgress: prefixCustomer + "/contract-handover/update",
 
     //danh sách đợt bàn giao
-    listHandoverProgress: prefixCustomer + "/contractHandover/list",
+    listHandoverProgress: prefixCustomer + "/contract-handover/list",
 
     // xóa 1 đợt bàn giao
-    deleteHandoverProgress: prefixCustomer + "/contractHandover/delete",
+    deleteHandoverProgress: prefixCustomer + "/contract-handover/delete",
 
     //phụ lục hợp đồng
-    contractAppendixList: prefixCustomer + "/contractAppendix/list",
-    contractAppendixDelete: prefixCustomer + "/contractAppendix/delete",
-    contractAppendixUpdate: prefixCustomer + "/contractAppendix/update",
-    contractAppendixDetail: prefixCustomer + "/contractAppendix/get",
+    contractAppendixList: prefixCustomer + "/contract-appendix/list",
+    contractAppendixDelete: prefixCustomer + "/contract-appendix/delete",
+    contractAppendixUpdate: prefixCustomer + "/contract-appendix/update",
+    contractAppendixDetail: prefixCustomer + "/contract-appendix/get",
 
-    contractExchange: prefixCustomer + "/contractExchange/list",
+    contractExchange: prefixCustomer + "/contract-exchange/list",
     // xóa 1 trao đổi trong
-    deleteContractExchange: prefixCustomer + "/contractExchange/delete",
+    deleteContractExchange: prefixCustomer + "/contract-exchange/delete",
     // thêm mới 1 trao đổi
-    addContractExchange: prefixCustomer + "/contractExchange/update",
+    addContractExchange: prefixCustomer + "/contract-exchange/update",
     // // chỉnh sửa 1 trao đổi
-    updateContractExchange: prefixCustomer + "/contractExchange/get",
+    updateContractExchange: prefixCustomer + "/contract-exchange/get",
     // gửi báo giá
     sendQuote: prefixCustomer + "/contract/email-quote",
 
@@ -1464,62 +1464,62 @@ export const urlsApi = {
     sendContract: prefixCustomer + "/contract/email-contract",
 
     exAttributes: prefixCustomer + "/contract/export/attributes",
-    numberFieldCustomer: prefixCustomer + "/contract/export/randomContracts",
-    autoProcess: prefixCustomer + "/contract/import/autoProcess",
+    numberFieldCustomer: prefixCustomer + "/contract/export/random-contracts",
+    autoProcess: prefixCustomer + "/contract/import/auto-process",
     // tải file lỗi trong quá trình upload
     downloadFile: prefixCustomer + "/contract/import",
 
     //các biểu đồ thống kê
-    reportContractStatus: prefixCustomer + "/contract/dashboard/byStatus",
+    reportContractStatus: prefixCustomer + "/contract/dashboard/by-status",
     // reportContractStatus: prefixCustomer + "/contract/dashboard/byStatusV2", // API này Năng làm
-    reportContractContract: prefixCustomer + "/contract/dashboard/dealValueByCustomer",
-    reportNewContract: prefixCustomer + "/contract/dashboard/newByTime",
+    reportContractContract: prefixCustomer + "/contract/dashboard/deal-value-by-customer",
+    reportNewContract: prefixCustomer + "/contract/dashboard/new-by-time",
     // reportNewContract: prefixCustomer + "/contract/dashboard/newByTimeV2", // API này Năng làm
 
     //thay đổi các trạng thái liên quan đến hợp đồng
     updateStatus: prefixCustomer + "/contract/update/status",
 
     //lịch sử thay đổi hợp đồng
-    logValues: prefixCustomer + "/contract/logValues",
+    logValues: prefixCustomer + "/contract/log-values",
   },
   customerGroup: {
-    list: prefixCustomer + "/customerGroup/list",
-    update: prefixCustomer + "/customerGroup/update",
-    delete: prefixCustomer + "/customerGroup/delete",
+    list: prefixCustomer + "/customer-group/list",
+    update: prefixCustomer + "/customer-group/update",
+    delete: prefixCustomer + "/customer-group/delete",
   },
   customerSource: {
-    list: prefixCustomer + "/customerSource/list",
-    update: prefixCustomer + "/customerSource/update",
-    delete: prefixCustomer + "/customerSource/delete",
+    list: prefixCustomer + "/customer-source/list",
+    update: prefixCustomer + "/customer-source/update",
+    delete: prefixCustomer + "/customer-source/delete",
   },
   customerMarketingLead: {
-    list: prefixCustomer + "/marketingSource/list",
-    update: prefixCustomer + "/marketingSource/update",
-    delete: prefixCustomer + "/marketingSource/delete",
+    list: prefixCustomer + "/marketing-source/list",
+    update: prefixCustomer + "/marketing-source/update",
+    delete: prefixCustomer + "/marketing-source/delete",
   },
   customerView: {
-    list: prefixCustomer + "/customerView/list",
-    update: prefixCustomer + "/customerView/update",
-    delete: prefixCustomer + "/customerView/delete",
+    list: prefixCustomer + "/customer-view/list",
+    update: prefixCustomer + "/customer-view/update",
+    delete: prefixCustomer + "/customer-view/delete",
   },
 
   reportChart: {
-    listReportArtifact: prefixCustomer + "/reportArtifact/list",
-    listArtifactByDashboard: prefixCustomer + "/reportArtifact/list/byDashboard",
-    listArtifactByEmployee: prefixCustomer + "/reportArtifact/list/byEmployee",
-    updateReportArtifact: prefixCustomer + "/reportArtifact/update",
-    deleteReportArtifact: prefixCustomer + "/reportArtifact/delete",
+    listReportArtifact: prefixCustomer + "/report-artifact/list",
+    listArtifactByDashboard: prefixCustomer + "/report-artifact/list/by-dashboard",
+    listArtifactByEmployee: prefixCustomer + "/report-artifact/list/by-employee",
+    updateReportArtifact: prefixCustomer + "/report-artifact/update",
+    deleteReportArtifact: prefixCustomer + "/report-artifact/delete",
 
-    listReportDashboard: prefixCustomer + "/reportDashboard/list",
-    updateReportDashboard: prefixCustomer + "/reportDashboard/update",
-    deleteReportDashboard: prefixCustomer + "/reportDashboard/delete",
+    listReportDashboard: prefixCustomer + "/report-dashboard/list",
+    updateReportDashboard: prefixCustomer + "/report-dashboard/update",
+    deleteReportDashboard: prefixCustomer + "/report-dashboard/delete",
 
-    listReportRole: prefixCustomer + "/reportRole/list",
-    updateReportRole: prefixCustomer + "/reportRole/update",
-    deleteReportRole: prefixCustomer + "/reportRole/delete",
+    listReportRole: prefixCustomer + "/report-role/list",
+    updateReportRole: prefixCustomer + "/report-role/update",
+    deleteReportRole: prefixCustomer + "/report-role/delete",
 
-    updateReportConfig: prefixCustomer + "/reportConfig/update",
-    deleteReportConfig: prefixCustomer + "/reportConfig/delete",
+    updateReportConfig: prefixCustomer + "/report-config/update",
+    deleteReportConfig: prefixCustomer + "/report-config/delete",
   },
 
   // Báo cáo bảo lãnh
@@ -1528,7 +1528,7 @@ export const urlsApi = {
   },
   // Báo cáo bảo hành
   reportContractWarranty: {
-    statistical: prefixCustomer + "/contractWarranty/statistical",
+    statistical: prefixCustomer + "/contract-warranty/statistical",
   },
   // Báo cáo đối tác
   reportBussinessParner: {
@@ -1538,80 +1538,80 @@ export const urlsApi = {
   },
   // Báo cáo khách hàng
   reportCustomer: {
-    totalCurentCustomer: prefixCustomer + "/customer/dashboard/getTotal",
+    totalCurentCustomer: prefixCustomer + "/customer/dashboard/get-total",
     totalContract: prefixCustomer + "/contract/total/dashboard",
     totalRevenue: prefixCustomer + "/contract/revenue/dashboard",
-    externalOrnot: prefixCustomer + "/customer/dashboard/externalOrnot",
-    relationShip: prefixCustomer + "/customer/dashboard/relationShip",
+    externalOrnot: prefixCustomer + "/customer/dashboard/external-ornot",
+    relationShip: prefixCustomer + "/customer/dashboard/relation-ship",
     pipeline: prefixCustomer + "/contract/dashboard/pipeline",
-    notInTimePipeline: prefixCustomer + "/contract/dashboard/notInTime/pipeline",
+    notInTimePipeline: prefixCustomer + "/contract/dashboard/not-in-time/pipeline",
     // Chi tiết tổng số khách hàng
-    totalCurentCustomerDetail: prefixCustomer + "/customer/dashboard/getTotal/detail",
+    totalCurentCustomerDetail: prefixCustomer + "/customer/dashboard/get-total/detail",
     // Chi tiết tổng số hợp đồng theo pipeline
-    totalContractSignerDetail: prefixCustomer + "/contract/dashboard/notInTime/pipeline/detail",
+    totalContractSignerDetail: prefixCustomer + "/contract/dashboard/not-in-time/pipeline/detail",
     // Doanh thu còn phải thu trong kì
     revenueNotYetReceivedDetail: prefixCustomer + "/contract/dashboard/pipeline/detail",
   },
   // Báo cáo cơ hội
   reportOpportunity: {
-    totalOpportunity: prefixCustomer + "/campaignOpportunity/total/dashboard",
-    opportunityByDate: prefixCustomer + "/campaignOpportunity/totalByDate/dashboard",
-    expectedRevenue: prefixCustomer + "/campaignOpportunity/totalExpectedRevenue/dashboard",
-    totalByApproach: prefixCustomer + "/campaignOpportunity/totalByApproach/dashboard",
+    totalOpportunity: prefixCustomer + "/campaign-opportunity/total/dashboard",
+    opportunityByDate: prefixCustomer + "/campaign-opportunity/total-by-date/dashboard",
+    expectedRevenue: prefixCustomer + "/campaign-opportunity/total-expected-revenue/dashboard",
+    totalByApproach: prefixCustomer + "/campaign-opportunity/total-by-approach/dashboard",
 
     //Chi tiết tổng số cơ hội
-    totalOpportunityDetail: prefixCustomer + "/campaignOpportunity/total/dashboard/detail",
+    totalOpportunityDetail: prefixCustomer + "/campaign-opportunity/total/dashboard/detail",
     //Chi tiết doanh thu dự kiến
-    expectedRevenueDetail: prefixCustomer + "/campaignOpportunity/totalExpectedRevenue/dashboard/detail",
+    expectedRevenueDetail: prefixCustomer + "/campaign-opportunity/total-expected-revenue/dashboard/detail",
     //Chi tiết doanh ký hợp đồng
     contractRevenueDetail: prefixCustomer + "/contract/revenue/dashboard/detail",
   },
 
   customerField: {
-    list: prefixCustomer + "/customerField/list",
-    update: prefixCustomer + "/customerField/update",
-    delete: prefixCustomer + "/customerField/delete",
+    list: prefixCustomer + "/customer-field/list",
+    update: prefixCustomer + "/customer-field/update",
+    delete: prefixCustomer + "/customer-field/delete",
   },
   customerAttribute: {
-    list: prefixCustomer + "/customerAttribute/list",
-    update: prefixCustomer + "/customerAttribute/update",
-    delete: prefixCustomer + "/customerAttribute/delete",
-    listAll: prefixCustomer + "/customerAttribute/listAll",
-    checkDuplicated: prefixCustomer + "/customerAttribute/checkDuplicated",
+    list: prefixCustomer + "/customer-attribute/list",
+    update: prefixCustomer + "/customer-attribute/update",
+    delete: prefixCustomer + "/customer-attribute/delete",
+    listAll: prefixCustomer + "/customer-attribute/list-all",
+    checkDuplicated: prefixCustomer + "/customer-attribute/check-duplicated",
   },
   customerExtraInfo: {
-    list: prefixCustomer + "/customerExtraInfo/list",
+    list: prefixCustomer + "/customer-extra-info/list",
   },
   contractAttribute: {
-    list: prefixCustomer + "/contractAttribute/list",
-    update: prefixCustomer + "/contractAttribute/update",
-    delete: prefixCustomer + "/contractAttribute/delete",
-    listAll: prefixCustomer + "/contractAttribute/listAll",
-    checkDuplicated: prefixCustomer + "/contractAttribute/checkDuplicated",
+    list: prefixCustomer + "/contract-attribute/list",
+    update: prefixCustomer + "/contract-attribute/update",
+    delete: prefixCustomer + "/contract-attribute/delete",
+    listAll: prefixCustomer + "/contract-attribute/list-all",
+    checkDuplicated: prefixCustomer + "/contract-attribute/check-duplicated",
   },
   contractExtraInfo: {
-    list: prefixCustomer + "/contractExtraInfo/list",
+    list: prefixCustomer + "/contract-extra-info/list",
   },
 
   guaranteeAttribute: {
-    list: prefixCustomer + "/guaranteeAttribute/list",
-    update: prefixCustomer + "/guaranteeAttribute/update",
-    delete: prefixCustomer + "/guaranteeAttribute/delete",
-    listAll: prefixCustomer + "/guaranteeAttribute/listAll",
-    checkDuplicated: prefixCustomer + "/guaranteeAttribute/checkDuplicated",
+    list: prefixCustomer + "/guarantee-attribute/list",
+    update: prefixCustomer + "/guarantee-attribute/update",
+    delete: prefixCustomer + "/guarantee-attribute/delete",
+    listAll: prefixCustomer + "/guarantee-attribute/list-all",
+    checkDuplicated: prefixCustomer + "/guarantee-attribute/check-duplicated",
   },
   warrantyAttribute: {
-    list: prefixCustomer + "/contractWarrantyAttribute/list",
-    update: prefixCustomer + "/contractWarrantyAttribute/update",
-    delete: prefixCustomer + "/contractWarrantyAttribute/delete",
-    listAll: prefixCustomer + "/contractWarrantyAttribute/listAll",
-    checkDuplicated: prefixCustomer + "/contractWarrantyAttribute/checkDuplicated",
+    list: prefixCustomer + "/contract-warranty-attribute/list",
+    update: prefixCustomer + "/contract-warranty-attribute/update",
+    delete: prefixCustomer + "/contract-warranty-attribute/delete",
+    listAll: prefixCustomer + "/contract-warranty-attribute/list-all",
+    checkDuplicated: prefixCustomer + "/contract-warranty-attribute/check-duplicated",
   },
   guaranteeExtraInfo: {
-    list: prefixCustomer + "/guaranteeExtraInfo/list",
+    list: prefixCustomer + "/guarantee-extra-info/list",
   },
   warrantyExtraInfo: {
-    list: prefixCustomer + "/contractWarrantyExtraInfo/list",
+    list: prefixCustomer + "/contract-warranty-extra-info/list",
   },
 
   career: {
@@ -1625,27 +1625,27 @@ export const urlsApi = {
     delete: prefixCustomer + "/relationship/delete",
   },
   tipGroup: {
-    list: prefixCustomer + "/tipGroup/list",
-    update: prefixCustomer + "/tipGroup/update",
-    delete: prefixCustomer + "/tipGroup/delete",
-    listTipGroupEmloyee: prefixCustomer + "/tipGroupEmployee/list",
-    updateTipGroupEmloyee: prefixCustomer + "/tipGroupEmployee/update",
-    deleteTipGroupEmloyee: prefixCustomer + "/tipGroupEmployee/delete",
+    list: prefixCustomer + "/tip-group/list",
+    update: prefixCustomer + "/tip-group/update",
+    delete: prefixCustomer + "/tip-group/delete",
+    listTipGroupEmloyee: prefixCustomer + "/tip-group-employee/list",
+    updateTipGroupEmloyee: prefixCustomer + "/tip-group-employee/update",
+    deleteTipGroupEmloyee: prefixCustomer + "/tip-group-employee/delete",
   },
   tipUser: {
-    list: prefixCustomer + "/tipUser/list",
-    update: prefixCustomer + "/tipUser/update",
-    delete: prefixCustomer + "/tipUser/delete",
+    list: prefixCustomer + "/tip-user/list",
+    update: prefixCustomer + "/tip-user/update",
+    delete: prefixCustomer + "/tip-user/delete",
   },
   tipUserConfig: {
-    list: prefixCustomer + "/tipUserConfig/list",
-    update: prefixCustomer + "/tipUserConfig/update",
-    delete: prefixCustomer + "/tipUserConfig/delete",
+    list: prefixCustomer + "/tip-user-config/list",
+    update: prefixCustomer + "/tip-user-config/update",
+    delete: prefixCustomer + "/tip-user-config/delete",
   },
   tipGroupConfig: {
-    list: prefixCustomer + "/tipGroupConfig/list",
-    update: prefixCustomer + "/tipGroupConfig/update",
-    delete: prefixCustomer + "/tipGroupConfig/delete",
+    list: prefixCustomer + "/tip-group-config/list",
+    update: prefixCustomer + "/tip-group-config/update",
+    delete: prefixCustomer + "/tip-group-config/delete",
   },
   setting: {
     list: prefixCustomer + "/setting/list",
@@ -1668,45 +1668,45 @@ export const urlsApi = {
     //* Lấy danh sách fanpage đã được kết nối
     listFanpage: prefixCustomer + "/fanpage/list",
     //* Lấy danh sách hội thoại chat
-    listFanpageDialog: prefixCustomer + "/fanpageDialog/list",
+    listFanpageDialog: prefixCustomer + "/fanpage-dialog/list",
     //* Danh sách tin nhắn chat từ fanpage
-    listFanpageChat: prefixCustomer + "/fanpageChat/list",
+    listFanpageChat: prefixCustomer + "/fanpage-chat/list",
     //* Phản hồi (nhắn tin phản hồi người chat facebook)
-    replyFanpageChat: prefixCustomer + "/fanpageChat/reply",
+    replyFanpageChat: prefixCustomer + "/fanpage-chat/reply",
     //* Danh sách bình luận từ fanpage
-    listFanpageComment: prefixCustomer + "/fanpageComment/list",
+    listFanpageComment: prefixCustomer + "/fanpage-comment/list",
     //* Phản hồi 1 bình luận từ 1 bình luận của khách hàng hoặc sửa lại bình luận đã phản hồi
-    replyFanpageComment: prefixCustomer + "/fanpageComment/reply",
+    replyFanpageComment: prefixCustomer + "/fanpage-comment/reply",
     //* Gỡ 1 bình luận đã đăng
-    deleteFanpageComment: prefixCustomer + "/fanpageComment/delete",
+    deleteFanpageComment: prefixCustomer + "/fanpage-comment/delete",
     //* Ẩn 1 bình luận trên fanpage
-    hiddenFanpageComment: prefixCustomer + "/fanpageComment/hidden",
+    hiddenFanpageComment: prefixCustomer + "/fanpage-comment/hidden",
     //* Lấy thông tin bài đã đăng
-    fanpagePost: prefixCustomer + "/fanpagePost/get",
+    fanpagePost: prefixCustomer + "/fanpage-post/get",
     //* Gửi file đính kèm trong messenger
-    fanpageChatSendAttachment: prefixCustomer + "/fanpageChat/send/attachment",
+    fanpageChatSendAttachment: prefixCustomer + "/fanpage-chat/send/attachment",
   },
   zaloOA: {
     //* kết nối zalo với crm
-    connect: prefixCustomer + "/zaloOa/connect",
+    connect: prefixCustomer + "/zalo-oa/connect",
     //* Lấy danh sách zalo đã được kết nối
-    list: prefixCustomer + "/zaloOa/list",
+    list: prefixCustomer + "/zalo-oa/list",
     //* Gỡ một zalo ra khỏi danh sách đã kết nối
-    delete: prefixCustomer + "/zaloOa/remove",
+    delete: prefixCustomer + "/zalo-oa/remove",
     //* Lấy danh sách hội thoại chat
-    listZaloFollower: prefixCustomer + "/zaloFollower/list",
+    listZaloFollower: prefixCustomer + "/zalo-follower/list",
     //* Danh sách tin nhắn chat từ người dùng tương tác với zalo
-    listZaloChat: prefixCustomer + "/zaloChat/list",
+    listZaloChat: prefixCustomer + "/zalo-chat/list",
     //* Nhắn tin cho người dùng
-    sendZaloChat: prefixCustomer + "/zaloChat/send",
+    sendZaloChat: prefixCustomer + "/zalo-chat/send",
     //* Gửi tin nhắn dạng link ảnh
-    linkImageSendZaloChat: prefixCustomer + "/zaloChat/send/link_image",
+    linkImageSendZaloChat: prefixCustomer + "/zalo-chat/send/link-image",
     //* Gửi tin nhắn đính kèm file
-    fileSendZaloChat: prefixCustomer + "/zaloChat/send/file",
+    fileSendZaloChat: prefixCustomer + "/zalo-chat/send/file",
     //* Phản hồi lại 1 tin nhắn (trả lời 1 tin nhắn khác)
-    answerSendZaloChat: prefixCustomer + "/zaloChat/send/answer",
+    answerSendZaloChat: prefixCustomer + "/zalo-chat/send/answer",
     //* Gỡ 1 tin nhắn chat
-    deleteZaloChat: prefixCustomer + "/zaloChat/delete",
+    deleteZaloChat: prefixCustomer + "/zalo-chat/delete",
   },
   image: {
     upload: "https://login.noron.vn/api/upload/image",
@@ -1726,52 +1726,52 @@ export const urlsApi = {
     detail: "https://cloud.reborn.vn/market/article/get",
   },
   reportMa: {
-    getCustomer: prefixCustomer + "/ma/dashboard/customer/byStatus",
+    getCustomer: prefixCustomer + "/ma/dashboard/customer/by-status",
     // detail: "https://cloud.reborn.vn/market/article/get",
   },
   keywordData: {
-    list: "https://cloud.reborn.vn/market/keywordData/list",
-    update: "https://cloud.reborn.vn/market/keywordData/update",
-    detail: "https://cloud.reborn.vn/market/keywordData/get",
-    delete: "https://cloud.reborn.vn/market/keywordData/delete",
+    list: "https://cloud.reborn.vn/market/keyword-data/list",
+    update: "https://cloud.reborn.vn/market/keyword-data/update",
+    detail: "https://cloud.reborn.vn/market/keyword-data/get",
+    delete: "https://cloud.reborn.vn/market/keyword-data/delete",
   },
   configCode: {
-    list: prefixCustomer + "/globalConfig/list",
-    update: prefixCustomer + "/globalConfig/update",
-    detail: prefixCustomer + "/globalConfig/get",
-    delete: prefixCustomer + "/globalConfig/delete",
+    list: prefixCustomer + "/global-config/list",
+    update: prefixCustomer + "/global-config/update",
+    detail: prefixCustomer + "/global-config/get",
+    delete: prefixCustomer + "/global-config/delete",
   },
   placeholder: {
-    contractWarranty: prefixCustomer + "/contractWarranty/placeholder", // placeholder Bảo hành
+    contractWarranty: prefixCustomer + "/contract-warranty/placeholder", // placeholder Bảo hành
     guarantee: prefixCustomer + "/guarantee/placeholder", // placeholder Bảo lãnh
     contract: prefixCustomer + "/contract/placeholder", // placeholder Hợp đồng
     customer: prefixCustomer + "/customer/placeholder", // placeholder Khách hàng
     contact: prefixCustomer + "/contact/placeholder ", // placeholder Người liên hệ
   },
   partnerCall: {
-    list: prefixCustomer + "/partnerCall/list",
-    update: prefixCustomer + "/partnerCall/update",
-    detail: prefixCustomer + "/partnerCall/get",
-    delete: prefixCustomer + "/partnerCall/delete",
+    list: prefixCustomer + "/partner-call/list",
+    update: prefixCustomer + "/partner-call/update",
+    detail: prefixCustomer + "/partner-call/get",
+    delete: prefixCustomer + "/partner-call/delete",
   },
   switchboard: {
-    list: prefixCustomer + "/callConfig/list",
-    update: prefixCustomer + "/callConfig/update",
-    updateStatus: prefixCustomer + "/callConfig/update/status",
-    detail: prefixCustomer + "/callConfig/get",
-    delete: prefixCustomer + "/callConfig/delete",
+    list: prefixCustomer + "/call-config/list",
+    update: prefixCustomer + "/call-config/update",
+    updateStatus: prefixCustomer + "/call-config/update/status",
+    detail: prefixCustomer + "/call-config/get",
+    delete: prefixCustomer + "/call-config/delete",
   },
   templateSMS: {
-    list: prefixCustomer + "/templateSms/list",
-    update: prefixCustomer + "/templateSms/update",
-    detail: prefixCustomer + "/templateSms/get",
-    delete: prefixCustomer + "/templateSms/delete",
+    list: prefixCustomer + "/template-sms/list",
+    update: prefixCustomer + "/template-sms/update",
+    detail: prefixCustomer + "/template-sms/get",
+    delete: prefixCustomer + "/template-sms/delete",
   },
   partnerSMS: {
-    list: prefixCustomer + "/partnerSms/list",
-    update: prefixCustomer + "/partnerSms/update",
-    detail: prefixCustomer + "/partnerSms/get",
-    delete: prefixCustomer + "/partnerSms/delete",
+    list: prefixCustomer + "/partner-sms/list",
+    update: prefixCustomer + "/partner-sms/update",
+    detail: prefixCustomer + "/partner-sms/get",
+    delete: prefixCustomer + "/partner-sms/delete",
   },
   brandName: {
     list: prefixCustomer + "/brandname/list",
@@ -1785,37 +1785,37 @@ export const urlsApi = {
     changeStatusWhiteList: prefixCustomer + "/whitelist/brandname/update",
   },
   templateCategory: {
-    list: prefixCustomer + "/templateCategory/list",
-    update: prefixCustomer + "/templateCategory/update",
-    detail: prefixCustomer + "/templateCategory/get",
-    delete: prefixCustomer + "/templateCategory/delete",
+    list: prefixCustomer + "/template-category/list",
+    update: prefixCustomer + "/template-category/update",
+    detail: prefixCustomer + "/template-category/get",
+    delete: prefixCustomer + "/template-category/delete",
   },
   templateZalo: {
-    list: prefixCustomer + "/templateZalo/list",
-    update: prefixCustomer + "/templateZalo/update",
-    detail: prefixCustomer + "/templateZalo/get",
-    delete: prefixCustomer + "/templateZalo/delete",
+    list: prefixCustomer + "/template-zalo/list",
+    update: prefixCustomer + "/template-zalo/update",
+    detail: prefixCustomer + "/template-zalo/get",
+    delete: prefixCustomer + "/template-zalo/delete",
   },
   templateEmail: {
-    list: prefixCustomer + "/templateEmail/list",
-    update: prefixCustomer + "/templateEmail/update",
-    detail: prefixCustomer + "/templateEmail/get",
-    delete: prefixCustomer + "/templateEmail/delete",
+    list: prefixCustomer + "/template-email/list",
+    update: prefixCustomer + "/template-email/update",
+    detail: prefixCustomer + "/template-email/get",
+    delete: prefixCustomer + "/template-email/delete",
   },
   partnerEmail: {
-    list: prefixCustomer + "/partnerEmail/list",
-    update: prefixCustomer + "/partnerEmail/update",
-    detail: prefixCustomer + "/partnerEmail/get",
-    delete: prefixCustomer + "/partnerEmail/delete",
+    list: prefixCustomer + "/partner-email/list",
+    update: prefixCustomer + "/partner-email/update",
+    detail: prefixCustomer + "/partner-email/get",
+    delete: prefixCustomer + "/partner-email/delete",
   },
   emailConfig: {
-    list: prefixCustomer + "/emailConfig/list",
-    update: prefixCustomer + "/emailConfig/update",
-    detail: prefixCustomer + "/emailConfig/get",
-    delete: prefixCustomer + "/emailConfig/delete",
+    list: prefixCustomer + "/email-config/list",
+    update: prefixCustomer + "/email-config/update",
+    detail: prefixCustomer + "/email-config/get",
+    delete: prefixCustomer + "/email-config/delete",
 
     //Kiểm tra Email nguồn
-    checkEmail: prefixCustomer + "/email/testConnection",
+    checkEmail: prefixCustomer + "/email/test-connection",
   },
   industry: {
     list: "https://cloud.reborn.vn/market/industry/list",
@@ -1830,9 +1830,9 @@ export const urlsApi = {
     delete: prefixCustomer + "/mailbox/delete",
     viewer: prefixCustomer + "/mailbox/viewer",
     updateViewer: prefixCustomer + "/mailbox/update/viewer",
-    mailboxExchangeList: prefixCustomer + "/mailboxExchange/list",
-    mailboxExchangeUpdate: prefixCustomer + "/mailboxExchange/update",
-    mailboxExchangeDelete: prefixCustomer + "/mailboxExchange/delete",
+    mailboxExchangeList: prefixCustomer + "/mailbox-exchange/list",
+    mailboxExchangeUpdate: prefixCustomer + "/mailbox-exchange/update",
+    mailboxExchangeDelete: prefixCustomer + "/mailbox-exchange/delete",
   },
   warranty: {
     list: prefixCustomer + "/warranty/list",
@@ -1843,17 +1843,17 @@ export const urlsApi = {
     overview: prefixCustomer + "/warranty/get/overview",
     viewer: prefixCustomer + "/warranty/viewer",
     updateStatus: prefixCustomer + "/warranty/update/status",
-    warrantyExchangeUpdate: prefixCustomer + "/warrantyExchange/update",
-    warrantyExchangeDelete: prefixCustomer + "/warrantyExchange/delete",
-    warrantyExchangeList: prefixCustomer + "/warrantyExchange/list",
-    warrantyProcess: prefixCustomer + "/warrantyProcess/update",
-    resetTransferVotes: prefixCustomer + "/supportObject/reset",
+    warrantyExchangeUpdate: prefixCustomer + "/warranty-exchange/update",
+    warrantyExchangeDelete: prefixCustomer + "/warranty-exchange/delete",
+    warrantyExchangeList: prefixCustomer + "/warranty-exchange/list",
+    warrantyProcess: prefixCustomer + "/warranty-process/update",
+    resetTransferVotes: prefixCustomer + "/support-object/reset",
   },
   warrantyCategory: {
-    list: prefixCustomer + "/warrantyCategory/list",
-    update: prefixCustomer + "/warrantyCategory/update",
-    detail: prefixCustomer + "/warrantyCategory/get",
-    delete: prefixCustomer + "/warrantyCategory/delete",
+    list: prefixCustomer + "/warranty-category/list",
+    update: prefixCustomer + "/warranty-category/update",
+    detail: prefixCustomer + "/warranty-category/get",
+    delete: prefixCustomer + "/warranty-category/delete",
   },
   warrantyProc: {
     list: prefixCustomer + "/support/list",
@@ -1863,10 +1863,10 @@ export const urlsApi = {
   },
   // đoạn này sau không dùng nữa bỏ hoặc thay thế cho ông khác
   warrantyStep: {
-    list: prefixCustomer + "/warrantyStep/list",
-    update: prefixCustomer + "/warrantyStep/update",
-    detail: prefixCustomer + "/warrantyStep/get",
-    delete: prefixCustomer + "/warrantyStep/delete",
+    list: prefixCustomer + "/warranty-step/list",
+    update: prefixCustomer + "/warranty-step/update",
+    detail: prefixCustomer + "/warranty-step/get",
+    delete: prefixCustomer + "/warranty-step/delete",
   },
   ticket: {
     list: prefixCustomer + "/ticket/list",
@@ -1877,17 +1877,17 @@ export const urlsApi = {
     delete: prefixCustomer + "/ticket/delete",
     viewer: prefixCustomer + "/ticket/viewer",
     updateStatus: prefixCustomer + "/ticket/update/status",
-    ticketExchangeList: prefixCustomer + "/ticketExchange/list",
-    ticketExchangeUpdate: prefixCustomer + "/ticketExchange/update",
-    ticketExchangeDelete: prefixCustomer + "/ticketExchange/delete",
-    ticketProcess: prefixCustomer + "/ticketProcess/update",
-    resetTransferVotes: prefixCustomer + "/supportObject/reset",
+    ticketExchangeList: prefixCustomer + "/ticket-exchange/list",
+    ticketExchangeUpdate: prefixCustomer + "/ticket-exchange/update",
+    ticketExchangeDelete: prefixCustomer + "/ticket-exchange/delete",
+    ticketProcess: prefixCustomer + "/ticket-process/update",
+    resetTransferVotes: prefixCustomer + "/support-object/reset",
   },
   ticketCategory: {
-    list: prefixCustomer + "/ticketCategory/list",
-    update: prefixCustomer + "/ticketCategory/update",
-    detail: prefixCustomer + "/ticketCategory/get",
-    delete: prefixCustomer + "/ticketCategory/delete",
+    list: prefixCustomer + "/ticket-category/list",
+    update: prefixCustomer + "/ticket-category/update",
+    detail: prefixCustomer + "/ticket-category/get",
+    delete: prefixCustomer + "/ticket-category/delete",
   },
   ticketProc: {
     list: prefixCustomer + "/support/list",
@@ -1896,45 +1896,45 @@ export const urlsApi = {
     delete: prefixCustomer + "/support/delete",
   },
   supportCommon: {
-    supportConfigLst: prefixCustomer + "/supportConfig/list",
-    supportConfigUpdate: prefixCustomer + "/supportConfig/update",
-    supportConfigDelete: prefixCustomer + "/supportConfig/delete",
-    supportConfigDetail: prefixCustomer + "/supportConfig/get",
+    supportConfigLst: prefixCustomer + "/support-config/list",
+    supportConfigUpdate: prefixCustomer + "/support-config/update",
+    supportConfigDelete: prefixCustomer + "/support-config/delete",
+    supportConfigDetail: prefixCustomer + "/support-config/get",
 
     updateStatusSupport: prefixCustomer + "/support/update/status",
 
-    supportLinkLst: prefixCustomer + "/supportLink/list",
-    supportLinkUpdate: prefixCustomer + "/supportLink/update",
-    supportLinkDelete: prefixCustomer + "/supportLink/delete",
+    supportLinkLst: prefixCustomer + "/support-link/list",
+    supportLinkUpdate: prefixCustomer + "/support-link/update",
+    supportLinkDelete: prefixCustomer + "/support-link/delete",
 
-    supportObjectLst: prefixCustomer + "/supportObject/list",
-    supportObjectUpdate: prefixCustomer + "/supportObject/update",
-    supportObjectDelete: prefixCustomer + "/supportObject/delete",
-    takeObject: prefixCustomer + "/supportObject/get/object",
-    checkApproved: prefixCustomer + "/supportObject/checkApproved",
+    supportObjectLst: prefixCustomer + "/support-object/list",
+    supportObjectUpdate: prefixCustomer + "/support-object/update",
+    supportObjectDelete: prefixCustomer + "/support-object/delete",
+    takeObject: prefixCustomer + "/support-object/get/object",
+    checkApproved: prefixCustomer + "/support-object/check-approved",
 
-    supportLogLst: prefixCustomer + "/supportLog/list",
-    supportLogUpdate: prefixCustomer + "/supportLog/update",
-    supportLogDelete: prefixCustomer + "/supportLog/delete",
+    supportLogLst: prefixCustomer + "/support-log/list",
+    supportLogUpdate: prefixCustomer + "/support-log/update",
+    supportLogDelete: prefixCustomer + "/support-log/delete",
 
     // đoạn này là action confirm nút
-    processDone: prefixCustomer + "/supportLog/processDone",
-    processReceive: prefixCustomer + "/supportLog/receive",
-    processRejected: prefixCustomer + "/supportLog/processRejected",
+    processDone: prefixCustomer + "/support-log/process-done",
+    processReceive: prefixCustomer + "/support-log/receive",
+    processRejected: prefixCustomer + "/support-log/process-rejected",
   },
   // đoạn này sau không dùng nữa bỏ hoặc thay thế cho ông khác
   ticketStep: {
-    list: prefixCustomer + "/ticketStep/list",
-    update: prefixCustomer + "/ticketStep/update",
-    detail: prefixCustomer + "/ticketStep/get",
-    delete: prefixCustomer + "/ticketStep/delete",
+    list: prefixCustomer + "/ticket-step/list",
+    update: prefixCustomer + "/ticket-step/update",
+    detail: prefixCustomer + "/ticket-step/get",
+    delete: prefixCustomer + "/ticket-step/delete",
   },
   //API công việc
   workProject: {
-    list: prefixCustomer + "/workProject/list",
-    update: prefixCustomer + "/workProject/update",
-    detail: prefixCustomer + "/workProject/get",
-    delete: prefixCustomer + "/workProject/delete",
+    list: prefixCustomer + "/work-project/list",
+    update: prefixCustomer + "/work-project/update",
+    detail: prefixCustomer + "/work-project/get",
+    delete: prefixCustomer + "/work-project/delete",
   },
   // workOrder: {
   //   list: prefixCustomer + "/workOrder/list",
@@ -1979,129 +1979,129 @@ export const urlsApi = {
   //   updatePriorityLevel: prefixCustomer + "/workOrder/update/priorityLevel",
   // },
   workOrder: {
-    listBpmWorkOrder: prefixBpm + "/workOrder/list",
-    list: prefixCustomer + "/workOrder/list",
-    listV2: prefixCustomer + "/workOrder/listV2",
-    groups: prefixCustomer + "/workOrder/groups",
-    groupsV2: prefixCustomer + "/workOrder/groupsV2",
-    update: prefixCustomer + "/workOrder/update",
-    updateAndInit: prefixCustomer + "/workOrder/save-and-init-process",
-    updateInitProcess: prefixCustomer + "/workOrder/update-init-process",
-    updateEmployee: prefixCustomer + "/workOrder/update/employee",
-    updatePause: prefixCustomer + "/workOrder/update/pause",
-    listPause: prefixCustomer + "/workOrder/list/pause",
-    updateReject: prefixCustomer + "/bpmForm/reject",
-    detail: prefixCustomer + "/workOrder/get",
-    delete: prefixCustomer + "/workOrder/delete",
+    listBpmWorkOrder: prefixBpm + "/work-order/list",
+    list: prefixCustomer + "/work-order/list",
+    listV2: prefixCustomer + "/work-order/list-v2",
+    groups: prefixCustomer + "/work-order/groups",
+    groupsV2: prefixCustomer + "/work-order/groups-v2",
+    update: prefixCustomer + "/work-order/update",
+    updateAndInit: prefixCustomer + "/work-order/save-and-init-process",
+    updateInitProcess: prefixCustomer + "/work-order/update-init-process",
+    updateEmployee: prefixCustomer + "/work-order/update/employee",
+    updatePause: prefixCustomer + "/work-order/update/pause",
+    listPause: prefixCustomer + "/work-order/list/pause",
+    updateReject: prefixCustomer + "/bpm-form/reject",
+    detail: prefixCustomer + "/work-order/get",
+    delete: prefixCustomer + "/work-order/delete",
     // Lấy thông tin người liên quan
-    relatedPeople: prefixCustomer + "/workOrder/get/related_people",
+    relatedPeople: prefixCustomer + "/work-order/get/related-people",
     // cập nhật thông tin người tham gia trong công việc
-    updateParticipant: prefixCustomer + "/workOrder/update/participant",
+    updateParticipant: prefixCustomer + "/work-order/update/participant",
     // cập nhật thông tin khách hàng tham gia trong công việc
-    updateCustomer: prefixCustomer + "/workOrder/update/customer",
+    updateCustomer: prefixCustomer + "/work-order/update/customer",
     // cập nhật thông tin công việc liên quan
-    updateOtherWorkOrder: prefixCustomer + "/workOrder/update/other_work_order",
+    updateOtherWorkOrder: prefixCustomer + "/work-order/update/other-work-order",
     // Lấy danh sách công việc liên quan
-    getOtherWorkOrder: prefixCustomer + "/workOrder/get/other_work_order",
+    getOtherWorkOrder: prefixCustomer + "/work-order/get/other-work-order",
     // Cập nhật tiến độ công việc
-    updateWorkInprogress: prefixCustomer + "/workInprogress/update",
+    updateWorkInprogress: prefixCustomer + "/work-inprogress/update",
     // Lấy tiến độ công việc
-    getWorkInprogress: prefixCustomer + "/workInprogress/get",
+    getWorkInprogress: prefixCustomer + "/work-inprogress/get",
     // Lấy danh sách cập nhật tiến độ công việc
-    getWorkInprogressList: prefixCustomer + "/workInprogress/list",
+    getWorkInprogressList: prefixCustomer + "/work-inprogress/list",
     // Cập nhật trạng thái công việc
-    updateStatus: prefixCustomer + "/workOrder/update/status",
+    updateStatus: prefixCustomer + "/work-order/update/status",
     // Lấy danh sách người giao việc
     employeeManagers: prefixCustomer + "/employee/managers",
     // Lấy danh sách người nhận việc
     employeeAssignees: prefixCustomer + "/employee/assignees",
     // Lấy danh sách người nhận việc trong dự án
-    projectEmployeeAssignees: prefixCustomer + "/workProject/getEmployees",
+    projectEmployeeAssignees: prefixCustomer + "/work-project/get-employees",
     // danh sách trao đổi trong công việc
-    workExchange: prefixCustomer + "/workExchange/list",
+    workExchange: prefixCustomer + "/work-exchange/list",
     // xóa 1 trao đổi trong công việc
-    deleteWorkExchange: prefixCustomer + "/workExchange/delete",
+    deleteWorkExchange: prefixCustomer + "/work-exchange/delete",
     // thêm mới 1 trao đổi công việc
-    addWorkExchange: prefixCustomer + "/workExchange/update",
+    addWorkExchange: prefixCustomer + "/work-exchange/update",
     // chỉnh sửa 1 trao đổi công việc
-    updateWorkExchange: prefixCustomer + "/workExchange/get",
+    updateWorkExchange: prefixCustomer + "/work-exchange/get",
     // cập nhật đánh giá chất lượng công việc
-    updateRating: prefixCustomer + "/workOrder/update/review",
+    updateRating: prefixCustomer + "/work-order/update/review",
     // cập nhật mức độ ưu tiên công việc
-    updatePriorityLevel: prefixCustomer + "/workOrder/update/priorityLevel",
+    updatePriorityLevel: prefixCustomer + "/work-order/update/priority-level",
     //exportOLA
     exportOLA: prefixBpm + "/ola/export",
     //exportSLA
     exportSLA: prefixBpm + "/sla/export",
     // Giao công việc đàm phán, thương thảo hợp đồng mẫu
-    assignNegotiationWork: prefixApplication + "/workAssignment",
+    assignNegotiationWork: prefixApplication + "/work-assignment",
     // Lấy thông tin chi tiết công việc đàm phán, thương thảo hợp đồng mẫu
-    getNegotiationWork: prefixApplication + "/workAssignment",
+    getNegotiationWork: prefixApplication + "/work-assignment",
     // Lưu công việc đàm phán, thương thảo hợp đồng mẫu
-    saveNegotiationWork: prefixApplication + "/negotiationBidderDetail",
+    saveNegotiationWork: prefixApplication + "/negotiation-bidder-detail",
     // hoàn thành công việc đàm phán, thương thảo hợp đồng mẫu
-    completeNegotiationWork: prefixApplication + "/negotiationBidderDetail/complete",
+    completeNegotiationWork: prefixApplication + "/negotiation-bidder-detail/complete",
     // Thu hồi công việc
   },
   formCategory: {
-    list: prefixBpm + "/bpmFormPopup/list",
-    update: prefixBpm + "/bpmFormPopup/update",
-    detail: prefixBpm + "/bpmFormPopup/get",
-    delete: prefixBpm + "/bpmFormPopup/delete",
+    list: prefixBpm + "/bpm-form-popup/list",
+    update: prefixBpm + "/bpm-form-popup/update",
+    detail: prefixBpm + "/bpm-form-popup/get",
+    delete: prefixBpm + "/bpm-form-popup/delete",
   },
   bpmReason: {
-    list: prefixBpm + "/bpm/listReason",
-    update: prefixBpm + "/bpm/updateReason",
-    updateActive: prefixBpm + "/bpm/updateReason/active",
-    detail: prefixBpm + "/bpm/getReason",
-    delete: prefixBpm + "/bpm/deleteReason",
+    list: prefixBpm + "/bpm/list-reason",
+    update: prefixBpm + "/bpm/update-reason",
+    updateActive: prefixBpm + "/bpm/update-reason/active",
+    detail: prefixBpm + "/bpm/get-reason",
+    delete: prefixBpm + "/bpm/delete-reason",
   },
   userTask: {
     // list: prefixCustomer + "/workOrder/list",
-    list: prefixBpm + "/workOrder/list",
-    update: prefixCustomer + "/workOrder/update",
-    detail: prefixBpm + "/workOrder/get",
+    list: prefixBpm + "/work-order/list",
+    update: prefixCustomer + "/work-order/update",
+    detail: prefixBpm + "/work-order/get",
     // detail: prefixBpm + "/workOrder/get",
-    updatePause: prefixCustomer + "/workOrder/update/pause",
+    updatePause: prefixCustomer + "/work-order/update/pause",
     // listPause: prefixCustomer + "/workOrder/list/pause",
-    listPause: prefixBpm + "/workOrder/list/pause",
-    delete: prefixCustomer + "/workOrder/delete",
+    listPause: prefixBpm + "/work-order/list/pause",
+    delete: prefixCustomer + "/work-order/delete",
     // Lấy thông tin người liên quan
-    relatedPeople: prefixCustomer + "/workOrder/get/related_people",
+    relatedPeople: prefixCustomer + "/work-order/get/related-people",
     // cập nhật thông tin người tham gia trong công việc
-    updateParticipant: prefixCustomer + "/workOrder/update/participant",
+    updateParticipant: prefixCustomer + "/work-order/update/participant",
     // cập nhật thông tin khách hàng tham gia trong công việc
-    updateCustomer: prefixCustomer + "/workOrder/update/customer",
+    updateCustomer: prefixCustomer + "/work-order/update/customer",
     // cập nhật thông tin công việc liên quan
-    updateOtherWorkOrder: prefixCustomer + "/workOrder/update/other_work_order",
+    updateOtherWorkOrder: prefixCustomer + "/work-order/update/other-work-order",
     // Lấy danh sách công việc liên quan
-    getOtherWorkOrder: prefixCustomer + "/workOrder/get/other_work_order",
+    getOtherWorkOrder: prefixCustomer + "/work-order/get/other-work-order",
     // Cập nhật tiến độ công việc
-    updateWorkInprogress: prefixSale + "/workInprogress/update",
+    updateWorkInprogress: prefixSale + "/work-inprogress/update",
     // Lấy tiến độ công việc
-    getWorkInprogress: prefixSale + "/workInprogress/get",
+    getWorkInprogress: prefixSale + "/work-inprogress/get",
     // Lấy danh sách cập nhật tiến độ công việc
-    getWorkInprogressList: prefixSale + "/workInprogress/list",
+    getWorkInprogressList: prefixSale + "/work-inprogress/list",
     // Cập nhật trạng thái công việc
-    updateStatus: prefixCustomer + "/workOrder/update/status",
+    updateStatus: prefixCustomer + "/work-order/update/status",
     // Lấy danh sách người giao việc
     employeeManagers: prefixSystem + "/employee/managers",
     // Lấy danh sách người nhận việc
     employeeAssignees: prefixSystem + "/employee/assignees",
     // danh sách trao đổi trong công việc
-    workExchange: prefixSale + "/workExchange/list",
+    workExchange: prefixSale + "/work-exchange/list",
     // báo cáo công việc
-    workReport: prefixCustomer + "/workOrder/report",
+    workReport: prefixCustomer + "/work-order/report",
     // xóa 1 trao đổi trong công việc
-    deleteWorkExchange: prefixSale + "/workExchange/delete",
+    deleteWorkExchange: prefixSale + "/work-exchange/delete",
     // thêm mới 1 trao đổi công việc
-    addWorkExchange: prefixSale + "/workExchange/update",
+    addWorkExchange: prefixSale + "/work-exchange/update",
     // chỉnh sửa 1 trao đổi công việc
-    updateWorkExchange: prefixSale + "/workExchange/get",
+    updateWorkExchange: prefixSale + "/work-exchange/get",
     // cập nhật đánh giá chất lượng công việc
-    updateRating: prefixCustomer + "/workOrder/update/review",
+    updateRating: prefixCustomer + "/work-order/update/review",
     // cập nhật mức độ ưu tiên công việc
-    updatePriorityLevel: prefixCustomer + "/workOrder/update/priorityLevel",
+    updatePriorityLevel: prefixCustomer + "/work-order/update/priority-level",
     //exportOLA
     exportOLA: prefixCustomer + "/ola/export",
     //exportSLA
@@ -2115,11 +2115,11 @@ export const urlsApi = {
     delete: prefixApplication + "/field/delete",
   },
   projectCatalog: {
-    list: prefixApplication + "/projectCatalog/list",
-    update: prefixApplication + "/projectCatalog/update",
-    updateStatus: prefixApplication + "/projectCatalog/update/status",
-    detail: prefixApplication + "/projectCatalog/get",
-    delete: prefixApplication + "/projectCatalog/delete",
+    list: prefixApplication + "/project-catalog/list",
+    update: prefixApplication + "/project-catalog/update",
+    updateStatus: prefixApplication + "/project-catalog/update/status",
+    detail: prefixApplication + "/project-catalog/get",
+    delete: prefixApplication + "/project-catalog/delete",
   },
   material: {
     list: prefixApplication + "/material/list",
@@ -2158,11 +2158,11 @@ export const urlsApi = {
     productionCancel: prefixInventory + "/material/production/cancel",
   },
   businessCategory: {
-    list: prefixApplication + "/businessCategory/list",
-    update: prefixApplication + "/businessCategory/update",
-    updateActive: prefixApplication + "/businessCategory/update/active",
-    detail: prefixApplication + "/businessCategory/get",
-    delete: prefixApplication + "/businessCategory/delete",
+    list: prefixApplication + "/business-category/list",
+    update: prefixApplication + "/business-category/update",
+    updateActive: prefixApplication + "/business-category/update/active",
+    detail: prefixApplication + "/business-category/get",
+    delete: prefixApplication + "/business-category/delete",
   },
   bpmInvestor: {
     list: prefixApplication + "/investor/list",
@@ -2177,9 +2177,9 @@ export const urlsApi = {
     updateActive: prefixApplication + "/organization/update/active",
     detail: prefixApplication + "/organization/get",
     delete: prefixApplication + "/organization/delete",
-    listContact: prefixApplication + "/contactOrg/list",
-    deleteContact: prefixApplication + "/contactOrg/delete",
-    detailContact: prefixApplication + "/contactOrg/get",
+    listContact: prefixApplication + "/contact-org/list",
+    deleteContact: prefixApplication + "/contact-org/delete",
+    detailContact: prefixApplication + "/contact-org/get",
   },
   inventorySupplier: {
     list:         prefixInventory + "/supplier/list",
@@ -2190,29 +2190,29 @@ export const urlsApi = {
     updateActive: prefixInventory + "/supplier/update/active",
   },
   workCategory: {
-    list: prefixApplication + "/workCategory/list",
-    update: prefixApplication + "/workCategory/update",
-    updateStatus: prefixApplication + "/workCategory/update/active",
-    detail: prefixApplication + "/workCategory/get",
-    delete: prefixApplication + "/workCategory/delete",
+    list: prefixApplication + "/work-category/list",
+    update: prefixApplication + "/work-category/update",
+    updateStatus: prefixApplication + "/work-category/update/active",
+    detail: prefixApplication + "/work-category/get",
+    delete: prefixApplication + "/work-category/delete",
   },
 
   procurement: {
-    list: prefixApplication + "/procurementType/list",
-    update: prefixApplication + "/procurementType/update",
-    updateStatus: prefixApplication + "/procurementType/update/status",
-    detail: prefixApplication + "/procurementType/get",
-    delete: prefixApplication + "/procurementType/delete",
+    list: prefixApplication + "/procurement-type/list",
+    update: prefixApplication + "/procurement-type/update",
+    updateStatus: prefixApplication + "/procurement-type/update/status",
+    detail: prefixApplication + "/procurement-type/get",
+    delete: prefixApplication + "/procurement-type/delete",
   },
   workType: {
-    list: prefixCustomer + "/workType/list",
-    update: prefixCustomer + "/workType/update",
-    detail: prefixCustomer + "/workType/get",
-    delete: prefixCustomer + "/workType/delete",
+    list: prefixCustomer + "/work-type/list",
+    update: prefixCustomer + "/work-type/update",
+    detail: prefixCustomer + "/work-type/get",
+    delete: prefixCustomer + "/work-type/delete",
   },
   //API người danh sách người mua, bán
   objectSource: {
-    list: prefixApi + "/objectSource/list",
+    list: prefixApi + "/object-source/list",
   },
   //API quản trị phân hệ
   subsystemAdministration: {
@@ -2221,9 +2221,9 @@ export const urlsApi = {
     detail: prefixCustomer + "/module/get",
     delete: prefixCustomer + "/module/delete",
     // Thêm mới một tài nguyên vào phân hệ
-    addModuleResource: prefixCustomer + "/moduleResource/add",
+    addModuleResource: prefixCustomer + "/module-resource/add",
     // Xóa một tài nguyên hỏi phân hệ
-    removeModuleResource: prefixCustomer + "/moduleResource/remove",
+    removeModuleResource: prefixCustomer + "/module-resource/remove",
   },
   //API quản trị chúc năng
   functionalManagement: {
@@ -2232,88 +2232,88 @@ export const urlsApi = {
     detail: prefixOrg + "/resource/get",
     delete: prefixOrg + "/resource/delete",
     // lấy ra danh sách tài nguyên chưa thuộc phân hệ nào
-    freeResource: prefixOrg + "/resource/list_ex",
+    freeResource: prefixOrg + "/resource/list-ex",
   },
   permission: {
     getPermissionResources: prefixOrg + "/permission/resource",
     //API phân quyền theo phòng ban
     permissionDepartment: prefixOrg + "/permission/info",
     //API phân quyền theo nhóm quyền
-    rolePermission: prefixOrg + "/rolePermission/info",
+    rolePermission: prefixOrg + "/role-permission/info",
     //API thêm quyền cho phòng ban
     permissionDepartmentAdd: prefixOrg + "/permission/add",
     //API thêm quyền cho nhóm quyền
-    permissionRoleAdd: prefixOrg + "/rolePermission/add",
+    permissionRoleAdd: prefixOrg + "/role-permission/add",
     //API xóa quyền được cấp
     permissionDepartmentDelete: prefixOrg + "/permission/remove",
     //API lấy danh sách quyền trước đó cho một đối tượng muốn sao chép
     permissionClone: prefixOrg + "/permission/clone",
 
     //danh sách yêu cầu xin quyền truy cập (mình xin quyền)
-    requestPermissionSource: prefixOrg + "/requestPermission/list/source",
+    requestPermissionSource: prefixOrg + "/request-permission/list/source",
     //gửi yêu cầu xin phê duyệt
-    updateRequestPermission: prefixOrg + "/requestPermission/update",
+    updateRequestPermission: prefixOrg + "/request-permission/update",
 
     //xoá yêu cầu xin phê duyệt
-    deleteRequestPermission: prefixOrg + "/requestPermission/delete",
+    deleteRequestPermission: prefixOrg + "/request-permission/delete",
 
     //danh sách cấp quyền truy cập (đối tác xin quyền)
-    requestPermissionTarget: prefixOrg + "/requestPermission/list/target",
+    requestPermissionTarget: prefixOrg + "/request-permission/list/target",
 
     //phê duyệt quyền truy cập
-    updateApprovePermission: prefixOrg + "/requestPermission/update/approved ",
+    updateApprovePermission: prefixOrg + "/request-permission/update/approved ",
 
     //từ chối quyền truy cập
-    updateRejectPermission: prefixOrg + "/requestPermission/update/rejected ",
+    updateRejectPermission: prefixOrg + "/request-permission/update/rejected ",
   },
   rolePermission: {
     getPermissionResources: prefixOrg + "/permission/resource",
     //API phân quyền theo nhóm quyền
-    rolePermission: prefixOrg + "/rolePermission/info",
+    rolePermission: prefixOrg + "/role-permission/info",
     //API phân quyền theo gói
-    packagePermission: prefixOrg + "/packagePermission/info",
+    packagePermission: prefixOrg + "/package-permission/info",
     //API thêm quyền cho nhóm quyền
-    packagePermissionAdd: prefixOrg + "/packagePermission/add",
+    packagePermissionAdd: prefixOrg + "/package-permission/add",
     //API thêm quyền cho nhóm quyền
-    permissionRoleAdd: prefixOrg + "/rolePermission/add",
+    permissionRoleAdd: prefixOrg + "/role-permission/add",
     //API xóa quyền được cấp
-    permissionRoleDelete: prefixOrg + "/rolePermission/remove",
+    permissionRoleDelete: prefixOrg + "/role-permission/remove",
     //API lấy danh sách quyền trước đó cho một đối tượng muốn sao chép
     permissionClone: prefixOrg + "/permission/clone",
 
     //danh sách yêu cầu xin quyền truy cập (mình xin quyền)
-    requestPermissionSource: prefixOrg + "/requestPermission/list/source",
+    requestPermissionSource: prefixOrg + "/request-permission/list/source",
     //gửi yêu cầu xin phê duyệt
-    updateRequestPermission: prefixOrg + "/requestPermission/update",
+    updateRequestPermission: prefixOrg + "/request-permission/update",
 
     //xoá yêu cầu xin phê duyệt
-    deleteRequestPermission: prefixOrg + "/requestPermission/delete",
+    deleteRequestPermission: prefixOrg + "/request-permission/delete",
 
     //danh sách cấp quyền truy cập (đối tác xin quyền)
-    requestPermissionTarget: prefixOrg + "/requestPermission/list/target",
+    requestPermissionTarget: prefixOrg + "/request-permission/list/target",
 
     //phê duyệt quyền truy cập
-    updateApprovePermission: prefixOrg + "/requestPermission/update/approved ",
+    updateApprovePermission: prefixOrg + "/request-permission/update/approved ",
 
     //từ chối quyền truy cập
-    updateRejectPermission: prefixOrg + "/requestPermission/update/rejected ",
+    updateRejectPermission: prefixOrg + "/request-permission/update/rejected ",
   },
   //API tổng đài
   callCenter: {
     //* Tạo 1 cuộc gọi
-    makeCall: prefixCustomer + "/callCenter/makeCall",
+    makeCall: prefixCustomer + "/call-center/make-call",
     //* Lấy danh sách lịch sử cuộc gọi
-    getHistory: prefixCustomer + "/callCenter/getHistory",
+    getHistory: prefixCustomer + "/call-center/get-history",
     //* Lấy chi tiết lịch sử cuộc gọi
-    getHistoryByCallId: prefixCustomer + "/callCenter/getHistoryByCallId",
+    getHistoryByCallId: prefixCustomer + "/call-center/get-history-by-call-id",
     //* Chuyển một cuộc gọi sang máy khác
-    transferCall: prefixCustomer + "/callCenter/transferCall",
+    transferCall: prefixCustomer + "/call-center/transfer-call",
     //* Thực hiện ngắt cuộc gọi
-    hangupCall: prefixCustomer + "/callCenter/hangupCall",
+    hangupCall: prefixCustomer + "/call-center/hangup-call",
     //* Tạo 1 cuộc gọi đọc mã OTP cho người đăng ký
-    makeCallOTP: prefixCustomer + "/callCenter/makeCallOTP",
+    makeCallOTP: prefixCustomer + "/call-center/make-call-otp",
     //* Danh sách lịch sử cuộc gọi
-    customerCallList: prefixCustomer + "/customerCall/list",
+    customerCallList: prefixCustomer + "/customer-call/list",
   },
   // Báo cáo tồn kho (inventory service)
   inventoryReport: {
@@ -2358,97 +2358,97 @@ export const urlsApi = {
   },
   // phiếu điều chỉnh kho
   adjustmentSlip: {
-    temp: prefixInventory + "/stockAdjust/temp",
-    createAdjSlip: prefixInventory + "/stockAdjust/create",
-    addUpdatePro: prefixInventory + "/stockAdjustDetail/update",
+    temp: prefixInventory + "/stock-adjust/temp",
+    createAdjSlip: prefixInventory + "/stock-adjust/create",
+    addUpdatePro: prefixInventory + "/stock-adjust-detail/update",
     // duyệt phiếu điều chỉnh kho
-    approved: prefixInventory + "/stockAdjust/approved",
+    approved: prefixInventory + "/stock-adjust/approved",
     // từ chối điều chỉnh kho
-    cancel: prefixInventory + "/stockAdjust/cancel",
-    view: prefixInventory + "/stockAdjust/view",
-    list: prefixInventory + "/stockAdjust/list",
+    cancel: prefixInventory + "/stock-adjust/cancel",
+    view: prefixInventory + "/stock-adjust/view",
+    list: prefixInventory + "/stock-adjust/list",
     // lấy danh sách sản phẩm có trong kho
-    productList: prefixInventory + "/inventoryBalance/stockProduct/list",
+    productList: prefixInventory + "/inventory-balance/stock-product/list",
     // xóa đi 1 sản phẩm
-    deletePro: prefixInventory + "/stockAdjustDetail/delete",
+    deletePro: prefixInventory + "/stock-adjust-detail/delete",
   },
   // Phiếu xuất hủy — dùng StockAdjust với adjustType = "DESTROY"
   destroySlip: {
-    list: prefixInventory + "/stockAdjust/destroy/list",
-    temp: prefixInventory + "/stockAdjust/destroy/temp",
-    create: prefixInventory + "/stockAdjust/destroy/create",
+    list: prefixInventory + "/stock-adjust/destroy/list",
+    temp: prefixInventory + "/stock-adjust/destroy/temp",
+    create: prefixInventory + "/stock-adjust/destroy/create",
     // Reuse stockAdjustDetail endpoints
-    addUpdatePro: prefixInventory + "/stockAdjustDetail/update",
-    deletePro: prefixInventory + "/stockAdjustDetail/delete",
-    get: prefixInventory + "/stockAdjust/get",
-    approved: prefixInventory + "/stockAdjust/approved",
-    cancel: prefixInventory + "/stockAdjust/cancel",
-    view: prefixInventory + "/stockAdjust/view",
+    addUpdatePro: prefixInventory + "/stock-adjust-detail/update",
+    deletePro: prefixInventory + "/stock-adjust-detail/delete",
+    get: prefixInventory + "/stock-adjust/get",
+    approved: prefixInventory + "/stock-adjust/approved",
+    cancel: prefixInventory + "/stock-adjust/cancel",
+    view: prefixInventory + "/stock-adjust/view",
   },
   kpiDatasource: {
-    list: prefixCustomer + "/kpiDatasource/list",
-    update: prefixCustomer + "/kpiDatasource/update",
-    delete: prefixCustomer + "/kpiDatasource/delete",
+    list: prefixCustomer + "/kpi-datasource/list",
+    update: prefixCustomer + "/kpi-datasource/update",
+    delete: prefixCustomer + "/kpi-datasource/delete",
   },
   kpiGoal: {
-    list: prefixCustomer + "/kpiGoal/list",
-    update: prefixCustomer + "/kpiGoal/update",
-    delete: prefixCustomer + "/kpiGoal/delete",
-    detail: prefixCustomer + "/kpiGoal/get",
+    list: prefixCustomer + "/kpi-goal/list",
+    update: prefixCustomer + "/kpi-goal/update",
+    delete: prefixCustomer + "/kpi-goal/delete",
+    detail: prefixCustomer + "/kpi-goal/get",
   },
   kpiTemplate: {
-    list: prefixCustomer + "/kpiTemplate/list",
-    update: prefixCustomer + "/kpiTemplate/update",
-    delete: prefixCustomer + "/kpiTemplate/delete",
+    list: prefixCustomer + "/kpi-template/list",
+    update: prefixCustomer + "/kpi-template/update",
+    delete: prefixCustomer + "/kpi-template/delete",
   },
   kpiTemplateGoal: {
-    list: prefixCustomer + "/kpiTemplateGoal/list",
-    update: prefixCustomer + "/kpiTemplateGoal/update",
-    delete: prefixCustomer + "/kpiTemplateGoal/delete",
+    list: prefixCustomer + "/kpi-template-goal/list",
+    update: prefixCustomer + "/kpi-template-goal/update",
+    delete: prefixCustomer + "/kpi-template-goal/delete",
   },
   kpiSetup: {
-    list: prefixCustomer + "/kpiSetup/list",
-    update: prefixCustomer + "/kpiSetup/update/web",
-    delete: prefixCustomer + "/kpiSetup/delete",
+    list: prefixCustomer + "/kpi-setup/list",
+    update: prefixCustomer + "/kpi-setup/update/web",
+    delete: prefixCustomer + "/kpi-setup/delete",
   },
   kpi: {
     list: prefixCustomer + "/kpi/list",
     update: prefixCustomer + "/kpi/update",
     delete: prefixCustomer + "/kpi/delete",
 
-    checkKpiCampaign: prefixCustomer + "/kpiApply/get/byCampaignId",
+    checkKpiCampaign: prefixCustomer + "/kpi-apply/get/by-campaign-id",
     updateKpi: prefixCustomer + "/campaign/update/kpi",
-    listEmployeeKpi: prefixCustomer + "/kpiObject/list",
-    addEmployeeToKpi: prefixCustomer + "/kpiObject/get/byObject",
-    listGoalKpiEmployee: prefixCustomer + "/kpiSetupObject/list/byKotId",
-    saveKpiEmployee: prefixCustomer + "/kpiSetupObject/update/web",
-    deleteEmployeeKpi: prefixCustomer + "/kpiObject/delete",
+    listEmployeeKpi: prefixCustomer + "/kpi-object/list",
+    addEmployeeToKpi: prefixCustomer + "/kpi-object/get/by-object",
+    listGoalKpiEmployee: prefixCustomer + "/kpi-setup-object/list/by-kot-id",
+    saveKpiEmployee: prefixCustomer + "/kpi-setup-object/update/web",
+    deleteEmployeeKpi: prefixCustomer + "/kpi-object/delete",
 
     //chỉ tiêu tương tác trong chiến dịch bán hàng
-    addEmployeeToKpiContact: prefixCustomer + "/campaignSale/interaction/kpis",
-    saveKpiContactEmployee: prefixCustomer + "/campaignSale/interaction/kpis",
-    listEmployeeKpiContact: prefixCustomer + "/campaignSale/interaction/employee",
-    deleteEmployeeKpiContact: prefixCustomer + "/campaignSale/interaction/kpis",
+    addEmployeeToKpiContact: prefixCustomer + "/campaign-sale/interaction/kpis",
+    saveKpiContactEmployee: prefixCustomer + "/campaign-sale/interaction/kpis",
+    listEmployeeKpiContact: prefixCustomer + "/campaign-sale/interaction/employee",
+    deleteEmployeeKpiContact: prefixCustomer + "/campaign-sale/interaction/kpis",
   },
   kpiApply: {
-    list: prefixCustomer + "/kpiApply/list",
-    update: prefixCustomer + "/kpiApply/update",
-    delete: prefixCustomer + "/kpiApply/delete",
+    list: prefixCustomer + "/kpi-apply/list",
+    update: prefixCustomer + "/kpi-apply/update",
+    delete: prefixCustomer + "/kpi-apply/delete",
   },
   kpiObject: {
-    list: prefixCustomer + "/kpiObject/list",
-    update: prefixCustomer + "/kpiObject/update/web",
-    delete: prefixCustomer + "/kpiObject/delete",
-    detail: prefixCustomer + "/kpiObject/get",
-    detailKpiEmployee: prefixCustomer + "/kpiObject/employee/result",
-    exchangeList: prefixCustomer + "/kpiExchange/list",
+    list: prefixCustomer + "/kpi-object/list",
+    update: prefixCustomer + "/kpi-object/update/web",
+    delete: prefixCustomer + "/kpi-object/delete",
+    detail: prefixCustomer + "/kpi-object/get",
+    detailKpiEmployee: prefixCustomer + "/kpi-object/employee/result",
+    exchangeList: prefixCustomer + "/kpi-exchange/list",
     // xóa 1 trao đổi
-    deleteKpiExchange: prefixCustomer + "/kpiExchange/delete",
+    deleteKpiExchange: prefixCustomer + "/kpi-exchange/delete",
     // thêm mới 1 trao đổi
-    addKpiExchange: prefixCustomer + "/kpiExchange/update",
+    addKpiExchange: prefixCustomer + "/kpi-exchange/update",
 
     // chỉnh sửa 1 trao đổi
-    updateKpiExchange: prefixCustomer + "/kpiExchange/get",
+    updateKpiExchange: prefixCustomer + "/kpi-exchange/get",
   },
   installApp: {
     list: prefixCustomer + "/app/list",
@@ -2485,10 +2485,10 @@ export const urlsApi = {
     share: prefixMarket + "/promotion/share",
   },
   fixedPricePromotion: {
-    getProducts: prefixMarket + "/fixedPrice/products",
-    saveProducts: prefixMarket + "/fixedPrice/products/save",
-    activeEntries: prefixMarket + "/fixedPrice/active-entries",
-    deleteProduct: prefixMarket + "/fixedPrice/product/delete",
+    getProducts: prefixMarket + "/fixed-price/products",
+    saveProducts: prefixMarket + "/fixed-price/products/save",
+    activeEntries: prefixMarket + "/fixed-price/active-entries",
+    deleteProduct: prefixMarket + "/fixed-price/product/delete",
   },
   couponProgram: {
     list: prefixMarket + "/coupon/list",
@@ -2502,10 +2502,10 @@ export const urlsApi = {
     share: prefixMarket + "/coupon/share",
   },
   email: {
-    list: prefixCustomer + "/outlookMail/list",
-    detail: prefixCustomer + "/outlookMail/get",
-    sendEmail: prefixCustomer + "/outlookMail/sendEmail",
-    delete: prefixCustomer + "/outlookMail/delete",
+    list: prefixCustomer + "/outlook-mail/list",
+    detail: prefixCustomer + "/outlook-mail/get",
+    sendEmail: prefixCustomer + "/outlook-mail/send-email",
+    delete: prefixCustomer + "/outlook-mail/delete",
     sendEmailConfirm: prefixCustomer + "/promotion/init-receive-task",
 
     // call api email
@@ -2529,58 +2529,58 @@ export const urlsApi = {
     updateStatus: prefixCustomer + "/ma/update/status",
     detailMA: prefixCustomer + "/ma/detail",
     updateConfigNode: prefixCustomer + "/ma/update-config",
-    listCustomer: prefixCustomer + "/maCustomer/customers",
+    listCustomer: prefixCustomer + "/ma-customer/customers",
     listCustomerByType: prefixCustomer + "/ma/customer/get",
-    listCustomerByCareer: prefixCustomer + "/ma/statistic/custCareer",
-    listCustomerByCustGroup: prefixCustomer + "/ma/statistic/custGroup",
-    listCustomerByCustCard: prefixCustomer + "/ma/statistic/custCard",
-    listCustomerByDate: prefixCustomer + "/ma/statistic/byDate",
-    detailCustomer: prefixCustomer + "/maCustomer/result",
-    deleteCustomer: prefixCustomer + "/maCustomer/delete",
-    updateMapping: prefixCustomer + "/maMapping/update",
-    detailMapping: prefixCustomer + "/maMapping/get",
+    listCustomerByCareer: prefixCustomer + "/ma/statistic/cust-career",
+    listCustomerByCustGroup: prefixCustomer + "/ma/statistic/cust-group",
+    listCustomerByCustCard: prefixCustomer + "/ma/statistic/cust-card",
+    listCustomerByDate: prefixCustomer + "/ma/statistic/by-date",
+    detailCustomer: prefixCustomer + "/ma-customer/result",
+    deleteCustomer: prefixCustomer + "/ma-customer/delete",
+    updateMapping: prefixCustomer + "/ma-mapping/update",
+    detailMapping: prefixCustomer + "/ma-mapping/get",
     //Quy tắc tích điểm
-    listLoyaltyProgram: prefixBiz + "/market/loyaltyProgram/list",
-    updateLoyaltyProgram: prefixBiz + "/market/loyaltyProgram/update",
-    deleteLoyaltyProgram: prefixBiz + "/market/loyaltyProgram/delete",
+    listLoyaltyProgram: prefixBiz + "/market/loyalty-program/list",
+    updateLoyaltyProgram: prefixBiz + "/market/loyalty-program/update",
+    deleteLoyaltyProgram: prefixBiz + "/market/loyalty-program/delete",
     //Danh sách thành viên
-    listLoyaltyPointLedger: prefixBiz + "/market/loyaltyPointLedger/list",
-    updateLoyaltyPointLedger: prefixBiz + "/market/loyaltyPointLedger/update",
-    deleteLoyaltyPointLedger: prefixBiz + "/market/loyaltyPointLedger/delete",
+    listLoyaltyPointLedger: prefixBiz + "/market/loyalty-point-ledger/list",
+    updateLoyaltyPointLedger: prefixBiz + "/market/loyalty-point-ledger/update",
+    deleteLoyaltyPointLedger: prefixBiz + "/market/loyalty-point-ledger/delete",
     //Danh sách đổi thưởng
-    listLoyaltyReward: prefixBiz + "/market/loyaltyReward/list",
-    getLoyaltyReward: prefixBiz + "/market/loyaltyReward/get",
-    updateLoyaltyReward: prefixBiz + "/market/loyaltyReward/update",
-    deleteLoyaltyReward: prefixBiz + "/market/loyaltyReward/delete",
-    loyaltyReportSummary: prefixBiz + "/market/loyaltyReport/summary",
+    listLoyaltyReward: prefixBiz + "/market/loyalty-reward/list",
+    getLoyaltyReward: prefixBiz + "/market/loyalty-reward/get",
+    updateLoyaltyReward: prefixBiz + "/market/loyalty-reward/update",
+    deleteLoyaltyReward: prefixBiz + "/market/loyalty-reward/delete",
+    loyaltyReportSummary: prefixBiz + "/market/loyalty-report/summary",
     //phân hạng hội viên
-    listLoyaltySegment: prefixBiz + "/market/loyaltySegment/list",
-    updateLoyaltySegment: prefixBiz + "/market/loyaltySegment/update",
-    deleteLoyaltySegment: prefixBiz + "/market/loyaltySegment/delete",
+    listLoyaltySegment: prefixBiz + "/market/loyalty-segment/list",
+    updateLoyaltySegment: prefixBiz + "/market/loyalty-segment/update",
+    deleteLoyaltySegment: prefixBiz + "/market/loyalty-segment/delete",
     //ví hội viên
-    listLoyaltyWallet: prefixBiz + "/market/loyaltyWallet/list",
-    getWalletByCustomer: prefixBiz + "/market/loyaltyWallet/getByCustomer",
+    listLoyaltyWallet: prefixBiz + "/market/loyalty-wallet/list",
+    getWalletByCustomer: prefixBiz + "/market/loyalty-wallet/get-by-customer",
     promotionCheckEligible: prefixBiz + "/market/promotion/check-eligible",
-    createLoyaltyWallet: prefixBiz + "/market/loyaltyWallet/update",
-    fluctuatePoint: prefixBiz + "/market/loyaltyPointLedger/fluctuatePoint",
-    getLoyaltyConfig: prefixBiz + "/market/loyaltyConfig/get",
-    updateLoyaltyConfig: prefixBiz + "/market/loyaltyConfig/update",
-    consumePoint: prefixBiz + "/market/loyaltyPointLedger/consumePoint",
+    createLoyaltyWallet: prefixBiz + "/market/loyalty-wallet/update",
+    fluctuatePoint: prefixBiz + "/market/loyalty-point-ledger/fluctuate-point",
+    getLoyaltyConfig: prefixBiz + "/market/loyalty-config/get",
+    updateLoyaltyConfig: prefixBiz + "/market/loyalty-config/update",
+    consumePoint: prefixBiz + "/market/loyalty-point-ledger/consume-point",
   },
 
   //TODO: Start quy trình bpm
   businessProcess: {
-    list: prefixBpm + "/businessProcess/list",
-    clone: prefixBpm + "/businessProcess/clone",
-    update: prefixBpm + "/businessProcess/update",
-    get: prefixBpm + "/businessProcess/get",
-    detail: prefixBpm + "/businessProcess/detail",
-    delete: prefixBpm + "/businessProcess/delete",
+    list: prefixBpm + "/business-process/list",
+    clone: prefixBpm + "/business-process/clone",
+    update: prefixBpm + "/business-process/update",
+    get: prefixBpm + "/business-process/get",
+    detail: prefixBpm + "/business-process/detail",
+    delete: prefixBpm + "/business-process/delete",
 
-    addNode: prefixBpm + "/businessProcess/configNode/update",
-    deleteNode: prefixBpm + "/businessProcess/node/delete",
+    addNode: prefixBpm + "/business-process/config-node/update",
+    deleteNode: prefixBpm + "/business-process/node/delete",
 
-    updateLinkNode: prefixBpm + "/businessProcess/updateConfig",
+    updateLinkNode: prefixBpm + "/business-process/update-config",
 
     //lấy danh sách các bước
     listStep: prefixBpm + "/workflow/list",
@@ -2589,362 +2589,362 @@ export const urlsApi = {
     //xoas các bước
     deleteStep: prefixBpm + "/workflow/delete",
     //lấy danh sách item workflow ở step
-    listWorkflow: prefixBpm + "/workflowStatus/list",
-    listWorkflowCloud: prefixCustomer + "/workflowStatus/list",
-    deleteWorkflow: prefixBpm + "/workflowStatus/delete",
+    listWorkflow: prefixBpm + "/workflow-status/list",
+    listWorkflowCloud: prefixCustomer + "/workflow-status/list",
+    deleteWorkflow: prefixBpm + "/workflow-status/delete",
 
     //update sla
-    updateSLA: prefixBpm + "/businessProcess/update/sla",
+    updateSLA: prefixBpm + "/business-process/update/sla",
 
     //bpmaddNode
-    bpmAddNode: prefixBpm + "/bpmConfigNode/update",
-    bpmAddNameNode: prefixBpm + "/bpmConfigNode/update/name",
-    bpmDeleteNode: prefixBpm + "/bpmConfigNode/delete",
-    bpmListNode: prefixBpm + "/bpmConfigNode/list",
-    bpmDetailNode: prefixBpm + "/bpmConfigNode/get",
+    bpmAddNode: prefixBpm + "/bpm-config-node/update",
+    bpmAddNameNode: prefixBpm + "/bpm-config-node/update/name",
+    bpmDeleteNode: prefixBpm + "/bpm-config-node/delete",
+    bpmListNode: prefixBpm + "/bpm-config-node/list",
+    bpmDetailNode: prefixBpm + "/bpm-config-node/get",
     //bpmaddLinkNode
-    bpmAddLinkNode: prefixBpm + "/bpmConfigLinkNode/update",
-    bpmAddNameLinkNode: prefixBpm + "/bpmConfigLinkNode/update/name",
-    bpmDeleteLinkNode: prefixBpm + "/bpmConfigLinkNode/delete",
-    bpmAddLinkNodeConfig: prefixBpm + "/bpmConfigLinkNode/update/config",
-    bpmGetLinkNode: prefixBpm + "/bpmConfigLinkNode/get",
+    bpmAddLinkNode: prefixBpm + "/bpm-config-link-node/update",
+    bpmAddNameLinkNode: prefixBpm + "/bpm-config-link-node/update/name",
+    bpmDeleteLinkNode: prefixBpm + "/bpm-config-link-node/delete",
+    bpmAddLinkNodeConfig: prefixBpm + "/bpm-config-link-node/update/config",
+    bpmGetLinkNode: prefixBpm + "/bpm-config-link-node/get",
     //save diagram
-    saveDiagram: prefixBpm + "/businessProcess/update/config",
+    saveDiagram: prefixBpm + "/business-process/update/config",
     //get diagram
-    getDetailDiagram: prefixBpm + "/businessProcess/get",
+    getDetailDiagram: prefixBpm + "/business-process/get",
 
     //Lấy về biến quy trình
-    listVariableDeclare: prefixBpm + "/variableDeclare/list",
-    updateVariableDeclare: prefixBpm + "/variableDeclare/update",
-    detailVariableDeclare: prefixBpm + "/variableDeclare/get",
-    deleteVariableDeclare: prefixBpm + "/variableDeclare/delete",
+    listVariableDeclare: prefixBpm + "/variable-declare/list",
+    updateVariableDeclare: prefixBpm + "/variable-declare/update",
+    detailVariableDeclare: prefixBpm + "/variable-declare/get",
+    deleteVariableDeclare: prefixBpm + "/variable-declare/delete",
 
     //Lấy về giá trị biến quy trình
-    listVariableInstance: prefixBpm + "/variableInstance/list",
+    listVariableInstance: prefixBpm + "/variable-instance/list",
 
     //Lấy về toàn bộ biến quy trình
-    listVariableDeclareGlobal: prefixBpm + "/variableDeclare/list/global",
+    listVariableDeclareGlobal: prefixBpm + "/variable-declare/list/global",
 
     //user task
-    updateUserTask: prefixBpm + "/bpmForm/update",
-    detailUserTask: prefixBpm + "/bpmForm/get",
-    cloneUserTask: prefixBpm + "/userTask/clone",
+    updateUserTask: prefixBpm + "/bpm-form/update",
+    detailUserTask: prefixBpm + "/bpm-form/get",
+    cloneUserTask: prefixBpm + "/user-task/clone",
     //clone form mapping
-    cloneFormMapping: prefixBpm + "/formMapping/clone",
+    cloneFormMapping: prefixBpm + "/form-mapping/clone",
     //list trường trong form
-    listBpmForm: prefixBpm + "/bpmForm/list",
+    listBpmForm: prefixBpm + "/bpm-form/list",
     //Lấy về toàn bộ trường trong quy trình
-    listBpmFormGlobal: prefixBpm + "/bpmForm/list/global",
+    listBpmFormGlobal: prefixBpm + "/bpm-form/list/global",
     //Lấy về list giá trị form quy trình
-    listBpmFormData: prefixBpm + "/bpmFormData/list",
+    listBpmFormData: prefixBpm + "/bpm-form-data/list",
     //Lấy về cụ thể giá trị form quy trình
-    getBpmFormDataByNodeId: prefixBpm + "/bpmFormData/getByNodeId",
+    getBpmFormDataByNodeId: prefixBpm + "/bpm-form-data/get-by-node-id",
     //list trường trong form để mapping
-    listBpmFormMapping: prefixBpm + "/bpmForm/list/mapping",
+    listBpmFormMapping: prefixBpm + "/bpm-form/list/mapping",
     //service task
-    updateServiceTask: prefixBpm + "/serviceTask/update",
-    detailServiceTask: prefixBpm + "/serviceTask/get",
-    cloneServiceTask: prefixBpm + "/serviceTask/clone",
+    updateServiceTask: prefixBpm + "/service-task/update",
+    detailServiceTask: prefixBpm + "/service-task/get",
+    cloneServiceTask: prefixBpm + "/service-task/clone",
     //script task
-    updateScriptTask: prefixBpm + "/scriptTask/update",
-    detailScriptTask: prefixBpm + "/scriptTask/get",
-    cloneScriptTask: prefixBpm + "/scriptTask/clone",
+    updateScriptTask: prefixBpm + "/script-task/update",
+    detailScriptTask: prefixBpm + "/script-task/get",
+    cloneScriptTask: prefixBpm + "/script-task/clone",
     //manual task
-    updateManualTask: prefixBpm + "/manualTask/update",
-    detailManualTask: prefixBpm + "/manualTask/get",
-    cloneManualTask: prefixBpm + "/manualTask/clone",
+    updateManualTask: prefixBpm + "/manual-task/update",
+    detailManualTask: prefixBpm + "/manual-task/get",
+    cloneManualTask: prefixBpm + "/manual-task/clone",
     //business rule task
-    updateBusinessRuleTask: prefixBpm + "/businessRuleTask/update",
-    updateBusinessRuleTaskAdvance: prefixBpm + "/decisionTable/update",
-    updateBusinessRuleTaskComplex: prefixBpm + "/bpmAssignmentRule/update",
-    detailBusinessRuleTask: prefixBpm + "/businessRuleTask/get",
-    updatePickMode: prefixBpm + "/decisionTable/update/pickMode",
-    cloneBusinessRuleTask: prefixBpm + "/businessRuleTask/clone",
-    detailBusinessRuleTaskAdvance: prefixBpm + "/decisionTable/get",
-    detailBusinessRuleTaskComplex: prefixBpm + "/bpmAssignmentRule/get",
-    checkType: prefixBpm + "/businessRuleTask/checkType",
-    checkTypeOLA: prefixBpm + "/ola/checkType",
+    updateBusinessRuleTask: prefixBpm + "/business-rule-task/update",
+    updateBusinessRuleTaskAdvance: prefixBpm + "/decision-table/update",
+    updateBusinessRuleTaskComplex: prefixBpm + "/bpm-assignment-rule/update",
+    detailBusinessRuleTask: prefixBpm + "/business-rule-task/get",
+    updatePickMode: prefixBpm + "/decision-table/update/pick-mode",
+    cloneBusinessRuleTask: prefixBpm + "/business-rule-task/clone",
+    detailBusinessRuleTaskAdvance: prefixBpm + "/decision-table/get",
+    detailBusinessRuleTaskComplex: prefixBpm + "/bpm-assignment-rule/get",
+    checkType: prefixBpm + "/business-rule-task/check-type",
+    checkTypeOLA: prefixBpm + "/ola/check-type",
     //send task
-    updateSendTask: prefixBpm + "/sendTask/update",
-    detailSendTask: prefixBpm + "/sendTask/get",
-    cloneSendTask: prefixBpm + "/sendTask/clone",
+    updateSendTask: prefixBpm + "/send-task/update",
+    detailSendTask: prefixBpm + "/send-task/get",
+    cloneSendTask: prefixBpm + "/send-task/clone",
     //Message Intermediate Throw Event
-    updateMessageIntermediateThrowEvent: prefixBpm + "/messageIntermediateThrowEvent/update",
-    detailMessageIntermediateThrowEvent: prefixBpm + "/messageIntermediateThrowEvent/get",
-    cloneMessageIntermediateThrowEvent: prefixBpm + "/messageIntermediateThrowEvent/clone",
+    updateMessageIntermediateThrowEvent: prefixBpm + "/message-intermediate-throw-event/update",
+    detailMessageIntermediateThrowEvent: prefixBpm + "/message-intermediate-throw-event/get",
+    cloneMessageIntermediateThrowEvent: prefixBpm + "/message-intermediate-throw-event/clone",
     //Message Intermediate Catch Event
-    updateMessageIntermediateCatchEvent: prefixBpm + "/messageIntermediateCatchEvent/update",
-    detailMessageIntermediateCatchEvent: prefixBpm + "/messageIntermediateCatchEvent/get",
-    cloneMessageIntermediateCatchEvent: prefixBpm + "/messageIntermediateCatchEvent/clone",
+    updateMessageIntermediateCatchEvent: prefixBpm + "/message-intermediate-catch-event/update",
+    detailMessageIntermediateCatchEvent: prefixBpm + "/message-intermediate-catch-event/get",
+    cloneMessageIntermediateCatchEvent: prefixBpm + "/message-intermediate-catch-event/clone",
     //receive task
-    updateReceiveTask: prefixBpm + "/receiveTask/update",
-    detailReceiveTask: prefixBpm + "/receiveTask/get",
-    cloneReceiveTask: prefixBpm + "/receiveTask/clone",
+    updateReceiveTask: prefixBpm + "/receive-task/update",
+    detailReceiveTask: prefixBpm + "/receive-task/get",
+    cloneReceiveTask: prefixBpm + "/receive-task/clone",
     //call activity
-    updateCallActivityTask: prefixBpm + "/callActivity/update",
-    detailCallActivityTask: prefixBpm + "/callActivity/get",
-    cloneCallActivityTask: prefixBpm + "/callActivity/clone",
+    updateCallActivityTask: prefixBpm + "/call-activity/update",
+    detailCallActivityTask: prefixBpm + "/call-activity/get",
+    cloneCallActivityTask: prefixBpm + "/call-activity/clone",
     //parallel gateway
-    updateParallelGateway: prefixBpm + "/parallelGateway/update",
-    detailParallelGateway: prefixBpm + "/parallelGateway/get",
-    cloneParallelGateway: prefixBpm + "/parallelGateway/clone",
+    updateParallelGateway: prefixBpm + "/parallel-gateway/update",
+    detailParallelGateway: prefixBpm + "/parallel-gateway/get",
+    cloneParallelGateway: prefixBpm + "/parallel-gateway/clone",
     //exclusive gateway
-    updateExclusiveGateway: prefixBpm + "/exclusiveGateway/update",
-    detailExclusiveGateway: prefixBpm + "/exclusiveGateway/get",
-    cloneExclusiveGateway: prefixBpm + "/exclusiveGateway/clone",
+    updateExclusiveGateway: prefixBpm + "/exclusive-gateway/update",
+    detailExclusiveGateway: prefixBpm + "/exclusive-gateway/get",
+    cloneExclusiveGateway: prefixBpm + "/exclusive-gateway/clone",
     //inclusive gateway
-    updateInclusiveGateway: prefixBpm + "/inclusiveGateway/update",
-    detailInclusiveGateway: prefixBpm + "/inclusiveGateway/get",
-    cloneInclusiveGateway: prefixBpm + "/inclusiveGateway/clone",
+    updateInclusiveGateway: prefixBpm + "/inclusive-gateway/update",
+    detailInclusiveGateway: prefixBpm + "/inclusive-gateway/get",
+    cloneInclusiveGateway: prefixBpm + "/inclusive-gateway/clone",
     //complex gateway
-    updateComplexGateway: prefixBpm + "/complexGateway/update",
-    detailComplexGateway: prefixBpm + "/complexGateway/get",
-    cloneComplexGateway: prefixBpm + "/complexGateway/clone",
+    updateComplexGateway: prefixBpm + "/complex-gateway/update",
+    detailComplexGateway: prefixBpm + "/complex-gateway/get",
+    cloneComplexGateway: prefixBpm + "/complex-gateway/clone",
     //complex gateway
     updateSubprocess: prefixBpm + "/subprocess/update",
     detailSubprocess: prefixBpm + "/subprocess/get",
     cloneSubprocess: prefixBpm + "/subprocess/clone",
     //timer start event
-    updateTimerStartEvent: prefixBpm + "/timerTask/update",
-    detailTimerStartEvent: prefixBpm + "/timerTask/get",
-    cloneTimerStartEvent: prefixBpm + "/timerTask/clone",
+    updateTimerStartEvent: prefixBpm + "/timer-task/update",
+    detailTimerStartEvent: prefixBpm + "/timer-task/get",
+    cloneTimerStartEvent: prefixBpm + "/timer-task/clone",
     //timer intermediate catch event
-    updateTimerIntermediateCatchEvent: prefixBpm + "/timerIntermediate/update",
-    detailTimerIntermediateCatchEvent: prefixBpm + "/timerTask/get",
-    cloneTimerIntermediateCatchEvent: prefixBpm + "/timerTask/clone",
+    updateTimerIntermediateCatchEvent: prefixBpm + "/timer-intermediate/update",
+    detailTimerIntermediateCatchEvent: prefixBpm + "/timer-task/get",
+    cloneTimerIntermediateCatchEvent: prefixBpm + "/timer-task/clone",
     //start event
-    updateStartTaskEvent: prefixBpm + "/startTask/update",
-    detailStartTaskEvent: prefixBpm + "/startTask/get",
-    cloneStartTaskEvent: prefixBpm + "/startTask/clone",
+    updateStartTaskEvent: prefixBpm + "/start-task/update",
+    detailStartTaskEvent: prefixBpm + "/start-task/get",
+    cloneStartTaskEvent: prefixBpm + "/start-task/clone",
     //message start event
-    updateStartMessageEvent: prefixBpm + "/messageStartEvent/update",
-    detailStartMessageEvent: prefixBpm + "/messageStartEvent/get",
-    cloneStartMessageEvent: prefixBpm + "/messageStartEvent/clone",
+    updateStartMessageEvent: prefixBpm + "/message-start-event/update",
+    detailStartMessageEvent: prefixBpm + "/message-start-event/get",
+    cloneStartMessageEvent: prefixBpm + "/message-start-event/clone",
     //end event
-    updateEndTaskEvent: prefixBpm + "/endTask/update",
-    detailEndTaskEvent: prefixBpm + "/endTask/get",
-    cloneEndTaskEvent: prefixBpm + "/endTask/clone",
+    updateEndTaskEvent: prefixBpm + "/end-task/update",
+    detailEndTaskEvent: prefixBpm + "/end-task/get",
+    cloneEndTaskEvent: prefixBpm + "/end-task/clone",
 
     //Escalation intermediate throw event
-    updateEscalationIntermediateThrowEvent: prefixBpm + "/escalationThrowTask/update",
-    detailEscalationIntermediateThrowEvent: prefixBpm + "/escalationThrowTask/get",
-    cloneEscalationIntermediateThrowEvent: prefixBpm + "/escalationThrowTask/clone",
+    updateEscalationIntermediateThrowEvent: prefixBpm + "/escalation-throw-task/update",
+    detailEscalationIntermediateThrowEvent: prefixBpm + "/escalation-throw-task/get",
+    cloneEscalationIntermediateThrowEvent: prefixBpm + "/escalation-throw-task/clone",
 
     //Escalation start event
-    updateEscalationStartEvent: prefixBpm + "/escalationStartEventTask/update",
-    detailEscalationStartEvent: prefixBpm + "/escalationStartEventTask/get",
-    cloneEscalationStartEvent: prefixBpm + "/escalationStartEventTask/clone",
+    updateEscalationStartEvent: prefixBpm + "/escalation-start-event-task/update",
+    detailEscalationStartEvent: prefixBpm + "/escalation-start-event-task/get",
+    cloneEscalationStartEvent: prefixBpm + "/escalation-start-event-task/clone",
 
     //conditional catch intermediate
-    updateConditionalCatchEventTask: prefixBpm + "/conditionalCatchEventTask/update",
-    detailConditionalCatchEventTask: prefixBpm + "/conditionalCatchEventTask/get",
+    updateConditionalCatchEventTask: prefixBpm + "/conditional-catch-event-task/update",
+    detailConditionalCatchEventTask: prefixBpm + "/conditional-catch-event-task/get",
 
     //signal start event
-    updateSignalStartEvent: prefixBpm + "/signalStartEvent/update",
-    detailSignalStartEvent: prefixBpm + "/signalStartEvent/get",
-    cloneSignalStartEvent: prefixBpm + "/signalStartEvent/clone",
+    updateSignalStartEvent: prefixBpm + "/signal-start-event/update",
+    detailSignalStartEvent: prefixBpm + "/signal-start-event/get",
+    cloneSignalStartEvent: prefixBpm + "/signal-start-event/clone",
 
     //signal end event
-    updateSignalEndEvent: prefixBpm + "/signalEndEvent/update",
-    detailSignalEndEvent: prefixBpm + "/signalEndEvent/get",
-    cloneSignalEndEvent: prefixBpm + "/signalEndEvent/clone",
+    updateSignalEndEvent: prefixBpm + "/signal-end-event/update",
+    detailSignalEndEvent: prefixBpm + "/signal-end-event/get",
+    cloneSignalEndEvent: prefixBpm + "/signal-end-event/clone",
 
     //signal intermediate throw event
-    updateSignalIntermediateThrowEvent: prefixBpm + "/signalThrowEvent/update",
-    detailSignalIntermediateThrowEvent: prefixBpm + "/signalThrowEvent/get",
-    cloneSignalIntermediateThrowEvent: prefixBpm + "/signalThrowEvent/clone",
+    updateSignalIntermediateThrowEvent: prefixBpm + "/signal-throw-event/update",
+    detailSignalIntermediateThrowEvent: prefixBpm + "/signal-throw-event/get",
+    cloneSignalIntermediateThrowEvent: prefixBpm + "/signal-throw-event/clone",
 
     //signal intermediate catch event
-    updateSignalIntermediateCatchEvent: prefixBpm + "/signalCatchEvent/update",
-    detailSignalIntermediateCatchEvent: prefixBpm + "/signalCatchEvent/get",
-    cloneSignalIntermediateCatchEvent: prefixBpm + "/signalCatchEvent/clone",
+    updateSignalIntermediateCatchEvent: prefixBpm + "/signal-catch-event/update",
+    detailSignalIntermediateCatchEvent: prefixBpm + "/signal-catch-event/get",
+    cloneSignalIntermediateCatchEvent: prefixBpm + "/signal-catch-event/clone",
 
     //conditional start event
-    updateConditionalStartEvent: prefixBpm + "/conditionalStartEventTask/update",
-    detailConditionalStartEvent: prefixBpm + "/conditionalStartEventTask/get",
+    updateConditionalStartEvent: prefixBpm + "/conditional-start-event-task/update",
+    detailConditionalStartEvent: prefixBpm + "/conditional-start-event-task/get",
 
     //Compensation Intermediate throw event
-    updateCompensationIntermediateThrowEvent: prefixBpm + "/compensationIntermediateThrowEvent/update",
-    detailCompensationIntermediateThrowEvent: prefixBpm + "/compensationIntermediateThrowEvent/get",
-    cloneCompensationIntermediateThrowEvent: prefixBpm + "/compensationIntermediateThrowEvent/clone",
-    getCompensationRef: prefixBpm + "/bpmConfigNode/list/compensation",
+    updateCompensationIntermediateThrowEvent: prefixBpm + "/compensation-intermediate-throw-event/update",
+    detailCompensationIntermediateThrowEvent: prefixBpm + "/compensation-intermediate-throw-event/get",
+    cloneCompensationIntermediateThrowEvent: prefixBpm + "/compensation-intermediate-throw-event/clone",
+    getCompensationRef: prefixBpm + "/bpm-config-node/list/compensation",
 
     //Compensation End Event
-    updateCompensationEndEvent: prefixBpm + "/compensationEndEvent/update",
-    detailCompensationEndEvent: prefixBpm + "/compensationEndEvent/get",
-    cloneCompensationEndEvent: prefixBpm + "/compensationEndEvent/clone",
+    updateCompensationEndEvent: prefixBpm + "/compensation-end-event/update",
+    detailCompensationEndEvent: prefixBpm + "/compensation-end-event/get",
+    cloneCompensationEndEvent: prefixBpm + "/compensation-end-event/clone",
 
     //Terminate end event
-    updateTerminateEndEvent: prefixBpm + "/terminateEndEvent/update",
-    detailTerminateEndEvent: prefixBpm + "/terminateEndEvent/get",
-    cloneTerminateEndEvent: prefixBpm + "/terminateEndEvent/clone",
+    updateTerminateEndEvent: prefixBpm + "/terminate-end-event/update",
+    detailTerminateEndEvent: prefixBpm + "/terminate-end-event/get",
+    cloneTerminateEndEvent: prefixBpm + "/terminate-end-event/clone",
 
     //Error end event
-    updateErrorEndEvent: prefixBpm + "/errorEndEvent/update",
-    detailErrorEndEvent: prefixBpm + "/errorEndEvent/get",
-    cloneErrorEndEvent: prefixBpm + "/errorEndEvent/clone",
+    updateErrorEndEvent: prefixBpm + "/error-end-event/update",
+    detailErrorEndEvent: prefixBpm + "/error-end-event/get",
+    cloneErrorEndEvent: prefixBpm + "/error-end-event/clone",
 
     //error start event
-    updateErrorStartEvent: prefixBpm + "/errorStartEvent/update",
-    detailErrorStartEvent: prefixBpm + "/errorStartEvent/get",
-    cloneErrorStartEvent: prefixBpm + "/errorStartEvent/clone",
+    updateErrorStartEvent: prefixBpm + "/error-start-event/update",
+    detailErrorStartEvent: prefixBpm + "/error-start-event/get",
+    cloneErrorStartEvent: prefixBpm + "/error-start-event/clone",
 
     //link catch intermediate
-    updateLinkCatchEventTask: prefixBpm + "/linkEvent/update",
-    detailLinkCatchEventTask: prefixBpm + "/linkCatchEvent/get",
+    updateLinkCatchEventTask: prefixBpm + "/link-event/update",
+    detailLinkCatchEventTask: prefixBpm + "/link-catch-event/get",
 
     //message end event
-    updateEndMessageEvent: prefixBpm + "/messageEndEvent/update",
-    detailEndMessageEvent: prefixBpm + "/messageEndEvent/get",
-    cloneEndMessageEvent: prefixBpm + "/messageEndEvent/clone",
+    updateEndMessageEvent: prefixBpm + "/message-end-event/update",
+    detailEndMessageEvent: prefixBpm + "/message-end-event/get",
+    cloneEndMessageEvent: prefixBpm + "/message-end-event/clone",
     //bpm participant
-    updateBpmParticipant: prefixBpm + "/bpmParticipant/update",
-    getBpmParticipant: prefixBpm + "/bpmParticipant/get",
+    updateBpmParticipant: prefixBpm + "/bpm-participant/update",
+    getBpmParticipant: prefixBpm + "/bpm-participant/get",
 
     //Lấy về danh sách luồng tới
-    listLinkTo: prefixBpm + "/bpmConfigLinkNode/list",
+    listLinkTo: prefixBpm + "/bpm-config-link-node/list",
 
     //Lấy về danh sách luồng ra
-    listLinkForm: prefixBpm + "/bpmConfigLinkNode/list/from",
+    listLinkForm: prefixBpm + "/bpm-config-link-node/list/from",
 
     //handle task
-    updateHandleTask: prefixBpm + "/bpmForm/activate",
+    updateHandleTask: prefixBpm + "/bpm-form/activate",
 
     //handle task init
-    updateHandleTaskInit: prefixBpm + "/bpmForm/init",
+    updateHandleTaskInit: prefixBpm + "/bpm-form/init",
 
     //tạo ycms
-    purchaseRequestApprove: prefixBpm + "/purchaseRequest/approve",
+    purchaseRequestApprove: prefixBpm + "/purchase-request/approve",
 
     //handle task lưu nháp
-    updateHandleTaskDraft: prefixBpm + "/bpmForm/draft",
+    updateHandleTaskDraft: prefixBpm + "/bpm-form/draft",
 
     //tạo ycms lưu nháp
-    purchaseRequestDraft: prefixBpm + "/purchaseRequest/draft",
+    purchaseRequestDraft: prefixBpm + "/purchase-request/draft",
 
     //lấy về dữ liệu khởi tạo của form xử lý task
-    getDataForm: prefixBpm + "/bpmEngine/form",
+    getDataForm: prefixBpm + "/bpm-engine/form",
 
     //lấy về lịch sử đối tượng trong quy trình
-    getProcessedObjectLog: prefixBpm + "/processedObjectLog/list",
+    getProcessedObjectLog: prefixBpm + "/processed-object-log/list",
 
     //Mô phỏng quy trình
-    listBpmTrigger: prefixBpm + "/bpmTrigger/list",
-    activeBpmTrigger: prefixBpm + "/bpmTrigger/activate",
+    listBpmTrigger: prefixBpm + "/bpm-trigger/list",
+    activeBpmTrigger: prefixBpm + "/bpm-trigger/activate",
 
     //lịch sử xử lý
-    processedObjectLog: prefixBpm + "/processedObjectLog/list",
-    processedObjectLogPage: prefixBpm + "/processedObjectLog/list/page",
+    processedObjectLog: prefixBpm + "/processed-object-log/list",
+    processedObjectLogPage: prefixBpm + "/processed-object-log/list/page",
 
     //OLA, SLA
-    updateServiceLevel: prefixBpm + "/serviceLevel/update",
-    listServiceLevel: prefixBpm + "/serviceLevel/list",
-    updateHistoryOLA: prefixBpm + "/serviceLevelHistory/insert",
-    listHistoryOLA: prefixBpm + "/serviceLevelHistory/getHistory",
+    updateServiceLevel: prefixBpm + "/service-level/update",
+    listServiceLevel: prefixBpm + "/service-level/list",
+    updateHistoryOLA: prefixBpm + "/service-level-history/insert",
+    listHistoryOLA: prefixBpm + "/service-level-history/get-history",
 
     //Tiếp nhận xử lý
-    receiveProcessedObjectLog: prefixBpm + "/processedObjectLog/receive",
+    receiveProcessedObjectLog: prefixBpm + "/processed-object-log/receive",
 
     //Tạm dừng xử lý
-    onholdProcessedObjectLog: prefixBpm + "/processedObjectLog/onhold",
+    onholdProcessedObjectLog: prefixBpm + "/processed-object-log/onhold",
 
     //Tiếp tục xử lý
-    onContinue: prefixBpm + "/workOrder/update/continue",
+    onContinue: prefixBpm + "/work-order/update/continue",
 
     //Thu hồi công việc:
-    onWorkRecall: prefixBpm + "/workOrder/recall",
-    onCheckWorkResult: prefixBpm + "/workOrder/recall/checkResult",
-    confirmWorkRecall: prefixBpm + "/workOrder/recall/confirm",
+    onWorkRecall: prefixBpm + "/work-order/recall",
+    onCheckWorkResult: prefixBpm + "/work-order/recall/check-result",
+    confirmWorkRecall: prefixBpm + "/work-order/recall/confirm",
 
     //lấy về các node của một quy trình để debug
-    debugListNodeProcess: prefixBpm + "/bpmConfigNode/list/children",
+    debugListNodeProcess: prefixBpm + "/bpm-config-node/list/children",
 
     //lấy về các node bắt đầu của một quy trình để debug
-    debugListNodeStartProcess: prefixBpm + "/bpmConfigNode/list",
+    debugListNodeStartProcess: prefixBpm + "/bpm-config-node/list",
 
     //lấy về các link của một quy trình để debug
-    debugListLinkNodeProcess: prefixBpm + "/bpmConfigLinkNode/list/children",
+    debugListLinkNodeProcess: prefixBpm + "/bpm-config-link-node/list/children",
     // debugListLinkNodeProcess: prefixBpm + "/bpmConfigLinkNode/list/from",
 
     //lấy danh sách bước (node) để từ chối rồi quay lại
-    listNodeHistory: prefixBpm + "/bpmConfigNode/list/history",
+    listNodeHistory: prefixBpm + "/bpm-config-node/list/history",
 
     //Thêm cột trong grid
-    addArtifactGrid: prefixBpm + "/artifactGird/add",
-    getArtifactGrid: prefixBpm + "/artifactGird/get",
+    addArtifactGrid: prefixBpm + "/artifact-gird/add",
+    getArtifactGrid: prefixBpm + "/artifact-gird/get",
 
     //Timer
-    updateTimer: prefixBpm + "/bpmForm/update/timer",
+    updateTimer: prefixBpm + "/bpm-form/update/timer",
     // getTimer: prefixBpm + "/bpmForm/get/timer",
 
     //Type
-    updateType: prefixBpm + "/bpmForm/update/type",
+    updateType: prefixBpm + "/bpm-form/update/type",
 
     //Thêm artifact vào list để cấu hình
-    updateArtifactMetadata: prefixBpm + "/artifactMetadata/update",
-    listArtifactMetadata: prefixBpm + "/artifactMetadata/list",
-    getArtifactMetadata: prefixBpm + "/artifactMetadata/get",
-    deleteArtifactMetadata: prefixBpm + "/artifactMetadata/delete",
+    updateArtifactMetadata: prefixBpm + "/artifact-metadata/update",
+    listArtifactMetadata: prefixBpm + "/artifact-metadata/list",
+    getArtifactMetadata: prefixBpm + "/artifact-metadata/get",
+    deleteArtifactMetadata: prefixBpm + "/artifact-metadata/delete",
 
     //thêm cấu trúc hồ sơ
-    updateBpmObject: prefixBpm + "/bpmObject/update",
-    detailBpmObject: prefixBpm + "/bpmObject/getByProcessId",
+    updateBpmObject: prefixBpm + "/bpm-object/update",
+    detailBpmObject: prefixBpm + "/bpm-object/get-by-process-id",
 
     // show log lỗi của quy trình
-    getErrorLogData: prefixBpm + "/findByCriteria",
+    getErrorLogData: prefixBpm + "/find-by-criteria",
 
     //export data process
-    exportDataProcess: prefixBpm + "/businessProcess/exportExcel",
+    exportDataProcess: prefixBpm + "/business-process/export-excel",
 
     //api lấy về link url để tải file
-    getUrlExportDataProcess: prefixBpm + "/businessProcess/exportExcel/status",
+    getUrlExportDataProcess: prefixBpm + "/business-process/export-excel/status",
 
     //import data process
-    importDataProcess: prefixBpm + "/businessProcess/importExcel",
+    importDataProcess: prefixBpm + "/business-process/import-excel",
 
     // state
-    listState: prefixBpm + "/stateMapping/list",
-    createState: prefixBpm + "/stateMapping/update",
-    updateState: prefixBpm + "/stateMapping/update",
-    deleteState: prefixBpm + "/stateMapping/delete",
+    listState: prefixBpm + "/state-mapping/list",
+    createState: prefixBpm + "/state-mapping/update",
+    updateState: prefixBpm + "/state-mapping/update",
+    deleteState: prefixBpm + "/state-mapping/delete",
   },
 
   bpmForm: {
-    lst: prefixBpm + "/bpmForm/list",
-    update: prefixBpm + "/bpmForm/update",
-    delete: prefixBpm + "/bpmForm/delete",
+    lst: prefixBpm + "/bpm-form/list",
+    update: prefixBpm + "/bpm-form/update",
+    delete: prefixBpm + "/bpm-form/delete",
   },
 
   bpmFormProcess: {
-    lst: prefixBpm + "/bpmFormProcess/list",
-    update: prefixBpm + "/bpmFormProcess/update",
-    detail: prefixBpm + "/bpmFormProcess/get",
-    delete: prefixBpm + "/bpmFormProcess/delete",
+    lst: prefixBpm + "/bpm-form-process/list",
+    update: prefixBpm + "/bpm-form-process/update",
+    detail: prefixBpm + "/bpm-form-process/get",
+    delete: prefixBpm + "/bpm-form-process/delete",
   },
 
   bpmParticipant: {
-    lst: prefixBpm + "/bpmParticipant/list",
-    update: prefixBpm + "/bpmParticipant/update",
-    detail: prefixBpm + "/bpmParticipant/get",
-    delete: prefixBpm + "/bpmParticipant/delete",
+    lst: prefixBpm + "/bpm-participant/list",
+    update: prefixBpm + "/bpm-participant/update",
+    detail: prefixBpm + "/bpm-participant/get",
+    delete: prefixBpm + "/bpm-participant/delete",
   },
 
   bpmEformMapping: {
-    lstSource: prefixBpm + "/eformMapping/list/source",
-    update: prefixBpm + "/eformMapping/update",
-    detail: prefixBpm + "/eformMapping/get",
-    delete: prefixBpm + "/eformMapping/delete",
+    lstSource: prefixBpm + "/eform-mapping/list/source",
+    update: prefixBpm + "/eform-mapping/update",
+    detail: prefixBpm + "/eform-mapping/get",
+    delete: prefixBpm + "/eform-mapping/delete",
 
     lstEform: prefixCustomer + "/bpm/list/eform",
   },
 
   bpmFormMapping: {
-    list: prefixBpm + "/formMapping/list",
-    listSource: prefixBpm + "/formMapping/list/source",
-    listTarget: prefixBpm + "/formMapping/list/target",
-    update: prefixBpm + "/formMapping/update",
-    detail: prefixBpm + "/formMapping/get",
-    delete: prefixBpm + "/formMapping/delete",
+    list: prefixBpm + "/form-mapping/list",
+    listSource: prefixBpm + "/form-mapping/list/source",
+    listTarget: prefixBpm + "/form-mapping/list/target",
+    update: prefixBpm + "/form-mapping/update",
+    detail: prefixBpm + "/form-mapping/get",
+    delete: prefixBpm + "/form-mapping/delete",
   },
 
   rest: {
@@ -2952,13 +2952,13 @@ export const urlsApi = {
   },
 
   bpmFormArtifact: {
-    lst: prefixBpm + "/bpmFormArtifact/list",
-    detail: prefixBpm + "/bpmFormArtifact/get",
-    update: prefixBpm + "/bpmFormArtifact/update",
-    updatePosition: prefixBpm + "/bpmFormArtifact/update/position",
-    updateConfig: prefixBpm + "/bpmFormArtifact/update/config",
-    updateEform: prefixBpm + "/bpmFormArtifact/update/eform",
-    delete: prefixBpm + "/bpmFormArtifact/delete",
+    lst: prefixBpm + "/bpm-form-artifact/list",
+    detail: prefixBpm + "/bpm-form-artifact/get",
+    update: prefixBpm + "/bpm-form-artifact/update",
+    updatePosition: prefixBpm + "/bpm-form-artifact/update/position",
+    updateConfig: prefixBpm + "/bpm-form-artifact/update/config",
+    updateEform: prefixBpm + "/bpm-form-artifact/update/eform",
+    delete: prefixBpm + "/bpm-form-artifact/delete",
   },
 
   // Các API liên quan tới quản lý tài liệu
@@ -2967,7 +2967,7 @@ export const urlsApi = {
     update: prefixBpm + "/document/update",
     delete: prefixBpm + "/document/delete",
     detail: prefixBpm + "/document/detail",
-    deleteByUrl: prefixBpm + "/document/delete/byUrl",
+    deleteByUrl: prefixBpm + "/document/delete/by-url",
   },
   purchaseRequest: {
     list: prefixCs + "/purchase-request/list",
@@ -2982,137 +2982,137 @@ export const urlsApi = {
     purchaseRequestExchangeUpdate: prefixCs + "/purchase-requestExchange/update",
     purchaseRequestExchangeDelete: prefixCs + "/purchase-requestExchange/delete",
     purchaseRequestProcess: prefixCs + "/purchase-request/update/process",
-    resetTransferVotes: prefixCs + "/supportObject/reset",
+    resetTransferVotes: prefixCs + "/support-object/reset",
     statisticStatus: prefixCs + "/purchase-request/statistic/status",
     statisticStatusByDate: prefixCs + "/purchase-request/statistic/status/by-date",
     statisticList: prefixCs + "/purchase-request/list-statistic",
     purchaseCategory: prefixCs + "/product-category/list",
     purchaseProduct: prefixCs + "/product/list",
-    paymentBill: prefixCs + "/purchase-request/getJson",
+    paymentBill: prefixCs + "/purchase-request/get-json",
     contractInfo: prefixCs + "/renewal-offer/get-information-aggregate",
-    renewalContract: prefixSale + "/renewalContract/initBusinessProcess",
+    renewalContract: prefixSale + "/renewal-contract/init-business-process",
     initReceiveTask: prefixCs + "/purchase-request/init-receive-task",
-    updateCertificate: prefixCs + "/purchase-request/updateCertificate",
+    updateCertificate: prefixCs + "/purchase-request/update-certificate",
     getJssdk: prefixSale + "/contract-insurance/get/jssdk",
     getProductJssdk: prefixCs + "/product/get/jssdk",
   },
   managementAsked: {
-    list: prefixApplication + "/clarificationRequest/list",
-    update: prefixApplication + "/clarificationRequest/update",
-    detail: prefixApplication + "/clarificationRequest/get",
-    delete: prefixApplication + "/clarificationRequest/delete",
+    list: prefixApplication + "/clarification-request/list",
+    update: prefixApplication + "/clarification-request/update",
+    detail: prefixApplication + "/clarification-request/get",
+    delete: prefixApplication + "/clarification-request/delete",
 
     //trả lời yêu cầu làm rõ
-    replyAsked: prefixApplication + "/clarificationResponse/update",
+    replyAsked: prefixApplication + "/clarification-response/update",
 
     //chia yêu cầu làm rõ cho nhanh viên
-    assignRequest: prefixApplication + "/clarificationRequest/assign",
+    assignRequest: prefixApplication + "/clarification-request/assign",
 
     //lưu thông tin câu trả lời
-    saveReply: prefixApplication + "/clarificationResponse/update",
-    getDetailReply: prefixApplication + "/clarificationResponse/get",
+    saveReply: prefixApplication + "/clarification-response/update",
+    getDetailReply: prefixApplication + "/clarification-response/get",
 
     //lấy danh sách câu trả lời của 1 gói thầu
-    getRepsonseList: prefixApplication + "/clarificationResponse/list",
+    getRepsonseList: prefixApplication + "/clarification-response/list",
 
     //gửi câu trả lời làm rõ
-    insertRepsonse: prefixApplication + "/clarificationResponse/insert",
+    insertRepsonse: prefixApplication + "/clarification-response/insert",
   },
   tenderPackage: {
-    list: prefixApplication + "/tenderPackage/list",
-    update: prefixApplication + "/tenderPackage/update",
-    detail: prefixApplication + "/tenderPackage/get",
-    delete: prefixApplication + "/tenderPackage/delete",
+    list: prefixApplication + "/tender-package/list",
+    update: prefixApplication + "/tender-package/update",
+    detail: prefixApplication + "/tender-package/get",
+    delete: prefixApplication + "/tender-package/delete",
 
-    listBiddingInvitation: prefixApplication + "/tenderInvitation/list",
-    listContractor: prefixApplication + "/tenderInvitation/list_contractor",
-    updateBidding: prefixApplication + "/tenderInvitation/update",
-    cancelBidding: prefixApplication + "/tenderInvitation/cancel",
-    detailBiddingInvitation: prefixApplication + "/tenderInvitation/get",
-    updateBiddingStatus: prefixApplication + "/tenderInvitation/update/bidding_status",
-    listSubmittedDocument: prefixApplication + "/submittedDocument/list",
+    listBiddingInvitation: prefixApplication + "/tender-invitation/list",
+    listContractor: prefixApplication + "/tender-invitation/list-contractor",
+    updateBidding: prefixApplication + "/tender-invitation/update",
+    cancelBidding: prefixApplication + "/tender-invitation/cancel",
+    detailBiddingInvitation: prefixApplication + "/tender-invitation/get",
+    updateBiddingStatus: prefixApplication + "/tender-invitation/update/bidding-status",
+    listSubmittedDocument: prefixApplication + "/submitted-document/list",
     //Mở thầu
-    openBidding: prefixApplication + "/tenderOpening/update",
+    openBidding: prefixApplication + "/tender-opening/update",
 
     //Đánh giá hồ sơ dự thầu
-    updateBatch: prefixApplication + "/documentEvaluation/updateBatch",
+    updateBatch: prefixApplication + "/document-evaluation/update-batch",
 
     //Gửi đánh giá cho thư ký tổng hợp
-    submitReview: prefixApplication + "/submittedDocument/submit_review/update",
+    submitReview: prefixApplication + "/submitted-document/submit-review/update",
 
     //tổng hợp kết quả đánh giá hồ sơ kỹ thuật trên màn hình thư ký
-    getResultDocumentEvaluation: prefixApplication + "/documentEvaluation/getResult",
+    getResultDocumentEvaluation: prefixApplication + "/document-evaluation/get-result",
 
     //tổng hợp kết quả đánh giá hồ sơ tài chính trên màn hình thư ký
-    getResultFinanceEvaluation: prefixApplication + "/documentEvaluation/getFinances",
+    getResultFinanceEvaluation: prefixApplication + "/document-evaluation/get-finances",
 
     //Gửi phản hồi kết quả đánh giá
-    sendEvaluation: prefixApplication + "/documentEvaluation/sendEvaluation",
+    sendEvaluation: prefixApplication + "/document-evaluation/send-evaluation",
 
     ///Gửi tổng hợp yêu cầu làm rõ
-    updateGeneralClarification: prefixApplication + "/generalClarification/update",
-    listGeneralClarification: prefixApplication + "/generalClarification/list",
+    updateGeneralClarification: prefixApplication + "/general-clarification/update",
+    listGeneralClarification: prefixApplication + "/general-clarification/list",
 
     //Gia hạn gói thầu
-    extensionHistory: prefixApplication + "/extensionHistory/insert",
-    detailExtensionRequest: prefixApplication + "/extensionRequest/get",
-    listExtensionHistory: prefixApplication + "/extensionHistory/list",
+    extensionHistory: prefixApplication + "/extension-history/insert",
+    detailExtensionRequest: prefixApplication + "/extension-request/get",
+    listExtensionHistory: prefixApplication + "/extension-history/list",
   },
   grid: {
-    list: prefixCustomer + "/artifactGridHeader/list",
+    list: prefixCustomer + "/artifact-grid-header/list",
 
     //Thêm cột
-    update: prefixBpm + "/artifactGridHeader/update",
-    detail: prefixBpm + "/artifactGridHeader/get",
-    delete: prefixBpm + "/artifactGridHeader/delete",
+    update: prefixBpm + "/artifact-grid-header/update",
+    detail: prefixBpm + "/artifact-grid-header/get",
+    delete: prefixBpm + "/artifact-grid-header/delete",
 
     //Thêm hàng
-    updateRow: prefixBpm + "/artifactGrid/update",
-    detailRow: prefixBpm + "/artifactGrid/get",
-    deleteRow: prefixBpm + "/artifactGrid/delete",
+    updateRow: prefixBpm + "/artifact-grid/update",
+    detailRow: prefixBpm + "/artifact-grid/get",
+    deleteRow: prefixBpm + "/artifact-grid/delete",
 
-    importFile: prefixBpm + "/upload/excelFile",
+    importFile: prefixBpm + "/upload/excel-file",
 
     //Thêm hàng
-    updateComment: prefixBpm + "/artifactComment/update",
-    listComment: prefixBpm + "/artifactComment/list",
+    updateComment: prefixBpm + "/artifact-comment/update",
+    listComment: prefixBpm + "/artifact-comment/list",
 
     //Lấy lữ liệu upload
-    getRowsUpload: prefixBpm + "/upload/getRows",
+    getRowsUpload: prefixBpm + "/upload/get-rows",
   },
   //TODO: End quy trình bpm
 
   //ngân sách marketing
   marketingBudget: {
-    list: prefixCustomer + "/marketingBudget/list",
-    update: prefixCustomer + "/marketingBudget/update",
-    updateStatus: prefixCustomer + "/marketingBudget/update/status",
-    detail: prefixCustomer + "/marketingBudget/get",
-    delete: prefixCustomer + "/marketingBudget/delete",
+    list: prefixCustomer + "/marketing-budget/list",
+    update: prefixCustomer + "/marketing-budget/update",
+    updateStatus: prefixCustomer + "/marketing-budget/update/status",
+    detail: prefixCustomer + "/marketing-budget/get",
+    delete: prefixCustomer + "/marketing-budget/delete",
   },
 
   //kênh MA
   marketingChannel: {
-    list: prefixCustomer + "/marketingChannel/list",
-    update: prefixCustomer + "/marketingChannel/update",
-    detail: prefixCustomer + "/marketingChannel/get",
-    delete: prefixCustomer + "/marketingChannel/delete",
+    list: prefixCustomer + "/marketing-channel/list",
+    update: prefixCustomer + "/marketing-channel/update",
+    detail: prefixCustomer + "/marketing-channel/get",
+    delete: prefixCustomer + "/marketing-channel/delete",
   },
 
   //đo lường MA
   marketingMeasurement: {
-    list: prefixCustomer + "/marketingMeasurement/list",
-    update: prefixCustomer + "/marketingMeasurement/update",
-    detail: prefixCustomer + "/marketingMeasurement/get",
-    delete: prefixCustomer + "/marketingMeasurement/delete",
+    list: prefixCustomer + "/marketing-measurement/list",
+    update: prefixCustomer + "/marketing-measurement/update",
+    detail: prefixCustomer + "/marketing-measurement/get",
+    delete: prefixCustomer + "/marketing-measurement/delete",
   },
 
   //đo lường MA
   marketingReport: {
-    list: prefixCustomer + "/marketingReport/list",
-    update: prefixCustomer + "/marketingReport/update",
-    detail: prefixCustomer + "/marketingReport/get",
-    delete: prefixCustomer + "/marketingReport/delete",
+    list: prefixCustomer + "/marketing-report/list",
+    update: prefixCustomer + "/marketing-report/update",
+    detail: prefixCustomer + "/marketing-report/get",
+    delete: prefixCustomer + "/marketing-report/delete",
   },
 
   // tiếp nhận phản hồi
@@ -3130,18 +3130,18 @@ export const urlsApi = {
   },
 
   objectFeature: {
-    lst: prefixCustomer + "/objectFeature/list",
-    update: prefixCustomer + "/objectFeature/update",
-    delete: prefixCustomer + "/objectFeature/delete",
-    detail: prefixCustomer + "/objectFeature/detail",
+    lst: prefixCustomer + "/object-feature/list",
+    update: prefixCustomer + "/object-feature/update",
+    delete: prefixCustomer + "/object-feature/delete",
+    detail: prefixCustomer + "/object-feature/detail",
   },
 
   // Khảo sát khách hàng
   surveyForm: {
-    lst: prefixCustomer + "/surveyForm/list",
-    update: prefixCustomer + "/surveyForm/update",
-    delete: prefixCustomer + "/surveyForm/delete",
-    detail: prefixCustomer + "/surveyForm/get",
+    lst: prefixCustomer + "/survey-form/list",
+    update: prefixCustomer + "/survey-form/update",
+    delete: prefixCustomer + "/survey-form/delete",
+    detail: prefixCustomer + "/survey-form/get",
     statistic: prefixCustomer + "/survey",
     submitVoc: "https://reborn.vn/log-capture/crm/survey",
   },
@@ -3150,12 +3150,12 @@ export const urlsApi = {
   offer: {
     list: prefixCustomer + "/offer/list/v2",
     create: prefixCustomer + "/offer/create",
-    offerDetail: prefixCustomer + "/offerDetail/import",
-    cardService: prefixCustomer + "/offerDetail/cardService",
+    offerDetail: prefixCustomer + "/offer-detail/import",
+    cardService: prefixCustomer + "/offer-detail/card-service",
     // Tạo báo giá
-    offerDetailCustomer: prefixCustomer + "/offerDetail/customer",
+    offerDetailCustomer: prefixCustomer + "/offer-detail/customer",
     // Xem chi tiết báo giá
-    offerDetailList: prefixCustomer + "/offerDetail/list",
+    offerDetailList: prefixCustomer + "/offer-detail/list",
     // Hủy báo giá
     cancelOffer: prefixCustomer + "/offer/delete",
     // lấy danh sách thu tiền, chi tiền của khách
@@ -3165,25 +3165,25 @@ export const urlsApi = {
   },
 
   offerService: {
-    addToInvoice: prefixCustomer + "/offerService/update",
-    delete: prefixCustomer + "/offerService/delete",
-    update: prefixCustomer + "/offerService/update",
-    detail: prefixCustomer + "/offerService/get",
-    getByCustomer: prefixCustomer + "/offerService/getBoughtServiceByCustomerId",
+    addToInvoice: prefixCustomer + "/offer-service/update",
+    delete: prefixCustomer + "/offer-service/delete",
+    update: prefixCustomer + "/offer-service/update",
+    detail: prefixCustomer + "/offer-service/get",
+    getByCustomer: prefixCustomer + "/offer-service/get-bought-service-by-customer-id",
   },
   offerProduct: {
-    list: prefixCustomer + "/offerProduct/list",
-    addToInvoice: prefixCustomer + "/offerProduct/update",
-    delete: prefixCustomer + "/offerProduct/delete",
-    update: prefixCustomer + "/offerProduct/update",
-    detail: prefixCustomer + "/offerProduct/get",
-    getByCustomer: prefixCustomer + "/offerProduct/getBoughtProductByCustomerId",
+    list: prefixCustomer + "/offer-product/list",
+    addToInvoice: prefixCustomer + "/offer-product/update",
+    delete: prefixCustomer + "/offer-product/delete",
+    update: prefixCustomer + "/offer-product/update",
+    detail: prefixCustomer + "/offer-product/get",
+    getByCustomer: prefixCustomer + "/offer-product/get-bought-product-by-customer-id",
   },
   offerCard: {
-    list: prefixCustomer + "/offerCardService/list",
-    add: prefixCustomer + "/offerCardService/update",
-    delete: prefixCustomer + "/offerCardService/delete",
-    update: prefixCustomer + "/offerCardService/update/cardNumber",
+    list: prefixCustomer + "/offer-card-service/list",
+    add: prefixCustomer + "/offer-card-service/update",
+    delete: prefixCustomer + "/offer-card-service/delete",
+    update: prefixCustomer + "/offer-card-service/update/card-number",
   },
 
   // fs
@@ -3195,12 +3195,12 @@ export const urlsApi = {
     detail: prefixCustomer + "/fs/get",
     cloneFs: prefixCustomer + "/fs/clone",
     updateStatus: prefixCustomer + "/fs/update/status",
-    resetSignal: prefixCustomer + "/approvalObject/reset",
+    resetSignal: prefixCustomer + "/approval-object/reset",
     // cấu hình form fs
-    fsFormLst: prefixCustomer + "/fsForm/list",
-    fsFormUpdate: prefixCustomer + "/fsForm/update",
-    fsFormDelete: prefixCustomer + "/fsForm/delete",
-    fsFormUpdatePostion: prefixCustomer + "/fsForm/update/position",
+    fsFormLst: prefixCustomer + "/fs-form/list",
+    fsFormUpdate: prefixCustomer + "/fs-form/update",
+    fsFormDelete: prefixCustomer + "/fs-form/delete",
+    fsFormUpdatePostion: prefixCustomer + "/fs-form/update/position",
   },
 
   // quote
@@ -3210,23 +3210,23 @@ export const urlsApi = {
     delete: prefixCustomer + "/quote/delete",
     cloneQuote: prefixCustomer + "/quote/clone",
     updateStatus: prefixCustomer + "/quote/update/status",
-    resetSignal: prefixCustomer + "/approvalObject/reset",
+    resetSignal: prefixCustomer + "/approval-object/reset",
     // cấu hình form quote
-    quoteFormLst: prefixCustomer + "/quoteForm/list",
-    quoteFormUpdate: prefixCustomer + "/quoteForm/update",
-    quoteFormDelete: prefixCustomer + "/quoteForm/delete",
-    quoteFormUpdatePostion: prefixCustomer + "/quoteForm/update/position",
+    quoteFormLst: prefixCustomer + "/quote-form/list",
+    quoteFormUpdate: prefixCustomer + "/quote-form/update",
+    quoteFormDelete: prefixCustomer + "/quote-form/delete",
+    quoteFormUpdatePostion: prefixCustomer + "/quote-form/update/position",
 
-    lstQuoteContract: prefixCustomer + "/contractQuote/list",
-    updateQuoteContract: prefixCustomer + "/contractQuote/update",
-    deleteQuoteContract: prefixCustomer + "/contractQuote/deleteByQuoteId",
+    lstQuoteContract: prefixCustomer + "/contract-quote/list",
+    updateQuoteContract: prefixCustomer + "/contract-quote/update",
+    deleteQuoteContract: prefixCustomer + "/contract-quote/delete-by-quote-id",
   },
 
   /**
    * Lịch sử phê duyệt trên form
    */
   approvedObjectLog: {
-    lst: prefixBpm + "/approvedObjectLog/list",
+    lst: prefixBpm + "/approved-object-log/list",
   },
 
   // cài đặt quy trình
@@ -3236,26 +3236,26 @@ export const urlsApi = {
     delete: prefixCustomer + "/approval/delete",
     updateStatus: prefixCustomer + "/approval/update/status",
     //config
-    lstConfig: prefixCustomer + "/approvalConfig/list",
-    updateConfig: prefixCustomer + "/approvalConfig/update",
-    deleteConfig: prefixCustomer + "/approvalConfig/delete",
+    lstConfig: prefixCustomer + "/approval-config/list",
+    updateConfig: prefixCustomer + "/approval-config/update",
+    deleteConfig: prefixCustomer + "/approval-config/delete",
     //link
-    lstLink: prefixCustomer + "/approvalLink/list",
-    updateLink: prefixCustomer + "/approvalLink/update",
-    deleteLink: prefixCustomer + "/approvalLink/delete",
+    lstLink: prefixCustomer + "/approval-link/list",
+    updateLink: prefixCustomer + "/approval-link/update",
+    deleteLink: prefixCustomer + "/approval-link/delete",
     //object
-    lstObject: prefixCustomer + "/approvalObject/list",
-    updateObject: prefixCustomer + "/approvalObject/update",
-    deleteObject: prefixCustomer + "/approvalObject/delete",
-    takeObject: prefixCustomer + "/approvalObject/get/object",
-    checkApproved: prefixCustomer + "/approvalObject/checkApproved",
+    lstObject: prefixCustomer + "/approval-object/list",
+    updateObject: prefixCustomer + "/approval-object/update",
+    deleteObject: prefixCustomer + "/approval-object/delete",
+    takeObject: prefixCustomer + "/approval-object/get/object",
+    checkApproved: prefixCustomer + "/approval-object/check-approved",
     //log
-    lstLog: prefixCustomer + "/approvalLog/list",
-    updateLog: prefixCustomer + "/approvalLog/update",
-    deleteLog: prefixCustomer + "/approvalLog/delete",
+    lstLog: prefixCustomer + "/approval-log/list",
+    updateLog: prefixCustomer + "/approval-log/update",
+    deleteLog: prefixCustomer + "/approval-log/delete",
 
     //alert
-    updateAlert: prefixCustomer + "/approval/update/alertConfig",
+    updateAlert: prefixCustomer + "/approval/update/alert-config",
   },
   // đoạn này lấy ra danh sách các gói
   package: {
@@ -3264,11 +3264,11 @@ export const urlsApi = {
     updateStatus: prefixRebornVn + "/package/update/status",
     detail: prefixRebornVn + "/package/get",
     delete: prefixRebornVn + "/package/delete",
-    addOrgApp: prefixRebornVn + "/orgApp/add",
-    updateBill: prefixRebornVn + "/orgApp/update/bill",
-    calcPrice: prefixRebornVn + "/orgApp/calc/priceRemaining",
-    extend: prefixRebornVn + "/orgApp/extend",
-    upgrade: prefixRebornVn + "/orgApp/upgrade",
+    addOrgApp: prefixRebornVn + "/org-app/add",
+    updateBill: prefixRebornVn + "/org-app/update/bill",
+    calcPrice: prefixRebornVn + "/org-app/calc/price-remaining",
+    extend: prefixRebornVn + "/org-app/extend",
+    upgrade: prefixRebornVn + "/org-app/upgrade",
   },
 
   field: {
@@ -3280,15 +3280,15 @@ export const urlsApi = {
   gift: {
     list: prefixCustomer + "/gift/list",
     update: prefixCustomer + "/gift/update",
-    updateObjectId: prefixCustomer + "/gift/update_objectid",
+    updateObjectId: prefixCustomer + "/gift/update-objectid",
     delete: prefixCustomer + "/gift/delete",
   },
   // đoạn này tạo ra mã qr code
   qrCode: {
-    list: prefixCustomer + "/qrCode/list",
-    update: prefixCustomer + "/qrCode/update",
-    delete: prefixCustomer + "/qrCode/delete",
-    detail: prefixCustomer + "/qrCode/get",
+    list: prefixCustomer + "/qr-code/list",
+    update: prefixCustomer + "/qr-code/update",
+    delete: prefixCustomer + "/qr-code/delete",
+    detail: prefixCustomer + "/qr-code/get",
   },
   // cài đặt mẫu hợp đồng
   sheetQuoteForm: {
@@ -3298,11 +3298,11 @@ export const urlsApi = {
     detail: prefixCustomer + "/sheet/get",
   },
   sheetFieldQuoteForm: {
-    list: prefixCustomer + "/sheetField/list",
-    update: prefixCustomer + "/sheetField/update",
-    updatePosition: prefixCustomer + "/sheetField/update/position",
-    delete: prefixCustomer + "/sheetField/delete",
-    detail: prefixCustomer + "/sheetField/get",
+    list: prefixCustomer + "/sheet-field/list",
+    update: prefixCustomer + "/sheet-field/update",
+    updatePosition: prefixCustomer + "/sheet-field/update/position",
+    delete: prefixCustomer + "/sheet-field/delete",
+    detail: prefixCustomer + "/sheet-field/get",
   },
 
   ///BPM
@@ -3315,100 +3315,100 @@ export const urlsApi = {
   },
 
   processedObject: {
-    lst: prefixBpm + "/processedObject/list",
-    update: prefixBpm + "/processedObject/update",
-    updateProcess: prefixBpm + "/processedObject/update/processId",
-    updateProcessInstance: prefixBpm + "/processInstance/update",
-    delete: prefixBpm + "/processedObject/delete",
-    cloneQuote: prefixBpm + "/processedObject/clone",
-    updateStatus: prefixBpm + "/processedObject/update/status",
-    resetSignal: prefixBpm + "/approvalObject/reset",
+    lst: prefixBpm + "/processed-object/list",
+    update: prefixBpm + "/processed-object/update",
+    updateProcess: prefixBpm + "/processed-object/update/process-id",
+    updateProcessInstance: prefixBpm + "/process-instance/update",
+    delete: prefixBpm + "/processed-object/delete",
+    cloneQuote: prefixBpm + "/processed-object/clone",
+    updateStatus: prefixBpm + "/processed-object/update/status",
+    resetSignal: prefixBpm + "/approval-object/reset",
 
     bpmStart: prefixBpm + "/bpm/start",
     bpmExecListNode: prefixBpm + "/bpm/exec/list/node",
     bpmProcess: prefixBpm + "/bpm/process",
-    bpmArtifactData: prefixBpm + "/bpmArtifactData/getByBfatId",
-    bpmParticipantProcesslog: prefixBpm + "/bpmParticipantProcesslog/list",
-    processedObjectLog: prefixBpm + "/processedObjectLog/list",
+    bpmArtifactData: prefixBpm + "/bpm-artifact-data/get-by-bfat-id",
+    bpmParticipantProcesslog: prefixBpm + "/bpm-participant-processlog/list",
+    processedObjectLog: prefixBpm + "/processed-object-log/list",
   },
 
   objectGroup: {
-    list: prefixBpm + "/objectGroup/list",
-    update: prefixBpm + "/objectGroup/update",
-    updateConfig: prefixBpm + "/objectGroup/update/config",
-    detail: prefixBpm + "/objectGroup/get",
-    delete: prefixBpm + "/objectGroup/delete",
+    list: prefixBpm + "/object-group/list",
+    update: prefixBpm + "/object-group/update",
+    updateConfig: prefixBpm + "/object-group/update/config",
+    detail: prefixBpm + "/object-group/get",
+    delete: prefixBpm + "/object-group/delete",
   },
 
   objectAttribute: {
-    list: prefixBpm + "/objectAttribute/list",
-    update: prefixBpm + "/objectAttribute/update",
-    detail: prefixBpm + "/objectAttribute/get",
-    delete: prefixBpm + "/objectAttribute/delete",
-    listAll: prefixBpm + "/objectAttribute/listAll",
-    checkDuplicated: prefixBpm + "/objectAttribute/checkDuplicated",
-    updatePosition: prefixBpm + "/objectAttribute/update/position",
+    list: prefixBpm + "/object-attribute/list",
+    update: prefixBpm + "/object-attribute/update",
+    detail: prefixBpm + "/object-attribute/get",
+    delete: prefixBpm + "/object-attribute/delete",
+    listAll: prefixBpm + "/object-attribute/list-all",
+    checkDuplicated: prefixBpm + "/object-attribute/check-duplicated",
+    updatePosition: prefixBpm + "/object-attribute/update/position",
   },
   objectExtraInfo: {
-    list: prefixCustomer + "/objectExtraInfo/list",
+    list: prefixCustomer + "/object-extra-info/list",
   },
 
   //Tài chính ngân hàng
   netLoan: {
-    lst: prefixFinance + "/netLoan/list",
-    update: prefixFinance + "/netLoan/update",
-    get: prefixFinance + "/netLoan/get",
-    delete: prefixFinance + "/netLoan/delete",
+    lst: prefixFinance + "/net-loan/list",
+    update: prefixFinance + "/net-loan/update",
+    get: prefixFinance + "/net-loan/get",
+    delete: prefixFinance + "/net-loan/delete",
   },
   netDeposit: {
-    lst: prefixFinance + "/netDeposit/list",
-    update: prefixFinance + "/netDeposit/update",
-    get: prefixFinance + "/netDeposit/get",
-    delete: prefixFinance + "/netDeposit/delete",
+    lst: prefixFinance + "/net-deposit/list",
+    update: prefixFinance + "/net-deposit/update",
+    get: prefixFinance + "/net-deposit/get",
+    delete: prefixFinance + "/net-deposit/delete",
   },
   netServiceCharge: {
-    lst: prefixFinance + "/netServiceCharge/list",
-    update: prefixFinance + "/netServiceCharge/update",
-    get: prefixFinance + "/netServiceCharge/get",
-    delete: prefixFinance + "/netServiceCharge/delete",
+    lst: prefixFinance + "/net-service-charge/list",
+    update: prefixFinance + "/net-service-charge/update",
+    get: prefixFinance + "/net-service-charge/get",
+    delete: prefixFinance + "/net-service-charge/delete",
   },
   productDemand: {
-    lst: prefixFinance + "/productDemand/list",
-    update: prefixFinance + "/productDemand/update",
-    get: prefixFinance + "/productDemand/get",
-    delete: prefixFinance + "/productDemand/delete",
+    lst: prefixFinance + "/product-demand/list",
+    update: prefixFinance + "/product-demand/update",
+    get: prefixFinance + "/product-demand/get",
+    delete: prefixFinance + "/product-demand/delete",
   },
   briefFinancialReport: {
-    lst: prefixFinance + "/briefFinancialReport/list",
-    update: prefixFinance + "/briefFinancialReport/update",
-    get: prefixFinance + "/briefFinancialReport/get",
-    delete: prefixFinance + "/briefFinancialReport/delete",
+    lst: prefixFinance + "/brief-financial-report/list",
+    update: prefixFinance + "/brief-financial-report/update",
+    get: prefixFinance + "/brief-financial-report/get",
+    delete: prefixFinance + "/brief-financial-report/delete",
   },
   fullFinancialReport: {
-    lst: prefixFinance + "/fullFinancialReport/list",
-    update: prefixFinance + "/fullFinancialReport/update",
-    get: prefixFinance + "/fullFinancialReport/get",
-    delete: prefixFinance + "/fullFinancialReport/delete",
+    lst: prefixFinance + "/full-financial-report/list",
+    update: prefixFinance + "/full-financial-report/update",
+    get: prefixFinance + "/full-financial-report/get",
+    delete: prefixFinance + "/full-financial-report/delete",
   },
   loanInformation: {
-    lst: prefixFinance + "/loanInformation/list",
-    update: prefixFinance + "/loanInformation/update",
-    get: prefixFinance + "/loanInformation/get",
-    delete: prefixFinance + "/loanInformation/delete",
+    lst: prefixFinance + "/loan-information/list",
+    update: prefixFinance + "/loan-information/update",
+    get: prefixFinance + "/loan-information/get",
+    delete: prefixFinance + "/loan-information/delete",
   },
   transactionInformation: {
-    lst: prefixFinance + "/transactionInformation/list",
-    update: prefixFinance + "/transactionInformation/update",
-    get: prefixFinance + "/transactionInformation/get",
-    delete: prefixFinance + "/transactionInformation/delete",
+    lst: prefixFinance + "/transaction-information/list",
+    update: prefixFinance + "/transaction-information/update",
+    get: prefixFinance + "/transaction-information/get",
+    delete: prefixFinance + "/transaction-information/delete",
   },
 
   application: {
-    lst: prefixRebornVn + "/orgApp/list",
-    lstAll: prefixRebornVn + "/orgApp/list/all",
-    confirmBill: prefixRebornVn + "/orgApp/payment/verify",
+    lst: prefixRebornVn + "/org-app/list",
+    lstAll: prefixRebornVn + "/org-app/list/all",
+    confirmBill: prefixRebornVn + "/org-app/payment/verify",
     update: prefixRebornVn + "/organization/update",
-    detail: prefixRebornVn + "/beautySalon/get",
+    detail: prefixRebornVn + "/beauty-salon/get",
   },
 };
 
