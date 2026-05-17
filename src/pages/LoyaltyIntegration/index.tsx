@@ -99,28 +99,28 @@ function OverviewTab() {
           title="Tra cứu hội viên"
           desc="POS tra cứu khách bằng SĐT → lấy điểm, hạng, ưu đãi"
           method="GET"
-          endpoint="/loyaltyWallet/getByCustomer"
+          endpoint="/loyalty-wallet/get-by-customer"
         />
         <FlowCard
           step="2"
           title="Tích điểm sau thanh toán"
           desc="POS gửi hoá đơn → BE tự tính điểm theo rule"
           method="POST"
-          endpoint="/loyaltyPointLedger/autoEarn"
+          endpoint="/loyalty-point-ledger/auto-earn"
         />
         <FlowCard
           step="3"
           title="Tiêu điểm tại quầy"
           desc="Khách dùng điểm trừ vào hoá đơn"
           method="POST"
-          endpoint="/loyaltyPointLedger/consumePoint"
+          endpoint="/loyalty-point-ledger/consume-point"
         />
         <FlowCard
           step="4"
           title="Đổi thưởng"
           desc="Khách đổi điểm lấy voucher, quà tặng"
           method="POST"
-          endpoint="/loyaltyReward/redeem"
+          endpoint="/loyalty-reward/redeem"
         />
       </div>
 
@@ -182,7 +182,7 @@ function MemberTab() {
     <div>
       <H2>API Hội viên (Member)</H2>
 
-      <Endpoint method="GET" path="/loyaltyWallet/list" desc="Danh sách hội viên">
+      <Endpoint method="GET" path="/loyalty-wallet/list" desc="Danh sách hội viên">
         <H4>Query params</H4>
         <ParamTable params={[
           ["page", "number", "1", "Trang"],
@@ -212,7 +212,7 @@ function MemberTab() {
 }`}</CodeBlock>
       </Endpoint>
 
-      <Endpoint method="GET" path="/loyaltyWallet/getByCustomer" desc="Tra cứu hội viên theo customer ID">
+      <Endpoint method="GET" path="/loyalty-wallet/get-by-customer" desc="Tra cứu hội viên theo customer ID">
         <H4>Query params</H4>
         <ParamTable params={[["customerId", "number", "", "ID khách hàng (bắt buộc)"]]} />
         <H4>Response</H4>
@@ -230,14 +230,14 @@ function MemberTab() {
 }`}</CodeBlock>
       </Endpoint>
 
-      <Endpoint method="POST" path="/loyaltyWallet/update" desc="Tạo / cập nhật hội viên">
+      <Endpoint method="POST" path="/loyalty-wallet/update" desc="Tạo / cập nhật hội viên">
         <CodeBlock>{`{
   "customerId": 42,
   "status": 1        // 1 = active
 }`}</CodeBlock>
       </Endpoint>
 
-      <Endpoint method="POST" path="/loyaltyWallet/import" desc="Import hội viên hàng loạt">
+      <Endpoint method="POST" path="/loyalty-wallet/import" desc="Import hội viên hàng loạt">
         <P>Content-Type: <code>multipart/form-data</code></P>
         <P>File CSV cột: Họ tên, SĐT, Email, Điểm, Hạng</P>
         <CodeBlock>{`{
@@ -259,7 +259,7 @@ function PointsTab() {
     <div>
       <H2>API Tích / Tiêu điểm</H2>
 
-      <Endpoint method="POST" path="/loyaltyPointLedger/autoEarn" desc="Tích điểm tự động từ hoá đơn (POS gọi sau thanh toán)">
+      <Endpoint method="POST" path="/loyalty-point-ledger/auto-earn" desc="Tích điểm tự động từ hoá đơn (POS gọi sau thanh toán)">
         <CodeBlock>{`{
   "phone": "0901234567",
   "orderAmount": 520000,
@@ -285,7 +285,7 @@ function PointsTab() {
         </InfoBox>
       </Endpoint>
 
-      <Endpoint method="POST" path="/loyaltyPointLedger/fluctuatePoint" desc="Cộng / trừ điểm thủ công">
+      <Endpoint method="POST" path="/loyalty-point-ledger/fluctuate-point" desc="Cộng / trừ điểm thủ công">
         <CodeBlock>{`{
   "walletId": 1,
   "customerId": 42,
@@ -294,7 +294,7 @@ function PointsTab() {
 }`}</CodeBlock>
       </Endpoint>
 
-      <Endpoint method="POST" path="/loyaltyPointLedger/consumePoint" desc="Tiêu điểm (khách dùng điểm thanh toán)">
+      <Endpoint method="POST" path="/loyalty-point-ledger/consume-point" desc="Tiêu điểm (khách dùng điểm thanh toán)">
         <CodeBlock>{`{
   "walletId": 1,
   "customerId": 42,
@@ -306,7 +306,7 @@ function PointsTab() {
         </InfoBox>
       </Endpoint>
 
-      <Endpoint method="GET" path="/loyaltyPointLedger/list" desc="Lịch sử tích/tiêu điểm">
+      <Endpoint method="GET" path="/loyalty-point-ledger/list" desc="Lịch sử tích/tiêu điểm">
         <ParamTable params={[
           ["customerId", "number", "", "Lọc theo khách hàng"],
           ["page", "number", "1", ""],
@@ -322,7 +322,7 @@ function RewardsTab() {
     <div>
       <H2>API Đổi thưởng</H2>
 
-      <Endpoint method="GET" path="/loyaltyReward/list" desc="Danh sách phần thưởng khả dụng">
+      <Endpoint method="GET" path="/loyalty-reward/list" desc="Danh sách phần thưởng khả dụng">
         <CodeBlock>{`{
   "code": 0,
   "result": {
@@ -341,7 +341,7 @@ function RewardsTab() {
 }`}</CodeBlock>
       </Endpoint>
 
-      <Endpoint method="GET" path="/loyaltySegment/list" desc="Danh sách hạng thành viên">
+      <Endpoint method="GET" path="/loyalty-segment/list" desc="Danh sách hạng thành viên">
         <CodeBlock>{`{
   "code": 0,
   "result": {
@@ -355,7 +355,7 @@ function RewardsTab() {
 }`}</CodeBlock>
       </Endpoint>
 
-      <Endpoint method="GET" path="/loyaltyConfig/get" desc="Cấu hình loyalty (tỷ giá, hạn điểm, thăng hạng...)">
+      <Endpoint method="GET" path="/loyalty-config/get" desc="Cấu hình loyalty (tỷ giá, hạn điểm, thăng hạng...)">
         <CodeBlock>{`{
   "code": 0,
   "result": {
