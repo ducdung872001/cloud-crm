@@ -149,7 +149,7 @@ const HandleTask = ({ onShow, dataWork }) => {
       showToast(`Xử lý nhiệm vụ thành công`, "success");
       localStorage.setItem("isKanbanBusinessProcess", JSON.stringify(true));
       setTimeout(() => {
-        navigation("/bpm/manage_processes");
+        navigation("/bpm/manage-processes");
       }, 500);
     } else {
       showToast(response.message ?? "Có lỗi xảy ra. Vui lòng thử lại sau", "error");

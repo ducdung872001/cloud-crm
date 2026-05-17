@@ -620,11 +620,11 @@ function Header(props: HeaderProps) {
           break;
         case "BID":
           if (payload.packageId)
-            navigate("/bpm/bid_management", { state: { viewDetail: true, packageId: payload.packageId } });
+            navigate("/bpm/bid-management", { state: { viewDetail: true, packageId: payload.packageId } });
           break;
         case "TASK":
           if (payload.workId)
-            navigate("/bpm/task_assignment", { state: { viewDetail: true, workId: payload.workId } });
+            navigate("/bpm/task-assignment", { state: { viewDetail: true, workId: payload.workId } });
           break;
         default:
           break;
