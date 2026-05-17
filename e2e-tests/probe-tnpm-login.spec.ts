@@ -54,7 +54,7 @@ test("probe: login flow on tnpm.reborn.vn", async ({ page }) => {
     }
   });
 
-  await page.goto("https://tnpm.reborn.vn/crm/login", { waitUntil: "domcontentloaded", timeout: 30000 }).catch(() => {});
+  await page.goto("https://tnpm.reborn.vn/biz-prop/login", { waitUntil: "domcontentloaded", timeout: 30000 }).catch(() => {});
   // Wait for either SSO password field or the page to settle on tnpm again
   await page
     .waitForFunction(

@@ -203,8 +203,8 @@ export const redirectUrl = (returnUrl: any, targetUrl: any) => {
     url = "/" + url;
   }
 
-  if (!url.startsWith("/crm/")) {
-    url = "/crm" + url;
+  if (!url.startsWith("/biz-prop/")) {
+    url = "/biz-prop" + url;
   }
 
   location.href = url;

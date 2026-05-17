@@ -290,9 +290,9 @@ export default function Layout() {
       />
 
       <div className={`page-wrapper${isCollapsedSidebar ? " page-wrapper--collapsed-sidebar" : ""} d-flex align-items-start justify-content-between`}>
-        {checkPathUrl !== "/crm/link_survey" && <Sidebar />}
+        {checkPathUrl !== "/biz-prop/link_survey" && <Sidebar />}
         <div className="main-content">
-          {checkPathUrl !== "/crm/link_survey" && (
+          {checkPathUrl !== "/biz-prop/link_survey" && (
             <Header
               listBranch={listBranch}
               newListBranch={newListBranch}
@@ -309,7 +309,7 @@ export default function Layout() {
               <div
                 className={`notification__warning--package ${
                   dataExpired && (dataExpired.numDay <= 14 && dataExpired.numDay > 6 ? isAlmostExpired : isExpired) ? "" : "d-none"
-                } ${checkPathUrl == "/crm/link_survey" ? "d-none" : ""}`}
+                } ${checkPathUrl == "/biz-prop/link_survey" ? "d-none" : ""}`}
               >
                 {dataExpired && dataExpired.period <= 36 && (
                   <div className={`box__warning--notify ${isExpired ? "bg__error" : isAlmostExpired ? "bg__warning" : ""}`}>

@@ -10,7 +10,7 @@
 // ReactDOM.render(
 //   <CookiesProvider>
 //     <I18nextProvider i18n={i18n}>
-//       <BrowserRouter basename="/crm/">
+//       <BrowserRouter basename="/biz-prop/">
 //         <App />
 //       </BrowserRouter>
 //     </I18nextProvider>
@@ -31,7 +31,7 @@ const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
   <CookiesProvider>
     <I18nextProvider i18n={i18n}>
-      <BrowserRouter basename="/crm/">
+      <BrowserRouter basename="/biz-prop/">
         <App />
       </BrowserRouter>
     </I18nextProvider>

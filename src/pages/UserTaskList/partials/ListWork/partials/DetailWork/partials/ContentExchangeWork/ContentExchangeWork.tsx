@@ -196,7 +196,7 @@ export default function ContentExchangeWork(props: IContentExchangeWorkProps) {
                       className="info-document"
                       onClick={() => {
                         window.open(
-                          `${process.env.APP_CRM_LINK}/crm/view_document?name=${item.fileName}&url=${item.url}`,
+                          `${process.env.APP_CRM_LINK}/biz-prop/view_document?name=${item.fileName}&url=${item.url}`,
                           "_blank",
                           "noopener,noreferrer"
                         );

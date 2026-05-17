@@ -199,7 +199,7 @@ export default function TableContractReport({ dataProjectReport }) {
       <div
         className="detail-customer"
         onClick={() => {
-          window.open(`/crm/detail_person/customerId/${data?.dataItem?.customerId}/not_purchase_invoice`, "_blank").focus();
+          window.open(`/biz-prop/detail_person/customerId/${data?.dataItem?.customerId}/not_purchase_invoice`, "_blank").focus();
         }}
       >
         {data?.dataItem?.customerName || data?.dataItem?.businessPartnerName}

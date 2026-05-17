@@ -211,9 +211,9 @@ export default function App() {
       let env = process.env.APP_ENV;
       let crmLink;
       if (rootDomain == "localhost") {
-        crmLink = `${process.env.APP_CRM_LINK}/crm/login`;
+        crmLink = `${process.env.APP_CRM_LINK}/biz-prop/login`;
       } else {
-        crmLink = `https://${sourceDomain}/crm/login`;
+        crmLink = `https://${sourceDomain}/biz-prop/login`;
       }
 
       let appSSOLink = getAppSSOLink(rootDomain);

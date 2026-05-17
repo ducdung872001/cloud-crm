@@ -1,7 +1,7 @@
 import { test } from "@playwright/test";
 
 test("probe operation BE endpoints with real JWT", async ({ page }) => {
-  await page.goto("https://tnpm.reborn.vn/crm/dashboard", { waitUntil: "domcontentloaded" });
+  await page.goto("https://tnpm.reborn.vn/biz-prop/dashboard", { waitUntil: "domcontentloaded" });
   await page.waitForFunction(() => location.hostname.includes("sso.reborn.vn") && !!document.querySelector('input[type="password"]'), undefined, { timeout: 30000 }).catch(() => {});
 
   if (page.url().includes("sso.reborn.vn")) {
@@ -26,7 +26,7 @@ test("probe operation BE endpoints with real JWT", async ({ page }) => {
     if (auth && auth.startsWith("Bearer ") && !captured) captured = auth;
   });
   // Force a fresh page nav that triggers new API calls
-  await page.goto("https://tnpm.reborn.vn/crm/units", { waitUntil: "networkidle" }).catch(() => {});
+  await page.goto("https://tnpm.reborn.vn/biz-prop/units", { waitUntil: "networkidle" }).catch(() => {});
   await page.waitForTimeout(8000);
   const token = captured ? (captured as string).replace(/^Bearer /i, "") : "";
   console.log("Token captured:", !!token, "len:", token.length);

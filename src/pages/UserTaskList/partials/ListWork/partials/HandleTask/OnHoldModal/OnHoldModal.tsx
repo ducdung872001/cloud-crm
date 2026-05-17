@@ -578,7 +578,7 @@ export default function OnHoldModal(props: any) {
                             className="item-attachment"
                             onDoubleClick={() => {
                               window.open(
-                                `${process.env.APP_CRM_LINK}/crm/view_document?name=${item.fileName}&url=${item.fileUrl}`,
+                                `${process.env.APP_CRM_LINK}/biz-prop/view_document?name=${item.fileName}&url=${item.fileUrl}`,
                                 "_blank",
                                 "noopener,noreferrer"
                               );

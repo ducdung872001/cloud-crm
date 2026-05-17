@@ -63,7 +63,7 @@ export default function AddCustomerSurvey(props: IAddCustomerSurveyProps) {
         form: data?.form ?? "1",
         cta: data?.cta ?? "",
         params: data?.params ?? [defaultParam],
-        link: `${protocol}//${currentDomain == "localhost" ? `${currentDomain}:4000` : currentDomain}/crm/link_survey?id=${data?.id}`,
+        link: `${protocol}//${currentDomain == "localhost" ? `${currentDomain}:4000` : currentDomain}/biz-prop/link_survey?id=${data?.id}`,
         shortLink: data?.shortLink ?? "",
         startTime: data?.startTime ?? new Date(),
         endTime: data?.endTime ?? "",

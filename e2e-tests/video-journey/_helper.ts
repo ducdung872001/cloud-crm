@@ -137,12 +137,12 @@ async function restoreAuthState(page: Page, context: BrowserContext, state: Auth
         }
       }, state.localStorage);
     }
-    await page.goto(`${CRM}/crm/dashboard`, { waitUntil: "domcontentloaded", timeout: 30_000 });
+    await page.goto(`${CRM}/biz-prop/dashboard`, { waitUntil: "domcontentloaded", timeout: 30_000 });
     await page.waitForTimeout(3500);
 
-    // Verify: nếu vẫn ở /crm/login hoặc bị redirect ra SSO → auth không valid
+    // Verify: nếu vẫn ở /biz-prop/login hoặc bị redirect ra SSO → auth không valid
     const url = page.url();
-    const stillOnLogin = url.includes("/crm/login") || url.includes("localhost:8080") || /\/\/sso\./.test(url);
+    const stillOnLogin = url.includes("/biz-prop/login") || url.includes("localhost:8080") || /\/\/sso\./.test(url);
     if (stillOnLogin) {
       console.log("[auth-cache] restore failed — vẫn ở login, sẽ full login");
       return false;
@@ -197,7 +197,7 @@ async function dismissRoleChooserIfOpen(page: Page) {
 }
 
 async function fullSsoLogin(page: Page) {
-  await page.goto(`${CRM}/crm/login`, { waitUntil: "commit", timeout: 60_000 }).catch(() => {});
+  await page.goto(`${CRM}/biz-prop/login`, { waitUntil: "commit", timeout: 60_000 }).catch(() => {});
   await page
     .waitForFunction(
       (crmHost) => {

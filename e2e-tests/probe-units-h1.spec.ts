@@ -10,7 +10,7 @@ test.use({
 
 test("inspect h1 on units page", async ({ page }) => {
   // Quick login
-  await page.goto("https://tnpm.reborn.vn/crm/units", { waitUntil: "domcontentloaded" });
+  await page.goto("https://tnpm.reborn.vn/biz-prop/units", { waitUntil: "domcontentloaded" });
   await page.waitForFunction(() => location.hostname.includes("sso.reborn.vn") && !!document.querySelector('input[type="password"]'), undefined, { timeout: 30000 }).catch(() => {});
 
   if (page.url().includes("sso.reborn.vn")) {
@@ -28,7 +28,7 @@ test("inspect h1 on units page", async ({ page }) => {
     }
   }
 
-  await page.goto("https://tnpm.reborn.vn/crm/units", { waitUntil: "domcontentloaded" });
+  await page.goto("https://tnpm.reborn.vn/biz-prop/units", { waitUntil: "domcontentloaded" });
   await page.waitForTimeout(5000);
 
   // Inspect H1

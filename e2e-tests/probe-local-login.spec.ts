@@ -42,9 +42,9 @@ test("probe: local CRM login via local SSO (port 8080)", async ({ page }) => {
     }
   });
 
-  // 1. open CRM /crm/login (Router basename is /crm/) → expect redirect to local SSO
-  console.log(`\n[goto] ${CRM}/crm/login`);
-  await page.goto(`${CRM}/crm/login`, { waitUntil: "commit", timeout: 60_000 }).catch((e) => {
+  // 1. open CRM /biz-prop/login (Router basename is /biz-prop/) → expect redirect to local SSO
+  console.log(`\n[goto] ${CRM}/biz-prop/login`);
+  await page.goto(`${CRM}/biz-prop/login`, { waitUntil: "commit", timeout: 60_000 }).catch((e) => {
     console.log("goto error:", e.message);
   });
 
@@ -79,9 +79,9 @@ test("probe: local CRM login via local SSO (port 8080)", async ({ page }) => {
       .waitForFunction(() => location.host.includes("localhost:4000"), undefined, { timeout: 30_000 })
       .catch(() => {});
 
-    // wait for navigation away from /crm/login (means we got logged in & redirected to dashboard)
+    // wait for navigation away from /biz-prop/login (means we got logged in & redirected to dashboard)
     await page
-      .waitForFunction(() => !location.pathname.endsWith("/crm/login") && location.pathname !== "/crm/", undefined, {
+      .waitForFunction(() => !location.pathname.endsWith("/biz-prop/login") && location.pathname !== "/biz-prop/", undefined, {
         timeout: 30_000,
       })
       .catch(() => {});

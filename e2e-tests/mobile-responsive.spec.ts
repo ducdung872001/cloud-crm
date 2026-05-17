@@ -14,17 +14,17 @@ test.use({
 });
 
 const pagesToCheck = [
-  "/crm/units",
-  "/crm/projects",
-  "/crm/lease-contracts",
-  "/crm/billing",
-  "/crm/vendors",
-  "/crm/dashboard",
+  "/biz-prop/units",
+  "/biz-prop/projects",
+  "/biz-prop/lease-contracts",
+  "/biz-prop/billing",
+  "/biz-prop/vendors",
+  "/biz-prop/dashboard",
 ];
 
 test("mobile responsive screenshot tour", async ({ page, context }) => {
   // Login first
-  await page.goto("https://tnpm.reborn.vn/crm/units", { waitUntil: "domcontentloaded" });
+  await page.goto("https://tnpm.reborn.vn/biz-prop/units", { waitUntil: "domcontentloaded" });
   await page
     .waitForFunction(() => location.hostname.includes("sso.reborn.vn") && !!document.querySelector('input[type="password"]'), undefined, { timeout: 30000 })
     .catch(() => {});

@@ -1173,7 +1173,7 @@ const DetailTask = (props: any) => {
                                         //   fileName: item.fileName
                                         // })
                                         window.open(
-                                          `${process.env.APP_CRM_LINK}/crm/view_document?name=${item.fileName}&url=${item.fileUrl}`,
+                                          `${process.env.APP_CRM_LINK}/biz-prop/view_document?name=${item.fileName}&url=${item.fileUrl}`,
                                           "_blank",
                                           "noopener,noreferrer"
                                         );
@@ -1440,7 +1440,7 @@ const DetailTask = (props: any) => {
                                             //   fileName: item.fileName
                                             // })
                                             window.open(
-                                              `${process.env.APP_CRM_LINK}/crm/view_document?name=${item.fileName}&url=${item.fileUrl}`,
+                                              `${process.env.APP_CRM_LINK}/biz-prop/view_document?name=${item.fileName}&url=${item.fileUrl}`,
                                               "_blank",
                                               "noopener,noreferrer"
                                             );
