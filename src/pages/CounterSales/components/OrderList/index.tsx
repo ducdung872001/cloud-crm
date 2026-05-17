@@ -133,7 +133,7 @@ const OrderList: React.FC<OrderListProps> = ({
     e.stopPropagation();
     setRecreatingId(order.id);
     try {
-      const res = await fetch(`/bizapi/sales/invoiceDetail/get?id=${order.id}`);
+      const res = await fetch(`/bizapi/sales/invoice-detail/get?id=${order.id}`);
       const json = await res.json();
       if (json.code === 0) {
         const result = json.result ?? {};
