@@ -77,7 +77,7 @@
     try {
       // const response = await fetch("https://cloud.reborn.vn/adminapi/customer/update/webform", {
       // const response = await fetch("http://192.168.200.33:9100/adminapi/contact/update/landingPage", {
-      const response = await fetch("https://biz.reborn.vn/customer/contact/update/landingPage", {
+      const response = await fetch("https://biz.reborn.vn/customer/contact/update/landing-page", {
         method: "POST",
         headers: {
           "Content-Type": "application/json;charset=UTF-8",
