@@ -94,7 +94,18 @@
       "Bash(tasklist)",
       "Bash(echo \"tsc done: $?\")",
       "Bash(tee d:/tmp/cloud-crm-playwright.log)",
-      "Bash(git status *)"
+      "Bash(git status *)",
+      "PowerShell(Get-NetTCPConnection -LocalPort 4000 -State Listen -ErrorAction SilentlyContinue | Select-Object -ExpandProperty OwningProcess -Unique | ForEach-Object { try { Stop-Process -Id $_ -Force -ErrorAction Stop; \"killed PID $_\" } catch { \"no PID $_\" } })",
+      "Bash(curl -s -o /dev/null -w \"biz-prop/login: HTTP %{http_code} | size=%{size_download}\\\\n\" --max-time 5 http://localhost:4000/biz-prop/login)",
+      "Bash(curl -s --max-time 5 http://localhost:4000/biz-prop/login)",
+      "Bash(tee d:/tmp/cloud-crm-playwright2.log)",
+      "Bash(curl -s -o /dev/null -w \"sso-local-8080: HTTP %{http_code}\\\\n\" --max-time 3 http://localhost:8080/)",
+      "Bash(curl -s -o /dev/null -w \"sso-prod: HTTP %{http_code}\\\\n\" --max-time 5 https://sso.reborn.vn/)",
+      "Bash(curl -sk -o /dev/null -w \"sso-prod: HTTP %{http_code}\\\\n\" --max-time 8 https://sso.reborn.vn/)",
+      "Bash(curl -s --max-time 3 http://localhost:8080/)",
+      "Bash(curl -s -o /dev/null --max-time 2 -w \"%{http_code}\" http://localhost:8080/)",
+      "Bash(tee d:/tmp/cloud-crm-playwright3.log)",
+      "Bash(tee d:/tmp/cloud-crm-playwright4.log)"
     ],
     "additionalDirectories": [
       "\\tmp"

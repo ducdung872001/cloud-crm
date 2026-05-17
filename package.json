@@ -5,7 +5,7 @@
   "author": "Reborn JSC",
   "license": "ISC",
   "scripts": {
-    "local": "vite --mode local",
+    "local": "vite",
     "dev": "vite build --mode dev",
     "prod": "vite build --mode prod",
     "preview": "vite preview",
