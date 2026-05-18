@@ -11,7 +11,7 @@ import { DataPaginationDefault, PaginationProps } from "components/pagination/pa
 import { useSearchParams } from "react-router-dom";
 import _ from "lodash";
 import moment from "moment";
-import BeautySalonService from "services/BeautySalonService";
+import OrganizationService from "services/OrganizationService";
 import Dialog, { IContentDialog } from "components/dialog/dialog";
 import { getPageOffset } from "reborn-util";
 import Badge from "components/badge/badge";
@@ -139,7 +139,7 @@ export default function OrganizationList() {
     paramsSearch.sortedBy = "newest";
 
     setIsLoading(true);
-    const response = await BeautySalonService.list(paramsSearch, abortController.signal);
+    const response = await OrganizationService.list(paramsSearch, abortController.signal);
     if (response.code === 0) {
       const result = response.result;
       setListBeautySalon(result.items);
@@ -317,7 +317,7 @@ export default function OrganizationList() {
   };
 
   const onDelete = async (id: number) => {
-    const response = await BeautySalonService.delete(id);
+    const response = await OrganizationService.delete(id);
     if (response.code === 0) {
       showToast(`Xóa tổ chức thành công`, "success");
       getListBeautySalon(params);

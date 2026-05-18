@@ -299,36 +299,7 @@ export default function AddServiceModal(props: IAddServiceModalProps) {
     [listCategoryService, isLoading, validateFieldCategory, detailCategory]
   );
 
-  const isBeauty = localStorage.getItem("isBeauty");
-
-  const listFieldAdvanced: IFieldCustomize[] = [
-    // ...(isBeauty && isBeauty == "1"
-    //   ? ([
-    //       {
-    //         label: "Thời gian thực hiện ( phút )",
-    //         name: "totalTime",
-    //         type: "number",
-    //         fill: true,
-    //         required: true,
-    //         placeholder: "Nhập số phút thực hiện",
-    //       },
-    //       {
-    //         label: "Số buổi thực hiện",
-    //         name: "treatmentNum",
-    //         type: "number",
-    //         fill: true,
-    //         required: true,
-    //       },
-    //     ] as any)
-    //   : []),
-    // {
-    //   label: "Thứ tự hiển thị",
-    //   name: "position",
-    //   type: "number",
-    //   fill: true,
-    //   required: false,
-    // },
-  ];
+  const listFieldAdvanced: IFieldCustomize[] = [];
 
   const listFieldPrice = useMemo(
     () =>
@@ -355,28 +326,8 @@ export default function AddServiceModal(props: IAddServiceModalProps) {
           isWarning: formData?.values?.discount > formData?.values?.price,
           messageWarning: "Giá ưu đãi phải nhỏ hơn hoặc giá gốc",
         },
-        // ...(isBeauty && isBeauty == "1"
-        //   ? [
-        //       {
-        //         label: "Dịch vụ bán theo combo",
-        //         name: "isCombo",
-        //         type: "radio",
-        //         fill: true,
-        //         options: [
-        //           {
-        //             value: "1",
-        //             label: "Có",
-        //           },
-        //           {
-        //             value: "0",
-        //             label: "Không",
-        //           },
-        //         ],
-        //       },
-        //     ]
-        //   : []),
       ] as IFieldCustomize[],
-    [formData?.values, isBeauty]
+    [formData?.values]
   );
 
   const listFieldIntroduce: IFieldCustomize[] = [
@@ -1039,7 +990,7 @@ export default function AddServiceModal(props: IAddServiceModalProps) {
             ))}
           </div>
 
-          <div className={`merge__field ${isBeauty && isBeauty != "1" ? "merge__field--special" : ""}`}>
+          <div className="merge__field merge__field--special">
             {/* <div className={`list__field--advanced`}>
               {listFieldAdvanced.map((field, index) => (
                 <FieldCustomize

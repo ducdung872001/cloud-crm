@@ -459,8 +459,6 @@ export default function PartnerList() {
     );
   };
 
-  const isBeauty = localStorage.getItem("isBeauty");
-
   const ActionRenderer = (props) => {
     let data = props.data;
     let params = props.params;
@@ -638,7 +636,7 @@ export default function PartnerList() {
 
     {
       headerName: "Hành động",
-      width: isBeauty && isBeauty == "1" ? 185 : 155,
+      width: 155,
       field: "action",
       cellRendererParams: { params },
       cellRenderer: ActionRenderer,

@@ -467,7 +467,6 @@ import IcCareHistory from "assets/icons-menu/ic-care-history.svg";
 import IcCallCenter from "assets/icons-menu/ic-call-center.svg";
 import IcRateCustomer from "assets/icons-menu/ic-rate-customer.svg";
 import IcMemberCustomerList from "assets/icons-menu/ic-member-customer-list.svg";
-import IcMembershipClass from "assets/icons-menu/ic-membership-class.svg";
 import IcAccumulatePoints from "assets/icons-menu/ic-accumulate-points.svg";
 import IcExchangePoints from "assets/icons-menu/ic-exchange-points.svg";
 import IcCampaignHistory from "assets/icons-menu/ic-campaign-history.svg";
@@ -971,7 +970,6 @@ const iconTypes = {
   CallCenter: IcCallCenter,
   RateCustomer: IcRateCustomer,
   MemberCustomerList: IcMemberCustomerList,
-  MembershipClass: IcMembershipClass,
   AccumulatePoints: IcAccumulatePoints,
   ExchangePoints: IcExchangePoints,
   CampaignHistory: IcCampaignHistory,

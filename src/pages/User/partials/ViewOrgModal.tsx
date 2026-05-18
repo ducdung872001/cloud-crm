@@ -7,7 +7,7 @@ import Modal, { ModalBody, ModalFooter, ModalHeader } from "components/modal/mod
 import { SystemNotification } from "components/systemNotification/systemNotification";
 import { IAction, IActionModal } from "model/OtherModel";
 import ImageError from "assets/images/error.png";
-import BeautySalonService from "services/BeautySalonService";
+import OrganizationService from "services/OrganizationService";
 import { showToast } from "utils/common";
 
 import "./ViewOrgModal.scss";
@@ -64,7 +64,7 @@ export default function ViewOrgModal(props: IViewOrgModalProps) {
       limit: 100,
     };
 
-    const response = await BeautySalonService.list(param);
+    const response = await OrganizationService.list(param);
 
     if (response.code === 0) {
       const result = response.result.items;

@@ -723,7 +723,7 @@ export const urlsApi = {
     detail: prefixAdmin + "/beauty-branch/get",
     update: prefixAdmin + "/beauty-branch/update",
     delete: prefixAdmin + "/beauty-branch/delete",
-    getByBeauty: `${process.env.APP_AUTHENTICATOR_URL}/api/beautySalon/getByDomain`,
+    getByBeauty: `${process.env.APP_PLATFORM_URL}/api/v1/internal/tenant/by-domain/tnpm`,
 
     //tìm đối tác theo mã
     getBeautyBranchByCode: prefixAdmin + "/beauty-branch/get/by-code",

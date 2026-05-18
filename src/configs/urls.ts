@@ -36,11 +36,6 @@ export const urlsApi = {
     get: prefixSales + "/user-shortcut/get",
     update: prefixSales + "/user-shortcut/update",
   },
-  beautySalon: {
-    list: prefixRebornVn + "/beauty-salon/list",
-    approve: prefixRebornVn + "/beauty-salon/approve",
-    delete: prefixRebornVn + "/beauty-salon/delete",
-  },
   businessRule: {
     list: prefixBpm + "/business-rule/list",
     update: prefixBpm + "/business-rule/update",
@@ -1091,7 +1086,7 @@ export const urlsApi = {
     detail: prefixCustomer + "/beauty-branch/get",
     update: prefixCustomer + "/beauty-branch/update",
     delete: prefixCustomer + "/beauty-branch/delete",
-    getByBeauty: `${process.env.APP_AUTHENTICATOR_URL}/api/beautySalon/getByDomain`,
+    getByBeauty: `${process.env.APP_PLATFORM_URL}/api/v1/internal/tenant/by-domain/tnpm`,
 
     //tìm đối tác theo mã
     getBeautyBranchByCode: prefixCustomer + "/beauty-branch/get/by-code",
@@ -1103,6 +1098,8 @@ export const urlsApi = {
 
   organization: {
     list: prefixRebornVn + "/beauty-salon/list",
+    approve: prefixRebornVn + "/beauty-salon/approve",
+    delete: prefixRebornVn + "/beauty-salon/delete",
     customerUploadList: prefixCustomer + "/customer-upload/list",
     customerUploadDelete: prefixCustomer + "/clean-data/upload-customer/delete",
   },

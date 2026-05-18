@@ -105,7 +105,18 @@
       "Bash(curl -s --max-time 3 http://localhost:8080/)",
       "Bash(curl -s -o /dev/null --max-time 2 -w \"%{http_code}\" http://localhost:8080/)",
       "Bash(tee d:/tmp/cloud-crm-playwright3.log)",
-      "Bash(tee d:/tmp/cloud-crm-playwright4.log)"
+      "Bash(tee d:/tmp/cloud-crm-playwright4.log)",
+      "Bash(Get-ChildItem -Path . -Recurse -Directory)",
+      "Bash(Select-Object -ExpandProperty FullName)",
+      "Bash(Get-ChildItem -Path .)",
+      "Bash(Select-Object Name)",
+      "Bash(curl -s -o /dev/null -w \"vite-4000: %{http_code} | sso-8080: \" --max-time 3 http://localhost:4000/biz-prop/login)",
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\\\\n\" --max-time 3 http://localhost:8080/)",
+      "Bash(git log *)",
+      "Bash(tee d:/tmp/cloud-crm-playwright5.log)",
+      "Bash(tee d:/tmp/cloud-crm-playwright6.log)",
+      "PowerShell(Get-NetTCPConnection -LocalPort 4000 -State Listen -ErrorAction SilentlyContinue | Select-Object -ExpandProperty OwningProcess -Unique | ForEach-Object { Stop-Process -Id $_ -Force -ErrorAction SilentlyContinue; \"killed PID $_\" })",
+      "Bash(tee d:/tmp/cloud-crm-playwright7.log)"
     ],
     "additionalDirectories": [
       "\\tmp"

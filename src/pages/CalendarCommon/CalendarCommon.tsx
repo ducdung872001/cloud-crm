@@ -40,36 +40,18 @@ export default function CalendarCommon() {
   const [valueOptionView, setValueOptionView] = useState<string>("week");
   const onView = useCallback((newView) => setValueOptionView(newView), [valueOptionView]);
 
-  const isBeauty = localStorage.getItem("isBeauty");
   const { dataBranch } = useContext(UserContext) as ContextType;
 
-  const listOptionNewAdd =
-    isBeauty && isBeauty == "1"
-      ? 
-      [
-          {
-            value: "2",
-            label: "Thêm lịch tư vấn",
-          },
-          {
-            value: "3",
-            label: "Thêm lịch thực hiện dịch vụ",
-          },
-          {
-            value: "1",
-            label: "Thêm lịch công việc",
-          },
-        ]
-      : [
-          {
-            value: "2",
-            label: "Thêm lịch tư vấn",
-          },
-          {
-            value: "1",
-            label: "Thêm lịch công việc",
-          },
-        ];
+  const listOptionNewAdd = [
+    {
+      value: "2",
+      label: "Thêm lịch tư vấn",
+    },
+    {
+      value: "1",
+      label: "Thêm lịch công việc",
+    },
+  ];
 
   const [valueOptionAdd, setValueOptionAdd] = useState({
     value: "2",

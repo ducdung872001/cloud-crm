@@ -333,8 +333,6 @@ export default function AddBoughtServiceModal(props: AddBoughtServiceProps) {
     [data, formData?.values?.discountUnit]
   );
 
-  const isBeauty = localStorage.getItem("isBeauty");
-
   const listField = useMemo(
     () =>
       [
@@ -386,17 +384,6 @@ export default function AddBoughtServiceModal(props: AddBoughtServiceProps) {
                 fill: true,
                 onChange: (e) => handleChangeValuePriceVariation(e),
                 disabled: data?.priceVariationId ? true : false,
-              },
-            ]
-          : []),
-        ...(isBeauty && isBeauty == "1"
-          ? [
-              {
-                label: "Số buổi điều trị",
-                name: "treatmentNum",
-                type: "number",
-                fill: true,
-                disabled: true,
               },
             ]
           : []),
@@ -514,7 +501,7 @@ export default function AddBoughtServiceModal(props: AddBoughtServiceProps) {
           fill: true,
         },
       ] as IFieldCustomize[],
-    [listPriceVariation, formData?.values, isPriceAdjustment, dataEmployee, validateEmployee, dataService, validateService, data, isBeauty]
+    [listPriceVariation, formData?.values, isPriceAdjustment, dataEmployee, validateEmployee, dataService, validateService, data]
   );
 
   useEffect(() => {
@@ -743,7 +730,7 @@ export default function AddBoughtServiceModal(props: AddBoughtServiceProps) {
             }}
           />
           <ModalBody>
-            <div className={`list-form-group ${data?.serviceNumber ? "dependent" : ""} ${isBeauty && isBeauty != "1" ? "not-spa" : ""}`}>
+            <div className={`list-form-group ${data?.serviceNumber ? "dependent" : ""} not-spa`}>
               {listField.map((field, index) => (
                 <FieldCustomize
                   key={index}

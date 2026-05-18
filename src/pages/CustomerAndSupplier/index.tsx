@@ -268,8 +268,6 @@ export default function CustomerAndSupplier(props: any) {
     }
   }, [widthColumns]);
 
-  const isBeauty = localStorage.getItem("isBeauty");
-
   const ActionRenderer = (props) => {
     let data = props.data;
     let params = props.params;
@@ -297,22 +295,6 @@ export default function CustomerAndSupplier(props: any) {
             </span>
           </Tippy>
         </div>
-
-        {isBeauty && isBeauty == "1" && (
-          <div
-            className="item__action view__contract"
-            onClick={() => {
-              setIdCustomer(data.id);
-              setShowModalAddScheduler(true);
-            }}
-          >
-            <Tippy content="Thêm mới yêu cầu thực hiện dịch vụ">
-              <span className="icon__item icon-invoice">
-                <Icon name="Calendar" />
-              </span>
-            </Tippy>
-          </div>
-        )}
 
         {permissions["CUSTOMER_UPDATE"] == 1 && (
           <div
@@ -494,7 +476,7 @@ export default function CustomerAndSupplier(props: any) {
     {
       headerName: "Thao tác",
       headerComponent: StyleHeaderTable,
-      width: isBeauty && isBeauty == "1" ? 185 : 155,
+      width: 155,
       field: "action",
       cellRendererParams: { params },
       cellRenderer: ActionRenderer,

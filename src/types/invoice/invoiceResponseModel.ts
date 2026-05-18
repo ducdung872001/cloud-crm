@@ -56,26 +56,6 @@ export interface IInvoice {
   has_combo?: number;
 }
 
-export interface IClinicItem {
-  id: number;
-  address?: string;
-  bhyt?: string;
-  caregiver?: string;
-  code_invoice?: string;
-  created_at: string;
-  doctor?: string;
-  height?: string;
-  id_card?: string;
-  invoice_id: number;
-  month_old?: number;
-  name_patient?: string;
-  patient_address?: string;
-  patient_code?: string;
-  updated_at?: string;
-  weight?: number;
-  year_old?: number;
-}
-
 export interface IInvoiceDetailItem {
   combo_name?: string;
   cost: number;
@@ -108,7 +88,6 @@ export interface IInvoiceDetailItem {
 }
 
 export interface IInvoiceDetail {
-  clinic?: IClinicItem[];
   invoice: IInvoice;
   invoice_detail: IInvoiceDetailItem[];
   refund_invoice?: number[];

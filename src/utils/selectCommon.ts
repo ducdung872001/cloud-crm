@@ -49,7 +49,7 @@ import BoughtCardService from "services/BoughtCardService";
 import ProductIdApiService from "services/ProductIdApiService";
 import ServiceIdApiService from "services/ServiceIdApiService";
 import CardServiceIdApiService from "services/CardServiceIdApiService";
-import BeautySalonService from "services/BeautySalonService";
+import OrganizationService from "services/OrganizationService";
 import ContractGuaranteeService from "services/ContractGuaranteeService";
 import PartnerService from "services/PartnerService";
 import ContractCategoryService from "services/ContractCategoryService";
@@ -339,7 +339,7 @@ export async function SelectOptionData(key: string, params?: any) {
       });
       break;
     case "bsnId":
-      response = await BeautySalonService.list({
+      response = await OrganizationService.list({
         ...params,
         limit: 1000,
       });

@@ -20,7 +20,7 @@ import moment from "moment";
 import ModalRequestDetail from "./partials/ModalRequestDetail";
 import KanbanOrderTracking from "./partials/KanbanOrderTracking";
 import SelectCustom from "components/selectCustom/selectCustom";
-import BeautySalonService from "services/BeautySalonService";
+import OrganizationService from "services/OrganizationService";
 
 const statusText = {
   PENDING: "Chờ xác nhận",
@@ -351,7 +351,7 @@ export default function OrderTracking() {
       page: page,
       limit: 10,
     };
-    const response = await BeautySalonService.list(param);
+    const response = await OrganizationService.list(param);
     const optionProcess =
       page === 1
         ? [

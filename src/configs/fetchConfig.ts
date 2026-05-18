@@ -37,10 +37,7 @@ export default function RegisterFetch() {
       } else if (!config.headers["Content-Type"]) {
         config.headers["Content-Type"] = "application/json";
       }
-      // Tnpm tạm dùng tenant "kcn.reborn.vn" cho mọi env (local + live tnpm.reborn.vn)
-      // — tenant tnpm.reborn.vn chưa cấu hình BE. Khi BE sẵn sàng, revert lại
-      // dùng location.hostname cho live.
-      config.headers["Hostname"] = "kcn.reborn.vn";
+      config.headers["Hostname"] = "tnpm.reborn.vn";
 
 
       if (!url.startsWith("http")) {

@@ -8,6 +8,16 @@ export default {
       method: "GET",
     }).then((res) => res.json());
   },
+  approve: (id: number) => {
+    return fetch(`${urlsApi.organization.approve}?id=${id}`, {
+      method: "POST",
+    }).then((res) => res.json());
+  },
+  delete: (id: number) => {
+    return fetch(`${urlsApi.organization.delete}?id=${id}`, {
+      method: "DELETE",
+    }).then((res) => res.json());
+  },
   customerUploadList: (params?: any, signal?: AbortSignal) => {
     return fetch(`${urlsApi.organization.customerUploadList}${convertParamsToString(params)}`, {
       signal,

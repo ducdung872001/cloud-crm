@@ -76,18 +76,9 @@ export default function Index() {
       // console.log("permissions =>", JSON.stringify(mapPermission));
       localStorage.setItem("permissions", JSON.stringify(mapPermission));
 
-      const takeIsBeauty = await BeautyBranchService.getByBeauty(cookies.token);
-      if (!isObjEmpty(takeIsBeauty)) {
-        localStorage.setItem("isBeauty", takeIsBeauty.isBeauty);
-
-        //Sẽ lưu lại logo của tổ chức nếu tên miền khác reborn.vn
-        let sourceDomain = getDomain(decodeURIComponent(location.href));
-        console.log("sourceDomain =>", sourceDomain);
-
-        // if (!sourceDomain.endsWith("reborn.vn")) {
-        console.log("sourceDomain =>", "Có vào");
-        localStorage.setItem("logoOrganization", takeIsBeauty.logo || takeIsBeauty.logoTransparent || "");
-        // }
+      const tenantInfo = await BeautyBranchService.getByBeauty(cookies.token);
+      if (!isObjEmpty(tenantInfo)) {
+        localStorage.setItem("logoOrganization", tenantInfo.logo || tenantInfo.logoTransparent || "");
       }
 
       const userRes = response.result.user;
