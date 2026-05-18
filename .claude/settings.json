@@ -116,7 +116,9 @@
       "Bash(tee d:/tmp/cloud-crm-playwright5.log)",
       "Bash(tee d:/tmp/cloud-crm-playwright6.log)",
       "PowerShell(Get-NetTCPConnection -LocalPort 4000 -State Listen -ErrorAction SilentlyContinue | Select-Object -ExpandProperty OwningProcess -Unique | ForEach-Object { Stop-Process -Id $_ -Force -ErrorAction SilentlyContinue; \"killed PID $_\" })",
-      "Bash(tee d:/tmp/cloud-crm-playwright7.log)"
+      "Bash(tee d:/tmp/cloud-crm-playwright7.log)",
+      "Bash(tee d:/tmp/cloud-crm-playwright8.log)",
+      "Bash(tee d:/tmp/cloud-crm-playwright9.log)"
     ],
     "additionalDirectories": [
       "\\tmp"
