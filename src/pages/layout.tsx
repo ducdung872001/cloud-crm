@@ -13,6 +13,7 @@ import { IBeautyBranchFilterRequest } from "model/beautyBranch/BeautyBranchReque
 import BeautyBranchService from "services/BeautyBranchService";
 import { IBeautyBranchResponse } from "model/beautyBranch/BeautyBranchResponseModel";
 import NotifiPackageRenewal from "components/notifiPackageRenewal/notifiPackageRenewal";
+import { ACCOUNT_EXPIRY_CHECK } from "configs/featureFlags";
 import { showToast } from "utils/common";
 import ChatFeedback from "./ChatFeedback";
 import EmployeeService from "services/EmployeeService";
@@ -264,6 +265,7 @@ export default function Layout() {
   };
 
   const [isPackage, setIsPackage] = useState<boolean>(() => {
+    if (ACCOUNT_EXPIRY_CHECK === "disable") return false;
     return dataExpired && dataExpired.numDay <= 0 && dataExpired.period <= 36 ? true : false;
   });
 
@@ -308,10 +310,10 @@ export default function Layout() {
             <Fragment>
               <div
                 className={`notification__warning--package ${
-                  dataExpired && (dataExpired.numDay <= 14 && dataExpired.numDay > 6 ? isAlmostExpired : isExpired) ? "" : "d-none"
+                  ACCOUNT_EXPIRY_CHECK === "enable" && dataExpired && (dataExpired.numDay <= 14 && dataExpired.numDay > 6 ? isAlmostExpired : isExpired) ? "" : "d-none"
                 } ${checkPathUrl == "/biz-prop/link_survey" ? "d-none" : ""}`}
               >
-                {dataExpired && dataExpired.period <= 36 && (
+                {ACCOUNT_EXPIRY_CHECK === "enable" && dataExpired && dataExpired.period <= 36 && (
                   <div className={`box__warning--notify ${isExpired ? "bg__error" : isAlmostExpired ? "bg__warning" : ""}`}>
                     <div className="content__notify--left">
                       <Icon name="WarningCircle" />

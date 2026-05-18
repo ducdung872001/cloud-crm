@@ -5,6 +5,7 @@ import Icon from "components/icon";
 import { IMenuItem } from "model/OtherModel";
 import { getPermissions } from "utils/common";
 import { ContextType, UserContext } from "contexts/userContext";
+import { ACCOUNT_EXPIRY_CHECK } from "configs/featureFlags";
 import _ from "lodash";
 import "./navigation.scss";
 
@@ -34,6 +35,8 @@ export default function Navigation(props: NavigationProps) {
   const { menuItemList } = props;
 
   const { permissions, dataExpired } = useContext(UserContext) as ContextType;
+
+  const isExpiredBlock = ACCOUNT_EXPIRY_CHECK === "enable" && !!dataExpired && dataExpired.numDay <= 0;
 
   const location = useLocation();
 
@@ -112,7 +115,7 @@ export default function Navigation(props: NavigationProps) {
               (item.permission &&
                 permissions.filter((per) => item.permission?.includes(per)).length === 0) ||
               (item.children?.length > 0 && disabledChildrenCount === item.children.length) ||
-              (dataExpired && dataExpired.numDay <= 0)
+              isExpiredBlock
                 ? " disabled"
                 : ""
             }`}
@@ -122,7 +125,7 @@ export default function Navigation(props: NavigationProps) {
               <a
                 className="d-flex align-items-center"
                 onClick={() => {
-                  if (dataExpired && dataExpired.numDay > 0) {
+                  if (!isExpiredBlock) {
                     handShowChildren(item);
                     setShowChildren(idx);
                   }
@@ -146,7 +149,7 @@ export default function Navigation(props: NavigationProps) {
                 title={t(`sidebar.${item.title}`)}
                 target={item.target}
                 onClick={() => {
-                  if (dataExpired && dataExpired.numDay > 0) {
+                  if (!isExpiredBlock) {
                     handShowChildren(item);
                     closeAllChildren(); // ← đóng tất cả submenu
                   }
@@ -176,7 +179,7 @@ export default function Navigation(props: NavigationProps) {
                     className={`level-2${childrenItem.path === location.pathname ? " active" : ""}${
                       (childrenItem.permission &&
                         permissions.filter((per) => childrenItem.permission?.includes(per)).length === 0) ||
-                      (dataExpired && dataExpired.numDay <= 0)
+                      isExpiredBlock
                         ? " disabled"
                         : ""
                     }`}
